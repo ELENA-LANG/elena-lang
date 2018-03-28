@@ -81,7 +81,20 @@ typedef ClassInfo::Attribute Attribute;
 //         return false;
 //   }
 //}
-//
+
+inline ident_t findSourceRef(SNode node)
+{
+   while (node != lxNone && node != lxNamespace) {
+      if (node.compare(lxConstructor, lxStaticMethod, lxClassMethod) && node.existChild(lxSourcePath)) {
+         return node.findChild(lxSourcePath).identifier();
+      }
+
+      node = node.parentNode();
+   }
+
+   return node.findChild(lxSourcePath).identifier();
+}
+
 //// --- CompilerLogic Optimization Ops ---
 //struct EmbeddableOp
 //{
@@ -209,8 +222,8 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
 
    if (methodFound) {
       int hint = info.methodHints.get(Attribute(message, maHint));
-//      result.outputReference = info.methodHints.get(Attribute(message, maReference));
-//
+      result.outputReference = info.methodHints.get(Attribute(message, maReference));
+
 //      result.embeddable = test(hint, tpEmbeddable);
 //      result.closure = test(hint, tpAction);
 
@@ -448,57 +461,57 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 //         return false;
 //   }
 //}
-//
-////inline bool isPrimitiveArrayCompatible(ref_t targetRef, ref_t sourceRef)
-////{
-////   switch (sourceRef)
-////   {
-////      case V_PTR32:
-////         return targetRef == V_INT32;
-////      default:
-////         return false;
-////   }
-////}
-//
-//bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
+
+//inline bool isPrimitiveArrayCompatible(ref_t targetRef, ref_t sourceRef)
 //{
-//   if (!targetRef && !isPrimitiveRef(sourceRef))
-//      return true;
-//
-//   if (sourceRef == V_NIL)
-//      return true;
-//
-//   if (isPrimitiveCompatible(targetRef, sourceRef))
-//      return true;
-//
-//   if (targetRef == scope.superReference && !isPrimitiveRef(sourceRef))
-//      return true;
-//
-//   while (sourceRef != 0) {
-//      if (targetRef != sourceRef) {
-//         ClassInfo info;
-//         if (!defineClassInfo(scope, info, sourceRef))
-//            return false;
-//
-//         // if it is a structure wrapper
-//         if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
-//            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-//            if (isCompatible(scope, targetRef, inner.value1))
-//               return true;
-//         }
-//
-//         if (test(info.header.flags, elClassClass)) {
-//            // class class can be compatible only with itself and the super class
-//            sourceRef = scope.superReference;
-//         }
-//         else sourceRef = info.header.parentRef;
-//      }
-//      else return true;
+//   switch (sourceRef)
+//   {
+//      case V_PTR32:
+//         return targetRef == V_INT32;
+//      default:
+//         return false;
 //   }
-//
-//   return false;
 //}
-//
+
+bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
+{
+   //if (!targetRef && !isPrimitiveRef(sourceRef))
+   //   return true;
+
+   if (sourceRef == V_NIL)
+      return true;
+
+   //if (isPrimitiveCompatible(targetRef, sourceRef))
+   //   return true;
+
+   if (targetRef == scope.superReference/* && !isPrimitiveRef(sourceRef)*/)
+      return true;
+
+   while (sourceRef != 0) {
+      if (targetRef != sourceRef) {
+         ClassInfo info;
+         if (!defineClassInfo(scope, info, sourceRef))
+            return false;
+
+         //// if it is a structure wrapper
+         //if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
+         //   ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+         //   if (isCompatible(scope, targetRef, inner.value1))
+         //      return true;
+         //}
+
+         if (test(info.header.flags, elClassClass)) {
+            // class class can be compatible only with itself and the super class
+            sourceRef = scope.superReference;
+         }
+         else sourceRef = info.header.parentRef;
+      }
+      else return true;
+   }
+
+   return false;
+}
+
 //bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 //{
 //   return test(info.header.flags, elDynamicRole | elStructureRole);
@@ -664,12 +677,12 @@ void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, Clas
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
       ref_t message = *it;
 
-      //ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
-      //if (outputRef != 0) {
-      //   // Bad luck we have to verify all overloaded methods
-      //   needVerification = true;
-      //   break;
-      //}
+      ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
+      if (outputRef != 0) {
+         // Bad luck we have to verify all overloaded methods
+         needVerification = true;
+         break;
+      }
    }
 
    if (!needVerification)
@@ -680,16 +693,16 @@ void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, Clas
       if (current == lxClassMethod) {
          SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
          if (multiMethAttr != lxNone) {
-   //         ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethAttr.argument, maReference));
-   //         if (outputRefMulti != 0) {
-   //            ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
-   //            if (outputRef == 0) {
-   //               scope.raiseError(errNotCompatibleMulti, current.findChild(lxIdentifier, lxPrivate));
-   //            }
-   //            else if (!isCompatible(scope, outputRefMulti, outputRef)) {
-   //               scope.raiseError(errNotCompatibleMulti, current.findChild(lxIdentifier, lxPrivate));
-   //            }
-   //         }            
+            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethAttr.argument, maReference));
+            if (outputRefMulti != 0) {
+               ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
+               if (outputRef == 0) {
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxIdentifier, lxPrivate));
+               }
+               else if (!isCompatible(scope, outputRefMulti, outputRef)) {
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxIdentifier, lxPrivate));
+               }
+            }            
          }
       }
       current = current.nextNode();

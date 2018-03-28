@@ -62,8 +62,8 @@ struct CompilerScope : _CompilerScope
 
    /*virtual */void saveAttribute(ident_t typeName, ref_t classReference);
 
-   void raiseError(const char* message, ident_t sourcePath, SNode terminal);
-   void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal);
+   virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal);
+   virtual void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal);
 
    CompilerScope(_ProjectManager* project)
       : savedPaths(-1)

@@ -92,9 +92,9 @@ public:
 //   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference);
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
 //   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
-//
-//   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
-//////   virtual bool isPrimitiveArray(ref_t reference);
+
+   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
+////   virtual bool isPrimitiveArray(ref_t reference);
 //   virtual bool isPrimitiveRef(ref_t reference)
 //   {
 //      return (int)reference < 0;

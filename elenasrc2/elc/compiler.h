@@ -539,7 +539,7 @@ private:
 //      bool  constant;
       bool  staticOne;
 //      bool  preloaded;
-//      ref_t outputRef;
+      ref_t outputRef;
 
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -583,12 +583,12 @@ private:
          else return parent->getScope(level);
       }
 
-//      ref_t getReturningRef(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
-//      }
+      ref_t getReturningRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
+      }
 
       //ref_t getClassFlags(bool ownerClass = true)
       //{
@@ -670,6 +670,13 @@ private:
          MethodScope* scope = (MethodScope*)getScope(slMethod);
 
          return scope ? scope->message : 0;
+      }
+
+      ref_t getReturningRef()
+      {
+         MethodScope* scope = (MethodScope*)getScope(slMethod);
+
+         return scope ? scope->getReturningRef() : 0;
       }
 
       ref_t getClassRefId(bool ownerClass = true)
@@ -901,7 +908,7 @@ private:
 //   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode assigning, CodeScope& scope);
 //
@@ -981,10 +988,10 @@ private:
 //   bool validate(_ProjectManager& project, _Module* module, int reference);
 //
 //   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
-//
-//   bool convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
-//   bool typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef);
-//
+
+   bool convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/);
+   bool typecastObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef);
+
 //   void compileExternalArguments(SNode node, ModuleScope& scope, WarningScope& warningScope);
 //
 //   ref_t analizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope);

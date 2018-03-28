@@ -523,7 +523,7 @@ enum MethodAttribute
 
    maNone               = 0x000,
    maHint               = 0x001,
-//   maReference          = 0x202,
+   maReference          = 0x202,
 //   maEmbeddableGet      = 0x103,
 //   maEmbeddableEval     = 0x104,
 //   maEmbeddableIdle     = 0x005,

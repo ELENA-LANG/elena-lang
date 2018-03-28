@@ -155,9 +155,9 @@ struct _CompilerScope
 ////   // cached bool values
 ////   BranchingInfo branchingInfo;
 //
-//   virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal) = 0;
-////   virtual void raiseWarning(int level, const char* message, SNode terminal) = 0;
-//
+   virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal) = 0;
+   //virtual void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal) = 0;
+
 //   virtual ref_t mapAttribute(SNode terminal) = 0;
 //   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
 ////   virtual ref_t mapReference(ident_t reference, bool existing = false) = 0;
@@ -236,13 +236,13 @@ public:
 //      bool  withOpenArg1Dispatcher;
 //      bool  withOpenArg2Dispatcher;
 //      bool  closure;
-//      ref_t outputReference;
+      ref_t outputReference;
 
       ChechMethodInfo()
       {
          directResolved = false;
          /*embeddable = *//*closed = */found = false;
-//         outputReference = 0;
+         outputReference = 0;
 //         withCustomDispatcher = false;
 //         stackSafe = false;
 //         withOpenArgDispatcher = false;
@@ -277,10 +277,10 @@ public:
 //
 //   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
-//
-//   // check if the classes is compatible
-//   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
-//
+
+   // check if the classes is compatible
+   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
+
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 //
 //   virtual bool isEmbeddableArray(ClassInfo& info) = 0;

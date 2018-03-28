@@ -22,11 +22,11 @@ using namespace _ELENA_;
 ////      current = current.nextNode();
 ////   }
 ////}
-//
-//// --- Hint constants ---
+
+// --- Hint constants ---
 //#define HINT_CLOSURE_MASK     0xC0008800
 
-//#define HINT_ROOT             0x80000000
+#define HINT_ROOT             0x80000000
 //#define HINT_ROOTSYMBOL       0xC0000000
 //#define HINT_NOBOXING         0x20000000
 //#define HINT_NOUNBOXING       0x10000000
@@ -950,7 +950,7 @@ Compiler::SourceScope :: SourceScope(NamespaceScope* moduleScope, ref_t referenc
 Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference)
    : SourceScope(parent, reference)
 {
-//   outputRef = 0;
+   outputRef = 0;
 //   constant = false;
    staticOne = false;
 //   preloaded = false;
@@ -3089,10 +3089,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //   bool dispatchCall = false;
    _CompilerLogic::ChechMethodInfo result;
    int callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
-//   if (result.found) {
-//      retVal.param = result.outputReference;
-//   }
-//
+   if (result.found) {
+      retVal.param = result.outputReference;
+   }
+
 //   if (target.kind == okThisParam && callType == tpPrivate) {
 //      messageRef |= SEALED_MESSAGE;
 //
@@ -3192,18 +3192,18 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    return retVal;
 }
 
-//bool Compiler :: convertObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
-//{
-//   if (!_logic->isCompatible(scope, targetRef, sourceRef)) {
-//      // if it can be boxed / implicitly converted
-//      if (!_logic->injectImplicitConversion(writer, scope, *this, targetRef, sourceRef, elementRef))
-//         return typecastObject(writer, scope, targetRef);
-//   }
-//   return true;
-//}
-//
-//bool Compiler :: typecastObject(SyntaxWriter& writer, ModuleScope& scope, ref_t targetRef)
-//{
+bool Compiler :: convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/)
+{
+   if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
+      // if it can be boxed / implicitly converted
+      //if (!_logic->injectImplicitConversion(writer, scope, *this, targetRef, sourceRef, elementRef))
+         return typecastObject(writer, scope, targetRef);
+   }
+   return true;
+}
+
+bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef)
+{
 //   if (targetRef != 0 && !isPrimitiveRef(targetRef)) {
 //      IdentifierString sign;
 //      sign.append('$');
@@ -3214,9 +3214,9 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //
 //      return true;
 //   }
-//   else return false;
-//}
-//
+   /*else */return false;
+}
+
 //void Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature)
 //{
 //   ref_t argRef = resolveObjectReference(scope, info);
@@ -3290,7 +3290,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //               arg = arg.nextNode();
 //         }
 //         // try to recognize the message signature
-/*         else *//*resolveStrongArgument(scope, */compileExpression(writer, current, scope, paramMode)/*, anonymous, signature)*/;
+/*         else *//*resolveStrongArgument(scope, */compileExpression(writer, current, scope, 0, paramMode)/*, anonymous, signature)*/;
       }
 
       current = current.nextNode();
@@ -4092,36 +4092,32 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
 ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
 //   bool typecasting = false;
 //   bool converting = false;
 //   ref_t signature = 0;
-//   ref_t targetRef = 0;
-//   if (test(mode, HINT_ROOT)) {
-//      // type cast returning value if required
-//      int paramCount;
-//      decodeMessage(scope.getMessageID(), signature, paramCount);
-//      if (classScope->info.methodHints.exist(Attribute(scope.getMessageID(), maReference))) {
-//         targetRef = classScope->info.methodHints.get(Attribute(scope.getMessageID(), maReference));
-//         converting = true;
-//      }
-//      else if (paramCount == 0 && signature != 0) {
-//         ident_t signName = scope.moduleScope->module->resolveSubject(signature);
-//         int index = signName.find('$');
-//         // if it is a qualified message and is not a property
-//         if (index != NOTFOUND_POS && signName[index + 1] != 0) {
-//            IdentifierString className(signName.c_str() + index + 1);
-//
-//            typecasting = true;
-//            targetRef = scope.moduleScope->module->mapReference(className);
-//         }
-//      }
-//   }
-//
+   ref_t targetRef = 0;
+   if (test(mode, HINT_ROOT)) {
+      // type cast returning value if required
+      //int paramCount;
+      //decodeMessage(scope.getMessageID(), signature, paramCount);
+
+      targetRef = scope.getReturningRef();
+      //else if (paramCount == 0 && signature != 0) {
+      //   ident_t signName = scope.moduleScope->module->resolveSubject(signature);
+      //   int index = signName.find('$');
+      //   // if it is a qualified message and is not a property
+      //   if (index != NOTFOUND_POS && signName[index + 1] != 0) {
+      //      IdentifierString className(signName.c_str() + index + 1);
+
+      //      typecasting = true;
+      //      targetRef = scope.moduleScope->module->mapReference(className);
+      //   }
+      //}
+   }
+
 //   writer.newBookmark();
 
-   ObjectInfo info = compileExpression(writer, node, scope, mode);
+   ObjectInfo info = compileExpression(writer, node, scope, targetRef, mode);
 
 //   if (converting || typecasting)
 //      convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, info), info.element);
@@ -4258,7 +4254,7 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //   return retVal;
 //}
 
-ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode)
 {
    writer.newBookmark();
 
@@ -4271,6 +4267,14 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          objectInfo = compileMessage(writer, current, scope, objectInfo, mode);
          break;
    }
+
+   if (targetRef) {
+      if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, objectInfo)/*, objectInfo.element*/))
+         scope.raiseError(errInvalidOperation, node);
+
+      objectInfo = ObjectInfo(okObject, targetRef);
+   }
+
 
 //   ObjectInfo objectInfo;
 //   if (node == lxAlt) {
@@ -4405,7 +4409,7 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 //
             writer.newNode(lxReturning);
             writer.appendNode(lxBreakpoint, dsStep);
-            retVal = compileRetExpression(writer, current, scope, /*HINT_ROOT*/0);
+            retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
             writer.closeNode();
 
             break;
@@ -5417,16 +5421,16 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
          // adding the code loading $self
          writer.newNode(lxReturning);
-//         writer.newBookmark();
+         writer.newBookmark();
          writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO);
 
-//         ref_t resultRef = scope.getReturningRef(false);
-//         if (resultRef != 0) {
-//            if (!convertObject(writer, *codeScope.moduleScope, resultRef, resolveObjectReference(codeScope, thisParam), 0))
-//               scope.raiseError(errInvalidOperation, node);
-//         }
-//
-//         writer.removeBookmark();
+         ref_t resultRef = scope.getReturningRef(false);
+         if (resultRef != 0) {
+            if (!convertObject(writer, codeScope, resultRef, resolveObjectReference(codeScope, thisParam)/*, 0*/))
+               scope.raiseError(errInvalidOperation, node);
+         }
+
+         writer.removeBookmark();
          writer.closeNode();
       }
 
@@ -5892,17 +5896,17 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
 
    generateClassDeclaration(node, classClassScope, true);
 
-   //// generate constructor attributes
-   //ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
-   //while (!it.Eof()) {
-   //   int hints = classClassScope.info.methodHints.get(Attribute(it.key(), maHint));
-   //   if (test(hints, tpConstructor)) {
-   //      classClassScope.info.methodHints.exclude(Attribute(it.key(), maReference));
-   //      classClassScope.info.methodHints.add(Attribute(it.key(), maReference), classScope.reference);
-   //   }
+   // generate constructor attributes
+   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
+   while (!it.Eof()) {
+      int hints = classClassScope.info.methodHints.get(Attribute(it.key(), maHint));
+      if (test(hints, tpConstructor)) {
+         classClassScope.info.methodHints.exclude(Attribute(it.key(), maReference));
+         classClassScope.info.methodHints.add(Attribute(it.key(), maReference), classScope.reference);
+      }
 
-   //   it++;
-   //}
+      it++;
+   }
 
    // save declaration
    classClassScope.save();
@@ -6672,12 +6676,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    writer.newNode(lxSymbol, node.argument);
    writer.newNode(lxExpression);
    writer.appendNode(lxBreakpoint, dsStep);
-   /*ObjectInfo retVal = */compileExpression(writer, expression, codeScope, /*isSingleStatement(expression) ? HINT_ROOTSYMBOL : */0);
-//   if (scope.outputRef != 0) {
-//      ModuleScope* moduleScope = scope.moduleScope;
-//
-//      convertObject(writer, *moduleScope, scope.outputRef, resolveObjectReference(codeScope, retVal), retVal.element);
-//   }
+   /*ObjectInfo retVal = */compileExpression(writer, expression, codeScope, scope.outputRef, /*isSingleStatement(expression) ? HINT_ROOTSYMBOL : */0);
 //   else if (resolveObjectReference(*scope.moduleScope, retVal) != 0) {
 //      // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
 //      scope.outputRef = resolveObjectReference(*scope.moduleScope, retVal);
