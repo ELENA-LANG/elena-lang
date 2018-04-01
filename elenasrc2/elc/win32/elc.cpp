@@ -529,18 +529,22 @@ _ELENA_::_JITCompiler* _ELC_::Project::createJITCompiler64()
    return new _ELENA_::AMD64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
-bool _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::SyntaxTree& syntaxTree, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope/*,
+void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::SyntaxTree& syntaxTree, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope/*,
    _ELENA_::ModuleInfo& moduleInfo, bool& repeatMode*/)
 {
    _ELENA_::SyntaxWriter syntaxWriter(syntaxTree);
    syntaxWriter.newNode(_ELENA_::lxRoot);
 
    _ELENA_::SyntaxTree derivationTree;
+   _ELENA_::DerivationWriter writer(derivationTree);
+
+   writer.begin();
 
    _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
    while (!file_it.Eof()) {
       _ELENA_::ident_t filePath = *file_it;
 
+      writer.beginModule(filePath);
       printInfo("%s", filePath);
 
       try {
@@ -553,13 +557,8 @@ bool _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::SyntaxT
          if (!sourceFile.isOpened())
             raiseError(errInvalidFile, filePath);
       
-         derivationTree.clear();
-         _ELENA_::DerivationWriter writer(derivationTree);
-         parser.parse(&sourceFile, writer, getTabSize());
-      
-         // declare the module members
-         _ELENA_::DerivationTransformer transformer(derivationTree);
-         transformer.generateSyntaxTree(syntaxWriter, scope, filePath);
+//         derivationTree.clear();
+         parser.parse(&sourceFile, writer, getTabSize());      
       }
       catch (_ELENA_::LineTooLong& e)
       {
@@ -579,14 +578,22 @@ bool _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::SyntaxT
          raiseError(e.error, filePath, e.row, e.column, e.token);
       }
 
+      writer.closeModule();
+
       file_it = source->nextIt(ELC_INCLUDE, file_it);
    }
 
-   //return idle;
+   writer.close();
+
+   // list of attributes / types
+   _ELENA_::MessageMap attributes;
+
+   // declare the module members
+   _ELENA_::DerivationTransformer transformer(derivationTree);
+   transformer.recognize(scope, &attributes);
+   transformer.generate(syntaxWriter, scope, &attributes);
 
    syntaxWriter.closeNode();
-
-   return false;
 }
 
 bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
@@ -604,14 +611,20 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
 
       _ELENA_::SyntaxTree syntaxTree;
 
-      _ELENA_::ident_t target = source->get(ELC_TARGET_NAME);      
+      _ELENA_::ident_t target = source->get(ELC_TARGET_NAME);
       int type = /*!emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : */1;
       if (type == 1) {
+         printInfo("Parsing %s", name);
+
+         // build derivation tree, recognize scopes and register all symbols
          buildSyntaxTree(parser, syntaxTree, source, scope);
 
+         printInfo("Compiling %s", name);
+
+         // declare classes / symbols based on the derivation tree
          compiler.declareModule(*this, syntaxTree, scope/*, unresolved*/);
 
-         // compile the syntax tree
+         // compile classes / symbols
          compiler.compileModule(*this, syntaxTree, scope/*, unresolved*/);
       }
       //else if (type == 2) {

@@ -167,7 +167,7 @@ struct _CompilerScope
 //   virtual bool saveAttribute(ident_t name, ref_t attr/*, bool internalAttr*/) = 0;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-//   virtual _Module* loadReferenceModule(ref_t& reference) = 0;
+   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 

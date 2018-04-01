@@ -213,12 +213,17 @@ inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, bool privateO
    return module->mapReference(name);
 }
 
+ref_t CompilerScope :: mapNewIdentifier(ident_t identifier, bool privateOne)
+{
+   return ::mapNewIdentifier(module, identifier, privateOne);
+}
+
 ref_t CompilerScope :: mapNewTerminal(SNode terminal, bool privateOne)
 {
    ident_t identifier = terminal.identifier();
    switch (terminal) {
       case lxIdentifier:
-         return mapNewIdentifier(module, identifier, privateOne);
+         return mapNewIdentifier(identifier, privateOne);
 //         return mapIdentifier(identifier, existing);
 //      case lxReference:
 //         return mapReference(identifier, existing);
@@ -305,4 +310,15 @@ void CompilerScope :: saveAttribute(ident_t name, ref_t attr)
       metaWriter.writeDWord(attr);
       metaWriter.writeLiteral(name);
    }
+}
+
+_Module* CompilerScope :: loadReferenceModule(ident_t referenceName, ref_t& reference)
+{
+   if (isWeakReference(referenceName)) {
+      reference = module->mapReference(referenceName, true);
+
+      return module;
+   }
+   else return project->resolveModule(referenceName, reference);
+
 }

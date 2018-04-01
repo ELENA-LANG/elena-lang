@@ -1281,6 +1281,8 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //         attrValue = elTapeGroup;
 //         return true;
       case V_CLASS:
+      case V_PUBLIC:
+      case V_PRIVATE:
          attrValue = 0;
          return true;
       case V_SINGLETON:

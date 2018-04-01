@@ -17,29 +17,29 @@
 namespace _ELENA_
 {
 
-struct Unresolved
-{
-   ident_t    fileName;
-   ref_t      reference;
-   _Module*   module;
-   size_t     row;
-   size_t     col;           // virtual column
+//struct Unresolved
+//{
+//   ident_t    fileName;
+//   ref_t      reference;
+//   _Module*   module;
+//   size_t     row;
+//   size_t     col;           // virtual column
+//
+//   Unresolved()
+//   {
+//      reference = 0;
+//   }
+//   Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
+//   {
+//      this->fileName = fileName;
+//      this->reference = reference;
+//      this->module = module;
+//      this->row = row;
+//      this->col = col;
+//   }
+//};
 
-   Unresolved()
-   {
-      reference = 0;
-   }
-   Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
-   {
-      this->fileName = fileName;
-      this->reference = reference;
-      this->module = module;
-      this->row = row;
-      this->col = col;
-   }
-};
-
-typedef List<Unresolved> Unresolveds;
+//typedef List<Unresolved> Unresolveds;
 
 // --- Compiler class ---
 class Compiler : public _Compiler
@@ -216,9 +216,9 @@ public:
 //   typedef Map<ref_t, SubjectList*>       AutoExtensionMap;
 
 private:
-      // - Scope -
-      struct Scope
-      {
+   // - Scope -
+   struct Scope
+   {
          enum ScopeLevel
          {
             slNamespace,
@@ -314,18 +314,17 @@ private:
             this->module = parent->module;
          //   this->sourcePath = parent->sourcePath;
          }
-      };
-
+   };
 
    // - NamespaceScope -
    struct NamespaceScope : Scope
    {
-//      _ProjectManager* project;      
-
-      // imported namespaces
-      List<ident_t> importedNs;
-      ForwardMap    forwards;       // forward declarations
-
+////      _ProjectManager* project;      
+//
+//      // imported namespaces
+//      List<ident_t> importedNs;
+//      ForwardMap    forwards;       // forward declarations
+//
 //      // symbol hints
 //      Map<ref_t, ref_t> constantHints;
 //
@@ -395,12 +394,12 @@ private:
 
       ref_t resolveImplicitIdentifier(ident_t name);
 
-//////      ref_t mapNewSubject(ident_t terminal);
-////
-////      // NOTE : the function returns 0 for implicit subjects
-////      // in any case output is set (for explicit one - the namespace is copied as well)
-////      ref_t mapSubject(SNode terminal, IdentifierString& output);
-////      ref_t mapSubject(SNode terminal);
+////      ref_t mapNewSubject(ident_t terminal);
+//
+//      // NOTE : the function returns 0 for implicit subjects
+//      // in any case output is set (for explicit one - the namespace is copied as well)
+//      ref_t mapSubject(SNode terminal, IdentifierString& output);
+//      ref_t mapSubject(SNode terminal);
 
       ref_t mapNewTerminal(SNode terminal);
 
@@ -486,8 +485,8 @@ private:
 //      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 //
 //      ObjectInfo mapField(ident_t identifier);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      //virtual ObjectInfo mapTerminal(ident_t identifier);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -614,7 +613,7 @@ private:
    // - CodeScope -
    struct CodeScope : public Scope
    {
-//      // scope local variables
+      // scope local variables
       LocalMap     locals;
       int          level;
 
@@ -698,100 +697,100 @@ private:
 //      CodeScope(CodeScope* parent);
    };
 
-//   // --- ResendScope ---
-//   struct ResendScope : public CodeScope
-//   {
-//      bool withFrame;
-//      bool consructionMode;
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      ResendScope(CodeScope* parent)
-//         : CodeScope(parent)
-//      {
-//         consructionMode = withFrame = false;
-//      }
-//   };
-//
-//   // - InlineClassScope -
-//   struct InlineClassScope : public ClassScope
-//   {
-//      struct Outer
-//      {
-//         ref_t      reference;
-//         bool       preserved;
-//         ObjectInfo outerObject;
-//
-//         Outer()
-//         {
-//            reference = INVALID_REF;
-//            preserved = false;
-//         }
-//         Outer(int reference, ObjectInfo outerObject)
-//         {
-//            this->reference = reference;
-//            this->outerObject = outerObject;
-//            this->preserved = false;
-//         }
-//      };
-//
-//      bool                    returningMode;
-//      Map<ident_t, Outer>     outers;
-//      //ClassInfo::FieldTypeMap outerFieldTypes;
-//
-//      Outer mapSelf();
-//      Outer mapOwner();
-//      Outer mapParent();
-//
-//      ObjectInfo allocateRetVar();
-//
-//      bool markAsPresaved(ObjectInfo object);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
-//
-//   struct WarningScope
-//   {
-//      ident_t terminal;
-//
-//      int warningMask;
-//      int col;
-//      int row;
-//
-//      void raise(ModuleScope& scope, int level, ident_t message, SNode node)
-//      {
-//         if (test(warningMask, level)) {
-//            if (col != 0) {
-//               scope.raiseWarning(level, message, row, col, terminal);
-//            }
-//            else if(node != lxNone)
-//               scope.raiseWarning(level, message, node);
-//         }
-//      }
-//
-//      WarningScope(int mask)
-//      {
-//         warningMask = mask;
-//         col = row = 0;
-//         terminal = NULL;
-//      }
-//      WarningScope()
-//      {
-//         warningMask = 0;
-//         col = row = 0;
-//         terminal = NULL;
-//      }
-//   };
+////   // --- ResendScope ---
+////   struct ResendScope : public CodeScope
+////   {
+////      bool withFrame;
+////      bool consructionMode;
+////
+////      virtual ObjectInfo mapTerminal(ident_t identifier);
+////
+////      ResendScope(CodeScope* parent)
+////         : CodeScope(parent)
+////      {
+////         consructionMode = withFrame = false;
+////      }
+////   };
+////
+////   // - InlineClassScope -
+////   struct InlineClassScope : public ClassScope
+////   {
+////      struct Outer
+////      {
+////         ref_t      reference;
+////         bool       preserved;
+////         ObjectInfo outerObject;
+////
+////         Outer()
+////         {
+////            reference = INVALID_REF;
+////            preserved = false;
+////         }
+////         Outer(int reference, ObjectInfo outerObject)
+////         {
+////            this->reference = reference;
+////            this->outerObject = outerObject;
+////            this->preserved = false;
+////         }
+////      };
+////
+////      bool                    returningMode;
+////      Map<ident_t, Outer>     outers;
+////      //ClassInfo::FieldTypeMap outerFieldTypes;
+////
+////      Outer mapSelf();
+////      Outer mapOwner();
+////      Outer mapParent();
+////
+////      ObjectInfo allocateRetVar();
+////
+////      bool markAsPresaved(ObjectInfo object);
+////
+////      virtual Scope* getScope(ScopeLevel level)
+////      {
+////         if (level == slClass) {
+////            return this;
+////         }
+////         else return Scope::getScope(level);
+////      }
+////
+////      virtual ObjectInfo mapTerminal(ident_t identifier);
+////
+////      InlineClassScope(CodeScope* owner, ref_t reference);
+////   };
+////
+////   struct WarningScope
+////   {
+////      ident_t terminal;
+////
+////      int warningMask;
+////      int col;
+////      int row;
+////
+////      void raise(ModuleScope& scope, int level, ident_t message, SNode node)
+////      {
+////         if (test(warningMask, level)) {
+////            if (col != 0) {
+////               scope.raiseWarning(level, message, row, col, terminal);
+////            }
+////            else if(node != lxNone)
+////               scope.raiseWarning(level, message, node);
+////         }
+////      }
+////
+////      WarningScope(int mask)
+////      {
+////         warningMask = mask;
+////         col = row = 0;
+////         terminal = NULL;
+////      }
+////      WarningScope()
+////      {
+////         warningMask = 0;
+////         col = row = 0;
+////         terminal = NULL;
+////      }
+////   };
 
    _CompilerLogic*  _logic;
 
@@ -837,7 +836,7 @@ private:
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
 
-//   int defineFieldSize(CodeScope& scope, int offset);
+////   int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 //   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
@@ -934,7 +933,7 @@ private:
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   ref_t declareArgumentType(SNode node, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
+   //ref_t declareArgumentType(SNode node, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
    void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
 //   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
@@ -1039,7 +1038,7 @@ public:
 
    void initializeScope(ident_t name, CompilerScope& scope, bool withDebugInfo);
 
-   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
+//   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 
 ////   // _Compiler interface implementation
 //////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);

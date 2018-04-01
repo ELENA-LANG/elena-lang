@@ -145,7 +145,7 @@ namespace _ELENA_
       mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000u,   // meta data
       mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
-//      mskSyntaxTreeRef       = 0x46000000u,   // template, declared in subject namespace
+      mskSyntaxTreeRef       = 0x46000000u,   // template, declared in subject namespace
       mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
       mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
 

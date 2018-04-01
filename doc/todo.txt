@@ -3,15 +3,13 @@ In development:
 ------                              
                             
               dev - redesign
-                 * templates and identifier namespaces
-
                  * namespaces and templates - it should be possible to provide a namespace for the template
+
+                 * templates and identifier namespaces
 
                  * namespaces and attributes??
 
                  * warn if the class / variable is similar to the attribute
-
-
 
                  * refactor module resloving algorithm, no need to replicate the name space structure on physical level
                  * get rid of weak references

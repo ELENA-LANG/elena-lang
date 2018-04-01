@@ -25,6 +25,8 @@ struct CompilerScope : _CompilerScope
 
    SymbolMap savedPaths;
 
+   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference);
+
    void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
    
    ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
@@ -37,6 +39,7 @@ struct CompilerScope : _CompilerScope
    //ref_t mapReference(ident_t referenceName, bool existing = false);
 
    /*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
+   ref_t mapNewIdentifier(ident_t identifier, bool privateOne);
 
    virtual _Memory* mapSection(ref_t reference, bool existing)
    {

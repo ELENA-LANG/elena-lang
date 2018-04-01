@@ -16,7 +16,7 @@
 #include "compiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0015
+#define ELC_REVISION_NUMBER             0x0016
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -141,8 +141,8 @@ class Project : public _ELENA_::Project
    virtual bool readCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting, _ELENA_::_ConfigFile::Nodes& list);
    virtual _ELENA_::ident_t getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
 
-   bool buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::SyntaxTree& syntaxTree, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope/*,
-      _ELENA_::ModuleInfo& moduleInfo, bool& repeatMode*/);
+   void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::SyntaxTree& syntaxTree, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope/*,
+                              _ELENA_::ModuleInfo& moduleInfo, bool& repeatMode*/);
 
 public:
    _ELENA_::Path appPath;
