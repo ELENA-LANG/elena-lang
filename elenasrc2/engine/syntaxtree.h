@@ -240,7 +240,7 @@ enum LexicalType
 //   lxInclude         = 0x20027,
 //   lxTemplateField   = 0x20028,
    lxNameAttr        = 0x20029,
-   //lxTypeAttr        = 0x2002A,
+   lxTypeAttr        = 0x2002A,
 //   lxStacksafeAttr   = 0x2002B,
 //   lxTemplateAttribute = 0x2002C,
 //   lxEmbeddableAttr  = 0x2002D,

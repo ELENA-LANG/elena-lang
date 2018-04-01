@@ -317,8 +317,10 @@ _Module* CompilerScope :: loadReferenceModule(ident_t referenceName, ref_t& refe
    if (isWeakReference(referenceName)) {
       reference = module->mapReference(referenceName, true);
 
-      return module;
+      return reference ? module : NULL;
    }
-   else return project->resolveModule(referenceName, reference);
 
+   _Module* extModule = project->resolveModule(referenceName, reference);
+
+   return reference ? extModule : NULL;
 }
