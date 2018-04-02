@@ -441,15 +441,12 @@ private:
 
       /*virtual */ref_t mapAnonymous();
 
-////      virtual ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared);
-////
 ////      bool defineForward(ident_t forward, ident_t referenceName)
 ////      {
 ////         ObjectInfo info = mapReferenceInfo(referenceName, false);
 ////      
 ////         return forwards.add(forward, info.param, true);
 ////      }
-////      ident_t resolveWeakTemplateReference(ident_t referenceName);
 //
 ////      virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion);
 ////
@@ -900,8 +897,8 @@ private:
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
-//
-//   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+
+   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);

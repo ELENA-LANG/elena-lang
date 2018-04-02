@@ -164,11 +164,11 @@ ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool head
    if (emptystr(vmtName))
       return 0;
 
-   //if (isTemplateWeakReference(vmtName)) {
-   //   // COMPILER MAGIC : try to find a template implementation
-   //   return loadClassInfo(info, resolveWeakTemplateReference(vmtName), headerOnly);
-   //}
-   //else {
+   if (isTemplateWeakReference(vmtName)) {
+      // COMPILER MAGIC : try to find a template implementation
+      return loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
+   }
+   else {
       // load class meta data
       ref_t moduleRef = 0;
       if (isWeakReference(vmtName)) {
@@ -201,7 +201,7 @@ ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool head
          importReference(argModule, moduleRef, module);
       }
       return moduleRef;
- //  }
+   }
 }
 
 inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, bool privateOne)
@@ -225,8 +225,8 @@ ref_t CompilerScope :: mapNewTerminal(SNode terminal, bool privateOne)
       case lxIdentifier:
          return mapNewIdentifier(identifier, privateOne);
 //         return mapIdentifier(identifier, existing);
-//      case lxReference:
-//         return mapReference(identifier, existing);
+      case lxReference:
+         return module->mapReference(identifier, false);
       default:
          return 0;
    }
@@ -323,4 +323,42 @@ _Module* CompilerScope :: loadReferenceModule(ident_t referenceName, ref_t& refe
    _Module* extModule = project->resolveModule(referenceName, reference);
 
    return reference ? extModule : NULL;
+}
+
+ref_t CompilerScope :: mapTemplateClass(ident_t templateName, bool& alreadyDeclared)
+{
+   ReferenceNs forwardName;
+   forwardName.append(TEMPLATE_PREFIX_NS);
+   forwardName.append(templateName);
+
+   if (emptystr(project->resolveForward(templateName))) {
+      ReferenceNs fullName(module->Name());
+      fullName.combine(templateName);
+
+      project->addForward(templateName, fullName);
+
+      mapNewIdentifier(templateName, false);
+
+      alreadyDeclared = false;
+   }
+   else alreadyDeclared = true;
+
+   return module->mapReference(forwardName);
+}
+
+ident_t CompilerScope:: resolveWeakTemplateReference(ident_t referenceName)
+{
+   ident_t resolvedName = project->resolveForward(referenceName);
+   if (emptystr(resolvedName)) {
+      // COMPILER MAGIC : try to find a template implementation
+      ref_t resolvedRef = 0;
+      _Module* refModule = project->resolveWeakModule(referenceName, resolvedRef, true);
+      if (refModule != nullptr) {
+         resolvedName = refModule->resolveReference(resolvedRef);
+
+         project->addForward(referenceName, resolvedName);
+      }
+   }
+
+   return resolvedName;
 }

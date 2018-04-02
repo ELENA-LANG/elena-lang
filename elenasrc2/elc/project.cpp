@@ -323,33 +323,33 @@ ident_t Project :: resolveForward(ident_t forward)
    return _settings.get(opForwards, forward, DEFAULT_STR);
 }
 
-//bool Project :: addForward(ident_t forward, ident_t reference)
-//{
-//   if (emptystr(resolveForward(forward))) {
-//      _settings.add(opForwards, forward, reference.clone());
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//_Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode)
-//{
-//   LoadResult result = lrNotFound;
-//   _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
-//   if (result != lrSuccessful) {
-//      // Bad luck : try to resolve it indirectly
-//      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
-//      if (result != lrSuccessful) {
-//         if (!silentMode)
-//            raiseError(getLoadError(result), weakReferenceName);
-//
-//         return NULL;
-//      }
-//      else return module;
-//   }
-//   else return module;
-//}
+bool Project :: addForward(ident_t forward, ident_t reference)
+{
+   if (emptystr(resolveForward(forward))) {
+      _settings.add(opForwards, forward, reference.clone());
+
+      return true;
+   }
+   else return false;
+}
+
+_Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode)
+{
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
+   if (result != lrSuccessful) {
+      // Bad luck : try to resolve it indirectly
+      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
+      if (result != lrSuccessful) {
+         if (!silentMode)
+            raiseError(getLoadError(result), weakReferenceName);
+
+         return NULL;
+      }
+      else return module;
+   }
+   else return module;
+}
 
 _Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
 {

@@ -35,7 +35,9 @@ struct CompilerScope : _CompilerScope
       return loadClassInfo(info, module->resolveReference(reference), headerOnly);
    }
 
-//   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
+   /*virtual */ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared);
+
+   //   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
    //ref_t mapReference(ident_t referenceName, bool existing = false);
 
    /*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
@@ -43,22 +45,24 @@ struct CompilerScope : _CompilerScope
 
    virtual _Memory* mapSection(ref_t reference, bool existing)
    {
-      //ref_t mask = reference & mskAnyRef;
+      ref_t mask = reference & mskAnyRef;
    
-      //ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
-      /*if (isTemplateWeakReference(referenceName)) {
-         return module->mapSection(module->mapReference(resolveWeakTemplateReference(referenceName)) | mask, existing);
+      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+      if (isTemplateWeakReference(referenceName)) {
+         return module->mapSection(module->mapReference(resolveWeakTemplateReference(referenceName + +TEMPLATE_PREFIX_NS_LEN)) | mask, existing);
       }
-      else */return module->mapSection(reference, existing);
+      else return module->mapSection(reference, existing);
    }
    
+   ident_t resolveWeakTemplateReference(ident_t referenceName);
+
    /*virtual */ident_t resolveFullName(ref_t reference)
    {
       ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
-//         if (isTemplateWeakReference(referenceName)) {
-//            return project->resolveForward(referenceName);
-//         }
-      /*else */return referenceName;
+      if (isTemplateWeakReference(referenceName)) {
+         return project->resolveForward(referenceName);
+      }
+      else return referenceName;
    }
    
    _Module* resolveReference(ref_t reference, ref_t& moduleReference);

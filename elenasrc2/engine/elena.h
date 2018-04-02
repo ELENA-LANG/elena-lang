@@ -90,11 +90,11 @@ public:
 //   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
 
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
-//   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
+   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
 
    virtual ident_t resolveForward(ident_t forward) = 0;
 
-//   virtual bool addForward(ident_t forward, ident_t reference) = 0;
+   virtual bool addForward(ident_t forward, ident_t reference) = 0;
 
 //   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
@@ -743,10 +743,10 @@ typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
 // --- miscellaneous routines ---
 
-//inline bool isTemplateWeakReference(ident_t referenceName)
-//{
-//   return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'' && referenceName.find('#') != NOTFOUND_POS);
-//}
+inline bool isTemplateWeakReference(ident_t referenceName)
+{
+   return referenceName[0] == '\'' && referenceName.startsWith(TEMPLATE_PREFIX_NS);
+}
 
 inline ref_t encodeMessage(ref_t actionRef, int paramCount)
 {

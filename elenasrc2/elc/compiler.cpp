@@ -576,23 +576,6 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
 ////   return project->resolveModule(module->resolveReference(reference), reference);
 ////}
 ////
-////ident_t Compiler::ModuleScope :: resolveWeakTemplateReference(ident_t referenceName)
-////{
-////   ident_t resolvedName = project->resolveForward(referenceName);
-////   if (emptystr(resolvedName)) {
-////      // COMPILER MAGIC : try to find a template implementation
-////      ref_t resolvedRef = 0;
-////      _Module* refModule = project->resolveWeakModule(referenceName, resolvedRef, true);
-////      if (refModule != nullptr) {
-////         resolvedName = refModule->resolveReference(resolvedRef);
-////
-////         project->addForward(referenceName, resolvedName);
-////      }
-////   }
-////
-////   return resolvedName;
-////}
-//
 ////ref_t Compiler::ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
 ////{
 ////   if (emptystr(symbol))
@@ -898,25 +881,6 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
 ////   }
 ////
 ////   list->add(extension);
-////}
-////
-////ref_t Compiler::ModuleScope :: mapTemplateClass(ident_t templateName, bool& alreadyDeclared)
-////{
-////   ReferenceNs forwardName;
-////   forwardName.append("'");
-////   forwardName.append(templateName);
-////
-////   if (emptystr(project->resolveForward(forwardName))) {
-////      ReferenceNs fullName(module->Name());
-////      fullName.combine(templateName);
-////
-////      project->addForward(forwardName, fullName);
-////
-////      alreadyDeclared = false;
-////   }
-////   else alreadyDeclared = true;
-////
-////   return module->mapReference(forwardName);
 ////}
 ////
 ////bool Compiler::ModuleScope :: includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion)
@@ -2035,16 +1999,26 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
-      else if (current == lxClassRefAttr/* || current == lxReference*/) {
+      else if (current == lxReference) {
          if (variable.extraparam == 0) {
-            NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+      //      NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-            variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
+      //      variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
 
-      //      variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
+            variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), true);
          }
          else scope.raiseError(errInvalidHint, node);
       }
+      //else if (current == lxClassRefAttr/* || current == lxReference*/) {
+      //   if (variable.extraparam == 0) {
+      //      NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+      //      variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
+
+      ////      variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
+      //   }
+      //   else scope.raiseError(errInvalidHint, node);
+      //}
       current = current.nextNode();
    }
 
@@ -2581,9 +2555,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //         }
          /*else */result = compileExpression(writer, node, scope, 0, mode/* & HINT_CLOSURE_MASK*/);
          break;
-//      case lxBoxing:
-//         result = compileExpression(writer, member, scope, mode);
-//         break;
+      case lxBoxing:
+         result = compileBoxingExpression(writer, node, scope, mode);
+         break;
 //      case lxMessageReference:
 //         result = compileMessageReference(writer, member, scope, mode);
 //         break;
@@ -4219,16 +4193,16 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //
 //   writer.removeBookmark();
 //}
-//
-//ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   writer.newBookmark();
-//
-//   ref_t targetRef = scope.moduleScope->module->mapReference(node.findChild(lxClassRefAttr).identifier(), false);
-//
-//   ObjectInfo retVal = ObjectInfo(okObject, targetRef);
-//   SNode objectNode = node.findChild(lxExpression);
-//   if (objectNode != lxNone) {
+
+ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   writer.newBookmark();
+
+   ref_t targetRef = scope.moduleScope->module->mapReference(node.findChild(lxReference).identifier(), false);
+
+   ObjectInfo retVal = ObjectInfo(okObject, targetRef);
+   SNode objectNode = node.findChild(lxExpression);
+   if (objectNode != lxNone) {
 //      if (node.existChild(lxOperator)) {
 //         ObjectInfo loperand = compileExpression(writer, objectNode, scope, 0);
 //
@@ -4242,7 +4216,7 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //
 //            retVal = assignResult(writer, scope, arrayRef, targetRef);
 //         }
-//         else scope.raiseError(errInvalidOperation, node);
+         /*else */scope.raiseError(errInvalidOperation, node);
 //      }
 //      else if (isCollection(objectNode, true)) {
 //         SNode argNode = isCollection(objectNode, true) ? objectNode : objectNode.findChild(lxExpression);
@@ -4262,14 +4236,14 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //         //if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
 //         //   scope.raiseError(errIllegalOperation, node);
 //      }
-//   }
-//   else if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
-//      scope.raiseError(errIllegalOperation, node);
-//
-//   writer.removeBookmark();
-//
-//   return retVal;
-//}
+   }
+   else if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
+      scope.raiseError(errIllegalOperation, node);
+
+   writer.removeBookmark();
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode)
 {
@@ -7594,7 +7568,7 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope/*, bool& 
       //      if (scope.mapAttribute(name) != 0)
       //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
 
-      if (current.argument == 0) {
+      if (current.argument == 0 || current.argument == INVALID_REF) {
          // hotfix : ignore already declared classes and symbols
          switch (current) {
    //         //         case lxInclude:
@@ -7602,7 +7576,7 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope/*, bool& 
    //         //            break;
             case lxClass:
                /*if (!isDependentOnNotDeclaredClass(findBaseParent(current), scope))*/ {
-                  current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
+                  current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr, lxReference)));
             
                   ClassScope classScope(&scope, current.argument/*, current.findChild(lxSourcePath).identifier()*/);
             

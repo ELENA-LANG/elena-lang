@@ -192,57 +192,57 @@ _Module* LibraryManager :: resolveNative(ident_t referenceName, LoadResult& resu
    return module;
 }
 
-//_Module* LibraryManager :: resolveWeakModule(ident_t weakName, LoadResult& result, ref_t& reference)
-//{
-//   for (auto it = _modules.start(); !it.Eof(); it++) {
-//      ReferenceNs fullName((*it)->Name());
-//      fullName.combine(weakName.c_str() + 1);
-//
-//      reference = (*it)->mapReference(fullName, true);
-//      if (reference) {
-//         result = lrSuccessful;
-//
-//         return *it;
-//      }
-//   }
-//
-//   return nullptr;
-//}
-//
-//_Module* LibraryManager :: resolveIndirectWeakModule(ident_t weakName, LoadResult& result, ref_t& reference)
-//{
-//   for (auto it = _modules.start(); !it.Eof(); it++) {
-//      // try to resolve it once again
-//      ReferenceNs fullName((*it)->Name());
-//      fullName.combine(weakName.c_str() + 1);
-//
-//      reference = (*it)->mapReference(fullName, true);
-//      if (reference) {
-//         result = lrSuccessful;
-//
-//         return *it;
-//      }
-//
-//      // if not - load imported modules
-//      if ((*it)->mapReference(weakName, true)) {
-//         // get list of imported modules
-//         ReferenceNs sectionName((*it)->Name(), IMPORTS_SECTION);
-//
-//         _Memory* section = (*it)->mapSection((*it)->mapReference(sectionName, true) | mskMetaRDataRef, true);
-//         if (section) {
-//            MemoryReader metaReader(section);
-//            while (!metaReader.Eof()) {
-//               ident_t moduleName = metaReader.getLiteral(DEFAULT_STR);
-//
-//               LoadResult tempResult;
-//               loadModule(moduleName, tempResult);
-//            }
-//         }
-//      }
-//   }
-//
-//   return nullptr;
-//}
+_Module* LibraryManager :: resolveWeakModule(ident_t weakName, LoadResult& result, ref_t& reference)
+{
+   for (auto it = _modules.start(); !it.Eof(); it++) {
+      ReferenceNs fullName((*it)->Name());
+      fullName.combine(weakName.c_str() + 1);
+
+      reference = (*it)->mapReference(fullName, true);
+      if (reference) {
+         result = lrSuccessful;
+
+         return *it;
+      }
+   }
+
+   return nullptr;
+}
+
+_Module* LibraryManager :: resolveIndirectWeakModule(ident_t weakName, LoadResult& result, ref_t& reference)
+{
+   for (auto it = _modules.start(); !it.Eof(); it++) {
+      // try to resolve it once again
+      ReferenceNs fullName((*it)->Name());
+      fullName.combine(weakName.c_str() + 1);
+
+      reference = (*it)->mapReference(fullName, true);
+      if (reference) {
+         result = lrSuccessful;
+
+         return *it;
+      }
+
+      // if not - load imported modules
+      if ((*it)->mapReference(weakName, true)) {
+         // get list of imported modules
+         ReferenceNs sectionName((*it)->Name(), IMPORTS_SECTION);
+
+         _Memory* section = (*it)->mapSection((*it)->mapReference(sectionName, true) | mskMetaRDataRef, true);
+         if (section) {
+            MemoryReader metaReader(section);
+            while (!metaReader.Eof()) {
+               ident_t moduleName = metaReader.getLiteral(DEFAULT_STR);
+
+               LoadResult tempResult;
+               loadModule(moduleName, tempResult);
+            }
+         }
+      }
+   }
+
+   return nullptr;
+}
 
 _Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference)
 {

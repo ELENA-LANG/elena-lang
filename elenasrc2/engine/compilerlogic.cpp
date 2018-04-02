@@ -768,19 +768,19 @@ void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, Clas
 //{
 //   return test(info.header.flags, elReadOnlyRole);
 //}
-//
-//bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, targetRef))
-//      return false;
-//
-//   if (test(info.header.flags, elStateless))
-//      return false;
-//
+
+bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, targetRef))
+      return false;
+
+   if (test(info.header.flags, elStateless))
+      return false;
+
 //   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
 //   if (!info.methods.exist(implicitConstructor, true))
-//      return false;
+      return false;
 //
 //   bool stackSafe = test(info.methodHints.get(Attribute(implicitConstructor, maHint)), tpStackSafe);
 //
@@ -797,8 +797,8 @@ void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, Clas
 //
 //      return true;
 //   }
-//}
-//
+}
+
 //bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, ref_t targetAction, ref_t sourceAction)
 //{
 //   if (targetAction == sourceAction)

@@ -429,11 +429,14 @@ namespace _ELENA_
 //   #define ACTION_SECTION           "#actions"
 //   #define INITIALIZER_SECTION      "#initializer"
 //   #define PACKAGE_SECTION          "#package"
-//   #define IMPORTS_SECTION          "#import"
+   #define IMPORTS_SECTION          "#import"
 //   #define AUTOEXTENSION_SECTION    "#auto_extensions"
 
   // --- ELENA class prefixes / postfixes ---
    #define PRIVATE_PREFIX_NS        "'$private'"
+
+   #define TEMPLATE_PREFIX_NS       "'$auto'"
+   #define TEMPLATE_PREFIX_NS_LEN   7 
 
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"

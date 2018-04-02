@@ -120,7 +120,7 @@ enum LexicalType
 //   lxClassRefField      = 0x08120,  // arg - self instance offset
 //
 //   lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
-//   lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
+   lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
 //   lxLocalUnboxing   = 0x0C003,   // arg - size
 //   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
@@ -232,7 +232,7 @@ enum LexicalType
 ////   lxConstAttr       = 0x2001F,
 ////   lxWarningMask     = 0x20020,
 //   lxOperatorAttr    = 0x20021,
-//   lxIdleMsgParameter= 0x20022,
+   lxIdleMsgParameter= 0x20022,
 //   lxBinarySelf      = 0x20023, // debug info only
    lxOvreriddenMessage = 0x20024, // arg - message ; used for extension / implicit constructor call
 ////   lxClassRef        = 0x20025,
