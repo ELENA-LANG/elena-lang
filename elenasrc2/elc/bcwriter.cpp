@@ -1117,18 +1117,18 @@ void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, re
    tape.write(bcFreeStack, freeArg);
 }
 
-//void ByteCodeWriter :: callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
-//{
-//   // validate
-//   // xcallrm r, m
-//
-//   if (withValidattion)
-//      tape.write(bcValidate);
-//
-//   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
-//
-//   tape.write(bcFreeStack, getParamCount(message));
-//}
+void ByteCodeWriter :: callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
+{
+   // validate
+   // xcallrm r, m
+
+   if (withValidattion)
+      tape.write(bcValidate);
+
+   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
+
+   tape.write(bcFreeStack, getParamCount(message));
+}
 
 void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode)
 {
@@ -5464,6 +5464,8 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxBinaryVariable:
             generateDebugInfo(tape, current);
             break;
+         case lxImplicitCall:
+            callImplicitConstructorMethod(tape, current.findChild(lxTarget).argument, current.argument, false);
          default:
             generateObjectExpression(tape, current);
             break;
@@ -5649,10 +5651,10 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
                // HOTFIX: -1 indicates the stack is not consumed by the constructor
                callMethod(tape, 1, -1);
             }
-            //else if (current.argument == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
-            //   // HOTFIX: call implicit constructor without putting the target to the stack
-            //   callImplicitConstructorMethod(tape, current.findChild(lxTarget).argument, current.argument, false);
-            //}               
+            else if (current.argument == (encodeAction(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
+               // HOTFIX: call implicit constructor without putting the target to the stack
+               callImplicitConstructorMethod(tape, current.findChild(lxTarget).argument, current.argument, false);
+            }               
             else {
                pushObject(tape, lxCurrent); // push the target
                callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument, false, false);

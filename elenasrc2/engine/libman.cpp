@@ -196,7 +196,7 @@ _Module* LibraryManager :: resolveWeakModule(ident_t weakName, LoadResult& resul
 {
    for (auto it = _modules.start(); !it.Eof(); it++) {
       ReferenceNs fullName((*it)->Name());
-      fullName.combine(weakName.c_str() + 1);
+      fullName.combine(weakName.c_str());
 
       reference = (*it)->mapReference(fullName, true);
       if (reference) {

@@ -572,7 +572,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
       // if the method included
       if (*it) {
          ref_t message = it.key();
-         if (getAbsoluteParamCount(message) > 0 && getAction(message) != 0/* && !test(message, CONVERSION_MESSAGE)*/) {
+         if (getAbsoluteParamCount(message) > 0 && getAction(message) != 0 && !test(message, CONVERSION_MESSAGE)) {
             ref_t signatureRef = 0;
             ident_t actionName = scope.module->resolveAction(getAction(message), signatureRef);
 
@@ -778,8 +778,8 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    if (test(info.header.flags, elStateless))
       return false;
 
-//   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
-//   if (!info.methods.exist(implicitConstructor, true))
+   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
+   if (!info.methods.exist(implicitConstructor, true))
       return false;
 //
 //   bool stackSafe = test(info.methodHints.get(Attribute(implicitConstructor, maHint)), tpStackSafe);
@@ -789,14 +789,14 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
 //
 //      return true;
 //   }
-//   else if (test(info.header.flags, elDynamicRole)) {
-//      return false;
-//   }
-//   else {
-//      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef, stackSafe);
-//
-//      return true;
-//   }
+   //else if (test(info.header.flags, elDynamicRole)) {
+   //   return false;
+   //}
+   //else {
+      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef/*, stackSafe*/);
+
+      return true;
+   //}
 }
 
 //bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, ref_t targetAction, ref_t sourceAction)
@@ -1321,9 +1321,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_CONSTRUCTOR:
          attrValue = tpConstructor;
          return true;
-      //case V_CONVERSION:
-      //   attrValue = (tpConversion | tpSealed);
-      //   return true;
+      case V_CONVERSION:
+         attrValue = (tpConversion | tpSealed);
+         return true;
       //case V_MULTI:
       //   // obsolete
       //   attrValue = /*tpMultimethod*/0;

@@ -70,7 +70,7 @@
 #define V_CONSTRUCTOR    (ref_t)-16384
 #define V_VARIABLE       (ref_t)-16385
 #define V_CLASS          (ref_t)-16386
-//#define V_CONVERSION     (ref_t)-16387
+#define V_CONVERSION     (ref_t)-16387
 //#define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
@@ -109,7 +109,7 @@ enum MethodHint
 //   tpIfBranch    = 0x0100,
 //   tpIfNotBranch = 0x0200,
    tpConstructor = 0x0400,
-//   tpConversion  = 0x0800,
+   tpConversion  = 0x0800,
    tpMultimethod = 0x1000,
 //   tpArgDispatcher = 0x3000,
 //   tpStatic      = 0x4000,
@@ -198,9 +198,9 @@ class _Compiler
 {
 public:
 //   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
-//   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe) = 0;
-////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
-//
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef/*, bool stacksafe*/) = 0;
+//   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
+
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
@@ -252,8 +252,8 @@ public:
       }
    };
 
-//   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
-//   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result) = 0;
+   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
+   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result) = 0;
 
    // retrieve the class info / size
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;

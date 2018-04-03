@@ -49,7 +49,7 @@ struct CompilerScope : _CompilerScope
    
       ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
       if (isTemplateWeakReference(referenceName)) {
-         return module->mapSection(module->mapReference(resolveWeakTemplateReference(referenceName + +TEMPLATE_PREFIX_NS_LEN)) | mask, existing);
+         return module->mapSection(module->mapReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN)) | mask, existing);
       }
       else return module->mapSection(reference, existing);
    }
@@ -60,7 +60,7 @@ struct CompilerScope : _CompilerScope
    {
       ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
       if (isTemplateWeakReference(referenceName)) {
-         return project->resolveForward(referenceName);
+         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
       }
       else return referenceName;
    }

@@ -811,13 +811,13 @@ private:
    void writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
-//   int checkMethod(ModuleScope& scope, ref_t reference, ref_t message)
-//   {
-//      _CompilerLogic::ChechMethodInfo dummy;
-//
-//      return _logic->checkMethod(scope, reference, message, dummy);
-//   }
-//
+   int checkMethod(CompilerScope& scope, ref_t reference, ref_t message)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      return _logic->checkMethod(scope, reference, message, dummy);
+   }
+
 //   int retrieveGenericArgParamCount(ClassScope& scope);
 //
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
@@ -941,7 +941,7 @@ private:
 
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
-//   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 //   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
@@ -1017,6 +1017,7 @@ private:
 //   void generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument);
 
    void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
+   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
 
 public:
    void loadRules(StreamReader* optimization);
@@ -1039,7 +1040,7 @@ public:
 //////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
 //   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
 //   virtual void injectLocalBoxing(SNode node, int size);
-//   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef/*, bool stacksafe*/);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 ////   virtual void injectFieldExpression(SyntaxWriter& writer);

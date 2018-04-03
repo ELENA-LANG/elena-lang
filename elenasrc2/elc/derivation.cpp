@@ -207,7 +207,11 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 
 inline void copyIdentifier(SyntaxWriter& writer, SNode ident)
 {
-   writer.newNode(ident.type, ident.identifier());
+   ident_t s = ident.identifier();
+   if (!emptystr(s)) {
+      writer.newNode(ident.type, s);
+   }
+   else writer.newNode(ident.type);
 
    SyntaxTree::copyNode(writer, lxRow, ident);
    SyntaxTree::copyNode(writer, lxCol, ident);
@@ -490,17 +494,6 @@ ref_t DerivationTransformer::DerivationScope :: mapIdentifier(ident_t identifier
 //   ref_t attr = moduleScope->attributes.get(name);
 //
 //   return attr != 0 && ::isAttribute(attr);
-//}
-//
-//bool DerivationReader::DerivationScope :: isImplicitAttribute(SNode terminal)
-//{
-//   ident_t name = terminal.identifier();
-//   if (emptystr(name))
-//      name = terminal.findChild(lxTerminal).identifier();
-//
-//   ref_t attr = moduleScope->attributes.get(name);
-//
-//   return attr == V_GENERIC || attr == V_CONVERSION || attr == V_ACTION;
 //}
 //
 //ref_t DerivationReader::DerivationScope :: mapTemplate(SNode terminal, int paramCounter, int prefixCounter)
@@ -3105,6 +3098,17 @@ void DerivationTransformer :: generateTemplateTree(SyntaxWriter& writer, SNode n
 //   else return false;
 //}
 
+bool DerivationTransformer :: isImplicitAttribute(SNode node, DerivationScope& scope)
+{
+   ident_t name = node.identifier();
+   if (emptystr(name))
+      name = node.firstChild(lxTerminalMask).identifier();
+
+   ref_t attr = scope.attributes->get(name);
+
+   return /*attr == V_GENERIC || */attr == V_CONVERSION/* || attr == V_ACTION*/;
+}
+
 bool DerivationTransformer :: recognizeMethodScope(SNode node, DerivationScope& scope)
 {
    SNode current = node.findChild(lxCode, lxExpression, lxDispatchCode/*, lxReturning, lxResendExpression*/);
@@ -3112,11 +3116,17 @@ bool DerivationTransformer :: recognizeMethodScope(SNode node, DerivationScope& 
       // try to resolve the message name
       setIdentifier(node);
 
+      SNode nameAttr = node.prevNode();
+      if (nameAttr == lxNameAttr && isImplicitAttribute(nameAttr, scope)) {
+         // HOTFIX : recognize explicit / generic attributes
+         nameAttr = lxAttribute;
+      }
+
 //      SNode lastAttr = findLastAttribute(attributes);
 //      SNode firstMember = node.findChild(lxMethodParameter, lxAttribute, lxAttributeValue);
 //
 //      if (scope.isImplicitAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) && (firstMember == lxAttributeValue || firstMember == lxMethodParameter || firstMember == lxNone)) {
-//         // HOTFIX : recognize explicit / generic attributes
+//         
 //      }
 //      else {
 //         if (node.firstChild(lxExprMask) == lxMethodParameter) {

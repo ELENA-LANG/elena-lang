@@ -55,12 +55,12 @@ class CompilerLogic : public _CompilerLogic
 //
 //   typedef List<OperatorInfo> OperatorList;
 //
-//   int checkMethod(ClassInfo& info, ref_t message)
-//   {
-//      ChechMethodInfo dummy;
-//      return checkMethod(info, message, dummy);
-//   }   
-//
+   int checkMethod(ClassInfo& info, ref_t message)
+   {
+      ChechMethodInfo dummy;
+      return checkMethod(info, message, dummy);
+   }   
+
 //   OperatorList operators;
 //
 //   bool isSignatureCompatible(_CompilerScope& scope, ref_t targetAction, ref_t sourceAction);

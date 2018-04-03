@@ -4386,9 +4386,9 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
          {
             needVirtualEnd = false;
 
-//            if (test(scope.getMessageID(), CONVERSION_MESSAGE))
-//               scope.raiseError(errIllegalOperation, current);
-//
+            if (test(scope.getMessageID(), CONVERSION_MESSAGE))
+               scope.raiseError(errIllegalOperation, current);
+
             writer.newNode(lxReturning);
             writer.appendNode(lxBreakpoint, dsStep);
             retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
@@ -4745,10 +4745,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //   bool propMode = false;
 //   bool constantConversion = false;
 //   bool unnamedMessage = false;
-//   ref_t flags = 0;
+   ref_t flags = 0;
 
    SNode action = node.firstChild(lxTerminalMask);
-   SNode current = action/*.findChild(lxMethodParameter/*, lxMessage, lxParamRefAttr)*/.nextNode();
+   SNode current = action == lxNone ? node.findChild(lxMethodParameter) : action.nextNode();
 
 //   if (verb == lxNone) {
 //      if (arg == lxMessage) {
@@ -4899,19 +4899,19 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         }
 //      }
 //
-//      if (test(scope.hints, tpSealed | tpConversion)) {
+      if (test(scope.hints, tpSealed | tpConversion)) {
 //         if (strongParamCounter > 0) {
 //            flags |= CONVERSION_MESSAGE;
 //            if (!emptystr(messageStr) && strongParamCounter == 1)
 //               constantConversion = true;
 //         }
-//         else if (emptystr(messageStr) && paramCount == 0) {
-//            // if it is an implicit in-place constructor
-//            flags |= CONVERSION_MESSAGE;
-//            actionRef = NEWOBJECT_MESSAGE_ID;
-//         }
-//         else scope.raiseError(errIllegalMethod, node);
-//      }
+         /*else */if (emptystr(actionStr) && paramCount == 0) {
+            // if it is an implicit in-place constructor
+            flags |= CONVERSION_MESSAGE;
+            actionRef = NEWOBJECT_MESSAGE_ID;
+         }
+         else scope.raiseError(errIllegalMethod, node);
+      }
 //      else if (test(scope.hints, tpSealed) && verb == lxPrivate) {
 //         flags |= SEALED_MESSAGE;
 //      }
@@ -4926,10 +4926,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      }
 
       //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-      if (paramCount > 0 && (signatureLen > 0 || paramCount >= OPEN_ARG_COUNT)/* && flags != CONVERSION_MESSAGE*/) {
+      if (paramCount > 0 && (signatureLen > 0 || paramCount >= OPEN_ARG_COUNT) && flags != CONVERSION_MESSAGE) {
          actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
 
-         ref_t genericMessage = encodeMessage(actionRef, paramCount)/* | flags*/;
+         ref_t genericMessage = encodeMessage(actionRef, paramCount) | flags;
 
          node.appendNode(lxMultiMethodAttr, genericMessage);
       }
@@ -4942,24 +4942,24 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         messageStr.copy(signature);
 //      }
 //      else messageStr.append(signature);
-//
-//      if (actionRef == NEWOBJECT_MESSAGE_ID) {
-//         // HOTFIX : for implicit constructor
-//      }
-//      else if (messageStr.Length() > 0) {
+
+      if (actionRef == NEWOBJECT_MESSAGE_ID) {
+         // HOTFIX : for implicit constructor
+      }
+      else if (actionStr.Length() > 0) {
          ref_t signatureRef = 0;
          if (signatureLen > 0)
             signatureRef = scope.moduleScope->module->mapSignature(signature, signatureLen, false);
 
          actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), signatureRef, false);
-//         if (actionRef == DISPATCH_MESSAGE_ID) {
-//            if (paramCount != 0)
-//               scope.raiseError(errIllegalMethod, node);
-//         }
-//      }
-//      else scope.raiseError(errIllegalMethod, node);
+         if (actionRef == DISPATCH_MESSAGE_ID) {
+            if (paramCount != 0)
+               scope.raiseError(errIllegalMethod, node);
+         }
+      }
+      else scope.raiseError(errIllegalMethod, node);
 
-      scope.message = encodeMessage(actionRef, paramCount)/* | flags*/;
+      scope.message = encodeMessage(actionRef, paramCount) | flags;
 
 //      // if it is an explicit constant conversion
 //      if (constantConversion) {
@@ -5400,7 +5400,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
       // if the method returns itself
       // HOTFIX : it should not be applied to the embeddable conversion routine
-      if(retVal.kind == okUnknown/* && (!test(scope.message, CONVERSION_MESSAGE) || !scope.classEmbeddable)*/) {
+      if(retVal.kind == okUnknown && (!test(scope.message, CONVERSION_MESSAGE)/* || !scope.classEmbeddable*/)) {
          ObjectInfo thisParam = scope.mapSelf();
 
          // adding the code loading $self
@@ -5428,59 +5428,59 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    writer.closeNode();
 }
 
-//void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elRole));
-//
-//   int preallocated = 0;
-//
-//   CodeScope codeScope(&scope);
-//
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//   if (checkMethod(*scope.moduleScope, classScope->info.header.parentRef, scope.message) != tpUnknown) {
-//      // check if the parent has implicit constructor - call it
-//      writer.newNode(lxCalling, scope.message);
-//      writer.appendNode(lxTarget, classScope->info.header.parentRef);
-//      writer.closeNode();
-//   }
-//
-//   writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
-//
-//   // new stack frame
-//   // stack already contains current $self reference
-//   // the original message should be restored if it is a generic method
-//   codeScope.level++;
-//
-//   preallocated = codeScope.level;
-//
-//   SNode body = node.findChild(lxCode);
-//   ObjectInfo retVal = compileCode(writer, body, codeScope);
-//
-//   // if the method returns itself
-//   if (retVal.kind == okUnknown) {
-//      // adding the code loading $self
-//      writer.newNode(lxExpression);
-//      writer.appendNode(lxLocal, 1);
-//
-//      ref_t resultRef = scope.getReturningRef(false);
-//      if (resultRef != 0) {
-//         scope.raiseError(errInvalidOperation, node);
-//      }
-//
-//      writer.closeNode();
-//   }
-//   else scope.raiseError(errIllegalMethod, node);
-//
-//   writer.closeNode();
-//
-//   writer.appendNode(lxParamCount, getParamCount(scope.message));
-//   writer.appendNode(lxReserved, scope.reserved);
-//   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
-//
-//   writer.closeNode();
-//}
+void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   declareParameterDebugInfo(writer, node, scope/*, true, test(scope.getClassFlags(), elRole)*/);
+
+   int preallocated = 0;
+
+   CodeScope codeScope(&scope);
+
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   if (checkMethod(*scope.moduleScope, classScope->info.header.parentRef, scope.message) != tpUnknown) {
+      // check if the parent has implicit constructor - call it
+      writer.newNode(lxCalling, scope.message);
+      writer.appendNode(lxTarget, classScope->info.header.parentRef);
+      writer.closeNode();
+   }
+
+   writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
+
+   // new stack frame
+   // stack already contains current $self reference
+   // the original message should be restored if it is a generic method
+   codeScope.level++;
+
+   preallocated = codeScope.level;
+
+   SNode body = node.findChild(lxCode);
+   ObjectInfo retVal = compileCode(writer, body, codeScope);
+
+   // if the method returns itself
+   if (retVal.kind == okUnknown) {
+      // adding the code loading $self
+      writer.newNode(lxExpression);
+      writer.appendNode(lxLocal, 1);
+
+      ref_t resultRef = scope.getReturningRef(false);
+      if (resultRef != 0) {
+         scope.raiseError(errInvalidOperation, node);
+      }
+
+      writer.closeNode();
+   }
+   else scope.raiseError(errIllegalMethod, node);
+
+   writer.closeNode();
+
+   writer.appendNode(lxParamCount, getParamCount(scope.message));
+   writer.appendNode(lxReserved, scope.reserved);
+   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
+
+   writer.closeNode();
+}
 
 void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope)
 {
@@ -5590,33 +5590,33 @@ void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& sc
       writer.closeNode();
    //}
 
-   //ref_t implicitMessage = encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE;
-   //if (classScope->info.methods.exist(implicitMessage)) {
-   //   if (classScope->info.methods.exist(implicitMessage, true)) {
-   //      // call the field in-place initialization
-   //      writer.newNode(lxCalling, implicitMessage);
-   //      writer.appendNode(lxTarget, classScope->reference);
-   //      writer.closeNode();
-   //   }
-   //   else {
-   //      ref_t parentRef = classScope->info.header.parentRef;
-   //      while (parentRef != 0) {
-   //         // call the parent field in-place initialization
-   //         ClassInfo parentInfo;
-   //         _logic->defineClassInfo(*scope.moduleScope, parentInfo, parentRef);
+   ref_t implicitMessage = encodeAction(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE;
+   if (classScope->info.methods.exist(implicitMessage)) {
+      if (classScope->info.methods.exist(implicitMessage, true)) {
+         // call the field in-place initialization
+         writer.newNode(lxCalling, implicitMessage);
+         writer.appendNode(lxTarget, classScope->reference);
+         writer.closeNode();
+      }
+      else {
+         ref_t parentRef = classScope->info.header.parentRef;
+         while (parentRef != 0) {
+            // call the parent field in-place initialization
+            ClassInfo parentInfo;
+            _logic->defineClassInfo(*scope.moduleScope, parentInfo, parentRef);
 
-   //         if (parentInfo.methods.exist(implicitMessage, true)) {
-   //            writer.newNode(lxCalling, implicitMessage);
-   //            writer.appendNode(lxTarget, parentRef);
-   //            writer.closeNode();
+            if (parentInfo.methods.exist(implicitMessage, true)) {
+               writer.newNode(lxCalling, implicitMessage);
+               writer.appendNode(lxTarget, parentRef);
+               writer.closeNode();
 
-   //            break;
-   //         }
+               break;
+            }
 
-   //         parentRef = parentInfo.header.parentRef;
-   //      }
-   //   }
-   //}
+            parentRef = parentInfo.header.parentRef;
+         }
+      }
+   }
 
    writer.closeNode();
 }
@@ -5667,12 +5667,12 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
             else {
                initialize(scope, methodScope);
                declareArgumentList(current, methodScope);
-//
-//               if (methodScope.message == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
-//                  // if it is in-place class member initialization
-//                  compileImplicitConstructor(writer, current, methodScope);
-//               }
-               /*else */compileMethod(writer, current, methodScope);
+
+               if (methodScope.message == (encodeAction(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
+                  // if it is in-place class member initialization
+                  compileImplicitConstructor(writer, current, methodScope);
+               }
+               else compileMethod(writer, current, methodScope);
             }
             break;
          }
@@ -5811,21 +5811,15 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 {
    CommandTape tape;
 
-//   // creates implicit symbol
-//   SymbolScope symbolScope(scope.moduleScope, scope.reference);
-//
-//   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
-//   if (scope.info.methods.exist(implicitConstructor, true)) {
-//      _writer.generateSymbolWithInitialization(tape, symbolScope.reference, lxConstantClass, scope.reference, implicitConstructor);
-//   }
-//   else _writer.generateSymbol(tape, symbolScope.reference, lxConstantClass, scope.reference);
+   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
 
    SyntaxTree tree;
    SyntaxWriter writer(tree);
-   //   if (scope.info.methods.exist(implicitConstructor, true)) {
-   //      _writer.generateSymbolWithInitialization(tape, symbolScope.reference, lxConstantClass, scope.reference, implicitConstructor);
-   //   }
-   generateClassSymbol(writer, scope);
+   if (scope.info.methods.exist(implicitConstructor, true)) {
+      generateSymbolWithInitialization(writer, scope, implicitConstructor);
+   }
+   else generateClassSymbol(writer, scope);
+
    _writer.generateSymbol(tape, tree.readRoot(), false, INVALID_REF);
 
    // create byte code sections
@@ -6270,7 +6264,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    }
    else {
 //      bool privateOne = test(message, SEALED_MESSAGE);
-//      bool castingOne = test(message, CONVERSION_MESSAGE);
+      bool castingOne = test(message, CONVERSION_MESSAGE);
       bool included = scope.include(message);
       bool sealedMethod = (methodHints & tpMask) == tpSealed;
       // if the class is closed, no new methods can be declared
@@ -6279,7 +6273,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.raiseError(errClosedParent, findParent(current, lxClass/*, lxNestedClass*/));
 
       // if the method is sealed, it cannot be overridden
-      if (!included && sealedMethod/* && !castingOne*/)
+      if (!included && sealedMethod && !castingOne)
          scope.raiseError(errClosedMethod, findParent(current, lxClass/*, lxNestedClass*/));
 
 //      // save extensions if required ; private method should be ignored
@@ -7773,93 +7767,93 @@ void Compiler :: generateSealedOverloadListMember(_CompilerScope& scope, ref_t l
 //   writer.insert(boxingType, argument);
 //   writer.closeNode();
 //}
+
+void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef/*, bool stacksafe*/)
+{
+   writer.insertChildren(0, createOp, createArg, lxTarget, targetClassRef);
+
+   writer.appendNode(lxCallTarget, targetClassRef);
+   //writer.appendNode(lxBoxableAttr);
+   //if (stacksafe)
+   //   writer.appendNode(lxStacksafeAttr);
+
+   writer.insert(convertOp, convertArg);
+   writer.closeNode();
+}
+
+//void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject)
+//{
+//   // removing assinging operation
+//   assignNode = lxExpression;
 //
-////void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe)
+//   // move assigning target into the call node
+//   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+//   if (assignTarget != lxNone) {
+//      callNode.appendNode(assignTarget.type, assignTarget.argument);
+//      assignTarget = lxIdle;
+//      callNode.setArgument(encodeMessage(subject, 1));
+//   }
+//}
+//
+//void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
+//{
+//   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+//
+//   if (paramCount == -1 && verb == 0) {
+//      assignNode.set(callNode.type, subject);
+//      callNode = lxIdle;
+//
+//      SNode targetNode = assignTarget.findChild(lxTarget);
+//      assignNode.appendNode(lxCallTarget, targetNode.argument);
+//   }
+//   else {
+//      // removing assinging operation
+//      assignNode = lxExpression;
+//
+//      // move assigning target into the call node
+//
+//      if (assignTarget != lxNone) {
+//         callNode.appendNode(assignTarget.type, assignTarget.argument);
+//         assignTarget = lxIdle;
+//         callNode.setArgument(encodeMessage(subject, paramCount));
+//      }
+//   }
+//}
+//
+//void Compiler :: injectLocalBoxing(SNode node, int size)
+//{
+//   //HOTFIX : using size variable copy to prevent aligning
+//   int dummy = size;
+//   int offset = allocateStructure(node, dummy);
+//
+//   // allocate place for the local copy
+//   node.injectNode(node.type, node.argument);
+//
+//   node.set(lxAssigning, size);
+//
+//   node.insertNode(lxLocalAddress, offset);
+//   node.insertNode(lxTempAttr, 0);
+//}
+//
+////void Compiler :: injectFieldExpression(SyntaxWriter& writer)
 ////{
-////   writer.insertChildren(0, createOp, createArg, lxTarget, targetClassRef);
+////   writer.appendNode(lxResultField);
 ////
-////   writer.appendNode(lxCallTarget, targetClassRef);
-////   writer.appendNode(lxBoxableAttr);
-////   if (stacksafe)
-////      writer.appendNode(lxStacksafeAttr);
-////
-////   writer.insert(convertOp, convertArg);
+////   writer.insert(lxFieldExpression);
 ////   writer.closeNode();
 ////}
-////
-////void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject)
-////{
-////   // removing assinging operation
-////   assignNode = lxExpression;
-////
-////   // move assigning target into the call node
-////   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
-////   if (assignTarget != lxNone) {
-////      callNode.appendNode(assignTarget.type, assignTarget.argument);
-////      assignTarget = lxIdle;
-////      callNode.setArgument(encodeMessage(subject, 1));
-////   }
-////}
-////
-////void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
-////{
-////   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
-////
-////   if (paramCount == -1 && verb == 0) {
-////      assignNode.set(callNode.type, subject);
-////      callNode = lxIdle;
-////
-////      SNode targetNode = assignTarget.findChild(lxTarget);
-////      assignNode.appendNode(lxCallTarget, targetNode.argument);
-////   }
-////   else {
-////      // removing assinging operation
-////      assignNode = lxExpression;
-////
-////      // move assigning target into the call node
-////
-////      if (assignTarget != lxNone) {
-////         callNode.appendNode(assignTarget.type, assignTarget.argument);
-////         assignTarget = lxIdle;
-////         callNode.setArgument(encodeMessage(subject, paramCount));
-////      }
-////   }
-////}
-////
-////void Compiler :: injectLocalBoxing(SNode node, int size)
-////{
-////   //HOTFIX : using size variable copy to prevent aligning
-////   int dummy = size;
-////   int offset = allocateStructure(node, dummy);
-////
-////   // allocate place for the local copy
-////   node.injectNode(node.type, node.argument);
-////
-////   node.set(lxAssigning, size);
-////
-////   node.insertNode(lxLocalAddress, offset);
-////   node.insertNode(lxTempAttr, 0);
-////}
-////
-//////void Compiler :: injectFieldExpression(SyntaxWriter& writer)
-//////{
-//////   writer.appendNode(lxResultField);
-//////
-//////   writer.insert(lxFieldExpression);
-//////   writer.closeNode();
-//////}
-////
-////void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t embeddedMessageRef)
-////{
-////   SNode methNode = classNode.appendNode(lxConstructor, message);
-////   methNode.appendNode(lxAttribute, tpEmbeddable);
-////   methNode.appendNode(lxEmbeddableMssg, embeddedMessageRef);
-////   methNode.appendNode(lxAttribute, tpConstructor);
-////   SNode codeNode = methNode.appendNode(lxCode);
-////   SNode exprNode = codeNode.appendNode(lxExpression);
-////   exprNode.appendNode(lxIdentifier, THIS_VAR);
-////   exprNode.appendNode(lxMessage, embeddedMessageRef);
-////}
+//
+//void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t embeddedMessageRef)
+//{
+//   SNode methNode = classNode.appendNode(lxConstructor, message);
+//   methNode.appendNode(lxAttribute, tpEmbeddable);
+//   methNode.appendNode(lxEmbeddableMssg, embeddedMessageRef);
+//   methNode.appendNode(lxAttribute, tpConstructor);
+//   SNode codeNode = methNode.appendNode(lxCode);
+//   SNode exprNode = codeNode.appendNode(lxExpression);
+//   exprNode.appendNode(lxIdentifier, THIS_VAR);
+//   exprNode.appendNode(lxMessage, embeddedMessageRef);
+//}
 
 void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef)
 {
@@ -7948,5 +7942,17 @@ void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
 
    writer.newNode(lxSymbol, scope.reference);
    writeTerminal(writer, SNode(), codeScope, ObjectInfo(okConstantClass, scope.reference, scope.info.header.classRef), HINT_NODEBUGINFO);
+   writer.closeNode();
+}
+
+void Compiler :: generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor)
+{
+   CodeScope codeScope(&scope);
+
+   writer.newNode(lxSymbol, scope.reference);
+   writeTerminal(writer, SNode(), codeScope, ObjectInfo(okConstantClass, scope.reference, scope.info.header.classRef), HINT_NODEBUGINFO);
+   writer.newNode(lxImplicitCall, implicitConstructor);
+   writer.appendNode(lxTarget, scope.reference);
+   writer.closeNode();
    writer.closeNode();
 }

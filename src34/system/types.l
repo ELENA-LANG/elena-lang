@@ -10,8 +10,8 @@ constructor     = #16384.
 template        = #16391.
 //extension       = #8203.
 //stacksafe       = #8192.
-//
-//implicit        = #16387.
+
+explicit        = #16387.
 //const           = #8201.
 singleton       = #8208.
 //generic         = #8202.

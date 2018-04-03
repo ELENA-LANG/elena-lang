@@ -217,6 +217,8 @@ class DerivationTransformer //: public _DerivationTransformer
 
    void recognizeScopeMembers(SNode& node, DerivationScope& scope, int mode);
 
+   bool isImplicitAttribute(SNode node, DerivationScope& scope);
+
    bool checkVariableDeclaration(SNode node, DerivationScope& scope);
 //   bool checkPatternDeclaration(SNode node, DerivationScope& scope);
 //   bool checkArrayDeclaration(SNode node, DerivationScope& scope);

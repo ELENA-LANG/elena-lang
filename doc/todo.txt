@@ -3,6 +3,9 @@ In development:
 ------                              
                             
               dev - redesign
+                 * constructors should not be inherited if explicit one is declared (e.g. default one should not be always
+                   available)
+
                  * namespaces and templates - it should be possible to provide a namespace for the template
 
                  * templates and identifier namespaces
