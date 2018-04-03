@@ -3174,7 +3174,7 @@ bool Compiler :: convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetR
 {
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
-      //if (!_logic->injectImplicitConversion(writer, scope, *this, targetRef, sourceRef, elementRef))
+      if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, sourceRef/*, elementRef*/))
          return typecastObject(writer, scope, targetRef);
    }
    return true;
@@ -4216,7 +4216,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 //
 //            retVal = assignResult(writer, scope, arrayRef, targetRef);
 //         }
-         /*else */scope.raiseError(errInvalidOperation, node);
+//         else scope.raiseError(errInvalidOperation, node);
 //      }
 //      else if (isCollection(objectNode, true)) {
 //         SNode argNode = isCollection(objectNode, true) ? objectNode : objectNode.findChild(lxExpression);
@@ -4229,12 +4229,10 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 //            scope.raiseError(errIllegalOperation, node);
 //      }
 //      else {
-//         ObjectInfo object = compileExpression(writer, objectNode, scope, mode);
-//         if (!convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, object), 0))
-//            scope.raiseError(errIllegalOperation, node);
-//
-//         //if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
-//         //   scope.raiseError(errIllegalOperation, node);
+         ObjectInfo object = compileExpression(writer, objectNode, scope, targetRef, mode);
+
+         //if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
+         //   scope.raiseError(errIllegalOperation, node);
 //      }
    }
    else if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
@@ -4900,12 +4898,16 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      }
 //
       if (test(scope.hints, tpSealed | tpConversion)) {
-//         if (strongParamCounter > 0) {
-//            flags |= CONVERSION_MESSAGE;
-//            if (!emptystr(messageStr) && strongParamCounter == 1)
-//               constantConversion = true;
-//         }
-         /*else */if (emptystr(actionStr) && paramCount == 0) {
+         if (signatureLen > 0) {
+            flags |= CONVERSION_MESSAGE;
+            if (emptystr(actionStr)) {
+               actionStr.copy(NEWOBJECT_MESSAGE);
+            }
+            //if (!emptystr(messageStr) && strongParamCounter == 1)
+            //   constantConversion = true;
+            
+         }
+         else if (emptystr(actionStr) && paramCount == 0) {
             // if it is an implicit in-place constructor
             flags |= CONVERSION_MESSAGE;
             actionRef = NEWOBJECT_MESSAGE_ID;

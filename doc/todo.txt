@@ -3,8 +3,10 @@ In development:
 ------                              
                             
               dev - redesign
+                 * reimplement forwards: super class, entry point
+
                  * constructors should not be inherited if explicit one is declared (e.g. default one should not be always
-                   available)
+                   available)?
 
                  * namespaces and templates - it should be possible to provide a namespace for the template
 

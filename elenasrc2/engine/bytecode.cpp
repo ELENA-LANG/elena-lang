@@ -684,7 +684,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
 {
    // load verbs
    addVerb(verbs, DISPATCH_MESSAGE,   DISPATCH_MESSAGE_ID); // NOTE : dispatch verb should not be used explicitly
-   addVerb(verbs, "#new",             NEWOBJECT_MESSAGE_ID);
+   addVerb(verbs, NEWOBJECT_MESSAGE,  NEWOBJECT_MESSAGE_ID);
    addVerb(verbs, INVOKE_MESSAGE,     INVOKE_MESSAGE_ID);
    addVerb(verbs, NEW_MESSAGE,        NEW_MESSAGE_ID);
    addVerb(verbs, GET_MESSAGE,        GET_MESSAGE_ID);

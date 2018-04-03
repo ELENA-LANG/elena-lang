@@ -245,28 +245,28 @@ inline bool setIdentifier(SNode node)
    return false;
 }
 
-//inline bool isTerminal(LexicalType type)
-//{
-//   switch (type)
-//   {
-//      case lxIdentifier:
-//      case lxPrivate:
-//      case lxInteger:
-//      case lxHexInteger:
-//      case lxLong:
-//      case lxReal:
-//      case lxLiteral:
-//      case lxReference:
-//      case lxCharacter:
-//      case lxWide:
-//      case lxExplicitConst:
-//      case lxMemberIdentifier:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+inline bool isTerminal(LexicalType type)
+{
+   switch (type)
+   {
+      case lxIdentifier:
+      //case lxPrivate:
+      //case lxInteger:
+      //case lxHexInteger:
+      //case lxLong:
+      //case lxReal:
+      //case lxLiteral:
+      case lxReference:
+      //case lxCharacter:
+      //case lxWide:
+      //case lxExplicitConst:
+      //case lxMemberIdentifier:
+         return true;
+      default:
+         return false;
+   }
+}
+
 //inline SNode goToNode(SNode current, LexicalType type)
 //{
 //   while (current != lxNone && current != type)
@@ -1735,14 +1735,14 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
       if (expr.existChild(lxIdleMsgParameter)) {
          // do nothing for idle parameter
       }
-      //else if (expr != lxNone && !expr.existChild(lxIdleMsgParameter)) {
-      //   if (expr == lxObject) {
-      //      writer.newNode(lxExpression);
-      //      generateObjectTree(writer, expr.firstChild(), scope);
-      //      writer.closeNode();
-      //   }
-      //   else generateExpressionTree(writer, expr, scope);
-      //}
+      else if (expr != lxNone) {
+         if (expr == lxObject) {
+            writer.newNode(lxExpression);
+            generateObjectTree(writer, expr.firstChild(), scope);
+            writer.closeNode();
+         }
+         else generateExpressionTree(writer, expr, scope);
+      }
       else scope.raiseError(errIllegalOperation, current);
 
       writer.insert(lxBoxing);
@@ -1848,16 +1848,16 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 //   bool singleMode = false;
 //   if (rootMode)
 //      writer.newBookmark();
-//
-//   switch (current.type) {
-//      case lxExpression:         
+
+   switch (current.type) {
+      case lxExpression:         
 //         if (objectMode) {
 //            writer.newNode(lxExpression);
 //            generateExpressionTree(writer, current, scope);
 //            writer.closeNode();
 //         }
-//         else generateExpressionTree(writer, current, scope);
-//         break;
+         /*else */generateExpressionTree(writer, current, scope);
+         break;
 //      case lxMessageReference:
 //      case lxLazyExpression:
 //         writer.newNode(lxExpression);
@@ -1902,9 +1902,9 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 //         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
 //         writer.closeNode();
 //         break;
-//      default:
-//      {
-//         if (isTerminal(current.type)) {
+      default:
+      {
+         if (isTerminal(current.type)) {
 //            singleMode = true;
 //            if (scope.type == DerivationScope::ttFieldTemplate) {
 //               int index = scope.mapIdentifier(current);
@@ -1921,12 +1921,12 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 //               writer.closeNode();
 //            }
             /*else */copyIdentifier(writer, current);
-//         }
-//         else scope.raiseError(errInvalidSyntax, current);
-//         break;
-//      }
-//   }
-//
+         }
+         else scope.raiseError(errInvalidSyntax, current);
+         break;
+      }
+   }
+
 //   if (nextNode != lxNone) {
 //      if (nextNode == lxExpression) {
 //         generateExpressionTree(writer, nextNode, scope);
