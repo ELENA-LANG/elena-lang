@@ -52,11 +52,13 @@ In development:
                    compileClassImplementation,compileSymbolCode,resolveFullName,loadClassInfo,importReference,importClassInfo,
                    importMessage,createBytecodeVMTSection,JITLinker :: resolveMessage, JITLinker :: resolveAction,importMessage,
                    compileClassClassDeclaration,findBaseParent,compileParentDeclaration,inheritClass,
-                   ProjectManager::clearForwards(),
+                   ProjectManager::clearForwards(),IDEController :: isOutaged
                  * test creating project, adding source files. including / excluding, forwards, settings, ...
                  * test sub namespace relative resolving
                  * hard-coded system classes / start entry, could it be configurable?? (e.g. special private attribute??)
                  * refactor _ImageLoader, to use module weak references without combining them together
+                 * relative reference?
+                 * there are reserved module names - system, forwards, externals
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

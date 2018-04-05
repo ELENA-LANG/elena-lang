@@ -543,8 +543,16 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::SyntaxT
    _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
    while (!file_it.Eof()) {
       _ELENA_::ident_t filePath = *file_it;
+      size_t index = filePath.find(PATH_SEPARATOR);
+      if (index != NOTFOUND_POS) {
+         _ELENA_::IdentifierString fullName(filePath, index);
+         fullName.append(',');
+         fullName.append(filePath);
 
-      writer.beginModule(filePath);
+         writer.beginModule(fullName);
+      }
+      else writer.beginModule(filePath);
+
       printInfo("%s", filePath);
 
       try {

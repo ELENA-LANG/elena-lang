@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser class implementation.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -79,6 +79,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
          break;
       case dfaMember:
          terminal.symbol = tsMember;
+         break;
+      case dfaGlobal:
+         terminal.symbol = tsGlobal;
          break;
       case dfaPrivate:
          if (terminal.value[1] == 0) {

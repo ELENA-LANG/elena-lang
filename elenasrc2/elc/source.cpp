@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Source Reader class implementation.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,7 +14,7 @@ using namespace _ELENA_ ;
 
 // --- DFA Table ---
 
-const char* DFA_table[33] =
+const char* DFA_table[34] =
 {
         ".????????CC??C??????????????????CMVBXHMEHHMMHYHINNNNNNNNNNMMMM`HaDDDDDDDDDDDDDDDDDDDDDDDDDDHMHMD?DDDDDDDDDDDDDDDDDDDDDDDDDDHMHHD",
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]",
@@ -48,7 +48,8 @@ const char* DFA_table[33] =
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "????????????????????????????????????????????????[[[[[[[[[[????????????????????????????????????????????????????????Q?????????????",
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAAAAAAHHHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAAA",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAaAaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAa"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbAAAAAAAAaaaaaaaaaaAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAaAaaaaaaaaaaaaaaaaaaaaaaaaaaAAAAa",
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbAAAAAAAAbbbbbbbbbbAAAAAAAbbbbbbbbbbbbbbbbbbbbbbbbbbAAAAbAbbbbbbbbbbbbbbbbbbbbbbbbbbAAAAb"
 };
 
 // --- SourceReader ---

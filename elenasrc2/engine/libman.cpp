@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA LibraryManager.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -254,8 +254,12 @@ _Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& resu
    }
    else {
       NamespaceName name(referenceName);
+      _Module* module = NULL;
+      while (!module && !emptystr(name)) {
+         module = loadModule(name, result);
 
-      _Module* module = loadModule(name, result);
+         name.trimLastSubNs();
+      }
 
       reference = module ? module->mapReference(referenceName, true) : 0;
 

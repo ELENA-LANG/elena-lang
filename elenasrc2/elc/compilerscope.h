@@ -35,13 +35,11 @@ struct CompilerScope : _CompilerScope
       return loadClassInfo(info, module->resolveReference(reference), headerOnly);
    }
 
-   /*virtual */ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared);
-
    //   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
-   //ref_t mapReference(ident_t referenceName, bool existing = false);
-
-   /*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
-   ref_t mapNewIdentifier(ident_t identifier, bool privateOne);
+   ref_t mapFullReference(ident_t referenceName, bool existing = false);
+   ///*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
+   ///*virtual */ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
+   ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne);
 
    virtual _Memory* mapSection(ref_t reference, bool existing)
    {
@@ -65,7 +63,7 @@ struct CompilerScope : _CompilerScope
       else return referenceName;
    }
    
-   _Module* resolveReference(ref_t reference, ref_t& moduleReference);
+   //_Module* resolveReference(ref_t reference, ref_t& moduleReference);
 
    /*virtual */void saveAttribute(ident_t typeName, ref_t classReference);
 

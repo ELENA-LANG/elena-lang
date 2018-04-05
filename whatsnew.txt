@@ -9,6 +9,7 @@
 
 [ELENA]
 [+] private / public visibility attributes
+[+] global references
 [!] old style private indentifiers are no longer supported
 
 ***************************************************************

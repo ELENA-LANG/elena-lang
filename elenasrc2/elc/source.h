@@ -43,6 +43,7 @@ const char dfaPrivate        = 'X';
 const char dfaCharacter      = ']';
 const char dfaWideQuote      = '^';
 const char dfaMember         = 'a';
+const char dfaGlobal         = 'b';
 
 inline bool isQuote(char state)
 {

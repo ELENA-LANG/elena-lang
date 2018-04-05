@@ -13,6 +13,7 @@
 #include "syntaxtree.h"
 
 // virtual objects
+#define V_PARAMETER     (ref_t)-02
 //#define V_FLAG           (ref_t)-03
 #define V_NIL            (ref_t)-04
 

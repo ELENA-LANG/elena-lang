@@ -87,12 +87,13 @@ enum LexicalType
 //   lxExplicitConst   = 0x1800E,
    lxExplicitAttr    = 0x1800F,
 //   lxMemberIdentifier= 0x18010,
+   lxGlobalReference = 0x18011,
 
    lxImporting       = 0x08101,
 //   lxNested          = 0x08102, // arg - count
 //   lxStruct          = 0x08103, // arg - count
    lxConstantSymbol  = 0x0A104, // arg - reference
-//   lxField           = 0x08105, // arg - offset
+   lxField           = 0x08105, // arg - offset
 //   lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
    lxSymbolReference = 0x08107,
 //   lxLocalAddress    = 0x0A108, // arg - offset
@@ -243,7 +244,7 @@ enum LexicalType
    lxNameAttr        = 0x20029,
    lxTypeAttr        = 0x2002A,
 //   lxStacksafeAttr   = 0x2002B,
-//   lxTemplateAttribute = 0x2002C,
+   lxTemplateAttribute = 0x2002C,
 //   lxEmbeddableAttr  = 0x2002D,
 //   lxBoxableAttr     = 0x2002E,
    lxClassRefAttr    = 0x2002F,

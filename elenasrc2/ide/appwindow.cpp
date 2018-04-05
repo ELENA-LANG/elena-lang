@@ -1743,36 +1743,36 @@ bool IDEController :: startDebugger(bool stepMode)
 
 bool IDEController :: isOutaged(bool noWarning)
 {
-   if (_model->isAnyDocumentModified()) {
-      if (!noWarning)
-         _view->error(ERROR_RUN_OUT_OF_DATE);
+   //if (_model->isAnyDocumentModified()) {
+   //   if (!noWarning)
+   //      _view->error(ERROR_RUN_OUT_OF_DATE);
 
-      return false;
-   }
+   //   return false;
+   //}
 
-   _ELENA_::Path rootPath(_model->project.path.c_str(), _project.getOutputPath());
-   for (_ProjectManager::SourceIterator it = _project.SourceFiles(); !it.Eof(); it++) {
-      _ELENA_::Path source(rootPath.c_str(), *it);
+   //_ELENA_::Path rootPath(_model->project.path.c_str(), _project.getOutputPath());
+   //for (_ProjectManager::SourceIterator it = _project.SourceFiles(); !it.Eof(); it++) {
+   //   _ELENA_::Path source(rootPath.c_str(), *it);
 
-      _ELENA_::Path module;
-      module.copySubPath(*it);
+   //   _ELENA_::Path module;
+   //   module.copySubPath(*it);
 
-      _ELENA_::ReferenceNs name(_project.getPackage());
-      name.pathToName(module.c_str());          // get a full name
+   //   _ELENA_::ReferenceNs name(_project.getPackage());
+   //   name.pathToName(module.c_str());          // get a full name
 
-      module.copy(rootPath.c_str());
-      module.nameToPath(name, _T("nl"));
+   //   module.copy(rootPath.c_str());
+   //   module.nameToPath(name, _T("nl"));
 
-      DateTime sourceDT = DateTime::getFileTime(source);
-      DateTime moduleDT = DateTime::getFileTime(module);
+   //   DateTime sourceDT = DateTime::getFileTime(source);
+   //   DateTime moduleDT = DateTime::getFileTime(module);
 
-      if (sourceDT > moduleDT) {
-         if (!noWarning)
-            _view->error(ERROR_RUN_OUT_OF_DATE);
+   //   if (sourceDT > moduleDT) {
+   //      if (!noWarning)
+   //         _view->error(ERROR_RUN_OUT_OF_DATE);
 
-         return false;
-      }
-   }
+   //      return false;
+   //   }
+   //}
 
    return true;
 }

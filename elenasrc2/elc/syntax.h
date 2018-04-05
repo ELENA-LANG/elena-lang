@@ -41,6 +41,7 @@ enum Symbol
    tsExplicitConst              = 0x0300E,
    tsAttribute                  = 0x0300F,
    tsMember                     = 0x03010,
+   tsGlobal                     = 0x03011,
 
 //   nsClass                      = 0x0100E,               // non-terminals
 //   nsTemplate                   = 0x0100F,

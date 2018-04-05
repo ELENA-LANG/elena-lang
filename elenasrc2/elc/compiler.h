@@ -89,16 +89,16 @@ public:
 //      }
    };
 
-   // InheritResult
-   enum InheritResult
-   {
-      irNone = 0,
-      irSuccessfull,
-      irUnsuccessfull,
-      irSealed,
-      irInvalid,
-      irObsolete
-   };
+//   // InheritResult
+//   enum InheritResult
+//   {
+//      irNone = 0,
+//      irSuccessfull,
+//      irUnsuccessfull,
+//      irSealed,
+//      irInvalid,
+//      irObsolete
+//   };
 
    enum ObjectKind
    {
@@ -119,7 +119,7 @@ public:
 //      okExtMessageConstant,           // param - reference
 //      okSignatureConstant,            // param - reference
 //      okArrayConst,
-//      okField,                        // param - reference, param - field offset, extraparam - class reference
+      okField,                        // param - reference, param - field offset, extraparam - class reference
 //      okStaticField,                  // param - reference
 //      okStaticConstantField,          // param - reference
 //      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
@@ -252,20 +252,6 @@ private:
             return parent->saveSourcePath(writer);
          }
 
-         ObjectInfo mapObject(SNode terminal)
-         {
-            if (terminal == lxIdentifier) {
-               return mapTerminal(terminal.identifier());
-            }
-            else /*return mapReference(terminal.identifier())*/ObjectInfo();
-
-            //ObjectInfo object = mapTerminal(terminal.identifier());
-            //if (object.kind == okUnknown) {
-            //   return moduleScope->mapObject(terminal);
-            //}
-            //else return object;
-         }
-   
    //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
    //      {
    //         if (parent) {
@@ -274,10 +260,10 @@ private:
    //         else return false;
    //      }
    
-         virtual ObjectInfo mapTerminal(ident_t identifier)
+         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne)
          {
             if (parent) {
-               return parent->mapTerminal(identifier);
+               return parent->mapTerminal(identifier, referenceOne);
             }
             else return ObjectInfo();
          }
@@ -290,20 +276,19 @@ private:
             else return NULL;
          }
    
-   //      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
-   //      {
-   //         return moduleScope->mapSubject(terminal, output);
-   //      }
-   //
-   //      virtual ref_t mapSubject(SNode terminal)
-   //      {
-   //         return moduleScope->mapSubject(terminal);
-   //      }
+//   //      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
+//   //      {
+//   //         return moduleScope->mapSubject(terminal, output);
+//   //      }
+//   //
+//   //      virtual ref_t mapSubject(SNode terminal)
+//   //      {
+//   //         return moduleScope->mapSubject(terminal);
+//   //      }
    
-         Scope(CompilerScope* moduleScope/*, ident_t sourcePath*/)
+         Scope(CompilerScope* moduleScope)
          {
             this->parent = NULL;
-         //   this->sourcePath = sourcePath;
             this->moduleScope = moduleScope;
             this->module = moduleScope->module;
          }
@@ -312,7 +297,6 @@ private:
             this->parent = parent;
             this->moduleScope = parent->moduleScope;
             this->module = parent->module;
-         //   this->sourcePath = parent->sourcePath;
          }
    };
 
@@ -323,22 +307,23 @@ private:
       List<ident_t> importedNs;
       ForwardMap    forwards;       // forward declarations
 
-//      // symbol hints
-//      Map<ref_t, ref_t> constantHints;
+////      // symbol hints
+////      Map<ref_t, ref_t> constantHints;
+////
+//////      // extensions
+////      SubjectMap        extensionHints;
+////      ExtensionMap      extensions;
+////      AutoExtensionMap  autoExtensions;
+////
+////      // action hints
+////      SubjectMap        actionHints;
+////
+////      ref_t packageReference;
 //
-////      // extensions
-//      SubjectMap        extensionHints;
-//      ExtensionMap      extensions;
-//      AutoExtensionMap  autoExtensions;
-//
-//      // action hints
-//      SubjectMap        actionHints;
-//
-//      ref_t packageReference;
+////      // list of references to the current module which should be checked after the project is compiled
+////      Unresolveds* forwardsUnresolved;
 
-//      // list of references to the current module which should be checked after the project is compiled
-//      Unresolveds* forwardsUnresolved;
-
+      ident_t      ns;
       ident_t      sourcePath;
 
       void loadNamespaceInfo(SNode node);
@@ -355,14 +340,14 @@ private:
 //
 //      virtual ref_t mapReference(ident_t reference, bool existing = false);
 //      virtual ref_t mapAttribute(SNode terminal);
+
+//      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 //
-////      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
-////
-////      void defineConstantSymbol(ref_t reference, ref_t classReference)
-////      {
-////         constantHints.add(reference, classReference);
-////      }
-//
+//      void defineConstantSymbol(ref_t reference, ref_t classReference)
+//      {
+//         constantHints.add(reference, classReference);
+//      }
+
       virtual void raiseError(const char* message)
       {
          Scope::raiseError(message);
@@ -376,21 +361,24 @@ private:
          moduleScope->raiseWarning(level, message, sourcePath, terminal);
       }
 
-      virtual ObjectInfo mapTerminal(ident_t identifier);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
+
+      ObjectInfo mapGlobal(ident_t identifier);
 
       virtual pos_t saveSourcePath(ByteCodeWriter& writer);
 
-//      void raiseError(const char* message);
-//      void raiseError(const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
-//      void raiseWarning(int level, const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
-////      void raiseWarning(int level, const char* message);
+////      void raiseError(const char* message);
+////      void raiseError(const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
+////      void raiseWarning(int level, const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
+//////      void raiseWarning(int level, const char* message);
+////
+////      virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal);
+////      virtual void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal);
 //
-//      virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal);
-//      virtual void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal);
+////      bool doesReferenceExist(ident_t referenceName);
 
-//      bool doesReferenceExist(ident_t referenceName);
-
-      ref_t resolveImplicitIdentifier(ident_t name);
+      ref_t resolveFullReference(ident_t name);
+      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
 
 ////      ref_t mapNewSubject(ident_t terminal);
 //
@@ -401,43 +389,43 @@ private:
 
       ref_t mapNewTerminal(SNode terminal);
 
-      ///*virtual */ref_t mapTerminal(SNode terminal, bool existing = false);
+//      ///*virtual */ref_t mapTerminal(SNode terminal, bool existing = false);
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-//      virtual _Module* loadReferenceModule(ref_t& reference);
-
-//      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
-
-//      bool loadAttributes(_Module* module);
-////      void loadExtensions(_Module* module, bool& duplicateExtensions);
-////      void loadActions(_Module* module);
-////      void loadAutogeneratedExtension(_Module* module);
+////      virtual _Module* loadReferenceModule(ref_t& reference);
 //
-////      virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension);
-////      bool saveExtension(ref_t message, ref_t type, ref_t role);
-////      void saveAction(ref_t message, ref_t reference);      
-////      void saveIncludedModule(_Module* extModule);
-////
-////      virtual void validateReference(SNode terminal, ref_t reference);
-////
-////      ref_t getBaseLazyExpressionClass();
+////      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 //
-////      void loadModuleInfo(_Module* extModule)
+////      bool loadAttributes(_Module* module);
+//////      void loadExtensions(_Module* module, bool& duplicateExtensions);
+//////      void loadActions(_Module* module);
+//////      void loadAutogeneratedExtension(_Module* module);
+////
+//////      virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension);
+//////      bool saveExtension(ref_t message, ref_t type, ref_t role);
+//////      void saveAction(ref_t message, ref_t reference);      
+//////      void saveIncludedModule(_Module* extModule);
+//////
+//////      virtual void validateReference(SNode terminal, ref_t reference);
+//////
+//////      ref_t getBaseLazyExpressionClass();
+////
+//////      void loadModuleInfo(_Module* extModule)
+//////      {
+//////         bool dummy1, dummy2;
+//////         loadModuleInfo(extModule, dummy1, dummy2);
+//////      }
+////      void loadModuleInfo(_Module* extModule, bool withAttributes/*, bool& duplicateExtensions, bool& duplicateAttributes*/)
 ////      {
-////         bool dummy1, dummy2;
-////         loadModuleInfo(extModule, dummy1, dummy2);
+////         if (withAttributes)
+////            /*duplicateAttributes = */loadAttributes(extModule);
+////
+//////         loadExtensions(extModule, duplicateExtensions);
+//////         loadActions(extModule);
+//////         loadAutogeneratedExtension(extModule);
+//////         saveIncludedModule(extModule);
 ////      }
-//      void loadModuleInfo(_Module* extModule, bool withAttributes/*, bool& duplicateExtensions, bool& duplicateAttributes*/)
-//      {
-//         if (withAttributes)
-//            /*duplicateAttributes = */loadAttributes(extModule);
-//
-////         loadExtensions(extModule, duplicateExtensions);
-////         loadActions(extModule);
-////         loadAutogeneratedExtension(extModule);
-////         saveIncludedModule(extModule);
-//      }
 
       /*virtual */ref_t mapAnonymous();
 
@@ -468,64 +456,64 @@ private:
       SourceScope(NamespaceScope* parent, ref_t reference/*, ident_t sourcePath*/);
    };
 
-   // - ClassScope -
-   struct ClassScope : public SourceScope
-   {
-      ClassInfo   info;
-//      ref_t       extensionClassRef;
-//      bool        embeddable;
-//      bool        classClassMode;
-//      bool        abstractBasedMode;
-//
-//      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
+//   // - ClassScope -
+//   struct ClassScope : public SourceScope
+//   {
+//      ClassInfo   info;
+////      ref_t       extensionClassRef;
+////      bool        embeddable;
+////      bool        classClassMode;
+////      bool        abstractBasedMode;
+////
+////      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 //
 //      ObjectInfo mapField(ident_t identifier);
-
-      //virtual ObjectInfo mapTerminal(ident_t identifier);
-
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         if (level == slClass || level == slOwnerClass) {
-            return this;
-         }
-         else return Scope::getScope(level);
-      }
-
-      void save()
-      {
-         // save class meta data
-         MemoryWriter metaWriter(moduleScope->mapSection(reference | mskMetaRDataRef, false), 0);
-         metaWriter.Memory()->trim(0);
-         info.save(&metaWriter);
-      }
-
-//      void addHint(ref_t message, int hint)
-//      {
-//         ClassInfo::Attribute attr(message, maHint);
 //
-//         hint |= info.methodHints.get(attr);
-//         info.methodHints.exclude(attr);
-//         info.methodHints.add(attr, hint);
+//      virtual ObjectInfo mapTerminal(ident_t identifier);
+//
+//      virtual Scope* getScope(ScopeLevel level)
+//      {
+//         if (level == slClass || level == slOwnerClass) {
+//            return this;
+//         }
+//         else return Scope::getScope(level);
 //      }
-
-      bool include(ref_t message)
-      {
-         // check if the method is inhreited and update vmt size accordingly
-         ClassInfo::MethodMap::Iterator it = info.methods.getIt(message);
-         if (it.Eof()) {
-            info.methods.add(message, true);
-
-            return true;
-         }
-         else {
-            (*it) = true;
-
-            return false;
-         }
-      }
-
-      ClassScope(NamespaceScope* parent, ref_t reference/*, ident_t sourcePath*/);
-   };
+//
+//      void save()
+//      {
+//         // save class meta data
+//         MemoryWriter metaWriter(moduleScope->mapSection(reference | mskMetaRDataRef, false), 0);
+//         metaWriter.Memory()->trim(0);
+//         info.save(&metaWriter);
+//      }
+//
+////      void addHint(ref_t message, int hint)
+////      {
+////         ClassInfo::Attribute attr(message, maHint);
+////
+////         hint |= info.methodHints.get(attr);
+////         info.methodHints.exclude(attr);
+////         info.methodHints.add(attr, hint);
+////      }
+//
+//      bool include(ref_t message)
+//      {
+//         // check if the method is inhreited and update vmt size accordingly
+//         ClassInfo::MethodMap::Iterator it = info.methods.getIt(message);
+//         if (it.Eof()) {
+//            info.methods.add(message, true);
+//
+//            return true;
+//         }
+//         else {
+//            (*it) = true;
+//
+//            return false;
+//         }
+//      }
+//
+//      ClassScope(NamespaceScope* parent, ref_t reference/*, ident_t sourcePath*/);
+//   };
 
    // - SymbolScope -
    struct SymbolScope : public SourceScope
@@ -550,60 +538,60 @@ private:
       SymbolScope(NamespaceScope* parent, ref_t reference);
    };
 
-   // - MethodScope -
-   struct MethodScope : public Scope
-   {
-      ref_t        message;
-      LocalMap     parameters;
-      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
-      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-      int          hints;
-//      bool         withOpenArg;
-//      bool         stackSafe;
-//      bool         classEmbeddable;
-//      bool         generic;
-//      bool         genericClosure;
-//      bool         extensionMode;
-      bool         multiMethod;
-//      bool         closureMode;
-//      bool         nestedMode;
-//      bool         subCodeMode;
-      
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         if (level == slMethod) {
-            return this;
-         }
-         else return parent->getScope(level);
-      }
-
-      ref_t getReturningRef(bool ownerClass = true)
-      {
-         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-
-         return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
-      }
-
-      //ref_t getClassFlags(bool ownerClass = true)
-      //{
-      //   ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-
-      //   return scope ? scope->info.header.flags : 0;
-      //}
-//      ref_t getClassRef(bool ownerClass = true)
+//   // - MethodScope -
+//   struct MethodScope : public Scope
+//   {
+//      ref_t        message;
+//      LocalMap     parameters;
+//      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
+//      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
+//      int          hints;
+////      bool         withOpenArg;
+////      bool         stackSafe;
+////      bool         classEmbeddable;
+////      bool         generic;
+////      bool         genericClosure;
+////      bool         extensionMode;
+//      bool         multiMethod;
+////      bool         closureMode;
+////      bool         nestedMode;
+////      bool         subCodeMode;
+//      
+//      virtual Scope* getScope(ScopeLevel level)
+//      {
+//         if (level == slMethod) {
+//            return this;
+//         }
+//         else return parent->getScope(level);
+//      }
+//
+//      ref_t getReturningRef(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 //
-//         return scope ? scope->reference : 0;
+//         return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
 //      }
-
-      virtual ObjectInfo mapTerminal(ident_t identifier);
-
-      ObjectInfo mapSelf(bool forced = false);
-      ObjectInfo mapParameter(Parameter param);
-
-      MethodScope(ClassScope* parent);
-   };
+//
+//      //ref_t getClassFlags(bool ownerClass = true)
+//      //{
+//      //   ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+//
+//      //   return scope ? scope->info.header.flags : 0;
+//      //}
+////      ref_t getClassRef(bool ownerClass = true)
+////      {
+////         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+////
+////         return scope ? scope->reference : 0;
+////      }
+//
+//      virtual ObjectInfo mapTerminal(ident_t identifier);
+//
+//      ObjectInfo mapSelf(bool forced = false);
+//      ObjectInfo mapParameter(Parameter param);
+//
+//      MethodScope(ClassScope* parent);
+//   };
 
    // - CodeScope -
    struct CodeScope : public Scope
@@ -612,25 +600,25 @@ private:
       LocalMap     locals;
       int          level;
 
-//      // scope stack allocation
-//      int          reserved;  // allocated for the current statement
-//      int          saved;     // permanently allocated
-
-      int newLocal()
-      {
-         level++;
-
-         return level;
-      }
-
-      void mapLocal(ident_t local, int level)
-      {
-         locals.add(local, Parameter(level));
-      }
-      void mapLocal(ident_t local, int level, ref_t class_ref/*, int size*/)
-      {
-         locals.add(local, Parameter(level, class_ref/*, size*/));
-      }
+////      // scope stack allocation
+////      int          reserved;  // allocated for the current statement
+////      int          saved;     // permanently allocated
+//
+//      int newLocal()
+//      {
+//         level++;
+//
+//         return level;
+//      }
+//
+//      void mapLocal(ident_t local, int level)
+//      {
+//         locals.add(local, Parameter(level));
+//      }
+//      void mapLocal(ident_t local, int level, ref_t class_ref/*, int size*/)
+//      {
+//         locals.add(local, Parameter(level, class_ref/*, size*/));
+//      }
 //      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
 //      {
 //         locals.add(local, Parameter(level, class_ref, element_ref, size));
@@ -643,8 +631,10 @@ private:
 //
 //      ObjectInfo mapMember(ident_t identifier);
 
-      virtual ObjectInfo mapTerminal(ident_t identifier);
-//      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
+      ObjectInfo mapGlobal(ident_t identifier);
+
+//      virtual ObjectInfo mapTerminal(ident_t identifier);
+////      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -659,37 +649,37 @@ private:
 //         return getMessageID() == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE);
 //      }
 
-      ref_t getMessageID()
-      {
-         MethodScope* scope = (MethodScope*)getScope(slMethod);
-
-         return scope ? scope->message : 0;
-      }
-
-      ref_t getReturningRef()
-      {
-         MethodScope* scope = (MethodScope*)getScope(slMethod);
-
-         return scope ? scope->getReturningRef() : 0;
-      }
-
-      ref_t getClassRefId(bool ownerClass = true)
-      {
-         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-
-         return scope ? scope->reference : 0;
-      }
-
-      ref_t getClassFlags(bool ownerClass = true)
-      {
-         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-
-         return scope ? scope->info.header.flags : 0;
-      }
+//      ref_t getMessageID()
+//      {
+//         MethodScope* scope = (MethodScope*)getScope(slMethod);
+//
+//         return scope ? scope->message : 0;
+//      }
+//
+//      ref_t getReturningRef()
+//      {
+//         MethodScope* scope = (MethodScope*)getScope(slMethod);
+//
+//         return scope ? scope->getReturningRef() : 0;
+//      }
+//
+//      ref_t getClassRefId(bool ownerClass = true)
+//      {
+//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+//
+//         return scope ? scope->reference : 0;
+//      }
+//
+//      ref_t getClassFlags(bool ownerClass = true)
+//      {
+//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+//
+//         return scope ? scope->info.header.flags : 0;
+//      }
 
       CodeScope(SourceScope* parent);
-      CodeScope(MethodScope* parent);
-//      CodeScope(CodeScope* parent);
+//      CodeScope(MethodScope* parent);
+////      CodeScope(CodeScope* parent);
    };
 
 ////   // --- ResendScope ---
@@ -808,73 +798,73 @@ private:
 //   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
-   void writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef);
-   void initialize(ClassScope& scope, MethodScope& methodScope);
-
-   int checkMethod(CompilerScope& scope, ref_t reference, ref_t message)
-   {
-      _CompilerLogic::ChechMethodInfo dummy;
-
-      return _logic->checkMethod(scope, reference, message, dummy);
-   }
-
-//   int retrieveGenericArgParamCount(ClassScope& scope);
+//   void writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef);
+//   void initialize(ClassScope& scope, MethodScope& methodScope);
 //
-//   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(/*ModuleScope& scope, */ObjectInfo object);
-   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
-//   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
-//
-//   void saveExtension(ClassScope& scope, ref_t message);
-//   ref_t mapExtension(ModuleScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef);
-//   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, bool& genericOne);
-
-   void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
-
-////   int defineFieldSize(CodeScope& scope, int offset);
-
-   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
-//   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
-
-   // NOTE : the method is used to set template pseudo variable
-   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withThis, bool withSelf*/);
-
-   ref_t resolveParentRef(SNode node, CompilerScope& moduleScope, bool silentMode);
-//   bool isDependentOnNotDeclaredClass(SNode baseNode, ModuleScope& scope);
-
-   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
-   void compileParentDeclaration(SNode node, ClassScope& scope);
-   void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
-
-//   void declareSymbolAttributes(SNode node, SymbolScope& scope);
-   void declareClassAttributes(SNode node, ClassScope& scope);
-   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
-   void declareFieldAttributes(SNode member, ClassScope& scope/*, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/);
-   void declareVMT(SNode member, ClassScope& scope);
-////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
-
-   void declareMethodAttributes(SNode member, MethodScope& scope);
-
-//   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
-//
-//   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
-//                                     bool withExtension, bool& genericOne);
-//   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
+//   int checkMethod(CompilerScope& scope, ref_t reference, ref_t message)
 //   {
-//      bool dummy;
-//      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
+//      _CompilerLogic::ChechMethodInfo dummy;
+//
+//      return _logic->checkMethod(scope, reference, message, dummy);
 //   }
-   ref_t mapMessage(SNode node, CodeScope& scope);
-
-//   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
-
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
-//   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
-//   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
-
-   //ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+//
+////   int retrieveGenericArgParamCount(ClassScope& scope);
+////
+////   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
+//   ref_t resolveObjectReference(/*ModuleScope& scope, */ObjectInfo object);
+//   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
+////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
+////
+////   void saveExtension(ClassScope& scope, ref_t message);
+////   ref_t mapExtension(ModuleScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef);
+////   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, bool& genericOne);
+//
+//   void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
+//
+//////   int defineFieldSize(CodeScope& scope, int offset);
+//
+//   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
+////   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
+//
+//   // NOTE : the method is used to set template pseudo variable
+//   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withThis, bool withSelf*/);
+//
+//   ref_t resolveParentRef(SNode node, CompilerScope& moduleScope, bool silentMode);
+////   bool isDependentOnNotDeclaredClass(SNode baseNode, ModuleScope& scope);
+//
+//   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
+//   void compileParentDeclaration(SNode node, ClassScope& scope);
+//   void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
+//
+////   void declareSymbolAttributes(SNode node, SymbolScope& scope);
+//   void declareClassAttributes(SNode node, ClassScope& scope);
+//   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
+//   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/);
+//   void declareVMT(SNode member, ClassScope& scope);
+//////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
+//
+//   void declareMethodAttributes(SNode member, MethodScope& scope);
+//
+////   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
+////
+////   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
+////                                     bool withExtension, bool& genericOne);
+////   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
+////   {
+////      bool dummy;
+////      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
+////   }
+//   ref_t mapMessage(SNode node, CodeScope& scope);
+//
+////   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//
+////   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+////   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+////   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
+////   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
+//
+//   //ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
    void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
@@ -882,108 +872,108 @@ private:
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-//   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
-//   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
+////   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
+////   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
+////   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+////   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
+////   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
+////   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
+////
+////   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
+////   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 //
-//   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
-//   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
-
-   /*ObjectInfo*/void compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
-
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
-//   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
-
-   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
-//   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
-//   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   /*ObjectInfo*/void compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
+//
+//   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+//   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
+////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
+//
+//   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+//   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+////   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
+////   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
-   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+//   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+////
+////   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+////
+////   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
+////
+////   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
+////   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
+////   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
+////
+////   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+////   int allocateStructure(SNode node, int& size);
+////   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
+////
+////   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
+////   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 //
-//   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+//   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+//   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
+//   void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 //
-//   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
+//   ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //
-//   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
+//   ref_t declareArgumentType(SNode node, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
+//   void declareArgumentList(SNode node, MethodScope& scope);
+////   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
+////   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
+////
+//////   void declareSingletonClass(SNode node, ClassScope& scope);
+////
+////   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+////   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+//   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false, bool withOpenArgGenerics = false*/);
 //
-//   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-//   int allocateStructure(SNode node, int& size);
-//   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
+//   void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+//   void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
+//   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //
-//   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
-
-   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
-   void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
-
-   ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
-
-   ref_t declareArgumentType(SNode node, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
-   void declareArgumentList(SNode node, MethodScope& scope);
-//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
-//   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
+//   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
+////   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
+////
+////   void compilePreloadedCode(SymbolScope& scope);
+////   void compilePreloadedCode(ClassScope& scope, SNode node);
+//   void compileSymbolCode(ClassScope& scope);
 //
-////   void declareSingletonClass(SNode node, ClassScope& scope);
+////   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
+////   void compileNestedVMT(SNode node, InlineClassScope& scope);
 //
-//   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-//   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false, bool withOpenArgGenerics = false*/);
-
-   void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-   void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
-   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
-
-   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
-//   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
+//   void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
+//   void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //
-//   void compilePreloadedCode(SymbolScope& scope);
-//   void compilePreloadedCode(ClassScope& scope, SNode node);
-   void compileSymbolCode(ClassScope& scope);
-
-//   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
-//   void compileNestedVMT(SNode node, InlineClassScope& scope);
-
-   void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
-   void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
-
-   void generateClassField(ClassScope& scope, SNode node/*, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField*/);
-//   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
-
-   void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
-   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message/*, bool allowTypeAttribute*/);
-
-   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed/*, bool allowTypeAttribute, bool closureBaseClass*/);
-   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType/*, bool closureBaseClass*/);
-   void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode/*, bool nestedDeclarationMode = false*/);
-
-   void generateClassImplementation(SNode node, ClassScope& scope);
-
-   void compileClassDeclaration(SNode node, ClassScope& scope);
-   void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
-   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
-   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
+//   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, ref_t elementRef, int sizeHint, bool singleField*/);
+////   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
+//
+//   void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
+//   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
+//
+//   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute/*, bool closureBaseClass*/);
+//   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType/*, bool closureBaseClass*/);
+//   void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode/*, bool nestedDeclarationMode = false*/);
+//
+//   void generateClassImplementation(SNode node, ClassScope& scope);
+//
+//   void compileClassDeclaration(SNode node, ClassScope& scope);
+//   void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
+//   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
+//   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
-//   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
-////   void compileIncludeModule(SNode node, ModuleScope& scope);
-//   void compileForward(SNode node, ModuleScope& scope);
+////   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
+//////   void compileIncludeModule(SNode node, ModuleScope& scope);
+////   void compileForward(SNode node, ModuleScope& scope);
+////
+////   bool validate(_ProjectManager& project, _Module* module, int reference);
+////
+////   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
 //
-//   bool validate(_ProjectManager& project, _Module* module, int reference);
-//
-//   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
-
-   bool convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/);
-   bool typecastObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef);
+//   bool convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/);
+//   bool typecastObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef);
 
 //   void compileExternalArguments(SNode node, ModuleScope& scope, WarningScope& warningScope);
 //
@@ -1016,8 +1006,8 @@ private:
 //
 //   void generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument);
 
-   void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
-   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
+//   void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
+//   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
 
 public:
    void loadRules(StreamReader* optimization);
@@ -1036,10 +1026,10 @@ public:
 
 //   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 
-////   // _Compiler interface implementation
-//////   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
-//   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
-//   virtual void injectLocalBoxing(SNode node, int size);
+   // _Compiler interface implementation
+//   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
+   //virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
+   //virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef/*, bool stacksafe*/);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);

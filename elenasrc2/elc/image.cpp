@@ -57,7 +57,7 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
    linker.prepareCompiler(verbs);
 
   // create the image
-   ident_t startUpClass = /*project->resolveForward(*/STARTUP_SYMBOL/*)*/;
+   ident_t startUpClass = project->resolveForward(STARTUP_SYMBOL);
    _entryPoint = emptystr(startUpClass) ? LOADER_NOTLOADED : linker.resolve(startUpClass, mskSymbolRef, true);
    if(_entryPoint == LOADER_NOTLOADED)
       throw JITUnresolvedException(ReferenceInfo(STARTUP_SYMBOL));
@@ -76,10 +76,10 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
 
 ref_t ExecutableImage :: getDebugEntryPoint()
 {
-   ident_t starter = /*_project->resolveForward(*/STARTUP_SYMBOL/*)*/;
-   /*while (isWeakReference(starter)) {
-      starter = _project->resolveForward(starter);
-   }*/
+   ident_t starter = _project->resolveForward(STARTUP_SYMBOL);
+   while (isForwardReference(starter)) {
+      starter = _project->resolveForward(starter + FORWARD_PREFIX_NS_LEN);
+   }
 
    return (ref_t)resolveReference(starter, mskSymbolRef) & ~mskAnyRef;
 }
@@ -253,6 +253,14 @@ ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t refere
 //   }
 //   else {
       ident_t referenceName = module->resolveReference(reference);
+      while (isForwardReference(referenceName)) {
+         ident_t resolvedName = _project->resolveForward(referenceName + FORWARD_PREFIX_NS_LEN);
+         if (!emptystr(resolvedName)) {
+            referenceName = resolvedName;
+         }
+         else throw JITUnresolvedException(referenceName);
+      }
+
       if (isWeakReference(referenceName)) {
          if (isTemplateWeakReference(referenceName)) {
             // COMPILER MAGIC : try to find a template implementation

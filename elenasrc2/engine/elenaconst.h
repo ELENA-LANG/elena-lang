@@ -439,6 +439,9 @@ namespace _ELENA_
    #define TEMPLATE_PREFIX_NS       "'$auto'"
    #define TEMPLATE_PREFIX_NS_LEN   7 
 
+   #define FORWARD_PREFIX_NS        "$forwards'"
+   #define FORWARD_PREFIX_NS_LEN    10
+
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
 //   #define GENERIC_PREFIX           "#generic"
@@ -456,6 +459,7 @@ namespace _ELENA_
 
    #define CORE_MODULE              "coreapi"
    #define STANDARD_MODULE          "system"                         // the standard module name
+   #define FORWARD_MODULE           "forwards"
 //   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
 //                                                                     // will be treated like internal core api one
@@ -474,7 +478,7 @@ namespace _ELENA_
    #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
 
    // predefined system forwards
-   #define SUPER_FORWARD            "system'Object"                    // the common class predecessor
+   #define SUPER_FORWARD            "$super"                    // the common class predecessor
 //   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
 //   #define INT_FORWARD              "'$int"
 //   #define LONG_FORWARD             "'$long"
@@ -488,7 +492,7 @@ namespace _ELENA_
 //   #define ARRAY_FORWARD            "'$array"
 //   #define BOOL_FORWARD             "'$bool"
 
-   #define STARTUP_SYMBOL             /*"'startUp"*/ "mytest'program" // !! temporal
+   #define STARTUP_SYMBOL             "$startUp"
    
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)

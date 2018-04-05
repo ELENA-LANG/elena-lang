@@ -354,6 +354,12 @@ public:
    {
       return NamespaceName::compare(reference, _string);
    }
+
+   void trimLastSubNs()
+   {
+      size_t index = ident_t(_string).findLast('\'', 0);
+      _string[index] = 0;
+   }
 };
 
 // --- ReferenceNs ---
@@ -394,6 +400,12 @@ public:
             break;
          }
       }
+   }
+
+   void trimProperName()
+   {
+      size_t index = ident_t(_string).findLast('\'', 0);
+      _string[index] = 0;
    }
 
    void combine(ident_t s)
@@ -536,12 +548,12 @@ enum MethodAttribute
 
 struct ClassInfo
 {
-//   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - type
+   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
    typedef Pair<ref_t, int>                    Attribute;
    typedef MemoryMap<ref_t, bool, false>       MethodMap;
    typedef MemoryMap<ident_t, int, true>       FieldMap;
 //   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
-//   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
+   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
 //   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
@@ -551,8 +563,8 @@ struct ClassInfo
    FieldMap       fields;
 //   StaticFieldMap statics;
 //   StaticInfoMap  staticValues;
-//
-//   FieldTypeMap   fieldTypes;
+
+   FieldTypeMap   fieldTypes;
    MethodInfoMap  methodHints;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
@@ -563,7 +575,7 @@ struct ClassInfo
 //         staticValues.write(writer);
          methods.write(writer);
          fields.write(writer);
-//         fieldTypes.write(writer);
+         fieldTypes.write(writer);
          methodHints.write(writer);
 //         statics.write(writer);
       }
@@ -577,14 +589,14 @@ struct ClassInfo
 //         staticValues.read(reader);
          methods.read(reader);
          fields.read(reader);
-//         fieldTypes.read(reader);
+         fieldTypes.read(reader);
          methodHints.read(reader);
 //         statics.read(reader);
       }
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0)//, fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0))//, statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
@@ -746,6 +758,11 @@ typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 inline bool isTemplateWeakReference(ident_t referenceName)
 {
    return referenceName[0] == '\'' && referenceName.startsWith(TEMPLATE_PREFIX_NS);
+}
+
+inline bool isForwardReference(ident_t referenceName)
+{
+   return referenceName.startsWith(FORWARD_PREFIX_NS);
 }
 
 inline ref_t encodeMessage(ref_t actionRef, int paramCount)
