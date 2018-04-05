@@ -74,7 +74,7 @@ class JITLinker : _JITLoaderListener
          return _owner->_loader->getLinkerConstant(constant);
       }
 
-//      virtual SectionInfo getSection(ref_t reference, _Module* module);
+      virtual SectionInfo getSection(ref_t reference, _Module* module);
       virtual SectionInfo getCoreSection(ref_t reference);
 
       virtual void* getVAddress(MemoryWriter& writer, int mask)
@@ -121,11 +121,11 @@ class JITLinker : _JITLoaderListener
    bool           _withDebugInfo;
    bool           _classSymbolAutoLoadMode;
    void*          _codeBase;
-//   int            _statLength;
+   int            _statLength;
    MethodMap      _staticMethods;
-//   ModuleList     _loadedModules;
-//
-////   int            _uniqueID;           // used for dynamic subject
+   ModuleList     _loadedModules;
+
+//   int            _uniqueID;           // used for dynamic subject
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
    void createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void* address, size_t& sizePtr);
@@ -155,7 +155,7 @@ class JITLinker : _JITLoaderListener
    void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo);
    void* resolveConstant(ReferenceInfo referenceInfo, int mask);
 //   void* resolveStaticVariable(ident_t reference, int mask);
-//   void* resolveAnonymousStaticVariable();
+   void* resolveAnonymousStaticVariable();
    void* resolveMessageTable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveMessage(ident_t reference, ident_t vmt, bool actionMode);
 //   void* resolveExtensionMessage(ident_t reference, ident_t vmt);
@@ -172,8 +172,8 @@ public:
    void* resolveEntry(void* programEntry);
 
 //   //void loadModuleInfo(_Module* module);
-//
-//   void generateInitTape(MemoryDump& tape);
+
+   void generateInitTape(MemoryDump& tape);
 
    bool getDebugMode() const { return _withDebugInfo; }
 
@@ -197,7 +197,7 @@ public:
       _virtualMode = virtualMode;
       _withDebugInfo = compiler->isWithDebugInfo();
       _codeBase = codeBase;
-//      _statLength = 0;
+      _statLength = 0;
       _classSymbolAutoLoadMode = autoLoadMode;
 
 //      loader->addListener(this);

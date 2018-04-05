@@ -3,9 +3,13 @@ In development:
 ------                              
                             
               dev - redesign
-                 * field initializer and explicit constructor
+                 * static methods
+
+                 * static fields
 
                  * private / protected / private sealed methods
+
+                 * field initializer and explicit constructor
 
                  * reimplement forwards: super class, entry point
 

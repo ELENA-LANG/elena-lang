@@ -1311,9 +1311,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       //case V_METHOD:
       //   attrValue = 0;
       //   return true;
-      //case V_STATIC:
-      //   attrValue = (tpStatic | tpSealed);
-      //   return true;
+      case V_STATIC:
+         attrValue = (tpStatic | tpSealed);
+         return true;
       default:
          return false;
    }
@@ -1323,9 +1323,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
 {
    switch ((size_t)attrValue)
    {
-      //case V_STATIC:
-      //   attrValue = lxStaticAttr;
-      //   return true;
+      case V_STATIC:
+         attrValue = lxStaticAttr;
+         return true;
       //case V_SEALED:
       //   if (!isSealed) {
       //      attrValue = -1;

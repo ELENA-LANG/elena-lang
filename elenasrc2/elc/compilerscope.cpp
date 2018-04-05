@@ -124,30 +124,30 @@ void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Modul
          mtype_it++;
       }
 
-      //// import static fields
-      //ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
-      //while (!static_it.Eof()) {
-      //   ClassInfo::FieldInfo info(
-      //      isSealedStaticField((*static_it).value1) ? importReference(exporter, (*static_it).value1, module) : (*static_it).value1,
-      //      importReference(exporter, (*static_it).value2, module));
+      // import static fields
+      ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
+      while (!static_it.Eof()) {
+         ClassInfo::FieldInfo info(
+            isSealedStaticField((*static_it).value1) ? importReference(exporter, (*static_it).value1, module) : (*static_it).value1,
+            importReference(exporter, (*static_it).value2, module));
 
-      //   target.statics.add(static_it.key(), info);
+         target.statics.add(static_it.key(), info);
 
-      //   static_it++;
-      //}
+         static_it++;
+      }
 
-      //// import static field values
-      //auto staticValue_it = copy.staticValues.start();
-      //while (!staticValue_it.Eof()) {
-      //   ref_t val = *staticValue_it;
-      //   if (val != mskStatRef) {
-      //      val = importReference(exporter, (val & ~mskAnyRef) | (val & mskAnyRef), module);
-      //   }
+      // import static field values
+      auto staticValue_it = copy.staticValues.start();
+      while (!staticValue_it.Eof()) {
+         ref_t val = *staticValue_it;
+         if (val != mskStatRef) {
+            val = importReference(exporter, (val & ~mskAnyRef) | (val & mskAnyRef), module);
+         }
 
-      //   target.staticValues.add(staticValue_it.key(), val);
+         target.staticValues.add(staticValue_it.key(), val);
 
-      //   staticValue_it++;
-      //}
+         staticValue_it++;
+      }
    }
    // import class class reference
    if (target.header.classRef != 0)

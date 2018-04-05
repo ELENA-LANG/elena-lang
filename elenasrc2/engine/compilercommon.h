@@ -48,7 +48,7 @@
 //
 //#define V_STATCKSAFE     (ref_t)-8192
 //#define V_EMBEDDABLE     (ref_t)-8193
-//#define V_STATIC         (ref_t)-8194
+#define V_STATIC         (ref_t)-8194
 #define V_SEALED         (ref_t)-8195
 //#define V_LIMITED        (ref_t)-8196
 //#define V_STRUCT         (ref_t)-8197
@@ -113,7 +113,7 @@ enum MethodHint
    tpConversion  = 0x0800,
    tpMultimethod = 0x1000,
 //   tpArgDispatcher = 0x3000,
-//   tpStatic      = 0x4000,
+   tpStatic      = 0x4000,
 };
 
 // --- _CompileScope ---

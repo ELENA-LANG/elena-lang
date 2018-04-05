@@ -120,14 +120,14 @@ public:
 //      okSignatureConstant,            // param - reference
 //      okArrayConst,
       okField,                        // param - reference, param - field offset, extraparam - class reference
-//      okStaticField,                  // param - reference
+      okStaticField,                  // param - reference
 //      okStaticConstantField,          // param - reference
 //      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
 //      okFieldAddress,                 // param - field offset, extraparam - class reference
 //      okOuter,                        // param - field offset, extraparam - class reference
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
 //      okOuterStaticField,             // param - field offset, extraparam - outer field offset
-//      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
+      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
 ////      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
@@ -151,28 +151,28 @@ public:
       ObjectKind kind;
       ref_t      param;
       ref_t      extraparam;
-//      ref_t      element;
+      ref_t      element;
 
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
          this->extraparam = 0;
-//         this->element = 0;
+         this->element = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
          this->extraparam = 0;
-//         this->element = 0;
+         this->element = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param)
       {
          this->kind = kind;
          this->param = param;
          this->extraparam = 0;
-//         this->element = 0;
+         this->element = 0;
       }
 //      ObjectInfo(ObjectKind kind, int param)
 //      {
@@ -186,29 +186,29 @@ public:
          this->kind = kind;
          this->param = param;
          this->extraparam = extraparam;
-//         this->element = 0;
+         this->element = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = (ref_t)extraparam;
-//         this->element = 0;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t element)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
-//         this->element = element;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t element)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = (ref_t)extraparam;
-//         this->element = element;
-//      }
+      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = (ref_t)extraparam;
+         this->element = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t element)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = extraparam;
+         this->element = element;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t element)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->extraparam = (ref_t)extraparam;
+         this->element = element;
+      }
    };
 
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
@@ -360,6 +360,10 @@ private:
       {
          moduleScope->raiseWarning(level, message, sourcePath, terminal);
       }
+      //virtual void raiseWarning(int level, const char* message, int row, int col, ident_t sourcePath, ident_t terminal)
+      //{
+      //   moduleScope->raiseWarning(level, message, sourcePath, );
+      //}
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
 
@@ -369,7 +373,6 @@ private:
 
 ////      void raiseError(const char* message);
 ////      void raiseError(const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
-////      void raiseWarning(int level, const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
 //////      void raiseWarning(int level, const char* message);
 ////
 ////      virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal);
@@ -462,10 +465,10 @@ private:
       ClassInfo   info;
 //      ref_t       extensionClassRef;
 //      bool        embeddable;
-//      bool        classClassMode;
+      bool        classClassMode;
 //      bool        abstractBasedMode;
-//
-//      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
+
+      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 
       ObjectInfo mapField(ident_t identifier);
 
@@ -644,10 +647,10 @@ private:
          else return parent->getScope(level);
       }
 
-//      bool isInitializer()
-//      {
-//         return getMessageID() == (encodeVerb(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE);
-//      }
+      bool isInitializer()
+      {
+         return getMessageID() == (encodeAction(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE);
+      }
 
       ref_t getMessageID()
       {
@@ -743,39 +746,39 @@ private:
 ////
 ////      InlineClassScope(CodeScope* owner, ref_t reference);
 ////   };
-////
-////   struct WarningScope
-////   {
-////      ident_t terminal;
-////
-////      int warningMask;
-////      int col;
-////      int row;
-////
-////      void raise(ModuleScope& scope, int level, ident_t message, SNode node)
-////      {
-////         if (test(warningMask, level)) {
-////            if (col != 0) {
-////               scope.raiseWarning(level, message, row, col, terminal);
-////            }
-////            else if(node != lxNone)
-////               scope.raiseWarning(level, message, node);
-////         }
-////      }
-////
-////      WarningScope(int mask)
-////      {
-////         warningMask = mask;
-////         col = row = 0;
-////         terminal = NULL;
-////      }
-////      WarningScope()
-////      {
-////         warningMask = 0;
-////         col = row = 0;
-////         terminal = NULL;
-////      }
-////   };
+
+   //struct WarningScope
+   //{
+   //   ident_t terminal;
+
+   //   int warningMask;
+   //   int col;
+   //   int row;
+
+   //   //void raise(Scope& scope, int level, ident_t message, SNode node)
+   //   //{
+   //   //   if (test(warningMask, level)) {
+   //   //      if (col != 0) {
+   //   //         scope.raiseWarning(level, message, row, col, terminal);
+   //   //      }
+   //   //      else if(node != lxNone)
+   //   //         scope.raiseWarning(level, message, node);
+   //   //   }
+   //   //}
+
+   //   WarningScope(int mask)
+   //   {
+   //      warningMask = mask;
+   //      col = row = 0;
+   //      terminal = NULL;
+   //   }
+   //   WarningScope()
+   //   {
+   //      warningMask = 0;
+   //      col = row = 0;
+   //      terminal = NULL;
+   //   }
+   //};
 
    _CompilerLogic*  _logic;
 
@@ -839,7 +842,7 @@ private:
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size*/, bool& isStaticField/*, bool& isSealed, bool& isConstant*/);
    void declareVMT(SNode member, ClassScope& scope);
 ////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
@@ -896,9 +899,9 @@ private:
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 
 //   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
-//
-//   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
-//
+
+   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
+
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -937,7 +940,7 @@ private:
 //   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 //
 //   void compilePreloadedCode(SymbolScope& scope);
-//   void compilePreloadedCode(ClassScope& scope, SNode node);
+   void compilePreloadedCode(ClassScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
 ////   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
@@ -947,7 +950,7 @@ private:
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
    void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, ref_t elementRef, int sizeHint, bool singleField*/);
-//   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, ref_t elementRef, bool isSealed, bool isConst*/);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
@@ -984,17 +987,17 @@ private:
 //   ref_t analizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
 //   ref_t analizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
 //   ref_t analizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
-//   ref_t analizeExpression(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
+   ref_t analizeExpression(SNode node, CompilerScope& scope, /*WarningScope& warningScope, */int mode = 0);
 //   ref_t analizeInternalCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
 //   ref_t analizeExtCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope, int mode);
 //   ref_t analizeNestedExpression(SNode node, ModuleScope& scope, WarningScope& warningScope);
-//   void analizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
+   void analizeExpressionTree(SNode node, CompilerScope& scope, /*WarningScope& warningScope, */int mode = 0);
 //   void analizeBranching(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
 //   void analizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
 //   void analizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);
 //   void analizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);
-//   void analizeSymbolTree(SNode node, Scope& scope, int warningMask);
-//
+   void analizeSymbolTree(SNode node, Scope& scope, int warningMask);
+
 //   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 //
 //   void createPackageInfo(_Module* module, _ProjectManager& project);

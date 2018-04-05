@@ -552,17 +552,17 @@ struct ClassInfo
    typedef Pair<ref_t, int>                    Attribute;
    typedef MemoryMap<ref_t, bool, false>       MethodMap;
    typedef MemoryMap<ident_t, int, true>       FieldMap;
-//   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
+   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
    typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
-//   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
+   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader    header;
 //   int            size;           // Object size
    MethodMap      methods;
    FieldMap       fields;
-//   StaticFieldMap statics;
-//   StaticInfoMap  staticValues;
+   StaticFieldMap statics;
+   StaticInfoMap  staticValues;
 
    FieldTypeMap   fieldTypes;
    MethodInfoMap  methodHints;
@@ -572,12 +572,12 @@ struct ClassInfo
       writer->write((void*)this, sizeof(ClassHeader));
 //      writer->writeDWord(size);
       if (!headerAndSizeOnly) {
-//         staticValues.write(writer);
+         staticValues.write(writer);
          methods.write(writer);
          fields.write(writer);
          fieldTypes.write(writer);
          methodHints.write(writer);
-//         statics.write(writer);
+         statics.write(writer);
       }
    }
 
@@ -586,17 +586,17 @@ struct ClassInfo
       reader->read((void*)&header, sizeof(ClassHeader));
 //      size = reader->getDWord();
       if (!headerOnly) {
-//         staticValues.read(reader);
+         staticValues.read(reader);
          methods.read(reader);
          fields.read(reader);
          fieldTypes.read(reader);
          methodHints.read(reader);
-//         statics.read(reader);
+         statics.read(reader);
       }
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0))//, statics(FieldInfo(0, 0))
+      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
@@ -733,7 +733,7 @@ inline ref_t mapReferenceKey(ident_t key)
 // --- Common type definitions ---
 
 typedef Map<ident_t, _Module*> ModuleMap;
-////typedef List<_Module*>         ModuleList;
+typedef List<_Module*>         ModuleList;
 typedef List<ident_t>          IdentifierList;
 
 // --- Reference mapping types ---
@@ -754,6 +754,11 @@ typedef MemoryHashTable<ref_t, int, syntaxRule, cnHashSize> SyntaxHash;
 typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
 // --- miscellaneous routines ---
+
+inline bool isSealedStaticField(ref_t ref)
+{
+   return (int)ref >= 0;
+}
 
 inline bool isTemplateWeakReference(ident_t referenceName)
 {

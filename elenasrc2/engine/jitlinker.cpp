@@ -31,15 +31,15 @@ inline void resolveReference(_Memory* image, size_t position, ref_t vaddress, si
 
 // --- ReferenceLoader::ReferenceHelper ---
 
-//SectionInfo JITLinker::ReferenceHelper :: getSection(ref_t reference, _Module* module)
-//{
-//   if (!module)
-//      module = _module;
-//
-//   ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
-//
-//   return _owner->_loader->getSectionInfo(referenceName, reference & mskAnyRef, false);
-//}
+SectionInfo JITLinker::ReferenceHelper :: getSection(ref_t reference, _Module* module)
+{
+   if (!module)
+      module = _module;
+
+   ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+
+   return _owner->_loader->getSectionInfo(ReferenceInfo(module, referenceName), reference & mskAnyRef, false);
+}
 
 SectionInfo JITLinker::ReferenceHelper :: getCoreSection(ref_t reference)
 {
@@ -602,25 +602,25 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       // fix VMT
       _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
 
-      //// fix VMT Static table
-      //ClassInfo::StaticInfoMap staticValues;
-      //staticValues.read(&vmtReader);
+      // fix VMT Static table
+      ClassInfo::StaticInfoMap staticValues;
+      staticValues.read(&vmtReader);
 
-      //ref_t currentMask = 0;
-      //ref_t currentRef = 0;
-      //for (auto it = staticValues.start(); !it.Eof(); it++) {
-      //   currentMask = *it & mskAnyRef;
-      //   currentRef = *it & ~mskAnyRef;
+      ref_t currentMask = 0;
+      ref_t currentRef = 0;
+      for (auto it = staticValues.start(); !it.Eof(); it++) {
+         currentMask = *it & mskAnyRef;
+         currentRef = *it & ~mskAnyRef;
 
-      //   void* refVAddress = NULL;
-      //   if (currentMask == mskStatRef && currentRef == 0) {
-      //      refVAddress = resolveAnonymousStaticVariable();
-      //   }
-      //   else if(currentRef != 0)
-      //      refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+         void* refVAddress = NULL;
+         if (currentMask == mskStatRef && currentRef == 0) {
+            refVAddress = resolveAnonymousStaticVariable();
+         }
+         else if(currentRef != 0)
+            refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 
-      //   resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
-      //}
+         resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
+      }
    }
 
    return vaddress;
@@ -799,20 +799,20 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    return vaddress;
 }
 
-//void* JITLinker :: resolveAnonymousStaticVariable()
-//{
-//   // get target image & resolve virtual address
-//   MemoryWriter writer(_loader->getTargetSection((ref_t)mskStatRef));
-//
-//   size_t vaddress = (_virtualMode ? writer.Position() | mskStatRef : (size_t)writer.Address());
-//
-//   _compiler->allocateVariable(writer);
-//
-//   _statLength++;
-//
-//   return (void*)vaddress;
-//}
-//
+void* JITLinker :: resolveAnonymousStaticVariable()
+{
+   // get target image & resolve virtual address
+   MemoryWriter writer(_loader->getTargetSection((ref_t)mskStatRef));
+
+   size_t vaddress = (_virtualMode ? writer.Position() | mskStatRef : (size_t)writer.Address());
+
+   _compiler->allocateVariable(writer);
+
+   _statLength++;
+
+   return (void*)vaddress;
+}
+
 //void* JITLinker :: resolveStaticVariable(ident_t reference, int mask)
 //{
 //   // get target image & resolve virtual address
@@ -1041,28 +1041,28 @@ void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReade
 
 void JITLinker :: onModuleLoad(_Module* module)
 {
-//   _loadedModules.add(module);
+   _loadedModules.add(module);
 }
 
-//void JITLinker :: generateInitTape(MemoryDump& tape)
-//{
-//   ReferenceHelper helper(this, NULL, NULL);
-//
-//   ModuleList::Iterator it = _loadedModules.start();
-//   while (!it.Eof()) {
-//      ReferenceNs initSymbol((*it)->Name(), INITIALIZER_SECTION);
-//      ref_t initRef = (*it)->mapReference(initSymbol, true);
-//      if (initRef != 0) {
-//         void* initializer = resolveBytecodeSection(initSymbol, mskSymbolRef, helper.getSection(initRef | mskSymbolRef, *it));
-//         if (initializer != LOADER_NOTLOADED)
-//            _compiler->generateSymbolCall(tape, initializer);
-//      }
-//
-//      it++;
-//   }
-//
-//   _loadedModules.clear();
-//}
+void JITLinker :: generateInitTape(MemoryDump& tape)
+{
+   ReferenceHelper helper(this, NULL, NULL);
+
+   ModuleList::Iterator it = _loadedModules.start();
+   while (!it.Eof()) {
+      ReferenceNs initSymbol((*it)->Name(), INITIALIZER_SECTION);
+      ref_t initRef = (*it)->mapReference(initSymbol, true);
+      if (initRef != 0) {
+         void* initializer = resolveBytecodeSection(ReferenceInfo(initSymbol), mskSymbolRef, helper.getSection(initRef | mskSymbolRef, *it));
+         if (initializer != LOADER_NOTLOADED)
+            _compiler->generateSymbolCall(tape, initializer);
+      }
+
+      it++;
+   }
+
+   _loadedModules.clear();
+}
 
 void* JITLinker :: resolveEntry(void* programEntry)
 {
@@ -1070,8 +1070,8 @@ void* JITLinker :: resolveEntry(void* programEntry)
 
    _compiler->generateProgramStart(ecodes);
 
-//   // generate module initializers
-//   generateInitTape(ecodes);
+   // generate module initializers
+   generateInitTape(ecodes);
 
    _compiler->generateSymbolCall(ecodes, programEntry);
 

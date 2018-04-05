@@ -428,7 +428,7 @@ namespace _ELENA_
    #define ATTRIBUTE_SECTION        "#attributes"
 //   #define EXTENSION_SECTION        "#extensions"
 //   #define ACTION_SECTION           "#actions"
-//   #define INITIALIZER_SECTION      "#initializer"
+   #define INITIALIZER_SECTION      "#initializer"
 //   #define PACKAGE_SECTION          "#package"
    #define IMPORTS_SECTION          "#import"
 //   #define AUTOEXTENSION_SECTION    "#auto_extensions"

@@ -41,15 +41,15 @@ using namespace _ELENA_;
 //#define HINT_EXT_RESENDEXPR   0x00080400
 //#define HINT_ASSIGNING_EXPR   0x00040000
 #define HINT_NODEBUGINFO      0x00020000
-////#define HINT_PARAMETERSONLY   0x00010000
-////#define HINT_SUBCODE_CLOSURE  0x00008800
-////#define HINT_RESENDEXPR       0x00000400
-////#define HINT_LAZY_EXPR        0x00000200
-////#define HINT_DYNAMIC_OBJECT   0x00000100  // indicates that the structure MUST be boxed
-////#define HINT_UNBOXINGEXPECTED 0x00000080
-////#define HINT_INT64EXPECTED    0x00000004
-////#define HINT_REAL64EXPECTED   0x00000002
-////#define HINT_INQUIRY_MODE     0x00000001
+//#define HINT_PARAMETERSONLY   0x00010000
+//#define HINT_SUBCODE_CLOSURE  0x00008800
+//#define HINT_RESENDEXPR       0x00000400
+//#define HINT_LAZY_EXPR        0x00000200
+//#define HINT_DYNAMIC_OBJECT   0x00000100  // indicates that the structure MUST be boxed
+//#define HINT_UNBOXINGEXPECTED 0x00000080
+//#define HINT_INT64EXPECTED    0x00000004
+//#define HINT_REAL64EXPECTED   0x00000002
+//#define HINT_INQUIRY_MODE     0x00000001
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
@@ -74,16 +74,16 @@ typedef ClassInfo::Attribute Attribute;
 //   }
 //   else return isCollection(node);
 //}
-//
+
 //inline bool isPrimitiveRef(ref_t reference)
 //{
 //   return (int)reference < 0;
 //}
-//
-////inline bool isPrimitiveType(ref_t reference)
-////{
-////   return reference == V_ARGARRAY;
-////}
+
+//inline bool isPrimitiveType(ref_t reference)
+//{
+//   return reference == V_ARGARRAY;
+//}
 
 inline void findUninqueName(_Module* module, IdentifierString& name)
 {
@@ -167,17 +167,12 @@ inline bool isImportRedirect(SNode node)
 ////      start = middle;
 ////   }
 ////}
-//
-////inline bool isSealedStaticField(ref_t ref)
+
+////inline bool checkNode(SNode node, LexicalType type, ref_t argument)
 ////{
-////   return (int)ref >= 0;
+////   return node == type && node.argument == argument;
 ////}
-////
-//////inline bool checkNode(SNode node, LexicalType type, ref_t argument)
-//////{
-//////   return node == type && node.argument == argument;
-//////}
-////
+//
 ////inline bool isConstantArguments(SNode node)
 ////{
 ////   if (node == lxNone)
@@ -1015,31 +1010,31 @@ Compiler::ClassScope :: ClassScope(NamespaceScope* parent, ref_t reference)
    info.header.classRef = 0;
    info.header.staticSize = 0;
 //   info.size = 0;
-//
+
 //   extensionClassRef = 0;
 //   embeddable = false;
-//   classClassMode = false;
+   classClassMode = false;
 //   abstractBasedMode = false;
 }
 
-//void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
-//{
-//   // import static fields
-//   ClassInfo::StaticFieldMap::Iterator static_it = statics.start();
-//   while (!static_it.Eof()) {
-//      info.statics.add(static_it.key(), *static_it);
-//
-//      static_it++;
-//   }
-//
-//   auto staticValue_it = staticValues.start();
-//   while (!staticValue_it.Eof()) {
-//      ref_t val = *staticValue_it;
-//      info.staticValues.add(staticValue_it.key(), val);
-//
-//      staticValue_it++;
-//   }
-//}
+void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
+{
+   // import static fields
+   ClassInfo::StaticFieldMap::Iterator static_it = statics.start();
+   while (!static_it.Eof()) {
+      info.statics.add(static_it.key(), *static_it);
+
+      static_it++;
+   }
+
+   auto staticValue_it = staticValues.start();
+   while (!staticValue_it.Eof()) {
+      ref_t val = *staticValue_it;
+      info.staticValues.add(staticValue_it.key(), val);
+
+      staticValue_it++;
+   }
+}
 
 ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
 {
@@ -1055,8 +1050,8 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
 //      return ObjectInfo(okThisParam, 1, -2, info.fieldTypes.get(-1).value1);
 //   }
    else {
-//      ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
-//      if (staticInfo.value1 != 0) {
+      ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
+      if (staticInfo.value1 != 0) {
 //         if (!isSealedStaticField(staticInfo.value1)) {
 //            ref_t val = info.staticValues.get(staticInfo.value1);
 //            if (val != mskStatRef) {
@@ -1066,12 +1061,12 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
 //               else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
 //            }
 //         }
-//         if (classClassMode) {
-//            return ObjectInfo(okClassStaticField, 0, staticInfo.value1, staticInfo.value2);
-//         }         
-//         else return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2);
-//      }
-      /*else */return ObjectInfo();
+         if (classClassMode) {
+            return ObjectInfo(okClassStaticField, 0, staticInfo.value1, staticInfo.value2);
+         }         
+         else return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2);
+      }
+      else return ObjectInfo();
    }
 }
 
@@ -1698,14 +1693,14 @@ ref_t Compiler :: resolveObjectReference(/*ModuleScope& scope, */ObjectInfo obje
       //case okOuter:
       case okParam:
       case okSymbol:
-      //case okStaticField:
+      case okStaticField:
       //case okStaticConstantField:
          return object.extraparam;
       //case okClassStaticConstantField:
       //case okOuterField:
       //case okOuterStaticField:
-      //case okClassStaticField:
-      //   return object.element;
+      case okClassStaticField:
+         return object.element;
       default:
          if (object.kind == okObject) {
             return object.param;
@@ -1991,21 +1986,21 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 //   }
 //}
 
-void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/)
+void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size*/, bool& isStaticField/*, bool& isSealed, bool& isConstant*/)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
          if (_logic->validateFieldAttribute(value/*, isSealed, isConstant*/)) {
-            //if (value == lxStaticAttr) {
-            //   isStaticField = true;
-            //}
+            if (value == lxStaticAttr) {
+               isStaticField = true;
+            }
             //else if (value == V_OBJARRAY) {
             //   elementRef = fieldRef;
             //   fieldRef = V_OBJARRAY;
             //}
-            /*else */if (value == -1) {
+            else if (value == -1) {
                // ignore if constant / sealed attribute was set
             }
             //else if (fieldRef == 0) {
@@ -2398,24 +2393,24 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 //      case okOuter:
          writer.newNode(lxField, object.param);
          break;
-//      case okStaticField:
-//         if ((int)object.param < 0) {
-//            // if it is a normal static field - field expression should be used
-//            writer.newNode(lxFieldExpression, 0);
-//            writer.appendNode(lxClassRefField, 1);
-//            writer.appendNode(lxStaticField, object.param);
-//         }
-//         // if it is a sealed static field
-//         else writer.newNode(lxStaticField, object.param);
-//         break;
-//      case okClassStaticField:
-//         writer.newNode(lxFieldExpression, 0);
-//         if (!object.param) {
-//            writer.appendNode(lxThisLocal, 1);
-//         }
-//         else writer.appendNode(lxConstantClass, object.param);
-//         writer.appendNode(lxStaticField, object.extraparam);
-//         break;
+      case okStaticField:
+         if ((int)object.param < 0) {
+            // if it is a normal static field - field expression should be used
+            writer.newNode(lxFieldExpression, 0);
+            writer.appendNode(lxClassRefField, 1);
+            writer.appendNode(lxStaticField, object.param);
+         }
+         // if it is a sealed static field
+         else writer.newNode(lxStaticField, object.param);
+         break;
+      case okClassStaticField:
+         writer.newNode(lxFieldExpression, 0);
+         if (!object.param) {
+            writer.appendNode(lxSelfLocal, 1);
+         }
+         else writer.appendNode(lxConstantClass, object.param);
+         writer.appendNode(lxStaticField, object.extraparam);
+         break;
 //      case okStaticConstantField:
 //         writer.newNode(lxFieldExpression, 0);
 //         writer.appendNode(lxClassRefField, 1);
@@ -2602,9 +2597,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
    else if (!emptystr(token))
       object = scope.mapTerminal(token, terminal == lxReference);
 
-//   if (test(mode, HINT_INQUIRY_MODE)) {
-//      // assingment optimization - do nothing for an inqiry mode
-//   }
+   //if (test(mode, HINT_INQUIRY_MODE)) {
+   //   // assingment optimization - do nothing for an inqiry mode
+   //}
 //   else if (object.kind == okExplicitConstant) {
 //      // replace an explicit constant with the appropriate object
 //      writer.newBookmark();
@@ -3681,26 +3676,26 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 //      operationType = lxNone;
 //   }
 //   else {
-//      SNode targetNode = node.firstChild(lxObjectMask);
-//      if (scope.isInitializer()) {
-//         // HOTFIX : recognize static field initializer
-//         retVal = compileExpression(writer, targetNode, scope, HINT_INQUIRY_MODE);
-//         if (retVal.kind == okStaticField) {
-//            // HOTFIX : static field initializer should be compiled as preloaded symbol
-//            compileStaticAssigning(retVal, targetNode.nextNode(lxObjectMask), *((ClassScope*)scope.getScope(Scope::slClass)));
-//
-//            writer.removeBookmark();
-//
-//            return ObjectInfo();
-//         }
-//         else retVal = compileExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
-//      }
-//      else retVal = compileExpression(writer, targetNode, scope, mode | HINT_NOBOXING);
-//
+      SNode sourceNode = current.nextNode(lxObjectMask);
+
+      if (scope.isInitializer()) {
+         // HOTFIX : recognize static field initializer
+         //retVal = compileExpression(writer, targetNode, scope, 0, HINT_INQUIRY_MODE);
+         if (target.kind == okStaticField) {
+            // HOTFIX : static field initializer should be compiled as preloaded symbol
+            compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::slClass)));
+
+            writer.removeBookmark();
+
+            return ObjectInfo();
+         }
+      }
+
 //      ref_t targetRef = resolveObjectReference(scope, retVal);
       switch (target.kind) {
          case okLocal:
          case okField:
+         case okStaticField:
             break;
          default:
             scope.raiseError(errInvalidOperation, node);
@@ -3740,8 +3735,6 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 //      else scope.raiseError(errInvalidOperation, node);
 //
 //      writer.newBookmark();
-
-      SNode sourceNode = current.nextNode(lxObjectMask);
 
       //   writer.newNode(lxExpression);
       //   //writer.appendNode(lxBreakpoint, dsStep);
@@ -5792,7 +5785,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 
 void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-//   bool staticFieldsInherited = false;
+   bool staticFieldsInherited = false;
 
    // add virtual constructor
    if (classClassScope.info.methods.exist(encodeAction(NEWOBJECT_MESSAGE_ID), true)) {
@@ -5820,24 +5813,24 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
             compileConstructor(writer, current, methodScope, classClassScope);
             break;
          }
-//         case lxStaticMethod:
-//         {
-//            if (!staticFieldsInherited) {
-//               // HOTFIX : inherit static fields
-//               classClassScope.copyStaticFields(classScope.info.statics, classScope.info.staticValues);
-//
-//               staticFieldsInherited = true;
-//            }
-//
-//            MethodScope methodScope(&classClassScope);
-//            methodScope.message = current.argument;
-//            declareArgumentList(current, methodScope);
-//
-//            initialize(classClassScope, methodScope);
-//
-//            compileMethod(writer, current, methodScope);
-//            break;
-//         }
+         case lxStaticMethod:
+         {
+            if (!staticFieldsInherited) {
+               // HOTFIX : inherit static fields
+               classClassScope.copyStaticFields(classScope.info.statics, classScope.info.staticValues);
+
+               staticFieldsInherited = true;
+            }
+
+            MethodScope methodScope(&classClassScope);
+            methodScope.message = current.argument;
+            declareArgumentList(current, methodScope);
+
+            initialize(classClassScope, methodScope);
+
+            compileMethod(writer, current, methodScope);
+            break;
+         }
       }
 
       current = current.nextNode();
@@ -5867,19 +5860,19 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope/*, bool singl
       if (current == lxClassField) {
          ref_t fieldRef = 0;
          //ref_t elementRef = 0;
-         //bool isStatic = false;
+         bool isStatic = false;
          //bool isSealed = false;
          //bool isConst = false;
          //int sizeHint = 0;
-         declareFieldAttributes(current, scope, fieldRef/*, elementRef, sizeHint, isStatic, isSealed, isConst*/);
+         declareFieldAttributes(current, scope, fieldRef/*, elementRef, sizeHint*/, isStatic/*, isSealed, isConst*/);
 
-         //if (isStatic) {
-         //   generateClassStaticField(scope, current, fieldRef, elementRef, isSealed, isConst);
-         //}
+         if (isStatic) {
+            generateClassStaticField(scope, current, fieldRef/*, elementRef, isSealed, isConst*/);
+         }
          //else if (isSealed || isConst) {
          //   scope.raiseError(errIllegalField, current);
          //}
-         /*else */generateClassField(scope, current, fieldRef/*, elementRef, sizeHint, singleField*/);
+         else generateClassField(scope, current, fieldRef/*, elementRef, sizeHint, singleField*/);
       }
       //else if (current == lxFieldInit) {
       //   // HOTFIX : reallocate static constant
@@ -5929,19 +5922,21 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 //   // create byte code sections
 //   _writer.save(tape, *scope.moduleScope);
 //}
-//
-//void Compiler :: compilePreloadedCode(ClassScope& scope, SNode node)
-//{
-//   _Module* module = scope.moduleScope->module;
-//
-//   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
-//
-//   CommandTape tape;
-//   _writer.generateInitializer(tape, module->mapReference(sectionName), node);
-//
-//   // create byte code sections
-//   _writer.save(tape, *scope.moduleScope);
-//}
+
+void Compiler :: compilePreloadedCode(ClassScope& scope, SNode node)
+{
+   _Module* module = scope.moduleScope->module;
+
+   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
+
+   pos_t sourcePathRef = scope.saveSourcePath(_writer);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, module->mapReference(sectionName), node);
+
+   // create byte code sections
+   _writer.save(tape, *scope.moduleScope, sourcePathRef);
+}
 
 void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
@@ -6023,8 +6018,8 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
          if (test(methodScope.hints, tpConstructor)) {
             current = lxConstructor;
          }
-//         else if (test(methodScope.hints, tpStatic))
-//            current = lxStaticMethod;
+         else if (test(methodScope.hints, tpStatic))
+            current = lxStaticMethod;
 
          if (!_logic->validateMessage(methodScope.message, false))
             scope.raiseError(errIllegalMethod, current);
@@ -6197,46 +6192,46 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    //}
 }
 
-////void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst)
-////{
-////   _Module* module = scope.moduleScope->module;
-////
-////   ident_t terminal = current.findChild(lxIdentifier, lxPrivate).identifier();
-////
-////   if (scope.info.statics.exist(terminal)) {
-////      if (current.argument == INVALID_REF) {
-////         //HOTFIX : ignore duplicate autogenerated fields
-////         return;
-////      }
-////      else scope.raiseError(errDuplicatedField, current);
-////   }
-////
-////   if (isSealed) {
-////      // generate static reference
-////      ReferenceNs name(module->resolveReference(scope.reference));
-////      name.append(STATICFIELD_POSTFIX);
-////
-////      findUninqueName(module, name);
-////
-////      scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), fieldRef));
-////   }
-////   else {
-////      int index = ++scope.info.header.staticSize;
-////      index = -index - 4;
-////
-////      scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
-////
-////      if (isConst) {
-////         ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
-////         name.append(STATICFIELD_POSTFIX);
-////         name.append("##");
-////         name.appendInt(-index);
-////
-////         scope.info.staticValues.add(index, scope.moduleScope->module->mapReference(name) | mskConstArray);
-////      }
-////      else scope.info.staticValues.add(index, (ref_t)mskStatRef);
-////   }
-////}
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, ref_t elementRef, bool isSealed, bool isConst*/)
+{
+//   _Module* module = scope.moduleScope->module;
+
+   ident_t terminal = current.findChild(lxIdentifier/*, lxPrivate*/).identifier();
+
+   if (scope.info.statics.exist(terminal)) {
+//      if (current.argument == INVALID_REF) {
+//         //HOTFIX : ignore duplicate autogenerated fields
+//         return;
+//      }
+      /*else */scope.raiseError(errDuplicatedField, current);
+   }
+
+//   if (isSealed) {
+//      // generate static reference
+//      ReferenceNs name(module->resolveReference(scope.reference));
+//      name.append(STATICFIELD_POSTFIX);
+//
+//      findUninqueName(module, name);
+//
+//      scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), fieldRef));
+//   }
+//   else {
+      int index = ++scope.info.header.staticSize;
+      index = -index - 4;
+
+      scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
+
+      //if (isConst) {
+      //   ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
+      //   name.append(STATICFIELD_POSTFIX);
+      //   name.append("##");
+      //   name.appendInt(-index);
+
+      //   scope.info.staticValues.add(index, scope.moduleScope->module->mapReference(name) | mskConstArray);
+      //}
+      /*else */scope.info.staticValues.add(index, (ref_t)mskStatRef);
+//   }
+}
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message, bool allowTypeAttribute)
 {
@@ -6754,9 +6749,9 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    writer.closeNode();
    writer.closeNode();
 
-//   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
-//   node.refresh();
-//
+   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
+   node.refresh();
+
 //   // create constant if required
 //   if (scope.constant) {
 //      // static symbol cannot be constant
@@ -6783,33 +6778,32 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    _writer.save(tape, *scope.moduleScope, sourcePathRef);
 }
 
-////void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/)
-////{
-////   SyntaxTree expressionTree;
-////   SyntaxWriter writer(expressionTree);
-////
-////   CodeScope codeScope(&scope);
-////
-////   writer.newNode(lxExpression);
-////   writer.newNode(lxAssigning);
-////   if (isPrimitiveRef(target.param)) {
-////      writeTerminal(writer, node, codeScope, ObjectInfo(okClassStaticField, scope.reference, target.param, target.extraparam), HINT_NODEBUGINFO);
-////   }
-////   else writeTerminal(writer, node, codeScope, target, HINT_NODEBUGINFO);
-////
-////   writer.newBookmark();
-////   ObjectInfo source = compileExpression(writer, node, codeScope, 0);
-////   convertObject(writer, *scope.moduleScope, target.extraparam, resolveObjectReference(codeScope, source), source.element);
-////
-////   writer.removeBookmark();
-////   writer.closeNode();
-////   writer.closeNode();
-////
-////   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
-////
-////   compilePreloadedCode(scope, expressionTree.readRoot());
-////}
-////
+void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/)
+{
+   SyntaxTree expressionTree;
+   SyntaxWriter writer(expressionTree);
+
+   CodeScope codeScope(&scope);
+
+   writer.newNode(lxExpression);
+   writer.newNode(lxAssigning);
+   /*if (isPrimitiveRef(target.param)) {
+      writeTerminal(writer, node, codeScope, ObjectInfo(okClassStaticField, scope.reference, target.param, target.extraparam), HINT_NODEBUGINFO);
+   }
+   else*/ writeTerminal(writer, node, codeScope, target, HINT_NODEBUGINFO);
+
+   writer.newBookmark();
+   ObjectInfo source = compileExpression(writer, node, codeScope, target.extraparam, 0);
+
+   writer.removeBookmark();
+   writer.closeNode();
+   writer.closeNode();
+
+   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
+
+   compilePreloadedCode(scope, expressionTree.readRoot());
+}
+
 ////// NOTE : elementRef is used for binary arrays
 ////ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef)
 ////{
@@ -6880,592 +6874,594 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 ////   }
 ////   else return V_INT32;
 ////}
-////
-////ref_t Compiler :: analizeInternalCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
+//
+//ref_t Compiler :: analizeInternalCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
+//{
+//   analizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
+//
+//   return V_INT32;
+//}
+//
+////ref_t Compiler :: analizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int)
 ////{
 ////   analizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
 ////
-////   return V_INT32;
+////   return 0;
 ////}
 ////
-//////ref_t Compiler :: analizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int)
-//////{
-//////   analizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
-//////
-//////   return 0;
-//////}
-//////
-//////int Compiler :: allocateStructure(SNode node, int& size)
-//////{
-//////   // finding method's reserved attribute
-//////   SNode methodNode = node.parentNode();
-//////   while (methodNode != lxClassMethod)
-//////      methodNode = methodNode.parentNode();
-//////
-//////   SNode reserveNode = methodNode.findChild(lxReserved);
-//////   int reserved = reserveNode.argument;
-//////
-//////   // allocating space
-//////   int offset = allocateStructure(false, size, reserved);
-//////
-//////   // HOT FIX : size should be in bytes
-//////   size *= 4;
-//////
-//////   reserveNode.setArgument(reserved);
-//////
-//////   return offset;
-//////}
-//////
-//////ref_t Compiler :: analizeNestedExpression(SNode node, ModuleScope& scope, WarningScope& warningScope)
-//////{
-//////   // check if the nested collection can be treated like constant one
-//////   bool constant = true;
-//////   ref_t memberCounter = 0;
-//////   SNode current = node.firstChild();
-//////   while (constant && current != lxNone) {
-//////      if (current == lxMember) {
-//////         SNode object = current.findSubNodeMask(lxObjectMask);
-//////         switch (object.type) {
-//////            case lxConstantChar:
-//////            case lxConstantClass:
-//////            case lxConstantInt:
-//////            case lxConstantLong:
-//////            case lxConstantList:
-//////            case lxConstantReal:
-//////            case lxConstantString:
-//////            case lxConstantWideStr:
-//////            case lxConstantSymbol:
-//////               break;
-//////            case lxNested:
-//////               analizeNestedExpression(object, scope, warningScope);
-//////               object.refresh();
-//////               if (object != lxConstantList)
-//////                  constant = false;
-//////
-//////               break;
-//////            case lxUnboxing:
-//////               current = lxOuterMember;
-//////               analizeBoxing(object, scope, warningScope, HINT_NOUNBOXING);
-//////               constant = false;
-//////               break;
-//////            default:
-//////               constant = false;
-//////               analizeExpressionTree(current, scope, warningScope);
-//////               break;
-//////         }
-//////         memberCounter++;
-//////      }
-//////      else if (current == lxOuterMember) {
-//////         // nested class with outer member must not be constant
-//////         constant = false;
-//////
-//////         analizeExpression(current, scope, warningScope);
-//////      }
-//////      else if (current == lxOvreriddenMessage) {
-//////         constant = false;
-//////      }
-//////      current = current.nextNode();
-//////   }
-//////
-//////   if (node.argument != memberCounter)
-//////      constant = false;
-//////
-//////   // replace with constant array if possible
-//////   if (constant && memberCounter > 0) {
-//////      ref_t reference = scope.mapAnonymous();
-//////
-//////      node = lxConstantList;
-//////      node.setArgument(reference | mskConstArray);
-//////
-//////      _writer.generateConstantList(node, scope.module, reference);
-//////   }
-//////
-//////   return node.findChild(lxTarget).argument;
-//////}
-//////
-//////ref_t Compiler :: analizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
-//////{
-//////   int mode = 0;
-//////
-//////   if (node.existChild(lxStacksafeAttr)) {
-//////      mode |= HINT_NOBOXING;
-//////   }
-//////
-//////   if (node.existChild(lxEmbeddableAttr)) {
-//////      if (!_logic->optimizeEmbeddable(node, scope))
-//////         node.appendNode(lxEmbeddable);
-//////   }
-//////
-//////   analizeExpressionTree(node, scope, warningScope, mode);
-//////
-//////   return node.findChild(lxTarget).argument;
-//////}
-//////
-//////ref_t Compiler :: analizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope)
-//////{
-//////   //ref_t targetRef = node.findChild(lxTarget).argument;
-//////   SNode targetNode = node.firstChild(lxObjectMask);
-//////   SNode sourceNode = targetNode.nextNode(lxObjectMask);
-//////
-//////   ref_t sourceRef = analizeExpression(sourceNode, scope, warningScope,node.argument != 0 ? HINT_NOBOXING | HINT_NOUNBOXING : HINT_NOUNBOXING);
-//////
-//////   if (node.argument != 0) {
-//////      SNode intValue = node.findSubNode(lxConstantInt);
-//////      if (intValue != lxNone && node.argument == 4) {
-//////         // direct operation with numeric constants
-//////         node.set(lxIntOp, SET_MESSAGE_ID);
-//////      }
-//////      else {
-//////         SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
-//////         if (subNode == lxAssigning) {
-//////            bool tempAttr = subNode.existChild(lxTempAttr);
-//////
-//////            // assignment operation
-//////            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
-//////            if (operationNode != lxNone) {
-//////               SNode larg = operationNode.findSubNodeMask(lxObjectMask);
-//////               SNode rarg = operationNode.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-//////               SNode target = node.firstChild(lxObjectMask);
-//////               if (rarg.type == targetNode.type && rarg.argument == targetNode.argument) {
-//////                  // if the target is used in the subexpression rvalue
-//////                  // do nothing
-//////               }
-//////               // if it is an operation with the same target
-//////               else if (larg.type == target.type && larg.argument == target.argument) {
-//////                  // remove an extra assignment
-//////                  larg = subNode.findSubNodeMask(lxObjectMask);
-//////
-//////                  larg = target.type;
-//////                  larg.setArgument(target.argument);
-//////                  node = lxExpression;
-//////                  target = lxIdle;
-//////
-//////                  // replace add / subtract with append / reduce and remove an assignment
-//////                  switch (operationNode.argument) {
-//////                     case ADD_MESSAGE_ID:
-//////                        operationNode.setArgument(APPEND_MESSAGE_ID);
-//////                        subNode = lxExpression;
-//////                        larg = lxIdle;
-//////                        break;
-//////                     case SUB_MESSAGE_ID:
-//////                        operationNode.setArgument(REDUCE_MESSAGE_ID);
-//////                        subNode = lxExpression;
-//////                        larg = lxIdle;
-//////                        break;
-//////                  }
-//////               }
-//////               // if it is an operation with an extra temporal variable
-//////               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
-//////                  larg = subNode.findSubNodeMask(lxObjectMask);
-//////
-//////                  if ((larg.type == targetNode.type && larg.argument == targetNode.argument) || (tempAttr && subNode.argument == node.argument && larg == lxLocalAddress)) {
-//////                     // remove an extra assignment
-//////                     subNode = lxExpression;
-//////                     larg = lxIdle;
-//////                  }
-//////               }
-//////            }
-//////            else if (tempAttr && subNode.argument == node.argument) {
-//////               SNode larg = subNode.firstChild(lxObjectMask);
-//////               if (larg == lxLocalAddress) {
-//////                  // remove an extra assignment
-//////                  subNode = lxExpression;
-//////                  larg = lxIdle;
-//////               }
-//////            }
-//////         }
-//////         else if (subNode != lxNone) {
-//////            if (subNode.existChild(lxEmbeddable)) {
-//////               if (!_logic->optimizeEmbeddableGet(scope, *this, node)) {
-//////                  _logic->optimizeEmbeddableOp(scope, *this, node);
-//////               }
-//////            }
-//////            else if (subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
-//////               SNode createNode = subNode.findChild(lxCreatingStruct);
-//////               if (createNode != lxNone && targetNode == lxLocalAddress) {
-//////                  // if it is implicit conversion
-//////                  createNode.set(targetNode.type, targetNode.argument);
-//////
-//////                  node = lxExpression;
-//////                  targetNode = lxIdle;
-//////               }
-//////            }
-//////         }
-//////      }
-//////   }
-//////
-//////   return sourceRef;
-//////}
-//////
-//////ref_t Compiler :: analizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
-//////{
-//////   if (node == lxCondBoxing && test(mode, HINT_NOCONDBOXING))
-//////      node = lxBoxing;
-//////
-//////   if (node == lxUnboxing && test(mode, HINT_NOUNBOXING))
-//////      node = lxBoxing;
-//////
-//////   ref_t targetRef = node.findChild(lxTarget).argument;
-//////   ref_t sourceRef = 0;
-//////   bool boxing = !test(mode, HINT_NOBOXING);
-//////
-//////   // HOTFIX : override the stacksafe attribute if the object must be boxed
-//////   if (!boxing && node.existChild(lxBoxingRequired))
-//////      boxing = true;
-//////
-//////   SNode sourceNode = node.findSubNodeMask(lxObjectMask);
-//////   if (sourceNode == lxBoxing) {
-//////      SNode newNode = sourceNode.findSubNodeMask(lxObjectMask);
-//////      if (newNode == lxNewOp) {
-//////         // HOTFIX : boxing inside boxing
-//////         sourceNode = lxExpression;
-//////
-//////         sourceNode = newNode;
-//////      }
-//////   }
-//////
-//////   if (sourceNode == lxNewOp) {
-//////      // HOTFIX : set correct target for the new operator
-//////      sourceNode.setArgument(targetRef);
-//////
-//////      analizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
-//////
-//////      boxing = false;
-//////   }
-//////   else {
-//////      // for boxing stack allocated / embeddable variables - source is the same as target
-//////      if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxThisLocal) && node.argument != 0) {
-//////         sourceRef = targetRef;
-//////      }
-//////      // HOTFIX : do not box constant classes
-//////      else if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
-//////         boxing = false;
-//////      }
-//////      else if (sourceNode == lxConstantReal && targetRef == scope.realReference) {
-//////         boxing = false;
-//////      }
-//////      else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
-//////         boxing = false;
-//////      }
-//////      else if (sourceNode == lxMessageConstant && targetRef == scope.messageReference) {
-//////         boxing = false;
-//////      }
-//////      else if (sourceNode == lxSignatureConstant && targetRef == scope.signatureReference) {
-//////         boxing = false;
-//////      }
-//////      else if (node == lxUnboxing && !boxing) {
-//////         //HOTFIX : to unbox structure field correctly
-//////         sourceRef = analizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
-//////      }
-//////      else {
-//////         if ((sourceNode == lxBoxing || sourceNode == lxUnboxing) && (int)node.argument < 0 && (int)sourceNode.argument > 0) {
-//////            //HOTFIX : boxing fixed-sized array
-//////            if (sourceNode.existChild(lxFieldAddress)) {
-//////               node.setArgument(-((int)sourceNode.argument / (int)node.argument));
-//////            }
-//////         }
-//////
-//////         int subMode = HINT_NOBOXING;
-//////         if (targetRef == scope.longReference) {
-//////            subMode |= HINT_INT64EXPECTED;
-//////         }
-//////         else if (targetRef == scope.realReference) {
-//////            subMode |= HINT_REAL64EXPECTED;
-//////         }
-//////
-//////         sourceRef = analizeExpression(sourceNode, scope, warningScope, subMode);
-//////      }
-//////
-//////      // adjust primitive target
-//////      if (_logic->isPrimitiveRef(targetRef) && boxing) {
-//////         targetRef = _logic->resolvePrimitiveReference(scope, targetRef);
-//////         node.findChild(lxTarget).setArgument(targetRef);
-//////      }
-//////
-//////      if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED))) {
-//////         scope.raiseError(errIllegalOperation, node);
-//////      }
-//////   }
-//////
-//////   if (!boxing && node != lxLocalUnboxing) {
-//////      node = lxExpression;
-//////   }
-//////
-//////   return targetRef;
-//////}
-//////
-//////ref_t Compiler :: analizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
-//////{
-//////   bool boxing = !test(mode, HINT_NOBOXING);
-//////
-//////   // HOTFIX : override the stacksafe attribute if the object must be boxed
-//////   if (!boxing && node.existChild(lxBoxingRequired))
-//////      boxing = true;
-//////
-//////   if (!boxing)
-//////      node = lxExpression;
-//////
-//////   analizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
-//////
-//////   return scope.arrayReference;
-//////}
-//////
-//////ref_t Compiler :: analizeSymbol(SNode& node, ModuleScope& scope, WarningScope&)
-//////{
-//////   ObjectInfo result = scope.defineObjectInfo(node.argument, true);
-//////   switch (result.kind) {
-//////      case okConstantClass:
-//////         node = lxConstantClass;
-//////         break;
-//////      case okConstantSymbol:
-//////         node = lxConstantSymbol;
-//////         break;
-//////   }
-//////
-//////   return resolveObjectReference(scope, result);
-//////}
-//////
-//////ref_t Compiler :: analizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope)
-//////{
-//////   int lmask = HINT_NOBOXING;
-//////   if (current.argument == REFER_MESSAGE_ID) {
-//////      switch (current.type) {
-//////         case lxIntArrOp:
-//////         case lxByteArrOp:
-//////         case lxShortArrOp:
-//////         case lxBinArrOp:
-//////            lmask |= HINT_NOUNBOXING;
-//////            break;
-//////         default:
-//////            break;
-//////      }
-//////   }
-//////
-//////   SNode loperand = current.firstChild(lxObjectMask);
-//////   analizeExpression(loperand, scope, warningScope, lmask);
-//////
-//////   SNode roperand = loperand.nextNode(lxObjectMask);
-//////   analizeExpression(roperand, scope, warningScope, HINT_NOBOXING);
-//////
-//////   SNode roperand2 = roperand.nextNode(lxObjectMask);
-//////   if (roperand2 != lxNone)
-//////      analizeExpression(roperand2, scope, warningScope, HINT_NOBOXING);
-//////
-//////   if (current == lxIntOp && loperand == lxConstantInt && roperand == lxConstantInt) {
-//////      int val = 0;
-//////      if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
-//////         loperand = lxIdle;
-//////         roperand = lxIdle;
-//////
-//////         IdentifierString str;
-//////         str.appendHex(val);
-//////         current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
-//////         current.appendNode(lxIntValue, val);
-//////
-//////         return V_INT32;
-//////      }
-//////   }
-//////   else if (current == lxRealOp && loperand == lxConstantReal && roperand == lxConstantReal) {
-//////      double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
-//////      double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
-//////      double val = 0;
-//////      if (calculateRealOp(current.argument, d1, d2, val)) {
-//////         loperand = lxIdle;
-//////         roperand = lxIdle;
-//////
-//////         IdentifierString str;
-//////         str.appendDouble(val);
-//////         current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
-//////
-//////         return V_REAL64;
-//////      }
-//////   }
-//////
-//////   switch (current) {
-//////      case lxIntOp:
-//////      case lxByteArrOp:
-//////      case lxIntArrOp:
-//////      case lxShortArrOp:
-//////         return V_INT32;
-//////      case lxLongOp:
-//////         return V_INT64;
-//////      case lxRealOp:
-//////         return V_REAL64;
-//////      case lxBinArrOp:
-//////         return V_BINARY;
-//////      case lxNewOp:
-//////         return current.argument;
-//////      default:
-//////         return 0;
-//////   }
-//////}
-//////
-//////ref_t Compiler ::analizeExpression(SNode current, ModuleScope& scope, WarningScope& warningScope, int mode)
-//////{
-//////   switch (current.type) {
-//////      case lxCalling:
-//////      case lxDirectCalling:
-//////      case lxSDirctCalling:
-//////         return analizeMessageCall(current, scope, warningScope);
-//////      case lxExpression:
-//////      case lxReturning:
-//////         return analizeExpression(current.firstChild(lxObjectMask), scope, warningScope, mode);
-//////      case lxAltExpression:
-//////      case lxBranching:
-//////      case lxTrying:
-//////         analizeExpressionTree(current, scope, warningScope);
-//////         return 0;
-//////      case lxBoxing:
-//////      case lxCondBoxing:
-//////      case lxUnboxing:
-//////         return analizeBoxing(current, scope, warningScope, mode);
-//////      case lxArgBoxing:
-//////         return analizeArgBoxing(current, scope, warningScope, mode);
-//////      case lxArgUnboxing:
-//////         return analizeArgUnboxing(current, scope, warningScope, mode);
-//////      case lxAssigning:
-//////         return analizeAssigning(current, scope, warningScope);
-//////      case lxSymbolReference:
-//////         return analizeSymbol(current, scope, warningScope);
-//////      case lxIntOp:
-//////      case lxLongOp:
-//////      case lxRealOp:
-//////      case lxIntArrOp:
-//////      case lxShortArrOp:
-//////      case lxByteArrOp:
-//////      case lxArrOp:
-//////      case lxBinArrOp:
-//////      case lxNewOp:
-//////      case lxArgArrOp:
-//////      case lxBoolOp:
-//////         return analizeOp(current, scope, warningScope);
-//////      case lxInternalCall:
-//////         return analizeInternalCall(current, scope, warningScope);
-//////      case lxStdExternalCall:
-//////      case lxExternalCall:
-//////      case lxCoreAPICall:
-//////         return analizeExtCall(current, scope, warningScope, mode);
-//////      case lxLooping:
-//////      case lxSwitching:
-//////      case lxOption:
-//////      case lxElse:
-//////         analizeExpressionTree(current, scope, warningScope);
-//////         return 0;
-//////      case lxNested:
-//////         return analizeNestedExpression(current, scope, warningScope);
-//////      default:
-//////         return current.findChild(lxTarget).argument;
-//////   }
-//////}
-//////
-//////void Compiler :: analizeBranching(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
-//////{
-//////   analizeExpressionTree(node, scope, warningScope, mode);
-//////
-//////   _logic->optimizeBranchingOp(scope, node);
-//////}
-//////
-//////void Compiler :: analizeExpressionTree(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
-//////{
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      switch (current.type) {
-//////         case lxElse:
-//////         case lxCode:
-//////         case lxIf:
-//////         case lxExternFrame:
-//////            analizeExpressionTree(current, scope, warningScope);
-//////            break;
-//////         case lxBranching:
-//////         case lxLooping:
-//////            analizeBranching(current, scope, warningScope);
-//////            break;
-//////         default:
-//////            if (test(current.type, lxObjectMask)) {
-//////               analizeExpression(current, scope, warningScope, mode);
-//////            }
-//////            break;
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
-//////
-//////void Compiler :: analizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope)
-//////{
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      switch (current.type) {
-//////         case lxReturning:
-//////            analizeExpressionTree(current, scope, warningScope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
-//////            break;
-//////         case lxExpression:
-//////         case lxExternFrame:
-//////         case lxDirectCalling:
-//////         case lxSDirctCalling:
-//////         case lxCalling:
-//////            analizeExpressionTree(current, scope, warningScope);
-//////            break;
-//////         default:
-//////            if (test(current.type, lxObjectMask)) {
-//////               analizeExpression(current, scope, warningScope, 0);
-//////            }
-//////            break;
-//////      }
-//////      current = current.nextNode();
-//////   }
-//////}
-//////
-//////void Compiler :: analizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope)
-//////{
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxNewFrame) {
-//////         analizeCode(current, scope, warningScope);
-//////      }
-//////      current = current.nextNode();
-//////   }
-//////}
-//////
-//////void Compiler :: analizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope)
-//////{
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      if (current == lxClassMethod) {
-////////         SNode mask = current.findChild(lxWarningMask);
-////////         if (mask != lxNone)
-////////            warningScope.warningMask = mask.argument;
-//////
-//////         analizeMethod(current, *scope.moduleScope, warningScope);
-//////
-//////         if (test(_optFlag, 1)) {
-//////            if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
-//////               defineEmbeddableAttributes(scope, current);
-//////            }
-//////         }
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
-//////
-//////void Compiler :: analizeSymbolTree(SNode node, Scope& scope, int warningMask)
-//////{
-//////   WarningScope warningScope(warningMask);
-//////
-//////   SNode current = node.firstChild();
-//////   while (current != lxNone) {
-//////      /*if (current == lxWarningMask) {
-//////         warningMask = current.argument;
-//////      }
-//////      else */if (test(current.type, lxExprMask)) {
-//////         analizeExpressionTree(current, *scope.moduleScope, warningScope, HINT_NOUNBOXING);
-//////      }
-//////
-//////      current = current.nextNode();
-//////   }
-//////}
-//////
+////int Compiler :: allocateStructure(SNode node, int& size)
+////{
+////   // finding method's reserved attribute
+////   SNode methodNode = node.parentNode();
+////   while (methodNode != lxClassMethod)
+////      methodNode = methodNode.parentNode();
+////
+////   SNode reserveNode = methodNode.findChild(lxReserved);
+////   int reserved = reserveNode.argument;
+////
+////   // allocating space
+////   int offset = allocateStructure(false, size, reserved);
+////
+////   // HOT FIX : size should be in bytes
+////   size *= 4;
+////
+////   reserveNode.setArgument(reserved);
+////
+////   return offset;
+////}
+////
+////ref_t Compiler :: analizeNestedExpression(SNode node, ModuleScope& scope, WarningScope& warningScope)
+////{
+////   // check if the nested collection can be treated like constant one
+////   bool constant = true;
+////   ref_t memberCounter = 0;
+////   SNode current = node.firstChild();
+////   while (constant && current != lxNone) {
+////      if (current == lxMember) {
+////         SNode object = current.findSubNodeMask(lxObjectMask);
+////         switch (object.type) {
+////            case lxConstantChar:
+////            case lxConstantClass:
+////            case lxConstantInt:
+////            case lxConstantLong:
+////            case lxConstantList:
+////            case lxConstantReal:
+////            case lxConstantString:
+////            case lxConstantWideStr:
+////            case lxConstantSymbol:
+////               break;
+////            case lxNested:
+////               analizeNestedExpression(object, scope, warningScope);
+////               object.refresh();
+////               if (object != lxConstantList)
+////                  constant = false;
+////
+////               break;
+////            case lxUnboxing:
+////               current = lxOuterMember;
+////               analizeBoxing(object, scope, warningScope, HINT_NOUNBOXING);
+////               constant = false;
+////               break;
+////            default:
+////               constant = false;
+////               analizeExpressionTree(current, scope, warningScope);
+////               break;
+////         }
+////         memberCounter++;
+////      }
+////      else if (current == lxOuterMember) {
+////         // nested class with outer member must not be constant
+////         constant = false;
+////
+////         analizeExpression(current, scope, warningScope);
+////      }
+////      else if (current == lxOvreriddenMessage) {
+////         constant = false;
+////      }
+////      current = current.nextNode();
+////   }
+////
+////   if (node.argument != memberCounter)
+////      constant = false;
+////
+////   // replace with constant array if possible
+////   if (constant && memberCounter > 0) {
+////      ref_t reference = scope.mapAnonymous();
+////
+////      node = lxConstantList;
+////      node.setArgument(reference | mskConstArray);
+////
+////      _writer.generateConstantList(node, scope.module, reference);
+////   }
+////
+////   return node.findChild(lxTarget).argument;
+////}
+////
+////ref_t Compiler :: analizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope)
+////{
+////   int mode = 0;
+////
+////   if (node.existChild(lxStacksafeAttr)) {
+////      mode |= HINT_NOBOXING;
+////   }
+////
+////   if (node.existChild(lxEmbeddableAttr)) {
+////      if (!_logic->optimizeEmbeddable(node, scope))
+////         node.appendNode(lxEmbeddable);
+////   }
+////
+////   analizeExpressionTree(node, scope, warningScope, mode);
+////
+////   return node.findChild(lxTarget).argument;
+////}
+////
+////ref_t Compiler :: analizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope)
+////{
+////   //ref_t targetRef = node.findChild(lxTarget).argument;
+////   SNode targetNode = node.firstChild(lxObjectMask);
+////   SNode sourceNode = targetNode.nextNode(lxObjectMask);
+////
+////   ref_t sourceRef = analizeExpression(sourceNode, scope, warningScope,node.argument != 0 ? HINT_NOBOXING | HINT_NOUNBOXING : HINT_NOUNBOXING);
+////
+////   if (node.argument != 0) {
+////      SNode intValue = node.findSubNode(lxConstantInt);
+////      if (intValue != lxNone && node.argument == 4) {
+////         // direct operation with numeric constants
+////         node.set(lxIntOp, SET_MESSAGE_ID);
+////      }
+////      else {
+////         SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
+////         if (subNode == lxAssigning) {
+////            bool tempAttr = subNode.existChild(lxTempAttr);
+////
+////            // assignment operation
+////            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
+////            if (operationNode != lxNone) {
+////               SNode larg = operationNode.findSubNodeMask(lxObjectMask);
+////               SNode rarg = operationNode.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+////               SNode target = node.firstChild(lxObjectMask);
+////               if (rarg.type == targetNode.type && rarg.argument == targetNode.argument) {
+////                  // if the target is used in the subexpression rvalue
+////                  // do nothing
+////               }
+////               // if it is an operation with the same target
+////               else if (larg.type == target.type && larg.argument == target.argument) {
+////                  // remove an extra assignment
+////                  larg = subNode.findSubNodeMask(lxObjectMask);
+////
+////                  larg = target.type;
+////                  larg.setArgument(target.argument);
+////                  node = lxExpression;
+////                  target = lxIdle;
+////
+////                  // replace add / subtract with append / reduce and remove an assignment
+////                  switch (operationNode.argument) {
+////                     case ADD_MESSAGE_ID:
+////                        operationNode.setArgument(APPEND_MESSAGE_ID);
+////                        subNode = lxExpression;
+////                        larg = lxIdle;
+////                        break;
+////                     case SUB_MESSAGE_ID:
+////                        operationNode.setArgument(REDUCE_MESSAGE_ID);
+////                        subNode = lxExpression;
+////                        larg = lxIdle;
+////                        break;
+////                  }
+////               }
+////               // if it is an operation with an extra temporal variable
+////               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
+////                  larg = subNode.findSubNodeMask(lxObjectMask);
+////
+////                  if ((larg.type == targetNode.type && larg.argument == targetNode.argument) || (tempAttr && subNode.argument == node.argument && larg == lxLocalAddress)) {
+////                     // remove an extra assignment
+////                     subNode = lxExpression;
+////                     larg = lxIdle;
+////                  }
+////               }
+////            }
+////            else if (tempAttr && subNode.argument == node.argument) {
+////               SNode larg = subNode.firstChild(lxObjectMask);
+////               if (larg == lxLocalAddress) {
+////                  // remove an extra assignment
+////                  subNode = lxExpression;
+////                  larg = lxIdle;
+////               }
+////            }
+////         }
+////         else if (subNode != lxNone) {
+////            if (subNode.existChild(lxEmbeddable)) {
+////               if (!_logic->optimizeEmbeddableGet(scope, *this, node)) {
+////                  _logic->optimizeEmbeddableOp(scope, *this, node);
+////               }
+////            }
+////            else if (subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
+////               SNode createNode = subNode.findChild(lxCreatingStruct);
+////               if (createNode != lxNone && targetNode == lxLocalAddress) {
+////                  // if it is implicit conversion
+////                  createNode.set(targetNode.type, targetNode.argument);
+////
+////                  node = lxExpression;
+////                  targetNode = lxIdle;
+////               }
+////            }
+////         }
+////      }
+////   }
+////
+////   return sourceRef;
+////}
+////
+////ref_t Compiler :: analizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
+////{
+////   if (node == lxCondBoxing && test(mode, HINT_NOCONDBOXING))
+////      node = lxBoxing;
+////
+////   if (node == lxUnboxing && test(mode, HINT_NOUNBOXING))
+////      node = lxBoxing;
+////
+////   ref_t targetRef = node.findChild(lxTarget).argument;
+////   ref_t sourceRef = 0;
+////   bool boxing = !test(mode, HINT_NOBOXING);
+////
+////   // HOTFIX : override the stacksafe attribute if the object must be boxed
+////   if (!boxing && node.existChild(lxBoxingRequired))
+////      boxing = true;
+////
+////   SNode sourceNode = node.findSubNodeMask(lxObjectMask);
+////   if (sourceNode == lxBoxing) {
+////      SNode newNode = sourceNode.findSubNodeMask(lxObjectMask);
+////      if (newNode == lxNewOp) {
+////         // HOTFIX : boxing inside boxing
+////         sourceNode = lxExpression;
+////
+////         sourceNode = newNode;
+////      }
+////   }
+////
+////   if (sourceNode == lxNewOp) {
+////      // HOTFIX : set correct target for the new operator
+////      sourceNode.setArgument(targetRef);
+////
+////      analizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING);
+////
+////      boxing = false;
+////   }
+////   else {
+////      // for boxing stack allocated / embeddable variables - source is the same as target
+////      if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxThisLocal) && node.argument != 0) {
+////         sourceRef = targetRef;
+////      }
+////      // HOTFIX : do not box constant classes
+////      else if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
+////         boxing = false;
+////      }
+////      else if (sourceNode == lxConstantReal && targetRef == scope.realReference) {
+////         boxing = false;
+////      }
+////      else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
+////         boxing = false;
+////      }
+////      else if (sourceNode == lxMessageConstant && targetRef == scope.messageReference) {
+////         boxing = false;
+////      }
+////      else if (sourceNode == lxSignatureConstant && targetRef == scope.signatureReference) {
+////         boxing = false;
+////      }
+////      else if (node == lxUnboxing && !boxing) {
+////         //HOTFIX : to unbox structure field correctly
+////         sourceRef = analizeExpression(sourceNode, scope, warningScope, HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
+////      }
+////      else {
+////         if ((sourceNode == lxBoxing || sourceNode == lxUnboxing) && (int)node.argument < 0 && (int)sourceNode.argument > 0) {
+////            //HOTFIX : boxing fixed-sized array
+////            if (sourceNode.existChild(lxFieldAddress)) {
+////               node.setArgument(-((int)sourceNode.argument / (int)node.argument));
+////            }
+////         }
+////
+////         int subMode = HINT_NOBOXING;
+////         if (targetRef == scope.longReference) {
+////            subMode |= HINT_INT64EXPECTED;
+////         }
+////         else if (targetRef == scope.realReference) {
+////            subMode |= HINT_REAL64EXPECTED;
+////         }
+////
+////         sourceRef = analizeExpression(sourceNode, scope, warningScope, subMode);
+////      }
+////
+////      // adjust primitive target
+////      if (_logic->isPrimitiveRef(targetRef) && boxing) {
+////         targetRef = _logic->resolvePrimitiveReference(scope, targetRef);
+////         node.findChild(lxTarget).setArgument(targetRef);
+////      }
+////
+////      if (!_logic->validateBoxing(scope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED))) {
+////         scope.raiseError(errIllegalOperation, node);
+////      }
+////   }
+////
+////   if (!boxing && node != lxLocalUnboxing) {
+////      node = lxExpression;
+////   }
+////
+////   return targetRef;
+////}
+////
+////ref_t Compiler :: analizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
+////{
+////   bool boxing = !test(mode, HINT_NOBOXING);
+////
+////   // HOTFIX : override the stacksafe attribute if the object must be boxed
+////   if (!boxing && node.existChild(lxBoxingRequired))
+////      boxing = true;
+////
+////   if (!boxing)
+////      node = lxExpression;
+////
+////   analizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
+////
+////   return scope.arrayReference;
+////}
+////
+////ref_t Compiler :: analizeSymbol(SNode& node, ModuleScope& scope, WarningScope&)
+////{
+////   ObjectInfo result = scope.defineObjectInfo(node.argument, true);
+////   switch (result.kind) {
+////      case okConstantClass:
+////         node = lxConstantClass;
+////         break;
+////      case okConstantSymbol:
+////         node = lxConstantSymbol;
+////         break;
+////   }
+////
+////   return resolveObjectReference(scope, result);
+////}
+////
+////ref_t Compiler :: analizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope)
+////{
+////   int lmask = HINT_NOBOXING;
+////   if (current.argument == REFER_MESSAGE_ID) {
+////      switch (current.type) {
+////         case lxIntArrOp:
+////         case lxByteArrOp:
+////         case lxShortArrOp:
+////         case lxBinArrOp:
+////            lmask |= HINT_NOUNBOXING;
+////            break;
+////         default:
+////            break;
+////      }
+////   }
+////
+////   SNode loperand = current.firstChild(lxObjectMask);
+////   analizeExpression(loperand, scope, warningScope, lmask);
+////
+////   SNode roperand = loperand.nextNode(lxObjectMask);
+////   analizeExpression(roperand, scope, warningScope, HINT_NOBOXING);
+////
+////   SNode roperand2 = roperand.nextNode(lxObjectMask);
+////   if (roperand2 != lxNone)
+////      analizeExpression(roperand2, scope, warningScope, HINT_NOBOXING);
+////
+////   if (current == lxIntOp && loperand == lxConstantInt && roperand == lxConstantInt) {
+////      int val = 0;
+////      if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
+////         loperand = lxIdle;
+////         roperand = lxIdle;
+////
+////         IdentifierString str;
+////         str.appendHex(val);
+////         current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
+////         current.appendNode(lxIntValue, val);
+////
+////         return V_INT32;
+////      }
+////   }
+////   else if (current == lxRealOp && loperand == lxConstantReal && roperand == lxConstantReal) {
+////      double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
+////      double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
+////      double val = 0;
+////      if (calculateRealOp(current.argument, d1, d2, val)) {
+////         loperand = lxIdle;
+////         roperand = lxIdle;
+////
+////         IdentifierString str;
+////         str.appendDouble(val);
+////         current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
+////
+////         return V_REAL64;
+////      }
+////   }
+////
+////   switch (current) {
+////      case lxIntOp:
+////      case lxByteArrOp:
+////      case lxIntArrOp:
+////      case lxShortArrOp:
+////         return V_INT32;
+////      case lxLongOp:
+////         return V_INT64;
+////      case lxRealOp:
+////         return V_REAL64;
+////      case lxBinArrOp:
+////         return V_BINARY;
+////      case lxNewOp:
+////         return current.argument;
+////      default:
+////         return 0;
+////   }
+////}
+
+ref_t Compiler ::analizeExpression(SNode current, CompilerScope& scope, /*WarningScope& warningScope, */int mode)
+{
+//   switch (current.type) {
+//      case lxCalling:
+//      case lxDirectCalling:
+//      case lxSDirctCalling:
+//         return analizeMessageCall(current, scope, warningScope);
+//      case lxExpression:
+//      case lxReturning:
+//         return analizeExpression(current.firstChild(lxObjectMask), scope, warningScope, mode);
+//      case lxAltExpression:
+//      case lxBranching:
+//      case lxTrying:
+//         analizeExpressionTree(current, scope, warningScope);
+//         return 0;
+//      case lxBoxing:
+//      case lxCondBoxing:
+//      case lxUnboxing:
+//         return analizeBoxing(current, scope, warningScope, mode);
+//      case lxArgBoxing:
+//         return analizeArgBoxing(current, scope, warningScope, mode);
+//      case lxArgUnboxing:
+//         return analizeArgUnboxing(current, scope, warningScope, mode);
+//      case lxAssigning:
+//         return analizeAssigning(current, scope, warningScope);
+//      case lxSymbolReference:
+//         return analizeSymbol(current, scope, warningScope);
+//      case lxIntOp:
+//      case lxLongOp:
+//      case lxRealOp:
+//      case lxIntArrOp:
+//      case lxShortArrOp:
+//      case lxByteArrOp:
+//      case lxArrOp:
+//      case lxBinArrOp:
+//      case lxNewOp:
+//      case lxArgArrOp:
+//      case lxBoolOp:
+//         return analizeOp(current, scope, warningScope);
+//      case lxInternalCall:
+//         return analizeInternalCall(current, scope, warningScope);
+//      case lxStdExternalCall:
+//      case lxExternalCall:
+//      case lxCoreAPICall:
+//         return analizeExtCall(current, scope, warningScope, mode);
+//      case lxLooping:
+//      case lxSwitching:
+//      case lxOption:
+//      case lxElse:
+//         analizeExpressionTree(current, scope, warningScope);
+//         return 0;
+//      case lxNested:
+//         return analizeNestedExpression(current, scope, warningScope);
+   //   default:
+   //      return current.findChild(lxTarget).argument;
+   //}
+
+   return 0; // !! temporal
+}
+
+////void Compiler :: analizeBranching(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
+////{
+////   analizeExpressionTree(node, scope, warningScope, mode);
+////
+////   _logic->optimizeBranchingOp(scope, node);
+////}
+
+void Compiler :: analizeExpressionTree(SNode node, CompilerScope& scope, /*WarningScope& warningScope, */int mode)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+//      switch (current.type) {
+////         case lxElse:
+////         case lxCode:
+////         case lxIf:
+////         case lxExternFrame:
+////            analizeExpressionTree(current, scope, warningScope);
+////            break;
+////         case lxBranching:
+////         case lxLooping:
+////            analizeBranching(current, scope, warningScope);
+////            break;
+//         default:
+//            if (test(current.type, lxObjectMask)) {
+//               analizeExpression(current, scope, /*warningScope, */mode);
+//            }
+//            break;
+//      }
+
+      current = current.nextNode();
+   }
+}
+
+//void Compiler :: analizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      switch (current.type) {
+//         case lxReturning:
+//            analizeExpressionTree(current, scope, warningScope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
+//            break;
+//         case lxExpression:
+//         case lxExternFrame:
+//         case lxDirectCalling:
+//         case lxSDirctCalling:
+//         case lxCalling:
+//            analizeExpressionTree(current, scope, warningScope);
+//            break;
+//         default:
+//            if (test(current.type, lxObjectMask)) {
+//               analizeExpression(current, scope, warningScope, 0);
+//            }
+//            break;
+//      }
+//      current = current.nextNode();
+//   }
+//}
+//
+//void Compiler :: analizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (current == lxNewFrame) {
+//         analizeCode(current, scope, warningScope);
+//      }
+//      current = current.nextNode();
+//   }
+//}
+//
+//void Compiler :: analizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (current == lxClassMethod) {
+////         SNode mask = current.findChild(lxWarningMask);
+////         if (mask != lxNone)
+////            warningScope.warningMask = mask.argument;
+//
+//         analizeMethod(current, *scope.moduleScope, warningScope);
+//
+//         if (test(_optFlag, 1)) {
+//            if (test(scope.info.methodHints.get(Attribute(current.argument, maHint)), tpEmbeddable)) {
+//               defineEmbeddableAttributes(scope, current);
+//            }
+//         }
+//      }
+//
+//      current = current.nextNode();
+//   }
+//}
+
+void Compiler :: analizeSymbolTree(SNode node, Scope& scope, int warningMask)
+{
+   //WarningScope warningScope(warningMask);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      /*if (current == lxWarningMask) {
+         warningMask = current.argument;
+      }
+      else */if (test(current.type, lxExprMask)) {
+         analizeExpressionTree(current, *scope.moduleScope, /*warningScope, */0/*HINT_NOUNBOXING*/);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //////void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
 //////{
 //////   // Optimization : var = get&subject => eval&subject&var[1]
@@ -7620,9 +7616,9 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 
             // compile class class if it available
             if (classScope.info.header.classRef != classScope.reference && classScope.info.header.classRef != 0) {
-               ClassScope classClassScope(&scope, classScope.info.header.classRef/*, classScope.sourcePath*/);
+               ClassScope classClassScope(&scope, classScope.info.header.classRef);
                scope.moduleScope->loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
-               //classClassScope.classClassMode = true;
+               classClassScope.classClassMode = true;
 
                compileClassClassImplementation(expressionTree, current, classClassScope, classScope);
             }

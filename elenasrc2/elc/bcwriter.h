@@ -116,7 +116,7 @@ class ByteCodeWriter
    void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, int sourcePathRef, bool appendMode);
    void writeClass(ref_t reference, ByteCodeIterator& it, _CompilerScope& scope, pos_t sourcePathRef);
 
-//   void declareInitializer(CommandTape& tape, ref_t reference);
+   void declareInitializer(CommandTape& tape, ref_t reference);
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
@@ -167,7 +167,7 @@ class ByteCodeWriter
 
 //   void copyBase(CommandTape& tape, int size);
    void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
+   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
@@ -230,7 +230,7 @@ class ByteCodeWriter
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
-//   void endInitializer(CommandTape& tape);
+   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
@@ -332,7 +332,7 @@ public:
 //   void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateSymbolWithInitialization(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument, ref_t implicitConstructor);
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
-//   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
+   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);
 //   void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);
 //   void generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument);
