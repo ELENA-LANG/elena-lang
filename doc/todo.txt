@@ -3,6 +3,10 @@ In development:
 ------                              
                             
               dev - redesign
+                 * field initializer and explicit constructor
+
+                 * private / protected / private sealed methods
+
                  * reimplement forwards: super class, entry point
 
                  * constructors should not be inherited if explicit one is declared (e.g. default one should not be always

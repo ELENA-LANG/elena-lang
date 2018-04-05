@@ -467,9 +467,9 @@ private:
 //
 //      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 
-//      ObjectInfo mapField(ident_t identifier);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
+      ObjectInfo mapField(ident_t identifier);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -628,8 +628,8 @@ private:
 //      {
 //         reserved = saved;
 //      }
-//
-//      ObjectInfo mapMember(ident_t identifier);
+
+      ObjectInfo mapMember(ident_t identifier);
 
       ObjectInfo mapGlobal(ident_t identifier);
 
@@ -801,12 +801,12 @@ private:
    void writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
-//   int checkMethod(CompilerScope& scope, ref_t reference, ref_t message)
-//   {
-//      _CompilerLogic::ChechMethodInfo dummy;
-//
-//      return _logic->checkMethod(scope, reference, message, dummy);
-//   }
+   int checkMethod(CompilerScope& scope, ref_t reference, ref_t message)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      return _logic->checkMethod(scope, reference, message, dummy);
+   }
 
 //   int retrieveGenericArgParamCount(ClassScope& scope);
 //
@@ -834,12 +834,12 @@ private:
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
    void compileParentDeclaration(SNode node, ClassScope& scope);
-//   void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
+   void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
 
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
-//   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/);
    void declareVMT(SNode member, ClassScope& scope);
 ////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
@@ -889,9 +889,9 @@ private:
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
 
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
-////   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
-////   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+//   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
+//   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 
@@ -931,7 +931,7 @@ private:
 
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
-//   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 //   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
@@ -946,7 +946,7 @@ private:
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
-//   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, ref_t elementRef, int sizeHint, bool singleField*/);
+   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, ref_t elementRef, int sizeHint, bool singleField*/);
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);

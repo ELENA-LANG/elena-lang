@@ -24,6 +24,7 @@ __define identifier		12293
 __define private	        12294
 __define reference		12295
 __define attribute		12303
+__define member			12304
 __define global			12305
 
 __define DECLARATION_END_EXPECTED	16384
@@ -42,6 +43,7 @@ DECLARATION ->
 	| BLOCK
 	| COLON PARAMETER METHOD_BODY
 	| OPENING_BRACKET SIGNATURE_BODY METHOD_BODY
+	| ASSIGN_OPERATOR ASSIGNING DECLARATION_END
 	| DECLARATION_END
  
 DECLARATIONS ->
@@ -165,6 +167,7 @@ MESSAGE_PARAMETER ->
 OBJECT ->
 	identifier
 	| reference
+	| member
 	| global
 	| OPENING_BRACKET SUB_EXPRESSION
 
@@ -176,6 +179,7 @@ PARAMETER ->
 
 TOKEN ->
 	identifier TOKEN_BODY
+	| member
 
 TOKEN_PARAM ->
 	identifier TOKEN_BODY
@@ -224,6 +228,9 @@ COLON ->
 
 DOUBLE_COLON ->
 	::
+
+ASSIGN_OPERATOR ->
+	:=
 
 TERMINATOR ->
 	.

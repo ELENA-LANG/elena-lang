@@ -1224,9 +1224,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 {
    switch ((size_t)attrValue)
    {
-//      case V_SEALED:
-//         attrValue = elSealed;
-//         return true;
+      case V_SEALED:
+         attrValue = elSealed;
+         return true;
 //      case V_ABSTRACT:
 //         attrValue = elAbstract;
 //         return true;
@@ -1292,9 +1292,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       //case V_GENERIC:
       //   attrValue = (tpGeneric | tpSealed);
       //   return true;
-      //case V_SEALED:
-      //   attrValue = tpSealed;
-      //   return true;
+      case V_SEALED:
+         attrValue = tpSealed;
+         return true;
       //case V_ACTION:
       //   attrValue = tpAction;
       //   return true;
