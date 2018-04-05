@@ -291,17 +291,6 @@ ref_t CompilerScope :: mapFullReference(ident_t referenceName, bool existing)
    return reference;
 }
 
-//_Module* CompilerScope :: resolveReference(ref_t reference, ref_t& moduleReference)
-//{
-//   ident_t refName = module->resolveReference(reference);
-//   if (isWeakReference(refName) || refName.find('\'') == NOTFOUND_POS) {
-//      moduleReference = reference;
-//
-//      return module;
-//   }
-//   else return project->resolveModule(refName, moduleReference);
-//}
-
 void CompilerScope :: saveAttribute(ident_t name, ref_t attr)
 {
    if (attr) {

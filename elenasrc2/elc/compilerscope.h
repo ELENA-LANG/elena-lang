@@ -26,6 +26,10 @@ struct CompilerScope : _CompilerScope
    SymbolMap savedPaths;
 
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference);
+   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference)
+   {
+      return loadReferenceModule(module->resolveReference(reference), moduleReference);
+   }
 
    void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly);
    
@@ -63,8 +67,6 @@ struct CompilerScope : _CompilerScope
       else return referenceName;
    }
    
-   //_Module* resolveReference(ref_t reference, ref_t& moduleReference);
-
    /*virtual */void saveAttribute(ident_t typeName, ref_t classReference);
 
    virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal);

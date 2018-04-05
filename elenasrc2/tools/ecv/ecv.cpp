@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   9
+#define REVISION_VERSION   10
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -165,7 +165,9 @@ void printHelp()
 
 _Memory* findClassMetaData(_Module* module, ident_t referenceName)
 {
-   ref_t reference = module->mapReference(referenceName, true);
+   IdentifierString name("'", referenceName);
+
+   ref_t reference = module->mapReference(name, true);
    if (reference == 0) {
       return NULL;
    }
