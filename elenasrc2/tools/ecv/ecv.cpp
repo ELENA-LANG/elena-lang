@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   10
+#define REVISION_VERSION   11
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -213,12 +213,12 @@ ref_t resolveMessage(_Module* module, ident_t method)
    ref_t actionRef = 0;
    ref_t flags = 0;
 
-   //if (method.startsWith("#private&")) {
-   //   flags |= SEALED_MESSAGE;
+   if (method.startsWith("#private&")) {
+      flags |= SEALED_MESSAGE;
 
-   //   method = method.c_str() + getlength("#private&");
-   //}
-   /*else */if (method.startsWith("#conversion&")) {
+      method = method.c_str() + getlength("#private&");
+   }
+   else if (method.startsWith("#conversion&")) {
       flags |= CONVERSION_MESSAGE;
 
       method = method.c_str() + getlength("#conversion&");
@@ -459,9 +459,9 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       if (test(reference, CONVERSION_MESSAGE)) {
          command.append("#conversion&");
       }
-      //else if (test(reference, SEALED_MESSAGE)) {
-      //   command.append("#private&");
-      //}
+      else if (test(reference, SEALED_MESSAGE)) {
+         command.append("#private&");
+      }
 
       ident_t verbName = retrieveKey(_verbs.start(), actionRef, DEFAULT_STR);
       command.append(verbName);
@@ -470,14 +470,14 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       if (test(reference, CONVERSION_MESSAGE)) {
          command.append("#conversion&");
       }
-   //   else {
-   //      if (test(reference, SEALED_MESSAGE)) {
-   //         command.append("#private&");
-   //      }
+      else {
+         if (test(reference, SEALED_MESSAGE)) {
+            command.append("#private&");
+         }
    //      if (test(reference, PROPSET_MESSAGE)) {
    //         command.append("set&");
    //      }
-   //   }
+      }
       ref_t signature = 0;
       ident_t actionName = module->resolveAction(actionRef, signature);
       command.append(actionName);

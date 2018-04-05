@@ -1120,51 +1120,54 @@ ObjectInfo Compiler::MethodScope :: mapSelf(bool forced)
    /*else */return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
 }
 
-//ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
-//{
-//   int prefix = /*closureMode ? 0 : */-1;
-//
-////   if (withOpenArg && param.class_ref == V_ARGARRAY) {
-////      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
-////   }
-////   else if (stackSafe && param.class_ref != 0 && param.size != 0) {
-////      return ObjectInfo(okParam, prefix - param.offset, param.class_ref, (ref_t)-1);
-////   }
-//   return ObjectInfo(okParam, prefix - param.offset, param.class_ref);
-//}
-//
-//ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal)
-//{
-////   if (terminal.compare(THIS_VAR)) {
-////      if (closureMode || nestedMode) {
-////         return parent->mapTerminal(OWNER_VAR);
-////      }
-////      else return mapThis();
-////   }
-////   else if (terminal.compare(SELF_VAR) && !closureMode) {
-////      if (extensionMode) {
-////         return mapThis();
-////      }
-////      else return ObjectInfo(okParam, (size_t)-1);
-////   }
-////   else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
-////      ObjectInfo retVar = parent->mapTerminal(terminal);
-////      if (retVar.kind == okUnknown) {
-////         InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
-////
-////         retVar = closure->allocateRetVar();
-////      }
-////
-////      return retVar;
-////   }
-////   else {
-//      Parameter param = parameters.get(terminal);
-//      if (param.offset >= 0) {
-//         return mapParameter(param);
-//      }
-//      else return Scope::mapTerminal(terminal);
-////   }
-//}
+ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
+{
+   int prefix = /*closureMode ? 0 : */-1;
+
+//   if (withOpenArg && param.class_ref == V_ARGARRAY) {
+//      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
+//   }
+//   else if (stackSafe && param.class_ref != 0 && param.size != 0) {
+//      return ObjectInfo(okParam, prefix - param.offset, param.class_ref, (ref_t)-1);
+//   }
+   return ObjectInfo(okParam, prefix - param.offset, param.class_ref);
+}
+
+ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool referenceOne)
+{
+   if (!referenceOne) {
+      if (terminal.compare(SELF_VAR)) {
+         /*if (closureMode || nestedMode) {
+         return parent->mapTerminal(OWNER_VAR);
+         }
+         else */return mapSelf();
+      }
+      //   else if (terminal.compare(SELF_VAR) && !closureMode) {
+      //      if (extensionMode) {
+      //         return mapThis();
+      //      }
+      //      else return ObjectInfo(okParam, (size_t)-1);
+      //   }
+      //   else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
+      //      ObjectInfo retVar = parent->mapTerminal(terminal);
+      //      if (retVar.kind == okUnknown) {
+      //         InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
+      //
+      //         retVar = closure->allocateRetVar();
+      //      }
+      //
+      //      return retVar;
+      //   }
+      else {
+         Parameter param = parameters.get(terminal);
+         if (param.offset >= 0) {
+            return mapParameter(param);
+         }
+      }
+   }
+
+   return Scope::mapTerminal(terminal, referenceOne);
+}
 
 // --- Compiler::CodeScope ---
 
@@ -3156,11 +3159,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       retVal.param = result.outputReference;
    }
 
-//   if (target.kind == okThisParam && callType == tpPrivate) {
-//      messageRef |= SEALED_MESSAGE;
-//
-//      callType = tpSealed;
-//   }
+   if (target.kind == okSelfParam && callType == tpPrivate) {
+      messageRef |= SEALED_MESSAGE;
+
+      callType = tpSealed;
+   }
 //   else if (classReference == scope.moduleScope->signatureReference) {
 //      dispatchCall = test(mode, HINT_EXTENSION_MODE);
 //   }
@@ -4997,9 +5000,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          }
          else scope.raiseError(errIllegalMethod, node);
       }
-//      else if (test(scope.hints, tpSealed) && verb == lxPrivate) {
-//         flags |= SEALED_MESSAGE;
-//      }
+      else if (test(scope.hints, tpPrivate)) {
+         flags |= SEALED_MESSAGE;
+      }
 //      else if (unnamedMessage && emptystr(messageStr))
 //         messageStr.append(EVAL_MESSAGE);
 //
@@ -5372,7 +5375,7 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
       ref_t overloadRef = classScope.info.methodHints.get(Attribute(message, maOverloadlist));
       if (overloadRef) {
          // !! hotfix : temporal do not use direct multi method resolving for the class constructors
-         if (test(classScope.info.header.flags, /*elFinal*/elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+         if (test(classScope.info.header.flags, /*elFinal*/elSealed) || test(message, SEALED_MESSAGE)) {
             writer.newNode(lxSealedMultiDispatching, overloadRef);
          }
          else writer.newNode(lxMultiDispatching, overloadRef);
@@ -6275,13 +6278,13 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       current = current.nextNode();
    }
 
-   //if ((message & MESSAGE_FLAG_MASK) == SEALED_MESSAGE) {
-   //   // if it is private message set private hint and save it as EVAL one
-   //   hintChanged = true;
-   //   hint |= tpPrivate;
+   if ((message & MESSAGE_FLAG_MASK) == SEALED_MESSAGE) {
+      // if it is private message set private hint and save it as EVAL one
+      hintChanged = true;
+      hint |= tpPrivate;
 
-   //   scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), hint);
-   //}
+      scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), hint);
+   }
 
    if (hintChanged) {
       //if (test(hint, tpSealed | tpGeneric) && getAction(message) == INVOKE_MESSAGE_ID) {
@@ -6349,18 +6352,26 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       scope.raiseError(errDuplicatedMethod, current);
    }
    else {
-//      bool privateOne = test(message, SEALED_MESSAGE);
+      bool privateOne = test(message, SEALED_MESSAGE);
       bool castingOne = test(message, CONVERSION_MESSAGE);
       bool included = scope.include(message);
       bool sealedMethod = (methodHints & tpMask) == tpSealed;
       // if the class is closed, no new methods can be declared
       // except private sealed ones (which are declared outside the class VMT)
-      if (included && closed/* && !privateOne*/)
+      if (included && closed && !privateOne)
          scope.raiseError(errClosedParent, findParent(current, lxClass/*, lxNestedClass*/));
 
       // if the method is sealed, it cannot be overridden
       if (!included && sealedMethod && !castingOne)
          scope.raiseError(errClosedMethod, findParent(current, lxClass/*, lxNestedClass*/));
+
+      // HOTFIX : make sure there are no duplicity between public and private ones
+      if (privateOne) {
+         if (scope.info.methods.exist(message & ~SEALED_MESSAGE))
+            scope.raiseError(errDuplicatedMethod, current);
+      }
+      else  if (scope.info.methods.exist(message | SEALED_MESSAGE))
+         scope.raiseError(errDuplicatedMethod, current);
 
 //      // save extensions if required ; private method should be ignored
 //      if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {

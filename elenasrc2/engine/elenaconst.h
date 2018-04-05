@@ -24,7 +24,7 @@ namespace _ELENA_
    #define SIGNATURE_FLAG          0x08000000u
 
    #define MESSAGE_FLAG_MASK       0xE0000000u
-//   #define SEALED_MESSAGE          0x40000000u
+   #define SEALED_MESSAGE          0x40000000u
    #define CONVERSION_MESSAGE      0x60000000u
 //   #define PROPSET_MESSAGE         0x20000000u
    #define PARAM_MASK              0x0000000Fu
@@ -411,9 +411,9 @@ namespace _ELENA_
 //   #define TEMPLATE_GET_MESSAGE     "$get"
 //   #define TEMPLATE_SET_MESSAGE     "$set"
 
-  //// --- ELENA explicit variables ---
-  // #define SELF_VAR                "self"             // the current method target / closure owner method target
-  // #define THIS_VAR                "$self"            // the current method class reference / closure owner class reference
+  // --- ELENA explicit variables ---
+  // #define GROUP_VAR                "target"             // the current method target / closure owner method target
+   #define SELF_VAR                "self"            // the current method class reference / closure owner class reference
 
 //   #define SUPER_VAR               "$super"           // the predecessor class
 //   #define SUBJECT_VAR             "$subject"         // the current message

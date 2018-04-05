@@ -3,11 +3,11 @@ In development:
 ------                              
                             
               dev - redesign
-                 * static methods
-
-                 * static fields
-
                  * private / protected / private sealed methods
+                 * property set / get
+                 * variables
+                 * qualified fields, static fields, variables
+                 * conversion - typecasting
 
                  * field initializer and explicit constructor
 

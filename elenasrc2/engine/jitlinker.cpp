@@ -579,11 +579,11 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
          codeReader.seek(entry.address);
          methodPosition = loadMethod(refHelper, codeReader, codeWriter);
          
-         //// NOTE : private message is not added to VMT
-         //if (test(entry.message, SEALED_MESSAGE)) {
-         //   _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
-         //}
-         /*else */_compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
+         // NOTE : private message is not added to VMT
+         if (test(entry.message, SEALED_MESSAGE)) {
+            _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
+         }
+         else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
 
          size -= sizeof(VMTEntry);
       }

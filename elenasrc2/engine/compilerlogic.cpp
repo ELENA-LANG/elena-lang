@@ -588,7 +588,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
                ref_t flags = message & MESSAGE_FLAG_MASK;
                ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getAbsoluteParamCount(message) | flags), maOverloadlist));
                if (listRef != 0) {
-                  if (test(info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+                  if (test(info.header.flags, elSealed) || test(message, SEALED_MESSAGE)) {
                      compiler.generateSealedOverloadListMember(scope, listRef, message, classRef);
                   }
                   else if (test(info.header.flags, elClosed)) {
@@ -1292,6 +1292,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       //case V_GENERIC:
       //   attrValue = (tpGeneric | tpSealed);
       //   return true;
+      case V_PRIVATE:
+         attrValue = tpPrivate;
+         return true;
       case V_SEALED:
          attrValue = tpSealed;
          return true;

@@ -1681,8 +1681,8 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Compil
    // reset VMT length
    info.header.count = 0;
    for (ClassInfo::MethodMap::Iterator m_it = info.methods.start(); !m_it.Eof(); m_it++) {
-      ////NOTE : ingnore private methods
-      //if (!test(m_it.key(), SEALED_MESSAGE))
+      //NOTE : ingnore private methods
+      if (!test(m_it.key(), SEALED_MESSAGE))
          info.header.count++;
    }
 
