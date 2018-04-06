@@ -1311,11 +1311,14 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       //   // obsolete
       //   attrValue = /*tpMultimethod*/0;
       //   return true;
-      //case V_METHOD:
-      //   attrValue = 0;
-      //   return true;
+      case V_METHOD:
+         attrValue = 0;
+         return true;
       case V_STATIC:
          attrValue = (tpStatic | tpSealed);
+         return true;
+      case V_SET:
+         attrValue = tpAccessor;
          return true;
       default:
          return false;

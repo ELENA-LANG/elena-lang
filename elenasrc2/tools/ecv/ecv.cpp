@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   11
+#define REVISION_VERSION   12
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -245,10 +245,10 @@ ref_t resolveMessage(_Module* module, ident_t method)
       flags = CONVERSION_MESSAGE;
    }
    else {
-   //   if (method.find("set&") != NOTFOUND_POS) {
-   //      actionName.cut(0, 4);
-   //      flags = PROPSET_MESSAGE;
-   //   }
+      if (method.find("set&") != NOTFOUND_POS) {
+         actionName.cut(0, 4);
+         flags = PROPSET_MESSAGE;
+      }
    //   else if (actionName.compare("set")) {
    //      flags = PROPSET_MESSAGE;
    //   }
@@ -474,9 +474,9 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
          if (test(reference, SEALED_MESSAGE)) {
             command.append("#private&");
          }
-   //      if (test(reference, PROPSET_MESSAGE)) {
-   //         command.append("set&");
-   //      }
+         if (test(reference, PROPSET_MESSAGE)) {
+            command.append("set&");
+         }
       }
       ref_t signature = 0;
       ident_t actionName = module->resolveAction(actionRef, signature);

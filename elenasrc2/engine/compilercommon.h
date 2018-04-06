@@ -76,7 +76,7 @@
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
 #define V_FIELD          (ref_t)-16392
-//#define V_METHOD         (ref_t)-16393
+#define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
 //#define V_EXTERN         (ref_t)-16396
@@ -84,6 +84,7 @@
 //#define V_ACCESSOR       (ref_t)-16399
 //#define V_BLOCK          (ref_t)-16400
 //#define V_NESTEDBLOCK    (ref_t)-16401
+#define V_SET            (ref_t)-16402
 //
 //// obsolete
 //#define V_MULTI          (ref_t)-16397
@@ -114,6 +115,7 @@ enum MethodHint
    tpMultimethod = 0x1000,
 //   tpArgDispatcher = 0x3000,
    tpStatic      = 0x4000,
+   tpAccessor    = 0x8000,
 };
 
 // --- _CompileScope ---

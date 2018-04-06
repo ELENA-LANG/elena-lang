@@ -3,8 +3,7 @@ In development:
 ------                              
                             
               dev - redesign
-                 * private / protected / private sealed methods
-                 * property set / get
+                 * property set
                  * variables
                  * qualified fields, static fields, variables
                  * conversion - typecasting
@@ -67,6 +66,7 @@ In development:
                  * refactor _ImageLoader, to use module weak references without combining them together
                  * relative reference?
                  * there are reserved module names - system, forwards, externals
+                 * protected / internal methods
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

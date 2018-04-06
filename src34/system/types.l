@@ -20,7 +20,7 @@ var             = #16385.
 //auto            = #50.
 //limited         = #8196.
 field           = #16392.
-//method          = #16393.
+method          = #16393.
 //__loop          = #16394.
 //nonstructural   = #8204.
 //import          = #16395.
@@ -31,6 +31,7 @@ field           = #16392.
 //__block         = #16400.
 //__nested        = #16401.
 //preloaded       = #8207.
+set             = #16402.  
 
 public          = #8211.
 private         = #8212.

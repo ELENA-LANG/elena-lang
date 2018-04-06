@@ -884,15 +884,16 @@ private:
 ////
 ////   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
 ////   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
-//
-//   /*ObjectInfo*/void compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
-//
+
+   /*ObjectInfo*/void compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
+
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
 
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
