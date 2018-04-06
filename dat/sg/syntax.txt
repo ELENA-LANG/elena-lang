@@ -208,6 +208,8 @@ ATTRIBUTE ->
 
 BASE_CLASS ->
 	identifier
+	| reference
+	| global
 
 SUBJECT_ARG ->
 	identifier

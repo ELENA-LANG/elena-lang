@@ -1826,30 +1826,6 @@ void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref
       scope.raiseError(errUnknownBaseClass, baseNode);
 }
 
-//ref_t Compiler :: resolveParentRef(SNode node, CompilerScope& moduleScope, bool silentMode)
-//{
-//   ref_t parentRef = node.argument;
-//   if (!parentRef) {
-//      /*SNode identifier = node.findChild(lxIdentifier, lxPrivate, lxReference);
-//      if (identifier != lxNone) {
-//      if (identifier == lxIdentifier || identifier == lxPrivate) {
-//      parentRef = moduleScope.mapTerminal(identifier, true);
-//      }
-//      else {
-//      ident_t name = identifier.findChild(lxTerminal).identifier();
-//      if (emptystr(name))
-//      name = identifier.identifier();
-//
-//      parentRef = moduleScope.mapReference(name);
-//      }
-//
-//      if (parentRef == 0 && !silentMode)
-//      moduleScope.raiseError(errUnknownClass, identifier);
-//      }*/
-//   }
-//   return parentRef;
-//}
-
 void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 {
 //   if (node.existChild(lxTemplate)) {
@@ -1857,7 +1833,11 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 //      scope.abstractBasedMode = true;
 //   }
 
-   ref_t parentRef = /*resolveParentRef(node, *scope.moduleScope, false)*/0;
+   ref_t parentRef = 0;
+   if (node == lxBaseParent) {
+      parentRef = scope.moduleScope->module->mapReference(node.identifier());
+   }
+
    if (scope.info.header.parentRef == scope.reference) {
       if (parentRef != 0) {
          scope.raiseError(errInvalidSyntax, node);
@@ -6233,20 +6213,20 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
          hintChanged = true;
       }
-      //else if (current == lxClassRefAttr) {
-      //   if (!allowTypeAttribute) {
-      //      scope.raiseError(errTypeNotAllowed, node);
-      //   }
-      //   else if (outputRef == 0) {
-      //      outputRef = scope.moduleScope->module->mapReference(current.identifier(), false);
+      else if (current == lxReference) {
+         if (!allowTypeAttribute) {
+            scope.raiseError(errTypeNotAllowed, node);
+         }
+         else if (outputRef == 0) {
+            outputRef = scope.moduleScope->module->mapReference(current.identifier(), false);
 
-      //      outputChanged = true;
-      //   }
-      //   else if (outputRef != scope.moduleScope->module->mapReference(current.identifier(), false)) {
-      //      scope.raiseError(errTypeAlreadyDeclared, node);
-      //   }
-      //   else outputChanged = true;
-      //}
+            outputChanged = true;
+         }
+         else if (outputRef != scope.moduleScope->module->mapReference(current.identifier(), false)) {
+            scope.raiseError(errTypeAlreadyDeclared, node);
+         }
+         else outputChanged = true;
+      }
 //      else if (current == lxClassMethodOpt) {
 //         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
 //         if (mssgAttr != lxNone) {
@@ -6469,30 +6449,30 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
-      //else if (current == lxReference) {
-      ////   if (current.nextNode().findNext(lxTerminalMask) != lxNone) {
-      ////      // HOTFIX : to correctly recognize the method returning type
-      ////      current = lxClassRefAttr;
-      ////   }
-      //}
+      else if (current == lxReference) {
+      //   if (current.nextNode().findNext(lxTerminalMask) != lxNone) {
+      //      // HOTFIX : to correctly recognize the method returning type
+      //      current = lxClassRefAttr;
+      //   }
+      }
 
       current = current.nextNode();
    }
 }
 
-//inline SNode findBaseParent(SNode node)
-//{
-//   SNode baseNode = node.findChild(lxBaseParent);
-//   //if (baseNode != lxNone) {
-//   //   if (baseNode.argument == -1 && existChildWithArg(node, lxBaseParent, 0u)) {
-//   //      // HOTFIX : allow to override the template parent
-//   //      baseNode = lxIdle;
-//   //      baseNode = node.findChild(lxBaseParent);
-//   //   }
-//   //}
-//
-//   return baseNode;
-//}
+inline SNode findBaseParent(SNode node)
+{
+   SNode baseNode = node.findChild(lxBaseParent);
+   //if (baseNode != lxNone) {
+   //   if (baseNode.argument == -1 && existChildWithArg(node, lxBaseParent, 0u)) {
+   //      // HOTFIX : allow to override the template parent
+   //      baseNode = lxIdle;
+   //      baseNode = node.findChild(lxBaseParent);
+   //   }
+   //}
+
+   return baseNode;
+}
 
 //bool Compiler :: isDependentOnNotDeclaredClass(SNode baseNode, ModuleScope& scope)
 //{
@@ -6516,7 +6496,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 
 void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 {
-   compileParentDeclaration(/*findBaseParent(*/node/*)*/, scope);
+   compileParentDeclaration(findBaseParent(node), scope);
 
    declareClassAttributes(node, scope);
 
@@ -7451,92 +7431,92 @@ void Compiler :: analizeSymbolTree(SNode node, Scope& scope, int warningMask)
    }
 }
 
-//////void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
-//////{
-//////   // Optimization : var = get&subject => eval&subject&var[1]
-//////   ref_t type = 0;
-//////   ref_t returnRef = classScope.info.methodHints.get(ClassInfo::Attribute(methodNode.argument, maReference));
-//////   if (_logic->recognizeEmbeddableGet(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGet), type);
-//////
-//////      // HOTFIX : allowing to recognize embeddable get in the class itself
-//////      classScope.save();
-//////   }
-//////   // Optimization : var = getAt&int => read&int&subject&var[2]
-//////   else if (_logic->recognizeEmbeddableGetAt(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt), type);
-//////
-//////      // HOTFIX : allowing to recognize embeddable get in the class itself
-//////      classScope.save();
-//////   }
-//////   // Optimization : var = getAt&int => read&int&subject&var[2]
-//////   else if (_logic->recognizeEmbeddableGetAt2(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt2), type);
-//////
-//////      // HOTFIX : allowing to recognize embeddable get in the class itself
-//////      classScope.save();
-//////   }
-//////   // Optimization : var = eval&subj&int => eval&subj&var[2]
-//////   else if (_logic->recognizeEmbeddableEval(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval), type);
-//////
-//////      // HOTFIX : allowing to recognize embeddable get in the class itself
-//////      classScope.save();
-//////   }
-//////   // Optimization : var = eval&int&int => evald&int&subject&var[2]
-//////   else if (_logic->recognizeEmbeddableEval2(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval2), type);
-//////
-//////      // HOTFIX : allowing to recognize embeddable get in the class itself
-//////      classScope.save();
-//////   }
-//////
-//////   // Optimization : subject'get = self / $self
-//////   if (_logic->recognizeEmbeddableIdle(methodNode, classScope.extensionClassRef != 0)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), INVALID_REF);
-//////
-//////      classScope.save();
-//////   }
-//////
-//////   // Optimization : embeddable constructor call
-//////   ref_t message = 0;
-//////   if (_logic->recognizeEmbeddableMessageCall(methodNode, message)) {
-//////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableNew), message);
-//////
-//////      classScope.save();
-//////   }
-//////}
-//////
-//////void Compiler :: compileForward(SNode ns, ModuleScope& scope)
-//////{
-//////   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).identifier();
-//////   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).identifier();
-//////
-//////   if (!scope.defineForward(shortcut, reference))
-//////      scope.raiseError(errDuplicatedDefinition, ns);
-//////}
-//////
-//////bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
-//////{
-//////   int   mask = reference & mskAnyRef;
-//////   ref_t extReference = 0;
-//////   ident_t refName = module->resolveReference(reference & ~mskAnyRef);
-//////   _Module* extModule = project.resolveModule(refName, extReference, true);
-//////
-//////   return (extModule != NULL && extModule->mapSection(extReference | mask, true) != NULL);
-//////}
-////
-////void Compiler :: validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project)
+////void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
 ////{
-////   //for (List<Unresolved>::Iterator it = unresolveds.start() ; !it.Eof() ; it++) {
-////   //   if (!validate(project, (*it).module, (*it).reference)) {
-////   //      ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
+////   // Optimization : var = get&subject => eval&subject&var[1]
+////   ref_t type = 0;
+////   ref_t returnRef = classScope.info.methodHints.get(ClassInfo::Attribute(methodNode.argument, maReference));
+////   if (_logic->recognizeEmbeddableGet(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
+////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGet), type);
 ////
-////   //      project.raiseWarning(wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
-////   //   }
-////   //}
+////      // HOTFIX : allowing to recognize embeddable get in the class itself
+////      classScope.save();
+////   }
+////   // Optimization : var = getAt&int => read&int&subject&var[2]
+////   else if (_logic->recognizeEmbeddableGetAt(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
+////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt), type);
+////
+////      // HOTFIX : allowing to recognize embeddable get in the class itself
+////      classScope.save();
+////   }
+////   // Optimization : var = getAt&int => read&int&subject&var[2]
+////   else if (_logic->recognizeEmbeddableGetAt2(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
+////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt2), type);
+////
+////      // HOTFIX : allowing to recognize embeddable get in the class itself
+////      classScope.save();
+////   }
+////   // Optimization : var = eval&subj&int => eval&subj&var[2]
+////   else if (_logic->recognizeEmbeddableEval(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
+////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval), type);
+////
+////      // HOTFIX : allowing to recognize embeddable get in the class itself
+////      classScope.save();
+////   }
+////   // Optimization : var = eval&int&int => evald&int&subject&var[2]
+////   else if (_logic->recognizeEmbeddableEval2(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
+////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval2), type);
+////
+////      // HOTFIX : allowing to recognize embeddable get in the class itself
+////      classScope.save();
+////   }
+////
+////   // Optimization : subject'get = self / $self
+////   if (_logic->recognizeEmbeddableIdle(methodNode, classScope.extensionClassRef != 0)) {
+////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), INVALID_REF);
+////
+////      classScope.save();
+////   }
+////
+////   // Optimization : embeddable constructor call
+////   ref_t message = 0;
+////   if (_logic->recognizeEmbeddableMessageCall(methodNode, message)) {
+////      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableNew), message);
+////
+////      classScope.save();
+////   }
+////}
+////
+////void Compiler :: compileForward(SNode ns, ModuleScope& scope)
+////{
+////   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).identifier();
+////   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).identifier();
+////
+////   if (!scope.defineForward(shortcut, reference))
+////      scope.raiseError(errDuplicatedDefinition, ns);
+////}
+////
+////bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
+////{
+////   int   mask = reference & mskAnyRef;
+////   ref_t extReference = 0;
+////   ident_t refName = module->resolveReference(reference & ~mskAnyRef);
+////   _Module* extModule = project.resolveModule(refName, extReference, true);
+////
+////   return (extModule != NULL && extModule->mapSection(extReference | mask, true) != NULL);
 ////}
 //
+//void Compiler :: validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project)
+//{
+//   //for (List<Unresolved>::Iterator it = unresolveds.start() ; !it.Eof() ; it++) {
+//   //   if (!validate(project, (*it).module, (*it).reference)) {
+//   //      ident_t refName = (*it).module->resolveReference((*it).reference & ~mskAnyRef);
+//
+//   //      project.raiseWarning(wrnUnresovableLink, (*it).fileName, (*it).row, (*it).col, refName);
+//   //   }
+//   //}
+//}
+
 ////inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
 ////{
 ////   writer.newNode(lxMember);
