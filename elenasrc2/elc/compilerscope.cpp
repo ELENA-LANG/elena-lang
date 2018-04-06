@@ -315,34 +315,34 @@ _Module* CompilerScope :: loadReferenceModule(ident_t referenceName, ref_t& refe
    return reference ? extModule : NULL;
 }
 
-//ref_t CompilerScope :: mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared)
-//{
-//   ReferenceNs forwardName;
-//   forwardName.append(TEMPLATE_PREFIX_NS);
-//   if (!emptystr(ns)) {
-//      forwardName.append(ns);
-//      forwardName.append('\'');
-//   }      
-//
-//   forwardName.append(templateName);
-//
-//   if (emptystr(project->resolveForward(templateName))) {
-//      ReferenceNs fullName(module->Name());
-//      if (!emptystr(ns))
-//         fullName.combine(ns);
-//
-//      fullName.combine(templateName);
-//
-//      project->addForward(templateName, fullName);
-//
-//      mapNewIdentifier(ns, templateName, false);
-//
-//      alreadyDeclared = false;
-//   }
-//   else alreadyDeclared = true;
-//
-//   return module->mapReference(forwardName);
-//}
+ref_t CompilerScope :: mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared)
+{
+   ReferenceNs forwardName;
+   forwardName.append(TEMPLATE_PREFIX_NS);
+   if (!emptystr(ns)) {
+      forwardName.append(ns);
+      forwardName.append('\'');
+   }      
+
+   forwardName.append(templateName);
+
+   if (emptystr(project->resolveForward(templateName))) {
+      ReferenceNs fullName(module->Name());
+      if (!emptystr(ns))
+         fullName.combine(ns);
+
+      fullName.combine(templateName);
+
+      project->addForward(templateName, fullName);
+
+      mapNewIdentifier(ns, templateName, false);
+
+      alreadyDeclared = false;
+   }
+   else alreadyDeclared = true;
+
+   return module->mapReference(forwardName);
+}
 
 ident_t CompilerScope:: resolveWeakTemplateReference(ident_t referenceName)
 {
@@ -405,7 +405,10 @@ inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _M
 ref_t CompilerScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList& importedNs)
 {
    ref_t reference = 0;
-   if (!emptystr(ns)) {
+   if (isWeakReference(identifier)) {
+      return module->mapReference(identifier, true);
+   }
+   else if (!emptystr(ns)) {
       // try to resovle an identifier in all nested namespaces
       ReferenceNs nameWithNs(ns, identifier);
       while (true) {

@@ -42,7 +42,7 @@ struct CompilerScope : _CompilerScope
    //   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
    ref_t mapFullReference(ident_t referenceName, bool existing = false);
    ///*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
-   ///*virtual */ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
+   /*virtual */ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
    ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne);
 
    virtual _Memory* mapSection(ref_t reference, bool existing)
