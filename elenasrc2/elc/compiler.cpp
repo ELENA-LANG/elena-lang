@@ -1136,20 +1136,35 @@ ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
    return nsScope->mapGlobal(identifier);
 }
 
+ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
+{
+   Parameter local = locals.get(identifier);
+   if (local.offset) {
+      //if (identifier.compare(SUBJECT_VAR)) {
+      //   return ObjectInfo(okSubject, local.offset);
+      //}
+      //else if (local.size != 0) {
+      //   return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
+      //}
+      /*else */return ObjectInfo(okLocal, local.offset, local.class_ref/*, local.element_ref*/);
+   }
+   else return ObjectInfo();
+}
+
 ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
 {
-   //if (identifier.compare(SELF_VAR)) {
-   //   MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
-   //   if (methodScope != NULL) {
-   //      return methodScope->mapThis();
-   //   }
-   //}
-   //else {
+   if (identifier.compare(SELF_VAR)) {
+      MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
+      if (methodScope != NULL) {
+         return methodScope->mapSelf();
+      }
+   }
+   else {
       ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
       if (classScope != NULL) {
          return classScope->mapField(identifier);
       }      
-   //}
+   }
    return ObjectInfo();
 }
 
@@ -1174,20 +1189,15 @@ ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
 //   return Scope::resolveAutoType(info, reference, element);
 //}
 
-//ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier)
-//{
-//   Parameter local = locals.get(identifier);
-//   if (local.offset) {
-//      //if (identifier.compare(SUBJECT_VAR)) {
-//      //   return ObjectInfo(okSubject, local.offset);
-//      //}
-//      //else if (local.size != 0) {
-//      //   return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
-//      //}
-//      /*else */return ObjectInfo(okLocal, local.offset, local.class_ref/*, local.element_ref*/);
-//   }
-//   else return Scope::mapTerminal(identifier);
-//}
+ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool referenceOne)
+{
+   if (!referenceOne) {
+      ObjectInfo info = mapLocal(identifier);
+      if (info.kind != okUnknown)
+         return info;
+   }
+   return Scope::mapTerminal(identifier, referenceOne);
+}
 
 ////// --- Compiler::ResendScope ---
 ////
@@ -1974,243 +1984,243 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
    //}
 }
 
-//void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable/*, int& size*/)
+void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable/*, int& size*/)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int value = current.argument;
+         //if (value > 0 && size == 0) {
+         //   size = value;
+         //}
+         /*else */if (_logic->validateLocalAttribute(value)) {
+            // negative value defines the target virtual class
+            if (variable.extraparam == 0) {
+               variable.extraparam = value;
+            }
+            //else if (value == V_OBJARRAY) {
+            //   variable.element = variable.extraparam;
+            //   variable.extraparam = value;
+            //}
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      }
+      else if (current == lxReference) {
+         if (variable.extraparam == 0) {
+      //      NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+      //      variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
+
+            variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), true);
+         }
+         else scope.raiseError(errInvalidHint, node);
+      }
+      //else if (current == lxClassRefAttr/* || current == lxReference*/) {
+      //   if (variable.extraparam == 0) {
+      //      NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+      //      variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
+
+      ////      variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
+      //   }
+      //   else scope.raiseError(errInvalidHint, node);
+      //}
+      current = current.nextNode();
+   }
+
+   //if (size != 0 && variable.extraparam != 0) {
+   //   if (!isPrimitiveRef(variable.extraparam)) {
+   //      variable.element = variable.extraparam;
+   //      variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.element);
+   //   }
+   //   else scope.raiseError(errInvalidHint, node);      
+   //}
+}
+
+//void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope)
 //{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         int value = current.argument;
-//         //if (value > 0 && size == 0) {
-//         //   size = value;
-//         //}
-//         /*else */if (_logic->validateLocalAttribute(value)) {
-//            // negative value defines the target virtual class
-//            if (variable.extraparam == 0) {
-//               variable.extraparam = value;
-//            }
-//            //else if (value == V_OBJARRAY) {
-//            //   variable.element = variable.extraparam;
-//            //   variable.extraparam = value;
-//            //}
-//            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//         }
-//         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+//   SNode targetNode = node.firstChild(lxObjectMask);
+//
+//   writer.newBookmark();
+//
+//   bool immMode = true;
+//   int localOffs = 0;
+//   ObjectInfo loperand;
+//   if (targetNode == lxExpression) {
+//      immMode = false;
+//
+//      localOffs = scope.newLocal();
+//
+//      loperand = compileExpression(writer, targetNode, scope, 0);
+//
+//      writer.insertChild(0, lxLocal, localOffs);
+//      writer.insert(lxAssigning, 0);
+//      writer.closeNode();
+//   }
+//
+//   SNode current = node.findChild(lxOption, lxElse);
+//   while (current == lxOption) {
+//      writer.newNode(lxOption);
+//      writer.newNode(lxExpression);
+//
+//      writer.newBookmark();
+//
+//      writer.appendNode(lxBreakpoint, dsStep);
+//
+//      int operator_id = current.argument;
+//
+//      if (!immMode) {
+//         writer.newNode(lxLocal, localOffs);
+//         writer.appendNode(lxTarget, resolveObjectReference(scope, loperand));
+//         writer.closeNode();
 //      }
-//      else if (current == lxReference) {
-//         if (variable.extraparam == 0) {
-//      //      NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+//      else loperand = compileExpression(writer, targetNode, scope, 0);
 //
-//      //      variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
+//      // find option value
+//      SNode valueNode = current.firstChild(lxObjectMask);
 //
-//            variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), true);
-//         }
-//         else scope.raiseError(errInvalidHint, node);
-//      }
-//      //else if (current == lxClassRefAttr/* || current == lxReference*/) {
-//      //   if (variable.extraparam == 0) {
-//      //      NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+//      ObjectInfo roperand = compileExpression(writer, valueNode.firstChild(lxObjectMask), scope, 0);
 //
-//      //      variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
+//      ObjectInfo operationInfo = compileOperator(writer, node, scope, operator_id, 1, loperand, roperand, ObjectInfo());
 //
-//      ////      variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
-//      //   }
-//      //   else scope.raiseError(errInvalidHint, node);
-//      //}
+//      ObjectInfo retVal;
+//      compileBranchingOperand(writer, valueNode, scope, HINT_SWITCH, IF_MESSAGE_ID, operationInfo, retVal);
+//
+//      writer.removeBookmark();
+//      writer.closeNode();
+//      writer.closeNode();
+//
 //      current = current.nextNode();
 //   }
 //
-//   //if (size != 0 && variable.extraparam != 0) {
-//   //   if (!isPrimitiveRef(variable.extraparam)) {
-//   //      variable.element = variable.extraparam;
-//   //      variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.element);
-//   //   }
-//   //   else scope.raiseError(errInvalidHint, node);      
-//   //}
-//}
+//   if (current == lxElse) {
+//      CodeScope subScope(&scope);
+//      SNode thenCode = current.findSubNode(lxCode);
 //
-////void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope)
-////{
-////   SNode targetNode = node.firstChild(lxObjectMask);
-////
-////   writer.newBookmark();
-////
-////   bool immMode = true;
-////   int localOffs = 0;
-////   ObjectInfo loperand;
-////   if (targetNode == lxExpression) {
-////      immMode = false;
-////
-////      localOffs = scope.newLocal();
-////
-////      loperand = compileExpression(writer, targetNode, scope, 0);
-////
-////      writer.insertChild(0, lxLocal, localOffs);
-////      writer.insert(lxAssigning, 0);
-////      writer.closeNode();
-////   }
-////
-////   SNode current = node.findChild(lxOption, lxElse);
-////   while (current == lxOption) {
-////      writer.newNode(lxOption);
-////      writer.newNode(lxExpression);
-////
-////      writer.newBookmark();
-////
-////      writer.appendNode(lxBreakpoint, dsStep);
-////
-////      int operator_id = current.argument;
-////
-////      if (!immMode) {
-////         writer.newNode(lxLocal, localOffs);
-////         writer.appendNode(lxTarget, resolveObjectReference(scope, loperand));
-////         writer.closeNode();
-////      }
-////      else loperand = compileExpression(writer, targetNode, scope, 0);
-////
-////      // find option value
-////      SNode valueNode = current.firstChild(lxObjectMask);
-////
-////      ObjectInfo roperand = compileExpression(writer, valueNode.firstChild(lxObjectMask), scope, 0);
-////
-////      ObjectInfo operationInfo = compileOperator(writer, node, scope, operator_id, 1, loperand, roperand, ObjectInfo());
-////
-////      ObjectInfo retVal;
-////      compileBranchingOperand(writer, valueNode, scope, HINT_SWITCH, IF_MESSAGE_ID, operationInfo, retVal);
-////
-////      writer.removeBookmark();
-////      writer.closeNode();
-////      writer.closeNode();
-////
-////      current = current.nextNode();
-////   }
-////
-////   if (current == lxElse) {
-////      CodeScope subScope(&scope);
-////      SNode thenCode = current.findSubNode(lxCode);
-////
-////      writer.newNode(lxElse);
-////
-////      SNode statement = thenCode.firstChild(lxObjectMask);
-////      if (statement.nextNode() != lxNone || statement == lxEOF) {
-////         compileCode(writer, thenCode, subScope);
-////      }
-////      // if it is inline action
-////      else compileRetExpression(writer, statement, scope, 0);
-////
-////      // preserve the allocated space
-////      scope.level = subScope.level;
-////
-////      writer.closeNode();
-////   }
-////
-////   writer.insert(lxSwitching);
-////   writer.closeNode();
-////
-////   writer.removeBookmark();
-////}
+//      writer.newNode(lxElse);
 //
-//void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   SNode terminal = node.findChild(lxIdentifier/*, lxPrivate, lxExpression*/);
-//   //if (terminal == lxExpression)
-//   //   terminal = terminal.findChild(lxIdentifier, lxPrivate);
+//      SNode statement = thenCode.firstChild(lxObjectMask);
+//      if (statement.nextNode() != lxNone || statement == lxEOF) {
+//         compileCode(writer, thenCode, subScope);
+//      }
+//      // if it is inline action
+//      else compileRetExpression(writer, statement, scope, 0);
 //
-//   ident_t identifier = terminal.identifier();
-//   //if (scope.moduleScope->mapAttribute(terminal) != 0)
-//   //   scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousVariable, terminal);
-//
-//   if (!scope.locals.exist(identifier)) {
-//      LexicalType variableType = lxVariable;
-//      int variableArg = 0;
-//      int size = 0;
-//      //ident_t className = NULL;
-//
-//      ObjectInfo variable(okLocal);
-//      declareLocalAttributes(node, scope, variable/*, size*/);
-//
-//      ClassInfo localInfo;
-//      bool bytearray = false;
-//      if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam))
-//         scope.raiseError(errUnknownVariableType, terminal);
-//
-//      //if (variable.extraparam == V_BINARYARRAY && variable.element != 0) {
-//      //   localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
-//      //}
-//
-//      //if (_logic->isEmbeddableArray(localInfo) && size != 0) {
-//      //   bytearray = true;
-//      //   size = size * (-((int)localInfo.size));
-//      //}
-//      //else if (_logic->isEmbeddable(localInfo) && size == 0) {
-//      //   bool dummy = false;
-//      //   size = _logic->defineStructSize(localInfo, dummy);
-//      //}
-//      //else if (size != 0)
-//      //   scope.raiseError(errInvalidOperation, terminal);
-//
-//      //if (size > 0) {
-//      //   if (!allocateStructure(scope, size, bytearray, variable))
-//      //      scope.raiseError(errInvalidOperation, terminal);
-//
-//      //   // make the reservation permanent
-//      //   scope.saved = scope.reserved;
-//
-//      //   switch (localInfo.header.flags & elDebugMask)
-//      //   {
-//      //      case elDebugDWORD:
-//      //         variableType = lxIntVariable;
-//      //         break;
-//      //      case elDebugQWORD:
-//      //         variableType = lxLongVariable;
-//      //         break;
-//      //      case elDebugReal64:
-//      //         variableType = lxReal64Variable;
-//      //         break;
-//      //      case elDebugIntegers:
-//      //         variableType = lxIntsVariable;
-//      //         variableArg = size;
-//      //         break;
-//      //      case elDebugShorts:
-//      //         variableType = lxShortsVariable;
-//      //         variableArg = size;
-//      //         break;
-//      //      case elDebugBytes:
-//      //         variableType = lxBytesVariable;
-//      //         variableArg = size;
-//      //         break;
-//      //      default:
-//      //         if (isPrimitiveRef(variable.extraparam)) {
-//      //            variableType = lxBytesVariable;
-//      //            variableArg = size;
-//      //         }
-//      //         else {
-//      //            variableType = lxBinaryVariable;
-//      //            // HOTFIX : size should be provide only for dynamic variables
-//      //            if (bytearray)
-//      //               variableArg = size;
-//
-//      //            if (variable.extraparam != 0) {
-//      //               className = scope.moduleScope->module->resolveReference(variable.extraparam);
-//      //            }
-//      //         }
-//      //         break;
-//      //   }
-//      //}
-//      /*else */variable.param = scope.newLocal();
-//
-//      writer.newNode(variableType, variableArg);
-//
-//      writer.appendNode(lxLevel, variable.param);
-//      writer.appendNode(lxIdentifier, identifier);
-//      //if (!emptystr(className))
-//      //   writer.appendNode(lxClassName, className);
+//      // preserve the allocated space
+//      scope.level = subScope.level;
 //
 //      writer.closeNode();
-//
-//      scope.mapLocal(identifier, variable.param, variable.extraparam/*, variable.element, size*/);
 //   }
-//   else scope.raiseError(errDuplicatedLocal, terminal);
+//
+//   writer.insert(lxSwitching);
+//   writer.closeNode();
+//
+//   writer.removeBookmark();
 //}
+
+void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   SNode terminal = node.findChild(lxIdentifier/*, lxPrivate, lxExpression*/);
+   //if (terminal == lxExpression)
+   //   terminal = terminal.findChild(lxIdentifier, lxPrivate);
+
+   ident_t identifier = terminal.identifier();
+   //if (scope.moduleScope->mapAttribute(terminal) != 0)
+   //   scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousVariable, terminal);
+
+   if (!scope.locals.exist(identifier)) {
+      LexicalType variableType = lxVariable;
+      int variableArg = 0;
+      int size = 0;
+      //ident_t className = NULL;
+
+      ObjectInfo variable(okLocal);
+      declareLocalAttributes(node, scope, variable/*, size*/);
+
+      ClassInfo localInfo;
+      bool bytearray = false;
+      if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.extraparam))
+         scope.raiseError(errUnknownVariableType, terminal);
+
+      //if (variable.extraparam == V_BINARYARRAY && variable.element != 0) {
+      //   localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
+      //}
+
+      //if (_logic->isEmbeddableArray(localInfo) && size != 0) {
+      //   bytearray = true;
+      //   size = size * (-((int)localInfo.size));
+      //}
+      //else if (_logic->isEmbeddable(localInfo) && size == 0) {
+      //   bool dummy = false;
+      //   size = _logic->defineStructSize(localInfo, dummy);
+      //}
+      //else if (size != 0)
+      //   scope.raiseError(errInvalidOperation, terminal);
+
+      //if (size > 0) {
+      //   if (!allocateStructure(scope, size, bytearray, variable))
+      //      scope.raiseError(errInvalidOperation, terminal);
+
+      //   // make the reservation permanent
+      //   scope.saved = scope.reserved;
+
+      //   switch (localInfo.header.flags & elDebugMask)
+      //   {
+      //      case elDebugDWORD:
+      //         variableType = lxIntVariable;
+      //         break;
+      //      case elDebugQWORD:
+      //         variableType = lxLongVariable;
+      //         break;
+      //      case elDebugReal64:
+      //         variableType = lxReal64Variable;
+      //         break;
+      //      case elDebugIntegers:
+      //         variableType = lxIntsVariable;
+      //         variableArg = size;
+      //         break;
+      //      case elDebugShorts:
+      //         variableType = lxShortsVariable;
+      //         variableArg = size;
+      //         break;
+      //      case elDebugBytes:
+      //         variableType = lxBytesVariable;
+      //         variableArg = size;
+      //         break;
+      //      default:
+      //         if (isPrimitiveRef(variable.extraparam)) {
+      //            variableType = lxBytesVariable;
+      //            variableArg = size;
+      //         }
+      //         else {
+      //            variableType = lxBinaryVariable;
+      //            // HOTFIX : size should be provide only for dynamic variables
+      //            if (bytearray)
+      //               variableArg = size;
+
+      //            if (variable.extraparam != 0) {
+      //               className = scope.moduleScope->module->resolveReference(variable.extraparam);
+      //            }
+      //         }
+      //         break;
+      //   }
+      //}
+      /*else */variable.param = scope.newLocal();
+
+      writer.newNode(variableType, variableArg);
+
+      writer.appendNode(lxLevel, variable.param);
+      writer.appendNode(lxIdentifier, identifier);
+      //if (!emptystr(className))
+      //   writer.appendNode(lxClassName, className);
+
+      writer.closeNode();
+
+      scope.mapLocal(identifier, variable.param, variable.extraparam/*, variable.element, size*/);
+   }
+   else scope.raiseError(errDuplicatedLocal, terminal);
+}
 
 void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
 {
@@ -2508,6 +2518,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
    }
    else if (terminal == lxGlobalReference) {
       object = scope.mapGlobal(token.c_str() + 1);
+   }
+   else if (terminal == lxPrivate) {
+      object = scope.mapLocal(token.c_str() + 1);
    }
    else if (!emptystr(token))
       object = scope.mapTerminal(token, terminal == lxReference);
@@ -4427,14 +4440,14 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 
             break;
          }
-//         case lxVariable:
-//            compileVariable(writer, current, scope);
+         case lxVariable:
+            compileVariable(writer, current, scope);
+            break;
+//         case lxExtern:
+//            writer.newNode(lxExternFrame);
+//            compileCode(writer, current.findSubNode(lxCode), scope);
+//            writer.closeNode();
 //            break;
-////         case lxExtern:
-////            writer.newNode(lxExternFrame);
-////            compileCode(writer, current.findSubNode(lxCode), scope);
-////            writer.closeNode();
-////            break;
          case lxEOF:
             needVirtualEnd = false;
             writer.newNode(lxBreakpoint, dsEOP);

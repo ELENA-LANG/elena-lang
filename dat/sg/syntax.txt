@@ -186,6 +186,7 @@ OBJECT ->
 	| reference
 	| member
 	| global
+	| private
 	| OPENING_BRACKET SUB_EXPRESSION
 
 IDLE_MESSAGE_PARAMETER ->

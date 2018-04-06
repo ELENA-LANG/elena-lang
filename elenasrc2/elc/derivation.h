@@ -234,19 +234,19 @@ class DerivationTransformer //: public _DerivationTransformer
    void recognizeScopeMembers(SNode& node, DerivationScope& scope, int mode);
 
 //   bool isImplicitAttribute(SNode node, DerivationScope& scope);
-//
-//   bool checkVariableDeclaration(SNode node, DerivationScope& scope);
+
+   bool checkVariableDeclaration(SNode node, DerivationScope& scope);
 //   bool checkPatternDeclaration(SNode node, DerivationScope& scope);
 //   bool checkArrayDeclaration(SNode node, DerivationScope& scope);
 
    void generateMessage(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool templateMode*/);
    void generateTypeAttribute(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool templateMode*/);
 
-////   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
-////   bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope, SubjectMap* parentAttributes);
-////   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-////   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+//   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
+//   bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope, SubjectMap* parentAttributes);
+//   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+//   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
      void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 ////   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);

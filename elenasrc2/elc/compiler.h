@@ -603,30 +603,30 @@ private:
       LocalMap     locals;
       int          level;
 
-////      // scope stack allocation
-////      int          reserved;  // allocated for the current statement
-////      int          saved;     // permanently allocated
-//
-//      int newLocal()
-//      {
-//         level++;
-//
-//         return level;
-//      }
-//
-//      void mapLocal(ident_t local, int level)
-//      {
-//         locals.add(local, Parameter(level));
-//      }
-//      void mapLocal(ident_t local, int level, ref_t class_ref/*, int size*/)
-//      {
-//         locals.add(local, Parameter(level, class_ref/*, size*/));
-//      }
-//      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
-//      {
-//         locals.add(local, Parameter(level, class_ref, element_ref, size));
-//      }
-//
+//      // scope stack allocation
+//      int          reserved;  // allocated for the current statement
+//      int          saved;     // permanently allocated
+
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
+
+      void mapLocal(ident_t local, int level)
+      {
+         locals.add(local, Parameter(level));
+      }
+      void mapLocal(ident_t local, int level, ref_t class_ref/*, int size*/)
+      {
+         locals.add(local, Parameter(level, class_ref/*, size*/));
+      }
+      //void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
+      //{
+      //   locals.add(local, Parameter(level, class_ref, element_ref, size));
+      //}
+
 //      void freeSpace()
 //      {
 //         reserved = saved;
@@ -636,7 +636,9 @@ private:
 
       ObjectInfo mapGlobal(ident_t identifier);
 
-//      virtual ObjectInfo mapTerminal(ident_t identifier);
+      ObjectInfo mapLocal(ident_t identifier);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
 ////      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -841,7 +843,7 @@ private:
 
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
-//   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
+   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size*/, bool& isStaticField/*, bool& isSealed, bool& isConstant*/);
    void declareVMT(SNode member, ClassScope& scope);
 ////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
@@ -859,15 +861,15 @@ private:
 //   }
    ref_t mapMessage(SNode node, CodeScope& scope);
 
-////   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-////   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
-////   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
-////   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
-////   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
-//
-//   //ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+//   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
+
+//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+//   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
+//   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
+
+   //ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
    void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
