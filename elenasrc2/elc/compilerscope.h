@@ -58,6 +58,8 @@ struct CompilerScope : _CompilerScope
    
    ident_t resolveWeakTemplateReference(ident_t referenceName);
 
+   ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList& importedNs);
+
    /*virtual */ident_t resolveFullName(ref_t reference)
    {
       ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);

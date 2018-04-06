@@ -339,83 +339,18 @@ ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool refe
 //   else return ObjectInfo();
 //}
 
-inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _Module* module, _ProjectManager* project, List<ident_t>& importedNs)
-{
-   ref_t reference = 0;
-   if (!referenceOne) {
-      // check private ones
-      IdentifierString privateOne(PRIVATE_PREFIX_NS, identifier);
-
-      reference = module->mapReference(privateOne.c_str(), true);
-      if (reference) {
-         return reference;
-      }
-
-      // check imported references
-      IdentifierString name("'", identifier);
-      List<ident_t>::Iterator it = importedNs.start();
-      while (!it.Eof()) {
-         _Module* ext_module = project->loadModule(*it, true);
-         if (ext_module) {
-            reference = ext_module->mapReference(name.c_str(), true);
-            if (reference) {
-               if (ext_module != module) {
-                  IdentifierString fullName(ext_module->Name(), name.c_str());
-
-                  return module->mapReference(fullName.c_str(), false);
-               }
-               else return reference;
-            }
-         }
-
-         it++;
-      }
-
-      return 0;
-   }
-   else {
-      IdentifierString relativeName("'", identifier);
-
-      return module->mapReference(relativeName.c_str(), true);
-   }
-}
-
 ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier, bool referenceOne)
 {
    ref_t reference = forwards.get(identifier);
    if (reference)
       return reference;
 
-   if (!emptystr(ns)) {
-      // try to resovle an identifier in all nested namespaces
-      ReferenceNs nameWithNs(ns, identifier);
-      while (true) {         
-         reference = ::resolveImplicitIdentifier(referenceOne, nameWithNs.c_str(), module, moduleScope->project, importedNs);
-         if (reference) {
-            forwards.add(identifier, reference);
-            return reference;
-         }
-         nameWithNs.trimProperName();
-         if (!emptystr(nameWithNs)) {
-            nameWithNs.trimProperName();
-            if (emptystr(nameWithNs)) {
-               nameWithNs.copy(identifier);
-            }
-            else nameWithNs.combine(identifier);
-         }
-         else break;
-      }
+   reference = moduleScope->resolveImplicitIdentifier(ns, identifier, referenceOne, importedNs);
+   if (reference) {
+      forwards.add(identifier, reference);
    }
-   else {
-      // try to resovle an identifier in the current namespace
-      reference = ::resolveImplicitIdentifier(referenceOne, identifier, module, moduleScope->project, importedNs);
-      if (reference) {
-         forwards.add(identifier, reference);
 
-         return reference;
-      }
-   }
-   return 0;
+   return reference;
 }
 
 ////ref_t Compiler::ModuleScope :: mapNewSubject(ident_t terminal)

@@ -304,8 +304,8 @@ private:
    struct NamespaceScope : Scope
    {
       // imported namespaces
-      List<ident_t> importedNs;
-      ForwardMap    forwards;       // forward declarations
+      IdentifierList importedNs;
+      ForwardMap     forwards;       // forward declarations
 
 ////      // symbol hints
 ////      Map<ref_t, ref_t> constantHints;
@@ -323,8 +323,8 @@ private:
 ////      // list of references to the current module which should be checked after the project is compiled
 ////      Unresolveds* forwardsUnresolved;
 
-      ident_t      ns;
-      ident_t      sourcePath;
+      ident_t        ns;
+      ident_t        sourcePath;
 
       void loadNamespaceInfo(SNode node);
 

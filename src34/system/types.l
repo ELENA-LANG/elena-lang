@@ -52,12 +52,11 @@ private         = #8212.
 //
 //__ifoperator    = #4097.
 //__ifnotoperator = #4098.
-//
-//
-///// Provides classes that describe the basic functionality
-//
-//type object     = system'Object.
-//
+
+/// Provides classes that describe the basic functionality
+
+type object     = system'Object.
+
 //// === basic logical types ===
 //type bool       = system'BaseBoolValue.
 //
