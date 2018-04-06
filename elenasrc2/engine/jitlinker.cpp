@@ -164,7 +164,7 @@ ref_t JITLinker :: resolveAction(ident_t action, _Module* module, ref_t* signatu
       SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
 
       // resolve the message
-      IdentifierString signatureName;
+      IdentifierString signatureName(action);
       for (int i = 0; i < paramCount; i++) {
          signatureName.append('$');
          ident_t referenceName = module->resolveReference(signatures[i]);
