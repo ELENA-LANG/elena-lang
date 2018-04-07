@@ -686,6 +686,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, DISPATCH_MESSAGE,   DISPATCH_MESSAGE_ID); // NOTE : dispatch verb should not be used explicitly
    addVerb(verbs, NEWOBJECT_MESSAGE,  NEWOBJECT_MESSAGE_ID);
    addVerb(verbs, INVOKE_MESSAGE,     INVOKE_MESSAGE_ID);
+   addVerb(verbs, CAST_MESSAGE,       CAST_MESSAGE_ID);
    addVerb(verbs, NEW_MESSAGE,        NEW_MESSAGE_ID);
    addVerb(verbs, GET_MESSAGE,        GET_MESSAGE_ID);
    addVerb(verbs, EVAL_MESSAGE,       EVAL_MESSAGE_ID);
@@ -713,7 +714,6 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
    addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
    addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
-   addVerb(verbs, "#values", VALUES_MESSAGE_ID);
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)

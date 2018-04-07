@@ -851,9 +851,9 @@ private:
    void declareMethodAttributes(SNode member, MethodScope& scope);
 
 //   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
-//
-//   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
-//                                     bool withExtension, bool& genericOne);
+
+   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*,
+                                     bool withExtension, bool& genericOne*/);
 //   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
 //   {
 //      bool dummy;
@@ -887,7 +887,7 @@ private:
 ////   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
 ////   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 
-   /*ObjectInfo*/void compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
+   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
@@ -1033,7 +1033,7 @@ public:
 //   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 
    // _Compiler interface implementation
-//   virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
+   //virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
    //virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
    //virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef/*, bool stacksafe*/);
@@ -1043,7 +1043,7 @@ public:
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
-//   virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable);
+   virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable);
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);

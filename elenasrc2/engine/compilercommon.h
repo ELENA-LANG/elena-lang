@@ -170,7 +170,9 @@ struct _CompilerScope
 //   virtual bool saveAttribute(ident_t name, ref_t attr/*, bool internalAttr*/) = 0;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
+   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 
@@ -209,8 +211,8 @@ public:
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0) = 0;
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
-//   virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable) = 0;
-//
+   virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable) = 0;
+
 //   virtual void injectLocalBoxing(SNode node, int size) = 0;
 ////   //virtual int injectTempLocal(SNode node) = 0;
 //
@@ -300,10 +302,10 @@ public:
 //   virtual bool isAbstract(ClassInfo& info) = 0;
 //
 //   virtual bool isPrimitiveRef(ref_t reference) = 0;
-////   virtual bool isPrimitiveArray(ref_t reference) = 0;
-//
-//   // auto generate virtual methods / fields
-//   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
+//   virtual bool isPrimitiveArray(ref_t reference) = 0;
+
+   // auto generate virtual methods / fields
+   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
    virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
@@ -345,8 +347,8 @@ public:
 //   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
 //   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
 //   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
-//
-//   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef) = 0;
+
+   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef) = 0;
 };
 
 }  // _ELENA_

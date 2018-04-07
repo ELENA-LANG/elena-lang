@@ -64,6 +64,8 @@ class CompilerLogic : public _CompilerLogic
 //   OperatorList operators;
 
    bool isSignatureCompatible(_CompilerScope& scope, ref_t targetSignature, ref_t* sourceSignatures);
+   bool isSignatureCompatible(_CompilerScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures);
+
 //   bool loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
    bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef, /*ref_t elementRef, */ref_t* signatures, int signatureLen);
 
@@ -124,8 +126,8 @@ public:
 //
 //      return isReadonly(info);
 //   }
-//
-//   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
+
+   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
    virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef);
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/);
@@ -171,10 +173,10 @@ public:
 //   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node);
 //
 //   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected);
-//
-//////   virtual void optimizeDuplicateBoxing(SNode node);
-//
-//   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef);
+
+////   virtual void optimizeDuplicateBoxing(SNode node);
+
+   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef);
    virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
 
    CompilerLogic();

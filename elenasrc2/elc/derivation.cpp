@@ -398,6 +398,9 @@ ref_t DerivationTransformer::DerivationScope :: mapReference(SNode terminal)
    else if (terminal == lxGlobalReference) {
       return compilerScope->mapFullReference(terminal.identifier() + 1, true);
    }
+   else if (terminal == lxClassRefAttr) {
+      return compilerScope->mapFullReference(terminal.identifier(), true);
+   }
 
 //   ref_t dummy_ref = 0;
 //
@@ -838,7 +841,7 @@ void DerivationTransformer :: copyParamAttribute(SyntaxWriter& writer, SNode cur
 //   }
 //   else {
       ident_t subjName = scope.compilerScope->module->resolveReference(classRef);
-      writer.newNode(/*current == lxTemplateParamAttr ? lxParamRefAttr : lxClassRefAttr*/lxReference, subjName);
+      writer.newNode(/*current == lxTemplateParamAttr ? lxParamRefAttr : lxClassRefAttr*/lxClassRefAttr, subjName);
 //   }
 //
    SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
@@ -1029,9 +1032,9 @@ void DerivationTransformer :: copyFieldTree(SyntaxWriter& writer, SNode node, De
       else if (current == lxTemplateAttribute) {
          copyParamAttribute(writer, current, scope);
       }
-//      else if (current == lxClassRefAttr) {
-//         writer.appendNode(current.type, current.identifier());
-//      }
+      else if (current == lxClassRefAttr) {
+         writer.appendNode(current.type, current.identifier());
+      }
 //      else if (current == lxSize) {
 //         writer.appendNode(current.type, current.argument);
 //      }
@@ -1330,7 +1333,7 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
             //         }
          }
          else if (attrRef != 0) {
-            writer.newNode(lxReference, scope.compilerScope->module->resolveReference(attrRef));
+            writer.newNode(lxClassRefAttr, scope.compilerScope->module->resolveReference(attrRef));
             copyIdentifier(writer, current.firstChild(lxTerminalMask));
             writer.closeNode();
          }
@@ -1462,7 +1465,7 @@ void DerivationTransformer :: generateTypeAttribute(SyntaxWriter& writer, SNode 
             classRef = scope.mapReference(current.firstChild(lxTerminalMask));
 
          if (classRef) {
-            writer.newNode(lxReference, scope.compilerScope->module->resolveReference(classRef));
+            writer.newNode(lxClassRefAttr, scope.compilerScope->module->resolveReference(classRef));
             copyIdentifier(writer, current.firstChild(lxTerminalMask));
             writer.closeNode();
          }
@@ -2485,7 +2488,7 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
    }
 
    if (classRef) {
-      writer.newNode(lxReference, scope.compilerScope->module->resolveReference(classRef));
+      writer.newNode(lxClassRefAttr, scope.compilerScope->module->resolveReference(classRef));
    }
    else scope.raiseError(errUnknownSubject, node);
 
@@ -3174,10 +3177,31 @@ bool DerivationTransformer :: recognizeMethodScope(SNode node, DerivationScope& 
       setIdentifier(node);
 
       SNode nameAttr = node.prevNode();
+      if (nameAttr == lxNameAttr && nameAttr.existChild(lxAttributeValue)) {
+         // HOTFIX : recognize explicit conversion
+         nameAttr = lxAttribute;
+      }
+
       //if (nameAttr == lxNameAttr && isImplicitAttribute(nameAttr, scope)) {
       //   // HOTFIX : recognize explicit / generic attributes
       //   nameAttr = lxAttribute;
       //}
+
+      // convert attributes into message or attribute values
+      SNode args = node.firstChild();
+      while (args != lxNone) {
+         if (args == lxAttribute) {
+            if (args.existChild(lxAttributeValue)) {
+               args = lxAttributeValue;
+            }
+            else args = lxMessage;
+         }
+         else if (args.compare(lxAttributeValue, lxMethodParameter)) {
+         }
+         else break;
+
+         args = args.nextNode();
+      }
 
 //      SNode lastAttr = findLastAttribute(attributes);
 //      SNode firstMember = node.findChild(lxMethodParameter, lxAttribute, lxAttributeValue);

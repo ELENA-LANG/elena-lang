@@ -76,10 +76,10 @@ typedef ClassInfo::Attribute Attribute;
 //   else return isCollection(node);
 //}
 
-//inline bool isPrimitiveRef(ref_t reference)
-//{
-//   return (int)reference < 0;
-//}
+inline bool isPrimitiveRef(ref_t reference)
+{
+   return (int)reference < 0;
+}
 
 //inline bool isPrimitiveType(ref_t reference)
 //{
@@ -1957,7 +1957,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
       //   }
       //   else scope.raiseError(errInvalidHint, node);
       //}
-      else if (current == lxReference) {
+      else if (current == lxClassRefAttr) {
          if (fieldRef == 0) {
             fieldRef = scope.moduleScope->module->mapReference(current.identifier(), true);
          }
@@ -2006,7 +2006,7 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
-      else if (current == lxReference) {
+      else if (current == lxClassRefAttr) {
          if (variable.extraparam == 0) {
       //      NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
@@ -3202,17 +3202,16 @@ bool Compiler :: convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetR
 
 bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef)
 {
-//   if (targetRef != 0 && !isPrimitiveRef(targetRef)) {
-//      IdentifierString sign;
-//      sign.append('$');
-//      sign.append(scope.module->resolveReference(targetRef));
-//
-//      writer.insert(lxCalling, encodeMessage(scope.module->mapSubject(sign, false), 0));
-//      writer.closeNode();
-//
-//      return true;
-//   }
-   /*else */return false;
+   if (targetRef != 0 && !isPrimitiveRef(targetRef)) {
+      ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
+      ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
+
+      writer.insert(lxCalling, encodeMessage(actionRef, 0));
+      writer.closeNode();
+
+      return true;
+   }
+   else return false;
 }
 
 //void Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature)
@@ -3239,10 +3238,9 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t target
 //   else return 0;
 //}
 
-/*ObjectInfo*/void Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode*/)
+ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode*/)
 {
 //   ObjectInfo target;
-//   bool anonymous = false;
 //   IdentifierString signature;
 //
 //   if (test(mode, HINT_PARAMETERSONLY))
@@ -3255,7 +3253,10 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t target
 //      arg = arg.nextNode();
 //   }
 
-   // compile the message target and generic argument list
+   // compile the message argument list
+   bool anonymous = false;
+   ref_t signatures[OPEN_ARG_COUNT];
+   ref_t signatureLen = 0;
    while (/*current != lxMessage && */current != lxNone) {
       if (test(current.type, lxObjectMask)) {
 //         if (target.kind == okUnknown) {
@@ -3287,8 +3288,18 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t target
 //               // HOTFIX : skip the extension node
 //               arg = arg.nextNode();
 //         }
-//         // try to recognize the message signature
-/*         else *//*resolveStrongArgument(scope, */compileExpression(writer, current, scope, 0, paramMode)/*, anonymous, signature)*/;
+
+         // try to recognize the message signature
+         if (!anonymous) {
+            ref_t argRef = resolveObjectReference(scope, compileExpression(writer, current, scope, 0, paramMode));
+            //   if (isPrimitiveRef(argRef))
+            //      argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+            if (argRef) {
+               signatures[signatureLen++] = argRef;
+            }
+            else anonymous = true;
+         }
+         else compileExpression(writer, current, scope, 0, paramMode);
       }
 
       current = current.nextNode();
@@ -3371,63 +3382,63 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t target
 //         }
 //      }
 //   }
-//
-//   if (!anonymous && !emptystr(signature)) {
-//      signatureRef = scope.moduleScope->module->mapSubject(signature.ident(), false);
-//   }
-//   return target;
+
+   if (!anonymous && signatureLen > 0) {
+      return scope.module->mapSignature(signatures, signatureLen, false);
+   }
+   else return 0;
 }
 
-////ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef, 
-////   bool withExtension, bool& genericOne)
-////{
-////   ref_t resolvedMessageRef = 0;
-////   ref_t targetRef = resolveObjectReference(scope, target);
-////   ref_t extensionRef = 0;
-////
-////   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef);
-////
-////   if (resolvedMessageRef != 0) {
-////      // if the object handles the compile-time resolved message - use it
-////      return resolvedMessageRef;
-////   }
-////
-////   if (withExtension) {
-////      // check the existing extensions if allowed
-////      if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
-////         // if the object handles the general message - use it
-////         return generalMessageRef;
-////      }
-////
-////      if (implicitSignatureRef) {
-////         extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, genericOne);
-////         if (extensionRef != 0) {
-////            // if there is an extension to handle the compile-time resolved message - use it
-////            target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
-////
-////            return generalMessageRef;
-////         }
-////      }
-////
-////      extensionRef = mapExtension(scope, generalMessageRef, 0, target, genericOne);
-////      if (extensionRef != 0) {
-////         // if there is an extension to handle the general message - use it
-////         target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
-////
-////         return generalMessageRef;
-////      }
-////   }
-////
-////   // otherwise - use the general message
-////   return generalMessageRef;
-////}
+ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*, 
+   bool withExtension, bool& genericOne*/)
+{
+   ref_t resolvedMessageRef = 0;
+   ref_t targetRef = resolveObjectReference(scope, target);
+//   ref_t extensionRef = 0;
+
+   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef);
+
+   if (resolvedMessageRef != 0) {
+      // if the object handles the compile-time resolved message - use it
+      return resolvedMessageRef;
+   }
+
+//   if (withExtension) {
+//      // check the existing extensions if allowed
+//      if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
+//         // if the object handles the general message - use it
+//         return generalMessageRef;
+//      }
+//
+//      if (implicitSignatureRef) {
+//         extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, genericOne);
+//         if (extensionRef != 0) {
+//            // if there is an extension to handle the compile-time resolved message - use it
+//            target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
+//
+//            return generalMessageRef;
+//         }
+//      }
+//
+//      extensionRef = mapExtension(scope, generalMessageRef, 0, target, genericOne);
+//      if (extensionRef != 0) {
+//         // if there is an extension to handle the general message - use it
+//         target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
+//
+//         return generalMessageRef;
+//      }
+//   }
+
+   // otherwise - use the general message
+   return generalMessageRef;
+}
 
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode)
 {
 //   ref_t implicitSignatureRef = 0;
 //   size_t paramCount = 0;
    ObjectInfo retVal;
-   compileMessageParameters(writer, node, scope/*, implicitSignatureRef, mode & (HINT_RESENDEXPR | HINT_PARAMETERSONLY)*/);
+   ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope/*, mode & (HINT_RESENDEXPR | HINT_PARAMETERSONLY)*/);
 
 //   if (test(mode, HINT_TRY_MODE)) {
 //      writer.insertChild(0, lxResult, 0);
@@ -3465,7 +3476,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //      }
 //      else {
 //         bool genericOne = false;
-//         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, genericOne);
+         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef/*, true, genericOne*/);
 //
 //         if (genericOne)
 //            mode |= HINT_DYNAMIC_OBJECT;
@@ -4715,7 +4726,7 @@ ref_t Compiler :: declareArgumentType(SNode attribute, Scope& scope/*, bool& fir
 //      subject = arg;
 
    ref_t class_ref = 0;
-   if (attribute == lxReference) {
+   if (attribute == lxClassRefAttr) {
       class_ref = scope.module->mapReference(attribute.identifier(), true);
    }
    //else class_ref = namespaceScope->resolveImplicitIdentifier(attribute.identifier());
@@ -4801,7 +4812,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      }
 //   }
 
-   if (action != lxNone)
+   if (action == lxIdentifier)
       actionStr.copy(action.identifier()); // !! temporal
 //      verbRef = scope.mapSubject(verb, messageStr);
 
@@ -4843,7 +4854,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
          SNode attribute = current.findChild(lxTypeAttr);
          if (attribute != lxNone) {
-            classRef = declareArgumentType(attribute.firstChild(lxTerminalMask), scope/*, first, messageStr, signature, elementRef*/);
+            classRef = declareArgumentType(attribute.findChild(lxClassRefAttr), scope/*, first, messageStr, signature, elementRef*/);
 
             signature[signatureLen++] = classRef;
          }
@@ -6226,7 +6237,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
          hintChanged = true;
       }
-      else if (current == lxReference) {
+      else if (current == lxClassRefAttr) {
          if (!allowTypeAttribute) {
             scope.raiseError(errTypeNotAllowed, node);
          }
@@ -6430,7 +6441,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
       generateClassFields(node, scope/*, countFields(node) == 1*/);
    }
 
-//   _logic->injectVirtualCode(*scope.moduleScope, node, scope.reference, scope.info, *this, closed);
+   _logic->injectVirtualCode(*scope.moduleScope, node, scope.reference, scope.info, *this, closed);
 
    // generate methods
    if (classClassMode) {
@@ -6462,7 +6473,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
-      else if (current == lxReference) {
+      else if (current == lxClassRefAttr) {
       //   if (current.nextNode().findNext(lxTerminalMask) != lxNone) {
       //      // HOTFIX : to correctly recognize the method returning type
       //      current = lxClassRefAttr;
@@ -8001,17 +8012,17 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
 //   SNode codeNode = methNode.appendNode(lxResendExpression, message);
 //   codeNode.appendNode(lxArgDispatcherAttr);
 //}
-//
-//void Compiler :: injectVirtualReturningMethod(_CompilerScope&, SNode classNode, ref_t message, ident_t variable)
-//{
-//   SNode methNode = classNode.appendNode(lxClassMethod, message);
-//   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
+
+void Compiler :: injectVirtualReturningMethod(_CompilerScope&, SNode classNode, ref_t message, ident_t variable)
+{
+   SNode methNode = classNode.appendNode(lxClassMethod, message);
+   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
 //   methNode.appendNode(lxAttribute, tpEmbeddable);
-//   methNode.appendNode(lxAttribute, tpSealed);
-//
-//   SNode expr = methNode.appendNode(lxReturning).appendNode(lxExpression);
-//   expr.appendNode(lxIdentifier, variable);
-//}
+   methNode.appendNode(lxAttribute, tpSealed);
+
+   SNode expr = methNode.appendNode(lxReturning).appendNode(lxExpression);
+   expr.appendNode(lxIdentifier, variable);
+}
 
 void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
 {

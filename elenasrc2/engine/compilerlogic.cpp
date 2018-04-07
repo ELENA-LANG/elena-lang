@@ -95,6 +95,19 @@ inline ident_t findSourceRef(SNode node)
    return node.findChild(lxSourcePath).identifier();
 }
 
+inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   //if (isPrimitiveRef(exportRef)) {
+   //   return exportRef;
+   //}
+   /*else */if (exportRef) {
+      ident_t reference = exporter->resolveReference(exportRef);
+
+      return importer->mapReference(reference);
+   }
+   else return 0;
+}
+
 //// --- CompilerLogic Optimization Ops ---
 //struct EmbeddableOp
 //{
@@ -602,21 +615,21 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
    }
 }
 
-//void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
-//{
+void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
+{
 //   // generate enumeration list
 //   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
 //      compiler.generateListMember(scope, info.header.parentRef, classRef);
 //   }
-//
-//   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed && !test(info.header.flags, elExtension)) {
-//      // auto generate get&type message for explicitly declared classes
-//      ReferenceName subject("$");
-//      subject.append(scope.module->resolveReference(classRef));
-//
-//      compiler.injectVirtualReturningMethod(scope, node, encodeVerb(scope.module->mapSubject(subject.ident(), false)), THIS_VAR);
-//   }
-//
+
+   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed/* && !test(info.header.flags, elExtension)*/) {
+      // auto generate get&type message for explicitly declared classes
+      ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
+      ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
+
+      compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR);
+   }
+
 //   // generate structure embeddable constructor
 //   if (test(info.header.flags, elSealed | elStructureRole)) {
 //      bool found = false;
@@ -642,7 +655,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
 //         compiler.injectEmbeddableConstructor(node, encodeVerb(NEW_MESSAGE_ID), encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
 //      }
 //   }
-//}
+}
 
 void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
 {
@@ -803,6 +816,8 @@ bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, ref_t targetS
 {
    ref_t targetSignatures[OPEN_ARG_COUNT];
    size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (len < 0)
+      return false;
 
    for (size_t i = 0; i < len; i++) {
       if (!isCompatible(scope, targetSignatures[i], sourceSignatures[i]))
@@ -810,6 +825,20 @@ bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, ref_t targetS
    }
 
    return true;
+}
+
+bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures)
+{
+   ref_t targetSignatures[OPEN_ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+
+   for (size_t i = 0; i < len; i++) {
+      if (!isCompatible(scope, importReference(targetModule, targetSignatures[i], scope.module), sourceSignatures[i]))
+         return false;
+   }
+
+   return true;
+
 }
 
 bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef, /*ref_t elementRef, */ref_t* signatures, int paramCount)
@@ -2001,78 +2030,54 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 //   end = signature.find(start, '$', getlength(signature));
 //   temp.copy(signature.c_str() + start, end - start);
 //}
-//
-//ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef)
-//{
-//   if (!implicitSignatureRef)
-//      return 0;
-//
+
+ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef)
+{
+   if (!implicitSignatureRef || !targetRef)
+      return 0;
+
+   //compatible = isSignatureCompatible(scope, signatureRef, signatures);
+
 //   bool openArg = getAbsoluteParamCount(multiMessage) == OPEN_ARG_COUNT;
 //   ident_t sour_sign = scope.module->resolveSubject(implicitSignatureRef);
-//
-//   ClassInfo info;
-//   if (defineClassInfo(scope, info, targetRef)) {
-//      ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
-//      if (listRef) {
-//         _Module* argModule = scope.loadReferenceModule(listRef);
-//
-//         _Memory* section = argModule->mapSection(listRef | mskRDataRef, true);
-//         if (!section || section->Length() < 4)
-//            return 0;
-//
-//         MemoryReader reader(section);
-//         pos_t position = section->Length() - 4;
-//         while (position != 0) {
-//            reader.seek(position - 8);
-//            ref_t message = importMessage(argModule, reader.getDWord(), scope.module);
-//
-//            ident_t signature = scope.module->resolveSubject(getAction(message));
-//            IdentifierString temp;
-//            size_t start, end;
-//            readFirstSignature(signature, start, end, temp);
-//
-//            IdentifierString sour_temp;
-//            size_t sour_start, sour_end;
-//            readFirstSignature(sour_sign, sour_start, sour_end, sour_temp);
-//
-//            ref_t sourRef = scope.module->mapReference(sour_temp);
-//            ref_t argRef = scope.module->mapReference(temp);
-//            bool matched = true;
-//            while (start < getlength(signature)) {
-//               if (sourRef != scope.superReference) {
-//                  // HOTFIX : exclude a super object from compile-time resolving
-//                  if (isCompatible(scope, argRef, sourRef)) {
-//                     start = end + 1;
-//                     sour_start = sour_end + 1;
-//                     if (openArg) {
-//                        // for open arg check the same type
-//                     }
-//                     if (start < getlength(signature)) {
-//                        readNextSignature(signature, start, end, temp);
-//                        argRef = scope.module->mapReference(temp);
-//
-//                        readNextSignature(sour_sign, sour_start, sour_end, sour_temp);
-//                        sourRef = scope.module->mapReference(sour_temp);
-//                     }
-//                  }
-//                  else {
-//                     matched = false;
-//                     break;
-//                  }
-//               }
-//               else return 0;
-//            }
-//
-//            if (matched)
-//               return message;
-//
-//            position -= 8;
-//         }
-//      }
-//   }
-//
-//   return 0;
-//}
+
+   ref_t signatures[OPEN_ARG_COUNT];
+   size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, targetRef)) {
+      ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
+      if (listRef) {
+         _Module* argModule = scope.loadReferenceModule(listRef, listRef);
+
+         _Memory* section = argModule->mapSection(listRef | mskRDataRef, true);
+         if (!section || section->Length() < 4)
+            return 0;
+
+         MemoryReader reader(section);
+         pos_t position = section->Length() - 4;
+         while (position != 0) {
+            reader.seek(position - 8);
+            ref_t argMessage = reader.getDWord();
+            ref_t argSign = 0;
+            argModule->resolveAction(getAction(argMessage), argSign);
+
+            if (argModule == scope.module) {
+               if (isSignatureCompatible(scope, argSign, signatures))
+                  return argMessage;
+            }
+            else {
+               if (isSignatureCompatible(scope, argModule, argMessage, signatures))
+                  return importMessage(argModule, argMessage, scope.module);
+            }
+
+            position -= 8;
+         }
+      }
+   }
+
+   return 0;
+}
 
 bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)
 {
