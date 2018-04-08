@@ -3322,8 +3322,8 @@ void DerivationTransformer :: generateClassTree(SyntaxWriter& writer, SNode node
    if (withInPlaceInit) {
       current = goToNode(buffer.readRoot(), lxFieldInit);
       writer.newNode(lxClassMethod);
-      writer.appendNode(lxAttribute, V_SEALED);
-      writer.appendNode(lxAttribute, V_CONVERSION);
+      writer.appendNode(lxAttribute, V_IMPLICIT);
+      writer.appendNode(lxIdentifier, INIT_MESSAGE);
       writer.newNode(lxCode);
       while (current != lxNone) {
          if (current == lxFieldInit) {

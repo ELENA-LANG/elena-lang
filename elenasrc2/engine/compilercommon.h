@@ -72,6 +72,7 @@
 #define V_VARIABLE       (ref_t)-16385
 #define V_CLASS          (ref_t)-16386
 #define V_CONVERSION     (ref_t)-16387
+#define V_IMPLICIT       (ref_t)-16388
 //#define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
@@ -96,26 +97,27 @@ typedef Map<ident_t, ref_t> ForwardMap;
 
 enum MethodHint
 {
-   tpMask        = 0x000F,
+   tpMask        = 0x0000F,
 
-   tpUnknown     = 0x0000,
-   tpSealed      = 0x0001,
-   tpClosed      = 0x0002,
-   tpNormal      = 0x0003,
+   tpUnknown     = 0x00000,
+   tpSealed      = 0x00001,
+   tpClosed      = 0x00002,
+   tpNormal      = 0x00003,
 ////      tpDispatcher = 0x04,
-   tpPrivate     = 0x0005,
+   tpPrivate     = 0x00005,
 //   tpStackSafe   = 0x0010,
 //   tpEmbeddable  = 0x0020,
 //   tpGeneric     = 0x0040,
 //   tpAction      = 0x0080,
 //   tpIfBranch    = 0x0100,
 //   tpIfNotBranch = 0x0200,
-   tpConstructor = 0x0400,
-   tpConversion  = 0x0800,
-   tpMultimethod = 0x1000,
+   tpConstructor = 0x00400,
+   tpConversion  = 0x00800,
+   tpMultimethod = 0x01000,
 //   tpArgDispatcher = 0x3000,
-   tpStatic      = 0x4000,
-   tpAccessor    = 0x8000,
+   tpStatic      = 0x04000,
+   tpAccessor    = 0x08000,
+   tpSpecial     = 0x10000,
 };
 
 // --- _CompileScope ---

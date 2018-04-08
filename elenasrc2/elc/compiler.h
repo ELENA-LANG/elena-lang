@@ -651,7 +651,7 @@ private:
 
       bool isInitializer()
       {
-         return getMessageID() == (encodeAction(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE);
+         return getMessageID() == (encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE);
       }
 
       ref_t getMessageID()
@@ -938,6 +938,8 @@ private:
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
    void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
+
+   void compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message);
 
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 //   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);

@@ -25,7 +25,7 @@ namespace _ELENA_
 
    #define MESSAGE_FLAG_MASK       0xE0000000u
    #define SEALED_MESSAGE          0x40000000u
-   #define CONVERSION_MESSAGE      0x60000000u
+   #define SPECIAL_MESSAGE         0x60000000u
    #define PROPSET_MESSAGE         0x20000000u
    #define PARAM_MASK              0x0000000Fu
    #define OPEN_ARG_COUNT          0x0C
@@ -63,9 +63,11 @@ namespace _ELENA_
    #define READ_MESSAGE_ID         0x001A
    #define WRITE_MESSAGE_ID        0x001B
    #define SHIFT_MESSAGE_ID        0x001C
-   #define CAST_MESSAGE_ID         0x001D             // virtual method returning the list of enum values
+   #define CAST_MESSAGE_ID         0x001D             // virtual method used for casting
    #define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
-   #define PREDEFINED_MESSAGE_ID   0x001E
+   #define DEFAULT_MESSAGE_ID      0x001F             // virtual method used for the implicit constructor
+   #define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
+   #define PREDEFINED_MESSAGE_ID   0x0020
 
 //   // virtual operator
 //   #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -383,6 +385,8 @@ namespace _ELENA_
    #define SHIFT_MESSAGE            "shift"
    #define INVOKE_MESSAGE           "#invoke"
    #define CAST_MESSAGE             "#cast"
+   #define DEFAULT_MESSAGE          "#default"
+   #define INIT_MESSAGE             "#init"
 
 //   // ELENA verb operators
 //   #define EQUAL_OPERATOR		      "=="

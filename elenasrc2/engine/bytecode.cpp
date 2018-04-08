@@ -687,6 +687,8 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, NEWOBJECT_MESSAGE,  NEWOBJECT_MESSAGE_ID);
    addVerb(verbs, INVOKE_MESSAGE,     INVOKE_MESSAGE_ID);
    addVerb(verbs, CAST_MESSAGE,       CAST_MESSAGE_ID);
+   addVerb(verbs, DEFAULT_MESSAGE,    DEFAULT_MESSAGE_ID);
+   addVerb(verbs, INIT_MESSAGE,       INIT_MESSAGE_ID);
    addVerb(verbs, NEW_MESSAGE,        NEW_MESSAGE_ID);
    addVerb(verbs, GET_MESSAGE,        GET_MESSAGE_ID);
    addVerb(verbs, EVAL_MESSAGE,       EVAL_MESSAGE_ID);

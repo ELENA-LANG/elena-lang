@@ -585,7 +585,7 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
       // if the method included
       if (*it) {
          ref_t message = it.key();
-         if (getAbsoluteParamCount(message) > 0 && getAction(message) != 0 && !test(message, CONVERSION_MESSAGE)) {
+         if (getAbsoluteParamCount(message) > 0 && getAction(message) != 0 && !test(message, SPECIAL_MESSAGE)) {
             ref_t signatureRef = 0;
             ident_t actionName = scope.module->resolveAction(getAction(message), signatureRef);
 
@@ -791,7 +791,7 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    if (test(info.header.flags, elStateless))
       return false;
 
-   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
+   ref_t implicitConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
    if (!info.methods.exist(implicitConstructor, true))
       return false;
 //
@@ -846,7 +846,7 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerS
    ClassInfo::MethodMap::Iterator it = info.methods.start();
    while (!it.Eof()) {
       pos_t implicitMessage = it.key();
-      if (test(implicitMessage, CONVERSION_MESSAGE) && getParamCount(implicitMessage) == paramCount) {
+      if (test(implicitMessage, SPECIAL_MESSAGE) && getParamCount(implicitMessage) == paramCount) {
 //         ref_t subj = getAction(implicitMessage);
          ref_t signatureRef = 0;
          scope.module->resolveAction(getAction(implicitMessage), signatureRef);
@@ -1322,7 +1322,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       //   attrValue = (tpGeneric | tpSealed);
       //   return true;
       case V_PRIVATE:
-         attrValue = tpPrivate;
+         attrValue = (tpPrivate | tpSealed);
          return true;
       case V_SEALED:
          attrValue = tpSealed;
@@ -1336,7 +1336,10 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_CONVERSION:
          attrValue = (tpConversion | tpSealed);
          return true;
-      //case V_MULTI:
+      case V_IMPLICIT:
+         attrValue = (tpSpecial | tpSealed);
+         return true;
+         //case V_MULTI:
       //   // obsolete
       //   attrValue = /*tpMultimethod*/0;
       //   return true;

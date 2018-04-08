@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   12
+#define REVISION_VERSION   13
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -218,11 +218,6 @@ ref_t resolveMessage(_Module* module, ident_t method)
 
       method = method.c_str() + getlength("#private&");
    }
-   else if (method.startsWith("#conversion&")) {
-      flags |= CONVERSION_MESSAGE;
-
-      method = method.c_str() + getlength("#conversion&");
-   }
 
    IdentifierString actionName;
    int paramIndex = method.find('[', -1);
@@ -241,8 +236,7 @@ ref_t resolveMessage(_Module* module, ident_t method)
    //   actionRef = NEWOBJECT_MESSAGE_ID;
    //}
    /*else */if (actionName.compare("#init")) {
-      actionRef = NEWOBJECT_MESSAGE_ID;
-      flags = CONVERSION_MESSAGE;
+      actionRef = INIT_MESSAGE_ID;
    }
    else {
       if (method.find("set&") != NOTFOUND_POS) {
@@ -449,17 +443,17 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    //if (actionRef == DISPATCH_MESSAGE_ID) {
    //   command.append("dispatch");
    //}
-   /*else */if (actionRef == NEWOBJECT_MESSAGE_ID) {
-      if (test(reference, CONVERSION_MESSAGE)) {
-         command.append("#init");
-      }
-      else command.append("#new");
-   }
-   else if (actionRef <= PREDEFINED_MESSAGE_ID) {
-      if (test(reference, CONVERSION_MESSAGE)) {
-         command.append("#conversion&");
-      }
-      else if (test(reference, SEALED_MESSAGE)) {
+   ///*else */if (actionRef == NEWOBJECT_MESSAGE_ID) {
+   //   if (test(reference, CONVERSION_MESSAGE)) {
+   //      command.append("#init");
+   //   }
+   //   else command.append("#new");
+   //}
+   /*else */if (actionRef <= PREDEFINED_MESSAGE_ID) {
+      //if (test(reference, CONVERSION_MESSAGE)) {
+      //   command.append("#conversion&");
+      //}
+      /*else */if (test(reference, SEALED_MESSAGE)) {
          command.append("#private&");
       }
 
@@ -467,17 +461,17 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       command.append(verbName);
    }
    else {
-      if (test(reference, CONVERSION_MESSAGE)) {
-         command.append("#conversion&");
-      }
-      else {
+      //if (test(reference, CONVERSION_MESSAGE)) {
+      //   command.append("#conversion&");
+      //}
+      //else {
          if (test(reference, SEALED_MESSAGE)) {
             command.append("#private&");
          }
          if (test(reference, PROPSET_MESSAGE)) {
             command.append("set&");
          }
-      }
+      //}
       ref_t signature = 0;
       ident_t actionName = module->resolveAction(actionRef, signature);
       command.append(actionName);

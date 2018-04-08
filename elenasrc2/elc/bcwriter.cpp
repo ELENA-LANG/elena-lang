@@ -5653,7 +5653,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
                // HOTFIX: -1 indicates the stack is not consumed by the constructor
                callMethod(tape, 1, -1);
             }
-            else if (current.argument == (encodeAction(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
+            else if (test(current.argument, SPECIAL_MESSAGE) && getAbsoluteParamCount(current.argument) == 0) {
                // HOTFIX: call implicit constructor without putting the target to the stack
                callImplicitConstructorMethod(tape, current.findChild(lxTarget).argument, current.argument, false);
             }               

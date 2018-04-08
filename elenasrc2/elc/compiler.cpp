@@ -4441,7 +4441,7 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
          {
             needVirtualEnd = false;
 
-            if (test(scope.getMessageID(), CONVERSION_MESSAGE))
+            if (test(scope.getMessageID(), SPECIAL_MESSAGE))
                scope.raiseError(errIllegalOperation, current);
 
             writer.newNode(lxReturning);
@@ -4934,6 +4934,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
+      if (test(scope.hints, tpSealed | tpSpecial))
+         flags |= SPECIAL_MESSAGE;
+
 //      if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
 //         if (!emptystr(signature) || !emptystr(messageStr))
 //            scope.raiseError(errInvalidHint, verb);
@@ -4976,9 +4979,16 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //            
 //         }
          /*else */if (emptystr(actionStr) && paramCount == 0) {
-            // if it is an implicit in-place constructor
-            flags |= CONVERSION_MESSAGE;
-            actionRef = NEWOBJECT_MESSAGE_ID;
+            // if it is an explicit typecasting message
+            // the output reference should be available
+            SNode typeNode = node.findChild(lxClassRefAttr);
+            if (typeNode != lxNone) {
+               signatureLen = 1;
+               signature[0] = scope.module->mapReference(typeNode.identifier(), false);
+
+               actionStr.copy(CAST_MESSAGE);
+            }
+            else scope.raiseError(errIllegalMethod, node);
          }
          else scope.raiseError(errIllegalMethod, node);
       }
@@ -4996,7 +5006,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      }
 
       //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-      if (paramCount > 0 && (signatureLen > 0 || paramCount >= OPEN_ARG_COUNT) && flags != CONVERSION_MESSAGE) {
+      if (paramCount > 0 && (signatureLen > 0 || paramCount >= OPEN_ARG_COUNT) && flags != SPECIAL_MESSAGE) {
          actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
 
          ref_t genericMessage = encodeMessage(actionRef, paramCount) | flags;
@@ -5640,6 +5650,36 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    writer.closeNode();
 }
 
+void Compiler :: compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message)
+{
+   if (classScope.info.methods.exist(message)) {
+      if (classScope.info.methods.exist(message, true)) {
+         // call the field in-place initialization
+         writer.newNode(lxCalling, message);
+         writer.appendNode(lxTarget, classScope.reference);
+         writer.closeNode();
+      }
+      else {
+         ref_t parentRef = classScope.info.header.parentRef;
+         while (parentRef != 0) {
+            // call the parent field in-place initialization
+            ClassInfo parentInfo;
+            _logic->defineClassInfo(*classScope.moduleScope, parentInfo, parentRef);
+
+            if (parentInfo.methods.exist(message, true)) {
+               writer.newNode(lxCalling, message);
+               writer.appendNode(lxTarget, parentRef);
+               writer.closeNode();
+
+               break;
+            }
+
+            parentRef = parentInfo.header.parentRef;
+         }
+      }
+   }
+}
+
 void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
@@ -5659,33 +5699,11 @@ void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& sc
       writer.closeNode();
    //}
 
-   ref_t implicitMessage = encodeAction(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE;
-   if (classScope->info.methods.exist(implicitMessage)) {
-      if (classScope->info.methods.exist(implicitMessage, true)) {
-         // call the field in-place initialization
-         writer.newNode(lxCalling, implicitMessage);
-         writer.appendNode(lxTarget, classScope->reference);
-         writer.closeNode();
-      }
-      else {
-         ref_t parentRef = classScope->info.header.parentRef;
-         while (parentRef != 0) {
-            // call the parent field in-place initialization
-            ClassInfo parentInfo;
-            _logic->defineClassInfo(*scope.moduleScope, parentInfo, parentRef);
+   // call field initilizers if available
+   compileSpecialMethodCall(writer, *classScope, encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE);
 
-            if (parentInfo.methods.exist(implicitMessage, true)) {
-               writer.newNode(lxCalling, implicitMessage);
-               writer.appendNode(lxTarget, parentRef);
-               writer.closeNode();
-
-               break;
-            }
-
-            parentRef = parentInfo.header.parentRef;
-         }
-      }
-   }
+   // call implicit constructor if available
+   compileSpecialMethodCall(writer, *classScope, encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE);
 
    writer.closeNode();
 }
@@ -5737,7 +5755,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
                initialize(scope, methodScope);
                declareArgumentList(current, methodScope);
 
-               if (methodScope.message == (encodeAction(NEWOBJECT_MESSAGE_ID) | CONVERSION_MESSAGE)) {
+               if (methodScope.message == (encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
                   // if it is in-place class member initialization
                   compileImplicitConstructor(writer, current, methodScope);
                }
@@ -5880,7 +5898,7 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 {
    CommandTape tape;
 
-   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
+//   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
 
    SyntaxTree tree;
    SyntaxWriter writer(tree);
@@ -6335,7 +6353,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    }
    else {
       bool privateOne = test(message, SEALED_MESSAGE);
-      bool castingOne = test(message, CONVERSION_MESSAGE);
+      bool castingOne = test(message, SPECIAL_MESSAGE);
       bool included = scope.include(message);
       bool sealedMethod = (methodHints & tpMask) == tpSealed;
       // if the class is closed, no new methods can be declared

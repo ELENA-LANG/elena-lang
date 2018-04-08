@@ -11,7 +11,6 @@ template        = #16391.
 //extension       = #8203.
 //stacksafe       = #8192.
 
-explicit        = #16387.
 //const           = #8201.
 singleton       = #8208.
 //generic         = #8202.
@@ -31,6 +30,7 @@ method          = #16393.
 //__block         = #16400.
 //__nested        = #16401.
 //preloaded       = #8207.
+cast            = #16387.
 set             = #16402.  
 
 public          = #8211.
