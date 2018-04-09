@@ -791,7 +791,7 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    if (test(info.header.flags, elStateless))
       return false;
 
-   ref_t implicitConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
+   ref_t implicitConstructor = encodeMessage(DEFAULT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
    if (!info.methods.exist(implicitConstructor, true))
       return false;
 //
@@ -806,7 +806,8 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    //   return false;
    //}
    //else {
-      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef/*, stackSafe*/);
+      //compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef*//*, stackSafe*/);
+      compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef);
 
       return true;
    //}
@@ -872,7 +873,7 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerS
             //else if (test(info.header.flags, elDynamicRole)) {
             //   return false;
             //}
-            /*else */compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingClass, info.fields.Count(), targetRef/*, stackSafe*/);
+            /*else */compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef);
 
             return true;
          }
@@ -1093,8 +1094,8 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 //         info.header.flags = elDynamicRole | elStructureRole;
 //         info.size = -1;
 //         break;
-//      case V_AUTO:
-//         break;
+      case V_AUTO:
+         break;
       default:
          if (reference != 0) {
             if (!scope.loadClassInfo(info, reference, headerOnly))
@@ -1425,9 +1426,9 @@ bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 
       return true;
    }
-   //else if (attrValue == (int)V_AUTO) {
-   //   return true;
-   //}
+   else if (attrValue == (int)V_AUTO) {
+      return true;
+   }
    else return false;
 }
 

@@ -385,7 +385,7 @@ namespace _ELENA_
    #define SHIFT_MESSAGE            "shift"
    #define INVOKE_MESSAGE           "#invoke"
    #define CAST_MESSAGE             "#cast"
-   #define DEFAULT_MESSAGE          "#default"
+   #define DEFAULT_MESSAGE          "default"
    #define INIT_MESSAGE             "#init"
 
 //   // ELENA verb operators

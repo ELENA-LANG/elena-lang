@@ -49,28 +49,28 @@ public:
    {
       int    offset;
       ref_t  class_ref;
-//      ref_t  element_ref;
+      ref_t  element_ref;
 //      int    size;
 
       Parameter()
       {
          offset = -1;
          class_ref = 0;
-//         element_ref = 0;
+         element_ref = 0;
 //         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->class_ref = 0;
-//         this->element_ref = 0;
+         this->element_ref = 0;
 //         this->size = 0;
       }
       Parameter(int offset, ref_t class_ref)
       {
          this->offset = offset;
          this->class_ref = class_ref;
-//         this->element_ref = 0;
+         this->element_ref = 0;
 //         this->size = 0;
       }
 //      Parameter(int offset, ref_t class_ref, int size)
@@ -252,13 +252,13 @@ private:
             return parent->saveSourcePath(writer);
          }
 
-   //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
-   //      {
-   //         if (parent) {
-   //            return parent->resolveAutoType(info, reference, element);
-   //         }
-   //         else return false;
-   //      }
+         virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+         {
+            if (parent) {
+               return parent->resolveAutoType(info, reference, element);
+            }
+            else return false;
+         }
    
          virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne)
          {
@@ -639,7 +639,7 @@ private:
       ObjectInfo mapLocal(ident_t identifier);
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
-////      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
+      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -850,7 +850,7 @@ private:
 
    void declareMethodAttributes(SNode member, MethodScope& scope);
 
-//   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
+   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*,
                                      bool withExtension, bool& genericOne*/);
@@ -893,7 +893,7 @@ private:
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef = 0);
 
-//   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);

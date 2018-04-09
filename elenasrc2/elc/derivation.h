@@ -260,7 +260,7 @@ class DerivationTransformer //: public _DerivationTransformer
 ////   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateTemplateParameters(SNode& node, DerivationScope& scope/*, bool templateMode*/);
    void generateSubTemplate(SNode& node, DerivationScope& scope/*, bool templateMode*/);
-//   void generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope, bool templateMode);
+   void generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope/*, bool templateMode*/);
    void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool rootMode/*, bool templateMode*/, bool expressionMode);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes,int nested = 0*/);
