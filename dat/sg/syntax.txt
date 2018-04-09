@@ -15,6 +15,7 @@ __define ASSIGNING		4129
 __define BASE_CLASS             4131
 __define RET_STATEMENT		4135
 __define L4_OPERATION           4161
+__define SIZE_PARAM             4162
 __define TOKEN   		4172
 __define DECLARATION   		4173
 __define ATTRIBUTE   		4174
@@ -24,6 +25,7 @@ __define eof            	12291
 __define identifier		12293
 __define private	        12294
 __define reference		12295
+__define integer		12296
 __define attribute		12303
 __define member			12304
 __define global			12305
@@ -215,13 +217,20 @@ BASE_CLASS ->
 SUBJECT_ARG ->
 	identifier
 
+SIZE_PARAM ->
+	integer
+	
 TOKEN_BODY ->
-	< TOKEN_PARAM TOKEN_PARAMS
+	< NEXT_TOKEN_PARAM
 	| eps
 
 TOKEN_PARAMS ->
 	, NEXT_TOKEN_PARAM
 	| CLOSING_ANGLE_BRACKET
+
+NEXT_TOKEN_PARAM ->
+	TOKEN_PARAM TOKEN_PARAMS
+	| SIZE_PARAM CLOSING_ANGLE_BRACKET
 
 DECLARATION_END ->
 	TERMINATOR

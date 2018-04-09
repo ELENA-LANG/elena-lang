@@ -78,8 +78,8 @@ enum LexicalType
    lxIdentifier      = 0x18005,
    lxPrivate         = 0x18006,
    lxReference       = 0x18007,
-//   lxInteger         = 0x18008,
-//   lxHexInteger      = 0x18009,
+   lxInteger         = 0x18008,
+   lxHexInteger      = 0x18009,
 //   lxReal            = 0x1800A,
 //   lxCharacter       = 0x1800B,
 //   lxLong            = 0x1800C,
@@ -96,8 +96,8 @@ enum LexicalType
    lxField           = 0x08105, // arg - offset
    lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
    lxSymbolReference = 0x08107,
-//   lxLocalAddress    = 0x0A108, // arg - offset
-//   lxFieldAddress    = 0x08109, // arg - offset
+   lxLocalAddress    = 0x0A108, // arg - offset
+   lxFieldAddress    = 0x08109, // arg - offset
    lxLocal           = 0x0A10A, // arg - offset
 //   lxBlockLocal      = 0x0A10B, // arg - offset
 //   lxConstantString  = 0x0A10C, // arg - reference
@@ -156,7 +156,7 @@ enum LexicalType
 //   lxExternFrame     = 0x04023,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025,   // arg - count
-//   lxCreatingStruct  = 0x0C026,   // arg - size
+   lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
 //   lxNewOp           = 0x0C028,
 //   lxArrOp           = 0x8C029,   // arg - operation id
@@ -225,7 +225,7 @@ enum LexicalType
 //   lxTempLocal       = 0x20016,
 //   lxIfValue         = 0x20017, // arg - reference
 //   lxElseValue       = 0x20018, // arg - reference
-//   lxSize            = 0x20019,
+   lxSize            = 0x20019,
 //   lxTemplateParam   = 0x2001A,
 //   lxEmbeddable      = 0x2001B,
 //   lxIntExtArgument  = 0x2001C,

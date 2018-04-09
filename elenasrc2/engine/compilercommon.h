@@ -13,15 +13,16 @@
 #include "syntaxtree.h"
 
 // virtual objects
-#define V_PARAMETER     (ref_t)-02
+#define V_PARAMETER      (ref_t)-02
 //#define V_FLAG           (ref_t)-03
 #define V_NIL            (ref_t)-04
 
 //#define V_BINARY         (ref_t)-10
-//#define V_INT32          (ref_t)-11
-//#define V_PTR32          (ref_t)-12
-//#define V_INT64          (ref_t)-13
-//#define V_REAL64         (ref_t)-14
+#define V_INT8           (ref_t)-11
+//#define V_PTR            (ref_t)-12
+#define V_INT32          (ref_t)-13
+#define V_INT64          (ref_t)-14
+//#define V_REAL64         (ref_t)-15
 //#define V_SIGNATURE      (ref_t)-18
 //#define V_MESSAGE        (ref_t)-19
 //#define V_EXTMESSAGE     (ref_t)-21
@@ -38,7 +39,7 @@
 //#define V_INT16ARRAY    (ref_t)-38
 //#define V_INT8ARRAY     (ref_t)-39
 
-#define V_AUTO          (ref_t)-50
+#define V_AUTO           (ref_t)-50
 
 //#define V_IFBRANCH      (ref_t)-4097
 //#define V_IFNOTBRANCH   (ref_t)-4098
@@ -51,7 +52,7 @@
 #define V_STATIC         (ref_t)-8194
 #define V_SEALED         (ref_t)-8195
 //#define V_LIMITED        (ref_t)-8196
-//#define V_STRUCT         (ref_t)-8197
+#define V_STRUCT         (ref_t)-8197
 //#define V_ENUMLIST       (ref_t)-8198
 //#define V_DYNAMIC        (ref_t)-8199
 //#define V_STRING         (ref_t)-8200
@@ -265,11 +266,11 @@ public:
    // retrieve the class info / size
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 
-//   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
-//   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef) = 0;
-//   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
-//
-//   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
+   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef) = 0;
+   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
+
+   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
@@ -292,7 +293,7 @@ public:
 //
 //   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
 //   virtual bool isVariable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(ClassInfo& info) = 0;
+   virtual bool isEmbeddable(ClassInfo& info) = 0;
 //   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
@@ -320,8 +321,8 @@ public:
 
    // auto generate class flags
    virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
-//   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
-//
+   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
+
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
 
    // attribute validations

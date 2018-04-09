@@ -275,8 +275,8 @@ namespace _ELENA_
   // --- ELENA VMT flags ---
    const int elStandartVMT         = 0x00000001;
    const int elNestedClass         = 0x00000002;
-//   const int elDynamicRole         = 0x00000004;
-//   const int elStructureRole       = 0x00000008;
+   const int elDynamicRole         = 0x00000004;
+   const int elStructureRole       = 0x00000008;
 //   const int elAbstract            = 0x00000010;
    const int elClosed              = 0x00000020;
 //   const int elWrapper             = 0x00000040;
@@ -286,7 +286,7 @@ namespace _ELENA_
    const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
-//   const int elReadOnlyRole        = 0x00000800;
+   const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
@@ -304,13 +304,13 @@ namespace _ELENA_
 
    const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
-//   const int elDebugMask           = 0x001F0000;
-//   const int elDebugDWORD          = 0x00010000;
+   const int elDebugMask           = 0x001F0000;
+   const int elDebugDWORD          = 0x00010000;
 //   const int elDebugReal64         = 0x00020000;
 //   const int elDebugLiteral        = 0x00030000;
 //   const int elDebugIntegers       = 0x00040000;
 //   const int elDebugArray          = 0x00050000;
-//   const int elDebugQWORD          = 0x00060000;
+   const int elDebugQWORD          = 0x00060000;
 //   const int elDebugBytes          = 0x00070000;
 //   const int elDebugShorts         = 0x00080000;
 //   const int elDebugPTR            = 0x00090000;

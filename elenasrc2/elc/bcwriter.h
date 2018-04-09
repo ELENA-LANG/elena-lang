@@ -153,10 +153,10 @@ class ByteCodeWriter
    void declareBlock(CommandTape& tape);
 
    void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
-//   void newStructure(CommandTape& tape, int size, ref_t reference);
-//   void newDynamicStructure(CommandTape& tape, int itemSize);
-//   void newDynamicWStructure(CommandTape& tape);
-//   void newDynamicNStructure(CommandTape& tape);
+   void newStructure(CommandTape& tape, int size, ref_t reference);
+   void newDynamicStructure(CommandTape& tape, int itemSize);
+   void newDynamicWStructure(CommandTape& tape);
+   void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
@@ -236,21 +236,21 @@ class ByteCodeWriter
 //   void endSwitchBlock(CommandTape& tape);
    void closeFrame(CommandTape& tape);
 
-//   void assignBaseTo(CommandTape& tape, LexicalType target);
-//
-//   void assignInt(CommandTape& tape, LexicalType target, int offset);
-//   void assignLong(CommandTape& tape, LexicalType target, int offset);
-//   void assignShort(CommandTape& tape, LexicalType target, int offset);
-//   void assignByte(CommandTape& tape, LexicalType target, int offset);
-//   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
+   void assignBaseTo(CommandTape& tape, LexicalType target);
+
+   void assignInt(CommandTape& tape, LexicalType target, int offset);
+   void assignLong(CommandTape& tape, LexicalType target, int offset);
+   void assignShort(CommandTape& tape, LexicalType target, int offset);
+   void assignByte(CommandTape& tape, LexicalType target, int offset);
+   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
 //   void saveInt(CommandTape& tape, LexicalType target, int argument);
 //   void saveReal(CommandTape& tape, LexicalType target, int argument);
 //   void saveLong(CommandTape& tape, LexicalType target, int argument);
-//   void copyInt(CommandTape& tape, int offset);
-//   void copyShort(CommandTape& tape, int offset);
-//   void copyByte(CommandTape& tape, int offset);
-//   void copyStructure(CommandTape& tape, int offset, int size);
-//   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
+   void copyInt(CommandTape& tape, int offset);
+   void copyShort(CommandTape& tape, int offset);
+   void copyByte(CommandTape& tape, int offset);
+   void copyStructure(CommandTape& tape, int offset, int size);
+   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);
 //   void saveIntConstant(CommandTape& tape, int value);
 ////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);

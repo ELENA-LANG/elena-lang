@@ -123,7 +123,7 @@ public:
       okStaticField,                  // param - reference
 //      okStaticConstantField,          // param - reference
 //      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
-//      okFieldAddress,                 // param - field offset, extraparam - class reference
+      okFieldAddress,                 // param - field offset, extraparam - class reference
 //      okOuter,                        // param - field offset, extraparam - class reference
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
 //      okOuterStaticField,             // param - field offset, extraparam - outer field offset
@@ -844,7 +844,7 @@ private:
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
    void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size*/, bool& isStaticField/*, bool& isSealed, bool& isConstant*/);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField/*, bool& isSealed, bool& isConstant*/);
    void declareVMT(SNode member, ClassScope& scope);
 ////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
@@ -954,7 +954,7 @@ private:
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
-   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, ref_t elementRef, int sizeHint, bool singleField*/);
+   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint/*, bool singleField*/);
    void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, ref_t elementRef, bool isSealed, bool isConst*/);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);

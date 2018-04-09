@@ -1,11 +1,11 @@
 /// Attributes
 type            = #16390.
 class           = #16386.
-//struct          = #8197.
+struct          = #8197.
 //symbol          = #16389.
 constructor     = #16384.
 //listable        = #8198.
-//sealed          = #8195.
+sealed          = #8195.
 //embeddable      = #8193.
 template        = #16391.
 //extension       = #8203.
@@ -40,7 +40,7 @@ private         = #8212.
 //args            = #32. 
 //
 //__string        = #8200.
-//__int           = #11.
+__byte          = #11.
 //__dword         = #12.
 //__real          = #14.
 //__mssg          = #19.

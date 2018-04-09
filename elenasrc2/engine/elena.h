@@ -558,7 +558,7 @@ struct ClassInfo
    typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader    header;
-//   int            size;           // Object size
+   int            size;           // Object size
    MethodMap      methods;
    FieldMap       fields;
    StaticFieldMap statics;
@@ -570,7 +570,7 @@ struct ClassInfo
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
       writer->write((void*)this, sizeof(ClassHeader));
-//      writer->writeDWord(size);
+      writer->writeDWord(size);
       if (!headerAndSizeOnly) {
          staticValues.write(writer);
          methods.write(writer);
@@ -584,7 +584,7 @@ struct ClassInfo
    void load(StreamReader* reader, bool headerOnly = false)
    {
       reader->read((void*)&header, sizeof(ClassHeader));
-//      size = reader->getDWord();
+      size = reader->getDWord();
       if (!headerOnly) {
          staticValues.read(reader);
          methods.read(reader);

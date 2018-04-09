@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   13
+#define REVISION_VERSION   14
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -931,13 +931,13 @@ void listFields(_Module* module, ident_t className, int& row, int pageSize)
    
    ClassInfo::FieldMap::Iterator it = info.fields.start();
    while (!it.Eof()) {
-      /*ref_t type = info.fieldTypes.get(*it).value1;
+      ref_t type = info.fieldTypes.get(*it).value1;
       if (type != 0) {
          ident_t typeName = module->resolveReference(type);
 
          printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
       }
-      else */printLine("Field ", (const char*)it.key(), row, pageSize);
+      else printLine("Field ", (const char*)it.key(), row, pageSize);
    
       it++;
    }
@@ -949,13 +949,13 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elNestedClass", row, pageSize);
    }      
 
-   //if (test(flags, elDynamicRole)) {
-   //   printLine("@flag ", "elDynamicRole", row, pageSize);
-   //}
-   //   
-   //if (test(flags, elStructureRole)) {
-   //   printLine("@flag ", "elStructureRole", row, pageSize);
-   //}      
+   if (test(flags, elDynamicRole)) {
+      printLine("@flag ", "elDynamicRole", row, pageSize);
+   }
+      
+   if (test(flags, elStructureRole)) {
+      printLine("@flag ", "elStructureRole", row, pageSize);
+   }      
 
    if (test(flags, elSealed)) {
       printLine("@flag ", "elSealed", row, pageSize);
@@ -986,8 +986,8 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elWithArgGenerics))
    //   printLine("@flag ", "elWithArgGenerics", row, pageSize);
 
-   //if (test(flags, elReadOnlyRole))
-   //   printLine("@flag ", "elReadOnlyRole", row, pageSize);
+   if (test(flags, elReadOnlyRole))
+      printLine("@flag ", "elReadOnlyRole", row, pageSize);
 
    if (test(flags, elNonStructureRole))
       printLine("@flag ", "elNonStructureRole", row, pageSize);
@@ -1019,10 +1019,10 @@ void listFlags(int flags, int& row, int pageSize)
    if (test(flags, elClassClass))
       printLine("@flag ", "elClassClass", row, pageSize);
 
-   //switch (flags & elDebugMask) {
-   //   case elDebugDWORD:
-   //      printLine("@flag ", "elDebugDWORD", row, pageSize);
-   //      break;
+   switch (flags & elDebugMask) {
+      case elDebugDWORD:
+         printLine("@flag ", "elDebugDWORD", row, pageSize);
+         break;
    //   case elDebugReal64:
    //      printLine("@flag ", "elDebugReal64", row, pageSize);
    //      break;
@@ -1035,9 +1035,9 @@ void listFlags(int flags, int& row, int pageSize)
    //   case elDebugArray:
    //      printLine("@flag ", "elDebugArray", row, pageSize);
    //      break;
-   //   case elDebugQWORD:
-   //      printLine("@flag ", "elDebugQWORD", row, pageSize);
-   //      break;
+      case elDebugQWORD:
+         printLine("@flag ", "elDebugQWORD", row, pageSize);
+         break;
    //   case elDebugBytes:
    //      printLine("@flag ", "elDebugBytes", row, pageSize);
    //      break;
@@ -1068,7 +1068,7 @@ void listFlags(int flags, int& row, int pageSize)
    //   case elEnumList:
    //      printLine("@flag ", "elEnumList", row, pageSize);
    //      break;
-   //}
+   }
 }
 
 void listConstructorMethods(_Module* module, ident_t className, ref_t reference)

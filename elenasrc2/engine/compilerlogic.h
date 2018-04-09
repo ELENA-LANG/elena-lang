@@ -77,14 +77,14 @@ public:
 
    virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
-//   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef)
-//   {
-//      bool dummy = false;
-//      return defineStructSizeVariable(scope, reference, elementRef, dummy);
-//   }
-//   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable);
-//   virtual int defineStructSize(ClassInfo& info, bool& variableS);
-//
+   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef)
+   {
+      bool dummy = false;
+      return defineStructSizeVariable(scope, reference, elementRef, dummy);
+   }
+   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable);
+   virtual int defineStructSize(ClassInfo& info, bool& variableS);
+
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
@@ -92,26 +92,26 @@ public:
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
 //   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference);
-//   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
+   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
 //   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
 
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
-////   virtual bool isPrimitiveArray(ref_t reference);
-//   virtual bool isPrimitiveRef(ref_t reference)
-//   {
-//      return (int)reference < 0;
-//   }
+//   virtual bool isPrimitiveArray(ref_t reference);
+   virtual bool isPrimitiveRef(ref_t reference)
+   {
+      return (int)reference < 0;
+   }
 //   virtual bool isEmbeddableArray(ClassInfo& info);
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
 //   virtual bool isVariable(ClassInfo& info);
-//   virtual bool isEmbeddable(ClassInfo& info);
-//   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
-//   {
-//      ClassInfo info;
-//      defineClassInfo(scope, info, reference, true);
-//
-//      return isEmbeddable(info);
-//   }
+   virtual bool isEmbeddable(ClassInfo& info);
+   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      defineClassInfo(scope, info, reference, true);
+
+      return isEmbeddable(info);
+   }
    virtual bool isRole(ClassInfo& info);
 //   virtual bool isAbstract(ClassInfo& info);
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
@@ -139,7 +139,7 @@ public:
    virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
 
    virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
-//   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
+   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
    virtual bool validateMethodAttribute(int& attrValue);

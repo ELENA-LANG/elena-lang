@@ -126,9 +126,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
 //      case nsMessageReference:
 //         _writer.newNode(lxMessageReference);
 //         break;
-//      case nsSizeValue:
-//         _writer.newNode(lxSize);
-//         break;
+      case nsSizeValue:
+         _writer.newNode(lxSize);
+         break;
 //      case nsDynamicSize:
 //         _writer.newNode(lxSize, -1);
 //         break;
@@ -281,14 +281,12 @@ inline bool isAttribute(ref_t attr)
    return (int)attr < 0;
 }
 
-//inline int readSizeValue(SNode node, int radix)
-//{
-//   ident_t val = node.identifier();
-//   if (emptystr(val))
-//      val = node.findChild(lxTerminal).identifier();
-//
-//   return val.toLong(radix);
-//}
+inline int readSizeValue(SNode node, int radix)
+{
+   ident_t val = node.identifier();
+
+   return val.toLong(radix);
+}
 
 //inline bool isTemplateDeclaration(SNode node)
 //{
@@ -1339,20 +1337,20 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
          }
          else scope.raiseError(errInvalidHint, current);
 
-         ////      if (current.existChild(lxSize)) {
-         ////         SNode sizeNode = current.findChild(lxSize);
-         ////         if (sizeNode.argument == -1 && node == lxClassField) {
-         ////            // if it is a dynamic size
-         ////            writer.appendNode(lxSize, -1);
-         ////         }
-         ////         else {
-         ////            sizeNode = sizeNode.findChild(lxInteger, lxHexInteger);
-         ////            if (sizeNode != lxNone && node == lxClassField) {
-         ////               writer.appendNode(lxSize, readSizeValue(sizeNode, sizeNode == lxHexInteger ? 16 : 10));            
-         ////            }
-         ////            else scope.raiseError(errInvalidHint, node);
-         ////         }         
-         ////      }
+         SNode sizeNode = current.findChild(lxSize);
+         if (sizeNode != lxNone) {
+//         if (sizeNode.argument == -1 && node == lxClassField) {
+//            // if it is a dynamic size
+//            writer.appendNode(lxSize, -1);
+//         }
+//         else {
+               sizeNode = sizeNode.findChild(lxInteger, lxHexInteger);
+               if (sizeNode != lxNone && node == lxClassField) {
+                  writer.appendNode(lxSize, readSizeValue(sizeNode, sizeNode == lxHexInteger ? 16 : 10));            
+               }
+               else scope.raiseError(errInvalidHint, node);
+//         }         
+         }
       }
       else if (current.compare(lxAttributeValue, lxIdle)) {
 
@@ -2934,7 +2932,7 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
                attr = daType;
                break;
             case V_CLASS:
-//            case V_STRUCT:
+            case V_STRUCT:
 //            //case V_STRING:
                attr = daClass;
                break;
