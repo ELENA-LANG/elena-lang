@@ -34,7 +34,7 @@
 
 #define V_OBJARRAY      (ref_t)-30
 #define V_INT32ARRAY    (ref_t)-31
-//#define V_ARGARRAY      (ref_t)-32
+#define V_ARGARRAY      (ref_t)-32
 #define V_BINARYARRAY   (ref_t)-35
 #define V_INT16ARRAY    (ref_t)-38
 #define V_INT8ARRAY     (ref_t)-39
@@ -108,14 +108,14 @@ enum MethodHint
    tpPrivate     = 0x00005,
 //   tpStackSafe   = 0x0010,
    tpEmbeddable  = 0x0020,
-//   tpGeneric     = 0x0040,
+   tpGeneric     = 0x0040,
 //   tpAction      = 0x0080,
 //   tpIfBranch    = 0x0100,
 //   tpIfNotBranch = 0x0200,
    tpConstructor = 0x00400,
    tpConversion  = 0x00800,
    tpMultimethod = 0x01000,
-//   tpArgDispatcher = 0x3000,
+   tpArgDispatcher = 0x3000,
    tpStatic      = 0x04000,
    tpAccessor    = 0x08000,
    tpSpecial     = 0x10000,
@@ -156,7 +156,7 @@ struct _CompilerScope
 //   ref_t literalReference;
 //   ref_t wideReference;
 //   ref_t charReference;
-//   ref_t arrayReference;
+   ref_t arrayReference;
 
 ////   // cached bool values
 ////   BranchingInfo branchingInfo;
@@ -195,7 +195,7 @@ struct _CompilerScope
       intReference = /*boolReference = */superReference = 0;
 ////      signatureReference = messageReference = 0;
 ////      longReference = literalReference = wideReference = 0;
-////      arrayReference = charReference = realReference = 0;
+      arrayReference = /*charReference = realReference = */0;
 ////      extMessageReference = 0;
    }
 };
@@ -213,7 +213,7 @@ public:
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0) = 0;
-//   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
+   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
    virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable) = 0;
 
    virtual void injectLocalBoxing(SNode node, int size) = 0;
@@ -236,13 +236,13 @@ public:
    {
       bool  found;
       bool  directResolved;
-//      bool  withCustomDispatcher;
+      bool  withCustomDispatcher;
 //      //bool  closed;
       bool  stackSafe;
       bool  embeddable;
-//      bool  withOpenArgDispatcher;
-//      bool  withOpenArg1Dispatcher;
-//      bool  withOpenArg2Dispatcher;
+      bool  withOpenArgDispatcher;
+      bool  withOpenArg1Dispatcher;
+      bool  withOpenArg2Dispatcher;
 //      bool  closure;
       ref_t outputReference;
 
@@ -251,11 +251,11 @@ public:
          directResolved = false;
          embeddable = /*closed = */found = false;
          outputReference = 0;
-//         withCustomDispatcher = false;
+         withCustomDispatcher = false;
          stackSafe = false;
-//         withOpenArgDispatcher = false;
-//         withOpenArg1Dispatcher = false;
-//         withOpenArg2Dispatcher = false;
+         withOpenArgDispatcher = false;
+         withOpenArg1Dispatcher = false;
+         withOpenArg2Dispatcher = false;
 //         closure = false;
       }
    };
@@ -296,7 +296,7 @@ public:
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
 

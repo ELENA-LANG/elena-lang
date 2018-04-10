@@ -137,7 +137,7 @@ public:
       okNil,
 //      okSuper,
       okLocalAddress,                 // param - local offset, extraparam - class reference
-//      okParams,                       // param - local offset
+      okParams,                       // param - local offset
 //////      okBlockLocal,                   // param - local offset
 //      okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
@@ -549,7 +549,7 @@ private:
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
-//      bool         withOpenArg;
+      bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
 //      bool         generic;
@@ -813,8 +813,8 @@ private:
       return _logic->checkMethod(scope, reference, message, dummy);
    }
 
-//   int retrieveGenericArgParamCount(ClassScope& scope);
-//
+   int retrieveGenericArgParamCount(ClassScope& scope);
+
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(/*ModuleScope& scope, */ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
@@ -924,7 +924,7 @@ private:
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   ref_t declareArgumentType(SNode node, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/);
+   ref_t declareArgumentType(SNode node, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature*/, ref_t& elementRef);
    void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
 //   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
@@ -933,7 +933,7 @@ private:
 //
 //   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false, bool withOpenArgGenerics = false*/);
+   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
@@ -989,8 +989,8 @@ private:
    ref_t analizeSymbol(SNode& node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    ref_t analizeAssigning(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    ref_t analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
-//   ref_t analizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
-//   ref_t analizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
+   ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
+   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
    ref_t analizeMessageCall(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    ref_t analizeExpression(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
 //   ref_t analizeInternalCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
@@ -1044,7 +1044,7 @@ public:
 ////   virtual void injectFieldExpression(SyntaxWriter& writer);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
-//   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
+   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable);
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);

@@ -963,11 +963,11 @@ public sealed struct IntNumber //:: IntBaseNumber
 //    /// Creates the object with the maximal value
 //    constructor max
 //        = 2147483647.
-//    
-//    /// Creates the object with specified value
-//    stacksafe constructor new int:value
-//        = value.
-//
+    
+    /// Creates the object with specified value
+    constructor new(int value)
+        = value.
+
 //    /// Creates the object with specified value
 //    stacksafe constructor new short:value
 //        = intConvertor convert short:value.
@@ -1047,23 +1047,23 @@ public sealed struct IntNumber //:: IntBaseNumber
 //
 //    stacksafe int divide(BaseVariable v)
 //        <= divide(v value).
-//        
-//    /// Returns the sum
-//    stacksafe int add int:anOperand
-//        = theValue + anOperand.
-//
-//    /// Returns the sum
-//    stacksafe int subtract int:anOperand
-//        = theValue - anOperand.
-//
-//    /// Returns the product
-//    stacksafe int multiply int:anOperand
-//        = theValue * anOperand.
-//
-//    /// Returns the result of integer division
-//    stacksafe int divide int:anOperand
-//        = theValue / anOperand.
-//
+        
+    /// Returns the sum
+    int add(int anOperand)
+        = theValue + anOperand.
+
+    /// Returns the sum
+    int subtract(int anOperand)
+        = theValue - anOperand.
+
+    /// Returns the product
+    int multiply(int anOperand)
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    int divide(int anOperand)
+        = theValue / anOperand.
+
 //    multi and:n
 //        <= and int:n.
 //        

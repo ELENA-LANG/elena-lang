@@ -16,6 +16,9 @@
 #define RECENTFILES_SECTION      "configuration/recent_files/*"
 #define RECENTRPOJECTS_SECTION   "configuration/recent_projects/*"
 
+#define SRCPATH_SECTION_NAME     "configuration/srcpath/path"     // template source paths
+#define LIBPATH_SECTION_NAME     "configuration/libpath/path"     // template library paths
+
 #define TAB_SIZE_SETTING         "configuration/settings/tabsize"
 #define ENCODING_SETTING         "configuration/settings/encoding"
 #define TAB_USING_SETTING        "tabusing"

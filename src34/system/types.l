@@ -9,7 +9,6 @@ sealed          = #8195.
 //embeddable      = #8193.
 template        = #16391.
 //extension       = #8203.
-//stacksafe       = #8192.
 
 //const           = #8201.
 singleton       = #8208.
@@ -48,8 +47,8 @@ __byte          = #11.
 //__extmssg       = #21.
 //__tape_mixin    = #8209.
 //__symbol        = #22.
-//__array         = #30.
-//
+dynamic         = #30.
+
 //__ifoperator    = #4097.
 //__ifnotoperator = #4098.
 

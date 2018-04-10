@@ -96,6 +96,7 @@ public:
    //ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL);
 
    void appendSetting(ident_t key, ident_t attribute, const char* value);
+   void appendSetting(ident_t key, const char* value);
 
    void setSetting(ident_t key, const char* value);
    void setSetting(ident_t key, int value);

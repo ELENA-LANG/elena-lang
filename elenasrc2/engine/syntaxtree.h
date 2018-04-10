@@ -118,15 +118,15 @@ enum LexicalType
    lxCurrentMessage     = 0x0A11B,
    lxSelfLocal          = 0x0A11C,
    lxConstantList       = 0x0A11E,   // arg - reference
-//   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
+   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
    lxClassRefField      = 0x08120,  // arg - self instance offset
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
    lxLocalUnboxing   = 0x0C003,   // arg - size
    lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
-//   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
-//   lxArgUnboxing     = 0x0C006,
+   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
+   lxArgUnboxing     = 0x0C006,
    lxCalling         = 0x0C007,   // sending a message, arg - message
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
@@ -196,7 +196,7 @@ enum LexicalType
    lxIntsVariable    = 0x1003B,
    lxBytesVariable   = 0x1003C,
    lxShortsVariable  = 0x1003D,
-//   lxParamsVariable  = 0x1003E,
+   lxParamsVariable  = 0x1003E,
 //   lxInlineClosure   = 0x1003F,
 
    // attributes
@@ -264,7 +264,7 @@ enum LexicalType
 //   lxTemplateBoxing  = 0x2003D,
 //   lxParentLists     = 0x2003E,
 //   lxClosureAttr     = 0x2003F,
-//   lxArgDispatcherAttr = 0x20040,
+   lxArgDispatcherAttr = 0x20040,
 //   lxFPUTarget       = 0x20041,
 //   lxFalseAttribute   = 0x20042,
 //   lxTemplateParamAttr = 0x20043,

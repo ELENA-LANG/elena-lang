@@ -797,13 +797,13 @@ inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
    paramCount = message & PARAM_MASK;
 }
 
-//inline ref_t overwriteParamCount(ref_t message, int paramCount)
-//{
-//   message &= ~PARAM_MASK;
-//   message |= paramCount;
-//
-//   return message;
-//}
+inline ref_t overwriteParamCount(ref_t message, int paramCount)
+{
+   message &= ~PARAM_MASK;
+   message |= paramCount;
+
+   return message;
+}
 
 inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
 {

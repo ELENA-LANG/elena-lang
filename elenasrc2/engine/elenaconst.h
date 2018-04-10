@@ -285,7 +285,7 @@ namespace _ELENA_
    const int elFinal               = 0x00000100;
    const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
-//   const int elWithGenerics        = 0x00000400;
+   const int elWithGenerics        = 0x00000400;
    const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
@@ -295,8 +295,8 @@ namespace _ELENA_
 //   const int elSymbol              = 0x00100000;
 //   const int elExtMessage          = 0x00208000;
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
-//   const int elWithCustomDispatcher= 0x00800000;
-//   const int elWithArgGenerics     = 0x01000000;
+   const int elWithCustomDispatcher= 0x00800000;
+   const int elWithArgGenerics     = 0x01000000;
 //   const int elTapeGroup           = 0x02000200;
    const int elClassClass          = 0x04000000;
    const int elWithMuti            = 0x08000000;
@@ -494,7 +494,7 @@ namespace _ELENA_
 //   #define MESSAGE_FORWARD          "'$message"
 //   #define EXT_MESSAGE_FORWARD      "'$ext_message"
 //   #define SIGNATURE_FORWARD        "'$signature"
-//   #define ARRAY_FORWARD            "'$array"
+   #define ARRAY_FORWARD            "$array"
 //   #define BOOL_FORWARD             "'$bool"
 
    #define STARTUP_SYMBOL             "$startUp"

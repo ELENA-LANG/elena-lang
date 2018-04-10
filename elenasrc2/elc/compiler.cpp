@@ -223,7 +223,6 @@ Compiler::NamespaceScope :: NamespaceScope(CompilerScope* moduleScope/*_ProjectM
 //   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
 //   messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
 //   extMessageReference = mapReference(project->resolveForward(EXT_MESSAGE_FORWARD));
-//   arrayReference = mapReference(project->resolveForward(ARRAY_FORWARD));
 //   boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
 //
 //   // HOTFIX : package section should be created if at least literal class is declated
@@ -1026,7 +1025,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->reserved = 0;
    this->rootToFree = 1;
    this->hints = 0;
-//   this->withOpenArg = false;
+   this->withOpenArg = false;
    this->stackSafe = this->classEmbeddable = false;
 //   this->generic = false;
 //   this->extensionMode = false;
@@ -1055,10 +1054,10 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
 {
    int prefix = /*closureMode ? 0 : */-1;
 
-//   if (withOpenArg && param.class_ref == V_ARGARRAY) {
-//      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
-//   }
-   /*else */if (stackSafe && param.class_ref != 0 && param.size != 0) {
+   if (withOpenArg && param.class_ref == V_ARGARRAY) {
+      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
+   }
+   else if (stackSafe && param.class_ref != 0 && param.size != 0) {
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, (ref_t)-1);
    }
    return ObjectInfo(okParam, prefix - param.offset, param.class_ref);
@@ -1623,8 +1622,8 @@ ref_t Compiler :: resolveObjectReference(/*ModuleScope& scope, */ObjectInfo obje
       //   return scope.extMessageReference;
       //case okSuper:
       //   return object.param;
-      //case okParams:
-      //   return V_ARGARRAY;
+      case okParams:
+         return V_ARGARRAY;
       //case okExternal:
       //   return V_INT32;
       //case okMessageConstant:
@@ -1680,10 +1679,10 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
          ident_t name = /*(current == lxIdentifier) ? current.identifier() : */current.findChild(lxIdentifier, lxPrivate).identifier();
          Parameter param = scope.parameters.get(name);
          if (param.offset != -1) {
-//            if (param.class_ref == V_ARGARRAY) {
-//               writer.newNode(lxParamsVariable);
-//            }
-            /*else */if (param.class_ref == moduleScope->intReference) {
+            if (param.class_ref == V_ARGARRAY) {
+               writer.newNode(lxParamsVariable);
+            }
+            else if (param.class_ref == moduleScope->intReference) {
                writer.newNode(lxIntVariable);
             }
 //            else if (param.class_ref == moduleScope->longReference) {
@@ -2415,13 +2414,13 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
 ////      case okBlockLocal:
 ////         terminal.set(lxBlockLocal, object.param);
 ////         break;
-//      case okParams:
-//         writer.newNode(lxArgBoxing, 0);
-//         writer.appendNode(lxBlockLocalAddr, object.param);
-//         writer.appendNode(lxTarget, scope.moduleScope->arrayReference);
-//         if (test(mode, HINT_DYNAMIC_OBJECT))
-//            writer.appendNode(lxBoxingRequired);
-//         break;
+      case okParams:
+         writer.newNode(lxArgBoxing, 0);
+         writer.appendNode(lxBlockLocalAddr, object.param);
+         writer.appendNode(lxTarget, scope.moduleScope->arrayReference);
+         if (test(mode, HINT_DYNAMIC_OBJECT))
+            writer.appendNode(lxBoxingRequired);
+         break;
       case okObject:
          writer.newNode(lxResult, 0);
          break;
@@ -3121,17 +3120,17 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    /*else */if (callType == tpClosed || callType == tpSealed) {
       operation = callType == tpClosed ? lxSDirctCalling : lxDirectCalling;
       argument = messageRef;
-//      if (result.withOpenArgDispatcher) {
-//         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT);
-//      }
-//      else if (result.withOpenArg1Dispatcher) {
-//         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 1);
-//      }
-//      else if (result.withOpenArg2Dispatcher) {
-//         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 2);
-//      }
+      if (result.withOpenArgDispatcher) {
+         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT);
+      }
+      else if (result.withOpenArg1Dispatcher) {
+         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 1);
+      }
+      else if (result.withOpenArg2Dispatcher) {
+         argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 2);
+      }
 
-      if (result.stackSafe/* && target.kind != okParams*/ && !test(mode, HINT_DYNAMIC_OBJECT))
+      if (result.stackSafe && target.kind != okParams && !test(mode, HINT_DYNAMIC_OBJECT))
          writer.appendNode(lxStacksafeAttr);
 
       if (result.embeddable)
@@ -4716,8 +4715,11 @@ inline SNode findTerminal(SNode node)
    return ident;
 }
 
-ref_t Compiler :: declareArgumentType(SNode attribute, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature, ref_t& elementRef*/)
+ref_t Compiler :: declareArgumentType(SNode node, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature*/, ref_t& elementRef)
 {
+   SNode attrNode = node.findChild(lxClassRefAttr);
+   SNode sizeNode = node.findChild(lxSize);
+
 //   NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
 //   SNode type = arg.findChild(/*lxIdentifier, lxPrivate, */lxReference/*, lxClassRefAttr*/);
@@ -4726,10 +4728,18 @@ ref_t Compiler :: declareArgumentType(SNode attribute, Scope& scope/*, bool& fir
 //      subject = arg;
 
    ref_t class_ref = 0;
-   if (attribute == lxClassRefAttr) {
-      class_ref = scope.module->mapReference(attribute.identifier(), true);
+   if (attrNode == lxClassRefAttr) {
+      class_ref = scope.module->mapReference(attrNode.identifier(), true);
    }
    //else class_ref = namespaceScope->resolveImplicitIdentifier(attribute.identifier());
+
+   if (sizeNode == lxSize) {
+      if (sizeNode.argument == -1) {
+         elementRef = class_ref;
+         class_ref = V_ARGARRAY;
+      }
+      else scope.raiseError(errInvalidSubject, node);
+   }
 
 ////   if (arg.compare(lxMessage, lxClosureMessage) && subject != lxReference && subject != lxClassRefAttr) {
 ////      bool openArg = arg.existChild(lxSize);
@@ -4748,8 +4758,6 @@ ref_t Compiler :: declareArgumentType(SNode attribute, Scope& scope/*, bool& fir
 ////
 ////      if (class_ref) {
 ////         if (openArg) {
-////            elementRef = class_ref;
-////            class_ref = V_ARGARRAY;
 ////         }
 ////         else {
 ////            signature.append('$');
@@ -4783,7 +4791,7 @@ ref_t Compiler :: declareArgumentType(SNode attribute, Scope& scope/*, bool& fir
 ////   }
 
    if (!class_ref)
-      scope.raiseError(errInvalidSubject, attribute);
+      scope.raiseError(errInvalidSubject, node);
 
    return class_ref;
 }
@@ -4846,7 +4854,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    while (current != lxNone) {
       if (current == lxMethodParameter) {
          int index = 1 + scope.parameters.Count();
+         int size = 0;
          ref_t classRef = 0;
+         ref_t elementRef = 0;
 
          ident_t terminal = findTerminal(current).identifier();
          if (scope.parameters.exist(terminal))
@@ -4854,24 +4864,31 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
          SNode attribute = current.findChild(lxTypeAttr);
          if (attribute != lxNone) {
-            classRef = declareArgumentType(attribute.findChild(lxClassRefAttr), scope/*, first, messageStr, signature, elementRef*/);
+            classRef = declareArgumentType(attribute, scope, /*first, messageStr, signature, */elementRef);
+            if (classRef == V_ARGARRAY) {
+               // the generic arguments should be free by the method exit
+               scope.withOpenArg = true;
 
-            signature[signatureLen++] = classRef;
+               // to indicate open argument list
+               paramCount += OPEN_ARG_COUNT;
+               if (paramCount > MAX_ARG_COUNT) {
+                  scope.raiseError(errNotApplicable, node);
+               }
+
+               signature[signatureLen++] = elementRef;
+            }
+            else {
+               signature[signatureLen++] = classRef;
+
+               size = _logic->defineStructSize(*scope.moduleScope, classRef, elementRef);
+
+               paramCount++;
+               if (paramCount >= OPEN_ARG_COUNT)
+                  scope.raiseError(errTooManyParameters, current);
+            }
          }
 
-         //      // if it is typified argument
-         //      if (verbRef) {
-         //         int size = _logic->defineStructSize(*scope.moduleScope, verbRef, 0);
-         //
-         //         scope.parameters.add(terminal, Parameter(index, verbRef, size));
-         //         verbRef = 0;
-         //         strongParamCounter++;
-         //      }
-         scope.parameters.add(terminal, Parameter(index, classRef));
-
-         paramCount++;
-         if (paramCount >= OPEN_ARG_COUNT)
-            scope.raiseError(errTooManyParameters, current);
+         scope.parameters.add(terminal, Parameter(index, classRef, elementRef, size));
 
       }
       else if (current == lxMessage) {
@@ -5053,20 +5070,20 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //   }
 }
 
-//int Compiler ::retrieveGenericArgParamCount(ClassScope& scope)
-//{
-//   int extraParamCount = -1;
-//   for (auto it = scope.info.methods.start(); !it.Eof(); it++) {
-//      if (isOpenArg(it.key()) && _logic->isMethodGeneric(scope.info, it.key())) {
-//         extraParamCount = getParamCount(it.key());
-//         break;
-//      }
-//   }
-//
-//   return extraParamCount;
-//}
+int Compiler :: retrieveGenericArgParamCount(ClassScope& scope)
+{
+   int extraParamCount = -1;
+   for (auto it = scope.info.methods.start(); !it.Eof(); it++) {
+      if (isOpenArg(it.key()) && _logic->isMethodGeneric(scope.info, it.key())) {
+         extraParamCount = getParamCount(it.key());
+         break;
+      }
+   }
 
-void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods, bool withOpenArgGenerics*/)
+   return extraParamCount;
+}
+
+void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -5321,48 +5338,48 @@ void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNod
 
 void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope)
 {
-   //if (node.existChild(lxArgDispatcherAttr)) {
-   //   // if it is a argument list unboxing routine
-   //   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+   if (node.existChild(lxArgDispatcherAttr)) {
+      // if it is a argument list unboxing routine
+      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
-   //   writer.newNode(lxNewFrame);
+      writer.newNode(lxNewFrame);
 
-   //   // new stack frame
-   //   // stack already contains current $self reference
-   //   scope.level++;
+      // new stack frame
+      // stack already contains current $self reference
+      scope.level++;
 
-   //   writer.newNode(lxCalling, node.argument);
-   //   writeTerminal(writer, node, scope, methodScope->mapThis(), HINT_NODEBUGINFO);
-   //   // copy the argument list
-   //   int paramCount = getParamCount(node.argument) + 1;
-   //   for (int i = 1; i <= paramCount; i++) {
-   //      if (i == paramCount)
-   //         // unbox the last argument ist
-   //         writer.newNode(lxArgUnboxing, scope.moduleScope->arrayReference);
+      writer.newNode(lxCalling, node.argument);
+      writeTerminal(writer, node, scope, methodScope->mapSelf(), HINT_NODEBUGINFO);
+      // copy the argument list
+      int paramCount = getParamCount(node.argument) + 1;
+      for (int i = 1; i <= paramCount; i++) {
+         if (i == paramCount)
+            // unbox the last argument ist
+            writer.newNode(lxArgUnboxing, scope.moduleScope->arrayReference);
 
-   //      writeTerminal(writer, node, scope, methodScope->mapParameter(Parameter(i)), HINT_NODEBUGINFO);
+         writeTerminal(writer, node, scope, methodScope->mapParameter(Parameter(i)), HINT_NODEBUGINFO);
 
-   //      if (i == paramCount)
-   //         writer.closeNode();
-   //   }
+         if (i == paramCount)
+            writer.closeNode();
+      }
 
-   //   if (methodScope->extensionMode) {
-   //      ObjectInfo target = methodScope->mapThis(true);
+      //if (methodScope->extensionMode) {
+      //   ObjectInfo target = methodScope->mapThis(true);
 
-   //      writer.newNode(lxOverridden);
-   //      writeParamTerminal(writer, scope, target, HINT_DYNAMIC_OBJECT, lxThisLocal);
-   //      writeTarget(writer, resolveObjectReference(scope, target));
-   //      writer.closeNode();
-   //      writer.closeNode();
-   //   }
+      //   writer.newNode(lxOverridden);
+      //   writeParamTerminal(writer, scope, target, HINT_DYNAMIC_OBJECT, lxThisLocal);
+      //   writeTarget(writer, resolveObjectReference(scope, target));
+      //   writer.closeNode();
+      //   writer.closeNode();
+      //}
 
-   //   writer.closeNode();
+      writer.closeNode();
 
-   //   scope.freeSpace();
+      //scope.freeSpace();
 
-   //   writer.closeNode();
-   //}
-   //else {
+      writer.closeNode();
+   }
+   else {
       ref_t message = scope.getMessageID();
       ref_t overloadRef = classScope.info.methodHints.get(Attribute(message, maOverloadlist));
       if (overloadRef) {
@@ -5395,7 +5412,7 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
          }
       }
       writer.closeNode();
-   //}
+   }
 }
 
 void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/)
@@ -5620,15 +5637,10 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
       }
 
       if (retExpr) {
-         //writer.newNode(lxReturning);
-         //writer.newBookmark();
-
-         //ObjectInfo retVal = compileRetExpression(writer, bodyNode, codeScope, /*HINT_CONSTRUCTOR_EPXR*/0);
-         //convertObject(writer, *codeScope.moduleScope, codeScope.getClassRefId(), resolveObjectReference(codeScope, retVal), retVal.element);
-
-         //writer.removeBookmark();
-         //writer.closeNode();
-         scope.raiseError(errIllegalOperation, node);
+         writer.newNode(lxReturning);
+         //writer.appendNode(lxBreakpoint, dsStep);
+         compileExpression(writer, bodyNode, codeScope, codeScope.getClassRefId(), HINT_DYNAMIC_OBJECT);
+         writer.closeNode();
       }
       else {
          preallocated = codeScope.level;
@@ -5746,9 +5758,9 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 
                initialize(scope, methodScope);
 
-               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope/*,
+               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope,
                   test(scope.info.header.flags, elWithGenerics),
-                  test(scope.info.header.flags, elWithArgGenerics)*/);
+                  test(scope.info.header.flags, elWithArgGenerics));
             }
             // if it is a normal method
             else {
@@ -5768,22 +5780,22 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
       current = current.nextNode();
    }
 
-//   // if the VMT conatains newly defined generic handlers, overrides default one
-//   if (testany(scope.info.header.flags, elWithGenerics | elWithArgGenerics) && scope.info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), false)) {
-//      MethodScope methodScope(&scope);
-//      methodScope.message = encodeVerb(DISPATCH_MESSAGE_ID);
-//
-//      scope.include(methodScope.message);
-//
-//      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
-//
-//      compileDispatcher(writer, SNode(), methodScope,
-//         test(scope.info.header.flags, elWithGenerics),
-//         test(scope.info.header.flags, elWithArgGenerics));
-//
-//      // overwrite the class info
-//      scope.save();
-//   }
+   // if the VMT conatains newly defined generic handlers, overrides default one
+   if (testany(scope.info.header.flags, elWithGenerics | elWithArgGenerics) && scope.info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), false)) {
+      MethodScope methodScope(&scope);
+      methodScope.message = encodeAction(DISPATCH_MESSAGE_ID);
+
+      scope.include(methodScope.message);
+
+      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
+
+      compileDispatcher(writer, SNode(), methodScope,
+         test(scope.info.header.flags, elWithGenerics),
+         test(scope.info.header.flags, elWithArgGenerics));
+
+      // overwrite the class info
+      scope.save();
+   }
 }
 
 void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
@@ -5995,7 +6007,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 {
    methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
-//   methodScope.withOpenArg = isOpenArg(methodScope.message);
+   methodScope.withOpenArg = isOpenArg(methodScope.message);
 //   methodScope.closureMode = _logic->isClosure(scope.info, methodScope.message);
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
 //   if (!methodScope.withOpenArg) {
@@ -6339,19 +6351,19 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    generateMethodAttributes(scope, current, message, allowTypeAttribute);
 
    int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
-//   if (isOpenArg(message)) {
-//      if (_logic->isMethodGeneric(scope.info, message)) {
-//         // HOTFIX : verify that only generics with similar argument signature available
-//         int extraParamCount = retrieveGenericArgParamCount(scope);
-//         if (extraParamCount != -1 && getParamCount(message) != extraParamCount)
-//            scope.raiseError(errIllegalMethod, current);
-//
-//         scope.info.header.flags |= elWithArgGenerics;
-//      }
-//   }
-//   else if (_logic->isMethodGeneric(scope.info, message)) {
-//      scope.info.header.flags |= elWithGenerics;
-//   }
+   if (isOpenArg(message)) {
+      if (_logic->isMethodGeneric(scope.info, message)) {
+         // HOTFIX : verify that only generics with similar argument signature available
+         int extraParamCount = retrieveGenericArgParamCount(scope);
+         if (extraParamCount != -1 && getParamCount(message) != extraParamCount)
+            scope.raiseError(errIllegalMethod, current);
+
+         scope.info.header.flags |= elWithArgGenerics;
+      }
+   }
+   else if (_logic->isMethodGeneric(scope.info, message)) {
+      scope.info.header.flags |= elWithGenerics;
+   }
 //   if (test(methodHints, tpAction) && closureBaseClass) {
 //      scope.moduleScope->saveAction(message, scope.reference);
 //   }
@@ -6904,12 +6916,12 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
 //   return V_INT32;
 //}
 
-//ref_t Compiler :: analizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int)
-//{
-//   analizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
-//
-//   return 0;
-//}
+ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int)
+{
+   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
+
+   return 0;
+}
 
 int Compiler :: allocateStructure(SNode node, int& size)
 {
@@ -7210,21 +7222,21 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScop
    return targetRef;
 }
 
-////ref_t Compiler :: analizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode)
-////{
-////   bool boxing = !test(mode, HINT_NOBOXING);
-////
-////   // HOTFIX : override the stacksafe attribute if the object must be boxed
-////   if (!boxing && node.existChild(lxBoxingRequired))
-////      boxing = true;
-////
-////   if (!boxing)
-////      node = lxExpression;
-////
-////   analizeExpressionTree(node, scope, warningScope, HINT_NOBOXING);
-////
-////   return scope.arrayReference;
-////}
+ref_t Compiler :: analizeArgBoxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode)
+{
+   bool boxing = !test(mode, HINT_NOBOXING);
+
+   // HOTFIX : override the stacksafe attribute if the object must be boxed
+   if (!boxing && node.existChild(lxBoxingRequired))
+      boxing = true;
+
+   if (!boxing)
+      node = lxExpression;
+
+   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
+
+   return scope.moduleScope->arrayReference;
+}
 
 ref_t Compiler :: analizeSymbol(SNode& node, NamespaceScope& scope/*, WarningScope&*/)
 {
@@ -7335,10 +7347,10 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, /*Warn
       case lxCondBoxing:
       case lxUnboxing:
          return analizeBoxing(current, scope, /*warningScope, */mode);
-      //case lxArgBoxing:
-      //   return analizeArgBoxing(current, scope, /*warningScope, */mode);
-      //case lxArgUnboxing:
-      //   return analizeArgUnboxing(current, scope, /*warningScope, */mode);
+      case lxArgBoxing:
+         return analizeArgBoxing(current, scope, /*warningScope, */mode);
+      case lxArgUnboxing:
+         return analizeArgUnboxing(current, scope, /*warningScope, */mode);
       case lxAssigning:
          return analizeAssigning(current, scope/*, warningScope*/);
       case lxSymbolReference:
@@ -7801,6 +7813,8 @@ void Compiler :: initializeScope(ident_t name, CompilerScope& scope, bool withDe
    // cache the frequently used references
    scope.superReference = safeMapReference(scope.module, scope.project->resolveForward(SUPER_FORWARD));
    scope.intReference = safeMapReference(scope.module, scope.project->resolveForward(INT_FORWARD));
+   scope.arrayReference = safeMapReference(scope.module, scope.project->resolveForward(ARRAY_FORWARD));
+
 
 //   createPackageInfo(info.codeModule, project);
 }
@@ -8020,30 +8034,32 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
       codeNode.appendNode(lxTarget, parentRef);
 }
 
-//void Compiler :: injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType)
-//{
-//   ref_t actionRef = getAction(message);
-//   IdentifierString sign(scope.module->resolveSubject(actionRef));
-//   int paramCount = getAbsoluteParamCount(message);
-//   for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
-//      sign.append('$');
-//      sign.append(scope.module->resolveReference(scope.superReference));
-//   }
-//   sign.append('$');
-//   sign.append(scope.module->resolveReference(scope.arrayReference));
-//
-//   ref_t signRef = scope.module->mapSubject(sign, false);
-//   ref_t resendMessage = encodeMessage(signRef, getParamCount(message) + 1);
-//
-//   SNode methNode = classNode.appendNode(methodType, resendMessage);
-//   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
-//   methNode.appendNode(lxAttribute, tpArgDispatcher);
-//   if (methodType == lxConstructor)
-//      methNode.appendNode(lxAttribute, tpConstructor);
-//
-//   SNode codeNode = methNode.appendNode(lxResendExpression, message);
-//   codeNode.appendNode(lxArgDispatcherAttr);
-//}
+void Compiler :: injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType)
+{
+   ref_t actionRef = getAction(message);
+   ref_t signRef = 0;
+   IdentifierString sign(scope.module->resolveAction(actionRef, signRef));
+   int paramCount = getAbsoluteParamCount(message);
+
+   size_t signatureLen = 0;
+   ref_t  signatures[OPEN_ARG_COUNT];
+   for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
+      signatures[signatureLen++] = scope.superReference;
+   }
+   signatures[signatureLen++] = scope.arrayReference;
+
+   ref_t resendActionRef = scope.module->mapAction(sign, scope.module->mapSignature(signatures, signatureLen, false), false);
+   ref_t resendMessage = encodeMessage(resendActionRef, getParamCount(message) + 1);
+
+   SNode methNode = classNode.appendNode(methodType, resendMessage);
+   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
+   methNode.appendNode(lxAttribute, tpArgDispatcher);
+   if (methodType == lxConstructor)
+      methNode.appendNode(lxAttribute, tpConstructor);
+
+   SNode codeNode = methNode.appendNode(lxResendExpression, message);
+   codeNode.appendNode(lxArgDispatcherAttr);
+}
 
 void Compiler :: injectVirtualReturningMethod(_CompilerScope&, SNode classNode, ref_t message, ident_t variable)
 {

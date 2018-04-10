@@ -2419,7 +2419,8 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
 {
     ref_t classRef = 0;
 
-   bool  arrayMode = false;
+   bool arrayMode = false;
+   bool dynamicMode = false;
    bool newTemplateMode = false;
 
    int prefixCounter = 0;
@@ -2432,9 +2433,13 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
    if (attrRef == V_TYPETEMPL && prefixCounter == 1) {
       // if it is a type atrribute
    }
-   if (attrRef == V_TYPETEMPL && prefixCounter == 2) {
+   else if (attrRef == V_TYPETEMPL && prefixCounter == 2) {
       // if it is an array atrribute
       arrayMode = true;
+   }
+   else if (attrRef == V_OBJARRAY && prefixCounter == 1) {
+      // if it is an array atrribute
+      dynamicMode = arrayMode = true;
    }
    else {
       IdentifierString className;
@@ -2484,7 +2489,7 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
 //
 //      return;
 //   }
-   /*else */if (attrRef == V_TYPETEMPL/* || attrRef == V_OBJARRAY*/) {
+   /*else */if (attrRef == V_TYPETEMPL || attrRef == V_OBJARRAY) {
       classRef = scope.mapReference(attr.firstChild(lxTerminalMask));
 //      className.copy(attr.firstChild(lxTerminalMask).identifier());
    }
@@ -2508,11 +2513,14 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
    writer.closeNode();
 
    if (arrayMode) {
-      SNode sizeNode = goToNode(attr.nextNode(), lxAttributeValue).firstChild(lxTerminalMask);
-      if (sizeNode.compare(lxInteger, lxHexInteger)) {
-         writer.appendNode(lxSize, readSizeValue(sizeNode, sizeNode == lxHexInteger ? 16 : 10));
+      if (!dynamicMode) {
+         SNode sizeNode = goToNode(attr.nextNode(), lxAttributeValue).firstChild(lxTerminalMask);
+         if (sizeNode.compare(lxInteger, lxHexInteger)) {
+            writer.appendNode(lxSize, readSizeValue(sizeNode, sizeNode == lxHexInteger ? 16 : 10));
+         }
+         else scope.raiseError(errInvalidSubject, node);
       }
-      else scope.raiseError(errInvalidSubject, node);
+      else writer.appendNode(lxSize, -1);
    }
 }
 

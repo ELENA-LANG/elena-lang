@@ -81,11 +81,12 @@ inline void saveSetting(_ELENA_::XmlConfigFile& config, const char* setting, int
 
 inline void saveSection(_ELENA_::XmlConfigFile& config, const char* section, PathMapping& list)
 {
-   //for(PathMapping::Iterator it = list.start(); !it.Eof(); it++) {
-   //   IdentifierString value(*it);
+   for(PathMapping::Iterator it = list.start(); !it.Eof(); it++) {
+      IdentifierString value(*it);
 
    //   config.setSetting(section, it.key(), value);
-   //}
+      config.appendSetting(section, it.key(), value.c_str());
+   }
 }
 
 // -- Paths ---
@@ -188,8 +189,8 @@ void Settings :: save(Model* model, _ELENA_::XmlConfigFile& config)
    saveSetting(config, TAB_SIZE_SETTING, model->tabSize, 4);
    saveSetting(config, ENCODING_SETTING, model->defaultEncoding, 0);
 
-   //saveSection(config, SRCPATH_SECTION, model->packageRoots);
-   //saveSection(config, LIBPATH_SECTION, model->libraryRoots);
+   saveSection(config, SRCPATH_SECTION_NAME, model->packageRoots);
+   saveSection(config, LIBPATH_SECTION_NAME, model->libraryRoots);
 }
 
 void Settings :: onNewProjectTemplate(Model* model, _GUI_::_ProjectManager* project)

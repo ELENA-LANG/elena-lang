@@ -486,10 +486,11 @@ void XmlConfigFile  :: appendSetting(ident_t key, ident_t attribute, const char*
    size_t end = key.findLast('/', length);
    if (end != NOTFOUND_POS) {
       String<char, 255> subCategory(key, end);
-      size_t position = find(_tree, subCategory.c_str());
+
+      size_t position = find(subCategory.c_str());
       if (position == NOTFOUND_POS) {
          setSetting(subCategory.c_str(), DEFAULT_STR);
-         position = find(_tree, subCategory.c_str());
+         position = find(subCategory.c_str());
       }
 
       XMLNode parent(position, &_tree);
@@ -498,7 +499,25 @@ void XmlConfigFile  :: appendSetting(ident_t key, ident_t attribute, const char*
       newNode.writeAttribute("key", attribute);
       newNode.writeContent(value);
    }
-   else {
+}
+
+void XmlConfigFile :: appendSetting(ident_t key, const char* value)
+{
+   size_t length = getlength(key);
+   size_t end = key.findLast('/', length);
+   if (end != NOTFOUND_POS) {
+      String<char, 255> subCategory(key, end);
+
+      size_t position = find(subCategory.c_str());
+      if (position == NOTFOUND_POS) {
+         setSetting(subCategory.c_str(), DEFAULT_STR);
+         position = find(subCategory.c_str());
+      }
+
+      XMLNode parent(position, &_tree);
+      XMLNode newNode = parent.appendNode(key + end + 1);
+
+      newNode.writeContent(value);
    }
 }
 

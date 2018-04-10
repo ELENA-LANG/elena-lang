@@ -255,28 +255,28 @@ int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t m
 //      //if (!test(info.header.flags, elClosed))
 //      //   result.closed = false;
 //
-//      if (test(info.header.flags, elWithCustomDispatcher))
-//         result.withCustomDispatcher = true;
+      if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
 
       int hint = checkMethod(info, message, result);
-//      if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
-//         hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
-//         if (hint != tpUnknown) {
-//            result.withOpenArgDispatcher = true;
-//         }
-//         else {
-//            hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 1), result);
-//            if (hint != tpUnknown) {
-//               result.withOpenArg1Dispatcher = true;
-//            }
-//            else {
-//               hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 2), result);
-//               if (hint != tpUnknown) {
-//                  result.withOpenArg2Dispatcher = true;
-//               }
-//            }
-//         }
-//      }
+      if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
+         hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
+         if (hint != tpUnknown) {
+            result.withOpenArgDispatcher = true;
+         }
+         else {
+            hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 1), result);
+            if (hint != tpUnknown) {
+               result.withOpenArg1Dispatcher = true;
+            }
+            else {
+               hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 2), result);
+               if (hint != tpUnknown) {
+                  result.withOpenArg2Dispatcher = true;
+               }
+            }
+         }
+      }
 
       return hint;
    }
@@ -552,10 +552,10 @@ bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
    return /*test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe)*/true;
 }
 
-//bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
-//}
+bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
+}
 
 bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
 {
@@ -654,18 +654,18 @@ void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode nod
       }
       else compiler.injectVirtualMultimethod(scope, node, *it, methodType);
 
-      //if (isOpenArg(*it)) {
-      //   // generate explicit argument list dispatcher
-      //   compiler.injectVirtualArgDispatcher(scope, node, *it, methodType);
+      if (isOpenArg(*it)) {
+         // generate explicit argument list dispatcher
+         compiler.injectVirtualArgDispatcher(scope, node, *it, methodType);
 
-      //   ref_t resendMessage = encodeMessage(getAction(*it), getParamCount(*it) + 1);
+         ref_t resendMessage = encodeMessage(getAction(*it), getParamCount(*it) + 1);
 
-      //   // generate argument list dispatcher multi-method
-      //   if (info.methods.exist(resendMessage)) {
-      //      compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType, info.header.parentRef);
-      //   }
-      //   else compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType);
-      //}
+         // generate argument list dispatcher multi-method
+         if (info.methods.exist(resendMessage)) {
+            compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType, info.header.parentRef);
+         }
+         else compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType);
+      }
 
       info.header.flags |= elWithMuti;
    }
@@ -1225,11 +1225,11 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, _Compiler& compiler
 //         else info.header.flags |= elDebugBytes;
 //      }
 //   }
-//
-//   // adjust objects with custom dispatch handler
-//   if (info.methods.exist(encodeVerb(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
-//      info.header.flags |= elWithCustomDispatcher;
-//   }
+
+   // adjust objects with custom dispatch handler
+   if (info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
+      info.header.flags |= elWithCustomDispatcher;
+   }
 
    // generation operation list if required
    if (test(info.header.flags, elWithMuti)) {
@@ -1518,8 +1518,8 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
       //   return firstNonZero(scope.signatureReference, scope.superReference);
       //case V_MESSAGE:
       //   return firstNonZero(scope.messageReference, scope.superReference);
-      //case V_ARGARRAY:
-      //   return firstNonZero(scope.arrayReference, scope.superReference);
+      case V_ARGARRAY:
+         return firstNonZero(scope.arrayReference, scope.superReference);
       default:
          return scope.superReference;
    }

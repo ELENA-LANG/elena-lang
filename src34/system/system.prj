@@ -11,6 +11,7 @@
        <include>types.l</include>
        <include>object.l</include>
        <include>basic.l</include>
+       <include>memory.l</include>
      </module>
   </files>
 </configuration>

@@ -144,7 +144,7 @@ class ByteCodeWriter
    void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
@@ -175,7 +175,7 @@ class ByteCodeWriter
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
    void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
-//   void boxArgList(CommandTape& tape, ref_t vmtReference);
+   void boxArgList(CommandTape& tape, ref_t vmtReference);
    void unboxArgList(CommandTape& tape, bool arrayMode);
    void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
 
