@@ -69,9 +69,9 @@ namespace _ELENA_
    #define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
    #define PREDEFINED_MESSAGE_ID   0x0020
 
-//   // virtual operator
-//   #define SETNIL_REFER_MESSAGE_ID 0x1019
-//
+   // virtual operator
+   #define SETNIL_REFER_MESSAGE_ID 0x1019
+
 //   // ---- ELENAVM command masks ---
 //   #define VM_MASK                 0x0200             // vm command mask
 //   #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument
@@ -279,8 +279,8 @@ namespace _ELENA_
    const int elStructureRole       = 0x00000008;
 //   const int elAbstract            = 0x00000010;
    const int elClosed              = 0x00000020;
-//   const int elWrapper             = 0x00000040;
-//   const int elStructureWrapper    = 0x00000048;
+   const int elWrapper             = 0x00000040;
+   const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elFinal               = 0x00000100;
    const int elSealed              = 0x00000120;
@@ -388,30 +388,30 @@ namespace _ELENA_
    #define DEFAULT_MESSAGE          "default"
    #define INIT_MESSAGE             "#init"
 
-//   // ELENA verb operators
-//   #define EQUAL_OPERATOR		      "=="
-//   #define NOTEQUAL_OPERATOR		   "!="
-//   #define NOTLESS_OPERATOR		   ">="
-//   #define NOTGREATER_OPERATOR      "<="
-//   #define GREATER_OPERATOR		   ">"
-//   #define LESS_OPERATOR            "<"
-//   #define IF_OPERATOR			      "?"
-//   #define IFNOT_OPERATOR		      "!"
-//   #define AND_OPERATOR             "&&"
-//   #define OR_OPERATOR              "||"
-//   #define XOR_OPERATOR             "^^"
-//   #define ADD_OPERATOR             "+"
-//   #define SUB_OPERATOR             "-"
-//   #define MUL_OPERATOR             "*"
-//   #define DIV_OPERATOR             "/"
-//   #define REFER_OPERATOR			   "@"
-//   #define APPEND_OPERATOR			   "+="
-//   #define REDUCE_OPERATOR			   "-="
-//   #define INCREASE_OPERATOR			"*="
-//   #define SEPARATE_OPERATOR			"/="
-//   #define WRITE_OPERATOR           "<<"
-//   #define READ_OPERATOR            ">>"
-//
+   // ELENA verb operators
+   #define EQUAL_OPERATOR		      "=="
+   #define NOTEQUAL_OPERATOR		   "!="
+   #define NOTLESS_OPERATOR		   ">="
+   #define NOTGREATER_OPERATOR      "<="
+   #define GREATER_OPERATOR		   ">"
+   #define LESS_OPERATOR            "<"
+   #define IF_OPERATOR			      "?"
+   #define IFNOT_OPERATOR		      "!"
+   #define AND_OPERATOR             "&&"
+   #define OR_OPERATOR              "||"
+   #define XOR_OPERATOR             "^^"
+   #define ADD_OPERATOR             "+"
+   #define SUB_OPERATOR             "-"
+   #define MUL_OPERATOR             "*"
+   #define DIV_OPERATOR             "/"
+   #define REFER_OPERATOR			   "@"
+   #define APPEND_OPERATOR			   "+="
+   #define REDUCE_OPERATOR			   "-="
+   #define INCREASE_OPERATOR			"*="
+   #define SEPARATE_OPERATOR			"/="
+   #define WRITE_OPERATOR           "<<"
+   #define READ_OPERATOR            ">>"
+
 //   // template virtual methods
 //   #define TEMPLATE_GET_MESSAGE     "$get"
 //   #define TEMPLATE_SET_MESSAGE     "$set"

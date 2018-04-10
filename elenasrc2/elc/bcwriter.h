@@ -137,7 +137,7 @@ class ByteCodeWriter
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
    void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
-//   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
+   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -145,7 +145,7 @@ class ByteCodeWriter
    void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareSelfInfo(CommandTape& tape, int level);
+   void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
@@ -157,13 +157,13 @@ class ByteCodeWriter
    void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
-//   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
+   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
    void newDynamicObject(CommandTape& tape);
-//   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
+   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
 
    void popObject(CommandTape& tape, LexicalType sourceTypeS);
 
-//   void copyBase(CommandTape& tape, int size);
+   void copyBase(CommandTape& tape, int size);
    void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
    void initBase(CommandTape& tape, int fieldCount);
@@ -172,15 +172,15 @@ class ByteCodeWriter
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
-//
-//   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
-//   void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
+
+   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
+   void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
 //   void boxArgList(CommandTape& tape, ref_t vmtReference);
-//   void unboxArgList(CommandTape& tape, bool arrayMode);
-//   void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
-//
-//   void releaseObject(CommandTape& tape, int count = 1);
-//   void releaseArgList(CommandTape& tape);
+   void unboxArgList(CommandTape& tape, bool arrayMode);
+   void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
+
+   void releaseObject(CommandTape& tape, int count = 1);
+   void releaseArgList(CommandTape& tape);
 
    void setSubject(CommandTape& tape, ref_t subject);
 
@@ -212,9 +212,9 @@ class ByteCodeWriter
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
-//   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
-//
+
 //   void freeVirtualStack(CommandTape& tape, int count);
 
    void endCatch(CommandTape& tape);
@@ -252,10 +252,10 @@ class ByteCodeWriter
    void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, int value);
 ////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-//   void doIntOperation(CommandTape& tape, int operator_id);
-//   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
-//   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
-//   void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
+   void doIntOperation(CommandTape& tape, int operator_id);
+   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
+   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
+   void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
 //   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
@@ -271,7 +271,7 @@ class ByteCodeWriter
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
-//   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
+   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
@@ -281,7 +281,7 @@ class ByteCodeWriter
 
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 
@@ -304,9 +304,9 @@ class ByteCodeWriter
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
-//   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
-//   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
+   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
+   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 //   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);

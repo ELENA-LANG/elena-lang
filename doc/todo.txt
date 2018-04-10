@@ -3,6 +3,8 @@ In development:
 ------                              
                             
               dev - redesign
+                 * uncomment optimizeEmbeddableGet, optimizeEmbeddableOp, optimizeEmbeddable
+
                  * private method (SEALED_MESSAGE, tpSealed - cannot be overridden)
                  * conversion method (CAST_MESSAGE, no need for CONVERSION_MESSAGE)
 

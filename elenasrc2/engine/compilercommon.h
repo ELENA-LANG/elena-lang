@@ -14,7 +14,7 @@
 
 // virtual objects
 #define V_PARAMETER      (ref_t)-02
-//#define V_FLAG           (ref_t)-03
+#define V_FLAG           (ref_t)-03
 #define V_NIL            (ref_t)-04
 
 //#define V_BINARY         (ref_t)-10
@@ -31,8 +31,8 @@
 //#define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
 //
 //#define V_OBJECT         (ref_t)-28
-//
-//#define V_OBJARRAY      (ref_t)-30
+
+#define V_OBJARRAY      (ref_t)-30
 #define V_INT32ARRAY    (ref_t)-31
 //#define V_ARGARRAY      (ref_t)-32
 #define V_BINARYARRAY   (ref_t)-35
@@ -107,7 +107,7 @@ enum MethodHint
 ////      tpDispatcher = 0x04,
    tpPrivate     = 0x00005,
 //   tpStackSafe   = 0x0010,
-//   tpEmbeddable  = 0x0020,
+   tpEmbeddable  = 0x0020,
 //   tpGeneric     = 0x0040,
 //   tpAction      = 0x0080,
 //   tpIfBranch    = 0x0100,
@@ -206,7 +206,7 @@ class _Compiler
 {
 public:
 //   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
-   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef/*, bool stacksafe*/) = 0;
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe) = 0;
 //   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
@@ -216,9 +216,9 @@ public:
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
    virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable) = 0;
 
-//   virtual void injectLocalBoxing(SNode node, int size) = 0;
-////   //virtual int injectTempLocal(SNode node) = 0;
-//
+   virtual void injectLocalBoxing(SNode node, int size) = 0;
+//   //virtual int injectTempLocal(SNode node) = 0;
+
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
@@ -238,8 +238,8 @@ public:
       bool  directResolved;
 //      bool  withCustomDispatcher;
 //      //bool  closed;
-//      bool  stackSafe;
-//      bool  embeddable;
+      bool  stackSafe;
+      bool  embeddable;
 //      bool  withOpenArgDispatcher;
 //      bool  withOpenArg1Dispatcher;
 //      bool  withOpenArg2Dispatcher;
@@ -249,10 +249,10 @@ public:
       ChechMethodInfo()
       {
          directResolved = false;
-         /*embeddable = *//*closed = */found = false;
+         embeddable = /*closed = */found = false;
          outputReference = 0;
 //         withCustomDispatcher = false;
-//         stackSafe = false;
+         stackSafe = false;
 //         withOpenArgDispatcher = false;
 //         withOpenArg1Dispatcher = false;
 //         withOpenArg2Dispatcher = false;
@@ -275,16 +275,16 @@ public:
    // retrieve the call type
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
 
-//   // retrieve the operation type
-//   virtual int resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-//   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
+   // retrieve the operation type
+   virtual int resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //
 //   // retrieve the branching operation type
 //   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
-//
-//   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
-//   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
+
+   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
+   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
 
    // check if the classes is compatible
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
@@ -294,8 +294,8 @@ public:
    virtual bool isEmbeddableArray(ClassInfo& info) = 0;
 //   virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
-//   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
+   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
+   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
@@ -311,7 +311,7 @@ public:
    virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
    virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
-//   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
+   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/) = 0;
 //   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t actionRef, int paramCount) = 0;
    virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef) = 0;
@@ -336,8 +336,8 @@ public:
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
-//   // optimization
-//   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected) = 0;
+   // optimization
+   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected) = 0;
 //   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
@@ -345,11 +345,11 @@ public:
 //   virtual bool recognizeEmbeddableEval2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
 //   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef) = 0;
-//   virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
-//
-//   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
-//   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
-//   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
+   virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
+
+   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
+   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
+   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
 
    virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef) = 0;
 };

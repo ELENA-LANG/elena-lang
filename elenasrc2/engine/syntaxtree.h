@@ -25,7 +25,7 @@ enum LexicalType
    lxTerminalMask    = 0x10000,
 //   lxTerminalObjMask = 0x18000,
 ////   lxReferenceMask   = 0x40000,
-//   lxPrimitiveOpMask = 0x80000,
+   lxPrimitiveOpMask = 0x80000,
 
    lxEnding          = -1,
    lxInvalid         = -2,
@@ -114,17 +114,17 @@ enum LexicalType
    lxNil                = 0x0A117,
    lxCurrent            = 0x0A118, // arg -offset
    lxResult             = 0x0A119, // arg -offset
-//   lxResultField        = 0x0A11A, // arg -offset
+   lxResultField        = 0x0A11A, // arg -offset
    lxCurrentMessage     = 0x0A11B,
    lxSelfLocal          = 0x0A11C,
    lxConstantList       = 0x0A11E,   // arg - reference
 //   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
    lxClassRefField      = 0x08120,  // arg - self instance offset
 
-//   lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
+   lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
-//   lxLocalUnboxing   = 0x0C003,   // arg - size
-//   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
+   lxLocalUnboxing   = 0x0C003,   // arg - size
+   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
 //   lxArgUnboxing     = 0x0C006,
    lxCalling         = 0x0C007,   // sending a message, arg - message
@@ -145,12 +145,12 @@ enum LexicalType
 //   lxAltExpression   = 0x0C018,
 //   lxIfNot           = 0x0C019,   // optional arg - reference
 //   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
-//   lxIfN             = 0x0C01B,   // arg - value
-//   lxIfNotN          = 0x0C01C,   // arg - value
-//   lxLessN           = 0x0C01D,   // arg - value
-//   lxNotLessN        = 0x0C01E,   // arg - value
-//   lxIf              = 0x0C01F,   // optional arg - reference
-//   lxElse            = 0x0C020,   // optional arg - reference
+   lxIfN             = 0x0C01B,   // arg - value
+   lxIfNotN          = 0x0C01C,   // arg - value
+   lxLessN           = 0x0C01D,   // arg - value
+   lxNotLessN        = 0x0C01E,   // arg - value
+   lxIf              = 0x0C01F,   // optional arg - reference
+   lxElse            = 0x0C020,   // optional arg - reference
 //   lxOption          = 0x0C021,
    lxFieldExpression = 0x0C022,
 //   lxExternFrame     = 0x04023,
@@ -164,10 +164,10 @@ enum LexicalType
 //   lxArgArrOp        = 0x8C02B,   // arg - operation id
 //   lxNilOp           = 0x8C02C,   // arg - operation id
 //   lxBoolOp          = 0x0C02D,   // arg - operation id
-//
-//   lxGreaterN        = 0x0C02E,   // arg - value
-//   lxNotGreaterN     = 0x0C02F,   // arg - value
-//
+
+   lxGreaterN        = 0x0C02E,   // arg - value
+   lxNotGreaterN     = 0x0C02F,   // arg - value
+
 //   lxIntArrOp        = 0x8C030,   // arg - operation id
    lxResendExpression= 0x0C031, 
 //   lxByteArrOp       = 0x8C032, // arg - operation id
@@ -175,7 +175,7 @@ enum LexicalType
 ////   lxReleasing       = 0x0C034,
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
-//   lxIntOp           = 0x8C038,   // arg - operation id
+   lxIntOp           = 0x8C038,   // arg - operation id
 //   lxLongOp          = 0x8C039,   // arg - operation id
 //   lxRealOp          = 0x8C03A,   // arg - operation id
    lxMultiDispatching= 0x0C03B,
@@ -214,7 +214,7 @@ enum LexicalType
    lxClassFlag       = 0x2000B, // class fields
    lxTarget          = 0x2000C, // arg - reference
    lxMessageVariable = 0x2000D, // debug info only
-//   lxSelfVariable    = 0x2000E, // debug info only
+   lxSelfVariable    = 0x2000E, // debug info only
    lxMessage         = 0x2000F, // arg - message
    lxAssign          = 0x20010,
    lxLevel           = 0x20011,
@@ -222,12 +222,12 @@ enum LexicalType
    lxCallTarget      = 0x20013, // arg - reference
    lxClassName       = 0x20014, // arg - identifier
    lxIntValue        = 0x20015, // arg - integer value
-//   lxTempLocal       = 0x20016,
-//   lxIfValue         = 0x20017, // arg - reference
-//   lxElseValue       = 0x20018, // arg - reference
+   lxTempLocal       = 0x20016,
+   lxIfValue         = 0x20017, // arg - reference
+   lxElseValue       = 0x20018, // arg - reference
    lxSize            = 0x20019,
 //   lxTemplateParam   = 0x2001A,
-//   lxEmbeddable      = 0x2001B,
+   lxEmbeddable      = 0x2001B,
 //   lxIntExtArgument  = 0x2001C,
 //   lxExtArgument     = 0x2001D,
 //   lxExtInteranlRef  = 0x2001E,
@@ -235,7 +235,7 @@ enum LexicalType
 ////   lxWarningMask     = 0x20020,
 //   lxOperatorAttr    = 0x20021,
    lxIdleMsgParameter= 0x20022,
-//   lxBinarySelf      = 0x20023, // debug info only
+   lxBinarySelf      = 0x20023, // debug info only
    lxOvreriddenMessage = 0x20024, // arg - message ; used for extension / implicit constructor call
 ////   lxClassRef        = 0x20025,
 ////   lxPreloadedAttr   = 0x20026,
@@ -243,17 +243,17 @@ enum LexicalType
 //   lxTemplateField   = 0x20028,
    lxNameAttr        = 0x20029,
    lxTypeAttr        = 0x2002A,
-//   lxStacksafeAttr   = 0x2002B,
+   lxStacksafeAttr   = 0x2002B,
    lxTemplateAttribute = 0x2002C,
-//   lxEmbeddableAttr  = 0x2002D,
-//   lxBoxableAttr     = 0x2002E,
+   lxEmbeddableAttr  = 0x2002D,
+   lxBoxableAttr     = 0x2002E,
    lxClassRefAttr    = 0x2002F,
 //   lxClosureMessage  = 0x20030,
 //   lxExtArgumentRef  = 0x20031,
 //   lxInternalRef     = 0x20032,
 //   lxTemplateVar     = 0x20033,
 //   lxEmbeddableMssg  = 0x20034,
-//   lxBoxingRequired  = 0x20035,
+   lxBoxingRequired  = 0x20035,
 //   lxParamRefAttr    = 0x20036,
    lxMultiMethodAttr = 0x20037,
    lxAutogenerated   = 0x20038,
@@ -268,8 +268,8 @@ enum LexicalType
 //   lxFPUTarget       = 0x20041,
 //   lxFalseAttribute   = 0x20042,
 //   lxTemplateParamAttr = 0x20043,
-//
-//   lxTempAttr        = 0x2010D,
+
+   lxTempAttr        = 0x2010D,
 };
 
 // --- SyntaxTree ---
@@ -635,14 +635,14 @@ public:
          return current;
       }
 
-      //Node nextSubNodeMask(LexicalType mask)
-      //{
-      //   Node child = nextNode(mask);
-      //   if (child == lxExpression) {
-      //      return child.findSubNodeMask(mask);
-      //   }
-      //   else return child;
-      //}
+      Node nextSubNodeMask(LexicalType mask)
+      {
+         Node child = nextNode(mask);
+         if (child == lxExpression) {
+            return child.findSubNodeMask(mask);
+         }
+         else return child;
+      }
 
       Node prevNode() const
       {

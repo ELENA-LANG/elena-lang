@@ -15,11 +15,11 @@ using namespace _ELENA_;
 
 typedef ClassInfo::Attribute Attribute;
 
-//inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
-//{
-//   return ref1 ? ref1 : ref2;
-//}
-//
+inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
+{
+   return ref1 ? ref1 : ref2;
+}
+
 //inline bool isWrappable(int flags)
 //{
 //   return !test(flags, elWrapper) && test(flags, elSealed);
@@ -126,18 +126,18 @@ CompilerLogic :: CompilerLogic()
 //   // nil
 //   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
-//
-//   // int32 primitive operations
-//   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(AND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(OR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(XOR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//
+
+   // int32 primitive operations
+   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(AND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(OR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(XOR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+
 //   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 //   operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
@@ -224,7 +224,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       int hint = info.methodHints.get(Attribute(message, maHint));
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
 
-//      result.embeddable = test(hint, tpEmbeddable);
+      result.embeddable = test(hint, tpEmbeddable);
 //      result.closure = test(hint, tpAction);
 
       if ((hint & tpMask) == tpSealed) {
@@ -292,9 +292,9 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
 //   if (callType == tpClosed || callType == tpSealed) {
-//      result.stackSafe = test(methodHint, tpStackSafe);
+      result.stackSafe = /*test(methodHint, tpStackSafe)*/true; // NOTE : currently all methods are stack-safe
 //   }      
-//
+
 //   if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
 //      // HOTFIX : calling closure
 //      result.closure = true;
@@ -303,71 +303,71 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
    return callType;
 }
 
-//int CompilerLogic :: resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
-//{
-//   if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
-//      return 0;
-//
-//   OperatorList::Iterator it = operators.start();
-//   while (!it.Eof()) {
-//      OperatorInfo info = *it;
-//
-//      if (info.operatorId == operatorId) {
-//         if (info.loperand == V_NIL) {
-//            if (loperand == V_NIL) {
-//               result = info.result;
-//
-//               return info.operationType;
-//            }
-//         }
-//         else if (info.loperand == V_FLAG && info.roperand == V_FLAG) {
-//            if (isBoolean(scope, compiler, loperand) && isBoolean(scope, compiler, loperand)) {
-//               result = info.result;
-//
-//               return info.operationType;
-//            }
-//         }
-//         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
-//            result = info.result;
-//
-//            return info.operationType;
-//         }
-//      }
-//
-//      it++;
-//   }
-//
-//   return 0;
-//}
-//
-//int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
-//{
-//   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
-//      return 0;
-//
-//   OperatorList::Iterator it = operators.start();
-//   while (!it.Eof()) {
-//      OperatorInfo info = *it;
-//
-//      if (info.operatorId == operatorId) {
-//         if (info.loperand == V_NIL) {
-//            // skip operation with NIL
-//         }
-//         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)
-//            && isCompatible(scope, info.roperand2, roperand2)) 
-//         {
-//            result = info.result;
-//
-//            return info.operationType;
-//         }
-//
-//      }
-//      it++;
-//   }
-//
-//   return 0;
-//}
-//
+int CompilerLogic :: resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
+{
+   if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
+      return 0;
+
+   OperatorList::Iterator it = operators.start();
+   while (!it.Eof()) {
+      OperatorInfo info = *it;
+
+      if (info.operatorId == operatorId) {
+         if (info.loperand == V_NIL) {
+            if (loperand == V_NIL) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         //else if (info.loperand == V_FLAG && info.roperand == V_FLAG) {
+         //   if (isBoolean(scope, compiler, loperand) && isBoolean(scope, compiler, loperand)) {
+         //      result = info.result;
+
+         //      return info.operationType;
+         //   }
+         //}
+         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
+            result = info.result;
+
+            return info.operationType;
+         }
+      }
+
+      it++;
+   }
+
+   return 0;
+}
+
+int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
+{
+   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
+      return 0;
+
+   OperatorList::Iterator it = operators.start();
+   while (!it.Eof()) {
+      OperatorInfo info = *it;
+
+      if (info.operatorId == operatorId) {
+         if (info.loperand == V_NIL) {
+            // skip operation with NIL
+         }
+         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)
+            && isCompatible(scope, info.roperand2, roperand2)) 
+         {
+            result = info.result;
+
+            return info.operationType;
+         }
+
+      }
+      it++;
+   }
+
+   return 0;
+}
+
 //bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
 //{
 //   if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
@@ -493,12 +493,12 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
          if (!defineClassInfo(scope, info, sourceRef))
             return false;
 
-         //// if it is a structure wrapper
-         //if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
-         //   ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-         //   if (isCompatible(scope, targetRef, inner.value1))
-         //      return true;
-         //}
+         // if it is a structure wrapper
+         if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
+            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+            if (isCompatible(scope, targetRef, inner.value1))
+               return true;
+         }
 
          if (test(info.header.flags, elClassClass)) {
             // class class can be compatible only with itself and the super class
@@ -545,12 +545,13 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //{
 //   return test(info.header.flags, elAbstract);
 //}
-//
-//bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
-//}
-//
+
+bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
+{
+   // NOTE : currently all methods are stack safe by default
+   return /*test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe)*/true;
+}
+
 //bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
@@ -719,51 +720,51 @@ void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, Clas
 //
 //   return isCompatible(scope, scope.branchingInfo.reference, reference);
 //}
-//
-//void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t elementRef)
-//{
-//   int size = 0;
-//   if (operationType == lxBinArrOp) {
-//      // HOTFIX : define an item size for the binary array operations
-//      size = -defineStructSize(scope, V_BINARYARRAY, elementRef);
-//   }
-//
-//   if (reference == V_BINARY && elementRef != 0) {
-//      reference = elementRef;
-//   }
-//   else if (reference == V_OBJECT && elementRef != 0) {
-//      reference = elementRef;
-//   }
-//
-//   bool inverting = IsInvertedOperator(operator_id);
-//
-//   if (reference == V_FLAG) {      
-//      if (!scope.branchingInfo.reference) {
-//         // HOTFIX : resolve boolean symbols
-//         ref_t dummy;
-//         resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.boolReference, dummy);
-//      }
-//
-//      reference = scope.branchingInfo.reference;
-//      if (inverting) {
-//         writer.appendNode(lxIfValue, scope.branchingInfo.falseRef);
-//         writer.appendNode(lxElseValue, scope.branchingInfo.trueRef);
-//      }
-//      else {
-//         writer.appendNode(lxIfValue, scope.branchingInfo.trueRef);
-//         writer.appendNode(lxElseValue, scope.branchingInfo.falseRef);
-//      }
-//   }
-//
-//   if (size != 0) {
-//      // HOTFIX : inject an item size for the binary array operations
-//      writer.appendNode(lxSize, size);
-//   }
-//
-//   writer.insert((LexicalType)operationType, operator_id);
-//   writer.closeNode();
-//}
-//
+
+void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t elementRef)
+{
+   //int size = 0;
+   //if (operationType == lxBinArrOp) {
+   //   // HOTFIX : define an item size for the binary array operations
+   //   size = -defineStructSize(scope, V_BINARYARRAY, elementRef);
+   //}
+
+   //if (reference == V_BINARY && elementRef != 0) {
+   //   reference = elementRef;
+   //}
+   //else if (reference == V_OBJECT && elementRef != 0) {
+   //   reference = elementRef;
+   //}
+
+   //bool inverting = IsInvertedOperator(operator_id);
+
+   //if (reference == V_FLAG) {      
+   //   if (!scope.branchingInfo.reference) {
+   //      // HOTFIX : resolve boolean symbols
+   //      ref_t dummy;
+   //      resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.boolReference, dummy);
+   //   }
+
+   //   reference = scope.branchingInfo.reference;
+   //   if (inverting) {
+   //      writer.appendNode(lxIfValue, scope.branchingInfo.falseRef);
+   //      writer.appendNode(lxElseValue, scope.branchingInfo.trueRef);
+   //   }
+   //   else {
+   //      writer.appendNode(lxIfValue, scope.branchingInfo.trueRef);
+   //      writer.appendNode(lxElseValue, scope.branchingInfo.falseRef);
+   //   }
+   //}
+
+   //if (size != 0) {
+   //   // HOTFIX : inject an item size for the binary array operations
+   //   writer.appendNode(lxSize, size);
+   //}
+
+   writer.insert((LexicalType)operationType, operator_id);
+   writer.closeNode();
+}
+
 //bool CompilerLogic :: isReadonly(ClassInfo& info)
 //{
 //   return test(info.header.flags, elReadOnlyRole);
@@ -781,12 +782,12 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    ref_t implicitConstructor = encodeMessage(DEFAULT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
    if (!info.methods.exist(implicitConstructor, true))
       return false;
-//
-//   bool stackSafe = test(info.methodHints.get(Attribute(implicitConstructor, maHint)), tpStackSafe);
+
+   bool stackSafe = isMethodStacksafe(info, implicitConstructor);
 
    if (test(info.header.flags, elStructureRole)) {
       //compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingStruct, info.size, targetRef, stackSafe);
-      compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef);
+      compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, stackSafe);
 
       return true;
    }
@@ -795,7 +796,7 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    }
    else {
       //compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef*//*, stackSafe*/);
-      compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef);
+      compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, stackSafe);
 
       return true;
    }
@@ -854,15 +855,15 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerS
          /*else */compatible = isSignatureCompatible(scope, signatureRef, signatures);
 
          if (compatible) {
-            //bool stackSafe = test(info.methodHints.get(Attribute(implicitMessage, maHint)), tpStackSafe);
+            bool stackSafe = isMethodStacksafe(info, implicitMessage);
             if (test(info.header.flags, elStructureRole)) {
             //   compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
-               compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef);
+               compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, stackSafe);
             }
             else if (test(info.header.flags, elDynamicRole)) {
                return false;
             }
-            else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef);
+            else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, stackSafe);
 
             return true;
          }
@@ -1465,11 +1466,11 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
    if (info.fields.Count() == 1) {
       switch (classRef) {
          case V_INT32:
-            info.header.flags |= (elDebugDWORD | elReadOnlyRole/* | elWrapper*/);
+            info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
             return true;
          case V_INT64:
-            info.header.flags |= (elDebugQWORD | elReadOnlyRole/* | elWrapper*/);
+            info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
             return true;
          //case V_REAL64:
@@ -1504,36 +1505,36 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
    return false;
 }
 
-//ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
-//{
-//   switch (reference) {
-//      case V_INT32:
-//         return firstNonZero(scope.intReference, scope.superReference);
-//      case V_INT64:
-//         return firstNonZero(scope.longReference, scope.superReference);
-//      case V_REAL64:
-//         return firstNonZero(scope.realReference, scope.superReference);
-//      case V_SIGNATURE:
-//         return firstNonZero(scope.signatureReference, scope.superReference);
-//      case V_MESSAGE:
-//         return firstNonZero(scope.messageReference, scope.superReference);
-//      case V_ARGARRAY:
-//         return firstNonZero(scope.arrayReference, scope.superReference);
-//      default:
-//         return scope.superReference;
-//   }
-//}
-//
-//ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
-//{
-//   if (test(info.header.flags, elStructureWrapper)) {
-//      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
-//      if (isPrimitiveRef(field.value1))
-//         return field.value1;
-//   }
-//
-//   return 0;
-//}
+ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
+{
+   switch (reference) {
+      case V_INT32:
+         return firstNonZero(scope.intReference, scope.superReference);
+      //case V_INT64:
+      //   return firstNonZero(scope.longReference, scope.superReference);
+      //case V_REAL64:
+      //   return firstNonZero(scope.realReference, scope.superReference);
+      //case V_SIGNATURE:
+      //   return firstNonZero(scope.signatureReference, scope.superReference);
+      //case V_MESSAGE:
+      //   return firstNonZero(scope.messageReference, scope.superReference);
+      //case V_ARGARRAY:
+      //   return firstNonZero(scope.arrayReference, scope.superReference);
+      default:
+         return scope.superReference;
+   }
+}
+
+ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
+{
+   if (test(info.header.flags, elStructureWrapper)) {
+      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
+      if (isPrimitiveRef(field.value1))
+         return field.value1;
+   }
+
+   return 0;
+}
 
 ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
 {
@@ -1818,9 +1819,9 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
 //   }
 //   else return false;
 //}
-//
-//bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node)
-//{
+
+bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node)
+{
 //   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
 //   SNode callTarget = callNode.findChild(lxCallTarget);
 //
@@ -1835,11 +1836,11 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
 //
 //      return true;
 //   }
-//   else return false;
-//}
-//
-//bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node)
-//{
+   /*else */return false;
+}
+
+bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node)
+{
 //   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
 //   SNode callTarget = callNode.findChild(lxCallTarget);
 //
@@ -1858,75 +1859,75 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
 //         return true;
 //      }
 //   }
-//
-//   return false;
-//}
-//
-//bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected)
+
+   return false;
+}
+
+bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected)
+{
+   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
+
+   if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
+      if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
+      }
+      else node = lxExpression;
+   }
+   else if (sourceRef == V_NIL) {
+      // NIL reference is never boxed
+      node = lxExpression;
+   }
+   else if (isPrimitiveRef(sourceRef) && (isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef)) || sourceRef == V_INT32)) {
+      //HOTFIX : allowing numeric constant direct boxing
+   }
+   else if (node.existChild(lxBoxableAttr)) {
+      // HOTFIX : if the object was explicitly boxed
+   }
+   else return false;
+
+   bool localBoxing = false;
+   if (exprNode == lxFieldAddress && exprNode.argument > 0) {
+      localBoxing = true;
+   }
+   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
+      localBoxing = true;
+   }
+   //else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+   //   // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+   //   localBoxing = true;
+   //}
+
+   if (localBoxing) {
+      bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
+
+      compiler.injectLocalBoxing(exprNode, node.argument);
+
+      node = unboxingMode ? lxLocalUnboxing : lxBoxing;
+   }
+
+   return true;
+}
+
+//void CompilerLogic :: injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode)
 //{
-//   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
+//   ClassInfo info;
+//   defineClassInfo(scope, info, targetRef);
 //
-//   if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
-//      if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
+//   operand = defineStructSize(info, false);
+//   
+//   if (paramMode) {
+//      if (operand == 0) {
+//         //HOTFIX : allowing to assign a reference variable
+//         // replace the parameter with the field expression
+//         compiler.injectFieldExpression(writer);
 //      }
-//      else node = lxExpression;
-//   }
-//   else if (sourceRef == V_NIL) {
-//      // NIL reference is never boxed
-//      node = lxExpression;
-//   }
-//   else if (isPrimitiveRef(sourceRef) && (isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef)) || sourceRef == V_INT32)) {
-//      //HOTFIX : allowing numeric constant direct boxing
-//   }
-//   else if (node.existChild(lxBoxableAttr)) {
-//      // HOTFIX : if the object was explicitly boxed
-//   }
-//   else return false;
 //
-//   bool localBoxing = false;
-//   if (exprNode == lxFieldAddress && exprNode.argument > 0) {
-//      localBoxing = true;
+//      type = info.fieldTypes.get(0).value2;
+//      targetRef = info.fieldTypes.get(0).value1;
 //   }
-//   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
-//      localBoxing = true;
-//   }
-//   else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
-//      // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
-//      localBoxing = true;
-//   }
-//
-//   if (localBoxing) {
-//      bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
-//
-//      compiler.injectLocalBoxing(exprNode, node.argument);
-//
-//      node = unboxingMode ? lxLocalUnboxing : lxBoxing;
-//   }
-//
-//   return true;
 //}
-//
-////void CompilerLogic :: injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode)
-////{
-////   ClassInfo info;
-////   defineClassInfo(scope, info, targetRef);
-////
-////   operand = defineStructSize(info, false);
-////   
-////   if (paramMode) {
-////      if (operand == 0) {
-////         //HOTFIX : allowing to assign a reference variable
-////         // replace the parameter with the field expression
-////         compiler.injectFieldExpression(writer);
-////      }
-////
-////      type = info.fieldTypes.get(0).value2;
-////      targetRef = info.fieldTypes.get(0).value1;
-////   }
-////}
-//
-//bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
-//{
+
+bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
+{
 //   // check if it is a virtual call
 //   if (node == lxDirectCalling && getParamCount(node.argument) == 0) {
 //      ident_t actionName = scope.module->resolveSubject(getAction(node.argument));
@@ -1943,71 +1944,71 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
 //         return true;
 //      }
 //   }
-//
-//   return false;
-//}
-//
-//void CompilerLogic :: optimizeBranchingOp(_CompilerScope&, SNode node)
-//{
-//   // check if direct comparision with a numeric constant is possible
-//   SNode ifOp = SyntaxTree::findPattern(node, 3,
-//      SNodePattern(lxExpression),
-//      SNodePattern(lxIntOp),
-//      SNodePattern(lxConstantInt));
-//
-//   if (ifOp != lxNone) {
-//      int arg = ifOp.findChild(lxIntValue).argument;
-//
-//      SNode intOpNode = node.findSubNode(lxIntOp);
-//      SNode ifNode = node.findChild(lxIf, lxElse);
-//      if (ifNode != lxNone) {
-//         SNode trueNode = intOpNode.findChild(ifNode == lxIf ? lxIfValue : lxElseValue);
-//
-//         if (ifOp.prevNode(lxObjectMask) == lxNone) {
-//            // if the numeric constant is the first operand
-//            if (intOpNode.argument == LESS_MESSAGE_ID) {
-//               intOpNode.argument = GREATER_MESSAGE_ID;
-//            }
-//            else if (intOpNode.argument == GREATER_MESSAGE_ID) {
-//               intOpNode.argument = LESS_MESSAGE_ID;
-//            }
-//         }
-//
-//         if (intOpNode.argument == EQUAL_MESSAGE_ID) {
-//            if (trueNode.argument == ifNode.argument) {
-//               ifNode.set(lxIfN, arg);
-//            }
-//            else if (trueNode.argument != ifNode.argument) {
-//               ifNode.set(lxIfNotN, arg);
-//            }
-//            else return;
-//         }
-//         else if (intOpNode.argument == LESS_MESSAGE_ID) {
-//            if (trueNode.argument != ifNode.argument) {
-//               ifNode.set(lxLessN, arg);
-//            }
-//            else if (trueNode.argument == ifNode.argument) {
-//               ifNode.set(lxNotLessN, arg);
-//            }
-//            else return;
-//         }
-//         else if (intOpNode.argument == GREATER_MESSAGE_ID) {
-//            if (trueNode.argument != ifNode.argument) {
-//               ifNode.set(lxGreaterN, arg);
-//            }
-//            else if (trueNode.argument == ifNode.argument) {
-//               ifNode.set(lxNotGreaterN, arg);
-//            }
-//            else return;
-//         }
-//         else return;
-//
-//         ifOp = lxIdle;
-//         intOpNode = lxExpression;
-//      }
-//   }
-//}
-//
+
+   return false;
+}
+
+void CompilerLogic :: optimizeBranchingOp(_CompilerScope&, SNode node)
+{
+   // check if direct comparision with a numeric constant is possible
+   SNode ifOp = SyntaxTree::findPattern(node, 3,
+      SNodePattern(lxExpression),
+      SNodePattern(lxIntOp),
+      SNodePattern(lxConstantInt));
+
+   if (ifOp != lxNone) {
+      int arg = ifOp.findChild(lxIntValue).argument;
+
+      SNode intOpNode = node.findSubNode(lxIntOp);
+      SNode ifNode = node.findChild(lxIf, lxElse);
+      if (ifNode != lxNone) {
+         SNode trueNode = intOpNode.findChild(ifNode == lxIf ? lxIfValue : lxElseValue);
+
+         if (ifOp.prevNode(lxObjectMask) == lxNone) {
+            // if the numeric constant is the first operand
+            if (intOpNode.argument == LESS_MESSAGE_ID) {
+               intOpNode.argument = GREATER_MESSAGE_ID;
+            }
+            else if (intOpNode.argument == GREATER_MESSAGE_ID) {
+               intOpNode.argument = LESS_MESSAGE_ID;
+            }
+         }
+
+         if (intOpNode.argument == EQUAL_MESSAGE_ID) {
+            if (trueNode.argument == ifNode.argument) {
+               ifNode.set(lxIfN, arg);
+            }
+            else if (trueNode.argument != ifNode.argument) {
+               ifNode.set(lxIfNotN, arg);
+            }
+            else return;
+         }
+         else if (intOpNode.argument == LESS_MESSAGE_ID) {
+            if (trueNode.argument != ifNode.argument) {
+               ifNode.set(lxLessN, arg);
+            }
+            else if (trueNode.argument == ifNode.argument) {
+               ifNode.set(lxNotLessN, arg);
+            }
+            else return;
+         }
+         else if (intOpNode.argument == GREATER_MESSAGE_ID) {
+            if (trueNode.argument != ifNode.argument) {
+               ifNode.set(lxGreaterN, arg);
+            }
+            else if (trueNode.argument == ifNode.argument) {
+               ifNode.set(lxNotGreaterN, arg);
+            }
+            else return;
+         }
+         else return;
+
+         ifOp = lxIdle;
+         intOpNode = lxExpression;
+      }
+   }
+}
+
 //inline void readFirstSignature(ident_t signature, size_t& start, size_t& end, IdentifierString& temp)
 //{
 //   start = signature.find('$') + 1;

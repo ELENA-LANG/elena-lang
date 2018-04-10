@@ -967,10 +967,10 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elClosed", row, pageSize);
    }      
 
-   //if (test(flags, elWrapper)) {
-   //   printLine("@flag ", "elWrapper", row, pageSize);
-   //}
-   //   
+   if (test(flags, elWrapper)) {
+      printLine("@flag ", "elWrapper", row, pageSize);
+   }
+      
    if (test(flags, elStateless)) {
       printLine("@flag ", "elStateless", row, pageSize);
    }      

@@ -278,7 +278,7 @@ enum ByteCode
    bdBreakpoint     = 0x8401,
    bdBreakcoord     = 0x8402,
    bdLocal          = 0x8403,
-   //bdSelf           = 0x8404,
+   bdSelf           = 0x8404,
    bdMessage        = 0x8405,
    bdLocalInfo      = 0x8406,
    bdSourcePath     = 0x8407,
@@ -291,7 +291,7 @@ enum ByteCode
    bdShortArrayLocal= 0x8463,
    bdIntArrayLocal  = 0x8473,
    bdStruct         = 0x8486,
-   //bdStructSelf     = 0x8484,
+   bdStructSelf     = 0x8484,
 };
 
 #define MAX_SINGLE_ECODE 0x8F

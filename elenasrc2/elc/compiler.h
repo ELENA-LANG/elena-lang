@@ -73,20 +73,20 @@ public:
          this->element_ref = 0;
          this->size = 0;
       }
-//      Parameter(int offset, ref_t class_ref, int size)
-//      {
-//         this->offset = offset;
-//         this->class_ref = class_ref;
-//         this->element_ref = 0;
-//         this->size = size;
-//      }
-//      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
-//      {
-//         this->offset = offset;
-//         this->class_ref = class_ref;
-//         this->element_ref = element_ref;
-//         this->size = size;
-//      }
+      Parameter(int offset, ref_t class_ref, int size)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->element_ref = 0;
+         this->size = size;
+      }
+      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->element_ref = element_ref;
+         this->size = size;
+      }
    };
 
    // InheritResult
@@ -464,7 +464,7 @@ private:
    {
       ClassInfo   info;
 //      ref_t       extensionClassRef;
-//      bool        embeddable;
+      bool        embeddable;
       bool        classClassMode;
 //      bool        abstractBasedMode;
 
@@ -550,8 +550,8 @@ private:
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
 //      bool         withOpenArg;
-//      bool         stackSafe;
-//      bool         classEmbeddable;
+      bool         stackSafe;
+      bool         classEmbeddable;
 //      bool         generic;
 //      bool         genericClosure;
 //      bool         extensionMode;
@@ -581,12 +581,12 @@ private:
 
       //   return scope ? scope->info.header.flags : 0;
       //}
-//      ref_t getClassRef(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
+      ref_t getClassRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
 
@@ -622,10 +622,10 @@ private:
       {
          locals.add(local, Parameter(level, class_ref/*, size*/));
       }
-      //void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
-      //{
-      //   locals.add(local, Parameter(level, class_ref, element_ref, size));
-      //}
+      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
+      {
+         locals.add(local, Parameter(level, class_ref, element_ref, size));
+      }
 
 //      void freeSpace()
 //      {
@@ -787,7 +787,7 @@ private:
    ByteCodeWriter _writer;
 
    MessageMap     _verbs;                            // list of verbs
-//   MessageMap     _operators;                        // list of operators
+   MessageMap     _operators;                        // list of operators
 
    int            _optFlag;
 
@@ -799,8 +799,8 @@ private:
    bool optimizeIdleBreakpoints(CommandTape& tape);
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
-//
-//   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
+
+   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
    void writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef);
@@ -826,13 +826,13 @@ private:
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
 
-////   int defineFieldSize(CodeScope& scope, int offset);
+   int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
 //   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 
    // NOTE : the method is used to set template pseudo variable
-   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withThis, bool withSelf*/);
+   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
 
 //   ref_t resolveParentRef(SNode node, CompilerScope& moduleScope, bool silentMode);
 ////   bool isDependentOnNotDeclaredClass(SNode baseNode, ModuleScope& scope);
@@ -877,15 +877,15 @@ private:
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
 
-////   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
-////   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, int operator_id);
-////   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-////   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-////   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
-////   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
-////
-////   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
-////   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+//   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
+//   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
+//   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode, int operator_id);
+//
+//   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
+//   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
 
@@ -910,7 +910,7 @@ private:
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-//   int allocateStructure(SNode node, int& size);
+   int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -977,30 +977,30 @@ private:
 //   void compileForward(SNode node, ModuleScope& scope);
 //
 //   bool validate(_ProjectManager& project, _Module* module, int reference);
-//
-//   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
+
+   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
 
    bool convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/);
    bool typecastObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef);
 
 //   void compileExternalArguments(SNode node, ModuleScope& scope, WarningScope& warningScope);
-//
-//   ref_t analizeOp(SNode current, ModuleScope& scope, WarningScope& warningScope);
-//   ref_t analizeSymbol(SNode& node, ModuleScope& scope, WarningScope& warningScope);
-//   ref_t analizeAssigning(SNode node, ModuleScope& scope, WarningScope& warningScope);
-//   ref_t analizeBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
+
+   ref_t analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   ref_t analizeSymbol(SNode& node, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   ref_t analizeAssigning(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   ref_t analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
 //   ref_t analizeArgBoxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
 //   ref_t analizeArgUnboxing(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode);
-//   ref_t analizeMessageCall(SNode node, ModuleScope& scope, WarningScope& warningScope);
-   ref_t analizeExpression(SNode node, CompilerScope& scope, /*WarningScope& warningScope, */int mode = 0);
+   ref_t analizeMessageCall(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   ref_t analizeExpression(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
 //   ref_t analizeInternalCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
 //   ref_t analizeExtCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope, int mode);
 //   ref_t analizeNestedExpression(SNode node, ModuleScope& scope, WarningScope& warningScope);
-   void analizeExpressionTree(SNode node, CompilerScope& scope, /*WarningScope& warningScope, */int mode = 0);
-//   void analizeBranching(SNode node, ModuleScope& scope, WarningScope& warningScope, int mode = 0);
-//   void analizeCode(SNode node, ModuleScope& scope, WarningScope& warningScope);
-//   void analizeMethod(SNode node, ModuleScope& scope, WarningScope& warningScope);
-//   void analizeClassTree(SNode node, ClassScope& scope, WarningScope& warningScope);
+   void analizeExpressionTree(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
+   void analizeBranching(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
+   void analizeCode(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   void analizeMethod(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   void analizeClassTree(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    void analizeSymbolTree(SNode node, Scope& scope, int warningMask);
 
 //   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
@@ -1037,8 +1037,8 @@ public:
    // _Compiler interface implementation
    //virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
    //virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
-   //virtual void injectLocalBoxing(SNode node, int size);
-   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef/*, bool stacksafe*/);
+   virtual void injectLocalBoxing(SNode node, int size);
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 ////   virtual void injectFieldExpression(SyntaxWriter& writer);

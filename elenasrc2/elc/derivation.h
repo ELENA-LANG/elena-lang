@@ -14,8 +14,8 @@
 
 #define EXPRESSION_IMPLICIT_MODE   1
 //#define EXPRESSION_MESSAGE_MODE    2
-//#define EXPRESSION_OPERATOR_MODE   4
-//#define EXPRESSION_OBJECT_REQUIRED 8
+#define EXPRESSION_OPERATOR_MODE   4
+#define EXPRESSION_OBJECT_REQUIRED 8
 
 namespace _ELENA_
 {
@@ -218,8 +218,8 @@ class DerivationTransformer //: public _DerivationTransformer
    void copyMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, SubjectMap* parentAttributes, int mode = 0);
 //   void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void copyOperator(SyntaxWriter& writer, SNode& node, DerivationScope& scope);
-//
+   void copyOperator(SyntaxWriter& writer, SNode& node, DerivationScope& scope);
+
 //   void autoGenerateExtensions(DerivationScope& scope, ref_t attrRef, SNode node);
    ref_t generateNewTemplate(DerivationScope& scope, ref_t attrRef, SNode node);
 

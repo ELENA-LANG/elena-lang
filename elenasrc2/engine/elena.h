@@ -862,50 +862,50 @@ inline ref_t fromMessage64(ref64_t message)
    return encodeMessage(actionRef, paramCount);
 }
 
-////inline bool IsExprOperator(int operator_id)
-////{
-////   switch (operator_id) {
-////      case ADD_MESSAGE_ID:
-////      case SUB_MESSAGE_ID:
-////      case MUL_MESSAGE_ID:
-////      case DIV_MESSAGE_ID:
-////      case AND_MESSAGE_ID:
-////      case OR_MESSAGE_ID:
-////      case XOR_MESSAGE_ID:
-////         return true;
-////      default:
-////         return false;
-////   }
-////}
-////
-////inline bool IsShiftOperator(int operator_id)
-////{
-////   switch (operator_id) {
-////      case READ_MESSAGE_ID:
-////      case WRITE_MESSAGE_ID:
-////         return true;
-////      default:
-////         return false;
-////   }
-////}
-////
-////inline bool IsRealExprOperator(int operator_id)
-////{
-////   switch (operator_id) {
-////   case ADD_MESSAGE_ID:
-////   case SUB_MESSAGE_ID:
-////   case MUL_MESSAGE_ID:
-////   case DIV_MESSAGE_ID:
-////      return true;
-////   default:
-////      return false;
-////   }
-////}
-////
-////inline bool isOpenArg(ref_t message)
-////{
-////   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
-////}
+inline bool IsExprOperator(int operator_id)
+{
+   switch (operator_id) {
+      case ADD_MESSAGE_ID:
+      case SUB_MESSAGE_ID:
+      case MUL_MESSAGE_ID:
+      case DIV_MESSAGE_ID:
+      case AND_MESSAGE_ID:
+      case OR_MESSAGE_ID:
+      case XOR_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool IsShiftOperator(int operator_id)
+{
+   switch (operator_id) {
+      case READ_MESSAGE_ID:
+      case WRITE_MESSAGE_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+//inline bool IsRealExprOperator(int operator_id)
+//{
+//   switch (operator_id) {
+//   case ADD_MESSAGE_ID:
+//   case SUB_MESSAGE_ID:
+//   case MUL_MESSAGE_ID:
+//   case DIV_MESSAGE_ID:
+//      return true;
+//   default:
+//      return false;
+//   }
+//}
+
+inline bool isOpenArg(ref_t message)
+{
+   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
+}
 
 inline ref_t importSignature(_Module* exporter, ref_t exportRef, _Module* importer)
 {
