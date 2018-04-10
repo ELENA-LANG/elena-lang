@@ -33,11 +33,11 @@
 //#define V_OBJECT         (ref_t)-28
 //
 //#define V_OBJARRAY      (ref_t)-30
-//#define V_INT32ARRAY    (ref_t)-31
+#define V_INT32ARRAY    (ref_t)-31
 //#define V_ARGARRAY      (ref_t)-32
-//#define V_BINARYARRAY   (ref_t)-35
-//#define V_INT16ARRAY    (ref_t)-38
-//#define V_INT8ARRAY     (ref_t)-39
+#define V_BINARYARRAY   (ref_t)-35
+#define V_INT16ARRAY    (ref_t)-38
+#define V_INT8ARRAY     (ref_t)-39
 
 #define V_AUTO           (ref_t)-50
 
@@ -146,7 +146,7 @@ struct _CompilerScope
 
    // cached references
    ref_t superReference;
-//   ref_t intReference;
+   ref_t intReference;
 //   ref_t longReference;
 //   ref_t realReference;
 //   ref_t signatureReference;
@@ -192,7 +192,7 @@ struct _CompilerScope
 ////      sourcePath = NULL;
 ////      sourcePathRef = 0;
       debugModule = module = NULL;
-      /*intReference = boolReference = */superReference = 0;
+      intReference = /*boolReference = */superReference = 0;
 ////      signatureReference = messageReference = 0;
 ////      longReference = literalReference = wideReference = 0;
 ////      arrayReference = charReference = realReference = 0;
@@ -290,8 +290,8 @@ public:
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
-//
-//   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
+
+   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
 //   virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
 //   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;

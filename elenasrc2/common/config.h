@@ -93,16 +93,6 @@ public:
 
    virtual ident_t getNodeAttribute(void* reference, ident_t name);
 
-   //ConfigCategoryIterator getCategoryIt(ident_t name)
-   //{
-   //   return _settings.getIt(name);
-   //}
-
-   //virtual ident_t getSetting(ident_t key)
-   //{
-   //   return _ConfigFile::getSetting(key);
-   //}
-
    //ident_t getSetting(ident_t category, ident_t key, ident_t defaultValue = NULL);
 
    void appendSetting(ident_t key, ident_t attribute, const char* value);

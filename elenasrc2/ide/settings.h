@@ -11,10 +11,10 @@
 #include "config.h"
 #include "idecommon.h"
 
-#define SRCPATH_SECTION          "srcpath"     // template source paths
-#define LIBPATH_SECTION          "libpath"     // template library paths
-#define RECENTFILES_SECTION      "recent_files"
-#define RECENTRPOJECTS_SECTION   "recent_projects"
+#define SRCPATH_SECTION          "configuration/srcpath/*"     // template source paths
+#define LIBPATH_SECTION          "configuration/libpath/*"     // template library paths
+#define RECENTFILES_SECTION      "configuration/recent_files/*"
+#define RECENTRPOJECTS_SECTION   "configuration/recent_projects/*"
 
 #define TAB_SIZE_SETTING         "configuration/settings/tabsize"
 #define ENCODING_SETTING         "configuration/settings/encoding"

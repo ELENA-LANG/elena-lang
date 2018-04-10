@@ -32,11 +32,11 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
    _Module* messages = _project->createModule(MESSAGE_TABLE_MODULE);
    messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
 
-//  // load default forwards
+  // load default forwards
 //   _literal = project->resolveForward(STR_FORWARD);
 //   _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
 //   _character = project->resolveForward(CHAR_FORWARD);
-//   _int = project->resolveForward(INT_FORWARD);
+   _int = project->resolveForward(INT_FORWARD);
 //   _long = project->resolveForward(LONG_FORWARD);
 //   _real = project->resolveForward(REAL_FORWARD);
 //   _message = project->resolveForward(MESSAGE_FORWARD);
@@ -206,12 +206,12 @@ size_t ExecutableImage :: getLinkerConstant(int id)
 //{
 //   return _character;
 //}
-//
-//ident_t ExecutableImage::getIntegerClass()
-//{
-//   return _int;
-//}
-//
+
+ident_t ExecutableImage::getIntegerClass()
+{
+   return _int;
+}
+
 //ident_t ExecutableImage::getLongClass()
 //{
 //   return _long;
@@ -244,14 +244,14 @@ ident_t ExecutableImage :: getNamespace()
 
 ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
-//   if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef) {
-//      return module->resolveConstant(reference);
-//   }
+   if (/*mask == mskLiteralRef || */mask == mskInt32Ref/* || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef*/) {
+      return module->resolveConstant(reference);
+   }
 //   // if it is a message
 //   else if (mask == 0) {
 //      return module->resolveSubject(reference);
 //   }
-//   else {
+   else {
       ident_t referenceName = module->resolveReference(reference);
       while (isForwardReference(referenceName)) {
          ident_t resolvedName = _project->resolveForward(referenceName + FORWARD_PREFIX_NS_LEN);
@@ -279,31 +279,8 @@ ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t refere
 
          return ReferenceInfo(module, referenceName);
       }
-
-      //while (isWeakReference(referenceName)) {
-      //   ident_t resolvedName = _project->resolveForward(referenceName);
-
-      //   if (!emptystr(resolvedName))  {
-      //      referenceName = resolvedName;
-      //   }
-      //   //else if (isTemplateWeakReference(referenceName)) {
-      //   //   // COMPILER MAGIC : try to find a template implementation
-      //   //   ref_t resolvedRef = 0;
-      //   //   _Module* refModule = _project->resolveWeakModule(referenceName, resolvedRef, true);
-      //   //   if (refModule != nullptr) {
-      //   //      _project->addForward(referenceName, refModule->resolveReference(resolvedRef));
-      //   //   }
-
-      //   //   resolvedName = _project->resolveForward(referenceName);
-      //   //   if (!emptystr(resolvedName)) {
-      //   //      referenceName = resolvedName;
-      //   //   }
-      //   //   else throw JITUnresolvedException(referenceName);
-      //   //}
-      //   else throw JITUnresolvedException(referenceName);
-      //}
       return ReferenceInfo(referenceName);
-//   }
+   }
 }
 
 //// --- VirtualMachineClientImage ---

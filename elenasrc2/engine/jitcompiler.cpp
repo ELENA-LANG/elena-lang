@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class implementation.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -39,20 +39,20 @@ void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reade
    compileProcedure(helper, reader, codeWriter);
 }
 
-//// --- JITCompiler32 ---
-//
-//void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
-//{
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800004);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->writeDWord(integer);
-//}
-//
+// --- JITCompiler32 ---
+
+void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
+{
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800004);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeDWord(integer);
+}
+
 //void JITCompiler32 :: compileInt64(MemoryWriter* writer, long long integer)
 //{
 //   writer->seek(writer->Position() - 8);
@@ -365,18 +365,18 @@ void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
 
 // --- JITCompiler64 ---
 
-//void JITCompiler64 :: compileInt32(MemoryWriter* writer, int integer)
-//{
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(0x80000004u);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->writeQWord(integer);
-//}
-//
+void JITCompiler64 :: compileInt32(MemoryWriter* writer, int integer)
+{
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(0x80000004u);
+   writer->writeQWord(0);
+
+   // object body
+   writer->writeQWord(integer);
+}
+
 //void JITCompiler64 :: compileInt64(MemoryWriter* writer, long long integer)
 //{
 //   writer->seek(writer->Position() - 0x10);

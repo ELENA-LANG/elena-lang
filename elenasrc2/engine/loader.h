@@ -23,7 +23,7 @@ protected:
    // addresses
    ReferenceMap  _codeReferences, _dataReferences, _symbolReferences;
    ReferenceMap  _statReferences, _exportReferences;
-//   ReferenceMap _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
+   ReferenceMap _constReferences, _numberReferences/*, _literalReferences, _characterReferences, _wideReferences*/;
    ReferenceMap  _bssReferences;
 
    // actions
@@ -47,8 +47,8 @@ public:
       _symbolReferences.clear();
       _statReferences.clear();
       _exportReferences.clear();
-      //_constReferences.clear();
-      //_numberReferences.clear();
+      _constReferences.clear();
+      _numberReferences.clear();
       //_literalReferences.clear();
       //_characterReferences.clear();
       //_wideReferences.clear();
@@ -58,7 +58,7 @@ public:
 
    _ImageLoader()
       : _codeReferences(INVALID_REF), _dataReferences(INVALID_REF), _symbolReferences(INVALID_REF),
-        _statReferences(INVALID_REF), //_constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
+        _statReferences(INVALID_REF), _constReferences((size_t)-1), _numberReferences((size_t)-1), //_characterReferences((size_t)-1),
       /*  _literalReferences((size_t)-1), */_bssReferences(INVALID_REF), _exportReferences(INVALID_REF), //_wideReferences((size_t)-1),
         _actions(0)
    {

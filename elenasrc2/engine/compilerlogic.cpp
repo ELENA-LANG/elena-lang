@@ -95,19 +95,6 @@ inline ident_t findSourceRef(SNode node)
    return node.findChild(lxSourcePath).identifier();
 }
 
-inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
-{
-   //if (isPrimitiveRef(exportRef)) {
-   //   return exportRef;
-   //}
-   /*else */if (exportRef) {
-      ident_t reference = exporter->resolveReference(exportRef);
-
-      return importer->mapReference(reference);
-   }
-   else return 0;
-}
-
 //// --- CompilerLogic Optimization Ops ---
 //struct EmbeddableOp
 //{
@@ -488,8 +475,8 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
-   //if (!targetRef && !isPrimitiveRef(sourceRef))
-   //   return true;
+   if (!targetRef && !isPrimitiveRef(sourceRef))
+      return true;
 
    if (sourceRef == V_NIL)
       return true;
@@ -497,7 +484,7 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    //if (isPrimitiveCompatible(targetRef, sourceRef))
    //   return true;
 
-   if (targetRef == scope.superReference/* && !isPrimitiveRef(sourceRef)*/)
+   if (targetRef == scope.superReference && !isPrimitiveRef(sourceRef))
       return true;
 
    while (sourceRef != 0) {
@@ -525,10 +512,10 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    return false;
 }
 
-//bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
-//{
-//   return test(info.header.flags, elDynamicRole | elStructureRole);
-//}
+bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole | elStructureRole);
+}
 
 //bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
 //{
@@ -1071,31 +1058,31 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 //         info.header.flags = elDebugReference | elStructureRole;
 //         info.size = 4;
 //         break;
-//      case V_INT32ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole;
-//         info.size = -4;
-//         break;
-//      case V_INT16ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole;
-//         info.size = -2;
-//         break;
-//      case V_INT8ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole;
-//         info.size = -1;
-//         break;
+      case V_INT32ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole;
+         info.size = -4;
+         break;
+      case V_INT16ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole;
+         info.size = -2;
+         break;
+      case V_INT8ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole;
+         info.size = -1;
+         break;
 //      case V_OBJARRAY:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugArray | elDynamicRole;
 //         info.size = 0;
 //         break;
-//      case V_BINARYARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDynamicRole | elStructureRole;
-//         info.size = -1;
-//         break;
+      case V_BINARYARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDynamicRole | elStructureRole;
+         info.size = -1;
+         break;
       case V_AUTO:
          break;
       default:
@@ -1116,31 +1103,28 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 
 int CompilerLogic :: defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable)
 {
-   //if (reference == V_BINARYARRAY && elementRef != 0) {
-   //   return -defineStructSizeVariable(scope, elementRef, 0, variable);
-   //}
+   if (reference == V_BINARYARRAY && elementRef != 0) {
+      return -defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
    //else if (reference == V_OBJARRAY && elementRef != 0) {
    //   return defineStructSizeVariable(scope, elementRef, 0, variable);
    //}
-   //else if (reference == V_INT32ARRAY) {
-   //   return -4;
-   //}
-   //else if (reference == V_INT32ARRAY) {
-   //   return -4;
-   //}
-   //else if (reference == V_INT16ARRAY) {
-   //   return -2;
-   //}
-   //else if (reference == V_INT8ARRAY) {
-   //   return -1;
-   //}
-   //else {
+   else if (reference == V_INT32ARRAY) {
+      return -4;
+   }
+   else if (reference == V_INT16ARRAY) {
+      return -2;
+   }
+   else if (reference == V_INT8ARRAY) {
+      return -1;
+   }
+   else {
       ClassInfo classInfo;
       if (defineClassInfo(scope, classInfo, reference)) {
          return defineStructSize(classInfo, variable);
       }
       else return 0;      
-//   }
+   }
 }
 
 int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
@@ -1417,13 +1401,13 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
 
 bool CompilerLogic :: validateLocalAttribute(int& attrValue)
 {
-   //if (attrValue == (int)V_INT32) {
-   //   return true;
-   //}
+   if (attrValue == (int)V_INT8) {
+      return true;
+   }
    //else if (attrValue == (int)V_OBJARRAY) {
    //   return true;
    //}
-   /*else */if (attrValue == (int)V_VARIABLE) {
+   else if (attrValue == (int)V_VARIABLE) {
       attrValue = 0;
 
       return true;
@@ -1557,24 +1541,22 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
    if (!defineClassInfo(scope, info, elementRef, true))
       return 0;
 
-   return 0; // !! temporal
-
-//   if (isEmbeddable(info)) {
-//      if (isCompatible(scope, V_INT32, elementRef)) {
-//         switch (info.size) {
-//            case 4:
-//               return V_INT32ARRAY;
-//            case 2:
-//               return V_INT16ARRAY;
-//            case 1:
-//               return V_INT8ARRAY;
-//            default:
-//               break;
-//         }
-//      }
-//      return V_BINARYARRAY;
-//   }
-//   else return V_OBJARRAY;
+   if (isEmbeddable(info)) {
+      if (isCompatible(scope, V_INT32, elementRef)) {
+         switch (info.size) {
+            case 4:
+               return V_INT32ARRAY;
+            case 2:
+               return V_INT16ARRAY;
+            case 1:
+               return V_INT8ARRAY;
+            default:
+               break;
+         }
+      }
+      return V_BINARYARRAY;
+   }
+   else return /*V_OBJARRAY*/0;
 }
 
 ////bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)

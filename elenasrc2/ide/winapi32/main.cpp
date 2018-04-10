@@ -95,7 +95,7 @@ void loadSettings(_ELENA_::path_t path, Model* model, IDEWindow* view)
    if (file.load(path, _ELENA_::feUTF8)) {
       Settings::load(model, file);
 
-      //view->loadHistory(file, RECENTFILES_SECTION, RECENTRPOJECTS_SECTION);
+      view->loadHistory(file, RECENTFILES_SECTION, RECENTRPOJECTS_SECTION);
 
       view->reloadSettings();
    }
@@ -109,7 +109,7 @@ void saveSettings(_ELENA_::path_t path, Model* model, IDEWindow* view)
 
    Settings::save(model, file);
 
-   //view->saveHistory(file, RECENTFILES_SECTION, RECENTRPOJECTS_SECTION);
+   view->saveHistory(file, RECENTFILES_SECTION, RECENTRPOJECTS_SECTION);
 
    file.save(path, _ELENA_::feUTF8);
 }
@@ -136,7 +136,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int)
    _ELENA_::Path configPath(model.paths.appPath);
    configPath.combine(_T("ide.cfg"));
 
-   // load command line argiments
+   // load command line arguments
    loadCommandLine(&model, cmdLine, configPath);
 
    // init IDE Controls

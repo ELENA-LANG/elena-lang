@@ -80,6 +80,7 @@ In development:
                  * protected / internal methods
                  * NEWOBJECT_MESSAGE_ID, should calls field initializer method and implicit constructor directly
                    (so called weak sealed methods)
+                 * save recent loaded project / file lists
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

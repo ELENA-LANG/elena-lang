@@ -273,24 +273,24 @@ enum ByteCode
    blStatement      = 0x8121,  // meta command, declaring statement
    blBlock          = 0x8122,  // meta command, declaring sub code
 
-   //// debug info
+   // debug info
    //bdDebugInfo      = 0x8400,
    bdBreakpoint     = 0x8401,
    bdBreakcoord     = 0x8402,
    bdLocal          = 0x8403,
    //bdSelf           = 0x8404,
    bdMessage        = 0x8405,
-   //bdLocalInfo      = 0x8406,
+   bdLocalInfo      = 0x8406,
    bdSourcePath     = 0x8407,
 
-   //bdIntLocal       = 0x8413,
+   bdIntLocal       = 0x8413,
    //bdLongLocal      = 0x8423,
    //bdRealLocal      = 0x8433,
    //bdParamsLocal    = 0x8443,
-   //bdByteArrayLocal = 0x8453,
-   //bdShortArrayLocal= 0x8463,
-   //bdIntArrayLocal  = 0x8473,
-   //bdStruct         = 0x8486,
+   bdByteArrayLocal = 0x8453,
+   bdShortArrayLocal= 0x8463,
+   bdIntArrayLocal  = 0x8473,
+   bdStruct         = 0x8486,
    //bdStructSelf     = 0x8484,
 };
 

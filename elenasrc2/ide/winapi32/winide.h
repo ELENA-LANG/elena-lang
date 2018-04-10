@@ -211,7 +211,7 @@ public:
 
    virtual void removeFile(_ELENA_::path_t name);
 
-   void loadHistory(_ELENA_::IniConfigFile& file, const char* recentFileSection, const char* recentProjectSection)
+   void loadHistory(_ELENA_::XmlConfigFile& file, const char* recentFileSection, const char* recentProjectSection)
    {
       _recentFiles.load(file, recentFileSection);
       _recentFiles.refresh();
@@ -220,7 +220,7 @@ public:
       _recentProjects.refresh();
    }
 
-   void saveHistory(_ELENA_::IniConfigFile& file, const char* recentFileSection, const char* recentProjectSection)
+   void saveHistory(_ELENA_::XmlConfigFile& file, const char* recentFileSection, const char* recentProjectSection)
    {
       _recentFiles.save(file, recentFileSection);
 

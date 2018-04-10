@@ -103,7 +103,7 @@ enum LexicalType
 //   lxConstantString  = 0x0A10C, // arg - reference
 //   lxConstantWideStr = 0x0A10D, // arg - reference
 //   lxConstantChar    = 0x0A10E, // arg - reference
-//   lxConstantInt     = 0x1A10F, // arg - reference
+   lxConstantInt     = 0x1A10F, // arg - reference
 //   lxConstantLong    = 0x1A110, // arg - reference
 //   lxConstantReal    = 0x1A111, // arg - reference
    lxConstantClass   = 0x0A112, // arg - reference
@@ -185,17 +185,17 @@ enum LexicalType
    lxBaseParent      = 0x10023,
 //   lxAssignOperator  = 0x10024,
    lxOperator        = 0x10025,
-//   lxIntVariable     = 0x10028,
+   lxIntVariable     = 0x10028,
 //   lxLongVariable    = 0x10029,
 //   lxReal64Variable  = 0x1002A,
 //   lxForward         = 0x1002E,
    lxVariable        = 0x10037,
-//   lxBinaryVariable  = 0x10038,
+   lxBinaryVariable  = 0x10038,
 //   lxMember          = 0x10039,  // a collection member, arg - offset
 //   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
-//   lxIntsVariable    = 0x1003B,
-//   lxBytesVariable   = 0x1003C,
-//   lxShortsVariable  = 0x1003D,
+   lxIntsVariable    = 0x1003B,
+   lxBytesVariable   = 0x1003C,
+   lxShortsVariable  = 0x1003D,
 //   lxParamsVariable  = 0x1003E,
 //   lxInlineClosure   = 0x1003F,
 
@@ -220,8 +220,8 @@ enum LexicalType
    lxLevel           = 0x20011,
    lxType            = 0x20012, // arg - subject
    lxCallTarget      = 0x20013, // arg - reference
-//   lxClassName       = 0x20014, // arg - identifier
-//   lxIntValue        = 0x20015, // arg - integer value
+   lxClassName       = 0x20014, // arg - identifier
+   lxIntValue        = 0x20015, // arg - integer value
 //   lxTempLocal       = 0x20016,
 //   lxIfValue         = 0x20017, // arg - reference
 //   lxElseValue       = 0x20018, // arg - reference

@@ -46,16 +46,18 @@ inline void loadSetting(const char* value, int& setting)
    }
 }
 
-inline void loadSection(ConfigCategoryIterator it, PathMapping& list)
+inline void loadSection(_ELENA_::XmlConfigFile& config, const char* key, PathMapping& list)
 {
    Path value;
-   while (!it.Eof()) {
-      value.copy((ident_t)(*it));
 
-      list.erase(it.key());
-      list.add(it.key(), value.clone(), true);
+   _ConfigFile::Nodes nodes;
+   config.select(key, nodes);
+   for (auto it = nodes.start(); !it.Eof(); it++) {
+      ident_t key = (*it).Attribute("key");
+      value.copy((*it).Content());
 
-      it++;
+      list.erase(key);
+      list.add(key, value.clone(), true);
    }
 }
 
@@ -154,8 +156,8 @@ void Settings :: load(Model* model, _ELENA_::XmlConfigFile& config)
    loadSetting(config.getSetting(SCHEME_SETTING), model->scheme, 0, 1, 0);
    loadSetting(config.getSetting(FONTSIZE_SETTING), model->font_size, 8, 24, 10);
 
-   //loadSection(config.getCategoryIt(SRCPATH_SECTION), model->packageRoots);
-   //loadSection(config.getCategoryIt(LIBPATH_SECTION), model->libraryRoots);
+   loadSection(config, SRCPATH_SECTION, model->packageRoots);
+   loadSection(config, LIBPATH_SECTION, model->libraryRoots);
 }
 
 void Settings :: save(Model* model, _ELENA_::XmlConfigFile& config)

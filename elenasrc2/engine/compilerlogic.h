@@ -101,7 +101,7 @@ public:
    {
       return (int)reference < 0;
    }
-//   virtual bool isEmbeddableArray(ClassInfo& info);
+   virtual bool isEmbeddableArray(ClassInfo& info);
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
 //   virtual bool isVariable(ClassInfo& info);
    virtual bool isEmbeddable(ClassInfo& info);

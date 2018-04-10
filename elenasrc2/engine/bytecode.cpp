@@ -70,9 +70,11 @@ inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
    if (ref != 0) {
       int mask = ref & mskAnyRef;
 
-      ident_t referenceName = sour->resolveReference(ref & ~mskAnyRef);
+      return importReference(sour, ref & ~mskAnyRef, dest) | mask;
 
-      return dest->mapReference(referenceName) | mask;
+      //ident_t referenceName = sour->resolveReference(ref & ~mskAnyRef);
+
+      //return dest->mapReference(referenceName) | mask;
    }
    else return 0;
 }

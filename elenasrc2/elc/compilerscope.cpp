@@ -81,7 +81,7 @@ void CompilerScope :: raiseWarning(int level, const char* message, ident_t sourc
 void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
 {
    target.header = copy.header;
-   //target.size = copy.size;
+   target.size = copy.size;
 
    if (!headerOnly) {
       // import method references and mark them as inherited

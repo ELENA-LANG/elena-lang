@@ -26,14 +26,14 @@ public:
    virtual ident_t resolveReference(ref_t reference) = 0;
    virtual ident_t resolveAction(ref_t reference, ref_t& signature) = 0;
    virtual size_t resolveSignature(ref_t signature, ref_t* references) = 0;
-//   virtual ident_t resolveConstant(ref_t reference) = 0;
+   virtual ident_t resolveConstant(ref_t reference) = 0;
 
    virtual ref_t mapReference(ident_t reference) = 0;
    virtual ref_t mapReference(ident_t reference, bool existing) = 0;
 
    virtual ref_t mapSignature(ref_t* references, size_t length, bool existing) = 0;
    virtual ref_t mapAction(ident_t actionName, ref_t signature, bool existing) = 0;
-//   virtual ref_t mapConstant(ident_t reference) = 0;
+   virtual ref_t mapConstant(ident_t reference) = 0;
 
    virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
    virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
@@ -188,7 +188,7 @@ public:
 //   virtual ident_t getLiteralClass() = 0;
 //   virtual ident_t getWideLiteralClass() = 0;
 //   virtual ident_t getCharacterClass() = 0;
-//   virtual ident_t getIntegerClass() = 0;
+   virtual ident_t getIntegerClass() = 0;
 //   virtual ident_t getRealClass() = 0;
 //   virtual ident_t getLongClass() = 0;
 //   virtual ident_t getMessageClass() = 0;
@@ -938,6 +938,28 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
    actionRef = importer->mapAction(actionName, importSignature(exporter, signature, importer), false);
 
    return encodeMessage(actionRef, paramCount) | flags;
+}
+
+inline bool isPrimitiveRef(ref_t reference)
+{
+   return (int)reference < 0;
+}
+
+inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   if (isPrimitiveRef(exportRef)) {
+      return exportRef;
+   }
+   else if (exportRef) {
+      ident_t reference = exporter->resolveReference(exportRef);
+      if (isWeakReference(reference)) {
+         IdentifierString fullName(exporter->Name(), reference);
+
+         return importer->mapReference(fullName.c_str());
+      }
+      else return importer->mapReference(reference);
+   }
+   else return 0;
 }
 
 } // _ELENA_

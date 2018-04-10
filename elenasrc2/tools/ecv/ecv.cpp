@@ -375,14 +375,14 @@ void parseMessageConstant(IdentifierString& message, ident_t reference)
 
 void printReference(IdentifierString& command, _Module* module, size_t reference)
 {
-   //bool literalConstant = false;
+   bool literalConstant = false;
    //bool charConstant = false;
    ident_t referenceName = NULL;
    int mask = reference & mskAnyRef;
-   //if (mask == mskInt32Ref) {
-   //   referenceName = _integer;
-   //   literalConstant = true;
-   //}
+   if (mask == mskInt32Ref) {
+      referenceName = _integer;
+      literalConstant = true;
+   }
    //else if (mask == mskInt64Ref) {
    //   referenceName = _long;
    //   literalConstant = true;
@@ -403,7 +403,7 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    //   referenceName = _char;
    //   charConstant = true;
    //}
-   /*else */if (reference == 0) {
+   else if (reference == 0) {
       referenceName = "$nil";
    }
    else if (reference == -1) {
@@ -416,11 +416,11 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    }
    else {
       command.append(referenceName);
-      //if (literalConstant) {
-      //   command.append("(");
-      //   command.append(module->resolveConstant(reference & ~mskAnyRef));
-      //   command.append(")");
-      //}
+      if (literalConstant) {
+         command.append("(");
+         command.append(module->resolveConstant(reference & ~mskAnyRef));
+         command.append(")");
+      }
       //else if (charConstant) {
       //   const char* ch = module->resolveConstant(reference & ~mskAnyRef);
 
@@ -1029,24 +1029,24 @@ void listFlags(int flags, int& row, int pageSize)
    //   case elDebugLiteral:
    //      printLine("@flag ", "elDebugLiteral", row, pageSize);
    //      break;
-   //   case elDebugIntegers:
-   //      printLine("@flag ", "elDebugIntegers", row, pageSize);
-   //      break;
+      case elDebugIntegers:
+         printLine("@flag ", "elDebugIntegers", row, pageSize);
+         break;
    //   case elDebugArray:
    //      printLine("@flag ", "elDebugArray", row, pageSize);
    //      break;
       case elDebugQWORD:
          printLine("@flag ", "elDebugQWORD", row, pageSize);
          break;
-   //   case elDebugBytes:
-   //      printLine("@flag ", "elDebugBytes", row, pageSize);
-   //      break;
-   //   case elDebugShorts:
-   //      printLine("@flag ", "elDebugShorts", row, pageSize);
-   //      break;
-   //   //case elDebugPTR:
-   //   //   printLine("@flag ", "elDebugPTR");
-   //   //   break;
+      case elDebugBytes:
+         printLine("@flag ", "elDebugBytes", row, pageSize);
+         break;
+      case elDebugShorts:
+         printLine("@flag ", "elDebugShorts", row, pageSize);
+         break;
+      //case elDebugPTR:
+      //   printLine("@flag ", "elDebugPTR");
+      //   break;
    //   case elDebugWideLiteral:
    //      printLine("@flag ", "elDebugWideLiteral", row, pageSize);
    //      break;

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      MenuHistoryList class header
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef historylistH
@@ -18,8 +18,8 @@ namespace _GUI_
 class RecentList : public MenuHistoryList
 {
 public:
-   void load(_ELENA_::IniConfigFile& file, const char* section);
-   void save(_ELENA_::IniConfigFile& file, const char* section);
+   void load(_ELENA_::XmlConfigFile& file, const char* section);
+   void save(_ELENA_::XmlConfigFile& file, const char* section);
 
    RecentList(int maxCount, int menuBaseId);
 };

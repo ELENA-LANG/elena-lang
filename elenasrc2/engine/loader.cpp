@@ -16,14 +16,14 @@ using namespace _ELENA_;
 void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask)
 {
    switch (mask) {
-//      case mskConstantRef:
-//         _constReferences.add(reference, (ref_t)vaddress);
-//         break;
+      case mskConstantRef:
+         _constReferences.add(reference, (ref_t)vaddress);
+         break;
 //      case mskInt64Ref:
-//      case mskInt32Ref:
+      case mskInt32Ref:
 //      case mskRealRef:
-//         _numberReferences.add(reference, (size_t)vaddress);
-//         break;
+         _numberReferences.add(reference, (size_t)vaddress);
+         break;
 //      case mskCharRef:
 //         _characterReferences.add(reference, (size_t)vaddress);
 //         break;
@@ -84,12 +84,12 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
 {
    if (mask != 0) {
       switch (mask) {
-//         case mskConstantRef:
-//            return (void*)_constReferences.get(reference);
+         case mskConstantRef:
+            return (void*)_constReferences.get(reference);
 //         case mskInt64Ref:
-//         case mskInt32Ref:
+         case mskInt32Ref:
 //         case mskRealRef:
-//            return (void*)_numberReferences.get(reference);
+            return (void*)_numberReferences.get(reference);
 //         case mskCharRef:
 //            return (void*)_characterReferences.get(reference);
 //         case mskLiteralRef:

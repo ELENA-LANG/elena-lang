@@ -203,15 +203,15 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
 //   tape.write(bcSNop);
 //   tape.write(bcFreeStack, 1);
 //}
-//
-//void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
-//{
-//   if (!emptystr(localName)) {
-//      tape.write(bdStruct, writeString(localName), level);
-//      tape.write(bdLocalInfo, writeString(className));
-//   }
-//}
-//
+
+void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
+{
+   if (!emptystr(localName)) {
+      tape.write(bdStruct, writeString(localName), level);
+      tape.write(bdLocalInfo, writeString(className));
+   }
+}
+
 //void ByteCodeWriter :: declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
 //{
 //   if (!emptystr(localName)) {
@@ -226,11 +226,11 @@ void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, in
       tape.write(bdLocal, writeString(localName), level);
 }
 
-//void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdIntLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
+void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdIntLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
 //void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 //{
 //   tape.write(bdLongLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
@@ -240,22 +240,22 @@ void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, in
 //{
 //   tape.write(bdRealLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
 //}
-//
-//void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdByteArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdShortArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
+
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdByteArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdShortArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
 //void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
 //{
 //   tape.write(bdParamsLocal, writeString(localName), level);
@@ -642,8 +642,8 @@ inline ref_t defineConstantMask(LexicalType type)
    //      return mskWideLiteralRef;
    //   case lxConstantChar:
    //      return mskCharRef;
-   //   case lxConstantInt:
-   //      return mskInt32Ref;
+      case lxConstantInt:
+         return mskInt32Ref;
    //   case lxConstantLong:
    //      return mskInt64Ref;
    //   case lxConstantReal:
@@ -1401,16 +1401,8 @@ void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
    tape.write(blEnd, bsSymbol);
 }
 
-void ByteCodeWriter :: writeProcedureDebugInfo(Scope& scope, ident_t path)
+void ByteCodeWriter :: writeProcedureDebugInfo(Scope& scope, ref_t sourceRef)
 {
-   ref_t sourceRef = scope.debugStrings->Position();
-   ident_t defaultPath = scope.defaultNameRef != -1 ? (const char*)scope.debugStrings->Memory()->get(scope.defaultNameRef) : NULL;
-
-   if (!emptystr(path) && !path.compare(defaultPath)) {
-      scope.debugStrings->writeLiteral(path);
-   }
-   else sourceRef = scope.defaultNameRef;
-
    DebugLineInfo symbolInfo(dsProcedure, 0, 0, 0);
    symbolInfo.addresses.source.nameRef = sourceRef;
 
@@ -1604,8 +1596,7 @@ void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* 
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule,
-   int sourcePathRef, bool appendMode)
+void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(module->mapSection(reference | mskSymbolRef, false));
@@ -1623,7 +1614,6 @@ void ByteCodeWriter :: writeSymbol(ref_t reference, ByteCodeIterator& it, _Modul
 
       scope.debugStrings = &debugStringWriter;
       scope.debug = &debugWriter;
-      scope.defaultNameRef = sourcePathRef;
 
       // save symbol debug line info
       writeSymbolDebugInfo(debugModule, &debugWriter, &debugStringWriter, module->resolveReference(reference & ~mskAnyRef));
@@ -1642,27 +1632,27 @@ void ByteCodeWriter :: writeDebugInfoStopper(MemoryWriter* debug)
    debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: save(CommandTape& tape, _CompilerScope& scope, pos_t sourcePathRef)
+void ByteCodeWriter :: save(CommandTape& tape, _CompilerScope& scope)
 {
    ByteCodeIterator it = tape.start();
    while (!it.Eof()) {
       if (*it == blBegin) {
          ref_t reference = (*it).additional;
          if ((*it).Argument() == bsClass) {
-            writeClass(reference, ++it, scope, sourcePathRef);
+            writeClass(reference, ++it, scope);
          }
          else if ((*it).Argument() == bsSymbol) {
-            writeSymbol(reference, ++it, scope.module, scope.debugModule, sourcePathRef, false);
+            writeSymbol(reference, ++it, scope.module, scope.debugModule, false);
          }
          else if ((*it).Argument() == bsInitializer) {
-            writeSymbol(reference, ++it, scope.module, scope.debugModule, sourcePathRef, true);
+            writeSymbol(reference, ++it, scope.module, scope.debugModule, true);
          }
       }
       it++;
    }
 }
 
-void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _CompilerScope& compilerScope, pos_t sourcePathRef)
+void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _CompilerScope& compilerScope)
 {
    // initialize bytecode writer
    MemoryWriter codeWriter(compilerScope.mapSection(reference | mskClassRef, false));
@@ -1702,7 +1692,6 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Compil
 
       scope.debugStrings = &debugStringWriter;
       scope.debug = &debugWriter;
-      scope.defaultNameRef = sourcePathRef;
 
      // save class debug info
       writeClassDebugInfo(compilerScope.debugModule, &debugWriter, &debugStringWriter, compilerScope.module->resolveReference(reference & ~mskAnyRef), info.header.flags);
@@ -1743,7 +1732,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 {
    if (*it == bdSourcePath) {
       if (scope.debug)
-         writeProcedureDebugInfo(scope, (const char*)_strings.get((*it).Argument()));
+         writeProcedureDebugInfo(scope, (*it).argument);
 
       it++;
    }
@@ -1841,14 +1830,14 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bdLocal:
             writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, frameLevel);
             break;
-         //case bdIntLocal:
-         //   if ((*it).predicate == bpFrame) {
-         //      // if it is a variable containing reference to the primitive value
-         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocal, frameLevel);
-         //   }
-         //   // else it is a primitice variable
-         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocalPtr, 0);
-         //   break;
+         case bdIntLocal:
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocalPtr, 0);
+            break;
          //case bdLongLocal:
          //   if ((*it).predicate == bpFrame) {
          //      // if it is a variable containing reference to the primitive value
@@ -1865,41 +1854,41 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //   // else it is a primitice variable
          //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocalPtr, 0);
          //   break;
-         //case bdByteArrayLocal:
-         //   if ((*it).predicate == bpFrame) {
-         //      // if it is a variable containing reference to the primitive value
-         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocal, frameLevel);
-         //   }
-         //   // else it is a primitive variable
-         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocalPtr, 0);
-         //   break;
-         //case bdShortArrayLocal:
-         //   if ((*it).predicate == bpFrame) {
-         //      // if it is a variable containing reference to the primitive value
-         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocal, frameLevel);
-         //   }
-         //   // else it is a primitice variable
-         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocalPtr, 0);
-         //   break;
-         //case bdIntArrayLocal:
-         //   if ((*it).predicate == bpFrame) {
-         //      // if it is a variable containing reference to the primitive value
-         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocal, frameLevel);
-         //   }
-         //   // else it is a primitice variable
-         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocalPtr, 0);
-         //   break;
+         case bdByteArrayLocal:
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocal, frameLevel);
+            }
+            // else it is a primitive variable
+            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocalPtr, 0);
+            break;
+         case bdShortArrayLocal:
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocalPtr, 0);
+            break;
+         case bdIntArrayLocal:
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocalPtr, 0);
+            break;
          //case bdParamsLocal:
          //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsParamsLocal, frameLevel);
          //   break;
          case bdMessage:
             writeMessageInfo(scope, dsMessage, (const char*)_strings.get((*it).additional));
             break;
-         //case bdStruct:
-         //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
-         //   it++;
-         //   writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
-         //   break;
+         case bdStruct:
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
+            it++;
+            writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
+            break;
          //case bdStructSelf:
          //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLocalPtr, frameLevel);
          //   it++;
@@ -2640,35 +2629,35 @@ void ByteCodeWriter :: copyByte(CommandTape& tape, int offset)
    tape.write(bcNSave);
 }
 
-//void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
-//{
-//   // bcopya
-//   // dcopy value
-//   // nsave
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcDCopy, value);
-//   tape.write(bcNSave);
-//}
-//
-//////void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
-//////{
-//////   // pushr trueRef
-//////   // ifr labEnd falseRef
-//////   // acopyr falseRef
-//////   // asavesi 0
-//////   // labEnd:
-//////   // popa
-//////
-//////   tape.newLabel();
-//////
-//////   tape.write(bcPushR, trueRef | mskConstantRef);
-//////   tape.write(bcIfR, baCurrentLabel, falseRef | mskConstantRef);
-//////   tape.write(bcACopyR, falseRef | mskConstantRef);
-//////   tape.write(bcASaveSI);
-//////   tape.setLabel();
-//////   tape.write(bcPopA);
-//////}
+void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
+{
+   // bcopya
+   // dcopy value
+   // nsave
+
+   tape.write(bcBCopyA);
+   tape.write(bcDCopy, value);
+   tape.write(bcNSave);
+}
+
+////void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
+////{
+////   // pushr trueRef
+////   // ifr labEnd falseRef
+////   // acopyr falseRef
+////   // asavesi 0
+////   // labEnd:
+////   // popa
+////
+////   tape.newLabel();
+////
+////   tape.write(bcPushR, trueRef | mskConstantRef);
+////   tape.write(bcIfR, baCurrentLabel, falseRef | mskConstantRef);
+////   tape.write(bcACopyR, falseRef | mskConstantRef);
+////   tape.write(bcASaveSI);
+////   tape.setLabel();
+////   tape.write(bcPopA);
+////}
 
 void ByteCodeWriter :: saveSubject(CommandTape& tape)
 {
@@ -3564,7 +3553,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantClass:
       case lxConstantSymbol:
       //case lxConstantChar:
-      //case lxConstantInt:
+      case lxConstantInt:
       //case lxConstantLong:
       //case lxConstantReal:
       //case lxMessageConstant:
@@ -3659,7 +3648,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantClass:
       case lxConstantSymbol:
 //      case lxConstantChar:
-//      case lxConstantInt:
+      case lxConstantInt:
 //      case lxConstantLong:
 //      case lxConstantReal:
 //      case lxMessageConstant:
@@ -5337,11 +5326,11 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, int mod
    }
 }
 
-//void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
-//{
-//   loadObject(tape, lxLocalAddress, offset + 2);
-//   saveIntConstant(tape, 0x800000 + node.argument);
-//}
+void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
+{
+   loadObject(tape, lxLocalAddress, offset + 2);
+   saveIntConstant(tape, 0x800000 + node.argument);
+}
 
 void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node current)
 {
@@ -5353,73 +5342,73 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
             current.findChild(lxIdentifier, lxPrivate).identifier(),
             current.findChild(lxLevel).argument);
          break;
-//      case lxIntVariable:
-//         declareLocalIntInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-//         break;
-//      case lxLongVariable:
-//         declareLocalLongInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-//         break;
-//      case lxReal64Variable:
-//         declareLocalRealInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-//         break;
+      case lxIntVariable:
+         declareLocalIntInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+         break;
+      //case lxLongVariable:
+      //   declareLocalLongInfo(tape,
+      //      current.findChild(lxIdentifier, lxPrivate).identifier(),
+      //      current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+      //   break;
+      //case lxReal64Variable:
+      //   declareLocalRealInfo(tape,
+      //      current.findChild(lxIdentifier, lxPrivate).identifier(),
+      //      current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+      //   break;
       case lxMessageVariable:
          declareMessageInfo(tape, current.identifier());
          break;
-//      //case lxParamsVariable:
-//      //   declareLocalParamsInfo(tape,
-//      //      current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//      //      current.findChild(lxLevel).argument);
-//      //   break;
-//      case lxBytesVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//         
-//         generateBinary(tape, current, level);
-//         declareLocalByteArrayInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            level, false);
-//         break;
-//      }
-//      case lxShortsVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//         
-//         generateBinary(tape, current, level);
-//         declareLocalShortArrayInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            level, false);
-//         break;
-//      }
-//      case lxIntsVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//         
-//         generateBinary(tape, current, level);
-//         
-//         declareLocalIntArrayInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            level, false);
-//         break;
-//      }
-//      case lxBinaryVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//
-//         // HOTFIX : only for dynamic objects
-//         if (current.argument != 0)
-//            generateBinary(tape, current, level);
-//
-//         declareStructInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            level, current.findChild(lxClassName).identifier());
-//         break;
-//      }
+      //case lxParamsVariable:
+      //   declareLocalParamsInfo(tape,
+      //      current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
+      //      current.findChild(lxLevel).argument);
+      //   break;
+      case lxBytesVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         declareLocalByteArrayInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            level, false);
+         break;
+      }
+      case lxShortsVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         declareLocalShortArrayInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            level, false);
+         break;
+      }
+      case lxIntsVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         
+         declareLocalIntArrayInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            level, false);
+         break;
+      }
+      case lxBinaryVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+
+         // HOTFIX : only for dynamic objects
+         if (current.argument != 0)
+            generateBinary(tape, current, level);
+
+         declareStructInfo(tape,
+            current.findChild(lxIdentifier, lxPrivate).identifier(),
+            level, current.findChild(lxClassName).identifier());
+         break;
+      }
    }
 }
 
@@ -5444,26 +5433,26 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxExternFrame:
 //            generateExternFrame(tape, current);
 //            break;
-////         case lxReleasing:
-////            releaseObject(tape, current.argument);
-////            break;
-//         case lxBinarySelf:
-//            declareSelfStructInfo(tape, THIS_VAR, current.argument,
-//               current.findChild(lxClassName).identifier());
+//         case lxReleasing:
+//            releaseObject(tape, current.argument);
 //            break;
+         //case lxBinarySelf:
+         //   declareSelfStructInfo(tape, THIS_VAR, current.argument,
+         //      current.findChild(lxClassName).identifier());
+         //   break;
          case lxBreakpoint:
             translateBreakpoint(tape, current);
             break;
          case lxVariable:
-//         case lxIntVariable:
+         case lxIntVariable:
 //         case lxLongVariable:
 //         case lxReal64Variable:
 //         case lxMessageVariable:
 //         case lxParamsVariable:
-//         case lxBytesVariable:
-//         case lxShortsVariable:
-//         case lxIntsVariable:
-//         case lxBinaryVariable:
+         case lxBytesVariable:
+         case lxShortsVariable:
+         case lxIntsVariable:
+         case lxBinaryVariable:
             generateDebugInfo(tape, current);
             break;
          case lxImplicitCall:
@@ -5599,16 +5588,16 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
             break;
          case lxVariable:
             declareLocalInfo(tape,
-               current.findChild(lxIdentifier, lxPrivate)/*.findChild(lxTerminal)*/.identifier(),
+               current.firstChild(lxTerminalMask).identifier(),
                current.findChild(lxLevel).argument);
             break;
 //         case lxSelfVariable:
 //            declareSelfInfo(tape, current.argument);
 //            break;
-//         case lxIntVariable:
-//            declareLocalIntInfo(tape,
-//               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),
-//               current.findChild(lxLevel).argument, true);
+         case lxIntVariable:
+            declareLocalIntInfo(tape,
+               current.firstChild(lxTerminalMask).identifier(),
+               current.findChild(lxLevel).argument, true);
 //         case lxLongVariable:
 //            declareLocalLongInfo(tape,
 //               current.findChild(lxIdentifier, lxPrivate).findChild(lxTerminal).identifier(),

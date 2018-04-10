@@ -50,28 +50,28 @@ public:
       int    offset;
       ref_t  class_ref;
       ref_t  element_ref;
-//      int    size;
+      int    size;
 
       Parameter()
       {
          offset = -1;
          class_ref = 0;
          element_ref = 0;
-//         size = 0;
+         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->class_ref = 0;
          this->element_ref = 0;
-//         this->size = 0;
+         this->size = 0;
       }
       Parameter(int offset, ref_t class_ref)
       {
          this->offset = offset;
          this->class_ref = class_ref;
          this->element_ref = 0;
-//         this->size = 0;
+         this->size = 0;
       }
 //      Parameter(int offset, ref_t class_ref, int size)
 //      {
@@ -111,7 +111,7 @@ public:
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
-//      okIntConstant,                  // param - reference, extraparam - imm argument
+      okIntConstant,                  // param - reference, extraparam - imm argument
 //      okUIntConstant,                 // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference
 //      okRealConstant,                 // param - reference
@@ -136,7 +136,7 @@ public:
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
 //      okSuper,
-//      okLocalAddress,                 // param - local offset, extraparam - class reference
+      okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
 //////      okBlockLocal,                   // param - local offset
 //      okConstantRole,                 // param - role reference
@@ -603,9 +603,9 @@ private:
       LocalMap     locals;
       int          level;
 
-//      // scope stack allocation
-//      int          reserved;  // allocated for the current statement
-//      int          saved;     // permanently allocated
+      // scope stack allocation
+      int          reserved;  // allocated for the current statement
+      int          saved;     // permanently allocated
 
       int newLocal()
       {
@@ -843,7 +843,7 @@ private:
 
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
-   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable/*, int& size*/);
+   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField/*, bool& isSealed, bool& isConstant*/);
    void declareVMT(SNode member, ClassScope& scope);
 ////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
@@ -908,11 +908,11 @@ private:
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-//   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+
+   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
 //   int allocateStructure(SNode node, int& size);
-//   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
-//
+   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
+
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 

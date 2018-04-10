@@ -40,7 +40,7 @@ inline ident_t resolveModuleReference(ident_t ns, ident_t reference)
 // --- BaseModule ---
 
 _BaseModule  :: _BaseModule()
-   : _references(0), _actionNames(0), _actions(0ll)//, _constants(0)
+   : _references(0), _actionNames(0), _actions(0ll), _constants(0)
 {
 }
 
@@ -100,10 +100,10 @@ size_t _BaseModule :: resolveSignature(ref_t signature, ref_t* references)
    else return 0;
 }
 
-//ident_t _BaseModule :: resolveConstant(ref_t reference)
-//{
-//   return retrieveKey(_constants.start(), reference, DEFAULT_STR);
-//}
+ident_t _BaseModule :: resolveConstant(ref_t reference)
+{
+   return retrieveKey(_constants.start(), reference, DEFAULT_STR);
+}
 
 ref_t _BaseModule :: retrieveSignature(ref_t* references, size_t length, bool existing)
 {
@@ -205,12 +205,12 @@ ref_t Module :: mapSignature(ref_t* references, size_t length, bool existing)
    return retrieveSignature(references, length, existing);
 }
 
-//ref_t Module :: mapConstant(ident_t constant)
-//{
-//   ref_t nextId = _constants.Count() + 1;
-//
-//   return mapKey(_constants, constant, nextId);
-//}
+ref_t Module :: mapConstant(ident_t constant)
+{
+   ref_t nextId = _constants.Count() + 1;
+
+   return mapKey(_constants, constant, nextId);
+}
 
 ref_t Module :: mapReference(ident_t reference, bool existing)
 {
@@ -294,8 +294,8 @@ LoadResult Module :: load(StreamReader& reader)
    // load actions...
    _actions.read(&reader);
 
-//   // load constants...
-//   _constants.read(&reader);
+   // load constants...
+   _constants.read(&reader);
 
    // load sections..
    loadSections(reader);
@@ -323,8 +323,8 @@ bool Module :: save(StreamWriter& writer)
    // save actions...
    _actions.write(&writer);
 
-//   // save constants...
-//   _constants.write(&writer);
+   // save constants...
+   _constants.write(&writer);
 
    // save sections..
    saveSections(writer);
@@ -362,8 +362,8 @@ ROModule :: ROModule(StreamReader& reader, LoadResult& result)
    // load actions...
    _actions.read(&reader);
 
-//   // load constants...
-//   _constants.read(&reader);
+   // load constants...
+   _constants.read(&reader);
 
    // load sections..
    loadSections(reader);
@@ -425,10 +425,10 @@ ref_t ROModule :: mapSignature(ref_t* references, size_t length, bool existing)
    else throw InternalError("Read-only Module");
 }
 
-//ref_t ROModule :: mapConstant(ident_t reference)
-//{
-//   return _constants.get(reference);
-//}
+ref_t ROModule :: mapConstant(ident_t reference)
+{
+   return _constants.get(reference);
+}
 
 _Memory* ROModule :: mapSection(ref_t reference, bool existing)
 {

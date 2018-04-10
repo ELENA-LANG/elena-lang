@@ -944,7 +944,7 @@
 /// A signed 32 bit integer
 public sealed struct IntNumber //:: IntBaseNumber
 {
-    __byte<4> theValue.
+    type<__byte, 4> theValue.
 
 //    stacksafe implicit(ByteNumber n)
 //    [
