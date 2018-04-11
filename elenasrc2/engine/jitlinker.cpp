@@ -813,21 +813,21 @@ void* JITLinker :: resolveAnonymousStaticVariable()
    return (void*)vaddress;
 }
 
-//void* JITLinker :: resolveStaticVariable(ident_t reference, int mask)
-//{
-//   // get target image & resolve virtual address
-//   MemoryWriter writer(_loader->getTargetSection(mask));
-//
-//   size_t vaddress = (_virtualMode ? writer.Position() | mask : (size_t)writer.Address());
-//
-//   _compiler->allocateVariable(writer);
-//
-//   _statLength++;
-//
-//   _loader->mapReference(reference, (void*)vaddress, mask);
-//
-//   return (void*)vaddress;
-//}
+void* JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, int mask)
+{
+   // get target image & resolve virtual address
+   MemoryWriter writer(_loader->getTargetSection(mask));
+
+   size_t vaddress = (_virtualMode ? writer.Position() | mask : (size_t)writer.Address());
+
+   _compiler->allocateVariable(writer);
+
+   _statLength++;
+
+   _loader->mapReference(referenceInfo, (void*)vaddress, mask);
+
+   return (void*)vaddress;
+}
 
 void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
 {
@@ -1130,9 +1130,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskConstArray:
             vaddress = resolveConstant(referenceInfo, mask);
             break;
-//         case mskStatSymbolRef:
-//            vaddress = resolveStaticVariable(reference, mskStatRef);
-//            break;
+         case mskStatSymbolRef:
+            vaddress = resolveStaticVariable(referenceInfo, mskStatRef);
+            break;
 //         case mskMessage:
 //            vaddress = resolveMessage(reference, _loader->getMessageClass(), false);
 //            break;

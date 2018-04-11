@@ -729,16 +729,16 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
          // bloadfi 1
          tape.write(bcBLoadFI, 1, bpFrame);
          break;
-      //case lxStaticConstField:
-      //   // pusha
-      //   // aloadai -offset
-      //   // bcopya
-      //   // popa
-      //   tape.write(bcPushA);
-      //   tape.write(bcALoadAI, sourceArgument);
-      //   tape.write(bcBCopyA);
-      //   tape.write(bcPopA);
-      //   break;
+      case lxStaticConstField:
+         // pusha
+         // aloadai -offset
+         // bcopya
+         // popa
+         tape.write(bcPushA);
+         tape.write(bcALoadAI, sourceArgument);
+         tape.write(bcBCopyA);
+         tape.write(bcPopA);
+         break;
       case lxStaticField:
          if ((int)sourceArgument > 0) {
             // bloadr ref
@@ -3590,12 +3590,12 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          }
          else tape.write(bcPushAI, argument);
          break;
-      //case lxStaticConstField:
-      //   // aloadai -offset
-      //   // pusha
-      //   tape.write(bcALoadAI, argument);
-      //   tape.write(bcPushA);
-      //   break;
+      case lxStaticConstField:
+         // aloadai -offset
+         // pusha
+         tape.write(bcALoadAI, argument);
+         tape.write(bcPushA);
+         break;
       case lxStaticField:
          if ((int)argument > 0) {
             // aloadr r
@@ -3687,10 +3687,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          }
          else tape.write(bcALoadBI, argument);
          break;
-//      case lxStaticConstField:
-//         // aloadai -offset
-//         tape.write(bcALoadAI, argument);
-//         break;
+      case lxStaticConstField:
+         // aloadai -offset
+         tape.write(bcALoadAI, argument);
+         break;
       case lxStaticField:
          if ((int)argument > 0) {
             // aloadr r

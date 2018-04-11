@@ -450,9 +450,9 @@ namespace _ELENA_
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
 //   #define GENERIC_PREFIX           "#generic"
-////   #define EMBEDDED_PREFIX          "#embedded"
-////   #define TARGET_POSTFIX           "##"
-//   #define STATICFIELD_POSTFIX      "#static"
+//   #define EMBEDDED_PREFIX          "#embedded"
+//   #define TARGET_POSTFIX           "##"
+   #define STATICFIELD_POSTFIX      "#static"
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"

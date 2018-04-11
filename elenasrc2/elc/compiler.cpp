@@ -982,15 +982,15 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
    else {
       ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
       if (staticInfo.value1 != 0) {
-//         if (!isSealedStaticField(staticInfo.value1)) {
-//            ref_t val = info.staticValues.get(staticInfo.value1);
-//            if (val != mskStatRef) {
-//               if (classClassMode) {
-//                  return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value1, staticInfo.value2);
-//               }
-//               else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
-//            }
-//         }
+         if (!isSealedStaticField(staticInfo.value1)) {
+            ref_t val = info.staticValues.get(staticInfo.value1);
+            if (val != mskStatRef) {
+               if (classClassMode) {
+                  return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value1, staticInfo.value2);
+               }
+               else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
+            }
+         }
          if (classClassMode) {
             return ObjectInfo(okClassStaticField, 0, staticInfo.value1, staticInfo.value2);
          }         
@@ -1637,9 +1637,9 @@ ref_t Compiler :: resolveObjectReference(/*ModuleScope& scope, */ObjectInfo obje
       case okParam:
       case okSymbol:
       case okStaticField:
-      //case okStaticConstantField:
+      case okStaticConstantField:
          return object.extraparam;
-      //case okClassStaticConstantField:
+      case okClassStaticConstantField:
       //case okOuterField:
       //case okOuterStaticField:
       case okClassStaticField:
@@ -1909,13 +1909,13 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 //   }
 //}
 
-void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField/*, bool& isSealed, bool& isConstant*/)
+void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed/*, bool& isConstant*/)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (_logic->validateFieldAttribute(value/*, isSealed, isConstant*/)) {
+         if (_logic->validateFieldAttribute(value, isSealed/*, isConstant*/)) {
             if (value == lxStaticAttr) {
                isStaticField = true;
             }
@@ -2348,19 +2348,19 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          else writer.appendNode(lxConstantClass, object.param);
          writer.appendNode(lxStaticField, object.extraparam);
          break;
-//      case okStaticConstantField:
-//         writer.newNode(lxFieldExpression, 0);
-//         writer.appendNode(lxClassRefField, 1);
-//         writer.appendNode(lxStaticConstField, object.param);
-//         break;
-//      case okClassStaticConstantField:
-//         writer.newNode(lxFieldExpression, 0);
-//         if (!object.param) {
-//            writer.appendNode(lxThisLocal, 1);
-//         }         
-//         else writer.appendNode(lxConstantClass, object.param);
-//         writer.appendNode(lxStaticConstField, object.extraparam);
-//         break;
+      case okStaticConstantField:
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxClassRefField, 1);
+         writer.appendNode(lxStaticConstField, object.param);
+         break;
+      case okClassStaticConstantField:
+         writer.newNode(lxFieldExpression, 0);
+         if (!object.param) {
+            writer.appendNode(lxSelfLocal, 1);
+         }         
+         else writer.appendNode(lxConstantClass, object.param);
+         writer.appendNode(lxStaticConstField, object.extraparam);
+         break;
 //      case okOuterField:
 //         writer.newNode(lxFieldExpression, 0);
 //         writer.appendNode(lxField, object.param);
@@ -5880,32 +5880,32 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
          ref_t fieldRef = 0;
          ref_t elementRef = 0;
          bool isStatic = false;
-         //bool isSealed = false;
+         bool isSealed = false;
          //bool isConst = false;
          int sizeHint = 0;
-         declareFieldAttributes(current, scope, fieldRef, elementRef, sizeHint, isStatic/*, isSealed, isConst*/);
+         declareFieldAttributes(current, scope, fieldRef, elementRef, sizeHint, isStatic, isSealed/*, isConst*/);
 
          if (isStatic) {
-            generateClassStaticField(scope, current, fieldRef/*, elementRef, isSealed, isConst*/);
+            generateClassStaticField(scope, current, fieldRef, elementRef, isSealed/*, isConst*/);
          }
-         //else if (isSealed || isConst) {
-         //   scope.raiseError(errIllegalField, current);
-         //}
+         else if (isSealed/* || isConst*/) {
+            scope.raiseError(errIllegalField, current);
+         }
          else generateClassField(scope, current, fieldRef, elementRef, sizeHint, singleField);
       }
-      //else if (current == lxFieldInit) {
-      //   // HOTFIX : reallocate static constant
-      //   SNode nameNode = current.findChild(lxMemberIdentifier);
-      //   ObjectInfo info = scope.mapField(nameNode.identifier().c_str() + 1);
-      ////   if (info.kind == okStaticConstantField) {
-      ////      ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
-      ////      name.append(STATICFIELD_POSTFIX);
-      ////      name.append("##");
-      ////      name.appendInt(-(int)info.param);
+      else if (current == lxFieldInit) {
+         // HOTFIX : reallocate static constant
+         SNode nameNode = current.findChild(lxMemberIdentifier);
+         ObjectInfo info = scope.mapField(nameNode.identifier().c_str() + 1);
+         if (info.kind == okStaticConstantField) {
+            ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
+            name.append(STATICFIELD_POSTFIX);
+            name.append("##");
+            name.appendInt(-(int)info.param);
 
-      ////      *scope.info.staticValues.getIt(info.param) = (scope.moduleScope->module->mapReference(name) | mskConstArray);
-      ////   }
-      //}
+            *scope.info.staticValues.getIt(info.param) = (scope.moduleScope->module->mapReference(name) | mskConstArray);
+         }
+      }
       current = current.nextNode();
    }
 }
@@ -6216,11 +6216,11 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, ref_t elementRef, bool isSealed, bool isConst*/)
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed/*, bool isConst*/)
 {
-//   _Module* module = scope.moduleScope->module;
+   _Module* module = scope.module;
 
-   ident_t terminal = current.findChild(lxIdentifier/*, lxPrivate*/).identifier();
+   ident_t terminal = current.firstChild(lxTerminalMask).identifier();
 
    if (scope.info.statics.exist(terminal)) {
 //      if (current.argument == INVALID_REF) {
@@ -6230,16 +6230,16 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       /*else */scope.raiseError(errDuplicatedField, current);
    }
 
-//   if (isSealed) {
-//      // generate static reference
-//      ReferenceNs name(module->resolveReference(scope.reference));
-//      name.append(STATICFIELD_POSTFIX);
-//
-//      findUninqueName(module, name);
-//
-//      scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), fieldRef));
-//   }
-//   else {
+   if (isSealed) {
+      // generate static reference
+      IdentifierString name(module->Name(), module->resolveReference(scope.reference));
+      name.append(STATICFIELD_POSTFIX);
+
+      findUninqueName(module, name);
+
+      scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), fieldRef));
+   }
+   else {
       int index = ++scope.info.header.staticSize;
       index = -index - 4;
 
@@ -6254,7 +6254,7 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       //   scope.info.staticValues.add(index, scope.moduleScope->module->mapReference(name) | mskConstArray);
       //}
       /*else */scope.info.staticValues.add(index, (ref_t)mskStatRef);
-//   }
+   }
 }
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message, bool allowTypeAttribute)

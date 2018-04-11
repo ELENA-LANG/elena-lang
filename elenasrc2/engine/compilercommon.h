@@ -328,7 +328,7 @@ public:
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
-   virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/) = 0;
+   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed/*, bool& isConstant*/) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
 //////   virtual bool validateWarningAttribute(int& attrValue) = 0;
