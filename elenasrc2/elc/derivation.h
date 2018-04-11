@@ -126,8 +126,8 @@ class DerivationTransformer //: public _DerivationTransformer
       ref_t mapNewIdentifier(ident_t name, bool privateOne);
       int mapParameter(ident_t identifier);
 //      ref_t mapAttributeType(SNode terminal/*, bool& arrayMode, bool& paramMode*/);
-//
-//      ref_t mapTemplate(SNode terminal, int paramCounter = 0, int prefixCounter = 0);
+
+      ref_t mapTemplate(SNode terminal/*, int paramCounter = 0, int prefixCounter = 0*/);
 //      ref_t mapClassTemplate(SNode terminal);
 //      ref_t mapTerminal(SNode terminal, bool existing = false);
 //      ref_t mapTypeTerminal(SNode terminal, bool existing = false);  // map type or reference
@@ -216,7 +216,7 @@ class DerivationTransformer //: public _DerivationTransformer
    void copyExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyTreeNode(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, SubjectMap* parentAttributes, int mode = 0);
+   void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, /*SubjectMap* parentAttributes, */int mode = 0);
    void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyOperator(SyntaxWriter& writer, SNode& node, DerivationScope& scope);
 

@@ -1,18 +1,18 @@
-//class BaseIndexable
-//{
+public class BaseIndexable
+{
 //    // should be overridden
 //    indexer = $nil.
-//}
-//
-//// --- arrayof ---
-//
-//sealed template<BaseIndexable> array :: template_subj
-//{
-//    template_subj<> $target.
-//
-////    implicit int:n
-////        = template_subj<>(n).
-//
+}
+
+// --- arrayof ---
+
+sealed template<BaseIndexable> array :: template_subj
+{
+    dynamic<template_subj> theArray.
+
+//    implicit int:n
+//        = template_subj<>(n).
+
 //    enumerator 
 //    [
 //        vint index := -1.
@@ -93,8 +93,8 @@
 //    /// Returns the item at the specified index
 //    multi template_subj getAt : aParam
 //        <= getAt int:aParam.
-//}
-//
+}
+
 //// --- matrixof ---
 //
 //sealed template matrix :: template_subj
@@ -1652,7 +1652,7 @@
 // --- Array ---
 
 /// An array
-public sealed Array //:: BaseIndexable, array<object>
+public sealed Array :: BaseIndexable, array<object>
 {
 //    /// Creates an empty array
 //    constructor min
@@ -1667,11 +1667,11 @@ public sealed Array //:: BaseIndexable, array<object>
 //    /// Obsolete
 //    constructor new length:aLength
 //        <= new int:aLength.
-//    
-//    /// Creates the array with the specified length
-//    stacksafe constructor new int:aLength
-//        = object<>(aLength).
-//
+    
+    /// Creates the array with the specified length
+    constructor new(int aLength)
+        = dynamic<object>(aLength).
+
 //    /// Creates a copy of the provided array
 //    constructor new array:anArray
 //        <= new int:0 int:(anArray length) array:anArray.

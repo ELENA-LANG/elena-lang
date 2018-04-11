@@ -6543,12 +6543,16 @@ inline SNode findBaseParent(SNode node)
 
 ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
 {
+   ref_t parentRef = 0;
    ident_t baseClassName = node.identifier();
 
    if (emptystr(baseClassName))
       baseClassName = scope.moduleScope->resolveFullName(node.findChild(lxClassRefAttr).identifier());
 
-   ref_t parentRef = scope.moduleScope->mapFullReference(baseClassName, true);
+   if (isWeakReference(baseClassName)) {
+      parentRef = scope.module->mapReference(baseClassName, true);
+   }
+   else parentRef = scope.moduleScope->mapFullReference(baseClassName, true);
 
    if (parentRef == 0 && !silentMode)
       scope.raiseError(errUnknownClass, node);

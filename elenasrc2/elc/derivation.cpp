@@ -23,7 +23,7 @@ inline bool isPrimitiveRef(ref_t reference)
 //#define MODE_CODETEMPLATE    0x02
 //#define MODE_OBJECTEXPR      0x04
 //#define MODE_SIGNATURE       0x08
-//#define MODE_IMPORTING       0x10
+#define MODE_IMPORTING       0x10
 
 //void test2(SNode node)
 //{
@@ -528,31 +528,31 @@ ref_t DerivationTransformer::DerivationScope :: mapReference(SNode terminal)
 ////
 ////   return attr != 0 && ::isAttribute(attr);
 ////}
-////
-////ref_t DerivationReader::DerivationScope :: mapTemplate(SNode terminal, int paramCounter, int prefixCounter)
-////{
-////   if (terminal == lxBaseParent) {
-////      paramCounter = SyntaxTree::countChild(terminal, lxAttributeValue);
-////   }
-////   else if (terminal == lxObject) {
-////      paramCounter = SyntaxTree::countChild(terminal, lxExpression);
-////   }
-////
-////   IdentifierString attrName(terminal.findChild(lxIdentifier).findChild(lxTerminal).identifier());
-////   if (prefixCounter != 0) {
-////      attrName.append('#');
-////      attrName.append('0' + (char)prefixCounter);
-////   }
-////   attrName.append('#');
-////   attrName.appendInt(paramCounter);
-////
-////   ref_t ref = moduleScope->attributes.get(attrName);
-////   if (!ref)
-////      raiseError(errInvalidHint, terminal);
-////
-////   return ref;
-////}
 //
+//ref_t DerivationReader::DerivationScope :: mapTemplate(SNode terminal, int paramCounter, int prefixCounter)
+//{
+//   if (terminal == lxBaseParent) {
+//      paramCounter = SyntaxTree::countChild(terminal, lxAttributeValue);
+//   }
+//   else if (terminal == lxObject) {
+//      paramCounter = SyntaxTree::countChild(terminal, lxExpression);
+//   }
+//
+//   IdentifierString attrName(terminal.findChild(lxIdentifier).findChild(lxTerminal).identifier());
+//   if (prefixCounter != 0) {
+//      attrName.append('#');
+//      attrName.append('0' + (char)prefixCounter);
+//   }
+//   attrName.append('#');
+//   attrName.appendInt(paramCounter);
+//
+//   ref_t ref = moduleScope->attributes.get(attrName);
+//   if (!ref)
+//      raiseError(errInvalidHint, terminal);
+//
+//   return ref;
+//}
+
 //ref_t DerivationReader::DerivationScope :: mapClassTemplate(SNode terminal)
 //{
 //   int paramCounter = 0;
@@ -1100,16 +1100,16 @@ void DerivationTransformer :: copyMethodTree(SyntaxWriter& writer, SNode node, D
    writer.closeNode();
 }
 
-//void DerivationReader :: copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, SubjectMap* parentAttributes, int mode)
-//{
-//   loadAttributeValues(attributeValues, scope, parentAttributes, true);
-//
-//   if (generateTemplate(writer, scope, false, mode)) {
-//      //if (/*variableMode && */scope.reference != 0)
-//      //   writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(scope.reference));
-//   }
-//   else scope.raiseError(errInvalidHint, node);
-//}
+void DerivationTransformer :: copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, /*SubjectMap* parentAttributes, */int mode)
+{
+   loadParameterValues(attributeValues, scope/*, parentAttributes, true*/);
+
+   if (generateTemplate(writer, scope, false, mode)) {
+      //if (/*variableMode && */scope.reference != 0)
+      //   writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(scope.reference));
+   }
+   else scope.raiseError(errInvalidHint, node);
+}
 
 //bool DerivationReader :: compareAttributes(SNode node, DerivationScope& scope)
 //{
@@ -1270,13 +1270,14 @@ bool DerivationTransformer :: generateTemplate(SyntaxWriter& writer, DerivationS
 //               scope.type = DerivationScope::ttMethodTemplate;
 //            }
 //         }
-         else /*if (!test(mode, MODE_IMPORTING))*/ {
+         else if (!test(mode, MODE_IMPORTING)) {
+            // do not copy the class attributes in the import mode 
             writer.newNode(current.type, current.argument);
             SyntaxTree::copyNode(writer, current);
             writer.closeNode();
          }
       }
-      else if (current == lxTemplateParent/* && !test(mode, MODE_IMPORTING)*/) {
+      else if (current == lxTemplateParent && !test(mode, MODE_IMPORTING)) {
          // HOTFIX : class based template
          writer.newNode(lxBaseParent, -1);
          SyntaxTree::copyNode(writer, current);
@@ -3396,13 +3397,14 @@ void DerivationTransformer :: generateClassTree(SyntaxWriter& writer, SNode node
                copyIdentifier(writer, current.firstChild(lxTerminalMask));
                writer.closeNode();
             }
-//            else {
-//               ref_t attrRef = scope.mapTemplate(current);
-//
-//               DerivationScope templateScope(&scope, attrRef);
-//               copyTemplateTree(writer, current, templateScope, current.firstChild(), &scope.attributes, MODE_IMPORTING);
-//            }
-            else scope.raiseError(errInvalidSyntax, node); // !! temporal
+            else {
+               int paramCounter = SyntaxTree::countChild(current, lxAttributeValue);
+
+               ref_t attrRef = mapTemplateName(current.firstChild(lxTerminalMask), paramCounter, scope);
+
+               DerivationScope templateScope(&scope, attrRef);
+               copyTemplateTree(writer, current, templateScope, current.firstChild(), /*&scope.attributes, */MODE_IMPORTING);
+            }
          }
          else if (firstParent) {
             SNode terminalNode = current.firstChild(lxTerminalMask);
