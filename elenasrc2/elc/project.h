@@ -171,10 +171,10 @@ public:
       }
    }
 
-//   void addLoaderListener(_JITLoaderListener* listener)
-//   {
-//      _loader.addListener(listener);
-//   }
+   void addLoaderListener(_JITLoaderListener* listener)
+   {
+      _loader.addListener(listener);
+   }
 
    virtual ident_t resolveForward(ident_t forward);
    virtual bool addForward(ident_t forward, ident_t reference);

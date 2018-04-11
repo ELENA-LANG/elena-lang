@@ -466,7 +466,7 @@ private:
 //      ref_t       extensionClassRef;
       bool        embeddable;
       bool        classClassMode;
-//      bool        abstractBasedMode;
+      bool        abstractBasedMode;
 
       void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 

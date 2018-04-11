@@ -542,10 +542,10 @@ bool CompilerLogic :: isRole(ClassInfo& info)
    return test(info.header.flags, elRole);
 }
 
-//bool CompilerLogic :: isAbstract(ClassInfo& info)
-//{
-//   return test(info.header.flags, elAbstract);
-//}
+bool CompilerLogic :: isAbstract(ClassInfo& info)
+{
+   return test(info.header.flags, elAbstract);
+}
 
 bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 {
@@ -1245,9 +1245,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_SEALED:
          attrValue = elSealed;
          return true;
-//      case V_ABSTRACT:
-//         attrValue = elAbstract;
-//         return true;
+      case V_ABSTRACT:
+         attrValue = elAbstract;
+         return true;
 //      case V_LIMITED:
 //         attrValue = elClosed;
 //         return true;

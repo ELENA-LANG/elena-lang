@@ -944,7 +944,7 @@ Compiler::ClassScope :: ClassScope(NamespaceScope* parent, ref_t reference)
 //   extensionClassRef = 0;
    embeddable = false;
    classClassMode = false;
-//   abstractBasedMode = false;
+   abstractBasedMode = false;
 }
 
 void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
@@ -1796,11 +1796,11 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       scope.info.header.parentRef = parentRef;
       scope.info.header.classRef = classClassCopy;
 
-      //if (test(scope.info.header.flags, elAbstract)) {
-      //   // exclude abstract flag
-      //   scope.info.header.flags &= ~elAbstract;
-      //   scope.abstractBasedMode = true;
-      //}
+      if (test(scope.info.header.flags, elAbstract)) {
+         // exclude abstract flag
+         scope.info.header.flags &= ~elAbstract;
+         scope.abstractBasedMode = true;
+      }
 
       scope.info.header.flags |= flagCopy;
 
@@ -1832,10 +1832,10 @@ void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref
 
 void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 {
-//   if (node.existChild(lxTemplate)) {
-//      // hotfix : mark the class as template inherited one
-//      scope.abstractBasedMode = true;
-//   }
+   if (node.existChild(lxTemplate)) {
+      // hotfix : mark the class as template inherited one
+      scope.abstractBasedMode = true;
+   }
 
    ref_t parentRef = 0;
    if (node == lxBaseParent) {
@@ -5964,7 +5964,7 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
       classScope.info.header.parentRef = classScope.moduleScope->superReference;
    }
    else {
-      ref_t parentRef = /*classScope.abstractBasedMode ? classScope.moduleScope->superReference : */classScope.info.header.parentRef;
+      ref_t parentRef = classScope.abstractBasedMode ? classScope.moduleScope->superReference : classScope.info.header.parentRef;
       IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(parentRef));
       classClassParentName.append(CLASSCLASS_POSTFIX);
 
@@ -6594,9 +6594,9 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
       // class is its own class class
       scope.info.header.classRef = scope.reference;
    }
-//   else if (_logic->isAbstract(scope.info)) {
-//      scope.info.header.classRef = 0;
-//   }
+   else if (_logic->isAbstract(scope.info)) {
+      scope.info.header.classRef = 0;
+   }
    else {
       // define class class name
       IdentifierString classClassName(scope.moduleScope->resolveFullName(scope.reference));
@@ -6844,10 +6844,10 @@ void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScop
 
    writer.newNode(lxExpression);
    writer.newNode(lxAssigning);
-   /*if (isPrimitiveRef(target.param)) {
+   if (isPrimitiveRef(target.param)) {
       writeTerminal(writer, node, codeScope, ObjectInfo(okClassStaticField, scope.reference, target.param, target.extraparam), HINT_NODEBUGINFO);
    }
-   else*/ writeTerminal(writer, node, codeScope, target, HINT_NODEBUGINFO);
+   else writeTerminal(writer, node, codeScope, target, HINT_NODEBUGINFO);
 
    writer.newBookmark();
    ObjectInfo source = compileExpression(writer, node, codeScope, target.extraparam, 0);

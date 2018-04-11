@@ -65,7 +65,7 @@
 //#define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
 //#define V_TAPEGROUP      (ref_t)-8209
-//#define V_ABSTRACT       (ref_t)-8210
+#define V_ABSTRACT       (ref_t)-8210
 #define V_PUBLIC         (ref_t)-8211
 #define V_PRIVATE        (ref_t)-8212
 
@@ -302,8 +302,8 @@ public:
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          
-//   virtual bool isAbstract(ClassInfo& info) = 0;
-//
+   virtual bool isAbstract(ClassInfo& info) = 0;
+
 //   virtual bool isPrimitiveRef(ref_t reference) = 0;
 //   virtual bool isPrimitiveArray(ref_t reference) = 0;
 

@@ -277,7 +277,7 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
    const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-//   const int elAbstract            = 0x00000010;
+   const int elAbstract            = 0x00000010;
    const int elClosed              = 0x00000020;
    const int elWrapper             = 0x00000040;
    const int elStructureWrapper    = 0x00000048;

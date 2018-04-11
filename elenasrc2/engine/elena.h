@@ -204,7 +204,7 @@ public:
 
    virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask) = 0;
 
-////   virtual void addListener(_JITLoaderListener* listener) = 0;
+   virtual void addListener(_JITLoaderListener* listener) = 0;
 
    virtual ~_JITLoader() {}
 };

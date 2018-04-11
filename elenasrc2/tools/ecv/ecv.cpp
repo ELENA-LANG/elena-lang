@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   15
+#define REVISION_VERSION   16
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -995,8 +995,8 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elSignature))
    //   printLine("@flag ", "elSignature", row, pageSize);
 
-   //if (test(flags, elAbstract))
-   //   printLine("@flag ", "elAbstract", row, pageSize);
+   if (test(flags, elAbstract))
+      printLine("@flag ", "elAbstract", row, pageSize);
 
    if (test(flags, elRole))
       printLine("@flag ", "elRole", row, pageSize);

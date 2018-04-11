@@ -888,9 +888,9 @@ void DerivationTransformer :: copyTreeNode(SyntaxWriter& writer, SNode current, 
    if (test(current.type, lxTerminalMask | lxObjectMask)) {
       copyIdentifier(writer, current);
    }
-//   else if (current == lxTemplate) {
-//      writer.appendNode(lxTemplate, scope.templateRef);
-//   }
+   else if (current == lxTemplate) {
+      writer.appendNode(lxTemplate, scope.templateRef);
+   }
    else if (current == lxTemplateParam) {
 //      if (scope.type == DerivationScope::ttCodeTemplate) {
 //         if (current.argument == 1) {
@@ -2848,10 +2848,10 @@ bool DerivationTransformer :: generateFieldTree(SyntaxWriter& writer, SNode node
 void DerivationTransformer :: generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode)
 {
    writer.newNode(lxClassMethod);
-   //if (templateMode) {
+   if (templateMode) {
    //   writer.appendNode(lxSourcePath, scope.sourcePath);
-   //   //writer.appendNode(lxTemplate, scope.templateRef);
-   //}
+      writer.appendNode(lxTemplate, scope.templateRef);
+   }
 
    generateAttributes(writer, node.prevNode(), scope, false, templateMode, false);
 
