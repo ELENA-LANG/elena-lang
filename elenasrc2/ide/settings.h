@@ -11,36 +11,38 @@
 #include "config.h"
 #include "idecommon.h"
 
-#define SRCPATH_SECTION          "configuration/srcpath/*"     // template source paths
-#define LIBPATH_SECTION          "configuration/libpath/*"     // template library paths
-#define RECENTFILES_SECTION      "configuration/recent_files/*"
-#define RECENTRPOJECTS_SECTION   "configuration/recent_projects/*"
+#define SRCPATH_SECTION             "configuration/srcpath/*"     // template source paths
+#define LIBPATH_SECTION             "configuration/libpath/*"     // template library paths
+#define RECENTFILES_SECTION         "configuration/recent_files/*"
+#define RECENTRPOJECTS_SECTION      "configuration/recent_projects/*"
 
-#define SRCPATH_SECTION_NAME     "configuration/srcpath/path"     // template source paths
-#define LIBPATH_SECTION_NAME     "configuration/libpath/path"     // template library paths
+#define SRCPATH_SECTION_NAME        "configuration/srcpath/path"     // template source paths
+#define LIBPATH_SECTION_NAME        "configuration/libpath/path"     // template library paths
+#define RECENTFILES_SECTION_NAME    "configuration/recent_files/path"
+#define RECENTRPOJECTS_SECTION_NAME "configuration/recent_projects/path"
 
-#define TAB_SIZE_SETTING         "configuration/settings/tabsize"
-#define ENCODING_SETTING         "configuration/settings/encoding"
-#define TAB_USING_SETTING        "tabusing"
-#define MAXIMIZED_SETTING        "configuration/settings/app_maximized"
-#define PATH_REMEMBER_SETTING    "configuration/settings/remeber_path"
-#define PROJECT_REMEMBER_SETTING "configuration/settings/remeber_project"
-#define AUTO_DETECTING_SETTING   "configuration/settings/encoding_detecting"
-#define LINE_NUMBERS_SETTING     "configuration/settings/linenumbers"
-#define HIGHLIGHT_SETTING        "configuration/settings/highlightsyntax"
-#define BRACKETS_SETTING         "configuration/settings/highlightbrackets"
-#define SCHEME_SETTING           "configuration/settings/scheme"
-#define TABSCORE_SETTING         "configuration/settings/tabscore"
-#define OUTPUT_SETTING           "configuration/settings/compileroutput"
-#define PROJECTVIEW_SETTING      "configuration/settings/projectview"
-#define CALLSTACK_SETTING        "configuration/settings/callstack"
-#define MESSAGES_SETTING         "configuration/settings/messages"
-#define AUTO_RECOMPILE_SETTING   "configuration/settings/autocomp"
-#define AUTO_PROJECT_LOAD_SETTING "configuration/settings/autoload"
-#define DEBUG_TAPE_SETTING       "debugtape"
-#define FONTSIZE_SETTING         "configuration/settings/font_size"
+#define TAB_SIZE_SETTING            "configuration/settings/tabsize"
+#define ENCODING_SETTING            "configuration/settings/encoding"
+#define TAB_USING_SETTING           "tabusing"
+#define MAXIMIZED_SETTING           "configuration/settings/app_maximized"
+#define PATH_REMEMBER_SETTING       "configuration/settings/remeber_path"
+#define PROJECT_REMEMBER_SETTING    "configuration/settings/remeber_project"
+#define AUTO_DETECTING_SETTING      "configuration/settings/encoding_detecting"
+#define LINE_NUMBERS_SETTING        "configuration/settings/linenumbers"
+#define HIGHLIGHT_SETTING           "configuration/settings/highlightsyntax"
+#define BRACKETS_SETTING            "configuration/settings/highlightbrackets"
+#define SCHEME_SETTING              "configuration/settings/scheme"
+#define TABSCORE_SETTING            "configuration/settings/tabscore"
+#define OUTPUT_SETTING              "configuration/settings/compileroutput"
+#define PROJECTVIEW_SETTING         "configuration/settings/projectview"
+#define CALLSTACK_SETTING           "configuration/settings/callstack"
+#define MESSAGES_SETTING            "configuration/settings/messages"
+#define AUTO_RECOMPILE_SETTING      "configuration/settings/autocomp"
+#define AUTO_PROJECT_LOAD_SETTING   "configuration/settings/autoload"
+#define DEBUG_TAPE_SETTING          "debugtape"
+#define FONTSIZE_SETTING            "configuration/settings/font_size"
 
-#define DEFAULT_PROJECT_SETTING  "configuration/settings/defaultproject"
+#define DEFAULT_PROJECT_SETTING     "configuration/settings/defaultproject"
 
 namespace _GUI_
 {

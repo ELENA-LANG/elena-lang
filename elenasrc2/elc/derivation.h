@@ -217,7 +217,7 @@ class DerivationTransformer //: public _DerivationTransformer
    void copyTreeNode(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, SubjectMap* parentAttributes, int mode = 0);
-//   void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyOperator(SyntaxWriter& writer, SNode& node, DerivationScope& scope);
 
 //   void autoGenerateExtensions(DerivationScope& scope, ref_t attrRef, SNode node);
@@ -230,7 +230,7 @@ class DerivationTransformer //: public _DerivationTransformer
 //   ref_t mapAttributeType(SNode attr, DerivationScope& scope);
    ref_t mapAttribute(SNode terminal, DerivationScope& scope, bool& templateParam);
 
-   ref_t mapNewTemplate(SNode node, DerivationScope& scope/*, bool& arrayMode, int& paramIndex*//*, bool templateMode, List<int>* templateAttributes*/);
+   ref_t mapNewTemplate(SNode node, DerivationScope& scope, bool& arrayMode/*, int& paramIndex*/, bool templateMode/*, List<int>* templateAttributes*/);
 
    void recognizeScopeMembers(SNode& node, DerivationScope& scope, int mode);
 
@@ -241,7 +241,7 @@ class DerivationTransformer //: public _DerivationTransformer
 //   bool checkArrayDeclaration(SNode node, DerivationScope& scope);
 
    void generateMessage(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool templateMode*/);
-   void generateTypeAttribute(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool templateMode*/);
+   void generateTypeAttribute(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
 
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
 //   bool generateTemplateCode(SyntaxWriter& writer, DerivationScope& scope, SubjectMap* parentAttributes);
@@ -252,16 +252,16 @@ class DerivationTransformer //: public _DerivationTransformer
 ////   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //////   bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
-   void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool templateMode = false*/);
-   bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer/*, bool templateMode = false*/); // returns true if in-place init found
+   void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode/* = false*/);
+   bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode/* = false*/); // returns true if in-place init found
 //////   void generateCodeExpression(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
 ////   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-   void generateTemplateParameters(SNode& node, DerivationScope& scope/*, bool templateMode*/);
-   void generateSubTemplate(SNode& node, DerivationScope& scope/*, bool templateMode*/);
-   void generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope/*, bool templateMode*/);
-   void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool rootMode/*, bool templateMode*/, bool expressionMode);
+   void generateTemplateParameters(SNode& node, DerivationScope& scope, bool templateMode);
+   void generateSubTemplate(SNode& node, DerivationScope& scope, bool templateMode);
+   void generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope, bool templateMode);
+   void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes,int nested = 0*/);
    void generateTemplateScope(SyntaxWriter& writer, SNode node, DerivationScope& scope);
@@ -272,7 +272,7 @@ class DerivationTransformer //: public _DerivationTransformer
 ////   bool generateSingletonScope(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
    bool recognizeDeclaration(SNode node, DerivationScope& scope);
    void generateTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes*/);
-   void generateAttributeTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool templateMode, int mode = 0*/, bool expressionMode);
+   void generateAttributeTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode/*, int mode = 0*/, bool expressionMode);
 
 //   void generateSyntaxTree(SyntaxWriter& writer, SNode node, CompilerScope& scope, SyntaxTree& autogenerated, 
 //      MessageMap* attributes, IdentidierList* imports, ident_t sourcePath);

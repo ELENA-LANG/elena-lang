@@ -309,7 +309,7 @@ namespace _ELENA_
 //   const int elDebugReal64         = 0x00020000;
 //   const int elDebugLiteral        = 0x00030000;
    const int elDebugIntegers       = 0x00040000;
-//   const int elDebugArray          = 0x00050000;
+   const int elDebugArray          = 0x00050000;
    const int elDebugQWORD          = 0x00060000;
    const int elDebugBytes          = 0x00070000;
    const int elDebugShorts         = 0x00080000;

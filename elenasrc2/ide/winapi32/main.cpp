@@ -109,7 +109,7 @@ void saveSettings(_ELENA_::path_t path, Model* model, IDEWindow* view)
 
    Settings::save(model, file);
 
-   view->saveHistory(file, RECENTFILES_SECTION, RECENTRPOJECTS_SECTION);
+   view->saveHistory(file, RECENTFILES_SECTION_NAME, RECENTRPOJECTS_SECTION_NAME);
 
    file.save(path, _ELENA_::feUTF8);
 }

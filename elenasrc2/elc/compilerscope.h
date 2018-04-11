@@ -67,8 +67,15 @@ struct CompilerScope : _CompilerScope
          return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
       }
       else return referenceName;
+   }   
+   ident_t resolveFullName(ident_t referenceName)
+   {
+      if (isTemplateWeakReference(referenceName)) {
+         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      }
+      else return referenceName;
    }
-   
+
    /*virtual */void saveAttribute(ident_t typeName, ref_t classReference);
 
    virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal);

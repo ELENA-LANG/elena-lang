@@ -28,7 +28,10 @@ void RecentList :: load(XmlConfigFile& file, const char* section)
 void RecentList :: save(XmlConfigFile& file, const char* section)
 {
    //file.clear(section);
-   //for(List<text_c*>::Iterator it = _list.start() ; !it.Eof() ; it++) {
-   //   file.setSetting(section, _ELENA_::IdentifierString(*it), (const char*)NULL);
-   //}
+   for(List<text_c*>::Iterator it = _list.start() ; !it.Eof() ; it++) {
+      IdentifierString value(*it);
+
+      //   config.setSetting(section, it.key(), value);
+      file.appendSetting(section, value.c_str());
+   }
 }

@@ -170,7 +170,7 @@ class ByteCodeWriter
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
@@ -256,14 +256,14 @@ class ByteCodeWriter
    void doIntOperation(CommandTape& tape, int operator_id, int immArg);
    void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
    void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
-//   void doLongOperation(CommandTape& tape, int operator_id);
-//   void doRealOperation(CommandTape& tape, int operator_id);
-//   void doArrayOperation(CommandTape& tape, int operator_id);
-//   void doArgArrayOperation(CommandTape& tape, int operator_id);
-//   void doIntArrayOperation(CommandTape& tape, int operator_id);
-//   void doByteArrayOperation(CommandTape& tape, int operator_id);
-//   void doShortArrayOperation(CommandTape& tape, int operator_id);
-//   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
+   //void doLongOperation(CommandTape& tape, int operator_id);
+   //void doRealOperation(CommandTape& tape, int operator_id);
+   void doArrayOperation(CommandTape& tape, int operator_id);
+   void doArgArrayOperation(CommandTape& tape, int operator_id);
+   void doIntArrayOperation(CommandTape& tape, int operator_id);
+   void doByteArrayOperation(CommandTape& tape, int operator_id);
+   void doShortArrayOperation(CommandTape& tape, int operator_id);
+   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
 
    bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
@@ -282,8 +282,8 @@ class ByteCodeWriter
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
-//   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
