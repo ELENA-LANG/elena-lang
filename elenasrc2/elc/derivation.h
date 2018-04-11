@@ -209,7 +209,7 @@ class DerivationTransformer //: public _DerivationTransformer
 
    void loadParameterValues(SNode node, DerivationScope& scope/*, MessageMap* parentParameterValues, bool classMode = false*/);
 
-//   void copyIdentifier(SyntaxWriter& writer, SNode terminal);
+//   void copyIdentifier(SyntaxWriter& writer, SNode terminal);   
    void copyParamAttribute(SyntaxWriter& writer, SNode current, DerivationScope& scope);
    void copyFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyFieldInitTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
@@ -228,6 +228,9 @@ class DerivationTransformer //: public _DerivationTransformer
 //   ref_t generateTemplate(SNode current, DerivationScope& scope, SubjectMap* parentAttributes);
 //
 //   ref_t mapAttributeType(SNode attr, DerivationScope& scope);
+
+   ref_t mapTemplateName(SNode node, int prefixCounter, DerivationScope& scope);
+
    ref_t mapAttribute(SNode terminal, DerivationScope& scope, bool& templateParam);
 
    ref_t mapNewTemplate(SNode node, DerivationScope& scope, bool& arrayMode/*, int& paramIndex*/, bool templateMode/*, List<int>* templateAttributes*/);

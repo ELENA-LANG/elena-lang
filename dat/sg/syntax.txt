@@ -260,8 +260,8 @@ ATTRIBUTE ->
 
 BASE_CLASS ->
 	identifier TOKEN_BODY
-	| reference
-	| global
+	| reference TOKEN_BODY
+	| global TOKEN_BODY
 
 SUBJECT_ARG ->
 	identifier

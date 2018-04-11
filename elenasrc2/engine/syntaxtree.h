@@ -260,7 +260,7 @@ enum LexicalType
 //   lxTemplateMethod  = 0x20039,
 //   lxMultiAttr       = 0x2003A,
    lxStaticAttr      = 0x2003B,
-//   lxTemplateParent  = 0x2003C,
+   lxTemplateParent  = 0x2003C,
 //   lxTemplateBoxing  = 0x2003D,
 //   lxParentLists     = 0x2003E,
 //   lxClosureAttr     = 0x2003F,

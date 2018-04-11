@@ -6567,7 +6567,7 @@ bool Compiler :: isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope)
 
    // get module reference
    ref_t moduleRef = 0;
-   _Module* module = scope.moduleScope->project->resolveModule(scope.module->resolveReference(parentRef), moduleRef, true);
+   _Module* module = scope.moduleScope->loadReferenceModule(scope.module->resolveReference(parentRef), moduleRef);
 
    if (module == NULL || moduleRef == 0)
       return true;
