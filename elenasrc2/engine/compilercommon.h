@@ -19,10 +19,10 @@
 
 #define V_BINARY         (ref_t)-10
 #define V_INT8           (ref_t)-11
-//#define V_PTR            (ref_t)-12
+#define V_PTR            (ref_t)-12
 #define V_INT32          (ref_t)-13
 #define V_INT64          (ref_t)-14
-//#define V_REAL64         (ref_t)-15
+#define V_REAL64         (ref_t)-15
 //#define V_SIGNATURE      (ref_t)-18
 //#define V_MESSAGE        (ref_t)-19
 //#define V_EXTMESSAGE     (ref_t)-21
@@ -55,7 +55,7 @@
 #define V_STRUCT         (ref_t)-8197
 #define V_ENUMLIST       (ref_t)-8198
 //#define V_DYNAMIC        (ref_t)-8199
-//#define V_STRING         (ref_t)-8200
+#define V_STRING         (ref_t)-8200
 #define V_CONST          (ref_t)-8201
 //#define V_GENERIC        (ref_t)-8202
 //#define V_EXTENSION      (ref_t)-8203
@@ -147,15 +147,15 @@ struct _CompilerScope
    // cached references
    ref_t superReference;
    ref_t intReference;
-//   ref_t longReference;
-//   ref_t realReference;
+   ref_t longReference;
+   ref_t realReference;
 //   ref_t signatureReference;
 //   ref_t messageReference;
 //   ref_t extMessageReference;
 //   ref_t boolReference;
-//   ref_t literalReference;
-//   ref_t wideReference;
-//   ref_t charReference;
+   ref_t literalReference;
+   ref_t wideReference;
+   ref_t charReference;
    ref_t arrayReference;
 
 ////   // cached bool values
@@ -194,8 +194,8 @@ struct _CompilerScope
       debugModule = module = NULL;
       intReference = /*boolReference = */superReference = 0;
 ////      signatureReference = messageReference = 0;
-////      longReference = literalReference = wideReference = 0;
-      arrayReference = /*charReference = realReference = */0;
+      longReference = literalReference = wideReference = 0;
+      arrayReference = charReference = realReference = 0;
 ////      extMessageReference = 0;
    }
 };

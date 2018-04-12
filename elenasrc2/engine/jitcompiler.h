@@ -56,13 +56,13 @@ public:
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code) = 0;
 
    virtual void compileInt32(MemoryWriter* writer, int integer) = 0;
-//   virtual void compileInt64(MemoryWriter* writer, long long integer) = 0;
-//   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset) = 0;
-//   virtual void compileInt64(MemoryWriter* writer, int low, int high) = 0;
-//   virtual void compileReal64(MemoryWriter* writer, double number) = 0;
-//   virtual void compileLiteral(MemoryWriter* writer, const char* value) = 0;
-//   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value) = 0;
-//   virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
+   virtual void compileInt64(MemoryWriter* writer, long long integer) = 0;
+   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset) = 0;
+   virtual void compileInt64(MemoryWriter* writer, int low, int high) = 0;
+   virtual void compileReal64(MemoryWriter* writer, double number) = 0;
+   virtual void compileLiteral(MemoryWriter* writer, const char* value) = 0;
+   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value) = 0;
+   virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
 //   virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
    virtual void compileCollection(MemoryWriter* writer, _Memory* binary) = 0;
 
@@ -105,13 +105,13 @@ class JITCompiler32 : public _JITCompiler
 {
 public:
    virtual void compileInt32(MemoryWriter* writer, int integer);
-//   virtual void compileInt64(MemoryWriter* writer, long long integer);
-//   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset);
-//   virtual void compileInt64(MemoryWriter* writer, int low, int high);
-//   virtual void compileReal64(MemoryWriter* writer, double number);
-//   virtual void compileLiteral(MemoryWriter* writer, const char* value);
-//   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
-//   virtual void compileChar32(MemoryWriter* writer, const char* value);
+   virtual void compileInt64(MemoryWriter* writer, long long integer);
+   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset);
+   virtual void compileInt64(MemoryWriter* writer, int low, int high);
+   virtual void compileReal64(MemoryWriter* writer, double number);
+   virtual void compileLiteral(MemoryWriter* writer, const char* value);
+   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
+   virtual void compileChar32(MemoryWriter* writer, const char* value);
 //   virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
    virtual void compileCollection(MemoryWriter* writer, _Memory* binary);
 
@@ -140,13 +140,13 @@ class JITCompiler64 : public _JITCompiler
 {
 public:
    virtual void compileInt32(MemoryWriter* writer, int integer);
-//   virtual void compileInt64(MemoryWriter* writer, long long integer);
-//   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset);
-//   virtual void compileInt64(MemoryWriter* writer, int low, int high);
-//   virtual void compileReal64(MemoryWriter* writer, double number);
-//   virtual void compileLiteral(MemoryWriter* writer, const char* value);
-//   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
-//   virtual void compileChar32(MemoryWriter* writer, const char* value);
+   virtual void compileInt64(MemoryWriter* writer, long long integer);
+   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset);
+   virtual void compileInt64(MemoryWriter* writer, int low, int high);
+   virtual void compileReal64(MemoryWriter* writer, double number);
+   virtual void compileLiteral(MemoryWriter* writer, const char* value);
+   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
+   virtual void compileChar32(MemoryWriter* writer, const char* value);
 //   virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
    virtual void compileCollection(MemoryWriter* writer, _Memory* binary);
 

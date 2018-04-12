@@ -53,102 +53,102 @@ void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
    writer->writeDWord(integer);
 }
 
-//void JITCompiler32 :: compileInt64(MemoryWriter* writer, long long integer)
-//{
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800008);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->write(&integer, 8u);
-//}
-//
-//void JITCompiler32 :: compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset)
-//{
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800008);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->writeDWord(low);
-//   writer->writeRef(ref, refOffset);
-//}
-//
-//void JITCompiler32::compileInt64(MemoryWriter* writer, int low, int high)
-//{
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800008);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->writeDWord(low);
-//   writer->writeDWord(high);
-//}
-//
-//void JITCompiler32 :: compileReal64(MemoryWriter* writer, double number)
-//{
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800008);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->write(&number, 8u);
-//}
-//
-//void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)
-//{
-//   size_t length = getlength(value) + 1;
-//
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800000 | length);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->writeLiteral(value, length);
-//   writer->align(4, 0);
-//}
-//
-//void JITCompiler32 :: compileWideLiteral(MemoryWriter* writer, const wide_c* value)
-//{
-//   size_t length = (getlength(value) + 1) << 1;
-//
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800000 | length);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->writeLiteral(value, length);
-//   writer->align(4, 0);
-//}
-//
-//void JITCompiler32 :: compileChar32(MemoryWriter* writer, const char* value)
-//{
-//   size_t len = 1;
-//   unic_c ch = 0;
-//   Convertor::copy(&ch, value, getlength(value), len);
-//
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800004);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->writeDWord(ch);
-//}
-//
+void JITCompiler32 :: compileInt64(MemoryWriter* writer, long long integer)
+{
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800008);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(&integer, 8u);
+}
+
+void JITCompiler32 :: compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset)
+{
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800008);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeDWord(low);
+   writer->writeRef(ref, refOffset);
+}
+
+void JITCompiler32::compileInt64(MemoryWriter* writer, int low, int high)
+{
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800008);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeDWord(low);
+   writer->writeDWord(high);
+}
+
+void JITCompiler32 :: compileReal64(MemoryWriter* writer, double number)
+{
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800008);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(&number, 8u);
+}
+
+void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)
+{
+   size_t length = getlength(value) + 1;
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800000 | length);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeLiteral(value, length);
+   writer->align(4, 0);
+}
+
+void JITCompiler32 :: compileWideLiteral(MemoryWriter* writer, const wide_c* value)
+{
+   size_t length = (getlength(value) + 1) << 1;
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800000 | length);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeLiteral(value, length);
+   writer->align(4, 0);
+}
+
+void JITCompiler32 :: compileChar32(MemoryWriter* writer, const char* value)
+{
+   size_t len = 1;
+   unic_c ch = 0;
+   Convertor::copy(&ch, value, getlength(value), len);
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800004);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeDWord(ch);
+}
+
 //void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
 //{
 //   size_t length = binary->Length();
@@ -377,102 +377,102 @@ void JITCompiler64 :: compileInt32(MemoryWriter* writer, int integer)
    writer->writeQWord(integer);
 }
 
-//void JITCompiler64 :: compileInt64(MemoryWriter* writer, long long integer)
-//{
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(0x80000008u);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->write(&integer, 8);
-//}
-//
-//void JITCompiler64 :: compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset)
-//{
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(0x80000008u);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->writeDWord(low);
-//   writer->writeRef(ref, refOffset);
-//}
-//
-//void JITCompiler64 :: compileInt64(MemoryWriter* writer, int low, int high)
-//{
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(0x80000008u);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->writeDWord(low);
-//   writer->writeDWord(high);
-//}
-//
-//void JITCompiler64 :: compileReal64(MemoryWriter* writer, double number)
-//{
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(0x80000008u);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->write(&number, 8);
-//}
-//
-//void JITCompiler64 :: compileLiteral(MemoryWriter* writer, const char* value)
-//{
-//   unsigned int length = getlength(value) + 1;
-//
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(0x80000000u | length);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->writeLiteral(value, length);
-//   writer->align(8, 0);
-//}
-//
-//void JITCompiler64 :: compileWideLiteral(MemoryWriter* writer, const wide_c* value)
-//{
-//   unsigned int length = (getlength(value) + 1) << 1;
-//
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(0x80000000u | length);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->writeLiteral(value, length);
-//   writer->align(8, 0);
-//}
-//
-//void JITCompiler64 :: compileChar32(MemoryWriter* writer, const char* value)
-//{
-//   size_t len = 1;
-//   unic_c ch = 0;
-//   Convertor::copy(&ch, value, getlength(value), len);
-//
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(0x80000004u);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->writeQWord(ch);
-//}
-//
+void JITCompiler64 :: compileInt64(MemoryWriter* writer, long long integer)
+{
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(0x80000008u);
+   writer->writeQWord(0);
+
+   // object body
+   writer->write(&integer, 8);
+}
+
+void JITCompiler64 :: compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset)
+{
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(0x80000008u);
+   writer->writeQWord(0);
+
+   // object body
+   writer->writeDWord(low);
+   writer->writeRef(ref, refOffset);
+}
+
+void JITCompiler64 :: compileInt64(MemoryWriter* writer, int low, int high)
+{
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(0x80000008u);
+   writer->writeQWord(0);
+
+   // object body
+   writer->writeDWord(low);
+   writer->writeDWord(high);
+}
+
+void JITCompiler64 :: compileReal64(MemoryWriter* writer, double number)
+{
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(0x80000008u);
+   writer->writeQWord(0);
+
+   // object body
+   writer->write(&number, 8);
+}
+
+void JITCompiler64 :: compileLiteral(MemoryWriter* writer, const char* value)
+{
+   unsigned int length = getlength(value) + 1;
+
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(0x80000000u | length);
+   writer->writeQWord(0);
+
+   // object body
+   writer->writeLiteral(value, length);
+   writer->align(8, 0);
+}
+
+void JITCompiler64 :: compileWideLiteral(MemoryWriter* writer, const wide_c* value)
+{
+   unsigned int length = (getlength(value) + 1) << 1;
+
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(0x80000000u | length);
+   writer->writeQWord(0);
+
+   // object body
+   writer->writeLiteral(value, length);
+   writer->align(8, 0);
+}
+
+void JITCompiler64 :: compileChar32(MemoryWriter* writer, const char* value)
+{
+   size_t len = 1;
+   unic_c ch = 0;
+   Convertor::copy(&ch, value, getlength(value), len);
+
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(0x80000004u);
+   writer->writeQWord(0);
+
+   // object body
+   writer->writeQWord(ch);
+}
+
 //void JITCompiler64 :: compileBinary(MemoryWriter* writer, _Memory* binary)
 //{
 //   unsigned int length = binary->Length();

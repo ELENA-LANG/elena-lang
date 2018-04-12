@@ -19,20 +19,20 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
       case mskConstantRef:
          _constReferences.add(reference, (ref_t)vaddress);
          break;
-//      case mskInt64Ref:
+      case mskInt64Ref:
       case mskInt32Ref:
-//      case mskRealRef:
+      case mskRealRef:
          _numberReferences.add(reference, (size_t)vaddress);
          break;
-//      case mskCharRef:
-//         _characterReferences.add(reference, (size_t)vaddress);
-//         break;
-//      case mskLiteralRef:
-//         _literalReferences.add(reference, (size_t)vaddress);
-//         break;
-//      case mskWideLiteralRef:
-//         _wideReferences.add(reference, (size_t)vaddress);
-//         break;
+      case mskCharRef:
+         _characterReferences.add(reference, (size_t)vaddress);
+         break;
+      case mskLiteralRef:
+         _literalReferences.add(reference, (size_t)vaddress);
+         break;
+      case mskWideLiteralRef:
+         _wideReferences.add(reference, (size_t)vaddress);
+         break;
       case mskSymbolRef:
          _symbolReferences.add(reference, (ref_t)vaddress);
          break;
@@ -86,16 +86,16 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
       switch (mask) {
          case mskConstantRef:
             return (void*)_constReferences.get(reference);
-//         case mskInt64Ref:
+         case mskInt64Ref:
          case mskInt32Ref:
-//         case mskRealRef:
+         case mskRealRef:
             return (void*)_numberReferences.get(reference);
-//         case mskCharRef:
-//            return (void*)_characterReferences.get(reference);
-//         case mskLiteralRef:
-//            return (void*)_literalReferences.get(reference);
-//         case mskWideLiteralRef:
-//            return (void*)_wideReferences.get(reference);
+         case mskCharRef:
+            return (void*)_characterReferences.get(reference);
+         case mskLiteralRef:
+            return (void*)_literalReferences.get(reference);
+         case mskWideLiteralRef:
+            return (void*)_wideReferences.get(reference);
 //         case mskSymbolRelRef:
          case mskSymbolRef:
            return (void*)_symbolReferences.get(reference);

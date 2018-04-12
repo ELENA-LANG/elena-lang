@@ -1095,14 +1095,14 @@ sealed template<BaseIndexable> array :: template_subj
 //
 ///// An empty literal value
 //const literal emptyLiteralValue = "".
-//
-//// --- LiteralValue ---
-//
-///// A UTF-8 literal value
-//sealed __string LiteralValue :: BaseValue
-//{
-//    byte<> $target.
-//
+
+// --- LiteralValue ---
+
+/// A UTF-8 literal value
+public sealed __string LiteralValue :: BaseValue
+{
+    dynamic<byte> theArray.
+
 //    /// Creates the empty literal
 //    constructor min
 //        = emptyLiteralValue.
@@ -1305,20 +1305,20 @@ sealed template<BaseIndexable> array :: template_subj
 //        => system'core_routines'__literal.
 //        
 //    int rvprop hash_code :: readHashCodeTo.
-//}
-//
+}
+
 //// --- emptyWideLiteralValue ---
 //
 ///// An empty wide literal value
 //const wide emptyWideLiteralValue = ""w.
-//
-//// --- WideLiteralValue ---
-//
-///// A UTF-18 literal value
-//sealed __string WideLiteralValue :: BaseValue
-//{
-//    short<> $target.
-//
+
+// --- WideLiteralValue ---
+
+/// A UTF-18 literal value
+public sealed __string WideLiteralValue :: BaseValue
+{
+    dynamic<short> theArray.
+
 //    /// Creates the empty literal
 //    constructor min
 //        = emptyWideLiteralValue.
@@ -1524,8 +1524,8 @@ sealed template<BaseIndexable> array :: template_subj
 //        => system'core_routines'__wide.
 //        
 //    int rvprop hash_code :: readHashCodeTo.
-//}
-//
+}
+
 //// --- Variant ---
 //
 ///// A basic type variant class

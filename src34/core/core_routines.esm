@@ -20,3 +20,17 @@ procedure __object.dispatch[1]
   throw
 
 end
+
+procedure __object.equal[2]
+
+  aloadsi 1
+  bloadsi 2
+  ifb     labTrue
+  acopyr  const : system'false
+  quitn   2
+  
+labTrue:
+  acopyr const : system'true
+  quitn 2
+  
+end

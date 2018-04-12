@@ -696,30 +696,30 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    bool constantValue = true;
    ident_t value = NULL;
    ReferenceInfo vmtReferenceInfo = referenceInfo;
-//   if (mask == mskLiteralRef) {
-//      value = reference;
-//      vmtReference = _loader->getLiteralClass();
-//   }
-//   else if (mask == mskWideLiteralRef) {
-//      value = reference;
-//      vmtReference = _loader->getWideLiteralClass();
-//   }
-//   else if (mask == mskCharRef) {
-//      value = reference;
-//      vmtReference = _loader->getCharacterClass();
-//   }
-   /*else */if (mask == mskInt32Ref) {
+   if (mask == mskLiteralRef) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getLiteralClass();
+   }
+   else if (mask == mskWideLiteralRef) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getWideLiteralClass();
+   }
+   else if (mask == mskCharRef) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getCharacterClass();
+   }
+   else if (mask == mskInt32Ref) {
       value = vmtReferenceInfo.referenceName;
       vmtReferenceInfo.referenceName = _loader->getIntegerClass();
    }
-//   else if (mask == mskInt64Ref) {
-//      value = reference;
-//      vmtReference = _loader->getLongClass();
-//   }
-//   else if (mask == mskRealRef) {
-//      value = reference;
-//      vmtReference = _loader->getRealClass();
-//   }
+   else if (mask == mskInt64Ref) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getLongClass();
+   }
+   else if (mask == mskRealRef) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getRealClass();
+   }
    else constantValue = false;
 
    // get constant VMT reference
@@ -742,27 +742,27 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    _loader->mapReference(referenceInfo, vaddress, mask);
 
    size_t position = writer.Position();
-//   if (mask == mskLiteralRef) {
-//      _compiler->compileLiteral(&writer, value);
-//   }
-//   else if (mask == mskWideLiteralRef) {
-//      WideString wideValue(value);
-//
-//      _compiler->compileWideLiteral(&writer, wideValue);
-//   }
-//   else if (mask == mskCharRef) {
-//      _compiler->compileChar32(&writer, value);
-//   }
-   /*else */if (mask == mskInt32Ref) {
+   if (mask == mskLiteralRef) {
+      _compiler->compileLiteral(&writer, value);
+   }
+   else if (mask == mskWideLiteralRef) {
+      WideString wideValue(value);
+
+      _compiler->compileWideLiteral(&writer, wideValue);
+   }
+   else if (mask == mskCharRef) {
+      _compiler->compileChar32(&writer, value);
+   }
+   else if (mask == mskInt32Ref) {
       _compiler->compileInt32(&writer, value.toULong(16));
    }
-//   else if (mask == mskInt64Ref) {
-//      // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
-//      _compiler->compileInt64(&writer, value.toULongLong(10, 1));
-//   }
-//   else if (mask == mskRealRef) {
-//      _compiler->compileReal64(&writer, value.toDouble());
-//   }
+   else if (mask == mskInt64Ref) {
+      // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
+      _compiler->compileInt64(&writer, value.toULongLong(10, 1));
+   }
+   else if (mask == mskRealRef) {
+      _compiler->compileReal64(&writer, value.toDouble());
+   }
    else if (mask == mskConstArray) {
       // resolve constant value
       SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
@@ -1119,12 +1119,12 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //            vaddress = resolveNativeSection(reference, mskNativeCodeRef, _loader->getSectionInfo(reference, mskNativeCodeRef, silentMode));
 //            break;
          case mskConstantRef:
-//         case mskLiteralRef:
-//         case mskWideLiteralRef:
-//         case mskCharRef:
+         case mskLiteralRef:
+         case mskWideLiteralRef:
+         case mskCharRef:
          case mskInt32Ref:
-//         case mskRealRef:
-//         case mskInt64Ref:
+         case mskRealRef:
+         case mskInt64Ref:
             vaddress = resolveConstant(referenceInfo, mask);
             break;
          case mskConstArray:

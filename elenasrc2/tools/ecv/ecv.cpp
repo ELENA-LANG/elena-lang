@@ -383,26 +383,26 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       referenceName = _integer;
       literalConstant = true;
    }
-   //else if (mask == mskInt64Ref) {
-   //   referenceName = _long;
-   //   literalConstant = true;
-   //}
-   //else if (mask == mskLiteralRef) {
-   //   referenceName = _literal;
-   //   literalConstant = true;
-   //}
-   //else if (mask == mskWideLiteralRef) {
-   //   referenceName = _wide;
-   //   literalConstant = true;
-   //}
-   //else if (mask == mskRealRef) {
-   //   referenceName = _real;
-   //   literalConstant = true;
-   //}
-   //else if (mask == mskCharRef) {
-   //   referenceName = _char;
-   //   charConstant = true;
-   //}
+   else if (mask == mskInt64Ref) {
+      referenceName = _long;
+      literalConstant = true;
+   }
+   else if (mask == mskLiteralRef) {
+      referenceName = _literal;
+      literalConstant = true;
+   }
+   else if (mask == mskWideLiteralRef) {
+      referenceName = _wide;
+      literalConstant = true;
+   }
+   else if (mask == mskRealRef) {
+      referenceName = _real;
+      literalConstant = true;
+   }
+   else if (mask == mskCharRef) {
+      referenceName = _char;
+      charConstant = true;
+   }
    else if (reference == 0) {
       referenceName = "$nil";
    }
@@ -1023,12 +1023,12 @@ void listFlags(int flags, int& row, int pageSize)
       case elDebugDWORD:
          printLine("@flag ", "elDebugDWORD", row, pageSize);
          break;
-   //   case elDebugReal64:
-   //      printLine("@flag ", "elDebugReal64", row, pageSize);
-   //      break;
-   //   case elDebugLiteral:
-   //      printLine("@flag ", "elDebugLiteral", row, pageSize);
-   //      break;
+      case elDebugReal64:
+         printLine("@flag ", "elDebugReal64", row, pageSize);
+         break;
+      case elDebugLiteral:
+         printLine("@flag ", "elDebugLiteral", row, pageSize);
+         break;
       case elDebugIntegers:
          printLine("@flag ", "elDebugIntegers", row, pageSize);
          break;
@@ -1047,9 +1047,9 @@ void listFlags(int flags, int& row, int pageSize)
       //case elDebugPTR:
       //   printLine("@flag ", "elDebugPTR");
       //   break;
-   //   case elDebugWideLiteral:
-   //      printLine("@flag ", "elDebugWideLiteral", row, pageSize);
-   //      break;
+      case elDebugWideLiteral:
+         printLine("@flag ", "elDebugWideLiteral", row, pageSize);
+         break;
    //   case elDebugReference:
    //      printLine("@flag ", "elDebugReference", row, pageSize);
    //      break;

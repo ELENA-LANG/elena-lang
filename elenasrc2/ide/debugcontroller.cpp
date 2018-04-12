@@ -1272,36 +1272,36 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
       DebugLineInfo* info = seekClassInfo(selfPtr, className, flags, classPtr);
       if (info) {
          int type = info->addresses.symbol.flags & elDebugMask;
-         //if (type==elDebugLiteral) {
-         //   char value[DEBUG_MAX_STR_LENGTH + 1];
-         //   int length = 0;
-         //   getValue(selfPtr - 8, (char*)&length, 4);
+         if (type==elDebugLiteral) {
+            char value[DEBUG_MAX_STR_LENGTH + 1];
+            int length = 0;
+            getValue(selfPtr - 8, (char*)&length, 4);
 
-         //   length &= 0xFFFFF;
+            length &= 0xFFFFF;
 
-         //   if (length > DEBUG_MAX_STR_LENGTH) {
-         //      length = DEBUG_MAX_STR_LENGTH;
-         //   }
-         //   getValue(selfPtr, value, length);
-         //   value[length] = 0;
-         //   watch->write(this, value);
-         //}
-         //else if (type == elDebugWideLiteral) {
-         //   wide_c value[DEBUG_MAX_STR_LENGTH + 1];
-         //   int length = 0;
-         //   getValue(selfPtr - 8, (char*)&length, 4);
+            if (length > DEBUG_MAX_STR_LENGTH) {
+               length = DEBUG_MAX_STR_LENGTH;
+            }
+            getValue(selfPtr, value, length);
+            value[length] = 0;
+            watch->write(this, value);
+         }
+         else if (type == elDebugWideLiteral) {
+            wide_c value[DEBUG_MAX_STR_LENGTH + 1];
+            int length = 0;
+            getValue(selfPtr - 8, (char*)&length, 4);
 
-         //   length &= 0xFFFFF;
-         //   length >>= 1;
+            length &= 0xFFFFF;
+            length >>= 1;
 
-         //   if (length > DEBUG_MAX_STR_LENGTH) {
-         //      length = DEBUG_MAX_STR_LENGTH;
-         //   }
-         //   getValue(selfPtr, value, length);
-         //   value[length] = 0;
-         //   watch->write(this, value);
-         //}
-         /*else */if (type == elDebugDWORD/* || type == elDebugSubject*/) {
+            if (length > DEBUG_MAX_STR_LENGTH) {
+               length = DEBUG_MAX_STR_LENGTH;
+            }
+            getValue(selfPtr, value, length);
+            value[length] = 0;
+            watch->write(this, value);
+         }
+         else if (type == elDebugDWORD/* || type == elDebugSubject*/) {
             char value[4];
             getValue(selfPtr, value, 4);
 
@@ -1313,12 +1313,12 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 
          //   readMessage(watch, selfPtr, *(int*)value);
          //}
-         //else if (type==elDebugReal64) {
-         //   char value[8];
-         //   getValue(selfPtr, value, 8);
+         else if (type==elDebugReal64) {
+            char value[8];
+            getValue(selfPtr, value, 8);
 
-         //   watch->write(this, *(double*)value);
-         //}
+            watch->write(this, *(double*)value);
+         }
          else if (type==elDebugQWORD) {
             char value[8];
             getValue(selfPtr, value, 8);

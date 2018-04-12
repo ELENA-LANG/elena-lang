@@ -250,12 +250,12 @@ inline bool isTerminal(LexicalType type)
       case lxPrivate:
       case lxInteger:
       case lxHexInteger:
-      //case lxLong:
-      //case lxReal:
-      //case lxLiteral:
+      case lxLong:
+      case lxReal:
+      case lxLiteral:
       case lxReference:
-      //case lxCharacter:
-      //case lxWide:
+      case lxCharacter:
+      case lxWide:
       //case lxExplicitConst:
       case lxMemberIdentifier:
       case lxGlobalReference:
@@ -3053,7 +3053,7 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
                break;
             case V_CLASS:
             case V_STRUCT:
-//            //case V_STRING:
+            //case V_STRING:
                attr = daClass;
                break;
             case V_TEMPLATE:

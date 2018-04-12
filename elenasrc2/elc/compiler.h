@@ -108,13 +108,13 @@ public:
       okSymbol,                       // param - reference
       okConstantSymbol,               // param - reference, extraparam - class reference
       okConstantClass,                // param - reference, extraparam - class reference
-//      okLiteralConstant,              // param - reference
-//      okWideLiteralConstant,          // param - reference
-//      okCharConstant,                 // param - reference
+      okLiteralConstant,              // param - reference
+      okWideLiteralConstant,          // param - reference
+      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
-//      okUIntConstant,                 // param - reference, extraparam - imm argument
-//      okLongConstant,                 // param - reference
-//      okRealConstant,                 // param - reference
+      okUIntConstant,                 // param - reference, extraparam - imm argument
+      okLongConstant,                 // param - reference
+      okRealConstant,                 // param - reference
 //      okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
 //      okSignatureConstant,            // param - reference
@@ -801,7 +801,7 @@ private:
    void optimizeTape(CommandTape& tape);
 
    bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
-//   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
+   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
    void writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
@@ -816,7 +816,7 @@ private:
    int retrieveGenericArgParamCount(ClassScope& scope);
 
    ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(/*ModuleScope& scope, */ObjectInfo object);
+   ref_t resolveObjectReference(CompilerScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
    //ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
 

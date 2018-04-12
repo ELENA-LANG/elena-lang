@@ -33,12 +33,12 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
    messages->mapSection(messages->mapReference(MESSAGE_TABLE) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
 
   // load default forwards
-//   _literal = project->resolveForward(STR_FORWARD);
-//   _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
-//   _character = project->resolveForward(CHAR_FORWARD);
+   _literal = project->resolveForward(STR_FORWARD);
+   _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
+   _character = project->resolveForward(CHAR_FORWARD);
    _int = project->resolveForward(INT_FORWARD);
-//   _long = project->resolveForward(LONG_FORWARD);
-//   _real = project->resolveForward(REAL_FORWARD);
+   _long = project->resolveForward(LONG_FORWARD);
+   _real = project->resolveForward(REAL_FORWARD);
 //   _message = project->resolveForward(MESSAGE_FORWARD);
 //   _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
 //   _signature = project->resolveForward(SIGNATURE_FORWARD);
@@ -192,36 +192,36 @@ size_t ExecutableImage :: getLinkerConstant(int id)
    }
 }
 
-//ident_t ExecutableImage::getLiteralClass()
-//{
-//   return _literal;
-//}
-//
-//ident_t ExecutableImage :: getWideLiteralClass()
-//{
-//   return _wideLiteral;
-//}
-//
-//ident_t ExecutableImage::getCharacterClass()
-//{
-//   return _character;
-//}
+ident_t ExecutableImage::getLiteralClass()
+{
+   return _literal;
+}
+
+ident_t ExecutableImage :: getWideLiteralClass()
+{
+   return _wideLiteral;
+}
+
+ident_t ExecutableImage::getCharacterClass()
+{
+   return _character;
+}
 
 ident_t ExecutableImage::getIntegerClass()
 {
    return _int;
 }
 
-//ident_t ExecutableImage::getLongClass()
-//{
-//   return _long;
-//}
-//
-//ident_t ExecutableImage::getRealClass()
-//{
-//   return _real;
-//}
-//
+ident_t ExecutableImage::getLongClass()
+{
+   return _long;
+}
+
+ident_t ExecutableImage::getRealClass()
+{
+   return _real;
+}
+
 //ident_t ExecutableImage::getMessageClass()
 //{
 //   return _message;
@@ -244,7 +244,7 @@ ident_t ExecutableImage :: getNamespace()
 
 ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
-   if (/*mask == mskLiteralRef || */mask == mskInt32Ref/* || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef*/) {
+   if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef) {
       return module->resolveConstant(reference);
    }
 //   // if it is a message

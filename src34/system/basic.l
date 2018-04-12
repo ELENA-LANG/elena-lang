@@ -77,14 +77,14 @@
 //type vlong  = var<LongNumber>.
 //type vreal  = var<RealNumber>.
 //type vchar  = var<CharValue>.
-//
-//// === Boolean values ===
-//
-//// --- true ---
-//
-///// A true value symbol
-//class true = BaseBoolValue::
-//{
+
+// === Boolean values ===
+
+// --- true ---
+
+/// A true value symbol
+public class true = BoolValue::
+{
 //    /// Executes the action
 //    __ifoperator if : aTrueAction = aTrueAction eval.
 //
@@ -114,13 +114,13 @@
 //
 //    /// Determines whether the specified object is equal to the current object boolean value.
 //    bool equal : anExpr = anExpr bool.
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    bool equal bool:aBool = aBool.
-//
-//    /// Always returns false.
-//    bool inverted = false.
-//
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    bool equal(bool aBool) = aBool.
+
+    /// Always returns false.
+    bool inverted = false.
+
 //    /// Returns literal representation.
 //    literal = "true".
 //
@@ -129,13 +129,13 @@
 //
 //    /// Returns itself.
 //    clone = $self.
-//}.
-//
-//// --- false ---
-//
-///// A false value symbol
-//class false = BaseBoolValue::
-//{
+}.
+
+// --- false ---
+
+/// A false value symbol
+public class false = BoolValue::
+{
 //    /// Always returns nil
 //    __ifnotoperator if : anAction = $nil.
 //    
@@ -170,16 +170,16 @@
 //        
 //        ^ true
 //    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    bool equal bool:anExpr
-//    [
-//        ^ anExpr inverted
-//    ]
-//
-//    /// Always returns true
-//    bool inverted = true.
-//
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    bool equal(bool anExpr)
+    [
+        ^ anExpr inverted
+    ]
+
+    /// Always returns true
+    bool inverted = true.
+
 //    /// Returns literal representation
 //    literal = "false".
 //    
@@ -188,15 +188,15 @@
 //    
 //    /// Returns itself
 //    clone = $self.
-//}.
-//
-//// === basic data classes ===
-//
-//// --- BaseValue ---
-//
-//// A base value
-//class BaseValue
-//{
+}.
+
+// === basic data classes ===
+
+// --- BaseValue ---
+
+// A base value
+public class BaseValue
+{
 //    bool equal(BaseVariable var)
 //        <= equal(var value).
 //    
@@ -219,13 +219,13 @@
 //    bool notless : anObject = $self less:anObject; inverted.
 //
 //    bool notgreater : anObject = $self greater:anObject; inverted.
-//}
-//
-//// --- BaseNumber ---
-//
-///// A base numeric value
-//class BaseNumber :: BaseValue
-//{
+}
+
+// --- BaseNumber ---
+
+/// A base numeric value
+public class BaseNumber :: BaseValue
+{
 //    add(BaseVariable var)
 //        <= add(var value).
 //
@@ -264,13 +264,13 @@
 //    
 //    negative
 //        = 0 - self.
-//}
-//
-//// --- IntBaseNumber ---
-//
-///// A base integer value
-//class IntBaseNumber :: BaseNumber
-//{
+}
+
+// --- IntBaseNumber ---
+
+/// A base integer value
+public class IntBaseNumber :: BaseNumber
+{
 //    and(BaseVariable var)
 //        <= and(var value).
 //        
@@ -311,15 +311,15 @@
 //        
 //    stacksafe shiftRight:n
 //        <= shiftRight int:n.
-//}
-//
-//// --- ByteNumber ---
-//
-///// An unsigned 8 bit integer
-//sealed struct ByteNumber :: IntBaseNumber
-//{
-//    __int<1> theValue.
-//
+}
+
+// --- ByteNumber ---
+
+/// An unsigned 8 bit integer
+public sealed struct ByteNumber :: IntBaseNumber
+{
+    T<__byte,1> theValue.
+
 //    stacksafe implicit(IntNumber n)
 //    [
 //        theValue := n && 255.
@@ -617,15 +617,15 @@
 //        
 //        ^ aCode
 //    ]
-//}
-//
-//// --- ShortNumber ---
-//
-///// A signed 16 bit integer
-//sealed struct ShortNumber :: IntBaseNumber
-//{
-//    __int<2> theValue.
-//
+}
+
+// --- ShortNumber ---
+
+/// A signed 16 bit integer
+public sealed struct ShortNumber :: IntBaseNumber
+{
+    T<__byte,2> theValue.
+
 //    stacksafe implicit(IntNumber n)
 //    [
 //        (n < 0)
@@ -937,7 +937,7 @@
 //        
 //        ^ aCode.
 //    ]        
-//}
+}
 
 // --- IntNumber ---
 
@@ -1266,14 +1266,14 @@ public sealed struct IntNumber //:: IntBaseNumber
 //        = 0 - theValue.
 }
 
-//// --- UIntNumber ---
-//
-///// A unsigned 32 bit integer
-//
-//sealed struct UIntNumber :: IntBaseNumber
-//{
-//    __int<4> theValue.
-//
+// --- UIntNumber ---
+
+/// A unsigned 32 bit integer
+
+public sealed struct UIntNumber :: IntBaseNumber
+{
+    T<__byte,4> theValue.
+
 //    stacksafe implicit(ByteNumber n)
 //    [
 //        theValue := n.
@@ -1638,15 +1638,15 @@ public sealed struct IntNumber //:: IntBaseNumber
 //    /// Bitwise inversion
 //    stacksafe uint inverted
 //        => system'core_routines'__int.  
-//}
-//
-//// --- LongNumber ---
-//
-///// A signed 64 bit integer value
-//sealed struct LongNumber :: IntBaseNumber
-//{
-//    __int<8> theValue.
-//    
+}
+
+// --- LongNumber ---
+
+/// A signed 64 bit integer value
+public sealed struct LongNumber :: IntBaseNumber
+{
+    T<__byte,8> theValue.
+    
 //    /// Returns the minimal value
 //    constructor min
 //        = -9223372036854775808l.
@@ -1963,15 +1963,15 @@ public sealed struct IntNumber //:: IntBaseNumber
 //    /// Negates the value
 //    stacksafe negative
 //        = 0l - theValue.
-//}
-//
-//// --- realNumber ---
-//
-///// A 64bit float numeric value
-//sealed struct RealNumber :: BaseNumber
-//{
-//    __real<8> theValue.
-//
+}
+
+// --- realNumber ---
+
+/// A 64bit float numeric value
+public sealed struct RealNumber :: BaseNumber
+{
+    T<__real,8> theValue.
+
 //    stacksafe implicit(IntNumber n)
 //    [
 //        realConvertor convert int:n vreal:$self.
@@ -2222,15 +2222,15 @@ public sealed struct IntNumber //:: IntBaseNumber
 //    /// Negates the value
 //    stacksafe negative
 //        = 0.0r - theValue.
-//}
-//
-//// --- CharValue ---
-//
+}
+
+// --- CharValue ---
+
 ///// An UTF-32 character symbol
-//sealed const struct CharValue :: BaseValue
+//public sealed const struct CharValue :: BaseValue
 //{
-//    __dword<4> theValue.
-//
+//    T<__binary,4> theValue.
+
 //    /// Creates the object with a default value (0)
 //    constructor new
 //        <= new char:$0.
@@ -2346,7 +2346,7 @@ public sealed struct IntNumber //:: IntBaseNumber
 //        ^ aCode.
 //    ]
 //}
-//
+
 //// --- nil constant ---
 //
 ///// A nil value

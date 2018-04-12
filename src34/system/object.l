@@ -7,22 +7,22 @@ public class Object
     /// Creates the object
     constructor new []
     
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    ///
-//    /// By default compares the object references.
-//    bool equal : anObject => system'core_routines'__object.
-//    
-//    bool notequal : anObject = $self equal:anObject; inverted.
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    ///
+    /// By default compares the object references.
+    bool equal : anObject => system'core_routines'__object.
+    
+    bool notequal : anObject = self equal:anObject; inverted.
                 
     /// Implements a message dispatching in VMT
     dispatch => system'core_routines'__object.
 }
 
-///// A common boolean value
-//listable class BaseBoolValue
-//{
-//    bool equal bool:aBool = $nil.
-//
+/// A common boolean value
+public enum class BoolValue
+{
+    bool equal(bool aBool) = __nil.
+
 //    if : aTrueAction = $nil.
 //
 //    if : aTrueAction : aFalseAction = $nil.
@@ -38,16 +38,16 @@ public class Object
 //    bool xor : aBool = $nil.
 //
 //    bool not = $self inverted.
-//
-//    bool inverted = $nil.
-//
+
+    bool inverted = __nil.
+
 //    literal = $nil.
 //
 //    wide = $nil.
 //
 //    clone = $nil.
-//}
-//
+}
+
 //extension commonOp
 //{
 //    /// Returns the parameter        
