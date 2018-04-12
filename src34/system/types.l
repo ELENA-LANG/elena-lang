@@ -2,7 +2,7 @@
 type            = #16390.
 class           = #16386.
 struct          = #8197.
-//symbol          = #16389.
+symbol          = #16389.
 constructor     = #16384.
 //listable        = #8198.
 sealed          = #8195.
@@ -10,7 +10,7 @@ sealed          = #8195.
 template        = #16391.
 //extension       = #8203.
 
-//const           = #8201.
+const           = #8201.
 singleton       = #8208.
 //generic         = #8202.
 static          = #8194.

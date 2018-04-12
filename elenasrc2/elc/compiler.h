@@ -307,21 +307,21 @@ private:
       IdentifierList importedNs;
       ForwardMap     forwards;       // forward declarations
 
-////      // symbol hints
-////      Map<ref_t, ref_t> constantHints;
-////
-//////      // extensions
-////      SubjectMap        extensionHints;
-////      ExtensionMap      extensions;
-////      AutoExtensionMap  autoExtensions;
-////
-////      // action hints
-////      SubjectMap        actionHints;
-////
-////      ref_t packageReference;
+      // symbol hints
+      Map<ref_t, ref_t> constantHints;
+
+////      // extensions
+//      SubjectMap        extensionHints;
+//      ExtensionMap      extensions;
+//      AutoExtensionMap  autoExtensions;
 //
-////      // list of references to the current module which should be checked after the project is compiled
-////      Unresolveds* forwardsUnresolved;
+//      // action hints
+//      SubjectMap        actionHints;
+//
+//      ref_t packageReference;
+
+//      // list of references to the current module which should be checked after the project is compiled
+//      Unresolveds* forwardsUnresolved;
 
       ident_t        ns;
       ident_t        sourcePath;
@@ -342,11 +342,11 @@ private:
 //      virtual ref_t mapAttribute(SNode terminal);
 
 //      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
-//
-//      void defineConstantSymbol(ref_t reference, ref_t classReference)
-//      {
-//         constantHints.add(reference, classReference);
-//      }
+
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       virtual void raiseError(const char* message)
       {
@@ -521,7 +521,7 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//      bool  constant;
+      bool  constant;
       bool  staticOne;
 //      bool  preloaded;
       ref_t outputRef;
@@ -815,7 +815,7 @@ private:
 
    int retrieveGenericArgParamCount(ClassScope& scope);
 
-//   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
+   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(/*ModuleScope& scope, */ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
    //ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
@@ -829,7 +829,7 @@ private:
    int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
-//   void inheritClassConstantList(ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
+   void inheritClassConstantList(CompilerScope& scope, ref_t sourceRef, ref_t targetRef);
 
    // NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
@@ -844,7 +844,7 @@ private:
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
    void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed/*, bool& isConstant*/);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
    void declareVMT(SNode member, ClassScope& scope);
 ////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
@@ -896,7 +896,7 @@ private:
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
-//   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
+   ObjectInfo compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
@@ -955,7 +955,7 @@ private:
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
    void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField);
-   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed/*, bool isConst*/);
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
@@ -972,7 +972,7 @@ private:
    void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
-//   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
+   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
 ////   void compileIncludeModule(SNode node, ModuleScope& scope);
 //   void compileForward(SNode node, ModuleScope& scope);
 //

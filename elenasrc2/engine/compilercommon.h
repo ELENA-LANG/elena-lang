@@ -27,7 +27,7 @@
 //#define V_MESSAGE        (ref_t)-19
 //#define V_EXTMESSAGE     (ref_t)-21
 //#define V_SYMBOL         (ref_t)-22
-//
+
 //#define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
 
 #define V_OBJECT         (ref_t)-28
@@ -56,7 +56,7 @@
 //#define V_ENUMLIST       (ref_t)-8198
 //#define V_DYNAMIC        (ref_t)-8199
 //#define V_STRING         (ref_t)-8200
-//#define V_CONST          (ref_t)-8201
+#define V_CONST          (ref_t)-8201
 //#define V_GENERIC        (ref_t)-8202
 //#define V_EXTENSION      (ref_t)-8203
 //#define V_NOSTRUCT       (ref_t)-8204
@@ -74,7 +74,7 @@
 #define V_CLASS          (ref_t)-16386
 #define V_CONVERSION     (ref_t)-16387
 #define V_IMPLICIT       (ref_t)-16388
-//#define V_SYMBOLEXPR     (ref_t)-16389
+#define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
 #define V_FIELD          (ref_t)-16392
@@ -328,7 +328,7 @@ public:
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue) = 0;
-   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed/*, bool& isConstant*/) = 0;
+   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
 //////   virtual bool validateWarningAttribute(int& attrValue) = 0;

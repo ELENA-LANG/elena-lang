@@ -1263,9 +1263,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //      case V_STRING:
 //         attrValue = elDebugLiteral;
 //         return true;
-//      case V_CONST:
-//         attrValue = elReadOnlyRole;
-//         return true;
+      case V_CONST:
+         attrValue = elReadOnlyRole;
+         return true;
 //      case V_EXTENSION:
 //         attrValue = elExtension;
 //         return true;
@@ -1346,7 +1346,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
    }
 }
 
-bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed/*, bool& isConstant*/)
+bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant)
 {
    switch ((size_t)attrValue)
    {
@@ -1360,13 +1360,13 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed/*, b
             return true;
          }
          else return false;
-      //case V_CONST:
-      //   if (!isConstant) {
-      //      attrValue = -1;
-      //      isConstant = true;
-      //      return true;
-      //   }
-      //   else return false;
+      case V_CONST:
+         if (!isConstant) {
+            attrValue = -1;
+            isConstant = true;
+            return true;
+         }
+         else return false;
       case V_INT8:
          attrValue = 0;
          return true;
