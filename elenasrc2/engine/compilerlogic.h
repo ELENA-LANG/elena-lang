@@ -128,6 +128,7 @@ public:
    }
 
    virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
+   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef);
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
@@ -153,7 +154,7 @@ public:
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info)
    {
-      return /*(info.header.flags & elDebugMask) != elEnumList*/true;
+      return (info.header.flags & elDebugMask) != elEnumList;
    }
 
 //   bool recognizeEmbeddableOp(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject);

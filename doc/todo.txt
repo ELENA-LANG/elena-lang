@@ -2,7 +2,10 @@
 In development:
 ------                              
                             
-              dev - redesign
+              dev - redesign                                                                           
+                 * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
+                   normal classes cannot be inherited from enum / enum value
+
                  * uncomment optimizeEmbeddableGet, optimizeEmbeddableOp, optimizeEmbeddable
 
                  * private method (SEALED_MESSAGE, tpSealed - cannot be overridden)
@@ -82,7 +85,8 @@ In development:
                  * protected / internal methods
                  * NEWOBJECT_MESSAGE_ID, should calls field initializer method and implicit constructor directly
                    (so called weak sealed methods)
-                 * save recent loaded project / file lists
+                 * enum / stateless class should not have default constructor
+                 * abstract class cannot be used directly (currently empty symbol is created)
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

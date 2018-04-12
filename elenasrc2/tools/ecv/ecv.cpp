@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   16
+#define REVISION_VERSION   17
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1065,9 +1065,9 @@ void listFlags(int flags, int& row, int pageSize)
    //   //case elDebugDPTR:
    //   //   printLine("@flag ", "elDebugDPTR");
    //   //   break;
-   //   case elEnumList:
-   //      printLine("@flag ", "elEnumList", row, pageSize);
-   //      break;
+      case elEnumList:
+         printLine("@flag ", "elEnumList", row, pageSize);
+         break;
    }
 }
 

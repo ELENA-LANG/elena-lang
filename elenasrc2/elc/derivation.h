@@ -266,13 +266,13 @@ class DerivationTransformer //: public _DerivationTransformer
    void generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope, bool templateMode);
    void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-   void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes,int nested = 0*/);
+   void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int nested = 0);
    void generateTemplateScope(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 
    void recognizeRootAttributes(SNode node, DerivationScope& scope);
 
    bool recognizeMethodScope(SNode node, DerivationScope& scope);
-////   bool generateSingletonScope(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes);
+   bool generateSingletonScope(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    bool recognizeDeclaration(SNode node, DerivationScope& scope);
    void generateTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes*/);
    void generateAttributeTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode/*, int mode = 0*/, bool expressionMode);

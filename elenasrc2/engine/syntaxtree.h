@@ -45,7 +45,7 @@ enum LexicalType
 //   lxFieldTemplate   = 0x00014,
    lxAttributeValue  = 0x00015,
    lxClassMethod     = 0x00016,
-//   lxNestedClass     = 0x00018,
+   lxNestedClass     = 0x00018,
    lxCode            = 0x0001A,
    lxDispatchCode    = 0x00020,
 //   lxStatic          = 0x00022,

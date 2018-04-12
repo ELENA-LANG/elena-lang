@@ -604,12 +604,22 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
    }
 }
 
+void CompilerLogic :: injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
+{
+   // generate enumeration list static field
+   if ((info.header.flags & elDebugMask) == elEnumList && !test(info.header.flags, elNestedClass)) {
+      compiler.injectVirtualStaticConstField(scope, node, ENUM_VAR, classRef);
+   }
+}
+
 void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
 {
-//   // generate enumeration list
-//   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
-//      compiler.generateListMember(scope, info.header.parentRef, classRef);
-//   }
+   // generate enumeration list
+   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
+      ClassInfo::FieldInfo valuesField = info.statics.get(ENUM_VAR);
+
+      compiler.generateListMember(scope, valuesField.value1, classRef);
+   }
 
    if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed/* && !test(info.header.flags, elExtension)*/) {
       // auto generate get&type message for explicitly declared classes
@@ -1254,9 +1264,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_STRUCT:
          attrValue = elStructureRole;
          return true;
-//      case V_ENUMLIST:
-//         attrValue = elStateless | elEnumList | elClosed;
-//         return true;
+      case V_ENUMLIST:
+         attrValue = /*elAbstract | */elEnumList | elClosed;
+         return true;
 //      case V_DYNAMIC:
 //         attrValue = elDynamicRole;
 //         return true;

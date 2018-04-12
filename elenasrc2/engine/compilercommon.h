@@ -53,7 +53,7 @@
 #define V_SEALED         (ref_t)-8195
 //#define V_LIMITED        (ref_t)-8196
 #define V_STRUCT         (ref_t)-8197
-//#define V_ENUMLIST       (ref_t)-8198
+#define V_ENUMLIST       (ref_t)-8198
 //#define V_DYNAMIC        (ref_t)-8199
 //#define V_STRING         (ref_t)-8200
 #define V_CONST          (ref_t)-8201
@@ -219,7 +219,9 @@ public:
    virtual void injectLocalBoxing(SNode node, int size) = 0;
 //   //virtual int injectTempLocal(SNode node) = 0;
 
-//   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
+   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef) = 0;
+
+   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
    virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
@@ -309,6 +311,7 @@ public:
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
+   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
    virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;

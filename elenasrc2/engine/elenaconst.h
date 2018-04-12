@@ -320,7 +320,7 @@ namespace _ELENA_
 ////   const int elDebugReals          = 0x000D0000;
 //   const int elDebugMessage        = 0x000E0000;
 ////   const int elDebugDPTR           = 0x000F0000;
-//   const int elEnumList            = 0x00100000;
+   const int elEnumList            = 0x00100000;
 
   // --- ELENA Linker / ELENA VM constants ---
    const int lnGCMGSize            = 0x00000001;
@@ -428,6 +428,8 @@ namespace _ELENA_
 //   #define PARENT_VAR              "$$parent"         // the closure parent
 
 //   #define TEMPLATE_FIELD          "$field"
+
+   #define ENUM_VAR                 "values"          // is auto generated for enum classes and contains the list of all possible enum values
 
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"

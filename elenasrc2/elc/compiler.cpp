@@ -990,12 +990,21 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
                else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
             }
          }
+         else if(info.staticValues.exist(staticInfo.value1, mskConstantRef)) {
+            // if it is a constant static sealed field
+            if (classClassMode) {
+               return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value1, staticInfo.value2);
+            }
+            else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
+         }
+
          if (classClassMode) {
             return ObjectInfo(okClassStaticField, 0, staticInfo.value1, staticInfo.value2);
-         }         
+         }
          else return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2);
+
       }
-      else return ObjectInfo();
+      return ObjectInfo();
    }
 }
 
@@ -2336,9 +2345,12 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          writer.appendNode(lxStaticField, object.extraparam);
          break;
       case okStaticConstantField:
-         writer.newNode(lxFieldExpression, 0);
-         writer.appendNode(lxClassRefField, 1);
-         writer.appendNode(lxStaticConstField, object.param);
+         if ((int)object.param < 0) {
+            writer.newNode(lxFieldExpression, 0);
+            writer.appendNode(lxClassRefField, 1);
+            writer.appendNode(lxStaticConstField, object.param);
+         }
+         else writer.newNode(lxStaticField, object.param);
          break;
       case okClassStaticConstantField:
          writer.newNode(lxFieldExpression, 0);
@@ -3509,13 +3521,14 @@ void Compiler :: inheritClassConstantList(CompilerScope& scope, ref_t sourceRef,
    }
 }
 
-ObjectInfo Compiler :: compileAssigningClassConstant(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal)
+void Compiler ::compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
    bool accumulatorMode = false;
 
    if (scope.getMessageID() == (encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE) && classScope != NULL) {
-      SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::slNamespace), classScope->info.staticValues.get(retVal.param) & ~mskAnyRef);
+      ref_t valueRef = classScope->info.staticValues.get(retVal.param);
+      SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::slNamespace), valueRef & ~mskAnyRef);
 
       SNode sourceNode = node;
       SNode operatorNode = sourceNode.findSubNode(lxOperator);
@@ -3546,8 +3559,6 @@ ObjectInfo Compiler :: compileAssigningClassConstant(SyntaxWriter& writer, SNode
       else scope.raiseError(errInvalidOperation, node);
    }
    else scope.raiseError(errInvalidOperation, node);
-
-   return ObjectInfo();
 }
 
 bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope)
@@ -3586,10 +3597,14 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
       if (scope.isInitializer()) {
          // HOTFIX : recognize static field initializer
-         //retVal = compileExpression(writer, targetNode, scope, 0, HINT_INQUIRY_MODE);
-         if (target.kind == okStaticField) {
+         if (target.kind == okStaticField || target.kind == okStaticConstantField) {
             // HOTFIX : static field initializer should be compiled as preloaded symbol
-            compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::slClass)));
+            if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
+               compileClassConstantAssigning(writer, sourceNode, scope, target);
+            }
+            else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::slClass)));
+
+            writer.trim();
 
             //writer.removeBookmark();
 
@@ -3612,16 +3627,6 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
             }
             else scope.raiseError(errInvalidOperation, sourceNode);
             break;
-         }
-         case okStaticConstantField:
-         {
-            // HOTFIX : static constant in-place assigning
-            retVal = compileAssigningClassConstant(writer, sourceNode, scope, target);
-            
-            writer.trim();
-            //writer.removeBookmark();
-            
-            return retVal;
          }
          default:
             scope.raiseError(errInvalidOperation, sourceNode);
@@ -5931,19 +5936,17 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 //   _writer.save(tape, *scope.moduleScope);
 //}
 
-void Compiler :: compilePreloadedCode(ClassScope& scope, SNode node)
+void Compiler :: compilePreloadedCode(_CompilerScope& scope, SNode node)
 {
-   _Module* module = scope.moduleScope->module;
+   _Module* module = scope.module;
 
    ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
-
-   pos_t sourcePathRef = scope.saveSourcePath(_writer);
 
    CommandTape tape;
    _writer.generateInitializer(tape, module->mapReference(sectionName), node);
 
    // create byte code sections
-   _writer.save(tape, *scope.moduleScope/*, sourcePathRef*/);
+   _writer.save(tape, scope);
 }
 
 void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
@@ -6075,6 +6078,7 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root/*, bool& closu
 //      }
 //      else scope.raiseError(errInvalidHint, root);
 //   }
+
 }
 
 void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef, ref_t elementRef, int sizeHint, bool singleField)
@@ -6212,11 +6216,11 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
    ident_t terminal = current.firstChild(lxTerminalMask).identifier();
 
    if (scope.info.statics.exist(terminal)) {
-//      if (current.argument == INVALID_REF) {
-//         //HOTFIX : ignore duplicate autogenerated fields
-//         return;
-//      }
-      /*else */scope.raiseError(errDuplicatedField, current);
+      if (current.argument == INVALID_REF) {
+         //HOTFIX : ignore duplicate autogenerated fields
+         return;
+      }
+      else scope.raiseError(errDuplicatedField, current);
    }
 
    if (isSealed) {
@@ -6226,7 +6230,13 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
 
       findUninqueName(module, name);
 
-      scope.info.statics.add(terminal, ClassInfo::FieldInfo(module->mapReference(name), fieldRef));
+      ref_t ref = module->mapReference(name);
+
+      scope.info.statics.add(terminal, ClassInfo::FieldInfo(ref, fieldRef));
+      if (isConst) {
+         // HOTFIX : add read-only attribute (!= mskStatRef)
+         scope.info.staticValues.add(ref, mskConstantRef);
+      }
    }
    else {
       int index = ++scope.info.header.staticSize;
@@ -6468,6 +6478,9 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 //      if (test(scope.info.header.flags, elExtension)) {
 //         scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
 //      }
+
+      // inject virtual fields
+      _logic->injectVirtualFields(*scope.moduleScope, node, scope.reference, scope.info, *this);
 
       // generate fields
       generateClassFields(node, scope, countFields(node) == 1);
@@ -6835,8 +6848,13 @@ void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScop
 
    writer.newNode(lxExpression);
    writer.newNode(lxAssigning);
-   if (isPrimitiveRef(target.param)) {
-      writeTerminal(writer, node, codeScope, ObjectInfo(okClassStaticField, scope.reference, target.param, target.extraparam), HINT_NODEBUGINFO);
+   if (!isSealedStaticField(target.param)) {
+      if (target.kind == okStaticField) {
+         writeTerminal(writer, node, codeScope, ObjectInfo(okClassStaticField, scope.reference, target.param, target.extraparam), HINT_NODEBUGINFO);
+      }
+      else if (target.kind == okStaticConstantField) {
+         writeTerminal(writer, node, codeScope, ObjectInfo(okClassStaticConstantField, scope.reference, target.param, target.extraparam), HINT_NODEBUGINFO);
+      }
    }
    else writeTerminal(writer, node, codeScope, target, HINT_NODEBUGINFO);
 
@@ -6849,7 +6867,7 @@ void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScop
 
    analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
 
-   compilePreloadedCode(scope, expressionTree.readRoot());
+   compilePreloadedCode(*scope.moduleScope, expressionTree.readRoot());
 }
 
 // NOTE : elementRef is used for binary arrays
@@ -7833,12 +7851,45 @@ void Compiler :: initializeScope(ident_t name, CompilerScope& scope, bool withDe
 //   createPackageInfo(info.codeModule, project);
 }
 
-//void Compiler :: generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
-//{
-//   MemoryWriter metaWriter(scope.module->mapSection(enumRef | mskRDataRef, false));
-//
-//   metaWriter.writeDWord(memberRef | mskConstantRef);
-//}
+void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef)
+{
+   // injecting auto-generated static sealed constant field, (argument=INVALID_REF)
+   SNode fieldNode = classNode.appendNode(lxClassField, INVALID_REF); 
+   fieldNode.appendNode(lxAttribute, V_STATIC);
+   fieldNode.appendNode(lxAttribute, V_SEALED);
+   fieldNode.appendNode(lxAttribute, V_CONST);
+
+   fieldNode.appendNode(lxIdentifier, fieldName);
+   if (fieldRef)
+      fieldNode.appendNode(lxClassRefAttr, scope.module->resolveReference(fieldRef));
+}
+
+void Compiler :: generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
+{
+   _Memory* section = scope.module->mapSection(enumRef | mskRDataRef, true);
+   if (!section) {
+      // if the member list is not available - create and assign to the static field
+      section = scope.module->mapSection(enumRef | mskRDataRef, false);
+
+      SyntaxTree expressionTree;
+      SyntaxWriter writer(expressionTree);
+
+      writer.newNode(lxExpression);
+      writer.newNode(lxAssigning);
+      writer.appendNode(lxStaticField, enumRef);
+      writer.appendNode(lxConstantList, enumRef | mskConstArray);
+      writer.closeNode();
+      writer.closeNode();
+
+      section->addReference(scope.arrayReference | mskVMTRef, (pos_t)-4);
+
+      compilePreloadedCode(scope, expressionTree.readRoot());
+   }
+
+   MemoryWriter metaWriter(section);
+
+   metaWriter.writeRef(memberRef | mskConstantRef, 0);
+}
 
 //void Compiler :: generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument)
 //{
