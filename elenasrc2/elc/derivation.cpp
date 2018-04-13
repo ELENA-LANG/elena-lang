@@ -83,9 +83,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsAssigning:
          _writer.newNode(lxAssigning);
          break;
-//      case nsResendExpression:
-//         _writer.newNode(lxResendExpression);
-//         break;
+      case nsResendExpression:
+         _writer.newNode(lxResendExpression);
+         break;
       case nsObject:
          _writer.newNode(lxObject);
          break;
@@ -2900,11 +2900,16 @@ void DerivationTransformer :: generateMethodTree(SyntaxWriter& writer, SNode nod
       current = current.nextNode();
    }
 
-   SNode bodyNode = node.findChild(lxCode, /*lxExpression, */lxDispatchCode, lxReturning/*, lxResendExpression*/);
+   SNode bodyNode = node.findChild(lxCode, /*lxExpression, */lxDispatchCode, lxReturning, lxResendExpression);
    if (bodyNode.compare(lxReturning, lxDispatchCode)) {
       if (templateMode)
          scope.reference = INVALID_REF;
 
+      writer.newNode(bodyNode.type);
+      generateExpressionTree(writer, bodyNode, scope, EXPRESSION_IMPLICIT_MODE);
+      writer.closeNode();
+   }
+   else if (bodyNode == lxResendExpression) {
       writer.newNode(bodyNode.type);
       generateExpressionTree(writer, bodyNode, scope, EXPRESSION_IMPLICIT_MODE);
       writer.closeNode();
@@ -3294,7 +3299,7 @@ bool DerivationTransformer :: generateSingletonScope(SyntaxWriter& writer, SNode
 
 bool DerivationTransformer :: recognizeMethodScope(SNode node, DerivationScope& scope)
 {
-   SNode current = node.findChild(lxCode, lxExpression, lxDispatchCode/*, lxReturning, lxResendExpression*/);
+   SNode current = node.findChild(lxCode, lxExpression, lxDispatchCode/*, lxReturning*/, lxResendExpression);
    if (current != lxNone) {
       // try to resolve the message name
       setIdentifier(node);

@@ -5461,27 +5461,31 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
       compileMultidispatch(writer, node, scope, *classScope);
    }
    else {
-      scope.raiseError(errIllegalOperation, node); // !! temporal
+      if (multiMethod) {
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-      //if (multiMethod) {
-      //   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+         compileMultidispatch(writer, SNode(), scope, *classScope);
+      }
 
-      //   compileMultidispatch(writer, SNode(), scope, *classScope);
-      //}
+      writer.newNode(lxNewFrame);
 
-      //writer.newNode(lxNewFrame);
+      // new stack frame
+      // stack already contains current $self reference
+      scope.level++;
 
-      //// new stack frame
-      //// stack already contains current $self reference
-      //scope.level++;
+      writer.newNode(lxExpression);
+      writer.newBookmark();
 
-      //writer.newNode(lxExpression);
-      //compileMessage(writer, node.firstChild(lxObjectMask), scope, (/*extensionMode ? HINT_EXT_RESENDEXPR : */HINT_RESENDEXPR) | HINT_PARAMETERSONLY);
-      //writer.closeNode();
+      ObjectInfo target = scope.mapMember(SELF_VAR);
+      writeTerminal(writer, node, scope, target, HINT_NODEBUGINFO);
+      compileMessage(writer, node.firstChild(lxObjectMask).findChild(lxMessage), scope, target, /*(*//*extensionMode ? HINT_EXT_RESENDEXPR : *//*HINT_RESENDEXPR) | HINT_PARAMETERSONLY*/0);
 
-      ////scope.freeSpace();
+      writer.removeBookmark();
+      writer.closeNode();
 
-      //writer.closeNode();
+      //scope.freeSpace();
+
+      writer.closeNode();
    }
 }
 
