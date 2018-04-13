@@ -67,7 +67,8 @@ namespace _ELENA_
    #define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
    #define DEFAULT_MESSAGE_ID      0x001F             // virtual method used for the implicit constructor
    #define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
-   #define PREDEFINED_MESSAGE_ID   0x0020
+   #define IF_ELSE_MESSAGE_ID      0x0021
+   #define PREDEFINED_MESSAGE_ID   0x0021
 
    // virtual operator
    #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -383,6 +384,7 @@ namespace _ELENA_
    #define IF_MESSAGE               "if"
    #define IFNOT_MESSAGE            "ifnot"
    #define SHIFT_MESSAGE            "shift"
+   #define IF_ELSE_MESSAGE          "if:else"
    #define INVOKE_MESSAGE           "#invoke"
    #define CAST_MESSAGE             "#cast"
    #define DEFAULT_MESSAGE          "default"

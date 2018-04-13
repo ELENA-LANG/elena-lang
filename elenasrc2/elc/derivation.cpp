@@ -2090,7 +2090,7 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
          case lxOperator:
             expressionExpected = false;
             copyOperator(writer, current, scope);
-            generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | /*EXPRESSION_IMPLICIT_MODE | */EXPRESSION_OBJECT_REQUIRED);
+            generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | EXPRESSION_IMPLICIT_MODE | EXPRESSION_OBJECT_REQUIRED);
             writer.insert(lxExpression);
             writer.closeNode();
             break;
@@ -3635,9 +3635,9 @@ void DerivationTransformer :: loadAttributes(CompilerScope& scope, ident_t name,
          MemoryReader metaReader(section);
          while (!metaReader.Eof()) {
             ref_t attrRef = metaReader.getDWord();
-            //if (!isPrimitiveRef(attrRef)) {
-            //   attrRef = importReference(extModule, attrRef, module);
-            //}
+            if (!isPrimitiveRef(attrRef)) {
+               attrRef = importReference(extModule, attrRef, scope.module);
+            }
    
             ident_t attrName = metaReader.getLiteral(DEFAULT_STR);
    

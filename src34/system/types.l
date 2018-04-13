@@ -51,8 +51,8 @@ __real          = #15.
 //__symbol        = #22.
 dynamic         = #30.
 
-//__ifoperator    = #4097.
-//__ifnotoperator = #4098.
+__ifoperator    = #4097.
+__ifnotoperator = #4098.
 
 /// Provides classes that describe the basic functionality
 

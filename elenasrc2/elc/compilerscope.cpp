@@ -141,7 +141,7 @@ void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Modul
       while (!staticValue_it.Eof()) {
          ref_t val = *staticValue_it;
          if (val != mskStatRef) {
-            val = importReference(exporter, (val & ~mskAnyRef) | (val & mskAnyRef), module);
+            val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);
          }
 
          target.staticValues.add(staticValue_it.key(), val);

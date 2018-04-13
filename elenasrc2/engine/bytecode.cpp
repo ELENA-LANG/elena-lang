@@ -718,6 +718,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
    addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
    addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
+   addVerb(verbs, IF_ELSE_MESSAGE,    IF_ELSE_MESSAGE_ID);
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)

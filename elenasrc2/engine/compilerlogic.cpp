@@ -369,75 +369,87 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
    return 0;
 }
 
-//bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
-//{
-//   if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
-//      return true;
-//
-//   ClassInfo info;
-//   scope.loadClassInfo(info, reference, true);
-//
-//   if ((info.header.flags & elDebugMask) == elEnumList) {
-//      _Module* extModule = NULL;
-//      _Memory* listSection = NULL;
-//
-//      while (true) {
-//         extModule = scope.loadReferenceModule(reference);
-//         listSection = extModule ? extModule->mapSection(reference | mskRDataRef, true) : NULL;
-//
-//         if (listSection == NULL && info.header.parentRef != 0) {
-//            reference = info.header.parentRef;
-//
-//            scope.loadClassInfo(info, reference, true);
-//         }
-//         else break;
-//      }
-//
-//      if (listSection) {
-//         MemoryReader reader(listSection);
-//
-//         ref_t trueRef = 0, falseRef = 0;
-//         while (!reader.Eof()) {
-//            ref_t memberRef = compiler.readEnumListMember(scope, extModule, reader);
-//
-//            ClassInfo memberInfo;
-//            scope.loadClassInfo(memberInfo, memberRef);
-//            int attribute = checkMethod(memberInfo, encodeMessage(IF_MESSAGE_ID, 1));
-//            if (attribute == (tpIfBranch | tpSealed)) {
-//               trueRef = memberRef;
-//            }
-//            else if (attribute == (tpIfNotBranch | tpSealed)) {
-//               falseRef = memberRef;
-//            }
-//         }
-//
-//         if (trueRef && falseRef) {
-//            scope.branchingInfo.reference = reference;
-//            scope.branchingInfo.trueRef = trueRef;
-//            scope.branchingInfo.falseRef = falseRef;
-//
-//            return true;
-//         }
-//      }
-//   }
-//
-//   return false;
-//}
-//
-//bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
-//{
-//   if (!loperand)
-//      return false;
-//
-//   if (loperand != scope.branchingInfo.reference) {
-//      if (!loadBranchingInfo(scope, compiler, loperand))
-//         return false;
-//   }
-//
-//   reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
-//
-//   return true;
-//}
+bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
+{
+   if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
+      return true;
+
+   ClassInfo info;
+   scope.loadClassInfo(info, reference);
+
+   if ((info.header.flags & elDebugMask) == elEnumList) {
+      _Module* extModule = NULL;
+      _Memory* listSection = NULL;
+
+      while (true) {
+         ref_t listRef = info.statics.get(ENUM_VAR).value1;
+
+         ref_t extRef = 0;
+         extModule = scope.loadReferenceModule(listRef, extRef);
+         listSection = extModule ? extModule->mapSection(extRef | mskRDataRef, true) : NULL;
+
+         if (listSection == NULL && info.header.parentRef != 0) {
+            reference = info.header.parentRef;
+
+            scope.loadClassInfo(info, reference);
+         }
+         else break;
+      }
+
+      if (listSection) {
+         ref_t trueRef = 0;
+         ref_t falseRef = 0;
+
+         // read enum list member and find true / false values
+         _ELENA_::RelocationMap::Iterator it(listSection->getReferences());
+         ref_t currentMask = 0;
+         ref_t memberRef = 0;
+         while (!it.Eof()) {
+            currentMask = it.key() & mskAnyRef;
+            if (currentMask == mskConstantRef) {
+               memberRef = importReference(extModule, it.key() & ~mskAnyRef, scope.module);
+
+               ClassInfo memberInfo;
+               scope.loadClassInfo(memberInfo, memberRef);
+               int attribute = checkMethod(memberInfo, encodeMessage(IF_MESSAGE_ID, 1));
+               if (attribute == (tpIfBranch | tpSealed)) {
+                  trueRef = memberRef;
+               }
+               else if (attribute == (tpIfNotBranch | tpSealed)) {
+                  falseRef = memberRef;
+               }
+            }
+
+            it++;
+         }
+
+         if (trueRef && falseRef) {
+            scope.branchingInfo.reference = reference;
+            scope.branchingInfo.trueRef = trueRef;
+            scope.branchingInfo.falseRef = falseRef;
+
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
+{
+   if (!loperand)
+      return false;
+
+   if (loperand != scope.branchingInfo.reference) {
+      if (!loadBranchingInfo(scope, compiler, loperand))
+         return false;
+   }
+
+   reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
+
+   return true;
+}
 
 int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
 {
@@ -1305,12 +1317,12 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
 {
    switch ((size_t)attrValue)
    {
-      //case V_IFBRANCH:
-      //   attrValue = tpIfBranch;
-      //   return true;
-      //case V_IFNOTBRANCH:
-      //   attrValue = tpIfNotBranch;
-      //   return true;
+      case V_IFBRANCH:
+         attrValue = tpIfBranch;
+         return true;
+      case V_IFNOTBRANCH:
+         attrValue = tpIfNotBranch;
+         return true;
       //case V_STATCKSAFE:
       //   attrValue = tpStackSafe;
       //   return true;

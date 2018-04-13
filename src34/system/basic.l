@@ -86,14 +86,14 @@
 public class true = BoolValue::
 {
     /// Executes the action
-    /*__ifoperator */if : aTrueAction = aTrueAction().
+    __ifoperator if : aTrueAction = aTrueAction().
 
-//    /// Executes then-action
-//    if : aTrueAction : aFalseAction = aTrueAction eval.
-//
-//    /// Always returns nil.
-//    __ifnotoperator ifnot : aTrueAction = $nil.
-//
+    /// Executes then-action
+    if:aTrueAction else:aFalseAction = aTrueAction().
+
+    /// Always returns nil.
+    __ifnotoperator ifnot : aTrueAction = nil.
+
 //    iif:aTrueValue:aFalseValue = aTrueValue.
 //    
 //    /// Executes logical OR operation
@@ -137,14 +137,14 @@ public class true = BoolValue::
 public class false = BoolValue::
 {
     /// Always returns nil
-    /*__ifnotoperator */if : anAction = nil.
+    __ifnotoperator if : anAction = nil.
     
-//    /// Executes else-action
-//    if : aTrueAction : aFalseAction = aFalseAction eval.
-//
-//    /// Executes the action
-//    __ifoperator ifnot : aFalseAction = aFalseAction eval.
-//
+    /// Executes else-action
+    if:aTrueAction else:aFalseAction = aFalseAction().
+
+    /// Executes the action
+    __ifoperator ifnot:aFalseAction = aFalseAction().
+
 //    iif:aTrueValue:aFalseValue = aFalseValue.
 //
 //    /// Executes logical OR operation
@@ -942,7 +942,7 @@ public sealed struct ShortNumber :: IntBaseNumber
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-public sealed struct IntNumber //:: IntBaseNumber
+public sealed struct IntNumber :: IntBaseNumber
 {
     type<__byte, 4> theValue.
 
@@ -1048,21 +1048,21 @@ public sealed struct IntNumber //:: IntBaseNumber
 //    stacksafe int divide(BaseVariable v)
 //        <= divide(v value).
         
-    /// Returns the sum
-    int add(int anOperand)
-        = theValue + anOperand.
-
-    /// Returns the sum
-    int subtract(int anOperand)
-        = theValue - anOperand.
-
-    /// Returns the product
-    int multiply(int anOperand)
-        = theValue * anOperand.
-
-    /// Returns the result of integer division
-    int divide(int anOperand)
-        = theValue / anOperand.
+//    /// Returns the sum
+//    int add(int anOperand)
+//        = theValue + anOperand.
+//
+//    /// Returns the sum
+//    int subtract(int anOperand)
+//        = theValue - anOperand.
+//
+//    /// Returns the product
+//    int multiply(int anOperand)
+//        = theValue * anOperand.
+//
+//    /// Returns the result of integer division
+//    int divide(int anOperand)
+//        = theValue / anOperand.
 
 //    multi and:n
 //        <= and int:n.

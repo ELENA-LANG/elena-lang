@@ -1123,13 +1123,13 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
    this->saved = this->reserved = 0;
 }
 
-//Compiler::CodeScope :: CodeScope(CodeScope* parent)
-//   : Scope(parent), locals(Parameter(0))
-//{
-//   this->level = parent->level;
-//   this->saved = parent->saved;
-//   this->reserved = parent->reserved;
-//}
+Compiler::CodeScope :: CodeScope(CodeScope* parent)
+   : Scope(parent), locals(Parameter(0))
+{
+   this->level = parent->level;
+   this->saved = parent->saved;
+   this->reserved = parent->reserved;
+}
 
 ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
 {
@@ -2808,124 +2808,124 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
    return encodeMessage(actionRef, paramCount) | actionFlags;
 }
 
-////ref_t Compiler :: mapExtension(ModuleScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef)
-////{
-////   auto it = typeExtensions->getIt(messageRef);
-////   while (!it.Eof()) {
-////      ref_t ref = *it;
-////      ref_t resolvedMessage = _logic->resolveMultimethod(scope, messageRef, ref, implicitSignatureRef);
-////      if (resolvedMessage) {
-////         messageRef = resolvedMessage;
-////
-////         return ref;
-////      }
-////
-////      it = typeExtensions->nextIt(messageRef, it);
-////   }
-////
-////   return 0;
-////}
-////
-////ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, bool& genericOne)
-////{
-////   // check typed extension if the type available
-////   ref_t typeRef = 0;
-////   ref_t extRef = 0;
-////
-////   ref_t objectRef = resolveObjectReference(scope, object);
-////   if (_logic->isPrimitiveRef(objectRef)) {
-////      if (objectRef != V_ARGARRAY)
-////         objectRef = _logic->resolvePrimitiveReference(*scope.moduleScope, objectRef);
-////   }
-////   else if (objectRef == scope.moduleScope->superReference) {
-////      objectRef = 0;
-////   }
-////
-////   if (objectRef != 0 && scope.moduleScope->extensionHints.exist(messageRef, objectRef)) {
-////      typeRef = objectRef;
-////   }
-////   else {
-////      if (scope.moduleScope->extensionHints.exist(messageRef)) {
-////         // if class reference available - select the possible type
-////         if (objectRef != 0) {
-////            SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
-////            while (!it.Eof()) {
-////               if (it.key() == messageRef) {
-////                  if (_logic->isCompatible(*scope.moduleScope, *it, objectRef)) {
-////                     typeRef = *it;
-////
-////                     break;
-////                  }
-////               }
-////
-////               it++;
-////            }
-////         }
-////      }
-////   }
-////
-////   // try to resolve strong typed extension and strong typed message
-////   if (implicitSignatureRef) {
-////      if (typeRef != 0) {
-////         extRef = mapExtension(*scope.moduleScope, scope.moduleScope->extensions.get(typeRef), messageRef, implicitSignatureRef);
-////         if (extRef)
-////            return extRef;
-////      }
-////
-////      // if no match found - try to resolve general extension and strong typed message
-////      extRef = mapExtension(*scope.moduleScope, scope.moduleScope->extensions.get(0), messageRef, implicitSignatureRef);
-////      if (extRef)
-////         return extRef;
-////   }
-////
-////   // if no match found - try to resolve strong typed extension and genral message
-////   if (typeRef != 0) {
-////      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(typeRef);
-////
-////      if (typeExtensions)
-////         extRef = typeExtensions->get(messageRef);
-////   }
-////
-////   // if no match found - try to resolve general extension and general message
-////   if (extRef == 0) {
-////      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
-////
-////      if (typeExtensions) {
-////         extRef = typeExtensions->get(messageRef);
-////         if (extRef != 0)
-////            genericOne = true;
-////      }
-////   }
-////
-////   return extRef;
-////}
-//
-//void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
+//ref_t Compiler :: mapExtension(ModuleScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef)
 //{
-//   if (loopMode) {
-//      writer.newNode(lxElse, ifReference);
+//   auto it = typeExtensions->getIt(messageRef);
+//   while (!it.Eof()) {
+//      ref_t ref = *it;
+//      ref_t resolvedMessage = _logic->resolveMultimethod(scope, messageRef, ref, implicitSignatureRef);
+//      if (resolvedMessage) {
+//         messageRef = resolvedMessage;
 //
-//      compileBranching(writer, thenBody.findSubNode(lxCode), scope);
-//      writer.closeNode();
+//         return ref;
+//      }
+//
+//      it = typeExtensions->nextIt(messageRef, it);
+//   }
+//
+//   return 0;
+//}
+//
+//ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, bool& genericOne)
+//{
+//   // check typed extension if the type available
+//   ref_t typeRef = 0;
+//   ref_t extRef = 0;
+//
+//   ref_t objectRef = resolveObjectReference(scope, object);
+//   if (_logic->isPrimitiveRef(objectRef)) {
+//      if (objectRef != V_ARGARRAY)
+//         objectRef = _logic->resolvePrimitiveReference(*scope.moduleScope, objectRef);
+//   }
+//   else if (objectRef == scope.moduleScope->superReference) {
+//      objectRef = 0;
+//   }
+//
+//   if (objectRef != 0 && scope.moduleScope->extensionHints.exist(messageRef, objectRef)) {
+//      typeRef = objectRef;
 //   }
 //   else {
-//      SNode thenCode = thenBody.findSubNode(lxCode);
+//      if (scope.moduleScope->extensionHints.exist(messageRef)) {
+//         // if class reference available - select the possible type
+//         if (objectRef != 0) {
+//            SubjectMap::Iterator it = scope.moduleScope->extensionHints.start();
+//            while (!it.Eof()) {
+//               if (it.key() == messageRef) {
+//                  if (_logic->isCompatible(*scope.moduleScope, *it, objectRef)) {
+//                     typeRef = *it;
 //
-//      writer.newNode(lxIf, ifReference);
-//      compileBranching(writer, thenCode, scope);
-//      writer.closeNode();
+//                     break;
+//                  }
+//               }
 //
-//      // HOTFIX : switch mode - ignore else
-//      if (!switchMode) {
-//         SNode elseCode = thenBody.firstChild().nextNode();
-//         if (elseCode != lxNone) {
-//            writer.newNode(lxElse, 0);
-//            compileBranching(writer, elseCode, scope);
-//            writer.closeNode();
+//               it++;
+//            }
 //         }
 //      }
 //   }
+//
+//   // try to resolve strong typed extension and strong typed message
+//   if (implicitSignatureRef) {
+//      if (typeRef != 0) {
+//         extRef = mapExtension(*scope.moduleScope, scope.moduleScope->extensions.get(typeRef), messageRef, implicitSignatureRef);
+//         if (extRef)
+//            return extRef;
+//      }
+//
+//      // if no match found - try to resolve general extension and strong typed message
+//      extRef = mapExtension(*scope.moduleScope, scope.moduleScope->extensions.get(0), messageRef, implicitSignatureRef);
+//      if (extRef)
+//         return extRef;
+//   }
+//
+//   // if no match found - try to resolve strong typed extension and genral message
+//   if (typeRef != 0) {
+//      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(typeRef);
+//
+//      if (typeExtensions)
+//         extRef = typeExtensions->get(messageRef);
+//   }
+//
+//   // if no match found - try to resolve general extension and general message
+//   if (extRef == 0) {
+//      SubjectMap* typeExtensions = scope.moduleScope->extensions.get(0);
+//
+//      if (typeExtensions) {
+//         extRef = typeExtensions->get(messageRef);
+//         if (extRef != 0)
+//            genericOne = true;
+//      }
+//   }
+//
+//   return extRef;
 //}
+
+void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
+{
+   if (loopMode) {
+      writer.newNode(lxElse, ifReference);
+
+      compileBranching(writer, thenBody.findSubNode(lxCode), scope);
+      writer.closeNode();
+   }
+   else {
+      SNode thenCode = thenBody.findSubNode(lxCode);
+
+      writer.newNode(lxIf, ifReference);
+      compileBranching(writer, thenCode, scope);
+      writer.closeNode();
+
+      // HOTFIX : switch mode - ignore else
+      if (!switchMode) {
+         SNode elseCode = thenBody.firstChild().nextNode();
+         if (elseCode != lxNone) {
+            writer.newNode(lxElse, 0);
+            compileBranching(writer, elseCode, scope);
+            writer.closeNode();
+         }
+      }
+   }
+}
 
 void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal)
 {
@@ -2941,36 +2941,34 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
 
    ref_t ifReference = 0;
    ref_t resolved_operator_id = operator_id;
-   //// try to resolve the branching operator directly
-   //if (_logic->resolveBranchOperation(*scope.moduleScope, *this, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
-   //   // good luck : we can implement branching directly
-   //   compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
+   // try to resolve the branching operator directly
+   if (_logic->resolveBranchOperation(*scope.moduleScope, *this, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
+      // good luck : we can implement branching directly
+      compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
 
-   //   writer.insert(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
-   //   writer.closeNode();
-   //}
-   //else {
+      writer.insert(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
+      writer.closeNode();
+   }
+   else {
       operator_id = original_id;
 
       // bad luck : we have to create closure
+      SNode roperand2Node = roperandNode.firstChild().existChild(lxCode) ? roperandNode.firstChild() : SNode();
+      int message = encodeMessage(operator_id, 1);
+      if (roperand2Node != lxNone) {
+         message = encodeMessage(IF_ELSE_MESSAGE_ID, 2);
+
+         compileClosure(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
+      }
       compileObject(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
 
-      SNode roperand2Node = roperandNode.firstChild() == lxExpression ? roperandNode.findChild(lxCode) : SNode();
-      if (roperand2Node != lxNone) {
-         // HOTFIX : else sub code is located in the first expression, while if one - in second layer expression
-         compileClosure(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
-
-         //compileObject(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
-
-         retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(operator_id, 2), 0);
-      }
-      else retVal = compileMessage(writer, roperandNode, scope, loperand, encodeMessage(operator_id, 1), 0);
+      retVal = compileMessage(writer, roperandNode, scope, loperand, message, 0);
 
       if (loopMode) {
          writer.insert(lxLooping);
          writer.closeNode();
       }
-   //}
+   }
 }
 
 ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, ObjectInfo loperand, int mode, int operator_id)
@@ -4414,22 +4412,22 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    return objectInfo;
 }
 
-////ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
-////{
-////   CodeScope subScope(&scope);
-////
-////   writer.newNode(lxCode);
-////
-////   compileCode(writer, thenCode, subScope);
-////
-////   // preserve the allocated space
-////   scope.level = subScope.level;
-////
-////   writer.closeNode();
-////
-////   return ObjectInfo(okObject);
-////}
-////
+ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
+{
+   CodeScope subScope(&scope);
+
+   writer.newNode(lxCode);
+
+   compileCode(writer, thenCode, subScope);
+
+   // preserve the allocated space
+   scope.level = subScope.level;
+
+   writer.closeNode();
+
+   return ObjectInfo(okObject);
+}
+
 ////void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
 ////{
 ////   // find inner expression
@@ -6544,7 +6542,11 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 
             current.setArgument(value);
          }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         else {
+            current = lxIdle;
+
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
       }
       else if (current == lxClassRefAttr) {
       //   if (current.nextNode().findNext(lxTerminalMask) != lxNone) {

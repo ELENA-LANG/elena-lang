@@ -66,7 +66,7 @@ class CompilerLogic : public _CompilerLogic
    bool isSignatureCompatible(_CompilerScope& scope, ref_t targetSignature, ref_t* sourceSignatures);
    bool isSignatureCompatible(_CompilerScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures);
 
-//   bool loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
+   bool loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
    bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef, ref_t elementRef, ref_t* signatures, int signatureLen);
 
 //   bool isBoolean(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
@@ -91,7 +91,7 @@ public:
    virtual int resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
    virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
-//   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference);
+   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference);
    virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
 

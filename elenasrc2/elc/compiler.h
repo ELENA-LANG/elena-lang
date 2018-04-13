@@ -684,7 +684,7 @@ private:
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
-//      CodeScope(CodeScope* parent);
+      CodeScope(CodeScope* parent);
    };
 
 //   // --- ResendScope ---
@@ -880,7 +880,7 @@ private:
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
-//   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
    void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
    ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
 
@@ -900,7 +900,7 @@ private:
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 
-//   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
 
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
    void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
@@ -1052,7 +1052,7 @@ public:
    virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
    virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
 
-//   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
+   //virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);
 };

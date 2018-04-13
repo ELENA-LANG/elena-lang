@@ -24,11 +24,11 @@ public enum class BoolValue
     bool equal(bool aBool) = nil.
 
     if : aTrueAction = nil.
+    
+    if:aTrueAction else:aFalseAction = nil.
 
-//    if : aTrueAction : aFalseAction = nil.
-//
-//    ifnot : aTrueAction = $nil.
-//
+    ifnot : aTrueAction = nil.
+
 //    iif:aTrueValue:aFalseValue = nil.
 
 //    bool or : anExpr = $nil.

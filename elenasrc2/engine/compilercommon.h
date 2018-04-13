@@ -41,12 +41,12 @@
 
 #define V_AUTO           (ref_t)-50
 
-//#define V_IFBRANCH      (ref_t)-4097
-//#define V_IFNOTBRANCH   (ref_t)-4098
-////#define V_WARNING1    (ref_t)-4099
-////#define V_WARNING2    (ref_t)-4100
-////#define V_WARNING3    (ref_t)-4101
-//
+#define V_IFBRANCH      (ref_t)-4097
+#define V_IFNOTBRANCH   (ref_t)-4098
+//#define V_WARNING1    (ref_t)-4099
+//#define V_WARNING2    (ref_t)-4100
+//#define V_WARNING3    (ref_t)-4101
+
 //#define V_STATCKSAFE     (ref_t)-8192
 //#define V_EMBEDDABLE     (ref_t)-8193
 #define V_STATIC         (ref_t)-8194
@@ -110,8 +110,8 @@ enum MethodHint
    tpEmbeddable  = 0x0020,
    tpGeneric     = 0x0040,
    tpAction      = 0x0080,
-//   tpIfBranch    = 0x0100,
-//   tpIfNotBranch = 0x0200,
+   tpIfBranch    = 0x0100,
+   tpIfNotBranch = 0x0200,
    tpConstructor = 0x00400,
    tpConversion  = 0x00800,
    tpMultimethod = 0x01000,
@@ -125,19 +125,19 @@ enum MethodHint
 
 struct _CompilerScope
 {
-////   struct BranchingInfo
-////   {
-////      ref_t reference;
-////      ref_t trueRef;
-////      ref_t falseRef;
-////
-////      BranchingInfo()
-////      {
-////         reference = 0;
-////         trueRef = falseRef = 0;
-////      }
-////   };
-//
+   struct BranchingInfo
+   {
+      ref_t reference;
+      ref_t trueRef;
+      ref_t falseRef;
+
+      BranchingInfo()
+      {
+         reference = 0;
+         trueRef = falseRef = 0;
+      }
+   };
+
 //   ident_t  sourcePath;
 //   ref_t    sourcePathRef;
 
@@ -158,9 +158,9 @@ struct _CompilerScope
    ref_t charReference;
    ref_t arrayReference;
 
-////   // cached bool values
-////   BranchingInfo branchingInfo;
-//
+   // cached bool values
+   BranchingInfo branchingInfo;
+
    virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal) = 0;
    //virtual void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal) = 0;
 
@@ -282,8 +282,8 @@ public:
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
    virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 
-//   // retrieve the branching operation type
-//   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
+   // retrieve the branching operation type
+   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
    virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
