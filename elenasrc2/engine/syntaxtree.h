@@ -162,8 +162,8 @@ enum LexicalType
    lxArrOp           = 0x8C029,   // arg - operation id
    lxBinArrOp        = 0x8C02A,   // arg - operation id
    lxArgArrOp        = 0x8C02B,   // arg - operation id
-//   lxNilOp           = 0x8C02C,   // arg - operation id
-//   lxBoolOp          = 0x0C02D,   // arg - operation id
+   lxNilOp           = 0x8C02C,   // arg - operation id
+   lxBoolOp          = 0x0C02D,   // arg - operation id
 
    lxGreaterN        = 0x0C02E,   // arg - value
    lxNotGreaterN     = 0x0C02F,   // arg - value

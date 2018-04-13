@@ -48,8 +48,8 @@ using namespace _ELENA_;
 #define HINT_DYNAMIC_OBJECT   0x00000100  // indicates that the structure MUST be boxed
 #define HINT_UNBOXINGEXPECTED 0x00000080
 #define HINT_PROP_MODE        0x00000040
-//#define HINT_INT64EXPECTED    0x00000004
-//#define HINT_REAL64EXPECTED   0x00000002
+#define HINT_INT64EXPECTED    0x00000004
+#define HINT_REAL64EXPECTED   0x00000002
 //#define HINT_INQUIRY_MODE     0x00000001
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
@@ -222,7 +222,6 @@ Compiler::NamespaceScope :: NamespaceScope(CompilerScope* moduleScope/*_ProjectM
 //   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
 //   messageReference = mapReference(project->resolveForward(MESSAGE_FORWARD));
 //   extMessageReference = mapReference(project->resolveForward(EXT_MESSAGE_FORWARD));
-//   boolReference = mapReference(project->resolveForward(BOOL_FORWARD));
 //
 //   // HOTFIX : package section should be created if at least literal class is declated
 //   if (literalReference != 0) {
@@ -3670,7 +3669,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          }
          else scope.raiseError(errInvalidOperation, node);
       }
-      else retVal = compileExpression(writer, sourceNode, scope, 0, /*HINT_NOUNBOXING*/0);
+      else retVal = compileExpression(writer, sourceNode, scope, targetRef, /*HINT_NOUNBOXING*/0);
       
    if (operationType != lxNone) {
       writer.insert(operationType, operand);
@@ -4293,10 +4292,12 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 //            scope.raiseError(errIllegalOperation, node);
 //      }
       else {
-         //ObjectInfo object = compileExpression(writer, objectNode, scope, targetRef, mode);
+         ObjectInfo object = compileExpression(writer, objectNode, scope, targetRef, mode);
+         if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, object), 0))
+            scope.raiseError(errIllegalOperation, node);
 
          //if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
-            scope.raiseError(errIllegalOperation, node);
+         //   scope.raiseError(errIllegalOperation, node);
       }
    }
    else if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
@@ -4922,6 +4923,19 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       else break;
 
       current = current.nextNode();
+   }
+
+   if (signatureLen > 0) {
+      // HOTFIX : ignore generic signature - only objects
+      bool genericSignature = true;
+      for (int i = 0; i < signatureLen; i++) {
+         if (signature[i] != scope.moduleScope->superReference) {
+            genericSignature = false;
+            break;
+         }
+      }
+      if (genericSignature)
+         signatureLen = 0;
    }
 
 //   // if method has named argument list
@@ -7256,12 +7270,12 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScop
          }
 
          int subMode = HINT_NOBOXING;
-         //if (targetRef == scope.longReference) {
-         //   subMode |= HINT_INT64EXPECTED;
-         //}
-         //else if (targetRef == scope.realReference) {
-         //   subMode |= HINT_REAL64EXPECTED;
-         //}
+         if (targetRef == scope.moduleScope->longReference) {
+            subMode |= HINT_INT64EXPECTED;
+         }
+         else if (targetRef == scope.moduleScope->realReference) {
+            subMode |= HINT_REAL64EXPECTED;
+         }
 
          sourceRef = analizeExpression(sourceNode, scope, /*warningScope, */subMode);
       }
@@ -7427,7 +7441,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, /*Warn
       case lxBinArrOp:
       case lxNewOp:
       case lxArgArrOp:
-      //case lxBoolOp:
+      case lxBoolOp:
          return analizeOp(current, scope/*, warningScope*/);
       //case lxInternalCall:
       //   return analizeInternalCall(current, scope/*, warningScope*/);
@@ -7438,7 +7452,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, /*Warn
       case lxLooping:
       //case lxSwitching:
       //case lxOption:
-      //case lxElse:
+      case lxElse:
          analizeExpressionTree(current, scope/*, warningScope*/);
          return 0;
       case lxNested:
@@ -7881,6 +7895,7 @@ void Compiler :: initializeScope(ident_t name, CompilerScope& scope, bool withDe
    scope.literalReference = safeMapReference(scope.module, scope.project->resolveForward(STR_FORWARD));
    scope.wideReference = safeMapReference(scope.module, scope.project->resolveForward(WIDESTR_FORWARD));
    scope.charReference = safeMapReference(scope.module, scope.project->resolveForward(CHAR_FORWARD));
+   scope.boolReference = safeMapReference(scope.module, scope.project->resolveForward(BOOL_FORWARD));
 
 
 //   createPackageInfo(info.codeModule, project);

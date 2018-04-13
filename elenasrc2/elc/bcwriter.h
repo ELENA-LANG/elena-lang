@@ -192,7 +192,7 @@ class ByteCodeWriter
    void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
    void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
    void doGenericHandler(CommandTape& tape);
-//   void unboxMessage(CommandTape& tape, int paramCount);
+   void unboxMessage(CommandTape& tape, int paramCount);
    void resend(CommandTape& tape);
    void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
@@ -213,7 +213,7 @@ class ByteCodeWriter
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
    void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 
 //   void freeVirtualStack(CommandTape& tape, int count);
 
@@ -279,8 +279,8 @@ class ByteCodeWriter
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
-//   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
-//   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
+   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);

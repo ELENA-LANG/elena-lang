@@ -69,7 +69,7 @@ class CompilerLogic : public _CompilerLogic
    bool loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
    bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef, ref_t elementRef, ref_t* signatures, int signatureLen);
 
-//   bool isBoolean(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
+   bool isBoolean(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
 
 public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);

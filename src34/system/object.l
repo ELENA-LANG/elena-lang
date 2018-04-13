@@ -29,23 +29,23 @@ public enum class BoolValue
 
     ifnot : aTrueAction = nil.
 
-//    iif:aTrueValue:aFalseValue = nil.
+    iif(object trueVal, object falseVal) = nil.
 
-//    bool or : anExpr = $nil.
-//
-//    bool and : anExpr = $nil.
-//
-//    bool xor : aBool = $nil.
-//
-//    bool not = $self inverted.
+    bool or : anExpr = nil.
+
+    bool and : anExpr = nil.
+
+    bool xor : aBool = nil.
+
+    bool not = self inverted.
 
     bool inverted = nil.
 
 //    literal = $nil.
 //
 //    wide = $nil.
-//
-//    clone = $nil.
+
+    clone = nil.
 }
 
 //extension commonOp

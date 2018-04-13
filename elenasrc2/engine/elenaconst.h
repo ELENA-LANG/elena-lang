@@ -419,7 +419,7 @@ namespace _ELENA_
 //   #define TEMPLATE_SET_MESSAGE     "$set"
 
   // --- ELENA explicit variables ---
-  // #define GROUP_VAR                "target"             // the current method target / closure owner method target
+   #define GROUP_VAR               "target"             // the current method target / closure owner method target
    #define SELF_VAR                "self"            // the current method class reference / closure owner class reference
 
    #define SUPER_VAR               "super"           // the predecessor class
@@ -499,7 +499,7 @@ namespace _ELENA_
 //   #define EXT_MESSAGE_FORWARD      "'$ext_message"
 //   #define SIGNATURE_FORWARD        "'$signature"
    #define ARRAY_FORWARD            "$array"
-//   #define BOOL_FORWARD             "'$bool"
+   #define BOOL_FORWARD             "$bool"
 
    #define STARTUP_SYMBOL             "$startUp"
    

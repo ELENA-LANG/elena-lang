@@ -94,26 +94,26 @@ public class true = BoolValue::
     /// Always returns nil.
     __ifnotoperator ifnot : aTrueAction = nil.
 
-//    iif:aTrueValue:aFalseValue = aTrueValue.
-//    
-//    /// Executes logical OR operation
-//    ///
-//    /// Always return true
-//    bool or : anExpr = $self.
-//
-//    /// Executes logical AND operation
-//    bool and : anExpr = anExpr bool.
-//
-//    /// Executes logical XOR operation
-//    bool xor : aBool
-//    [
-//        aBool bool ? [ ^ false ].
-//        
-//        ^ $self
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    bool equal : anExpr = anExpr bool.
+    iif(object trueVal, object falseVal) = trueVal.
+    
+    /// Executes logical OR operation
+    ///
+    /// Always return true
+    bool or : anExpr = self.
+
+    /// Executes logical AND operation
+    bool and : anExpr = anExpr.
+
+    /// Executes logical XOR operation
+    bool xor : aBool
+    [
+        T<bool>(aBool) ? [ ^ false ].
+        
+        ^ self
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    bool equal : anExpr = anExpr.
 
     /// Determines whether the specified object is equal to the current object boolean value.
     bool equal(bool aBool) = aBool.
@@ -126,9 +126,9 @@ public class true = BoolValue::
 //
 //    /// Returns literal representation.
 //    wide = "true"w.
-//
-//    /// Returns itself.
-//    clone = $self.
+
+    /// Returns itself.
+    clone = self.
 }.
 
 // --- false ---
@@ -145,31 +145,31 @@ public class false = BoolValue::
     /// Executes the action
     __ifoperator ifnot:aFalseAction = aFalseAction().
 
-//    iif:aTrueValue:aFalseValue = aFalseValue.
-//
-//    /// Executes logical OR operation
-//    bool or : anExpr = anExpr bool.
-//
-//    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    bool and : anExpr = $self.
-//
-//    /// Executes logical XOR operation
-//    bool xor : anExpr 
-//    [
-//        anExpr bool ? [ ^ true ].
-//        
-//        ^ $self
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    bool equal : anExpr
-//    [
-//        anExpr bool ? [ ^ $self ].
-//        
-//        ^ true
-//    ]
+    iif(object aTrueValue, object aFalseValue) = aFalseValue.
+
+    /// Executes logical OR operation
+    bool or : anExpr = anExpr.
+
+    /// Executes logical AND operation
+    ///
+    /// Always return false
+    bool and : anExpr = self.
+
+    /// Executes logical XOR operation
+    bool xor : anExpr 
+    [
+        T<bool>(anExpr) ? [ ^ true ].
+        
+        ^ self
+    ]
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    bool equal : anExpr
+    [
+        T<bool>(anExpr) ? [ ^ self ].
+        
+        ^ true
+    ]
 
     /// Determines whether the specified object is equal to the current object boolean value
     bool equal(bool anExpr)
@@ -185,9 +185,9 @@ public class false = BoolValue::
 //    
 //    /// Returns literal representation
 //    wide = "false"w.
-//    
-//    /// Returns itself
-//    clone = $self.
+    
+    /// Returns itself
+    clone = self.
 }.
 
 // === basic data classes ===
@@ -199,7 +199,7 @@ public class BaseValue
 {
 //    bool equal(BaseVariable var)
 //        <= equal(var value).
-//    
+    
 //    bool less(BaseVariable var)
 //        <= equal(var value).
 //    

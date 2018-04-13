@@ -152,7 +152,7 @@ struct _CompilerScope
 //   ref_t signatureReference;
 //   ref_t messageReference;
 //   ref_t extMessageReference;
-//   ref_t boolReference;
+   ref_t boolReference;
    ref_t literalReference;
    ref_t wideReference;
    ref_t charReference;
@@ -192,7 +192,7 @@ struct _CompilerScope
 ////      sourcePath = NULL;
 ////      sourcePathRef = 0;
       debugModule = module = NULL;
-      intReference = /*boolReference = */superReference = 0;
+      intReference = boolReference = superReference = 0;
 ////      signatureReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
