@@ -117,7 +117,7 @@ public:
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
-//   virtual bool isClosure(ClassInfo& info, ref_t message);
+   virtual bool isClosure(ClassInfo& info, ref_t message);
    virtual bool isReadonly(ClassInfo& info);
    virtual bool isReadonly(_CompilerScope& scope, ref_t reference)
    {

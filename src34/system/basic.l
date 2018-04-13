@@ -85,9 +85,9 @@
 /// A true value symbol
 public class true = BoolValue::
 {
-//    /// Executes the action
-//    __ifoperator if : aTrueAction = aTrueAction eval.
-//
+    /// Executes the action
+    /*__ifoperator */if : aTrueAction = aTrueAction().
+
 //    /// Executes then-action
 //    if : aTrueAction : aFalseAction = aTrueAction eval.
 //
@@ -136,9 +136,9 @@ public class true = BoolValue::
 /// A false value symbol
 public class false = BoolValue::
 {
-//    /// Always returns nil
-//    __ifnotoperator if : anAction = $nil.
-//    
+    /// Always returns nil
+    /*__ifnotoperator */if : anAction = nil.
+    
 //    /// Executes else-action
 //    if : aTrueAction : aFalseAction = aFalseAction eval.
 //
@@ -2226,10 +2226,10 @@ public sealed struct RealNumber :: BaseNumber
 
 // --- CharValue ---
 
-///// An UTF-32 character symbol
-//public sealed const struct CharValue :: BaseValue
-//{
-//    T<__binary,4> theValue.
+/// An UTF-32 character symbol
+public sealed const struct CharValue :: BaseValue
+{
+    int theValue.
 
 //    /// Creates the object with a default value (0)
 //    constructor new
@@ -2345,7 +2345,7 @@ public sealed struct RealNumber :: BaseNumber
 //        
 //        ^ aCode.
 //    ]
-//}
+}
 
 //// --- nil constant ---
 //

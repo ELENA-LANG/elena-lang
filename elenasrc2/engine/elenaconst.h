@@ -300,7 +300,7 @@ namespace _ELENA_
 //   const int elTapeGroup           = 0x02000200;
    const int elClassClass          = 0x04000000;
    const int elWithMuti            = 0x08000000;
-//   const int elVirtualVMT          = 0x10000000;
+   const int elVirtualVMT          = 0x10000000;
 
    const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
@@ -420,12 +420,12 @@ namespace _ELENA_
   // #define GROUP_VAR                "target"             // the current method target / closure owner method target
    #define SELF_VAR                "self"            // the current method class reference / closure owner class reference
 
-//   #define SUPER_VAR               "$super"           // the predecessor class
+   #define SUPER_VAR               "super"           // the predecessor class
 //   #define SUBJECT_VAR             "$subject"         // the current message
-   #define NIL_VAR                 "__nil"             // the nil pseudo symbol - representing the null value
-//   #define RETVAL_VAR              "$$ret"            // the closure returning value
-//   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
-//   #define PARENT_VAR              "$$parent"         // the closure parent
+   #define NIL_VAR                 "nil"             // the nil pseudo symbol - representing the null value
+   #define RETVAL_VAR              "$$ret"            // the closure returning value
+   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
+   #define PARENT_VAR              "$$parent"         // the closure parent
 
 //   #define TEMPLATE_FIELD          "$field"
 

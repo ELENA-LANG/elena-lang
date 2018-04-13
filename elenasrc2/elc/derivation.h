@@ -257,7 +257,7 @@ class DerivationTransformer //: public _DerivationTransformer
 //////   bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributes, SyntaxTree& buffer, bool templateMode = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode/* = false*/);
    bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode/* = false*/); // returns true if in-place init found
-//////   void generateCodeExpression(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateCodeExpression(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
 ////   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);

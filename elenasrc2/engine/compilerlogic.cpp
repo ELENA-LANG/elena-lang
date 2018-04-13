@@ -226,7 +226,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
 
       result.embeddable = test(hint, tpEmbeddable);
-//      result.closure = test(hint, tpAction);
+      result.closure = test(hint, tpAction);
 
       if ((hint & tpMask) == tpSealed) {
          return hint;
@@ -296,10 +296,10 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
       result.stackSafe = /*test(methodHint, tpStackSafe)*/true; // NOTE : currently all methods are stack-safe
 //   }      
 
-//   if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
-//      // HOTFIX : calling closure
-//      result.closure = true;
-//   }
+   if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
+      // HOTFIX : calling closure
+      result.closure = true;
+   }
 
    return callType;
 }
@@ -563,10 +563,10 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
 }
 
-//bool CompilerLogic :: isClosure(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpAction);
-//}
+bool CompilerLogic :: isClosure(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpAction);
+}
 
 void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
 {

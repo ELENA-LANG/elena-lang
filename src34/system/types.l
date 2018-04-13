@@ -42,7 +42,7 @@ private         = #8212.
 
 __string        = #8200.
 __byte          = #11.
-__binary        = #12.
+//__binary        = #12.
 __real          = #15.
 //__mssg          = #19.
 //__subj          = #18.

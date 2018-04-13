@@ -19,7 +19,7 @@
 
 #define V_BINARY         (ref_t)-10
 #define V_INT8           (ref_t)-11
-#define V_PTR            (ref_t)-12
+//#define V_PTR            (ref_t)-12
 #define V_INT32          (ref_t)-13
 #define V_INT64          (ref_t)-14
 #define V_REAL64         (ref_t)-15
@@ -109,7 +109,7 @@ enum MethodHint
 //   tpStackSafe   = 0x0010,
    tpEmbeddable  = 0x0020,
    tpGeneric     = 0x0040,
-//   tpAction      = 0x0080,
+   tpAction      = 0x0080,
 //   tpIfBranch    = 0x0100,
 //   tpIfNotBranch = 0x0200,
    tpConstructor = 0x00400,
@@ -245,7 +245,7 @@ public:
       bool  withOpenArgDispatcher;
       bool  withOpenArg1Dispatcher;
       bool  withOpenArg2Dispatcher;
-//      bool  closure;
+      bool  closure;
       ref_t outputReference;
 
       ChechMethodInfo()
@@ -258,7 +258,7 @@ public:
          withOpenArgDispatcher = false;
          withOpenArg1Dispatcher = false;
          withOpenArg2Dispatcher = false;
-//         closure = false;
+         closure = false;
       }
    };
 
@@ -300,7 +300,7 @@ public:
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
+   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          

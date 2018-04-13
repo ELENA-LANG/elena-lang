@@ -99,7 +99,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsL2Operation:
 //      case nsL3Operation:
       case nsL4Operation:
-//      case nsL5Operation:
+      case nsL5Operation:
          _writer.newNode(lxOperator);
          break;
 //      case nsL8Operation:
@@ -1812,18 +1812,20 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
 
 void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
-//   bool invokeWithNoParamMode = node == lxIdleMsgParameter;
-//   bool invokeMode = invokeWithNoParamMode || (node == lxMessageParameter);
+   bool invokeWithNoParamMode = node == lxIdleMsgParameter;
+   bool invokeMode = invokeWithNoParamMode || (node == lxMessageParameter);
 
    SNode current;
-//   if (invokeMode) {
-//      writer.appendNode(lxMessage, INVOKE_MESSAGE);
-//
-//      current = node;
-//      if (invokeWithNoParamMode)
-//         return;
-//   }
-   /*else */current = node.firstChild();
+   if (invokeMode) {
+      writer.newNode(lxMessage);
+      writer.appendNode(lxIdentifier, INVOKE_MESSAGE);
+      writer.closeNode();
+
+      current = node;
+      if (invokeWithNoParamMode)
+         return;
+   }
+   else current = node.firstChild();
 
    while (current != lxNone) {
       switch (current.type) {
@@ -1868,35 +1870,35 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
    }
 }
 
-//////void DerivationReader :: generateCodeExpression(SyntaxWriter& writer, SNode current, DerivationScope& scope)
-//////{
-//////   generateCodeTree(writer, current, scope);
-//////   if (current == lxReturning) {
-//////      writer.closeNode();
-//////   }
-//////   else if (scope.type == DerivationScope::ttCodeTemplate && checkFirstNode(current, lxEOF)) {
-//////      if (test(scope.mode, daDblBlock)) {
-//////         if (scope.codeNode == lxNone) {
-//////            writer.insert(lxTemplateParam);
-//////            writer.closeNode();
-//////
-//////            scope.codeNode = current;
-//////         }
-//////         else {
-//////            writer.insert(lxTemplateParam, 3);
-//////            writer.closeNode();
-//////
-//////            scope.codeNode = SNode();
-//////         }
-//////      }
-//////      else if (test(scope.mode, daBlock)) {
-//////         writer.insert(lxTemplateParam);
-//////         writer.closeNode();
-//////      }
-//////   }
-//////   writer.insert(lxExpression);
-//////   writer.closeNode();
-//////}
+void DerivationTransformer :: generateCodeExpression(SyntaxWriter& writer, SNode current, DerivationScope& scope)
+{
+   generateCodeTree(writer, current, scope);
+//   if (current == lxReturning) {
+//      writer.closeNode();
+//   }
+//   else if (scope.type == DerivationScope::ttCodeTemplate && checkFirstNode(current, lxEOF)) {
+//      if (test(scope.mode, daDblBlock)) {
+//         if (scope.codeNode == lxNone) {
+//            writer.insert(lxTemplateParam);
+//            writer.closeNode();
+//
+//            scope.codeNode = current;
+//         }
+//         else {
+//            writer.insert(lxTemplateParam, 3);
+//            writer.closeNode();
+//
+//            scope.codeNode = SNode();
+//         }
+//      }
+//      else if (test(scope.mode, daBlock)) {
+//         writer.insert(lxTemplateParam);
+//         writer.closeNode();
+//      }
+//   }
+   writer.insert(lxExpression);
+   writer.closeNode();
+}
 
 void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode current, DerivationScope& scope, int mode)
 {
@@ -1916,50 +1918,50 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 //         }
          /*else */generateExpressionTree(writer, current, scope);
          break;
-////      case lxMessageReference:
-////      case lxLazyExpression:
-////         writer.newNode(lxExpression);
-////         writer.newNode(current.type);
-////         if (current == lxLazyExpression) {
-////            generateExpressionTree(writer, current, scope);
-////         }
-////         else if (scope.type == DerivationScope::ttFieldTemplate) {
-////            scope.copySubject(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
-////         }
-////         else copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
-////         writer.closeNode();
-////         writer.closeNode();
-////         break;
-////      case lxNestedClass:
-////         if (scope.type == DerivationScope::ttCodeTemplate && test(scope.mode, daNestedBlock)) {
-////            writer.insert(lxTemplateParam, 2);
-////            writer.closeNode();
-////         }
-////         else {
-////            generateScopeMembers(current, scope, MODE_ROOT);
-////
-////            generateClassTree(writer, current, scope, SNode(), -1);
-////         }
-////         writer.insert(lxExpression);
-////         writer.closeNode();
-////         break;
-////      case lxReturning:
-////         writer.newNode(lxCode);
-////      case lxCode:
-////         generateCodeExpression(writer, current, scope);
-////         break;
-////      case lxMethodParameter:
-////      {
-////         writer.newNode(lxMethodParameter);
-////         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
-////         writer.closeNode();
-////         break;
-////      }
-////      case lxAttributeValue:
-////         writer.newNode(lxClosureMessage, -1);
-////         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
-////         writer.closeNode();
-////         break;
+//      case lxMessageReference:
+//      case lxLazyExpression:
+//         writer.newNode(lxExpression);
+//         writer.newNode(current.type);
+//         if (current == lxLazyExpression) {
+//            generateExpressionTree(writer, current, scope);
+//         }
+//         else if (scope.type == DerivationScope::ttFieldTemplate) {
+//            scope.copySubject(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
+//         }
+//         else copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
+//         writer.closeNode();
+//         writer.closeNode();
+//         break;
+//      case lxNestedClass:
+//         if (scope.type == DerivationScope::ttCodeTemplate && test(scope.mode, daNestedBlock)) {
+//            writer.insert(lxTemplateParam, 2);
+//            writer.closeNode();
+//         }
+//         else {
+//            generateScopeMembers(current, scope, MODE_ROOT);
+//
+//            generateClassTree(writer, current, scope, SNode(), -1);
+//         }
+//         writer.insert(lxExpression);
+//         writer.closeNode();
+//         break;
+//      case lxReturning:
+//         writer.newNode(lxCode);
+      case lxCode:
+         generateCodeExpression(writer, current, scope);
+         break;
+//      case lxMethodParameter:
+//      {
+//         writer.newNode(lxMethodParameter);
+//         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+//         writer.closeNode();
+//         break;
+//      }
+//      case lxAttributeValue:
+//         writer.newNode(lxClosureMessage, -1);
+//         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+//         writer.closeNode();
+//         break;
       default:
       {
          if (isTerminal(current.type)) {
@@ -2062,11 +2064,11 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
             }
             else generateObjectTree(writer, current.firstChild(), scope/*, MODE_OBJECTEXPR*/);
             break;
-////         case lxCatchOperation:
-////         case lxAltOperation:
-////            writer.newBookmark();
-////         case lxIdleMsgParameter:
-////         case lxMessageParameter:
+//         case lxCatchOperation:
+//         case lxAltOperation:
+//            writer.newBookmark();
+         case lxIdleMsgParameter:
+//         case lxMessageParameter:
          case lxMessage:
             expressionExpected = false;
             generateMessageTree(writer, current, scope);
@@ -2101,10 +2103,10 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
             generateExpressionTree(writer, current, scope);
             expressionExpected = true;
             break;
-//         case lxCode:
-//            first = false;
-//            generateCodeExpression(writer, current, scope);
-//            break;
+         case lxCode:
+            first = false;
+            generateCodeExpression(writer, current, scope);
+            break;
 //         case lxExtension:
 //            writer.newNode(current.type, current.argument);
 //            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);

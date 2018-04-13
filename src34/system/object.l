@@ -21,16 +21,16 @@ public class Object
 /// A common boolean value
 public enum class BoolValue
 {
-    bool equal(bool aBool) = __nil.
+    bool equal(bool aBool) = nil.
 
-//    if : aTrueAction = $nil.
-//
-//    if : aTrueAction : aFalseAction = $nil.
+    if : aTrueAction = nil.
+
+//    if : aTrueAction : aFalseAction = nil.
 //
 //    ifnot : aTrueAction = $nil.
 //
-//    iif:aTrueValue:aFalseValue = $nil.
-//
+//    iif:aTrueValue:aFalseValue = nil.
+
 //    bool or : anExpr = $nil.
 //
 //    bool and : anExpr = $nil.
@@ -39,7 +39,7 @@ public enum class BoolValue
 //
 //    bool not = $self inverted.
 
-    bool inverted = __nil.
+    bool inverted = nil.
 
 //    literal = $nil.
 //

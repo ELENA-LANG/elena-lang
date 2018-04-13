@@ -90,8 +90,8 @@ enum LexicalType
    lxGlobalReference = 0x18011,
 
    lxImporting       = 0x08101,
-//   lxNested          = 0x08102, // arg - count
-//   lxStruct          = 0x08103, // arg - count
+   lxNested          = 0x08102, // arg - count
+   lxStruct          = 0x08103, // arg - count
    lxConstantSymbol  = 0x0A104, // arg - reference
    lxField           = 0x08105, // arg - offset
    lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
@@ -133,9 +133,9 @@ enum LexicalType
    lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
 //   lxTrying          = 0x0C00C,   // try-catch expression
 //   lxAlt             = 0x0C00D,   // alt-catch expression
-//   lxBranching       = 0x0C00F,   // branch expression
+   lxBranching       = 0x0C00F,   // branch expression
 //   lxSwitching       = 0x0C010,
-//   lxLooping         = 0x0C011,
+   lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
 //   lxThrowing        = 0x0C013,
 //   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
@@ -143,7 +143,7 @@ enum LexicalType
 //   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
-//   lxIfNot           = 0x0C019,   // optional arg - reference
+   lxIfNot           = 0x0C019,   // optional arg - reference
 //   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIfN             = 0x0C01B,   // arg - value
    lxIfNotN          = 0x0C01C,   // arg - value
@@ -191,8 +191,8 @@ enum LexicalType
 //   lxForward         = 0x1002E,
    lxVariable        = 0x10037,
    lxBinaryVariable  = 0x10038,
-//   lxMember          = 0x10039,  // a collection member, arg - offset
-//   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
+   lxMember          = 0x10039,  // a collection member, arg - offset
+   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
    lxIntsVariable    = 0x1003B,
    lxBytesVariable   = 0x1003C,
    lxShortsVariable  = 0x1003D,
@@ -263,7 +263,7 @@ enum LexicalType
    lxTemplateParent  = 0x2003C,
 //   lxTemplateBoxing  = 0x2003D,
 //   lxParentLists     = 0x2003E,
-//   lxClosureAttr     = 0x2003F,
+   lxClosureAttr     = 0x2003F,
    lxArgDispatcherAttr = 0x20040,
 //   lxFPUTarget       = 0x20041,
 //   lxFalseAttribute   = 0x20042,
