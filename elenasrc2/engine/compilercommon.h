@@ -58,7 +58,7 @@
 #define V_STRING         (ref_t)-8200
 #define V_CONST          (ref_t)-8201
 //#define V_GENERIC        (ref_t)-8202
-//#define V_EXTENSION      (ref_t)-8203
+#define V_EXTENSION      (ref_t)-8203
 //#define V_NOSTRUCT       (ref_t)-8204
 //#define V_ACTION         (ref_t)-8205
 //#define V_GROUP          (ref_t)-8206

@@ -78,6 +78,12 @@ void CompilerScope :: raiseWarning(int level, const char* message, ident_t sourc
       project->raiseWarning(message, sourcePath, row, col, identifier);
 }
 
+void CompilerScope :: raiseWarning(int level, const char* message, ident_t sourcePath)
+{
+   if (test(warningMask, level))
+      project->raiseWarning(message, sourcePath);
+}
+
 void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
 {
    target.header = copy.header;

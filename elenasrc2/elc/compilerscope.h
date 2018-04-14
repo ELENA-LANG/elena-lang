@@ -80,6 +80,7 @@ struct CompilerScope : _CompilerScope
 
    virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal);
    virtual void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal);
+   virtual void raiseWarning(int level, const char* message, ident_t sourcePath);
 
    CompilerScope(_ProjectManager* project)
       : savedPaths(-1)

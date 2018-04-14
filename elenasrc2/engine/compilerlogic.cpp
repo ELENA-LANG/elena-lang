@@ -633,7 +633,7 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
       compiler.generateListMember(scope, valuesField.value1, classRef);
    }
 
-   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed/* && !test(info.header.flags, elExtension)*/) {
+   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed && !test(info.header.flags, elExtension)) {
       // auto generate get&type message for explicitly declared classes
       ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
       ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
@@ -1184,10 +1184,10 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, _Compiler& compiler
       info.header.flags |= elSealed;
    }
 
-//   if (test(info.header.flags, elExtension)) {
-//      info.header.flags |= elSealed;
-//   }
-//
+   if (test(info.header.flags, elExtension)) {
+      info.header.flags |= elSealed;
+   }
+
 //   // verify if the class may be a wrapper
 //   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
 //      test(info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
@@ -1288,9 +1288,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_CONST:
          attrValue = elReadOnlyRole;
          return true;
-//      case V_EXTENSION:
-//         attrValue = elExtension;
-//         return true;
+      case V_EXTENSION:
+         attrValue = elExtension;
+         return true;
 //      case V_NOSTRUCT:
 //         attrValue = elNonStructureRole;
 //         return true;

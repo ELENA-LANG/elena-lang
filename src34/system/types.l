@@ -10,7 +10,7 @@ enum            = #8198.
 sealed          = #8195.
 //embeddable      = #8193.
 template        = #16391.
-//extension       = #8203.
+extension       = #8203.
 
 const           = #8201.
 singleton       = #8208.

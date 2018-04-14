@@ -14,6 +14,8 @@ public class Object
     
     bool notequal : anObject = self equal:anObject; inverted.
                 
+//    literal toLiteral = self __className.
+                
     /// Implements a message dispatching in VMT
     dispatch => system'core_routines'__object.
 }

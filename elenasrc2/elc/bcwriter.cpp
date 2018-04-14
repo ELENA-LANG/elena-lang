@@ -4355,11 +4355,11 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
       declareBlock(tape);
    }
 
-//   SNode overridden = callNode.findChild(lxOverridden);
-//   if (overridden != lxNone) {
-//      generateExpression(tape, overridden, ACC_REQUIRED);
-//   }
-   /*else */tape.write(bcALoadSI, 0);
+   SNode overridden = callNode.findChild(lxOverridden);
+   if (overridden != lxNone) {
+      generateExpression(tape, overridden, ACC_REQUIRED);
+   }
+   else tape.write(bcALoadSI, 0);
 
    // copym message
    ref_t message = callNode.argument;
