@@ -136,7 +136,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsScope:
       case nsTokenParam:
       case nsDispatchExpression:
-//      case nsExtension:
+      case nsExtension:
 //      case nsCatchMessageOperation:
 //      case nsAltMessageOperation:
 //      case nsSwitchOption:
@@ -2107,11 +2107,11 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
             first = false;
             generateCodeExpression(writer, current, scope);
             break;
-//         case lxExtension:
-//            writer.newNode(current.type, current.argument);
-//            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
-//            writer.closeNode();
-//            break;
+         case lxExtension:
+            writer.newNode(current.type, current.argument);
+            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
+            writer.closeNode();
+            break;
 //         case lxSwitching:
 //            generateSwitchTree(writer, current, scope);
 //            writer.insert(lxSwitching);

@@ -32,7 +32,7 @@ using namespace _ELENA_;
 #define HINT_NOUNBOXING       0x10000000
 //#define HINT_EXTERNALOP       0x08000000
 #define HINT_NOCONDBOXING     0x04000000
-//#define HINT_EXTENSION_MODE   0x02000000
+#define HINT_EXTENSION_MODE   0x02000000
 //#define HINT_TRY_MODE         0x01000000
 #define HINT_LOOP             0x00800000
 #define HINT_SWITCH           0x00400000
@@ -3760,89 +3760,80 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ref_t extensionRef = 0;
-//
-//   writer.newBookmark();
-//
-//   ModuleScope* moduleScope = scope.moduleScope;
-//   ObjectInfo   role;
-//
-//   SNode roleNode = node.findChild(lxExtension);
-//   // check if the extension can be used as a static role (it is constant)
-//   SNode roleTerminal = roleNode.firstChild(lxTerminalMask);
-//   if (roleTerminal != lxNone) {
-//      int flags = 0;
-//
-//      role = scope.mapObject(roleTerminal);
-//      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
-//         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
-//
-//         // if the symbol is used inside itself
-//         if (classRef == scope.getClassRefId()) {
-//            flags = scope.getClassFlags();
-//         }
-//         // otherwise
-//         else {
-//            ClassInfo roleClass;
-//            moduleScope->loadClassInfo(roleClass, moduleScope->module->resolveReference(classRef));
-//
-//            flags = roleClass.header.flags;
-//            //HOTFIX : typecast the extension target if required
-//            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
-//               extensionRef = roleClass.fieldTypes.get(-1).value1;
-//            }
-//         }
-//      }
-//      // if the symbol VMT can be used as an external role
-//      if (test(flags, elStateless)) {
-//         role = ObjectInfo(okConstantRole, role.param);
-//      }
-//   }
-//
-//   // if it is a generic role
-//   if (role.kind != okConstantRole && role.kind != okSubject) {
-//      writer.newNode(lxOverridden);
-//      role = compileExpression(writer, roleNode, scope, 0);
-//      writer.closeNode();
-//   }
-//
-//   ObjectInfo retVal = compileExtensionMessage(writer, node, scope, role, extensionRef);
-//
-//   writer.removeBookmark();
-//
-//   return retVal;
-//}
-//
-//// NOTE : targetRef refers to the type for the typified extension method
-//ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, ref_t targetRef)
-//{
-//   size_t paramCount = 0;
-//   ref_t  messageRef = mapMessage(node, scope, paramCount);
-//   ref_t implicitSignatureRef = 0;
-//
-//   ObjectInfo object;
-//   if (targetRef != 0) {
-//      //HOTFIX : to compile strong typed explicit extension
-//      writer.newBookmark();
-//      SNode targetNode = node.firstChild(lxObjectMask);
-//
-//      object = compileExpression(writer, targetNode, scope, 0);
-//
-//      convertObject(writer, *scope.moduleScope, targetRef, resolveObjectReference(scope, object), object.element);
-//      writer.removeBookmark();
-//
-//      // the target node already compiler so it should be skipped
-//      targetNode = lxResult;
-//      compileMessageParameters(writer, node, scope, implicitSignatureRef, HINT_EXTENSION_MODE);
-//   }
-//   else object = compileMessageParameters(writer, node, scope, implicitSignatureRef, HINT_EXTENSION_MODE);
-//
-//   messageRef = resolveMessageAtCompileTime(role, scope, messageRef, implicitSignatureRef);
-//
-//   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
-//}
+ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
+{
+   ref_t extensionRef = 0;
+
+   ObjectInfo   role;
+
+   SNode roleNode = node;
+   // check if the extension can be used as a static role (it is constant)
+   SNode roleTerminal = roleNode.firstChild(lxTerminalMask);
+   if (roleTerminal != lxNone) {
+      int flags = 0;
+
+      role = scope.mapTerminal(roleTerminal.identifier(), roleTerminal == lxReference);
+      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
+         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
+
+         // if the symbol is used inside itself
+         if (classRef == scope.getClassRefId()) {
+            flags = scope.getClassFlags();
+         }
+         // otherwise
+         else {
+            ClassInfo roleClass;
+            scope.moduleScope->loadClassInfo(roleClass, classRef);
+
+            flags = roleClass.header.flags;
+            //HOTFIX : typecast the extension target if required
+            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
+               extensionRef = roleClass.fieldTypes.get(-1).value1;
+            }
+         }
+      }
+      // if the symbol VMT can be used as an external role
+      if (test(flags, elStateless)) {
+         role = ObjectInfo(okConstantRole, role.param);
+      }
+   }
+
+   // if it is a generic role
+   if (role.kind != okConstantRole/* && role.kind != okSubject*/) {
+      writer.newNode(lxOverridden);
+      role = compileExpression(writer, roleNode, scope, 0, 0);
+      writer.closeNode();
+   }
+
+   ObjectInfo retVal = compileExtensionMessage(writer, node.nextNode(), scope, target, role, extensionRef);
+
+   return retVal;
+}
+
+// NOTE : targetRef refers to the type for the typified extension method
+ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, ref_t targetRef)
+{
+   ref_t  messageRef = mapMessage(node, scope);
+   ref_t implicitSignatureRef = 0;
+
+   if (targetRef != 0) {
+      if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, object), object.element))
+         scope.raiseError(errInvalidOperation, node);
+
+      //SNode targetNode = node.firstChild(lxObjectMask);
+
+      //object = compileExpression(writer, targetNode, scope, targetRef, 0);
+
+      //// the target node already compiler so it should be skipped
+      //targetNode = lxResult;
+      implicitSignatureRef = compileMessageParameters(writer, node, scope);
+   }
+   else implicitSignatureRef = compileMessageParameters(writer, node, scope);
+
+   messageRef = resolveMessageAtCompileTime(role, scope, messageRef, implicitSignatureRef);
+
+   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
+}
 
 bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode)
 {
@@ -4365,6 +4356,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       case lxOperator:
          objectInfo = compileOperator(writer, current, scope, objectInfo, mode);
          break;
+      case lxExtension:
+         objectInfo = compileExtension(writer, current, scope, objectInfo);
+         break;
    }
 
    if (targetRef) {
@@ -4401,9 +4395,6 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 ////            compileSwitch(writer, current, scope);
 ////
 ////            objectInfo = ObjectInfo(okObject);
-////            break;
-////         case lxExtension:
-////            objectInfo = compileExtension(writer, node, scope);
 ////            break;
 ////         case lxOperator:
 ////            objectInfo = compileOperator(writer, node, scope, mode);

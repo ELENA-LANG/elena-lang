@@ -51,7 +51,7 @@ enum LexicalType
 //   lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
    lxStaticMethod    = 0x00025,
-//   lxExtension       = 0x0002B,
+   lxExtension       = 0x0002B,
 //   lxAltOperation    = 0x0002C,
 //   lxCatchOperation  = 0x0002F,
 //   lxLoop            = 0x00030,
