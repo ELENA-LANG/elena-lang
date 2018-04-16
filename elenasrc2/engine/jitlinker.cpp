@@ -858,19 +858,19 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
    return NULL; // !! should be resolved only once
 }
 
-//ref_t JITLinker :: parseMessage(ident_t reference, bool actionMode)
-//{
-//   if (actionMode) {
-//      return resolveSignature(reference, 0);
-//   }
-//   else {
-//      int count = reference[0] - '0';
-//      ref_t actionRef = resolveSignature(reference + 1, count);
-//
-//      return encodeMessage(actionRef, count);
-//   }
-//}
-//
+ref_t JITLinker :: parseMessage(ident_t reference, bool actionMode)
+{
+   if (actionMode) {
+      return resolveAction(reference, NULL, NULL, 0);
+   }
+   else {
+      int count = reference[0] - '0';
+      ref_t actionRef = resolveAction(reference + 1, NULL, NULL, count);
+
+      return encodeMessage(actionRef, count);
+   }
+}
+
 //void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)
 //{
 //   int dotPos = reference.find('.');
@@ -905,31 +905,31 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
 //
 //   return vaddress;
 //}
-//
-//void* JITLinker :: resolveMessage(ident_t reference, ident_t vmt, bool actionMode)
-//{
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskRDataRef);
-//   MemoryWriter writer(image);
-//
-//   // allocate object header
-//   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
-//
-//   void* vaddress = calculateVAddress(&writer, mskRDataRef);
-//
-//   _loader->mapReference(reference, vaddress, mskMessage);
-//
-//   _compiler->compileInt32(&writer, parseMessage(reference, actionMode));
-//
-//   // get constant VMT reference
-//   void* vmtVAddress = resolve(vmt, mskVMTRef, false);
-//
-//   // fix object VMT reference
-//   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
-//
-//   return vaddress;
-//}
-//
+
+void* JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt, bool actionMode)
+{
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   // allocate object header
+   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
+
+   void* vaddress = calculateVAddress(&writer, mskRDataRef);
+
+   _loader->mapReference(referenceInfo, vaddress, mskMessage);
+
+   _compiler->compileInt32(&writer, parseMessage(referenceInfo.referenceName, actionMode));
+
+   // get constant VMT reference
+   void* vmtVAddress = resolve(vmt, mskVMTRef, false);
+
+   // fix object VMT reference
+   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
+
+   return vaddress;
+}
+
 ////void* JITLinker :: resolveThreadSafeVariable(const TCHAR*  reference, int mask)
 ////{
 ////   // get target image & resolve virtual address
@@ -1103,10 +1103,10 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //         case mskClassRelRef:
             vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelCodeRef, _loader->getSectionInfo(referenceInfo, mask & ~mskRelCodeRef, silentMode));
             break;
-//         case mskInternalRef:
-//         case mskInternalRelRef:
-//            vaddress = resolveBytecodeSection(reference, mask & ~mskRelCodeRef, _loader->getSectionInfo(reference, 0, silentMode));
-//            break;
+         case mskInternalRef:
+         case mskInternalRelRef:
+            vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelCodeRef, _loader->getSectionInfo(referenceInfo, 0, silentMode));
+            break;
          case mskVMTRef:
             vaddress = resolveBytecodeVMTSection(referenceInfo, mask, _loader->getClassSectionInfo(referenceInfo, mskClassRef, mskVMTRef, silentMode));
             break;
@@ -1133,9 +1133,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskStatSymbolRef:
             vaddress = resolveStaticVariable(referenceInfo, mskStatRef);
             break;
-//         case mskMessage:
-//            vaddress = resolveMessage(reference, _loader->getMessageClass(), false);
-//            break;
+         case mskMessage:
+            vaddress = resolveMessage(referenceInfo, _loader->getMessageClass(), false);
+            break;
 //         case mskSignature:
 //            vaddress = resolveMessage(reference, _loader->getSignatureClass(), true);
 //            break;

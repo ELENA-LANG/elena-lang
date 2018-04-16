@@ -12,6 +12,11 @@
        <include>object.l</include>
        <include>basic.l</include>
        <include>memory.l</include>
+       <include>win32_pointers.l</include>
+       <include>dynamic.l</include>
+       <include>win32_pointers.l</include>
+       <include>extensions.l</include>
+       <include>exceptions.l</include>
      </module>
   </files>
 </configuration>

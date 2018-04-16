@@ -24,7 +24,7 @@
 #define V_INT64          (ref_t)-14
 #define V_REAL64         (ref_t)-15
 //#define V_SIGNATURE      (ref_t)-18
-//#define V_MESSAGE        (ref_t)-19
+#define V_MESSAGE        (ref_t)-19
 //#define V_EXTMESSAGE     (ref_t)-21
 //#define V_SYMBOL         (ref_t)-22
 
@@ -150,7 +150,7 @@ struct _CompilerScope
    ref_t longReference;
    ref_t realReference;
 //   ref_t signatureReference;
-//   ref_t messageReference;
+   ref_t messageReference;
 //   ref_t extMessageReference;
    ref_t boolReference;
    ref_t literalReference;
@@ -193,7 +193,7 @@ struct _CompilerScope
 ////      sourcePathRef = 0;
       debugModule = module = NULL;
       intReference = boolReference = superReference = 0;
-////      signatureReference = messageReference = 0;
+      /*signatureReference = */messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
 ////      extMessageReference = 0;
@@ -206,7 +206,8 @@ class _Compiler
 {
 public:
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
-   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe) = 0;
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, 
+      ref_t targetRef, bool stacksafe) = 0;
 //   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
@@ -291,10 +292,10 @@ public:
    // check if the classes is compatible
    virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 
-//   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
+   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 
    virtual bool isEmbeddableArray(ClassInfo& info) = 0;
-//   virtual bool isVariable(ClassInfo& info) = 0;
+   virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;

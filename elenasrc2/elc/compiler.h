@@ -115,7 +115,7 @@ public:
       okUIntConstant,                 // param - reference, extraparam - imm argument
       okLongConstant,                 // param - reference
       okRealConstant,                 // param - reference
-//      okMessageConstant,              // param - reference
+      okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
 //      okSignatureConstant,            // param - reference
 //      okArrayConst,
@@ -141,8 +141,8 @@ public:
 //      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
-//
-//      okExternal,
+
+      okExternal,
 //      okInternal,
    };
 
@@ -930,7 +930,7 @@ private:
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
-//   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo info);
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
@@ -1000,7 +1000,7 @@ private:
    bool convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
    bool typecastObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef);
 
-//   void compileExternalArguments(SNode node, ModuleScope& scope, WarningScope& warningScope);
+   void compileExternalArguments(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
 
    ref_t analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/);
    ref_t analizeSymbol(SNode& node, NamespaceScope& scope/*, WarningScope& warningScope*/);
@@ -1010,8 +1010,8 @@ private:
    ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
    ref_t analizeMessageCall(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    ref_t analizeExpression(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
-//   ref_t analizeInternalCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope);
-//   ref_t analizeExtCall(SyntaxTree::Node node, ModuleScope& scope, WarningScope& warningScope, int mode);
+   ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope/*, WarningScope& warningScope*/, int mode);
    ref_t analizeNestedExpression(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    void analizeExpressionTree(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
    void analizeBranching(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
@@ -1055,7 +1055,8 @@ public:
    //virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
    virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
    virtual void injectLocalBoxing(SNode node, int size);
-   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, bool stacksafe);
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, 
+      ref_t targetRef, bool stacksafe);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 ////   virtual void injectFieldExpression(SyntaxWriter& writer);

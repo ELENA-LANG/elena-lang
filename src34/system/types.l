@@ -44,7 +44,7 @@ __string        = #8200.
 __byte          = #11.
 //__binary        = #12.
 __real          = #15.
-//__mssg          = #19.
+__mssg          = #19.
 //__subj          = #18.
 //__extmssg       = #21.
 //__tape_mixin    = #8209.
@@ -75,7 +75,7 @@ type uint       = system'UIntNumber.
 type long       = system'LongNumber.
 type real       = system'RealNumber.
 type char       = system'CharValue.
-//type mssg       = system'Message.
+type mssg       = system'Message.
 //type ext_mssg   = system'ExtensionMessage.
 //
 //type subject    = system'Signature.

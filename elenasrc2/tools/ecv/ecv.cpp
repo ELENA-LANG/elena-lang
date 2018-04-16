@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   17
+#define REVISION_VERSION   18
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -243,6 +243,9 @@ ref_t resolveMessage(_Module* module, ident_t method)
          actionName.cut(0, 4);
          flags = PROPSET_MESSAGE;
       }
+      else if (method.startsWith("#cast<")) {
+         flags = SPECIAL_MESSAGE;
+      }
    //   else if (actionName.compare("set")) {
    //      flags = PROPSET_MESSAGE;
    //   }
@@ -376,7 +379,7 @@ void parseMessageConstant(IdentifierString& message, ident_t reference)
 void printReference(IdentifierString& command, _Module* module, size_t reference)
 {
    bool literalConstant = false;
-   //bool charConstant = false;
+   bool charConstant = false;
    ident_t referenceName = NULL;
    int mask = reference & mskAnyRef;
    if (mask == mskInt32Ref) {
@@ -421,16 +424,16 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
          command.append(module->resolveConstant(reference & ~mskAnyRef));
          command.append(")");
       }
-      //else if (charConstant) {
-      //   const char* ch = module->resolveConstant(reference & ~mskAnyRef);
+      else if (charConstant) {
+         const char* ch = module->resolveConstant(reference & ~mskAnyRef);
 
-      //   IdentifierString num;
-      //   num.appendInt(ch[0]);
-      //   command.append("(");
-      //   command.append(num);
-      //   command.append(")");
+         IdentifierString num;
+         num.appendInt(ch[0]);
+         command.append("(");
+         command.append(num);
+         command.append(")");
 
-      //}
+      }
    }
 }
 
@@ -440,16 +443,16 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    int paramCount = 0;
    decodeMessage(reference, actionRef, paramCount);
 
-   //if (actionRef == DISPATCH_MESSAGE_ID) {
-   //   command.append("dispatch");
-   //}
+   if (actionRef == DISPATCH_MESSAGE_ID) {
+      command.append("dispatch");
+   }
    ///*else */if (actionRef == NEWOBJECT_MESSAGE_ID) {
    //   if (test(reference, CONVERSION_MESSAGE)) {
    //      command.append("#init");
    //   }
    //   else command.append("#new");
    //}
-   /*else */if (actionRef <= PREDEFINED_MESSAGE_ID) {
+   else if (actionRef <= PREDEFINED_MESSAGE_ID) {
       //if (test(reference, CONVERSION_MESSAGE)) {
       //   command.append("#conversion&");
       //}
@@ -461,17 +464,16 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
       command.append(verbName);
    }
    else {
-      //if (test(reference, CONVERSION_MESSAGE)) {
-      //   command.append("#conversion&");
-      //}
-      //else {
+      if (test(reference, SPECIAL_MESSAGE)) {         
+      }
+      else {
          if (test(reference, SEALED_MESSAGE)) {
             command.append("#private&");
          }
          if (test(reference, PROPSET_MESSAGE)) {
             command.append("set&");
          }
-      //}
+      }
       ref_t signature = 0;
       ident_t actionName = module->resolveAction(actionRef, signature);
       command.append(actionName);
@@ -1059,9 +1061,9 @@ void listFlags(int flags, int& row, int pageSize)
    //   //case elDebugReals:
    //   //   printLine("@flag ", "elDebugReals");
    //   //   break;
-   //   case elDebugMessage:
-   //      printLine("@flag ", "elDebugMessage", row, pageSize);
-   //      break;
+      case elDebugMessage:
+         printLine("@flag ", "elDebugMessage", row, pageSize);
+         break;
    //   //case elDebugDPTR:
    //   //   printLine("@flag ", "elDebugDPTR");
    //   //   break;

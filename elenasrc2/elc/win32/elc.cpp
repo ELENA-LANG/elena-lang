@@ -222,8 +222,8 @@ bool _ELC_::Project :: readCategory(_ELENA_::_ConfigFile& config, _ELENA_::Proje
          return config.select(SOURCE_CATEGORY, list);
       case _ELENA_::opForwards:
          return config.select(FORWARD_CATEGORY, list);
-//      case _ELENA_::opExternals:
-//         return config.select(EXTERNALS_CATEGORY, list);
+      case _ELENA_::opExternals:
+         return config.select(EXTERNALS_CATEGORY, list);
       case _ELENA_::opReferences:
          return config.select(REFERENCE_CATEGORY, list);
       case _ELENA_::opWinAPI:

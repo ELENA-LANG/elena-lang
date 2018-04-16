@@ -68,7 +68,7 @@ enum ProjectSetting
    opForwards              = 0x0061,
    opSources               = 0x0062,  
    opTemplates             = 0x0063,
-//   opExternals             = 0x0064,
+   opExternals             = 0x0064,
    opWinAPI                = 0x0065,   // used only for WIN32
    opReferences            = 0x0066,
 //   opTargets               = 0x0067,   // compiler targets (only xml project)
@@ -143,7 +143,7 @@ public:
       return _loader.resolvePrimitive(alias);
    }
 
-//   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
    virtual void addSource(path_t path) = 0;
    virtual void addModule(_ConfigFile::Node moduleNode) = 0;

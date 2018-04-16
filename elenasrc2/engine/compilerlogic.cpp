@@ -20,10 +20,10 @@ inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
    return ref1 ? ref1 : ref2;
 }
 
-//inline bool isWrappable(int flags)
-//{
-//   return !test(flags, elWrapper) && test(flags, elSealed);
-//}
+inline bool isWrappable(int flags)
+{
+   return !test(flags, elWrapper) && test(flags, elSealed);
+}
 
 inline bool isPrimitiveArrayRef(ref_t classRef)
 {
@@ -530,19 +530,19 @@ bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
    return test(info.header.flags, elDynamicRole | elStructureRole);
 }
 
-//bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, classReference))
-//      return false;
-//
-//   return isVariable(info);
-//}
-//
-//bool CompilerLogic :: isVariable(ClassInfo& info)
-//{
-//   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
-//}
+bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference))
+      return false;
+
+   return isVariable(info);
+}
+
+bool CompilerLogic :: isVariable(ClassInfo& info)
+{
+   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
+}
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 {
@@ -810,7 +810,7 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
 
    if (test(info.header.flags, elStructureRole)) {
       //compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingStruct, info.size, targetRef, stackSafe);
-      compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, stackSafe);
+      compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, targetRef, stackSafe);
 
       return true;
    }
@@ -819,7 +819,7 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    }
    else {
       //compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef*//*, stackSafe*/);
-      compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, stackSafe);
+      compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, targetRef, stackSafe);
 
       return true;
    }
@@ -881,12 +881,14 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerS
             bool stackSafe = isMethodStacksafe(info, implicitMessage);
             if (test(info.header.flags, elStructureRole)) {
             //   compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
-               compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, stackSafe);
+               compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), 
+                  info.header.classRef, targetRef, stackSafe);
             }
             else if (test(info.header.flags, elDynamicRole)) {
                return false;
             }
-            else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, stackSafe);
+            else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), 
+               info.header.classRef, targetRef, stackSafe);
 
             return true;
          }
@@ -926,9 +928,9 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
          // HOTFIX : replace generic object with an integer constant
          targetRef = scope.realReference;
       }
-//      else if (sourceRef == V_MESSAGE) {
-//         targetRef = scope.messageReference;
-//      }
+      else if (sourceRef == V_MESSAGE) {
+         targetRef = scope.messageReference;
+      }
 //      else if (sourceRef == V_SIGNATURE) {
 //         targetRef = scope.signatureReference;
 //      }
@@ -1067,11 +1069,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 //         info.header.flags = elDebugSubject | elStructureRole;
 //         info.size = 4;
 //         break;
-//      case V_MESSAGE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugMessage | elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_MESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole;
+         info.size = 4;
+         break;
 //      case V_EXTMESSAGE:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugMessage | elStructureRole;
@@ -1188,24 +1190,24 @@ void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, _Compiler& compiler
       info.header.flags |= elSealed;
    }
 
-//   // verify if the class may be a wrapper
-//   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
-//      test(info.methodHints.get(Attribute(encodeVerb(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
-//   {
-//      if (test(info.header.flags, elStructureRole)) {
-//         ClassInfo::FieldInfo field = *info.fieldTypes.start();
-//
-//         ClassInfo fieldInfo;
-//         if (defineClassInfo(scope, fieldInfo, field.value1, true) && isEmbeddable(fieldInfo)) {
-//            // wrapper around embeddable object should be marked as embeddable wrapper
-//            info.header.flags |= elEmbeddableWrapper;
-//
-//            if ((info.header.flags & elDebugMask) == 0)
-//               info.header.flags |= fieldInfo.header.flags & elDebugMask;
-//         }
-//      }
-//      else info.header.flags |= elWrapper;
-//   }
+   // verify if the class may be a wrapper
+   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
+      test(info.methodHints.get(Attribute(encodeAction(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
+   {
+      if (test(info.header.flags, elStructureRole)) {
+         ClassInfo::FieldInfo field = *info.fieldTypes.start();
+
+         ClassInfo fieldInfo;
+         if (defineClassInfo(scope, fieldInfo, field.value1, true) && isEmbeddable(fieldInfo)) {
+            // wrapper around embeddable object should be marked as embeddable wrapper
+            info.header.flags |= elEmbeddableWrapper;
+
+            if ((info.header.flags & elDebugMask) == 0)
+               info.header.flags |= fieldInfo.header.flags & elDebugMask;
+         }
+      }
+      else info.header.flags |= elWrapper;
+   }
 
    // adjust literal wrapper
    if ((info.header.flags & elDebugMask) == elDebugLiteral) {
@@ -1407,9 +1409,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       //case V_SYMBOL:
       //   attrValue = 0;
       //   return true;
-      //case V_MESSAGE:
-      //   attrValue = 0;
-      //   return true;
+      case V_MESSAGE:
+         attrValue = 0;
+         return true;
       //case V_EXTMESSAGE:
       //   attrValue = 0;
       //   return true;
@@ -1508,10 +1510,10 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
          //   info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
          //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
          //   return info.size == 4;
-         //case V_MESSAGE:
-         //   info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
-         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
-         //   return info.size == 4;
+         case V_MESSAGE:
+            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
+            return info.size == 4;
          //case V_EXTMESSAGE:
          //   info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
          //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));
@@ -1539,8 +1541,8 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
          return firstNonZero(scope.realReference, scope.superReference);
       //case V_SIGNATURE:
       //   return firstNonZero(scope.signatureReference, scope.superReference);
-      //case V_MESSAGE:
-      //   return firstNonZero(scope.messageReference, scope.superReference);
+      case V_MESSAGE:
+         return firstNonZero(scope.messageReference, scope.superReference);
       case V_ARGARRAY:
          return firstNonZero(scope.arrayReference, scope.superReference);
       default:
@@ -1914,10 +1916,10 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
    else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
       localBoxing = true;
    }
-   //else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
-   //   // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
-   //   localBoxing = true;
-   //}
+   else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+      // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+      localBoxing = true;
+   }
 
    if (localBoxing) {
       bool unboxingMode = (node == lxUnboxing) || unboxingExpected;

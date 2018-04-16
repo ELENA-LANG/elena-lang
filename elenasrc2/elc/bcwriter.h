@@ -35,27 +35,27 @@ class ByteCodeWriter
       }
    };
 
-//   struct ExternalScope
-//   {
-//      struct ParamInfo
-//      {
-//         int offset;
-//
-//         ParamInfo()
-//         {
-//            offset = 0;
-//         }
-//      };
-//      
-//      int               frameSize;
-//      Stack<ParamInfo>  operands;
-//   
-//      ExternalScope()
-//         : operands(ParamInfo())
-//      {
-//         frameSize = 0;
-//      }
-//   };
+   struct ExternalScope
+   {
+      struct ParamInfo
+      {
+         int offset;
+
+         ParamInfo()
+         {
+            offset = 0;
+         }
+      };
+      
+      int               frameSize;
+      Stack<ParamInfo>  operands;
+   
+      ExternalScope()
+         : operands(ParamInfo())
+      {
+         frameSize = 0;
+      }
+   };
 
    struct ImportScope
    {
@@ -120,10 +120,10 @@ class ByteCodeWriter
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
    void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
    void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame = true);
-//   void declareExternalBlock(CommandTape& tape);
+   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
-//   void declareVariable(CommandTape& tape, int value);
+   void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
    void declareThenBlock(CommandTape& tape);
@@ -171,7 +171,7 @@ class ByteCodeWriter
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void loadInternalReference(CommandTape& tape, ref_t reference);
+   void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
    void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
@@ -195,8 +195,8 @@ class ByteCodeWriter
    void unboxMessage(CommandTape& tape, int paramCount);
    void resend(CommandTape& tape);
    void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
-//   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
-//   void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
+   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
+   void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 
    void jumpIfLess(CommandTape& tape, ref_t ref);
    void jumpIfNotLess(CommandTape& tape, ref_t ref);
@@ -215,14 +215,14 @@ class ByteCodeWriter
    void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
    void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 
-//   void freeVirtualStack(CommandTape& tape, int count);
+   void freeVirtualStack(CommandTape& tape, int count);
 
    void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);
-//   void endExternalBlock(CommandTape& tape, bool idle = false);
+   void endExternalBlock(CommandTape& tape, bool idle = false);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
    void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
    void endIdleMethod(CommandTape& tape);
@@ -241,9 +241,9 @@ class ByteCodeWriter
    void assignShort(CommandTape& tape, LexicalType target, int offset);
    void assignByte(CommandTape& tape, LexicalType target, int offset);
    void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
-//   void saveInt(CommandTape& tape, LexicalType target, int argument);
-//   void saveReal(CommandTape& tape, LexicalType target, int argument);
-//   void saveLong(CommandTape& tape, LexicalType target, int argument);
+   void saveInt(CommandTape& tape, LexicalType target, int argument);
+   void saveReal(CommandTape& tape, LexicalType target, int argument);
+   void saveLong(CommandTape& tape, LexicalType target, int argument);
    void copyInt(CommandTape& tape, int offset);
    void copyShort(CommandTape& tape, int offset);
    void copyByte(CommandTape& tape, int offset);
@@ -270,7 +270,7 @@ class ByteCodeWriter
    void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
-//   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
+   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
@@ -289,9 +289,9 @@ class ByteCodeWriter
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
    void generateResending(CommandTape& tape, SyntaxTree::Node node);
    void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
-//   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
-//   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
-//   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
+   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
+   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
+   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
    ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
 
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);

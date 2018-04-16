@@ -96,7 +96,7 @@ public:
 
    virtual bool addForward(ident_t forward, ident_t reference) = 0;
 
-//   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
 // -- ReferenceInfo ---
@@ -191,7 +191,7 @@ public:
    virtual ident_t getIntegerClass() = 0;
    virtual ident_t getRealClass() = 0;
    virtual ident_t getLongClass() = 0;
-//   virtual ident_t getMessageClass() = 0;
+   virtual ident_t getMessageClass() = 0;
 //   virtual ident_t getExtMessageClass() = 0;
 //   virtual ident_t getSignatureClass() = 0;
    virtual ident_t getNamespace() = 0;

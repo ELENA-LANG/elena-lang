@@ -3,6 +3,8 @@ In development:
 ------                              
                             
               dev - redesign                                                                           
+                 * private extensions should be used only inside the module
+
                  * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
                    normal classes cannot be inherited from enum / enum value
 

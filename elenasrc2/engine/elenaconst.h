@@ -136,8 +136,8 @@ namespace _ELENA_
 //      mskConstVariable       = 0x4D000000u,
       mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
 
-//      mskInternalRef         = 0x13000000u,   // internal code
-//      mskInternalRelRef      = 0x33000000u,   // internal code
+      mskInternalRef         = 0x13000000u,   // internal code
+      mskInternalRelRef      = 0x33000000u,   // internal code
       mskSymbolRef           = 0x12000000u,   // symbol code
       mskSymbolRelRef        = 0x32000000u,   // symbol code
       mskVMTRef              = 0x41000000u,   // class VMT
@@ -295,7 +295,7 @@ namespace _ELENA_
    const int elMessage             = 0x00008000;
 //   const int elSymbol              = 0x00100000;
 //   const int elExtMessage          = 0x00208000;
-//   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
+   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
    const int elWithCustomDispatcher= 0x00800000;
    const int elWithArgGenerics     = 0x01000000;
 //   const int elTapeGroup           = 0x02000200;
@@ -319,7 +319,7 @@ namespace _ELENA_
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
 //   const int elDebugSubject        = 0x000C0000;
 ////   const int elDebugReals          = 0x000D0000;
-//   const int elDebugMessage        = 0x000E0000;
+   const int elDebugMessage        = 0x000E0000;
 ////   const int elDebugDPTR           = 0x000F0000;
    const int elEnumList            = 0x00100000;
 
@@ -453,7 +453,7 @@ namespace _ELENA_
 
    #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
-//   #define GENERIC_PREFIX           "#generic"
+   #define GENERIC_PREFIX           "#generic"
 //   #define EMBEDDED_PREFIX          "#embedded"
 //   #define TARGET_POSTFIX           "##"
    #define STATICFIELD_POSTFIX      "#static"
@@ -464,14 +464,14 @@ namespace _ELENA_
 
 //   #define STANDARD_MODULE_LEN      6
    #define INTERNAL_MASK_LEN        12
-//   #define COREAPI_MASK_LEN         5 
+   #define COREAPI_MASK_LEN         5 
 
    #define CORE_MODULE              "coreapi"
    #define STANDARD_MODULE          "system"                         // the standard module name
    #define FORWARD_MODULE           "forwards"
-//   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
-//   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
-//                                                                     // will be treated like internal core api one
+   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
+   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
+                                                                     // will be treated like internal core api one
    #define INTERNAL_MASK            "system'core_"                   // primitive module mask
 
    #define NATIVE_MODULE            "$native"
@@ -495,7 +495,7 @@ namespace _ELENA_
    #define STR_FORWARD              "$literal"
    #define WIDESTR_FORWARD          "$wideliteral"
    #define CHAR_FORWARD             "$char"
-//   #define MESSAGE_FORWARD          "'$message"
+   #define MESSAGE_FORWARD          "$message"
 //   #define EXT_MESSAGE_FORWARD      "'$ext_message"
 //   #define SIGNATURE_FORWARD        "'$signature"
    #define ARRAY_FORWARD            "$array"

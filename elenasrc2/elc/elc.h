@@ -16,7 +16,7 @@
 #include "compiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0038
+#define ELC_REVISION_NUMBER             0x0039
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -56,8 +56,8 @@
 #define PRIMITIVE_CATEGORY          "configuration/primitives/*"
 #define TEMPLATE_CATEGORY           "configuration/templates/*"
 #define WINAPI_CATEGORY             "configuration/winapi/*"
-//#define EXTERNALS_CATEGORY          "externals/*"
-#define REFERENCE_CATEGORY          "references/*"
+#define EXTERNALS_CATEGORY          "configuration/externals/*"
+#define REFERENCE_CATEGORY          "configuration/references/*"
 //#define TARGET_CATEGORY             "targets/*"
 
 // --- ELC config settings ---

@@ -158,12 +158,12 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       token.read();
       return binary->mapReference(token.value) | mskVMTRef;
    }
-   //else if (word.compare("intern")) {
-   //   token.read(":", "Invalid operand (%d)");
-   //   token.read();
+   else if (word.compare("intern")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
 
-   //   return binary->mapReference(token.value) | mskInternalRef;
-   //}
+      return binary->mapReference(token.value) | mskInternalRef;
+   }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
 

@@ -64,7 +64,6 @@ enum LexicalType
 //   lxLessSwitchOption = 0x0003F,
 //   lxLazyExpression  = 0x00040,
    lxFieldInit       = 0x00041,
-   lxImplicitCall     = 0x00042,
 
 //   //lxDefaultGeneric  = 0x00046,
 //   lxSubject         = 0x00047,
@@ -99,7 +98,7 @@ enum LexicalType
    lxLocalAddress    = 0x0A108, // arg - offset
    lxFieldAddress    = 0x08109, // arg - offset
    lxLocal           = 0x0A10A, // arg - offset
-//   lxBlockLocal      = 0x0A10B, // arg - offset
+   lxBlockLocal      = 0x0A10B, // arg - offset
    lxConstantString  = 0x0A10C, // arg - reference
    lxConstantWideStr = 0x0A10D, // arg - reference
    lxConstantChar    = 0x0A10E, // arg - reference
@@ -107,7 +106,7 @@ enum LexicalType
    lxConstantLong    = 0x1A110, // arg - reference
    lxConstantReal    = 0x1A111, // arg - reference
    lxConstantClass   = 0x0A112, // arg - reference
-//   lxMessageConstant = 0x0A113, // arg - rererence
+   lxMessageConstant = 0x0A113, // arg - rererence
 //   lxExtMessageConstant = 0x0A114, // arg -reference
 //   lxSignatureConstant  = 0x0A115, // arg - reference
    lxStaticConstField   = 0x08116, // arg - reference
@@ -131,6 +130,7 @@ enum LexicalType
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
    lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+   lxImplicitCall    = 0x0C00B,
 //   lxTrying          = 0x0C00C,   // try-catch expression
 //   lxAlt             = 0x0C00D,   // alt-catch expression
    lxBranching       = 0x0C00F,   // branch expression
@@ -138,13 +138,13 @@ enum LexicalType
    lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,
 //   lxThrowing        = 0x0C013,
-//   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
-//   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
-//   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
+   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
+   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
+   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
    lxIfNot           = 0x0C019,   // optional arg - reference
-//   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
+   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIfN             = 0x0C01B,   // arg - value
    lxIfNotN          = 0x0C01C,   // arg - value
    lxLessN           = 0x0C01D,   // arg - value
@@ -228,11 +228,11 @@ enum LexicalType
    lxSize            = 0x20019,
    lxTemplateParam   = 0x2001A,
    lxEmbeddable      = 0x2001B,
-//   lxIntExtArgument  = 0x2001C,
-//   lxExtArgument     = 0x2001D,
-//   lxExtInteranlRef  = 0x2001E,
-////   lxConstAttr       = 0x2001F,
-////   lxWarningMask     = 0x20020,
+   lxIntExtArgument  = 0x2001C,
+   lxExtArgument     = 0x2001D,
+   lxExtInteranlRef  = 0x2001E,
+//   lxConstAttr       = 0x2001F,
+//   lxWarningMask     = 0x20020,
 //   lxOperatorAttr    = 0x20021,
    lxIdleMsgParameter= 0x20022,
    lxBinarySelf      = 0x20023, // debug info only
@@ -250,7 +250,7 @@ enum LexicalType
    lxClassRefAttr    = 0x2002F,
 //   lxClosureMessage  = 0x20030,
 //   lxExtArgumentRef  = 0x20031,
-//   lxInternalRef     = 0x20032,
+   lxInternalRef     = 0x20032,
 //   lxTemplateVar     = 0x20033,
 //   lxEmbeddableMssg  = 0x20034,
    lxBoxingRequired  = 0x20035,
@@ -265,7 +265,7 @@ enum LexicalType
 //   lxParentLists     = 0x2003E,
    lxClosureAttr     = 0x2003F,
    lxArgDispatcherAttr = 0x20040,
-//   lxFPUTarget       = 0x20041,
+   lxFPUTarget       = 0x20041,
 //   lxFalseAttribute   = 0x20042,
 //   lxTemplateParamAttr = 0x20043,
 
