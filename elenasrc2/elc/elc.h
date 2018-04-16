@@ -16,7 +16,7 @@
 #include "compiler.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0039
+#define ELC_REVISION_NUMBER             0x003A
 // --- ELC default file names ---
 #ifdef _WIN32
 

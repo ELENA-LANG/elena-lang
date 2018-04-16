@@ -641,31 +641,31 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
       compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR);
    }
 
-//   // generate structure embeddable constructor
-//   if (test(info.header.flags, elSealed | elStructureRole)) {
-//      bool found = false;
-//      SNode current = node.firstChild();
-//      while (current != lxNone) {
-//         if (current == lxConstructor && current.argument == encodeVerb(NEW_MESSAGE_ID)) {
-//            SNode attr = current.firstChild();
-//            while (attr != lxNone) {
-//               if (attr == lxAttribute && attr.argument == tpEmbeddable) {
-//                  current.set(lxClassMethod, encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
-//                  attr.argument = tpPrivate;
-//
-//                  found = true;
-//                  break;
-//               }
-//               attr = attr.nextNode();
-//            }
-//            break;
-//         }
-//         current = current.nextNode();
-//      }
-//      if (found) {
-//         compiler.injectEmbeddableConstructor(node, encodeVerb(NEW_MESSAGE_ID), encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
-//      }
-//   }
+   //// generate structure embeddable constructor
+   //if (test(info.header.flags, elSealed | elStructureRole)) {
+   //   bool found = false;
+   //   SNode current = node.firstChild();
+   //   while (current != lxNone) {
+   //      if (current == lxClassMethod && test(current.argument, SPECIAL_MESSAGE) && getAbsoluteParamCount(current.argument) > 0) {
+   //         SNode attr = current.firstChild();
+   //         while (attr != lxNone) {
+   //            if (attr == lxAttribute && attr.argument == tpEmbeddable) {
+   //               current.set(lxClassMethod, encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
+   //               attr.argument = tpPrivate;
+
+   //               found = true;
+   //               break;
+   //            }
+   //            attr = attr.nextNode();
+   //         }
+   //         break;
+   //      }
+   //      current = current.nextNode();
+   //   }
+   //   if (found) {
+   //      compiler.injectEmbeddableConstructor(node, encodeVerb(NEW_MESSAGE_ID), encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
+   //   }
+   //}
 }
 
 void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
@@ -1059,11 +1059,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugReal64 | elStructureRole;
          info.size = 8;
          break;
-//      case V_PTR32:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugPTR | elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_PTR:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugPTR | elStructureRole;
+         info.size = 4;
+         break;
 //      case V_SIGNATURE:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugSubject | elStructureRole;
@@ -1400,9 +1400,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       case V_REAL64:
          attrValue = 0;
          return true;
-      //case V_PTR32:
-      //   attrValue = 0;
-      //   return true;
+      case V_PTR:
+         attrValue = 0;
+         return true;
       //case V_SIGNATURE:
       //   attrValue = 0;
       //   return true;
@@ -1502,10 +1502,10 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
             info.header.flags |= (elDebugReal64 | elReadOnlyRole | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_REAL64, 0));
             return true;
-         //case V_PTR32:
-         //   info.header.flags |= (elDebugPTR | elWrapper);
-         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR32, 0));
-         //   return info.size == 4;
+         case V_PTR:
+            info.header.flags |= (elDebugPTR | elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));
+            return info.size == 4;
          //case V_SIGNATURE:
          //   info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
          //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));

@@ -42,3 +42,13 @@ procedure __object."__class[1]"
   quitn 1
 
 end
+
+procedure __dptr."system$setReference[2]"
+
+  bcopya
+  dloadsi 2
+  nsave
+  acopyb
+  quitn 2
+
+end

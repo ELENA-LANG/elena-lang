@@ -159,8 +159,13 @@ ClassSectionInfo ExecutableImage :: getClassSectionInfo(ReferenceInfo referenceI
 
    ref_t referenceID = 0;
    if (referenceInfo.isRelative()) {
-      sectionInfo.module = referenceInfo.module;
-      referenceID = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
+      if (isTemplateWeakReference(referenceInfo.referenceName)) {
+         sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID, silentMode);
+      }
+      else {
+         sectionInfo.module = referenceInfo.module;
+         referenceID = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
+      }
    }
    else sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID, silentMode);
 
@@ -267,10 +272,16 @@ ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t refere
             ref_t resolvedRef = 0;
             _Module* refModule = _project->resolveWeakModule(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedRef, true);
             if (refModule != nullptr) {
-               _project->addForward(referenceName, refModule->resolveReference(resolvedRef));
+               ident_t referenceName = refModule->resolveReference(resolvedRef);
+               if (isWeakReference(referenceName)) {
+                  IdentifierString fullName(refModule->Name(), referenceName);
+
+                  _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, referenceName);
+               }
+               else _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, referenceName);
             }
 
-            ident_t resolvedName = _project->resolveForward(referenceName);
+            ident_t resolvedName = _project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
             if (!emptystr(resolvedName)) {
                referenceName = resolvedName;
             }

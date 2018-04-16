@@ -3,6 +3,9 @@ In development:
 ------                              
                             
               dev - redesign                                                                           
+                 * optimization : dirty_ptr ptr := self - cast method should be called directly without actually allocating the
+                   structure
+
                  * private extensions should be used only inside the module
 
                  * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
@@ -89,6 +92,7 @@ In development:
                    (so called weak sealed methods)
                  * enum / stateless class should not have default constructor
                  * abstract class cannot be used directly (currently empty symbol is created)
+                 * optimize external call routines
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

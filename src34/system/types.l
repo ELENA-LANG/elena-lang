@@ -41,8 +41,8 @@ private         = #8212.
 //args            = #32. 
 
 __string        = #8200.
-__byte          = #11.
-//__binary        = #12.
+__int           = #11.
+__ptr           = #12.
 __real          = #15.
 __mssg          = #19.
 //__subj          = #18.
@@ -120,12 +120,12 @@ type wide       = system'WideLiteralValue.
 //type nfunc      = system'IndexFunction1.
 //type nnfunc     = system'IndexFunction2.
 //type n3func     = system'IndexFunction3.
-//
-//// === system handles ===
+
+// === system handles ===
 //type handle     = system'Handle.
 //type rt_ptr     = system'RTPointer.
-//type dirty_ptr  = system'UnsafePointer.
-//
+type dirty_ptr  = system'UnsafePointer.
+
 //// --- Enumerators / Indexers ---
 //type enumerator = system'Enumerator.
 //type indexer    = system'Indexer.

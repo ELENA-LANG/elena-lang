@@ -667,8 +667,7 @@ bool DerivationTransformer::DerivationScope :: generateClassName()
    ident_t templateName = compilerScope->module->resolveReference(templateRef);
 
    NamespaceName rootNs(templateName);
-   IdentifierString name(compilerScope->module->Name());
-   name.append(templateName);
+   IdentifierString name(templateName);
 
    SubjectMap::Iterator it = parameterValues.start();
    while (!it.Eof()) {

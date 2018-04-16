@@ -318,7 +318,7 @@ public class IntBaseNumber :: BaseNumber
 /// An unsigned 8 bit integer
 public sealed struct ByteNumber :: IntBaseNumber
 {
-    T<__byte,1> theValue.
+    T<__int,1> theValue.
 
 //    stacksafe implicit(IntNumber n)
 //    [
@@ -624,7 +624,7 @@ public sealed struct ByteNumber :: IntBaseNumber
 /// A signed 16 bit integer
 public sealed struct ShortNumber :: IntBaseNumber
 {
-    T<__byte,2> theValue.
+    T<__int,2> theValue.
 
 //    stacksafe implicit(IntNumber n)
 //    [
@@ -944,7 +944,7 @@ public sealed struct ShortNumber :: IntBaseNumber
 /// A signed 32 bit integer
 public sealed struct IntNumber :: IntBaseNumber
 {
-    type<__byte, 4> theValue.
+    type<__int, 4> theValue.
 
 //    stacksafe implicit(ByteNumber n)
 //    [
@@ -1272,7 +1272,7 @@ public sealed struct IntNumber :: IntBaseNumber
 
 public sealed struct UIntNumber :: IntBaseNumber
 {
-    T<__byte,4> theValue.
+    T<__int,4> theValue.
 
 //    stacksafe implicit(ByteNumber n)
 //    [
@@ -1645,7 +1645,7 @@ public sealed struct UIntNumber :: IntBaseNumber
 /// A signed 64 bit integer value
 public sealed struct LongNumber :: IntBaseNumber
 {
-    T<__byte,8> theValue.
+    T<__int,8> theValue.
     
 //    /// Returns the minimal value
 //    constructor min

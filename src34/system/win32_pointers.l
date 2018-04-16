@@ -51,26 +51,26 @@
 //    stacksafe  free
 //        => system'core_routines'__rtptr.
 //}
-//
-//// --- UnsafePointer ---
-//
-//sealed struct UnsafePointer
-//{
-//    __dword<4> thePointer.
-//
+
+// --- UnsafePointer ---
+
+public sealed const struct UnsafePointer
+{
+    __ptr thePointer.
+
 //    constructor new : anObject
 //    [
 //        $self $setReference:anObject.
 //    ]
-//    
-//    stacksafe implicit(Object ref)
-//    [
-//        $self $setReference:ref.
-//    ]
-//    
-//    stacksafe $setReference:anObject
-//        => system'core_routines'__dptr.
-//    
+    
+    cast T<object>:ref
+    [
+        self setReference:ref.
+    ]
+    
+    private setReference:anObject
+        => system'core_routines'__dptr.
+    
 //    stacksafe $setUnsafeReference:anObject
 //        => system'core_routines'__dptr.
 //    
@@ -142,8 +142,8 @@
 //    
 //    stacksafe bool isEmpty
 //        = 0 == thePointer.
-//}
-//
+}
+
 //// --- COORD ---
 //
 //type win_coord = system'COORD.

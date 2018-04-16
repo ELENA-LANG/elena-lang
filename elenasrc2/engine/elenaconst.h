@@ -314,7 +314,7 @@ namespace _ELENA_
    const int elDebugQWORD          = 0x00060000;
    const int elDebugBytes          = 0x00070000;
    const int elDebugShorts         = 0x00080000;
-//   const int elDebugPTR            = 0x00090000;
+   const int elDebugPTR            = 0x00090000;
    const int elDebugWideLiteral    = 0x000A0000;
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
 //   const int elDebugSubject        = 0x000C0000;

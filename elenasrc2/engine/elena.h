@@ -907,6 +907,28 @@ inline bool isOpenArg(ref_t message)
    return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
 }
 
+inline bool isPrimitiveRef(ref_t reference)
+{
+   return (int)reference < 0;
+}
+
+inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   if (isPrimitiveRef(exportRef)) {
+      return exportRef;
+   }
+   else if (exportRef) {
+      ident_t reference = exporter->resolveReference(exportRef);
+      if (isWeakReference(reference)) {
+         IdentifierString fullName(exporter->Name(), reference);
+
+         return importer->mapReference(fullName.c_str());
+      }
+      else return importer->mapReference(reference);
+   }
+   else return 0;
+}
+
 inline ref_t importSignature(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    if (!exportRef)
@@ -914,6 +936,9 @@ inline ref_t importSignature(_Module* exporter, ref_t exportRef, _Module* import
 
    ref_t dump[OPEN_ARG_COUNT];
    size_t len = exporter->resolveSignature(exportRef, dump);
+   for (size_t i = 0; i < len; i++) {
+      dump[i] = importReference(exporter, dump[i], importer);
+   }
 
    return importer->mapSignature(dump, len, false);
 }
@@ -938,28 +963,6 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
    actionRef = importer->mapAction(actionName, importSignature(exporter, signature, importer), false);
 
    return encodeMessage(actionRef, paramCount) | flags;
-}
-
-inline bool isPrimitiveRef(ref_t reference)
-{
-   return (int)reference < 0;
-}
-
-inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
-{
-   if (isPrimitiveRef(exportRef)) {
-      return exportRef;
-   }
-   else if (exportRef) {
-      ident_t reference = exporter->resolveReference(exportRef);
-      if (isWeakReference(reference)) {
-         IdentifierString fullName(exporter->Name(), reference);
-
-         return importer->mapReference(fullName.c_str());
-      }
-      else return importer->mapReference(reference);
-   }
-   else return 0;
 }
 
 } // _ELENA_

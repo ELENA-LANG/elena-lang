@@ -19,7 +19,7 @@
 
 #define V_BINARY         (ref_t)-10
 #define V_INT8           (ref_t)-11
-//#define V_PTR            (ref_t)-12
+#define V_PTR            (ref_t)-12
 #define V_INT32          (ref_t)-13
 #define V_INT64          (ref_t)-14
 #define V_REAL64         (ref_t)-15

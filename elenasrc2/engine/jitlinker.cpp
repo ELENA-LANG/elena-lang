@@ -169,8 +169,13 @@ ref_t JITLinker :: resolveAction(ident_t action, _Module* module, ref_t* signatu
          signatureName.append('$');
          ident_t referenceName = module->resolveReference(signatures[i]);
          if (isWeakReference(referenceName)) {
-            signatureName.append(module->Name());
-            signatureName.append(referenceName);
+            if (isTemplateWeakReference(referenceName)) {
+               signatureName.append(referenceName);
+            }
+            else {
+               signatureName.append(module->Name());
+               signatureName.append(referenceName);
+            }
          }
          else signatureName.append(referenceName);
       }
@@ -186,8 +191,13 @@ ref_t JITLinker :: resolveAction(ident_t action, _Module* module, ref_t* signatu
          for (int i = 0; i < paramCount; i++) {
             ident_t referenceName = module->resolveReference(signatures[i]);
             if (isWeakReference(referenceName)) {
-               typeName.copy(module->Name());
-               typeName.append(referenceName);
+               if (isTemplateWeakReference(referenceName)) {
+                  typeName.copy(referenceName);
+               }
+               else {
+                  typeName.copy(module->Name());
+                  typeName.append(referenceName);
+               }
             }
             else typeName.copy(referenceName);
 
