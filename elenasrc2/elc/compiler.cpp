@@ -1972,7 +1972,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
       }
       else if (current == lxClassRefAttr) {
          if (fieldRef == 0) {
-            fieldRef = scope.moduleScope->module->mapReference(current.identifier(), true);
+            fieldRef = scope.moduleScope->mapFullReference(current.identifier(), true);
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -2043,7 +2043,7 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
 
       //      variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
 
-            variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), true);
+            variable.extraparam = scope.moduleScope->mapFullReference(current.identifier(), true);
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -4281,7 +4281,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 {
    writer.newBookmark();
 
-   ref_t targetRef = scope.moduleScope->module->mapReference(node.findChild(lxClassRefAttr).identifier(), false);
+   ref_t targetRef = scope.moduleScope->mapFullReference(node.findChild(lxClassRefAttr).identifier(), true);
 
    ObjectInfo retVal = ObjectInfo(okObject, targetRef);
    SNode objectNode = node.findChild(lxExpression);
@@ -4802,7 +4802,7 @@ ref_t Compiler :: declareArgumentType(SNode node, Scope& scope/*, bool& first, I
 
    ref_t class_ref = 0;
    if (attrNode == lxClassRefAttr) {
-      class_ref = scope.module->mapReference(attrNode.identifier(), true);
+      class_ref = scope.moduleScope->mapFullReference(attrNode.identifier(), true);
    }
    //else class_ref = namespaceScope->resolveImplicitIdentifier(attribute.identifier());
 
@@ -4978,14 +4978,18 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
 
    if (signatureLen > 0) {
-      // HOTFIX : ignore generic signature - only objects
+      // validate that 
       bool genericSignature = true;
       for (int i = 0; i < signatureLen; i++) {
+         // primitive arguments should be replaced with wrapper classes
+         if (isPrimitiveRef(signature[i]))
+            signature[i] = _logic->resolvePrimitiveReference(*scope.moduleScope, signature[i]);
+
          if (signature[i] != scope.moduleScope->superReference) {
             genericSignature = false;
-            break;
          }
       }
+      // if the signature consists only of generic parameters - ignore it
       if (genericSignature)
          signatureLen = 0;
    }
@@ -5087,7 +5091,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             }
             else signatureLen = 1;
 
-            signature[0] = scope.module->mapReference(typeNode.identifier(), false);
+            signature[0] = scope.moduleScope->mapFullReference(typeNode.identifier(), true);
 
             if (paramCount > 0) {
                // HOTFIX : lxClassRefAttr should be treated like a parameter type rather than returning one
@@ -6372,11 +6376,11 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
             scope.raiseError(errTypeNotAllowed, node);
          }
          else if (outputRef == 0) {
-            outputRef = scope.moduleScope->module->mapReference(current.identifier(), false);
+            outputRef = scope.moduleScope->mapFullReference(current.identifier(), true);
 
             outputChanged = true;
          }
-         else if (outputRef != scope.moduleScope->module->mapReference(current.identifier(), false)) {
+         else if (outputRef != scope.moduleScope->mapFullReference(current.identifier(), true)) {
             scope.raiseError(errTypeAlreadyDeclared, node);
          }
          else outputChanged = true;
@@ -7973,8 +7977,15 @@ void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode clas
    fieldNode.appendNode(lxAttribute, V_CONST);
 
    fieldNode.appendNode(lxIdentifier, fieldName);
-   if (fieldRef)
-      fieldNode.appendNode(lxClassRefAttr, scope.module->resolveReference(fieldRef));
+   if (fieldRef) {
+      ident_t referenceName = scope.module->resolveReference(fieldRef);
+      if (isWeakReference(referenceName)) {
+         IdentifierString fullName(scope.module->Name(), referenceName);
+
+         fieldNode.appendNode(lxClassRefAttr, fullName.c_str());
+      }
+      else fieldNode.appendNode(lxClassRefAttr, referenceName);
+   }      
 }
 
 void Compiler :: generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)

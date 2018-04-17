@@ -845,19 +845,54 @@ inline void writeFullReference(SyntaxWriter& writer, _Module* module, ref_t refe
    else writer.appendNode(lxClassRefAttr, referenceName);
 }
 
+inline void writeFullReference(SyntaxWriter& writer, _Module* module, ref_t reference, SNode node)
+{
+   ident_t referenceName = module->resolveReference(reference);
+   if (isWeakReference(referenceName) && !isTemplateWeakReference(referenceName)) {
+      IdentifierString fullName(module->Name(), referenceName);
+
+      writer.newNode(lxClassRefAttr, fullName.c_str());
+   }
+   else writer.newNode(lxClassRefAttr, referenceName);
+
+   if (test(node.type, lxTerminalMask)) {
+      copyIdentifier(writer, node);
+   }
+   else copyIdentifier(writer, node.firstChild(lxTerminalMask));
+
+   writer.closeNode();
+}
+
+inline void writeParentFullReference(SyntaxWriter& writer, _Module* module, ref_t reference, SNode node)
+{
+   ident_t referenceName = module->resolveReference(reference);
+   if (isWeakReference(referenceName) && !isTemplateWeakReference(referenceName)) {
+      IdentifierString fullName(module->Name(), referenceName);
+
+      writer.newNode(lxBaseParent, fullName.c_str());
+   }
+   else writer.newNode(lxBaseParent, referenceName);
+
+   if (test(node.type, lxTerminalMask)) {
+      copyIdentifier(writer, node);
+   }
+   else copyIdentifier(writer, node.firstChild(lxTerminalMask));
+
+   writer.closeNode();
+}
+
 void DerivationTransformer :: copyParamAttribute(SyntaxWriter& writer, SNode current, DerivationScope& scope)
 {
    ref_t classRef = scope.parameterValues.get(current.argument);
 //   if ((int)classRef < -1) {
 //      writer.newNode(lxTemplateAttribute, -((int)classRef + 1));
-//   }
+//   SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+//   writer.closeNode();
+   //   }
 //   else {
-      ident_t subjName = scope.compilerScope->module->resolveReference(classRef);
-      writer.newNode(/*current == lxTemplateParamAttr ? lxParamRefAttr : lxClassRefAttr*/lxClassRefAttr, subjName);
-//   }
+      writeFullReference(writer, scope.compilerScope->module, classRef, current);
+      //   }
 //
-   SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-   writer.closeNode();
 }
 
 //ref_t DerivationTransformer :: generateTemplate(SNode current, DerivationScope& scope, SubjectMap* parentAttributes)
@@ -1375,9 +1410,7 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
             }
          }
          else if (attrRef != 0) {
-            writer.newNode(lxClassRefAttr, scope.compilerScope->module->resolveReference(attrRef));
-            copyIdentifier(writer, current.firstChild(lxTerminalMask));
-            writer.closeNode();
+            writeFullReference(writer, scope.compilerScope->module, attrRef, current);
          }
          else scope.raiseError(errInvalidHint, current);
       }
@@ -1492,9 +1525,7 @@ void DerivationTransformer :: generateTypeAttribute(SyntaxWriter& writer, SNode 
             classRef = scope.mapReference(current.firstChild(lxTerminalMask));
 
          if (classRef) {
-            writer.newNode(lxClassRefAttr, scope.compilerScope->module->resolveReference(classRef));
-            copyIdentifier(writer, current.firstChild(lxTerminalMask));
-            writer.closeNode();
+            writeFullReference(writer, scope.compilerScope->module, classRef, current);
          }
          else scope.raiseError(errInvalidHint, current);
       }
@@ -1782,9 +1813,7 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
 //      node = current;
    }
    else {
-      writer.newNode(lxClassRefAttr, scope.compilerScope->module->resolveReference(typeRef));
-      copyIdentifier(writer, node.firstChild(lxTerminalMask));
-      writer.closeNode();
+      writeFullReference(writer, scope.compilerScope->module, typeRef, node);
 
       if (arrayMode) {
          writer.appendNode(lxOperator, -1);
@@ -2634,15 +2663,13 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
          writer.newNode(lxAttribute, classRef);
       }
       else scope.raiseError(errInvalidSubject, node);
+      copyIdentifier(writer, node);
+      writer.closeNode();
    }
    else if (classRef) {
-      writer.newNode(lxClassRefAttr, scope.compilerScope->module->resolveReference(classRef));
+      writeFullReference(writer, scope.compilerScope->module, classRef, node);
    }
    else scope.raiseError(errUnknownSubject, node);
-
-   copyIdentifier(writer, node);
-      
-   writer.closeNode();
 
    if (arrayMode) {
       if (!insertSize(writer, attr, dynamicMode))
@@ -3308,9 +3335,7 @@ bool DerivationTransformer :: generateSingletonScope(SyntaxWriter& writer, SNode
          if (!reference)
             scope.raiseError(errUnknownSubject, terminal);
 
-         writer.newNode(lxBaseParent, scope.compilerScope->module->resolveReference(reference));
-         copyIdentifier(writer, terminal);
-         writer.closeNode();
+         writeParentFullReference(writer, scope.compilerScope->module, reference, terminal);
       }
 
       generateAttributes(writer, node.prevNode(), scope, true, false, false);
@@ -3461,9 +3486,7 @@ void DerivationTransformer :: generateClassTree(SyntaxWriter& writer, SNode node
             if (!reference)
                scope.raiseError(errUnknownSubject, terminalNode);
 
-            writer.newNode(lxBaseParent, scope.compilerScope->module->resolveReference(reference));
-            copyIdentifier(writer, terminalNode);
-            writer.closeNode();
+            writeParentFullReference(writer, scope.compilerScope->module, reference, terminalNode);
          }
          else scope.raiseError(errInvalidSyntax, node);
 

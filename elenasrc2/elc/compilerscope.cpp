@@ -288,9 +288,12 @@ ref_t CompilerScope :: mapFullReference(ident_t referenceName, bool existing)
       // check if the reference does exist
       ref_t moduleRef = 0;
       _Module* argModule = project->resolveModule(referenceName, moduleRef);
-
-      if (argModule != NULL && moduleRef != 0)
-         reference = module->mapReference(referenceName);
+      if (argModule != NULL && moduleRef != 0) {
+         if (argModule != module) {
+            reference = module->mapReference(referenceName);
+         }
+         else reference = moduleRef;
+      }
    }
    else reference = module->mapReference(referenceName, existing);
 

@@ -31,23 +31,20 @@ public extension objectOp
 //    // obsolete
 //    literal className
 //        = self __className.
-//
-//    literal __className
-//    [
-//        var c := self~objectOp __class.
-//        
-//        byte<256> aBuffer.
-//        int       aLength := system'external LoadClassName 
-//                                ref:c
-//                                bytearray:aBuffer
-//                                int:255.
-//         
-//        if (aLength == 0)
-//            [ ^ "Unknown class" ].
-//        
-//        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
-//    ]    
-//    
+
+    literal __className
+    [
+        dirty_ptr c := self~objectOp __class.
+        
+        T<byte,256> dump.
+        int         len := system'external LoadClassName(c, dump, 255).
+         
+        if (len == 0)
+            [ ^ "Unknown class" ].
+        
+        ^ LiteralValue new(0,len,T<ByteArray>(dump)).
+    ]    
+    
 //    /// Returns true if the specified object instances are equal; otherwise, false.
 //    bool equal reference:anObject
 //        => system'core_routines'__object.
