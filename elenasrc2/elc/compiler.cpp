@@ -301,11 +301,11 @@ ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
    else if (NamespaceName::isIncluded(EXTERNAL_MODULE, identifier)) {
       return ObjectInfo(okExternal);
    }
-   //   // To tell apart primitive modules, the name convention is used
-   //   else if (reference.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
-   //      return ObjectInfo(okInternal, module->mapReference(reference));
-   //   }
-   //
+   // To tell apart primitive modules, the name convention is used
+   else if (identifier.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
+      return ObjectInfo(okInternal, module->mapReference(identifier));
+   }
+   
 
    // if it is an existing full reference
    ref_t reference = moduleScope->mapFullReference(identifier, true);
@@ -2451,9 +2451,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          break;
       case okExternal:
          return;
-//      case okInternal:
-//         writer.appendNode(lxInternalRef, object.param);
-//         return;
+      case okInternal:
+         writer.appendNode(lxInternalRef, object.param);
+         return;
    }
 
    writeTarget(writer, resolveObjectReference(scope, object));
@@ -3071,7 +3071,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       //SNode thirdNode = exprNode.nextNode(lxObjectMask);
       //SyntaxTree::copyNodeSafe(exprNode.nextNode(lxObjectMask), exprNode.appendNode(lxExpression), true);
 
-      roperand = compileExpression(writer, exprNode, scope, 0, 0);
+      roperand = compileObject(writer, exprNode, scope, 0);
       roperand2 = compileExpression(writer, expr2Node, scope, 0, 0);
 
       node = exprNode;
@@ -3084,10 +3084,10 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
          // HOTFIX : to compile switch statement
          roperand = ObjectInfo(okLocal, roperandNode.argument);
       }*/
-      if (test(roperandNode.type, lxTerminalMask)) {
+      /*if (test(roperandNode.type, lxTerminalMask)) {*/
          roperand = compileObject(writer, roperandNode, scope, 0);
-      }
-      else roperand = compileExpression(writer, roperandNode, scope, 0, 0);
+      /*}
+      else roperand = compileExpression(writer, roperandNode, scope, 0, 0);*/
    }
 
    retVal = compileOperator(writer, node, scope, operator_id, paramCount, loperand, roperand, roperand2);
@@ -3512,11 +3512,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
    else {
       ref_t messageRef = mapMessage(node, scope/*, paramCount*/);
-//
-//      if (target.kind == okInternal) {
-//         retVal = compileInternalCall(writer, node, scope, messageRef, target);
-//      }
-//      else {
+
+      if (target.kind == okInternal) {
+         retVal = compileInternalCall(writer, node, scope, messageRef, implicitSignatureRef, target);
+      }
+      else {
          bool genericOne = false;
          messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, genericOne);
 
@@ -3524,7 +3524,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
             mode |= HINT_DYNAMIC_OBJECT;
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode);
-//      }
+      }
    }
 
    return retVal;
@@ -4189,7 +4189,7 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
       //}
    }
 
-//   writer.newBookmark();
+   writer.newBookmark();
 
    ObjectInfo info = compileExpression(writer, node, scope, targetRef, mode);
 
@@ -4207,7 +4207,7 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
       }
    }
 
-//   writer.removeBookmark();
+   writer.removeBookmark();
 
    return info;
 }
@@ -4641,32 +4641,50 @@ ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, Cod
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ObjectInfo routine)
-//{
-//   ModuleScope* moduleScope = scope.moduleScope;
-//
-//   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
-//   virtualReference.append('.');
-//
-//   int paramCount;
-//   ref_t actionRef;
-//   decodeMessage(message, actionRef, paramCount);
-//
-//   size_t signIndex = virtualReference.Length();
-//   virtualReference.append('0' + (char)paramCount);
-//   virtualReference.append(moduleScope->module->resolveSubject(actionRef));
-//
-//   virtualReference.replaceAll('\'', '@', signIndex);
-//
-//   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
-//   writer.closeNode();
-//
+ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo routine)
+{
+   CompilerScope* moduleScope = scope.moduleScope;
+
+   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
+   virtualReference.append('.');
+
+   int paramCount;
+   ref_t actionRef;
+   ref_t dummy = 0;
+   decodeMessage(message, actionRef, paramCount);
+
+   size_t signIndex = virtualReference.Length();
+   virtualReference.append('0' + (char)paramCount);
+   virtualReference.append(moduleScope->module->resolveAction(actionRef, dummy));
+
+   ref_t signatures[OPEN_ARG_COUNT];
+   size_t len = scope.module->resolveSignature(signature, signatures);
+   for (size_t i = 0; i < len; i++) {
+      if (isPrimitiveRef(signatures[i])) {
+         // !!
+         scope.raiseError(errIllegalOperation, node);
+      }
+      else {
+         virtualReference.append("$");
+         ident_t name = scope.module->resolveReference(signatures[i]);
+         if (isWeakReference(name))
+            virtualReference.append(scope.module->Name());
+
+         virtualReference.append(name);
+      }
+   }
+
+   virtualReference.replaceAll('\'', '@', signIndex);
+
+   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
+   writer.closeNode();
+
 //   SNode targetNode = node.firstChild(lxTerminalMask);
 //   // HOTFIX : comment out dll reference
 //   targetNode = lxIdle;
-//
-//   return ObjectInfo(okObject);
-//}
+
+   return ObjectInfo(okObject);
+}
 
 int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reserved)
 {
@@ -5322,7 +5340,7 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
 
 void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
 {
-   SNode expr = node.findChild(lxExpression).firstChild(lxObjectMask);
+   SNode expr = node.findChild(lxExpression);
 
    CompilerScope* moduleScope = scope.moduleScope;
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
@@ -6021,7 +6039,7 @@ void Compiler :: compilePreloadedCode(_CompilerScope& scope, SNode node)
 {
    _Module* module = scope.module;
 
-   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
+   IdentifierString sectionName("'", INITIALIZER_SECTION);
 
    CommandTape tape;
    _writer.generateInitializer(tape, module->mapReference(sectionName), node);
@@ -6299,7 +6317,7 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
 
    if (isSealed) {
       // generate static reference
-      IdentifierString name(module->Name(), module->resolveReference(scope.reference));
+      IdentifierString name(module->resolveReference(scope.reference));
       name.append(STATICFIELD_POSTFIX);
 
       findUninqueName(module, name);
@@ -6319,12 +6337,12 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
 
       if (isConst) {
-         ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
+         ReferenceNs name(module->resolveReference(scope.reference));
          name.append(STATICFIELD_POSTFIX);
          name.append("##");
          name.appendInt(-index);
 
-         scope.info.staticValues.add(index, scope.moduleScope->module->mapReference(name) | mskConstArray);
+         scope.info.staticValues.add(index, module->mapReference(name) | mskConstArray);
       }
       else scope.info.staticValues.add(index, (ref_t)mskStatRef);
    }
@@ -7902,10 +7920,19 @@ void Compiler :: compileModule(_ProjectManager& project, SyntaxTree& syntaxTree,
    }
 }
 
-inline ref_t safeMapReference(_Module* module, ident_t referenceName)
+inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t referenceName)
 {
    if (!emptystr(referenceName)) {
-      return module->mapReference(referenceName);
+      // HOTFIX : for the standard module the references should be mapped forcefully
+      if (module->Name().compare(STANDARD_MODULE)) {
+         return module->mapReference(referenceName + getlength(module->Name()));
+      }
+      else {
+         ref_t extRef = 0;
+         _Module* extModule = project->resolveModule(referenceName, extRef, true);
+
+         return importReference(extModule, extRef, module);
+      }
    }
    else return 0;
 }
@@ -7923,16 +7950,16 @@ void Compiler :: initializeScope(ident_t name, CompilerScope& scope, bool withDe
       scope.debugModule = scope.project->createDebugModule(name);
 
    // cache the frequently used references
-   scope.superReference = safeMapReference(scope.module, scope.project->resolveForward(SUPER_FORWARD));
-   scope.intReference = safeMapReference(scope.module, scope.project->resolveForward(INT_FORWARD));
-   scope.longReference = safeMapReference(scope.module, scope.project->resolveForward(LONG_FORWARD));
-   scope.realReference = safeMapReference(scope.module, scope.project->resolveForward(REAL_FORWARD));
-   scope.arrayReference = safeMapReference(scope.module, scope.project->resolveForward(ARRAY_FORWARD));
-   scope.literalReference = safeMapReference(scope.module, scope.project->resolveForward(STR_FORWARD));
-   scope.wideReference = safeMapReference(scope.module, scope.project->resolveForward(WIDESTR_FORWARD));
-   scope.charReference = safeMapReference(scope.module, scope.project->resolveForward(CHAR_FORWARD));
-   scope.boolReference = safeMapReference(scope.module, scope.project->resolveForward(BOOL_FORWARD));
-   scope.messageReference = safeMapReference(scope.module, scope.project->resolveForward(MESSAGE_FORWARD));
+   scope.superReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SUPER_FORWARD));
+   scope.intReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(INT_FORWARD));
+   scope.longReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LONG_FORWARD));
+   scope.realReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REAL_FORWARD));
+   scope.arrayReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAY_FORWARD));
+   scope.literalReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(STR_FORWARD));
+   scope.wideReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WIDESTR_FORWARD));
+   scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
+   scope.boolReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
+   scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
 
 //   createPackageInfo(info.codeModule, project);
 }

@@ -93,6 +93,8 @@ In development:
                  * enum / stateless class should not have default constructor
                  * abstract class cannot be used directly (currently empty symbol is created)
                  * optimize external call routines
+                 * support interal messages
+                 * make sure that array<byte> can be passed as bytearray
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

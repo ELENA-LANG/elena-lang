@@ -52,3 +52,21 @@ procedure __dptr."system$setReference[2]"
   quitn 2
 
 end
+
+procedure __literal."copy$system@LiteralValue$system@IntNumber$system@IntNumber$system@ByteArray[4]"
+
+  bloadsi 1
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  
+  callextr api : subcopyz
+  
+  acopyb
+  quitn 4
+
+end
+

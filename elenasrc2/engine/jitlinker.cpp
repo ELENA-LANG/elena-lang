@@ -1060,7 +1060,7 @@ void JITLinker :: generateInitTape(MemoryDump& tape)
 
    ModuleList::Iterator it = _loadedModules.start();
    while (!it.Eof()) {
-      ReferenceNs initSymbol((*it)->Name(), INITIALIZER_SECTION);
+      IdentifierString initSymbol("'", INITIALIZER_SECTION);
       ref_t initRef = (*it)->mapReference(initSymbol, true);
       if (initRef != 0) {
          void* initializer = resolveBytecodeSection(ReferenceInfo(initSymbol), mskSymbolRef, helper.getSection(initRef | mskSymbolRef, *it));
@@ -1125,9 +1125,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskNativeRDataRef:
             vaddress = resolveNativeSection(referenceInfo, mask, _loader->getSectionInfo(referenceInfo, mask, silentMode));
             break;
-//         case mskNativeRelCodeRef:
-//            vaddress = resolveNativeSection(reference, mskNativeCodeRef, _loader->getSectionInfo(reference, mskNativeCodeRef, silentMode));
-//            break;
+         case mskNativeRelCodeRef:
+            vaddress = resolveNativeSection(referenceInfo, mskNativeCodeRef, _loader->getSectionInfo(referenceInfo, mskNativeCodeRef, silentMode));
+            break;
          case mskConstantRef:
          case mskLiteralRef:
          case mskWideLiteralRef:

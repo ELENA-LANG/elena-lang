@@ -18,7 +18,7 @@ sealed template<BaseIndexable> array :: template_subj
 //        vint index := -1.
 //        int length := 0.
 //        $target >> length.
-//        
+//        --
 //        ^ Enumerator::
 //          {
 //              get = $self getAt int:index.
@@ -237,18 +237,18 @@ sealed template<BaseIndexable> array :: template_subj
 //          }.
 //    ]
 //}
-//
-//// === basic memory classes ===
-//
-//// --- ByteArray ---
-//
-///// A byte array
-//sealed ByteArray :: BaseIndexable, array<byte>
-//{
-//    /// Creates the byte array with the specified length
-//    stacksafe constructor new int:len
-//        = byte<>(len).
-//
+
+// === basic memory classes ===
+
+// --- ByteArray ---
+
+/// A byte array
+public sealed ByteArray :: BaseIndexable, array<byte>
+{
+    /// Creates the byte array with the specified length
+    constructor new(int len)
+        = dynamic<byte>(len).
+
 //    /// Creates the copy of a byte subarray
 //    stacksafe constructor new int:anIndex int:aLength bytearray:anArray
 //        <= new int:aLength;
@@ -385,8 +385,8 @@ sealed template<BaseIndexable> array :: template_subj
 //
 //    /// Creates the object copy
 //    clone = ByteArray new bytearray:$self.
-//}
-//
+}
+
 //// --- ShortArray ---
 //
 ///// A short integer array
@@ -1090,9 +1090,9 @@ sealed template<BaseIndexable> array :: template_subj
 //    /// Creates the object copy
 //    clone = CharArray new chararray:$self.
 //}
-//        
-//// --- emptyliteralvalue ---
-//
+        
+// --- emptyliteralvalue ---
+
 ///// An empty literal value
 //const literal emptyLiteralValue = "".
 
@@ -1103,14 +1103,17 @@ public sealed __string LiteralValue :: BaseValue
 {
     dynamic<byte> theArray.
 
+// constructor new
+//    <= min.
+
 //    /// Creates the empty literal
 //    constructor min
 //        = emptyLiteralValue.
-//        
-//    /// Creates the literal string with specified length        
-//    stacksafe constructor new int:size
-//        = byte<>(size + 1).
-//
+        
+    /// Creates the literal string with specified length        
+    constructor new(int size)
+        = dynamic<byte>(size + 1).
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    stacksafe constructor new int:aSize literal:aLiteral
 //        <= new int:aSize;
@@ -1129,13 +1132,13 @@ public sealed __string LiteralValue :: BaseValue
 //    /// Creates the copy of a subarray        
 //    stacksafe constructor new int:anIndex int:aSize chararray:anArray
 //        => system'core_routines'__literal.
-//
-//    stacksafe constructor $new int:anIndex int:aSize bytearray:anArray
-//        <= new int:aSize;
-//    [
-//        system'core_routines'__literal copy literal:$self int:anIndex int:aSize bytearray:anArray.
-//    ]
-//    
+
+    /*internal*/ constructor new(int anIndex, int aSize, bytearray anArray)
+        <= new(aSize);
+    [
+        system'core_routines'__literal copy(self, anIndex, aSize, anArray).
+    ]
+    
 //    /// Converts to UTF-16 literal
 //    wide = wideConvertor convert literal:$self.
 //

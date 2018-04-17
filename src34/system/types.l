@@ -28,7 +28,7 @@ method          = #16393.
 //closure         = #8205.
 //mixin           = #8206.
 //__accessor      = #16399.
-//__block         = #16400.
+__block         = #16400.
 //__nested        = #16401.
 //preloaded       = #8207.
 cast            = #16387.
@@ -80,9 +80,9 @@ type mssg       = system'Message.
 //
 //type subject    = system'Signature.
 //type symbol_ref = system'Symbol.
-//
-//// === basic dynamic types ===
-//type bytearray  = system'ByteArray.
+
+// === basic dynamic types ===
+type bytearray  = system'ByteArray.
 //type shortarray = system'ShortArray.
 //type intarray   = system'IntArray.
 //type intmatrix  = system'IntMatrix.

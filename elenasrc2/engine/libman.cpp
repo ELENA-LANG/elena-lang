@@ -258,12 +258,14 @@ _Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& resu
       while (!module && !emptystr(name)) {
          module = loadModule(name, result);
 
+         reference = module ? module->mapReference(referenceName.c_str() + getlength(module->Name()), true) : 0;
+         if (reference)
+            return module;
+
          name.trimLastSubNs();
       }
 
-      reference = module ? module->mapReference(referenceName, true) : 0;
-
-      return module;
+      return NULL;
    }
 }
 
