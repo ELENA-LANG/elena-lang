@@ -52,7 +52,7 @@ enum LexicalType
    lxConstructor     = 0x00024,
    lxStaticMethod    = 0x00025,
    lxExtension       = 0x0002B,
-//   lxAltOperation    = 0x0002C,
+   lxAltOperation    = 0x0002C,
 //   lxCatchOperation  = 0x0002F,
 //   lxLoop            = 0x00030,
 ////   lxInlineExpression= 0x00032,
@@ -132,7 +132,7 @@ enum LexicalType
    lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
    lxImplicitCall    = 0x0C00B,
 //   lxTrying          = 0x0C00C,   // try-catch expression
-//   lxAlt             = 0x0C00D,   // alt-catch expression
+   lxAlt             = 0x0C00D,   // alt-catch expression
    lxBranching       = 0x0C00F,   // branch expression
 //   lxSwitching       = 0x0C010,
    lxLooping         = 0x0C011,
@@ -142,7 +142,7 @@ enum LexicalType
    lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
    lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
-//   lxAltExpression   = 0x0C018,
+   lxAltExpression   = 0x0C018,
    lxIfNot           = 0x0C019,   // optional arg - reference
    lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIfN             = 0x0C01B,   // arg - value

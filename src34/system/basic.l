@@ -333,38 +333,38 @@ public sealed struct ByteNumber :: IntBaseNumber
     constructor new : val
         <= new(T<byte>(val)).
 
-//    /// Returns the value as a short integer
-//    short = ShortNumber new byte:$self.
-//
-//    /// Returns the value as an integer
-//    int = IntNumber new byte:$self.
-//
-//    /// Returns the value as an integer
-//    uint = UIntNumber new byte:$self.
-//
-//    /// Returns the value as a long integer
-//    long = LongNumber new byte:$self.
-//
-//    /// Returns the value as a real number
-//    real = RealNumber new byte:$self.
-//
-//    stacksafe bool equal(BaseVariable v)
-//        <= equal(v value).
-//
-//    stacksafe bool equal byte:anOperand
-//        = theValue == anOperand.
-//
-//    stacksafe bool equal short:anOperand
-//        = ShortNumber new byte:$self; equal short:anOperand.
-//        
-//    /// Compares the value
-//    stacksafe bool equal int:anOperand
-//        = IntNumber new byte:$self; less int:anOperand.
-//        
-//    /// Compares the value
-//    stacksafe bool equal real:anOperand
-//        = RealNumber new byte:$self; equal real:anOperand.
-//        
+    /// Returns the value as a short integer
+    cast T<short> = ShortNumber new(self).
+
+    /// Returns the value as an integer
+    cast T<int> = IntNumber new(self).
+
+    /// Returns the value as an integer
+    cast T<uint> = UIntNumber new(self).
+
+    /// Returns the value as a long integer
+    cast T<long> = LongNumber new(self).
+
+    /// Returns the value as a real number
+    cast T<real> = RealNumber new(self).
+
+    bool equal(BaseVariable v)
+        <= equal(v value).
+
+    bool equal(byte anOperand)
+        = theValue == anOperand.
+
+    bool equal(short anOperand)
+        = ShortNumber new(self); equal(anOperand).
+        
+    /// Compares the value
+    bool equal(int anOperand)
+        = IntNumber new(self); less(anOperand).
+        
+    /// Compares the value
+    bool equal(real anOperand)
+        = RealNumber new(self); equal(anOperand).
+        
 //    multi bool equal : o
 //    [
 //        var n := o byte \ back:$nil.

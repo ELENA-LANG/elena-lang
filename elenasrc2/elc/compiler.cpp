@@ -2546,6 +2546,10 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
       case lxPrivate:
          object = scope.mapLocal(token.c_str() + 1);
          break;
+      case lxLocal:
+         // if it is a temporal variable
+         object = ObjectInfo(okLocal, terminal.argument);
+         break;
       default:
          if (!emptystr(token)) {
             object = scope.mapTerminal(token, terminal == lxReference);
@@ -2622,6 +2626,11 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //      case lxMessageReference:
 //         result = compileMessageReference(writer, member, scope, mode);
 //         break;
+      case lxAlt:
+         compileAltOperation(writer, node, scope);
+         
+         result = ObjectInfo(okObject);
+         break;
       default:
          result = compileTerminal(writer, node, scope, mode);
    }
@@ -4232,53 +4241,73 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 ////
 ////   writer.removeBookmark();
 ////}
-////
-////void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope)
-////{
-////   // extract the expression target
-////   SNode firstExpr = node.firstChild(lxObjectMask);
-////   SNode targetNode = firstExpr.firstChild(lxObjectMask);
-////
-////   writer.newBookmark();
-////
-////   // inject a temporal variable
-////   int tempLocal = scope.newLocal();
-////   writer.newNode(lxAssigning);
-////   writer.appendNode(lxLocal, tempLocal);
-////   compileExpression(writer, targetNode, scope, 0);
-////   writer.closeNode();
-////
-////   targetNode.set(lxLocal, tempLocal);
-////
-////   writer.newBookmark();
-////
-////   bool catchNode = false;
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (test(current.type, lxExprMask)) {
-////         compileExpression(writer, current, scope, catchNode ? HINT_ALT_MODE | HINT_RESENDEXPR : 0);
-////
-////         catchNode = true;
-////      }
-////
-////      current = current.nextNode();
-////   }
-////
-////   writer.insert(lxAlt);
-////   writer.closeNode();
-////
-////   writer.removeBookmark();
-////
-////   // inject a nested expression
-////   writer.insert(lxAltExpression);
-////   writer.closeNode();
-////
-////   writer.removeBookmark();
-////}
+
+void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   // extract the expression target
+   SNode firstExpr = node.firstChild(lxObjectMask);
+   SNode targetNode = firstExpr.firstChild(lxObjectMask);
+
+   writer.newBookmark(); // !! an extra breakpoint?
+
+   // inject a temporal variable
+   int tempLocal = scope.newLocal();
+   writer.newNode(lxAssigning);
+   writer.appendNode(lxLocal, tempLocal);
+   ObjectInfo objectInfo = compileObject(writer, targetNode, scope, 0);
+   writer.closeNode();
+
+   targetNode.set(lxLocal, tempLocal);
+
+   writer.newBookmark();
+
+   bool catchNode = false;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         if (catchNode) {
+            writer.newBookmark();
+            writer.appendNode(lxLocal, tempLocal);
+            SNode operationNode = current.firstChild();
+            while (operationNode != lxNone) {
+               compileOperation(writer, operationNode, scope, objectInfo, 0);
+
+               operationNode = operationNode.nextNode();
+            }            
+
+            writer.removeBookmark();
+            //      SNode targetNode = node.parentNode().firstChild(lxObjectMask).firstChild(lxObjectMask);
+            //      if (targetNode == lxLocal) {
+            //         writer.insertChild(0, targetNode.type, targetNode.argument);
+            //      }
+            //      else writer.insertChild(0, lxCurrent, 0);
+            //
+            //      target = ObjectInfo(okObject);
+
+         }
+         else compileExpression(writer, current, scope, 0, 0);
+
+         catchNode = true;
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.insert(lxAlt);
+   writer.closeNode();
+
+   writer.removeBookmark();
+
+   // inject a nested expression
+   writer.insert(lxAltExpression);
+   writer.closeNode();
+
+   writer.removeBookmark();
+}
 
 ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
-   writer.newBookmark();
+   writer.newBookmark(); // !! an extra breakpoint?
 
    ref_t targetRef = scope.moduleScope->mapFullReference(node.findChild(lxClassRefAttr).identifier(), true);
 
@@ -4327,6 +4356,29 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
    return retVal;
 }
 
+ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, int mode)
+{
+   switch (current.type) {
+      case lxMessage:
+         if (test(mode, HINT_PROP_MODE)) {
+            objectInfo = compilePropAssigning(writer, current, scope, objectInfo, mode);
+         }
+         else objectInfo = compileMessage(writer, current, scope, objectInfo, mode);
+         break;
+      case lxAssign:
+         objectInfo = compileAssigning(writer, current, scope, objectInfo, mode);
+         break;
+      case lxOperator:
+         objectInfo = compileOperator(writer, current, scope, objectInfo, mode);
+         break;
+      case lxExtension:
+         objectInfo = compileExtension(writer, current, scope, objectInfo);
+         break;
+   }
+
+   return objectInfo;
+}
+
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode)
 {
    writer.newBookmark();
@@ -4345,24 +4397,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    
    ObjectInfo objectInfo = compileObject(writer, object, scope, targetMode);
 
-   SNode current = object.nextNode();
-   switch (current.type) {
-      case lxMessage:
-         if (test(mode, HINT_PROP_MODE)) {
-            objectInfo = compilePropAssigning(writer, current, scope, objectInfo, mode);
-         }
-         else objectInfo = compileMessage(writer, current, scope, objectInfo, mode);
-         break;
-      case lxAssign:
-         objectInfo = compileAssigning(writer, current, scope, objectInfo, mode);
-         break;
-      case lxOperator:
-         objectInfo = compileOperator(writer, current, scope, objectInfo, mode);
-         break;
-      case lxExtension:
-         objectInfo = compileExtension(writer, current, scope, objectInfo);
-         break;
-   }
+   objectInfo = compileOperation(writer, object.nextNode(), scope, objectInfo, mode);
 
    if (targetRef) {
       if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, objectInfo), objectInfo.element))
@@ -7485,7 +7520,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, /*Warn
       case lxExpression:
       case lxReturning:
          return analizeExpression(current.firstChild(lxObjectMask), scope/*, warningScope*/, mode);
-      //case lxAltExpression:
+      case lxAltExpression:
       case lxBranching:
       //case lxTrying:
          analizeExpressionTree(current, scope/*, warningScope*/);

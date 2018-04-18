@@ -922,8 +922,10 @@ private:
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
    void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 
+   ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, int mode);
+
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);

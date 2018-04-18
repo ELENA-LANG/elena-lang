@@ -133,7 +133,7 @@ class ByteCodeWriter
 //   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
-//   void declareAlt(CommandTape& tape);
+   void declareAlt(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
    void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
@@ -218,7 +218,7 @@ class ByteCodeWriter
    void freeVirtualStack(CommandTape& tape, int count);
 
    void endCatch(CommandTape& tape);
-//   void endAlt(CommandTape& tape);
+   void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);
@@ -296,7 +296,7 @@ class ByteCodeWriter
 
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
 //   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
-//   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
+   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
    void generateLooping(CommandTape& tape, SyntaxTree::Node node);
    void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
