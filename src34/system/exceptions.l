@@ -216,10 +216,10 @@ public class MethodNotFoundException :: Exception
     ]
 }
 
-//// --- MethodNotSupported ---
-//
-//class NotSupportedException :: Exception
-//{
+// --- MethodNotSupported ---
+
+public class NotSupportedException :: Exception
+{
 //    /// Creates the exception
 //    constructor new
 //        <= new literal:"Operation is not supported".
@@ -227,8 +227,8 @@ public class MethodNotFoundException :: Exception
 //    /// Creates the exception
 //    constructor new :aMessage
 //        <= new literal:aMessage.
-//}
-//
+}
+
 //// --- AbortException ---
 //
 ///// An abort exception 

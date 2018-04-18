@@ -833,7 +833,7 @@ bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, ref_t targetS
       return false;
 
    for (size_t i = 0; i < len; i++) {
-      if (!isCompatible(scope, sourceSignatures[i], targetSignatures[i]))
+      if (!isCompatible(scope, targetSignatures[i], sourceSignatures[i]))
          return false;
    }
 
@@ -846,7 +846,7 @@ bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, _Module* targ
    size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
 
    for (size_t i = 0; i < len; i++) {
-      if (!isCompatible(scope, sourceSignatures[i], importReference(targetModule, targetSignatures[i], scope.module)))
+      if (!isCompatible(scope, importReference(targetModule, targetSignatures[i], scope.module), sourceSignatures[i]))
          return false;
    }
 

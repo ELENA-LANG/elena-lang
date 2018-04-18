@@ -14,7 +14,7 @@ public class Object
     
     bool notequal : anObject = self equal:anObject; inverted.
                 
-//    literal toLiteral = self __className.
+    T<literal> literal = self __className.
                 
     /// Implements a message dispatching in VMT
     dispatch => system'core_routines'__object.
@@ -43,18 +43,14 @@ public enum class BoolValue
 
     bool inverted = nil.
 
-//    literal = $nil.
-//
-//    wide = $nil.
-
     clone = nil.
 }
 
-//extension commonOp
-//{
-//    /// Returns the parameter        
-//    back : anObject = anObject.
-// 
+extension commonOp
+{
+    /// Returns the parameter        
+    back : anObject = anObject.
+ 
 //    then : code
 //        = code eval.
 //        
@@ -65,9 +61,6 @@ public enum class BoolValue
 //        self close
 //    ]
 //    
-//    ifTrue:trueBlock ifFalse:falseBlock
-//        = self if(trueBlock,falseBlock).
-//        
 //    doFinally func:c1 func:c2
 //    [
 //        c1 eval; then:c2
@@ -79,8 +72,8 @@ public enum class BoolValue
 //        self thenClose:code
 //            | raise:[ self close ].
 //    ]        
-//}
-//
+}
+
 //singleton __prober
 //{
 //    dispatch => system'core_routines'__prober.    

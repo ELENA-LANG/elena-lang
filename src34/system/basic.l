@@ -1,10 +1,10 @@
-//// base variable mixin
-//class BaseVariable
-//{
-//    // should be overridden
-//    value = $nil.
-//}
-//
+// base variable mixin
+class BaseVariable
+{
+    // should be overridden
+    value = nil.
+}
+
 //sealed template<BaseVariable> var :: template_subj
 //{
 //    template_subj $value.
@@ -121,11 +121,8 @@ public class true = BoolValue::
     /// Always returns false.
     bool inverted = false.
 
-//    /// Returns literal representation.
-//    literal = "true".
-//
-//    /// Returns literal representation.
-//    wide = "true"w.
+    /// Returns literal representation.
+    T<literal> literal = "true".
 
     /// Returns itself.
     clone = self.
@@ -180,11 +177,8 @@ public class false = BoolValue::
     /// Always returns true
     bool inverted = true.
 
-//    /// Returns literal representation
-//    literal = "false".
-//    
-//    /// Returns literal representation
-//    wide = "false"w.
+    /// Returns literal representation
+    T<literal> literal = "false".
     
     /// Returns itself
     clone = self.
@@ -197,28 +191,28 @@ public class false = BoolValue::
 // A base value
 public class BaseValue
 {
-//    bool equal(BaseVariable var)
-//        <= equal(var value).
+    bool equal(BaseVariable var)
+        <= equal(var value).
     
-//    bool less(BaseVariable var)
-//        <= equal(var value).
-//    
-//    /// Compares the values
-//    bool multi equal : anObject
-//        = false.
-//
-//    /// Compares the values
-//    bool multi less : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Compares the values
-//    bool greater : anObject = anObject less:$self.
-//
-//    bool notless : anObject = $self less:anObject; inverted.
-//
-//    bool notgreater : anObject = $self greater:anObject; inverted.
+    bool less(BaseVariable var)
+        <= equal(var value).
+    
+    /// Compares the values
+    bool equal : anObject
+        = false.
+
+    /// Compares the values
+    bool less : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
+
+    /// Compares the values
+    bool greater : anObject = anObject less:self.
+
+    bool notless : anObject = self less:anObject; inverted.
+
+    bool notgreater : anObject = self greater:anObject; inverted.
 }
 
 // --- BaseNumber ---
@@ -226,44 +220,44 @@ public class BaseValue
 /// A base numeric value
 public class BaseNumber :: BaseValue
 {
-//    add(BaseVariable var)
-//        <= add(var value).
-//
-//    subtract(BaseVariable var)
-//        <= subtract(var value).
-//    
-//    multiply(BaseVariable var)
-//        <= multiply(var value).
-//
-//    divide(BaseVariable var)
-//        <= divide(var value).
-//    
-//    /// Adds the value
-//    multi add : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Subtracts the value
-//    multi subtract : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Multiply by the value
-//    multi multiply : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Divides into the value
-//    multi divide : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    negative
-//        = 0 - self.
+    add(BaseVariable var)
+        <= add(var value).
+
+    subtract(BaseVariable var)
+        <= subtract(var value).
+    
+    multiply(BaseVariable var)
+        <= multiply(var value).
+
+    divide(BaseVariable var)
+        <= divide(var value).
+    
+    /// Adds the value
+    add : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
+
+    /// Subtracts the value
+    subtract : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
+
+    /// Multiply by the value
+    multiply : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
+
+    /// Divides into the value
+    divide : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
+    
+    negative
+        = 0 - self.
 }
 
 // --- IntBaseNumber ---
@@ -271,46 +265,40 @@ public class BaseNumber :: BaseValue
 /// A base integer value
 public class IntBaseNumber :: BaseNumber
 {
-//    and(BaseVariable var)
-//        <= and(var value).
-//        
-//    or(BaseVariable var)
-//        <= or(var value).
-//        
-//    xor(BaseVariable var)
-//        <= xor(var value).
-//    
-//    /// Execute bitwise AND operation
-//    multi and : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Execute bitwise OR operation
-//    multi or : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Execute bitwise XOR operation
-//    multi xor : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Returns true if all the mask bits are set
-//    bool allMask : anOperand
-//        = $self and:anOperand == anOperand.
-//        
-//    /// Returns true if any of the mask bits are set    
-//    bool anyMask : anOperand
-//        = 0 != $self and:anOperand.
-//        
-//    stacksafe shiftLeft:n
-//        <= shiftLeft int:n.
-//        
-//    stacksafe shiftRight:n
-//        <= shiftRight int:n.
+    and(BaseVariable var)
+        <= and(var value).
+        
+    or(BaseVariable var)
+        <= or(var value).
+        
+    xor(BaseVariable var)
+        <= xor(var value).
+    
+    /// Execute bitwise AND operation
+    and : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
+
+    /// Execute bitwise OR operation
+    or : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
+    
+    /// Execute bitwise XOR operation
+    xor : anObject
+    [
+        system'NotSupportedException new; raise.
+    ]
+    
+    /// Returns true if all the mask bits are set
+    bool allMask : anOperand
+        = self and:anOperand == anOperand.
+        
+    /// Returns true if any of the mask bits are set    
+    bool anyMask : anOperand
+        = 0 != self and:anOperand.
 }
 
 // --- ByteNumber ---
@@ -320,31 +308,31 @@ public sealed struct ByteNumber :: IntBaseNumber
 {
     T<__int,1> theValue.
 
-//    stacksafe implicit(IntNumber n)
-//    [
-//        theValue := n && 255.
-//    ]
-//
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        = 0.
-//
-//    /// Returns the minimal value (0)
-//    constructor min
-//        = 0.
-//
-//    /// Returns the maxial value (255)
-//    constructor max
-//        = 255.
-//    
-//    /// Creates the object with a specified value
-//    stacksafe constructor new byte:value
-//        = value.
-//
-//    /// Creates the object with a specified value
-//    constructor new : aValue
-//        <= new byte:aValue.
-//
+    cast T<int>:n
+    [
+        theValue := n && 255.
+    ]
+
+    /// Creates the object with a default value (0)
+    constructor new
+        = 0.
+
+    /// Returns the minimal value (0)
+    constructor min
+        = 0.
+
+    /// Returns the maxial value (255)
+    constructor max
+        = 255.
+    
+    /// Creates the object with a specified value
+    constructor new(byte value)
+        = value.
+
+    /// Creates the object with a specified value
+    constructor new : val
+        <= new(T<byte>(val)).
+
 //    /// Returns the value as a short integer
 //    short = ShortNumber new byte:$self.
 //
@@ -626,37 +614,37 @@ public sealed struct ShortNumber :: IntBaseNumber
 {
     T<__int,2> theValue.
 
-//    stacksafe implicit(IntNumber n)
-//    [
-//        (n < 0)
-//            ? [ 
-//                theValue := n && 0FFFFh. 
-//                
-//                theValue := theValue || 0FFFF0000h
-//            ]
-//            ! [ theValue := n && 0FFFFh ]
-//    ]
-//    
-//    /// Returns the minimal value (-32768)
-//    constructor min
-//        = -32768.
-//
-//    /// Returns the maxial value (32767)
-//    constructor max
-//        = 32767.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new byte:value
-//        = shortConvertor convert byte:value.
-//        
-//    /// Creates the object with specified value
-//    stacksafe constructor new short:value
-//        = value.
-//
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        = 0.
-//
+    cast T<int>:n
+    [
+        (n < 0)
+            ? [ 
+                theValue := n && 0FFFFh. 
+                
+                theValue := theValue || 0FFFF0000h
+            ]
+            ! [ theValue := n && 0FFFFh ]
+    ]
+    
+    /// Returns the minimal value (-32768)
+    constructor min
+        = -32768.
+
+    /// Returns the maxial value (32767)
+    constructor max
+        = 32767.
+
+    /// Creates the object with specified value
+    constructor new(byte value)
+        = shortConvertor convert(value).
+        
+    /// Creates the object with specified value
+    constructor new(short value)
+        = value.
+
+    /// Creates the object with a default value (0)
+    constructor new
+        = 0.
+
 //    /// Creates the object with specified value
 //    constructor new : anObject
 //        <= new short:anObject.
@@ -946,40 +934,40 @@ public sealed struct IntNumber :: IntBaseNumber
 {
     type<__int, 4> theValue.
 
-//    stacksafe implicit(ByteNumber n)
-//    [
-//        theValue := n.
-//    ]
-//    
-//    stacksafe implicit(ShortNumber n)
-//    [
-//        theValue := n.
-//    ]
-//    
-//    /// Creates the object with the minimal value
-//    constructor min
-//        = -2147483648.
-//
-//    /// Creates the object with the maximal value
-//    constructor max
-//        = 2147483647.
+    cast T<byte>:n
+    [
+        theValue := n.
+    ]
+    
+    cast T<short>:n
+    [
+        theValue := n.
+    ]
+    
+    /// Creates the object with the minimal value
+    constructor min
+        = -2147483648.
+
+    /// Creates the object with the maximal value
+    constructor max
+        = 2147483647.
     
     /// Creates the object with specified value
     constructor new(int value)
         = value.
 
-//    /// Creates the object with specified value
-//    stacksafe constructor new short:value
-//        = intConvertor convert short:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new byte:value
-//        = intConvertor convert byte:value.
-//
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        <= new int:0.
-//
+    /// Creates the object with specified value
+    constructor new(short value)
+        = intConvertor convert(value).
+
+    /// Creates the object with specified value
+    constructor new(byte value)
+        = intConvertor convert(value).
+
+    /// Creates the object with a default value (0)
+    constructor new
+        <= new(0).
+
 //    /// Creates the object with specified value
 //    constructor new : anObject
 //        <= new int:anObject.
@@ -2590,10 +2578,10 @@ public sealed const struct CharValue :: BaseValue
 //    byte multi convert : anObject
 //        = anObject byte.
 //}.
-//
-///// A 16bit integer convertor
-//class shortConvertor =
-//{
+
+/// A 16bit integer convertor
+class shortConvertor =
+{
 //    /// Converts a character into a short integer value and saves the result into an output parameter
 //    stacksafe convert char:aValue vshort:aRetVal
 //        => system'core_routines'__shortconvertor.
@@ -2704,11 +2692,11 @@ public sealed const struct CharValue :: BaseValue
 //        
 //        ^ ShortNumber new short:aRetVal
 //    ]
-//        
-//    short multi convert : anObject
-//        = anObject short.
-//}.
-//
+        
+    short convert : anObject
+        = T<short>(anObject).
+}.
+
 ///// An Unicode character convertor
 //class charConvertor =
 //{
@@ -2811,10 +2799,10 @@ public sealed const struct CharValue :: BaseValue
 //    char multi convert : anObject
 //        = anObject char.
 //}.
-//
-///// An integer convertor
-//class intConvertor =
-//{
+
+/// An integer convertor
+class intConvertor =
+{
 //    /// Converts a literal string into an integer and saves the result into an output parameter
 //    stacksafe convert literal:aValue vint:aRetVal
 //        => system'core_routines'__intconvertor.
@@ -2954,11 +2942,11 @@ public sealed const struct CharValue :: BaseValue
 //
 //    stacksafe int convert uint:anInt
 //        = IntNumber new int:anInt.        
-//                        
-//    int multi convert : anObject
-//        = anObject int.
-//}.
-//
+                        
+    int convert : anObject
+        = T<int>(anObject).
+}.
+
 ///// A unsigned integer convertor
 //class uintConvertor =
 //{
