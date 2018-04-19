@@ -1206,7 +1206,15 @@ void DerivationTransformer :: copyTemplateAttributeTree(SyntaxWriter& writer, SN
          if (attrRef == V_PARAMETER) {
             writer.appendNode(lxTemplateAttribute, paramIndex);
          }
-         else scope.raiseError(errInvalidHint, current);
+         else {
+            SNode terminalNode = current.firstChild(lxTerminalMask);
+
+            ref_t classRef = scope.mapReference(terminalNode);
+            if (classRef) {
+               writeFullReference(writer, scope.compilerScope->module, classRef, terminalNode);
+            }
+            else scope.raiseError(errInvalidHint, terminalNode);
+         }
 
         //ref_t classRef = scope.mapReference(terminalNode);
          //if (!classRef)

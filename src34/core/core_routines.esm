@@ -91,3 +91,25 @@ procedure __short."inverted[1]"
   quitn 1
   
 end
+
+procedure __int."inverted[1]"
+
+  newn   class : system'IntNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure __long."inverted[1]"
+
+  newn   class : system'LongNumber 8
+  bcopya
+  aloadsi 1    // ; load source
+  lnot         // ; invert
+  acopyb
+  quitn 1
+  
+end

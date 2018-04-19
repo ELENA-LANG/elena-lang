@@ -36,6 +36,8 @@ __define private	        12294
 __define reference		12295
 __define integer		12296
 __define hex			12297
+__define real			12298
+__define long                   12300
 __define attribute		12303
 __define member			12304
 __define global			12305
@@ -313,6 +315,8 @@ OBJECT ->
 	| private
 	| integer
 	| hex
+	| long
+	| real
 	| literal
 	| OPENING_BRACKET SUB_EXPRESSION	
 	| NESTED_CLASS
