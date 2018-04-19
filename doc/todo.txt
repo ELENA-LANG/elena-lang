@@ -3,6 +3,13 @@ In development:
 ------                              
                             
               dev - redesign                                                                           
+                 * ref<int> n := 2. - the value should be copied directly
+
+                 *  int n := 2. MyValue new; read(ref<int>(n)). - should box the value??
+
+                 *  var n := 2. MyValue new; read(ref<int>(n)). - should be dispatched
+
+
                  * warn on duplicate module, extensions, unknown modules
 
                  * optimization : dirty_ptr ptr := self - cast method should be called directly without actually allocating the

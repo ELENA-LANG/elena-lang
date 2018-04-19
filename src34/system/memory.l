@@ -1751,14 +1751,14 @@ public sealed Array :: BaseIndexable, array<object>
 //        
 //    int rvprop length :: readLengthTo.
 //}
-//
-//// === Convertors ===
-//
-//// --- literalConvertor ---
-//
-///// A literal convertor
-//class literalConvertor =
-//{
+
+// === Convertors ===
+
+// --- literalConvertor ---
+
+/// A literal convertor
+public class literalConvertor =
+{
 //    literal convert(BaseVariable v)
 //        <= convert(v value).
 //    
@@ -1983,12 +1983,12 @@ public sealed Array :: BaseIndexable, array<object>
 //    /// Returns a parameter                
 //    stacksafe literal convert literal:aLiteral
 //        = aLiteral.
-//        
-//    /// Returns the literal presentation of the parameter
-//    literal multi convert : anObject
-//        = anObject literal.
-//}.
-//
+        
+    /// Returns the literal presentation of the parameter
+    literal convert : anObject
+        = anObject literal.
+}.
+
 //// --- wideConvertor ---
 //
 ///// A wide literal convertor

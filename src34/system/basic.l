@@ -1,28 +1,28 @@
 // base variable mixin
-class BaseVariable
+public class BaseVariable
 {
     // should be overridden
     value = nil.
 }
 
-//sealed template<BaseVariable> var :: template_subj
-//{
-//    template_subj $value.
-//    
-//    sealed embeddable template_subj = $value.
-//    
-//    value = $value.
-//    
-//    stacksafe implicit template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    stacksafe set template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
+sealed template<BaseVariable> ref :: template_subj
+{
+    template_subj theValue.
+    
+    cast T<template_subj>:val
+    [
+        theValue := val.
+    ]
+    
+    cast T<template_subj> = theValue.
+    
+    value = theValue.
+    
+    set value(template_subj val)
+    [
+        theValue := val.
+    ]
+    
 //    stacksafe append template_subj:val
 //    [
 //        $value := $value + val.
@@ -38,13 +38,16 @@ class BaseVariable
 //    
 //    multi reduce:val
 //        <= reduce template_subj:val.
-//    
-//    bool equal : anObject
-//        => $value.
-//
-//    embeddable dispatch => $value.
-//}
-//
+    
+    bool equal : anObject
+        => theValue.
+
+    /*T<literal>*/ literal
+        => theValue.
+
+    /*embeddable */dispatch => theValue.
+}
+
 //sealed template<BaseVariable> ref :: template_subj
 //{
 //    template_subj $value.
@@ -68,15 +71,6 @@ class BaseVariable
 //
 //    embeddable dispatch => $value.
 //}
-//
-//// === Numeric Variables ===
-//
-//type vbyte  = var<ByteNumber>.
-//type vshort = var<ShortNumber>.
-//type vint   = var<IntNumber>.
-//type vlong  = var<LongNumber>.
-//type vreal  = var<RealNumber>.
-//type vchar  = var<CharValue>.
 
 // === Boolean values ===
 
@@ -571,29 +565,26 @@ public sealed struct ByteNumber :: IntBaseNumber
     long xor(long anOperand)
         = LongNumber new(self); xor(anOperand).
 
-//    stacksafe byte shiftLeft int:val
-//    [
-//        ^ theValue << val
-//    ]
-//
-//    stacksafe byte shiftRight int:val
-//    [
-//        ^ theValue >> val
-//    ]
-//    
-//    /// Bitwise inversion
-//    stacksafe byte inverted
-//        => system'core_routines'__byte.
-//        
-//    /// Returns the literal presentation
-//    literal = system'literalConvertor convert byte:$self.
-//        
-//    /// Returns the literal presentation
-//    wide = system'wideConvertor convert byte:$self.
-//
-//    /// Clones the value
-//    clone = ByteNumber new byte:$self.
-//
+    byte shiftLeft(int val)
+    [
+        ^ theValue << val
+    ]
+
+    byte shiftRight(int val)
+    [
+        ^ theValue >> val
+    ]
+    
+    /// Bitwise inversion
+    byte inverted
+        => system'core_routines'__byte.
+        
+    /// Returns the literal presentation
+    T<literal> literal = literalConvertor convert(self).
+        
+    /// Clones the value
+    clone = ByteNumber new(self).
+
 //    // Reads the object hash code into the output parameter
 //    stacksafe readHashCodeTo vint:aCode 
 //        => system'core_routines'__int.
@@ -645,74 +636,74 @@ public sealed struct ShortNumber :: IntBaseNumber
     constructor new
         = 0.
 
-//    /// Creates the object with specified value
-//    constructor new : anObject
-//        <= new short:anObject.
-//
-//    /// Returns the byte value        
-//    byte = byteConvertor convert short:$self.
-//    
-//    /// Returns the integer value
-//    int = IntNumber new short:$self.
-//    
-//    /// Returns the integer value
-//    uint = UIntNumber new short:$self.
-//    
-//    /// Returns the long integer value
-//    long = LongNumber new short:$self.
-//    
-//    /// Returns the value as a real number
-//    real = RealNumber new short:$self.
-//
-//    multi bool equal:o
-//    [
-//        var n := o short \ back:$nil.
-//        ($nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ $self equal short:n ]
-//    ]
-//
-//    multi bool less:n
-//        <= less short:n.
-//
-//    stacksafe bool equal(BaseVariable v)
-//        <= equal(v value).
-//                
-//    stacksafe bool less(BaseVariable v)
-//        <= equal(v value).
-//
-//    /// Compares the value
-//    stacksafe bool equal short:anOperand 
-//        = theValue == anOperand.
-//        
-//    /// Compares the value
-//    stacksafe bool less short:anOperand
-//        = theValue < anOperand.
-//        
-//    /// Compares the value
-//    stacksafe bool equal int:anOperand 
-//        = IntNumber new short:$self; equal int:anOperand.
-//        
-//    /// Compares the value
-//    stacksafe bool less int:anOperand
-//        = IntNumber new short:$self; less int:anOperand.
-//    
-//    /// Compares the value
-//    stacksafe bool equal byte:anOperand 
-//        = $self equal short:(ShortNumber new byte:anOperand).
-//        
-//    /// Compares the value
-//    stacksafe bool less byte:anOperand
-//        = $self less short:(ShortNumber new byte:anOperand).
-//    
-//    /// Compares the value
-//    stacksafe bool equal long:anOperand 
-//        = LongNumber new short:$self; equal long:anOperand.
-//        
-//    /// Compares the value
-//    stacksafe bool less long:anOperand
-//        = LongNumber new short:$self; less long:anOperand.
-//    
+    /// Creates the object with specified value
+    constructor new : anObject
+        <= new(T<short>(anObject)).
+
+    /// Returns the byte value        
+    cast T<byte> = byteConvertor convert(self).
+    
+    /// Returns the integer value
+    cast T<int> = IntNumber new(self).
+    
+    /// Returns the integer value
+    cast T<uint> = UIntNumber new(self).
+    
+    /// Returns the long integer value
+    cast T<long> = LongNumber new(self).
+    
+    /// Returns the value as a real number
+    cast T<real> = RealNumber new(self).
+
+    bool equal:o
+    [
+        var n := T<short>(o) \ back:nil.
+        (nil == n)
+            ? [ ^ false ]
+            ! [ ^ self equal(n) ]
+    ]
+
+    bool less:n
+        <= less(n).
+
+    bool equal(BaseVariable v)
+        <= equal(v value).
+                
+    bool less(BaseVariable v)
+        <= equal(v value).
+
+    /// Compares the value
+    bool equal(short anOperand)
+        = theValue == anOperand.
+        
+    /// Compares the value
+    bool less(short anOperand)
+        = theValue < anOperand.
+        
+    /// Compares the value
+    bool equal(int anOperand)
+        = IntNumber new(self); equal(anOperand).
+        
+    /// Compares the value
+    bool less(int anOperand)
+        = IntNumber new(self); less(anOperand).
+    
+    /// Compares the value
+    bool equal(byte anOperand)
+        = self equal(ShortNumber new(anOperand)).
+        
+    /// Compares the value
+    bool less (byte anOperand)
+        = self less(ShortNumber new(anOperand)).
+    
+    /// Compares the value
+    bool equal(long anOperand)
+        = LongNumber new(self); equal(anOperand).
+        
+    /// Compares the value
+    bool less(long anOperand)
+        = LongNumber new(self); less(anOperand).
+    
 //    /// Compares the value
 //    stacksafe bool equal real:anOperand 
 //        = RealNumber new short:$self; equal real:anOperand.
@@ -2456,14 +2447,14 @@ public sealed const struct CharValue :: BaseValue
 //    /// Redirects the incoming messages to the object
 //    dispatch => theObject.
 //}
-//
-//// === Basic Convertors ===
-//
-//// --- convertor helpers ---
-//
-///// A byte convertor
-//class byteConvertor =
-//{
+
+// === Basic Convertors ===
+
+// --- convertor helpers ---
+
+/// A byte convertor
+public class byteConvertor =
+{
 //    /// Converts a character into a byte value and saves the result into an output parameter
 //    stacksafe convert char:aValue vbyte:aRetVal
 //        => system'core_routines'__byteconvertor.
@@ -2574,13 +2565,13 @@ public sealed const struct CharValue :: BaseValue
 //        
 //        ^ ByteNumber new byte:aValue
 //    ]
-//
-//    byte multi convert : anObject
-//        = anObject byte.
-//}.
+
+    byte convert : anObject
+        = T<byte>(anObject).
+}.
 
 /// A 16bit integer convertor
-class shortConvertor =
+public class shortConvertor =
 {
 //    /// Converts a character into a short integer value and saves the result into an output parameter
 //    stacksafe convert char:aValue vshort:aRetVal
@@ -2801,7 +2792,7 @@ class shortConvertor =
 //}.
 
 /// An integer convertor
-class intConvertor =
+public class intConvertor =
 {
 //    /// Converts a literal string into an integer and saves the result into an output parameter
 //    stacksafe convert literal:aValue vint:aRetVal

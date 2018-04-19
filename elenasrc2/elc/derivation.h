@@ -29,6 +29,9 @@ class DerivationWriter : public _DerivationWriter
    void writeNode(Symbol symbol);
 
 public:
+   void begin();
+   void close();
+
    virtual void writeSymbol(Symbol symbol);
    virtual void writeTerminal(TerminalInfo& terminal);
 

@@ -565,7 +565,9 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
             raiseError(errInvalidFile, filePath);
       
          _ELENA_::DerivationWriter writer(*info->tree);
+         writer.begin();
          parser.parse(&sourceFile, writer, getTabSize());      
+         writer.close();
 
          _ELENA_::DerivationTransformer transformer(*info->tree);
          transformer.recognize(scope, info->path, info->ns);
@@ -600,7 +602,9 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
 
       _ELENA_::SyntaxWriter syntaxWriter(*syntaxTree);
       _ELENA_::DerivationTransformer transformer(*derivationTree);
+      syntaxWriter.newNode(_ELENA_::lxRoot);
       transformer.generate(syntaxWriter, scope, (*it)->path, (*it)->ns, &(*it)->importedNs);
+      syntaxWriter.closeNode();
 
       (*it)->tree = syntaxTree;
 

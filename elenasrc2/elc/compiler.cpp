@@ -7794,7 +7794,7 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
    SyntaxTree expressionTree; // expression tree is reused
 
    // second pass - implementation
-   SNode current = node;
+   SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current) {
          case lxClass:
@@ -7830,7 +7830,7 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 
 bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& repeatMode)
 {
-   SNode current = node;
+   SNode current = node.firstChild();
 
    if (scope.moduleScope->superReference == 0)
       scope.raiseError(errNotDefinedBaseClass);

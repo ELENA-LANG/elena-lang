@@ -284,7 +284,7 @@ ref_t CompilerScope :: mapFullReference(ident_t referenceName, bool existing)
       return 0;
 
    ref_t reference = 0;
-   if (existing) {
+   if (existing && !isTemplateWeakReference(referenceName)) {
       // check if the reference does exist
       ref_t moduleRef = 0;
       _Module* argModule = project->resolveModule(referenceName, moduleRef);

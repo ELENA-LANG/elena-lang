@@ -70,3 +70,13 @@ procedure __literal."copy$system@LiteralValue$system@IntNumber$system@IntNumber$
 
 end
 
+procedure __byte."inverted[1]"
+
+  newn   class : system'ByteNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
