@@ -204,11 +204,27 @@ inline bool isConstantArguments(SNode node)
 
 // --- Compiler::NamespaceScope ---
 
-Compiler::NamespaceScope :: NamespaceScope(CompilerScope* moduleScope/*_ProjectManager* project, _Module* module, _Module* debugModule*//*, Unresolveds* forwardsUnresolved*/)
+Compiler::NamespaceScope :: NamespaceScope(CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported, bool withFullInfo)
    : Scope(moduleScope), constantHints(INVALID_REF), extensions(NULL, freeobj)/*, autoExtensions(NULL, freeobj), */
 {
-   this->ns = NULL;
-   this->sourcePath = NULL;
+   this->ns = ns;
+   this->sourcePath = path;
+
+   for (auto it = imported->start(); !it.Eof(); it++) {
+      ident_t importedNs = *it;
+
+      bool duplicateExtensions = false;
+      bool duplicateInclusion = false;
+      /*if (!*/includeModule(importedNs, withFullInfo, duplicateExtensions, duplicateInclusion);/*) {*/
+      //   raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, *it);
+      //}
+      //if (duplicateInclusion) {
+      //   raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, *it);
+      //}
+      //   
+      //if (duplicateExtensions)
+      //   raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, *it);
+   }
 
   //   this->forwardsUnresolved = forwardsUnresolved;
 
@@ -228,46 +244,7 @@ Compiler::NamespaceScope :: NamespaceScope(CompilerScope* moduleScope/*_ProjectM
 //   }
 //   else packageReference = 0;
 
-   importedNs.add(module->Name());
-
 //   loadModuleInfo(module, true);
-}
-
-void Compiler::NamespaceScope :: loadNamespaceInfo(SNode node, bool loadModuleInfo)
-{
-   if (!emptystr(node.identifier())) {
-      ns = node.identifier();
-   }
-
-   // load current module extensions
-   loadExtensions(module->Name(), ns);
-
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      switch (current) {
-         case lxSourcePath:
-            sourcePath = current.identifier();
-            break;
-         case lxImporting:
-         {
-            bool duplicateInclusion = false;
-            bool duplicateExtensions = false;
-            if (!includeModule(current.identifier(), loadModuleInfo, duplicateExtensions, duplicateInclusion)) {
-               raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current);
-            }
-            if (duplicateInclusion) {
-               raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
-            }
-            if (duplicateExtensions)
-               raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, current);
-            break;
-         }
-         default:
-            return;
-      }
-
-      current = current.nextNode();
-   }
 }
 
 pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
@@ -6436,7 +6413,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
       scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), hint);
    }
-   else if (test(message, SPECIAL_MESSAGE) && message == encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE) {
+   else if (test(message, SPECIAL_MESSAGE) && message == (encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
       hint |= tpSpecial;
       hint |= tpSealed;
    }
@@ -7817,7 +7794,7 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
    SyntaxTree expressionTree; // expression tree is reused
 
    // second pass - implementation
-   SNode current = node.firstChild();
+   SNode current = node;
    while (current != lxNone) {
       switch (current) {
          case lxClass:
@@ -7853,14 +7830,13 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 
 bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& repeatMode)
 {
-   SNode current = node.firstChild();
+   SNode current = node;
 
    if (scope.moduleScope->superReference == 0)
       scope.raiseError(errNotDefinedBaseClass);
 
    // first pass - declaration
    bool declared = false;
-   //repeatMode = false;
    while (current != lxNone) {
       //      if (scope.mapAttribute(name) != 0)
       //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
@@ -7935,41 +7911,22 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
 //   builder.generateSyntaxTree(writer, scope, sourcePath);
 //}
 
-void Compiler :: declareModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope/*, Unresolveds& unresolveds, */)
+bool Compiler :: declareModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode)
 {
    // declare classes several times to ignore the declaration order
-   bool repeatMode = true;
-   bool idle = false;
-   while (repeatMode && !idle) {
-      idle = true;
+   NamespaceScope namespaceScope(&scope, path, ns, imported, false);
 
-      SNode current = syntaxTree.readRoot().firstChild();
-      while (current != lxNone) {
-         if (current == lxNamespace) {
-            NamespaceScope namespaceScope(&scope/*, &project, info.codeModule, info.debugModule*//*, &unresolveds*/);
-            namespaceScope.loadNamespaceInfo(current, false);
-
-            idle &= !compileDeclarations(current, namespaceScope, repeatMode);
-         }
-         current = current.nextNode();
-      }
-   }
+   return compileDeclarations(syntaxTree.readRoot(), namespaceScope, repeatMode);
 }
 
-void Compiler :: compileModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope/*, Unresolveds& unresolveds*/)
+void Compiler :: compileModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/)
 {
-   SNode current = syntaxTree.readRoot().firstChild();
-   while (current != lxNone) {
-      if (current == lxNamespace) {
-         NamespaceScope namespaceScope(&scope/*, &project, info.codeModule, info.debugModule*//*, &unresolveds*/);
-         namespaceScope.loadNamespaceInfo(current, true);
+   // declare classes several times to ignore the declaration order
+   NamespaceScope namespaceScope(&scope, path, ns, imported, true);
 
-         scope.project->printInfo("%s", namespaceScope.sourcePath);
+   scope.project->printInfo("%s", namespaceScope.sourcePath);
 
-         compileImplementations(current, namespaceScope);
-      }
-      current = current.nextNode();
-   }
+   compileImplementations(syntaxTree.readRoot(), namespaceScope);
 }
 
 inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t referenceName)
@@ -7987,6 +7944,34 @@ inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t
       }
    }
    else return 0;
+}
+
+void Compiler :: loadAttributes(CompilerScope& scope, ident_t name, MessageMap* attributes)
+{
+   _Module* extModule = scope.project->loadModule(name, true);
+   bool duplicates = false;
+   if (extModule) {
+      //      //bool owner = module == extModule;
+      //
+      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
+
+      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
+      if (section) {
+         MemoryReader metaReader(section);
+         while (!metaReader.Eof()) {
+            ref_t attrRef = metaReader.getDWord();
+            if (!isPrimitiveRef(attrRef)) {
+               attrRef = importReference(extModule, attrRef, scope.module);
+            }
+
+            ident_t attrName = metaReader.getLiteral(DEFAULT_STR);
+
+            if (!attributes->add(attrName, attrRef, true))
+               duplicates = true;
+         }
+      }
+   }
+   //   return duplicates;
 }
 
 void Compiler :: initializeScope(ident_t name, CompilerScope& scope, bool withDebugInfo)
@@ -8012,6 +7997,12 @@ void Compiler :: initializeScope(ident_t name, CompilerScope& scope, bool withDe
    scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
    scope.boolReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
    scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
+
+   if (!scope.module->Name().compare(STANDARD_MODULE)) {
+      // system attributes should be loaded automatically
+      loadAttributes(scope, STANDARD_MODULE, &scope.attributes);
+      //loadModuleInfo(project->loadModule(STANDARD_MODULE, false), true);
+   }
 
 //   createPackageInfo(info.codeModule, project);
 }

@@ -25,6 +25,8 @@ struct CompilerScope : _CompilerScope
 
    SymbolMap savedPaths;
 
+   MessageMap attributes;
+
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference);
    virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference)
    {

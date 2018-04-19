@@ -330,8 +330,6 @@ private:
       ident_t        ns;
       ident_t        sourcePath;
 
-      void loadNamespaceInfo(SNode node, bool fullInfo);
-
       virtual Scope* getScope(ScopeLevel level)
       {
          if (level == slNamespace) {
@@ -465,7 +463,7 @@ private:
 
 //      pos_t saveSourcePath(ByteCodeWriter& writer, ident_t sourcePath);
 
-      NamespaceScope(CompilerScope* moduleScope/*_ProjectManager* project, _Module* module, _Module* debugModule*//*, Unresolveds* forwardsUnresolved*/);
+      NamespaceScope(CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported, bool withFullInfo);
    };
 
    // - SourceScope -
@@ -832,6 +830,8 @@ private:
 
    int retrieveGenericArgParamCount(ClassScope& scope);
 
+   void loadAttributes(CompilerScope& scope, ident_t name, MessageMap* attributes);
+
    ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CompilerScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
@@ -1044,8 +1044,8 @@ public:
    }
 
    // return true if no forward class declarations are encountered
-   void declareModule(_ProjectManager& project, SyntaxTree& tree, CompilerScope& scope/*, Unresolveds& unresolveds, */);
-   void compileModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope/*, Unresolveds& unresolveds*/);
+   bool declareModule(_ProjectManager& project, SyntaxTree& tree, CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode);
+   void compileModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/);
 
 //   void compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& tree, ModuleInfo& moduleInfo, Unresolveds& unresolveds);
 

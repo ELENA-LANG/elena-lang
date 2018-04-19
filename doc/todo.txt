@@ -3,6 +3,8 @@ In development:
 ------                              
                             
               dev - redesign                                                                           
+                 * warn on duplicate module, extensions, unknown modules
+
                  * optimization : dirty_ptr ptr := self - cast method should be called directly without actually allocating the
                    structure
 
@@ -22,6 +24,8 @@ In development:
                  * field initializer - special name
 
                  * implicit constructor - special name
+
+                 * move compiler code to project, only win32 specific code should stay in ElcProject
 
 
 
