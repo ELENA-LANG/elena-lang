@@ -80,3 +80,14 @@ procedure __byte."inverted[1]"
   quitn 1
   
 end
+
+procedure __short."inverted[1]"
+
+  newn   class : system'ShortNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end

@@ -8,7 +8,7 @@ symbol          = #16389.
 constructor     = #16384.
 enum            = #8198.
 sealed          = #8195.
-//embeddable      = #8193.
+embeddable      = #8193.
 template        = #16391.
 extension       = #8203.
 

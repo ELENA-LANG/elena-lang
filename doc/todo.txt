@@ -9,6 +9,10 @@ In development:
 
                  *  var n := 2. MyValue new; read(ref<int>(n)). - should be dispatched
 
+                 * debugger : display template based classes
+                 * debugger : debugging template based classes
+                 * method not found wrong attribute
+
 
                  * warn on duplicate module, extensions, unknown modules
 
@@ -106,6 +110,7 @@ In development:
                  * optimize external call routines
                  * support interal messages
                  * make sure that array<byte> can be passed as bytearray
+                 * boxing : default constructor / field intializer should be auto called
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

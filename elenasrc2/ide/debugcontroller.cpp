@@ -450,6 +450,14 @@ inline bool isSymbolReference(ident_t name)
    else return false;
 }
 
+inline ref_t mapModuleReference(_Module* module, ident_t referenceName, bool existing)
+{
+   if (!isWeakReference(referenceName)) {
+      return module->mapReference(referenceName + getlength(module->Name()), existing);
+   }
+   else return module->mapReference(referenceName, existing);
+}
+
 bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  addressReader)
 {
    bool isClass = true;
@@ -463,9 +471,9 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
 
    pos_t position = 0;
    if (reference.find('@') != NOTFOUND_POS && reference.find('#', 0) > 0) {
-      position = (module != NULL) ? module->mapReference(reference + reference.find('\'', 0), true) : 0;
+      position = (module != NULL) ? mapModuleReference(module, reference + reference.find('\'', 0), true) : 0;
    }
-   else position = (module != NULL) ? module->mapReference(reference, true) : 0;
+   else position = (module != NULL) ? mapModuleReference(module, reference, true) : 0;
    if (position != 0) {
       // place reader on the next after symbol record
       MemoryReader reader(module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true), position);
