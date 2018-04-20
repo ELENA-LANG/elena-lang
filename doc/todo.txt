@@ -3,6 +3,8 @@ In development:
 ------                              
                             
               dev - redesign                                                                           
+                 * reimplement embeddable optimization / embeddable constructor
+
                  * ref<int> n := 2. - the value should be copied directly
 
                  *  int n := 2. MyValue new; read(ref<int>(n)). - should box the value??
@@ -114,6 +116,7 @@ In development:
                  * optimize equal generic implementation (in basic module)
                  * a == b == c - not allowed
                  * a < b < c - not allowed
+                 * reimplement nilValue generic handler
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

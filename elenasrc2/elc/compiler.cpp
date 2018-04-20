@@ -1754,13 +1754,18 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, iden
          ident_t paramName = moduleScope->module->resolveReference(signatures[i]);
 
          NamespaceName ns(paramName);
-         if (ns.compare(STANDARD_MODULE)) {
-            virtualReference.append('$');
-            virtualReference.append(paramName + getlength(ns) + 1);
-         }
-         else if (isTemplateWeakReference(paramName)) {
+         if (isTemplateWeakReference(paramName)) {
             virtualReference.append('$');
             virtualReference.append(paramName + getlength(ns));
+         }
+         else if (isWeakReference(paramName)) {
+            virtualReference.append('$');
+            virtualReference.append(scope.module->Name());
+            virtualReference.append(paramName);
+         }
+         else {
+            virtualReference.append('$');
+            virtualReference.append(paramName);
          }
       }
    }

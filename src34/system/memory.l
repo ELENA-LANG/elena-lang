@@ -387,15 +387,15 @@ public sealed ByteArray :: BaseIndexable, array<byte>
 //    clone = ByteArray new bytearray:$self.
 }
 
-//// --- ShortArray ---
-//
-///// A short integer array
-//sealed ShortArray :: BaseIndexable, array<short>
-//{
-//    /// Creates the short array with the specified length
-//    stacksafe constructor new int:aLength
-//        = short<>(aLength).
-//    
+// --- ShortArray ---
+
+/// A short integer array
+public sealed ShortArray :: BaseIndexable, array<short>
+{
+    /// Creates the short array with the specified length
+    constructor new(int aLength)
+        = dynamic<short>(aLength).
+    
 //    /// Creates the copy of a short subarray
 //    stacksafe constructor new int:anIndex int:aLength shortarray:anArray
 //        <= new int:aLength;
@@ -460,8 +460,8 @@ public sealed ByteArray :: BaseIndexable, array<byte>
 //
 //    /// Creates the object copy
 //    clone = ShortArray new shortarray:$self.
-//}
-//
+}
+
 //// --- IntArray ---
 //
 ///// An array of integers

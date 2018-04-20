@@ -83,7 +83,7 @@ type mssg       = system'Message.
 
 // === basic dynamic types ===
 type bytearray  = system'ByteArray.
-//type shortarray = system'ShortArray.
+type shortarray = system'ShortArray.
 //type intarray   = system'IntArray.
 //type intmatrix  = system'IntMatrix.
 //type realarray  = system'RealArray.

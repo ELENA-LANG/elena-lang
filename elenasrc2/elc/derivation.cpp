@@ -1735,7 +1735,9 @@ inline void moveUpTerminal(SNode& current)
    SNode targetNode = current.firstChild();
    SNode sourceNode = current.findChild(lxObject).firstChild(lxTerminalMask);
 
-   targetNode.set(sourceNode.type, sourceNode.identifier());
+   // HOTFIX : the reserve copy of the string should be done before inserting
+   IdentifierString copy(sourceNode.identifier());
+   targetNode.set(sourceNode.type, copy.c_str());
 }
 
 void DerivationTransformer :: generateTemplateParameters(SNode& current, DerivationScope& scope, bool templateMode)
