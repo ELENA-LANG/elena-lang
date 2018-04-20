@@ -1,3 +1,11 @@
+class Test
+{
+    test : n
+    [
+        ^ n >> 2.
+    ]
+}
+
 // base variable mixin
 public class BaseVariable
 {
@@ -2250,17 +2258,17 @@ public sealed const struct CharValue :: BaseValue
     bool equal(int val)
         = theValue == val.
 
-//    bool equal(literal val)
-//        = val == T<literal>(self).
+    bool equal(literal val)
+        = val == T<literal>(self).
 
-//    bool equal(wide val)
-//        = val == T<wide>(self).
-//
-//    bool less(literal val)
-//        = val < (T<literal>(self)).
-//
-//    bool less(wide val)
-//        = val < (T<wide>(self)).
+    bool equal(wide val)
+        = val == T<wide>(self).
+
+    bool less(literal val)
+        = val < T<literal>(self).
+
+    bool less(wide val)
+        = val < T<wide>(self).
 
     /// Clones the value
     clone = CharValue new(self).

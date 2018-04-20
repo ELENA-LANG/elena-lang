@@ -112,6 +112,11 @@ enum Symbol
    nsExprMessageParameter       = 0x0105E,
    nsDynamicSize                = 0x0105F,
    nsReferenceExpression        = 0x01060,
+   nsL1Operator                 = 0x01061,
+   nsL2Operator                 = 0x01062,
+   nsL3Operator                 = 0x01063,
+   nsL4Operator                 = 0x01064,
+   nsClosingOperator            = 0x01065,
 
    nsDeclarationEndExpected         = 0x04000,               // error-terminals
    nsStatementEndExpected           = 0x04001,               
