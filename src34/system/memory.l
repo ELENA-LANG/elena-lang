@@ -1989,11 +1989,11 @@ public class literalConvertor =
         = anObject literal.
 }.
 
-//// --- wideConvertor ---
-//
-///// A wide literal convertor
-//class wideConvertor =
-//{
+// --- wideConvertor ---
+
+/// A wide literal convertor
+public class wideConvertor =
+{
 //    wide convert(BaseVariable v)
 //        <= convert(v value).
 //    
@@ -2218,12 +2218,12 @@ public class literalConvertor =
 //    /// Returns a parameter
 //    stacksafe wide convert wide:aLiteral
 //        = aLiteral.
-//
-//    /// Returns the literal presentation of the parameter
-//    wide multi convert : anObject
-//        = anObject wide.
-//}.
-//
+
+    /// Returns the literal presentation of the parameter
+    wide convert : anObject
+        = T<wide>(anObject literal).
+}.
+
 //// === Enumerators / Indexers
 //
 //// --- LiteralEnumerator ---

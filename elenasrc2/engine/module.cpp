@@ -201,7 +201,10 @@ ref_t Module :: mapConstant(ident_t constant)
 {
    ref_t nextId = _constants.Count() + 1;
 
-   return mapKey(_constants, constant, nextId);
+   if (!constant) {
+      return mapKey(_constants, "", nextId);
+   }
+   else return mapKey(_constants, constant, nextId);
 }
 
 ref_t Module :: mapReference(ident_t reference, bool existing)

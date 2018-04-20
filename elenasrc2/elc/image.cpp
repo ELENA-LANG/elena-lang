@@ -276,7 +276,7 @@ ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t refere
                if (isWeakReference(resolvedReferenceName)) {
                   IdentifierString fullName(refModule->Name(), resolvedReferenceName);
 
-                  _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedReferenceName);
+                  _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, fullName);
                }
                else _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedReferenceName);
             }

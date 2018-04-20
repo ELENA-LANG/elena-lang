@@ -194,10 +194,9 @@ _Module* LibraryManager :: resolveNative(ident_t referenceName, LoadResult& resu
 
 _Module* LibraryManager :: resolveWeakModule(ident_t weakName, LoadResult& result, ref_t& reference)
 {
-   for (auto it = _modules.start(); !it.Eof(); it++) {
-      ReferenceNs fullName((*it)->Name());
-      fullName.combine(weakName.c_str());
+   IdentifierString fullName("'", weakName);
 
+   for (auto it = _modules.start(); !it.Eof(); it++) {
       reference = (*it)->mapReference(fullName, true);
       if (reference) {
          result = lrSuccessful;

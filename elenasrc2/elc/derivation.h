@@ -291,7 +291,7 @@ public:
 
    void generate(SyntaxWriter& writer, _CompilerScope& scope, ident_t sourcePath, ident_t ns, IdentifierList* imports);
 
-   ref_t generateTemplate(SyntaxTree& templateTree, _CompilerScope& scope, ref_t reference, List<ref_t>& parameters);
+   ref_t generateTemplate(SyntaxWriter& writer, _CompilerScope& scope, ref_t reference, List<ref_t>& parameters);
 
    DerivationTransformer(SyntaxTree& tree);
 };

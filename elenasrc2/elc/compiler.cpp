@@ -1747,6 +1747,24 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, iden
    ref_t signature = 0;
    virtualReference.append(moduleScope->module->resolveAction(actionRef, signature));
 
+   if (signature) {
+      ref_t signatures[OPEN_ARG_COUNT];
+      size_t len = moduleScope->module->resolveSignature(signature, signatures);
+      for (size_t i = 0; i < len; i++) {
+         ident_t paramName = moduleScope->module->resolveReference(signatures[i]);
+
+         NamespaceName ns(paramName);
+         if (ns.compare(STANDARD_MODULE)) {
+            virtualReference.append('$');
+            virtualReference.append(paramName + getlength(ns) + 1);
+         }
+         else if (isTemplateWeakReference(paramName)) {
+            virtualReference.append('$');
+            virtualReference.append(paramName + getlength(ns));
+         }
+      }
+   }
+
    virtualReference.replaceAll('\'', '@', signIndex);
 
    ref_t reference = 0;
@@ -7963,7 +7981,8 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, id
    // declare classes several times to ignore the declaration order
    NamespaceScope namespaceScope(&scope, path, ns, imported, true);
 
-   scope.project->printInfo("%s", namespaceScope.sourcePath);
+   if (!emptystr(namespaceScope.sourcePath))
+      scope.project->printInfo("%s", namespaceScope.sourcePath);
 
    compileImplementations(syntaxTree.readRoot(), namespaceScope);
 }

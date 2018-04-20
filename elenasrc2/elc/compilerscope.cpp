@@ -423,8 +423,10 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
    SyntaxTree templateTree;
 
    DerivationTransformer transformer(templateTree);
-
-   ref_t generatedReference = transformer.generateTemplate(templateTree, *this, reference, parameters);
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   ref_t generatedReference = transformer.generateTemplate(writer, *this, reference, parameters);
+   writer.closeNode();
 
    SourceFileInfo fileInfo;
    fileInfo.tree = &templateTree;

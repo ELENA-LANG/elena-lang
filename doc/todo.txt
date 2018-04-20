@@ -111,6 +111,7 @@ In development:
                  * support interal messages
                  * make sure that array<byte> can be passed as bytearray
                  * boxing : default constructor / field intializer should be auto called
+                 * optimize equal generic implementation (in basic module)
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

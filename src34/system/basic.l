@@ -585,17 +585,17 @@ public sealed struct ByteNumber :: IntBaseNumber
     /// Clones the value
     clone = ByteNumber new(self).
 
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCodeTo vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCodeTo vint:aCode.
-//        
-//        ^ aCode
-//    ]
+    // Reads the object hash code into the output parameter
+    readHashCodeTo(ref<int> retVal)
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        self readHashCodeTo(&aCode).
+        
+        ^ aCode
+    ]
 }
 
 // --- ShortNumber ---
@@ -905,17 +905,17 @@ public sealed struct ShortNumber :: IntBaseNumber
     /// Clones the value
     clone = ShortNumber new(self).
 
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCodeTo vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCodeTo vint:aCode.
-//        
-//        ^ aCode.
-//    ]        
+    // Reads the object hash code into the output parameter
+    readHashCodeTo(ref<int> aCode)
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        self readHashCodeTo(&aCode).
+        
+        ^ aCode.
+    ]        
 }
 
 // --- IntNumber ---
@@ -1214,17 +1214,17 @@ public sealed struct IntNumber :: IntBaseNumber
     /// Clones the value
     clone = IntNumber new(self).
 
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCodeTo vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCodeTo vint:aCode.
-//        
-//        ^ aCode.
-//    ]        
+    // Reads the object hash code into the output parameter
+    readHashCodeTo(ref<int> aCode)
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        self readHashCodeTo(&aCode).
+        
+        ^ aCode.
+    ]        
 
     int shiftLeft(int val)
     [
@@ -1592,17 +1592,17 @@ public sealed struct UIntNumber :: IntBaseNumber
     /// Clones the value
     clone = UIntNumber new(self).
 
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCodeTo vint:aCode 
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCodeTo vint:aCode.
-//        
-//        ^ aCode.
-//    ]        
+    // Reads the object hash code into the output parameter
+    readHashCodeTo(ref<int> aCode)
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        self readHashCodeTo(&aCode).
+        
+        ^ aCode.
+    ]        
 
     uint shiftLeft(int val)
     [
@@ -1913,17 +1913,17 @@ public sealed struct LongNumber :: IntBaseNumber
     /// Clones the value
     clone = LongNumber new(self).
     
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCodeTo vint:aCode
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCodeTo vint:aCode.
-//        
-//        ^ aCode.
-//    ]
+    // Reads the object hash code into the output parameter
+    readHashCodeTo(ref<int> aCode)
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        self readHashCodeTo(&aCode).
+        
+        ^ aCode.
+    ]
 
     long shiftLeft(int val)
     [
@@ -1951,11 +1951,10 @@ public sealed struct RealNumber :: BaseNumber
 {
     T<__real,8> theValue.
 
-//    cast T<int>:n
-//    [
-//        realConvertor convert int:n vreal:$self.
-//        realConvertor convert(n,&self).
-//    ]
+    cast T<int>:n
+    [
+        realConvertor convert(n,&self).
+    ]
             
     /// Returns the minimal value
     constructor min
@@ -1965,243 +1964,243 @@ public sealed struct RealNumber :: BaseNumber
     constructor max
         = 1.7976931348623157e+308r.
         
-//    /// Returns the negative infinity
-//    embeddable constructor negativeInfinity 
-//        = -1.0r / 0.0r. 
-//        
-//    /// Returns the positive infinity 
-//    embeddable constructor positiveInfinity 
-//        = 1.0r / 0.0r.
-//        
-//    /// returns the NaN
-//    embeddable constructor NaN
-//        = 0.0r / 0.0r.
-//
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        <= new real:0.0r.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new real:value
-//        = value.
-//  
-//    /// Creates the object with specified value
-//    stacksafe constructor new int:value 
-//        = realConvertor convert int:value.
-//  
-//    /// Creates the object with specified value
-//    stacksafe constructor new uint:value 
-//        = realConvertor convert uint:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new short:value 
-//        = realConvertor convert short:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new byte:value 
-//        = realConvertor convert byte:value.
-//
-//    /// Creates the object with specified value
-//    stacksafe constructor new long:value
-//        = realConvertor convert long:value.
-//        
-//    /// Creates the object with specified value
-//    constructor new : anObject
-//        <= new real:anObject.
-//        
-//    multi bool equal:o
-//    [
-//        var n := o real \ back:$nil.
-//        ($nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ $self equal real:n ]
-//    ]
-//
-//    multi bool less:n
-//        <= less real:n.
-//        
-//    stacksafe bool equal(BaseVariable v)
-//        <= equal(v value).
-//        
-//    stacksafe bool less(BaseVariable v)
-//        <= less(v value).
-//        
-//    /// Compares the value
-//    stacksafe bool equal real:anOperand 
-//        = theValue == anOperand.
-//        
-//    /// Compares the value
-//    stacksafe bool less real:anOperand
-//        = theValue < anOperand.
-//        
-//    multi add :n
-//        <= add real:n.
-//
-//    multi subtract:n
-//        <= subtract real:n.
-//
-//    multi multiply:n
-//        <= multiply real:n.
-//
-//    multi divide:n
-//        <= divide real:n.
-//        
-//    stacksafe real add(BaseVariable v)
-//        <= add(v value).
-//
-//    stacksafe real subtract(BaseVariable v)
-//        <= subtract(v value).
-//
-//    stacksafe real multiply(BaseVariable v)
-//        <= multiply(v value).
-//
-//    stacksafe real divide(BaseVariable v)
-//        <= divide(v value).
-//        
-//    /// Returns the sum
-//    stacksafe real add real:anOperand
-//        = theValue + anOperand.
-//
-//    /// Returns the sum
-//    stacksafe real subtract real:anOperand
-//        = theValue - anOperand.
-//
-//    /// Returns the product
-//    stacksafe real multiply real:anOperand
-//        = theValue * anOperand.
-//
-//    /// Returns the result of integer division
-//    stacksafe real divide real:anOperand
-//        = theValue / anOperand.
-//        
-//    /// Compares the numeric values
-//    stacksafe bool equal int:anOperand
-//        = $self equal real:(RealNumber new int:anOperand).
-//
-//    /// Compares the numeric values
-//    stacksafe bool equal byte:anOperand
-//        = $self equal real:(RealNumber new byte:anOperand).
-//
-//    /// Compares the numeric values
-//    stacksafe bool equal short:anOperand
-//        = $self equal real:(RealNumber new short:anOperand).
-//
-//    /// Compares the numeric values
-//    stacksafe bool equal long:anOperand
-//        = $self equal real:(RealNumber new long:anOperand).
-//
-//    /// Compares the numeric values
-//    stacksafe bool less int:anOperand
-//        = $self less real:(RealNumber new int:anOperand).
-//
-//    /// Compares the numeric values
-//    stacksafe bool less byte:anOperand
-//        = $self less real:(RealNumber new byte:anOperand).
-//
-//    /// Compares the numeric values
-//    stacksafe bool less short:anOperand
-//        = $self less real:(RealNumber new short:anOperand).
-//
-//    /// Compares the numeric values
-//    stacksafe bool less long:anOperand
-//        = $self less real:(RealNumber new long:anOperand).
-//
-//    /// Returns the sum of numbers
-//    stacksafe real add int:anOperand
-//        = $self add real:(RealNumber new int:anOperand).
-//
-//    /// Returns the sum of numbers
-//    stacksafe real add byte:anOperand
-//        = $self add real:(RealNumber new byte:anOperand).
-//
-//    /// Returns the sum of numbers
-//    stacksafe real add short:anOperand
-//        = $self add real:(RealNumber new short:anOperand).
-//
-//    /// Returns the sum of numbers
-//    stacksafe real add long:anOperand
-//        = $self add real:(RealNumber new long:anOperand).
-//
-//    /// Returns the difference of numbers
-//    stacksafe real subtract int:anOperand
-//        = $self subtract real:(RealNumber new int:anOperand).
-//
-//    /// Returns the difference of numbers
-//    stacksafe real subtract byte:anOperand
-//        = $self subtract real:(RealNumber new byte:anOperand).
-//
-//    /// Returns the difference of numbers
-//    stacksafe real subtract short:anOperand
-//        = $self subtract real:(RealNumber new short:anOperand).
-//
-//    /// Returns the difference of numbers
-//    stacksafe real subtract long:anOperand
-//        = $self subtract real:(RealNumber new long:anOperand).
-//
-//    /// Returns the product of numbers
-//    stacksafe real multiply int:anOperand
-//    [
-//        real n := anOperand.
-//        
-//        ^ $self multiply real:n.
-//    ]
-//
-//    /// Returns the product of numbers
-//    stacksafe real multiply byte:anOperand
-//        = $self multiply real:(RealNumber new byte:anOperand).
-//
-//    /// Returns the product of numbers
-//    stacksafe real multiply short:anOperand
-//        = $self multiply real:(RealNumber new short:anOperand).
-//
-//    /// Returns the product of numbers
-//    stacksafe real multiply long:anOperand
-//        = $self multiply real:(RealNumber new long:anOperand).
-//
-//    /// Returns the result of the division
-//    stacksafe real divide int:anOperand
-//    [
-//        real n := anOperand.
-//        
-//        ^ $self divide real:n
-//    ]
-//
-//    /// Returns the result of the division
-//    stacksafe real divide byte:anOperand
-//        = $self divide real:(RealNumber new byte:anOperand).
-//        
-//    /// Returns the result of the division
-//    stacksafe real divide short:anOperand
-//        = $self divide real:(RealNumber new short:anOperand).
-//
-//    /// Returns the result of the division
-//    stacksafe real divide long:anOperand
-//        = $self divide real:(RealNumber new long:anOperand).
-//
-//    /// Returns the literal presentation
-//    literal = system'literalConvertor convert real:$self.
-//
+    /// Returns the negative infinity
+    embeddable constructor negativeInfinity 
+        = -1.0r / 0.0r. 
+        
+    /// Returns the positive infinity 
+    embeddable constructor positiveInfinity 
+        = 1.0r / 0.0r.
+        
+    /// returns the NaN
+    embeddable constructor NaN
+        = 0.0r / 0.0r.
+
+    /// Creates the object with a default value (0)
+    constructor new
+        <= new(0.0r).
+
+    /// Creates the object with specified value
+    constructor new(real value)
+        = value.
+  
+    /// Creates the object with specified value
+    constructor new(int value)
+        = realConvertor convert(value).
+  
+    /// Creates the object with specified value
+    constructor new(uint value)
+        = realConvertor convert(value).
+
+    /// Creates the object with specified value
+    constructor new(short value)
+        = realConvertor convert(value).
+
+    /// Creates the object with specified value
+    constructor new(byte value)
+        = realConvertor convert(value).
+
+    /// Creates the object with specified value
+    constructor new(long value)
+        = realConvertor convert(value).
+        
+    /// Creates the object with specified value
+    constructor new : anObject
+        <= new(T<real>(anObject)).
+        
+    bool equal:o
+    [
+        var n := T<real>(o) \ back:nil.
+        (nil == n)
+            ? [ ^ false ]
+            ! [ ^ self equal(n) ]
+    ]
+
+    bool less:n
+        <= less(T<real>(n)).
+        
+    bool equal(BaseVariable v)
+        <= equal(v value).
+        
+    bool less(BaseVariable v)
+        <= less(v value).
+        
+    /// Compares the value
+    bool equal(real anOperand)
+        = theValue == anOperand.
+        
+    /// Compares the value
+    bool less(real anOperand)
+        = theValue < anOperand.
+        
+    add:n
+        <= add(T<real>(n)).
+
+    subtract:n
+        <= subtract(T<real>(n)).
+
+    multiply:n
+        <= multiply(T<real>(n)).
+
+    divide:n
+        <= divide(T<real>(n)).
+        
+    real add(BaseVariable v)
+        <= add(v value).
+
+    real subtract(BaseVariable v)
+        <= subtract(v value).
+
+    real multiply(BaseVariable v)
+        <= multiply(v value).
+
+    real divide(BaseVariable v)
+        <= divide(v value).
+        
+    /// Returns the sum
+    real add(real anOperand)
+        = theValue + anOperand.
+
+    /// Returns the sum
+    real subtract(real anOperand)
+        = theValue - anOperand.
+
+    /// Returns the product
+    real multiply(real anOperand)
+        = theValue * anOperand.
+
+    /// Returns the result of integer division
+    real divide(real anOperand)
+        = theValue / anOperand.
+        
+    /// Compares the numeric values
+    bool equal(int anOperand)
+        = self equal(RealNumber new(anOperand)).
+
+    /// Compares the numeric values
+    bool equal(byte anOperand)
+        = self equal(RealNumber new(anOperand)).
+
+    /// Compares the numeric values
+    bool equal(short anOperand)
+        = self equal(RealNumber new(anOperand)).
+
+    /// Compares the numeric values
+    bool equal(long anOperand)
+        = self equal(RealNumber new(anOperand)).
+
+    /// Compares the numeric values
+    bool less(int anOperand)
+        = self less(RealNumber new(anOperand)).
+
+    /// Compares the numeric values
+    bool less(byte anOperand)
+        = self less(RealNumber new(anOperand)).
+
+    /// Compares the numeric values
+    bool less(short anOperand)
+        = self less(RealNumber new(anOperand)).
+
+    /// Compares the numeric values
+    bool less(long anOperand)
+        = self less(RealNumber new(anOperand)).
+
+    /// Returns the sum of numbers
+    real add(int anOperand)
+        = self add(RealNumber new(anOperand)).
+
+    /// Returns the sum of numbers
+    real add(byte anOperand)
+        = self add(RealNumber new(anOperand)).
+
+    /// Returns the sum of numbers
+    real add(short anOperand)
+        = self add(RealNumber new(anOperand)).
+
+    /// Returns the sum of numbers
+    real add(long anOperand)
+        = self add(RealNumber new(anOperand)).
+
+    /// Returns the difference of numbers
+    real subtract(int anOperand)
+        = self subtract(RealNumber new(anOperand)).
+
+    /// Returns the difference of numbers
+    real subtract(byte anOperand)
+        = self subtract(RealNumber new(anOperand)).
+
+    /// Returns the difference of numbers
+    real subtract(short anOperand)
+        = self subtract(RealNumber new(anOperand)).
+
+    /// Returns the difference of numbers
+    real subtract(long anOperand)
+        = self subtract(RealNumber new(anOperand)).
+
+    /// Returns the product of numbers
+    real multiply(int anOperand)
+    [
+        real n := anOperand.
+        
+        ^ self multiply(n).
+    ]
+
+    /// Returns the product of numbers
+    real multiply(byte anOperand)
+        = self multiply(RealNumber new(anOperand)).
+
+    /// Returns the product of numbers
+    real multiply(short anOperand)
+        = self multiply(RealNumber new(anOperand)).
+
+    /// Returns the product of numbers
+    real multiply(long anOperand)
+        = self multiply(RealNumber new(anOperand)).
+
+    /// Returns the result of the division
+    real divide(int anOperand)
+    [
+        real n := anOperand.
+        
+        ^ self divide(n)
+    ]
+
+    /// Returns the result of the division
+    real divide(byte anOperand)
+        = self divide(RealNumber new(anOperand)).
+        
+    /// Returns the result of the division
+    real divide(short anOperand)
+        = self divide(RealNumber new(anOperand)).
+
+    /// Returns the result of the division
+    real divide(long anOperand)
+        = self divide(RealNumber new(anOperand)).
+
+    /// Returns the literal presentation
+    T<literal> literal = literalConvertor convert(self).
+
 //    /// Returns the literal presentation
 //    wide = system'wideConvertor convert real:$self.
-//
-//    /// Clones the value    
-//    clone = RealNumber new real:$self.
-//    
-//    // Reads the object hash code into the output parameter
-//    stacksafe readHashCodeTo vint:aCode
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        $self readHashCodeTo vint:aCode.
-//        
-//        ^ aCode
-//    ]
-//        
-//    /// Negates the value
-//    stacksafe negative
-//        = 0.0r - theValue.
+
+    /// Clones the value    
+    clone = RealNumber new(self).
+    
+    // Reads the object hash code into the output parameter
+    readHashCodeTo(ref<int> aCode)
+        => system'core_routines'__int.
+    
+    embeddable int hash_code
+    [
+        int aCode := 0.
+        self readHashCodeTo(&aCode).
+        
+        ^ aCode
+    ]
+        
+    /// Negates the value
+    negative
+        = 0.0r - theValue.
 }
 
 // --- CharValue ---
@@ -2211,67 +2210,70 @@ public sealed const struct CharValue :: BaseValue
 {
     int theValue.
 
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        <= new char:$0.
+    /// Creates the object with a default value (0)
+    constructor new
+        <= new($0).
+
+    /// Creates the object with specified value
+    constructor new(char value)
+        = value.
+
+    /// Creates the object with specified numeric value
+    constructor new(int anOperand)
+        <= new(charConvertor convert(anOperand)).
+
+    /// Returns the minimal possible character value (0)
+    constructor min
+        = $0.
+
+    /// Returns the maximal possible character value (010FFFFh)
+    constructor max
+        = $010FFFFh.
+
+    bool equal:o
+    [
+        var n := T<char>(o) \ back:nil.
+        (nil == n)
+            ? [ ^ false ]
+            ! [ ^ self equal(n) ]
+    ]
+
+    bool less:n
+        <= less(T<char>(n)).
+        
+    bool equal(BaseVariable v)
+        <= equal(v value).
+        
+    bool less(BaseVariable v)
+        <= less(v value).
+        
+    bool equal(int val)
+        = theValue == val.
+
+//    bool equal(literal val)
+//        = val == T<literal>(self).
+
+//    bool equal(wide val)
+//        = val == T<wide>(self).
 //
-//    /// Creates the object with specified value
-//    stacksafe constructor new char:value
-//        = value.
+//    bool less(literal val)
+//        = val < (T<literal>(self)).
 //
-//    /// Creates the object with specified numeric value
-//    stacksafe constructor new int:anOperand
-//        <= new char:(charConvertor convert int:anOperand).
-//
-//    /// Returns the minimal possible character value (0)
-//    constructor min
-//        = $0.
-//
-//    /// Returns the maximal possible character value (010FFFFh)
-//    constructor max
-//        = $010FFFFh.
-//
-//    multi bool equal:o
-//    [
-//        var n := o char \ back:$nil.
-//        ($nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ $self equal char:n ]
-//    ]
-//
-//    multi bool less:n
-//        <= less char:n.
-//        
-//    stacksafe bool equal(BaseVariable v)
-//        <= equal(v value).
-//        
-//    stacksafe bool less(BaseVariable v)
-//        <= less(v value).
-//        
-//    stacksafe bool equal int:val
-//        = theValue == val.
-//
-//    stacksafe bool equal literal:val
-//        = val == $self literal.
-//
-//    stacksafe bool equal wide:val
-//        = val == $self wide.
-//
-//    stacksafe bool less literal:val
-//        = val < $self literal.
-//
-//    stacksafe bool less wide:val
-//        = val < $self wide.
-//
-//    /// Clones the value
-//    clone = CharValue new char:$self.
-//
-//    /// Returns the literal value
-//    stacksafe literal = system'literalConvertor convert char:$self.
-//
-//    /// Returns the wide literal value
-//    wide = system'wideConvertor convert char:$self.
-//    
+//    bool less(wide val)
+//        = val < (T<wide>(self)).
+
+    /// Clones the value
+    clone = CharValue new(self).
+
+    /// Returns the literal value
+    T<literal> literal = literalConvertor convert(self).
+
+    /// Returns the literal value
+    cast T<literal> = literalConvertor convert(self).
+    
+    /// Returns the wide literal value
+    cast T<wide> = wideConvertor convert(self).
+    
 //    /// Reads the number of bytes to represent the symbol
 //    stacksafe readLengthTo vint:aLength
 //        => system'core_routines'__char.
@@ -2689,9 +2691,9 @@ public class shortConvertor =
         = T<short>(anObject).
 }.
 
-///// An Unicode character convertor
-//class charConvertor =
-//{
+/// An Unicode character convertor
+public class charConvertor =
+{
 //    /// Converts a byte value into a character and saves the result into an output parameter
 //    stacksafe convert byte:aValue vchar:aRetVal
 //        => system'core_routines'__charconvertor.
@@ -2787,10 +2789,10 @@ public class shortConvertor =
 //        
 //        ^ CharValue new char:aRetVal
 //    ]
-//        
-//    char multi convert : anObject
-//        = anObject char.
-//}.
+        
+    char convert : anObject
+        = T<char>(anObject).
+}.
 
 /// An integer convertor
 public class intConvertor =
@@ -3098,9 +3100,9 @@ public class longConvertor =
         = T<long>(anObject).
 }.
 
-///// A real number convertor
-//class realConvertor =
-//{
+/// A real number convertor
+class realConvertor =
+{
 //    /// Converts an integer into a real number and saves the result into an output parameter
 //    stacksafe convert int:aValue vreal:aRetVal
 //        => system'core_routines'__realconvertor.
@@ -3216,11 +3218,11 @@ public class longConvertor =
 //        
 //        ^ RealNumber new real:aRetVal
 //    ]
-//        
-//    real multi convert : anObject
-//        = anObject real.
-//}.
-//
+        
+    real convert : o
+        = T<real>(o).
+}.
+
 //// --- realOpController ---
 //
 //class realOpController =
