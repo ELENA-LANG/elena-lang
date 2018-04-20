@@ -599,3 +599,20 @@ SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
    return nodes[0];
 }
 
+SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
+{
+   if (node.existChild(lxRow))
+      return node;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      SNode terminalNode = findTerminalInfo(current);
+      if (terminalNode != lxNone)
+         return terminalNode;
+
+      current = current.nextNode();
+   }
+
+   return current;
+}
+

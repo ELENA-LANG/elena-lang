@@ -28,6 +28,7 @@ __define ATTRIBUTE   		4174
 __define ARRAY_OPERATION        4179
 __define IDLE_MESSAGE_PARAMETER 4189
 __define SUB_MESSAGE_PARAMETER  4190
+__define REFERENCE              4192
 
 __define eof            	12291
 __define literal		12292
@@ -321,6 +322,10 @@ OBJECT ->
 	| OPENING_BRACKET SUB_EXPRESSION	
 	| NESTED_CLASS
 	| BLOCK
+	| AMPERSAND REFERENCE
+	   
+REFERENCE ->
+	OBJECT
 
 OBJECT_BODY ->
 	:: OBJECT_EXT
@@ -403,6 +408,9 @@ ASSIGN_OPERATOR ->
 
 RESEND_OPERATOR ->
 	<=
+
+AMPERSAND ->
+	&
 
 TERMINATOR ->
 	.

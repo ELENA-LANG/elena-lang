@@ -188,8 +188,11 @@ void _ELC_::Project::raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _EL
       throw _ELENA_::_Exception();
 }
 
-void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
+void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
 {
+   if (!_ELENA_::test(_warningMasks, level))
+      return;
+
    if (!indicateWarning())
       return;
 
@@ -200,8 +203,11 @@ void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path, i
    print(wMsg, (const wchar_t*)wPath, row, column, (const wchar_t*)wTerminal);
 }
 
-void _ELC_::Project::raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path)
+void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path)
 {
+   if (!_ELENA_::test(_warningMasks, level))
+      return;
+
    if (!indicateWarning())
       return;
 
@@ -529,11 +535,11 @@ _ELENA_::_JITCompiler* _ELC_::Project::createJITCompiler64()
    return new _ELENA_::AMD64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
-void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope, FileList& files)
+void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope, _ELENA_::SourceFileList& files)
 {
    _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
    while (!file_it.Eof()) {
-      FileInfo* info = new FileInfo();
+      _ELENA_::SourceFileInfo* info = new _ELENA_::SourceFileInfo();
       info->tree = new _ELENA_::SyntaxTree();
 
       _ELENA_::ident_t filePath = *file_it;
@@ -628,7 +634,7 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
       //_ELENA_::ident_t target = source->get(ELC_TARGET_NAME);
       int type = /*!emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : */1;
       if (type == 1) {
-         FileList files(NULL, _ELENA_::freeobj);
+         _ELENA_::SourceFileList files(NULL, _ELENA_::freeobj);
          
          printInfo("Parsing %s", name);
 
@@ -637,25 +643,7 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
 
          printInfo("Compiling %s", name);
 
-         // declare classes / symbols based on the derivation tree
-         bool repeatMode = true;
-         bool idle = false;
-         while (repeatMode && !idle) {
-            repeatMode = false;
-            idle = true;
-            for (auto it = files.start(); !it.Eof(); it++) {
-               FileInfo* info = *it;
-
-               idle &= !compiler.declareModule(*this, *info->tree, scope, info->path.c_str(), info->ns.c_str(), &info->importedNs, repeatMode);
-            }
-         }
-
-         // compile classes / symbols
-         for (auto it = files.start(); !it.Eof(); it++) {
-            FileInfo* info = *it;
-
-            compiler.compileModule(*this, *info->tree, scope, info->path.c_str(), info->ns.c_str(), &info->importedNs);
-         }
+         scope.compile(compiler, files);
       }
       //else if (type == 2) {
       //   // if it is a script file
@@ -706,7 +694,7 @@ void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
 
       _ELENA_::FileReader rulesFile(rulesPath.c_str(), _ELENA_::feRaw, false);
       if (!rulesFile.isOpened()) {
-         project.raiseWarning(errInvalidFile, RULES_FILE);
+         project.raiseWarning(0, errInvalidFile, RULES_FILE);
       }
       else compiler.loadRules(&rulesFile);
    }

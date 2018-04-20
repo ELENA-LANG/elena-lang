@@ -70,6 +70,7 @@ enum LexicalType
 ////   lxImplicitConstructor = 0x0004B,
    lxScope           = 0x0004D,
    lxMessageParameter= 0x0C04E,
+   lxReferenceExpr   = 0x0C060,
 
    // parameters
    lxEOF             = 0x18003, // indicating closing code bracket
@@ -1026,6 +1027,8 @@ public:
 
    static Node findPattern(Node node, int counter, ...);
    static bool matchPattern(Node node, int mask, int counter, ...);
+
+   static Node findTerminalInfo(Node node);
 
    Node readRoot();
    Node readFirstNode(size_t position);

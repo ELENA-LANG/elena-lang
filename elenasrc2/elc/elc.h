@@ -9,14 +9,15 @@
 #ifndef elcH
 #define elcH 1
 
-#include "project.h"
 #include "config.h"
 #include "jitcompiler.h"
 #include "parser.h"
+#include "project.h"
 #include "compiler.h"
+#include "compilerscope.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0042
+#define ELC_REVISION_NUMBER             0x0043
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -136,33 +137,12 @@ typedef _ELENA_::XmlConfigFile ElcXmlConfigFile;
 // --- Command Line Project ---
 class Project : public _ELENA_::Project
 {
-   struct FileInfo
-   {
-      _ELENA_::SyntaxTree*       tree;
-      _ELENA_::IdentifierString  path;
-      _ELENA_::IdentifierString  ns;
-      _ELENA_::IdentifierList    importedNs;
-
-      FileInfo()
-      {
-         tree = NULL;
-      }
-      ~FileInfo()
-      {
-         _ELENA_::freeobj(tree);
-      }
-   };
-
-   typedef _ELENA_::List<FileInfo*> FileList;
-
    int _tabSize, _encoding;
 
    virtual bool readCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting, _ELENA_::_ConfigFile::Nodes& list);
    virtual _ELENA_::ident_t getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
 
-   void buildSyntaxTree(_ELENA_::Parser& parser, /*_ELENA_::SyntaxTree& syntaxTree, */_ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope,
-                        FileList& files
-                        /*,_ELENA_::ModuleInfo& moduleInfo, bool& repeatMode*/);
+   void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope, _ELENA_::SourceFileList& files);
 
 public:
    _ELENA_::Path appPath;
@@ -179,8 +159,8 @@ public:
    virtual void raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t value);
    virtual void raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _ELENA_::ident_t identifier);
 
-   virtual void raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
-   virtual void raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path);
+   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
+   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
 
    virtual void addSource(_ELENA_::path_t path);
    bool loadProject(_ELENA_::path_t path);

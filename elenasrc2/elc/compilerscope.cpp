@@ -9,6 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "compilerscope.h"
+#include "derivation.h"
 
 using namespace _ELENA_;
 
@@ -32,57 +33,7 @@ inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* import
    else return 0;
 }
 
-SNode findTerminalInfo(SNode node)
-{
-   if (node.existChild(lxRow))
-      return node;
-
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      SNode terminalNode = findTerminalInfo(current);
-      if (terminalNode != lxNone)
-         return terminalNode;
-
-      current = current.nextNode();
-   }
-
-   return current;
-}
-
 // --- CompilerScope ---
-
-void CompilerScope :: raiseError(const char* message, ident_t sourcePath, SNode node)
-{
-   SNode terminal = findTerminalInfo(node);
-   
-   int col = terminal.findChild(lxCol).argument;
-   int row = terminal.findChild(lxRow).argument;
-   ident_t identifier = terminal.identifier();
-   if (emptystr(identifier))
-      identifier = terminal.identifier();
-   
-   project->raiseError(message, sourcePath, row, col, identifier);
-}
-
-void CompilerScope :: raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
-{
-   SNode terminal = findTerminalInfo(node);
-
-   int col = terminal.findChild(lxCol).argument;
-   int row = terminal.findChild(lxRow).argument;
-   ident_t identifier = terminal.identifier();
-   //if (emptystr(identifier))
-   //   identifier = terminal.findChild(lxTerminal).identifier();
-
-   if (test(warningMask, level))
-      project->raiseWarning(message, sourcePath, row, col, identifier);
-}
-
-void CompilerScope :: raiseWarning(int level, const char* message, ident_t sourcePath)
-{
-   if (test(warningMask, level))
-      project->raiseWarning(message, sourcePath);
-}
 
 void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
 {
@@ -442,4 +393,49 @@ ref_t CompilerScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier,
       // try to resovle an identifier in the current namespace
       return ::resolveImplicitIdentifier(referenceOne, identifier, module, project, importedNs);
    }   
+}
+
+void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files)
+{
+   // declare classes / symbols based on the derivation tree
+   bool repeatMode = true;
+   bool idle = false;
+   while (repeatMode && !idle) {
+      repeatMode = false;
+      idle = true;
+      for (auto it = files.start(); !it.Eof(); it++) {
+         SourceFileInfo* info = *it;
+
+         idle &= !compiler.declareModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs, repeatMode);
+      }
+   }
+
+   // compile classes / symbols
+   for (auto it = files.start(); !it.Eof(); it++) {
+      SourceFileInfo* info = *it;
+
+      compiler.compileModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs);
+   }
+}
+
+ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters)
+{
+   SyntaxTree templateTree;
+
+   DerivationTransformer transformer(templateTree);
+
+   ref_t generatedReference = transformer.generateTemplate(templateTree, *this, reference, parameters);
+
+   SourceFileInfo fileInfo;
+   fileInfo.tree = &templateTree;
+
+   SourceFileList files;
+   files.add(&fileInfo);
+
+   compile(compiler, files);
+
+   // HOTFIX : clear tree reference because it is stack allocated 
+   fileInfo.tree = NULL;
+
+   return generatedReference;
 }

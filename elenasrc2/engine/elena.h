@@ -54,51 +54,6 @@ public:
    //virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
 };
 
-// --- _Project ---
-
-class _ProjectManager
-{
-public:
-   virtual ident_t Namespace() const = 0;
-
-   virtual int getDefaultEncoding() = 0; // !! obsolete!?
-   virtual int getTabSize() = 0; // !! obsolete!?
-
-//   virtual bool HasWarnings() const = 0;     // !! obsolete
-   virtual int getWarningMask() const = 0;
-//   virtual bool WarnOnWeakUnresolved() const = 0;
-
-//   virtual ident_t getManinfestName() = 0;
-//   virtual ident_t getManinfestVersion() = 0;
-//   virtual ident_t getManinfestAuthor() = 0;
-
-   virtual void printInfo(const char* msg, ident_t value) = 0;
-
-   virtual void raiseError(ident_t msg) = 0;
-   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
-   virtual void raiseError(ident_t msg, ident_t value) = 0;
-
-   virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
-
-   virtual void raiseWarning(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
-   virtual void raiseWarning(ident_t msg, ident_t path) = 0;
-
-   virtual _Module* createModule(ident_t name) = 0;
-   virtual _Module* createDebugModule(ident_t name) = 0 ;
-
-   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
-//   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
-
-   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
-   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
-
-   virtual ident_t resolveForward(ident_t forward) = 0;
-
-   virtual bool addForward(ident_t forward, ident_t reference) = 0;
-
-   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
-};
-
 // -- ReferenceInfo ---
 
 struct ReferenceInfo

@@ -500,6 +500,7 @@ namespace _ELENA_
 //   #define SIGNATURE_FORWARD        "'$signature"
    #define ARRAY_FORWARD            "$array"
    #define BOOL_FORWARD             "$bool"
+   #define REFTEMPLATE_FORWARD      "$reference"
 
    #define STARTUP_SYMBOL             "$startUp"
    

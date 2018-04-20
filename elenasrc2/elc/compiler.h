@@ -11,7 +11,6 @@
 
 #include "elena.h"
 #include "compilercommon.h"
-#include "compilerscope.h"
 #include "bcwriter.h"
 
 namespace _ELENA_
@@ -230,9 +229,9 @@ private:
             //slTemplate,
          };
    
-         CompilerScope* moduleScope;
-         _Module*       module;
-         Scope*         parent;
+         _CompilerScope* moduleScope;
+         _Module*        module;
+         Scope*          parent;
    
          virtual void raiseError(const char* message)
          {
@@ -290,7 +289,7 @@ private:
 //   //         return moduleScope->mapSubject(terminal);
 //   //      }
    
-         Scope(CompilerScope* moduleScope)
+         Scope(_CompilerScope* moduleScope)
          {
             this->parent = NULL;
             this->moduleScope = moduleScope;
@@ -463,7 +462,7 @@ private:
 
 //      pos_t saveSourcePath(ByteCodeWriter& writer, ident_t sourcePath);
 
-      NamespaceScope(CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported, bool withFullInfo);
+      NamespaceScope(_CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported, bool withFullInfo);
    };
 
    // - SourceScope -
@@ -818,10 +817,10 @@ private:
    bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
    bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
-   void writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef);
+   void writeMessageInfo(SyntaxWriter& writer, _CompilerScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
-   int checkMethod(CompilerScope& scope, ref_t reference, ref_t message)
+   int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message)
    {
       _CompilerLogic::ChechMethodInfo dummy;
 
@@ -830,15 +829,15 @@ private:
 
    int retrieveGenericArgParamCount(ClassScope& scope);
 
-   void loadAttributes(CompilerScope& scope, ident_t name, MessageMap* attributes);
+   void loadAttributes(_CompilerScope& scope, ident_t name, MessageMap* attributes);
 
    ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(CompilerScope& scope, ObjectInfo object);
+   ref_t resolveObjectReference(_CompilerScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
    //ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
 
    void saveExtension(ClassScope& scope, ref_t message);
-   ref_t mapExtension(CompilerScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef);
+   ref_t mapExtension(_CompilerScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef);
    ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, bool& genericOne);
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
@@ -846,7 +845,7 @@ private:
    int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
-   void inheritClassConstantList(CompilerScope& scope, ref_t sourceRef, ref_t targetRef);
+   void inheritClassConstantList(_CompilerScope& scope, ref_t sourceRef, ref_t targetRef);
 
    // NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
@@ -911,6 +910,7 @@ private:
    ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
@@ -1020,7 +1020,7 @@ private:
    void analizeCode(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    void analizeMethod(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    void analizeClassTree(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
-   void analizeSymbolTree(SNode node, Scope& scope, int warningMask);
+   void analizeSymbolTree(SNode node, Scope& scope);
 
 //   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
 //
@@ -1044,12 +1044,12 @@ public:
    }
 
    // return true if no forward class declarations are encountered
-   bool declareModule(_ProjectManager& project, SyntaxTree& tree, CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode);
-   void compileModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/);
+   bool declareModule(SyntaxTree& tree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode);
+   void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/);
 
 //   void compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& tree, ModuleInfo& moduleInfo, Unresolveds& unresolveds);
 
-   void initializeScope(ident_t name, CompilerScope& scope, bool withDebugInfo);
+   void initializeScope(ident_t name, _CompilerScope& scope, bool withDebugInfo);
 
 //   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 

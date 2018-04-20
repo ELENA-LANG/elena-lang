@@ -204,7 +204,7 @@ inline bool isConstantArguments(SNode node)
 
 // --- Compiler::NamespaceScope ---
 
-Compiler::NamespaceScope :: NamespaceScope(CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported, bool withFullInfo)
+Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported, bool withFullInfo)
    : Scope(moduleScope), constantHints(INVALID_REF), extensions(NULL, freeobj)/*, autoExtensions(NULL, freeobj), */
 {
    this->ns = ns;
@@ -1425,7 +1425,7 @@ Compiler :: Compiler(_CompilerLogic* logic)
    ByteCodeCompiler::loadOperators(_operators);
 }
 
-void Compiler :: writeMessageInfo(SyntaxWriter& writer, CompilerScope& scope, ref_t messageRef)
+void Compiler :: writeMessageInfo(SyntaxWriter& writer, _CompilerScope& scope, ref_t messageRef)
 {
    ref_t actionRef;
    int paramCount;
@@ -1588,7 +1588,7 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
    else return resolveObjectReference(*scope.moduleScope, object);
 }
 
-ref_t Compiler :: resolveObjectReference(CompilerScope& scope, ObjectInfo object)
+ref_t Compiler :: resolveObjectReference(_CompilerScope& scope, ObjectInfo object)
 {
    // if static message is sent to a class class
    switch (object.kind)
@@ -1657,7 +1657,7 @@ ref_t Compiler :: resolveObjectReference(CompilerScope& scope, ObjectInfo object
 
 void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/)
 {
-   CompilerScope* moduleScope = scope.moduleScope;
+   _CompilerScope* moduleScope = scope.moduleScope;
 
    // declare built-in variables
    if (withSelf) {
@@ -1725,7 +1725,7 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
 
 void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t function, ref_t message)
 {
-   CompilerScope* moduleScope = scope.moduleScope;
+   _CompilerScope* moduleScope = scope.moduleScope;
 
    IdentifierString virtualReference(function);
    virtualReference.append('.');
@@ -1761,7 +1761,7 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, iden
 
 Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed)
 {
-   CompilerScope* moduleScope = scope.moduleScope;
+   _CompilerScope* moduleScope = scope.moduleScope;
 
    size_t flagCopy = scope.info.header.flags;
    size_t classClassCopy = scope.info.header.classRef;
@@ -2606,6 +2606,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
       case lxBoxing:
          result = compileBoxingExpression(writer, node, scope, mode);
          break;
+      case lxReferenceExpr:
+         result = compileReferenceExpression(writer, node, scope, mode);
+         break;
 //      case lxMessageReference:
 //         result = compileMessageReference(writer, member, scope, mode);
 //         break;
@@ -2822,7 +2825,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
    return encodeMessage(actionRef, paramCount) | actionFlags;
 }
 
-ref_t Compiler :: mapExtension(CompilerScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef)
+ref_t Compiler :: mapExtension(_CompilerScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef)
 {
    auto it = typeExtensions->getIt(messageRef);
    while (!it.Eof()) {
@@ -3527,7 +3530,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    return retVal;
 }
 
-void Compiler :: inheritClassConstantList(CompilerScope& scope, ref_t sourceRef, ref_t targetRef)
+void Compiler :: inheritClassConstantList(_CompilerScope& scope, ref_t sourceRef, ref_t targetRef)
 {
    ref_t moduleRef = 0;
    _Module* parent = scope.loadReferenceModule(sourceRef, moduleRef);
@@ -4294,6 +4297,30 @@ void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope
    writer.removeBookmark();
 }
 
+ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   writer.newBookmark();
+
+   ObjectInfo objectInfo = compileObject(writer, node.firstChild(lxObjectMask), scope, mode);
+
+   // generate an reference class
+   List<ref_t> parameters;
+   ref_t operandRef = resolveObjectReference(scope, objectInfo);
+   if (!operandRef)
+      operandRef = scope.moduleScope->superReference;
+
+   parameters.add(operandRef);
+
+   ref_t targetRef = scope.moduleScope->generateTemplate(*this, scope.moduleScope->refTemplateReference, parameters);
+
+   if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, objectInfo), objectInfo.element))
+      scope.raiseError(errInvalidOperation, node);
+
+   writer.removeBookmark();
+
+   return ObjectInfo(okObject, targetRef);
+}
+
 ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    writer.newBookmark(); // !! an extra breakpoint?
@@ -4606,7 +4633,7 @@ ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, Cod
 {
    ObjectInfo retVal(okExternal);
 
-   CompilerScope* moduleScope = scope.moduleScope;
+   _CompilerScope* moduleScope = scope.moduleScope;
 
 //   bool rootMode = test(mode, HINT_ROOT);
    bool stdCall = false;
@@ -4666,7 +4693,7 @@ ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, Cod
 
 ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo routine)
 {
-   CompilerScope* moduleScope = scope.moduleScope;
+   _CompilerScope* moduleScope = scope.moduleScope;
 
    IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
    virtualReference.append('.');
@@ -5369,7 +5396,7 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
 {
    SNode expr = node.findChild(lxExpression);
 
-   CompilerScope* moduleScope = scope.moduleScope;
+   _CompilerScope* moduleScope = scope.moduleScope;
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
    // find where the target constructor is declared in the current class
@@ -6949,7 +6976,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    writer.closeNode();
    writer.closeNode();
 
-   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
+   analizeSymbolTree(expressionTree.readRoot(), scope);
    node.refresh();
 
 //   // create constant if required
@@ -7004,7 +7031,7 @@ void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScop
    writer.closeNode();
    writer.closeNode();
 
-   analizeSymbolTree(expressionTree.readRoot(), scope, scope.moduleScope->warningMask);
+   analizeSymbolTree(expressionTree.readRoot(), scope);
 
    compilePreloadedCode(*scope.moduleScope, expressionTree.readRoot());
 }
@@ -7648,7 +7675,7 @@ void Compiler :: analizeClassTree(SNode node, NamespaceScope& scope/*, WarningSc
    }
 }
 
-void Compiler :: analizeSymbolTree(SNode node, Scope& scope, int warningMask)
+void Compiler :: analizeSymbolTree(SNode node, Scope& scope)
 {
    //WarningScope warningScope(warningMask);
 
@@ -7923,7 +7950,7 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
 //   builder.generateSyntaxTree(writer, scope, sourcePath);
 //}
 
-bool Compiler :: declareModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode)
+bool Compiler :: declareModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode)
 {
    // declare classes several times to ignore the declaration order
    NamespaceScope namespaceScope(&scope, path, ns, imported, false);
@@ -7931,7 +7958,7 @@ bool Compiler :: declareModule(_ProjectManager& project, SyntaxTree& syntaxTree,
    return compileDeclarations(syntaxTree.readRoot(), namespaceScope, repeatMode);
 }
 
-void Compiler :: compileModule(_ProjectManager& project, SyntaxTree& syntaxTree, CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/)
+void Compiler :: compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/)
 {
    // declare classes several times to ignore the declaration order
    NamespaceScope namespaceScope(&scope, path, ns, imported, true);
@@ -7958,7 +7985,7 @@ inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t
    else return 0;
 }
 
-void Compiler :: loadAttributes(CompilerScope& scope, ident_t name, MessageMap* attributes)
+void Compiler :: loadAttributes(_CompilerScope& scope, ident_t name, MessageMap* attributes)
 {
    _Module* extModule = scope.project->loadModule(name, true);
    bool duplicates = false;
@@ -7986,7 +8013,7 @@ void Compiler :: loadAttributes(CompilerScope& scope, ident_t name, MessageMap* 
    //   return duplicates;
 }
 
-void Compiler :: initializeScope(ident_t name, CompilerScope& scope, bool withDebugInfo)
+void Compiler :: initializeScope(ident_t name, _CompilerScope& scope, bool withDebugInfo)
 {
    scope.module = scope.project->createModule(name);
 
@@ -8009,6 +8036,7 @@ void Compiler :: initializeScope(ident_t name, CompilerScope& scope, bool withDe
    scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
    scope.boolReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
    scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
+   scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically

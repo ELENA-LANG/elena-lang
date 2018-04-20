@@ -121,7 +121,55 @@ enum MethodHint
    tpSpecial     = 0x10000,
 };
 
+// --- _Project ---
+
+class _ProjectManager
+{
+public:
+   virtual ident_t Namespace() const = 0;
+
+   virtual int getDefaultEncoding() = 0; // !! obsolete!?
+   virtual int getTabSize() = 0; // !! obsolete!?
+
+   //   virtual bool HasWarnings() const = 0;     // !! obsolete
+   //   virtual bool WarnOnWeakUnresolved() const = 0;
+
+   //   virtual ident_t getManinfestName() = 0;
+   //   virtual ident_t getManinfestVersion() = 0;
+   //   virtual ident_t getManinfestAuthor() = 0;
+
+   virtual void printInfo(const char* msg, ident_t value) = 0;
+
+   virtual void raiseError(ident_t msg) = 0;
+   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   virtual void raiseError(ident_t msg, ident_t value) = 0;
+
+   virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
+
+   virtual void raiseWarning(int level, ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+   virtual void raiseWarning(int level, ident_t msg, ident_t path) = 0;
+
+   virtual _Module* createModule(ident_t name) = 0;
+   virtual _Module* createDebugModule(ident_t name) = 0;
+
+   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
+   //   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
+
+   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
+   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
+
+   virtual ident_t resolveForward(ident_t forward) = 0;
+
+   virtual bool addForward(ident_t forward, ident_t reference) = 0;
+
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
+};
+
+// class forward declaration
+class _Compiler;
+
 // --- _CompileScope ---
+
 
 struct _CompilerScope
 {
@@ -138,46 +186,52 @@ struct _CompilerScope
       }
    };
 
-//   ident_t  sourcePath;
-//   ref_t    sourcePathRef;
+   _ProjectManager*  project;
 
-   _Module* module;
-   _Module* debugModule;
+   _Module*          module;
+   _Module*          debugModule;
 
    // cached references
-   ref_t superReference;
-   ref_t intReference;
-   ref_t longReference;
-   ref_t realReference;
+   ref_t             superReference;
+   ref_t             intReference;
+   ref_t             longReference;
+   ref_t             realReference;
 //   ref_t signatureReference;
-   ref_t messageReference;
+   ref_t             messageReference;
 //   ref_t extMessageReference;
-   ref_t boolReference;
-   ref_t literalReference;
-   ref_t wideReference;
-   ref_t charReference;
-   ref_t arrayReference;
+   ref_t             boolReference;
+   ref_t             literalReference;
+   ref_t             wideReference;
+   ref_t             charReference;
+   ref_t             arrayReference;
+   ref_t             refTemplateReference;
 
    // cached bool values
-   BranchingInfo branchingInfo;
+   BranchingInfo     branchingInfo;
 
-   virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal) = 0;
-   //virtual void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal) = 0;
+   // cached paths
+   SymbolMap         savedPaths;
+
+   MessageMap        attributes;
 
 //   virtual ref_t mapAttribute(SNode terminal) = 0;
 //   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
 ////   virtual ref_t mapReference(ident_t reference, bool existing = false) = 0;
 ////   virtual ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared) = 0;
 ////   virtual ref_t mapAnonymous() = 0;
-//
-//   virtual bool saveAttribute(ident_t name, ref_t attr/*, bool internalAttr*/) = 0;
+
+   virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
 
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
    virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
+   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
+
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly) = 0;
 
 ////   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion) = 0;
 ////
@@ -186,16 +240,56 @@ struct _CompilerScope
 ////   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
 ////   virtual SubjectList* getAutogerenatedExtensions(ref_t attr) = 0;
 
-   _CompilerScope()
-//      : attributes(0)
+   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
+   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
+
+   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList& importedNs) = 0;
+   virtual ident_t resolveFullName(ref_t reference) = 0;
+   virtual ident_t resolveFullName(ident_t referenceName) = 0;
+
+   void raiseError(const char* message, ident_t sourcePath, SNode node)
    {
-////      sourcePath = NULL;
-////      sourcePathRef = 0;
+      SNode terminal = SyntaxTree::findTerminalInfo(node);
+
+      int col = terminal.findChild(lxCol).argument;
+      int row = terminal.findChild(lxRow).argument;
+      ident_t identifier = terminal.identifier();
+      if (emptystr(identifier))
+         identifier = terminal.identifier();
+
+      project->raiseError(message, sourcePath, row, col, identifier);
+   }
+
+   void raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
+   {
+      SNode terminal = SyntaxTree::findTerminalInfo(node);
+
+      int col = terminal.findChild(lxCol).argument;
+      int row = terminal.findChild(lxRow).argument;
+      ident_t identifier = terminal.identifier();
+      //if (emptystr(identifier))
+      //   identifier = terminal.findChild(lxTerminal).identifier();
+
+      project->raiseWarning(level, message, sourcePath, row, col, identifier);
+   }
+
+   void raiseWarning(int level, const char* message, ident_t sourcePath)
+   {
+      project->raiseWarning(level, message, sourcePath);
+   }
+
+   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters) = 0;
+
+   _CompilerScope()
+      : attributes(0), savedPaths(-1)
+   {
+      project = NULL;
       debugModule = module = NULL;
       intReference = boolReference = superReference = 0;
       /*signatureReference = */messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
+      refTemplateReference = 0;
 ////      extMessageReference = 0;
    }
 };
@@ -226,6 +320,9 @@ public:
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
    virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
+
+   virtual bool declareModule(SyntaxTree& tree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode) = 0;
+   virtual void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/) = 0;
 
 //   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };

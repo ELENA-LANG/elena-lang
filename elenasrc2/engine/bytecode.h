@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
-#define bytecbcpopodeH 1
+#define bytecodeH 1
 
 namespace _ELENA_
 {

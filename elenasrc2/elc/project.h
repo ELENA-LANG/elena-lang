@@ -10,6 +10,7 @@
 #define projectH 1
 
 #include "libman.h"
+#include "compilercommon.h"
 //#include "separser.h"
 
 namespace _ELENA_
@@ -189,8 +190,6 @@ public:
    virtual bool HasWarnings() const { return _hasWarning; }
 
    virtual int getTabSize() { return 4; }
-
-   virtual int getWarningMask() const { return _warningMasks; }
 
 //   virtual ident_t getManinfestName()
 //   {
