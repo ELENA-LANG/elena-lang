@@ -18,7 +18,7 @@ singleton       = #8208.
 static          = #8194.
 var             = #16385.
 auto            = #50.
-//limited         = #8196.
+interface       = #8196.
 field           = #16392.
 method          = #16393.
 //__loop          = #16394.
@@ -126,7 +126,7 @@ type wide       = system'WideLiteralValue.
 //type rt_ptr     = system'RTPointer.
 type dirty_ptr  = system'UnsafePointer.
 
-//// --- Enumerators / Indexers ---
+// --- Enumerators / Indexers ---
 //type enumerator = system'Enumerator.
 //type indexer    = system'Indexer.
 //type indexer2d  = system'Indexer2D.

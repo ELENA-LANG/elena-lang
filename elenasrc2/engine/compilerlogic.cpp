@@ -1272,9 +1272,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_ABSTRACT:
          attrValue = elAbstract;
          return true;
-//      case V_LIMITED:
-//         attrValue = elClosed;
-//         return true;
+      case V_LIMITED:
+         attrValue = elClosed;
+         return true;
       case V_STRUCT:
          attrValue = elStructureRole;
          return true;

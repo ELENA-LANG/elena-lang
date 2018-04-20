@@ -1,7 +1,7 @@
 public class BaseIndexable
 {
 //    // should be overridden
-//    indexer = $nil.
+//    cast T<indexer> = nil.
 }
 
 // --- arrayof ---

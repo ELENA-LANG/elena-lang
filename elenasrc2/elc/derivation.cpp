@@ -1976,7 +1976,7 @@ void DerivationTransformer :: generateCodeExpression(SyntaxWriter& writer, SNode
 
 void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode current, DerivationScope& scope, int mode)
 {
-//   SNode nextNode = current.nextNode();
+   SNode nextNode = current.nextNode();
 //   bool rootMode = test(mode, MODE_ROOT);
 //   bool objectMode = test(mode, MODE_OBJECTEXPR);
 //   bool singleMode = false;
@@ -2011,19 +2011,19 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 //         writer.closeNode();
 //         writer.closeNode();
 //         break;
-//      case lxNestedClass:
-//         if (scope.type == DerivationScope::ttCodeTemplate && test(scope.mode, daNestedBlock)) {
-//            writer.insert(lxTemplateParam, 2);
-//            writer.closeNode();
-//         }
-//         else {
-//            generateScopeMembers(current, scope, MODE_ROOT);
-//
-//            generateClassTree(writer, current, scope, SNode(), -1);
-//         }
-//         writer.insert(lxExpression);
-//         writer.closeNode();
-//         break;
+      case lxNestedClass:
+         //if (scope.type == DerivationScope::ttCodeTemplate && test(scope.mode, daNestedBlock)) {
+         //   writer.insert(lxTemplateParam, 2);
+         //   writer.closeNode();
+         //}
+         //else {
+            recognizeScopeMembers(current, scope, MODE_ROOT);
+
+            generateClassTree(writer, current, scope, -1);
+         //}
+         writer.insert(lxExpression);
+         writer.closeNode();
+         break;
 //      case lxReturning:
 //         writer.newNode(lxCode);
       case lxCode:
@@ -2066,17 +2066,17 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
       }
    }
 
-//   if (nextNode != lxNone) {
+   if (nextNode != lxNone) {
 //      if (nextNode == lxExpression) {
 //         generateExpressionTree(writer, nextNode, scope);
 //      }
-//      else generateObjectTree(writer, nextNode, scope);
+      /*else */generateObjectTree(writer, nextNode, scope);
 //
 //      if (rootMode && singleMode) {
 //         writer.insert(lxExpression);
 //         writer.closeNode();
 //      }
-//   }
+   }
 //
 //   if (rootMode)
 //      writer.removeBookmark();

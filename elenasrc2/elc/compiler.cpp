@@ -1871,6 +1871,19 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
    if (node == lxBaseParent) {
       parentRef = resolveParentRef(node, scope, false);
    }
+   else if (node != lxNone) {
+      SNode terminal = node.firstChild(lxTerminalMask);
+      if (terminal != lxNone) {
+         NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+         if (terminal == lxGlobalReference) {
+            parentRef = ns->moduleScope->mapFullReference(terminal.identifier(), true);
+         }
+         else parentRef = ns->resolveImplicitIdentifier(terminal.identifier(), terminal == lxReference);
+
+         if (!parentRef)
+            scope.raiseError(errUnknownBaseClass, terminal);
+      }
+   }
 
    if (scope.info.header.parentRef == scope.reference) {
       if (parentRef != 0) {
@@ -2608,7 +2621,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 {
    ObjectInfo result;
 
-   SNode member = node.findChild(lxCode/*, lxNestedClass, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing*/);
+   SNode member = node.findChild(lxCode, lxNestedClass/*, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing*/);
    switch (node.type) {
 ////      case lxNestedClass:
 ////      case lxLazyExpression:
@@ -2620,6 +2633,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
       case lxExpression:
          if (member == lxCode) {
             result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
+         }
+         else if (member == lxNestedClass) {
+            result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
          }
 //         if (isCollection(member)) {
 //            result = compileCollection(writer, objectNode, scope);

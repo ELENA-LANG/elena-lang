@@ -1089,3 +1089,97 @@ procedure __longconvertor."convert$system@RealNumber$@system@ref#1&LongNumber[3]
 
 end
 
+
+procedure __realconvertor."convert$system@IntNumber$@system@ref#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@UIntNumber$@system@ref#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@ByteNumber$@system@ref#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@ShortNumber$@system@ref#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@LongNumber$@system@ref#1&RealNumber[3]"
+  
+  bcopya
+  aloadsi 2
+  callextr api : longtoreal
+  acopyb
+  quitn 3
+
+end
+
+
+procedure __realconvertor."convert$system@LiteralValue$@system@ref#1&RealNumber[3]"
+  
+  bloadsi  3
+  dcopy    10
+  aloadsi  2
+  callextr api : strtoreal
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __realconvertor."convert$system@WideLiteralValue$@system@ref#1&RealNumber[3]"
+  
+  bloadsi  3
+  dcopy    10
+  aloadsi  2
+  callextr api : wstrtoreal
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+

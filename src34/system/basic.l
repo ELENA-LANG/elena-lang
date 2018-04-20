@@ -3055,54 +3055,54 @@ public class longConvertor =
         ^ LongNumber new(aRetVal)
     ]
 
-//    /// Converts a character into a long integer
-//    stacksafe long convert char:aValue
-//    [
-//        int aRetVal := 0.
-//        intConvertor convert char:aValue vint:aRetVal.
-//        
-//        ^ LongNumber new int:aRetVal
-//    ]
-//
+    /// Converts a character into a long integer
+    long convert(char aValue)
+    [
+        int aRetVal := 0.
+        intConvertor convert(aValue, &aRetVal).
+        
+        ^ LongNumber new(aRetVal)
+    ]
+
+    /// Converts a literal string into a long integer
+    long convert(literal aLiteral)
+    [
+        long aRetVal := 0l.
+        self convert(aLiteral, &aRetVal).
+        
+        ^ LongNumber new(aRetVal)
+    ]
+
 //    /// Converts a literal string into a long integer
-//    stacksafe long convert literal:aLiteral
+//    stacksafe long convert literal:literal base:base
 //    [
-//        long aRetVal := 0l.
-//        $self convert literal:aLiteral vlong:aRetVal.
+//        long retVal := 0l.
+//        $self convert literal:literal int:base vlong:retVal.
 //        
-//        ^ LongNumber new long:aRetVal
+//        ^ LongNumber new long:retVal
 //    ]
-//
-////    /// Converts a literal string into a long integer
-////    stacksafe long convert literal:literal base:base
-////    [
-////        long retVal := 0l.
-////        $self convert literal:literal int:base vlong:retVal.
-////        
-////        ^ LongNumber new long:retVal
-////    ]
-//
+
+    /// Converts a wide literal string into a long integer
+    long convert(wide aLiteral)
+    [
+        long aRetVal := 0l.
+        self convert(aLiteral, &aRetVal).
+        
+        ^ LongNumber new(aRetVal)
+    ]
+
 //    /// Converts a wide literal string into a long integer
-//    stacksafe long convert wide:aLiteral
+//    stacksafe long convert wide:literal base:base
 //    [
-//        long aRetVal := 0l.
-//        $self convert wide:aLiteral vlong:aRetVal.
+//        long retVal := 0l.
+//        $self convert wide:literal int:base vlong:retVal.
 //        
-//        ^ LongNumber new long:aRetVal
+//        ^ LongNumber new long:retVal
 //    ]
-//
-////    /// Converts a wide literal string into a long integer
-////    stacksafe long convert wide:literal base:base
-////    [
-////        long retVal := 0l.
-////        $self convert wide:literal int:base vlong:retVal.
-////        
-////        ^ LongNumber new long:retVal
-////    ]
-//    
-//    /// Returns a parameter
-//    stacksafe long convert long:aLong
-//        = LongNumber new long:aLong.
+    
+    /// Returns a parameter
+    long convert(long aLong)
+        = LongNumber new(aLong).
         
     long convert : anObject
         = T<long>(anObject).
@@ -3111,121 +3111,120 @@ public class longConvertor =
 /// A real number convertor
 class realConvertor =
 {
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    stacksafe convert int:aValue vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    stacksafe convert uint:aValue vreal:aRetVal
-//    [
-//        (aValue < 0)?
-//        [
-//            // If the number is bigger than 2^31
-//            // than we are unlucky
-//            int odd := aValue && 1.            
-//            int halfed := aValue >> 1.
-//            
-//            real r := 0.
-//            $self convert int:halfed vreal:r.
-//            r := r * 2.0r.
-//            r := r + odd.
-//            
-//            aRetVal real := r.
-//        ]
-//        ! [ $self convert int:aValue vreal:aRetVal. ]
-//    ]    
-//    
-//    //    => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    stacksafe convert long:aValue vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    stacksafe convert byte:aValue vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    stacksafe convert short:aValue vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts a literal string into a real number and saves the result into an output parameter
-//    stacksafe convert literal:aValue vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts a wide literal string into a real number and saves the result into an output parameter
-//    stacksafe convert wide:aValue vreal:aRetVal
-//        => system'core_routines'__realconvertor.
-//        
-//    real convert(BaseVariable v)
-//        <= convert(v value).
-//        
-//    /// Converts a literal string into a real number
-//    stacksafe real convert literal:aLiteral
-//    [
-//        real aRetVal := 0.0r.
-//        $self convert literal:aLiteral vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//        
-//    /// Converts a wide literal string into a real number
-//    stacksafe real convert wide:aLiteral
-//    [
-//        real aRetVal := 0.0r.
-//        $self convert wide:aLiteral vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    /// Returns a parameter
-//    stacksafe real convert real:aReal
-//        = RealNumber new real:aReal.
-//        
-//    /// Converts an integer into a real number
-//    stacksafe real convert int:anInt
-//    [
-//        real aRetVal := 0.0r.
-//        $self convert int:anInt vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//        
-//    /// Converts an integer into a real number
-//    stacksafe real convert uint:anInt
-//    [
-//        real aRetVal := 0.0r.
-//        $self convert uint:anInt vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    /// Converts a long integer into a real number
-//    stacksafe real convert long:aLong
-//    [
-//        real aRetVal := 0.0r.
-//        $self convert long:aLong vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    /// Converts a byte into a real number
-//    stacksafe real convert byte:aValue
-//    [
-//        real aRetVal := 0.0r.
-//        $self convert byte:aValue vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
-//
-//    /// Converts a short integer into a real number
-//    stacksafe real convert short:aValue
-//    [
-//        real aRetVal := 0.0r.
-//        $self convert short:aValue vreal:aRetVal.
-//        
-//        ^ RealNumber new real:aRetVal
-//    ]
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(int aValue, ref<real> aRetVal)
+        => system'core_routines'__realconvertor.
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(uint aValue, ref<real> aRetVal)
+    [
+        (aValue < 0)?
+        [
+            // If the number is bigger than 2^31
+            // than we are unlucky
+            int odd := aValue && 1.            
+            int halfed := aValue >> 1.
+            
+            real r := 0.
+            $self convert(halfed, &r).
+            r := r * 2.0r.
+            r := r + odd.
+            
+            aRetVal value := r.
+        ]
+        ! [ self convert(aValue, &aRetVal). ]
+    ]        
+    //    => system'core_routines'__realconvertor.
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(long aValue, ref<real> aRetVal)
+        => system'core_routines'__realconvertor.
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(byte aValue, ref<real> aRetVal)
+        => system'core_routines'__realconvertor.
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(short aValue, ref<real> aRetVal)
+        => system'core_routines'__realconvertor.
+
+    /// Converts a literal string into a real number and saves the result into an output parameter
+    convert(literal aValue, ref<real> aRetVal)
+        => system'core_routines'__realconvertor.
+
+    /// Converts a wide literal string into a real number and saves the result into an output parameter
+    convert(wide aValue, ref<real> aRetVal)
+        => system'core_routines'__realconvertor.
+        
+    real convert(BaseVariable v)
+        <= convert(v value).
+        
+    /// Converts a literal string into a real number
+    real convert(literal aLiteral)
+    [
+        real aRetVal := 0.0r.
+        self convert(aLiteral, &aRetVal).
+        
+        ^ RealNumber new(aRetVal)
+    ]
+        
+    /// Converts a wide literal string into a real number
+    real convert(wide aLiteral)
+    [
+        real aRetVal := 0.0r.
+        self convert(aLiteral, &aRetVal).
+        
+        ^ RealNumber new(aRetVal)
+    ]
+
+    /// Returns a parameter
+    real convert(real aReal)
+        = RealNumber new(aReal).
+        
+    /// Converts an integer into a real number
+    real convert(int anInt)
+    [
+        real aRetVal := 0.0r.
+        self convert(anInt, &aRetVal).
+        
+        ^ RealNumber new(aRetVal)
+    ]
+        
+    /// Converts an integer into a real number
+    real convert(uint anInt)
+    [
+        real aRetVal := 0.0r.
+        self convert(anInt, &aRetVal).
+        
+        ^ RealNumber new(aRetVal)
+    ]
+
+    /// Converts a long integer into a real number
+    real convert(long aLong)
+    [
+        real aRetVal := 0.0r.
+        self convert(aLong, &aRetVal).
+        
+        ^ RealNumber new(aRetVal)
+    ]
+
+    /// Converts a byte into a real number
+    real convert(byte aValue)
+    [
+        real aRetVal := 0.0r.
+        self convert(aValue, &aRetVal).
+        
+        ^ RealNumber new(aRetVal)
+    ]
+
+    /// Converts a short integer into a real number
+    real convert(short aValue)
+    [
+        real aRetVal := 0.0r.
+        self convert(aValue, &aRetVal).
+        
+        ^ RealNumber new(aRetVal)
+    ]
         
     real convert : o
         = T<real>(o).

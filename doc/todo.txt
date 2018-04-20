@@ -3,6 +3,8 @@ In development:
 ------                              
                             
               dev - redesign                                                                           
+                 * interface class cannot be created directly
+
                  * reimplement embeddable optimization / embeddable constructor
 
                  * ref<int> n := 2. - the value should be copied directly
