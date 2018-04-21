@@ -571,7 +571,7 @@ private:
       bool         extensionMode;
       bool         multiMethod;
       bool         closureMode;
-//      bool         nestedMode;
+      bool         nestedMode;
       bool         subCodeMode;
       
       virtual Scope* getScope(ScopeLevel level)
