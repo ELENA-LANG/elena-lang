@@ -76,6 +76,7 @@ namespace _ELENA_
    #define errTypeNotAllowed        "%s(%d:%d): error 155: returning type attribute '%s' cannot be specified for this method\n"
    #define errNotCompatibleMulti    "%s(%d:%d): error 156: type attribute should be the same for the overloaded method '%s'\n"
    #define errTypeAlreadyDeclared   "%s(%d:%d): error 157: type attribute cannot be overridden\n"
+   #define errAbstractMethods       "%s(%d:%d): error 158: Class contains abstract methods\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"

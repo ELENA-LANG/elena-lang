@@ -116,6 +116,7 @@ public:
    virtual bool isAbstract(ClassInfo& info);
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
+   virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
    virtual bool isClosure(ClassInfo& info, ref_t message);
    virtual bool isReadonly(ClassInfo& info);
@@ -151,6 +152,7 @@ public:
    virtual bool validateMessage(ref_t message, bool isClassClass);
 //
 //   virtual bool validateClassFlag(ClassInfo& info, int flag);
+   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods);
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info)
    {

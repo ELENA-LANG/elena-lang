@@ -11,6 +11,7 @@
 [+] private / public visibility attributes
 [+] global references
 [!] old style private indentifiers are no longer supported
+[+] #410 : abstract classes / methods
 
 ***************************************************************
                              What's New in 3.3.0

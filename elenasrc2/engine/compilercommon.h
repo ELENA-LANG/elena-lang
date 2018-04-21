@@ -119,6 +119,7 @@ enum MethodHint
    tpStatic      = 0x04000,
    tpAccessor    = 0x08000,
    tpSpecial     = 0x10000,
+   tpAbstract    = 0x20000,
 };
 
 // --- _Project ---
@@ -396,6 +397,7 @@ public:
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
    virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
@@ -425,6 +427,7 @@ public:
    virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
+   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;

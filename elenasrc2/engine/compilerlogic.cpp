@@ -565,6 +565,11 @@ bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
    return /*test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe)*/true;
 }
 
+bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
+}
+
 bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
@@ -1279,7 +1284,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
          attrValue = elStructureRole;
          return true;
       case V_ENUMLIST:
-         attrValue = /*elAbstract | */elEnumList | elClosed;
+         attrValue = elAbstract | elEnumList | elClosed;
          return true;
 //      case V_DYNAMIC:
 //         attrValue = elDynamicRole;
@@ -1364,6 +1369,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          return true;
       case V_SET:
          attrValue = tpAccessor;
+         return true;
+      case V_ABSTRACT:
+         attrValue = tpAbstract;
          return true;
       default:
          return false;
@@ -1592,7 +1600,17 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
 ////
 ////   return true;
 ////}
-//
+
+void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods)
+{
+   if (!isAbstract(info)) {
+      for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+         if (test(*it, tpAbstract))
+            withAbstractMethods = true;
+      }
+   }
+}
+
 //bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject)
 //{
 //   if (returningRef != 0 && defineStructSize(scope, returningRef, 0) > 0) {

@@ -23,27 +23,27 @@ public class Object
 /// A common boolean value
 public enum class BoolValue
 {
-    bool equal(bool aBool) = nil.
+    abstract bool equal(bool aBool) []
 
-    if : aTrueAction = nil.
-    
-    if:aTrueAction else:aFalseAction = nil.
+    abstract if : aTrueAction []
 
-    ifnot : aTrueAction = nil.
+    abstract if:aTrueAction else:aFalseAction []
 
-    iif(object trueVal, object falseVal) = nil.
+    abstract ifnot : aTrueAction []
 
-    bool or : anExpr = nil.
+    abstract iif(object trueVal, object falseVal) []
 
-    bool and : anExpr = nil.
+    abstract bool or : anExpr []
 
-    bool xor : aBool = nil.
+    abstract bool and : anExpr []
 
-    bool not = self inverted.
+    abstract bool xor : aBool []
 
-    bool inverted = nil.
+//    abstract bool not []
 
-    clone = nil.
+    abstract bool inverted []
+
+    abstract clone []
 }
 
 extension commonOp

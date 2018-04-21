@@ -938,7 +938,7 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference)
    extensionClassRef = 0;
    embeddable = false;
    classClassMode = false;
-   abstractBasedMode = false;
+   abstractMode = false;
 }
 
 void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
@@ -1036,6 +1036,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->closureMode = false;
    this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
    this->subCodeMode = false;
+   this->abstractMethod = false;
 //   this->genericClosure = false;
 }
 
@@ -1829,7 +1830,6 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       if (test(scope.info.header.flags, elAbstract)) {
          // exclude abstract flag
          scope.info.header.flags &= ~elAbstract;
-         scope.abstractBasedMode = true;
       }
 
       scope.info.header.flags |= flagCopy;
@@ -1862,11 +1862,6 @@ void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref
 
 void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 {
-   if (node.existChild(lxTemplate)) {
-      // hotfix : mark the class as template inherited one
-      scope.abstractBasedMode = true;
-   }
-
    ref_t parentRef = 0;
    if (node == lxBaseParent) {
       parentRef = resolveParentRef(node, scope, false);
@@ -1922,6 +1917,9 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
                if (value != 0 && test(flags, value)) {
                   scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateAttribute, current);
                }
+               else if (test(value, elAbstract))
+                  scope.abstractMode = true;
+
                flags |= value;
             }
          }
@@ -5715,6 +5713,23 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    writer.closeNode();
 }
 
+void Compiler ::compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   SNode body = node.findChild(lxCode);
+   // abstract method should have an empty body
+   if (body != lxNone) {
+      if (body.firstChild() != lxEOF)
+         scope.raiseError(errInvalidOperation, node);
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   writer.appendNode(lxNil);
+
+   writer.closeNode();
+}
+
 void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
@@ -5962,6 +5977,9 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
                   // if it is in-place class member initialization
                   compileImplicitConstructor(writer, current, methodScope);
                }
+               else if (methodScope.abstractMethod) {
+                  compileAbstractMethod(writer, current, methodScope);
+               }
                else compileMethod(writer, current, methodScope);
             }
             break;
@@ -6149,11 +6167,13 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
       classScope.info.header.parentRef = classScope.moduleScope->superReference;
    }
    else {
-      ref_t parentRef = classScope.abstractBasedMode ? classScope.moduleScope->superReference : classScope.info.header.parentRef;
-      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(parentRef));
-      classClassParentName.append(CLASSCLASS_POSTFIX);
+      if (!classScope.abstractMode) {
+         IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
+         classClassParentName.append(CLASSCLASS_POSTFIX);
 
-      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+         classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+      }
+      else classClassScope.info.header.parentRef = classScope.moduleScope->superReference;;
    }
 
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef, true);
@@ -6199,6 +6219,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.withOpenArg = isOpenArg(methodScope.message);
    methodScope.closureMode = _logic->isClosure(scope.info, methodScope.message);
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
+   methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
 //   if (!methodScope.withOpenArg) {
 //      // HOTFIX : generic with open argument list is compiled differently
 //      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
@@ -6220,7 +6241,11 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
          current.setArgument(methodScope.message);
 
          if (test(methodScope.hints, tpConstructor)) {
-            if (methodScope.message == encodeAction(DEFAULT_MESSAGE_ID)) {
+            if (_logic->isAbstract(scope.info)) {
+               // abstract class cannot have constructors
+               scope.raiseError(errIllegalMethod, current);
+            }
+            else if (methodScope.message == encodeAction(DEFAULT_MESSAGE_ID)) {
                // if it is a special default constructor
                current.setArgument(methodScope.message | SPECIAL_MESSAGE);
             }
@@ -6457,6 +6482,12 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
+         if (test(current.argument, tpAbstract)) {
+            if (!_logic->isAbstract(scope.info))
+               // only abstract class may have an abstract methods
+               scope.raiseError(errInvalidHint, current);
+         }
+
          hint |= current.argument;
 
          hintChanged = true;
@@ -6501,7 +6532,6 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       //   // HOTFIX : generic closure cannot be sealed
       //   hint &= ~tpSealed;
       //}
-
       scope.info.methodHints.exclude(Attribute(message, maHint));
       scope.info.methodHints.add(Attribute(message, maHint), hint);
    }
@@ -6588,6 +6618,12 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       // save extensions if required ; private method should be ignored
       if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
          saveExtension(scope, message);
+      }
+
+      if (!included && !scope.abstractMode && test(methodHints, tpAbstract)) {
+         // reset the abstract hint for overridden method
+         scope.info.methodHints.exclude(Attribute(message, maHint));
+         scope.info.methodHints.add(Attribute(message, maHint), methodHints & ~tpAbstract);
       }
 
       // create overloadlist if required
@@ -6696,6 +6732,11 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    }
    else generateMethodDeclarations(node, scope, closed, lxClassMethod/*, closureBaseClass*/);
 
+   bool withAbstractMethods = false;
+   _logic->validateClassDeclaration(scope.info, withAbstractMethods);
+   if (withAbstractMethods)
+      scope.raiseError(errAbstractMethods, node);
+
    // do not set flags for closure declaration - they will be set later
    if (!nestedDeclarationMode) {
       _logic->tweakClassFlags(*scope.moduleScope, *this, scope.reference, scope.info, classClassMode);
@@ -6800,9 +6841,6 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    if (_logic->isRole(scope.info)) {
       // class is its own class class
       scope.info.header.classRef = scope.reference;
-   }
-   else if (_logic->isAbstract(scope.info)) {
-      scope.info.header.classRef = 0;
    }
    else {
       // define class class name

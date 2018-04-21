@@ -3,6 +3,12 @@ In development:
 ------                              
                             
               dev - redesign                                                                           
+                 * abstract method may be declared only in abstract class, non abstract class cannot have abstract methods,
+                   abstract method may have only empty body (410)
+
+                                                                                 
+                 * abstract attribute
+
                  * interface class cannot be created directly
 
                  * reimplement embeddable optimization / embeddable constructor
@@ -119,6 +125,11 @@ In development:
                  * a == b == c - not allowed
                  * a < b < c - not allowed
                  * reimplement nilValue generic handler
+                 * nested classes around self variable should be compiled as a wrapper,
+                   so in some cases they can be used without actually creating them
+                 * #new method should not be created for an abstract class
+                 * constructor or static methods cannot be abstract
+                 * idle method should generate an method not found exception
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

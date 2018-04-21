@@ -34,6 +34,7 @@ __block         = #16400.
 cast            = #16387.
 set             = #16402.  
 
+abstract        = #8210. 
 public          = #8211.
 private         = #8212.
 
