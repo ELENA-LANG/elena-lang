@@ -170,7 +170,9 @@ ref_t JITLinker :: resolveAction(ident_t action, _Module* module, ref_t* signatu
          ident_t referenceName = module->resolveReference(signatures[i]);
          if (isWeakReference(referenceName)) {
             if (isTemplateWeakReference(referenceName)) {
-               signatureName.append(referenceName);
+               ReferenceInfo info = _loader->retrieveReference(module, signatures[i], mskVMTRef);
+
+               signatureName.append(info.referenceName);
             }
             else {
                signatureName.append(module->Name());
