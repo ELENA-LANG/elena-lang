@@ -130,6 +130,7 @@ In development:
                  * #new method should not be created for an abstract class
                  * constructor or static methods cannot be abstract
                  * idle method should generate an method not found exception
+                 * optimize interface dispatch implementation (interface template)
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

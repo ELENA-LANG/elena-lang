@@ -976,23 +976,19 @@ void DerivationTransformer :: copyTreeNode(SyntaxWriter& writer, SNode current, 
 //         copyIdentifier(writer, current.findChild(lxIdentifier));
 //         writer.closeNode();
 //      }
-//      else {
-//         // if it is a template parameter
-//         ref_t attrRef = scope.attributes.get(current.argument);
-//         if (attrRef == INVALID_REF && (scope.type == DerivationScope::ttFieldTemplate || scope.type == DerivationScope::ttMethodTemplate)) {
-//            copyIdentifier(writer, scope.identNode.firstChild(lxTerminalMask));
-//         }
-//         else if ((int)attrRef < -1) {
-//            copyParamAttribute(writer, current, scope);
-//         }
-//         else {
-//            ident_t attrName = scope.moduleScope->module->resolveReference(attrRef);
-//            writer.newNode(lxReference, attrName);
-//
-//            SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-//            writer.closeNode();
-//         }
-//      }
+      else {
+         // if it is a template parameter
+         ref_t attrRef = scope.parameterValues.get(current.argument);
+         //if (attrRef == INVALID_REF && (scope.type == DerivationScope::ttFieldTemplate || scope.type == DerivationScope::ttMethodTemplate)) {
+         //   copyIdentifier(writer, scope.identNode.firstChild(lxTerminalMask));
+         //}
+         //else if ((int)attrRef < -1) {
+         //   copyParamAttribute(writer, current, scope);
+         //}
+         //else {
+            writeFullReference(writer, scope.compilerScope->module, attrRef, current);
+         //}
+      }
    }
 //   else if (current == lxTemplateField && current.argument >= 0) {
 //      ident_t fieldName = retrieveIt(scope.fields.start(), current.argument).key();
@@ -2056,6 +2052,11 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 //            }
             /*else */if (scope.type == DerivationScope::ttCodeTemplate && scope.mapParameter(current.identifier())) {
                writer.newNode(lxTemplateParam, 1);
+               copyIdentifier(writer, current);
+               writer.closeNode();
+            }
+            else if (nextNode == lxNestedClass && scope.mapParameter(current.identifier())) {
+               writer.newNode(lxTemplateParam, scope.mapParameter(current.identifier()));
                copyIdentifier(writer, current);
                writer.closeNode();
             }

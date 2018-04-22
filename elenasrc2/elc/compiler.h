@@ -481,6 +481,7 @@ private:
       bool        embeddable;
       bool        classClassMode;
       bool        abstractMode;
+      bool        abstractBaseMode;
 
       void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 
@@ -1068,6 +1069,7 @@ public:
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
    virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable);
+   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);
    virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);
    virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);

@@ -699,6 +699,59 @@ void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode nod
    }
 }
 
+bool CompilerLogic :: isWithEmbeddableDispatcher(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod && current.existChild(lxDispatchCode)) {
+         SNode ident = current.firstChild(lxTerminalMask);
+         if (ident == lxIdentifier && ident.identifier().compare(DISPATCH_MESSAGE)) {
+            // find dispatch method
+            SNode attr = current.firstChild();
+            while (attr == lxAttribute) {
+               if (attr.argument == V_EMBEDDABLE) {
+                  SNode dispatch = current.findChild(lxDispatchCode);
+
+                  return isSingleStatement(dispatch);
+               }
+               attr = attr.nextNode();
+            }
+         }
+      }
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+void CompilerLogic :: injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t parentRef)
+{
+   SNode current = node.firstChild();
+   SNode dispatchMethodNode;
+   SNode dispatchNode;
+   while (current != lxNone) {
+      if (current == lxClassMethod && current.existChild(lxDispatchCode)) {
+         dispatchMethodNode = current;
+         SNode ident = current.firstChild(lxTerminalMask);
+         if (ident == lxIdentifier && ident.identifier().compare(DISPATCH_MESSAGE)) {
+            dispatchNode = current.findChild(lxDispatchCode).firstChild();
+            break;
+         }         
+      }
+      current = current.nextNode();
+   }
+
+   ClassInfo info;
+   scope.loadClassInfo(info, parentRef);
+   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+      if (it.key().value2 == maHint && test(*it, tpAbstract)) {
+         compiler.injectVirtualDispatchMethod(node, it.key().value1, dispatchNode.type, dispatchNode.identifier());
+      }
+   }
+
+   dispatchMethodNode = lxIdle;
+}
+
 void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods)
 {
    // HOTFIX : Make sure the multi-method methods have the same output type as generic one
@@ -1278,7 +1331,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
          attrValue = elAbstract;
          return true;
       case V_LIMITED:
-         attrValue = elClosed;
+         attrValue = (elClosed | elAbstract);
          return true;
       case V_STRUCT:
          attrValue = elStructureRole;
@@ -1601,7 +1654,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
 ////   return true;
 ////}
 
-void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods)
+void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed)
 {
    if (!isAbstract(info)) {
       for (auto it = info.methodHints.start(); !it.Eof(); it++) {
@@ -1609,6 +1662,10 @@ void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstra
             withAbstractMethods = true;
       }
    }
+
+   // interface class cannot have a custom dispatcher method
+   if (!test(info.header.flags, elFinal) && test(info.header.flags, elClosed) && info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true))
+      disptacherNotAllowed = true;
 }
 
 //bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject)

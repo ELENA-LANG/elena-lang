@@ -12,6 +12,7 @@
 [+] global references
 [!] old style private indentifiers are no longer supported
 [+] #410 : abstract classes / methods
+[+] #409 : Simulate interface 
 
 ***************************************************************
                              What's New in 3.3.0
