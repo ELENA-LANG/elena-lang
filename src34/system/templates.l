@@ -1,3 +1,11 @@
+template interface :: type
+{
+    cast T<type> = type::
+    {
+        embeddable dispatch => self.
+    }.
+}
+
 //field template prop :: prop_name
 //{
 //    object $field.
