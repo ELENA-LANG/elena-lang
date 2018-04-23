@@ -635,26 +635,26 @@ int DerivationTransformer::DerivationScope :: mapParameter(ident_t identifier)
 
 void DerivationTransformer::DerivationScope :: copyName(SyntaxWriter& writer, SNode terminal)
 {
-//   int index = mapParameter(terminal);
+   int index = /*mapParameter(terminal)*/0;
 //   if (index) {
 //      writer.newNode(lxTemplateParam, index);
 //      copyIdentifier(writer, terminal);
 //      writer.closeNode();
 //   }
-//   else if (type == DerivationScope::ttMethodTemplate) {
-//      ident_t identifier = terminal.identifier();
-//      if (emptystr(identifier))
-//         identifier = terminal.findChild(lxTerminal).identifier();
-//
-//      index = fields.get(identifier);
-//      if (index != 0) {
-//         writer.newNode(lxTemplateMethod, parameters.Count() + index);
-//         copyIdentifier(writer, terminal);
-//         writer.closeNode();
-//      }
-//      else copyIdentifier(writer, terminal);
-//   }
-   /*else */::copyIdentifier(writer, terminal);
+   /*else */if (type == DerivationScope::ttMethodTemplate) {
+      ident_t identifier = terminal.identifier();
+      if (emptystr(identifier))
+         identifier = terminal.identifier();
+
+      index = fields.get(identifier);
+      if (index != 0) {
+         writer.newNode(lxTemplateMethod, parameters.Count() + index);
+         copyIdentifier(writer, terminal);
+         writer.closeNode();
+      }
+      else copyIdentifier(writer, terminal);
+   }
+   else ::copyIdentifier(writer, terminal);
 }
 
 //void DerivationTransformer::DerivationScope :: copyMessageName(SyntaxWriter& writer, SNode terminal)
@@ -960,7 +960,7 @@ void DerivationTransformer :: copyTreeNode(SyntaxWriter& writer, SNode current, 
       else {
          // if it is a template parameter
          ref_t attrRef = scope.parameterValues.get(current.argument);
-         if (attrRef == INVALID_REF && (scope.type == DerivationScope::ttFieldTemplate/* || scope.type == DerivationScope::ttMethodTemplate*/)) {
+         if (attrRef == INVALID_REF && (scope.type == DerivationScope::ttFieldTemplate || scope.type == DerivationScope::ttMethodTemplate)) {
             copyIdentifier(writer, scope.identNode.firstChild(lxTerminalMask));
          }
          //else if ((int)attrRef < -1) {
@@ -977,14 +977,14 @@ void DerivationTransformer :: copyTreeNode(SyntaxWriter& writer, SNode current, 
       SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
       writer.closeNode();
    }
-//   else if (current == lxTemplateMethod && current.argument >= 0) {
-//      ident_t methodName = retrieveIt(scope.fields.start(), current.argument - scope.attributes.Count()).key();
-//
-//      writer.newNode(lxIdentifier, methodName);
-//
-//      SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-//      writer.closeNode();
-//   }
+   else if (current == lxTemplateMethod && current.argument >= 0) {
+      ident_t methodName = retrieveIt(scope.fields.start(), current.argument - scope.parameterValues.Count()).key();
+
+      writer.newNode(lxIdentifier, methodName);
+
+      SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+      writer.closeNode();
+   }
    else if (current == lxTemplateBoxing) {
       writer.newNode(lxBoxing);
 //      if (current.existChild(lxSize)) {
@@ -1295,12 +1295,12 @@ bool DerivationTransformer :: generateTemplate(SyntaxWriter& writer, DerivationS
          else if (current.argument == V_FIELD/* && scope.type != TemplateScope::ttAttrTemplate*/) {
             // ignore template attributes
          }
-//         else if (current.argument == V_ACCESSOR) {
-//            if (scope.type == DerivationScope::ttFieldTemplate) {
-//               // HOTFIX : is it is a method template, consider the field name as a message subject
-//               scope.type = DerivationScope::ttMethodTemplate;
-//            }
-//         }
+         else if (current.argument == V_ACCESSOR) {
+            if (scope.type == DerivationScope::ttFieldTemplate) {
+               // HOTFIX : is it is a method template, consider the field name as a message subject
+               scope.type = DerivationScope::ttMethodTemplate;
+            }
+         }
          else if (!test(mode, MODE_IMPORTING)) {
             // do not copy the class attributes in the import mode 
             writer.newNode(current.type, current.argument);
@@ -1392,18 +1392,30 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
             copyIdentifier(writer, current.findChild(lxIdentifier));
             writer.closeNode();
 
-            if (templateMode && current.argument == V_TEMPLATE && current.existChild(lxBaseParent)) {
-               //HOTFIX : check if it is template based on the class
-               writer.newNode(lxTemplateParent);
+            if (templateMode) {
+               if (current.argument == V_TEMPLATE && current.existChild(lxBaseParent)) {
+                  //HOTFIX : check if it is template based on the class
+                  writer.newNode(lxTemplateParent);
 
-               SNode terminalNode = current.findChild(lxBaseParent).firstChild(lxTerminalMask);
-               ref_t reference = scope.mapReference(terminalNode);
-               if (!reference)
-                  scope.raiseError(errUnknownSubject, terminalNode);
+                  SNode terminalNode = current.findChild(lxBaseParent).firstChild(lxTerminalMask);
+                  ref_t reference = scope.mapReference(terminalNode);
+                  if (!reference)
+                     scope.raiseError(errUnknownSubject, terminalNode);
 
-               writeFullReference(writer, scope.compilerScope->module, reference);
+                  writeFullReference(writer, scope.compilerScope->module, reference);
 
-               writer.closeNode();
+                  writer.closeNode();
+               }
+               else if (current.argument == V_ACCESSOR) {
+                  // HOTFIX : recognize virtual property template
+                  // add virtual methods
+                  if (scope.fields.Count() == 0) {
+                     scope.fields.add(TEMPLATE_GET_MESSAGE, scope.fields.Count() + 1);
+                  }
+                  else scope.fields.add(TEMPLATE_SET_MESSAGE, scope.fields.Count() + 1);
+
+                  scope.type = DerivationScope::ttMethodTemplate;
+               }
             }
          }
          else if (attrRef != 0) {
@@ -1424,12 +1436,13 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
          copyIdentifier(writer, nameNode.firstChild(lxTerminalMask));
          writer.closeNode();
       }
-      else if (scope.type == DerivationScope::ttFieldTemplate) {
+      else if (scope.type == DerivationScope::ttFieldTemplate || scope.type == DerivationScope::ttMethodTemplate) {
          // HOTFIX : in field template the last parameter is a name
          int paramIndex = scope.mapParameter(nameNode.firstChild(lxTerminalMask).identifier());
          if (paramIndex != 0 && paramIndex == scope.parameters.Count()) {
             writer.appendNode(lxTemplateParam, paramIndex);
          }
+         else scope.copyName(writer, nameNode.firstChild(lxTerminalMask));
       }
       else scope.copyName(writer, nameNode.firstChild(lxTerminalMask));
    }
@@ -3003,7 +3016,7 @@ bool DerivationTransformer :: generateFieldTree(SyntaxWriter& writer, SNode node
          copyIdentifier(writer, name);
          writer.closeNode();
 
-         generateAttributes(writer, SNode(), scope, false, templateMode, false);
+         generateAttributes(writer, node.prevNode().prevNode(), scope, false, templateMode, false);
       }
       else generateAttributes(writer, node.prevNode(), scope, false, templateMode, false);
 
@@ -3259,15 +3272,15 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
 //            case V_LOOP:
 //               attr = (DeclarationAttr)(daLoop | daTemplate | daBlock);
 //               break;
-//            case V_ACCESSOR:
-//               if (test(declType, daAccessor)) {
-//                  if (test(declType, daDblAccessor)) {
-//                     scope.raiseError(errInvalidHint, node);
-//                  }
-//                  else attr = daDblAccessor;
-//               }
-//               else attr = daAccessor;
-//               break;
+            case V_ACCESSOR:
+               if (test(declType, daAccessor)) {
+                  if (test(declType, daDblAccessor)) {
+                     scope.raiseError(errInvalidHint, node);
+                  }
+                  else attr = daDblAccessor;
+               }
+               else attr = daAccessor;
+               break;
 //            case V_IMPORT:
 //               attr = daImport;
 //               break;
@@ -3332,21 +3345,21 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
       if (test(declType, daField)) {
          templateName.append("#1");
 
-         if (count != 1)
+         if (count != 1 && count != 2)
             scope.raiseError(errInvalidSyntax, node);
 
          //scope.type = DerivationScope::ttFieldTemplate;
       }
-//      else if (test(declType, daAccessor)) {
-//         if (test(declType, daDblAccessor)) {
-//            templateName.append("#3");
-//         }
-//         else {
-//            templateName.append("#2");
-//         }
-//
-//         scope.type = DerivationScope::ttMethodTemplate;
-//      }
+      else if (test(declType, daAccessor)) {
+         if (test(declType, daDblAccessor)) {
+            templateName.append("#2");
+         }
+         else {
+            templateName.append("#1");
+         }
+
+         //scope.type = DerivationScope::ttMethodTemplate;
+      }
       else if (test(declType, daCode)) {
          mode |= MODE_CODETEMPLATE;
 
@@ -3415,8 +3428,10 @@ void DerivationTransformer :: generateTemplateScope(SyntaxWriter& writer, SNode 
 
       //scope.type = DerivationScope::ttCodeTemplate;
    }
-   else if (name[index + 1] == '1') {
-      scope.type = DerivationScope::ttFieldTemplate;
+   else if (name.find(index + 1, '#', NOTFOUND_POS) != NOTFOUND_POS) {
+      if (name[index + 1] == '1' || name[index + 1] == '2') {
+         scope.type = DerivationScope::ttFieldTemplate;
+      }
    }
 
    saveTemplate(node, scope, scope.type, /**scope.autogeneratedTree, */templateRef);
@@ -3803,12 +3818,6 @@ void DerivationTransformer :: saveTemplate(SNode node, DerivationScope& scope, D
    rootScope.mode = scope.mode;
 
    //int mode = MODE_ROOT;
-//   if (type == DerivationScope::ttMethodTemplate) {
-//      // add virtual methods
-//      rootScope.fields.add(TEMPLATE_GET_MESSAGE, rootScope.fields.Count() + 1);
-//      if (node.argument > 1) 
-//         rootScope.fields.add(TEMPLATE_SET_MESSAGE, rootScope.fields.Count() + 1);
-//   }
    /*else if (type == DerivationScope::ttCodeTemplate) {
       mode |= MODE_CODETEMPLATE;
       

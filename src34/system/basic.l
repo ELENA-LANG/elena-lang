@@ -17,6 +17,8 @@ sealed template<BaseVariable> ref :: template_subj
 {
     template_subj theValue.
     
+    template_subj value = theValue.
+    
     cast T<template_subj>:val
     [
         theValue := val.
@@ -24,13 +26,11 @@ sealed template<BaseVariable> ref :: template_subj
     
     cast T<template_subj> = theValue.
     
-    value = theValue.
-    
     set value(template_subj val)
     [
         theValue := val.
     ]
-    
+
 //    stacksafe append template_subj:val
 //    [
 //        $value := $value + val.

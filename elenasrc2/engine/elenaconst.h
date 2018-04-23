@@ -414,10 +414,6 @@ namespace _ELENA_
    #define WRITE_OPERATOR           "<<"
    #define READ_OPERATOR            ">>"
 
-//   // template virtual methods
-//   #define TEMPLATE_GET_MESSAGE     "$get"
-//   #define TEMPLATE_SET_MESSAGE     "$set"
-
   // --- ELENA explicit variables ---
    #define GROUP_VAR               "target"             // the current method target / closure owner method target
    #define SELF_VAR                "self"            // the current method class reference / closure owner class reference
@@ -428,6 +424,10 @@ namespace _ELENA_
    #define RETVAL_VAR              "$$ret"            // the closure returning value
    #define OWNER_VAR               "$$owner"          // the nested class / closure owner
    #define PARENT_VAR              "$$parent"         // the closure parent
+
+   // template virtual methods / fields
+   #define TEMPLATE_GET_MESSAGE     "__get"
+   #define TEMPLATE_SET_MESSAGE     "__set"
 
    #define TEMPLATE_FIELD          "field"
 

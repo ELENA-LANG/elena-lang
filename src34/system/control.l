@@ -57,26 +57,20 @@ public interface Indexer
     /// Sets the current member
     abstract set : object []
     
+    int vprop index :: readIndexTo, writeIndex.
+
     /// Reads the current index into an output parameter
     abstract readIndexTo(ref<int> retVal) []
 
-////    int vvprop index :: readIndexTo, writeIndex.
-////
-////    /// Sets the index by specified value
-////    ///
-////    /// Should be overidden(or set&index)
-////    stacksafe writeIndex int:anIndex 
-////    [ 
-////        $self set index:anIndex.
-////    ] 
-////
-////    /// Reads the length to the output parameter    
-////    stacksafe readLengthTo vint:retVal 
-////    [
-////        retVal int := 0
-////    ]
-////    
-////    int rvprop length :: readLengthTo.
+    /// Sets the index by specified value
+    ///
+    /// Should be overidden(or set&index)
+    abstract writeIndex(int anIndex) []
+
+    /// Reads the length to the output parameter    
+    abstract readLengthTo(ref<int> retVal) []
+    
+    int rvprop length :: readLengthTo.
 }
 
 public interface Indexable
@@ -878,11 +872,16 @@ public abstract class BaseIndexer :: Indexer
         retVal value := theIndex
     ]    
     
-//    /// Sets the i-index by specified value
-//    writeIndex int:anIndex 
-//    [ 
-//        theIndex := anIndex
-//    ] 
+    /// Sets the i-index by specified value
+    writeIndex(int anIndex)
+    [ 
+        theIndex := anIndex
+    ] 
+    
+    readLengthTo(ref<int> retVal)
+    [
+        retVal value := theBaseIndexerLength.
+    ]
 }
 
 //// --- BaseMatrixIndexer ---

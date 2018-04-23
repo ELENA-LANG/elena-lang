@@ -52,7 +52,7 @@ class DerivationTransformer //: public _DerivationTransformer
       {
          ttNone           = 0,
          ttFieldTemplate  = 1,
-//         ttMethodTemplate = 2,
+         ttMethodTemplate = 2,
          ttCodeTemplate   = 3,
 //         ttExtTemplate    = 4
       };
@@ -180,8 +180,8 @@ class DerivationTransformer //: public _DerivationTransformer
 //      daLoop        = 0x0020,
 //      daImport      = 0x0040,
 //      daExtern      = 0x0080,
-//      daAccessor    = 0x0100,
-//      daDblAccessor = 0x0300,
+      daAccessor    = 0x0100,
+      daDblAccessor = 0x0300,
       daCodeMask    = 0xF800,
       daCode        = 0x0800,
       daBlock       = 0x1800,
