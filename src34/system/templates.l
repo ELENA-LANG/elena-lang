@@ -1,4 +1,4 @@
-template interface :: type
+vvprtemplate interface :: type
 {
     cast T<type> = type::
     {

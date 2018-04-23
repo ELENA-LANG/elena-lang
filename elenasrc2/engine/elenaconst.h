@@ -429,7 +429,7 @@ namespace _ELENA_
    #define OWNER_VAR               "$$owner"          // the nested class / closure owner
    #define PARENT_VAR              "$$parent"         // the closure parent
 
-//   #define TEMPLATE_FIELD          "$field"
+   #define TEMPLATE_FIELD          "field"
 
    #define ENUM_VAR                 "values"          // is auto generated for enum classes and contains the list of all possible enum values
 

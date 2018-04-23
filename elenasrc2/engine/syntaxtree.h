@@ -42,7 +42,7 @@ enum LexicalType
    lxTemplate        = 0x0000F,
    lxSymbol          = 0x00011,
    lxClassField      = 0x00013,
-//   lxFieldTemplate   = 0x00014,
+   lxFieldTemplate   = 0x00014,
    lxAttributeValue  = 0x00015,
    lxClassMethod     = 0x00016,
    lxNestedClass     = 0x00018,
@@ -241,7 +241,7 @@ enum LexicalType
 ////   lxClassRef        = 0x20025,
 ////   lxPreloadedAttr   = 0x20026,
 //   lxInclude         = 0x20027,
-//   lxTemplateField   = 0x20028,
+   lxTemplateField   = 0x20028,
    lxNameAttr        = 0x20029,
    lxTypeAttr        = 0x2002A,
    lxStacksafeAttr   = 0x2002B,
@@ -262,7 +262,7 @@ enum LexicalType
 //   lxMultiAttr       = 0x2003A,
    lxStaticAttr      = 0x2003B,
    lxTemplateParent  = 0x2003C,
-//   lxTemplateBoxing  = 0x2003D,
+   lxTemplateBoxing  = 0x2003D,
 //   lxParentLists     = 0x2003E,
    lxClosureAttr     = 0x2003F,
    lxArgDispatcherAttr = 0x20040,
@@ -344,6 +344,10 @@ public:
 //      {
 //         insert(type, 0);
 //      }
+      void insert(LexicalType type, ident_t argument)
+      {
+         insert(0, type, argument);
+      }
       void insert(LexicalType type, ref_t argument)
       {
          insert(0, type, argument);

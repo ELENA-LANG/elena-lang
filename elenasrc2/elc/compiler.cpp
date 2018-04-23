@@ -3219,7 +3219,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          /*if (test(mode, HINT_ASSIGNING_EXPR)) {
             scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
          }
-         else */scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage, lxOperator));
+         else */scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
       }         
    }
 
@@ -5734,9 +5734,9 @@ void Compiler ::compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodSc
    // abstract method should have an empty body
    if (body != lxNone) {
       if (body.firstChild() != lxEOF)
-         scope.raiseError(errInvalidOperation, node);
+         scope.raiseError(errAbstractMethodCode, node);
    }
-   else scope.raiseError(errInvalidOperation, node);
+   else scope.raiseError(errAbstractMethodCode, node);
 
    writer.appendNode(lxNil);
 
@@ -6636,7 +6636,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          saveExtension(scope, message);
       }
 
-      if (!included && !scope.abstractMode && test(methodHints, tpAbstract)) {
+      if (!included && /*!scope.abstractMode && */test(methodHints, tpAbstract)) {
          // reset the abstract hint for overridden method
          scope.info.methodHints.exclude(Attribute(message, maHint));
          scope.info.methodHints.add(Attribute(message, maHint), methodHints & ~tpAbstract);

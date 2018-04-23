@@ -1,12 +1,7 @@
-public class BaseIndexable
-{
-//    // should be overridden
-//    cast T<indexer> = nil.
-}
 
 // --- arrayof ---
 
-sealed template<BaseIndexable> array :: template_subj
+sealed template<Indexable> array :: template_subj
 {
     dynamic<template_subj> theArray.
 
@@ -35,22 +30,22 @@ sealed template<BaseIndexable> array :: template_subj
 //              ]
 //          }
 //    ]
-//
-//    indexer = BaseIndexer::
-//    {
-//        @theIndex := 0.
-//        
-//        @theBaseIndexerLength := $self length.
-//        
-//        get
-//            = $self getAt int:theIndex.
-//            
-//        set : o
-//        [
-//            $self setAt int:theIndex template_subj:o.
-//        ]                        
-//    }.    
-//
+
+    T<indexer> indexer = BaseIndexer::
+    {
+        @theIndex := 0.
+        
+        @theBaseIndexerLength := self length.
+        
+        get
+            = self getAt(theIndex).
+            
+        set : o
+        [
+//            self setAt(theIndex, T<template_subj>(o)).
+        ]
+    }.    
+
 //    stacksafe readLengthTo vint:retVal
 //    [
 //        int len := 0.
@@ -73,23 +68,23 @@ sealed template<BaseIndexable> array :: template_subj
 //            [ ^ $target[n] ];
 //            [ InvalidArgumentException new; raise ]
 //    ]
-//
-//    stacksafe setAt int:n template_subj:item
+
+//    setAt(int n, template_subj item)
 //    [
-//        if (n < 0)
-//            [ InvalidArgumentException new; raise ].
-//        
-//        int len := 0.
-//        $target >> len.
-//
-//        if (n < len)
-//            [ $target[n] := item ];
-//            [ InvalidArgumentException new; raise ]
+////        if (n < 0)
+////            [ InvalidArgumentException new; raise ].
+////        
+////        int len := 0.
+////        $target >> len.
+////
+////        if (n < len)
+////            [ $target[n] := item ];
+////            [ InvalidArgumentException new; raise ]
 //    ]
 //               
-//    multi setAt:n:object
-//        <= setAt int:n template_subj:object.                
-//                  
+//    setAt(object n, object object)
+//        <= setAt(T<int>(n), T<template_subj>(object)).
+                  
 //    /// Returns the item at the specified index
 //    multi template_subj getAt : aParam
 //        <= getAt int:aParam.
@@ -243,7 +238,7 @@ sealed template<BaseIndexable> array :: template_subj
 // --- ByteArray ---
 
 /// A byte array
-public sealed ByteArray :: BaseIndexable, array<byte>
+public sealed ByteArray :: Indexable, array<byte>
 {
     /// Creates the byte array with the specified length
     constructor new(int len)
@@ -390,7 +385,7 @@ public sealed ByteArray :: BaseIndexable, array<byte>
 // --- ShortArray ---
 
 /// A short integer array
-public sealed ShortArray :: BaseIndexable, array<short>
+public sealed ShortArray :: Indexable, array<short>
 {
     /// Creates the short array with the specified length
     constructor new(int aLength)
@@ -1655,7 +1650,7 @@ public sealed __string WideLiteralValue :: BaseValue
 // --- Array ---
 
 /// An array
-public sealed Array :: BaseIndexable, array<object>
+public sealed Array :: Indexable, array<object>
 {
 //    /// Creates an empty array
 //    constructor min

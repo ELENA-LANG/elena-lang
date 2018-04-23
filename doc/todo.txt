@@ -3,12 +3,6 @@ In development:
 ------                              
                             
               dev - redesign                                                                           
-                 * abstract method may be declared only in abstract class, non abstract class cannot have abstract methods,
-                   abstract method may have only empty body (410)
-
-                                                                                 
-                 * abstract attribute
-
                  * interface class cannot be created directly
 
                  * reimplement embeddable optimization / embeddable constructor
@@ -131,6 +125,7 @@ In development:
                  * constructor or static methods cannot be abstract
                  * idle method should generate an method not found exception
                  * optimize interface dispatch implementation (interface template)
+                 * validate that a field template contains exactly one a field with a name "field"
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

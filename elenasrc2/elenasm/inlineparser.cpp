@@ -32,69 +32,69 @@ int VMTapeParser:: mapVerb(ident_t literal)
 
 void VMTapeParser :: writeSubject(TapeWriter& writer, ident_t message)
 {
-   IdentifierString reference;
-   reference.append('0');
-   reference.append('#');
-   reference.append(0x20);
-   reference.append('&');
-   reference.append(message);
+   //IdentifierString reference;
+   //reference.append('0');
+   //reference.append('#');
+   //reference.append(0x20);
+   //reference.append('&');
+   //reference.append(message);
 
-   writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, reference);
+   //writer.writeCommand(PUSHG_TAPE_MESSAGE_ID, reference);
 }
 
 bool VMTapeParser :: writeObject(TapeWriter& writer, int state, ident_t token)
 {
-   if (token.compare(".")) {
-      writer.writeCommand(POP_TAPE_MESSAGE_ID);
-   }
-   else {
-      switch (state) {
-         case dfaInteger:
-            writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
-            break;
-         case dfaReal:
-            writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
-            break;
-         case dfaLong:
-            writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
-            break;
-         case dfaQuote:
-            writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, token);
-            break;
-         case dfaFullIdentifier:
-            writer.writeCallCommand(token);
-            break;
-         case dfaIdentifier:
-            writeSubject(writer, token);
-            break;
-         default:
-            return false;
-      }
-   }
+   //if (token.compare(".")) {
+   //   writer.writeCommand(POP_TAPE_MESSAGE_ID);
+   //}
+   //else {
+   //   switch (state) {
+   //      case dfaInteger:
+   //         writer.writeCommand(PUSHN_TAPE_MESSAGE_ID, token);
+   //         break;
+   //      case dfaReal:
+   //         writer.writeCommand(PUSHR_TAPE_MESSAGE_ID, token);
+   //         break;
+   //      case dfaLong:
+   //         writer.writeCommand(PUSHL_TAPE_MESSAGE_ID, token);
+   //         break;
+   //      case dfaQuote:
+   //         writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, token);
+   //         break;
+   //      case dfaFullIdentifier:
+   //         writer.writeCallCommand(token);
+   //         break;
+   //      case dfaIdentifier:
+   //         writeSubject(writer, token);
+   //         break;
+   //      default:
+   //         return false;
+   //   }
+   //}
    return true;
 }
 
 bool VMTapeParser :: writeArgument(TapeWriter& writer, int state, ident_t token)
 {
-   if (state == dfaFullIdentifier) {
-      writer.writeCommand(ARG_TAPE_MESSAGE_ID, token);
+   //if (state == dfaFullIdentifier) {
+   //   writer.writeCommand(ARG_TAPE_MESSAGE_ID, token);
 
-      return true;
-   }
-   else return false;
+   //   return true;
+   //}
+   /*else */return false;
    //         writer.writeCommand(NEW_TAPE_MESSAGE_ID, counter);
 }
 
 bool VMTapeParser :: writeArray(TapeWriter& writer, int state, ident_t token)
 {
-   if (state == dfaInteger) {
-      int value = token.toInt();
+   //if (state == dfaInteger) {
+   //   int value = token.toInt();
 
-      writer.writeCommand(NEW_TAPE_MESSAGE_ID, value);
+   //   writer.writeCommand(NEW_TAPE_MESSAGE_ID, value);
 
-      return true;
-   }
-   else return false;
+   //   return true;
+   //}
+   /*else */return false;
 }
 
 bool VMTapeParser :: parseMessage(ident_t message, IdentifierString& reference)
@@ -152,30 +152,30 @@ bool VMTapeParser :: writeExtension(TapeWriter& writer, ident_t message, int com
 
 void VMTapeParser:: parseStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer)
 {
-   if (reader.compare("*")) {
-      bm = reader.read();
+   //if (reader.compare("*")) {
+   //   bm = reader.read();
 
-      writeArgument(writer, bm.state, reader.lookup(bm));
-   }
-   else if (reader.compare("=")) {
-      bm = reader.read();
+   //   writeArgument(writer, bm.state, reader.lookup(bm));
+   //}
+   //else if (reader.compare("=")) {
+   //   bm = reader.read();
 
-      writeArray(writer, bm.state, reader.lookup(bm));
-   }
-   else if (reader.compare("^")) {
-      bm = reader.read();
+   //   writeArray(writer, bm.state, reader.lookup(bm));
+   //}
+   //else if (reader.compare("^")) {
+   //   bm = reader.read();
 
-      writeMessage(writer, reader.lookup(bm), SEND_TAPE_MESSAGE_ID);
-   }
-   else if (reader.compare("%")) {
-      bm = reader.read();
-      ident_t message = reader.lookup(bm);
-      if (message.find('.') != NOTFOUND_POS) {
-         writeExtension(writer, reader.lookup(bm), PUSHE_TAPE_MESSAGE_ID);
-      }
-      else writeMessage(writer, reader.lookup(bm), PUSHM_TAPE_MESSAGE_ID);
-   }
-   else writeObject(writer, bm.state, reader.lookup(bm));
+   //   writeMessage(writer, reader.lookup(bm), SEND_TAPE_MESSAGE_ID);
+   //}
+   //else if (reader.compare("%")) {
+   //   bm = reader.read();
+   //   ident_t message = reader.lookup(bm);
+   //   if (message.find('.') != NOTFOUND_POS) {
+   //      writeExtension(writer, reader.lookup(bm), PUSHE_TAPE_MESSAGE_ID);
+   //   }
+   //   else writeMessage(writer, reader.lookup(bm), PUSHM_TAPE_MESSAGE_ID);
+   //}
+   //else writeObject(writer, bm.state, reader.lookup(bm));
 }
 
 bool VMTapeParser :: parse(TapeWriter& writer, _ScriptReader& reader)

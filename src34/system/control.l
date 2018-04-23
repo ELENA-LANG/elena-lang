@@ -1,55 +1,65 @@
-//// === Basic prototypes ===
-//
-//// --- Enumerator ---
-//
-///// An enumerator prototype
-//public interface Enumerator
-//{
-//    /// Returns the current object
-//    get = nil.
-//    
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next = nil.
+// === Basic prototypes ===
+
+// --- Enumerator ---
+
+/// An enumerator prototype
+public interface Enumerator
+{
+    /// Returns the current object
+    abstract get []
+    
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    abstract bool next []
 //    
 //    /// Resets the enumerator
-//    reset []
+//    abstract reset []
 //    
 //    /// returns the enumerator owner
-//    enumerable = nil.
-//}
-//
-//// --- enumerator<> ---
-//
-//template interface enumerator :: type
-//{
-//    bool next
-//    [
-//        NotSupportedException new; raise. // only raise??
-//    ]    
+//    abstract enumerable []
+}
+
+// --- enumerator<> ---
+
+template interface enumerator :: type
+{
+    abstract bool next []
+    
+    abstract type get []
 //    
-//    type get
-//    [
-//        NotSupportedException new; raise. // only raise??
-//    ]
-//}
-//
-//// --- Indexer ---
-//
-///// An indexer prototype
-//public interface Indexer
-//{
-//    /// Returns false if the index out of range
-//    bool available = nil.
-//
-//    /// Returns the current member
-//    get = nil.
+//    /// Resets the enumerator
+//    abstract reset []
 //    
-//    /// Sets the current member
-//    set : anObject []
-//    
-//    /// Reads the current index into an output parameter
-//    readIndexTo(ref<int> retVal) []
-//
+//    /// returns the enumerator owner
+//    abstract enumerable []
+}
+
+public interface Enumarable
+{
+    abstract T<Enumerator> enumerator []
+}
+
+template interface enumerable :: type
+{
+    abstract enumerator<type> enumerator []
+}
+
+// --- Indexer ---
+
+/// An indexer prototype
+public interface Indexer
+{
+    /// Returns false if the index out of range
+    abstract bool available []
+
+    /// Returns the current member
+    abstract get []
+    
+    /// Sets the current member
+    abstract set : object []
+    
+    /// Reads the current index into an output parameter
+    abstract readIndexTo(ref<int> retVal) []
+
 ////    int vvprop index :: readIndexTo, writeIndex.
 ////
 ////    /// Sets the index by specified value
@@ -67,7 +77,12 @@
 ////    ]
 ////    
 ////    int rvprop length :: readLengthTo.
-//}
+}
+
+public interface Indexable
+{
+    abstract T<Indexer> indexer []
+}
 
 //// --- MatrixIndexer ---
 //
@@ -846,30 +861,30 @@
 ////    /// Clones the object
 ////    #method clone = Boolean new:$value.
 ////}
-//
-//// --- BaseIndexer ---
-//
-//class BaseIndexer :: Indexer
-//{
-//    int theIndex.
-//    int theBaseIndexerLength.
-//    
-//    /// Returns false if the index out of range
-//    bool available = (theIndex < theBaseIndexerLength).
-//    
-//    /// Reads the current i-index into an output parameter
-//    readIndexTo vint:retVal
-//    [
-//        retVal int := theIndex
-//    ]    
-//    
+
+// --- BaseIndexer ---
+
+public abstract class BaseIndexer :: Indexer
+{
+    int theIndex.
+    int theBaseIndexerLength.
+    
+    /// Returns false if the index out of range
+    bool available = (theIndex < theBaseIndexerLength).
+    
+    /// Reads the current i-index into an output parameter
+    readIndexTo(ref<int> retVal)
+    [
+        retVal value := theIndex
+    ]    
+    
 //    /// Sets the i-index by specified value
 //    writeIndex int:anIndex 
 //    [ 
 //        theIndex := anIndex
 //    ] 
-//}
-//
+}
+
 //// --- BaseMatrixIndexer ---
 //
 //class BaseMatrixIndexer :: Indexer2D
