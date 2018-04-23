@@ -73,7 +73,7 @@ public interface Indexer
     int rvprop length :: readLengthTo.
 }
 
-public interface Indexable
+public abstract Indexable
 {
     abstract T<Indexer> indexer []
 }

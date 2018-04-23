@@ -10,21 +10,21 @@ sealed template<Indexable> array :: template_subj
 
 //    enumerator 
 //    [
-//        vint index := -1.
+//        int index := -1.
 //        int length := 0.
-//        $target >> length.
-//        --
+//        theArray >> length.
+//
 //        ^ Enumerator::
 //          {
-//              get = $self getAt int:index.
+//              get = self getAt(index value).
 //              
-//              enumerable = $self.
+//              enumerable = self.
 //              
-//              reset [ index int := -1 ]
+//              reset [ index value := -1 ]
 //              
 //              bool next
 //              [
-//                  index append int:1.
+//                  index append(1).
 //                  
 //                  ^ index < length
 //              ]
@@ -42,20 +42,20 @@ sealed template<Indexable> array :: template_subj
             
         set : o
         [
-//            self setAt(theIndex, T<template_subj>(o)).
+            self setAt(theIndex, T<template_subj>(o)).
         ]
     }.    
 
-//    stacksafe readLengthTo vint:retVal
-//    [
-//        int len := 0.
-//        $target >> len.
-//        
-//        retVal int := len
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//
+    readLengthTo(ref<int> retVal)
+    [
+        int len := 0.
+        theArray >> len.
+        
+        retVal value := len
+    ]
+    
+    int rvprop length :: readLengthTo.
+
 //    stacksafe template_subj getAt int:n
 //    [
 //        if (n < 0)
