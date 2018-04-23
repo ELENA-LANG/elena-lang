@@ -21,7 +21,7 @@ auto            = #50.
 interface       = #8196.
 field           = #16392.
 method          = #16393.
-//__loop          = #16394.
+__loop          = #16394.
 //nonstructural   = #8204.
 //import          = #16395.
 //__extern        = #16396.
@@ -85,7 +85,7 @@ type mssg       = system'Message.
 // === basic dynamic types ===
 type bytearray  = system'ByteArray.
 type shortarray = system'ShortArray.
-//type intarray   = system'IntArray.
+type intarray   = system'IntArray.
 //type intmatrix  = system'IntMatrix.
 //type realarray  = system'RealArray.
 //type realmatrix = system'RealMatrix.

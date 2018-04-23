@@ -54,7 +54,7 @@ enum LexicalType
    lxExtension       = 0x0002B,
    lxAltOperation    = 0x0002C,
 //   lxCatchOperation  = 0x0002F,
-//   lxLoop            = 0x00030,
+   lxLoop            = 0x00030,
 ////   lxInlineExpression= 0x00032,
 //   lxMessageReference= 0x00033,
 //   lxExtern          = 0x00039,

@@ -3126,7 +3126,7 @@ class realConvertor =
             int halfed := aValue >> 1.
             
             real r := 0.
-            $self convert(halfed, &r).
+            self convert(halfed, &r).
             r := r * 2.0r.
             r := r + odd.
             

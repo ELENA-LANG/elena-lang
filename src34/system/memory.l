@@ -56,38 +56,38 @@ sealed template<Indexable> array :: template_subj
     
     int rvprop length :: readLengthTo.
 
-//    stacksafe template_subj getAt int:n
-//    [
-//        if (n < 0)
-//            [ InvalidArgumentException new; raise ].
-//        
-//        int len := 0.
-//        $target >> len.
-//
-//        if (n < len)
-//            [ ^ $target[n] ];
-//            [ InvalidArgumentException new; raise ]
-//    ]
+    template_subj getAt(int n)
+    [
+        if (n < 0)
+            [ InvalidArgumentException new; raise ].
+        
+        int len := 0.
+        theArray >> len.
 
-//    setAt(int n, template_subj item)
-//    [
-////        if (n < 0)
-////            [ InvalidArgumentException new; raise ].
-////        
-////        int len := 0.
-////        $target >> len.
-////
-////        if (n < len)
-////            [ $target[n] := item ];
-////            [ InvalidArgumentException new; raise ]
-//    ]
-//               
-//    setAt(object n, object object)
-//        <= setAt(T<int>(n), T<template_subj>(object)).
+        if (n < len)
+            [ ^ theArray[n] ];
+            [ InvalidArgumentException new; raise ]
+    ]
+
+    setAt(int n, template_subj item)
+    [
+        if (n < 0)
+            [ InvalidArgumentException new; raise ].
+        
+        int len := 0.
+        theArray >> len.
+
+        if (n < len)
+            [ theArray[n] := item ];
+            [ InvalidArgumentException new; raise ]
+    ]
+               
+    setAt(object n, object object)
+        <= setAt(T<int>(n), T<template_subj>(object)).
                   
-//    /// Returns the item at the specified index
-//    multi template_subj getAt : aParam
-//        <= getAt int:aParam.
+    /// Returns the item at the specified index
+    template_subj getAt : aParam
+        <= getAt(T<int>(aParam)).
 }
 
 //// --- matrixof ---
@@ -244,142 +244,142 @@ public sealed ByteArray :: Indexable, array<byte>
     constructor new(int len)
         = dynamic<byte>(len).
 
-//    /// Creates the copy of a byte subarray
-//    stacksafe constructor new int:anIndex int:aLength bytearray:anArray
-//        <= new int:aLength;
-//    [
-//        anArray read int:anIndex int:aLength bytearray:$self.
-//    ]
-//
-//    /// Creates the byte array copy
-//    stacksafe constructor new bytearray:anArray
-//        <= new int:0 int:(anArray length) bytearray:anArray.
-//
-//    /// Reads the array length to the output parameter
-//    stacksafe readLengthTo vint:aLength
-//        => system'core_routines'__bytearray.
-//
-//    /// Fills the sub array with a specified value
-//    stacksafe fill int:anIndex int:aLength byte:aValue
-//    [
-//        int aTotalLength := $self length.
-//        
-//        int i := anIndex.
-//        int m := anIndex + aLength.
-//        
-//        if (i > aTotalLength)
-//            [ system'InvalidArgumentException new; raise ].
-//        
-//        if (m > aTotalLength)
-//            [ system'InvalidArgumentException new; raise ].
-//            
-//        while(i < m)
-//        [
-//            $self write int:i byte:aValue.
-//            
-//            i := i + 1
-//        ]
-//    ]
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    stacksafe read int:anIndex int:aLength bytearray:aDump
-//        => system'core_routines'__bytearray.
-//
-//    /// Copies the byte array at the specified position
-//    stacksafe write int:anIndex int:aLength bytearray:aDump
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes the byte value at specified position
-//    stacksafe write int:anIndex byte:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a byte value at the specified position and saves it into an output variable
-//    stacksafe read int:anIndex vbyte:anInt
-//        => system'core_routines'__bytearray.
-//
-//    embeddable byte getAt int:n
-//    [
-//        byte retVal := 0.
-//        
-//        $self read int:n vbyte:retVal.
-//        
-//        ^ retVal
-//    ]
-//
-//    /// Writes a short integer value at the specified position
-//    stacksafe write int:anIndex short:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a short integer value at the specified position and saves it into an output variable
-//    stacksafe read int:anIndex vshort:aChar
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes a character value at the specified position
-//    stacksafe write int:anIndex char:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a character value at the specified position and saves it into an output variable
-//    stacksafe read int:anIndex vchar:aChar
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes an integer value at the specified position
-//    stacksafe write int:anIndex int:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    stacksafe read int:anIndex vint:anInt
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes a long integer value at the specified position
-//    stacksafe write int:anIndex long:aLong
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a long integer value at the specified position and saves it into an output variable
-//    stacksafe read int:anIndex vlong:aLong
-//        => system'core_routines'__bytearray.
-//
-//    /// Writes a real value at the specified position
-//    stacksafe write int:anIndex real:aLong
-//        => system'core_routines'__bytearray.
-//
-//    /// Reads a real value at the specified position and saves it into an output variable
-//    stacksafe read int:anIndex vreal:aLong
-//        => system'core_routines'__bytearray.
-//
-//    stacksafe move int:anIndex int:aLength int:anOffset
-//        => system'core_routines'__bytearray.
-//    
-//    /// Concatinates the arrays    
-//    stacksafe bytearray add int:aLength2 bytearray:anArray
-//    [
-//        int aLength1 := $self length.
-//        
-//        bytearray aRetVal := ByteArray new int:(aLength1 + aLength2).
-//
-//        byte tmp := 0.
-//        int anIndex := 0.
-//        while(anIndex < aLength1)
-//        [
-//            $self read int:anIndex vbyte:tmp.
-//            aRetVal write int:anIndex byte:tmp.
-//            
-//            anIndex := anIndex + 1
-//        ].
-//
-//        anIndex := 0.
-//        while(anIndex < aLength2)
-//        [
-//            anArray read int:anIndex vbyte:tmp.
-//            aRetVal write int:(aLength1 + anIndex) byte:tmp.
-//            
-//            anIndex := anIndex + 1
-//        ].
-//            
-//        ^ aRetVal
-//    ]    
-//
-//    /// Creates the object copy
-//    clone = ByteArray new bytearray:$self.
+    /// Creates the copy of a byte subarray
+    constructor new(int anIndex, int aLength, bytearray anArray)
+        <= new(aLength);
+    [
+        anArray read(anIndex, aLength, self).
+    ]
+
+    /// Creates the byte array copy
+    constructor new(bytearray anArray)
+        <= new(0, anArray length, anArray).
+
+    /// Reads the array length to the output parameter
+    readLengthTo(ref<int> aLength)
+        => system'core_routines'__bytearray.
+
+    /// Fills the sub array with a specified value
+    fill(int anIndex, int aLength, byte aValue)
+    [
+        int aTotalLength := self length.
+        
+        int i := anIndex.
+        int m := anIndex + aLength.
+        
+        if (i > aTotalLength)
+            [ system'InvalidArgumentException new; raise ].
+        
+        if (m > aTotalLength)
+            [ system'InvalidArgumentException new; raise ].
+            
+        while(i < m)
+        [
+            self write(i, aValue).
+            
+            i := i + 1
+        ]
+    ]
+
+    /// Copies a sub array to the provided one at the specified position
+    read(int anIndex, int aLength, bytearray aDump)
+        => system'core_routines'__bytearray.
+
+    /// Copies the byte array at the specified position
+    write(int anIndex, int aLength, bytearray aDump)
+        => system'core_routines'__bytearray.
+
+    /// Writes the byte value at specified position
+    write(int anIndex, byte anInt)
+        => system'core_routines'__bytearray.
+
+    /// Reads a byte value at the specified position and saves it into an output variable
+    read(int anIndex, ref<byte> anInt)
+        => system'core_routines'__bytearray.
+
+    embeddable byte getAt(int n)
+    [
+        byte retVal := 0.
+        
+        self read(n, &retVal).
+        
+        ^ retVal
+    ]
+
+    /// Writes a short integer value at the specified position
+    write(int anIndex, short anInt)
+        => system'core_routines'__bytearray.
+
+    /// Reads a short integer value at the specified position and saves it into an output variable
+    read(int anIndex, ref<short> aChar)
+        => system'core_routines'__bytearray.
+
+    /// Writes a character value at the specified position
+    write(int anIndex, char anInt)
+        => system'core_routines'__bytearray.
+
+    /// Reads a character value at the specified position and saves it into an output variable
+    read(int anIndex, ref<char> aChar)
+        => system'core_routines'__bytearray.
+
+    /// Writes an integer value at the specified position
+    write(int anIndex, int anInt)
+        => system'core_routines'__bytearray.
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int anIndex, ref<int> anInt)
+        => system'core_routines'__bytearray.
+
+    /// Writes a long integer value at the specified position
+    write(int anIndex, long aLong)
+        => system'core_routines'__bytearray.
+
+    /// Reads a long integer value at the specified position and saves it into an output variable
+    read(int anIndex, ref<long> aLong)
+        => system'core_routines'__bytearray.
+
+    /// Writes a real value at the specified position
+    write(int anIndex, real aLong)
+        => system'core_routines'__bytearray.
+
+    /// Reads a real value at the specified position and saves it into an output variable
+    read(int anIndex, ref<real> aLong)
+        => system'core_routines'__bytearray.
+
+    move(int anIndex, int aLength, int anOffset)
+        => system'core_routines'__bytearray.
+    
+    /// Concatinates the arrays    
+    bytearray add(int aLength2, bytearray anArray)
+    [
+        int aLength1 := self length.
+        
+        bytearray aRetVal := ByteArray new(aLength1 + aLength2).
+
+        byte tmp := 0.
+        int anIndex := 0.
+        while(anIndex < aLength1)
+        [
+            self read(anIndex, &tmp).
+            aRetVal write(anIndex, tmp).
+            
+            anIndex := anIndex + 1
+        ].
+
+        anIndex := 0.
+        while(anIndex < aLength2)
+        [
+            anArray read(anIndex, &tmp).
+            aRetVal write(aLength1 + anIndex, tmp).
+            
+            anIndex := anIndex + 1
+        ].
+            
+        ^ aRetVal
+    ]    
+
+    /// Creates the object copy
+    clone = ByteArray new(self).
 }
 
 // --- ShortArray ---
@@ -391,82 +391,82 @@ public sealed ShortArray :: Indexable, array<short>
     constructor new(int aLength)
         = dynamic<short>(aLength).
     
-//    /// Creates the copy of a short subarray
-//    stacksafe constructor new int:anIndex int:aLength shortarray:anArray
-//        <= new int:aLength;
-//    [
-//        anArray read int:anIndex int:aLength shortarray:$self.
-//    ]
-//
-//    /// Creates the short array copy
-//    constructor new shortarray:anArray
-//        <= new int:0 int:(anArray length) shortarray:anArray.
-//
-//    /// Reads the array length to the output parameter
-//    stacksafe readLengthTo vint:aLength
-//        => system'core_routines'__shortarray.
-//
-//    /// Fills the sub array with a specified value
-//    stacksafe fill int:anIndex int:aLength short:aValue
-//    [
-//        int aTotalLength := $self length.
-//        
-//        int i := anIndex.
-//        int m := anIndex + aLength.
-//        
-//        if (i > aTotalLength)
-//            [ system'InvalidArgumentException new; raise ].
-//        
-//        if (m > aTotalLength)
-//            [ system'InvalidArgumentException new; raise ].
-//            
-//        while(i < m)
-//        [
-//            $self write int:i short:aValue.
-//            
-//            i := i + 1
-//        ]
-//    ]
-//    
-//    /// Copies a sub array to the provided one at the specified position
-//    stacksafe read int:anIndex int:aLength shortarray:anArray
-//        => system'core_routines'__shortarray.
-//
-//    /// Copies the short array at the specified position   
-//    stacksafe write int:anIndex int:aLength shortarray:anArray
-//        => system'core_routines'__shortarray.
-//
-//    /// Writes a short integer value at the specified position
-//    stacksafe write int:anIndex short:aValue
-//        => system'core_routines'__shortarray.
-//
-//    embeddable short getAt int:n
-//    [
-//        short retVal := 0.
-//        
-//        $self read int:n vshort:retVal.
-//        
-//        ^ retVal
-//    ]
-//
-//    /// Reads a short integer value at the specified position and saves it into an output variable
-//    stacksafe read int:anIndex vshort:aValue
-//        => system'core_routines'__shortarray.
-//
-//    /// Creates the object copy
-//    clone = ShortArray new shortarray:$self.
+    /// Creates the copy of a short subarray
+    constructor new(int anIndex, int aLength, shortarray anArray)
+        <= new(aLength);
+    [
+        anArray read(anIndex, aLength, self).
+    ]
+
+    /// Creates the short array copy
+    constructor new(shortarray anArray)
+        <= new(0, anArray length, anArray).
+
+    /// Reads the array length to the output parameter
+    readLengthTo(ref<int> aLength)
+        => system'core_routines'__shortarray.
+
+    /// Fills the sub array with a specified value
+    fill(int anIndex, int aLength, short aValue)
+    [
+        int aTotalLength := self length.
+        
+        int i := anIndex.
+        int m := anIndex + aLength.
+        
+        if (i > aTotalLength)
+            [ system'InvalidArgumentException new; raise ].
+        
+        if (m > aTotalLength)
+            [ system'InvalidArgumentException new; raise ].
+            
+        while(i < m)
+        [
+            self write(i, aValue).
+            
+            i := i + 1
+        ]
+    ]
+    
+    /// Copies a sub array to the provided one at the specified position
+    read(int anIndex, int aLength, shortarray anArray)
+        => system'core_routines'__shortarray.
+
+    /// Copies the short array at the specified position   
+    write(int anIndex, int aLength, shortarray anArray)
+        => system'core_routines'__shortarray.
+
+    /// Writes a short integer value at the specified position
+    write(int anIndex, short aValue)
+        => system'core_routines'__shortarray.
+
+    embeddable short getAt(int n)
+    [
+        short retVal := 0.
+        
+        self read(n, &retVal).
+        
+        ^ retVal
+    ]
+
+    /// Reads a short integer value at the specified position and saves it into an output variable
+    read(int anIndex, ref<short> aValue)
+        => system'core_routines'__shortarray.
+
+    /// Creates the object copy
+    clone = ShortArray new(self).
 }
 
-//// --- IntArray ---
-//
-///// An array of integers
-//sealed IntArray :: BaseIndexable, array<int>
-//{
-//    /// Creates the array with the specified length
-//    stacksafe constructor $new int : aLength
-//        = int<>(aLength).
-//        
-//    /// Creates the array with the specified length
+// --- IntArray ---
+
+/// An array of integers
+public sealed IntArray :: Indexable, array<int>
+{
+    /// Creates the array with the specified length
+    /*private*/ constructor new(int aLength)
+        = dynamic<int>(aLength).
+        
+    /// Creates the array with the specified length
 //    stacksafe constructor new int : aLength
 //        <= $new(aLength);
 //    [
@@ -478,77 +478,77 @@ public sealed ShortArray :: Indexable, array<short>
 //            i := i + 1
 //        ]
 //    ]
-//
-////    /// Creates the array with the specified length
-////    constructor new : aLength
-////        <= new int:aLength.
-//
-//    /// Creates the copy of a subarray
-//    stacksafe constructor new int:anIndex int:aLength intarray:anArray
-//        <= new int:aLength;
-//    [
-//        anArray read int:anIndex int:aLength intarray:$self.
-//    ]
-//
-//    /// Creates the short array copy
-//    constructor new intarray:anArray
-//        <= new int:0 int:(anArray length) intarray:anArray.
-//    
-//    /// Reads the array length to the output parameter
-//    stacksafe readLengthTo vint:aLength
-//        => system'core_routines'__intarray.
-//
-//    /// Fills the sub array with a specified value
-//    stacksafe fill int:anIndex int:aLength int:aValue
-//    [
-//        int aTotalLength := $self length.
-//        
-//        int i := anIndex.
-//        int m := anIndex + aLength.
-//        
-//        if (i > aTotalLength)
-//            [ system'InvalidArgumentException new; raise ].
-//        
-//        if (m > aTotalLength)
-//            [ system'InvalidArgumentException new; raise ].
-//            
-//        while(i < m)
-//        [
-//            $self write int:i int:aValue.
-//            
-//            i := i + 1
-//        ]
-//    ]
-//
-//    /// Copies a sub array to the provided one at the specified position
-//    stacksafe read int:anIndex int:aLength intarray:anArray
-//        => system'core_routines'__intarray.
-//
-//    /// Copies the short array at the specified position
-//    stacksafe write int:anIndex int:aLength intarray:anArray
-//        => system'core_routines'__intarray.
-//
-//    /// Writes an integer value at the specified position
-//    stacksafe write int:anIndex int:aValue
-//        => system'core_routines'__intarray.
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    stacksafe read int:anIndex vint:anInt
-//        => system'core_routines'__intarray.
-//
-//    embeddable int getAt int:n
-//    [
-//        int retVal := 0.
-//        
-//        $self read int:n vint:retVal.
-//        
-//        ^ retVal
-//    ]
-//
-//    /// Creates the object copy
-//    clone = IntArray new intarray:$self.
-//}
-//
+
+//    /// Creates the array with the specified length
+//    constructor new : aLength
+//        <= new int:aLength.
+
+    /// Creates the copy of a subarray
+    constructor new(int anIndex, int aLength, intarray anArray)
+        <= new(aLength);
+    [
+        anArray read(anIndex, aLength, self).
+    ]
+
+    /// Creates the short array copy
+    constructor new(intarray anArray)
+        <= new(0, anArray length, anArray).
+    
+    /// Reads the array length to the output parameter
+    readLengthTo(ref<int> aLength)
+        => system'core_routines'__intarray.
+
+    /// Fills the sub array with a specified value
+    fill(int anIndex, int aLength, int aValue)
+    [
+        int aTotalLength := self length.
+        
+        int i := anIndex.
+        int m := anIndex + aLength.
+        
+        if (i > aTotalLength)
+            [ system'InvalidArgumentException new; raise ].
+        
+        if (m > aTotalLength)
+            [ system'InvalidArgumentException new; raise ].
+            
+        while(i < m)
+        [
+            self write(i, aValue).
+            
+            i := i + 1
+        ]
+    ]
+
+    /// Copies a sub array to the provided one at the specified position
+    read(int anIndex, int aLength, intarray anArray)
+        => system'core_routines'__intarray.
+
+    /// Copies the short array at the specified position
+    write(int anIndex, int aLength, intarray anArray)
+        => system'core_routines'__intarray.
+
+    /// Writes an integer value at the specified position
+    write(int anIndex, int aValue)
+        => system'core_routines'__intarray.
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int anIndex, ref<int> anInt)
+        => system'core_routines'__intarray.
+
+    embeddable int getAt(int n)
+    [
+        int retVal := 0.
+        
+        self read(n, &retVal).
+        
+        ^ retVal
+    ]
+
+    /// Creates the object copy
+    clone = IntArray new(self).
+}
+
 //// --- BitArray ---
 //
 //sealed class BitArray

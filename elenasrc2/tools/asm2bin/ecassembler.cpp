@@ -550,7 +550,7 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
       token.read();
    }
 
-   ReferenceNs refName(binary->Name(), method);
+   IdentifierString refName("'", method);
    ref_t reference = binary->mapReference(refName) | mskCodeRef;
 
 	if (binary->mapSection(reference, true)!=NULL) {

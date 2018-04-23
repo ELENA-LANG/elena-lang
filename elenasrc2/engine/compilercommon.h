@@ -79,7 +79,7 @@
 #define V_TEMPLATE       (ref_t)-16391
 #define V_FIELD          (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
-//#define V_LOOP           (ref_t)-16394
+#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
 //#define V_EXTERN         (ref_t)-16396
 #define V_ATTRTEMPLATE   (ref_t)-16398

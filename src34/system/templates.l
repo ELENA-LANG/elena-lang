@@ -188,25 +188,25 @@ __accessor template rvprop :: type,prop_name
 //        ^ retVal.            
 //    ]
 //}
-//
-//// --- while statement ---
-//
-//__loop template while :: expr
-//[
-//    expr bool ?
-//    [
-//    ].
-//]    
-//
-//// --- until statement ---
-//
-//__loop template until :: expr
-//[
-//    expr bool !
-//    [
-//    ].
-//]
-//    
+
+// --- while statement ---
+
+__loop template while :: expr
+[
+    T<bool>(expr) ?
+    [
+    ].
+]    
+
+// --- until statement ---
+
+__loop template until :: expr
+[
+    T<bool>(expr) !
+    [
+    ].
+]
+    
 //// --- extern statement ---
 //
 //__extern template extern
@@ -224,35 +224,36 @@ __block template if :: expr
     ].
 ]
 
-//// --- ifnot statement ---
-//
-//__block template ifnot :: expr
-//[
-//    expr bool !
-//    [
-//    ].
-//]
-//
-//// --- if-else statement ---
-//
-//__block __block template if :: expr
-//[
-//    expr bool ?
-//    [
-//    ]
-//    ! [
-//    ].    
-//]
-//
-//__block __block template ifnot :: expr
-//[
-//    expr bool; inverted ?
-//    [
-//    ]
-//    ! [
-//    ].
-//]
-//
+// --- ifnot statement ---
+
+__block template ifnot :: expr
+[
+    T<bool>(expr) !
+    [
+    ].
+]
+
+// --- if-else statement ---
+
+__block __block template if :: expr
+[
+    T<bool>(expr) ?
+    [
+    ]
+    ! [
+    ].    
+]
+
+
+__block __block template ifnot :: expr
+[
+    T<bool>(expr) inverted ?
+    [
+    ]
+    ! [
+    ].
+]
+
 //// -- try-catch statement ---
 //
 //__nested template try :: expr
