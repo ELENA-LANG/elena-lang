@@ -3,6 +3,9 @@ In development:
 ------                              
                             
               dev - redesign                                                                           
+                 * migrating startUp code
+                 * exception handling : method not found
+
                  * compile wide literal constant (emptyWideLiteralValue)
 
                  * interface class cannot be created directly

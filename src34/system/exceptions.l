@@ -238,12 +238,12 @@ public class NotSupportedException :: Exception
 //    constructor new
 //        <= new literal:"The process terminated".
 //}
-//
-//// --- CriticalException ---
-//
-//class CriticalException :: Exception
-//{
+
+// --- CriticalException ---
+
+public class CriticalException :: Exception
+{
 //    /// Creates the exception
 //    constructor new
 //        <= new literal:"Critical exception".
-//}
+}

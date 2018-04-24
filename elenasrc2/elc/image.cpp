@@ -252,10 +252,11 @@ ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t refere
    if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef) {
       return module->resolveConstant(reference);
    }
-//   // if it is a message
-//   else if (mask == 0) {
-//      return module->resolveSubject(reference);
-//   }
+   // if it is a message
+   else if (mask == 0) {
+      ref_t signRef = 0;
+      return module->resolveAction(reference, signRef);
+   }
    else {
       ident_t referenceName = module->resolveReference(reference);
       while (isForwardReference(referenceName)) {

@@ -3549,3 +3549,20 @@ procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$system@Sho
 
 end
 
+procedure __exception.register[0]
+
+  acopyr intern : system'core_routines'critical_exception_handler
+  callextr api : register_critical_exception_handler
+
+  quit
+
+end
+
+procedure critical_exception_handler
+
+  open 1
+  pushr class : system'CriticalException
+  pushr const : %"new[0]"
+  throw
+
+end
