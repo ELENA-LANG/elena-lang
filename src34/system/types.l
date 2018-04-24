@@ -87,10 +87,10 @@ type bytearray  = system'ByteArray.
 type shortarray = system'ShortArray.
 type intarray   = system'IntArray.
 //type intmatrix  = system'IntMatrix.
-//type realarray  = system'RealArray.
+type realarray  = system'RealArray.
 //type realmatrix = system'RealMatrix.
-//type chararray  = system'CharArray.
-//type array      = system'Array.
+type chararray  = system'CharArray.
+type array      = system'Array.
 //type bitarray   = system'BitArray.
 //type bitset     = system'BitArray32.
 

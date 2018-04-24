@@ -128,6 +128,7 @@ In development:
                  * validate that a field template contains exactly one a field with a name "field"
                  * test typified prop - the get accessor should be typiefied as well
                  * vprop - currently 0 is assigned, which is not correct, probably "prop_type min" should be used
+                 * uncomment WideLiteral class
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

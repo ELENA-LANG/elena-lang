@@ -2138,13 +2138,21 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 //      writer.removeBookmark();
 }
 
-void DerivationTransformer :: copyOperator(SyntaxWriter& writer, SNode& node, DerivationScope& scope, int& level)
+inline int defineOperatorLevel(SNode node)
+{
+   SNode ident = node.firstChild();
+   if (emptystr(ident.identifier())) {
+      return ident.type - nsL1Operator + 1;
+   }
+   return 10;
+}
+
+void DerivationTransformer :: copyOperator(SyntaxWriter& writer, SNode& node, DerivationScope& scope)
 {
    int operator_id = node.argument;
 
    SNode ident = node.firstChild();
    if (emptystr(ident.identifier())) {
-      level = ident.type - nsL1Operator + 1;
 
       ident = ident.firstChild();
    }
@@ -2231,39 +2239,33 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
             break;
          case lxOperator:
          {
+            expressionExpected = true;
+
             // HOTFIX : arranging the operator precedence
-            int level = 0;
+            int level = defineOperatorLevel(current);
             int last_level = bookmarks.peek() & 7;
-            int bm = 0;
+            while (last_level && last_level <= level) {
+               bookmarks.pop();
+               writer.removeBookmark();
 
-            expressionExpected = false;
-            copyOperator(writer, current, scope, level);
-            if (level) {
-               while (last_level && level > last_level) {
-                  writer.insert(bookmarks.pop(), lxExpression, 0);
-                  writer.closeNode();
-
-                  writer.removeBookmark();
-
-                  last_level = bookmarks.peek() & 7;
+               if (bookmarks.Count() != 0) {
+                  writer.insert(bookmarks.peek() >> 3, lxExpression, 0);
                }
+               else writer.insert(lxExpression);
+               writer.closeNode();
 
-               bm = writer.newBookmark();
+               last_level = bookmarks.peek() & 7;
             }
+
+            copyOperator(writer, current, scope);
+            int bm = writer.newBookmark();
+            bookmarks.push((bm << 3) + level);
 
             if (isTemplateBracket(current.nextNode())) {
                generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
             }
             else generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | EXPRESSION_IMPLICIT_MODE | EXPRESSION_OBJECT_REQUIRED);
 
-            if (level) {
-               bookmarks.push((bm << 3) + level);
-               expressionExpected = true;
-            }
-            else {
-               writer.insert(lxExpression);
-               writer.closeNode();
-            }
             break;
          }
          case lxExpression:
@@ -2300,10 +2302,17 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
       current = current.nextNode();
    }
 
+   bool skipFirst = true;
    while (bookmarks.Count() > 0) {
-      writer.insert(bookmarks.pop(), lxExpression, 0);
-      writer.closeNode();
-
+      if (!skipFirst) {
+         // the last bookmark can be ignored
+         writer.insert(bookmarks.pop() >> 3, lxExpression, 0);
+         writer.closeNode();
+      }
+      else {
+         bookmarks.pop();
+         skipFirst = false;
+      }
       writer.removeBookmark();
    }
 
