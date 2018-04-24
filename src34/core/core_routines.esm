@@ -3143,3 +3143,409 @@ labNext2:
 
 end
 
+
+procedure __literalconvertor."convert$system@IntNumber$system@ByteArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor."convert$system@UIntNumber$system@ByteArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : uinttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor."convert$system@WideLiteralValue$system@ByteArray$@system@ref#1&IntNumber[4]"
+
+  aloadsi 2
+  bloadsi 3
+  callextr api : wstrtostr
+  bloadsi 4
+  nwritei 0
+  quitn 4
+  
+end
+
+procedure __literalconvertor."convert$system@IntNumber$system@IntNumber$system@ByteArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : inttostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __literalconvertor."convert$system@UIntNumber$system@IntNumber$system@ByteArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : uinttostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __literalconvertor."convert$system@ShortNumber$system@ByteArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor."convert$system@ByteNumber$system@ByteArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor."convert$system@LongNumber$system@ByteArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : longtostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+
+end
+
+procedure __literalconvertor."convert$system@RealNumber$system@ByteArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 24
+  
+  callextr api : realtostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+end
+
+procedure __literalconvertor."convert$system@CharValue$system@ByteArray$@system@ref#1&IntNumber[4]"
+
+  aloadsi 2
+  nload
+  ifn labEmpty 0
+
+  bloadsi 3
+
+  callextr api : chartostr
+  bloadsi 4
+  nwritei 0
+  quitn 4
+  
+labEmpty:
+  ecopy 0
+  bloadsi 4
+  nwritei 0
+  quitn 4
+
+end
+
+procedure __literalconvertor."convert$system@ShortNumber$system@IntNumber$system@ByteArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : inttostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __literalconvertor."convert$system@ByteNumber$system@IntNumber$system@ByteArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : inttostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __literalconvertor."convert$system@LongNumber$system@IntNumber$system@ByteArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : longtostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __wideconvertor."convert$system@LiteralValue$system@ShortArray$@system@ref#1&IntNumber[4]"
+
+  aloadsi 2
+  bloadsi 3
+  callextr api : strtowstr
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@IntNumber$system@IntNumber$system@ShortArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : inttowstr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __wideconvertor."convert$system@UIntNumber$system@IntNumber$system@ShortArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : uinttowstr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __wideconvertor."convert$system@IntNumber$system@ShortArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@UIntNumber$system@ShortArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : uinttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@ShortNumber$system@ShortArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+  
+end
+
+procedure __wideconvertor."convert$system@ByteNumber$system@ShortArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+  
+end
+
+procedure __wideconvertor."convert$system@LongNumber$system@ShortArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : longtowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@RealNumber$system@ShortArray$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 24
+  
+  callextr api : realtowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@CharValue$system@ShortArray$@system@ref#1&IntNumber[4]"
+
+  aloadsi 2
+  nload
+  ifn labEmpty 0
+
+  bloadsi 3
+  aloadsi 2
+  callextr api : chartowstr
+  bloadsi 4
+  nwritei 0
+  quitn 4
+
+labEmpty:
+  ecopy 0
+  bloadsi 4
+  nwritei 0
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@ShortNumber$system@IntNumber$system@ShortArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : inttowstr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __wideconvertor."convert$system@ByteNumber$system@IntNumber$system@ShortArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : inttowstr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$system@ShortArray$@system@ref#1&IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : longtowstr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+

@@ -749,6 +749,9 @@ void DerivationTransformer :: loadParameterValues(SNode attributes, DerivationSc
          if (!classRef)
             scope.raiseError(errInvalidHint, current);
 
+         if (isPrimitiveRef(classRef))
+            scope.raiseError(errInvalidHint, current);
+
 //         ref_t attr = scope.mapAttribute(terminalNode);
 //         if (attr == INVALID_REF) {
 //            attr = -1 - scope.mapParameter(terminalNode);
@@ -1038,6 +1041,9 @@ void DerivationTransformer :: copyTreeNode(SyntaxWriter& writer, SNode current, 
    }
    else if (current == lxTemplateAttribute) {
       copyParamAttribute(writer, current, scope);
+   }
+   else if (current == lxAttributeValue) {
+      copyExpressionTree(writer, current.findChild(lxClassRefAttr), scope);
    }
 //   else if (current == lxTemplateParamAttr) {
 //      copyParamAttribute(writer, current, scope);
@@ -3656,8 +3662,11 @@ void DerivationTransformer :: generateClassTree(SyntaxWriter& writer, SNode node
             SNode terminalNode = current.firstChild(lxTerminalMask);
 
             ref_t reference = scope.mapReference(terminalNode);
-            if (!reference)
+            if (!reference) {
                scope.raiseError(errUnknownSubject, terminalNode);
+            }
+            else if (isPrimitiveRef(reference))
+               scope.raiseError(errInvalidHint, terminalNode);
 
             writeParentFullReference(writer, scope.compilerScope->module, reference, terminalNode);
          }
