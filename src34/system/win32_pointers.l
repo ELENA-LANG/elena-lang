@@ -1,25 +1,30 @@
-//// --- Handler ---
-//
-//sealed struct Handle
-//{
-//    __dword<4> theHandle.
-//    
-//    stacksafe new handle:h
-//    [
-//        theHandle := h
-//    ]
-//
-//    stacksafe new int:aHandle
-//    [
-//        theHandle := aHandle
-//    ]
-//
-//    handle = $self.
-//
-//    stacksafe bool equal handle:anOperand 
-//        = theHandle == anOperand.
-//}
-//
+// --- Handler ---
+
+public sealed struct Handle
+{
+    int theHandle.
+
+    constructor new(handle h)
+    [
+        theHandle := h
+    ]
+    
+    constructor new(int h)
+    [
+        theHandle := h
+    ]
+
+    cast T<int> : n
+    [
+        theHandle := n.
+    ]
+
+    cast T<int> = theHandle.
+
+    bool equal(handle anOperand)
+        = theHandle == anOperand.
+}
+
 //// --- RTPointer ---
 //
 //static rt_sync = Object new.

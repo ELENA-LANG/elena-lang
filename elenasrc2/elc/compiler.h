@@ -117,7 +117,7 @@ public:
       okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
 //      okSignatureConstant,            // param - reference
-//      okArrayConst,
+      okArrayConst,
       okField,                        // param - reference, param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
       okStaticConstantField,          // param - reference
@@ -403,7 +403,7 @@ private:
 
 //      virtual _Module* loadReferenceModule(ref_t& reference);
 
-//      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
+      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
 
 //      bool loadAttributes(_Module* module);
       void loadExtensions(ident_t ns, bool& duplicateExtensions);
@@ -538,7 +538,7 @@ private:
    {
       bool  constant;
       bool  staticOne;
-//      bool  preloaded;
+      bool  preloaded;
       ref_t outputRef;
 
 //      virtual ObjectInfo mapTerminal(ident_t identifier);
@@ -551,7 +551,7 @@ private:
          else return Scope::getScope(level);
       }
 
-//      void save();
+      void save();
 
       SymbolScope(NamespaceScope* parent, ref_t reference);
    };
@@ -859,7 +859,7 @@ private:
    void compileParentDeclaration(SNode node, ClassScope& scope);
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 
-//   void declareSymbolAttributes(SNode node, SymbolScope& scope);
+   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
    void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
@@ -905,7 +905,7 @@ private:
 //   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 
-   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t& signatureRef, int mode = 0*/);   // returns an info of the first operand
+   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
@@ -966,7 +966,7 @@ private:
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
    void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
-//   void compilePreloadedCode(SymbolScope& scope);
+   void compilePreloadedCode(SymbolScope& scope);
    void compilePreloadedCode(_CompilerScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
@@ -1022,11 +1022,11 @@ private:
    void analizeBranching(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
    void analizeCode(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    void analizeMethod(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
-   void analizeClassTree(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   void analizeClassTree(SNode node, ClassScope& scope/*, WarningScope& warningScope*/);
    void analizeSymbolTree(SNode node, Scope& scope);
 
-//   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
-//
+   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
+
 //   void createPackageInfo(_Module* module, _ProjectManager& project);
 //
    bool compileDeclarations(SNode node, NamespaceScope& scope, bool& repeatMode);
@@ -1062,10 +1062,10 @@ public:
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, 
       ref_t targetRef, bool stacksafe);
-//   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
+   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 ////   virtual void injectFieldExpression(SyntaxWriter& writer);
-//   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
+   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
    virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable);

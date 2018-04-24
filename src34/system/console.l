@@ -1,20 +1,20 @@
-//// --- Console ---
-//
-///// A console
-//class $Console
-//{
-//    object  theWriter.
-//    object  theReader.
-//    literal theNewLineConstant.
-//
-//    /// Creates a console
-//    constructor new reader:aReader writer:aWriter
-//    [
-//        theWriter := aWriter.
-//        theReader := aReader.
-//        theNewLineConstant := 'newLine.
-//    ]
-//
+// --- Console ---
+
+/// A console
+class Console
+{
+    object  theWriter.
+    object  theReader.
+    literal theNewLineConstant.
+
+    /// Creates a console
+    constructor new(object aReader, object aWriter)
+    [
+        theWriter := aWriter.
+        theReader := aReader.
+        theNewLineConstant := forwards'newLine.
+    ]
+
 //    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
 //    writeLine : anObject
 //    [
@@ -80,7 +80,7 @@
 //    /// Reads the next key code from the input stream
 //    readKey
 //        = theReader int.
-//}
-//
-///// A standard console
-//static console = $Console new reader:system'io'stdConsoleReader writer:system'io'stdConsoleWriter.
+}
+
+/// A standard console
+public static console = Console new/*(io'stdConsoleReader, io'stdConsoleWriter)*/.

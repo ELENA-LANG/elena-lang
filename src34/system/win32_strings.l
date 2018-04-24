@@ -1,3 +1,6 @@
+public const newLine
+    = $13$10.
+
 //// --- characterController ---
 //
 //class $characterController =

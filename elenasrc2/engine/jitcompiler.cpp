@@ -149,20 +149,20 @@ void JITCompiler32 :: compileChar32(MemoryWriter* writer, const char* value)
    writer->writeDWord(ch);
 }
 
-//void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
-//{
-//   size_t length = binary->Length();
-//
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800000 | length);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->write(binary->get(0), length);
-//   writer->align(4, 0);
-//}
+void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
+{
+   size_t length = binary->Length();
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800000 | length);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(4, 0);
+}
 
 void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
 {
@@ -473,20 +473,20 @@ void JITCompiler64 :: compileChar32(MemoryWriter* writer, const char* value)
    writer->writeQWord(ch);
 }
 
-//void JITCompiler64 :: compileBinary(MemoryWriter* writer, _Memory* binary)
-//{
-//   unsigned int length = binary->Length();
-//
-//   writer->seek(writer->Position() - 0x10);
-//
-//   // object header
-//   writer->writeQWord(0x80000000u | length);
-//   writer->writeQWord(0);
-//
-//   // object body
-//   writer->write(binary->get(0), length);
-//   writer->align(8, 0);
-//}
+void JITCompiler64 :: compileBinary(MemoryWriter* writer, _Memory* binary)
+{
+   unsigned int length = binary->Length();
+
+   writer->seek(writer->Position() - 0x10);
+
+   // object header
+   writer->writeQWord(0x80000000u | length);
+   writer->writeQWord(0);
+
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(8, 0);
+}
 
 void JITCompiler64 :: compileCollection(MemoryWriter* writer, _Memory* binary)
 {

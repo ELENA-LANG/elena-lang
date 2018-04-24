@@ -147,7 +147,7 @@ class JITLinker : _JITLoaderListener
    ref_t resolveAction(ident_t signature, _Module* module, ref_t* signatures, int paramCount);
    ref_t resolveMessage(_Module* module, ref_t reference);
 
-//   void* resolveNativeVariable(ident_t  reference, int mask);
+   void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveConstVariable(ident_t  reference, int mask);
    void* resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
    void* resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);

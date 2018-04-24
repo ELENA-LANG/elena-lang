@@ -5809,12 +5809,12 @@ void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root, pos_t source
 //   endSymbol(tape);
 //}
 
-//void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
-//{
-//   declareInitializer(tape, reference);
-//   loadObject(tape, type, argument);
-//   endInitializer(tape);
-//}
+void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
+{
+   declareInitializer(tape, reference);
+   loadObject(tape, type, argument);
+   endInitializer(tape);
+}
 
 void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, SNode root)
 {

@@ -123,7 +123,7 @@ type wide       = system'WideLiteralValue.
 //type n3func     = system'IndexFunction3.
 
 // === system handles ===
-//type handle     = system'Handle.
+type handle     = system'Handle.
 //type rt_ptr     = system'RTPointer.
 type dirty_ptr  = system'UnsafePointer.
 

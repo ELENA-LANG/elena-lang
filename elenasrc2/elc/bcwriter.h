@@ -329,7 +329,7 @@ public:
    void generateClass(CommandTape& tape, SNode root, pos_t sourcePathBookmark);
 //   void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateSymbolWithInitialization(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument, ref_t implicitConstructor);
-//   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);
    void generateConstantList(SyntaxTree::Node node, _Module* module, ref_t reference);

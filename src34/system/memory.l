@@ -1308,7 +1308,7 @@ public sealed __string LiteralValue :: BaseValue
 // --- emptyWideLiteralValue ---
 
 /// An empty wide literal value
-const wide emptyWideLiteralValue = ""/*w*/.
+/*const*/ wide emptyWideLiteralValue = ""/*w*/.
 
 // --- WideLiteralValue ---
 

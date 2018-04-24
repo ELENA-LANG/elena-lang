@@ -460,21 +460,21 @@ void* JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, int mask, S
    return vaddress;
 }
 
-//void* JITLinker :: resolveNativeVariable(ident_t reference, int mask)
-//{
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection((ref_t)mskDataRef);
-//   MemoryWriter writer(image);
-//
-//   void* vaddress = calculateVAddress(&writer, mskDataRef, 4);
-//
-//   _compiler->allocateVariable(writer);
-//
-//   _loader->mapReference(reference, vaddress, mask);
-//
-//   return vaddress;
-//}
-//
+void* JITLinker :: resolveNativeVariable(ReferenceInfo referenceInfo, int mask)
+{
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection((ref_t)mskDataRef);
+   MemoryWriter writer(image);
+
+   void* vaddress = calculateVAddress(&writer, mskDataRef, 4);
+
+   _compiler->allocateVariable(writer);
+
+   _loader->mapReference(referenceInfo, vaddress, mask);
+
+   return vaddress;
+}
+
 //void* JITLinker :: resolveConstVariable(ident_t reference, int mask)
 //{
 //   // get target image & resolve virtual address
@@ -784,14 +784,14 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
       fixSectionReferences(sectionInfo, image, position, vmtVAddress);
       constantValue = true;
    }
-//   else if (vmtVAddress == LOADER_NOTLOADED) {
-//      // resolve constant value
-//      SectionInfo sectionInfo = _loader->getSectionInfo(reference, mskRDataRef, false);
-//      _compiler->compileBinary(&writer, sectionInfo.section);
-//
-//      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
-//      constantValue = true;
-//   }
+   else if (vmtVAddress == LOADER_NOTLOADED) {
+      // resolve constant value
+      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+      _compiler->compileBinary(&writer, sectionInfo.section);
+
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
+      constantValue = true;
+   }
 
    if (vmtVAddress == LOADER_NOTLOADED)
       throw JITUnresolvedException(referenceInfo);
@@ -1155,10 +1155,10 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //         case mskExtMessage:
 //            vaddress = resolveExtensionMessage(reference, _loader->getExtMessageClass());
 //            break;
-//         case mskNativeVariable:
-//         case mskLockVariable:
-//            vaddress = resolveNativeVariable(reference, mask);
-//            break;
+         //case mskNativeVariable:
+         case mskLockVariable:
+            vaddress = resolveNativeVariable(referenceInfo, mask);
+            break;
 //         case mskConstVariable:
 //            vaddress = resolveConstVariable(reference, mask);
 //            break;
