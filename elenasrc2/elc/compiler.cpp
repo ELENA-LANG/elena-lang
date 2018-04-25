@@ -3391,9 +3391,10 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
          ref_t argRef = 0;
          if (!anonymous) {
             argRef = resolveObjectReference(scope, compileExpression(writer, current, scope, 0, paramMode));
-            //   if (isPrimitiveRef(argRef))
-            //      argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
             if (argRef) {
+               if (isPrimitiveRef(argRef))
+                  argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+
                signatures[signatureLen++] = argRef;
             }
             else anonymous = true;
@@ -8362,30 +8363,44 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t sub
    }
 }
 
-//void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
-//{
-//   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
-//
-//   if (paramCount == -1 && verb == 0) {
-//      assignNode.set(callNode.type, subject);
-//      callNode = lxIdle;
-//
-//      SNode targetNode = assignTarget.findChild(lxTarget);
-//      assignNode.appendNode(lxCallTarget, targetNode.argument);
-//   }
-//   else {
-//      // removing assinging operation
-//      assignNode = lxExpression;
-//
-//      // move assigning target into the call node
-//
-//      if (assignTarget != lxNone) {
-//         callNode.appendNode(assignTarget.type, assignTarget.argument);
-//         assignTarget = lxIdle;
-//         callNode.setArgument(encodeMessage(subject, paramCount));
-//      }
-//   }
-//}
+void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
+{
+   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+
+   if (paramCount == -1 && verb == 0) {
+      // if it is an embeddable constructor call
+      SNode sourceNode = assignNode.firstChild(lxObjectMask);
+      
+      SNode callTargetNode = callNode.firstChild(lxObjectMask);
+      callTargetNode.set(sourceNode.type, sourceNode.argument);
+
+      callNode.setArgument(subject);
+
+      SNode targetNode = assignTarget.findChild(lxTarget);
+      SNode callTarget = callNode.findChild(lxCallTarget);
+      callTarget.setArgument(targetNode.argument);
+
+      assignNode = lxExpression;
+      sourceNode = lxIdle;
+
+      //assignNode.set(callNode.type, subject);
+      //callNode = lxIdle;
+      
+      //assignNode.appendNode(lxCallTarget, targetNode.argument);
+   }
+   else {
+      // removing assinging operation
+      assignNode = lxExpression;
+
+      // move assigning target into the call node
+
+      if (assignTarget != lxNone) {
+         callNode.appendNode(assignTarget.type, assignTarget.argument);
+         assignTarget = lxIdle;
+         callNode.setArgument(encodeMessage(subject, paramCount));
+      }
+   }
+}
 
 void Compiler :: injectLocalBoxing(SNode node, int size)
 {

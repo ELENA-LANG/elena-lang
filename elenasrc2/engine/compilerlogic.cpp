@@ -1952,24 +1952,24 @@ bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& co
 
 bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node)
 {
-//   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
-//   SNode callTarget = callNode.findChild(lxCallTarget);
-//
-//   ClassInfo info;
-//   if(!defineClassInfo(scope, info, callTarget.argument))
-//      return false;
-//
-//   for (int i = 0; i < EMBEDDABLEOP_MAX; i++) {
-//      EmbeddableOp op = embeddableOps[i];
-//      ref_t subject = info.methodHints.get(Attribute(callNode.argument, op.attribute));
-//
-//      // if it is possible to replace get&subject operation with eval&subject2:local
-//      if (subject != 0) {
-//         compiler.injectEmbeddableOp(node, callNode, subject, op.paramCount, op.verb);
-//
-//         return true;
-//      }
-//   }
+   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
+   SNode callTarget = callNode.findChild(lxCallTarget);
+
+   ClassInfo info;
+   if(!defineClassInfo(scope, info, callTarget.argument))
+      return false;
+
+   for (int i = 0; i < EMBEDDABLEOP_MAX; i++) {
+      EmbeddableOp op = embeddableOps[i];
+      ref_t subject = info.methodHints.get(Attribute(callNode.argument, op.attribute));
+
+      // if it is possible to replace get&subject operation with eval&subject2:local
+      if (subject != 0) {
+         compiler.injectEmbeddableOp(node, callNode, subject, op.paramCount, op.verb);
+
+         return true;
+      }
+   }
 
    return false;
 }
@@ -2039,22 +2039,18 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
 
 bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
 {
-//   // check if it is a virtual call
-//   if (node == lxDirectCalling && getParamCount(node.argument) == 0) {
-//      ident_t actionName = scope.module->resolveSubject(getAction(node.argument));
-//      if (actionName.find('$') == NOTFOUND_POS)
-//         return false;
-//
-//      SNode callTarget = node.findChild(lxCallTarget);
-//
-//      ClassInfo info;
-//      if (defineClassInfo(scope, info, callTarget.argument) && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
-//         // if it is an idle call, remove it
-//         node = lxExpression;
-//
-//         return true;
-//      }
-//   }
+   // check if it is a virtual call
+   if (node == lxDirectCalling && getParamCount(node.argument) == 0) {
+      SNode callTarget = node.findChild(lxCallTarget);
+
+      ClassInfo info;
+      if (defineClassInfo(scope, info, callTarget.argument) && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
+         // if it is an idle call, remove it
+         node = lxExpression;
+
+         return true;
+      }
+   }
 
    return false;
 }
