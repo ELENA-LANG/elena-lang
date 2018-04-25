@@ -1,63 +1,58 @@
-//// --- type --
-//
-//type exception = Exception.
-//
-//// --- helper ---
-//
-//extension $op
-//{
-//    throw
-//        => system'core_routines'__object.
-//}
-//
-//// --- CallStack ---
-//
-///// A call stack
-//sealed nonstructural class CallStack
-//{
-//    intarray theStack.
-//    
-//    /// Creates a current call stack
-//    constructor new
-//    [
-//        int<64> aStack.
-//        int     aLength := 0.
-//        
-//        aLength := system'external core_callstack_load
-//            intarray:aStack
-//            int:64.
-//            
-//        theStack := IntArray new int:0 int:aLength intarray:aStack
-//    ]
-//    
-//    /// Generates the call stack literal representation
-//    literal
-//    [
-//        int     anIndex := 0.
-//        int     aLength := theStack length.
-//        int     aBufferLength := 0.
-//        int     address := 0.
-//
-//        byte<512> aBuffer.
-//        literal   aCallStackText := emptyLiteralValue.
-//        while (anIndex < aLength)
-//        [
-//            theStack read int:anIndex vint:address.
-//            
-//            aBufferLength := system'external LoadAddressInfo
-//                int:address 
-//                bytearray:aBuffer
-//                int:512.
-//            
-//            if (aBufferLength > 0)
-//                [ aCallStackText := aCallStackText add literal:(LiteralValue $new int:0 int:aBufferLength bytearray:aBuffer); add literal:'newLine ].
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        ^ aCallStackText.
-//    ]
-//}
+// --- type --
+
+type exception = Exception.
+
+// --- helper ---
+
+extension op
+{
+    throw
+        => system'core_routines'__object.
+}
+
+// --- CallStack ---
+
+/// A call stack
+public sealed /*nonstructural */class CallStack
+{
+    intarray theStack.
+    
+    /// Creates a current call stack
+    constructor new
+    [
+        T<int,64> aStack.
+        int       aLength := 0.
+        
+        aLength := system'external core_callstack_load(T<intarray>(aStack), 64).
+            
+        theStack := IntArray new(0, aLength, T<intarray>(aStack))
+    ]
+    
+    /// Generates the call stack literal representation
+    T<literal> literal
+    [
+        int     anIndex := 0.
+        int     aLength := theStack length.
+        int     aBufferLength := 0.
+        int     address := 0.
+
+        T<byte,512> aBuffer.
+        literal     aCallStackText := emptyLiteralValue.
+        while (anIndex < aLength)
+        [
+            theStack read(anIndex, &address).
+            
+            aBufferLength := system'external LoadAddressInfo(address, T<bytearray>(aBuffer), 512).
+            
+            if (aBufferLength > 0)
+                [ aCallStackText := aCallStackText add(LiteralValue new(0, aBufferLength, T<bytearray>(aBuffer))); add(forwards'newLine) ].
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ aCallStackText.
+    ]
+}
 
 // --- Exception ---
 
@@ -65,185 +60,182 @@
 public class Exception
 {
     literal theMessage.
-//    object  theCallStack.
-//    
-//    /// Returns the message and the call stack
-//    literal
-//    [
-//        literal retVal := theMessage add literal:$10"Call stack:"$10.
-//        
-//        ^ retVal add literal:(theCallStack literal)
-//    ]
-//    
-//    /// Returns the message
-//    message = theMessage.
-//    
-//    /// Executes the exception handler for the current exception if available.
-//    ///
-//    /// Otherwise goes to the next exception handler
-//    catch : aCatchBlock
-//    [
-//        if($nil == aCatchBlock~__prober on:$self)
-//            [ $self throw ]
-//    ]    
-//
-//    /// Executes the exception handler for the current exception if available.
-//    /// Finally code is called before
-//    ///
-//    /// Otherwise goes to the next exception handler
-//    catch : aFinallyCode : aCatchBlock
-//    [
-//        aFinallyCode eval.
-//        
-//        if($nil == aCatchBlock~__prober on:$self)
-//            [ $self throw ]
-//    ]
-//
-//    if : aCatchblock
-//    [
-//        ^ aCatchblock eval:$self.
-//    ]
-//
-//    raise
-//    [
-//        $self throw.  
-//    ]
-//    
-//    raise : aFinallyCode
-//    [
-//        aFinallyCode eval.
-//        
-//        $self throw.
-//    ]
-//    
-////    subject = $self.
+    object  theCallStack.
+    
+    /// Returns the message and the call stack
+    T<literal> literal
+    [
+        literal retVal := theMessage add($10"Call stack:"$10).
+        
+        ^ retVal add(theCallStack literal)
+    ]
+    
+    /// Returns the message
+    T<literal> message = theMessage.
+    
+    /// Executes the exception handler for the current exception if available.
+    ///
+    /// Otherwise goes to the next exception handler
+    catch : aCatchBlock
+    [
+        if(nil == aCatchBlock~__prober on:self)
+            [ self throw ]
+    ]    
+
+    /// Executes the exception handler for the current exception if available.
+    /// Finally code is called before
+    ///
+    /// Otherwise goes to the next exception handler
+    catch(object aFinallyCode, object aCatchBlock)
+    [
+        aFinallyCode().
+        
+        if(nil == aCatchBlock~__prober on:self)
+            [ self throw ]
+    ]
+
+    if : aCatchblock
+    [
+        ^ aCatchblock(self).
+    ]
+
+    raise
+    [
+        self throw.  
+    ]
+    
+    raise : aFinallyCode
+    [
+        aFinallyCode().
+        
+        self throw.
+    ]
+    
+//    subject = $self.
         
     /// Creates the exception with the provided message and error type
     constructor new(literal aMessage)
     [
         theMessage := aMessage.
-//        theCallStack := CallStack new.
+        theCallStack := CallStack new.
     ]    
     
-//    constructor new
-//        <= new($self className).
+    constructor new
+        <= new(self className).
 }
 
 // --- FormatException ---
 
 public class FormatException :: Exception
 {
-//    constructor new
-//        <= new literal:"A number is not in the correct format".
-//        
-//    constructor new : message
-//        <= new literal:message.
+    constructor new
+        <= new("A number is not in the correct format").
+        
+    constructor new : message
+        <= new(message).
 }
 
 // --- OutOfRangeException ---
 
 public class OutOfRangeException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"An index is out of range".
-//
-//    /// Creates the exception
-//    constructor new:aMessage
-//        <= new literal:aMessage.
+    /// Creates the exception
+    constructor new
+        <= new("An index is out of range").
+
+    /// Creates the exception
+    constructor new:aMessage
+        <= new(aMessage).
 }
 
-////// --- IndexOutOfRangeException ---
-////
-////#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
-////{
-////    #constructor new &literal:message
-////    [
-////        theMessage := message.
-////        theCallStack := CallStack new.
-////    ]
-////    
-////    /// Creates the exception
-////    #constructor new
-////        <= new &literal:"An index is out of range".
-////
-////    /// Creates the exception
-////    #constructor new:aMessage
-////        <= new &literal:(aMessage literal).
-////}
+//// --- IndexOutOfRangeException ---
+//
+//#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
+//{
+//    #constructor new &literal:message
+//    [
+//        theMessage := message.
+//        theCallStack := CallStack new.
+//    ]
+//    
+//    /// Creates the exception
+//    #constructor new
+//        <= new &literal:"An index is out of range".
+//
+//    /// Creates the exception
+//    #constructor new:aMessage
+//        <= new &literal:(aMessage literal).
+//}
 
 // --- InvalidArgumentException ---
 
 public class InvalidArgumentException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Invalid argument".
-//        
-//    /// Creates the exception
-//    constructor new:aMessage
-//        <= new literal:aMessage.
+    /// Creates the exception
+    constructor new
+        <= new("Invalid argument").
+        
+    /// Creates the exception
+    constructor new:aMessage
+        <= new(aMessage).
 }
 
-//// --- InvalidOperationException ---
-//
-//class InvalidOperationException :: Exception
-//{
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Invalid operation".
-//
-//    /// Creates the exception
-//    constructor new:aMessage
-//        <= new literal:aMessage.
-//}
+// --- InvalidOperationException ---
+
+class InvalidOperationException :: Exception
+{
+    /// Creates the exception
+    constructor new
+        <= new("Invalid operation").
+
+    /// Creates the exception
+    constructor new:aMessage
+        <= new(aMessage).
+}
 
 // --- MethodNotFound ---
 
 public class MethodNotFoundException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Method not found".
-//
-//    stacksafe constructor new mssg:missingMessage
-//        <= new literal("Method " add literal:missingMessage; add literal:" not found").
+    /// Creates the exception
+    constructor new
+        <= new("Method not found").
+
+    stacksafe constructor new(mssg missingMessage)
+        <= new("Method " add(missingMessage); add(" not found")).
         
     constructor new(object object, mssg missingMessage)
-//        <= new(object className + " : Method " + missingMessage + " not found").
-    [
-        // !! temporal
-    ]
+        <= new(object __className + " : Method " + missingMessage literal + " not found").
 }
 
 // --- MethodNotSupported ---
 
 public class NotSupportedException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Operation is not supported".
-//        
-//    /// Creates the exception
-//    constructor new :aMessage
-//        <= new literal:aMessage.
+    /// Creates the exception
+    constructor new
+        <= new("Operation is not supported").
+        
+    /// Creates the exception
+    constructor new :aMessage
+        <= new(aMessage).
 }
 
-//// --- AbortException ---
-//
-///// An abort exception 
-//class AbortException :: Exception
-//{
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"The process terminated".
-//}
+// --- AbortException ---
+
+/// An abort exception 
+class AbortException :: Exception
+{
+    /// Creates the exception
+    constructor new
+        <= new("The process terminated").
+}
 
 // --- CriticalException ---
 
 public class CriticalException :: Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new literal:"Critical exception".
+    /// Creates the exception
+    constructor new
+        <= new("Critical exception").
 }

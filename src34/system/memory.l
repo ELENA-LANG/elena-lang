@@ -484,14 +484,14 @@ public sealed IntArray :: Indexable, array<int>
 //        <= new int:aLength.
 
     /// Creates the copy of a subarray
-    constructor new(int anIndex, int aLength, intarray anArray)
+    stacksafe constructor new(int anIndex, int aLength, intarray anArray)
         <= new(aLength);
     [
         anArray read(anIndex, aLength, self).
     ]
 
     /// Creates the short array copy
-    constructor new(intarray anArray)
+    stacksafe constructor new(intarray anArray)
         <= new(0, anArray length, anArray).
     
     /// Reads the array length to the output parameter
@@ -521,22 +521,22 @@ public sealed IntArray :: Indexable, array<int>
     ]
 
     /// Copies a sub array to the provided one at the specified position
-    read(int anIndex, int aLength, intarray anArray)
+    stacksafe read(int anIndex, int aLength, intarray anArray)
         => system'core_routines'__intarray.
 
     /// Copies the short array at the specified position
-    write(int anIndex, int aLength, intarray anArray)
+    stacksafe write(int anIndex, int aLength, intarray anArray)
         => system'core_routines'__intarray.
 
     /// Writes an integer value at the specified position
-    write(int anIndex, int aValue)
+    stacksafe write(int anIndex, int aValue)
         => system'core_routines'__intarray.
 
     /// Reads an integer value at the specified position and saves it into an output variable
-    read(int anIndex, ref<int> anInt)
+    stacksafe read(int anIndex, ref<int> anInt)
         => system'core_routines'__intarray.
 
-    embeddable int getAt(int n)
+    stacksafe embeddable int getAt(int n)
     [
         int retVal := 0.
         

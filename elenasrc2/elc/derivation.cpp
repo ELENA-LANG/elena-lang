@@ -2224,7 +2224,7 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
          case lxAltOperation:
             writer.newBookmark();
          case lxIdleMsgParameter:
-//         case lxMessageParameter:
+         case lxMessageParameter:
          case lxMessage:
             expressionExpected = false;
             generateMessageTree(writer, current, scope);

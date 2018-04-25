@@ -74,7 +74,7 @@ extension commonOp
 //    ]        
 }
 
-//singleton __prober
-//{
-//    dispatch => system'core_routines'__prober.    
-//}
+singleton __prober
+{
+    dispatch => system'core_routines'__prober.    
+}

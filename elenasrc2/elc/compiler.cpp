@@ -4295,11 +4295,13 @@ void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scop
       if (test(current.type, lxObjectMask)) {
          if (catchNode) {
             SNode operationNode = current.firstChild();
+            writer.newBookmark();
             while (operationNode != lxNone) {
                compileOperation(writer, operationNode, scope, /*objectInfo*/ObjectInfo(okObject), 0);
 
                operationNode = operationNode.nextNode();
             }
+            writer.removeBookmark();
          }
          else compileExpression(writer, current, scope, 0, 0);
 
