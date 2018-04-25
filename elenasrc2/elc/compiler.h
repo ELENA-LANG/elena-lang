@@ -926,7 +926,7 @@ private:
 
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, int mode);
 
-//   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 

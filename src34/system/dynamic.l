@@ -3,7 +3,7 @@
 ///// A dynamic symbol
 //sealed struct Symbol
 //{
-//    __symbol<4> theValue.
+//    __symbol theValue.
 //    
 //    /// Loads a symbol
 //    constructor new literal:name

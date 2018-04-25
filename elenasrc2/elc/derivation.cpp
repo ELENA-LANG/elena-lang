@@ -127,7 +127,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsTokenParam:
       case nsDispatchExpression:
       case nsExtension:
-//      case nsCatchMessageOperation:
+      case nsCatchMessageOperation:
       case nsAltMessageOperation:
 //      case nsSwitchOption:
 //      case nsLastSwitchOption:
@@ -2220,7 +2220,7 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
             }
             else generateObjectTree(writer, current.firstChild(), scope/*, MODE_OBJECTEXPR*/);
             break;
-//         case lxCatchOperation:
+         case lxCatchOperation:
          case lxAltOperation:
             writer.newBookmark();
          case lxIdleMsgParameter:
@@ -2230,13 +2230,13 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
             generateMessageTree(writer, current, scope);
             writer.insert(lxExpression);
             writer.closeNode();
-//            if (current == lxCatchOperation) {
-//               writer.removeBookmark();
-//               writer.insert(lxTrying);
-//               writer.closeNode();
-//               expressionExpected = true;
-//            }
-            /*else */if (current == lxAltOperation) {
+            if (current == lxCatchOperation) {
+               writer.removeBookmark();
+               writer.insert(lxTrying);
+               writer.closeNode();
+               expressionExpected = true;
+            }
+            else if (current == lxAltOperation) {
                writer.removeBookmark();
                writer.insert(lxAlt);
                writer.closeNode();

@@ -4865,31 +4865,31 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //
 //   includeFrame(tape);
 //}
-//
-//void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   declareTry(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         if (first) {
-//            declareCatch(tape);
-//
-//            // ...
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endCatch(tape);
-//}
+
+void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         generateObjectExpression(tape, current);
+
+         if (first) {
+            declareCatch(tape);
+
+            // ...
+
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endCatch(tape);
+}
 
 void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
 {
@@ -5245,9 +5245,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node, i
       case lxImplicitCall:
          callImplicitConstructorMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
          break;
-//      case lxTrying:
-//         generateTrying(tape, node);
-//         break;
+      case lxTrying:
+         generateTrying(tape, node);
+         break;
       case lxAlt:
          generateAlt(tape, node);
          break;

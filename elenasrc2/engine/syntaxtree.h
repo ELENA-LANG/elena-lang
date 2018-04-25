@@ -53,7 +53,7 @@ enum LexicalType
    lxStaticMethod    = 0x00025,
    lxExtension       = 0x0002B,
    lxAltOperation    = 0x0002C,
-//   lxCatchOperation  = 0x0002F,
+   lxCatchOperation  = 0x0002F,
    lxLoop            = 0x00030,
 ////   lxInlineExpression= 0x00032,
 //   lxMessageReference= 0x00033,
@@ -132,7 +132,7 @@ enum LexicalType
    lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
    lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
    lxImplicitCall    = 0x0C00B,
-//   lxTrying          = 0x0C00C,   // try-catch expression
+   lxTrying          = 0x0C00C,   // try-catch expression
    lxAlt             = 0x0C00D,   // alt-catch expression
    lxBranching       = 0x0C00F,   // branch expression
 //   lxSwitching       = 0x0C010,

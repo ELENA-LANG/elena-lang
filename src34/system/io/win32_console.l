@@ -81,25 +81,20 @@ sealed struct ConsoleWriter
         theHandle := aHandle.
     ]
 
-//    write literal:aLiteral
-//    [
-//        $self write wide:aLiteral.
-//    ]
-//
-//    write wide : s
-//    [
-//        int len := s length.
-//
-//        system'external'KERNEL32 WriteConsoleW
-//            int  :  theHandle
-//            wide :  s
-//            int  :  len
-//            int  :  0                       // !! temporally we do not use it
-//            int  :  0.             
-//
-//        // !!check the result of the operation
-//    ]
-//    
+    write(literal aLiteral)
+    [
+        self write(T<wide>(aLiteral)).
+    ]
+
+    write(wide s)
+    [
+        int len := s length.
+
+        system'external'KERNEL32 WriteConsoleW(theHandle,s,len,0,0).             
+
+        // !!check the result of the operation
+    ]
+    
 //    clear
 //    [
 //        console_screen_buffer_info aBuffer := CONSOLE_SCREEN_BUFFER_INFO new.
@@ -124,11 +119,11 @@ sealed struct ConsoleWriter
 //                
 //        system'external'KERNEL32 SetConsoleCursorPosition int:theHandle int:coord.
 //    ]
-//
-//    refresh
-//    [
-//    ]
-//
+
+    refresh
+    [
+    ]
+
 //    free
 //    [
 //        system'external'KERNEL32 CloseHandle
@@ -147,17 +142,13 @@ sealed class FileWriter
         theHandle := aHandle
     ]
 
-//    stacksafe write bytearray:buffer int:length
-//    [
-//        int written := 0.
-//        system'external'KERNEL32 WriteFile
-//            int       : theHandle
-//            bytearray : buffer
-//            int       : length
-//            vint      : written
-//            int       : 0.
-//    ]
-//
+    write(bytearray buffer, int length)
+    [
+        int written := 0.
+        system'external'KERNEL32 WriteFile
+            (theHandle, buffer, length, &written, 0).
+    ]
+
 //    write wide : literal
 //    [
 //        byte<256> buffer.
@@ -209,11 +200,11 @@ sealed class FileWriter
 //    clear
 //    [
 //    ]
-//
-//    refresh
-//    [
-//    ]
-//
+
+    refresh
+    [
+    ]
+
 //    free
 //    [
 //        system'external'KERNEL32 CloseHandle
@@ -227,11 +218,11 @@ sealed struct ConsoleReader
 {
     handle theHandle.
     
-//    constructor new handle:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//
+    constructor new(handle aHandle)
+    [
+        theHandle := aHandle.
+    ]
+
 //    stacksafe read vchar:aChar
 //    [
 //        byte<20> aDump.

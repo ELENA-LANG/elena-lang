@@ -1382,9 +1382,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_IFNOTBRANCH:
          attrValue = tpIfNotBranch;
          return true;
-      //case V_STATCKSAFE:
-      //   attrValue = tpStackSafe;
-      //   return true;
+      case V_STATCKSAFE:
+         attrValue = tpStackSafe;
+         return true;
       case V_EMBEDDABLE:
          attrValue = tpEmbeddable;
          return true;

@@ -2662,6 +2662,11 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
          
          result = ObjectInfo(okObject);
          break;
+      case lxTrying:
+         compileTrying(writer, node, scope);
+
+         result = ObjectInfo(okObject);
+         break;
       default:
          result = compileTerminal(writer, node, scope, mode);
    }
@@ -4278,27 +4283,37 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
    return info;
 }
 
-////void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope)
-////{
-////   writer.newBookmark();
-////
-////   bool catchNode = false;
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (test(current.type, lxObjectMask)) {
-////         compileExpression(writer, current, scope, catchNode ? HINT_TRY_MODE | HINT_RESENDEXPR : 0);
-////
-////         catchNode = true;
-////      }
-////
-////      current = current.nextNode();
-////   }
-////
-////   writer.insert(lxTrying);
-////   writer.closeNode();
-////
-////   writer.removeBookmark();
-////}
+void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   writer.newBookmark();
+
+   //ObjectInfo objectInfo/*- = compileObject(writer, targetNode, scope, 0)*/;
+
+   bool catchNode = false;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (catchNode) {
+            SNode operationNode = current.firstChild();
+            while (operationNode != lxNone) {
+               compileOperation(writer, operationNode, scope, /*objectInfo*/ObjectInfo(okObject), 0);
+
+               operationNode = operationNode.nextNode();
+            }
+         }
+         else compileExpression(writer, current, scope, 0, 0);
+
+         catchNode = true;
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.insert(lxTrying);
+   writer.closeNode();
+
+   writer.removeBookmark();
+}
 
 void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
@@ -6660,7 +6675,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       }
       
       if (included && _logic->isEmbeddable(scope.info)) {
-         // add a stacksafe attribute if allowed
+         // add a stacksafe attribute for the embeddable structure automatically
          scope.info.methodHints.exclude(Attribute(message, maHint));
          scope.info.methodHints.add(Attribute(message, maHint), methodHints | tpStackSafe);
       }
@@ -7671,7 +7686,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
          return analizeExpression(current.firstChild(lxObjectMask), scope/*, warningScope*/, mode);
       case lxAltExpression:
       case lxBranching:
-      //case lxTrying:
+      case lxTrying:
          analizeExpressionTree(current, scope/*, warningScope*/);
          return 0;
       case lxBoxing:

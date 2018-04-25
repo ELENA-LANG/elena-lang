@@ -1106,18 +1106,18 @@ public sealed __string LiteralValue :: BaseValue
         = emptyLiteralValue.
         
     /// Creates the literal string with specified length        
-    constructor new(int size)
+    stacksafe constructor new(int size)
         = dynamic<byte>(size + 1).
 
     /// Creates the literal string with specified length and copies the parameter value
-    constructor new(int aSize, literal aLiteral)
+    stacksafe constructor new(int aSize, literal aLiteral)
         <= new(aSize);
     [
         system'core_routines'__literal copy(aLiteral, self).
     ]
 
     /// Creates the literal string with specified length fills with spciefied character value        
-    constructor new(int aSize, char aChar)
+    stacksafe constructor new(int aSize, char aChar)
         => system'core_routines'__literal.
 
     /// Creates the literal string copy              
@@ -1125,17 +1125,19 @@ public sealed __string LiteralValue :: BaseValue
         <= new(aLiteral length, aLiteral).
         
     /// Creates the copy of a subarray        
-    constructor new(int anIndex, int aSize, chararray anArray)
+    stacksafe constructor new(int anIndex, int aSize, chararray anArray)
         => system'core_routines'__literal.
 
-    /*internal*/ constructor new(int anIndex, int aSize, bytearray anArray)
+    /*internal*/ stacksafe constructor new(int anIndex, int aSize, bytearray anArray)
         <= new(aSize);
     [
         system'core_routines'__literal copy(self, anIndex, aSize, anArray).
     ]
     
-//    /// Converts to UTF-16 literal
-//    wide = wideConvertor convert literal:$self.
+    /// Converts to UTF-16 literal
+    cast T<wide> = wideConvertor convert(self).
+
+    T<literal> literal = self.
 
     bool equal:n
     [
@@ -1203,33 +1205,33 @@ public sealed __string LiteralValue :: BaseValue
         => system'core_routines'__literal.
 
     /// Concatinates the values
-    literal add(char aChar)
+    stacksafe literal add(char aChar)
         = self add(T<literal>(aChar)).
 
     // Reads the character at the specified index and saves into an output parameter
-    read(int anIndex, ref<char> aChar)
+    stacksafe read(int anIndex, ref<char> aChar)
         => system'core_routines'__literal.
 
     // Reads the byte at the specified index and saves into an output parameter
-    read(int anIndex, ref<byte> anInt)
+    stacksafe read(int anIndex, ref<byte> anInt)
         => system'core_routines'__literal.
 
     /// Saves the index of the first occurence of the specified substring into an output parameter.
     ///
     /// If the substring is not found. returns -1
-    indexOf(int anIndex, literal aLiteral, ref<int> aRetVal)
+    stacksafe indexOf(int anIndex, literal aLiteral, ref<int> aRetVal)
         => system'core_routines'__literal.
 
     /// Saves the index of the first occurence of the specified symbol into an output parameter.
     ///
     /// If the substring is not found. returns -1
-    indexOf(int anIndex, char aChar, ref<int> aRetVal)
+    stacksafe indexOf(int anIndex, char aChar, ref<int> aRetVal)
         => system'core_routines'__literal.
 
     /// Returns the index of the first occurence of the specified symbol.
     /// 
     /// If the substring is not found. returns -1
-    indexOf(char aChar) at(int anIndex)
+    stacksafe indexOf(char aChar) at(int anIndex)
     [
         int aRetVal := 0.
         self indexOf(anIndex, aChar, &aRetVal).
@@ -1240,7 +1242,7 @@ public sealed __string LiteralValue :: BaseValue
     /// Returns the index of the first occurence of the specified substring.
     ///
     /// If the substring is not found. returns -1
-    indexOf(literal aLiteral) at(int anIndex)
+    stacksafe indexOf(literal aLiteral) at(int anIndex)
     [
         int aRetVal := 0.
         self indexOf(anIndex, aLiteral, &aRetVal).
@@ -1249,11 +1251,11 @@ public sealed __string LiteralValue :: BaseValue
     ]
 
     /// Inserts the substring into and returns the new one
-    literal insert(int anIndex, literal aLiteral)
+    stacksafe literal insert(int anIndex, literal aLiteral)
         => system'core_routines'__literal.
 
     /// Inserts a character into and returns the new one
-    literal insert(int anIndex, char aChar)
+    stacksafe literal insert(int anIndex, char aChar)
         = self insert(anIndex, T<literal>(aChar)).
 
     /// Inserts an object into and returns the new one
@@ -1265,7 +1267,7 @@ public sealed __string LiteralValue :: BaseValue
         = self delete(T<int>(anIndex), T<int>(aLength)).
 
     /// Deletes the substring from the object and returns the new one
-    literal delete(int anIndex, int aLength)
+    stacksafe literal delete(int anIndex, int aLength)
         => system'core_routines'__literal.
 
     /// Returns the substring
@@ -1273,20 +1275,20 @@ public sealed __string LiteralValue :: BaseValue
         = self Substring(T<int>(anIndex), T<int>(aLength)).
 
     /// Returns the substring
-    literal Substring(int anIndex, int aLength)
+    stacksafe literal Substring(int anIndex, int aLength)
         => system'core_routines'__literal.
 
     /// Reads the literal length into an output parameter
-    readLengthTo(ref<int> aLength)
+    stacksafe readLengthTo(ref<int> aLength)
         => system'core_routines'__literal.
         
     int rvprop length :: readLengthTo.
 
     /// Saves the literal into a UTF-32 character array
-    save(int anIndex, chararray anArray, ref<int> aRetVal)
+    stacksafe save(int anIndex, chararray anArray, ref<int> aRetVal)
         => system'core_routines'__literal.
 
-    /*internal*/ save(int anIndex, bytearray anArray, int aRetVal)
+    stacksafe /*internal*/ save(int anIndex, bytearray anArray, int aRetVal)
         => system'core_routines'__literal.
 
 //    /// Returns the string enumerator
@@ -1299,7 +1301,7 @@ public sealed __string LiteralValue :: BaseValue
     clone = LiteralValue new(self).
 
     /// Reads the object hash code into the output parameter
-    readHashCodeTo(ref<int> aCode)
+    stacksafe readHashCodeTo(ref<int> aCode)
         => system'core_routines'__literal.
         
     int rvprop hash_code :: readHashCodeTo.
@@ -1341,10 +1343,10 @@ public sealed __string WideLiteralValue :: BaseValue
         <= new(aLiteral length, aLiteral).
         
     /// Creates the copy of a subarray
-    constructor new(int anIndex, int aSize, chararray anArray)
+    stacksafe constructor new(int anIndex, int aSize, chararray anArray)
         => system'core_routines'__wide.
 
-    /*internal*/ constructor new(int anIndex, int aSize, shortarray anArray)
+    /*internal*/ stacksafe constructor new(int anIndex, int aSize, shortarray anArray)
         <= new(aSize);
     [
         system'core_routines'__wide copy(self, anIndex, aSize, anArray).
@@ -1353,6 +1355,8 @@ public sealed __string WideLiteralValue :: BaseValue
     /// Converts to UTF-8 literal
     cast T<literal> = literalConvertor convert(self).
 
+    T<literal> literal = literalConvertor convert(self).
+    
     bool equal:n
     [
         var l := T<wide>(n) \ back:nil.
@@ -1748,194 +1752,194 @@ public sealed Array :: Indexable, array<object>
 /// A literal convertor
 public class literalConvertor =
 {
-    literal convert(BaseVariable v)
+    stacksafe literal convert(BaseVariable v)
         <= convert(v value).
     
-    literal convert(BaseVariable v, int radix)
+    stacksafe literal convert(BaseVariable v, int radix)
         <= convert(v value, radix).
     
     /// Converts the parameter to the literal value
-    convert(char aValue, bytearray buffer, ref<int> length)
+    stacksafe convert(char aValue, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
     
-    literal convert(char aValue)
+    stacksafe literal convert(char aValue)
     [
         T<byte,4> buffer.
         int       length := 0.
         
-        self convert(aValue, buffer, &length).
+        self convert(aValue, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer)
     ]
     
-    convert(int aNumber, bytearray buffer, ref<int> length)
+    stacksafe convert(int aNumber, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
     
-    convert(uint aNumber, bytearray buffer, ref<int> length)
+    stacksafe convert(uint aNumber, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
     
     /// Converts the parameter to the literal value
-    literal convert(int aNumber)
+    stacksafe literal convert(int aNumber)
     [
         T<byte,12> buffer.
         int        length := 0.
         
-        self convert(aNumber, buffer, length).
+        self convert(aNumber, T<bytearray>(buffer), length).
         
         ^ LiteralValue new(0, length, buffer)
     ]
     
     /// Converts the parameter to the literal value
-    literal convert(uint aNumber)
+    stacksafe literal convert(uint aNumber)
     [
         T<byte,12> buffer.
         int        length := 0.
         
-        self convert(aNumber, buffer, length).
+        self convert(aNumber, T<bytearray>(buffer), length).
         
         ^ LiteralValue new(0, length, buffer)
     ]
 
     /// Converts the parameter to the literal value
-    convert(short aNumber, bytearray buffer, ref<int> length)
+    stacksafe convert(short aNumber, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
     
     /// Converts the parameter to the literal value
-    literal convert(short aNumber)
+    stacksafe literal convert(short aNumber)
     [
         T<byte,12> buffer.
         int        length := 0.
         
-        self convert(aNumber, buffer, &length).
+        self convert(aNumber, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer)
     ]
 
     /// Converts the parameter to the literal value
-    convert(byte aNumber, bytearray buffer, ref<int> length)
+    stacksafe convert(byte aNumber, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
     
     /// Converts the parameter to the literal value
-    literal convert(byte aNumber)
+    stacksafe literal convert(byte aNumber)
     [
         T<byte,4> buffer.
         int       length := 0.
         
-        self convert(aNumber, buffer, &length).
+        self convert(aNumber, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer)
     ]
 
     /// Converts the parameter to the literal value
-    convert(long aNumber, bytearray buffer, ref<int> length)
+    stacksafe convert(long aNumber, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
 
     /// Converts the parameter to the literal value
-    literal convert(long aNumber)
+    stacksafe literal convert(long aNumber)
     [
         T<byte, 64> buffer.
         int         length := 0.
         
-        self convert(aNumber, buffer, &length).
+        self convert(aNumber, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer).
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    convert(int aNumber, int aRadix, bytearray buffer, ref<int> length)
+    stacksafe convert(int aNumber, int aRadix, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
-    convert(uint aNumber, int aRadix, bytearray buffer, ref<int> length)
+    stacksafe convert(uint aNumber, int aRadix, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
-    literal convert(int aNumber, int aRadix)
+    stacksafe literal convert(int aNumber, int aRadix)
     [
         T<byte, 48> buffer.
         int         length := 0.
         
-        self convert(aNumber, aRadix, buffer, &length).
+        self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer)
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    literal convert(uint aNumber, int aRadix)
+    stacksafe literal convert(uint aNumber, int aRadix)
     [
         T<byte,48> buffer.
         int        length := 0.
         
-        self convert(aNumber, aRadix, buffer, &length).
+        self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer)
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    convert(short aNumber, int aRadix, bytearray buffer, ref<int> length)
+    stacksafe convert(short aNumber, int aRadix, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
-    literal convert(short aNumber, int aRadix)
+    stacksafe literal convert(short aNumber, int aRadix)
     [
         T<byte,32> buffer.
         int        length := 0.
         
-        self convert(aNumber, aRadix, buffer, &length).
+        self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer)
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    literal convert(byte aNumber, int aRadix, bytearray buffer, ref<int> length)
+    stacksafe literal convert(byte aNumber, int aRadix, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
-    literal convert(byte aNumber, int aRadix)
+    stacksafe literal convert(byte aNumber, int aRadix)
     [
         T<byte,8> buffer.
         int       length := 0.
         
-        self convert(aNumber, aRadix, buffer, &length).
+        self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer).
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    convert(long aNumber, int aRadix, bytearray buffer, ref<int> length)
+    stacksafe convert(long aNumber, int aRadix, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
 
     /// Converts the parameter to the literal value
-    literal convert(long aNumber, int radix)
+    stacksafe literal convert(long aNumber, int radix)
     [
         T<byte,64> buffer.
         int        length := 0.
         
-        self convert(aNumber, radix, buffer, &length).
+        self convert(aNumber, radix, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer).
     ]
 
     /// Converts the parameter to the literal value
-    convert(real aNumber, bytearray buffer, ref<int> length)
+    stacksafe convert(real aNumber, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
 
     /// Converts the parameter to the literal value
-    literal convert(real aNumber)
+    stacksafe literal convert(real aNumber)
     [
         T<byte,32> buffer.
         int        length := 0.
         
-        self convert(aNumber, buffer, &length).
+        self convert(aNumber, T<bytearray>(buffer), &length).
         
         ^ LiteralValue new(0, length, buffer).
     ]
 
     /// Converts UTF-16 literal to UTF-8 one
-    convert(wide aLiteral, bytearray buffer, ref<int> length)
+    stacksafe convert(wide aLiteral, bytearray buffer, ref<int> length)
         => system'core_routines'__literalconvertor.
 
-    literal convert(wide aLiteral)
+    stacksafe literal convert(wide aLiteral)
     [
         int       i := 0.
         int       m := 0.
@@ -1944,7 +1948,7 @@ public class literalConvertor =
         T<byte, 256> buffer.
         if (l < 128)
         [
-            self convert(aLiteral, buffer, &m).
+            self convert(aLiteral, T<bytearray>(buffer), &m).
             
             ^ LiteralValue new(0, m, buffer)
         ].
@@ -1958,9 +1962,9 @@ public class literalConvertor =
                page := 127.
             ].
             
-            self convert(aLiteral Substring(i, page), buffer, &m).
+            self convert(aLiteral Substring(i, page), T<bytearray>(buffer)buffer, &m).
             
-            retVal := retVal add(LiteralValue new(0, m, buffer)).
+            retVal := retVal add(LiteralValue new(0, m, T<bytearray>(buffer)buffer)).
             
             i := i + page.
             l := l - page.
@@ -1983,194 +1987,194 @@ public class literalConvertor =
 /// A wide literal convertor
 public class wideConvertor =
 {
-    wide convert(BaseVariable v)
+    stacksafe wide convert(BaseVariable v)
         <= convert(v value).
     
     /// Converts the parameter to the literal value
-    convert(char aValue, shortarray buffer, ref<int> length)
+    stacksafe convert(char aValue, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
     
-    wide convert(char aValue)
+    stacksafe wide convert(char aValue)
     [
         T<short,2> buffer.
         int        length := 0.
         
-        self convert(aValue, buffer, &length).
+        self convert(aValue, T<shortarray>(buffer), &length).
         
         ^ WideLiteralValue new(0, length, buffer)
     ]    
     
     /// Converts the parameter to the literal value
-    convert(int aNumber, shortarray buffer, ref<int> length)
+    stacksafe convert(int aNumber, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value
-    convert(uint aNumber, shortarray buffer, ref<int> length)
+    stacksafe convert(uint aNumber, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value
-    wide convert(int aNumber)
+    stacksafe wide convert(int aNumber)
     [
         T<short,12> buffer.
         int         length := 0.
         
-        self convert(aNumber, buffer, &length).
+        self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
-    wide convert(uint aNumber)
+    stacksafe wide convert(uint aNumber)
     [
         T<short,12> buffer.
         int         length := 0.
         
-        self convert(aNumber, buffer, length).
+        self convert(aNumber, buffer, T<shortarray>(buffer)).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
-    convert(short aNumber, shortarray buffer, ref<int> length)
+    stacksafe convert(short aNumber, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value
-    wide convert(short aNumber)
+    stacksafe wide convert(short aNumber)
     [
         T<short,12> buffer.
         int         length := 0.
         
-        self convert(aNumber, buffer, &length).
+        self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
-    convert(byte aNumber, shortarray buffer, ref<int> length)
+    stacksafe convert(byte aNumber, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value
-    wide convert(byte aNumber)
+    stacksafe wide convert(byte aNumber)
     [
         T<short,12> buffer.
         int         length := 0.
         
-        self convert(aNumber, buffer, &length).
+        self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
-    convert(long aNumber, shortarray buffer, ref<int> length)
+    stacksafe convert(long aNumber, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value
-    wide convert(long aNumber)
+    stacksafe wide convert(long aNumber)
     [
         T<short,64> buffer.
         int         length := 0.
         
-        self convert(aNumber, buffer, &length).
+        self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer).
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer)).
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    convert(int aNumber, int aRadix, shortarray buffer, ref<int> length)
+    stacksafe convert(int aNumber, int aRadix, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
-    convert(uint aNumber, int aRadix, shortarray buffer, ref<int> length)
+    stacksafe convert(uint aNumber, int aRadix, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
-    wide convert(int aNumber, int aRadix)
+    stacksafe wide convert(int aNumber, int aRadix)
     [
         T<short,32> buffer.
         int         length := 0.
         
-        self convert(aNumber, aRadix, buffer, &length).
+        self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
         ^ WideLiteralValue new(0, length, buffer)
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    wide convert(uint aNumber, int aRadix)
+    stacksafe wide convert(uint aNumber, int aRadix)
     [
         T<short,32> buffer.
         int         length := 0.
         
-        self convert(aNumber, aRadix, buffer, &length).
+        self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    convert(short aNumber, int aRadix, shortarray buffer, ref<int> length)
+    stacksafe convert(short aNumber, int aRadix, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
-    wide convert(short aNumber, int aRadix)
+    stacksafe wide convert(short aNumber, int aRadix)
     [
         T<short,16> buffer.
         int         length := 0.
         
-        self convert(aNumber, aRadix, buffer, &length).
+        self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    convert(byte aNumber, int aRadix, shortarray buffer, ref<int> length)
+    stacksafe convert(byte aNumber, int aRadix, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
-    wide convert(byte aNumber, int aRadix)
+    stacksafe wide convert(byte aNumber, int aRadix)
     [
         T<short,12> buffer.
         int         length := 0.
         
-        self convert(aNumber, aRadix, buffer, &length).
+        self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
-    convert(long aNumber, int aRadix, shortarray buffer, ref<int> length)
+    stacksafe convert(long aNumber, int aRadix, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value with the provided radix
-    wide convert(long aNumber, int aRadix)
+    stacksafe wide convert(long aNumber, int aRadix)
     [
         T<short,64> buffer.
         int         length := 0.
         
-        self convert(aNumber, aRadix, buffer, &length).
+        self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
-    convert(real aNumber, shortarray buffer, ref<int> length)
+    stacksafe convert(real aNumber, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts the parameter to the literal value
-    wide convert(real aNumber)
+    stacksafe wide convert(real aNumber)
     [
         T<short,32> buffer.
         int         length := 0.
         
-        self convert(aNumber, buffer, &length).
+        self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts UTF-8 literal to UTF-16e
-    convert(literal aLiteral, shortarray buffer, ref<int> length)
+    stacksafe convert(literal aLiteral, shortarray buffer, ref<int> length)
         => system'core_routines'__wideconvertor.
 
     /// Converts UTF-8 literal to UTF-16e
-    wide convert(literal aLiteral)
+    stacksafe wide convert(literal aLiteral)
     [
         int        i := 0.
         int        m := 0.
@@ -2179,9 +2183,9 @@ public class wideConvertor =
         T<short,256> buffer.
         if (l < 256)
         [
-            self convert(aLiteral, buffer, &m).
+            self convert(aLiteral, T<shortarray>(buffer), &m).
             
-            ^ WideLiteralValue new(0, m, buffer)
+            ^ WideLiteralValue new(0, m, T<shortarray>(buffer))
         ].
         
         wide retVal := emptyWideLiteralValue.
@@ -2193,9 +2197,9 @@ public class wideConvertor =
                 page := 256
             ].
             
-            self convert(aLiteral Substring(i,page), buffer, &m).
+            self convert(aLiteral Substring(i,page), T<shortarray>(buffer), &m).
             
-            retVal := retVal add(WideLiteralValue new(0, m, buffer)).
+            retVal := retVal add(WideLiteralValue new(0, m, T<shortarray>(buffer))).
             
             i := i + page.
             l := l - page

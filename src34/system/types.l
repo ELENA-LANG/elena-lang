@@ -11,6 +11,7 @@ sealed          = #8195.
 embeddable      = #8193.
 template        = #16391.
 extension       = #8203.
+stacksafe       = #8192.
 
 const           = #8201.
 singleton       = #8208.

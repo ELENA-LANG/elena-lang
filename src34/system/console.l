@@ -15,42 +15,42 @@ class Console
         theNewLineConstant := forwards'newLine.
     ]
 
-//    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
-//    writeLine : anObject
-//    [
-//        theWriter write literal:anObject.
-//        
-//        theWriter write literal:theNewLineConstant
-//    ]
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    write object:anObject
-//    [
-//        $self write literal:anObject.
-//    ]
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    write literal:aLiteral
-//    [
-//        theWriter write literal:aLiteral.
-//        
-//        theWriter refresh.
-//    ]
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    write wide:aLiteral
-//    [
-//        theWriter write wide:aLiteral.
-//        
-//        theWriter refresh.
-//    ]
-//
-//    /// the current line terminator to the standard output stream.
-//    writeLine
-//    [
-//        self write:theNewLineConstant.
-//    ]
-//
+    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
+    writeLine : anObject
+    [
+        theWriter write(anObject literal).
+        
+        theWriter write(theNewLineConstant)
+    ]
+
+    /// Writes the specified literal value to the standard output stream.
+    write : anObject
+    [
+        self write(anObject literal).
+    ]
+
+    /// Writes the specified literal value to the standard output stream.
+    write(literal aLiteral)
+    [
+        theWriter write(aLiteral).
+        
+        theWriter refresh.
+    ]
+
+    /// Writes the specified literal value to the standard output stream.
+    write(wide aLiteral)
+    [
+        theWriter write(aLiteral).
+        
+        theWriter refresh.
+    ]
+
+    /// the current line terminator to the standard output stream.
+    writeLine
+    [
+        self write:theNewLineConstant.
+    ]
+
 //    /// Clears the console
 //    clear 
 //        => theWriter.
@@ -83,4 +83,4 @@ class Console
 }
 
 /// A standard console
-public static console = Console new/*(io'stdConsoleReader, io'stdConsoleWriter)*/.
+public static console = Console new(io'stdConsoleReader, io'stdConsoleWriter).

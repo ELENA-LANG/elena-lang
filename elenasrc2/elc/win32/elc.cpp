@@ -546,9 +546,8 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
       size_t index = filePath.find(PATH_SEPARATOR);
       if (index != NOTFOUND_POS) {
          info->ns.copy(filePath, index);
-         info->path.copy(filePath + index + 1);
       }
-      else info->path.copy(filePath);
+      info->path.copy(filePath);
 
       // add the module itself
       info->importedNs.add(scope.module->Name());

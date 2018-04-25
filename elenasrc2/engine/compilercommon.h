@@ -47,7 +47,7 @@
 //#define V_WARNING2    (ref_t)-4100
 //#define V_WARNING3    (ref_t)-4101
 
-//#define V_STATCKSAFE     (ref_t)-8192
+#define V_STATCKSAFE     (ref_t)-8192
 #define V_EMBEDDABLE     (ref_t)-8193
 #define V_STATIC         (ref_t)-8194
 #define V_SEALED         (ref_t)-8195

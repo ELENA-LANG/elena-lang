@@ -3,6 +3,14 @@ In development:
 ------                              
 	                            
               dev - redesign                                                                           
+                 * try-catch, try template
+
+                 * regression test : verify all closed issues in GitHub
+
+                 * migrate exceptions, dynamic, templates, win32_app files
+                 * migrate rest of the code : try-catch, try template, switch, generics, collections, operations with
+                   open argument list
+
                  * optimize embeddable length call
                  * optimize embeddable function call
                  * optimize embeddable function2 call
@@ -145,6 +153,9 @@ In development:
                  * reimplement embeddable constructor
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
                    directly (and get rid of hot fix in compileExternalArguments)
+                 * uncomment system'io'FileWriter
+                 * optimize wideConvertor / literalConvertor
+                 * call console operations directly
 
               dev - general implementation
                  * typified enumerators / extensions #245                 
