@@ -106,7 +106,7 @@ enum MethodHint
    tpNormal      = 0x00003,
 ////      tpDispatcher = 0x04,
    tpPrivate     = 0x00005,
-//   tpStackSafe   = 0x0010,
+   tpStackSafe   = 0x0010,
    tpEmbeddable  = 0x0020,
    tpGeneric     = 0x0040,
    tpAction      = 0x0080,

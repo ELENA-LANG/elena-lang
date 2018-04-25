@@ -1,15 +1,11 @@
 ------                                 
 In development:
 ------                              
-                            
+	                            
               dev - redesign                                                                           
-                 * reimplement embeddable constructor
-
                  * test operation with a struct (where init is a stack safe method):
                        T<MyStruct> s := 3.
                        helper do(s init);   // s should be boxed??
-
-                 * struct method - returning self??
 
                  * struct - should not return a newly created object (e.g.  struct X { test(int n) [ _n := n ] } ) - 
                    creates a dynamic object
@@ -19,9 +15,6 @@ In development:
                  * optimize embeddable length call
                  * optimize embeddable function call
                  * optimize embeddable function2 call
-
-
-
 
                  * system'io'console routines
                  * console
@@ -158,6 +151,7 @@ In development:
                  * vprop - currently 0 is assigned, which is not correct, probably "prop_type min" should be used
                  * uncomment WideLiteral class
                  * structure should contain at least one data field
+                 * reimplement embeddable constructor
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

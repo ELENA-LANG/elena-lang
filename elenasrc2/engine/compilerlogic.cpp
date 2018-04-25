@@ -292,9 +292,9 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
-//   if (callType == tpClosed || callType == tpSealed) {
-      result.stackSafe = /*test(methodHint, tpStackSafe)*/true; // NOTE : currently all methods are stack-safe
-//   }      
+   if (callType == tpClosed || callType == tpSealed) {
+      result.stackSafe = test(methodHint, tpStackSafe);
+   }      
 
    if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
       // HOTFIX : calling closure
@@ -561,8 +561,7 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 
 bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 {
-   // NOTE : currently all methods are stack safe by default
-   return /*test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe)*/true;
+   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
 }
 
 bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
@@ -646,31 +645,31 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
       compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR);
    }
 
-   // generate structure embeddable constructor
-   if (test(info.header.flags, elSealed | elStructureRole)) {
-      bool found = false;
-      SNode current = node.firstChild();
-      while (current != lxNone) {
-         if (current == lxClassMethod && test(current.argument, SPECIAL_MESSAGE) && getAbsoluteParamCount(current.argument) > 0) {
-            SNode attr = current.firstChild();
-            while (attr != lxNone) {
-               if (attr == lxAttribute && attr.argument == tpEmbeddable) {
-                  current.set(lxClassMethod, encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
-                  attr.argument = tpPrivate;
+   //// generate structure embeddable constructor
+   //if (test(info.header.flags, elSealed | elStructureRole)) {
+   //   bool found = false;
+   //   SNode current = node.firstChild();
+   //   while (current != lxNone) {
+   //      if (current == lxClassMethod && test(current.argument, SPECIAL_MESSAGE) && getAbsoluteParamCount(current.argument) > 0) {
+   //         SNode attr = current.firstChild();
+   //         while (attr != lxNone) {
+   //            if (attr == lxAttribute && attr.argument == tpEmbeddable) {
+   //               current.set(lxClassMethod, encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
+   //               attr.argument = tpPrivate;
 
-                  found = true;
-                  break;
-               }
-               attr = attr.nextNode();
-            }
-            break;
-         }
-         current = current.nextNode();
-      }
-      if (found) {
-         compiler.injectEmbeddableConstructor(node, encodeAction(NEW_MESSAGE_ID), encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
-      }
-   }
+   //               found = true;
+   //               break;
+   //            }
+   //            attr = attr.nextNode();
+   //         }
+   //         break;
+   //      }
+   //      current = current.nextNode();
+   //   }
+   //   if (found) {
+   //      compiler.injectEmbeddableConstructor(node, encodeAction(NEW_MESSAGE_ID), encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
+   //   }
+   //}
 }
 
 void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)

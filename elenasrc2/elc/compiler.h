@@ -836,11 +836,11 @@ private:
    ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_CompilerScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
-   //ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
 
    void saveExtension(ClassScope& scope, ref_t message);
    ref_t mapExtension(_CompilerScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef);
-   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, bool& genericOne);
+   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, bool& dynamicReqiered);
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
 
@@ -871,7 +871,7 @@ private:
    bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
-                                     bool withExtension, bool& genericOne);
+                                     bool withExtension, bool& dynamicReqiered);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
    {
       bool dummy;
@@ -1013,7 +1013,7 @@ private:
    ref_t analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
    ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
    ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
-   ref_t analizeMessageCall(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeExpression(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
    ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope/*, WarningScope& warningScope*/);
    ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope/*, WarningScope& warningScope*/, int mode);

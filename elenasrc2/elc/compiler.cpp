@@ -1564,20 +1564,20 @@ ref_t Compiler :: resolveConstantObjectReference(CodeScope& scope, ObjectInfo ob
    }
 }
 
-//ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef)
-//{
-//   if (object.kind == okExternal) {
-//      // HOTFIX : recognize external functions returning long / real
-//      if (targetRef == scope.moduleScope->longReference) {
-//         return V_INT64;
-//      }
-//      else if (targetRef == scope.moduleScope->realReference) {
-//         return V_REAL64;
-//      }
-//      else return resolveObjectReference(scope, object);
-//   }
-//   else return resolveObjectReference(scope, object);
-//}
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef)
+{
+   if (object.kind == okExternal) {
+      // HOTFIX : recognize external functions returning long / real
+      if (targetRef == scope.moduleScope->longReference) {
+         return V_INT64;
+      }
+      else if (targetRef == scope.moduleScope->realReference) {
+         return V_REAL64;
+      }
+      else return resolveObjectReference(scope, object);
+   }
+   else return resolveObjectReference(scope, object);
+}
 
 ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 {
@@ -2888,7 +2888,7 @@ ref_t Compiler :: mapExtension(_CompilerScope& scope, SubjectMap* typeExtensions
    return 0;
 }
 
-ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, bool& genericOne)
+ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, bool& dynamicReqiered)
 {
    // check typed extension if the type available
    ref_t typeRef = 0;
@@ -2938,8 +2938,11 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
 
       // if no match found - try to resolve general extension and strong typed message
       extRef = mapExtension(*scope.moduleScope, nsScope->extensions.get(0), messageRef, implicitSignatureRef);
-      if (extRef)
+      if (extRef) {
+         dynamicReqiered = true;
+
          return extRef;
+      }         
    }
 
    // if no match found - try to resolve strong typed extension and genral message
@@ -2955,9 +2958,9 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
       SubjectMap* typeExtensions = nsScope->extensions.get(0);
 
       if (typeExtensions) {
+         dynamicReqiered = true;
+
          extRef = typeExtensions->get(messageRef);
-         if (extRef != 0)
-            genericOne = true;
       }
    }
 
@@ -3082,7 +3085,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       // if it is a primitive operation
       _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.element);
 
-      retVal = assignResult(writer, scope, resultClassRef/*, loperand.element*/);
+      retVal = assignResult(writer, scope, resultClassRef, loperand.element);
    }
    // if not , replace with appropriate method call
    else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(operator_id, paramCount), HINT_NODEBUGINFO);
@@ -3481,7 +3484,7 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
 }
 
 ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef, 
-   bool withExtension, bool& genericOne)
+   bool withExtension, bool& dynamicReqiered)
 {
    ref_t resolvedMessageRef = 0;
    ref_t targetRef = resolveObjectReference(scope, target);
@@ -3494,17 +3497,15 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
       return resolvedMessageRef;
    }
 
+   // check the existing extensions if allowed
    if (withExtension) {
-      // check the existing extensions if allowed
       if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
-         // if the object handles the general message - use it
-         genericOne = true;
-
+         // if the object handles the message - do not use extensions
          return generalMessageRef;
       }
 
       if (implicitSignatureRef) {
-         extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, genericOne);
+         extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, dynamicReqiered);
          if (extensionRef != 0) {
             // if there is an extension to handle the compile-time resolved message - use it
             target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
@@ -3513,11 +3514,9 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
          }
       }
 
-      extensionRef = mapExtension(scope, generalMessageRef, 0, target, genericOne);
+      extensionRef = mapExtension(scope, generalMessageRef, 0, target, dynamicReqiered);
       if (extensionRef != 0) {
          // if there is an extension to handle the general message - use it
-         genericOne = true;
-
          target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
 
          return generalMessageRef;
@@ -3525,8 +3524,6 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
    }
 
    // otherwise - use the general message
-   genericOne = true;
-
    return generalMessageRef;
 }
 
@@ -3577,10 +3574,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          retVal = compileInternalCall(writer, node, scope, messageRef, implicitSignatureRef, target);
       }
       else {
-         bool genericOne = false;
-         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, genericOne);
+         bool dynamicReqiered = false;
+         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, dynamicReqiered);
 
-         if (genericOne)
+         if (dynamicReqiered)
             mode |= HINT_DYNAMIC_OBJECT;
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode);
@@ -3750,15 +3747,19 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       //   writer.newNode(lxExpression);
       //   //writer.appendNode(lxBreakpoint, dsStep);
       
+      int assignMode = HINT_NOUNBOXING;
+      if (targetRef == 0 || targetRef == V_AUTO)
+         assignMode |= HINT_DYNAMIC_OBJECT;
+
       if (targetRef == V_AUTO) {
          // support auto attribute
-         retVal = compileExpression(writer, sourceNode, scope, 0, /*HINT_NOUNBOXING*/0);
+         retVal = compileExpression(writer, sourceNode, scope, 0, assignMode);
          if (resolveAutoType(retVal, target, scope)) {
             targetRef = resolveObjectReference(scope, retVal);
          }
          else scope.raiseError(errInvalidOperation, node);
       }
-      else retVal = compileExpression(writer, sourceNode, scope, targetRef, /*HINT_NOUNBOXING*/0);
+      else retVal = compileExpression(writer, sourceNode, scope, targetRef, assignMode);
       
    if (operationType != lxNone) {
       writer.insert(operationType, operand);
@@ -4481,9 +4482,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    objectInfo = compileOperation(writer, object.nextNode(), scope, objectInfo, mode);
 
    if (targetRef) {
-      ref_t sourceRef = resolveObjectReference(scope, objectInfo);
+      ref_t sourceRef = resolveObjectReference(scope, objectInfo, targetRef);
       if (sourceRef != targetRef) {
-         if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, objectInfo), objectInfo.element))
+         if (!convertObject(writer, scope, targetRef, sourceRef, objectInfo.element))
             scope.raiseError(errInvalidOperation, node);
 
          objectInfo = ObjectInfo(okObject, targetRef);
@@ -4755,6 +4756,8 @@ ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, Cod
    }
    else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
    writer.closeNode();
+
+   retVal = assignResult(writer, scope, V_INT32);
 
    return retVal;
 }
@@ -6653,6 +6656,12 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
          saveExtension(scope, message);
       }
+      
+      if (included && _logic->isEmbeddable(scope.info)) {
+         // add a stacksafe attribute if allowed
+         scope.info.methodHints.exclude(Attribute(message, maHint));
+         scope.info.methodHints.add(Attribute(message, maHint), methodHints | tpStackSafe);
+      }
 
       if (!included && /*!scope.abstractMode && */test(methodHints, tpAbstract)) {
          // reset the abstract hint for overridden method
@@ -7201,9 +7210,9 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
    else return retVal;
 }
 
-ref_t Compiler :: analizeExtCall(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode)
+ref_t Compiler :: analizeExtCall(SNode node, NamespaceScope& scope, int mode)
 {
-   compileExternalArguments(node, scope/*, warningScope*/);
+   compileExternalArguments(node, scope);
 
    if (test(mode, HINT_INT64EXPECTED)) {
       return V_INT64;
@@ -7319,20 +7328,21 @@ ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope/*, W
    return node.findChild(lxTarget).argument;
 }
 
-ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/)
+ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int mode)
 {
-   int mode = 0;
+   int paramMode = 0;
 
-   if (node.existChild(lxStacksafeAttr)) {
-      mode |= HINT_NOBOXING;
+   if (node.existChild(lxStacksafeAttr) && !test(mode, HINT_DYNAMIC_OBJECT)) {
+      paramMode |= HINT_NOBOXING;
    }
+   else paramMode |= HINT_DYNAMIC_OBJECT;
 
    if (node.existChild(lxEmbeddableAttr)) {
       if (!_logic->optimizeEmbeddable(node, *scope.moduleScope))
          node.appendNode(lxEmbeddable);
    }
 
-   analizeExpressionTree(node, scope, /*warningScope, */mode);
+   analizeExpressionTree(node, scope, paramMode);
 
    return node.findChild(lxTarget).argument;
 }
@@ -7640,14 +7650,14 @@ ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope
    }
 }
 
-ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, /*WarningScope& warningScope, */int mode)
+ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mode)
 {
    switch (current.type) {
       case lxCalling:
       case lxDirectCalling:
       case lxSDirctCalling:
       case lxImplicitCall:
-         return analizeMessageCall(current, scope/*, warningScope*/);
+         return analizeMessageCall(current, scope, mode);
       case lxExpression:
       case lxReturning:
          return analizeExpression(current.firstChild(lxObjectMask), scope/*, warningScope*/, mode);
