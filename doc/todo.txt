@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign                                                                           
+                 * reimplement embeddable constructor
+
                  * reimplement callstack printing
 
                  * try-catch, try template
@@ -152,7 +154,6 @@ In development:
                  * vprop - currently 0 is assigned, which is not correct, probably "prop_type min" should be used
                  * uncomment WideLiteral class
                  * structure should contain at least one data field
-                 * reimplement embeddable constructor
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
                    directly (and get rid of hot fix in compileExternalArguments)
                  * uncomment system'io'FileWriter
@@ -160,6 +161,7 @@ In development:
                  * optimize CallStack
                  * call console operations directly
                  * private / internal extensions
+                 * initializing stack allocated object #10
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

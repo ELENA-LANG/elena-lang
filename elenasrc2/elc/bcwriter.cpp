@@ -5245,6 +5245,9 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node, i
       case lxImplicitCall:
          callImplicitConstructorMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
          break;
+      case lxImplicitJump:
+         resendResolvedMethod(tape, node.findChild(lxTarget).argument, node.argument);
+         break;
       case lxTrying:
          generateTrying(tape, node);
          break;

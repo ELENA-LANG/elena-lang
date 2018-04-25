@@ -5576,7 +5576,17 @@ void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNod
    if (isImportRedirect(node)) {
       importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
    }
-   else scope.raiseError(errInvalidOperation, node);
+   else {
+      SNode dispatchMssg = node.parentNode().findChild(lxEmbeddableMssg);
+
+      if (node.argument == -1 && dispatchMssg != lxNone) {
+         writer.appendNode(lxCalling, -1);
+         writer.newNode(lxImplicitJump, dispatchMssg.argument);
+         writer.appendNode(lxTarget, scope.getClassRefId());
+         writer.closeNode();
+      }
+      else scope.raiseError(errInvalidOperation, node);
+   }   
 }
 
 void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope)
@@ -6714,7 +6724,8 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    // first pass - mark all multi-methods
    SNode current = root.firstChild();
    while (current != lxNone) {
-      if (current == methodType) {
+      if (current == methodType && !test(current.argument, SEALED_MESSAGE)) {
+         //HOTFIX : ignore private methods
          SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
          if (multiMethAttr != lxNone) {
             if (retrieveIndex(implicitMultimethods.start(), multiMethAttr.argument) == -1) {
@@ -8399,16 +8410,17 @@ void Compiler :: injectLocalBoxing(SNode node, int size)
 //   writer.closeNode();
 //}
 
-void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t embeddedMessageRef)
+void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t embeddedMessageRef, ref_t genericMessage)
 {
    SNode methNode = classNode.appendNode(lxConstructor, message);
-   methNode.appendNode(lxAttribute, tpEmbeddable);
    methNode.appendNode(lxEmbeddableMssg, embeddedMessageRef);
+   methNode.appendNode(lxAttribute, tpEmbeddable);
    methNode.appendNode(lxAttribute, tpConstructor);
-   SNode codeNode = methNode.appendNode(lxCode);
-   SNode exprNode = codeNode.appendNode(lxExpression);
-   exprNode.appendNode(lxIdentifier, SELF_VAR);
-   exprNode.appendNode(lxMessage, embeddedMessageRef);
+
+   if (genericMessage)
+      methNode.appendNode(lxMultiMethodAttr, genericMessage);
+
+   SNode codeNode = methNode.appendNode(lxDispatchCode, -1);
 }
 
 void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef)

@@ -645,31 +645,39 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
       compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR);
    }
 
-   //// generate structure embeddable constructor
-   //if (test(info.header.flags, elSealed | elStructureRole)) {
-   //   bool found = false;
-   //   SNode current = node.firstChild();
-   //   while (current != lxNone) {
-   //      if (current == lxClassMethod && test(current.argument, SPECIAL_MESSAGE) && getAbsoluteParamCount(current.argument) > 0) {
-   //         SNode attr = current.firstChild();
-   //         while (attr != lxNone) {
-   //            if (attr == lxAttribute && attr.argument == tpEmbeddable) {
-   //               current.set(lxClassMethod, encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
-   //               attr.argument = tpPrivate;
+   // generate structure embeddable constructor
+   if (test(info.header.flags, elSealed | elStructureRole)) {
+      List<Attribute> generatedConstructors;
+      bool found = 0;
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxConstructor) {
+            SNode attr = current.firstChild();
+            while (attr != lxNone) {
+               if (attr == lxAttribute && attr.argument == tpEmbeddable) {
+                  generatedConstructors.add(Attribute(current.argument, current.findChild(lxMultiMethodAttr).argument));
 
-   //               found = true;
-   //               break;
-   //            }
-   //            attr = attr.nextNode();
-   //         }
-   //         break;
-   //      }
-   //      current = current.nextNode();
-   //   }
-   //   if (found) {
-   //      compiler.injectEmbeddableConstructor(node, encodeAction(NEW_MESSAGE_ID), encodeMessage(NEW_MESSAGE_ID, 0) | SEALED_MESSAGE);
-   //   }
-   //}
+                  current.set(lxClassMethod, current.argument | SEALED_MESSAGE);
+                  attr.argument = tpPrivate;
+
+                  found = true;
+                  break;
+               }
+               attr = attr.nextNode();
+            }
+         }
+         current = current.nextNode();
+      }
+
+      if (found) {
+         for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
+            ref_t message = (*it).value1;
+            ref_t dispatchArg = (*it).value2;
+
+            compiler.injectEmbeddableConstructor(node, message, message | SEALED_MESSAGE, dispatchArg);
+         }
+      }
+   }
 }
 
 void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)

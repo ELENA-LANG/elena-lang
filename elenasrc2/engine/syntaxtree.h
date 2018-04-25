@@ -134,7 +134,8 @@ enum LexicalType
    lxImplicitCall    = 0x0C00B,
    lxTrying          = 0x0C00C,   // try-catch expression
    lxAlt             = 0x0C00D,   // alt-catch expression
-   lxBranching       = 0x0C00F,   // branch expression
+   lxImplicitJump    = 0x0C00E,
+   lxBranching       = 0x0C00F,   // branch expression      
 //   lxSwitching       = 0x0C010,
    lxLooping         = 0x0C011,
    lxExpression      = 0x0C012,

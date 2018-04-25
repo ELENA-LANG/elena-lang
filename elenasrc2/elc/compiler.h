@@ -1071,7 +1071,7 @@ public:
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 ////   virtual void injectFieldExpression(SyntaxWriter& writer);
-   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
+   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef, ref_t genericMessage);
    virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0);
    virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_CompilerScope& scope, SNode classNode, ref_t message, ident_t variable);
