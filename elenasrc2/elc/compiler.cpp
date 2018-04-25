@@ -4483,12 +4483,10 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
    if (targetRef) {
       ref_t sourceRef = resolveObjectReference(scope, objectInfo, targetRef);
-      if (sourceRef != targetRef) {
-         if (!convertObject(writer, scope, targetRef, sourceRef, objectInfo.element))
-            scope.raiseError(errInvalidOperation, node);
-
+      if (convertObject(writer, scope, targetRef, sourceRef, objectInfo.element)) {
          objectInfo = ObjectInfo(okObject, targetRef);
       }
+      else scope.raiseError(errInvalidOperation, node);
    }
 
 ////   ObjectInfo objectInfo;
@@ -4650,11 +4648,11 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
          analizeExpressionTree(current, nsScope, /*warningScope, */HINT_NOBOXING);
 
          ref_t classReference = current.findChild(lxExtArgumentRef).argument;
+         ClassInfo classInfo;
          if (classReference) {
             ref_t primitiveRef = classReference;
             bool variableOne = false;
-            if (!isPrimitiveRef(classReference)) {
-               ClassInfo classInfo;
+            if (!isPrimitiveRef(classReference)) {               
                _logic->defineClassInfo(*nsScope.moduleScope, classInfo, classReference);
 
                variableOne = _logic->isVariable(classInfo);
@@ -4680,14 +4678,18 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
                //   break;
                //}
                default:
-                  //if (test(classInfo.header.flags, elStructureRole)) {
-                  //   current.set(lxExtArgument, 0);
-                  //}
+                  if (test(classInfo.header.flags, elStructureRole)) {
+                     // HOTFIX : to allow pass system'Handle value directly
+                     if (!variableOne && classInfo.size == 4) {
+                        current.set(lxIntExtArgument, 0);
+                     }
+                     else current.set(lxExtArgument, 0);
+                  }
                   //else if (test(classInfo.header.flags, elWrapper)) {
                   //   //HOTFIX : allow to pass a normal object
                   //   current.set(lxExtArgument, 0);
                   //}
-                  /*else */nsScope.raiseError(errInvalidOperation, current);
+                  else nsScope.raiseError(errInvalidOperation, current.firstChild(lxObjectMask));
                   break;
             }
          }
@@ -7085,13 +7087,19 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    writer.newNode(lxSymbol, node.argument);
    writer.newNode(lxExpression);
    writer.appendNode(lxBreakpoint, dsStep);
-   ObjectInfo retVal = compileExpression(writer, expression, codeScope, scope.outputRef, isSingleStatement(expression) ? HINT_ROOTSYMBOL : 0);
-   if (scope.outputRef && resolveObjectReference(*scope.moduleScope, retVal) != 0) {
-      // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
-      scope.outputRef = resolveObjectReference(*scope.moduleScope, retVal);
-      scope.save();
+   writer.newBookmark();
+   // HOTFIX : due to implementation (compileSymbolConstant requires constant types) typecast should be done explicitly
+   ObjectInfo retVal = compileExpression(writer, expression, codeScope, 0, isSingleStatement(expression) ? HINT_ROOTSYMBOL : 0);
+   if (scope.outputRef == 0) {
+      if (resolveObjectReference(*scope.moduleScope, retVal) != 0) {
+         // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
+         scope.outputRef = resolveObjectReference(*scope.moduleScope, retVal);
+         scope.save();
+      }
    }
+   else convertObject(writer, codeScope, scope.outputRef, resolveObjectReference(codeScope, retVal), retVal.element);
 
+   writer.removeBookmark();
    writer.closeNode();
    writer.closeNode();
 

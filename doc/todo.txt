@@ -3,15 +3,6 @@ In development:
 ------                              
 	                            
               dev - redesign                                                                           
-                 * test operation with a struct (where init is a stack safe method):
-                       T<MyStruct> s := 3.
-                       helper do(s init);   // s should be boxed??
-
-                 * struct - should not return a newly created object (e.g.  struct X { test(int n) [ _n := n ] } ) - 
-                   creates a dynamic object
-
-                 * optimize -" handle aHandle := system'external'KERNEL32 GetStdHandle(45). "
-
                  * optimize embeddable length call
                  * optimize embeddable function call
                  * optimize embeddable function2 call
@@ -152,6 +143,8 @@ In development:
                  * uncomment WideLiteral class
                  * structure should contain at least one data field
                  * reimplement embeddable constructor
+                 * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
+                   directly (and get rid of hot fix in compileExternalArguments)
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

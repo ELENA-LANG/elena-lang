@@ -1,6 +1,6 @@
 // --- Handler ---
 
-public sealed struct Handle
+public sealed const struct Handle
 {
     int theHandle.
 

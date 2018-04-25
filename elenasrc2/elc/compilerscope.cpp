@@ -371,16 +371,18 @@ ref_t CompilerScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier,
    else if (!emptystr(ns)) {
       // try to resovle an identifier in all nested namespaces
       ReferenceNs nameWithNs(ns, identifier);
+      bool emptyNs = false;
       while (true) {
          reference = ::resolveImplicitIdentifier(referenceOne, nameWithNs.c_str(), module, project, importedNs);
          if (reference) {
             return reference;
          }
-         nameWithNs.trimProperName();
-         if (!emptystr(nameWithNs)) {
+         if (!emptyNs) {
+            nameWithNs.truncate(getlength(nameWithNs) - getlength(identifier) - 1);
             nameWithNs.trimProperName();
             if (emptystr(nameWithNs)) {
                nameWithNs.copy(identifier);
+               emptyNs = true;
             }
             else nameWithNs.combine(identifier);
          }

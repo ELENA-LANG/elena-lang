@@ -1,9 +1,9 @@
 //import system'text.
 //
 //type console_screen_buffer_info = CONSOLE_SCREEN_BUFFER_INFO.
-//
-//const int FILE_TYPE_CHAR = 2.
-//
+
+const int FILE_TYPE_CHAR = 2.
+
 //sealed struct CONSOLE_SCREEN_BUFFER_INFO
 //{
 //    win_coord      dwSize.    
@@ -55,32 +55,32 @@ singleton ConsoleHandleFactory
 {
     handle new(int anAttributes)
     [ 
-//        handle aHandle := system'external'KERNEL32 GetStdHandle(anAttributes).
-//        
-//        ^ aHandle.
+        handle aHandle := system'external'KERNEL32 GetStdHandle(anAttributes).
+        
+        ^ aHandle.
     ]
     
-//    newWriter
-//    [
-//        handle h := $ConsoleHandleFactory new attributes:0FFFFFFF5h.
-//        int    dwMode := system'external'KERNEL32 GetFileType int:h.
-//        if (dwMode == FILE_TYPE_CHAR)
-//            [ ^ $ConsoleWriter new handle:h ];
-//            [ ^ $FileWriter new handle:h ]
-//    ]
+    newWriter
+    [
+        handle h := ConsoleHandleFactory new(0FFFFFFF5h).
+        int    dwMode := system'external'KERNEL32 GetFileType(h).
+        if (dwMode == FILE_TYPE_CHAR)
+            [ ^ ConsoleWriter new(h) ];
+            [ ^ FileWriter new(h) ]
+    ]
 }
 
-//// --- ConsoleWriter ---
-//
-//sealed struct $ConsoleWriter
-//{
-//    handle theHandle.
-//
-//    stacksafe constructor new handle:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-//
+// --- ConsoleWriter ---
+
+sealed struct ConsoleWriter
+{
+    handle theHandle.
+
+    constructor new(handle aHandle)
+    [
+        theHandle := aHandle.
+    ]
+
 //    write literal:aLiteral
 //    [
 //        $self write wide:aLiteral.
@@ -134,19 +134,19 @@ singleton ConsoleHandleFactory
 //        system'external'KERNEL32 CloseHandle
 //            int:theHandle.
 //    ]
-//}
-//
-//// --- $FileWriter ---
-//
-//sealed class $FileWriter
-//{
-//    handle theHandle.
-//
-//    stacksafe constructor new handle:aHandle
-//    [
-//        theHandle := aHandle
-//    ]
-//
+}
+
+// --- FileWriter ---
+
+sealed class FileWriter
+{
+    handle theHandle.
+
+    constructor new(handle aHandle)
+    [
+        theHandle := aHandle
+    ]
+
 //    stacksafe write bytearray:buffer int:length
 //    [
 //        int written := 0.
@@ -219,7 +219,7 @@ singleton ConsoleHandleFactory
 //        system'external'KERNEL32 CloseHandle
 //            int:theHandle.
 //    ]
-//}
+}
 
 // --- ConsoleReader ---
 

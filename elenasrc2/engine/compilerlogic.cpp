@@ -1660,7 +1660,8 @@ void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstra
 {
    if (!isAbstract(info)) {
       for (auto it = info.methodHints.start(); !it.Eof(); it++) {
-         if (test(*it, tpAbstract))
+         auto key = it.key();
+         if (key.value2 == maHint && test(*it, tpAbstract))
             withAbstractMethods = true;
       }
    }
