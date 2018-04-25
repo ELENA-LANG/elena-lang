@@ -2187,6 +2187,23 @@ void DerivationTransformer :: copyOperator(SyntaxWriter& writer, SNode& node, De
    writer.closeNode();
 }
 
+inline void insertBookmarks(SyntaxWriter& writer, Stack<int>& bookmarks)
+{
+   bool skipFirst = true;
+   while (bookmarks.Count() > 0) {
+      if (!skipFirst) {
+         // the last bookmark can be ignored
+         writer.insert(bookmarks.pop() >> 3, lxExpression, 0);
+         writer.closeNode();
+      }
+      else {
+         bookmarks.pop();
+         skipFirst = false;
+      }
+      writer.removeBookmark();
+   }
+}
+
 void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode)
 {
    writer.newBookmark();
@@ -2279,6 +2296,12 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
             generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
             break;
          case lxAssigning:
+            insertBookmarks(writer, bookmarks);
+            if (expressionExpected) {
+               writer.insert(lxExpression);
+               writer.closeNode();
+            }
+
             writer.appendNode(lxAssign);
             generateExpressionTree(writer, current, scope);
             expressionExpected = true;
@@ -2308,19 +2331,7 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
       current = current.nextNode();
    }
 
-   bool skipFirst = true;
-   while (bookmarks.Count() > 0) {
-      if (!skipFirst) {
-         // the last bookmark can be ignored
-         writer.insert(bookmarks.pop() >> 3, lxExpression, 0);
-         writer.closeNode();
-      }
-      else {
-         bookmarks.pop();
-         skipFirst = false;
-      }
-      writer.removeBookmark();
-   }
+   insertBookmarks(writer, bookmarks);
 
    if (expressionExpected) {
       writer.insert(lxExpression);
@@ -3077,7 +3088,7 @@ void DerivationTransformer :: generateMethodTree(SyntaxWriter& writer, SNode nod
 {
    writer.newNode(lxClassMethod);
    if (templateMode) {
-   //   writer.appendNode(lxSourcePath, scope.sourcePath);
+      writer.appendNode(lxSourcePath, scope.sourcePath);
       writer.appendNode(lxTemplate, scope.templateRef);
    }
 

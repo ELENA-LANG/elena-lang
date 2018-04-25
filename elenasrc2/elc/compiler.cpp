@@ -249,12 +249,17 @@ Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t 
 
 pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
 {
-   if (!emptystr(sourcePath)) {
-      int position = moduleScope->savedPaths.get(sourcePath);
-      if (position == -1) {
-         position = writer.writeSourcePath(moduleScope->debugModule, sourcePath);
+   return saveSourcePath(writer, sourcePath);
+}
 
-         moduleScope->savedPaths.add(sourcePath, position);
+pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer, ident_t path)
+{
+   if (!emptystr(path)) {
+      int position = moduleScope->savedPaths.get(path);
+      if (position == -1) {
+         position = writer.writeSourcePath(moduleScope->debugModule, path);
+
+         moduleScope->savedPaths.add(path, position);
       }
 
       return position;
@@ -1714,7 +1719,7 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
          }
       }
       else if (current == lxSourcePath) {
-         writer.appendNode(lxSourcePath, scope.saveSourcePath(_writer));
+         writer.appendNode(lxSourcePath, scope.saveSourcePath(_writer, current.identifier()));
       }
 
       current = current.nextNode();

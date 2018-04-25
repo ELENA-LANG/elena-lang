@@ -254,6 +254,10 @@ private:
          {
             return parent->saveSourcePath(writer);
          }
+         virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path)
+         {
+            return parent->saveSourcePath(writer, path);
+         }
 
          virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
          {
@@ -375,6 +379,8 @@ private:
       ObjectInfo mapGlobal(ident_t identifier);
 
       virtual pos_t saveSourcePath(ByteCodeWriter& writer);
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
+
 
 ////      void raiseError(const char* message);
 ////      void raiseError(const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
