@@ -48,9 +48,9 @@ public sealed struct Message
 //        
 //        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
 //    ]
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    dispatch => system'core_routines'__message.
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    dispatch => system'core_routines'__message.
 }
 
 //// --- ExtensionMessage ---

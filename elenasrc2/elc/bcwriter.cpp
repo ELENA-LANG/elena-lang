@@ -650,10 +650,10 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskRealRef;
       case lxMessageConstant:
          return mskMessage;
-   //   case lxExtMessageConstant:
-   //      return mskExtMessage;
-   //   case lxSignatureConstant:
-   //      return mskSignature;
+      case lxExtMessageConstant:
+         return mskExtMessage;
+      case lxSignatureConstant:
+         return mskSignature;
       case lxConstantList:
          return mskConstArray;
       default:
@@ -3561,8 +3561,8 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantLong:
       case lxConstantReal:
       case lxMessageConstant:
-      //case lxExtMessageConstant:
-      //case lxSignatureConstant:
+      case lxExtMessageConstant:
+      case lxSignatureConstant:
       case lxConstantList:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
@@ -3664,8 +3664,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantLong:
       case lxConstantReal:
       case lxMessageConstant:
-//      case lxExtMessageConstant:
-//      case lxSignatureConstant:
+      case lxExtMessageConstant:
+      case lxSignatureConstant:
       case lxConstantList:
          // pushr reference
          tape.write(bcACopyR, argument | defineConstantMask(type));

@@ -146,9 +146,9 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 
-//   // subject primitive operations
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
+   // subject primitive operations
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
 
    // int64 primitive operations
    operators.add(OperatorInfo(ADD_MESSAGE_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
@@ -996,9 +996,9 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
       else if (sourceRef == V_MESSAGE) {
          targetRef = scope.messageReference;
       }
-//      else if (sourceRef == V_SIGNATURE) {
-//         targetRef = scope.signatureReference;
-//      }
+      else if (sourceRef == V_SIGNATURE) {
+         targetRef = scope.signatureReference;
+      }
    }
 
    ClassInfo info;
@@ -1129,26 +1129,26 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugPTR | elStructureRole;
          info.size = 4;
          break;
-//      case V_SIGNATURE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugSubject | elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_SIGNATURE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugSubject | elStructureRole;
+         info.size = 4;
+         break;
       case V_MESSAGE:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugMessage | elStructureRole;
          info.size = 4;
          break;
-//      case V_EXTMESSAGE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugMessage | elStructureRole;
-//         info.size = 8;
-//         break;
-//      case V_SYMBOL:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugReference | elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_EXTMESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole;
+         info.size = 8;
+         break;
+      case V_SYMBOL:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugReference | elStructureRole;
+         info.size = 4;
+         break;
       case V_INT32ARRAY:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole;
@@ -1471,18 +1471,18 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       case V_PTR:
          attrValue = 0;
          return true;
-      //case V_SIGNATURE:
-      //   attrValue = 0;
-      //   return true;
-      //case V_SYMBOL:
-      //   attrValue = 0;
-      //   return true;
+      case V_SIGNATURE:
+         attrValue = 0;
+         return true;
+      case V_SYMBOL:
+         attrValue = 0;
+         return true;
       case V_MESSAGE:
          attrValue = 0;
          return true;
-      //case V_EXTMESSAGE:
-      //   attrValue = 0;
-      //   return true;
+      case V_EXTMESSAGE:
+         attrValue = 0;
+         return true;
       //case V_OBJARRAY:
       //   return true;
       case V_FIELD:
@@ -1577,22 +1577,22 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
             info.header.flags |= (elDebugPTR | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));
             return info.size == 4;
-         //case V_SIGNATURE:
-         //   info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
-         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
-         //   return info.size == 4;
+         case V_SIGNATURE:
+            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
+            return info.size == 4;
          case V_MESSAGE:
             info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
             return info.size == 4;
-         //case V_EXTMESSAGE:
-         //   info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
-         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));
-         //   return info.size == 8;
-         //case V_SYMBOL:
-         //   info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
-         //   info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
-         //   return info.size == 4;
+         case V_EXTMESSAGE:
+            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));
+            return info.size == 8;
+         case V_SYMBOL:
+            info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
+            return info.size == 4;
          default:
             break;
       }
@@ -1610,8 +1610,8 @@ ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t re
          return firstNonZero(scope.longReference, scope.superReference);
       case V_REAL64:
          return firstNonZero(scope.realReference, scope.superReference);
-      //case V_SIGNATURE:
-      //   return firstNonZero(scope.signatureReference, scope.superReference);
+      case V_SIGNATURE:
+         return firstNonZero(scope.signatureReference, scope.superReference);
       case V_MESSAGE:
          return firstNonZero(scope.messageReference, scope.superReference);
       case V_ARGARRAY:

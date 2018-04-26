@@ -147,8 +147,8 @@ public:
    virtual ident_t getRealClass() = 0;
    virtual ident_t getLongClass() = 0;
    virtual ident_t getMessageClass() = 0;
-//   virtual ident_t getExtMessageClass() = 0;
-//   virtual ident_t getSignatureClass() = 0;
+   virtual ident_t getExtMessageClass() = 0;
+   virtual ident_t getSignatureClass() = 0;
    virtual ident_t getNamespace() = 0;
 
    virtual ReferenceInfo retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;

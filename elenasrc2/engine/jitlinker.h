@@ -158,7 +158,7 @@ class JITLinker : _JITLoaderListener
    void* resolveAnonymousStaticVariable();
    void* resolveMessageTable(ReferenceInfo referenceInfo, int mask);
    void* resolveMessage(ReferenceInfo referenceInfo, ident_t vmt, bool actionMode);
-//   void* resolveExtensionMessage(ident_t reference, ident_t vmt);
+   void* resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt);
 ////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:

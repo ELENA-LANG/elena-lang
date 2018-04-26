@@ -160,8 +160,8 @@ namespace _ELENA_
       mskMessage             = 0x06000000u,   // message constant
       mskCharRef             = 0x07000000u,   // reference to character constant
       mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
-//      mskSignature           = 0x09000000u,   // message signature constant
-//      mskExtMessage          = 0x0B000000u,   // external message verb constant
+      mskSignature           = 0x09000000u,   // message signature constant
+      mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
       mskConstArray          = 0x0D000000u,   // constant array
 
@@ -289,12 +289,12 @@ namespace _ELENA_
    const int elWithGenerics        = 0x00000400;
    const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
-//   const int elSignature           = 0x00002000;
+   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
    const int elExtension           = 0x00004980;
    const int elMessage             = 0x00008000;
-//   const int elSymbol              = 0x00100000;
-//   const int elExtMessage          = 0x00208000;
+   const int elSymbol              = 0x00100000;
+   const int elExtMessage          = 0x00208000;
    const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
    const int elWithCustomDispatcher= 0x00800000;
    const int elWithArgGenerics     = 0x01000000;
@@ -316,8 +316,8 @@ namespace _ELENA_
    const int elDebugShorts         = 0x00080000;
    const int elDebugPTR            = 0x00090000;
    const int elDebugWideLiteral    = 0x000A0000;
-//   const int elDebugReference      = 0x000B0000;   // symbol reference
-//   const int elDebugSubject        = 0x000C0000;
+   const int elDebugReference      = 0x000B0000;   // symbol reference
+   const int elDebugSubject        = 0x000C0000;
 ////   const int elDebugReals          = 0x000D0000;
    const int elDebugMessage        = 0x000E0000;
 ////   const int elDebugDPTR           = 0x000F0000;
@@ -496,8 +496,8 @@ namespace _ELENA_
    #define WIDESTR_FORWARD          "$wideliteral"
    #define CHAR_FORWARD             "$char"
    #define MESSAGE_FORWARD          "$message"
-//   #define EXT_MESSAGE_FORWARD      "'$ext_message"
-//   #define SIGNATURE_FORWARD        "'$signature"
+   #define EXT_MESSAGE_FORWARD      "$ext_message"
+   #define SIGNATURE_FORWARD        "$signature"
    #define ARRAY_FORWARD            "$array"
    #define BOOL_FORWARD             "$bool"
    #define REFTEMPLATE_FORWARD      "$reference"

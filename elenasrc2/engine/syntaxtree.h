@@ -55,8 +55,8 @@ enum LexicalType
    lxAltOperation    = 0x0002C,
    lxCatchOperation  = 0x0002F,
    lxLoop            = 0x00030,
-////   lxInlineExpression= 0x00032,
-//   lxMessageReference= 0x00033,
+//   lxInlineExpression= 0x00032,
+   lxMessageReference= 0x08033,
 //   lxExtern          = 0x00039,
 //   lxSwitchOption    = 0x0003C,
 //   lxLastSwitchOption = 0x0003D,
@@ -108,8 +108,8 @@ enum LexicalType
    lxConstantReal    = 0x1A111, // arg - reference
    lxConstantClass   = 0x0A112, // arg - reference
    lxMessageConstant = 0x0A113, // arg - rererence
-//   lxExtMessageConstant = 0x0A114, // arg -reference
-//   lxSignatureConstant  = 0x0A115, // arg - reference
+   lxExtMessageConstant = 0x0A114, // arg -reference
+   lxSignatureConstant  = 0x0A115, // arg - reference
    lxStaticConstField   = 0x08116, // arg - reference
    lxNil                = 0x0A117,
    lxCurrent            = 0x0A118, // arg -offset

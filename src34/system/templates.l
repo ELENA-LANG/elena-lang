@@ -12,10 +12,10 @@ field template prop :: prop_name
     
     set prop_name:val
     [
-        $field := val
+        field := val
     ]
     
-    prop_name = $field.
+    prop_name = field.
 }
 
 field template prop :: prop_type, prop_name
@@ -27,7 +27,7 @@ field template prop :: prop_type, prop_name
         field := val
     ]
     
-    prop_type prop_name = $field.
+    prop_type prop_name = field.
 }
 
 field template rprop :: prop_type, prop_name

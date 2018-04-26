@@ -115,8 +115,8 @@ public:
       okLongConstant,                 // param - reference
       okRealConstant,                 // param - reference
       okMessageConstant,              // param - reference
-//      okExtMessageConstant,           // param - reference
-//      okSignatureConstant,            // param - reference
+      okExtMessageConstant,           // param - reference
+      okSignatureConstant,            // param - reference
       okArrayConst,
       okField,                        // param - reference, param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
@@ -843,6 +843,8 @@ private:
    ref_t resolveObjectReference(_CompilerScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
+   ref_t resolveImplicitIdentifier(Scope& scope, SNode terminal);
+   ref_t resolveImplicitIdentifier(Scope& scope, ident_t identifier, bool referenceOne, bool gloabalOne = false);
 
    void saveExtension(ClassScope& scope, ref_t message);
    ref_t mapExtension(_CompilerScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef);
@@ -893,7 +895,7 @@ private:
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 
-   //ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
    void writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode);
    void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);

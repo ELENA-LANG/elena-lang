@@ -883,40 +883,40 @@ ref_t JITLinker :: parseMessage(ident_t reference, bool actionMode)
    }
 }
 
-//void* JITLinker :: resolveExtensionMessage(ident_t reference, ident_t vmt)
-//{
-//   int dotPos = reference.find('.');
-//
-//   IdentifierString extensionName(reference, dotPos);
-//   ref_t messageID = parseMessage(reference + dotPos + 1, false);
-//
-//   void* vmtExtVAddress = resolve(extensionName, mskVMTRef, false);
-//   int entryOffset = getVMTMethodAddress(vmtExtVAddress, messageID);;
-//
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskRDataRef);
-//   MemoryWriter writer(image);
-//
-//   // allocate object header
-//   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
-//
-//   void* vaddress = calculateVAddress(&writer, mskRDataRef);
-//
-//   _loader->mapReference(reference, vaddress, mskMessage);
-//
-//   if (_virtualMode) {
-//      _compiler->compileInt64(&writer, messageID, mskCodeRef, entryOffset);
-//   }
-//   else _compiler->compileInt64(&writer, messageID, entryOffset);
-//
-//   // get constant VMT reference
-//   void* vmtVAddress = resolve(vmt, mskVMTRef, false);
-//
-//   // fix object VMT reference
-//   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
-//
-//   return vaddress;
-//}
+void* JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt)
+{
+   int dotPos = referenceInfo.referenceName.find('.');
+
+   IdentifierString extensionName(referenceInfo.referenceName, dotPos);
+   ref_t messageID = parseMessage(referenceInfo.referenceName + dotPos + 1, false);
+
+   void* vmtExtVAddress = resolve(ReferenceInfo(referenceInfo.module, extensionName), mskVMTRef, false);
+   int entryOffset = getVMTMethodAddress(vmtExtVAddress, messageID);;
+
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   // allocate object header
+   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
+
+   void* vaddress = calculateVAddress(&writer, mskRDataRef);
+
+   _loader->mapReference(referenceInfo, vaddress, mskMessage);
+
+   if (_virtualMode) {
+      _compiler->compileInt64(&writer, messageID, mskCodeRef, entryOffset);
+   }
+   else _compiler->compileInt64(&writer, messageID, entryOffset);
+
+   // get constant VMT reference
+   void* vmtVAddress = resolve(vmt, mskVMTRef, false);
+
+   // fix object VMT reference
+   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
+
+   return vaddress;
+}
 
 void* JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt, bool actionMode)
 {
@@ -1149,12 +1149,12 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskMessage:
             vaddress = resolveMessage(referenceInfo, _loader->getMessageClass(), false);
             break;
-//         case mskSignature:
-//            vaddress = resolveMessage(reference, _loader->getSignatureClass(), true);
-//            break;
-//         case mskExtMessage:
-//            vaddress = resolveExtensionMessage(reference, _loader->getExtMessageClass());
-//            break;
+         case mskSignature:
+            vaddress = resolveMessage(referenceInfo, _loader->getSignatureClass(), true);
+            break;
+         case mskExtMessage:
+            vaddress = resolveExtensionMessage(referenceInfo, _loader->getExtMessageClass());
+            break;
          //case mskNativeVariable:
          case mskLockVariable:
             vaddress = resolveNativeVariable(referenceInfo, mask);

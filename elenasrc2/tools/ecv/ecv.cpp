@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   18
+#define REVISION_VERSION   19
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -994,8 +994,8 @@ void listFlags(int flags, int& row, int pageSize)
    if (test(flags, elNonStructureRole))
       printLine("@flag ", "elNonStructureRole", row, pageSize);
 
-   //if (test(flags, elSignature))
-   //   printLine("@flag ", "elSignature", row, pageSize);
+   if (test(flags, elSignature))
+      printLine("@flag ", "elSignature", row, pageSize);
 
    if (test(flags, elAbstract))
       printLine("@flag ", "elAbstract", row, pageSize);
@@ -1006,14 +1006,14 @@ void listFlags(int flags, int& row, int pageSize)
    if (test(flags, elExtension))
       printLine("@flag ", "elExtension", row, pageSize);
 
-   //if (test(flags, elMessage))
-   //   printLine("@flag ", "elMessage", row, pageSize);
+   if (test(flags, elMessage))
+      printLine("@flag ", "elMessage", row, pageSize);
 
-   //if (test(flags, elExtMessage))
-   //   printLine("@flag ", "elExtMessage", row, pageSize);
+   if (test(flags, elExtMessage))
+      printLine("@flag ", "elExtMessage", row, pageSize);
 
-   //if (test(flags, elSymbol))
-   //   printLine("@flag ", "elSymbol", row, pageSize);
+   if (test(flags, elSymbol))
+      printLine("@flag ", "elSymbol", row, pageSize);
 
    if (test(flags, elWithMuti))
       printLine("@flag ", "elWithMuti", row, pageSize);
@@ -1052,12 +1052,12 @@ void listFlags(int flags, int& row, int pageSize)
       case elDebugWideLiteral:
          printLine("@flag ", "elDebugWideLiteral", row, pageSize);
          break;
-   //   case elDebugReference:
-   //      printLine("@flag ", "elDebugReference", row, pageSize);
-   //      break;
-   //   case elDebugSubject:
-   //      printLine("@flag ", "elDebugSubject", row, pageSize);
-   //      break;
+      case elDebugReference:
+         printLine("@flag ", "elDebugReference", row, pageSize);
+         break;
+      case elDebugSubject:
+         printLine("@flag ", "elDebugSubject", row, pageSize);
+         break;
    //   //case elDebugReals:
    //   //   printLine("@flag ", "elDebugReals");
    //   //   break;

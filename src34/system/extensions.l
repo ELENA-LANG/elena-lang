@@ -37,7 +37,7 @@ public extension objectOp
         dirty_ptr c := self~objectOp __class.
         
         T<byte,256> dump.
-        int         len := system'external LoadClassName(c, dump, 255).
+        int         len := system'external LoadClassName(c, T<bytearray>(dump), 255).
          
         if (len == 0)
             [ ^ "Unknown class" ].

@@ -113,9 +113,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsRetStatement:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
          break;
-//      case nsMessageReference:
-//         _writer.newNode(lxMessageReference);
-//         break;
+      case nsMessageReference:
+         _writer.newNode(lxMessageReference);
+         break;
 //      case nsDynamicSize:
 //         _writer.newNode(lxSize, -1);
 //         break;
@@ -2054,20 +2054,20 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 //         }
          /*else */generateExpressionTree(writer, current, scope);
          break;
-//      case lxMessageReference:
+      case lxMessageReference:
 //      case lxLazyExpression:
 //         writer.newNode(lxExpression);
-//         writer.newNode(current.type);
+         writer.newNode(current.type);
 //         if (current == lxLazyExpression) {
 //            generateExpressionTree(writer, current, scope);
 //         }
 //         else if (scope.type == DerivationScope::ttFieldTemplate) {
 //            scope.copySubject(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
 //         }
-//         else copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
+         /*else */copyIdentifier(writer, current.findChild(lxIdentifier, lxLiteral));
+         writer.closeNode();
 //         writer.closeNode();
-//         writer.closeNode();
-//         break;
+         break;
       case lxNestedClass:
          //if (scope.type == DerivationScope::ttCodeTemplate && test(scope.mode, daNestedBlock)) {
          //   writer.insert(lxTemplateParam, 2);

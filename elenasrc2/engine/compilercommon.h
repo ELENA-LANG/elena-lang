@@ -23,10 +23,10 @@
 #define V_INT32          (ref_t)-13
 #define V_INT64          (ref_t)-14
 #define V_REAL64         (ref_t)-15
-//#define V_SIGNATURE      (ref_t)-18
+#define V_SIGNATURE      (ref_t)-18
 #define V_MESSAGE        (ref_t)-19
-//#define V_EXTMESSAGE     (ref_t)-21
-//#define V_SYMBOL         (ref_t)-22
+#define V_EXTMESSAGE     (ref_t)-21
+#define V_SYMBOL         (ref_t)-22
 
 //#define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
 
@@ -197,9 +197,9 @@ struct _CompilerScope
    ref_t             intReference;
    ref_t             longReference;
    ref_t             realReference;
-//   ref_t signatureReference;
+   ref_t             signatureReference;
    ref_t             messageReference;
-//   ref_t extMessageReference;
+   ref_t extMessageReference;
    ref_t             boolReference;
    ref_t             literalReference;
    ref_t             wideReference;
@@ -287,11 +287,11 @@ struct _CompilerScope
       project = NULL;
       debugModule = module = NULL;
       intReference = boolReference = superReference = 0;
-      /*signatureReference = */messageReference = 0;
+      signatureReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
       refTemplateReference = 0;
-////      extMessageReference = 0;
+      extMessageReference = 0;
    }
 };
 

@@ -235,8 +235,6 @@ Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t 
 //   literalReference = mapReference(project->resolveForward(STR_FORWARD));
 //   wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
 //   charReference = mapReference(project->resolveForward(CHAR_FORWARD));
-//   signatureReference = mapReference(project->resolveForward(SIGNATURE_FORWARD));
-//   extMessageReference = mapReference(project->resolveForward(EXT_MESSAGE_FORWARD));
 //
 //   // HOTFIX : package section should be created if at least literal class is declated
 //   if (literalReference != 0) {
@@ -1562,8 +1560,8 @@ ref_t Compiler :: resolveConstantObjectReference(CodeScope& scope, ObjectInfo ob
    switch (object.kind) {
       case okIntConstant:
          return scope.moduleScope->intReference;
-      //case okSignatureConstant:
-      //   return scope.moduleScope->signatureReference;
+      case okSignatureConstant:
+         return scope.moduleScope->signatureReference;
       default:
          return resolveObjectReference(scope, object);
    }
@@ -1625,11 +1623,11 @@ ref_t Compiler :: resolveObjectReference(_CompilerScope& scope, ObjectInfo objec
          return scope.literalReference;
       case okWideLiteralConstant:
          return scope.wideReference;
-      //case okSubject:
-      //case okSignatureConstant:
-      //   return V_SIGNATURE;
-      //case okExtMessageConstant:
-      //   return scope.extMessageReference;
+//      case okSubject:
+      case okSignatureConstant:
+         return V_SIGNATURE;
+      case okExtMessageConstant:
+         return scope.extMessageReference;
       case okSuper:
          return object.param;
       case okParams:
@@ -1868,6 +1866,24 @@ void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref
       scope.raiseError(errUnknownBaseClass, baseNode);
 }
 
+ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, ident_t identifier, bool referenceOne, bool gloabalOne)
+{
+   NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+   if (gloabalOne) {
+      return ns->moduleScope->mapFullReference(identifier, true);
+   }
+   else return ns->resolveImplicitIdentifier(identifier, referenceOne);
+
+}
+
+ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, SNode terminal)
+{
+   if (terminal == lxGlobalReference) {
+      return resolveImplicitIdentifier(scope, terminal.identifier() + 1, false, true);
+   }
+   else return resolveImplicitIdentifier(scope, terminal.identifier(), terminal == lxReference);
+}
+
 void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
 {
    ref_t parentRef = 0;
@@ -1877,11 +1893,7 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
    else if (node != lxNone) {
       SNode terminal = node.firstChild(lxTerminalMask);
       if (terminal != lxNone) {
-         NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-         if (terminal == lxGlobalReference) {
-            parentRef = ns->moduleScope->mapFullReference(terminal.identifier(), true);
-         }
-         else parentRef = ns->resolveImplicitIdentifier(terminal.identifier(), terminal == lxReference);
+         parentRef = resolveImplicitIdentifier(scope, terminal);
 
          if (!parentRef)
             scope.raiseError(errUnknownBaseClass, terminal);
@@ -2456,15 +2468,15 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
       case okMessageConstant:
          writer.newNode(lxMessageConstant, object.param);
          break;
-//      case okExtMessageConstant:
-//         writer.newNode(lxExtMessageConstant, object.param);
+      case okExtMessageConstant:
+         writer.newNode(lxExtMessageConstant, object.param);
+         break;
+      case okSignatureConstant:
+         writer.newNode(lxSignatureConstant, object.param);
+         break;
+//      case okBlockLocal:
+//         terminal.set(lxBlockLocal, object.param);
 //         break;
-//      case okSignatureConstant:
-//         writer.newNode(lxSignatureConstant, object.param);
-//         break;
-////      case okBlockLocal:
-////         terminal.set(lxBlockLocal, object.param);
-////         break;
       case okParams:
          writer.newNode(lxArgBoxing, 0);
          writer.appendNode(lxBlockLocalAddr, object.param);
@@ -2659,9 +2671,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
       case lxReferenceExpr:
          result = compileReferenceExpression(writer, node, scope, mode);
          break;
-//      case lxMessageReference:
-//         result = compileMessageReference(writer, member, scope, mode);
-//         break;
+      case lxMessageReference:
+         result = compileMessageReference(writer, node, scope, mode);
+         break;
       case lxAlt:
          compileAltOperation(writer, node, scope);
          
@@ -2679,93 +2691,90 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
    return result;
 }
 
-////ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-////{
-////   SNode terminal = node.findChild(lxPrivate, lxIdentifier, lxLiteral);
-////   IdentifierString signature;
-////   int paramCount = 0;
-////   ref_t extensionRef = 0;
-////   if (terminal == lxIdentifier || terminal == lxPrivate) {
-////      ident_t name = terminal.identifier();
-////      signature.copy(name);
-////
-////      paramCount = -1;
-////   }
-////   else {
-////      ident_t message = terminal.identifier();
-////
-////      int subject = message.find('.',0);
-////      if (subject != 0) {
-////         signature.copy(message, subject);
-////         if (signature.ident().find('\'') != NOTFOUND_POS) {
-////            // if it is a full reference
-////            extensionRef = scope.moduleScope->mapReference(signature.ident(), true);
-////         }
-////         else extensionRef = scope.moduleScope->resolveImplicitIdentifier(signature);
-////         if (extensionRef == 0)
-////            scope.raiseError(errInvalidSubject, terminal);
-////
-////         subject++;
-////      }
-////
-////      int param = 0;
-////      for (size_t i = subject; i < getlength(message); i++) {
-////         if (message[i] == '&') {
-////         }
-////         else if (message[i] == '[') {
-////            int len = getlength(message);
-////            if (message[i+1] == ']') {
-////               paramCount = OPEN_ARG_COUNT;
-////            }
-////            else if (message[len - 1] == ']') {
-////               signature.copy(message + i + 1, len - i - 2);
-////               paramCount = signature.ident().toInt();
-////               if (paramCount > MAX_ARG_COUNT)
-////                  scope.raiseError(errInvalidSubject, terminal);
-////            }
-////            else scope.raiseError(errInvalidSubject, terminal);
-////
-////            param = i;
-////            break;
-////         }
-////         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-////         }
-////         else scope.raiseError(errInvalidConstant, terminal);
-////      }
-////
-////      if (param != 0) {
-////         signature.copy(message + subject, param - subject);
-////      }
-////      else signature.copy(message + subject);
-////   }
-////
-////   ObjectInfo retVal;
-////   IdentifierString message;
-////   if (extensionRef != 0) {
-////      message.append(scope.moduleScope->module->resolveReference(extensionRef));
-////      message.append('.');
-////   }
-////
-////   if (paramCount != -1) {
-////      message.append('0' + (char)paramCount);
-////      message.append(signature);
-////   }
-////   else message.copy(signature);
-////
-////   if (extensionRef != 0) {
-////      retVal.kind = okExtMessageConstant;
-////   }
-////   else if (paramCount == -1) {
-////      retVal.kind = okSignatureConstant;
-////   }
-////   else retVal.kind = okMessageConstant;
-////
-////   retVal.param = scope.moduleScope->module->mapReference(message);
-////
-////   writeTerminal(writer, node, scope, retVal, mode);
-////
-////   return retVal;
-////}
+ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   SNode terminal = node.findChild(lxIdentifier, lxLiteral);
+   IdentifierString signature;
+   int paramCount = 0;
+   ref_t extensionRef = 0;
+   if (terminal == lxIdentifier || terminal == lxPrivate) {
+      ident_t name = terminal.identifier();
+      signature.copy(name);
+
+      paramCount = -1;
+   }
+   else {
+      ident_t message = terminal.identifier();
+
+      int subject = message.find('.',0);
+      if (subject != 0) {
+         signature.copy(message, subject);
+         bool referenceOne = signature.ident().find('\'') != NOTFOUND_POS;
+         extensionRef = resolveImplicitIdentifier(scope, message, referenceOne);
+         if (extensionRef == 0)
+            scope.raiseError(errInvalidSubject, terminal);
+
+         subject++;
+      }
+
+      int param = 0;
+      for (size_t i = subject; i < getlength(message); i++) {
+         if (message[i] == ':') {
+         }
+         else if (message[i] == '[') {
+            int len = getlength(message);
+            if (message[i+1] == ']') {
+               paramCount = OPEN_ARG_COUNT;
+            }
+            else if (message[len - 1] == ']') {
+               signature.copy(message + i + 1, len - i - 2);
+               paramCount = signature.ident().toInt();
+               if (paramCount > MAX_ARG_COUNT)
+                  scope.raiseError(errInvalidSubject, terminal);
+            }
+            else scope.raiseError(errInvalidSubject, terminal);
+
+            param = i;
+            break;
+         }
+         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+         }
+         else scope.raiseError(errInvalidConstant, terminal);
+      }
+
+      if (param != 0) {
+         signature.copy(message + subject, param - subject);
+      }
+      else signature.copy(message + subject);
+   }
+
+   ObjectInfo retVal;
+   IdentifierString message;
+   if (extensionRef != 0) {
+      message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+   }
+
+   if (paramCount != -1) {
+      message.append('0' + (char)paramCount);
+      message.append(signature);
+   }
+   else message.copy(signature);
+
+   if (extensionRef != 0) {
+      retVal.kind = okExtMessageConstant;
+   }
+   else if (paramCount == -1) {
+      retVal.kind = okSignatureConstant;
+   }
+   else retVal.kind = okMessageConstant;
+
+   retVal.param = scope.moduleScope->module->mapReference(message);
+
+   writeTerminal(writer, node, scope, retVal, mode);
+
+   return retVal;
+}
 
 ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 {
@@ -7017,19 +7026,19 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
       if (dataWriter.Position() == 0)
          dataWriter.Memory()->addReference(scope.moduleScope->arrayReference | mskVMTRef, (ref_t)-4);
 
-      //if (retVal.kind == okSignatureConstant) {
-      //   dataWriter.Memory()->addReference(retVal.param | mskSignature, dataWriter.Position());
+      if (retVal.kind == okSignatureConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskSignature, dataWriter.Position());
 
-      //   dataWriter.writeDWord(0);
-      //}
-      //else {
+         dataWriter.writeDWord(0);
+      }
+      else {
          SymbolScope memberScope(nsScope, nsScope->mapAnonymous());
          if (!compileSymbolConstant(node, memberScope, retVal))
             return false;
 
          dataWriter.Memory()->addReference(memberScope.reference | mskConstantRef, dataWriter.Position());
          dataWriter.writeDWord(0);
-      //}
+      }
    }
    else {
       if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
@@ -7231,9 +7240,9 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
          case V_REAL64:
             targetRef = scope.moduleScope->realReference;
             break;
-         //case V_SIGNATURE:
-         //   targetRef = scope.moduleScope->signatureReference;
-         //   break;
+         case V_SIGNATURE:
+            targetRef = scope.moduleScope->signatureReference;
+            break;
          case V_MESSAGE:
             targetRef = scope.moduleScope->messageReference;
             break;
@@ -7542,9 +7551,9 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScop
       else if (sourceNode == lxMessageConstant && targetRef == scope.moduleScope->messageReference) {
          boxing = false;
       }
-      //else if (sourceNode == lxSignatureConstant && targetRef == scope.signatureReference) {
-      //   boxing = false;
-      //}
+      else if (sourceNode == lxSignatureConstant && targetRef == scope.moduleScope->signatureReference) {
+         boxing = false;
+      }
       else if (node == lxUnboxing && !boxing) {
          //HOTFIX : to unbox structure field correctly
          sourceRef = analizeExpression(sourceNode, scope, /*warningScope, */HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
@@ -8203,6 +8212,8 @@ void Compiler :: initializeScope(ident_t name, _CompilerScope& scope, bool withD
    scope.boolReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
    scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
+   scope.signatureReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SIGNATURE_FORWARD));
+   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically

@@ -40,8 +40,8 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
    _long = project->resolveForward(LONG_FORWARD);
    _real = project->resolveForward(REAL_FORWARD);
    _message = project->resolveForward(MESSAGE_FORWARD);
-//   _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
-//   _signature = project->resolveForward(SIGNATURE_FORWARD);
+   _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
+   _signature = project->resolveForward(SIGNATURE_FORWARD);
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef,
       project->BoolSetting(opClassSymbolAutoLoad));
@@ -232,15 +232,15 @@ ident_t ExecutableImage::getMessageClass()
    return _message;
 }
 
-//ident_t ExecutableImage::getExtMessageClass()
-//{
-//   return _ext_message;
-//}
-//
-//ident_t ExecutableImage::getSignatureClass()
-//{
-//   return _signature;
-//}
+ident_t ExecutableImage::getExtMessageClass()
+{
+   return _ext_message;
+}
+
+ident_t ExecutableImage::getSignatureClass()
+{
+   return _signature;
+}
 
 ident_t ExecutableImage :: getNamespace()
 {
