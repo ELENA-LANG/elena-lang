@@ -3778,3 +3778,16 @@ labDefault:
   throw
   
 end
+
+procedure __signature."load$system@Signature$system@Message[2]"
+
+  bloadsi 1
+  aloadsi 2
+  nload
+  ecopyd
+  dcopyverb
+  nsave
+  acopyb
+  quitn 2
+
+end

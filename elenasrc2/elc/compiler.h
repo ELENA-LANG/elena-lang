@@ -131,7 +131,7 @@ public:
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
 ////      okParamField,
-//      okSubject,                      // param - parameter offset
+      okSubject,                      // param - parameter offset
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
       okSuper,
@@ -579,8 +579,8 @@ private:
       bool         withOpenArg;
       bool         stackSafe;
       bool         classEmbeddable;
-//      bool         generic;
-//      bool         genericClosure;
+      bool         generic;
+      bool         genericClosure;
       bool         extensionMode;
       bool         multiMethod;
       bool         closureMode;
@@ -646,9 +646,9 @@ private:
       {
          locals.add(local, Parameter(level));
       }
-      void mapLocal(ident_t local, int level, ref_t class_ref/*, int size*/)
+      void mapLocal(ident_t local, int level, ref_t class_ref, int size)
       {
-         locals.add(local, Parameter(level, class_ref/*, size*/));
+         locals.add(local, Parameter(level, class_ref, size));
       }
       void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
       {

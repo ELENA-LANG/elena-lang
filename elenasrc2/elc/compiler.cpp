@@ -978,14 +978,14 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->hints = 0;
    this->withOpenArg = false;
    this->stackSafe = this->classEmbeddable = false;
-//   this->generic = false;
+   this->generic = false;
    this->extensionMode = false;
    this->multiMethod = false;
    this->closureMode = false;
    this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
    this->subCodeMode = false;
    this->abstractMethod = false;
-//   this->genericClosure = false;
+   this->genericClosure = false;
 }
 
 ObjectInfo Compiler::MethodScope :: mapSelf(bool forced)
@@ -1086,10 +1086,10 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      //if (identifier.compare(SUBJECT_VAR)) {
-      //   return ObjectInfo(okSubject, local.offset);
-      //}
-      /*else */if (local.size != 0) {
+      if (identifier.compare(SUBJECT_VAR)) {
+         return ObjectInfo(okSubject, local.offset);
+      }
+      else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.element_ref);
@@ -1567,7 +1567,7 @@ ref_t Compiler :: resolveObjectReference(_CompilerScope& scope, ObjectInfo objec
          return scope.literalReference;
       case okWideLiteralConstant:
          return scope.wideReference;
-//      case okSubject:
+      case okSubject:
       case okSignatureConstant:
          return V_SIGNATURE;
       case okExtMessageConstant:
@@ -2381,11 +2381,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          writer.closeNode();         
          writer.appendNode(lxStaticField, object.extraparam);
          break;
-//      case okSubject:
-//         writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference, 0u));
-//         writer.appendNode(lxLocalAddress, object.param);
-//         writer.appendNode(lxTarget, scope.moduleScope->signatureReference);
-//         break;
+      case okSubject:
+         writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference, 0u));
+         writer.appendNode(lxLocalAddress, object.param);
+         writer.appendNode(lxTarget, scope.moduleScope->signatureReference);
+         break;
       case okLocalAddress:
       case okFieldAddress:
       {
@@ -3143,12 +3143,12 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
       callType = tpSealed;
    }
-//   else if (classReference == scope.moduleScope->signatureReference) {
-//      dispatchCall = test(mode, HINT_EXTENSION_MODE);
-//   }
-//   else if (classReference == scope.moduleScope->messageReference) {
-//      dispatchCall = test(mode, HINT_EXTENSION_MODE);
-//   }
+   else if (classReference == scope.moduleScope->signatureReference) {
+      dispatchCall = test(mode, HINT_EXTENSION_MODE);
+   }
+   else if (classReference == scope.moduleScope->messageReference) {
+      dispatchCall = test(mode, HINT_EXTENSION_MODE);
+   }
    else if (target.kind == okSuper) {
       // parent methods are always sealed
       callType = tpSealed;
@@ -3211,7 +3211,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
 
    // define the message target if required
-   if (target.kind == okConstantRole/* || target.kind == okSubject*/) {
+   if (target.kind == okConstantRole || target.kind == okSubject) {
       writer.newNode(lxOverridden);
       writer.newNode(lxExpression);
       writeTerminal(writer, node, scope, target, 0);
@@ -3828,7 +3828,7 @@ ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeSc
    }
 
    // if it is a generic role
-   if (role.kind != okConstantRole/* && role.kind != okSubject*/) {
+   if (role.kind != okConstantRole && role.kind != okSubject) {
       writer.newNode(lxOverridden);
       role = compileExpression(writer, roleNode, scope, 0, 0);
       writer.closeNode();
@@ -5057,12 +5057,17 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
                signature[signatureLen++] = classRef;
 
                size = _logic->defineStructSize(*scope.moduleScope, classRef, elementRef);
+
+               paramCount++;
+               if (paramCount >= OPEN_ARG_COUNT)
+                  scope.raiseError(errTooManyParameters, current);
             }
          }
-
-         paramCount++;
-         if (paramCount >= OPEN_ARG_COUNT)
-            scope.raiseError(errTooManyParameters, current);
+         else {
+            paramCount++;
+            if (paramCount >= OPEN_ARG_COUNT)
+               scope.raiseError(errTooManyParameters, current);
+         }
 
          scope.parameters.add(terminal, Parameter(index, classRef, elementRef, size));
 
@@ -5076,8 +5081,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       current = current.nextNode();
    }
 
-   if (signatureLen > 0) {
-      // validate that 
+   if (signatureLen > 0 && !scope.withOpenArg) {
+      // validate generic signature (except an open argument one)
       bool genericSignature = true;
       for (int i = 0; i < signatureLen; i++) {
          // primitive arguments should be replaced with wrapper classes
@@ -5147,12 +5152,12 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (test(scope.hints, tpSealed | tpSpecial))
          flags |= SPECIAL_MESSAGE;
 
-//      if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
-//         if (!emptystr(signature) || !emptystr(messageStr))
-//            scope.raiseError(errInvalidHint, verb);
-//
-//         messageStr.copy(GENERIC_PREFIX);
-//      }
+      if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
+         if (signatureLen > 0 || !actionStr.compare(EVAL_MESSAGE))
+            scope.raiseError(errInvalidHint, action);
+
+         actionStr.copy(GENERIC_PREFIX);
+      }
 //      else if (test(scope.hints, tpAction)) {
 //         messageStr.copy(INVOKE_MESSAGE);
 //         // Compiler Magic : if it is a generic closure - ignore fixed argument
@@ -5264,10 +5269,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      }
    }
 
-//   if (scope.genericClosure && paramCount > OPEN_ARG_COUNT) {
-//      // Compiler Magic : if it is a generic closure - ignore fixed argument but it should be removed from the stack
-//      scope.rootToFree += (paramCount - OPEN_ARG_COUNT);
-//   }
+   if (scope.genericClosure && paramCount > OPEN_ARG_COUNT) {
+      // Compiler Magic : if it is a generic closure - ignore fixed argument but it should be removed from the stack
+      scope.rootToFree += (paramCount - OPEN_ARG_COUNT);
+   }
 }
 
 int Compiler :: retrieveGenericArgParamCount(ClassScope& scope)
@@ -5690,17 +5695,17 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
          compileMultidispatch(writer, SNode(), codeScope, *classScope);
       }
 
-      writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
+      writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
 
       // new stack frame
       // stack already contains current self reference
       // the original message should be restored if it is a generic method
       codeScope.level++;
-//      // declare the current subject for a generic method
-//      if (scope.generic) {
-//         codeScope.level++;
-//         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0);
-//      }
+      // declare the current subject for a generic method
+      if (scope.generic) {
+         codeScope.level++;
+         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0);
+      }
 
       preallocated = codeScope.level;
 
@@ -5770,7 +5775,7 @@ void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, Me
       writer.closeNode();
    }
 
-   writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
+   writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
 
    // new stack frame
    // stack already contains current $self reference
@@ -6242,12 +6247,12 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.closureMode = _logic->isClosure(scope.info, methodScope.message);
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
-//   if (!methodScope.withOpenArg) {
-//      // HOTFIX : generic with open argument list is compiled differently
-//      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
-//   }
-//   else if (_logic->isMethodGeneric(scope.info, methodScope.message))
-//      methodScope.genericClosure = true;
+   if (!methodScope.withOpenArg) {
+      // HOTFIX : generic with open argument list is compiled differently
+      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
+   }
+   else if (_logic->isMethodGeneric(scope.info, methodScope.message))
+      methodScope.genericClosure = true;
 }
 
 void Compiler :: declareVMT(SNode node, ClassScope& scope)
@@ -8411,20 +8416,20 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
       ref_t signatureLen = 0;
       ref_t signatures[OPEN_ARG_COUNT];
 
-      /*if (paramCount >= OPEN_ARG_COUNT) {
+      if (paramCount >= OPEN_ARG_COUNT) {
          for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
-            sign.append('$');
-            sign.append(scope.module->resolveReference(scope.superReference));
+            signatureLen++;
+            signatures[i] = scope.superReference;
          }
-         sign.append('$');
-         sign.append(scope.module->resolveReference(scope.superReference));
+         signatures[signatureLen] = scope.superReference;
+         signatureLen++;
       }
-      else {*/
+      else {
          for (int i = 0; i < paramCount; i++) {
             signatureLen++;
             signatures[i] = scope.superReference;
          }
-      //}
+      }
       ref_t signRef = scope.module->mapAction(actionName, scope.module->mapSignature(signatures, signatureLen, false), false);
 
       resendMessage = encodeMessage(signRef, paramCount);

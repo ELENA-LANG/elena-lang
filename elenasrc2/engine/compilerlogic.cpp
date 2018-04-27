@@ -1396,9 +1396,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_EMBEDDABLE:
          attrValue = tpEmbeddable;
          return true;
-      //case V_GENERIC:
-      //   attrValue = (tpGeneric | tpSealed);
-      //   return true;
+      case V_GENERIC:
+         attrValue = (tpGeneric | tpSealed);
+         return true;
       case V_PRIVATE:
          attrValue = (tpPrivate | tpSealed);
          return true;

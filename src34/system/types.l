@@ -15,7 +15,7 @@ stacksafe       = #8192.
 
 const           = #8201.
 singleton       = #8208.
-//generic         = #8202.
+generic         = #8202.
 static          = #8194.
 var             = #16385.
 auto            = #50.

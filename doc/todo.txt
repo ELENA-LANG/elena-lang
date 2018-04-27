@@ -165,6 +165,8 @@ In development:
                  * test #40 : Typed Extensions : self should be typedcasted
                  * debugger : display message
                  * ide : call stack info
+                 * call open argument list explicitly (a sum(dynamic<object>(1,2,3)))
+                 * can generic handler be strong-typed?
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

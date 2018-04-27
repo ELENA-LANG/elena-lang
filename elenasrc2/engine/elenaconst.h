@@ -415,12 +415,12 @@ namespace _ELENA_
    #define READ_OPERATOR            ">>"
 
   // --- ELENA explicit variables ---
-   #define GROUP_VAR               "target"             // the current method target / closure owner method target
-   #define SELF_VAR                "self"            // the current method class reference / closure owner class reference
+   #define GROUP_VAR               "target"           // the current method target / closure owner method target
+   #define SELF_VAR                "self"             // the current method class reference / closure owner class reference
 
-   #define SUPER_VAR               "super"           // the predecessor class
-//   #define SUBJECT_VAR             "$subject"         // the current message
-   #define NIL_VAR                 "nil"             // the nil pseudo symbol - representing the null value
+   #define SUPER_VAR               "super"            // the predecessor class
+   #define SUBJECT_VAR             "received"         // the current message
+   #define NIL_VAR                 "nil"              // the nil pseudo symbol - representing the null value
    #define RETVAL_VAR              "$$ret"            // the closure returning value
    #define OWNER_VAR               "$$owner"          // the nested class / closure owner
    #define PARENT_VAR              "$$parent"         // the closure parent
