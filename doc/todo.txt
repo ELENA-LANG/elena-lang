@@ -3,13 +3,12 @@ In development:
 ------                              
 	                            
               dev - redesign                                                                           
-                 * reimplement embeddable constructor
+                 * regression test : verify all closed issues in GitHub
+                 * Open argument list : assigning 
 
-                 * reimplement callstack printing
+                 * uncomment objectOp
 
                  * try-catch, try template
-
-                 * regression test : verify all closed issues in GitHub
 
                  * migrate exceptions, dynamic, templates, win32_app files
                  * migrate rest of the code : try-catch, try template, switch, generics, collections, operations with
@@ -164,6 +163,8 @@ In development:
                  * test #12 : Extension with stack allocated object 
                  * #15 : Returning double float and long value from external function
                  * test #40 : Typed Extensions : self should be typedcasted
+                 * debugger : display message
+                 * ide : call stack info
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

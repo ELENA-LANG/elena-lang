@@ -14,16 +14,24 @@
 
 namespace _ELENA_
 {
-   
+
+inline void freeident(ident_t s)
+{
+   if (s != NULL) {
+      free((void*)s.c_str());
+   }
+}
+
 // --- SourceFileInfo ---
 struct SourceFileInfo
 {
    _ELENA_::SyntaxTree*       tree;
    _ELENA_::IdentifierString  path;
    _ELENA_::IdentifierString  ns;
-   _ELENA_::IdentifierList    importedNs;
+   _ELENA_::IdentifierList    importedNs; // importedns contains the list of dynamically allocated strings
 
    SourceFileInfo()
+      : importedNs(NULL, freeident)
    {
       tree = NULL;
    }
@@ -72,6 +80,8 @@ struct CompilerScope : _CompilerScope
    
    ident_t resolveWeakTemplateReference(ident_t referenceName);
 
+   void saveIncludedModule(_Module* extModule);
+
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList& importedNs);
 
    virtual ident_t resolveFullName(ref_t reference)
@@ -93,6 +103,8 @@ struct CompilerScope : _CompilerScope
    virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters);
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference);
+
+   virtual bool includeModule(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);
 
    void compile(_Compiler& compiler, SourceFileList& files);
 

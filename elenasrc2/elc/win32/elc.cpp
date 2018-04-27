@@ -99,10 +99,10 @@ public:
 
          // save subject info if enabled
          _ELENA_::MemoryWriter debugWriter(debug);
-         /*if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
-            image.saveSubject(&debugWriter);
+         if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
+            image.saveActionNames(&debugWriter);
          }
-         else */debugWriter.writeDWord(0);
+         else debugWriter.writeDWord(0);
       }
       else debug->clear();
    }
@@ -125,8 +125,8 @@ _ELC_::Project :: Project()
    _tabSize = 4;
    _encoding = _ELENA_::feUTF8;
 
-//   // !! temporally
-//   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
+   // !! temporally
+   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
 }
 
 void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
@@ -274,8 +274,8 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
 //   //      return config.getSetting(PROJECT_CATEGORY, ELC_WARNON_SIGNATURE);
       case _ELENA_::opDebugMode:
          return config.getSetting(ELC_DEBUGINFO);
-//      case _ELENA_::opDebugSubjectInfo:
-//         return config.getSetting(ELC_SUBJECTINFO);
+      case _ELENA_::opDebugSubjectInfo:
+         return config.getSetting(ELC_SUBJECTINFO);
       case _ELENA_::opClassSymbolAutoLoad:
          return config.getSetting(ELC_CLASSSYMBOLLOAD);
       case _ELENA_::opThreadMax:
@@ -508,9 +508,9 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
 //         _settings.add(_ELENA_::opTarget, valueName.clone(1));
 //         break;
       case ELC_PRM_DEBUGINFO:
-         //if (valueName.compare(ELC_SUBJECTINFO)) {
-         //   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
-         //}
+         if (valueName.compare(ELC_SUBJECTINFO)) {
+            _settings.add(_ELENA_::opDebugSubjectInfo, -1);
+         }
          _settings.add(_ELENA_::opDebugMode, -1);
          break;
 //      case ELC_PRM_CONFIG:
@@ -550,11 +550,11 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
       info->path.copy(filePath);
 
       // add the module itself
-      info->importedNs.add(scope.module->Name());
+      info->importedNs.add(scope.module->Name().clone());
 
       // system module should be included by default
       if (!scope.module->Name().compare(STANDARD_MODULE)) {
-         info->importedNs.add(STANDARD_MODULE);
+         info->importedNs.add(_ELENA_::ident_t(STANDARD_MODULE).clone());
       }
 
       printInfo("%s", filePath);
@@ -575,7 +575,7 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
          writer.close();
 
          _ELENA_::DerivationTransformer transformer(*info->tree);
-         transformer.recognize(scope, info->path, info->ns);
+         transformer.recognize(scope, info->path, info->ns, &info->importedNs);
 
          files.add(info);
       }

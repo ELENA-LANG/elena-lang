@@ -245,6 +245,10 @@ private:
          {
             parent->raiseWarning(level, message, terminal);
          }
+         virtual void raiseWarning(int level, const char* message, ident_t identifier)
+         {
+            parent->raiseWarning(level, message, identifier);
+         }
          virtual void raiseWarning(int level, const char* message)
          {
             parent->raiseWarning(level, message);
@@ -369,6 +373,10 @@ private:
       {
          moduleScope->raiseWarning(level, message, sourcePath);
       }
+      virtual void raiseWarning(int level, const char* message, ident_t identifier)
+      {
+         moduleScope->raiseWarning(level, message, sourcePath, identifier);
+      }
       //virtual void raiseWarning(int level, const char* message, int row, int col, ident_t sourcePath, ident_t terminal)
       //{
       //   moduleScope->raiseWarning(level, message, sourcePath, );
@@ -458,8 +466,6 @@ private:
 //      
 //         return forwards.add(forward, info.param, true);
 //      }
-
-      /*virtual */bool includeModule(ident_t name, bool loadModuleInfo, bool& duplicateExtensions, bool& duplicateInclusion);
 
 //      virtual SubjectList* getAutogerenatedExtensions(ref_t attr)
 //      {

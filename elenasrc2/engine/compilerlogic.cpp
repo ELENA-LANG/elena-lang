@@ -292,7 +292,7 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
-   if (callType == tpClosed || callType == tpSealed) {
+   if (callType == tpClosed || callType == tpSealed || callType == tpPrivate) {
       result.stackSafe = test(methodHint, tpStackSafe);
    }      
 

@@ -22,32 +22,30 @@ public sealed struct Message
 {
     __mssg theValue.
 
-//    constructor new literal:name
-//    [
-//        system'core_routines'__message load mssg:$self literal:name
-//    ]
-//    
+    constructor new(literal name)
+    [
+        system'core_routines'__message load(self, name)
+    ]
+    
 //    stacksafe constructor $new(int message)
 //    [
 //        system'core_routines'__message copy mssg:$self int:message.
 //    ]
-//    
-//    /// Loads a message
-//    constructor new mssg:message
-//        = message.
-//
-//    stacksafe subject
-//        => system'core_routines'__message.
-//
-//    stacksafe literal
-//    [
-//        mssg val:= $self.
-//        
-//        byte<256> aBuffer.
-//        int       aLength := system'external LoadMessageName mssg:$self bytearray:aBuffer int:255.
-//        
-//        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
-//    ]
+    
+    /// Loads a message
+    constructor new(mssg message)
+        = message.
+
+    T<signature> signature
+        => system'core_routines'__message.
+
+    T<literal> literal
+    [
+        T<byte,256> aBuffer.
+        int         aLength := system'external LoadMessageName(self, T<bytearray>(aBuffer), 255).
+        
+        ^ LiteralValue new(0, aLength, T<bytearray>(aBuffer))
+    ]
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
     dispatch => system'core_routines'__message.
@@ -73,14 +71,14 @@ public sealed struct Message
 //    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
 //    dispatch => system'core_routines'__extmessage.
 //}
-//
-//// --- Signature ---
-//
-///// A dynamic signature extender
-//sealed struct Signature
-//{
-//    __subj<4> theValue.
-//    
+
+// --- Signature ---
+
+/// A dynamic signature extender
+public sealed struct Signature
+{
+    __subj theValue.
+    
 //    /// Creates a dynamic signature
 //    stacksafe constructor new mssg:message
 //    [
@@ -112,7 +110,7 @@ public sealed struct Message
 //        
 //        ^ LiteralValue $new int:0 int:aLength bytearray:aBuffer
 //    ]
-//
-//    /// Qualifies incoming messages and redirects to the target
-//    stacksafe dispatch => system'core_routines'__signature.
-//}
+
+    /// Qualifies incoming messages and redirects to the target
+    stacksafe dispatch => system'core_routines'__signature.
+}

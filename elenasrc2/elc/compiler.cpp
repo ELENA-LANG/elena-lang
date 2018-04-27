@@ -211,31 +211,20 @@ Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t 
    this->sourcePath = path;
 
    for (auto it = imported->start(); !it.Eof(); it++) {
-      ident_t importedNs = *it;
+      ident_t ns = *it;
 
-      bool duplicateExtensions = false;
-      bool duplicateInclusion = false;
-      /*if (!*/includeModule(importedNs, withFullInfo, duplicateExtensions, duplicateInclusion);/*) {*/
-      //   raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, *it);
-      //}
-      //if (duplicateInclusion) {
-      //   raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, *it);
-      //}
-      //   
-      //if (duplicateExtensions)
-      //   raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, *it);
+      importedNs.add(ns);
+
+      if (withFullInfo) {
+         bool duplicateExtensions = false;
+         loadModuleInfo(ns, duplicateExtensions);
+         if (duplicateExtensions)
+            raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
+      }         
    }
 
   //   this->forwardsUnresolved = forwardsUnresolved;
 
-//   // cache the frequently used references
-//   intReference = mapReference(project->resolveForward(INT_FORWARD));
-//   longReference = mapReference(project->resolveForward(LONG_FORWARD));
-//   realReference = mapReference(project->resolveForward(REAL_FORWARD));
-//   literalReference = mapReference(project->resolveForward(STR_FORWARD));
-//   wideReference = mapReference(project->resolveForward(WIDESTR_FORWARD));
-//   charReference = mapReference(project->resolveForward(CHAR_FORWARD));
-//
 //   // HOTFIX : package section should be created if at least literal class is declated
 //   if (literalReference != 0) {
 //      packageReference = module->mapReference(ReferenceNs(module->Name(), PACKAGE_SECTION));
@@ -754,30 +743,6 @@ bool Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t typeRef, ref
    else return false;
 }
 
-void Compiler::NamespaceScope :: saveIncludedModule(_Module* extModule)
-{
-   // HOTFIX : do not include itself
-   if (module == extModule)
-      return;
-
-   IdentifierString sectionName("'", IMPORTS_SECTION);
-
-   _Memory* section = module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false);
-
-   // check if the module alread included
-   MemoryReader metaReader(section);
-   while (!metaReader.Eof()) {
-      ident_t name = metaReader.getLiteral(DEFAULT_STR);
-      if (name.compare(extModule->Name()))
-         return;
-   }
-
-   // otherwise add it to the list
-   MemoryWriter metaWriter(section);
-
-   metaWriter.writeLiteral(extModule->Name().c_str());
-}
-
 //void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
 //{
 //   ReferenceNs sectionName(module->Name(), ACTION_SECTION);
@@ -869,27 +834,6 @@ void Compiler::NamespaceScope :: saveIncludedModule(_Module* extModule)
 //
 //   list->add(extension);
 //}
-
-bool Compiler::NamespaceScope :: includeModule(ident_t name, bool fullInfo, bool& duplicateExtensions, bool& duplicateInclusion)
-{
-   // check if the module exists
-   _Module* extModule = moduleScope->project->loadModule(name, true);
-   if (extModule) {
-      ident_t value = retrieve(importedNs.start(), name, NULL);
-      if (value == NULL) {
-         importedNs.add(name);
-
-         if (fullInfo) {
-            loadModuleInfo(name, duplicateExtensions);
-
-            saveIncludedModule(extModule);
-         }            
-         return true;
-      }
-      else duplicateInclusion = true;
-   }
-   return false;
-}
 
 // --- Compiler::SourceScope ---
 
@@ -6705,6 +6649,12 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          // add a stacksafe attribute for the embeddable structure automatically
          scope.info.methodHints.exclude(Attribute(message, maHint));
          scope.info.methodHints.add(Attribute(message, maHint), methodHints | tpStackSafe);
+
+         //HOTFIX : for the private message : update the virtual method as well
+         if ((message & MESSAGE_FLAG_MASK) == SEALED_MESSAGE) {
+            scope.info.methodHints.exclude(Attribute(message & ~SEALED_MESSAGE, maHint));
+            scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), methodHints | tpStackSafe);
+         }
       }
 
       if (!included && /*!scope.abstractMode && */test(methodHints, tpAbstract)) {

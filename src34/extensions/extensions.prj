@@ -1,0 +1,15 @@
+﻿<configuration>
+  <project>
+      <template>lib</template>
+      <namespace>extensions</namespace>
+      <debuginfo>-1</debuginfo>
+      <options>-w3</options>
+      <output>..\..\lib34</output>
+  </project>
+  <files>
+     <module>
+       <include>control.l</include>
+       <include>console.l</include>
+     </module>
+  </files>
+</configuration>

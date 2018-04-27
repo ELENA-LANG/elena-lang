@@ -127,43 +127,43 @@ int Instance::loadSubjectName(size_t subject, char* buffer, size_t length)
 
 int Instance :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
 {
-   //RTManager manager;
+   RTManager manager;
 
-   //// initialize image section ;
-   //// it directly follows debug section
-   //ImageSection subjectSection;
-   //if (initSubjectSection(subjectSection)) {
-   //   MemoryReader reader(&subjectSection);
+   // initialize image section ;
+   // it directly follows debug section
+   ImageSection subjectSection;
+   if (initSubjectSection(subjectSection)) {
+      MemoryReader reader(&subjectSection);
 
-   //   ref_t action;
-   //   int count;
-   //   decodeMessage(subjectRef, action, count);
+      ref_t action;
+      int count;
+      decodeMessage(subjectRef, action, count);
 
-   //   size_t used = 0;
-   //   if (test(subjectRef, encodeVerb(SIGNATURE_FLAG))) {
-   //      ImageSection messageSection;
-   //      messageSection.init(_messageSection, 0x10000); // !! dummy size
+      size_t used = 0;
+      if (test(subjectRef, encodeAction(SIGNATURE_FLAG))) {
+         ImageSection messageSection;
+         messageSection.init(_messageSection, 0x10000); // !! dummy size
 
-   //      ref_t verb = messageSection[action];
-   //      used += manager.readSubjectName(reader, verb, buffer + used, length - used);
-   //   }
-   //   else used += manager.readSubjectName(reader, action, buffer + used, length - used);
+         ref_t verb = messageSection[action];
+         used += manager.readSubjectName(reader, verb, buffer + used, length - used);
+      }
+      else used += manager.readSubjectName(reader, action, buffer + used, length - used);
 
-   //   if (count > 0) {
-   //      size_t dummy = 10;
-   //      String<char, 10>temp;
-   //      temp.appendInt(count);
+      if (count > 0) {
+         size_t dummy = 10;
+         String<char, 10>temp;
+         temp.appendInt(count);
 
-   //      buffer[used++] = '[';
-   //      Convertor::copy(buffer + used, temp, getlength(temp), dummy);
-   //      used += dummy;
-   //      buffer[used++] = ']';
-   //   }
-   //   buffer[used] = 0;
+         buffer[used++] = '[';
+         Convertor::copy(buffer + used, temp, getlength(temp), dummy);
+         used += dummy;
+         buffer[used++] = ']';
+      }
+      buffer[used] = 0;
 
-   //   return used;
-   //}
-   /*else */return 0;
+      return used;
+   }
+   else return 0;
 }
 
 void* Instance :: loadSymbol(ident_t name)

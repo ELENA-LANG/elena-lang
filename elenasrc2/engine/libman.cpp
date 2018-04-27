@@ -19,13 +19,13 @@ using namespace _ELENA_;
 
 LibraryManager :: LibraryManager()
    : _modules(NULL, freeobj), _binaries(NULL, freeobj),
-   _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr)//, _debugModules(NULL, freeobj)
+   _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr), _debugModules(NULL, freeobj)
 {
 }
 
 LibraryManager :: LibraryManager(path_t root, ident_t package)
    : _rootPath(root), _namespace(package), _modules(NULL, freeobj), _binaries(NULL, freeobj),
-   _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr)//, _debugModules(NULL, freeobj)
+   _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr), _debugModules(NULL, freeobj)
 {
 }
 
@@ -83,27 +83,27 @@ _Module* LibraryManager :: loadModule(ident_t package, LoadResult& result, bool 
    return module;
 }
 
-//_Module* LibraryManager :: loadDebugModule(ident_t package, LoadResult& result)
-//{
-//   _Module* module = _debugModules.get(package);
-//   if (!module) {
-//      Path path;
-//      nameToPath(package, path, "dnl");
-//
-//      FileReader  reader(path.c_str(), feRaw, false);
-//      module = new ROModule(reader, result);
-//
-//      if (result != lrSuccessful) {
-//         delete module;
-//
-//         return NULL;
-//      }
-//      else _debugModules.add(package, module);
-//   }
-//   else result = lrSuccessful;
-//
-//   return module;
-//}
+_Module* LibraryManager :: loadDebugModule(ident_t package, LoadResult& result)
+{
+   _Module* module = _debugModules.get(package);
+   if (!module) {
+      Path path;
+      nameToPath(package, path, "dnl");
+
+      FileReader  reader(path.c_str(), feRaw, false);
+      module = new ROModule(reader, result);
+
+      if (result != lrSuccessful) {
+         delete module;
+
+         return NULL;
+      }
+      else _debugModules.add(package, module);
+   }
+   else result = lrSuccessful;
+
+   return module;
+}
 
 _Module* LibraryManager :: loadNative(ident_t package, LoadResult& result)
 {
@@ -268,13 +268,13 @@ _Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& resu
    }
 }
 
-//_Module* LibraryManager :: resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference)
-//{
-//   NamespaceName name(referenceName);
-//
-//   _Module* module = loadDebugModule(name, result);
-//
-//   reference = module ? module->mapReference(referenceName, true) : 0;
-//
-//   return module;
-//}
+_Module* LibraryManager :: resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference)
+{
+   NamespaceName name(referenceName);
+
+   _Module* module = loadDebugModule(name, result);
+
+   reference = module ? module->mapReference(referenceName, true) : 0;
+
+   return module;
+}

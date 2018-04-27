@@ -11,26 +11,14 @@
 /// A generic extender
 public extension objectOp
 {
-//    // !! obsolete
-//    class_ref
-//        = self __class.
-
     __class
         => system'core_routines'__object.
 
-//    // !! obsolete
-//    parent_ref
-//        = self __parent.
-//    
-//    __parent
-//        => system'core_routines'__object.
-//
-//    bool instanceOf:type
-//        => system'core_routines'__object.        
-//
-//    // obsolete
-//    literal className
-//        = self __className.
+    __parent
+        => system'core_routines'__object.
+
+    bool instanceOf:type
+        => system'core_routines'__object.        
 
     literal __className
     [
@@ -45,10 +33,10 @@ public extension objectOp
         ^ LiteralValue new(0,len,T<ByteArray>(dump)).
     ]    
     
-//    /// Returns true if the specified object instances are equal; otherwise, false.
-//    bool equal reference:anObject
-//        => system'core_routines'__object.
-//        
+    /// Returns true if the specified object instances are equal; otherwise, false.
+    bool equalReference:anObject
+        => system'core_routines'__object.
+        
 //    evalSelf func1:aFunction
 //        = aFunction eval:self.
 //

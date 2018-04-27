@@ -83,10 +83,10 @@ public:
 
    Project* getProject() const { return _project; }
 
-//   void saveSubject(MemoryWriter* writer)
-//   {
-//      _subjects.write(writer);
-//   }
+   void saveActionNames(MemoryWriter* writer)
+   {
+      _actions.write(writer);
+   }
 
    virtual void addListener(_JITLoaderListener* listener)
    {

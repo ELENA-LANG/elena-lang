@@ -51,7 +51,7 @@ class _LibraryManager
 {
 public:
    virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
-   //virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
+   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference) = 0;
 };
 
 // -- ReferenceInfo ---

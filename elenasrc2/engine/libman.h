@@ -24,7 +24,7 @@ class LibraryManager : public _LibraryManager
    IdentifierString  _namespace;
 
    ModuleMap         _modules;         // Note : assumed to be linked list by resolveIndirectWeakModule
-//   ModuleMap         _debugModules;
+   ModuleMap         _debugModules;
    ModuleMap         _binaries;
 
    PathMap           _binaryPaths;
@@ -107,7 +107,7 @@ public:
 
    _Module* loadNative(ident_t package, LoadResult& result);
    _Module* loadModule(ident_t package, LoadResult& result, bool readOnly = true);
-//   _Module* loadDebugModule(ident_t package, LoadResult& result);
+   _Module* loadDebugModule(ident_t package, LoadResult& result);
 
    bool loadCore(LoadResult& result);
 
@@ -116,7 +116,7 @@ public:
    virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
    virtual _Module* resolveWeakModule(ident_t weakName, LoadResult& result, ref_t& reference);
    virtual _Module* resolveIndirectWeakModule(ident_t weakName, LoadResult& result, ref_t& reference);
-   //virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference);
+   virtual _Module* resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference);
 
    void addListener(_JITLoaderListener* listener)
    {

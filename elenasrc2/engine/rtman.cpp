@@ -127,87 +127,87 @@ void* RTManager :: loadSymbol(StreamReader& reader, ident_t name)
 bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager,
    ident_t &symbol, ident_t &method, ident_t &path, int& row)
 {
-   //int index = 0;
+   int index = 0;
    bool found = false;
-   //row = 0;
+   row = 0;
 
-   //// search through debug section until the ret point is inside two consecutive steps within the same object
-   //while (!reader.Eof() && !found) {
-   //   // read reference
-   //   symbol = reader.getLiteral(DEFAULT_STR);
+   // search through debug section until the ret point is inside two consecutive steps within the same object
+   while (!reader.Eof() && !found) {
+      // read reference
+      symbol = reader.getLiteral(DEFAULT_STR);
 
-   //   // define the next record position
-   //   size_t size = reader.getDWord() - 4;
-   //   index = 0;
-   //   size_t previous = 0;
-   //   size_t current = 0;
-   //   while (size > 0) {
-   //      current = reader.getDWord();
-   //      if (retAddress == current || (previous != 0 && previous < retAddress && current >= retAddress)) {
-   //         found = true;
+      // define the next record position
+      size_t size = reader.getDWord() - 4;
+      index = 0;
+      size_t previous = 0;
+      size_t current = 0;
+      while (size > 0) {
+         current = reader.getDWord();
+         if (retAddress == current || (previous != 0 && previous < retAddress && current >= retAddress)) {
+            found = true;
 
-   //         break;
-   //      }
+            break;
+         }
 
-   //      previous = current;
-   //      index++;
-   //      size -= 4;
-   //   }
-   //}
+         previous = current;
+         index++;
+         size -= 4;
+      }
+   }
 
-   //if (found) {
-   //   bool isClass = true;
-   //   _Module* module = NULL;
-   //   // if symbol
-   //   if (symbol[0]=='#') {
-   //      symbol+=1;
+   if (found) {
+      bool isClass = true;
+      _Module* module = NULL;
+      // if symbol
+      if (symbol[0]=='#') {
+         symbol+=1;
 
-   //      isClass = false;
-   //   }
-   //   LoadResult result;
-   //   ref_t position = 0;
-   //   // load the appropriate debug module
-   //   module = manager->resolveDebugModule(symbol, result, position);
-   //   if (result == lrSuccessful) {
-   //      // load the object debug section
-   //      MemoryReader lineReader(module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true), position);
-   //      MemoryReader stringReader(module->mapSection(DEBUG_STRINGS_ID | mskDataRef, true));
+         isClass = false;
+      }
+      LoadResult result;
+      ref_t position = 0;
+      // load the appropriate debug module
+      module = manager->resolveDebugModule(symbol, result, position);
+      if (result == lrSuccessful) {
+         // load the object debug section
+         MemoryReader lineReader(module->mapSection(DEBUG_LINEINFO_ID | mskDataRef, true), position);
+         MemoryReader stringReader(module->mapSection(DEBUG_STRINGS_ID | mskDataRef, true));
 
-   //      // skip vmt address for a class
-   //      reader.getDWord();
+         // skip vmt address for a class
+         reader.getDWord();
 
-   //      // look through the records to find the entry
-   //      DebugLineInfo info;
-   //      while (!lineReader.Eof()) {
-   //         lineReader.read(&info, sizeof(DebugLineInfo));
-   //         if (info.symbol == dsProcedure) {
-   //            stringReader.seek(info.addresses.source.nameRef);
-   //            path = stringReader.getLiteral(DEFAULT_STR);
-   //            method = NULL;
-   //         }
-   //         else if (info.symbol == dsMessage) {
-   //            stringReader.seek(info.addresses.source.nameRef);
-   //            method = stringReader.getLiteral(DEFAULT_STR);
-   //         }
-   //         else if ((info.symbol & dsDebugMask) == dsStep) {
-   //            index--;
-   //            if (index == 0) {
-   //               if (info.row >= 0) {
-   //                  row = info.row;
-   //               }
-   //               break;
-   //            }
-   //         }
+         // look through the records to find the entry
+         DebugLineInfo info;
+         while (!lineReader.Eof()) {
+            lineReader.read(&info, sizeof(DebugLineInfo));
+            if (info.symbol == dsProcedure) {
+               stringReader.seek(info.addresses.source.nameRef);
+               path = stringReader.getLiteral(DEFAULT_STR);
+               method = NULL;
+            }
+            else if (info.symbol == dsMessage) {
+               stringReader.seek(info.addresses.source.nameRef);
+               method = stringReader.getLiteral(DEFAULT_STR);
+            }
+            else if ((info.symbol & dsDebugMask) == dsStep) {
+               index--;
+               if (index == 0) {
+                  if (info.row >= 0) {
+                     row = info.row;
+                  }
+                  break;
+               }
+            }
 
-   //         if (info.row > 0)
-   //            row = info.row;
-   //      }
-   //   }
-   //   else {
-   //      path = NULL;
-   //      method = NULL;
-   //   }
-   //}
+            if (info.row > 0)
+               row = info.row;
+         }
+      }
+      else {
+         path = NULL;
+         method = NULL;
+      }
+   }
 
    return found;
 }

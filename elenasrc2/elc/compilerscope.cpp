@@ -443,3 +443,45 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
 
    return generatedReference;
 }
+
+void CompilerScope :: saveIncludedModule(_Module* extModule)
+{
+   // HOTFIX : do not include itself
+   if (module == extModule)
+      return;
+
+   IdentifierString sectionName("'", IMPORTS_SECTION);
+
+   _Memory* section = module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false);
+
+   // check if the module alread included
+   MemoryReader metaReader(section);
+   while (!metaReader.Eof()) {
+      ident_t name = metaReader.getLiteral(DEFAULT_STR);
+      if (name.compare(extModule->Name()))
+         return;
+   }
+
+   // otherwise add it to the list
+   MemoryWriter metaWriter(section);
+
+   metaWriter.writeLiteral(extModule->Name().c_str());
+}
+
+bool CompilerScope :: includeModule(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)
+{
+   // check if the module exists
+   _Module* extModule = project->loadModule(name, true);
+   if (extModule) {
+      ident_t value = retrieve(importedNs.start(), name, NULL);
+      if (value == NULL) {
+         importedNs.add(name.clone());
+
+         saveIncludedModule(extModule);
+
+         return true;
+      }
+      else duplicateInclusion = true;
+   }
+   return false;
+}

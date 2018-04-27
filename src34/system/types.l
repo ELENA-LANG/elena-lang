@@ -24,7 +24,7 @@ field           = #16392.
 method          = #16393.
 __loop          = #16394.
 //nonstructural   = #8204.
-//import          = #16395.
+import          = #16395.
 //__extern        = #16396.
 //closure         = #8205.
 //mixin           = #8206.
@@ -47,7 +47,7 @@ __int           = #11.
 __ptr           = #12.
 __real          = #15.
 __mssg          = #19.
-//__subj          = #18.
+__subj          = #18.
 //__extmssg       = #21.
 //__tape_mixin    = #8209.
 //__symbol        = #22.
@@ -79,8 +79,8 @@ type real       = system'RealNumber.
 type char       = system'CharValue.
 type mssg       = system'Message.
 //type ext_mssg   = system'ExtensionMessage.
-//
-//type subject    = system'Signature.
+
+type signature  = system'Signature.
 //type symbol_ref = system'Symbol.
 
 // === basic dynamic types ===

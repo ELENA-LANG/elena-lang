@@ -3244,25 +3244,25 @@ void DerivationTransformer :: declareType(/*SyntaxWriter& writer, */SNode node, 
 //   return !invalid;
 }
 
-////void DerivationReader :: includeModule(SNode ns, _CompilerScope& scope)
-////{
-////   ident_t name = ns.findChild(lxIdentifier, lxReference).findChild(lxTerminal).identifier();
-////   if (name.compare(STANDARD_MODULE))
-////      // system module is included automatically - nothing to do in this case
-////      return;
-////
-////   bool duplicateExtensions = false;
-////   bool duplicateAttributes = false;
-////   bool duplicateInclusion = false;
-////   if (scope.includeModule(name, duplicateExtensions, duplicateAttributes, duplicateInclusion)) {
-////      if (duplicateExtensions)
-////         scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
-////   }
-////   else if (duplicateInclusion) {
-////      scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, ns);
-////   }
-////   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
-////}
+void DerivationTransformer :: includeModule(SNode ns, DerivationScope& scope)
+{
+   ident_t name = ns.findChild(lxIdentifier, lxReference).identifier();
+   if (name.compare(STANDARD_MODULE))
+      // system module is included automatically - nothing to do in this case
+      return;
+
+   //bool duplicateExtensions = false;
+   bool duplicateAttributes = false;
+   bool duplicateInclusion = false;
+   if (scope.compilerScope->includeModule(*scope.imports, name, duplicateInclusion)) {
+      //if (duplicateExtensions)
+      //   scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
+   }
+   else if (duplicateInclusion) {
+      scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, ns);
+   }
+   else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, ns);
+}
 
 bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& scope)
 {
@@ -3317,9 +3317,9 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
                }
                else attr = daAccessor;
                break;
-//            case V_IMPORT:
-//               attr = daImport;
-//               break;
+            case V_IMPORT:
+               attr = daImport;
+               break;
 //            case V_EXTERN:
 //               attr = (DeclarationAttr)(daExtern | daTemplate | daBlock);
 //               break;
@@ -3362,13 +3362,16 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
 //      return retVal;
       return true;
    }
-//   else if (declType == daImport) {
-//      SNode name = goToNode(attributes, lxNameAttr);
-//
-//      includeModule(name, *scope.moduleScope);
-//
-//      return true;
-//   }
+   else if (declType == daImport) {
+      node = lxIdle;
+
+      SNode name = node.prevNode();
+      if (name == lxNameAttr) {
+         includeModule(name, scope);
+
+         return true;
+      }
+   }
    else if (test(declType, daTemplate)) {
       node = lxTemplate;
 
@@ -3983,12 +3986,12 @@ void DerivationTransformer :: recognizeRootScope(SNode node, DerivationScope& sc
    }
 }
 
-void DerivationTransformer :: recognize(_CompilerScope& scope, SNode node, ident_t sourcePath, ident_t ns)
+void DerivationTransformer :: recognize(_CompilerScope& scope, SNode node, ident_t sourcePath, ident_t ns, IdentifierList* imports)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxScope) {
-         DerivationScope rootScope(&scope, sourcePath, ns, NULL);
+         DerivationScope rootScope(&scope, sourcePath, ns, imports);
          setIdentifier(current);
 
          recognizeRootScope(current, rootScope);
@@ -3997,10 +4000,10 @@ void DerivationTransformer :: recognize(_CompilerScope& scope, SNode node, ident
    }
 }
 
-void DerivationTransformer :: recognize(_CompilerScope& scope, ident_t sourcePath, ident_t ns)
+void DerivationTransformer :: recognize(_CompilerScope& scope, ident_t sourcePath, ident_t ns, IdentifierList* imports)
 {
 //   // load already declared attributes in the current module
 //   loadAttributes(scope, scope.module->Name(), attributes);
    
-   recognize(scope, _root.firstChild(), sourcePath, ns);
+   recognize(scope, _root.firstChild(), sourcePath, ns, imports);
 }

@@ -80,7 +80,7 @@
 #define V_FIELD          (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
 #define V_LOOP           (ref_t)-16394
-//#define V_IMPORT         (ref_t)-16395
+#define V_IMPORT         (ref_t)-16395
 //#define V_EXTERN         (ref_t)-16396
 #define V_ATTRTEMPLATE   (ref_t)-16398
 #define V_ACCESSOR       (ref_t)-16399
@@ -268,10 +268,13 @@ struct _CompilerScope
       int col = terminal.findChild(lxCol).argument;
       int row = terminal.findChild(lxRow).argument;
       ident_t identifier = terminal.identifier();
-      //if (emptystr(identifier))
-      //   identifier = terminal.findChild(lxTerminal).identifier();
 
       project->raiseWarning(level, message, sourcePath, row, col, identifier);
+   }
+
+   void raiseWarning(int level, const char* message, ident_t sourcePath, ident_t identifier)
+   {
+      project->raiseWarning(level, message, sourcePath, 0, 0, identifier);
    }
 
    void raiseWarning(int level, const char* message, ident_t sourcePath)
@@ -280,6 +283,8 @@ struct _CompilerScope
    }
 
    virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters) = 0;
+
+   virtual bool includeModule(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
    _CompilerScope()
       : attributes(0), savedPaths(-1)
