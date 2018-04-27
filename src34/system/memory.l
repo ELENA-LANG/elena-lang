@@ -1784,9 +1784,9 @@ public class literalConvertor =
         T<byte,12> buffer.
         int        length := 0.
         
-        self convert(aNumber, T<bytearray>(buffer), length).
+        self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer)
+        ^ LiteralValue new(0, length, T<bytearray>(buffer))
     ]
     
     /// Converts the parameter to the literal value
@@ -1795,9 +1795,9 @@ public class literalConvertor =
         T<byte,12> buffer.
         int        length := 0.
         
-        self convert(aNumber, T<bytearray>(buffer), length).
+        self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer)
+        ^ LiteralValue new(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -1812,7 +1812,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer)
+        ^ LiteralValue new(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -1827,7 +1827,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer)
+        ^ LiteralValue new(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -1842,7 +1842,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer).
+        ^ LiteralValue new(0, length, T<bytearray>(buffer)).
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1861,7 +1861,7 @@ public class literalConvertor =
         
         self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer)
+        ^ LiteralValue new(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1872,7 +1872,7 @@ public class literalConvertor =
         
         self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer)
+        ^ LiteralValue new(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1887,7 +1887,7 @@ public class literalConvertor =
         
         self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer)
+        ^ LiteralValue new(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1902,7 +1902,7 @@ public class literalConvertor =
         
         self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer).
+        ^ LiteralValue new(0, length, T<bytearray>(buffer)).
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1917,7 +1917,7 @@ public class literalConvertor =
         
         self convert(aNumber, radix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer).
+        ^ LiteralValue new(0, length, T<bytearray>(buffer)).
     ]
 
     /// Converts the parameter to the literal value
@@ -1932,7 +1932,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer).
+        ^ LiteralValue new(0, length, T<bytearray>(buffer)).
     ]
 
     /// Converts UTF-16 literal to UTF-8 one
@@ -1950,7 +1950,7 @@ public class literalConvertor =
         [
             self convert(aLiteral, T<bytearray>(buffer), &m).
             
-            ^ LiteralValue new(0, m, buffer)
+            ^ LiteralValue new(0, m, T<bytearray>(buffer))
         ].
 
         literal retVal := emptyLiteralValue.
@@ -1964,7 +1964,7 @@ public class literalConvertor =
             
             self convert(aLiteral Substring(i, page), T<bytearray>(buffer)buffer, &m).
             
-            retVal := retVal add(LiteralValue new(0, m, T<bytearray>(buffer)buffer)).
+            retVal := retVal add(LiteralValue new(0, m, T<bytearray>(buffer))).
             
             i := i + page.
             l := l - page.

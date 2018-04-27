@@ -270,6 +270,7 @@ enum LexicalType
    lxFPUTarget       = 0x20041,
 //   lxFalseAttribute   = 0x20042,
 //   lxTemplateParamAttr = 0x20043,
+   lxRefAttribute    = 0x20042,
 
    lxTempAttr        = 0x2010D,
 };

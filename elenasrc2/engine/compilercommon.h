@@ -199,7 +199,7 @@ struct _CompilerScope
    ref_t             realReference;
    ref_t             signatureReference;
    ref_t             messageReference;
-   ref_t extMessageReference;
+   ref_t             extMessageReference;
    ref_t             boolReference;
    ref_t             literalReference;
    ref_t             wideReference;

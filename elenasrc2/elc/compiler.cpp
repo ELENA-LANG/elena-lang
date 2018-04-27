@@ -1891,11 +1891,12 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
 
                flags |= value;
             }
-         }
-//      }
-//      else if (current == lxClassRefAttr) {
+         //}
+      }
+      else if (current == lxClassRefAttr) {
+         scope.raiseError(errInvalidSyntax, current);
 //         current.set(lxTarget, scope.moduleScope->module->mapReference(current.identifier(), false));
-//      }
+      }
       current = current.nextNode();
    }
 }
@@ -6299,6 +6300,12 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root/*, bool& closu
    while (current != lxNone) {
       if (current == lxClassFlag) {
          scope.info.header.flags |= current.argument;
+         if (test(current.argument, elExtension)) {
+            SNode argRef = current.findChild(lxClassRefAttr);
+            if (argRef != lxNone)
+               extensionTypeRef = scope.moduleScope->mapFullReference(argRef.identifier(), true);
+         }
+         
       }
 //      else if (current == lxTarget) {
 //         extensionTypeRef = current.argument;

@@ -187,7 +187,7 @@ class DerivationTransformer //: public _DerivationTransformer
       daBlock       = 0x1800,
       daDblBlock    = 0x3800,
 //      daNestedBlock = 0x4800,
-//      daExtension   = 0x8000
+      daExtension   = 0x8000
    };
 
    SNode       _root;

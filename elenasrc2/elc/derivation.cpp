@@ -1448,6 +1448,13 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
       else if (current.compare(lxAttributeValue, lxIdle)) {
 
       }
+      else if (current == lxRefAttribute) {
+         // if it is an attribute with a reference body - treat it like T<> template
+         writer.newNode(lxAttribute, current.argument);
+         current.setArgument(V_TYPETEMPL);
+         generateAttributeTemplate(writer, current, scope, templateMode, expressionMode);
+         writer.closeNode();
+      }
       else break;
 
       current = current.prevNode();
@@ -3299,9 +3306,13 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
             case V_TEMPLATE:
                attr = daTemplate;
                break;
-//            case V_EXTENSION:
-//               attr = daExtension;
-//               break;
+            case V_EXTENSION:
+               attr = daExtension;
+               if (current.existChild(lxAttributeValue) && SyntaxTree::countChild(current, lxAttributeValue) == 1) {
+                  // HOTFIX : recognize typified extension
+                  current = lxRefAttribute;
+               }
+               break;
             case V_FIELD:
                attr = daField;
                break;

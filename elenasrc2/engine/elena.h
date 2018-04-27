@@ -874,7 +874,7 @@ inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* import
    }
    else if (exportRef) {
       ident_t reference = exporter->resolveReference(exportRef);
-      if (isWeakReference(reference)) {
+      if (isWeakReference(reference) && !isTemplateWeakReference(reference)) {
          IdentifierString fullName(exporter->Name(), reference);
 
          return importer->mapReference(fullName.c_str());
