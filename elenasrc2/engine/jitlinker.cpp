@@ -609,7 +609,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
       void* parentVAddress = NULL;
       if (header.parentRef != 0)
-         parentVAddress = resolve(sectionInfo.module->resolveReference(header.parentRef), mskVMTRef, true);
+         parentVAddress = resolve(ReferenceInfo(sectionInfo.module, sectionInfo.module->resolveReference(header.parentRef)), mskVMTRef, true);
 
       // fix VMT
       _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);

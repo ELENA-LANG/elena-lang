@@ -39,22 +39,22 @@ extension outputOp
 //    [
 //        self writeLine.
 //    ]
-//            
-//    generic printLine(object<> list)
-//    [
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            self write(obj~convertorOp toLiteral).            
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self writeLine
-//    ]    
-//
+            
+    generic printLine(dynamic<object> list)
+    [
+        int len := list length.
+        int i := 0.
+        while (i < len)
+        [
+            object obj := list[i].
+            self write(obj~convertorOp toLiteral).            
+            
+            i := i + 1
+        ].
+        
+        ^ self writeLine
+    ]    
+
 //    generic printPaddingRight(object<> list)
 //    [
 //        textbuffer aBuffer := TextBuilder new.

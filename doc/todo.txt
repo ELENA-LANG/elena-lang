@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign                                                                           
+                 * test classOp : test if object is subclass of #100
+
                  * resolving multi-method extensions at compile-time
 
                  * regression test : verify all closed issues in GitHub
