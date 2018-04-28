@@ -2868,13 +2868,13 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
       return roleRef2;
    }
    else if (generalRoleRef2) {
-      // if it is strong typed message and general extension
-      dynamicReqiered = true;
-
+      // if it is general message and strong typed extension
       return generalRoleRef2;
    }
    else if (roleRef1) {
       // if it is strong typed message and general extension
+      dynamicReqiered = true;
+
       messageRef = strongMessage1;
 
       return roleRef1;
