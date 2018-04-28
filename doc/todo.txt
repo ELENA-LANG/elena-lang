@@ -3,7 +3,7 @@ In development:
 ------                              
 	                            
               dev - redesign                                                                           
-                 * optimize embeddable length call
+                 * resolving multi-method extensions at compile-time
 
                  * regression test : verify all closed issues in GitHub
                  * Open argument list : assigning 

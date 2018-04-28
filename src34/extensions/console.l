@@ -1,26 +1,24 @@
 //import system'routines.
 //import system'text.
-//
-//// --- outputOp ---
-//
-//extension outputOp
-//{
-//    generic print(object<> list)
-//    [
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            self write(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self
-//    ]
-//    
+
+// --- outputOp ---
+
+extension outputOp
+{
+    generic print(dynamic<object> list)
+    [
+        int len := list length.
+        int i := 0.
+        while (i < len)
+        [
+            object obj := list[i].
+            
+            self write(obj toLiteral).
+            
+            i := i + 1
+        ].
+    ]
+    
 //    generic printWide(object<> list)
 //    [
 //        int len := list length.
@@ -156,8 +154,8 @@
 //            
 //        ^ self
 //    ]    
-//}
-//
+}
+
 //// --- formatterOp ---
 //
 //class $helper =

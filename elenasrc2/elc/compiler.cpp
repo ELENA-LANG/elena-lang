@@ -205,7 +205,7 @@ inline bool isConstantArguments(SNode node)
 // --- Compiler::NamespaceScope ---
 
 Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported, bool withFullInfo)
-   : Scope(moduleScope), constantHints(INVALID_REF), extensions(NULL, freeobj)/*, autoExtensions(NULL, freeobj), */
+   : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0))/*, autoExtensions(NULL, freeobj), */
 {
    this->ns = ns;
    this->sourcePath = path;
@@ -216,10 +216,7 @@ Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t 
       importedNs.add(ns);
 
       if (withFullInfo) {
-         bool duplicateExtensions = false;
-         loadModuleInfo(ns, duplicateExtensions);
-         if (duplicateExtensions)
-            raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
+         loadModuleInfo(ns);
       }         
    }
 
@@ -653,7 +650,7 @@ ref_t Compiler::NamespaceScope :: loadSymbolExpressionInfo(SymbolExpressionInfo&
 //   }
 //}
 
-void Compiler::NamespaceScope :: loadExtensions(ident_t ns, bool& duplicateExtensions)
+void Compiler::NamespaceScope :: loadExtensions(ident_t ns)
 {
    ReferenceNs sectionName(ns, EXTENSION_SECTION);
 
@@ -672,45 +669,12 @@ void Compiler::NamespaceScope :: loadExtensions(ident_t ns, bool& duplicateExten
             role_ref = importReference(extModule, role_ref, module);
          }
 
-         if(!extensionHints.exist(message, type_ref)) {
-            extensionHints.add(message, type_ref);
-
-            SubjectMap* typeExtensions = extensions.get(type_ref);
-            if (!typeExtensions) {
-               typeExtensions = new SubjectMap();
-
-               extensions.add(type_ref, typeExtensions);
-            }
-
-            typeExtensions->add(message, role_ref);
-         }
-         else {
-            SubjectMap* typeExtensions = extensions.get(type_ref);
-            ref_t duplicateRef = typeExtensions->get(message);
-
-            if (role_ref != duplicateRef) {
-               // HOTFIX : ignore warning if it is virtual extension (for generic extension with open argument list)
-               IdentifierString warningStr(wrnDuplicateInfo);
-               ref_t signRef = 0;
-               warningStr.append(module->resolveAction(getAction(message), signRef));
-               warningStr.append('[');
-               warningStr.appendInt(getAbsoluteParamCount(message));
-               warningStr.append("] - ");
-
-               warningStr.append(module->resolveReference(role_ref));
-               warningStr.append(" and ");
-               warningStr.append(module->resolveReference(duplicateRef));
-
-               raiseWarning(WARNING_LEVEL_3, warningStr.c_str());
-
-               duplicateExtensions = true;
-            }
-         }
+         extensions.add(message, Pair<ref_t, ref_t>(type_ref, role_ref));
       }
    }
 }
 
-bool Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t typeRef, ref_t role)
+void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t typeRef, ref_t role)
 {
    if (typeRef == INVALID_REF || typeRef == moduleScope->superReference)
       typeRef = 0;
@@ -731,21 +695,7 @@ bool Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t typeRef, ref
    metaWriter.writeDWord(message);
    metaWriter.writeDWord(role);
 
-   if (!extensionHints.exist(message, typeRef)) {
-      extensionHints.add(message, typeRef);
-
-      SubjectMap* typeExtensions = extensions.get(typeRef);
-      if (!typeExtensions) {
-         typeExtensions = new SubjectMap();
-
-         extensions.add(typeRef, typeExtensions);
-      }
-
-      typeExtensions->add(message, role);
-
-      return true;
-   }
-   else return false;
+   extensions.add(message, Pair<ref_t, ref_t>(typeRef, role));
 }
 
 //void Compiler::ModuleScope :: saveAction(ref_t mssg_ref, ref_t reference)
@@ -2839,28 +2789,28 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
    return encodeMessage(actionRef, paramCount) | actionFlags;
 }
 
-ref_t Compiler :: mapExtension(_CompilerScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef)
-{
-   auto it = typeExtensions->getIt(messageRef);
-   while (!it.Eof()) {
-      ref_t ref = *it;
-      ref_t resolvedMessage = _logic->resolveMultimethod(scope, messageRef, ref, implicitSignatureRef);
-      if (resolvedMessage) {
-         messageRef = resolvedMessage;
-
-         return ref;
-      }
-
-      it = typeExtensions->nextIt(messageRef, it);
-   }
-
-   return 0;
-}
+//ref_t Compiler :: mapExtension(_CompilerScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef)
+//{
+//   auto it = typeExtensions->getIt(messageRef);
+//   while (!it.Eof()) {
+//      ref_t ref = *it;
+//      ref_t resolvedMessage = _logic->resolveMultimethod(scope, messageRef, ref, implicitSignatureRef);
+//      if (resolvedMessage) {
+//         messageRef = resolvedMessage;
+//
+//         return ref;
+//      }
+//
+//      it = typeExtensions->nextIt(messageRef, it);
+//   }
+//
+//   return 0;
+//}
 
 ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, bool& dynamicReqiered)
 {
-   // check typed extension if the type available
-   ref_t typeRef = 0;
+//   // check typed extension if the type available
+//   ref_t typeRef = 0;
    ref_t extRef = 0;
 
    ref_t objectRef = resolveObjectReference(scope, object);
@@ -2872,68 +2822,71 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
       objectRef = 0;
    }
 
+   // general extension
+   ref_t generalRoleRef1 = 0;
+   ref_t roleRef1 = 0;
+   ref_t strongMessage1 = 0;
+
+   // typified extension
+   ref_t generalRoleRef2 = 0;
+   ref_t roleRef2 = 0;
+   ref_t strongMessage2 = 0;
+
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-
-   if (objectRef != 0 && nsScope->extensionHints.exist(messageRef, objectRef)) {
-      typeRef = objectRef;
-   }
-   else {
-      if (nsScope->extensionHints.exist(messageRef)) {
-         // if class reference available - select the possible type
-         if (objectRef != 0) {
-            SubjectMap::Iterator it = nsScope->extensionHints.start();
-            while (!it.Eof()) {
-               if (it.key() == messageRef) {
-                  if (_logic->isCompatible(*scope.moduleScope, *it, objectRef)) {
-                     typeRef = *it;
-
-                     break;
-                  }
+   for (auto it = nsScope->extensions.getIt(messageRef); !it.Eof(); it = nsScope->extensions.nextIt(messageRef, it)) {
+      if (_logic->isCompatible(*scope.moduleScope, (*it).value1, objectRef)) {
+         ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, (*it).value2, implicitSignatureRef);
+         if (resolvedMessageRef) {
+            if ((*it).value1) {
+               if (!roleRef2) {
+                  strongMessage2 = resolvedMessageRef;
+                  roleRef2 = (*it).value2;
                }
-
-               it++;
+            }
+            else {
+               strongMessage1 = resolvedMessageRef;
+               roleRef1 = (*it).value2;
+            }
+         }
+         else {
+            if ((*it).value1) {
+               if (!generalRoleRef2)
+                  generalRoleRef2 = (*it).value2;
+            }
+            else {
+               if (!generalRoleRef1)
+                  generalRoleRef1 = (*it).value2;
             }
          }
       }
    }
 
-   // try to resolve strong typed extension and strong typed message
-   if (implicitSignatureRef) {
-      if (typeRef != 0) {
-         extRef = mapExtension(*scope.moduleScope, nsScope->extensions.get(typeRef), messageRef, implicitSignatureRef);
-         if (extRef)
-            return extRef;
-      }
+   if (roleRef2) {
+      // if it is strong typed message and extension
+      messageRef = strongMessage2;
 
-      // if no match found - try to resolve general extension and strong typed message
-      extRef = mapExtension(*scope.moduleScope, nsScope->extensions.get(0), messageRef, implicitSignatureRef);
-      if (extRef) {
-         dynamicReqiered = true;
+      return roleRef2;
+   }
+   else if (generalRoleRef2) {
+      // if it is strong typed message and general extension
+      dynamicReqiered = true;
 
-         return extRef;
-      }         
+      return generalRoleRef2;
+   }
+   else if (roleRef1) {
+      // if it is strong typed message and general extension
+      messageRef = strongMessage1;
+
+      return roleRef1;
+   }
+   else if (generalRoleRef1) {
+      // if it is general message and extension
+      dynamicReqiered = true;
+
+      return generalRoleRef1;
    }
 
-   // if no match found - try to resolve strong typed extension and genral message
-   if (typeRef != 0) {
-      SubjectMap* typeExtensions = nsScope->extensions.get(typeRef);
-
-      if (typeExtensions)
-         extRef = typeExtensions->get(messageRef);
-   }
-
-   // if no match found - try to resolve general extension and general message
-   if (extRef == 0) {
-      SubjectMap* typeExtensions = nsScope->extensions.get(0);
-
-      if (typeExtensions) {
-         dynamicReqiered = true;
-
-         extRef = typeExtensions->get(messageRef);
-      }
-   }
-
-   return extRef;
+   return 0;
 }
 
 void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
@@ -3458,7 +3411,6 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
 {
    ref_t resolvedMessageRef = 0;
    ref_t targetRef = resolveObjectReference(scope, target);
-   ref_t extensionRef = 0;
 
    resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef);
 
@@ -3474,23 +3426,33 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
          return generalMessageRef;
       }
 
-      if (implicitSignatureRef) {
-         extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, dynamicReqiered);
-         if (extensionRef != 0) {
-            // if there is an extension to handle the compile-time resolved message - use it
-            target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
-
-            return generalMessageRef;
-         }
-      }
-
-      extensionRef = mapExtension(scope, generalMessageRef, 0, target, dynamicReqiered);
+      ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, dynamicReqiered);
       if (extensionRef != 0) {
-         // if there is an extension to handle the general message - use it
+         // if there is an extension to handle the compile-time resolved message - use it
          target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
 
          return generalMessageRef;
       }
+
+      //extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, dynamicReqiered);
+
+      //if (implicitSignatureRef) {
+      //   extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, dynamicReqiered);
+      //   if (extensionRef != 0) {
+      //      // if there is an extension to handle the compile-time resolved message - use it
+      //      target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
+
+      //      return generalMessageRef;
+      //   }
+      //}
+
+      //extensionRef = mapExtension(scope, generalMessageRef, 0, target, dynamicReqiered);
+      //if (extensionRef != 0) {
+      //   // if there is an extension to handle the general message - use it
+      //   target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
+
+      //   return generalMessageRef;
+      //}
    }
 
    // otherwise - use the general message
@@ -6598,12 +6560,25 @@ void Compiler :: saveExtension(ClassScope& scope, ref_t message)
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
    nsScope->saveExtension(message, scope.extensionClassRef, scope.reference);
-   if (isOpenArg(message) && _logic->isMethodGeneric(scope.info, message)) {
+   if (isOpenArg(message)/* && _logic->isMethodGeneric(scope.info, message)*/) {
       // if it is an extension with open argument list generic handler
       // creates the references for all possible number of parameters
       for (int i = 1; i < OPEN_ARG_COUNT; i++) {
          nsScope->saveExtension(overwriteParamCount(message, i), scope.extensionClassRef, scope.reference);
       }
+   }
+}
+
+inline bool isGeneralMessage(_Module* module, ref_t message)
+{
+   if (getParamCount(message) == 0) {
+      return true;
+   }
+   else {
+      ref_t signRef = 0;
+      module->resolveAction(getAction(message), signRef);
+
+      return signRef == 0;
    }
 }
 
@@ -6664,11 +6639,6 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       else  if (scope.info.methods.exist(message | SEALED_MESSAGE))
          scope.raiseError(errDuplicatedMethod, current);
 
-      // save extensions if required ; private method should be ignored
-      if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
-         saveExtension(scope, message);
-      }
-      
       if (included && _logic->isEmbeddable(scope.info)) {
          // add a stacksafe attribute for the embeddable structure automatically
          scope.info.methodHints.exclude(Attribute(message, maHint));
@@ -6695,6 +6665,16 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.info.methodHints.add(Attribute(message, maOverloadlist), namespaceScope->mapAnonymous());
 
          scope.info.header.flags |= elWithMuti;
+
+         // save extensions if required ; private method should be ignored
+         if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
+            // NOTE : only general message should be saved
+            saveExtension(scope, message);
+         }
+      }
+      else if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate) && isGeneralMessage(scope.module, message)) {
+         // save the extension message without parameters as well
+         saveExtension(scope, message);
       }
    }
 }
