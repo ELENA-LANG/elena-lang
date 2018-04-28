@@ -39,8 +39,7 @@ abstract        = #8210.
 public          = #8211.
 private         = #8212.
 
-//
-//args            = #32. 
+__args          = #32. 
 
 __string        = #8200.
 __int           = #11.

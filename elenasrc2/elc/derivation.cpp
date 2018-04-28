@@ -1,4 +1,5 @@
 //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Engine Derivation Tree class implementation
@@ -2850,7 +2851,8 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
    }
 
    if (isPrimitiveRef(classRef)) {
-      if (arrayMode) {
+      if (arrayMode || classRef == V_ARGARRAY) {
+         // HOTFIX : recognize the open argument extension
          writer.newNode(lxAttribute, classRef);
       }
       else scope.raiseError(errInvalidSubject, node);

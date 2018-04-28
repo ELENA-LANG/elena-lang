@@ -663,9 +663,14 @@ void Compiler::NamespaceScope :: loadExtensions(ident_t ns, bool& duplicateExten
    if (section) {
       MemoryReader metaReader(section);
       while (!metaReader.Eof()) {
-         ref_t type_ref = importReference(extModule, metaReader.getDWord(), module);
-         ref_t message = importMessage(extModule, metaReader.getDWord(), module);
-         ref_t role_ref = importReference(extModule, metaReader.getDWord(), module);
+         ref_t type_ref = metaReader.getDWord();
+         ref_t message = metaReader.getDWord();
+         ref_t role_ref = metaReader.getDWord();
+         if (extModule != module) {
+            type_ref = importReference(extModule, type_ref, module);
+            message = importMessage(extModule, message, module);
+            role_ref = importReference(extModule, role_ref, module);
+         }
 
          if(!extensionHints.exist(message, type_ref)) {
             extensionHints.add(message, type_ref);
@@ -6301,11 +6306,18 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root/*, bool& closu
       if (current == lxClassFlag) {
          scope.info.header.flags |= current.argument;
          if (test(current.argument, elExtension)) {
-            SNode argRef = current.findChild(lxClassRefAttr);
-            if (argRef != lxNone)
+            SNode argRef = current.findChild(lxClassRefAttr, lxAttribute);
+            if (argRef == lxClassRefAttr) {
                extensionTypeRef = scope.moduleScope->mapFullReference(argRef.identifier(), true);
-         }
-         
+            }
+            else if (argRef == lxAttribute) {
+               if (argRef.argument == V_ARGARRAY) {
+                  // HOTFIX : recognize open argument extension
+                  extensionTypeRef = V_ARGARRAY;
+               }
+               else scope.raiseError(errInvalidHint, root);
+            }
+         }         
       }
 //      else if (current == lxTarget) {
 //         extensionTypeRef = current.argument;

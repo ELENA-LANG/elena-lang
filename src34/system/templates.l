@@ -144,7 +144,7 @@ __accessor __accessor template vprop :: prop_type,prop_name
 
 __accessor template rvprop :: type,prop_name
 {
-    embeddable type prop_name
+    stacksafe embeddable type prop_name
     [
         type val := 0.        
         self __get(&val).

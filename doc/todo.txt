@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign                                                                           
+                 * optimize embeddable length call
+
                  * regression test : verify all closed issues in GitHub
                  * Open argument list : assigning 
 
@@ -14,7 +16,6 @@ In development:
                  * migrate rest of the code : try-catch, try template, switch, generics, collections, operations with
                    open argument list
 
-                 * optimize embeddable length call
                  * optimize embeddable function call
                  * optimize embeddable function2 call
 

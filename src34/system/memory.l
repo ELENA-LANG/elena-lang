@@ -1735,15 +1735,15 @@ public sealed Array :: Indexable, array<object>
         = Array new(self).
 }
 
-//// --- $paramsOp ---
-//
-//args extension paramsOp
-//{
-//    stacksafe readLengthTo vint:aLength
-//        => system'core_routines'__args.            
-//        
-//    int rvprop length :: readLengthTo.
-//}
+// --- paramsOp ---
+
+extension<__args> paramsOp
+{
+    stacksafe readLengthTo(ref<int> aLength)
+        => system'core_routines'__args.            
+        
+    int rvprop length :: readLengthTo.
+}
 
 // === Convertors ===
 
