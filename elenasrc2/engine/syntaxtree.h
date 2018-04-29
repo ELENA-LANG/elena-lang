@@ -185,7 +185,7 @@ enum LexicalType
    lxOverridden      = 0x04047,
 
    lxBaseParent      = 0x10023,
-//   lxAssignOperator  = 0x10024,
+   lxAssignOperator  = 0x10024,
    lxOperator        = 0x10025,
    lxIntVariable     = 0x10028,
    lxLongVariable    = 0x10029,

@@ -3230,61 +3230,61 @@ class realConvertor =
         = T<real>(o).
 }.
 
-//// --- realOpController ---
-//
-//class realOpController =
-//{
-//    stacksafe exp real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe abs real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe ln real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe round real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe truncate real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe sin real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe cos real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe arctan real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//                
-//    stacksafe sqrt real:aReal vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe pi vreal:aRetVal
-//        => system'core_routines'__real.
-//        
-//    stacksafe embeddable real pi
-//    [
-//        real aRetVal := 0.0r.
-//        $self pi vreal:aRetVal.
-//        
-//        ^ aRetVal
-//    ]        
-//    
-//    stacksafe embeddable real e
-//    [
-//        real aRetVal := 0.0r.
-//        $self exp real:1.0r vreal:aRetVal.
-//        
-//        ^ aRetVal
-//    ]        
-//}.
-//
-//real pi_value = realOpController pi.
-//
-//real e_value = realOpController e.
-//
+// --- realOpController ---
+
+class realOpController =
+{
+    stacksafe exp(real aReal, ref<real> aRetVal)
+        => system'core_routines'__real.
+        
+    stacksafe abs(real aReal, ref<real> aRetVal)
+        => system'core_routines'__real.
+        
+    stacksafe ln(real aReal, ref<real> aRetVal)
+        => system'core_routines'__real.
+        
+    stacksafe round(real aReal, ref<real> aRetVal)
+        => system'core_routines'__real.
+        
+    stacksafe truncate(real aReal, ref<real> aRetVal)
+        => system'core_routines'__real.
+        
+    stacksafe sin(real aReal, ref<real> aRetVal)
+        => system'core_routines'__real.
+        
+    stacksafe cos(real aReal, ref<real> aRetVal)
+        => system'core_routines'__real.
+        
+    stacksafe arctan(real aReal, ref<real> aRetVal)
+        => system'core_routines'__real.
+                
+    stacksafe sqrt(real aReal, ref<real> aRetVal)
+        => system'core_routines'__real.
+        
+    stacksafe pi(ref<real> aRetVal)
+        => system'core_routines'__real.
+        
+    stacksafe embeddable real pi
+    [
+        real aRetVal := 0.0r.
+        self pi(&aRetVal).
+        
+        ^ aRetVal
+    ]        
+    
+    stacksafe embeddable real e
+    [
+        real aRetVal := 0.0r.
+        self exp(1.0r, &aRetVal).
+        
+        ^ aRetVal
+    ]        
+}.
+
+real public pi_value = realOpController pi.
+
+real public e_value = realOpController e.
+
 //// --- obsolete variables ---
 //
 //class Integer =

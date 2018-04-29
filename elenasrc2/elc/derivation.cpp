@@ -93,9 +93,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsL5Operation:
          _writer.newNode(lxOperator);
          break;
-//      case nsL8Operation:
-//         _writer.newNode(lxAssignOperator);
-//         break;
+      case nsL8Operation:
+         _writer.newNode(lxAssignOperator);
+         break;
       case nsArrayOperation:
          _writer.newNode(lxOperator, REFER_MESSAGE_ID);
          break;
@@ -2364,59 +2364,59 @@ void DerivationTransformer :: generateSymbolTree(SyntaxWriter& writer, SNode nod
    writer.closeNode();
 }
 
-////void DerivationReader :: generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope)
-////{
-////   writer.newNode(lxExpression);
-////
-////   SNode loperand = node.findChild(lxObject);
-////   SNode operatorNode = node.findChild(lxAssignOperator);
-////
-////   if (loperand.nextNode() == lxOperator) {
-////      // HOTFIX : if it is an assign operator with array brackets
-////      SNode loperatorNode = loperand.nextNode();
-////
-////      writer.newBookmark();
-////      writer.newNode(lxExpression);
-////      generateObjectTree(writer, loperand, scope);
-////      copyOperator(writer, loperatorNode, scope);
-////      generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
-////      writer.closeNode();
-////      while (loperatorNode.nextNode() == lxOperator) {
-////         loperatorNode = loperatorNode.nextNode();
-////         generateObjectTree(writer, loperatorNode, scope);
-////      }      
-////      writer.removeBookmark();      
-////
-////      loperatorNode = loperand.nextNode();
-////      writer.appendNode(lxAssign);
-////      writer.newBookmark();
-////      writer.newNode(lxExpression);
-////      writer.newNode(lxExpression);
-////      generateObjectTree(writer, loperand, scope);
-////      copyOperator(writer, loperatorNode, scope);
-////      generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
-////      writer.closeNode();
-////      while (loperatorNode.nextNode() == lxOperator) {
-////         loperatorNode = loperatorNode.nextNode();
-////         generateObjectTree(writer, loperatorNode, scope);
-////      }
-////      writer.removeBookmark();
-////   }
-////   else {
-////      generateObjectTree(writer, loperand.firstChild(), scope);
-////      writer.appendNode(lxAssign);
-////      writer.newNode(lxExpression);
-////      generateObjectTree(writer, loperand.firstChild(), scope);
-////   }
-////
-////   IdentifierString operatorName(operatorNode.firstChild().findChild(lxTerminal).identifier(), 1);
-////   writer.appendNode(lxOperator, operatorName.c_str());
-////
-////   generateExpressionTree(writer, operatorNode, scope, EXPRESSION_OPERATOR_MODE);
-////   writer.closeNode();
-////
-////   writer.closeNode();
-////}
+void DerivationTransformer:: generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   writer.newNode(lxExpression);
+
+   SNode loperand = node.findChild(lxObject);
+   SNode operatorNode = node.findChild(lxAssignOperator);
+
+   if (loperand.nextNode() == lxOperator) {
+      // HOTFIX : if it is an assign operator with array brackets
+      SNode loperatorNode = loperand.nextNode();
+
+      writer.newBookmark();
+      writer.newNode(lxExpression);
+      generateObjectTree(writer, loperand, scope);
+      copyOperator(writer, loperatorNode, scope);
+      generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
+      writer.closeNode();
+      while (loperatorNode.nextNode() == lxOperator) {
+         loperatorNode = loperatorNode.nextNode();
+         generateObjectTree(writer, loperatorNode, scope);
+      }      
+      writer.removeBookmark();      
+
+      loperatorNode = loperand.nextNode();
+      writer.appendNode(lxAssign);
+      writer.newBookmark();
+      writer.newNode(lxExpression);
+      writer.newNode(lxExpression);
+      generateObjectTree(writer, loperand, scope);
+      copyOperator(writer, loperatorNode, scope);
+      generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
+      writer.closeNode();
+      while (loperatorNode.nextNode() == lxOperator) {
+         loperatorNode = loperatorNode.nextNode();
+         generateObjectTree(writer, loperatorNode, scope);
+      }
+      writer.removeBookmark();
+   }
+   else {
+      generateObjectTree(writer, loperand.firstChild(), scope);
+      writer.appendNode(lxAssign);
+      writer.newNode(lxExpression);
+      generateObjectTree(writer, loperand.firstChild(), scope);
+   }
+
+   IdentifierString operatorName(operatorNode.firstChild().identifier(), 1);
+   writer.appendNode(lxOperator, operatorName.c_str());
+
+   generateExpressionTree(writer, operatorNode, scope, EXPRESSION_OPERATOR_MODE);
+   writer.closeNode();
+
+   writer.closeNode();
+}
 
 bool DerivationTransformer :: checkPatternDeclaration(SNode node, DerivationScope&)
 {
@@ -2953,9 +2953,9 @@ void DerivationTransformer :: generateCodeTree(SyntaxWriter& writer, SNode node,
 //            else if (checkArrayDeclaration(current, scope)) {
 //               generateArrayVariableTree(writer, current, scope);
 //            }
-//            else if (current.existChild(lxAssignOperator)) {
-//               generateAssignmentOperator(writer, current, scope);
-//            }
+            else if (current.existChild(lxAssignOperator)) {
+               generateAssignmentOperator(writer, current, scope);
+            }
             else generateExpressionTree(writer, current, scope);
             break;
          case lxReturning:

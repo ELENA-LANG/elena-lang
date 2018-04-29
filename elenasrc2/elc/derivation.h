@@ -250,7 +250,7 @@ class DerivationTransformer //: public _DerivationTransformer
    void generateCodeExpression(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
-////   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateTemplateParameters(SNode& node, DerivationScope& scope, bool templateMode);
    void generateSubTemplate(SNode& node, DerivationScope& scope, bool templateMode);
    void generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope, bool templateMode);

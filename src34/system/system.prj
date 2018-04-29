@@ -22,6 +22,7 @@
        <include>events.l</include>
        <include>console.l</include>
        <include>win32_app.l</include>
+       <include>math\math.l</include>
        <include>io\win32_console.l</include>
      </module>
   </files>

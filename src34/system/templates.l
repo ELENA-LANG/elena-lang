@@ -153,18 +153,18 @@ __accessor template rvprop :: type,prop_name
     ]
 }
 
-//// --- fnprop ---
-//
-//__accessor template fnprop :: type,template_fn
-//{
-//    stacksafe embeddable type template_fn type:n
-//    [
-//        type retVal := 0.
-//        $self $get type:n var<type>:retVal.
-//        ^ retVal.            
-//    ]
-//}
-//
+// --- fnprop ---
+
+__accessor template fnprop :: type,template_fn
+{
+    stacksafe embeddable type template_fn(type n)
+    [
+        type retVal := 0.
+        self __get(n, &retVal).
+        ^ retVal.            
+    ]
+}
+
 //// --- fn2prop ---
 //
 //__accessor template fn2prop :: type,template_fn

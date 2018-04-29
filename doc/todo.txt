@@ -3,7 +3,7 @@ In development:
 ------                              
 	                            
               dev - redesign                                                                           
-                 * test classOp : test if object is subclass of #100
+                 * un comment intOp,byteOp, ...
 
                  * resolving multi-method extensions at compile-time
 
