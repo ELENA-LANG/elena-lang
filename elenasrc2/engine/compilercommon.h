@@ -85,7 +85,7 @@
 #define V_ATTRTEMPLATE   (ref_t)-16398
 #define V_ACCESSOR       (ref_t)-16399
 #define V_BLOCK          (ref_t)-16400
-//#define V_NESTEDBLOCK    (ref_t)-16401
+#define V_NESTEDBLOCK    (ref_t)-16401
 #define V_SET            (ref_t)-16402
 //
 //// obsolete

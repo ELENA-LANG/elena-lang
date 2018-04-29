@@ -955,14 +955,14 @@ void DerivationTransformer :: copyTreeNode(SyntaxWriter& writer, SNode current, 
          
             generateCodeTree(writer, scope.elseNode, *parentScope);
          }
-//         else if (current.argument == 2) {
-//            // if it is a code template parameter
-//            DerivationScope* parentScope = scope.parent;
-//         
-//            writer.newBookmark();
-//            generateObjectTree(writer, scope.nestedNode, *parentScope);
-//            writer.removeBookmark();
-//         }
+         else if (current.argument == 2) {
+            // if it is a code template parameter
+            DerivationScope* parentScope = scope.parent;
+         
+            writer.newBookmark();
+            generateObjectTree(writer, scope.nestedNode, *parentScope);
+            writer.removeBookmark();
+         }
       }
       else if (current.argument == INVALID_REF) {
          ref_t templateRef = generateNewTemplate(current, scope, &scope.parameterValues);
@@ -2077,15 +2077,15 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 //         writer.closeNode();
          break;
       case lxNestedClass:
-         //if (scope.type == DerivationScope::ttCodeTemplate && test(scope.mode, daNestedBlock)) {
-         //   writer.insert(lxTemplateParam, 2);
-         //   writer.closeNode();
-         //}
-         //else {
+         if (scope.type == DerivationScope::ttCodeTemplate && test(scope.mode, daNestedBlock)) {
+            writer.insert(lxTemplateParam, 2);
+            writer.closeNode();
+         }
+         else {
             recognizeScopeMembers(current, scope, MODE_ROOT);
 
             generateClassTree(writer, current, scope, -1);
-         //}
+         }
          writer.insert(lxExpression);
          writer.closeNode();
          break;
@@ -2914,8 +2914,8 @@ void DerivationTransformer :: generateCodeTemplateTree(SyntaxWriter& writer, SNo
          DerivationScope templateScope(&scope, attrRef);
          templateScope.exprNode = node.findChild(lxMessageParameter);
          templateScope.codeNode = node.findChild(lxCode);
-         //templateScope.nestedNode = node.findChild(lxNestedClass);
-         if (/*templateScope.nestedNode == lxNone || */templateScope.codeNode != lxNone) {
+         templateScope.nestedNode = node.findChild(lxNestedClass);
+         if (templateScope.nestedNode == lxNone || templateScope.codeNode != lxNone) {
             // if there is else code block
             templateScope.elseNode = templateScope.codeNode.nextNode();
          }
@@ -3345,12 +3345,12 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
                }
                else attr = daBlock;
                break;
-//            case V_NESTEDBLOCK:
-//               if (test(declType, daNestedBlock)) {
-//                  scope.raiseError(errInvalidHint, node);
-//               }
-//               else attr = daNestedBlock;
-//               break;
+            case V_NESTEDBLOCK:
+               if (test(declType, daNestedBlock)) {
+                  scope.raiseError(errInvalidHint, node);
+               }
+               else attr = daNestedBlock;
+               break;
             default:
                break;
          }
@@ -3428,10 +3428,10 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
          }
          else templateName.append("#0");
 
-         /*if (test(declType, daNestedBlock)) {
+         if (test(declType, daNestedBlock)) {
             templateName.append("#1");
          }
-         else */templateName.append("#0");
+         else templateName.append("#0");
 
          if (test(declType, daLoop)) {
             node.findChild(lxCode).injectNode(lxLoop);
@@ -3476,6 +3476,9 @@ void DerivationTransformer :: generateTemplateScope(SyntaxWriter& writer, SNode 
       }
       else if (name[index + 2] == '1') {
          scope.mode = daBlock;
+      }
+      if (name[index + 3] == '#' && name[index + 4] == '1') {
+         scope.mode |= daNestedBlock;
       }
 
       //scope.type = DerivationScope::ttCodeTemplate;

@@ -34,13 +34,13 @@ public symbol startUp =
         [
             system'core_routines'__exception register.
             
-/*            try(*/forwards'program()/*)*/
-//                {
-//                    on(Exception e) [ console writeLine:(e literal) ]
-//                    
-//                    on(AbortException e) []                    
-//                }.
-//    
+            try(forwards'program())
+                {
+                    on(Exception e) [ console writeLine(e literal) ]
+                    
+                    on(AbortException e) []                    
+                }.
+    
 //            events $onStop:$nil
         ]        
     }

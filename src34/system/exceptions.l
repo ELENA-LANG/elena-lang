@@ -182,7 +182,7 @@ public class InvalidArgumentException :: Exception
 
 // --- InvalidOperationException ---
 
-class InvalidOperationException :: Exception
+public class InvalidOperationException :: Exception
 {
     /// Creates the exception
     constructor new
@@ -224,7 +224,7 @@ public class NotSupportedException :: Exception
 // --- AbortException ---
 
 /// An abort exception 
-class AbortException :: Exception
+public class AbortException :: Exception
 {
     /// Creates the exception
     constructor new

@@ -4223,6 +4223,7 @@ void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scop
          if (catchNode) {
             SNode operationNode = current.firstChild();
             writer.newBookmark();
+            writer.appendNode(lxResult);
             while (operationNode != lxNone) {
                compileOperation(writer, operationNode, scope, /*objectInfo*/ObjectInfo(okObject), 0);
 
