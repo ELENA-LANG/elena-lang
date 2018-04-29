@@ -1128,7 +1128,7 @@ public sealed __string LiteralValue :: BaseValue
     stacksafe constructor new(int anIndex, int aSize, chararray anArray)
         => system'core_routines'__literal.
 
-    /*internal*/ stacksafe constructor new(int anIndex, int aSize, bytearray anArray)
+    internal stacksafe constructor new(int anIndex, int aSize, bytearray anArray)
         <= new(aSize);
     [
         system'core_routines'__literal copy(self, anIndex, aSize, anArray).
@@ -1288,7 +1288,7 @@ public sealed __string LiteralValue :: BaseValue
     stacksafe save(int anIndex, chararray anArray, ref<int> aRetVal)
         => system'core_routines'__literal.
 
-    stacksafe /*internal*/ save(int anIndex, bytearray anArray, int aRetVal)
+    stacksafe internal save(int anIndex, bytearray anArray, int aRetVal)
         => system'core_routines'__literal.
 
 //    /// Returns the string enumerator
@@ -1346,7 +1346,7 @@ public sealed __string WideLiteralValue :: BaseValue
     stacksafe constructor new(int anIndex, int aSize, chararray anArray)
         => system'core_routines'__wide.
 
-    /*internal*/ stacksafe constructor new(int anIndex, int aSize, shortarray anArray)
+    internal stacksafe constructor new(int anIndex, int aSize, shortarray anArray)
         <= new(aSize);
     [
         system'core_routines'__wide copy(self, anIndex, aSize, anArray).
@@ -1509,7 +1509,7 @@ public sealed __string WideLiteralValue :: BaseValue
     save(int anIndex, chararray anArray, ref<int> aLength)
         => system'core_routines'__wide.
 
-    /*internal*/save(int anIndex, shortarray anArray, int aRetVal)
+    internal save(int anIndex, shortarray anArray, int aRetVal)
         => system'core_routines'__wide.
 
 //    /// Returns the object enumerator

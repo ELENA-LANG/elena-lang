@@ -1583,7 +1583,7 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
    // method parameter debug info
    while (current != lxNone) {
       if (current == lxMethodParameter/* || current == lxIdentifier*/) {
-         ident_t name = /*(current == lxIdentifier) ? current.identifier() : */current.findChild(lxIdentifier, lxPrivate).identifier();
+         ident_t name = /*(current == lxIdentifier) ? current.identifier() : */current.firstChild(lxTerminalMask).identifier();
          Parameter param = scope.parameters.get(name);
          if (param.offset != -1) {
             if (param.class_ref == V_ARGARRAY) {
@@ -5127,6 +5127,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
          actionStr.copy(GENERIC_PREFIX);
       }
+      if (test(scope.hints, tpInternal)) {
+         actionStr.insert("$$", 0);
+         actionStr.insert(scope.module->Name(), 0);
+      }
+
 //      else if (test(scope.hints, tpAction)) {
 //         messageStr.copy(INVOKE_MESSAGE);
 //         // Compiler Magic : if it is a generic closure - ignore fixed argument
@@ -6528,7 +6533,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    }
 
    if ((message & MESSAGE_FLAG_MASK) == SEALED_MESSAGE) {
-      // if it is private message set private hint and save it as EVAL one
+      // if it is private message set private hint and save it as public one
       hintChanged = true;
       hint |= tpPrivate;
 
@@ -6537,6 +6542,22 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    else if (test(message, SPECIAL_MESSAGE) && message == (encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
       hint |= tpSpecial;
       hint |= tpSealed;
+   }
+   else if (test(hint, tpInternal)) {
+      // if it is an internal message save internal hint as a public general one
+      // so it could be later recognized
+      ref_t signRef = 0;
+      ident_t name = scope.module->resolveAction(getAction(message), signRef);
+      int index = name.find("$$");
+      ref_t publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
+      if (scope.info.methods.exist(publicMessage)) {
+         // there should be no public method with the same name
+         scope.raiseError(errDuplicatedMethod, current);
+      }
+      else {
+         scope.info.methodHints.exclude(Attribute(publicMessage, maHint));
+         scope.info.methodHints.add(Attribute(publicMessage, maHint), tpInternal);
+      }
    }
 
    if (hintChanged) {

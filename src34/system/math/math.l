@@ -266,7 +266,7 @@ extension mathOp
         
         x := x * (-1.0r).
         
-        x := x floor.
+        x := x~mathOp floor.
         
         x := x * (-1.0r).
         

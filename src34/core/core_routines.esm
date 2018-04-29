@@ -650,7 +650,7 @@ labCopy:
 
 end
 
-procedure __charconvertor."convert$system@IntNumber$system@LiteralValue$@system@ref#1&CharValue[4]"
+procedure __charconvertor."system$$convert$system@IntNumber$system@LiteralValue$@system@ref#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -673,7 +673,7 @@ labErr:
 
 end
 
-procedure __charconvertor."convert$system@IntNumber$system@ByteArray$@system@ref#1&CharValue[4]"
+procedure __charconvertor."system$$convert$system@IntNumber$system@ByteArray$@system@ref#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -696,7 +696,7 @@ labErr:
 
 end
 
-procedure __charconvertor."convert$system@IntNumber$system@WideLiteralValue$@system@ref#1&CharValue[4]"
+procedure __charconvertor."system$$convert$system@IntNumber$system@WideLiteralValue$@system@ref#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -719,7 +719,7 @@ labErr:
 
 end
 
-procedure __charconvertor."convert$system@IntNumber$system@ShortArray$@system@ref#1&CharValue[4]"
+procedure __charconvertor."system$$convert$system@IntNumber$system@ShortArray$@system@ref#1&CharValue[4]"
   
   aloadsi 2
   nload
@@ -742,7 +742,7 @@ labErr:
 
 end
 
-procedure __charconvertor."save$system@CharValue$system@IntNumber$system@ShortArray$@system@ref#1&IntNumber[5]"
+procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$system@ShortArray$@system@ref#1&IntNumber[5]"
 
   aloadsi 2
   nload
@@ -759,7 +759,7 @@ procedure __charconvertor."save$system@CharValue$system@IntNumber$system@ShortAr
 
 end
 
-procedure __charconvertor."save$system@CharValue$system@IntNumber$system@ByteArray$@system@ref#1&IntNumber[5]"
+procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$system@ByteArray$@system@ref#1&IntNumber[5]"
 
   aloadsi 2
   nload
@@ -2390,7 +2390,7 @@ procedure __literal."save$system@IntNumber$system@CharArray$@system@ref#1&IntNum
 
 end
 
-procedure __literal."save$system@IntNumber$system@ByteArray$system@IntNumber[4]"
+procedure __literal."system$$save$system@IntNumber$system@ByteArray$system@IntNumber[4]"
 
   pusha
   bloadsi 4
@@ -2894,7 +2894,7 @@ procedure __wide."save$system@IntNumber$system@CharArray$@system@ref#1&IntNumber
 
 end
 
-procedure __wide."save$system@IntNumber$system@ShortArray$system@IntNumber[4]"
+procedure __wide."system$$save$system@IntNumber$system@ShortArray$system@IntNumber[4]"
 
   pusha
   bloadsi 4

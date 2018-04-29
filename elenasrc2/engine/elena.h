@@ -760,6 +760,14 @@ inline ref_t overwriteParamCount(ref_t message, int paramCount)
    return message;
 }
 
+inline ref_t overwriteAction(ref_t message, ref_t action)
+{
+   message &= PARAM_MASK;
+   message |= (action << 4);
+
+   return message;
+}
+
 inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
 {
    actionRef = (ref_t)(message >> 16);

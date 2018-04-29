@@ -1,5 +1,6 @@
 /// Attributes
 T               = #16390.
+V               = #30.
 
 type            = #16390.
 class           = #16386.
@@ -38,6 +39,7 @@ set             = #16402.
 abstract        = #8210. 
 public          = #8211.
 private         = #8212.
+internal        = #8213.
 
 __args          = #32. 
 

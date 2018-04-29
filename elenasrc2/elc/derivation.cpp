@@ -2231,6 +2231,7 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
          case lxObject:
             if (!first) {
                if (expressionExpected) {
+                  insertBookmarks(writer, bookmarks);
                   writer.insert(lxExpression);
                   writer.closeNode();
                }

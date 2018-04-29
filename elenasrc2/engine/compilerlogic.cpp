@@ -569,6 +569,11 @@ bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
 }
 
+bool CompilerLogic :: isMethodInternal(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpInternal);
+}
+
 bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
@@ -1402,6 +1407,12 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       case V_PRIVATE:
          attrValue = (tpPrivate | tpSealed);
          return true;
+      case V_PUBLIC:
+         attrValue = 0;
+         return true;
+      case V_INTERNAL:
+         attrValue = tpInternal;
+         return true;
       case V_SEALED:
          attrValue = tpSealed;
          return true;
@@ -2144,6 +2155,17 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
 
    ClassInfo info;
    if (defineClassInfo(scope, info, targetRef)) {
+      if (isMethodInternal(info, multiMessage)) {
+         // recognize the internal message
+         ref_t signRef = 0;
+         IdentifierString internalName(scope.module->Name(), "$$");
+         internalName.append(scope.module->resolveAction(getAction(multiMessage), signRef));
+
+         ref_t internalRef = scope.module->mapAction(internalName.c_str(), signRef, false);
+
+         multiMessage = overwriteAction(multiMessage, internalRef);
+      }
+
       ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
       if (listRef) {
          _Module* argModule = scope.loadReferenceModule(listRef, listRef);

@@ -2,17 +2,8 @@
 In development:
 ------                              
 	                            
-              dev - redesign                                                                           
-                 * un comment intOp,byteOp, ...
-
-                 * resolving multi-method extensions at compile-time
-
-                 * regression test : verify all closed issues in GitHub
-                 * Open argument list : assigning 
-
+              dev - redesign
                  * uncomment objectOp
-
-                 * try-catch, try template
 
                  * migrate exceptions, dynamic, templates, win32_app files
                  * migrate rest of the code : try-catch, try template, switch, generics, collections, operations with
@@ -132,7 +123,7 @@ In development:
                  * refactor _ImageLoader, to use module weak references without combining them together
                  * relative reference?
                  * there are reserved module names - system, forwards, externals
-                 * protected / internal methods
+                 * protected methods
                  * NEWOBJECT_MESSAGE_ID, should calls field initializer method and implicit constructor directly
                    (so called weak sealed methods)
                  * enum / stateless class should not have default constructor

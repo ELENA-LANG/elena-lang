@@ -68,6 +68,7 @@
 #define V_ABSTRACT       (ref_t)-8210
 #define V_PUBLIC         (ref_t)-8211
 #define V_PRIVATE        (ref_t)-8212
+#define V_INTERNAL       (ref_t)-8213
 
 #define V_CONSTRUCTOR    (ref_t)-16384
 #define V_VARIABLE       (ref_t)-16385
@@ -120,6 +121,7 @@ enum MethodHint
    tpAccessor    = 0x08000,
    tpSpecial     = 0x10000,
    tpAbstract    = 0x20000,
+   tpInternal    = 0x40000,
 };
 
 // --- _Project ---
