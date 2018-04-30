@@ -60,7 +60,7 @@ extension commonOp
 //        
 //        self close
 //    ]
-//    
+    
 //    doFinally func:c1 func:c2
 //    [
 //        c1 eval; then:c2

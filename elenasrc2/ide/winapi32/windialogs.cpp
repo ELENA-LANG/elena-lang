@@ -310,15 +310,20 @@ void ProjectSettingsDialog :: loadTemplateList()
    _ELENA_::Path configPath(_project->getAppPath());
    configPath.combine(_T("elc.cfg"));
 
-   _ELENA_::IniConfigFile config;
-   if (!config.load(configPath.c_str(), _ELENA_::feAnsi))
+   _ELENA_::XmlConfigFile config;
+   if (!config.load(configPath.c_str(), _ELENA_::feUTF8))
       return;
 
    _ELENA_::ident_t curTemplate = _project->getTemplate();
 
    int current = 0;
-   for (_ELENA_::ConfigCategoryIterator it = config.getCategoryIt("templates") ; !it.Eof() ; it++, current++) {
-      addComboBoxItem(IDC_SETTINGS_TEPMPLATE, TextString(it.key()));
+   _ELENA_::_ConfigFile::Nodes list;
+   config.select("configuration/templates/*", list);
+
+   for (auto it = list.start(); !it.Eof() ; it++, current++) {
+      _ELENA_::ident_t key = (*it).Attribute("key");
+
+      addComboBoxItem(IDC_SETTINGS_TEPMPLATE, TextString(key));
 
       if (curTemplate.compare(it.key()))
          setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, current);

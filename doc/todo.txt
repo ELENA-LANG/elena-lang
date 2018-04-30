@@ -3,21 +3,15 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * uncomment objectOp
 
-                 * migrate exceptions, dynamic, templates, win32_app files
+                 * migrate dynamic, templates, win32_app files
                  * migrate rest of the code : try-catch, try template, switch, generics, collections, operations with
                    open argument list
 
                  * optimize embeddable function call
                  * optimize embeddable function2 call
 
-                 * system'io'console routines
-                 * console
                  * migrating startUp code
-                 * exception handling : method not found
-
-                 * compile wide literal constant (emptyWideLiteralValue)
 
                  * interface class cannot be created directly
 
@@ -35,20 +29,13 @@ In development:
 
                  * reimplement embeddable optimization
 
-                 * warn on duplicate module, extensions, unknown modules
-
                  * optimization : dirty_ptr ptr := self - cast method should be called directly without actually allocating the
                    structure
 
-                 * private extensions should be used only inside the module
+                 * internal extension methods should be used only inside the module
 
                  * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
                    normal classes cannot be inherited from enum / enum value
-
-                 * uncomment optimizeEmbeddableGet, optimizeEmbeddableOp, optimizeEmbeddable
-
-                 * private method (SEALED_MESSAGE, tpSealed - cannot be overridden)
-                 * conversion method (CAST_MESSAGE, no need for CONVERSION_MESSAGE)
 
                  * default constructor method - NEWOBJECT_MESSAGE_ID, it calls field initializer method, implicit
                    constructor
@@ -161,6 +148,12 @@ In development:
                  * ide : call stack info
                  * call open argument list explicitly (a sum(dynamic<object>(1,2,3)))
                  * can generic handler be strong-typed?
+                 * uncomment objectOp
+                 * elenart - switch to xml config
+                 * IDE : do not add extra new lines when saving the project
+                 * reimplement IDE exclude the file
+                 * reimplement IDE add forward
+                 * reimplement IDE clear forwards
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

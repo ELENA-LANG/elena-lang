@@ -2043,7 +2043,7 @@ void IDEController::ProjectManager::setSectionOption(const char* option, const c
    if (!_ELENA_::emptystr(value)) {
       _model->project.xmlConfig.setSetting(option, value);
    }
-   else _model->project.xmlConfig.setSetting(option, NULL);
+   else _model->project.xmlConfig.setSetting(option, DEFAULT_STR);
 
    _model->project.changed = true;
 }
@@ -2260,16 +2260,20 @@ bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
 
 void IDEController::ProjectManager::includeSource(_ELENA_::path_t path)
 {
-   //_ELENA_::Path relPath(path);
-   //Paths::makeRelativePath(relPath, _model->project.path.c_str());
+   _ELENA_::Path relPath(path);
+   Paths::makeRelativePath(relPath, _model->project.path.c_str());
+
+   _ELENA_::IdentifierString str(relPath.c_str());
+      
+   _model->project.xmlConfig.appendSetting("configuration/files/module/include", str.c_str());
 
    //if (_model->project.type == ctXml) {
    //}
    //else _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clonePath(relPath.c_str()), (const char*)NULL);
 
-   //reloadSources();
+   reloadSources();
 
-   //_model->project.changed = true;
+   _model->project.changed = true;
 }
 
 void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)

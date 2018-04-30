@@ -1569,6 +1569,9 @@ size_t wide_t :: findLast(size_t index, wide_c ch, size_t defValue)
       if (_string[i] == ch)
          return i;
 
+      /*/ HOTFIX : stop at the 0*/
+      if (!i) break;
+
       i--;
    }
 

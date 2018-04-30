@@ -140,13 +140,13 @@ public extension objectOp
 //        
 //    stacksafe reallocate int:aNewLength
 //        => system'core_routines'__array.
-//        
-//    shift : n
-//    [
-//        if (n < 0)
-//            [ ^ self shiftLeft int(n int; negative) ];
-//            [ ^ self shiftRight int:n ].
-//    ]
+        
+    shift(int n)
+    [
+        if (n < 0)
+            [ ^ self shiftLeft(n negative) ];
+            [ ^ self shiftRight(n) ].
+    ]
 }
 
 // --- Operations ---
