@@ -35,13 +35,13 @@ public:
    virtual void addBreakpoint(size_t position) = 0;
 };
 
-//// --- _BinaryHelper ---
-//
-//class _BinaryHelper
-//{
-//public:
-//   virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask) = 0;
-//};
+// --- _BinaryHelper ---
+
+class _BinaryHelper
+{
+public:
+   virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask) = 0;
+};
 
 // --- JITCompiler class ---
 class _JITCompiler
@@ -89,7 +89,7 @@ public:
 
    virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode) = 0;
 
-//   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
+   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
 
    virtual void* getPreloadedReference(ref_t reference) = 0;
 

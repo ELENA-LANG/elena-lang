@@ -1573,26 +1573,26 @@ void AMD64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader
    alignCode(&codeWriter, 0x08, true);
 }
 
-//void AMD64JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section)
-//{
-//   //size_t position = writer.Position();
-//
-//   //writer.write(section->get(0), section->Length());
-//
-//   //// resolve section references
-//   //_ELENA_::RelocationMap::Iterator it(section->getReferences());
-//   //while (!it.Eof()) {
-//   //   int arg = *it;
-//   //   writer.seek(arg + position);
-//
-//   //   ident_t reference = binary->resolveReference(it.key() & ~mskAnyRef);
-//
-//   //   helper.writeReference(writer, reference, it.key() & mskAnyRef);
-//
-//   //   it++;
-//   //}
-//   //writer.seekEOF();
-//}
+void AMD64JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section)
+{
+   //size_t position = writer.Position();
+
+   //writer.write(section->get(0), section->Length());
+
+   //// resolve section references
+   //_ELENA_::RelocationMap::Iterator it(section->getReferences());
+   //while (!it.Eof()) {
+   //   int arg = *it;
+   //   writer.seek(arg + position);
+
+   //   ident_t reference = binary->resolveReference(it.key() & ~mskAnyRef);
+
+   //   helper.writeReference(writer, reference, it.key() & mskAnyRef);
+
+   //   it++;
+   //}
+   //writer.seekEOF();
+}
 
 void AMD64JITCompiler :: generateProgramStart(MemoryDump& tape)
 {

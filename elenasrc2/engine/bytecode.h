@@ -1,4 +1,4 @@
-//		E L E N A   P r o j e c t:  ELENA Engine
+   //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains common ELENA byte code classes and constants
 //

@@ -150,7 +150,7 @@ void Module :: mapPredefinedAction(ident_t name, ref_t reference)
    _resolvedActionNames.clear();
 
    _actionNames.add(name, reference);
-   _actions.add(reference, encodeActionX(reference, 0));
+   _actions.add(reference, encodeActionX(reference, 0u));
 }
 
 ref_t Module :: mapReference(ident_t reference)

@@ -73,35 +73,35 @@ namespace _ELENA_
    // virtual operator
    #define SETNIL_REFER_MESSAGE_ID 0x1019
 
-//   // ---- ELENAVM command masks ---
-//   #define VM_MASK                 0x0200             // vm command mask
-//   #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument
-//
-//   // ---- ELENAVM commands ---
-//   #define START_VM_MESSAGE_ID     0x02F1             // restart VM
-//   #define MAP_VM_MESSAGE_ID       0x06F2             // map forward reference
-//   #define USE_VM_MESSAGE_ID       0x06F3             // set current package
-//   #define LOAD_VM_MESSAGE_ID      0x06F4             // load template
-//   #define OPEN_VM_CONSOLE         0x02F5             // open console
-//
-//   // ---- ELENAVM interpreter commands ---
-//   #define CALL_TAPE_MESSAGE_ID    0x05E0             // call symbol
-//   #define ARG_TAPE_MESSAGE_ID     0x05E1             // define the second parameter
-//   #define PUSH_VAR_MESSAGE_ID     0x01E2             // copy the data
-//   #define ASSIGN_VAR_MESSAGE_ID   0x01E3             // assign the data
-//   #define PUSH_TAPE_MESSAGE_ID    0x05E4             // push constant
-//   #define PUSHS_TAPE_MESSAGE_ID   0x05E5             // push literal constant
-//   #define PUSHN_TAPE_MESSAGE_ID   0x05E6             // push integer constant
-//   #define PUSHR_TAPE_MESSAGE_ID   0x05E7             // push floating numeric constant
-//   #define PUSHL_TAPE_MESSAGE_ID   0x05E8             // push long integer constant
-//   #define PUSHM_TAPE_MESSAGE_ID   0x05E9             // push message reference
-//   #define PUSHG_TAPE_MESSAGE_ID   0x05EA             // push the subject reference
-//   #define POP_TAPE_MESSAGE_ID     0x01EB             // free the stack content
-//   #define SEND_TAPE_MESSAGE_ID    0x05EC             // send the message
-//   #define REVERSE_TAPE_MESSAGE_ID 0x01ED             // reverse the stack
-//   #define PUSHE_TAPE_MESSAGE_ID   0x05EE             // push message reference
-//
-//   #define NEW_TAPE_MESSAGE_ID     0x01F0             // create a dynamic object
+   // ---- ELENAVM command masks ---
+   #define VM_MASK                 0x0200             // vm command mask
+   #define LITERAL_ARG_MASK        0x0400             // indicates that the command has a literal argument
+
+   // ---- ELENAVM commands ---
+   #define START_VM_MESSAGE_ID     0x02F1             // restart VM
+   #define MAP_VM_MESSAGE_ID       0x06F2             // map forward reference
+   #define USE_VM_MESSAGE_ID       0x06F3             // set current package
+   #define LOAD_VM_MESSAGE_ID      0x06F4             // load template
+   #define OPEN_VM_CONSOLE         0x02F5             // open console
+
+   // ---- ELENAVM interpreter commands ---
+   #define CALL_TAPE_MESSAGE_ID    0x05E0             // call symbol
+   #define ARG_TAPE_MESSAGE_ID     0x05E1             // define the second parameter
+   #define PUSH_VAR_MESSAGE_ID     0x01E2             // copy the data
+   #define ASSIGN_VAR_MESSAGE_ID   0x01E3             // assign the data
+   #define PUSH_TAPE_MESSAGE_ID    0x05E4             // push constant
+   #define PUSHS_TAPE_MESSAGE_ID   0x05E5             // push literal constant
+   #define PUSHN_TAPE_MESSAGE_ID   0x05E6             // push integer constant
+   #define PUSHR_TAPE_MESSAGE_ID   0x05E7             // push floating numeric constant
+   #define PUSHL_TAPE_MESSAGE_ID   0x05E8             // push long integer constant
+   #define PUSHM_TAPE_MESSAGE_ID   0x05E9             // push message reference
+   #define PUSHG_TAPE_MESSAGE_ID   0x05EA             // push the subject reference
+   #define POP_TAPE_MESSAGE_ID     0x01EB             // free the stack content
+   #define SEND_TAPE_MESSAGE_ID    0x05EC             // send the message
+   #define REVERSE_TAPE_MESSAGE_ID 0x01ED             // reverse the stack
+   #define PUSHE_TAPE_MESSAGE_ID   0x05EE             // push message reference
+
+   #define NEW_TAPE_MESSAGE_ID     0x01F0             // create a dynamic object
 
    #define VA_ALIGNMENT       0x08
    #define VA_ALIGNMENT_POWER 0x03
@@ -479,8 +479,8 @@ namespace _ELENA_
    #define MESSAGE_TABLE_MODULE     "$messages"
    #define MESSAGE_TABLE            "$messages'$table"
 
-//  // VM temporal code
-//   #define TAPE_SYMBOL              "$tape"
+  // VM temporal code
+   #define TAPE_SYMBOL              "$tape"
 
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key

@@ -285,7 +285,7 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
                 [ found := false ]
         ].
                     
-        byteArrayHelper read(T<bytearray>(aDump), 8, &aKey)
+        byteArrayHelper read(T<bytearray>(aDump), 8, aKey)
     ]
 
 //    bool isKeyAvailable

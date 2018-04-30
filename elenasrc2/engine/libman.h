@@ -42,10 +42,10 @@ public:
       _rootPath.copy(root);
    }
 
-//   ident_t getNamespace() const
-//   {
-//      return _namespace;
-//   }
+   ident_t getNamespace() const
+   {
+      return _namespace;
+   }
    void setNamespace(ident_t package, path_t path)
    {
       _namespace.copy(package);

@@ -325,7 +325,7 @@ void ProjectSettingsDialog :: loadTemplateList()
 
       addComboBoxItem(IDC_SETTINGS_TEPMPLATE, TextString(key));
 
-      if (curTemplate.compare(it.key()))
+      if (curTemplate.compare(key))
          setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, current);
    }
 }

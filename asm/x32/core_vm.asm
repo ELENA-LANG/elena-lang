@@ -10,7 +10,7 @@ define CLOSEFRAME        1001Ah
 procedure core_vm'console_vm_start
 
   // ; set debug mode if debug hook is set
-  mov  ebx, [data:"'vm_hook"]
+  mov  ebx, [data:"$vm_hook"]
   mov  ebx, [ebx]
   test ebx, ebx
   jz   short labHookEnd
@@ -18,14 +18,14 @@ procedure core_vm'console_vm_start
   call extern 'dlls'elenavm.SetDebugMode
 
   // ; set debug section info
-  mov  esi, [data:"'vm_hook"]
+  mov  esi, [data:"$vm_hook"]
   mov  [esi+4], eax
 
   mov  eax, [esp]
 
 labHookEnd:
 
-  mov  ebx, data:"'vm_tape"
+  mov  ebx, data:"$vm_tape"
   push ebx
 
   call extern 'dlls'elenavm.InterpretTape

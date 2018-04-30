@@ -286,8 +286,8 @@ _ELENA_::ident_t _ELC_::Project::getOption(_ELENA_::_ConfigFile& config, _ELENA_
 //         return config.getSetting(ELC_L1);
 //   //   case _ELENA_::opL2:
 //   //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
-//      case _ELENA_::opTemplate:
-//         return config.getSetting(ELC_PROJECT_TEMPLATE);
+      case _ELENA_::opTemplate:
+         return config.getSetting(ELC_PROJECT_TEMPLATE);
 //      case _ELENA_::opManifestName:
 //         return config.getSetting(ELC_MANIFEST_NAME);
 //      case _ELENA_::opManifestVersion:

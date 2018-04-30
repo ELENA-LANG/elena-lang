@@ -1,12 +1,16 @@
-﻿[project]
-executable=helloworld.exe
-namespace=helloworld
-template=vm_console
-debuginfo=-1
-
-[files]
-helloworld.l
-
-[forwards]
-'program=helloworld'Program
-
+<configuration>
+    <project>
+        <executable>helloworld.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>helloworld</namespace>
+        <template>vm_console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>helloworld.l</include>
+        </module>
+    </files>
+</configuration>
