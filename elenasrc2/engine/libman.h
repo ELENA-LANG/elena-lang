@@ -34,6 +34,8 @@ class LibraryManager : public _LibraryManager
 
    void onModuleLoad(_Module* module);
 
+   _Module* resolve(bool debugModule, ident_t referenceName, LoadResult& result, ref_t& reference);
+
 public:
    void setRootPath(path_t root)
    {

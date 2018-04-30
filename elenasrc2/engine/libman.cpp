@@ -243,6 +243,26 @@ _Module* LibraryManager :: resolveIndirectWeakModule(ident_t weakName, LoadResul
    return nullptr;
 }
 
+_Module* LibraryManager :: resolve(bool debugModule, ident_t referenceName, LoadResult& result, ref_t& reference)
+{
+   NamespaceName name(referenceName);
+   _Module* module = NULL;
+   while (!module && !emptystr(name)) {
+      if (debugModule) {
+         module = loadDebugModule(name, result);
+      }
+      else module = loadModule(name, result);
+
+      reference = module ? module->mapReference(referenceName.c_str() + getlength(module->Name()), true) : 0;
+      if (reference)
+         return module;
+
+      name.trimLastSubNs();
+   }
+
+   return NULL;
+}
+
 _Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference)
 {
    if (NamespaceName::compare(referenceName, NAMESPACE_KEY)) {
@@ -251,30 +271,10 @@ _Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& resu
 
       return resolveModule(resolvedName, result, reference);
    }
-   else {
-      NamespaceName name(referenceName);
-      _Module* module = NULL;
-      while (!module && !emptystr(name)) {
-         module = loadModule(name, result);
-
-         reference = module ? module->mapReference(referenceName.c_str() + getlength(module->Name()), true) : 0;
-         if (reference)
-            return module;
-
-         name.trimLastSubNs();
-      }
-
-      return NULL;
-   }
+   else return resolve(false, referenceName, result, reference);
 }
 
 _Module* LibraryManager :: resolveDebugModule(ident_t referenceName, LoadResult& result, ref_t& reference)
 {
-   NamespaceName name(referenceName);
-
-   _Module* module = loadDebugModule(name, result);
-
-   reference = module ? module->mapReference(referenceName, true) : 0;
-
-   return module;
+   return resolve(true, referenceName, result, reference);
 }
