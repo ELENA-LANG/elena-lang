@@ -4,33 +4,32 @@ import extensions.
 
 const IntSamplePrompt = "Enter the two integer numbers:".
 
-const RealSamplePrompt = "Enter the two real numbers:".
+//const RealSamplePrompt = "Enter the two real numbers:".
+//
+//// --- EReader ---
+//
+//extension EReader
+//{
+//    loadFrom : aStream
+//        = aStream readLine; convert to:self
+//            | if(:e)
+//                [
+//                    console writeLine:(e message); readChar.
+//                    
+//                    AbortException new; raise.
+//                ].
+//}
 
-// --- EReader ---
-
-extension EReader
-{
-    loadFrom : aStream
-        = aStream readLine; convert to:self
-            | if(:e)
-                [
-                    console writeLine:(e message); readChar.
-                    
-                    AbortException new; raise.
-                ].
-}
-
-enteredNumber = 'number new; loadFrom:console.
+//enteredNumber = forwards'number new; loadFrom:console.
 
 // --- Program ---
 
-Program =
+public program =
 [
-    console
-        printLine:'prompt;
-        printLine("The sum is ",enteredNumber + enteredNumber);
-        readChar
+    var s := console readLine.
+    
+//    console
+//        printLine:forwards'prompt;
+//        printLine("The sum is ",enteredNumber + enteredNumber);
+//        readChar
 ].
-
-
-

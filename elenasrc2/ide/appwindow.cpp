@@ -2265,11 +2265,7 @@ void IDEController::ProjectManager::includeSource(_ELENA_::path_t path)
 
    _ELENA_::IdentifierString str(relPath.c_str());
       
-   _model->project.xmlConfig.appendSetting("configuration/files/module/include", str.c_str());
-
-   //if (_model->project.type == ctXml) {
-   //}
-   //else _model->project.config.setSetting(IDE_FILES_SECTION, _ELENA_::IdentifierString::clonePath(relPath.c_str()), (const char*)NULL);
+   _model->project.xmlConfig.appendSetting(IDE_SOURCE_ELEMENT, str.c_str());
 
    reloadSources();
 
@@ -2288,9 +2284,9 @@ void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)
 
 void IDEController::ProjectManager :: clearForwards()
 {
-   //_model->project.xmlConfig.setSetting(IDE_FORWARDS_SECTION, DEFAULT_STR);
+   _model->project.xmlConfig.setSetting(IDE_FORWARDS_ROOT, DEFAULT_STR);
 
-   //_model->project.changed = true;
+   _model->project.changed = true;
 }
 
 void IDEController::ProjectManager::addForward(const char* name, const char* reference)

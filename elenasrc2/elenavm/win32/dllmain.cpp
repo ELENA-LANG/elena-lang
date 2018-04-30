@@ -178,19 +178,21 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength
       return 0;
 
    try {
-      size_t subj_id;
-      int param_count;
-      decodeMessage((size_t)message, subj_id, param_count);
+      ref_t action;
+      int count;
+      decodeMessage((ref_t)message, action, count);
 
-      ident_t verbName = instance->getVerb(subj_id);
-      size_t used = getlength(verbName);
-      Convertor::copy(buffer, verbName, used, used);
+      size_t used = 0;
+      //if (test((ref_t)message, encodeAction(SIGNATURE_FLAG))) {
+      //   ImageSection messageSection;
+      //   messageSection.init(_messageSection, 0x10000); // !! dummy size
 
-      if (subj_id > 0) {
-         buffer[used++] = '&';
-
-         ident_t subjectName = instance->getSubject((ref_t)subj_id);
-         size_t length = getlength(subjectName) ;
+      //   ref_t verb = messageSection[action];
+      //   used += manager.readSubjectName(reader, verb, buffer + used, length - used);
+      //}
+      //else {
+         ident_t subjectName = instance->getSubject(action);
+         size_t length = getlength(subjectName);
          if (length > 0) {
             if (maxLength >= (int)(length + used)) {
                Convertor::copy(buffer + used, subjectName, length, length);
@@ -199,12 +201,16 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength
             }
             else buffer[used] = 0;
          }
-      }
+      //}
 
-      if (param_count > 0) {
+      if (count > 0) {
+         size_t dummy = 10;
+         String<char, 10>temp;
+         temp.appendInt(count);
+
          buffer[used++] = '[';
-         Convertor::intToStr(param_count, buffer + used, 10);
-         used = getlength(buffer);
+         Convertor::copy(buffer + used, temp, getlength(temp), dummy);
+         used += dummy;
          buffer[used++] = ']';
       }
       buffer[used] = 0;

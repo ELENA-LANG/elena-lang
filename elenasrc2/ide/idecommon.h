@@ -41,6 +41,9 @@ namespace _GUI_
 #define IDE_FILES_XMLSECTION                    "configuration/files/*"
 #define IDE_FORWARDS_XMLSECTION                 "configuration/forwards/*"
 
+#define IDE_SOURCE_ELEMENT                      "configuration/files/module/include"
+
+#define IDE_FORWARDS_ROOT                       "configuration/forwards"
 #define IDE_FORWARDS_ELEMENT                    "configuration/forwards/forward"
 
 
