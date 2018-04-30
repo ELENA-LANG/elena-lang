@@ -3838,19 +3838,20 @@ bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScop
 
    methodScope.message = encodeAction(lazyExpression ? EVAL_MESSAGE_ID : INVOKE_MESSAGE_ID);
 
-//   if (argNode != lxNone) {
-//      // define message parameter
-//      methodScope.message = declareInlineArgumentList(argNode, methodScope);
-//   }
+   if (argNode != lxNone) {
+      // define message parameter
+      methodScope.message = declareInlineArgumentList(argNode, methodScope);
+   }
 
    ref_t parentRef = scope.info.header.parentRef;
 //   if (lazyExpression) {
 //      parentRef = scope.moduleScope->getBaseLazyExpressionClass();
 //   }
 //   else {
+      ref_t closureRef = scope.moduleScope->resolveClosure(methodScope.message);
 //      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
-//      if (actionRef)
-//         parentRef = actionRef;
+      if (closureRef)
+         parentRef = closureRef;
 //   }
 
    compileParentDeclaration(SNode(), scope, parentRef);
@@ -3872,6 +3873,9 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
    scope.include(methodScope.message);
    scope.addHint(methodScope.message, tpAction);
+
+   // exclude abstract flag if presented
+   scope.removeHint(methodScope.message, tpAbstract);
 
    // HOTFIX : if the closure emulates code brackets
    if (test(mode, HINT_SUBCODE_CLOSURE))
@@ -4797,28 +4801,29 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool bytearray, O
    return true;
 }
 
-//ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
-//{
+ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
+{
 //   IdentifierString signature;
-//   IdentifierString messageStr;
-//
-//   ref_t actionRef = 0;
-//
+   IdentifierString messageStr;
+
+   ref_t actionRef = 0;
+   ref_t signRef = 0;
+
 //   SNode sign = goToNode(arg, lxClosureMessage);
 //   bool first = true;
-//   while (arg == lxMethodParameter || arg == lxIdentifier || arg == lxPrivate) {
-//      SNode terminalNode = arg;
-//      if (terminalNode == lxMethodParameter) {
-//         terminalNode = terminalNode.findChild(lxIdentifier, lxPrivate);
-//      }
-//
-//      ident_t terminal = terminalNode.identifier();
-//      int index = 1 + scope.parameters.Count();
-//
-//      // !! check duplicates
-//      if (scope.parameters.exist(terminal))
-//         scope.raiseError(errDuplicatedLocal, arg);
-//
+   while (arg == lxMethodParameter/* || arg == lxIdentifier || arg == lxPrivate*/) {
+      SNode terminalNode = arg;
+      if (terminalNode == lxMethodParameter) {
+         terminalNode = terminalNode.firstChild(lxTerminalMask);
+      }
+
+      ident_t terminal = terminalNode.identifier();
+      int index = 1 + scope.parameters.Count();
+
+      // !! check duplicates
+      if (scope.parameters.exist(terminal))
+         scope.raiseError(errDuplicatedLocal, arg);
+
 //      if (sign != lxNone) {
 //         // if the closure has explicit signature
 //         ref_t elementRef = 0;
@@ -4830,22 +4835,22 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool bytearray, O
 //         sign = sign.nextNode();
 //      }
 //      else if (first) {
-//         scope.parameters.add(terminal, Parameter(index));
+         scope.parameters.add(terminal, Parameter(index));
 //      }
 //      else scope.raiseError(errInvalidSyntax, arg);      
-//
-//      arg = arg.nextNode();
-//   }
-//
-//   if (emptystr(messageStr)) {
-//      messageStr.copy(INVOKE_MESSAGE);
-//   }
-//   messageStr.append(signature);
-//
-//   actionRef = scope.moduleScope->module->mapSubject(messageStr, false);
-//
-//   return encodeMessage(actionRef, scope.parameters.Count());
-//}
+
+      arg = arg.nextNode();
+   }
+
+   if (emptystr(messageStr)) {
+      messageStr.copy(INVOKE_MESSAGE);
+   }
+   //messageStr.append(signature);
+
+   actionRef = scope.moduleScope->module->mapAction(messageStr, signRef, false);
+
+   return encodeMessage(actionRef, scope.parameters.Count());
+}
 
 inline SNode findTerminal(SNode node)
 {
@@ -5127,13 +5132,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
          actionStr.copy(GENERIC_PREFIX);
       }
-      if (test(scope.hints, tpInternal)) {
-         actionStr.insert("$$", 0);
-         actionStr.insert(scope.module->Name(), 0);
-      }
+      else if (test(scope.hints, tpAction)) {
+         if (!actionStr.compare(EVAL_MESSAGE))
+            scope.raiseError(errInvalidHint, action);
 
-//      else if (test(scope.hints, tpAction)) {
-//         messageStr.copy(INVOKE_MESSAGE);
+         actionStr.copy(INVOKE_MESSAGE);
 //         // Compiler Magic : if it is a generic closure - ignore fixed argument
 //         if (test(scope.hints, tpGeneric) && paramCount > OPEN_ARG_COUNT) {
 //            if (validateGenericClosure(signature)) {
@@ -5148,7 +5151,12 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //            // generic clsoure should have a homogeneous signature (i.e. same types)
 //            else scope.raiseError(errIllegalMethod, node);
 //         }
-//      }
+      }
+
+      if (test(scope.hints, tpInternal)) {
+         actionStr.insert("$$", 0);
+         actionStr.insert(scope.module->Name(), 0);
+      }
 
       if (test(scope.hints, tpAccessor)) {
          if (paramCount == 1) {
@@ -8136,6 +8144,18 @@ inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t
    else return 0;
 }
 
+inline ref_t safeMapWeakReference(_Module* module, _ProjectManager* project, ident_t referenceName)
+{
+   if (!emptystr(referenceName)) {
+      // HOTFIX : for the standard module the references should be mapped forcefully
+      if (module->Name().compare(STANDARD_MODULE)) {
+         return module->mapReference(referenceName + getlength(module->Name()), false);
+      }
+      else return module->mapReference(referenceName, false);
+   }
+   else return 0;
+}
+
 void Compiler :: loadAttributes(_CompilerScope& scope, ident_t name, MessageMap* attributes)
 {
    _Module* extModule = scope.project->loadModule(name, true);
@@ -8190,6 +8210,7 @@ void Compiler :: initializeScope(ident_t name, _CompilerScope& scope, bool withD
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
    scope.signatureReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SIGNATURE_FORWARD));
    scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
+   scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically

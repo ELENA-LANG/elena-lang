@@ -333,9 +333,9 @@ extension convertorOp
 //
 //    toReal
 //        = realConvertor convert:self.
-//
-//    convert to : aTarget
-//        = Variant new:self; saveTo:aTarget.
+
+    convertTo : aTarget
+        = Variant new:self; saveTo:aTarget.
 }
 
 //convertor 

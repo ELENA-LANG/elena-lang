@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   19
+#define REVISION_VERSION   20
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -243,7 +243,7 @@ ref_t resolveMessage(_Module* module, ident_t method)
          actionName.cut(0, 4);
          flags = PROPSET_MESSAGE;
       }
-      else if (method.startsWith("#cast<")) {
+      else if (method.startsWith("#cast<") && paramCount > 0) {
          flags = SPECIAL_MESSAGE;
       }
    //   else if (actionName.compare("set")) {

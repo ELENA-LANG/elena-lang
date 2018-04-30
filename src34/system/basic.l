@@ -3285,20 +3285,20 @@ real public pi_value = realOpController pi.
 
 real public e_value = realOpController e.
 
-//// --- obsolete variables ---
-//
-//class Integer =
-//{
-//    vint new
-//        = 0.
-//        
-//    vint new int:n
-//        = n.
-//        
-//    vint new:n
-//        = n int.
-//}.
-//
+// --- obsolete variables ---
+
+public class Integer =
+{
+    ref<int> new
+        = 0.
+        
+    ref<int> new(int n)
+        = n.
+        
+    ref<int> new:n
+        = T<int>(n).
+}.
+
 //class LongInteger =
 //{
 //    vlong new

@@ -441,6 +441,24 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
    return generatedReference;
 }
 
+ref_t CompilerScope :: resolveClosure(ref_t closureMessage)
+{
+   ref_t signRef = 0;
+   module->resolveAction(getAction(closureMessage), signRef);
+
+   int paramCount = getParamCount(closureMessage);
+
+   IdentifierString closureName(module->resolveReference(closureTemplateReference));
+   if (signRef == 0) {
+      if (paramCount > 0) {
+         closureName.appendInt(paramCount);
+      }
+
+      return mapFullReference(closureName, true);
+   }
+   else return 0; // !! temporal   
+}
+
 void CompilerScope :: saveIncludedModule(_Module* extModule)
 {
    // HOTFIX : do not include itself

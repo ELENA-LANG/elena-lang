@@ -501,6 +501,7 @@ namespace _ELENA_
    #define ARRAY_FORWARD            "$array"
    #define BOOL_FORWARD             "$bool"
    #define REFTEMPLATE_FORWARD      "$reference"
+   #define CLOSURETEMPLATE_FORWARD  "$closure"
 
    #define STARTUP_SYMBOL             "$startUp"
    

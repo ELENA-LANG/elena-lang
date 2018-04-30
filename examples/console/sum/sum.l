@@ -5,29 +5,27 @@ import extensions.
 const IntSamplePrompt = "Enter the two integer numbers:".
 
 //const RealSamplePrompt = "Enter the two real numbers:".
-//
+
 //// --- EReader ---
 //
 //extension EReader
 //{
 //    loadFrom : aStream
-//        = aStream readLine; convert to:self
+//        = aStream readLine; convertTo:self
 //            | if(:e)
 //                [
-//                    console writeLine:(e message); readChar.
+//                    console writeLine(e message); readChar.
 //                    
 //                    AbortException new; raise.
 //                ].
 //}
-
+//
 //enteredNumber = forwards'number new; loadFrom:console.
 
 // --- Program ---
 
 public program =
 [
-    var s := console readLine.
-    
 //    console
 //        printLine:forwards'prompt;
 //        printLine("The sum is ",enteredNumber + enteredNumber);

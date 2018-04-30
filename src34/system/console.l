@@ -57,18 +57,14 @@ class Console
 //
 //    stacksafe setCursorPosition int:x int:y
 //        => theWriter.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    literal readLine
-//        = theReader literal.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    literal readLiteral
-//        = theReader literal.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    wide readWide
-//        = theReader wide.
+
+    /// Reads the next line of characters from the standard input stream.
+    literal readLine
+        = theReader readLiteral.
+
+    /// Reads the next line of characters from the standard input stream.
+    wide readWideLine
+        = theReader readWide.
 
     /// Reads the next character from the input stream
     readChar

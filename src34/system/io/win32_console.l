@@ -4,6 +4,10 @@
 
 public interface IConsoleReader
 {
+    abstract T<literal> readLiteral []
+    
+    abstract T<wide> readWide []
+    
     abstract read(ref<int> retVal) []
     
     abstract read(ref<char> retVal) []
@@ -327,51 +331,48 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
 //        
 //        ^ false.                   
 //    ]
-//
-//    stacksafe read shortarray:aBuffer vint:aRetVal
-//    [
-//        extern()
-//        [
-//            system'external'KERNEL32 ReadConsoleW
-//                int        : theHandle
-//                shortarray : aBuffer
-//                int        : aRetVal
-//                vint       : aRetVal
-//                int        : 0
-//        ].            
-//    ]
-//    
-//    wide
-//    [
-//        short<127> aBuffer.
-//        int        aLength := 0.
-//        var        anOutput := emptyWideLiteralValue.
-//        
-//        bool continue := true.
-//        while (continue)
-//        [
-//            aLength := 127.
-//            $self read shortarray:aBuffer vint:aLength.
-//            
-//            short aShort := aBuffer[aLength - 1].
-//            if (aShort == 0Ah)
-//                [
-//                    aLength := aLength - 2.
-//                    
-//                    continue := false
-//                ].
-//            
-//            var aTemp := WideLiteralValue $new int:0 int:aLength shortarray:aBuffer.
-//            
-//            anOutput := anOutput + aTemp.
-//        ].
-//
-//        ^ anOutput
-//    ]
-//
-//    literal
-//        = $self wide; literal.
-//
+
+    stacksafe read(shortarray aBuffer, ref<int> aRetVal)
+    [
+        int len := aRetVal value.
+        
+        extern()
+        [
+            system'external'KERNEL32 ReadConsoleW(theHandle, aBuffer, len, aRetVal, 0).
+        ].            
+    ]
+    
+    T<wide> readWide
+    [
+        T<short,127> aBuffer.
+        int          aLength := 0.
+        var          anOutput := emptyWideLiteralValue.
+        
+        bool continue := true.
+        while (continue)
+        [
+            aLength := 127.
+            self read(T<shortarray>(aBuffer), &aLength).
+            
+            short aShort := aBuffer[aLength - 1].
+            if (aShort == 0Ah)
+                [
+                    aLength := aLength - 2.
+                    
+                    continue := false
+                ].
+            
+            var aTemp := WideLiteralValue new(0, aLength, T<shortarray>(aBuffer)).
+            
+            anOutput := anOutput + aTemp.
+        ].
+
+        ^ anOutput
+    ]
+
+    T<literal> readLiteral
+        = self readWide.
+
 //    int
 //    [
 //        int aRetVal := 0.

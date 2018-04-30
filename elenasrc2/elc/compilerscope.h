@@ -100,6 +100,8 @@ struct CompilerScope : _CompilerScope
       else return referenceName;
    }
 
+   virtual ref_t resolveClosure(ref_t closureMessage);
+
    virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters);
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference);

@@ -520,6 +520,15 @@ private:
          info.methodHints.exclude(attr);
          info.methodHints.add(attr, hint);
       }
+      void removeHint(ref_t message, int hintToRemove)
+      {
+         ClassInfo::Attribute attr(message, maHint);
+
+         int hints = info.methodHints.get(attr);
+         hints &= ~hintToRemove;
+         info.methodHints.exclude(attr);
+         info.methodHints.add(attr, hints);
+      }
 
       bool include(ref_t message)
       {
@@ -595,7 +604,7 @@ private:
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
-         return scope->info.methodHints.get(ClassInfo::Attribute(message, maReference));
+         return scope ? scope->info.methodHints.get(ClassInfo::Attribute(message, maReference)) : 0;
       }
 
       //ref_t getClassFlags(bool ownerClass = true)
@@ -956,7 +965,7 @@ private:
 
    ref_t declareArgumentType(SNode node, Scope& scope/*, bool& first, IdentifierString& messageStr, IdentifierString& signature*/, ref_t& elementRef);
    void declareArgumentList(SNode node, MethodScope& scope);
-//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope);
    bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
 
 //   void declareSingletonClass(SNode node, ClassScope& scope);

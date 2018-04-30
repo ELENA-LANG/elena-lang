@@ -60,7 +60,7 @@
 #define V_GENERIC        (ref_t)-8202
 #define V_EXTENSION      (ref_t)-8203
 //#define V_NOSTRUCT       (ref_t)-8204
-//#define V_ACTION         (ref_t)-8205
+#define V_ACTION         (ref_t)-8205
 //#define V_GROUP          (ref_t)-8206
 #define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
@@ -208,6 +208,7 @@ struct _CompilerScope
    ref_t             charReference;
    ref_t             arrayReference;
    ref_t             refTemplateReference;
+   ref_t             closureTemplateReference;
 
    // cached bool values
    BranchingInfo     branchingInfo;
@@ -235,6 +236,8 @@ struct _CompilerScope
    virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly) = 0;
+
+   virtual ref_t resolveClosure(ref_t closureMessage) = 0;
 
 ////   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion) = 0;
 ////
@@ -297,7 +300,7 @@ struct _CompilerScope
       signatureReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
-      refTemplateReference = 0;
+      closureTemplateReference = refTemplateReference = 0;
       extMessageReference = 0;
    }
 };

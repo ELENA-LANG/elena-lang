@@ -158,6 +158,7 @@ In development:
                  * external calls - do not save the result if the target is not specified
                  * it should be possible to implicitly typecast the primitive array in compile-time
                  * interface template - generate an error / warning if there is no abstract method implementation
+                 * existing method cannot be declared abstract
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

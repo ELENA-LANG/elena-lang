@@ -2094,13 +2094,13 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
       case lxCode:
          generateCodeExpression(writer, current, scope);
          break;
-//      case lxMethodParameter:
-//      {
-//         writer.newNode(lxMethodParameter);
-//         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
-//         writer.closeNode();
-//         break;
-//      }
+      case lxMethodParameter:
+      {
+         writer.newNode(lxMethodParameter);
+         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
+         writer.closeNode();
+         break;
+      }
 //      case lxAttributeValue:
 //         writer.newNode(lxClosureMessage, -1);
 //         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));

@@ -27,7 +27,7 @@ __loop          = #16394.
 //nonstructural   = #8204.
 import          = #16395.
 __extern        = #16396.
-//closure         = #8205.
+closure         = #8205.
 //mixin           = #8206.
 __accessor      = #16399.
 __block         = #16400.
@@ -101,28 +101,22 @@ type literal    = system'LiteralValue.
 
 type wide       = system'WideLiteralValue.
 
-//// === function types ===
-//type func       = system'BaseFunction.
+// === function types ===
+type func       = system'Func.
 //type lazy_func  = system'BaseLazyExpression.
-//
-///// An anonymous function with a generic parameter.
-/////
-///// An instance of system'BaseFunction1
-//type func1      = system'BaseFunction1.
-//type func2      = system'BaseFunction2.
-//type func3      = system'BaseFunction3.
-//type func4      = system'BaseFunction4.
-//type func5      = system'BaseFunction5.
-//type func6      = system'BaseFunction6.
-//type func7      = system'BaseFunction7.
-//type func8      = system'BaseFunction8.
-//type func9      = system'BaseFunction9.
-//type func10     = system'BaseFunction10.
-//type func11     = system'BaseFunction11.
-//
-//type nfunc      = system'IndexFunction1.
-//type nnfunc     = system'IndexFunction2.
-//type n3func     = system'IndexFunction3.
+
+/// An anonymous function with a generic parameter.
+type func1      = system'Func1.
+type func2      = system'Func2.
+type func3      = system'Func3.
+type func4      = system'Func4.
+type func5      = system'Func5.
+type func6      = system'Func6.
+type func7      = system'Func7.
+type func8      = system'Func8.
+type func9      = system'Func9.
+type func10     = system'Func10.
+type func11     = system'Func11.
 
 // === system handles ===
 type handle     = system'Handle.

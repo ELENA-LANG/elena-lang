@@ -183,15 +183,15 @@ public abstract Indexable
 //    
 //    int rvprop rows :: readRownsTo.
 //}
-//
-//// --- base functions ---
-//
-///// A base action
-//limited closure class BaseFunction
-//{
-//    /// Executes the action
-//    closure []
-//    
+
+// --- base functions ---
+
+/// A base action
+public interface Func
+{
+    /// Executes the action
+    abstract closure eval []
+    
 //    /// Executes the action
 //    eval = $self().
 //    
@@ -218,14 +218,14 @@ public abstract Indexable
 //            flag := aBool bool
 //        ].
 //    ]
-//}
-//
-///// A base function
-//limited closure class BaseFunction1
-//{
-//    /// Executes the action
-//    closure : aParam []
-//    
+}
+
+/// A base function
+public interface Func1
+{
+    /// Executes the action
+    abstract closure eval:aParam []
+    
 //    /// Executes the function
 //    eval : aParam = $self(aParam).
 //
@@ -252,8 +252,8 @@ public abstract Indexable
 //        
 //        ^ $nil.
 //    ]
-//}
-//
+}
+
 //limited template function :: type
 //{
 //    /// Executes the action
@@ -263,13 +263,13 @@ public abstract Indexable
 //    [
 //    ]
 //}
-//
-///// A base two variable function
-//limited closure class BaseFunction2
-//{
-//    /// Executes the action
-//    closure : aParam1 : aParam2 []
-//    
+
+/// A base two variable function
+public interface Func2
+{
+    /// Executes the action
+    abstract closure eval(object aParam1, object aParam2) []
+    
 //    /// Executes the function
 //    eval : aParam1 : aParam2 = $self(aParam1,aParam2).
 //    
@@ -300,14 +300,14 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base three variable function
-//limited closure class BaseFunction3
-//{
-//    /// Executes the function
-//    closure : aParam1 : aParam2 : aParam3 []
-//    
+}
+
+/// A base three variable function
+public interface Func3
+{
+    /// Executes the function
+    abstract closure eval(object aParam1, object aParam2, object aParam3) []
+    
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 = $self(aParam1,aParam2,aParam3).
 //    
@@ -334,13 +334,13 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base four variable function
-//limited closure class BaseFunction4
-//{
-//    /// Executes the function
-//    closure : aParam1 : aParam2 : aParam3 : aParam4 []
+}
+
+/// A base three variable function
+public interface Func4
+{
+    /// Executes the function
+    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4) []
 //    
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 = $self(aParam1,aParam2,aParam3,aParam4).
@@ -369,14 +369,14 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base five variable function
-//limited closure class BaseFunction5
-//{
-//    /// Executes the function
-//    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 []
-//    
+}
+
+/// A base five variable function
+public interface Func5
+{
+    /// Executes the function
+    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5) []
+
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 = $self(aParam1,aParam2,aParam3,aParam4,aParam5).
 //    
@@ -403,14 +403,14 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base six variable function
-//limited closure class BaseFunction6
-//{
-//    /// Executes the function
-//    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 []
-//    
+}
+
+/// A base six variable function
+public interface Func6
+{
+    /// Executes the function
+    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6) []
+
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6).
 //    
@@ -437,13 +437,13 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base seven variable function
-//limited closure class BaseFunction7
-//{
-//    /// Executes the function    
-//    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 []    /// Executes the function
+}
+
+/// A base seven variable function
+public interface Func7
+{
+    /// Executes the function
+    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7) []
 //    
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7).
@@ -471,13 +471,14 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base eight variable function
-//limited closure class BaseFunction8
-//{
-//    /// Executes the function    
-//    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 []    /// Executes the function
+}
+
+/// A base eight variable function
+public interface Func8
+{
+    /// Executes the function
+    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
+                        object aParam7, object aParam8) []
 //    
 //    /// Executes the function    
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8
@@ -506,14 +507,15 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base nine variable function
-//limited closure class BaseFunction9
-//{
-//    /// Executes the function    
-//    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 []    /// Executes the function
-//    
+}
+
+/// A base nine variable function
+public interface Func9
+{
+    /// Executes the function
+    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
+                        object aParam7, object aParam8, object aParam9) []
+
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9).
@@ -541,14 +543,15 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base ten variable function
-//limited closure class BaseFunction10
-//{
-//    /// Executes the function    
-//    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 []    /// Executes the function
-//    
+}
+
+/// A base ten variable function
+public interface Func10
+{
+    /// Executes the function
+    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
+                        object aParam7, object aParam8, object aParam9, object aParam10) []
+
 //    /// Executes the function    
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10).
@@ -577,13 +580,15 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
-///// A base eleven variable functions
-//limited closure class BaseFunction11
-//{
-//    /// Executes the function    
-//    closure : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11 []    /// Executes the function
+}
+
+/// A base eleven variable functions
+public interface Func11
+{
+    /// Executes the function
+    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
+                        object aParam7, object aParam8, object aParam9, object aParam10, object aParam11) []
+
 //    
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11
@@ -614,8 +619,8 @@ public abstract Indexable
 //        
 //        ^ $nil
 //    ]
-//}
-//
+}
+
 //// --- base lazy expression ---
 //
 //limited class BaseLazyExpression
