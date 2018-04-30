@@ -3310,18 +3310,18 @@ public class Integer =
 //    vlong new:n
 //        = n long.
 //}.
-//
-//class Real =
-//{
-//    vreal new
-//        = 0.0r.
-//        
-//    vreal new : n
-//        = n real.
-//        
-//    vreal new int:n
-//        = n real.
-//        
-//    vreal new real:n
-//        = n.
-//}.
+
+public class Real =
+{
+    ref<real> new
+        = 0.0r.
+        
+    ref<real> new : n
+        = T<real>(n).
+        
+    ref<real> new(int n)
+        = T<real>(n).
+        
+    ref<real> new(real n)
+        = n.
+}.
