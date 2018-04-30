@@ -213,7 +213,7 @@ _Module* LibraryManager :: resolveIndirectWeakModule(ident_t weakName, LoadResul
    for (auto it = _modules.start(); !it.Eof(); it++) {
       // try to resolve it once again
       ReferenceNs fullName((*it)->Name());
-      fullName.combine(weakName.c_str() + 1);
+      fullName.combine(weakName.c_str());
 
       reference = (*it)->mapReference(fullName, true);
       if (reference) {

@@ -2885,8 +2885,13 @@ bool DerivationTransformer :: generateCodeTemplate(SyntaxWriter& writer, Derivat
 
    SNode current = root.findChild(lxCode).firstChild();
    while (current != lxNone) {
-      if (current.type == lxLoop || current.type == lxExpression/* || current.type == lxExtern*/)
-         copyExpressionTree(writer, current, scope);
+      switch (current.type) {
+         case lxLoop:
+         case lxExpression:
+         case lxExtern:
+            copyExpressionTree(writer, current, scope);
+            break;
+      }
 
       current = current.nextNode();
    }
@@ -2978,7 +2983,7 @@ void DerivationTransformer :: generateCodeTree(SyntaxWriter& writer, SNode node,
          }
          case lxLoop:
          case lxCode:
-//         case lxExtern:
+         case lxExtern:
             generateCodeTree(writer, current, scope);
             break;
 //         case lxObject:
@@ -3334,9 +3339,9 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
             case V_IMPORT:
                attr = daImport;
                break;
-//            case V_EXTERN:
-//               attr = (DeclarationAttr)(daExtern | daTemplate | daBlock);
-//               break;
+            case V_EXTERN:
+               attr = (DeclarationAttr)(daExtern | daTemplate | daBlock);
+               break;
             case V_BLOCK:
                if (test(declType, daBlock)) {
                   if (test(declType, daDblBlock)) {
@@ -3437,9 +3442,9 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
          if (test(declType, daLoop)) {
             node.findChild(lxCode).injectNode(lxLoop);
          }
-         /*else if (test(declType, daExtern)) {
+         else if (test(declType, daExtern)) {
             node.findChild(lxCode).injectNode(lxExtern);
-         }*/
+         }
       }
 //      else if (declType == (DeclarationAttr)(daExtension | daTemplate)) {
 //         scope.type = DerivationScope::ttExtTemplate;

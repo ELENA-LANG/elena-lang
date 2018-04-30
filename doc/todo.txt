@@ -3,6 +3,7 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * uncomment FileWriter
 
                  * migrate dynamic, templates, win32_app files
                  * migrate rest of the code : try-catch, try template, switch, generics, collections, operations with
@@ -154,6 +155,9 @@ In development:
                  * reimplement IDE exclude the file
                  * reimplement IDE add forward
                  * reimplement IDE clear forwards
+                 * external calls - do not save the result if the target is not specified
+                 * it should be possible to implicitly typecast the primitive array in compile-time
+                 * interface template - generate an error / warning if there is no abstract method implementation
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

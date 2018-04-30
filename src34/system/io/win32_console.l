@@ -1,5 +1,14 @@
 //import system'text.
-//
+
+// --- IConsoleReader ---
+
+public interface IConsoleReader
+{
+    abstract read(ref<int> retVal) []
+    
+    abstract read(ref<char> retVal) []
+}
+
 //type console_screen_buffer_info = CONSOLE_SCREEN_BUFFER_INFO.
 
 const int FILE_TYPE_CHAR = 2.
@@ -214,7 +223,7 @@ sealed class FileWriter
 
 // --- ConsoleReader ---
 
-sealed struct ConsoleReader
+sealed struct ConsoleReader :: Object, interface<IConsoleReader>
 {
     handle theHandle.
     
@@ -223,71 +232,62 @@ sealed struct ConsoleReader
         theHandle := aHandle.
     ]
 
-//    stacksafe read vchar:aChar
-//    [
-//        byte<20> aDump.
-//        int      aNumberRead := 0.
-//        short    anEventType := 0.
-//        int      aKeyDown := 0.
-//        int      aHandle := theHandle.
-//        
-//        bool found := false.
-//        until (found)
-//        [
-//            extern()
-//            [
-//                system'external'KERNEL32 ReadConsoleInputW
-//                    int           : aHandle
-//                    bytearray     : aDump
-//                    int           : 1
-//                    vint          : aNumberRead.
-//            ].
-//
-//            byteArrayHelper read bytearray:aDump int:0 vshort:anEventType.
-//            if (anEventType == 1)
-//                [  
-//                    byteArrayHelper read bytearray:aDump int:4 vint:aKeyDown.
-//                    
-//                    found := aKeyDown == 1
-//                ];
-//                [ found := false ]
-//        ].
-//
-//        byteArrayHelper read bytearray:aDump int:14 vchar:aChar.
-//    ]
-//
-//    stacksafe read vint:aKey
-//    [
-//        byte<20> aDump.
-//        int      aNumberRead := 0.
-//        short    anEventType := 0.
-//        int      aKeyDown := 0.
-//        
-//        bool found := false.
-//        until (found)
-//        [
-//            extern()
-//            [
-//                system'external'KERNEL32 ReadConsoleInputW
-//                    int           : theHandle
-//                    bytearray     : aDump
-//                    int           : 1
-//                    vint          : aNumberRead
-//            ].
-//
-//            byteArrayHelper read bytearray:aDump int:0 vshort:anEventType.
-//            if (anEventType == 1)
-//                [  
-//                    byteArrayHelper read bytearray:aDump int:4 vint:aKeyDown.
-//                    
-//                    found := aKeyDown == 1
-//                ];
-//                [ found := false ]
-//        ].
-//                    
-//        byteArrayHelper read bytearray:aDump int:8 vint:aKey
-//    ]
-//
+    stacksafe read(ref<char> aChar)
+    [
+        T<byte,20> aDump.
+        int        aNumberRead := 0.
+        short      anEventType := 0.
+        int        aKeyDown := 0.
+        
+        bool found := false.
+        until (found)
+        [
+            extern()
+            [
+                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<bytearray>(aDump), 1, &aNumberRead).
+            ].
+
+            byteArrayHelper read(T<bytearray>(aDump), 0, &anEventType).
+            if (anEventType == 1)
+                [  
+                    byteArrayHelper read(T<bytearray>(aDump), 4, &aKeyDown).
+                    
+                    found := aKeyDown == 1
+                ];
+                [ found := false ]
+        ].
+
+        byteArrayHelper read(T<bytearray>(aDump), 14, aChar).
+    ]
+
+    stacksafe read(ref<int> aKey)
+    [
+        T<byte,20> aDump.
+        int        aNumberRead := 0.
+        short      anEventType := 0.
+        int        aKeyDown := 0.
+        
+        bool found := false.
+        until (found)
+        [
+            extern()
+            [
+                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<bytearray>(aDump), 1, &aNumberRead).
+            ].
+
+            byteArrayHelper read(T<bytearray>(aDump), 0, &anEventType).
+            if (anEventType == 1)
+                [  
+                    byteArrayHelper read(T<bytearray>(aDump), 4, &aKeyDown).
+                    
+                    found := aKeyDown == 1
+                ];
+                [ found := false ]
+        ].
+                    
+        byteArrayHelper read(T<bytearray>(aDump), 8, &aKey)
+    ]
+
 //    bool isKeyAvailable
 //    [
 //        byte<20> aDump.

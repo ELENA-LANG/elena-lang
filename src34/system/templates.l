@@ -207,13 +207,13 @@ __loop template until :: expr
     ].
 ]
     
-//// --- extern statement ---
-//
-//__extern template extern
-//[
-//    [
-//    ].
-//]
+// --- extern statement ---
+
+__extern template extern
+[
+    [
+    ].
+]
 
 // --- if statement ---
 

@@ -269,24 +269,25 @@ ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t refere
 
       if (isWeakReference(referenceName)) {
          if (isTemplateWeakReference(referenceName)) {
-            // COMPILER MAGIC : try to find a template implementation
-            ref_t resolvedRef = 0;
-            _Module* refModule = _project->resolveWeakModule(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedRef, true);
-            if (refModule != nullptr) {
-               ident_t resolvedReferenceName = refModule->resolveReference(resolvedRef);
-               if (isWeakReference(resolvedReferenceName)) {
-                  IdentifierString fullName(refModule->Name(), resolvedReferenceName);
-
-                  _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, fullName);
-               }
-               else _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedReferenceName);
-            }
-
             ident_t resolvedName = _project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
-            if (!emptystr(resolvedName)) {
-               referenceName = resolvedName;
+            if (emptystr(resolvedName)) {
+               // COMPILER MAGIC : try to find a template implementation
+               ref_t resolvedRef = 0;
+               _Module* refModule = _project->resolveWeakModule(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedRef, true);
+               if (refModule != nullptr) {
+                  ident_t resolvedReferenceName = refModule->resolveReference(resolvedRef);
+                  if (isWeakReference(resolvedReferenceName)) {
+                     IdentifierString fullName(refModule->Name(), resolvedReferenceName);
+
+                     _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, fullName);
+                  }
+                  else _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedReferenceName);
+
+                  referenceName = _project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+               }
+               else throw JITUnresolvedException(referenceName);
             }
-            else throw JITUnresolvedException(referenceName);
+            else referenceName = resolvedName;
          }
 
          return ReferenceInfo(module, referenceName);

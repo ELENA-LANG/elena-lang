@@ -3,9 +3,9 @@
 /// A console
 class Console
 {
-    object  theWriter.
-    object  theReader.
-    literal theNewLineConstant.
+    object               theWriter.
+    T<io'IConsoleReader> theReader.
+    literal              theNewLineConstant.
 
     /// Creates a console
     constructor new(object aReader, object aWriter)
@@ -69,17 +69,27 @@ class Console
 //    /// Reads the next line of characters from the standard input stream.
 //    wide readWide
 //        = theReader wide.
-//
-//    /// Reads the next character from the input stream
-//    readChar
-//        = theReader char.
-//
+
+    /// Reads the next character from the input stream
+    readChar
+    [
+        char ch := $0.
+        theReader read(&ch).
+        
+        ^  ch.
+    ]
+
 //    bool isKeyAvailable
 //        => theReader.
-//
-//    /// Reads the next key code from the input stream
-//    readKey
-//        = theReader int.
+
+    /// Reads the next key code from the input stream
+    readKey
+    [
+        int key := 0.
+        theReader read(&key).
+        
+        ^ key
+    ]
 }
 
 /// A standard console

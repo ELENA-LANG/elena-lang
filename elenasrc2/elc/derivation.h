@@ -179,7 +179,7 @@ class DerivationTransformer //: public _DerivationTransformer
       daField       = 0x0008,
       daLoop        = 0x0020,
       daImport      = 0x0040,
-//      daExtern      = 0x0080,
+      daExtern      = 0x0080,
       daAccessor    = 0x0100,
       daDblAccessor = 0x0300,
       daCodeMask    = 0xF800,

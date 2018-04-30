@@ -4560,11 +4560,11 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
          case lxVariable:
             compileVariable(writer, current, scope);
             break;
-//         case lxExtern:
-//            writer.newNode(lxExternFrame);
-//            compileCode(writer, current.findSubNode(lxCode), scope);
-//            writer.closeNode();
-//            break;
+         case lxExtern:
+            writer.newNode(lxExternFrame);
+            compileCode(writer, current.findSubNode(lxCode), scope);
+            writer.closeNode();
+            break;
          case lxEOF:
             needVirtualEnd = false;
             writer.newNode(lxBreakpoint, dsEOP);
@@ -7751,7 +7751,7 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, /*Warn
          case lxElse:
          case lxCode:
          case lxIf:
-         //case lxExternFrame:
+         case lxExternFrame:
             analizeExpressionTree(current, scope/*, warningScope*/);
             break;
          case lxBranching:
@@ -7769,20 +7769,20 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, /*Warn
    }
 }
 
-void Compiler :: analizeCode(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/)
+void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
          case lxReturning:
-            analizeExpressionTree(current, scope, /*warningScope, */HINT_NOUNBOXING | HINT_NOCONDBOXING);
+            analizeExpressionTree(current, scope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
             break;
          case lxExpression:
-         //case lxExternFrame:
+         case lxExternFrame:
          case lxDirectCalling:
          case lxSDirctCalling:
          case lxCalling:
-            analizeExpressionTree(current, scope/*, warningScope*/);
+            analizeExpressionTree(current, scope);
             break;
          default:
             if (test(current.type, lxObjectMask)) {

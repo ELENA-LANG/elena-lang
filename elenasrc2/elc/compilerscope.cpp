@@ -278,11 +278,8 @@ _Module* CompilerScope :: loadReferenceModule(ident_t referenceName, ref_t& refe
 ref_t CompilerScope :: mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared)
 {
    ReferenceNs forwardName;
+   // NOTE : the nested namespace is not included into the weak name
    forwardName.append(TEMPLATE_PREFIX_NS);
-   if (!emptystr(ns)) {
-      forwardName.append(ns);
-      forwardName.append('\'');
-   }      
 
    forwardName.append(templateName);
 
