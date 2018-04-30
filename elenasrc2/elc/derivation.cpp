@@ -99,9 +99,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsArrayOperation:
          _writer.newNode(lxOperator, REFER_MESSAGE_ID);
          break;
-//      case nsXInlineClosure:
-//         _writer.newNode(lxInlineClosure);
-//         break;
+      case nsXInlineClosure:
+         _writer.newNode(lxInlineClosure);
+         break;
       case nsMessageOperation:
          _writer.newNode(lxMessage);
          break;
@@ -1513,18 +1513,18 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
 //      current = current.nextNode();
 //   }
 //}
-//
-//void DerivationReader :: generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
-//{
-//   SNode current = node.firstChild();
-//
-//   // COMPILER MAGIC : advanced closure syntax
-//   writer.newBookmark();
-//
-//   generateObjectTree(writer, current, scope);
-//
-//   writer.removeBookmark();
-//}
+
+void DerivationTransformer :: generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   SNode current = node.firstChild();
+
+   // COMPILER MAGIC : advanced closure syntax
+   writer.newBookmark();
+
+   generateObjectTree(writer, current, scope);
+
+   writer.removeBookmark();
+}
 
 void DerivationTransformer :: generateMessage(SyntaxWriter& writer, SNode current, DerivationScope& scope/*, bool templateMode*/)
 {
@@ -1975,10 +1975,10 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
          case lxExpression:
             generateExpressionTree(writer, current, scope/*, EXPRESSION_MESSAGE_MODE*/);
             break;
-//         case lxInlineClosure:
-//            // COMPILER MAGIC : advanced closure syntax
-//            generateClosureTree(writer, current, scope);
-//            break;
+         case lxInlineClosure:
+            // COMPILER MAGIC : advanced closure syntax
+            generateClosureTree(writer, current, scope);
+            break;
          case lxMessage:
          {
             //if (invokeMode/* || invokeWithNoParamMode*/) {

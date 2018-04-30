@@ -199,7 +199,7 @@ enum LexicalType
    lxBytesVariable   = 0x1003C,
    lxShortsVariable  = 0x1003D,
    lxParamsVariable  = 0x1003E,
-//   lxInlineClosure   = 0x1003F,
+   lxInlineClosure   = 0x1003F,
 
    // attributes
    lxAttribute       = 0x20000,

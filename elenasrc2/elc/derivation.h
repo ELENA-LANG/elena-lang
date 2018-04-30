@@ -242,7 +242,7 @@ class DerivationTransformer //: public _DerivationTransformer
    void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
      void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-////   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool withBookmark = false);
    bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode/* = false*/);

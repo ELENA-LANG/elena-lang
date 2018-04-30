@@ -4425,10 +4425,16 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
       mode |= HINT_NOUNBOXING;
    }
-   
-   ObjectInfo objectInfo = compileObject(writer, object, scope, targetMode);
 
-   objectInfo = compileOperation(writer, object.nextNode(), scope, objectInfo, mode);
+   ObjectInfo objectInfo;
+   if (object == lxMethodParameter) {
+      objectInfo = compileObject(writer, node, scope, targetMode);
+   }
+   else {
+      objectInfo = compileObject(writer, object, scope, targetMode);
+
+      objectInfo = compileOperation(writer, object.nextNode(), scope, objectInfo, mode);
+   }   
 
    if (targetRef) {
       ref_t sourceRef = resolveObjectReference(scope, objectInfo, targetRef);

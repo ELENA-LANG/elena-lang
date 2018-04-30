@@ -6,8 +6,8 @@ const IntSamplePrompt = "Enter the two integer numbers:".
 
 //const RealSamplePrompt = "Enter the two real numbers:".
 
-//// --- EReader ---
-//
+// --- EReader ---
+
 //extension EReader
 //{
 //    loadFrom : aStream
@@ -19,7 +19,7 @@ const IntSamplePrompt = "Enter the two integer numbers:".
 //                    AbortException new; raise.
 //                ].
 //}
-//
+
 //enteredNumber = forwards'number new; loadFrom:console.
 
 // --- Program ---
