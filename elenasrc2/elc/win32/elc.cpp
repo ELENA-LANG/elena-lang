@@ -535,6 +535,28 @@ _ELENA_::_JITCompiler* _ELC_::Project::createJITCompiler64()
    return new _ELENA_::AMD64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 }
 
+inline void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
+{
+   if (!moduleNs.compare(rootNs)) {
+      moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
+   }
+   else moduleNs = NULL;
+
+   size_t start = 0;
+   size_t ns_index = moduleNs ? moduleNs.find(start, '\'') : NOTFOUND_POS;
+   while (ns_index != NOTFOUND_POS) {
+      if (moduleNs.compare(filePath, start, ns_index)) {
+         start = ns_index + 1;
+         ns_index = moduleNs.find(start, '\'');
+      }
+      else break;
+   }
+   size_t index = filePath.findLast(PATH_SEPARATOR);
+   if (index != NOTFOUND_POS && index > start) {
+      retVal.copy(filePath + start, index - start);
+   }
+}
+
 void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope, _ELENA_::SourceFileList& files)
 {
    _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
@@ -543,10 +565,12 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
       info->tree = new _ELENA_::SyntaxTree();
 
       _ELENA_::ident_t filePath = *file_it;
-      size_t index = filePath.find(PATH_SEPARATOR);
-      if (index != NOTFOUND_POS) {
-         info->ns.copy(filePath, index);
-      }
+
+      retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, info->ns);
+      //size_t index = filePath.find(PATH_SEPARATOR);
+      //if (index != NOTFOUND_POS) {
+      //   info->ns.copy(filePath, index);
+      //}
       info->path.copy(filePath);
 
       // add the module itself
@@ -626,8 +650,9 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
       _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ProjectSettings::VItem>* source = *it;
 
       // create module
-      _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
       _ELENA_::CompilerScope scope(this);
+
+      _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
       compiler.initializeScope(name, scope, debugMode);
 
       //_ELENA_::ident_t target = source->get(ELC_TARGET_NAME);

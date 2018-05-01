@@ -1089,7 +1089,7 @@ public sealed CharArray :: Indexable, array<char>
 // --- emptyliteralvalue ---
 
 /// An empty literal value
-const literal emptyLiteralValue = "".
+const literal public emptyLiteralValue = "".
 
 // --- LiteralValue ---
 

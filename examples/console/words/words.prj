@@ -1,12 +1,16 @@
-﻿[project]
-executable=words.exe
-namespace=words
-template=console
-debuginfo=-1
-
-[files]
-words.l
-
-[forwards]
-'program=words'Program
-
+<configuration>
+    <project>
+        <executable>words.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>words</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>words.l</include>
+        </module>
+    </files>
+</configuration>

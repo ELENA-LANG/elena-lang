@@ -31,19 +31,19 @@ sealed template<BaseVariable> ref :: template_subj
         theValue := val.
     ]
 
-//    stacksafe append template_subj:val
-//    [
-//        $value := $value + val.
-//    ]
-//    
+    stacksafe append(template_subj val)
+    [
+        theValue := theValue + val.
+    ]
+    
 //    multi append:val
 //        <= append template_subj:val.
-//    
-//    stacksafe reduce template_subj:val
-//    [
-//        $value := $value - val.
-//    ]
-//    
+    
+    stacksafe reduce(template_subj val)
+    [
+        theValue := theValue - val.
+    ]
+    
 //    multi reduce:val
 //        <= reduce template_subj:val.
     
@@ -2372,42 +2372,42 @@ public singleton nilValue
 //      
 //    dispatch => theObject.
 //}
-//
-///// A generic variable. 
-/////
-///// Extends an assigned value
-//sealed class Variable :: BaseVariable, var<object>
-//{
-//    /// Creates the empty variable
-//    constructor new
-//    [
-//    ]        
-//        
-//    /// Creates the variable
-//    constructor new : value
+
+/// A generic variable. 
+///
+/// Extends an assigned value
+sealed public class Variable :: BaseVariable, ref<object>
+{
+    /// Creates the empty variable
+    constructor new
+    [
+    ]        
+        
+    /// Creates the variable
+    constructor new : value
+    [
+        theValue := value.
+    ]
+    
+//    set : value
 //    [
 //        $value := value.
 //    ]
-//    
-////    set : value
-////    [
-////        $value := value.
-////    ]
-//    
-//    append : val
-//    [
-//        ($nil == $value)
-//            ? [ $value := val ]
-//            ! [ $value := $value + val ]
-//    ]
-//    
-//    reduce : val
-//    [
-//        ($nil == $value)
-//            ? [ system'InvalidOperationException new; raise ]
-//            ! [ $value := $value - val ]
-//    ]
-//    
+    
+    append : val
+    [
+        (nil == theValue)
+            ? [ theValue := val ]
+            ! [ theValue := theValue + val ]
+    ]
+    
+    reduce : val
+    [
+        (nil == theValue)
+            ? [ system'InvalidOperationException new; raise ]
+            ! [ theValue := theValue - val ]
+    ]
+    
 //    multiplyBy : val
 //    [
 //        ($nil == $value)
@@ -2422,8 +2422,8 @@ public singleton nilValue
 //            ? [ system'InvalidOperationException new; raise ]
 //            ! [ $value := $value / val ]
 //    ]    
-//}
-//
+}
+
 //// --- KeyValue ---
 //
 ///// A key - object pair

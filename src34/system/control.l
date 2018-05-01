@@ -10,12 +10,12 @@ public interface Enumerator
     
     /// Goes to the next enumeration member and returns true if it is not the last member
     abstract bool next []
-//    
-//    /// Resets the enumerator
-//    abstract reset []
-//    
-//    /// returns the enumerator owner
-//    abstract enumerable []
+    
+    /// Resets the enumerator
+    abstract reset []
+    
+    /// returns the enumerator owner
+    abstract enumerable []
 }
 
 // --- enumerator<> ---

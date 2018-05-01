@@ -11,6 +11,7 @@
        <include>control.l</include>
        <include>convertors.l</include>
        <include>console.l</include>
+       <include>text\strings.l</include>
      </module>
   </files>
 </configuration>
