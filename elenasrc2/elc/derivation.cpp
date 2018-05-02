@@ -1063,7 +1063,7 @@ void DerivationTransformer :: copyFieldTree(SyntaxWriter& writer, SNode node, De
       }
       else if (current == lxTemplateParam && current.argument == INVALID_REF) {
          SNode templateNode = current.findChild(lxTemplate);
-         ref_t attrRef = templateNode.argument;
+         //ref_t attrRef = templateNode.argument;
          //if (attrRef == V_OBJARRAY || attrRef == V_TYPETEMPL)
 
          //ref_t attrRef = scope.moduleScope->attributes.get(current.findChild(lxTemplate).identifier());
@@ -1469,7 +1469,7 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
       else if (scope.type == DerivationScope::ttFieldTemplate || scope.type == DerivationScope::ttMethodTemplate) {
          // HOTFIX : in field template the last parameter is a name
          int paramIndex = scope.mapParameter(nameNode.firstChild(lxTerminalMask).identifier());
-         if (paramIndex != 0 && paramIndex == scope.parameters.Count()) {
+         if (paramIndex != 0 && paramIndex == (int)scope.parameters.Count()) {
             writer.appendNode(lxTemplateParam, paramIndex);
          }
          else scope.copyName(writer, nameNode.firstChild(lxTerminalMask));
@@ -2161,7 +2161,7 @@ inline int defineOperatorLevel(SNode node)
    return 10;
 }
 
-void DerivationTransformer :: copyOperator(SyntaxWriter& writer, SNode& node, DerivationScope& scope)
+void DerivationTransformer :: copyOperator(SyntaxWriter& writer, SNode& node)
 {
    int operator_id = node.argument;
 
@@ -2289,7 +2289,7 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
                last_level = bookmarks.peek() & 7;
             }
 
-            copyOperator(writer, current, scope);
+            copyOperator(writer, current);
             int bm = writer.newBookmark();
             bookmarks.push((bm << 3) + level);
 
@@ -2379,7 +2379,7 @@ void DerivationTransformer:: generateAssignmentOperator(SyntaxWriter& writer, SN
       writer.newBookmark();
       writer.newNode(lxExpression);
       generateObjectTree(writer, loperand, scope);
-      copyOperator(writer, loperatorNode, scope);
+      copyOperator(writer, loperatorNode);
       generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
       writer.closeNode();
       while (loperatorNode.nextNode() == lxOperator) {
@@ -2394,7 +2394,7 @@ void DerivationTransformer:: generateAssignmentOperator(SyntaxWriter& writer, SN
       writer.newNode(lxExpression);
       writer.newNode(lxExpression);
       generateObjectTree(writer, loperand, scope);
-      copyOperator(writer, loperatorNode, scope);
+      copyOperator(writer, loperatorNode);
       generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
       writer.closeNode();
       while (loperatorNode.nextNode() == lxOperator) {
@@ -3266,10 +3266,8 @@ void DerivationTransformer :: includeModule(SNode ns, DerivationScope& scope)
       // system module is included automatically - nothing to do in this case
       return;
 
-   //bool duplicateExtensions = false;
-   bool duplicateAttributes = false;
    bool duplicateInclusion = false;
-   if (scope.compilerScope->includeModule(*scope.imports, name, duplicateInclusion)) {
+   if (scope.compilerScope->includeNamespace(*scope.imports, name, duplicateInclusion)) {
       //if (duplicateExtensions)
       //   scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
    }
@@ -3390,6 +3388,7 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
 
          return true;
       }
+      else return false;
    }
    else if (test(declType, daTemplate)) {
       node = lxTemplate;

@@ -86,17 +86,17 @@ public sealed const struct UnsafePointer
 //    [
 //        thePointer := aValue.
 //    ]
-//                
-//    stacksafe set dirty_ptr:anObject
+                
+//    stacksafe set reference(object anObject)
 //    [
 //        $self $setUnsafeReference:anObject.
 //    ]
-//                                                
-//    stacksafe offset int:offs
-//    [
-//        thePointer := thePointer + offs.
-//    ]
-//
+                                                
+    stacksafe offset(int offs)
+    [
+        thePointer := thePointer + offs.
+    ]
+
 //    stacksafe write int:anObject
 //        => system'core_routines'__dptr.
 //                

@@ -1,5 +1,5 @@
-//import system'routines.
-//
+import system'routines.
+
 //int extension intLoopOp
 //{
 //    stacksafe runIntLoop int:anEnd nfunc:aFunction
@@ -78,8 +78,8 @@ extension forLoopOp
 //    multi to:aMaxValue by:aStep do:anAction
 //        = self~forLoopOp to:aMaxValue by:aStep do(:n)[ anAction eval:n ].
 
-//    till(object aMaxValue) do(func1 aFunction)
-//        = aFunction run enumerator:(IntervalEnumerator new from:self till:aMaxValue).
+    till(object aMaxValue) do(func1 aFunction)
+        = aFunction run(IntervalEnumerator from:self till:aMaxValue).
 
 //    till(object aMaxValue) do(ExtensionMessage aMessage)
 //        = self~forLoopOp to:aMaxValue do(:n)[ n~aMessage get ].

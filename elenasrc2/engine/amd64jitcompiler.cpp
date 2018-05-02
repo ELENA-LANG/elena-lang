@@ -1112,7 +1112,7 @@ void _ELENA_::compileACopyB(int, AMD64JITScope& scope)
 
 void _ELENA_::compileInvokeVMTOffset(int opcode, AMD64JITScope& scope)
 {
-   int message = scope.resolveMessage(scope.tape->getDWord());
+   ref64_t message = scope.resolveMessage(scope.tape->getDWord());
 
    char*  code = (char*)scope.compiler->_inlines[opcode];
    size_t position = scope.code->Position();
@@ -1130,7 +1130,7 @@ void _ELENA_::compileInvokeVMTOffset(int opcode, AMD64JITScope& scope)
 
       if (relocation[0] == -1) {
          // resolve message offset
-         scope.writeReference(*scope.code, scope.argument | mskVMTEntryOffset, message);
+         scope.writeXReference(*scope.code, scope.argument | mskVMTEntryOffset, message);
       }
 
       relocation += 2;

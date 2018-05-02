@@ -410,7 +410,7 @@ void _ELC_::Project :: loadConfig(_ELENA_::path_t path, bool root, bool requiere
    {
       loadGenericConfig(config, configPath.c_str(), root, requiered);
    }
-   catch (_ELENA_::XMLException& e)
+   catch (_ELENA_::XMLException&)
    {
       raiseErrorIf(requiered, ELC_ERR_INVALID_PATH, _ELENA_::IdentifierString(path));
       return;
@@ -543,11 +543,11 @@ inline void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _E
    else moduleNs = NULL;
 
    size_t start = 0;
-   size_t ns_index = moduleNs ? moduleNs.find(start, '\'') : NOTFOUND_POS;
+   size_t ns_index = moduleNs ? moduleNs.find(start, '\'', getlength(moduleNs)) : NOTFOUND_POS;
    while (ns_index != NOTFOUND_POS) {
       if (moduleNs.compare(filePath, start, ns_index)) {
          start = ns_index + 1;
-         ns_index = moduleNs.find(start, '\'');
+         ns_index = moduleNs.find(start, '\'', NOTFOUND_POS);
       }
       else break;
    }
@@ -572,6 +572,9 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
       //   info->ns.copy(filePath, index);
       //}
       info->path.copy(filePath);
+
+      // declare a namespace
+      scope.declareNamespace(info->ns.c_str());
 
       // add the module itself
       info->importedNs.add(scope.module->Name().clone());

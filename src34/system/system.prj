@@ -23,6 +23,9 @@
        <include>console.l</include>
        <include>win32_app.l</include>
        <include>math\math.l</include>
+       <include>text\encoder.l</include>
+       <include>text\win32_encoder.l</include>
+       <include>text\textbuffer.l</include>
        <include>io\win32_console.l</include>
      </module>
      <module name="routines">

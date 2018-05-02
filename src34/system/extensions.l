@@ -1051,196 +1051,196 @@ extension<real> realOp
 //        ^ self
 //    ]
 //}
-//
-//// --- literalOp ---
-//
-//literal extension literalOp
-//{
-//    indexOf : anObject
-//        = self indexOf:anObject at:0.
-//
-//    indexOf literal:aLiteral
-//        = self indexOf:aLiteral at:0.
-//
-//    indexOf char:aChar
-//        = self indexOf:aChar at:0.
-//        
-//    literal Substring at:anIndex
-//        = self~literalOp Substring int:anIndex.
-//        
-//    stacksafe literal Substring int:anIndex
+
+// --- literalOp ---
+
+extension<literal> literalOp
+{
+    indexOf : anObject
+        = self indexOf:anObject at:0.
+
+    indexOf(literal aLiteral)
+        = self indexOf:aLiteral at:0.
+
+    indexOf(char aChar)
+        = self indexOf:aChar at:0.
+        
+    literal Substring : anIndex
+        = self~literalOp Substring(T<int>(anIndex)).
+        
+    stacksafe literal Substring(int anIndex)
+    [
+        int aLength := self length.
+        if (aLength > anIndex)
+        [
+            aLength := aLength - anIndex.
+            
+            ^ self Substring(anIndex, aLength)
+        ];
+        [
+            ^ emptyLiteralValue
+        ]        
+    ]        
+    
+    literal trimLeft(char aChar)
+    [
+        int  anIndex := 0.
+        int  aLength := self length.
+        char aCurrent := $0.
+        int  aCharLen := aChar length.
+        
+        while(anIndex < aLength)
+        [
+            self read(anIndex, &aCurrent).
+            
+            ifnot(aCurrent == aChar)
+                [ 
+                    if (anIndex == 0)
+                        [ ^ self ];
+                        [ ^ self delete(0, anIndex) ]
+                ].
+            
+            anIndex := anIndex + aCharLen
+        ].
+        
+        ^ emptyLiteralValue
+    ]
+    
+    literal trimLeft
+        = self~literalOp trimLeft($32).
+       
+    literal trimRight(char aChar)
+    [
+        int  aLength := self length.
+        int  anIndex := aLength - 1.
+        int  aPrevious := aLength.
+        char aCurrent := $0.
+        int  aCharLen := aChar length.
+        
+        while (anIndex >= 0)
+        [
+            self read(anIndex, &aCurrent).
+            
+            ifnot (aCurrent equal(aChar))
+                [ ^ self delete(aPrevious,aLength - aPrevious) ].
+            
+            aPrevious := anIndex.
+            anIndex := anIndex - aCharLen
+        ].
+        
+        ^ emptyLiteralValue
+    ]
+    
+    literal trimRight
+        = self~literalOp trimRight($32).
+        
+    literal trim(char aChar)
+        = self~literalOp trimLeft(aChar); trimRight(aChar).
+    
+    literal trim
+        = self~literalOp trimLeft($32); trimRight($32).
+    
+    padLeft(int aLength)
+        = self padLeft($32, aLength).
+    
+    padLeft(char aChar, int aLength)
+    [
+        int aCurrentLength := self length.
+        
+        if (aCurrentLength < aLength)
+            [ ^ LiteralValue new(aLength - aCurrentLength, aChar); add(self) ].
+            
+        ^ self
+    ]
+    
+    padRight(int aLength)
+        = self padRight($32, aLength).
+    
+    padRight(char aChar, int aLength)
+    [
+        int aCurrentLength := self length.
+
+        if (aCurrentLength < aLength)
+            [ ^ self add(LiteralValue new(aLength - aCurrentLength, aChar)) ].
+            
+        ^ self
+    ]
+
+    bool startingWith(literal s)
+    [
+        int n := 0.
+        self indexOf(0, s, &n).
+        
+        ^ 0 == n
+    ]
+        
+    bool endingWith(literal s)
+    [
+        int l1 := self length.
+        int l2 := s length.
+
+        int n := 0.
+        self indexOf(l1 - l2, s, &n).
+        
+        ^ n != -1
+    ]
+        
+    bool containing(literal s)
+    [
+        int l1 := self length.
+        int l2 := s length.
+
+        int n := 0.
+        self indexOf(0, s, &n).
+        
+        ^ n != -1
+    ]
+
+//    replaceFirst literal:aReplacee literal:aReplacer
 //    [
-//        int aLength := self length.
-//        if (aLength > anIndex)
-//        [
-//            aLength := aLength - anIndex.
-//            
-//            ^ self Substring int:anIndex int:aLength
-//        ];
-//        [
-//            ^ emptyLiteralValue
-//        ]        
-//    ]        
-//    
-//    literal trimLeft char:aChar
-//    [
-//        int  anIndex := 0.
-//        int  aLength := self length.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
+//        int aReplaceeLen := aReplacee length.
+//        int anIndex := 0.
 //        
-//        while(anIndex < aLength)
-//        [
-//            self read int:anIndex vchar:aCurrent.
-//            
-//            ifnot(aCurrent == aChar)
-//                [ 
-//                    if (anIndex == 0)
-//                        [ ^ self ];
-//                        [ ^ self delete int:0 int:anIndex ]
-//                ].
-//            
-//            anIndex := anIndex + aCharLen
-//        ].
+//        self indexOf int:0 literal:aReplacee vint:anIndex.
 //        
-//        ^ emptyLiteralValue
-//    ]
-//    
-//    literal trimLeft
-//        = self~literalOp trimLeft char:$32.    
-//       
-//    literal trimRight char:aChar
-//    [
-//        int  aLength := self length.
-//        int  anIndex := aLength - 1.
-//        int  aPrevious := aLength.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self read int:anIndex vchar:aCurrent.
-//            
-//            ifnot (aCurrent equal char:aChar)
-//                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
-//            
-//            aPrevious := anIndex.
-//            anIndex := anIndex - aCharLen
-//        ].
-//        
-//        ^ emptyLiteralValue
-//    ]
-//    
-//    literal trimRight
-//        = self~literalOp trimRight char:$32.
-//        
-//    literal trim char:aChar
-//        = self~literalOp trimLeft char:aChar; trimRight char:aChar.
-//    
-//    literal trim
-//        = self~literalOp trimLeft char:$32; trimRight char:$32.        
-//    
-//    padLeft int:aLength
-//        = self padLeft($32, aLength).
-//    
-//    padLeft char:aChar int:aLength
-//    [
-//        int aCurrentLength := self length.
-//        
-//        if (aCurrentLength < aLength)
-//            [ ^ LiteralValue new int(aLength - aCurrentLength) char(aChar); add literal:self ].
-//            
-//        ^ self
-//    ]
-//    
-//    padRight int:aLength
-//        = self padRight($32, aLength).
-//    
-//    padRight char:aChar int:aLength
-//    [
-//        int aCurrentLength := self length.
-//
-//        if (aCurrentLength < aLength)
-//            [ ^ self add literal(LiteralValue new int(aLength - aCurrentLength) char(aChar)) ].
-//            
-//        ^ self
-//    ]
-//
-//    startingWith literal:s
-//    [
-//        int n := 0.
-//        self indexOf int:0 literal:s vint:n.
-//        
-//        ^ 0 == n
-//    ]
-//        
-//    endingWith literal:s
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//
-//        int n := 0.
-//        self indexOf int:(l1 - l2) literal:s vint:n.
-//        
-//        ^ n != -1
-//    ]
-//        
-//    containing literal:s
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//
-//        int n := 0.
-//        self indexOf int:0 literal:s vint:n.
-//        
-//        ^ n != -1
-//    ]
-//
-////    replaceFirst literal:aReplacee literal:aReplacer
-////    [
-////        int aReplaceeLen := aReplacee length.
-////        int anIndex := 0.
-////        
-////        self indexOf int:0 literal:aReplacee vint:anIndex.
-////        
-////        if (anIndex != -1)
-////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
-////            [ ^ self ].
-////    ]    
-//    
-//    replace literal:aReplacee literal:aReplacer
-//    [
-//        literal aTarget := emptyLiteralValue.
-//        int     aStart := 0.
-//        int     anEnd := 0.
-//        int     aReplaceeLen := aReplacee length.
-//        
-//        self indexOf int:aStart literal:aReplacee vint:anEnd.
-//        
-//        while (anEnd != -1)
-//        [
-//            aTarget := aTarget
-//                add literal:(self Substring int:aStart int:(anEnd - aStart));
-//                add literal:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            self indexOf int:aStart literal:aReplacee vint:anEnd
-//        ].
-//    
-//        (aStart != 0)
-//            ? [ ^ aTarget add literal:(self~literalOp Substring int:aStart) ]
-//            ! [ ^ self ]
-//    ]
-//    
-//    bool isEmpty
-//    [
-//        int aLength := self length.
-//        
-//        ^ aLength == 0
+//        if (anIndex != -1)
+//            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
+//            [ ^ self ].
 //    ]    
-//}
-//
+    
+    replace(literal aReplacee, literal aReplacer)
+    [
+        literal aTarget := emptyLiteralValue.
+        int     aStart := 0.
+        int     anEnd := 0.
+        int     aReplaceeLen := aReplacee length.
+        
+        self indexOf(aStart, aReplacee, &anEnd).
+        
+        while (anEnd != -1)
+        [
+            aTarget := aTarget
+                add(self Substring(aStart, anEnd - aStart));
+                add(aReplacer).
+            
+            aStart := anEnd + aReplaceeLen.
+            
+            self indexOf(aStart, aReplacee, &anEnd)
+        ].
+    
+        (aStart != 0)
+            ? [ ^ aTarget add(self~literalOp Substring(aStart)) ]
+            ! [ ^ self ]
+    ]
+    
+    bool isEmpty
+    [
+        int aLength := self length.
+        
+        ^ aLength == 0
+    ]    
+}
+
 //// --- wideOp ---
 //
 //wide extension wideOp

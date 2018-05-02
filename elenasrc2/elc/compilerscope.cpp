@@ -331,20 +331,17 @@ inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _M
       }
 
       // check imported references
-      IdentifierString name("'", identifier);
       List<ident_t>::Iterator it = importedNs.start();
       while (!it.Eof()) {
-         _Module* ext_module = project->loadModule(*it, true);
-         if (ext_module) {
-            reference = ext_module->mapReference(name.c_str(), true);
-            if (reference) {
-               if (ext_module != module) {
-                  IdentifierString fullName(ext_module->Name(), name.c_str());
+         ReferenceNs fullName(*it, identifier);
 
-                  return module->mapReference(fullName.c_str(), false);
-               }
-               else return reference;
+         ref_t reference = 0;
+         _Module* ext_module = project->resolveModule(fullName, reference, true);
+         if (ext_module && reference) {
+            if (ext_module != module) {
+               return module->mapReference(fullName.c_str(), false);
             }
+            else return reference;
          }
 
          it++;
@@ -483,11 +480,25 @@ void CompilerScope :: saveIncludedModule(_Module* extModule)
    metaWriter.writeLiteral(extModule->Name().c_str());
 }
 
-bool CompilerScope :: includeModule(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)
+void CompilerScope :: declareNamespace(ident_t ns)
 {
-   // check if the module exists
-   _Module* extModule = project->loadModule(name, true);
-   if (extModule) {
+   IdentifierString virtualRef("'");
+   if (!emptystr(ns)) {
+      virtualRef.append(ns);
+      virtualRef.append("'");
+   }
+   virtualRef.append(NAMESPACE_REF);
+
+   module->mapReference(virtualRef.c_str(), false);
+}
+
+bool CompilerScope ::includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)
+{
+   // check if the namespace exists
+   ReferenceNs virtualRef(name, NAMESPACE_REF);
+   ref_t dummyRef = 0;
+   _Module* extModule = project->resolveModule(virtualRef, dummyRef);
+   if (extModule && dummyRef) {
       ident_t value = retrieve(importedNs.start(), name, NULL);
       if (value == NULL) {
          importedNs.add(name.clone());

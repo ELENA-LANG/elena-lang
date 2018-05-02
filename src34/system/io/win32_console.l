@@ -1,4 +1,4 @@
-//import system'text.
+import system'text.
 
 // --- IConsoleReader ---
 
@@ -137,11 +137,10 @@ sealed struct ConsoleWriter
     [
     ]
 
-//    free
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            int:theHandle.
-//    ]
+    free
+    [
+        system'external'KERNEL32 CloseHandle(theHandle).
+    ]
 }
 
 // --- FileWriter ---
@@ -162,67 +161,66 @@ sealed class FileWriter
             (theHandle, buffer, length, &written, 0).
     ]
 
-//    write wide : literal
-//    [
-//        byte<256> buffer.
-//        int       length := literal length.
-//        int       index := 0.
-//        int       buf_len := 256.
-//        int       subs_len := 256.
-//        while (length > 0)
-//        [
-//            buf_len := 256.
-//            
-//            if (length < 128)
-//                [ subs_len := length ] ;
-//                [ subs_len := 128 ].
-//            
-//            OEMEncoder convert int:index vint:subs_len wide:literal bytearray:buffer vint:buf_len.
-//            
-//            $self write bytearray:buffer int:buf_len.
-//            
-//            index := index + subs_len.
-//            length := length - subs_len.
-//        ].
-//    ]
-//    
-//    write literal : literal
-//    [
-//        byte<256> buffer.
-//        int       length := literal length.
-//        int       index := 0.
-//        int       buf_len := 256.
-//        int       subs_len := 256.
-//        while (length > 0)
-//        [
-//            buf_len := 256.
-//            
-//            if (length < 128)
-//                [ subs_len := length ];
-//                [ subs_len := 128 ].
-//            
-//            OEMEncoder convert int:index vint:subs_len literal:literal bytearray:buffer vint:buf_len.
-//            
-//            $self write bytearray:buffer int:buf_len.
-//            
-//            index := index + subs_len.
-//            length := length - subs_len
-//        ].
-//    ]
-//    
-//    clear
-//    [
-//    ]
+    write(wide literal)
+    [
+        T<byte,256> buffer.
+        int         length := literal length.
+        int         index := 0.
+        int         buf_len := 256.
+        int         subs_len := 256.
+        while (length > 0)
+        [
+            buf_len := 256.
+            
+            if (length < 128)
+                [ subs_len := length ] ;
+                [ subs_len := 128 ].
+            
+            OEMEncoder convert(index, &subs_len, literal, T<bytearray>(buffer), &buf_len).
+            
+            self write(buffer, buf_len).
+            
+            index := index + subs_len.
+            length := length - subs_len.
+        ].
+    ]
+    
+    write(literal literal)
+    [
+        T<byte,256> buffer.
+        int         length := literal length.
+        int         index := 0.
+        int         buf_len := 256.
+        int         subs_len := 256.
+        while (length > 0)
+        [
+            buf_len := 256.
+            
+            if (length < 128)
+                [ subs_len := length ];
+                [ subs_len := 128 ].
+            
+            OEMEncoder convert(index, &subs_len, literal, T<bytearray>(buffer), &buf_len).
+            
+            self write(buffer, buf_len).
+            
+            index := index + subs_len.
+            length := length - subs_len
+        ].
+    ]
+    
+    clear
+    [
+    ]
 
     refresh
     [
     ]
 
-//    free
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            int:theHandle.
-//    ]
+    free
+    [
+        system'external'KERNEL32 CloseHandle(theHandle).
+    ]
 }
 
 // --- ConsoleReader ---

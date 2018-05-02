@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * debugger : the full symbol name should be used (rather than a relative one)
+
                  * uncomment FileWriter
 
                  * migrate dynamic, templates, win32_app files

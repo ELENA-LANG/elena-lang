@@ -291,7 +291,7 @@ bool XMLTree :: save(path_t path, int encoding, bool formatted)
       int indent = -4;
       bool inlineMode = false;
       bool openning = true;
-      for (int i = 0; i < getlength(_content); i++) {
+      for (size_t i = 0; i < getlength(_content); i++) {
          if (_content[i] == '<') {            
             if (_content[i + 1] != '/') {
                openning = true;

@@ -106,7 +106,8 @@ struct CompilerScope : _CompilerScope
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference);
 
-   virtual bool includeModule(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);
+   virtual void declareNamespace(ident_t name);
+   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);
 
    void compile(_Compiler& compiler, SourceFileList& files);
 

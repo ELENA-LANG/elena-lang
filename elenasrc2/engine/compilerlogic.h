@@ -66,10 +66,10 @@ class CompilerLogic : public _CompilerLogic
    bool isSignatureCompatible(_CompilerScope& scope, ref_t targetSignature, ref_t* sourceSignatures);
    bool isSignatureCompatible(_CompilerScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures);
 
-   bool loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
+   bool loadBranchingInfo(_CompilerScope& scope, ref_t reference);
    bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef, ref_t elementRef, ref_t* signatures, int signatureLen);
 
-   bool isBoolean(_CompilerScope& scope, _Compiler& compiler, ref_t reference);
+   bool isBoolean(_CompilerScope& scope, ref_t reference);
 
 public:
    virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
@@ -88,10 +88,10 @@ public:
    virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
-   virtual int resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
+   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
    virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
    virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
-   virtual bool resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference);
+   virtual bool resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference);
    virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
    virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
 
@@ -133,7 +133,7 @@ public:
    virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
    virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
-   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, ref_t elementRef);
+   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef);
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
 //   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t actionRef, int paramCount);
 

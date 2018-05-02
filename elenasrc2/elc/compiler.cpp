@@ -211,12 +211,12 @@ Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t 
    this->sourcePath = path;
 
    for (auto it = imported->start(); !it.Eof(); it++) {
-      ident_t ns = *it;
+      ident_t imported_ns = *it;
 
-      importedNs.add(ns);
+      importedNs.add(imported_ns);
 
       if (withFullInfo) {
-         loadModuleInfo(ns);
+         loadModuleInfo(imported_ns);
       }         
    }
 
@@ -1073,7 +1073,7 @@ bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, r
 {
    if (info.kind == okLocal) {
       for (auto it = locals.start(); !it.Eof(); it++) {
-         if ((*it).offset == info.param) {
+         if ((*it).offset == (int)info.param) {
             if ((*it).class_ref == V_AUTO) {
                (*it).class_ref = reference;
                (*it).element_ref = element;
@@ -1308,7 +1308,7 @@ ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
 
    Outer outer;
    outer.reference = info.fields.Count();
-   outer.outerObject = ObjectInfo(okNil, -1);
+   outer.outerObject = ObjectInfo(okNil, (ref_t)-1);
 
    outers.add(RETVAL_VAR, outer);
    mapKey(info.fields, RETVAL_VAR, (int)outer.reference);
@@ -2811,7 +2811,7 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
 {
 //   // check typed extension if the type available
 //   ref_t typeRef = 0;
-   ref_t extRef = 0;
+//   ref_t extRef = 0;
 
    ref_t objectRef = resolveObjectReference(scope, object);
    if (isPrimitiveRef(objectRef)) {
@@ -2931,7 +2931,7 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
    ref_t ifReference = 0;
    ref_t resolved_operator_id = operator_id;
    // try to resolve the branching operator directly
-   if (_logic->resolveBranchOperation(*scope.moduleScope, *this, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
+   if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
       // good luck : we can implement branching directly
       compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
 
@@ -2994,7 +2994,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
          operator_id = SETNIL_REFER_MESSAGE_ID;
       }
    }
-   else operationType = _logic->resolveOperationType(*scope.moduleScope, *this, operator_id, loperandRef, roperandRef, resultClassRef);
+   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
 
    // HOTFIX : primitive operations can be implemented only in the method
    // because the symbol implementations do not open a new stack frame
@@ -3005,7 +3005,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    //bool assignMode = false;
    if (operationType != 0) {
       // if it is a primitive operation
-      _logic->injectOperation(writer, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, loperand.element);
+      _logic->injectOperation(writer, *scope.moduleScope, operator_id, operationType, resultClassRef, loperand.element);
 
       retVal = assignResult(writer, scope, resultClassRef, loperand.element);
    }
@@ -5064,7 +5064,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    if (signatureLen > 0 && !scope.withOpenArg) {
       // validate generic signature (except an open argument one)
       bool genericSignature = true;
-      for (int i = 0; i < signatureLen; i++) {
+      for (size_t i = 0; i < signatureLen; i++) {
          // primitive arguments should be replaced with wrapper classes
          if (isPrimitiveRef(signature[i]))
             signature[i] = _logic->resolvePrimitiveReference(*scope.moduleScope, signature[i]);
@@ -5195,7 +5195,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          }
          else scope.raiseError(errIllegalMethod, node);
 
-         if ((paramCount == 0 && signatureLen != 1) || (paramCount > 0 && paramCount != signatureLen))
+         if ((paramCount == 0 && signatureLen != 1) || (paramCount > 0 && (size_t)paramCount != signatureLen))
             scope.raiseError(errIllegalMethod, node);
 
          actionStr.copy(CAST_MESSAGE);
@@ -8150,7 +8150,7 @@ inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t
    else return 0;
 }
 
-inline ref_t safeMapWeakReference(_Module* module, _ProjectManager* project, ident_t referenceName)
+inline ref_t safeMapWeakReference(_Module* module, ident_t referenceName)
 {
    if (!emptystr(referenceName)) {
       // HOTFIX : for the standard module the references should be mapped forcefully
@@ -8216,7 +8216,7 @@ void Compiler :: initializeScope(ident_t name, _CompilerScope& scope, bool withD
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
    scope.signatureReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SIGNATURE_FORWARD));
    scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
-   scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
+   scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically

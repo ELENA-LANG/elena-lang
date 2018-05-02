@@ -3907,3 +3907,212 @@ procedure __real."abs$system@RealNumber$@system@ref#1&RealNumber[3]"
   quitn 3
 
 end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&IntNumber$system@ByteArray$system@CharArray$@system@ref#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&IntNumber$system@CharArray$system@ByteArray$@system@ref#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_decode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+  
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+
+procedure __utf16encoder."convert$system@IntNumber$@system@ref#1&IntNumber$system@ByteArray$system@CharArray$@system@ref#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$@system@ref#1&IntNumber$system@CharArray$system@ByteArray$@system@ref#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_decode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$system@ShortArray$system@CharArray$@system@ref#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  shiftln 1
+  ecopyd
+  aloadsi 2
+  nload
+  shiftln 1
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_encode
+  ifr labErr 0
+
+  dcopye  
+  bloadsi 6
+  nsave
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$system@CharArray$system@ShortArray$@system@ref#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : ws_decode
+  ifr labErr 0
+
+  dcopye  
+  bloadsi 6
+  nsave
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end

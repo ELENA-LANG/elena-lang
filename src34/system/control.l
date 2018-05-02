@@ -228,16 +228,16 @@ public interface Func1
     
 //    /// Executes the function
 //    eval : aParam = $self(aParam).
-//
-//    /// Executes the function for every enumeration item
-//    run enumerator:anEnumerator
-//    [
-//        while(anEnumerator next)
-//        [
-//            $self(anEnumerator get)
-//        ].        
-//    ]
-//    
+
+    /// Executes the function for every enumeration item
+    sealed run(enumerator anEnumerator)
+    [
+        while(anEnumerator next)
+        [
+            self(anEnumerator get)
+        ].        
+    ]
+    
 //    /// Executes the function for every enumeration item until it returns true
 //    sealed retrieve enumerator:anEnumerator
 //    [
@@ -272,19 +272,16 @@ public interface Func2
     
 //    /// Executes the function
 //    eval : aParam1 : aParam2 = $self(aParam1,aParam2).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam enumerator:anEnumerator
-//    [
-//        while(anEnumerator next)
-//        [
-//            var x := anEnumerator get.
-//            
-//            $self(aParam,x).
-//            //$self(aParam,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam, enumerator anEnumerator)
+    [
+        while(anEnumerator next)
+        [
+            self(aParam,anEnumerator get).
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true
 //    sealed retrieve object:aParam enumerator:anEnumerator
 //    [
@@ -310,16 +307,16 @@ public interface Func3
     
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 = $self(aParam1,aParam2,aParam3).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self(aParam1,aParam2,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam1, object aParam2, enumerator anEnumerator)
+    [
+        while (anEnumerator next)
+        [
+            self(aParam1,aParam2,anEnumerator get)
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true    
 //    sealed retrieve object:aParam1 object:aParam2 enumerator:anEnumerator
 //    [
@@ -344,16 +341,16 @@ public interface Func4
 //    
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 = $self(aParam1,aParam2,aParam3,aParam4).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self(aParam1,aParam2,aParam3,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam1, object aParam2, object aParam3, enumerator anEnumerator)
+    [
+        while (anEnumerator next)
+        [
+            self(aParam1,aParam2,aParam3,anEnumerator get)
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true    
 //    sealed retrieve object:aParam1 object:aParam2 object:aParam3 enumerator:anEnumerator
 //    [
@@ -379,16 +376,16 @@ public interface Func5
 
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 = $self(aParam1,aParam2,aParam3,aParam4,aParam5).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self(aParam1,aParam2,aParam3,aParam4,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, enumerator anEnumerator)
+    [
+        while (anEnumerator next)
+        [
+            self(aParam1,aParam2,aParam3,aParam4,anEnumerator get)
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true    
 //    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 enumerator:anEnumerator
 //    [
@@ -413,16 +410,16 @@ public interface Func6
 
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self(aParam1,aParam2,aParam3,aParam4,aParam5,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, enumerator anEnumerator)
+    [
+        while (anEnumerator next)
+        [
+            self(aParam1,aParam2,aParam3,aParam4,aParam5,anEnumerator get)
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true    
 //    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 enumerator:anEnumerator
 //    [
@@ -447,16 +444,16 @@ public interface Func7
 //    
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, enumerator anEnumerator)
+    [
+        while (anEnumerator next)
+        [
+            self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anEnumerator get)
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true    
 //    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 enumerator:anEnumerator
 //    [
@@ -483,16 +480,16 @@ public interface Func8
 //    /// Executes the function    
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, enumerator anEnumerator)
+    [
+        while (anEnumerator next)
+        [
+            self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,anEnumerator get)
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true    
 //    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 enumerator:anEnumerator
 //    [
@@ -519,16 +516,16 @@ public interface Func9
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, object aParam8, enumerator anEnumerator)
+    [
+        while (anEnumerator next)
+        [
+            self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,anEnumerator get)
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true    
 //    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 enumerator:anEnumerator
 //    [
@@ -555,17 +552,17 @@ public interface Func10
 //    /// Executes the function    
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
-//                enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, object aParam8, object aParam9,
+                enumerator anEnumerator)
+    [
+        while (anEnumerator next)
+        [
+            self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,anEnumerator get)
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true    
 //    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 enumerator:anEnumerator
 //    [
@@ -593,17 +590,17 @@ public interface Func11
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 : aParam8 : aParam9 : aParam10 : aParam11
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,aParam11).
-//    
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
-//               object:aParam10 enumerator:anEnumerator
-//    [
-//        while (anEnumerator next)
-//        [
-//            $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,anEnumerator get)
-//        ]
-//    ]
-//    
+    
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, object aParam8, object aParam9,
+               object aParam10, enumerator anEnumerator)
+    [
+        while (anEnumerator next)
+        [
+            self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,anEnumerator get)
+        ]
+    ]
+    
 //    /// Executes the function for parameters and every enumeration item until it returns true    
 //    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
 //                    object:aParam10 enumerator:anEnumerator

@@ -154,28 +154,28 @@ sealed public class StringWriter :: BaseVariable
         theValue := aText.
     ]
 
-//    constructor new(literal s, int count)
-//    [
-//        theValue := emptyLiteralValue.
-//        
-//        0 till:count do(:i)[ $self append(s) ].
-//    ]
-//    
-//    write : aText
-//    [
-//        theValue := theValue add:aText.
-//    ]
-//    
-//    writeLine : aText
-//    [
-//        $self write:aText; write:'newLine.
-//    ]
-//   
-//    writeLine
-//    [
-//        $self write:'newLine.
-//    ]    
-//
+    constructor new(literal s, int count)
+    [
+        theValue := emptyLiteralValue.
+        
+        0 till:count do(:i)[ self append(s) ].
+    ]
+    
+    write : aText
+    [
+        theValue := theValue add:aText.
+    ]
+    
+    writeLine : aText
+    [
+        self write:aText; write:forwards'newLine.
+    ]
+   
+    writeLine
+    [
+        self write:forwards'newLine.
+    ]    
+
 //    writeFormatted : format : o1
 //        = $self printFormatted(format, o1).
 //
@@ -205,44 +205,44 @@ sealed public class StringWriter :: BaseVariable
 //
 //    writeFormatted(object<> args)
 //        = $self printFormatted object<>:args.
-//
-//    set : aText
-//    [
-//        theValue := aText.
-//    ]
-//
-//    append : aText
-//    [
-//        theValue := theValue add:aText.
-//    ]
-//    
-//    insert:s at:index
-//    [
-//        theValue := theValue insert:s at:index.
-//    ]
-//
-//    replace(literal s, literal s2)
-//    [
-//        theValue := theValue replace(s, s2).
-//    ]
-//    
-//    replace(object s, object s2)
-//    [
-//        theValue := theValue replace(s literal, s2 literal).
-//    ]
-//    
-//    get = theValue.
-//
-//    clear
-//    [
-//        theValue := emptyLiteralValue.
-//    ]
-//
-//    literal = theValue.
-//
-//    wide => theValue.
-//    
-//    value = theValue.
-//
-//    dispatch => theValue.
+
+    set value : aText
+    [
+        theValue := aText.
+    ]
+
+    append : aText
+    [
+        theValue := theValue add:aText.
+    ]
+    
+    insert:s at:index
+    [
+        theValue := theValue insert:s at:index.
+    ]
+
+    replace(literal s, literal s2)
+    [
+        theValue := theValue replace(s, s2).
+    ]
+    
+    replace(object s, object s2)
+    [
+        theValue := theValue replace(s literal, s2 literal).
+    ]
+    
+    value = theValue.
+
+    clear
+    [
+        theValue := emptyLiteralValue.
+    ]
+
+    T<literal> literal = theValue.
+
+    cast T<literal> = theValue.
+    
+    cast T<wide> = theValue.
+
+    dispatch => theValue.
 }

@@ -129,7 +129,10 @@ type indexer    = system'Indexer.
 //type indexer2d  = system'Indexer2D.
 //
 //type void       = nil.
-//
+
+type textbuffer = system'text'TextBuilder.
+type encoder    = system'text'Encoder.
+
 ///// obsolete : use implicit instead
 //explicit        = #16387.  
 //

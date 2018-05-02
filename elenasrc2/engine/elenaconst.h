@@ -441,6 +441,7 @@ namespace _ELENA_
 //   #define PACKAGE_SECTION          "#package"
    #define IMPORTS_SECTION          "#import"
 //   #define AUTOEXTENSION_SECTION    "#auto_extensions"
+   #define NAMESPACE_REF            "#namespace"
 
   // --- ELENA class prefixes / postfixes ---
    #define PRIVATE_PREFIX_NS        "'$private'"

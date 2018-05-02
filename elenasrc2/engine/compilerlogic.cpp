@@ -304,7 +304,7 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
    return callType;
 }
 
-int CompilerLogic :: resolveOperationType(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
+int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 {
    if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
       return 0;
@@ -322,7 +322,7 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, _Compiler& comp
             }
          }
          else if (info.loperand == V_FLAG && info.roperand == V_FLAG) {
-            if (isBoolean(scope, compiler, loperand) && isBoolean(scope, compiler, loperand)) {
+            if (isBoolean(scope, loperand) && isBoolean(scope, roperand)) {
                result = info.result;
 
                return info.operationType;
@@ -369,7 +369,7 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
    return 0;
 }
 
-bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
+bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, ref_t reference)
 {
    if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
       return true;
@@ -436,13 +436,13 @@ bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, _Compiler& compil
    return false;
 }
 
-bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, _Compiler& compiler, int operatorId, ref_t loperand, ref_t& reference)
+bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference)
 {
    if (!loperand)
       return false;
 
    if (loperand != scope.branchingInfo.reference) {
-      if (!loadBranchingInfo(scope, compiler, loperand))
+      if (!loadBranchingInfo(scope, loperand))
          return false;
    }
 
@@ -462,18 +462,18 @@ int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t lopera
    return 0;
 }
 
-//inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
-//{
-//   switch (sourceRef)
-//   {
-//      case V_PTR32:
-//         return targetRef == V_INT32;
-//      case V_INT32:
-//         return targetRef == V_PTR32;
-//      default:
-//         return false;
-//   }
-//}
+inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
+{
+   switch (sourceRef)
+   {
+      case V_PTR:
+         return targetRef == V_INT32;
+      case V_INT32:
+         return targetRef == V_PTR;
+      default:
+         return false;
+   }
+}
 
 //inline bool isPrimitiveArrayCompatible(ref_t targetRef, ref_t sourceRef)
 //{
@@ -494,8 +494,8 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    if (sourceRef == V_NIL)
       return true;
 
-   //if (isPrimitiveCompatible(targetRef, sourceRef))
-   //   return true;
+   if (isPrimitiveCompatible(targetRef, sourceRef))
+      return true;
 
    if (targetRef == scope.superReference && !isPrimitiveRef(sourceRef))
       return true;
@@ -803,18 +803,18 @@ void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, Clas
    }
 }
 
-bool CompilerLogic :: isBoolean(_CompilerScope& scope, _Compiler& compiler, ref_t reference)
+bool CompilerLogic :: isBoolean(_CompilerScope& scope, ref_t reference)
 {
    if (!scope.branchingInfo.reference) {
       // HOTFIX : resolve boolean symbols
       ref_t dummy;
-      resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.boolReference, dummy);
+      resolveBranchOperation(scope, IF_MESSAGE_ID, scope.boolReference, dummy);
    }
 
    return isCompatible(scope, scope.branchingInfo.reference, reference);
 }
 
-void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, ref_t elementRef)
+void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, int operator_id, int operationType, ref_t& reference, ref_t elementRef)
 {
    int size = 0;
    if (operationType == lxBinArrOp) {
@@ -835,7 +835,7 @@ void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scop
       if (!scope.branchingInfo.reference) {
          // HOTFIX : resolve boolean symbols
          ref_t dummy;
-         resolveBranchOperation(scope, compiler, IF_MESSAGE_ID, scope.boolReference, dummy);
+         resolveBranchOperation(scope, IF_MESSAGE_ID, scope.boolReference, dummy);
       }
 
       reference = scope.branchingInfo.reference;
