@@ -173,281 +173,281 @@ sealed public /*nonstructural */ class TextBuilder
         retVal value := v
     ]
 
-//    generic writeFormatted(literal s, V<object> args)
-//    [
-//        int  len := s length.
-//        int  i := 0.
-//        char ch := $0.
-//        int  chlen := 0.
-//        int  index := 0.
-//        
-//        while (i < len)
-//        [
-//            s read(i, &ch).
-//            
-//            if (ch == $123)
-//                [ 
-//                    i := i + 1.
-//                    
-//                    self readIndex(s, &i, &index).
-//                    self write(args[index]).
-//                    
-//                    chlen := 1.
-//                ];
-//                [ 
-//                    self write(ch).
-//                    ch readLengthTo(&chlen)
-//                ].
-//            
-//            i := i + chlen
-//        ]
-//    ]
+    generic writeFormatted(literal s, V<object> args)
+    [
+        int  len := s length.
+        int  i := 0.
+        char ch := $0.
+        int  chlen := 0.
+        int  index := 0.
+        
+        while (i < len)
+        [
+            s read(i, &ch).
+            
+            if (ch == $123)
+                [ 
+                    i := i + 1.
+                    
+                    self readIndex(s, &i, &index).
+                    self write(args[index]).
+                    
+                    chlen := 1.
+                ];
+                [ 
+                    self write(ch).
+                    ch readLengthTo(&chlen)
+                ].
+            
+            i := i + chlen
+        ]
+    ]
 
-//    fill(literal s, int counter)
-//    [
-//        int i := 0.
-//        while (i < counter)
-//        [
-//            $self write(s).
-//        ]
-//    ]
-//
-//    fill(wide s, int counter)
-//    [
-//        int i := 0.
-//        while (i < counter)
-//        [
-//            $self write(s).
-//        ]
-//    ]
-//
-//    fill(char ch, int counter)
-//    [
-//        int i := 0.
-//        while (i < counter)
-//        [
-//            $self write(ch).
-//            
-//            i += 1
-//        ]
-//    ]
-//
-//    insert int:anIndex int:aLength chararray:anArray
-//    [
-//        $self reserve int:aLength.
-//        
-//        theBuffer move int:anIndex int:theLength int:aLength.
-//        
-//        theBuffer write int:anIndex int:aLength chararray:anArray.
-//        
-//        theLength append int:aLength.
-//    ]
-//
-//    insert int:anIndex literal:aLiteral
-//    [
-//        int aLength := 0.
-//        UTF8Encoding charCount literal:aLiteral vint:aLength.
-//
-//        $self reserve int:aLength.
-//        
-//        theBuffer move int:anIndex int:theLength int:aLength.
-//        
-//        aLiteral save int:anIndex chararray:theBuffer vint:aLength.
-//        
-//        theLength append int:aLength.
-//    ]
-//
-//    insert int:anIndex wide:aLiteral
-//    [
-//        int aLength := 0.
-//        UTF16Encoding charCount wide:aLiteral vint:aLength.
-//
-//        $self reserve int:aLength.
-//        
-//        theBuffer move int:anIndex int:theLength int:aLength.
-//        
-//        aLiteral save int:anIndex chararray:theBuffer vint:aLength.
-//        
-//        theLength append int:aLength.
-//    ]
-//    
-//    insert int:anIndex char:aChar
-//    [
-//        $self reserve int:1.
-//        
-//        theBuffer move int:anIndex int:theLength int:1.
-//        
-//        theBuffer write int:anIndex char:aChar.
-//        
-//        theLength append int:1.
-//    ]
-//
-//    insert : anObject at:anIndex
-//        <= insert(anIndex int, anObject).
-//
-//    stacksafe indexOf int:aPosition char:aValue vint:aRetVal
-//    [
-//        int  anIndex := 0.
-//        char aCurrent := $0.
-//        
-//        while (anIndex < theLength)
-//        [
-//            theBuffer read int:anIndex vchar:aCurrent.
-//            
-//            if (aCurrent == aValue)
-//                [ aRetVal int := anIndex. ^$self ].
-//                
-//            anIndex += 1
-//        ].
-//        
-//        aRetVal int := -1
-//    ]
-//
-//    stacksafe indexOf int:aPosition literal:aLiteral vint:aRetVal
-//    [
-//        int  aLiteralLength := 0.
-//        int  anIndex := 0.
-//        int  aFirstCharLen := 0.
-//        char aCurrent := $0.
-//        char aFirstChar := $0.
-//        char aNextChar := $0.
-//        
-//        aLiteral readLengthTo vint:aLiteralLength.
-//        
-//        aLiteral read int:0 vchar:aFirstChar.
-//        aFirstChar readLengthTo vint:aFirstCharLen.
-//        
-//        int aMaxIndex := theLength.
-//        aMaxIndex := aMaxIndex - aLiteralLength.
-//        
-//        while (anIndex < aMaxIndex)
-//        [
-//            theBuffer read int:anIndex vchar:aCurrent.
-//            
-//            if (aCurrent == aFirstChar)
-//            [ 
-//                int j := aFirstCharLen.
-//                int chLen := 0.
-//                while (j < aLiteralLength)
-//                [
-//                    theBuffer read int:(anIndex + j) vchar:aCurrent.
-//                    aLiteral read int:j vchar:aNextChar.
-//                    
-//                    if (aNextChar == aCurrent)
-//                        [ aNextChar readLengthTo vint:chLen ];
-//                        [ j := aLiteralLength. chLen := 1 ].
-//                    
-//                    j := j + chLen
-//                ].
-//                
-//                if (j == aLiteralLength)
-//                    [ aRetVal int := anIndex. ^ $self ]
-//            ].
-//                
-//            anIndex := anIndex + 1
-//        ].
-//        
-//        aRetVal int := -1
-//    ]
-//
-//    stacksafe indexOf int:aPosition wide:aLiteral vint:aRetVal
-//    [
-//        int  aLiteralLength := 0.
-//        int  anIndex := 0.
-//        int  aFirstCharLen := 0.
-//        char aCurrent := $0.
-//        char aFirstChar := $0.
-//        char aNextChar := $0.
-//        
-//        aLiteral readLengthTo vint:aLiteralLength.
-//        
-//        aLiteral read int:0 vchar:aFirstChar.
-//        aFirstChar readWideLengthTo vint:aFirstCharLen.
-//        
-//        while (anIndex < theLength)
-//        [
-//            theBuffer read int:anIndex vchar:aCurrent.
-//            
-//            if (aCurrent == aFirstChar)
-//            [ 
-//                int j := aFirstCharLen.
-//                int chLen := 0.
-//                while (j < aLiteralLength)
-//                [
-//                    theBuffer read int:(anIndex + j) vchar:aCurrent.
-//                    aLiteral read int:j vchar:aNextChar.
-//                    
-//                    if (aNextChar == aCurrent)
-//                        [ aNextChar readWideLengthTo vint:chLen ];
-//                        [ j := aLiteralLength. chLen := 1 ].
-//                    
-//                    j := j + chLen
-//                ].
-//                
-//                if (j > aLiteralLength)
-//                    [ aRetVal int := anIndex. ^ $self ]
-//            ].
-//                
-//            anIndex := anIndex + 1
-//        ].
-//        
-//        aRetVal int := -1
-//    ]
-//
-//    indexOf int:aPosition char:aValue    
-//    [
-//        int aRetVal := 0.
-//        $self indexOf int:aPosition char:aValue vint:aRetVal.
-//        
-//        ^ IntNumber new int:aRetVal
-//    ]
-//    
-//    indexOf int:aPosition literal:aValue
-//    [
-//        int aRetVal := 0.
-//        $self indexOf int:aPosition literal:aValue vint:aRetVal.
-//        
-//        ^ IntNumber new int:aRetVal
-//    ]
-//    
-//    indexOf int:aPosition wide:aValue
-//    [
-//        int aRetVal := 0.
-//        $self indexOf int:aPosition wide:aValue vint:aRetVal.
-//        
-//        ^ IntNumber new int:aRetVal
-//    ]
-//
-//    stacksafe literal Substring int:anIndex int:aLength
-//    [
-//        if (aLength == 0)
-//            [ ^ emptyLiteralValue ].
-//            
-//        ^ LiteralValue new int:anIndex int:aLength chararray:theBuffer
-//    ]
-//
-//    stacksafe wide WideSubstring int:anIndex int:aLength
-//    [
-//        if (aLength == 0)
-//            [ ^ emptyWideLiteralValue ].
-//            
-//        ^ WideLiteralValue new int:anIndex int:aLength chararray:theBuffer
-//    ]
-//
-//    stacksafe delete int:anIndex int:aLength
-//    [
-//        int n := 0 - aLength.
-//        int l := theLength.
-//        l := l - anIndex.
-//        l := l - aLength.
-//        
-//        theBuffer move int:(anIndex + aLength) int:l int:n.
-//        
-//        theLength reduce int:aLength
-//    ]
-//    
-//    stacksafe trim int:n
-//    [
-//        theLength reduce int:n
-//    ]
+    stacksafe fill(literal s, int counter)
+    [
+        int i := 0.
+        while (i < counter)
+        [
+            self write(s).
+        ]
+    ]
+
+    stacksafe fill(wide s, int counter)
+    [
+        int i := 0.
+        while (i < counter)
+        [
+            self write(s).
+        ]
+    ]
+
+    stacksafe fill(char ch, int counter)
+    [
+        int i := 0.
+        while (i < counter)
+        [
+            self write(ch).
+            
+            i += 1
+        ]
+    ]
+
+    stacksafe insert(int anIndex, int aLength, chararray anArray)
+    [
+        self reserve(aLength).
+        
+        theBuffer move(anIndex, theLength, aLength).
+        
+        theBuffer write(anIndex, aLength, anArray).
+        
+        theLength append(aLength).
+    ]
+
+    stacksafe insert(int anIndex, literal aLiteral)
+    [
+        int aLength := 0.
+        UTF8Encoding charCount(aLiteral, &aLength).
+
+        self reserve(aLength).
+        
+        theBuffer move(anIndex, theLength, aLength).
+        
+        aLiteral save(anIndex, theBuffer, &aLength).
+        
+        theLength append(aLength).
+    ]
+
+    stacksafe insert(int anIndex, wide aLiteral)
+    [
+        int aLength := 0.
+        UTF16Encoding charCount(aLiteral, &aLength).
+
+        self reserve(aLength).
+        
+        theBuffer move(anIndex, theLength, aLength).
+        
+        aLiteral save(anIndex, theBuffer, &aLength).
+        
+        theLength append(aLength).
+    ]
+    
+    stacksafe insert(int anIndex, char aChar)
+    [
+        self reserve(1).
+        
+        theBuffer move(anIndex, theLength, 1).
+        
+        theBuffer write(anIndex, aChar).
+        
+        theLength append(1).
+    ]
+
+    insert : anObject at:anIndex
+        <= insert(T<int>(anIndex), anObject).
+
+    stacksafe indexOf(int aPosition, char aValue, ref<int> aRetVal)
+    [
+        int  anIndex := 0.
+        char aCurrent := $0.
+        
+        while (anIndex < theLength)
+        [
+            theBuffer read(anIndex, &aCurrent).
+            
+            if (aCurrent == aValue)
+                [ aRetVal value := anIndex. ^self ].
+                
+            anIndex += 1
+        ].
+        
+        aRetVal value := -1
+    ]
+
+    stacksafe indexOf(int aPosition, literal aLiteral, ref<int> aRetVal)
+    [
+        int  aLiteralLength := 0.
+        int  anIndex := 0.
+        int  aFirstCharLen := 0.
+        char aCurrent := $0.
+        char aFirstChar := $0.
+        char aNextChar := $0.
+        
+        aLiteral readLengthTo(&aLiteralLength).
+        
+        aLiteral read(0, &aFirstChar).
+        aFirstChar readLengthTo(&aFirstCharLen).
+        
+        int aMaxIndex := theLength.
+        aMaxIndex := aMaxIndex - aLiteralLength.
+        
+        while (anIndex < aMaxIndex)
+        [
+            theBuffer read(anIndex, &aCurrent).
+            
+            if (aCurrent == aFirstChar)
+            [ 
+                int j := aFirstCharLen.
+                int chLen := 0.
+                while (j < aLiteralLength)
+                [
+                    theBuffer read(anIndex + j, &aCurrent).
+                    aLiteral read(j, &aNextChar).
+                    
+                    if (aNextChar == aCurrent)
+                        [ aNextChar readLengthTo(&chLen) ];
+                        [ j := aLiteralLength. chLen := 1 ].
+                    
+                    j := j + chLen
+                ].
+                
+                if (j == aLiteralLength)
+                    [ aRetVal value := anIndex. ^ self ]
+            ].
+                
+            anIndex := anIndex + 1
+        ].
+        
+        aRetVal value := -1
+    ]
+
+    stacksafe indexOf(int aPosition, wide aLiteral, ref<int> aRetVal)
+    [
+        int  aLiteralLength := 0.
+        int  anIndex := 0.
+        int  aFirstCharLen := 0.
+        char aCurrent := $0.
+        char aFirstChar := $0.
+        char aNextChar := $0.
+        
+        aLiteral readLengthTo(&aLiteralLength).
+        
+        aLiteral read(0, &aFirstChar).
+        aFirstChar readWideLengthTo(&aFirstCharLen).
+        
+        while (anIndex < theLength)
+        [
+            theBuffer read(anIndex, &aCurrent).
+            
+            if (aCurrent == aFirstChar)
+            [ 
+                int j := aFirstCharLen.
+                int chLen := 0.
+                while (j < aLiteralLength)
+                [
+                    theBuffer read(anIndex + j, &aCurrent).
+                    aLiteral read(j, &aNextChar).
+                    
+                    if (aNextChar == aCurrent)
+                        [ aNextChar readWideLengthTo(&chLen) ];
+                        [ j := aLiteralLength. chLen := 1 ].
+                    
+                    j := j + chLen
+                ].
+                
+                if (j > aLiteralLength)
+                    [ aRetVal value := anIndex. ^ self ]
+            ].
+                
+            anIndex := anIndex + 1
+        ].
+        
+        aRetVal value := -1
+    ]
+
+    indexOf(int aPosition, char aValue)
+    [
+        int aRetVal := 0.
+        self indexOf(aPosition, aValue, &aRetVal).
+        
+        ^ IntNumber new(aRetVal)
+    ]
+    
+    indexOf(int aPosition, literal aValue)
+    [
+        int aRetVal := 0.
+        self indexOf(aPosition, aValue, &aRetVal).
+        
+        ^ IntNumber new(aRetVal)
+    ]
+    
+    indexOf(int aPosition, wide aValue)
+    [
+        int aRetVal := 0.
+        self indexOf(aPosition, aValue, &aRetVal).
+        
+        ^ IntNumber new(aRetVal)
+    ]
+
+    stacksafe literal Substring(int anIndex, int aLength)
+    [
+        if (aLength == 0)
+            [ ^ emptyLiteralValue ].
+            
+        ^ LiteralValue new(anIndex, aLength, theBuffer)
+    ]
+
+    stacksafe wide WideSubstring(int anIndex, int aLength)
+    [
+        if (aLength == 0)
+            [ ^ emptyWideLiteralValue ].
+            
+        ^ WideLiteralValue new(anIndex, aLength, theBuffer)
+    ]
+
+    stacksafe delete(int anIndex, int aLength)
+    [
+        int n := 0 - aLength.
+        int l := theLength.
+        l := l - anIndex.
+        l := l - aLength.
+        
+        theBuffer move(anIndex + aLength, l, n).
+        
+        theLength reduce(aLength)
+    ]
+    
+    stacksafe trim(int n)
+    [
+        theLength reduce(n)
+    ]
 }

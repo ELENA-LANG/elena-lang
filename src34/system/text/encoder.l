@@ -169,10 +169,10 @@ public singleton UTF8Encoder :: Encoder
 class UTF8Encoding =
 {
 //    encoder = UTF8Encoder.
-//    
-//    stacksafe charCount literal:aLiteral vint:aRetVal
-//        => system'core_routines'__utf8encoder.
-//        
+    
+    stacksafe charCount(literal aLiteral, ref<int> aRetVal)
+        => system'core_routines'__utf8encoder.
+        
 //    stacksafe convert int:anIndex int:aLength literal:aLiteral bytearray:anArray
 //    [
 //        aLiteral $save int:anIndex bytearray:anArray int:aLength.
@@ -204,10 +204,10 @@ public singleton UTF16Encoder :: Encoder
 public singleton UTF16Encoding
 {
 //    encoder = UTF16Encoder.
-//    
-//    stacksafe charCount wide:aLiteral vint:aRetVal
-//        => system'core_routines'__utf16encoder.
-//        
+    
+    stacksafe charCount(wide aLiteral, ref<int> aRetVal)
+        => system'core_routines'__utf16encoder.
+        
 //    stacksafe convert int:anIndex int:aLength wide:aLiteral shortarray:anArray
 //    [
 //        aLiteral $save int:anIndex shortarray:anArray int:aLength.

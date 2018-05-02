@@ -159,6 +159,7 @@ In development:
                  * it should be possible to implicitly typecast the primitive array in compile-time
                  * interface template - generate an error / warning if there is no abstract method implementation
                  * existing method cannot be declared abstract
+                 * publish an example with the enumeration (list of enum values)
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

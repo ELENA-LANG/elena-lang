@@ -5228,7 +5228,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousMessageName, verb);
 //
 //      if (propMode && paramCount == 1 && !emptystr(signature)) {
-//         // COMPILER MAGIC : set$int => $int
+//         // COMPILER MAGIC :_ set$int => $int
 //         messageStr.copy(signature);
 //      }
 //      else messageStr.append(signature);
@@ -6724,7 +6724,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    // first pass - mark all multi-methods
    SNode current = root.firstChild();
    while (current != lxNone) {
-      if (current == methodType && !test(current.argument, SEALED_MESSAGE)) {
+      if (current == methodType/* && !test(current.argument, SEALED_MESSAGE)*/) {
          //HOTFIX : ignore private methods
          SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
          if (multiMethAttr != lxNone) {
