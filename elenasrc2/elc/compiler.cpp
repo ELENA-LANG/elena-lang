@@ -8466,11 +8466,9 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
 
       if (paramCount >= OPEN_ARG_COUNT) {
          for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
-            signatureLen++;
-            signatures[i] = scope.superReference;
+            signatures[signatureLen++] = scope.superReference;
          }
-         signatures[signatureLen] = scope.superReference;
-         signatureLen++;
+         signatures[signatureLen++] = scope.superReference;
       }
       else {
          for (int i = 0; i < paramCount; i++) {

@@ -3984,6 +3984,43 @@ labErr:
   
 end
 
+procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&IntNumber$system@LiteralValue$system@CharArray$@system@ref#1&IntNumber[6]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  bloadsi 5
+  
+  callextr api : s_encode
+  ifr labErr 0
+
+  pushd
+  dcopye  
+  bloadsi 7
+  nsave
+
+  aloadsi 3
+  nload
+  ecopyd
+  popd
+  sub    
+
+  bloadsi 3
+  nsave
+  aloadsi 1
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
 
 procedure __utf16encoder."convert$system@IntNumber$@system@ref#1&IntNumber$system@ByteArray$system@CharArray$@system@ref#1&IntNumber[6]"
 

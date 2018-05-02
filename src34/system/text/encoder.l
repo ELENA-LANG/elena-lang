@@ -164,10 +164,10 @@ public singleton UTF8Encoder :: Encoder
 //        = UTF8Encoding toLiteral int:anIndex int:aLength bytearray:anArray.
 }
 
-//// --- UTF8Encoding ---
-//
-//class UTF8Encoding =
-//{
+// --- UTF8Encoding ---
+
+class UTF8Encoding =
+{
 //    encoder = UTF8Encoder.
 //    
 //    stacksafe charCount literal:aLiteral vint:aRetVal
@@ -180,13 +180,13 @@ public singleton UTF8Encoder :: Encoder
 //        
 //    stacksafe toLiteral int:anIndex int:aLength bytearray:anArray
 //        = LiteralValue $new int:anIndex int:aLength bytearray:anArray.
-//        
-//    stacksafe convert int:anIndex vint:aLength bytearray:aByteArray chararray:anOutput vint:anOutputLength
-//        => system'core_routines'__utf8encoder.
-//        
-//    stacksafe convert int:anIndex vint:aLength literal:aByteArray chararray:anOutput vint:anOutputLength
-//        => system'core_routines'__utf8encoder.
-//}.
+        
+    stacksafe convert(int anIndex, ref<int> aLength, bytearray aByteArray, chararray anOutput, ref<int> anOutputLength)
+        => system'core_routines'__utf8encoder.
+        
+    stacksafe convert(int anIndex, ref<int> aLength, literal aByteArray, chararray anOutput, ref<int> anOutputLength)
+        => system'core_routines'__utf8encoder.
+}.
 
 // --- UTF16Encoder ---
 

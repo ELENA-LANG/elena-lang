@@ -625,13 +625,18 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
          currentRef = *it & ~mskAnyRef;
 
          void* refVAddress = NULL;
-         if (currentMask == mskStatRef && currentRef == 0) {
-            refVAddress = resolveAnonymousStaticVariable();
+         if (currentMask == mskConstantRef && currentRef == 0) {
+            // HOTFIX : ignore read-only sealed static field
          }
-         else if(currentRef != 0)
-            refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+         else {
+            if (currentMask == mskStatRef && currentRef == 0) {
+               refVAddress = resolveAnonymousStaticVariable();
+            }
+            else if (currentRef != 0)
+               refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 
-         resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
+            resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
+         }
       }
    }
 

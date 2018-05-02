@@ -335,7 +335,7 @@ inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _M
       while (!it.Eof()) {
          ReferenceNs fullName(*it, identifier);
 
-         ref_t reference = 0;
+         reference = 0;
          _Module* ext_module = project->resolveModule(fullName, reference, true);
          if (ext_module && reference) {
             if (ext_module != module) {

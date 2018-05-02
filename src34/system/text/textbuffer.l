@@ -117,63 +117,63 @@ sealed public /*nonstructural */ class TextBuilder
         theLength append(1).
     ]
 
-//    stacksafe write(int n)
-//    [
-//        byte<16> tmp.
-//        char<16> ch_tmp.
-//        int      len := 16.
-//        
-//        literalConvertor convert int:n bytearray:tmp vint:len.
-//        
-//        UTF8Encoding convert int:0 vint:len bytearray:tmp chararray:ch_tmp vint:len.
-//        
-//        $self write chararray:ch_tmp int:len.
-//    ]
+    stacksafe write(int n)
+    [
+        T<byte,16> tmp.
+        T<char,16> ch_tmp.
+        int        len := 16.
+        
+        literalConvertor convert(n, T<bytearray>(tmp), &len).
+        
+        UTF8Encoding convert(0, &len, T<bytearray>(tmp), T<chararray>(ch_tmp), &len).
+        
+        self write(T<chararray>(ch_tmp), len).
+    ]
 
-//    multi write : anObject
-//    [
-//        $self write literal:anObject.
-//    ]
-//
-//    stacksafe write chararray:anArray int:aLength
-//    [
-//        ifnot (0 == aLength)
-//        [
-//            $self reserve int:aLength.
-//            
-//            theBuffer write int:theLength int:aLength chararray:anArray.
-//            
-//            theLength append int:aLength.
-//        ].
-//    ]
-//
-//    sealed stacksafe $readIndex literal:s vint:i vint:retVal
-//    [
-//        char ch := $0.
-//        int  n := 0.
-//        int  v := 0.
-//        
-//        s read int:i vchar:ch.
-//        while (ch != $125)
-//        [
-//            intConvertor convert char:ch vint:n.
-//            if((n >= 30h)and:(n <= 39h))
-//            [                
-//                n := n - 30h.
-//                
-//                v := v * 10.
-//                v := v + n.
-//            ];
-//            [ InvalidArgumentException new; raise ].
-//                
-//            i append int:1.
-//            s read int:i vchar:ch
-//        ].
-//        
-//        retVal int := v
-//    ]
-//
-//    generic writeFormatted(literal s, object<> args)
+    write : anObject
+    [
+        self write(anObject literal).
+    ]
+
+    stacksafe write(chararray anArray, int aLength)
+    [
+        ifnot (0 == aLength)
+        [
+            self reserve(aLength).
+            
+            theBuffer write(theLength, aLength, anArray).
+            
+            theLength append(aLength).
+        ].
+    ]
+
+    private stacksafe readIndex(literal s, ref<int> i, ref<int> retVal)
+    [
+        char ch := $0.
+        int  n := 0.
+        int  v := 0.
+        
+        s read(i, &ch).
+        while (ch != $125)
+        [
+            intConvertor convert(ch, &n).
+            if((n >= 30h)and:(n <= 39h))
+            [                
+                n := n - 30h.
+                
+                v := v * 10.
+                v := v + n.
+            ];
+            [ InvalidArgumentException new; raise ].
+                
+            i append(1).
+            s read(i, &ch)
+        ].
+        
+        retVal value := v
+    ]
+
+//    generic writeFormatted(literal s, V<object> args)
 //    [
 //        int  len := s length.
 //        int  i := 0.
@@ -183,26 +183,26 @@ sealed public /*nonstructural */ class TextBuilder
 //        
 //        while (i < len)
 //        [
-//            s read int:i vchar:ch.
+//            s read(i, &ch).
 //            
 //            if (ch == $123)
 //                [ 
 //                    i := i + 1.
 //                    
-//                    $self $readIndex literal:s vint:i vint:index.
-//                    $self write(args[index]).
+//                    self readIndex(s, &i, &index).
+//                    self write(args[index]).
 //                    
 //                    chlen := 1.
 //                ];
 //                [ 
-//                    $self write char:ch. 
-//                    ch readLengthTo vint:chlen
+//                    self write(ch).
+//                    ch readLengthTo(&chlen)
 //                ].
 //            
 //            i := i + chlen
 //        ]
 //    ]
-//
+
 //    fill(literal s, int counter)
 //    [
 //        int i := 0.
