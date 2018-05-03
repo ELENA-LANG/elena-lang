@@ -4,6 +4,7 @@
 define elStructure          000000008h
 
 define EVAL_ACTION          005h
+define EVAL_MESSAGE_ID      050h
 
 procedure __object.dispatch[1]
 
@@ -4178,5 +4179,20 @@ procedure __utf16encoder."charCount$system@WideLiteralValue$@system@ref#1&IntNum
   callextr api : wstrcharlen
   bloadsi 3
   nsave
+
+end
+
+procedure __lazyexpression.dispatch[1]
+
+  pushe
+  pusha
+  copym EVAL_MESSAGE_ID
+
+  xindexrm system'BaseLazyExpression %"eval[0]"
+  acallvd
+
+  pope
+  asavesi 1
+  ajumpvi 0
 
 end

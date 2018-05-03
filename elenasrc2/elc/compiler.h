@@ -439,7 +439,7 @@ private:
 
 //      virtual void validateReference(SNode terminal, ref_t reference);
 //
-//      ref_t getBaseLazyExpressionClass();
+//      
 
 //      void loadModuleInfo(_Module* extModule)
 //      {

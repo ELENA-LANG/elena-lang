@@ -251,11 +251,6 @@ pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer, ident_t
    else return 0;
 }
 
-//ref_t Compiler::ModuleScope :: getBaseLazyExpressionClass()
-//{
-//   return mapReference(project->resolveForward(LAZYEXPR_FORWARD));
-//}
-
 ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
 {
    if (NamespaceName::isIncluded(FORWARD_MODULE, identifier)) {
@@ -2547,9 +2542,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
    SNode member = node.findChild(lxCode, lxNestedClass/*, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing*/);
    switch (node.type) {
 ////      case lxNestedClass:
-////      case lxLazyExpression:
-////         result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
-////         break;
+      case lxLazyExpression:
+         result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
+         break;
 ////      case lxCode:
 ////         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
 ////         break;
@@ -3844,15 +3839,15 @@ bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScop
    }
 
    ref_t parentRef = scope.info.header.parentRef;
-//   if (lazyExpression) {
-//      parentRef = scope.moduleScope->getBaseLazyExpressionClass();
-//   }
-//   else {
+   if (lazyExpression) {
+      parentRef = scope.moduleScope->lazyExprReference;
+   }
+   else {
       ref_t closureRef = scope.moduleScope->resolveClosure(methodScope.message);
 //      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
       if (closureRef)
          parentRef = closureRef;
-//   }
+   }
 
    compileParentDeclaration(SNode(), scope, parentRef);
 
@@ -3930,7 +3925,7 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
    if (!node.argument) {
       compileParentDeclaration(node, scope);
 
-      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed) && _logic->isWithEmbeddableDispatcher(node)) {
+      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(node)) {
          // COMPILER MAGIC : inject interface implementation
          _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef); 
       }
@@ -4099,10 +4094,10 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 
    // if it is a lazy expression / multi-statement closure without parameters
    SNode argNode = node.firstChild();
-   //if (node == lxLazyExpression) {
-   //   compileAction(node, scope, SNode(), HINT_LAZY_EXPR);
-   //}
-   /*else */if (argNode == lxCode) {
+   if (node == lxLazyExpression) {
+      compileAction(node, scope, SNode(), HINT_LAZY_EXPR);
+   }
+   else if (argNode == lxCode) {
       compileAction(node, scope, SNode(), singleton ? mode | HINT_SINGLETON : mode);
    }
    else if (node.existChild(lxCode)) {
@@ -8216,6 +8211,7 @@ void Compiler :: initializeScope(ident_t name, _CompilerScope& scope, bool withD
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
    scope.signatureReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SIGNATURE_FORWARD));
    scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
+   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {

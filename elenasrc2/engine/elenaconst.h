@@ -302,6 +302,7 @@ namespace _ELENA_
    const int elClassClass          = 0x04000000;
    const int elWithMuti            = 0x08000000;
    const int elVirtualVMT          = 0x10000000;
+   const int elNoCustomDispatcher  = 0x20000000;
 
    const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
@@ -489,7 +490,7 @@ namespace _ELENA_
 
    // predefined system forwards
    #define SUPER_FORWARD            "$super"                    // the common class predecessor
-//   #define LAZYEXPR_FORWARD         "'$lazyexpression"               // the base lazy expression class
+   #define LAZYEXPR_FORWARD         "$lazyexpression"               // the base lazy expression class
    #define INT_FORWARD              "$int"
    #define LONG_FORWARD             "$long"
    #define REAL_FORWARD             "$real"

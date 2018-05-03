@@ -108,9 +108,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsSubjectArg:
          _writer.newNode(lxMessage/*, -1*/);
          break;
-//      case nsLazyExpression:
-//         _writer.newNode(lxLazyExpression);
-//         break;
+      case nsLazyExpression:
+         _writer.newNode(lxLazyExpression);
+         break;
       case nsRetStatement:
          _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
          break;
@@ -2063,18 +2063,19 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
          /*else */generateExpressionTree(writer, current, scope);
          break;
       case lxMessageReference:
-//      case lxLazyExpression:
 //         writer.newNode(lxExpression);
          writer.newNode(current.type);
-//         if (current == lxLazyExpression) {
-//            generateExpressionTree(writer, current, scope);
-//         }
-//         else if (scope.type == DerivationScope::ttFieldTemplate) {
+//         if (scope.type == DerivationScope::ttFieldTemplate) {
 //            scope.copySubject(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
 //         }
          /*else */copyIdentifier(writer, current.findChild(lxIdentifier, lxLiteral));
          writer.closeNode();
 //         writer.closeNode();
+         break;
+      case lxLazyExpression:
+         writer.newNode(current.type);
+         generateExpressionTree(writer, current, scope);
+         writer.closeNode();
          break;
       case lxNestedClass:
          if (scope.type == DerivationScope::ttCodeTemplate && test(scope.mode, daNestedBlock)) {

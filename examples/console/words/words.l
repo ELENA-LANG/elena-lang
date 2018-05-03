@@ -2,8 +2,8 @@
 //import system'collections.
 //import extensions.
 //import extensions'routines.
-//import extensions'text.
-//
+import extensions'text.
+
 //// --- WordList ---
 //
 //class WordList

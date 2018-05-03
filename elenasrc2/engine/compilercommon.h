@@ -69,6 +69,7 @@
 #define V_PUBLIC         (ref_t)-8211
 #define V_PRIVATE        (ref_t)-8212
 #define V_INTERNAL       (ref_t)-8213
+#define V_CLOSED         (ref_t)-8214
 
 #define V_CONSTRUCTOR    (ref_t)-16384
 #define V_VARIABLE       (ref_t)-16385
@@ -209,6 +210,7 @@ struct _CompilerScope
    ref_t             arrayReference;
    ref_t             refTemplateReference;
    ref_t             closureTemplateReference;
+   ref_t             lazyExprReference;
 
    // cached bool values
    BranchingInfo     branchingInfo;
@@ -301,7 +303,7 @@ struct _CompilerScope
       longReference = literalReference = wideReference = 0;
       arrayReference = charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
-      extMessageReference = 0;
+      lazyExprReference = extMessageReference = 0;
    }
 };
 

@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   20
+#define REVISION_VERSION   21
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1020,6 +1020,9 @@ void listFlags(int flags, int& row, int pageSize)
 
    if (test(flags, elClassClass))
       printLine("@flag ", "elClassClass", row, pageSize);
+
+   if (test(flags, elNoCustomDispatcher))
+      printLine("@flag ", "elNoCustomDispatcher", row, pageSize);
 
    switch (flags & elDebugMask) {
       case elDebugDWORD:

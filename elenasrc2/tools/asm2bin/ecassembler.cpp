@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -55,7 +55,7 @@ void ECodesAssembler :: compileICommand(ByteCode code, TokenInfo& token, MemoryW
    writeCommand(ByteCommand(code, offset), writer);
 }
 
-bool ECodesAssembler :: readMessage(ident_t quote, IdentifierString& subject, int& paramCount)
+bool ECodesAssembler :: readMessage(ident_t quote, IdentifierString& subject, ref_t& signRef, int& paramCount)
 {
    size_t len = getlength(quote);
    size_t param_index = quote.find('[');
@@ -67,12 +67,14 @@ bool ECodesAssembler :: readMessage(ident_t quote, IdentifierString& subject, in
    IdentifierString content;
    content.copy(quote + param_index + 1, len - param_index - 2);
 
+   signRef = 0;
+
    paramCount = content.ident().toInt();
 
    return true;
 }
 
-void ECodesAssembler::readMessage(TokenInfo& token, IdentifierString& subject, int& paramCount)
+void ECodesAssembler::readMessage(TokenInfo& token, IdentifierString& subject, ref_t& signRef, int& paramCount)
 {
    while (token.value[0] != '[') {
       subject.append(token.value);
@@ -93,21 +95,22 @@ void ECodesAssembler::readMessage(TokenInfo& token, IdentifierString& subject, i
 
 void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& message)
 {   
-   IdentifierString subject;
+   IdentifierString action;
 
    int paramCount = 0;
+   ref_t signRef = 0;
 
    if (token.terminal.state == dfaQuote) {
       QuoteTemplate<IdentifierString> quote(token.terminal.line);
 
-      if (!readMessage(quote.ident(), subject, paramCount))
+      if (!readMessage(quote.ident(), action, signRef, paramCount))
          token.raiseErr("Invalid operand (%d)");
    }
-   else readMessage(token, subject, paramCount);
+   else readMessage(token, action, signRef, paramCount);
 
    // reserve place for param counter
    message.append('0');
-   message.append(subject);
+   message.append(action);
 
    message[0] = message[0] + paramCount;
 }
@@ -122,14 +125,15 @@ ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
 
 ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
 {
-   //QuoteTemplate<IdentifierString> quote(token.terminal.line);
+   QuoteTemplate<IdentifierString> quote(token.terminal.line);
 
-   //IdentifierString subject;
-   //int paramCount = 0;
+   IdentifierString subject;
+   int paramCount = 0;
+   ref_t signRef = 0;
 
-   //readMessage(quote.ident(), subject, paramCount);
+   readMessage(quote.ident(), subject, signRef, paramCount);
 
-   return /*encodeMessage(binary->mapSubject(subject, false), paramCount)*/0;
+   return encodeMessage(binary->mapAction(subject, signRef, false), paramCount);
 }
 
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
@@ -202,50 +206,49 @@ void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryW
 
 void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
-   //ident_t word = token.read();
-   //if (token.terminal.state == dfaInteger || constants.exist(word)) {
-   //   int m = 0;
-   //   if(token.getInteger(m, constants)) {
-   //      writeCommand(ByteCommand(code, m), writer);
-   //   }
-   //   else token.raiseErr("Invalid number (%d)\n");
-   //}
-   //else if (word.compare("subject")) {
-   //   token.read(":", "Invalid operand (%d)");
-   //   token.read();
+   ident_t word = token.read();
+   if (token.terminal.state == dfaInteger || constants.exist(word)) {
+      int m = 0;
+      if(token.getInteger(m, constants)) {
+         writeCommand(ByteCommand(code, m), writer);
+      }
+      else token.raiseErr("Invalid number (%d)\n");
+   }
+   else if (word.compare("subject")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
 
-   //   int paramCount = 0; // NOTE: paramCount might be not equal to stackCount (the actual stack size) in the case if variables are used for virtual methods
-   //   int stackCount = 0;
-   //   int verbId = mapVerb(token.value);
-   //   if (verbId == 0) {
-   //      verbId = EVAL_MESSAGE_ID;
-   //   }
+      int paramCount = 0;
+      //int verbId = mapVerb(token.value);
+      //if (verbId == 0) {
+      //   verbId = EVAL_MESSAGE_ID;
+      //}
 
-   //   IdentifierString subject;
-   //   token.read();
-   //   bool first = true;
-   //   while(token.value[0] == '&') {
-   //      if (first) {
-   //         first = false;
-   //      }
-   //      else subject.append(token.value);
+      IdentifierString subject(token.value);
+      token.read();
+      bool first = true;
+      //while(token.value[0] == '&') {
+      //   if (first) {
+      //      first = false;
+      //   }
+      //   else subject.append(token.value);
 
-   //      token.read();
-   //      subject.append(token.value);
-   //      token.read();
-   //   }
-   //   if (token.value[0] == '[') {
-   //      paramCount = token.readInteger(constants);
-   //   }
-   //   else token.raiseErr("Invalid operand (%d)");
+      //   token.read();
+      //   subject.append(token.value);
+      //   token.read();
+      //}
+      if (token.value[0] == '[') {
+         paramCount = token.readInteger(constants);
+      }
+      else token.raiseErr("Invalid operand (%d)");
 
-   //   token.read("]", "Invalid operand (%d)");
+      token.read("]", "Invalid operand (%d)");
 
-   //   ref_t subj = binary->mapSubject(subject, false);
+      ref_t subj = binary->mapAction(subject, 0, false);
 
-   //   writeCommand(ByteCommand(code, encodeMessage(subj, paramCount)), writer);
-   //}
-   //else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
+      writeCommand(ByteCommand(code, encodeMessage(subj, paramCount)), writer);
+   }
+   else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
 
 void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
@@ -579,10 +582,13 @@ void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
 
    Module       binary(name);
 
-   //// load predefine messages
-   //for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
-   //   binary.mapPredefinedSubject(it.key(), *it);
-   //}
+   // load predefine messages
+   if (verbs.Count() == 0) {
+      ByteCodeCompiler::loadVerbs(verbs);
+   }
+   for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
+      binary.mapPredefinedAction(it.key(), *it);
+   }
 
    SourceReader reader(4, source);
 

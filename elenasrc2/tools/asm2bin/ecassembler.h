@@ -60,8 +60,8 @@ class ECodesAssembler : public Assembler
 
    void fixJump(ident_t label, MemoryWriter& writer, LabelInfo& info);
 
-   bool readMessage(ident_t quote, IdentifierString& subject, int& paramCount);
-   void readMessage(TokenInfo& token, IdentifierString& subject, int& paramCount);
+   bool readMessage(ident_t quote, IdentifierString& subject, ref_t& signRef, int& paramCount);
+   void readMessage(TokenInfo& token, IdentifierString& subject, ref_t& signRef, int& paramCount);
    void compileMessage(TokenInfo& token, IdentifierString& message);
 
    ref_t compileRArg(TokenInfo& token, _Module* binary);

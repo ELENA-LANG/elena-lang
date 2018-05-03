@@ -40,6 +40,7 @@ abstract        = #8210.
 public          = #8211.
 private         = #8212.
 internal        = #8213.
+closed          = #8214.
 
 __args          = #32. 
 

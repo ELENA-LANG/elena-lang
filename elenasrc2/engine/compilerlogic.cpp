@@ -1343,7 +1343,10 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
          attrValue = elAbstract;
          return true;
       case V_LIMITED:
-         attrValue = (elClosed | elAbstract);
+         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
+         return true;
+      case V_CLOSED:
+         attrValue = elClosed;
          return true;
       case V_STRUCT:
          attrValue = elStructureRole;
@@ -1686,7 +1689,7 @@ void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstra
    }
 
    // interface class cannot have a custom dispatcher method
-   if (!test(info.header.flags, elFinal) && test(info.header.flags, elClosed) && info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true))
+   if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true))
       disptacherNotAllowed = true;
 }
 
