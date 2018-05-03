@@ -1,5 +1,5 @@
 //import system'routines.
-//import system'collections.
+import system'collections.
 import extensions.
 //import extensions'routines.
 import extensions'text.
@@ -8,15 +8,15 @@ import extensions'text.
 
 class WordList
 {
-//    object theTotal.
-//    object theList.
-//
-//    constructor new
-//    [
-//        theList := ArrayList new.
-//        theTotal := Integer new int:0.
-//    ]
-//
+    ref<int>     theTotal.
+    T<ArrayList> theList.
+
+    constructor new
+    [
+        theList := ArrayList new.
+        theTotal := 0.
+    ]
+
 //    append : aWord
 //    [
 //        theTotal append:1.
@@ -24,12 +24,12 @@ class WordList
 //        ifnot (theList ifExists:aWord)
 //            [ theList append:aWord ]
 //    ]
-//
-//    total_words = theTotal.
-//
-//    unique_words = theList length.
-//        
-//    dispatch => theList.
+
+    total_words = theTotal.
+
+    unique_words = theList length.
+        
+    dispatch => theList.
 }
 
 extension helpOp

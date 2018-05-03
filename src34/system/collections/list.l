@@ -603,83 +603,83 @@ public sealed class ArrayList :: Indexable
         theLength append(1).
     ]
     
-//    multi appendRange : subarray
-//    [
-//        if ($nil != subarray)
-//        [
-//            int len := subarray length.
-//            int i := 0.
-//            while (i < len)
-//            [
-//                $self append(subarray getAt int:i).
-//                i := i + 1
-//            ]
-//        ]
-//    ]
-//
-//    appendRange(BaseIndexable indexable)
-//    [
-//        if ($nil != indexable)
-//        [
-//            int len := indexable length.
-//            indexer it := indexable indexer.
-//            
-//            int i := 0.
-//            while (it available)
-//            [                
-//                $self append(it get).
-//                
-//                i += 1.
-//                it writeIndex int:i.
-//            ]
-//        ]
-//    ]        
-//                
-//    /// Inserts a new object to the specified position
-//    insert int:anIndex object:anObject
-//    [
-//        if (anIndex >= theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        $self $expand.
-//        
-//        int i := theLength.
-//        while (i > anIndex)
-//        [
-//            theArray setAt int:i object:(theArray getAt int:(i - 1)).
-//            
-//            i := i - 1
-//        ].
-//        
-//        theArray setAt int:anIndex object:anObject
-//    ]    
-//    
-//    /// Inserts a new object to the beginning of the list
-//    insert : anObject
-//        <= insert int:0 object:anObject.
-//
-//    insert : anObject at:anIndex
-//        <= insert int:anIndex object:anObject.
-//        
-//    /// Removes an object at the specified position
-//    stacksafe remove int:anIndex
-//    [
-//        if (anIndex >= theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theLength reduce int:1.
-//        
-//        int i := anIndex.
-//        while (i < theLength)
-//        [
-//            theArray setAt int:i object:(theArray getAt int:(i + 1)).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//        
-//    remove at:anIndex
-//        <= remove int:anIndex.
+    appendRange : subarray
+    [
+        if (nil != subarray)
+        [
+            int len := subarray length.
+            int i := 0.
+            while (i < len)
+            [
+                self append(subarray getAt(i)).
+                i := i + 1
+            ]
+        ]
+    ]
+
+    appendRange(Indexable indexable)
+    [
+        if (nil != indexable)
+        [
+            int len := indexable length.
+            indexer it := indexable indexer.
+            
+            int i := 0.
+            while (it available)
+            [                
+                self append(it get).
+                
+                i += 1.
+                it writeIndex(i).
+            ]
+        ]
+    ]        
+                
+    /// Inserts a new object to the specified position
+    insert(int anIndex, object anObject)
+    [
+        if (anIndex >= theLength)
+            [ OutOfRangeException new; raise ].
+        
+        self expand.
+        
+        int i := theLength.
+        while (i > anIndex)
+        [
+            theArray setAt(i, theArray getAt(i - 1)).
+            
+            i := i - 1
+        ].
+        
+        theArray setAt(anIndex, anObject)
+    ]    
+    
+    /// Inserts a new object to the beginning of the list
+    insert : anObject
+        <= insert(0, anObject).
+
+    insert : anObject at:anIndex
+        <= insert(T<int>(anIndex), anObject).
+        
+    /// Removes an object at the specified position
+    stacksafe remove(int anIndex)
+    [
+        if (anIndex >= theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theLength reduce(1).
+        
+        int i := anIndex.
+        while (i < theLength)
+        [
+            theArray setAt(i, theArray getAt(i + 1)).
+            
+            i := i + 1
+        ]
+    ]
+        
+    removeAt:anIndex
+        <= remove(T<int>(anIndex)).
     
     /// Reads the number of list item to the output parameter
     stacksafe readLengthTo(ref<int> aLength)
@@ -692,31 +692,31 @@ public sealed class ArrayList :: Indexable
         aCapacity value := theCapacity.
     ]
     
-//    /// Clears the list
-//    clear 
-//    [
-//        theLength int := 0
-//    ]
-//    
-//    stacksafe trim(IntNumber pos)
-//    [
-//        if (pos > theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theLength int := pos.
-//    ]
-//    
-//    /// Returns the top object
-//    first = theArray getAt int:0.
-//
-//    /// Returns the last object
-//    last
-//    [
-//        int len := theLength.
-//        
-//        ^ theArray getAt int(len - 1)
-//    ]
-//    
+    /// Clears the list
+    clear 
+    [
+        theLength value := 0
+    ]
+    
+    stacksafe trim(int pos)
+    [
+        if (pos > theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theLength value := pos.
+    ]
+    
+    /// Returns the top object
+    first = theArray getAt(0).
+
+    /// Returns the last object
+    last
+    [
+        int len := theLength.
+        
+        ^ theArray getAt(len - 1)
+    ]
+    
 //    /// Returns the list enumerator
 //    enumerator = ArrayListEnumerator new array_list:$self.
     
