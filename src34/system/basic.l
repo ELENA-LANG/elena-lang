@@ -31,22 +31,6 @@ sealed template<BaseVariable> ref :: template_subj
         theValue := val.
     ]
 
-    stacksafe append(template_subj val)
-    [
-        theValue := theValue + val.
-    ]
-    
-//    multi append:val
-//        <= append template_subj:val.
-    
-    stacksafe reduce(template_subj val)
-    [
-        theValue := theValue - val.
-    ]
-    
-//    multi reduce:val
-//        <= reduce template_subj:val.
-    
     bool equal : anObject
         => theValue.
 
@@ -56,29 +40,24 @@ sealed template<BaseVariable> ref :: template_subj
     embeddable dispatch => theValue.
 }
 
-//sealed template<BaseVariable> ref :: template_subj
-//{
-//    template_subj $value.
-//    
-//    stacksafe implicit template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    stacksafe set template_subj:val
-//    [
-//        $value := val.
-//    ]
-//    
-//    value = $value.
-//    
-//    sealed embeddable template_subj = $value.
-//    
-//    bool equal : anObject
-//        => $value.
-//
-//    embeddable dispatch => $value.
-//}
+extension<ref<int>> integerOp
+{
+    stacksafe append(int n)
+    [
+        int v := self.
+        v := v + n.
+        
+        self value := v.
+    ]
+    
+    stacksafe reduce(int n)
+    [
+        int v := self.
+        v := v + n.
+        
+        self value := v.
+    ]
+}
 
 // === Boolean values ===
 

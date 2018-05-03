@@ -22,6 +22,9 @@
        <include>events.l</include>
        <include>console.l</include>
        <include>win32_app.l</include>
+       <include>collections\list.l</include>
+       <include>collections\queues.l</include>
+       <include>collections\tuples.l</include>
        <include>math\math.l</include>
        <include>text\encoder.l</include>
        <include>text\win32_encoder.l</include>

@@ -2175,9 +2175,15 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode node, CodeScope& sc
       writer.appendNode(lxIdentifier, identifier);
       if (!emptystr(className)) {
          if (isWeakReference(className)) {
-            IdentifierString fullName(scope.module->Name(), className);
+            if (isTemplateWeakReference(className)) {
+               // HOTFIX : save weak template-based class name directly
+               writer.appendNode(lxClassName, className);
+            }
+            else {
+               IdentifierString fullName(scope.module->Name(), className);
 
-            writer.appendNode(lxClassName, fullName);
+               writer.appendNode(lxClassName, fullName);
+            }
          }
          else writer.appendNode(lxClassName, className);
       }

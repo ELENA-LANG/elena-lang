@@ -982,7 +982,14 @@ void JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void*
 
    // start with # to distinguish the symbol debug info from the class one
    if (referenceInfo.isRelative()) {
-      IdentifierString name(referenceInfo.module->Name(), "'#", ReferenceName(referenceInfo.referenceName + 1));
+      IdentifierString name(referenceInfo.module->Name());
+      if (referenceInfo.referenceName.find(1, '\'', NOTFOUND_POS) != NOTFOUND_POS) {
+         name.append(NamespaceName(referenceInfo.referenceName));
+      }
+
+      name.append("'#");
+      name.append(ReferenceName(referenceInfo.referenceName + 1));
+
       writer.writeLiteral(name);
    }
    else {

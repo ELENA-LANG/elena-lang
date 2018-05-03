@@ -1452,8 +1452,16 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
       else if (current == lxRefAttribute) {
          // if it is an attribute with a reference body - treat it like T<> template
          writer.newNode(lxAttribute, current.argument);
-         current.setArgument(V_TYPETEMPL);
-         generateAttributeTemplate(writer, current, scope, templateMode, expressionMode);
+         SNode attrParam = current.findChild(lxAttributeValue);
+         if (attrParam.existChild(lxAttributeValue)) {
+            attrParam = lxAttribute;
+            generateAttributeTemplate(writer, attrParam, scope, templateMode, expressionMode);
+         }
+         else {
+            current.setArgument(V_TYPETEMPL);
+            generateAttributeTemplate(writer, current, scope, templateMode, expressionMode);
+         }
+         
          writer.closeNode();
       }
       else break;

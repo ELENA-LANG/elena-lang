@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //      its helpers
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -486,6 +486,11 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
          if (vmtPtr != 0) {
             _classes.add(vmtPtr, (size_t)reader.Address());
             _classNames.add(reference, vmtPtr);
+            if (reference.find('@') != NOTFOUND_POS && reference.find('#', 0) > 0) {
+               IdentifierString weakName("'$auto", reference + getlength(module->Name()));
+
+               _classNames.add(weakName, vmtPtr);
+            }
          }
       }
       // skip symbol entry address
@@ -655,20 +660,35 @@ _Module* DebugController :: loadDebugModule(ident_t reference)
       it++;
    }
 
-   _manager->retrievePath(name, path, _T("dnl"));
+   Module* module = NULL;
+   while (!module && !emptystr(name)) {
+      _manager->retrievePath(name, path, _T("dnl"));
 
-   Module* module = (Module*)_modules.get(name);
-   if (module == NULL) {
-      module = new Module();
+      if (!_modules.exist(name)) {
+         module = new Module();
 
-      _ELENA_::FileReader reader(path.c_str(), _ELENA_::feRaw, false);
-      _ELENA_::LoadResult result = module->load(reader);
-      if (result != _ELENA_::lrSuccessful) {
-         delete module;
+         _ELENA_::FileReader reader(path.c_str(), _ELENA_::feRaw, false);
+         _ELENA_::LoadResult result = module->load(reader);
+         if (result == _ELENA_::lrSuccessful) {
+            if (module->mapReference(reference.c_str() + getlength(module->Name()), true) != 0) {
+               _modules.add(name, module);
+            }
+            else {
+               delete module;
+               module = NULL;
 
-         return NULL;
+               name.trimLastSubNs();
+            }
+         }
+         else {
+            delete module;
+            module = NULL;
+
+            name.trimLastSubNs();
+         }
       }
-      _modules.add(name, module);
+      else name.trimLastSubNs();
+
    }
    return module;
 }

@@ -109,8 +109,8 @@ extension forLoopOp
 //        = aFunction retrieve enumerator(RangeEnumerator new from:self to:aMaxValue by:aStep).
 }
 
-//extension loopOp
-//{
+extension loopOp
+{
 //    doWhile:anAction
 //    [
 //        while (self bool)
@@ -118,15 +118,15 @@ extension forLoopOp
 //            anAction eval.
 //        ].
 //    ]
-//    
-//    doWhile
-//    [
-//        while (self bool)
-//        [
-//        ].
-//    ]    
-//}
-//
+    
+    doWhile
+    [
+        while (T<bool>(self))
+        [
+        ].
+    ]    
+}
+
 //func extension blockOp
 //{
 //    repeatUntil:aCondition
@@ -235,37 +235,3 @@ extension forLoopOp
 //        v set(tmp).
 //    ]
 //}
-
-// --- control ---
-
-public class control =
-{
-////    try : anAction &catching:aHandler
-////    [
-////        ^ anAction eval | if:aHandler.
-////    ]    
-//    
-//    do:object with:action
-//        = action eval:object.
-    
-    do:anAction = anAction().
-    
-//    do:anAction until:anExpr
-//        = anAction run until:anExpr.
-//
-//    while:anExpr
-//        = $self while:anExpr do:[].
-//
-//    while:anExpr do:anAction
-//        = anAction run while:anExpr.
-//
-////    run int:aStart int:anEnd every:aFunction
-////        = (aStart < anEnd)
-////            ? [ aFunction run int:aStart int:anEnd int:1 ]
-////            ! [ aFunction rewind int:aStart int:anEnd int:1 ].
-////    
-////    run int:aStart int:anEnd int:aStep every:aFunction
-////        = (aStart < anEnd)
-////            ? [ aFunction run int:aStart int:anEnd int:aStep ]
-////            ! [ aFunction rewind int:aStart int:anEnd int:aStep ].
-}.

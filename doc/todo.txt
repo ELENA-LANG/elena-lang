@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * ref<char> - add / subtract are not supported. similar to ref<object>
+
                  * debugger : the full symbol name should be used (rather than a relative one)
 
                  * migrate dynamic, templates, win32_app files
@@ -160,6 +162,7 @@ In development:
                  * interface template - generate an error / warning if there is no abstract method implementation
                  * existing method cannot be declared abstract
                  * publish an example with the enumeration (list of enum values)
+                 * optimize integerOp : append / reduce should be stacksafe
 
               dev - general implementation
                  * typified enumerators / extensions #245                 
@@ -244,6 +247,7 @@ Pipeline:
 
               dev - debugger
                  * #263 - fix goto
+                 * DebugController::loadDebugModule should use LibraryManager to avoid code duplication
 
               exp - web
 
