@@ -1,7 +1,7 @@
 
 // --- arrayof ---
 
-sealed array<template_subj> :: Indexable
+sealed array<template_subj> //:: Indexable<template_subj>
 {
     dynamic<template_subj> theArray.
 
@@ -15,13 +15,6 @@ sealed array<template_subj> :: Indexable
 //        @theLength := self length.
 //        
 //        template_subj get = self getAt(@theIndex).
-//        
-//      bool next
-//      [
-//          @theIndex := @theIndex + 1.
-//          
-//          ^ @theIndex < @theLength
-//      ]        
 //    }.
 
 //    enumerator 
@@ -47,20 +40,20 @@ sealed array<template_subj> :: Indexable
 //          }
 //    ]
 
-    T<indexer> indexer = BaseIndexer::
-    {
-        @theIndex := 0.
-        
-        @theBaseIndexerLength := self length.
-        
-        get
-            = self getAt(theIndex).
-            
-        set : o
-        [
-            self setAt(theIndex, T<template_subj>(o)).
-        ]
-    }.    
+//    T<Indexer<template_subj>> indexer = BaseIndexer<template_subj>::
+//    {
+//        @theIndex := 0.
+//        
+//        @theLength := self length.
+//        
+//        template_subj get
+//            = self getAt(theIndex).
+//            
+//        set(template_subj o)
+//        [
+//            self setAt(theIndex, o).
+//        ]
+//    }.    
 
     readLengthTo(ref<int> retVal)
     [

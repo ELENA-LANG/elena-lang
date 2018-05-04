@@ -73,9 +73,41 @@ public interface Indexer
     int rvprop length :: readLengthTo.
 }
 
+interface Indexer<type>
+{
+    /// Returns false if the index out of range
+    abstract bool available []
+
+    /// Returns the current member
+    abstract type get []
+    
+    /// Sets the current member
+    abstract set(type object) []
+    
+    int vprop index :: readIndexTo, writeIndex.
+
+    /// Reads the current index into an output parameter
+    abstract readIndexTo(ref<int> retVal) []
+
+    /// Sets the index by specified value
+    ///
+    /// Should be overidden(or set&index)
+    abstract writeIndex(int anIndex) []
+
+    /// Reads the length to the output parameter    
+    abstract readLengthTo(ref<int> retVal) []
+    
+    int rvprop length :: readLengthTo.
+}
+
 public abstract Indexable
 {
-    abstract T<Indexer> indexer []
+    //abstract T<Indexer> indexer []
+}
+
+abstract Indexable<type>
+{
+    abstract T<Indexer<type>> indexer []
 }
 
 //// --- MatrixIndexer ---
@@ -864,6 +896,21 @@ public abstract closed BaseLazyExpression
 //{
 //}
 
+// --- BaseEnumerator<type> ---
+
+abstract class BaseEnumerator<type> :: Enumerator<type>
+{
+    ref<int> theIndex.
+    int theLength.
+    
+    bool next
+    [
+        theIndex append(1).
+        
+      ^ theIndex < theLength
+    ]    
+}
+
 // --- BaseIndexer ---
 
 public abstract class BaseIndexer :: Indexer
@@ -889,6 +936,32 @@ public abstract class BaseIndexer :: Indexer
     readLengthTo(ref<int> retVal)
     [
         retVal value := theBaseIndexerLength.
+    ]
+}
+
+abstract BaseIndexer<type> :: Indexer<type>
+{
+    int theIndex.
+    int theLength.
+    
+    /// Returns false if the index out of range
+    bool available = (theIndex < theLength).
+    
+    /// Reads the current i-index into an output parameter
+    readIndexTo(ref<int> retVal)
+    [
+        retVal value := theIndex
+    ]    
+    
+    /// Sets the i-index by specified value
+    writeIndex(int anIndex)
+    [ 
+        theIndex := anIndex
+    ] 
+    
+    readLengthTo(ref<int> retVal)
+    [
+        retVal value := theLength.
     ]
 }
 

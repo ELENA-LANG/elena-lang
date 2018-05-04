@@ -3,7 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * modify the extensoin declaration syntax
+                 * review the extensoin declaration syntax
+                 * review field / method template usage syntax
 
                  * debugger : the full symbol name should be used (rather than a relative one)
 
