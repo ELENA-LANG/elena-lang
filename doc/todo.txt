@@ -3,13 +3,12 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * ref<char> - add / subtract are not supported. similar to ref<object>
+                 * modify the extensoin declaration syntax
 
                  * debugger : the full symbol name should be used (rather than a relative one)
 
                  * migrate dynamic, templates, win32_app files
-                 * migrate rest of the code : try-catch, try template, switch, generics, collections, operations with
-                   open argument list
+                 * migrate switch
 
                  * optimize embeddable function call
                  * optimize embeddable function2 call

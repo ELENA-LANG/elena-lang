@@ -1,12 +1,28 @@
 
 // --- arrayof ---
 
-sealed template<Indexable> array :: template_subj
+sealed array<template_subj> :: Indexable
 {
     dynamic<template_subj> theArray.
 
 //    implicit int:n
 //        = template_subj<>(n).
+
+//    Enumerator<template_subj> enumerator = BaseEnumerator<template_subj>::
+//    {
+//        @theIndex := 0.
+//        
+//        @theLength := self length.
+//        
+//        template_subj get = self getAt(@theIndex).
+//        
+//      bool next
+//      [
+//          @theIndex := @theIndex + 1.
+//          
+//          ^ @theIndex < @theLength
+//      ]        
+//    }.
 
 //    enumerator 
 //    [

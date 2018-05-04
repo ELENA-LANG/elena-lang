@@ -13,7 +13,7 @@ public class BaseVariable
     value = nil.
 }
 
-sealed template<BaseVariable> ref :: template_subj
+sealed ref<template_subj> :: BaseVariable
 {
     template_subj theValue.
     

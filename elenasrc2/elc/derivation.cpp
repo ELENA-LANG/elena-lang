@@ -577,7 +577,10 @@ void DerivationTransformer::DerivationScope :: loadParameters(SNode node)
    SNode current = node.firstChild();
    // load template parameters
    while (current != lxNone) {
-      if (current == lxBaseParent) {
+      if (current == lxAttributeValue) {
+         if (current.existChild(lxAttributeValue))
+            raiseError(errInvalidSyntax, node);
+
          ident_t name = current.firstChild(lxTerminalMask).identifier();
 
          parameters.add(name, parameters.Count() + 1);
@@ -1357,6 +1360,8 @@ bool DerivationTransformer :: generateTemplate(SyntaxWriter& writer, DerivationS
       else if (current == lxTemplateParent && !test(mode, MODE_IMPORTING)) {
          // HOTFIX : class based template
          writer.newNode(lxBaseParent, -1);
+         copyClassTree(writer, current.findChild(lxTypeAttr), scope);
+
          SyntaxTree::copyNode(writer, current);
          writer.closeNode();
       }
@@ -1439,20 +1444,7 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
             writer.closeNode();
 
             if (templateMode) {
-               if (current.argument == V_TEMPLATE && current.existChild(lxBaseParent)) {
-                  //HOTFIX : check if it is template based on the class
-                  writer.newNode(lxTemplateParent);
-
-                  SNode terminalNode = current.findChild(lxBaseParent).firstChild(lxTerminalMask);
-                  ref_t reference = scope.mapReference(terminalNode);
-                  if (!reference)
-                     scope.raiseError(errUnknownSubject, terminalNode);
-
-                  writeFullReference(writer, scope.compilerScope->module, reference);
-
-                  writer.closeNode();
-               }
-               else if (current.argument == V_ACCESSOR) {
+               if (current.argument == V_ACCESSOR) {
                   // HOTFIX : recognize virtual property template
                   // add virtual methods
                   if (scope.fields.Count() == 0) {
@@ -3334,22 +3326,15 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
 {
    // recognize the declaration type
    DeclarationAttr declType = daNone;
-   SNode current = node.prevNode();
-   if (current == lxNameAttr)
-      current = current.prevNode();
+   SNode nameNode = node.prevNode();
+   if (nameNode != lxNameAttr)
+      scope.raiseError(errInvalidSyntax, node);
 
+   SNode current = nameNode.prevNode();
    while (current == lxAttribute/* || current == lxAttributeDecl*/) {
       ref_t attrRef = scope.mapAttribute(current);
 //      if (!attrRef) {
 //         attrRef = scope.mapAttribute(current);
-         if (attrRef == V_TEMPLATE && current.existChild(lxAttributeValue)) {
-            // HOTFIX : check if it is a template based on the class
-            SNode attrValue = current.findChild(lxAttributeValue);
-
-            attrValue = lxBaseParent;
-            current.setArgument(attrRef);
-         }
-
          current.setArgument(attrRef);
 
          DeclarationAttr attr = daNone;
@@ -3417,6 +3402,10 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
       current = current.prevNode();
    }
 
+   if (nameNode.existChild(lxAttributeValue)) {
+      declType = (DeclarationAttr)(declType | daTemplate);
+   }      
+
 //   attributes.refresh();
 
    if (declType == daType) {
@@ -3444,14 +3433,15 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
       else return false;
    }
    else if (test(declType, daTemplate)) {
+      if (testany(declType, daImport | daType))
+         scope.raiseError(errInvalidSyntax, node);
+
       node = lxTemplate;
 
-      SNode name = node.prevNode();
-
-      int count = SyntaxTree::countChild(node, lxBaseParent);
+      int count = SyntaxTree::countChild(nameNode, lxAttributeValue);
       int mode = MODE_ROOT;
 
-      IdentifierString templateName(name.findChild(lxIdentifier).identifier());
+      IdentifierString templateName(nameNode.findChild(lxIdentifier).identifier());
       if (test(declType, daField)) {
          templateName.append("#1");
 
@@ -3578,6 +3568,21 @@ void DerivationTransformer :: generateTemplateTree(SyntaxWriter& writer, SNode n
          scope.type = DerivationScope::ttCodeTemplate;
 
          generateCodeTree(writer, current, scope);
+      }
+      else if (current == lxBaseParent) {
+         //HOTFIX : check if it is template based on the class
+         writer.newNode(lxTemplateParent);
+
+         generateTypeAttribute(writer, current, scope, true);
+
+         //SNode terminalNode = current.firstChild(lxTerminalMask);
+         //ref_t reference = scope.mapReference(terminalNode);
+         //if (!reference)
+         //   scope.raiseError(errUnknownSubject, terminalNode);
+
+         //writeFullReference(writer, scope.compilerScope->module, reference);
+
+         writer.closeNode();
       }
 
       current = current.nextNode();
@@ -3928,7 +3933,7 @@ void DerivationTransformer :: saveTemplate(SNode node, DerivationScope& scope, D
 
    DerivationScope rootScope(scope.compilerScope, fullPath.c_str(), NULL, scope.imports);
    rootScope.autogeneratedTree = &autogenerated;
-   rootScope.loadParameters(node);
+   rootScope.loadParameters(node.prevNode());
 //   rootScope.sourcePath = fullPath;
    rootScope.type = type;
    rootScope.mode = scope.mode;

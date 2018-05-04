@@ -1,4 +1,4 @@
-template interface :: type
+interface<type>
 {
     cast T<type> = type::
     {
@@ -6,7 +6,7 @@ template interface :: type
     }.
 }
 
-field template prop :: prop_name
+field prop<prop_name>
 {
     object field.
     
@@ -18,7 +18,7 @@ field template prop :: prop_name
     prop_name = field.
 }
 
-field template prop :: prop_type, prop_name
+field prop<prop_type, prop_name>
 {
     prop_type field.
     
@@ -30,7 +30,7 @@ field template prop :: prop_type, prop_name
     prop_type prop_name = field.
 }
 
-field template rprop :: prop_type, prop_name
+field rprop<prop_type, prop_name>
 {
     prop_type field.
     
@@ -75,7 +75,7 @@ field template rprop :: prop_type, prop_name
 
 // --- vprop ---
 
-__accessor __accessor template vprop :: prop_type,prop_name
+__accessor __accessor vprop<prop_type,prop_name>
 {
     embeddable prop_type prop_name
     [
@@ -142,7 +142,7 @@ __accessor __accessor template vprop :: prop_type,prop_name
 
 // --- rvprop ---
 
-__accessor template rvprop :: type,prop_name
+__accessor rvprop<type,prop_name>
 {
     stacksafe embeddable type prop_name
     [
@@ -155,7 +155,7 @@ __accessor template rvprop :: type,prop_name
 
 // --- fnprop ---
 
-__accessor template fnprop :: type,template_fn
+__accessor fnprop<type,template_fn>
 {
     stacksafe embeddable type template_fn(type n)
     [
@@ -191,7 +191,7 @@ __accessor template fnprop :: type,template_fn
 
 // --- while statement ---
 
-__loop template while :: expr
+__loop while<expr>
 [
     T<bool>(expr) ?
     [
@@ -200,7 +200,7 @@ __loop template while :: expr
 
 // --- until statement ---
 
-__loop template until :: expr
+__loop until<expr>
 [
     T<bool>(expr) !
     [
@@ -217,7 +217,7 @@ __extern template extern
 
 // --- if statement ---
 
-__block template if :: expr
+__block if<expr>
 [
     T<bool>(expr) ?
     [
@@ -226,7 +226,7 @@ __block template if :: expr
 
 // --- ifnot statement ---
 
-__block template ifnot :: expr
+__block ifnot<expr>
 [
     T<bool>(expr) !
     [
@@ -235,7 +235,7 @@ __block template ifnot :: expr
 
 // --- if-else statement ---
 
-__block __block template if :: expr
+__block __block if<expr>
 [
     T<bool>(expr) ?
     [
@@ -245,7 +245,7 @@ __block __block template if :: expr
 ]
 
 
-__block __block template ifnot :: expr
+__block __block ifnot<expr>
 [
     T<bool>(expr) inverted ?
     [
@@ -256,7 +256,7 @@ __block __block template ifnot :: expr
 
 // -- try-catch statement ---
 
-__nested template try :: expr
+__nested try<expr>
 [
     expr | catch:
     {

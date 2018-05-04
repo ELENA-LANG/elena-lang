@@ -20,7 +20,7 @@ public interface Enumerator
 
 // --- enumerator<> ---
 
-template interface Enumerator :: type
+interface Enumerator<type>
 {
     abstract bool next []
     
@@ -38,7 +38,7 @@ public interface Enumarable
     abstract T<Enumerator> enumerator []
 }
 
-template interface Enumerable :: type
+interface Enumerable<type>
 {
     abstract Enumerator<type> enumerator []
 }
@@ -857,6 +857,12 @@ public abstract closed BaseLazyExpression
 ////    /// Clones the object
 ////    #method clone = Boolean new:$value.
 ////}
+
+//// --- BaseEnumerator<type> ---
+//
+//sealed template<BaseIndexer<template_subj>> array :: template_subj
+//{
+//}
 
 // --- BaseIndexer ---
 
