@@ -1,59 +1,42 @@
 
 // --- arrayof ---
 
-sealed array<template_subj> //:: Indexable<template_subj>
+sealed array<template_subj> :: Indexable<template_subj>
 {
     dynamic<template_subj> theArray.
 
 //    implicit int:n
 //        = template_subj<>(n).
 
-//    Enumerator<template_subj> enumerator = BaseEnumerator<template_subj>::
-//    {
-//        @theIndex := 0.
-//        
-//        @theLength := self length.
-//        
-//        template_subj get = self getAt(@theIndex).
-//    }.
+    Enumerator<template_subj> enumerator = BaseEnumerator<template_subj>::
+    {
+        @theIndex := 0.
+        
+        @theLength := self length.
+        
+        template_subj get = self getAt(@theIndex).
+    }.
 
-//    enumerator 
-//    [
-//        int index := -1.
-//        int length := 0.
-//        theArray >> length.
-//
-//        ^ Enumerator::
-//          {
-//              get = self getAt(index value).
-//              
-//              enumerable = self.
-//              
-//              reset [ index value := -1 ]
-//              
-//              bool next
-//              [
-//                  index append(1).
-//                  
-//                  ^ index < length
-//              ]
-//          }
-//    ]
+    cast T<Indexable> = Indexable::{ /*embeddable dispatch => self.*/T<Indexer> indexer => self. }.
+    
+    cast Enumerable<template_subj> = Enumerable<template_subj>::{ embeddable dispatch => self. }.
 
-//    T<Indexer<template_subj>> indexer = BaseIndexer<template_subj>::
-//    {
-//        @theIndex := 0.
-//        
-//        @theLength := self length.
-//        
-//        template_subj get
-//            = self getAt(theIndex).
-//            
-//        set(template_subj o)
-//        [
-//            self setAt(theIndex, o).
-//        ]
-//    }.    
+    cast T<Enumarable> = Enumarable::{ embeddable dispatch => self. }.
+
+    Indexer<template_subj> indexer = BaseIndexer<template_subj>::
+    {
+        @theIndex := 0.
+        
+        @theLength := self length.
+        
+        template_subj get
+            = self getAt(theIndex).
+            
+        set(template_subj o)
+        [
+            self setAt(theIndex, o).
+        ]
+    }.    
 
     readLengthTo(ref<int> retVal)
     [
@@ -247,7 +230,7 @@ sealed array<template_subj> //:: Indexable<template_subj>
 // --- ByteArray ---
 
 /// A byte array
-public sealed ByteArray :: Indexable, array<byte>
+public sealed ByteArray :: Indexable<byte>, array<byte>
 {
     /// Creates the byte array with the specified length
     constructor new(int len)
@@ -394,7 +377,7 @@ public sealed ByteArray :: Indexable, array<byte>
 // --- ShortArray ---
 
 /// A short integer array
-public sealed ShortArray :: Indexable, array<short>
+public sealed ShortArray :: Indexable<short>, array<short>
 {
     /// Creates the short array with the specified length
     constructor new(int aLength)
@@ -469,7 +452,7 @@ public sealed ShortArray :: Indexable, array<short>
 // --- IntArray ---
 
 /// An array of integers
-public sealed IntArray :: Indexable, array<int>
+public sealed IntArray :: Indexable<int>, array<int>
 {
     /// Creates the array with the specified length
     /*private*/ constructor new(int aLength)
@@ -846,7 +829,7 @@ public sealed class BitArray32
 // --- RealArray ---
 
 /// An array of real numbers
-public sealed RealArray :: Indexable, array<real>
+public sealed RealArray :: Indexable<real>, array<real>
 {
     /// Creates the array with the specified length
     constructor new(int aLength)
@@ -1016,7 +999,7 @@ public sealed RealArray :: Indexable, array<real>
 // --- CharArray ---
 
 /// An array of unicode characters (UTF-32)
-public sealed CharArray :: Indexable, array<char>
+public sealed CharArray :: Indexable<char>, array<char>
 {
     /// Creates the new array with a specified length
     constructor new(int len)
@@ -1741,9 +1724,9 @@ public sealed Array :: Indexable, array<object>
  
 //    /// Returns the array enumerator
 //    enumerator = ArrayEnumerator new array:$self.
-//
-//    /// Returns the array indexer
-//    indexer = ArrayIndexer new array:$self.
+
+    /// Returns the array indexer
+    T<Indexer> indexer = ArrayIndexer new(self).
 
     /// Clones the array
     array clone 
@@ -2459,62 +2442,62 @@ public class wideConvertor =
 //    readLengthTo vint:anOutput
 //        => theLiteral.
 //}
-//
-//// --- ArrayIndexer ---
-//
-///// An array indexer
-//class ArrayIndexer :: Indexer
-//{
-//    array theArray.
-//    vint  theIndex.
-//
-//    /// Returns the parameter indexer
-//    constructor new : anArray
-//        <= new array:anArray.
-//    
-//    /// Returns the parameter indexer
-//    constructor new array:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    bool available
-//    [
-//        int aLength := 0.
-//        theArray readLengthTo vint:aLength.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    get
-//        = theArray getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt int:theIndex object:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex int := anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theArray.
-//}
-//
+
+// --- ArrayIndexer ---
+
+/// An array indexer
+public class ArrayIndexer :: Indexer
+{
+    array    theArray.
+    ref<int> theIndex.
+
+    /// Returns the parameter indexer
+    constructor new : anArray
+        <= new(T<array>(anArray)).
+    
+    /// Returns the parameter indexer
+    constructor new(array anArray)
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    bool available
+    [
+        int aLength := 0.
+        theArray readLengthTo(&aLength).
+        
+        ^ theIndex < aLength.
+    ]
+
+    /// Returns the current member
+    get
+        = theArray getAt(theIndex).
+    
+    /// Sets the current member
+    set : anObject
+    [
+        theArray setAt(theIndex, anObject).
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref<int> anIndex)
+    [
+        anIndex value := theIndex.
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex(int anIndex)
+    [
+        theIndex value := anIndex.
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo(ref<int> anOutput)
+        => theArray.
+}
+
 //// --- ArrayEnumerator ---
 //
 ///// An array enumerator

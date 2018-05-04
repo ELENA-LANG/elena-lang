@@ -164,6 +164,9 @@ In development:
                  * publish an example with the enumeration (list of enum values)
                  * optimize integerOp : append / reduce should be stacksafe
                  * collection : validate if the parent class can be array based class
+                 * can cast method be overridden? so it means it should not have sealed attribute?
+                 * find out why the following code does not work:
+                      cast T<Indexable> = Indexable::{ embeddable dispatch => self. }.     
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

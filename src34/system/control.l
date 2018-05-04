@@ -31,6 +31,8 @@ interface Enumerator<type>
 //    
 //    /// returns the enumerator owner
 //    abstract enumerable []
+
+    abstract cast T<Enumerator> []
 }
 
 public interface Enumarable
@@ -98,16 +100,18 @@ interface Indexer<type>
     abstract readLengthTo(ref<int> retVal) []
     
     int rvprop length :: readLengthTo.
+    
+    abstract cast T<Indexer> []
 }
 
 public abstract Indexable
 {
-    //abstract T<Indexer> indexer []
+   abstract T<Indexer> indexer []
 }
 
 abstract Indexable<type>
 {
-    abstract T<Indexer<type>> indexer []
+   abstract Indexer<type> indexer []
 }
 
 //// --- MatrixIndexer ---
@@ -890,12 +894,6 @@ public abstract closed BaseLazyExpression
 ////    #method clone = Boolean new:$value.
 ////}
 
-//// --- BaseEnumerator<type> ---
-//
-//sealed template<BaseIndexer<template_subj>> array :: template_subj
-//{
-//}
-
 // --- BaseEnumerator<type> ---
 
 abstract class BaseEnumerator<type> :: Enumerator<type>
@@ -909,6 +907,8 @@ abstract class BaseEnumerator<type> :: Enumerator<type>
         
       ^ theIndex < theLength
     ]    
+    
+    cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
 }
 
 // --- BaseIndexer ---
@@ -936,7 +936,7 @@ public abstract class BaseIndexer :: Indexer
     readLengthTo(ref<int> retVal)
     [
         retVal value := theBaseIndexerLength.
-    ]
+    ]    
 }
 
 abstract BaseIndexer<type> :: Indexer<type>
@@ -963,6 +963,8 @@ abstract BaseIndexer<type> :: Indexer<type>
     [
         retVal value := theLength.
     ]
+    
+    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.
 }
 
 //// --- BaseMatrixIndexer ---

@@ -2805,6 +2805,12 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
    ref_t attrRef = scope.mapAttribute(node/*, true*/);
    if (attrRef == V_TYPETEMPL && prefixCounter == 1) {
       // if it is a type atrribute
+      if (!expressionMode) {
+         if (node.findChild(lxAttributeValue).existChild(lxAttributeValue))
+            scope.raiseError(errInvalidHint, node);
+      }     
+      else if (goToNode(node, lxAttributeValue).existChild(lxAttributeValue))
+         scope.raiseError(errInvalidHint, node);
    }
    else if (attrRef == V_TYPETEMPL && prefixCounter == 2) {
       // if it is an array atrribute

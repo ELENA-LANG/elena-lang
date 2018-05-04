@@ -6663,17 +6663,19 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    }
    else {
       bool privateOne = test(message, SEALED_MESSAGE);
-      bool castingOne = test(message, SPECIAL_MESSAGE);
+      bool castingOne = test(methodHints, tpConversion);
       bool included = scope.include(message);
       bool sealedMethod = (methodHints & tpMask) == tpSealed;
       // if the class is closed, no new methods can be declared
       // except private sealed ones (which are declared outside the class VMT)
-      if (included && closed && !privateOne)
+      if (included && closed && !privateOne) {
          scope.raiseError(errClosedParent, findParent(current, lxClass/*, lxNestedClass*/));
+      }
 
       // if the method is sealed, it cannot be overridden
-      if (!included && sealedMethod && !castingOne)
+      if (!included && sealedMethod && !castingOne) {
          scope.raiseError(errClosedMethod, findParent(current, lxClass/*, lxNestedClass*/));
+      }
 
       // HOTFIX : make sure there are no duplicity between public and private ones
       if (privateOne) {
@@ -6821,8 +6823,9 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    bool withAbstractMethods = false;
    bool disptacherNotAllowed = false;
    _logic->validateClassDeclaration(scope.info, withAbstractMethods, disptacherNotAllowed);
-   if (withAbstractMethods)
+   if (withAbstractMethods) {
       scope.raiseError(errAbstractMethods, node);
+   }      
    if (disptacherNotAllowed)
       scope.raiseError(errDispatcherInInterface, node);
 
