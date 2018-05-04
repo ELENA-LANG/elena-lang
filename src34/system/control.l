@@ -274,20 +274,20 @@ public interface Func1
         ].        
     ]
     
-//    /// Executes the function for every enumeration item until it returns true
-//    sealed retrieve enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//
-//            if($self(anItem))
-//                [ ^ anItem ]
-//        ].
-//        
-//        ^ $nil.
-//    ]
+    /// Executes the function for every enumeration item until it returns true
+    sealed retrieve(enumerator anEnumerator)
+    [
+        object anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+
+            if(self(anItem))
+                [ ^ anItem ]
+        ].
+        
+        ^ nil.
+    ]
 }
 
 //limited template function :: type
@@ -318,21 +318,21 @@ public interface Func2
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true
-//    sealed retrieve object:aParam enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            // !! temporal
-//            if ($self(aParam,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true
+    sealed retrieve(object aParam, enumerator anEnumerator)
+    [
+        object anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            // !! temporal
+            if (self(aParam,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 /// A base three variable function
@@ -353,20 +353,20 @@ public interface Func3
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self(aParam1,aParam2,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve(object aParam1, object aParam2, enumerator anEnumerator)
+    [
+        object anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if (self(aParam1,aParam2,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 /// A base three variable function
@@ -387,21 +387,21 @@ public interface Func4
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            // !! temporal
-//            if ($self(aParam1,aParam2,aParam3,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve(object aParam1, object aParam2, object aParam3, enumerator anEnumerator)
+    [
+        object anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            // !! temporal
+            if (self(aParam1,aParam2,aParam3,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 /// A base five variable function
@@ -422,20 +422,20 @@ public interface Func5
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self(aParam1,aParam2,aParam3,aParam4,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, enumerator anEnumerator)
+    [
+        object anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if (self(aParam1,aParam2,aParam3,aParam4,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 /// A base six variable function
@@ -456,20 +456,20 @@ public interface Func6
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, enumerator anEnumerator)
+    [
+        object anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 /// A base seven variable function
@@ -490,20 +490,20 @@ public interface Func7
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, enumerator anEnumerator)
+    [
+        object anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 /// A base eight variable function
@@ -526,20 +526,20 @@ public interface Func8
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, enumerator anEnumerator)
+    [
+        object anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 /// A base nine variable function
@@ -562,20 +562,21 @@ public interface Func9
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 enumerator:anEnumerator
-//    [
-//        object anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
+                        object aParam7, object aParam8, enumerator anEnumerator)
+    [
+        object anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 /// A base ten variable function
@@ -599,20 +600,21 @@ public interface Func10
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 enumerator:anEnumerator
-//    [
-//        var anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, 
+                        object aParam8, object aParam9, enumerator anEnumerator)
+    [
+        var anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 /// A base eleven variable functions
@@ -637,21 +639,21 @@ public interface Func11
         ]
     ]
     
-//    /// Executes the function for parameters and every enumeration item until it returns true    
-//    sealed retrieve object:aParam1 object:aParam2 object:aParam3 object:aParam4 object:aParam5 object:aParam6 object:aParam7 object:aParam8 object:aParam9 
-//                    object:aParam10 enumerator:anEnumerator
-//    [
-//        var anItem := $nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//            
-//            if ($self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,anItem))
-//                [ ^ anItem ]
-//        ].        
-//        
-//        ^ $nil
-//    ]
+    /// Executes the function for parameters and every enumeration item until it returns true    
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, 
+                        object aParam8, object aParam9, object aParam10, enumerator anEnumerator)
+    [
+        var anItem := nil.
+        while (anEnumerator next)
+        [
+            anItem := anEnumerator get.
+            
+            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9,aParam10,anItem))
+                [ ^ anItem ]
+        ].        
+        
+        ^ nil
+    ]
 }
 
 // --- base lazy expression ---

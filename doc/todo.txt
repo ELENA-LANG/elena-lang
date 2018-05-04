@@ -166,7 +166,8 @@ In development:
                  * collection : validate if the parent class can be array based class
                  * can cast method be overridden? so it means it should not have sealed attribute?
                  * find out why the following code does not work:
-                      cast T<Indexable> = Indexable::{ embeddable dispatch => self. }.     
+                      cast T<Indexable> = Indexable::{ embeddable dispatch => self. }.    
+                 * there should be typified enumerableOp extensions
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

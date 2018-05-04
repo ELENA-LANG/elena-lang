@@ -1,4 +1,4 @@
-//import system'routines.
+import system'routines.
 import system'collections.
 import extensions.
 //import extensions'routines.
@@ -17,13 +17,13 @@ class WordList
         theTotal := 0.
     ]
 
-//    append : aWord
-//    [
-//        theTotal append:1.
-//
-//        ifnot (theList ifExists:aWord)
-//            [ theList append:aWord ]
-//    ]
+    append : aWord
+    [
+        theTotal append:1.
+
+        ifnot (theList ifExists:aWord)
+            [ theList append:aWord ]
+    ]
 
     total_words = theTotal.
 

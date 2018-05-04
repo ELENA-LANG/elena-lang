@@ -111,14 +111,14 @@
 //        ^ aList array.
 //    ]
 //}
-//
-//// --- enumerableOp ---
-//
-//extension enumerableOp
-//{
-//    forEach(BaseFunction1 aFunction)
-//        = aFunction run enumerator:(self enumerator).
-//
+
+// --- enumerableOp ---
+
+extension enumerableOp
+{
+    forEach(Func1 aFunction)
+        = aFunction run(T<Enumerator>(self enumerator)).
+
 //    forEach(ExtensionMessage anExtMessage)
 //        = self~enumerableOp forEach(:n)(n~anExtMessage eval).
 //        
@@ -166,13 +166,13 @@
 //
 ////    safeSeek : aValue
 ////        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
-//
-//    seekFor:aValue
-//        = (:x)[ ^aValue equal:x ] retrieve enumerator(self enumerator).
-//
-//    bool ifExists : aValue
-//        = $nil != self~enumerableOp seekFor:aValue.
-//
+
+    seekFor:aValue
+        = (:x)[ ^aValue equal:x ] retrieve(T<Enumerator>(self enumerator)).
+
+    bool ifExists : aValue
+        = nil != self~enumerableOp seekFor:aValue.
+
 //    equal enumerable:list
 //    [
 //        ifnot (self length == list length)
@@ -283,8 +283,8 @@
 //    
 //    allMatchedBy(ExtensionMessage extMessage)
 //        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
-//}
-//
+}
+
 //// --- indexableOp ---
 //
 //extension indexableOp

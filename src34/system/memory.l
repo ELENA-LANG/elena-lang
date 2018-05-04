@@ -10,7 +10,7 @@ sealed array<template_subj> :: Indexable<template_subj>
 
     Enumerator<template_subj> enumerator = BaseEnumerator<template_subj>::
     {
-        @theIndex := 0.
+        @theIndex := -1.
         
         @theLength := self length.
         
