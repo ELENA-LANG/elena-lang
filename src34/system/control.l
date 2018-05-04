@@ -20,7 +20,7 @@ public interface Enumerator
 
 // --- enumerator<> ---
 
-template interface enumerator :: type
+template interface Enumerator :: type
 {
     abstract bool next []
     
@@ -38,9 +38,9 @@ public interface Enumarable
     abstract T<Enumerator> enumerator []
 }
 
-template interface enumerable :: type
+template interface Enumerable :: type
 {
-    abstract enumerator<type> enumerator []
+    abstract Enumerator<type> enumerator []
 }
 
 // --- Indexer ---

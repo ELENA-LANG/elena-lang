@@ -264,15 +264,21 @@ void CompilerScope :: saveAttribute(ident_t name, ref_t attr)
 
 _Module* CompilerScope :: loadReferenceModule(ident_t referenceName, ref_t& reference)
 {
-   if (isWeakReference(referenceName)) {
-      reference = module->mapReference(referenceName, true);
-
-      return reference ? module : NULL;
+   if (isTemplateWeakReference(referenceName)) {
+      // COMPILER MAGIC : try to find a template implementation
+      return loadReferenceModule(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), reference);
    }
+   else {
+      if (isWeakReference(referenceName)) {
+         reference = module->mapReference(referenceName, true);
 
-   _Module* extModule = project->resolveModule(referenceName, reference);
+         return reference ? module : NULL;
+      }
 
-   return reference ? extModule : NULL;
+      _Module* extModule = project->resolveModule(referenceName, reference);
+
+      return reference ? extModule : NULL;
+   }
 }
 
 ref_t CompilerScope :: mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared)
