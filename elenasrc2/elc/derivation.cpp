@@ -837,6 +837,16 @@ void DerivationTransformer :: loadParameterValues(SNode attributes, DerivationSc
 //   return _verbs.exist(attribute.findChild(lxIdentifier).findChild(lxTerminal).identifier());
 //}
 
+
+void DerivationTransformer :: copyClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      copyTreeNode(writer, current, scope);
+
+      current = current.nextNode();
+   }
+}
 void DerivationTransformer :: copyExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 {
    if (node.strArgument != -1) {
@@ -1042,7 +1052,10 @@ void DerivationTransformer :: copyTreeNode(SyntaxWriter& writer, SNode current, 
 //      }
 
       if (bodyNode == lxNestedClass) {
-         generateObjectTree(writer, bodyNode, scope, 0);
+         copyClassTree(writer, bodyNode, scope);
+         writer.insert(lxNestedClass);
+         writer.closeNode();
+
          writer.removeBookmark();
       }
       else generateExpressionTree(writer, bodyNode, scope, 0);
@@ -1234,7 +1247,7 @@ void DerivationTransformer :: copyTemplateAttributeTree(SyntaxWriter& writer, SN
             SNode terminalNode = current.firstChild(lxTerminalMask);
 
             ref_t classRef = scope.mapReference(terminalNode);
-            if (classRef) {
+            if (classRef && !isPrimitiveRef(classRef)) {
                writeFullReference(writer, scope.compilerScope->module, classRef, terminalNode);
             }
             else scope.raiseError(errInvalidHint, terminalNode);
@@ -1937,8 +1950,12 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
          if (arrayMode)
             scope.raiseError(errIllegalOperation, current);
 
-         writer.newNode(lxNestedClass);
-         SyntaxTree::copyNode(writer, expr);
+         writer.newBookmark();
+         recognizeScopeMembers(expr, scope, MODE_ROOT);
+         generateClassTree(writer, expr, scope, -1);
+         writer.removeBookmark();
+
+         writer.insert(lxExpression);
          writer.closeNode();
       }
       else {
