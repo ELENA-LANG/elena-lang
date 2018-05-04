@@ -1120,7 +1120,7 @@ public sealed __string LiteralValue :: BaseValue
     stacksafe constructor new(int anIndex, int aSize, chararray anArray)
         => system'core_routines'__literal.
 
-    internal stacksafe constructor new(int anIndex, int aSize, bytearray anArray)
+    internal stacksafe constructor fromByteArray(int anIndex, int aSize, bytearray anArray)
         <= new(aSize);
     [
         system'core_routines'__literal copy(self, anIndex, aSize, anArray).
@@ -1338,7 +1338,7 @@ public sealed __string WideLiteralValue :: BaseValue
     stacksafe constructor new(int anIndex, int aSize, chararray anArray)
         => system'core_routines'__wide.
 
-    internal stacksafe constructor new(int anIndex, int aSize, shortarray anArray)
+    internal stacksafe constructor fromShortArray(int anIndex, int aSize, shortarray anArray)
         <= new(aSize);
     [
         system'core_routines'__wide copy(self, anIndex, aSize, anArray).
@@ -1767,7 +1767,7 @@ public class literalConvertor =
         
         self convert(aValue, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, buffer)
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer))
     ]
     
     stacksafe convert(int aNumber, bytearray buffer, ref<int> length)
@@ -1784,7 +1784,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer))
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer))
     ]
     
     /// Converts the parameter to the literal value
@@ -1795,7 +1795,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer))
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -1810,7 +1810,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer))
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -1825,7 +1825,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer))
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -1840,7 +1840,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer)).
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer)).
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1859,7 +1859,7 @@ public class literalConvertor =
         
         self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer))
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1870,7 +1870,7 @@ public class literalConvertor =
         
         self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer))
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1885,7 +1885,7 @@ public class literalConvertor =
         
         self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer))
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1900,7 +1900,7 @@ public class literalConvertor =
         
         self convert(aNumber, aRadix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer)).
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer)).
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -1915,7 +1915,7 @@ public class literalConvertor =
         
         self convert(aNumber, radix, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer)).
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer)).
     ]
 
     /// Converts the parameter to the literal value
@@ -1930,7 +1930,7 @@ public class literalConvertor =
         
         self convert(aNumber, T<bytearray>(buffer), &length).
         
-        ^ LiteralValue new(0, length, T<bytearray>(buffer)).
+        ^ LiteralValue fromByteArray(0, length, T<bytearray>(buffer)).
     ]
 
     /// Converts UTF-16 literal to UTF-8 one
@@ -1948,7 +1948,7 @@ public class literalConvertor =
         [
             self convert(aLiteral, T<bytearray>(buffer), &m).
             
-            ^ LiteralValue new(0, m, T<bytearray>(buffer))
+            ^ LiteralValue fromByteArray(0, m, T<bytearray>(buffer))
         ].
 
         literal retVal := emptyLiteralValue.
@@ -1962,7 +1962,7 @@ public class literalConvertor =
             
             self convert(aLiteral Substring(i, page), T<bytearray>(buffer)buffer, &m).
             
-            retVal := retVal add(LiteralValue new(0, m, T<bytearray>(buffer))).
+            retVal := retVal add(LiteralValue fromByteArray(0, m, T<bytearray>(buffer))).
             
             i := i + page.
             l := l - page.
@@ -1999,7 +1999,7 @@ public class wideConvertor =
         
         self convert(aValue, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]    
     
     /// Converts the parameter to the literal value
@@ -2018,7 +2018,7 @@ public class wideConvertor =
         
         self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -2029,7 +2029,7 @@ public class wideConvertor =
         
         self convert(aNumber, buffer, T<shortarray>(buffer)).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -2044,7 +2044,7 @@ public class wideConvertor =
         
         self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -2059,7 +2059,7 @@ public class wideConvertor =
         
         self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -2074,7 +2074,7 @@ public class wideConvertor =
         
         self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer)).
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer)).
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -2093,7 +2093,7 @@ public class wideConvertor =
         
         self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, buffer)
+        ^ WideLiteralValue fromShortArray(0, length, buffer)
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -2104,7 +2104,7 @@ public class wideConvertor =
         
         self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -2119,7 +2119,7 @@ public class wideConvertor =
         
         self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -2134,7 +2134,7 @@ public class wideConvertor =
         
         self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value with the provided radix
@@ -2149,7 +2149,7 @@ public class wideConvertor =
         
         self convert(aNumber, aRadix, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts the parameter to the literal value
@@ -2164,7 +2164,7 @@ public class wideConvertor =
         
         self convert(aNumber, T<shortarray>(buffer), &length).
         
-        ^ WideLiteralValue new(0, length, T<shortarray>(buffer))
+        ^ WideLiteralValue fromShortArray(0, length, T<shortarray>(buffer))
     ]
 
     /// Converts UTF-8 literal to UTF-16e
@@ -2183,7 +2183,7 @@ public class wideConvertor =
         [
             self convert(aLiteral, T<shortarray>(buffer), &m).
             
-            ^ WideLiteralValue new(0, m, T<shortarray>(buffer))
+            ^ WideLiteralValue fromShortArray(0, m, T<shortarray>(buffer))
         ].
         
         wide retVal := emptyWideLiteralValue.
@@ -2197,7 +2197,7 @@ public class wideConvertor =
             
             self convert(aLiteral Substring(i,page), T<shortarray>(buffer), &m).
             
-            retVal := retVal add(WideLiteralValue new(0, m, T<shortarray>(buffer))).
+            retVal := retVal add(WideLiteralValue fromShortArray(0, m, T<shortarray>(buffer))).
             
             i := i + page.
             l := l - page

@@ -517,7 +517,7 @@
 // --- ArrayList ---
 
 /// An array list object
-public sealed class ArrayList :: Indexable
+public sealed class ArrayList :: Indexable//, interface<Enumerable>
 {
     array    theArray.
     ref<int> theLength.
@@ -538,19 +538,19 @@ public sealed class ArrayList :: Indexable
         theArray := Array new(aCapacity).
     ]
     
-//    constructor new array:a
-//        <= $new array:a int:(a length).
-//    
-//    /// Creates the list
-//    stacksafe constructor $new array:anArray int:aLength
-//    [
-//        int capacity := anArray length.
-//        
-//        theCapacity := capacity.
-//        theLength := aLength.
-//        
-//        theArray := anArray clone.
-//    ]
+    constructor new(array a)
+        <= fromArray(a, a length).
+    
+    /// Creates the list
+    stacksafe internal constructor fromArray(array anArray, int aLength)
+    [
+        int capacity := anArray length.
+        
+        theCapacity := capacity.
+        theLength := aLength.
+        
+        theArray := anArray clone.
+    ]
     
     int rvprop length :: readLengthTo.
     
@@ -717,61 +717,63 @@ public sealed class ArrayList :: Indexable
         ^ theArray getAt(len - 1)
     ]
     
-//    /// Returns the list enumerator
-//    enumerator = ArrayListEnumerator new array_list:$self.
+    /// Returns the list enumerator
+    enumerator = ArrayListEnumerator new(self).
     
     /// Returns the list indexer9
     T<Indexer> indexer = ArrayListIndexer new(self).
     
-//    /// Returns a list copy
-//    array_list clone
-//        = ArrayList $new array:theArray int:theLength.
-//        
-//    array
-//        = Array new int:0 int:theLength array:theArray.
-//
+    /// Returns a list copy
+    T<ArrayList> clone
+        = ArrayList fromArray(theArray, T<int>(theLength)).
+        
+    cast T<array>
+        = Array new(0, T<int>(theLength), theArray).
+
 //    value 
 //        <= array.
 }
 
-//// --- ArrayListEnumerator ---
-//
-///// A list enumerator
-//class ArrayListEnumerator :: Enumerator
-//{
-//    array_list theList.
-//    vint       theIndex.
-//    
-//    /// Creates a list enumerator
-//    constructor new array_list:aList
-//    [
-//        theList := aList.
-//        theIndex := -1.
-//    ]
-//
-//    /// Creates a list enumerator
-//    constructor new : anObject
-//        <= new array_list:anObject.
-//
-//    /// Returns the current object
-//    get = theList getAt int:theIndex.
-//    
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex int := -1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        theIndex append int:1.
-//        
-//        int aLength := theList length.
-//        
-//        ^ (aLength > theIndex)
-//    ]
-//}
+// --- ArrayListEnumerator ---
+
+/// A list enumerator
+class ArrayListEnumerator :: Enumerator
+{
+    T<ArrayList> theList.
+    ref<int>     theIndex.
+    
+    /// Creates a list enumerator
+    constructor new(ArrayList aList)
+    [
+        theList := aList.
+        theIndex := -1.
+    ]
+
+    /// Creates a list enumerator
+    constructor new : anObject
+        <= new(T<ArrayList>(anObject)).
+
+    /// Returns the current object
+    get = theList getAt(T<int>(theIndex)).
+    
+    /// Resets the enumerator
+    reset
+    [
+        theIndex value := -1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next
+    [
+        theIndex append(1).
+        
+        int aLength := theList length.
+        
+        ^ (aLength > theIndex)
+    ]
+    
+    enumerable = theList.
+}
 
 // --- ArrayListIndexer ---
 

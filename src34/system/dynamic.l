@@ -44,7 +44,7 @@ public sealed struct Message
         T<byte,256> aBuffer.
         int         aLength := system'external LoadMessageName(self, T<bytearray>(aBuffer), 255).
         
-        ^ LiteralValue new(0, aLength, T<bytearray>(aBuffer))
+        ^ LiteralValue fromByteArray(0, aLength, T<bytearray>(aBuffer))
     ]
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
@@ -108,7 +108,7 @@ public sealed struct Signature
         T<byte,256> aBuffer.
         int         aLength := system'external LoadSubjectName(self, T<bytearray>(aBuffer), 255).
         
-        ^ LiteralValue new(0, aLength, T<bytearray>(aBuffer))
+        ^ LiteralValue fromByteArray(0, aLength, T<bytearray>(aBuffer))
     ]
 
     /// Qualifies incoming messages and redirects to the target

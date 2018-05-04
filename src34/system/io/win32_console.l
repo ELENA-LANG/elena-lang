@@ -360,7 +360,7 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
                     continue := false
                 ].
             
-            var aTemp := WideLiteralValue new(0, aLength, T<shortarray>(aBuffer)).
+            var aTemp := WideLiteralValue fromShortArray(0, aLength, T<shortarray>(aBuffer)).
             
             anOutput := anOutput + aTemp.
         ].

@@ -170,6 +170,8 @@ In development:
                  * optimize equal, less operation between chars
                  * check if && and || works (partial evaluation)
                  * optimize TextBuilder
+                 * a class cannot have a public and internal methods with the same name and similar number of parameters
+                 * why the error - ArrayList :: Indexable, interface<Enumerable>
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

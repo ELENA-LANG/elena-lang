@@ -45,7 +45,7 @@ public sealed /*nonstructural */class CallStack
             aBufferLength := system'external LoadAddressInfo(address, T<bytearray>(aBuffer), 512).
             
             if (aBufferLength > 0)
-                [ aCallStackText := aCallStackText add(LiteralValue new(0, aBufferLength, T<bytearray>(aBuffer))); add(forwards'newLine) ].
+                [ aCallStackText := aCallStackText add(LiteralValue fromByteArray(0, aBufferLength, T<bytearray>(aBuffer))); add(forwards'newLine) ].
             
             anIndex := anIndex + 1.
         ].

@@ -30,7 +30,7 @@ public extension objectOp
         if (len == 0)
             [ ^ "Unknown class" ].
         
-        ^ LiteralValue new(0,len,T<ByteArray>(dump)).
+        ^ LiteralValue fromByteArray(0,len,T<ByteArray>(dump)).
     ]    
     
     /// Returns true if the specified object instances are equal; otherwise, false.
