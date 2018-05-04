@@ -124,13 +124,13 @@ public extension objectOp
 //        
 //        ^ true.
 //    ]
-//        
-//    bool isEmpty
-//        = self length == 0.
-//        
-//    bool isNonempty
-//        = self length != 0.
-//        
+        
+    bool isEmpty
+        = self length == 0.
+        
+    bool isNonempty
+        = self length != 0.
+        
 //    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
 ////    bool safeEqual : anObject
 ////        = anObject cast:%eval to:{ generic eval:aTarget:anObject = aTarget~$subject equal:anObject \ back:false. } with:self.
@@ -1581,76 +1581,76 @@ extension<literal> literalOp
 //        ^ self
 //    ]    
 //}
-//
-//// --- charOp ---
-//
-//char extension charOp
-//{
-//    stacksafe bool isWhitespace
-//    [
-//        self =>
-//            $9  [ ^ true ];
-//            $32 [ ^ true ];
-//            $10 [ ^ true ];
-//            $13 [ ^ true ];
-//            $12 [ ^ true ].
-//            
-//        ^ false
-//    ]
-//    
-//    stacksafe bool isDigit
-//    [
-//        int ch := 0.
-//        intConvertor convert char:self vint:ch.
-//        
-//        ^ (ch >= 30h) and: (ch <= 39h)
-//    ]
-//    
-//    stacksafe bool isNewLine
-//    [
-//        ^ self == $10
-//    ]
-//    
-//    stacksafe bool isLetter
-//    [
-//        int ch := 0.
-//        intConvertor convert char:self vint:ch.
-//        
-//        if ((ch >= 41h) and: (ch <= 5Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 61h) and: (ch <= 7Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 3ACh) and: (ch <= 3CEh))
-//            [ ^ true ].
-//            
-//        if ((ch >= 400h) and: (ch <= 42Fh))
-//            [ ^ true ].
-//            
-//        ^ false
-//    ]
-//    
-//    stacksafe bool isLToken
-//    [
-//        int ch := 0.
-//        intConvertor convert char:self vint:ch.
-//        
-//        if ((ch >= 41h) and: (ch <= 5Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 61h) and: (ch <= 7Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 3ACh) and: (ch <= 3CEh))
-//            [ ^ true ].
-//            
-//        if ((ch >= 400h) and: (ch <= 42Fh))
-//            [ ^ true ].
-//            
-//        ^ ch == 39
-//    ]
-//}
+
+// --- charOp ---
+
+public extension<char> charOp
+{
+    stacksafe bool isWhitespace
+    [
+        self =>
+            $9  [ ^ true ];
+            $32 [ ^ true ];
+            $10 [ ^ true ];
+            $13 [ ^ true ];
+            $12 [ ^ true ].
+            
+        ^ false
+    ]
+    
+    stacksafe bool isDigit
+    [
+        int ch := 0.
+        intConvertor convert(self, &ch).
+        
+        ^ (ch >= 30h) and: (ch <= 39h)
+    ]
+    
+    stacksafe bool isNewLine
+    [
+        ^ self == $10
+    ]
+    
+    stacksafe bool isLetter
+    [
+        int ch := 0.
+        intConvertor convert(self, &ch).
+        
+        if ((ch >= 41h) && (ch <= 5Ah))
+            [ ^ true ].
+        
+        if ((ch >= 61h) && (ch <= 7Ah))
+            [ ^ true ].
+        
+        if ((ch >= 3ACh) && (ch <= 3CEh))
+            [ ^ true ].
+            
+        if ((ch >= 400h) && (ch <= 42Fh))
+            [ ^ true ].
+            
+        ^ false
+    ]
+    
+    stacksafe bool isLToken
+    [
+        int ch := 0.
+        intConvertor convert(self, &ch).
+        
+        if ((ch >= 41h) && (ch <= 5Ah))
+            [ ^ true ].
+        
+        if ((ch >= 61h) && (ch <= 7Ah))
+            [ ^ true ].
+        
+        if ((ch >= 3ACh) && (ch <= 3CEh))
+            [ ^ true ].
+            
+        if ((ch >= 400h) && (ch <= 42Fh))
+            [ ^ true ].
+            
+        ^ ch == 39
+    ]
+}
 
 // --- byteArrayHelper ---
 

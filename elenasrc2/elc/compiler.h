@@ -897,7 +897,7 @@ private:
    }
    ref_t mapMessage(SNode node, CodeScope& scope);
 
-//   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);

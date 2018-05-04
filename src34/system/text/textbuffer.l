@@ -10,7 +10,7 @@ sealed public /*nonstructural */ class TextBuilder
     constructor new
     [
         theBuffer := CharArray new(TextPageSize).
-        theLength value := 0.
+        theLength := 0.
     ]
 
     constructor new : value
@@ -42,7 +42,7 @@ sealed public /*nonstructural */ class TextBuilder
     cast T<chararray> = theBuffer.
 
     T<literal> literal
-        = LiteralValue new(0, theLength, theBuffer).
+        = LiteralValue new(0, T<int>(theLength), theBuffer).
 
 //    wide
 //        = WideLiteralValue new int:0 int:theLength chararray:theBuffer.
@@ -112,7 +112,7 @@ sealed public /*nonstructural */ class TextBuilder
     [
         self reserve(1).
         
-        theBuffer write(theLength, aChar).
+        theBuffer write(T<int>(theLength), aChar).
         
         theLength append(1).
     ]

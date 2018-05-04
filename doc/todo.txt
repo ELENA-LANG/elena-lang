@@ -9,7 +9,6 @@ In development:
                  * debugger : the full symbol name should be used (rather than a relative one)
 
                  * migrate dynamic, templates, win32_app files
-                 * migrate switch
 
                  * optimize embeddable function call
                  * optimize embeddable function2 call
@@ -168,6 +167,9 @@ In development:
                  * find out why the following code does not work:
                       cast T<Indexable> = Indexable::{ embeddable dispatch => self. }.    
                  * there should be typified enumerableOp extensions
+                 * optimize equal, less operation between chars
+                 * check if && and || works (partial evaluation)
+                 * optimize TextBuilder
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

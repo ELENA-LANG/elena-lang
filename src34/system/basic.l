@@ -2217,6 +2217,11 @@ public sealed const struct CharValue :: BaseValue
     constructor max
         = $010FFFFh.
 
+    internal readValue(ref<int> retVal)
+    [
+        retVal value := theValue.
+    ]
+
     bool equal:o
     [
         var n := T<char>(o) \ back:nil.
@@ -2243,6 +2248,22 @@ public sealed const struct CharValue :: BaseValue
     bool equal(wide val)
         = val == T<wide>(self).
 
+    bool equal(char val)
+    [
+        int v := 0.
+        val readValue(&v).
+        
+        ^ theValue == v.
+    ]
+
+    bool less(char val)
+    [
+        int v := 0.
+        val readValue(&v).
+        
+        ^ theValue < v.
+    ]
+    
     bool less(literal val)
         = val < T<literal>(self).
 
@@ -2295,14 +2316,6 @@ public sealed const struct CharValue :: BaseValue
         ^ aLength.
     ]
 
-    /// Compares values
-    bool equal(char anOperand)
-        = theValue == anOperand.
-
-    /// Compares values
-    bool less(char anOperand)
-        = theValue < anOperand.
-        
     // Reads the object hash code into the output parameter
     readHashCodeTo(ref<int> aCode)
         => system'core_routines'__int.

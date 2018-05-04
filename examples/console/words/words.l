@@ -1,7 +1,7 @@
 import system'routines.
 import system'collections.
 import extensions.
-//import extensions'routines.
+import extensions'routines.
 import extensions'text.
 
 // --- WordList ---
@@ -55,8 +55,8 @@ public program =
     
     var aList := WordList new.
 
-//    aText forEachWord(:anItem)[ aList append:anItem ].
-//
+    aText forEachWord(:anItem)[ aList append:anItem ].
+
 //    console printLine("There are ",aList unique_words," unique words out of ",aList total_words).
 //    if (aList total_words > 0)
 //        [ console printLine("the list of unique words:",aList ascendant) ].

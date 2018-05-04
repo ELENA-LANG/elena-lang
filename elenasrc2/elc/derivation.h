@@ -237,7 +237,7 @@ class DerivationTransformer //: public _DerivationTransformer
    void generateMessage(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool templateMode*/);
    void generateTypeAttribute(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
 
-//   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
+   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
    bool generateCodeTemplate(SyntaxWriter& writer, DerivationScope& scope, SubjectMap* parentAttributes);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
