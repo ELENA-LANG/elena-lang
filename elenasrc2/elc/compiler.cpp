@@ -33,7 +33,7 @@ using namespace _ELENA_;
 #define HINT_EXTERNALOP       0x08000000
 #define HINT_NOCONDBOXING     0x04000000
 #define HINT_EXTENSION_MODE   0x02000000
-//#define HINT_TRY_MODE         0x01000000
+#define HINT_COLLECTION_MODE  0x01000000
 #define HINT_LOOP             0x00800000
 #define HINT_SWITCH           0x00400000
 //#define HINT_ALT_MODE         0x00200000
@@ -2545,15 +2545,19 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 {
    ObjectInfo result;
 
-   SNode member = node.findChild(lxCode, lxNestedClass/*, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing*/);
-   switch (node.type) {
-////      case lxNestedClass:
+   if (test(mode, HINT_COLLECTION_MODE)) {
+      result = compileCollection(writer, node.parentNode(), scope);
+   }
+   else {
+      SNode member = node.findChild(lxCode, lxNestedClass/*, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing*/);
+      switch (node.type) {
+         ////      case lxNestedClass:
       case lxLazyExpression:
          result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
          break;
-////      case lxCode:
-////         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
-////         break;
+         ////      case lxCode:
+         ////         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
+         ////         break;
       case lxExpression:
          if (member == lxCode) {
             result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
@@ -2561,9 +2565,6 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
          else if (member == lxNestedClass) {
             result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
          }
-//         if (isCollection(member)) {
-//            result = compileCollection(writer, objectNode, scope);
-//         }
          else result = compileExpression(writer, node, scope, 0, mode/* & HINT_CLOSURE_MASK*/);
          break;
       case lxBoxing:
@@ -2577,7 +2578,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
          break;
       case lxAlt:
          compileAltOperation(writer, node, scope);
-         
+
          result = ObjectInfo(okObject);
          break;
       case lxTrying:
@@ -2587,6 +2588,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
          break;
       default:
          result = compileTerminal(writer, node, scope, mode);
+      }
    }
 
    return result;
@@ -4125,47 +4127,47 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    return compileClosure(writer, node, ownerScope, scope);
 }
 
-//ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ref_t parentRef = scope.moduleScope->arrayReference;
-//   SNode parentNode = node.findChild(lxIdentifier, lxPrivate, lxReference);
-//   if (parentNode != lxNone) {
-//      parentRef = scope.moduleScope->mapTerminal(parentNode, true);
-//      if (parentRef == 0)
-//         scope.raiseError(errUnknownObject, node);
-//   }
-//
-//   return compileCollection(writer, node, scope, parentRef);
-//}
-//
-//ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t vmtReference)
-//{
-//   if (vmtReference == 0)
-//      vmtReference = scope.moduleScope->superReference;
-//
-//   int counter = 0;
-//
-//   writer.newBookmark();
-//
-//   // all collection memebers should be created before the collection itself
-//   SNode current = node.findChild(lxExpression);
-//   while (current != lxNone) {
-//      writer.newNode(lxMember, counter);
-//      compileExpression(writer, current, scope, 0);
-//      writer.closeNode();
-//
-//      current = current.nextNode();
-//      counter++;
-//   }
-//
-//   writer.appendNode(lxTarget, vmtReference);
-//   writer.insert(lxNested, counter);
-//   writer.closeNode();
-//
-//   writer.removeBookmark();
-//
-//   return ObjectInfo(okObject, vmtReference);
-//}
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ref_t parentRef = scope.moduleScope->arrayReference;
+   SNode parentNode = node.firstChild(lxTerminalMask);
+   if (parentNode != lxNone) {
+      parentRef = resolveImplicitIdentifier(scope, parentNode);
+      if (parentRef == 0)
+         scope.raiseError(errUnknownBaseClass, node);
+   }
+
+   return compileCollection(writer, node, scope, parentRef);
+}
+
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t vmtReference)
+{
+   if (vmtReference == 0)
+      vmtReference = scope.moduleScope->superReference;
+
+   int counter = 0;
+
+   writer.newBookmark();
+
+   // all collection memebers should be created before the collection itself
+   SNode current = node.findChild(lxExpression);
+   while (current != lxNone) {
+      writer.newNode(lxMember, counter);
+      compileExpression(writer, current, scope, 0, 0);
+      writer.closeNode();
+
+      current = current.nextNode();
+      counter++;
+   }
+
+   writer.appendNode(lxTarget, vmtReference);
+   writer.insert(lxNested, counter);
+   writer.closeNode();
+
+   writer.removeBookmark();
+
+   return ObjectInfo(okObject, vmtReference);
+}
 
 ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
@@ -4418,7 +4420,8 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    int targetMode = mode & ~HINT_PROP_MODE;
 
    SNode object = node.firstChild(lxObjectMask);
-   if (object.nextNode() == lxAssign) {
+   SNode nextNode = object.nextNode();
+   if (nextNode == lxAssign) {
       // recognize the property set operation
       targetMode |= HINT_PROP_MODE;
       if (isSingleStatement(object))
@@ -4432,6 +4435,10 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       objectInfo = compileObject(writer, node, scope, targetMode);
    }
    else {
+      if (nextNode == lxExpression) {
+         targetMode |= HINT_COLLECTION_MODE;
+      }
+
       objectInfo = compileObject(writer, object, scope, targetMode);
 
       objectInfo = compileOperation(writer, object.nextNode(), scope, objectInfo, mode);
