@@ -239,7 +239,7 @@ struct _CompilerScope
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly) = 0;
 
-   virtual ref_t resolveClosure(ref_t closureMessage) = 0;
+   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef) = 0;
 
 ////   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion) = 0;
 ////

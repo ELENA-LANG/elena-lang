@@ -292,15 +292,15 @@ public interface Func1
     ]
 }
 
-//limited template function :: type
-//{
-//    /// Executes the action
-//    closure(type param) []
-//    
+interface Func<type, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type param) []
+    
 //    run(enumerator<type> e)
 //    [
 //    ]
-//}
+}
 
 /// A base two variable function
 public interface Func2
@@ -337,6 +337,16 @@ public interface Func2
     ]
 }
 
+interface Func<type1,type2, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 /// A base three variable function
 public interface Func3
 {
@@ -369,6 +379,16 @@ public interface Func3
         
         ^ nil
     ]
+}
+
+interface Func<type1,type2,type3, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
 }
 
 /// A base three variable function
@@ -406,6 +426,16 @@ public interface Func4
     ]
 }
 
+interface Func<type1,type2,type3,type4, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 /// A base five variable function
 public interface Func5
 {
@@ -438,6 +468,16 @@ public interface Func5
         
         ^ nil
     ]
+}
+
+interface Func<type1,type2,type3,type4,type5, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
 }
 
 /// A base six variable function
@@ -474,6 +514,16 @@ public interface Func6
     ]
 }
 
+interface Func<type1,type2,type3,type4,type5,type6, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 /// A base seven variable function
 public interface Func7
 {
@@ -506,6 +556,16 @@ public interface Func7
         
         ^ nil
     ]
+}
+
+interface Func<type1,type2,type3,type4,type5,type6,type7, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
 }
 
 /// A base eight variable function
@@ -544,6 +604,16 @@ public interface Func8
     ]
 }
 
+interface Func<type1,type2,type3,type4,type5,type6,type7,type8, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 /// A base nine variable function
 public interface Func9
 {
@@ -579,6 +649,16 @@ public interface Func9
         
         ^ nil
     ]
+}
+
+interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8, type9 param9) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
 }
 
 /// A base ten variable function
@@ -619,6 +699,17 @@ public interface Func10
     ]
 }
 
+interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
+                            type9 param9, type10 param10) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 /// A base eleven variable functions
 public interface Func11
 {
@@ -656,6 +747,17 @@ public interface Func11
         
         ^ nil
     ]
+}
+
+interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10,type11, ret_type>
+{
+    /// Executes the action
+    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
+                            type9 param9, type10 param10, type11 param11) []
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
 }
 
 // --- base lazy expression ---

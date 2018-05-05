@@ -444,7 +444,7 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
    return generatedReference;
 }
 
-ref_t CompilerScope :: resolveClosure(ref_t closureMessage)
+ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef)
 {
    ref_t signRef = 0;
    module->resolveAction(getAction(closureMessage), signRef);
@@ -459,7 +459,27 @@ ref_t CompilerScope :: resolveClosure(ref_t closureMessage)
 
       return mapFullReference(closureName, true);
    }
-   else return 0; // !! temporal   
+   else {   
+      ref_t signatures[OPEN_ARG_COUNT];
+      size_t signLen = module->resolveSignature(signRef, signatures);
+
+      List<ref_t> parameters;
+      for (size_t i = 0; i < signLen; i++) {
+         parameters.add(signatures[i]);
+      }
+      if (outputRef) {
+         parameters.add(outputRef);
+      }
+      // if the output signature is not provided - use the super class
+      else parameters.add(superReference);
+
+      closureName.append('#');
+      closureName.appendInt(paramCount + 1);
+
+      ref_t templateReference = mapFullReference(closureName, true);
+
+      return generateTemplate(compiler, templateReference, parameters);
+   }
 }
 
 void CompilerScope :: saveIncludedModule(_Module* extModule)

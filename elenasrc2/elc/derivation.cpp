@@ -2049,10 +2049,10 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
 void DerivationTransformer :: generateCodeExpression(SyntaxWriter& writer, SNode current, DerivationScope& scope)
 {
    generateCodeTree(writer, current, scope);
-//   if (current == lxReturning) {
-//      writer.closeNode();
-//   }
-   /*else */if (scope.type == DerivationScope::ttCodeTemplate && checkFirstNode(current, lxEOF)) {
+   if (current == lxReturning) {
+      writer.closeNode();
+   }
+   else if (scope.type == DerivationScope::ttCodeTemplate && checkFirstNode(current, lxEOF)) {
       if (test(scope.mode, daDblBlock)) {
          if (scope.codeNode == lxNone) {
             writer.insert(lxTemplateParam);
@@ -2127,8 +2127,8 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
          writer.insert(lxExpression);
          writer.closeNode();
          break;
-//      case lxReturning:
-//         writer.newNode(lxCode);
+      case lxReturning:
+         writer.newNode(lxCode);
       case lxCode:
          generateCodeExpression(writer, current, scope);
          break;
@@ -2139,11 +2139,9 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
          writer.closeNode();
          break;
       }
-//      case lxAttributeValue:
-//         writer.newNode(lxClosureMessage, -1);
-//         copyIdentifier(writer, current.findChild(lxIdentifier, lxPrivate));
-//         writer.closeNode();
-//         break;
+      case lxAttributeValue:
+         generateTypeAttribute(writer, current, scope, scope.reference == INVALID_REF);
+         break;
       default:
       {
          if (isTerminal(current.type)) {

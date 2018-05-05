@@ -100,7 +100,7 @@ struct CompilerScope : _CompilerScope
       else return referenceName;
    }
 
-   virtual ref_t resolveClosure(ref_t closureMessage);
+   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef);
 
    virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters);
 

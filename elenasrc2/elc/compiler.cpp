@@ -134,15 +134,15 @@ inline bool isImportRedirect(SNode node)
 //
 //   return false;
 //}
-//
-//inline SNode goToNode(SNode current, LexicalType type)
-//{
-//   while (current != lxNone && current != type)
-//      current = current.nextNode();
-//
-//   return current;
-//}
-//
+
+inline SNode goToNode(SNode current, LexicalType type)
+{
+   while (current != lxNone && current != type)
+      current = current.nextNode();
+
+   return current;
+}
+
 ////inline bool validateGenericClosure(ident_t signature)
 ////{
 ////   size_t len = getlength(signature);
@@ -3849,9 +3849,10 @@ bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScop
 
    methodScope.message = encodeAction(lazyExpression ? EVAL_MESSAGE_ID : INVOKE_MESSAGE_ID);
 
+   ref_t outputRef = 0;
    if (argNode != lxNone) {
       // define message parameter
-      methodScope.message = declareInlineArgumentList(argNode, methodScope);
+      methodScope.message = declareInlineArgumentList(argNode, methodScope, outputRef);
    }
 
    ref_t parentRef = scope.info.header.parentRef;
@@ -3859,7 +3860,7 @@ bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScop
       parentRef = scope.moduleScope->lazyExprReference;
    }
    else {
-      ref_t closureRef = scope.moduleScope->resolveClosure(methodScope.message);
+      ref_t closureRef = scope.moduleScope->resolveClosure(*this, methodScope.message, outputRef);
 //      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
       if (closureRef)
          parentRef = closureRef;
@@ -3900,21 +3901,21 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    }
    else compileLazyExpressionMethod(writer, node, methodScope);
 
-   //if (node.existChild(lxClosureMessage)) {
-   //   // inject a virtual invoke multi-method if required
-   //   SyntaxTree virtualTree;
-   //   virtualTree.insertNode(0, lxClass, 0);
+   if (node.existChild(lxTypeAttr)) {
+      // inject a virtual invoke multi-method if required
+      SyntaxTree virtualTree;
+      virtualTree.insertNode(0, lxClass, 0);
 
-   //   List<ref_t> implicitMultimethods;
-   //   implicitMultimethods.add(encodeMessage(INVOKE_MESSAGE_ID, getAbsoluteParamCount(methodScope.message)));
+      List<ref_t> implicitMultimethods;
+      implicitMultimethods.add(encodeMessage(INVOKE_MESSAGE_ID, getAbsoluteParamCount(methodScope.message)));
 
-   //   _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), scope.info, *this, implicitMultimethods, lxClassMethod);
+      _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), scope.info, *this, implicitMultimethods, lxClassMethod);
 
-   //   generateClassDeclaration(virtualTree.readRoot(), scope, false);
+      generateClassDeclaration(virtualTree.readRoot(), scope, false);
 
-   //   compileVMT(writer, virtualTree.readRoot(), scope);
-   //}
-   //else {
+      compileVMT(writer, virtualTree.readRoot(), scope);
+   }
+   else {
       generateClassDeclaration(SNode(), scope, false);
 
       if (test(scope.info.header.flags, elWithMuti)) {
@@ -3923,7 +3924,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
          scope.info.header.flags &= ~elSealed;
          scope.info.header.flags |= elClosed;
       }
-   //}
+   }
 
    writer.closeNode();
 
@@ -4823,7 +4824,7 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool bytearray, O
    return true;
 }
 
-ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
+ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t& outputRef)
 {
 //   IdentifierString signature;
    IdentifierString messageStr;
@@ -4831,7 +4832,9 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
    ref_t actionRef = 0;
    ref_t signRef = 0;
 
-//   SNode sign = goToNode(arg, lxClosureMessage);
+   SNode sign = goToNode(arg, lxTypeAttr);
+   ref_t signatures[OPEN_ARG_COUNT];
+   size_t signatureLen = 0;
 //   bool first = true;
    while (arg == lxMethodParameter/* || arg == lxIdentifier || arg == lxPrivate*/) {
       SNode terminalNode = arg;
@@ -4846,28 +4849,45 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope)
       if (scope.parameters.exist(terminal))
          scope.raiseError(errDuplicatedLocal, arg);
 
-//      if (sign != lxNone) {
-//         // if the closure has explicit signature
-//         ref_t elementRef = 0;
-//         ref_t class_ref = declareArgumentSubject(sign, *scope.moduleScope, first, messageStr, signature, elementRef);
-//
-//         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, class_ref, 0) : 0;
-//         scope.parameters.add(terminal, Parameter(index, class_ref, elementRef, size));
-//
-//         sign = sign.nextNode();
-//      }
-//      else if (first) {
+      if (sign != lxNone) {
+         // if the closure has explicit signature
+         ref_t elementRef = 0;
+         ref_t class_ref = declareArgumentType(sign, scope, /*first, messageStr, signature, */elementRef);
+
+         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, class_ref, 0) : 0;
+         scope.parameters.add(terminal, Parameter(index, class_ref, elementRef, size));
+
+         signatures[signatureLen++] = class_ref;
+
+         sign = sign.nextNode();
+      }
+      else /*if (first) */{
          scope.parameters.add(terminal, Parameter(index));
-//      }
+      }
 //      else scope.raiseError(errInvalidSyntax, arg);      
 
       arg = arg.nextNode();
+   }
+   if (sign == lxTypeAttr) {
+      // if the returning type is provided
+      ref_t elementRef = 0;
+      outputRef = declareArgumentType(sign, scope, /*first, messageStr, signature, */elementRef);
+
+      if (sign.nextNode() == lxTypeAttr)
+         scope.raiseError(errInvalidOperation, arg);
    }
 
    if (emptystr(messageStr)) {
       messageStr.copy(INVOKE_MESSAGE);
    }
    //messageStr.append(signature);
+
+   if (signatureLen > 0) {
+      if (scope.parameters.Count() == signatureLen) {
+         signRef = scope.module->mapSignature(signatures, signatureLen, false);
+      }
+      else scope.raiseError(errInvalidOperation, arg);
+   }
 
    actionRef = scope.moduleScope->module->mapAction(messageStr, signRef, false);
 
