@@ -88,7 +88,7 @@ sealed public /*nonstructural */ class TextBuilder
         [
             self reserve(aLength).
             
-            aLiteral save(theLength, theBuffer, &aLength).
+            aLiteral save(T<int>(theLength), theBuffer, &aLength).
             
             theLength append(aLength).
         ].
@@ -102,7 +102,7 @@ sealed public /*nonstructural */ class TextBuilder
         [
             self reserve(aLength).
             
-            aLiteral save(theLength, theBuffer, &aLength).
+            aLiteral save(T<int>(theLength), theBuffer, &aLength).
             
             theLength append(aLength).
         ].

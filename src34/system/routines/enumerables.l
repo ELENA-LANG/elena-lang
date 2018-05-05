@@ -1,5 +1,13 @@
 //import system'collections.
-//
+
+// === actions ===
+
+symbol ifOrdered
+    = (:aFormer:aLater) [ ^aFormer < aLater ].
+
+symbol ifDecrescent
+    = (:aFormer:aLater) [ ^aFormer > aLater ].
+
 //// --- literalSplitOp ---
 //
 //literal extension literalListOp
@@ -285,10 +293,10 @@ extension enumerableOp
 //        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
 }
 
-//// --- indexableOp ---
-//
-//extension indexableOp
-//{
+// --- indexableOp ---
+
+extension indexableOp
+{
 //    exchange : anIndex1 : anIndex2
 //        = self~indexableOp exchange int:anIndex1 int:anIndex2.
 //        
@@ -402,38 +410,38 @@ extension enumerableOp
 //        
 //        ^ true.
 //    ]
-//
-//    sort func2:aCompareFunc
-//    [
-//        indexer aFormer := self indexer.
-//        indexer aLater := self indexer.
-//
-//        while (aFormer available)
-//        [
-//            int i := aFormer index.
-//            
-//            aLater writeIndex int:(i + 1).
-//            
-//            while (aLater available)
-//            [
-//                ifnot (aCompareFunc eval(aFormer get, aLater get))
-//                    [
-//                        var aTmp := aFormer get.
-//                        aFormer set(aLater get).
-//                        aLater set:aTmp.
-//                    ].
-//                    
-//                aLater append index:1
-//            ].
-//            aFormer append index:1
-//        ].
-//        
-//        ^ self
-//    ]
-//    
-//    ascendant
-//        = (self clone)~indexableOp sort:ifOrdered.
-//
+
+    sort(Func2 aCompareFunc)
+    [
+        indexer aFormer := self indexer.
+        indexer aLater := self indexer.
+
+        while (aFormer available)
+        [
+            int i := aFormer index.
+            
+            aLater writeIndex(i + 1).
+            
+            while (aLater available)
+            [
+                ifnot (aCompareFunc(aFormer get, aLater get))
+                    [
+                        var aTmp := aFormer get.
+                        aFormer set(aLater get).
+                        aLater set:aTmp.
+                    ].
+                    
+                aLater appendIndex:1
+            ].
+            aFormer appendIndex:1
+        ].
+        
+        ^ self
+    ]
+    
+    ascendant
+        = (self clone)~indexableOp sort:ifOrdered.
+
 //    isAscendant
 //        = self~indexableOp isSorted:ifOrdered.
 //
@@ -495,8 +503,8 @@ extension enumerableOp
 //        
 //        ^ self
 //    ]    
-//}
-//
+}
+
 //// --- stringListOp ---
 //
 //singleton $stringController

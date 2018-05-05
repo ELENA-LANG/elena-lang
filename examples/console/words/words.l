@@ -57,9 +57,9 @@ public program =
 
     aText forEachWord(:anItem)[ aList append:anItem ].
 
-//    console printLine("There are ",aList unique_words," unique words out of ",aList total_words).
-//    if (aList total_words > 0)
-//        [ console printLine("the list of unique words:",aList ascendant) ].
+    console printLine("There are ",aList unique_words," unique words out of ",aList total_words).
+    if (aList total_words > 0)
+        [ console printLine("the list of unique words:",aList ascendant) ].
 
     console readChar // wait for any key
 ].

@@ -1,11 +1,3 @@
-//// === actions ===
-//
-//symbol ifOrdered
-//    = (:aFormer:aLater) [ ^aFormer < aLater ].
-//
-//symbol ifDecrescent
-//    = (:aFormer:aLater) [ ^aFormer > aLater ].
-
 // --- common methods ---
 
 /// A generic extender

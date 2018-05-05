@@ -2007,7 +2007,7 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
       switch (current.type) {
          case lxMessageParameter:
             generateExpressionTree(writer, current, scope);
-//            current = lxIdle; // HOTFIX : to prevent duble compilation of closure parameters
+            current = lxIdle; // HOTFIX : to prevent duble compilation of closure parameters
             break;
          case lxExpression:
             generateExpressionTree(writer, current, scope/*, EXPRESSION_MESSAGE_MODE*/);
@@ -2368,8 +2368,8 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
             writer.closeNode();
             expressionExpected = true;
             break;
-//         case lxIdle:
-//            break;
+         case lxIdle:
+            break;
          default:
             scope.raiseError(errInvalidSyntax, current);
             break;

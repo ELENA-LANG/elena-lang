@@ -803,19 +803,31 @@ public class ArrayListIndexer :: Indexer
     ]
 
     /// Returns the current member
-    get = theList getAt(theIndex).
+    get
+    [
+        int index := theIndex value.
+        
+        ^ theList getAt(index).
+    ]
     
     /// Sets the current member
     set : anObject 
     [
-        theList setAt(theIndex, anObject).
+        int index := theIndex value.
+        
+        theList setAt(index, anObject).
     ]
     
     /// Reads the current index into an output parameter
     readIndexTo(ref<int> anIndex)
     [
-        anIndex value := theIndex.
+        theIndex readValueTo(anIndex).
     ]
+    
+    appendIndex(int anIndex)
+    [ 
+        theIndex append(anIndex).
+    ] 
     
     /// Sets the index by specified value
     writeIndex(int anIndex)

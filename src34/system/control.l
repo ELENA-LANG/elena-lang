@@ -62,15 +62,17 @@ public interface Indexer
     int vprop index :: readIndexTo, writeIndex.
 
     /// Reads the current index into an output parameter
-    abstract readIndexTo(ref<int> retVal) []
+    abstract stacksafe readIndexTo(ref<int> retVal) []
 
     /// Sets the index by specified value
     ///
     /// Should be overidden(or set&index)
-    abstract writeIndex(int anIndex) []
+    abstract stacksafe writeIndex(int anIndex) []
+
+    abstract stacksafe appendIndex(int anIndex) []
 
     /// Reads the length to the output parameter    
-    abstract readLengthTo(ref<int> retVal) []
+    abstract stacksafe readLengthTo(ref<int> retVal) []
     
     int rvprop length :: readLengthTo.
 }
@@ -933,6 +935,11 @@ public abstract class BaseIndexer :: Indexer
     writeIndex(int anIndex)
     [ 
         theIndex := anIndex
+    ] 
+    
+    appendIndex(int anIndex)
+    [ 
+        theIndex := theIndex + anIndex.
     ] 
     
     readLengthTo(ref<int> retVal)

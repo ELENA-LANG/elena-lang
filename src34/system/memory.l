@@ -2493,6 +2493,12 @@ public class ArrayIndexer :: Indexer
         theIndex value := anIndex.
     ]
     
+    /// Sets the index by specified value
+    appendIndex(int anIndex)
+    [
+        theIndex append(anIndex).
+    ]
+    
     /// Reads the length to the output parameter    
     readLengthTo(ref<int> anOutput)
         => theArray.

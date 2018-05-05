@@ -1,7 +1,7 @@
 //import system'collections.
 //import system'routines.
 //import system'calendar.
-//import system'text.
+import system'text.
 //import system'dynamic.
 
 // --- convertors ---
@@ -10,25 +10,25 @@ class literalExConvertor =
 {
 //    literal convert intmatrix:a
 //        = intmatrixExConvertor toLiteral intmatrix:a.
-//
-//    literal convert indexer:it
-//    [
-//        textbuffer anOutput := TextBuilder new.
-//        while (it available)
-//        [
-//            anOutput write(it get; toLiteral).
-//            anOutput write:",".
-//            
-//            it append index:1
-//        ].
-//        
-//        int aLength := anOutput length.
-//        if (0 < aLength)
-//            [ anOutput setLength int:(-1 + aLength) ].
-//        
-//        ^ anOutput literal
-//    ]
-//
+
+    literal convert(indexer it)
+    [
+        textbuffer anOutput := TextBuilder new.
+        while (it available)
+        [
+            anOutput write(it get; toLiteral).
+            anOutput write:",".
+            
+            it appendIndex:1
+        ].
+        
+        int aLength := anOutput length.
+        if (0 < aLength)
+            [ anOutput setLength(-1 + aLength) ].
+        
+        ^ anOutput literal
+    ]
+
 //    literal convert enumerator:aList
 //    [
 //        textbuffer anOutput := TextBuilder new.
@@ -49,9 +49,9 @@ class literalExConvertor =
 //
 //    literal convert(BaseEnumerable o)
 //        <= convert enumerator:o.
-//
-//    literal convert(BaseIndexable o)
-//        <= convert indexer:o.
+
+    literal convert(Indexable o)
+        <= convert(o indexer).
 
     literal convert:o
         = literalConvertor convert:o.
