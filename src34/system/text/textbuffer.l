@@ -28,7 +28,7 @@ sealed public /*nonstructural */ class TextBuilder
 
     stacksafe readLengthTo(ref<int> aRetVal)
     [
-        aRetVal value := theLength.
+        theLength readValueTo(aRetVal).
     ]
 
     stacksafe setLength(int aLength)

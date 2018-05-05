@@ -3230,9 +3230,6 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t target
 
 //void Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature)
 //{
-//   ref_t argRef = resolveObjectReference(scope, info);
-//   if (isPrimitiveRef(argRef))
-//      argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
 //
 //   if (!anonymous && argRef != 0) {
 //      signature.append('$');
@@ -3240,9 +3237,15 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t target
 //   }
 //   else anonymous = true;
 //}
-//
-//ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
-//{
+
+ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
+{
+   ref_t argRef = resolveObjectReference(scope, info);
+   if (isPrimitiveRef(argRef))
+      argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+
+   return scope.module->mapSignature(&argRef, 1, false);
+
 //   bool anonymous = false;
 //   IdentifierString signature;
 //   resolveStrongArgument(scope, info, anonymous, signature);
@@ -3250,7 +3253,7 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t target
 //      return scope.moduleScope->module->mapSubject(signature.ident(), false);
 //   }
 //   else return 0;
-//}
+}
 
 ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
@@ -3755,8 +3758,8 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
 
    ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, /*(classRef != 0) ? 0 : */HINT_DYNAMIC_OBJECT);
    
-   //         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
-   //
+   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
+   
    retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO/* | HINT_ASSIGNING_EXPR*/);
 
    // remove the assign node to prevent the duplication
@@ -6690,8 +6693,8 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       else  if (scope.info.methods.exist(message | SEALED_MESSAGE))
          scope.raiseError(errDuplicatedMethod, current);
 
-      if (included && _logic->isEmbeddable(scope.info)) {
-         // add a stacksafe attribute for the embeddable structure automatically
+      if (included && _logic->isEmbeddable(scope.info) && !test(methodHints, tpMultimethod)) {
+         // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
          scope.info.methodHints.exclude(Attribute(message, maHint));
          scope.info.methodHints.add(Attribute(message, maHint), methodHints | tpStackSafe);
 

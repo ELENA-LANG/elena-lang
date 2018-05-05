@@ -684,7 +684,7 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
     /// Reads the number of list item to the output parameter
     stacksafe readLengthTo(ref<int> aLength)
     [
-        aLength value := theLength.
+        theLength readValueTo(aLength).
     ]
     
     stacksafe readCapacityTo(ref<int> aCapacity)

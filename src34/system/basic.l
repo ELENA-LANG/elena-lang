@@ -31,6 +31,11 @@ sealed ref<template_subj> :: BaseVariable
         theValue := val.
     ]
 
+    readValueTo(ref<template_subj> retVal)
+    [
+        retVal value := theValue.
+    ]
+
     bool equal : anObject
         => theValue.
 

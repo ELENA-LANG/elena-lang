@@ -921,7 +921,7 @@ private:
    ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
 
 //   void resolveStrongArgument(CodeScope& scope, ObjectInfo info, bool& anonymous, IdentifierString& signature);
-//   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
+   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);
 
