@@ -769,8 +769,41 @@ public abstract closed BaseLazyExpression
     dispatch => system'core_routines'__lazyexpression.
 }
 
-//// --- IndexFunction ---
-//
+// --- IndexFunction ---
+
+extension<Func<int,object>> indexFunctionOp
+{
+    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
+    stacksafe rewind(int aStart, int n, int dx)
+    [
+        int i := aStart.
+        
+        while (i >= n)
+        [
+            self(i).
+            
+            i := i - dx
+        ].
+        
+        ^ nil
+    ]          
+    
+    /// Executes the function for every value in the specified range (starting value, ending value, step)
+    stacksafe run(int aStart, int n, int dx)
+    [
+        int i := aStart.
+        
+        while (i <= n)
+        [
+            self(i).
+            
+            i := i + dx
+        ].
+        
+        ^ nil
+    ]
+}
+
 ///// A base index function
 //limited closure class IndexFunction1
 //{
@@ -779,35 +812,6 @@ public abstract closed BaseLazyExpression
 //
 //    stacksafe eval int:n = $self(n).
 //
-//    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
-//    sealed stacksafe rewind int:aStart int:n int:dx
-//    [
-//        int i := aStart.
-//        
-//        while (i >= n)
-//        [
-//            $self(i).
-//            
-//            i := i - dx
-//        ].
-//        
-//        ^ $nil
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting value, ending value, step)
-//    sealed stacksafe run int:aStart int:n int:dx
-//    [
-//        int i := aStart.
-//        
-//        while (i <= n)
-//        [
-//            $self(i).
-//            
-//            i := i + dx
-//        ].
-//        
-//        ^ $nil
-//    ]
 //
 //    /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
 //    sealed stacksafe retrieve int:aStart int:n int:dx

@@ -1,11 +1,3 @@
-class Test
-{
-    test : n
-    [
-        ^ n >> 2.
-    ]
-}
-
 // base variable mixin
 public class BaseVariable
 {
@@ -45,7 +37,7 @@ sealed ref<template_subj> :: BaseVariable
     embeddable dispatch => theValue.
 }
 
-extension<ref<int>> integerOp
+extension<ref<int>> intRefOp
 {
     stacksafe append(int n)
     [
@@ -58,6 +50,25 @@ extension<ref<int>> integerOp
     stacksafe reduce(int n)
     [
         int v := self.
+        v := v + n.
+        
+        self value := v.
+    ]
+}
+
+extension<ref<real>> realRefOp
+{
+    stacksafe append(real n)
+    [
+        real v := self.
+        v := v + n.
+        
+        self value := v.
+    ]
+    
+    stacksafe reduce(real n)
+    [
+        real v := self.
         v := v + n.
         
         self value := v.

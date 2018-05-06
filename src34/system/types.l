@@ -134,6 +134,9 @@ type indexer    = system'Indexer.
 type textbuffer = system'text'TextBuilder.
 type encoder    = system'text'Encoder.
 
+type datetime = system'calendar'Date.
+type timespan = system'calendar'TimeSpan.
+
 ///// obsolete : use implicit instead
 //explicit        = #16387.  
 //

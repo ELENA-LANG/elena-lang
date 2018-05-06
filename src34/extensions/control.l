@@ -1,16 +1,16 @@
 import system'routines.
 
-//int extension intLoopOp
-//{
-//    stacksafe runIntLoop int:anEnd nfunc:aFunction
-//    [
-//       int aStart := self.
-//
-//       if (aStart < anEnd)
-//            [ ^ aFunction run int:aStart int:anEnd int:1 ];
-//            [ ^ aFunction rewind int:aStart int:anEnd int:1 ]
-//    ]
-//
+extension<int> intLoopOp
+{
+    stacksafe runIntLoop(int anEnd, Func<int,object> aFunction)
+    [
+       int aStart := self.
+
+       if (aStart < anEnd)
+            [ ^ aFunction run(aStart, anEnd, 1) ];
+            [ ^ aFunction rewind(aStart, anEnd, 1) ]
+    ]
+
 //    stacksafe runIntLoop int:anEnd int:aStep nfunc:aFunction
 //    [
 //       int aStart := self.
@@ -19,10 +19,10 @@ import system'routines.
 //            [ ^ aFunction run int:aStart int:anEnd int:aStep ];
 //            [ ^ aFunction rewind int:aStart int:anEnd int:aStep ]
 //    ]
-//
-//    stacksafe to(int anEnd) do(nfunc aFunction)
-//        = self~intLoopOp runIntLoop int:anEnd nfunc:aFunction.
-//            
+
+    stacksafe to(int anEnd) do(Func<int,object> aFunction)
+        = self~intLoopOp runIntLoop(anEnd, aFunction).
+            
 //    stacksafe till(int anEnd) do(nfunc aFunction)
 //        = self~intLoopOp runIntLoop int(anEnd-1) nfunc:aFunction.
 //            
@@ -56,7 +56,7 @@ import system'routines.
 //    multi till:anEnd by:aStep do:anAction
 //        = self~intLoopOp runIntLoop int(anEnd int - 1) int:aStep nfunc(:n)<int>[ anAction eval:n ].
 //        
-//}
+}
 
 extension forLoopOp
 {
