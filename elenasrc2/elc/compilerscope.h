@@ -81,6 +81,7 @@ struct CompilerScope : _CompilerScope
    ident_t resolveWeakTemplateReference(ident_t referenceName);
 
    void saveIncludedModule(_Module* extModule);
+   void saveListMember(ident_t sectionName, ident_t memberName);
 
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList& importedNs);
 

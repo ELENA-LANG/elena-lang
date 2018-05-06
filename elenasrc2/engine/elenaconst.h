@@ -441,6 +441,7 @@ namespace _ELENA_
    #define INITIALIZER_SECTION      "#initializer"
 //   #define PACKAGE_SECTION          "#package"
    #define IMPORTS_SECTION          "#import"
+   #define NAMESPACES_SECTION       "#namespaces"
 //   #define AUTOEXTENSION_SECTION    "#auto_extensions"
    #define NAMESPACE_REF            "#namespace"
 
@@ -505,7 +506,7 @@ namespace _ELENA_
    #define REFTEMPLATE_FORWARD      "$reference"
    #define CLOSURETEMPLATE_FORWARD  "$closure"
 
-   #define STARTUP_SYMBOL             "$startUp"
+   #define STARTUP_SYMBOL           "$startUp"
    
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)

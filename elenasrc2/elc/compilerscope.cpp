@@ -482,13 +482,10 @@ ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage,
    }
 }
 
-void CompilerScope :: saveIncludedModule(_Module* extModule)
+void CompilerScope :: saveListMember(ident_t name, ident_t memberName)
 {
    // HOTFIX : do not include itself
-   if (module == extModule)
-      return;
-
-   IdentifierString sectionName("'", IMPORTS_SECTION);
+   IdentifierString sectionName("'", name);
 
    _Memory* section = module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false);
 
@@ -496,14 +493,23 @@ void CompilerScope :: saveIncludedModule(_Module* extModule)
    MemoryReader metaReader(section);
    while (!metaReader.Eof()) {
       ident_t name = metaReader.getLiteral(DEFAULT_STR);
-      if (name.compare(extModule->Name()))
+      if (name.compare(memberName))
          return;
    }
 
    // otherwise add it to the list
    MemoryWriter metaWriter(section);
 
-   metaWriter.writeLiteral(extModule->Name().c_str());
+   metaWriter.writeLiteral(memberName.c_str());
+}
+
+void CompilerScope :: saveIncludedModule(_Module* extModule)
+{
+   // HOTFIX : do not include itself
+   if (module == extModule)
+      return;
+
+   saveListMember(IMPORTS_SECTION, extModule->Name());
 }
 
 void CompilerScope :: declareNamespace(ident_t ns)
@@ -516,6 +522,9 @@ void CompilerScope :: declareNamespace(ident_t ns)
    virtualRef.append(NAMESPACE_REF);
 
    module->mapReference(virtualRef.c_str(), false);
+
+   if (!emptystr(ns))
+      saveListMember(NAMESPACES_SECTION, ns);
 }
 
 bool CompilerScope ::includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)

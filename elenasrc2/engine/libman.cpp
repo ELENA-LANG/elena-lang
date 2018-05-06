@@ -210,12 +210,14 @@ _Module* LibraryManager :: resolveWeakModule(ident_t weakName, LoadResult& resul
 
 _Module* LibraryManager :: resolveIndirectWeakModule(ident_t weakName, LoadResult& result, ref_t& reference)
 {
+   IdentifierString relativeName(TEMPLATE_PREFIX_NS, weakName);
+
    for (auto it = _modules.start(); !it.Eof(); it++) {
       // try to resolve it once again
-      ReferenceNs fullName((*it)->Name());
-      fullName.combine(weakName.c_str());
+      IdentifierString properName("'");
+      properName.append(weakName.c_str());
 
-      reference = (*it)->mapReference(fullName, true);
+      reference = (*it)->mapReference(properName, true);
       if (reference) {
          result = lrSuccessful;
 
@@ -223,7 +225,26 @@ _Module* LibraryManager :: resolveIndirectWeakModule(ident_t weakName, LoadResul
       }
 
       // if not - load imported modules
-      if ((*it)->mapReference(weakName, true)) {
+      if ((*it)->mapReference(relativeName.c_str(), true)) {
+         // get list of nested namespaces
+         IdentifierString nsSectionName("'", NAMESPACES_SECTION);
+         _Memory* nsSection = (*it)->mapSection((*it)->mapReference(nsSectionName, true) | mskMetaRDataRef, true);
+         if (nsSection) {
+            MemoryReader nsMetaReader(nsSection);
+            while (!nsMetaReader.Eof()) {
+               IdentifierString nsProperName("'", nsMetaReader.getLiteral(DEFAULT_STR));
+               nsProperName.append("'");
+               nsProperName.append(weakName.c_str());
+
+               reference = (*it)->mapReference(nsProperName, true);
+               if (reference) {
+                  result = lrSuccessful;
+
+                  return *it;
+               }
+            }
+         }
+
          // get list of imported modules
          IdentifierString sectionName("'", IMPORTS_SECTION);
 
