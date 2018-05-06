@@ -3,11 +3,6 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * resolve property multi-methods at compile time
-
-                 * review the extensoin declaration syntax
-                 * review field / method template usage syntax
-
                  * debugger : the full symbol name should be used (rather than a relative one)
 
                  * migrate dynamic, templates, win32_app files
@@ -175,6 +170,12 @@ In development:
                  * a class cannot have a public and internal methods with the same name and similar number of parameters
                  * why the error - ArrayList :: Indexable, interface<Enumerable>
                  * fix ide callstack info
+                 * review the extensoin declaration syntax
+                 * review field / method template usage syntax
+                 * reimplement manifest
+                 * template extension
+                 * classes / symbols should be internal rather than private
+                 * template should be public or internal
 
               dev - general implementation
                  * typified enumerators / extensions #245                 
@@ -184,7 +185,6 @@ In development:
                  * class to expression tree
 
                  * expression tree to class
-                 * reimplement manifest
                                                                                                         
 ------                                                           
 Pipeline:

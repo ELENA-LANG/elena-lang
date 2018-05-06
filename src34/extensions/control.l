@@ -60,9 +60,9 @@ extension<int> intLoopOp
 
 extension forLoopOp
 {
-//    to(object aMaxValue) do(func1 aFunction)
-//        = aFunction run enumerator(RangeEnumerator new from:self to:aMaxValue).
-//
+    to(object aMaxValue) do(func1 aFunction)
+        = aFunction run(RangeEnumerator from:self to:aMaxValue).
+
 //    to(object aMaxValue) do(ExtensionMessage aMessage)
 //        = self~forLoopOp to:aMaxValue do(:n)[ n~aMessage get ].
 //

@@ -232,19 +232,19 @@ extension formatterOp
     ]
 }
 
-//// --- inputOp ---
-//
-//extension inputOp
-//{
-//    readLineTo:var
-//    [
-//        var aLine := self readLiteral.
-//        
-//        aLine~convertorOp convert to:var.
-//        
-//        ^var.
-//    ]
-//    
+// --- inputOp ---
+
+extension inputOp
+{
+    readLineTo:var
+    [
+        var aLine := self readLine.
+        
+        aLine~convertorOp convertTo:var.
+        
+        ^var.
+    ]
+    
 //    generic readLine(object<> Arguments)
 //    [
 //        literal aLine := self readLiteral.
@@ -263,4 +263,4 @@ extension formatterOp
 //            
 //        ^ self
 //    ]
-//}
+}

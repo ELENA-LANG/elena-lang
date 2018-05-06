@@ -857,22 +857,22 @@ extension<real> realOp
 //    populate(BaseFunction1 aFunction)
 //        = self~intArrayOp populate(:n)<int>[ ^aFunction eval:n ].    
 //}
-//
-//// --- arrayOp ---
-//
-//array extension arrayOp
-//{
+
+// --- arrayOp ---
+
+extension<array> arrayOp
+{
 //    exchange : anIndex1 : anIndex2
 //        = self~arrayOp exchange int:anIndex1 int:anIndex2.
-//        
-//    exchange int:anIndex1 int:anIndex2
-//    [
-//        var aTemp := self getAt int:anIndex1.
-//        
-//        self setAt int:anIndex1 object:(self getAt int:anIndex2).
-//        self setAt int:anIndex2 object:aTemp.
-//    ]
-//    
+        
+    exchange(int anIndex1, int anIndex2)
+    [
+        var aTemp := self getAt(anIndex1).
+        
+        self setAt(anIndex1, self getAt(anIndex2)).
+        self setAt(anIndex2, aTemp).
+    ]
+    
 //    stacksafe indexOf int:anIndex object:anObject vint:aRetVal
 //    [
 //        aRetVal int := -1.
@@ -937,22 +937,22 @@ extension<real> realOp
 //        
 //        ^ self.
 //    ]
-//    
-//    populate nfunc:anIndexFunc
-//    [
-//        int anIndex := 0.
-//        int aLength := self length.
-//        
-//        while(anIndex < aLength)
-//        [            
-//            self setAt int:anIndex object:(anIndexFunc eval int:anIndex).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        ^ self
-//    ]
-//    
+    
+    populate(Func<int,object> anIndexFunc)
+    [
+        int anIndex := 0.
+        int aLength := self length.
+        
+        while(anIndex < aLength)
+        [            
+            self setAt(anIndex, anIndexFunc(anIndex)).
+            
+            anIndex := anIndex + 1.
+        ].
+        
+        ^ self
+    ]
+    
 //    populate(BaseFunction1 aFunction)
 //        = self~arrayOp populate(:n)<int>[ ^aFunction eval:n ].
 //
@@ -1011,8 +1011,8 @@ extension<real> realOp
 //        
 //        ^ Array new int:aLength; populate(:i)<int>(it writeIndex int(anIndex + i); get).
 //    ]
-//}
-//
+}
+
 //// --- intmatrixOp ---
 //
 //intmatrix extension intmatrixOp

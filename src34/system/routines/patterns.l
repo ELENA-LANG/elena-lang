@@ -495,58 +495,60 @@
 //        theEnumerator2 reset.
 //    ]
 //}
-//
-//// --- RangeEnumerator ---
-//
-//class RangeEnumerator :: Enumerator
-//{
-//    object theVariable.
-//    object theStart.
-//    object theEnd.
-//    object theStep.
-//    
-//    bool   theForward.
-//    
-//    constructor new for:aVariable from:aStart to:anEnd by:aStep
-//    [
-//        theVariable := aVariable.
-//        theStart := aStart.
-//        theEnd := anEnd.
-//        theStep := aStep.
-//        
-//        theForward := (aStart < anEnd).
-//        
-//        $self reset.
-//    ]
-//
-//    constructor new from:aStart to:anEnd by:aStep
-//        <= new for:(Variable new) from:aStart to:anEnd by:aStep.
-//
-//    constructor new from:aStart to:anEnd
-//        <= new for:(Variable new) from:aStart to:anEnd by:1.
-//        
-//    reset 
-//    [
-//        theVariable set:theStart.
-//
-//        if(theForward)
-//            [ theVariable reduce:theStep ];
-//            [ theVariable append:theStep ]
-//    ]    
-//    
-//    get = theVariable value.
-//    
-//    bool next
-//    [
-//        if(theForward)
-//            [ theVariable append:theStep. ^ (theVariable <= theEnd) ].
-//        
-//        theVariable reduce:theStep. 
-//        
-//        ^ (theVariable >= theEnd)
-//    ]
-//}
-//
+
+// --- RangeEnumerator ---
+
+public class RangeEnumerator :: Enumerator
+{
+    object theVariable.
+    object theStart.
+    object theEnd.
+    object theStep.
+    
+    bool   theForward.
+    
+    constructor for:aVariable from:aStart to:anEnd by:aStep
+    [
+        theVariable := aVariable.
+        theStart := aStart.
+        theEnd := anEnd.
+        theStep := aStep.
+        
+        theForward := (aStart < anEnd).
+        
+        self reset.
+    ]
+
+    constructor from:aStart to:anEnd by:aStep
+        <= for:(Variable new) from:aStart to:anEnd by:aStep.
+
+    constructor from:aStart to:anEnd
+        <= for:(Variable new) from:aStart to:anEnd by:1.
+        
+    reset 
+    [
+        theVariable value := theStart.
+
+        if(theForward)
+            [ theVariable reduce:theStep ];
+            [ theVariable append:theStep ]
+    ]    
+    
+    get = theVariable value.
+    
+    bool next
+    [
+        if(theForward)
+            [ theVariable append:theStep. ^ (theVariable <= theEnd) ].
+        
+        theVariable reduce:theStep. 
+        
+        ^ (theVariable >= theEnd)
+    ]
+    
+    enumerable = theVariable.
+}
+
 //// --- BaseIndexer ---
 //
 //class IntRangeEnumerator :: Enumerator

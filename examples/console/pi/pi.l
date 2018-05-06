@@ -20,8 +20,8 @@ public program =
 
     console writeLine:pi.
 
-//    var aDiff := anEnd - aStart.
-//    console printLine("Time elapsed in msec:",aDiff milliseconds).
+    var aDiff := anEnd - aStart.
+    console printLine("Time elapsed in msec:",aDiff milliseconds).
 
     console readChar
 ].

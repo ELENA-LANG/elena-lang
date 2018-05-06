@@ -6,14 +6,14 @@ import extensions.
 
 prompter = (:anIndex)<int>
 [
-     ^ console print("Enter array[",anIndex,"]:"); readLineTo(Integer new); int
+     ^ console print("Enter array[",anIndex,"]:"); readLineTo(Integer new); value
 ].
 
 // --- bsortOp ---
 
 extension bsortOp
 {
-    bsortRange int:aStart int:anEnd
+    bsortRange(int aStart, int anEnd)
     [
         int aCurrent := aStart.
         
@@ -40,27 +40,27 @@ extension bsortOp
      [
         (self length / 2) to:0 do(:anIndex)
         [
-            self~bsortOp bsortRange int:anIndex int(self length - 1).
+            self~bsortOp bsortRange(anIndex, self length - 1).
         ].
 
         (self length - 1) to:0 do(:anIndex)
         [
             self exchange(anIndex,0).
             
-            self~bsortOp bsortRange int:0 int(anIndex - 1).
+            self~bsortOp bsortRange(0, anIndex - 1).
         ].
      ]
 }
 
 // === Program ===
 
-Program =
+public program =
 [
     // 1. Create the array
-    var aSize := console write:"Enter the array size:"; readLineTo(Integer new).
+    var aSize := console write:"Enter the array size:"; readLineTo(Integer new); value.
 
     // 2. Initialize the array
-    var anArray := Array new length:aSize; populate:prompter.
+    var anArray := Array new(aSize); populate:prompter.
 
     // 3. Sort the array
     anArray bsort.
