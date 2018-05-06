@@ -137,8 +137,11 @@ type encoder    = system'text'Encoder.
 type datetime = system'calendar'Date.
 type timespan = system'calendar'TimeSpan.
 
+type stream       = system'io'Stream.
+type textreader   = system'io'TextReader.
+type binaryreader = system'io'BinaryReader.
+type textwriter   = system'io'TextWriter.
+type binarywriter = system'io'BinaryWriter.
+
 ///// obsolete : use implicit instead
 //explicit        = #16387.  
-//
-///// obsolete : all methods are multi now
-//multi           = #16397.

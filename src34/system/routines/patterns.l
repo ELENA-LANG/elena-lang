@@ -394,36 +394,38 @@
 //        ^ false
 //    ]
 //}
-//
-//// --- Selecting ---
-//
-//class Selector :: Enumerator
-//{
-//    func1      theSelector.
-//    enumerator theEnumerator.
-//    
-//    constructor new func1:aSelector enumerator:anEnumerator
-//    [
-//        theSelector := aSelector.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
+
+// --- Selecting ---
+
+class Selector :: Enumerator
+{
+    func1      theSelector.
+    enumerator theEnumerator.
+
+    constructor new(func1 aSelector, enumerator anEnumerator)
+    [
+        theSelector := aSelector.
+        theEnumerator := anEnumerator.
+    ]
+    
 //    constructor new ext_mssg:anExtension enumerator:anEnumerator
 //    [
 //        theSelector := (:x)[ ^ x~anExtension eval ].
 //        theEnumerator := anEnumerator.
 //    ]
-//    
-//    get = theSelector(theEnumerator get).
-//    
-//    bool next = theEnumerator next.
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
-//
+    
+    get = theSelector(theEnumerator get).
+    
+    bool next = theEnumerator next.
+    
+    reset 
+    [
+        theEnumerator reset.
+    ]    
+    
+    enumerable => theEnumerator.
+}
+
 //// --- Repeater ---
 //
 //class Repeater :: Enumerator
@@ -865,9 +867,6 @@ public class IntervalEnumerator :: Enumerator
 //    filterBy func6:aSelector
 //        = PatternFilter6 new(aSelector, self enumerator).        
 //        
-//    selectBy:aSelector
-//        = Selector new(aSelector, self enumerator).
-//
 //    zip:anEnumerable by:aZipper
 //        = ZipEnumerator new(aZipper, self enumerator, anEnumerable enumerator).
 //

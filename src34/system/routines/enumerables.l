@@ -120,12 +120,26 @@ symbol ifDecrescent
 //    ]
 //}
 
+// --- enumeratorOp ---
+
+public extension<enumerator> enumeratorOp
+{
+    forEach(Func1 aFunction)
+        = aFunction run(self).
+
+    selectBy:aSelector
+        = Selector new(aSelector, self).
+}
+
 // --- enumerableOp ---
 
-extension enumerableOp
+public extension enumerableOp
 {
     forEach(Func1 aFunction)
         = aFunction run(T<Enumerator>(self enumerator)).
+
+    selectBy:aSelector
+        = Selector new(aSelector, T<Enumerator>(self enumerator)).
 
 //    forEach(ExtensionMessage anExtMessage)
 //        = self~enumerableOp forEach(:n)(n~anExtMessage eval).

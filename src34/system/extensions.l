@@ -1233,257 +1233,258 @@ extension<literal> literalOp
     ]    
 }
 
-//// --- wideOp ---
-//
-//wide extension wideOp
-//{
-//    indexOf : anObject
-//        = self indexOf:anObject at:0.
-//        
-//    indexOf wide:aLiteral
-//        = self indexOf:aLiteral at:0.
-//
-//    indexOf char:aChar
-//        = self indexOf:aChar at:0.
-//                
-//    wide Substring at:anIndex
-//        = self~wideOp Substring int:anIndex.
-//        
-//    stacksafe wide Substring int:anIndex
+// --- wideOp ---
+
+public extension<wide> wideOp
+{
+    indexOf : anObject
+        = self indexOf:anObject at:0.
+        
+    indexOf(wide aLiteral)
+        = self indexOf:aLiteral at:0.
+
+    indexOf(char aChar)
+        = self indexOf:aChar at:0.
+                
+    wide Substring:anIndex
+        = self~wideOp Substring(T<int>(anIndex)).
+        
+    stacksafe wide Substring(int anIndex)
+    [
+        int aLength := self length.
+        
+        aLength := aLength - anIndex.
+        
+        ^ self Substring(anIndex, aLength)
+    ]
+     
+    wide trimLeft(char aChar)
+    [
+        int  anIndex := 0.
+        int  aLength := self length.
+        char aCurrent := $0.
+        int  aCharLen := aChar length.
+        
+        while (anIndex < aLength)
+        [
+            self read(anIndex, &aCurrent).
+            
+            ifnot(aCurrent equal(aChar))
+                [ ^ self delete(0, anIndex) ].
+            
+            anIndex := anIndex + aCharLen
+        ].
+        
+        ^ emptyWideLiteralValue
+    ]
+    
+    wide trimLeft
+        = self~wideOp trimLeft($32).
+       
+    wide trimRight(char aChar)
+    [
+        int  aLength := self length.
+        char aCurrent := $0.
+        int  aCharLen := aChar length.
+                
+        int  anIndex := aLength - 1.
+        int  aPrevious := aLength.
+        while (anIndex >= 0)
+        [
+            self read(anIndex, &aCurrent).
+            
+            ifnot (aCurrent equal(aChar))
+                [ ^ self delete(aPrevious, aLength - aPrevious) ].
+            
+            aPrevious := anIndex.
+            anIndex := anIndex - aCharLen
+        ].
+        
+        ^ emptyWideLiteralValue
+    ]
+    
+    wide trimRight
+        = self~wideOp trimRight($32).
+       
+    wide trim(char aChar)
+        = self~wideOp trimLeft(aChar); trimRight(aChar).
+    
+    wide trim
+        = self~wideOp trimLeft($32); trimRight($32).
+    
+    padLeft(char aChar, int aLength)
+    [
+        int aCurrentLength := self length.
+        
+        if (aCurrentLength < aLength)
+            [ ^ WideLiteralValue new(aLength - aCurrentLength, aChar); add(self) ].
+            
+        ^ self
+    ]
+    
+    padRight(char aChar, int aLength)
+    [
+        int aCurrentLength := self length.
+
+        if (aCurrentLength < aLength)
+            [ ^ self add(WideLiteralValue new(aLength - aCurrentLength, aChar)) ].
+            
+        ^ self
+    ]
+
+    bool startingWith(wide s)
+    [
+        int n := 0.
+        self indexOf(0, s, &n).
+        
+        ^ 0 == n
+    ]
+    
+    bool endingWith(wide s)
+    [
+        int l1 := self length.
+        int l2 := s length.
+        int n := 0.
+        self indexOf(l1 - l2, s, &n).
+        
+        ^ n != -1
+    ]
+    
+    bool containing(wide s)
+    [
+        int l1 := self length.
+        int l2 := s length.
+        int n := 0.
+        
+        self indexOf(0, s, &n).
+        
+        ^ n != -1
+    ]
+    
+//    replaceFirst wide:aReplacee wide:aReplacer
 //    [
-//        int aLength := self length.
+//        int aReplaceeLen := aReplacee length.
+//        int anIndex := 0.
 //        
-//        aLength := aLength - anIndex.
+//        self indexOf int:0 wide:aReplacee vint:anIndex.
 //        
-//        ^ self Substring int:anIndex int:aLength
-//    ]
-//     
-//    wide trimLeft char:aChar
-//    [
-//        int  anIndex := 0.
-//        int  aLength := self length.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//        
-//        while (anIndex < aLength)
-//        [
-//            self read int:anIndex vchar:aCurrent.
-//            
-//            ifnot(aCurrent equal char:aChar)
-//                [ ^ self delete int:0 int:anIndex ].
-//            
-//            anIndex := anIndex + aCharLen
-//        ].
-//        
-//        ^ emptyWideLiteralValue
-//    ]
-//    
-//    wide trimLeft
-//        = self~wideOp trimLeft char:$32.
-//       
-//    wide trimRight char:aChar
-//    [
-//        int  aLength := self length.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//                
-//        int  anIndex := aLength - 1.
-//        int  aPrevious := aLength.
-//        while (anIndex >= 0)
-//        [
-//            self read int:anIndex vchar:aCurrent.
-//            
-//            ifnot (aCurrent equal char:aChar)
-//                [ ^ self delete int:aPrevious int:(aLength - aPrevious) ].
-//            
-//            aPrevious := anIndex.
-//            anIndex := anIndex - aCharLen
-//        ].
-//        
-//        ^ emptyWideLiteralValue
-//    ]
-//    
-//    wide trimRight
-//        = self~wideOp trimRight char:$32.
-//       
-//    wide trim char:aChar
-//        = self~wideOp trimLeft char:aChar; trimRight char:aChar.
-//    
-//    wide trim
-//        = self~wideOp trimLeft char:$32; trimRight char:$32.
-//    
-//    padLeft char:aChar int:aLength
-//    [
-//        int aCurrentLength := self length.
-//        
-//        if (aCurrentLength < aLength)
-//            [ ^ WideLiteralValue new int(aLength - aCurrentLength) char(aChar); add wide:self ].
-//            
-//        ^ self
-//    ]
-//    
-//    padRight char:aChar int:aLength
-//    [
-//        int aCurrentLength := self length.
-//
-//        if (aCurrentLength < aLength)
-//            [ ^ self add wide(WideLiteralValue new int(aLength - aCurrentLength) char(aChar)) ].
-//            
-//        ^ self
-//    ]
-//
-//    startingWith wide:s
-//    [
-//        int n := 0.
-//        self indexOf int:0 wide:s vint:n.
-//        
-//        ^ 0 == n
-//    ]
-//    
-//    endingWith wide:s
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//        int n := 0.
-//        self indexOf int:(l1 - l2) wide:s vint:n.
-//        
-//        ^ n != -1
-//    ]
-//    
-//    containing wide:s
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//        int n := 0.
-//        
-//        self indexOf int:0 wide:s vint:n.
-//        
-//        ^ n != -1
-//    ]
-//    
-////    replaceFirst wide:aReplacee wide:aReplacer
-////    [
-////        int aReplaceeLen := aReplacee length.
-////        int anIndex := 0.
-////        
-////        self indexOf int:0 wide:aReplacee vint:anIndex.
-////        
-////        if (anIndex != -1)
-////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex wide:aReplacee ];
-////            [ ^ self ].
-////    ]
-////        
-//    replace wide:aReplacee wide:aReplacer
-//    [
-//        wide aTarget := emptyWideLiteralValue.
-//        int  aStart := 0.
-//        int  anEnd := 0.
-//        int  aReplaceeLen := aReplacee length.
-//        
-//        self indexOf int:aStart wide:aReplacee vint:anEnd.
-//        
-//        while (anEnd != -1)
-//        [
-//            aTarget := aTarget
-//                add wide:(self Substring int:aStart int:(anEnd - aStart));
-//                add wide:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            self indexOf int:aStart wide:aReplacee vint:anEnd
-//        ].
-//    
-//        if (aStart != 0)
-//            [ ^ aTarget add wide:(self~wideOp Substring int:aStart) ];
+//        if (anIndex != -1)
+//            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex wide:aReplacee ];
 //            [ ^ self ].
 //    ]
-//
-//    bool isEmpty
-//    [
-//        int aLength := self length.
 //        
-//        ^ aLength == 0
-//    ]
-//}
-//
-//// --- stringOp ---
-//
-//class $stringOpDispatcher =
-//{
-//    padRight literal:s char:ch int:len
-//        = s~literalOp padRight char:ch int:len.
-//    
-//    padRight wide:s char:ch int:len
-//        = s~wideOp padRight char:ch int:len.
-//        
-//    padLeft literal:s char:ch int:len
-//        = s~literalOp padLeft char:ch int:len.
-//    
-//    padLeft wide:s char:ch int:len
-//        = s~wideOp padLeft char:ch int:len.
-//        
-//    startingWith literal:s literal:subs
-//        = s~literalOp startingWith literal:subs.
-//
-//    startingWith wide:s wide:subs
-//        = s~wideOp startingWith wide:subs.
-//
-//    endingWith literal:s literal:subs
-//        = s~literalOp endingWith literal:subs.
-//
-//    endingWith wide:s wide:subs
-//        = s~wideOp endingWith wide:subs.
-//        
-//    containing literal:s literal:subs
-//        = s~literalOp containing literal:subs.
-//
-//    containing wide:s wide:subs
-//        = s~wideOp containing wide:subs.
-//        
-//    trimLeft literal:s char:ch
-//        =s~literalOp trimLeft char:ch.        
-//        
-//    trimRight literal:s char:ch
-//        =s~literalOp trimRight char:ch.        
-//        
-//    trim literal:s char:ch
-//        =s~literalOp trim char:ch.
-//        
-//    trimLeft wide:s char:ch
-//        =s~wideOp trimLeft char:ch.        
-//        
-//    trimRight wide:s char:ch
-//        =s~wideOp trimRight char:ch.        
-//        
-//    trim wide:s char:ch
-//        =s~wideOp trim char:ch.}.
-//
-//extension stringOp
-//{
-//    Substring : anIndex
-//        = self Substring:(self length - anIndex) at:anIndex.
-//            
-//    Substring : anIndex : aLength
-//        = self Substring:aLength at:anIndex.
-//    
-//    trimLeft :ch
-//        = $stringOpDispatcher trimLeft(self, ch).
-//
-//    trimRight :ch
-//        = $stringOpDispatcher trimRight(self, ch).
-//
-//    trim:ch
-//        = $stringOpDispatcher trim(self, ch).
-//    
-//    trimLeft
-//        = $stringOpDispatcher trimLeft(self, $32).
-//
-//    trimRight
-//        = $stringOpDispatcher trimRight(self, $32).
-//
-//    trim
-//        = $stringOpDispatcher trim(self, $32).
-//
+    replace(wide aReplacee, wide aReplacer)
+    [
+        wide aTarget := emptyWideLiteralValue.
+        int  aStart := 0.
+        int  anEnd := 0.
+        int  aReplaceeLen := aReplacee length.
+        
+        self indexOf(aStart, aReplacee, &anEnd).
+        
+        while (anEnd != -1)
+        [
+            aTarget := aTarget
+                add(self Substring(aStart, anEnd - aStart));
+                add:aReplacer.
+            
+            aStart := anEnd + aReplaceeLen.
+            
+            self indexOf(aStart, aReplacee, &anEnd)
+        ].
+    
+        if (aStart != 0)
+            [ ^ aTarget add(self~wideOp Substring(aStart)) ];
+            [ ^ self ].
+    ]
+
+    bool isEmpty
+    [
+        int aLength := self length.
+        
+        ^ aLength == 0
+    ]
+}
+
+// --- stringOp ---
+
+singleton stringOpDispatcher
+{
+    padRight(literal s, char ch, int len)
+        = s~literalOp padRight(ch, len).
+    
+    padRight(wide s, char ch, int len)
+        = s~wideOp padRight(ch, len).
+        
+    padLeft(literal s, char ch, int len)
+        = s~literalOp padLeft(ch, len).
+    
+    padLeft(wide s, char ch, int len)
+        = s~wideOp padLeft(ch, len).
+        
+    bool startingWith(literal s, literal subs)
+        = s~literalOp startingWith(subs).
+
+    bool startingWith(wide s, wide subs)
+        = s~wideOp startingWith(subs).
+
+    bool endingWith(literal s, literal subs)
+        = s~literalOp endingWith(subs).
+
+    bool endingWith(wide s, wide subs)
+        = s~wideOp endingWith(subs).
+        
+    bool containing(literal s, literal subs)
+        = s~literalOp containing(subs).
+
+    bool containing(wide s, wide subs)
+        = s~wideOp containing(subs).
+        
+    trimLeft(literal s, char ch)
+        =s~literalOp trimLeft(ch).        
+        
+    trimRight(literal s, char ch)
+        =s~literalOp trimRight(ch).
+        
+    trim(literal s, char ch)
+        =s~literalOp trim(ch).
+        
+    trimLeft(wide s, char ch)
+        =s~wideOp trimLeft(ch).        
+        
+    trimRight(wide s, char ch)
+        =s~wideOp trimRight(ch).        
+        
+    trim(wide s, char ch)
+        =s~wideOp trim(ch).
+}
+
+extension stringOp
+{
+    Substring : anIndex
+        = self Substring:(self length - anIndex) at:anIndex.
+            
+    Substring(object anIndex, object aLength)
+        = self Substring:aLength at:anIndex.
+    
+    trimLeft :ch
+        = stringOpDispatcher trimLeft(self, ch).
+
+    trimRight :ch
+        = stringOpDispatcher trimRight(self, ch).
+
+    trim:ch
+        = stringOpDispatcher trim(self, ch).
+    
+    trimLeft
+        = stringOpDispatcher trimLeft(self, $32).
+
+    trimRight
+        = stringOpDispatcher trimRight(self, $32).
+
+    trim
+        = stringOpDispatcher trim(self, $32).
+
 //    padLeft : padSymbol : len
 //        = $stringOpDispatcher padLeft(self, padSymbol, len).
 //        
@@ -1572,7 +1573,7 @@ extension<literal> literalOp
 //            
 //        ^ self
 //    ]    
-//}
+}
 
 // --- charOp ---
 

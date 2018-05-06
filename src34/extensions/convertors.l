@@ -1,5 +1,5 @@
-//import system'collections.
-//import system'routines.
+import system'collections.
+import system'routines.
 //import system'calendar.
 import system'text.
 //import system'dynamic.
@@ -42,7 +42,7 @@ class literalExConvertor =
 //        
 //        ^ anOutput literal
 //    ]
-//
+
 //    literal convert datetime:aValue = aValue literal.
 //        
 //    literal convert timestamp:aValue = aValue literal.
@@ -197,78 +197,78 @@ class literalExConvertor =
 //        ^ anOutput literal
 //    ]
 //}.
-//
-//// --- arrayConvertorEx ---
-//
-//arrayConvertorEx =
-//{
-//    multi convert : anObject
-//        = anObject array.
-//    
-//    convert array:anArray
-//        = anArray.
-//
+
+// --- arrayConvertorEx ---
+
+public singleton arrayConvertorEx
+{
+    array convert : anObject
+        = T<array>(anObject).
+    
+    array convert(array anArray)
+        = anArray.
+
 //    convert literal:l
 //        <= convert enumerator:l.
 //
 //    convert wide:l
 //        <= convert enumerator:l.
-//
-//    convert enumerator:anEnumerator
-//    [
-//        array_list aRetVal := ArrayList new.
-//
-//        anEnumerator forEach(:anItem)[ aRetVal append:anItem ].
-//
-//        ^ aRetVal array
-//    ]
-//
-//    convert indexer:it
-//    [
-//        array_list aRetVal := ArrayList new.
-//        while (it available)
-//        [
-//            aRetVal append(it get).
-//            
-//            it append index:1
-//        ].
-//
-//        ^ aRetVal array
-//    ]
-//
-//    convert(BaseEnumerable v)
+
+    array convert(enumerator anEnumerator)
+    [
+        T<ArrayList> aRetVal := ArrayList new.
+
+        anEnumerator forEach(:anItem)[ aRetVal append:anItem ].
+
+        ^ T<array>(aRetVal)
+    ]
+
+    array convert(indexer it)
+    [
+        T<ArrayList> aRetVal := ArrayList new.
+        while (it available)
+        [
+            aRetVal append(it get).
+            
+            it appendIndex(1)
+        ].
+
+        ^ T<array>(aRetVal)
+    ]
+
+//    convert(Enumerable v)
 //        <= convert(v enumerator).
-//        
-//    convert(BaseIndexable v)
-//        <= convert(v indexer).
-//        
+        
+    array convert(Indexable v)
+        <= convert(v indexer).
+        
 //    convert void:val
 //        = Array min.                        
-//}.
+}
 
 // --- convertorOp ---
 
 extension convertorOp
 {
-//    toArray
-//        = arrayConvertorEx convert:self.
-//
-////    toIntArray
-////        = self cast:%eval to:
-////            {
-////                intarray : anArray
-////                    = anArray.
-////                
-////                array : anArray
-////                    = intarrayExConvertor convert enumerable:anArray.
-////                    
-////                enumerable : aList
-////                    = intarrayExConvertor convert enumerable:aList.
-////                    
-////                enumerator : anEnumerator
-////                    = intarrayExConvertor convert enumerable:anEnumerator.
-////            }.
-//    
+    toArray
+        = arrayConvertorEx convert:self.
+
+//    toIntArray
+//        = self cast:%eval to:
+//            {
+//                intarray : anArray
+//                    = anArray.
+//                
+//                array : anArray
+//                    = intarrayExConvertor convert enumerable:anArray.
+//                    
+//                enumerable : aList
+//                    = intarrayExConvertor convert enumerable:aList.
+//                    
+//                enumerator : anEnumerator
+//                    = intarrayExConvertor convert enumerable:anEnumerator.
+//            }.
+    
 //    toByteArray        
 //        = byteArrayExConvertor convert:self.
 ////    

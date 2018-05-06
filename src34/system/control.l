@@ -16,6 +16,8 @@ public interface Enumerator
     
     /// returns the enumerator owner
     abstract enumerable []
+    
+    T<Enumerator> enumerator = self.
 }
 
 // --- enumerator<> ---
@@ -33,6 +35,8 @@ interface Enumerator<type>
 //    abstract enumerable []
 
     abstract cast T<Enumerator> []
+    
+    Enumerator<type> enumerator = self.
 }
 
 public interface Enumarable

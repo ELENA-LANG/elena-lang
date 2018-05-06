@@ -114,27 +114,27 @@ public sealed const struct UnsafePointer
 //        
 //        ^ IntNumber new int:aValue
 //    ]
-//
-//    // unsafe code
-//    stacksafe literal
-//    [
-//        int     aLen := system'external'KERNEL32 lstrlenA int:thePointer.
-//        literal aLiteral := LiteralValue new int:aLen.
-//        system'external'KERNEL32 lstrcpyA literal:aLiteral int:thePointer.
-//        
-//        ^ aLiteral
-//    ]        
-//
-//    // unsafe code
-//    stacksafe wide
-//    [
-//        int  aLen := system'external'KERNEL32 lstrlenW int:thePointer.
-//        wide aLiteral := WideLiteralValue new int:aLen.
-//        system'external'KERNEL32 lstrcpyW wide:aLiteral int:thePointer.
-//        
-//        ^ aLiteral
-//    ]
-//    
+
+    // unsafe code
+    T<literal> literal
+    [
+        int     aLen := system'external'KERNEL32 lstrlenA(self).
+        literal aLiteral := LiteralValue new(aLen).
+        system'external'KERNEL32 lstrcpyA(aLiteral, self).
+        
+        ^ aLiteral
+    ]        
+
+    // unsafe code
+    T<wide> wide
+    [
+        int  aLen := system'external'KERNEL32 lstrlenW(self).
+        wide aLiteral := WideLiteralValue new(aLen).
+        system'external'KERNEL32 lstrcpyW(aLiteral, self).
+        
+        ^ aLiteral
+    ]
+    
 //    stacksafe saveTo bytearray:target int:offs
 //    [
 //        target write int:offs int:thePointer.
