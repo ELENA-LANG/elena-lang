@@ -3,7 +3,7 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * now, utcnow - should be strong typed
+                 * emptyLiteral, emptyWideLiteral should be constant and typied
 
                  * debugger : the full symbol name should be used (rather than a relative one)
 
@@ -178,6 +178,9 @@ In development:
                  * template extension
                  * classes / symbols should be internal rather than private
                  * template should be public or internal
+                 * comparing int and ptr (handle, dirty_ptr)
+                 * extrnal operations without target - ignore the result
+                 * extrnal operations : support long and real
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

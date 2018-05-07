@@ -41,11 +41,14 @@ sealed public /*nonstructural */ class TextBuilder
 
     cast T<CharArray> = theBuffer.
 
+    cast T<literal> 
+        = LiteralValue new(0, T<int>(theLength), theBuffer).
+
     T<literal> literal
         = LiteralValue new(0, T<int>(theLength), theBuffer).
 
-//    wide
-//        = WideLiteralValue new int:0 int:theLength chararray:theBuffer.
+    cast T<wide>
+        = WideLiteralValue new(0, T<int>(theLength), theBuffer).
 
     writeLine
     [
@@ -61,7 +64,7 @@ sealed public /*nonstructural */ class TextBuilder
     [
         int aNewLength := aLength.
         
-        aNewLength := aNewLength + theLength.
+        aNewLength := aNewLength + T<int>(theLength).
         
         int aBufferLength := theBuffer length.
         
@@ -141,7 +144,7 @@ sealed public /*nonstructural */ class TextBuilder
         [
             self reserve(aLength).
             
-            theBuffer write(theLength, aLength, anArray).
+            theBuffer write(T<int>(theLength), aLength, anArray).
             
             theLength append(aLength).
         ].
@@ -236,7 +239,7 @@ sealed public /*nonstructural */ class TextBuilder
     [
         self reserve(aLength).
         
-        theBuffer move(anIndex, theLength, aLength).
+        theBuffer move(anIndex, T<int>(theLength), aLength).
         
         theBuffer write(anIndex, aLength, anArray).
         
@@ -250,7 +253,7 @@ sealed public /*nonstructural */ class TextBuilder
 
         self reserve(aLength).
         
-        theBuffer move(anIndex, theLength, aLength).
+        theBuffer move(anIndex, T<int>(theLength), aLength).
         
         aLiteral save(anIndex, theBuffer, &aLength).
         
@@ -264,7 +267,7 @@ sealed public /*nonstructural */ class TextBuilder
 
         self reserve(aLength).
         
-        theBuffer move(anIndex, theLength, aLength).
+        theBuffer move(anIndex, T<int>(theLength), aLength).
         
         aLiteral save(anIndex, theBuffer, &aLength).
         
@@ -275,7 +278,7 @@ sealed public /*nonstructural */ class TextBuilder
     [
         self reserve(1).
         
-        theBuffer move(anIndex, theLength, 1).
+        theBuffer move(anIndex, T<int>(theLength), 1).
         
         theBuffer write(anIndex, aChar).
         
@@ -290,7 +293,7 @@ sealed public /*nonstructural */ class TextBuilder
         int  anIndex := 0.
         char aCurrent := $0.
         
-        while (anIndex < theLength)
+        while (anIndex < T<int>(theLength))
         [
             theBuffer read(anIndex, &aCurrent).
             

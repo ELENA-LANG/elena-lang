@@ -21,7 +21,7 @@ const int FILE_ATTRIBUTE_DIRECTORY = 10h.
 
 // --- FileStream ---
 
-struct FileStream :: Stream
+public struct FileStream :: Stream
 {
     handle theHandle.
     
@@ -63,13 +63,15 @@ struct FileStream :: Stream
             0).
     ]
 
-    read(ByteArray aDump, ref<int> aLength)
+    read(ByteArray aDump, ref<int> retVal)
     [
+        int toRead := retVal.
+        
         system'external'KERNEL32 ReadFile(
             theHandle,
             aDump,
-            aLength,
-            aLength,
+            toRead,
+            retVal,
             0).
     ]
     

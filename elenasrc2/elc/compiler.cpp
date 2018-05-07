@@ -1040,7 +1040,7 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
          return ObjectInfo(okSubject, local.offset);
       }
       else if (local.size != 0) {
-         return ObjectInfo(okLocalAddress, local.offset, local.class_ref);
+         return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.element_ref);
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.element_ref);
    }
