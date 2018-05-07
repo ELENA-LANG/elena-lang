@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * IDE : fix the bookmark routine
+
                  * emptyLiteral, emptyWideLiteral should be constant and typied
 
                  * debugger : the full symbol name should be used (rather than a relative one)

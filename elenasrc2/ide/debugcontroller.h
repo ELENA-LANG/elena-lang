@@ -231,6 +231,8 @@ protected:
    MemoryDump _tape;
    TapeMap    _tapeBookmarks;
 
+   _ELENA_::_Module* resolveModule(ident_t ns);
+
    virtual _ELENA_::_Module* loadDebugModule(ident_t reference);
 
    virtual void debugThread();

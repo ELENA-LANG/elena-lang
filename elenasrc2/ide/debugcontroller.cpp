@@ -617,7 +617,7 @@ void DebugController :: loadBreakpoints(List<Breakpoint>& breakpoints)
 {
    List<Breakpoint>::Iterator breakpoint = breakpoints.start();
    while (!breakpoint.Eof()) {
-      _Module* module = _modules.get((*breakpoint).module);
+      _Module* module = resolveModule((*breakpoint).module);
       if (module != NULL) {
          size_t address = findNearestAddress(module, (*breakpoint).source, (*breakpoint).row);
          if (address != 0xFFFFFFFF) {
@@ -642,6 +642,23 @@ void DebugController :: toggleBreakpoint(Breakpoint& breakpoint, bool adding)
          }
       }
    }
+}
+
+_Module* DebugController :: resolveModule(ident_t ns)
+{
+   // check if the module is already loaded
+   auto it = _modules.start();
+   while (!it.Eof()) {
+      if (NamespaceName::isIncluded((*it)->Name(), ns)) {
+         IdentifierString virtualRef(ns + getlength((*it)->Name()), "'");
+         virtualRef.append(NAMESPACE_REF);
+         if ((*it)->mapReference(virtualRef, true))
+            return *it;
+      }
+      it++;
+   }
+
+   return NULL;
 }
 
 _Module* DebugController :: loadDebugModule(ident_t reference)

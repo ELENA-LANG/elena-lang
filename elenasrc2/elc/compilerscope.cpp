@@ -522,6 +522,9 @@ void CompilerScope :: declareNamespace(ident_t ns)
    virtualRef.append(NAMESPACE_REF);
 
    module->mapReference(virtualRef.c_str(), false);
+   if (debugModule)
+      // HOTFIX : save the namespace in the debug module as well
+      debugModule->mapReference(virtualRef.c_str(), false);
 
    if (!emptystr(ns))
       saveListMember(NAMESPACES_SECTION, ns);

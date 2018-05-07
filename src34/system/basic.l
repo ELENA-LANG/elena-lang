@@ -50,7 +50,7 @@ extension<ref<int>> intRefOp
     stacksafe reduce(int n)
     [
         int v := self.
-        v := v + n.
+        v := v - n.
         
         self value := v.
     ]
@@ -69,7 +69,7 @@ extension<ref<real>> realRefOp
     stacksafe reduce(real n)
     [
         real v := self.
-        v := v + n.
+        v := v - n.
         
         self value := v.
     ]
