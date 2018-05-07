@@ -146,7 +146,7 @@ sealed public class StringWriter :: BaseVariable
     
     constructor new
     [
-        theValue := emptyLiteralValue.
+        theValue := emptyLiteral.
     ]
     
     constructor new : aText
@@ -156,7 +156,7 @@ sealed public class StringWriter :: BaseVariable
 
     constructor new(literal s, int count)
     [
-        theValue := emptyLiteralValue.
+        theValue := emptyLiteral.
         
         0 till:count do(:i)[ self append(s) ].
     ]
@@ -235,7 +235,7 @@ sealed public class StringWriter :: BaseVariable
 
     clear
     [
-        theValue := emptyLiteralValue.
+        theValue := emptyLiteral.
     ]
 
     T<literal> literal = theValue.

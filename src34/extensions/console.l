@@ -191,7 +191,7 @@ extension formatterOp
 {
     generic printFormatted(literal s, V<object> args)
     [
-        textbuffer buffer := TextBuilder new.
+        auto buffer := TextBuilder new.
         
         int  len := s length.
         int  i := 0.

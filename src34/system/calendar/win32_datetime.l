@@ -237,12 +237,12 @@ public sealed struct TimeStruct
         T<short,127> aBuffer.
 
         int aLength := system'external'KERNEL32 GetDateFormatW(
-            0, Flags,self,0,T<shortarray>(aBuffer),255,0).
+            0, Flags,self,0,T<ShortArray>(aBuffer),255,0).
             
         if (aLength == 0)
             [ FormatException new:"Invalid date"; raise ].
 
-        ^ WideLiteralValue fromShortArray(0, aLength - 1, T<shortarray>(aBuffer)).
+        ^ WideLiteralValue fromShortArray(0, aLength - 1, T<ShortArray>(aBuffer)).
     ]
     
     private stacksafe wide timeToWide(int Flags)
@@ -250,12 +250,12 @@ public sealed struct TimeStruct
         T<short,127> aBuffer.
 
         int aLength := system'external'KERNEL32 GetTimeFormatW(
-            0,Flags,self,0,T<shortarray>(aBuffer),255,0).
+            0,Flags,self,0,T<ShortArray>(aBuffer),255,0).
             
         if (aLength == 0)
             [ FormatException new:"Invalid time"; raise ].
 
-        ^ WideLiteralValue fromShortArray(0, aLength - 1, T<shortarray>(aBuffer)).
+        ^ WideLiteralValue fromShortArray(0, aLength - 1, T<ShortArray>(aBuffer)).
     ]
 
     stacksafe wide toShortDate

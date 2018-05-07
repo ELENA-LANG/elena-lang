@@ -4,9 +4,9 @@
 
 public interface Encoder
 {
-    stacksafe abstract convert(int anIndex, ref<int> aLength, bytearray aByteArray, chararray anOutput, ref<int> anOutputLength) [] 
+    stacksafe abstract convert(int anIndex, ref<int> aLength, ByteArray aByteArray, CharArray anOutput, ref<int> anOutputLength) [] 
 
-    stacksafe abstract convert(int anIndex, ref<int> aLength, chararray aCharArray, bytearray anOutput, ref<int> anOutputLength) []
+    stacksafe abstract convert(int anIndex, ref<int> aLength, CharArray aCharArray, ByteArray anOutput, ref<int> anOutputLength) []
     
 //    stacksafe convert int:anIndex vint:aLength literal:aLiteral bytearray:anOutput vint:anOutputLength
 //    [
@@ -147,10 +147,10 @@ public interface Encoder
 
 public singleton UTF8Encoder :: Encoder
 {
-    convert(int anIndex, ref<int> aLength, bytearray aByteArray, chararray anOutput, ref<int> anOutputLength)
+    convert(int anIndex, ref<int> aLength, ByteArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
         => system'core_routines'__utf8encoder.
     
-    convert(int anIndex, ref<int> aLength, chararray aByteArray, bytearray anOutput, ref<int> anOutputLength)
+    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int> anOutputLength)
         => system'core_routines'__utf8encoder.
     
 //    stacksafe convert int:anIndex vint:aLength literal:aLiteral bytearray:anOutput vint:anOutputLength
@@ -181,10 +181,10 @@ class UTF8Encoding =
 //    stacksafe toLiteral int:anIndex int:aLength bytearray:anArray
 //        = LiteralValue $new int:anIndex int:aLength bytearray:anArray.
         
-    stacksafe convert(int anIndex, ref<int> aLength, bytearray aByteArray, chararray anOutput, ref<int> anOutputLength)
+    stacksafe convert(int anIndex, ref<int> aLength, ByteArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
         => system'core_routines'__utf8encoder.
         
-    stacksafe convert(int anIndex, ref<int> aLength, literal aByteArray, chararray anOutput, ref<int> anOutputLength)
+    stacksafe convert(int anIndex, ref<int> aLength, literal aByteArray, CharArray anOutput, ref<int> anOutputLength)
         => system'core_routines'__utf8encoder.
 }.
 
@@ -192,10 +192,10 @@ class UTF8Encoding =
 
 public singleton UTF16Encoder :: Encoder
 {
-    convert(int anIndex, ref<int> aLength, bytearray aByteArray, chararray anOutput, ref<int> anOutputLength)
+    convert(int anIndex, ref<int> aLength, ByteArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
         => system'core_routines'__utf16encoder.
     
-    convert(int anIndex, ref<int> aLength, chararray aByteArray, bytearray anOutput, ref<int>anOutputLength)
+    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int>anOutputLength)
         => system'core_routines'__utf16encoder.
 }
 
@@ -213,10 +213,10 @@ public singleton UTF16Encoding
 //        aLiteral $save int:anIndex shortarray:anArray int:aLength.
 //    ]
 
-    stacksafe convert(int anIndex, int aSize, shortarray aByteArray, chararray anOutput, ref<int> anOutputLength)
+    stacksafe convert(int anIndex, int aSize, ShortArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
         => system'core_routines'__utf16encoder.
         
-    stacksafe convert(int anIndex, int aSize, chararray aByteArray, shortarray anOutput, ref<int> anOutputLength)
+    stacksafe convert(int anIndex, int aSize, CharArray aByteArray, ShortArray anOutput, ref<int> anOutputLength)
         => system'core_routines'__utf16encoder.
         
 //    stacksafe convert int:anIndex vint:aSize literal:aLiteral shortarray:anOutput vint:anOutputLength

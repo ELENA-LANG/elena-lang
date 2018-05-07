@@ -1,5 +1,5 @@
 import system'io.
-//import system'text.
+import system'text.
 //import extensions.
 import extensions'text.
 
@@ -7,8 +7,8 @@ import extensions'text.
 
 class ReaderEnumerator :: Enumerator
 {
-    textreader theReader.
-    object     theLine.
+    T<TextReader> theReader.
+    object        theLine.
 
     constructor new
     [ 
@@ -20,7 +20,7 @@ class ReaderEnumerator :: Enumerator
         theReader := source textreader.
     ]
 
-    constructor new(stream aStream, encoder anEncoder)
+    constructor new(Stream aStream, Encoder anEncoder)
         <= new;
     [
         theReader := StreamReader new(aStream, anEncoder).
@@ -32,7 +32,7 @@ class ReaderEnumerator :: Enumerator
         theReader := StreamReader new:aPath.
     ]
     
-    constructor new(literal aPath, encoder anEncoder)
+    constructor new(literal aPath, Encoder anEncoder)
         <= new;
     [
         theReader := StreamReader new(aPath, anEncoder)

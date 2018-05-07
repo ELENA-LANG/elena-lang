@@ -519,7 +519,7 @@
 /// An array list object
 public sealed class ArrayList :: Indexable//, interface<Enumerable>
 {
-    array    theArray.
+    T<Array> theArray.
     ref<int> theLength.
     ref<int> theCapacity.
 
@@ -538,11 +538,11 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
         theArray := Array new(aCapacity).
     ]
     
-    constructor new(array a)
+    constructor new(Array a)
         <= fromArray(a, a length).
     
     /// Creates the list
-    stacksafe internal constructor fromArray(array anArray, int aLength)
+    stacksafe internal constructor fromArray(Array anArray, int aLength)
     [
         int capacity := anArray length.
         
@@ -580,7 +580,7 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
         [
             theCapacity append(32).
             
-            array aNewArray := Array new(theCapacity).
+            T<Array> aNewArray := Array new(theCapacity).
             int   i := 0.
             while (i < theLength)
             [
@@ -622,7 +622,7 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
         if (nil != indexable)
         [
             int len := indexable length.
-            indexer it := indexable indexer.
+            T<Indexer> it := indexable indexer.
             
             int i := 0.
             while (it available)
@@ -727,7 +727,7 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
     T<ArrayList> clone
         = ArrayList fromArray(theArray, T<int>(theLength)).
         
-    cast T<array>
+    cast T<Array>
         = Array new(0, T<int>(theLength), theArray).
 
 //    value 

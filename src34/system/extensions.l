@@ -17,7 +17,7 @@ public extension objectOp
         dirty_ptr c := self~objectOp __class.
         
         T<byte,256> dump.
-        int         len := system'external LoadClassName(c, T<bytearray>(dump), 255).
+        int         len := system'external LoadClassName(c, T<ByteArray>(dump), 255).
          
         if (len == 0)
             [ ^ "Unknown class" ].
@@ -860,7 +860,7 @@ extension<real> realOp
 
 // --- arrayOp ---
 
-extension<array> arrayOp
+extension<Array> arrayOp
 {
 //    exchange : anIndex1 : anIndex2
 //        = self~arrayOp exchange int:anIndex1 int:anIndex2.
@@ -1070,7 +1070,7 @@ extension<literal> literalOp
             ^ self Substring(anIndex, aLength)
         ];
         [
-            ^ emptyLiteralValue
+            ^ emptyLiteral
         ]        
     ]        
     
@@ -1095,7 +1095,7 @@ extension<literal> literalOp
             anIndex := anIndex + aCharLen
         ].
         
-        ^ emptyLiteralValue
+        ^ emptyLiteral
     ]
     
     literal trimLeft
@@ -1120,7 +1120,7 @@ extension<literal> literalOp
             anIndex := anIndex - aCharLen
         ].
         
-        ^ emptyLiteralValue
+        ^ emptyLiteral
     ]
     
     literal trimRight
@@ -1202,7 +1202,7 @@ extension<literal> literalOp
     
     replace(literal aReplacee, literal aReplacer)
     [
-        literal aTarget := emptyLiteralValue.
+        literal aTarget := emptyLiteral.
         int     aStart := 0.
         int     anEnd := 0.
         int     aReplaceeLen := aReplacee length.
@@ -1275,7 +1275,7 @@ public extension<wide> wideOp
             anIndex := anIndex + aCharLen
         ].
         
-        ^ emptyWideLiteralValue
+        ^ emptyWideLiteral
     ]
     
     wide trimLeft
@@ -1300,7 +1300,7 @@ public extension<wide> wideOp
             anIndex := anIndex - aCharLen
         ].
         
-        ^ emptyWideLiteralValue
+        ^ emptyWideLiteral
     ]
     
     wide trimRight
@@ -1375,7 +1375,7 @@ public extension<wide> wideOp
 //        
     replace(wide aReplacee, wide aReplacer)
     [
-        wide aTarget := emptyWideLiteralValue.
+        wide aTarget := emptyWideLiteral.
         int  aStart := 0.
         int  anEnd := 0.
         int  aReplaceeLen := aReplacee length.
@@ -1649,57 +1649,57 @@ public extension<char> charOp
 
 singleton byteArrayHelper
 {
-    stacksafe read(bytearray array, int offset, ref<short> retVal)
+    stacksafe read(ByteArray array, int offset, ref<short> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe read(bytearray array, int offset, ref<int> retVal)
+    stacksafe read(ByteArray array, int offset, ref<int> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe read(bytearray array, int offset, ref<long> retVal)
+    stacksafe read(ByteArray array, int offset, ref<long> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe read(bytearray array, int offset, ref<real> retVal)
+    stacksafe read(ByteArray array, int offset, ref<real> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe read(bytearray array, int offset, ref<char> retVal)
+    stacksafe read(ByteArray array, int offset, ref<char> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe write(bytearray array, int offset, short retVal)
+    stacksafe write(ByteArray array, int offset, short retVal)
     [
         array write(offset, retVal)
     ]
     
-    stacksafe write(bytearray array, int offset, int retVal)
+    stacksafe write(ByteArray array, int offset, int retVal)
     [
         array write(offset, retVal)
     ]
     
-    stacksafe write(bytearray array, int offset, long retVal)
+    stacksafe write(ByteArray array, int offset, long retVal)
     [
         array write(offset, retVal).
     ]
     
-    stacksafe write(bytearray array, int offset, real retVal)
+    stacksafe write(ByteArray array, int offset, real retVal)
     [
         array write(offset, retVal)
     ]
     
-    stacksafe write(bytearray array, int offset, char retVal)
+    stacksafe write(ByteArray array, int offset, char retVal)
     [
         array write(offset, retVal)
     ]
     
-    stacksafe fill(bytearray array, int offset, int length, byte val)
+    stacksafe fill(ByteArray array, int offset, int length, byte val)
     [
         array fill(offset, length, val).
     ]

@@ -36,9 +36,9 @@ public interface Stream
         self writeIndex(aNewIndex).
     ]
         
-    abstract stacksafe read(bytearray aDump, ref<int> aLength) []
+    abstract stacksafe read(ByteArray aDump, ref<int> aLength) []
     
-    abstract stacksafe write(bytearray aDump, int aLength) []
+    abstract stacksafe write(ByteArray aDump, int aLength) []
     
     abstract close []
 }

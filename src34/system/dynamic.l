@@ -36,15 +36,15 @@ public sealed struct Message
     constructor new(mssg message)
         = message.
 
-    T<signature> signature
+    T<Signature> signature
         => system'core_routines'__message.
 
     T<literal> literal
     [
         T<byte,256> aBuffer.
-        int         aLength := system'external LoadMessageName(self, T<bytearray>(aBuffer), 255).
+        int         aLength := system'external LoadMessageName(self, T<ByteArray>(aBuffer), 255).
         
-        ^ LiteralValue fromByteArray(0, aLength, T<bytearray>(aBuffer))
+        ^ LiteralValue fromByteArray(0, aLength, T<ByteArray>(aBuffer))
     ]
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
@@ -86,7 +86,7 @@ public sealed struct Signature
     ]
         
     /// Creates a dynamic signature
-    constructor new(signature subject)
+    constructor new(Signature subject)
         = subject.
 
 //    /// Creates a dynamic signature
@@ -106,9 +106,9 @@ public sealed struct Signature
     T<literal> literal
     [
         T<byte,256> aBuffer.
-        int         aLength := system'external LoadSubjectName(self, T<bytearray>(aBuffer), 255).
+        int         aLength := system'external LoadSubjectName(self, T<ByteArray>(aBuffer), 255).
         
-        ^ LiteralValue fromByteArray(0, aLength, T<bytearray>(aBuffer))
+        ^ LiteralValue fromByteArray(0, aLength, T<ByteArray>(aBuffer))
     ]
 
     /// Qualifies incoming messages and redirects to the target

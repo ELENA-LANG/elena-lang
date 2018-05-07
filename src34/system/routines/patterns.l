@@ -399,10 +399,10 @@
 
 class Selector :: Enumerator
 {
-    func1      theSelector.
-    enumerator theEnumerator.
+    T<Func1>      theSelector.
+    T<Enumerator> theEnumerator.
 
-    constructor new(func1 aSelector, enumerator anEnumerator)
+    constructor new(Func1 aSelector, Enumerator anEnumerator)
     [
         theSelector := aSelector.
         theEnumerator := anEnumerator.

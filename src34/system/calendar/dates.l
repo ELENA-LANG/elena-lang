@@ -1,6 +1,6 @@
 // --- TimeSpan --
 
-public sealed struct TimeSpan :: BaseNumber
+public sealed struct Timespan :: BaseNumber
 {
     T<SystemTime> theValue.
 
@@ -116,7 +116,7 @@ public sealed struct TimeSpan :: BaseNumber
         ^ LongNumber new(aRetVal).
     ]
 
-    bool equal(timespan aSpan)
+    bool equal(Timespan aSpan)
     [
         T<SystemTime> aValue := 0l.
         aSpan readValueTo(&aValue).
@@ -124,7 +124,7 @@ public sealed struct TimeSpan :: BaseNumber
         ^ aValue equal(theValue).
     ]
 
-    bool less(timespan aSpan)
+    bool less(Timespan aSpan)
     [
         T<SystemTime> aValue := 0l.
         aSpan readValueTo(&aValue).
@@ -132,26 +132,26 @@ public sealed struct TimeSpan :: BaseNumber
         ^ theValue less(aValue).
     ]
 
-    add(datetime aDate)
+    add(Date aDate)
         = aDate add(self).
     
-    add(timespan aSpan)
+    add(Timespan aSpan)
     [
         T<SystemTime> aValue := 0l.
         aSpan readValueTo(&aValue).
 
         T<SystemTime> retVal := theValue + aValue.
 
-        ^ TimeSpan new(retVal).
+        ^ Timespan new(retVal).
     ]
 
-    subtract(timespan aSpan)
+    subtract(Timespan aSpan)
     [
         T<SystemTime> aValue := 0l.
         aSpan readValueTo(&aValue).
 
         T<SystemTime> retVal := theValue - aValue.
-        ^ TimeSpan new(retVal).
+        ^ Timespan new(retVal).
     ]
 
     T<literal> literal
@@ -163,8 +163,8 @@ public sealed struct TimeSpan :: BaseNumber
         ^ (self days; literal + "." + aValue) literal.
     ]
 
-    T<TimeSpan> clone
-        = TimeSpan new(theValue).
+    T<Timespan> clone
+        = Timespan new(theValue).
 }
 
 // --- Date ---
@@ -228,7 +228,7 @@ public sealed struct Date :: BaseNumber
         aRetVal value := theValue.
     ]
    
-    bool equal(datetime aDate)
+    bool equal(Date aDate)
     [
         T<SystemTime> aValue := 0l.
         aDate readValueTo(&aValue).
@@ -236,7 +236,7 @@ public sealed struct Date :: BaseNumber
         ^ aValue equal(theValue)
     ]
 
-    bool less(datetime aDate)
+    bool less(Date aDate)
     [
         T<SystemTime> aValue := 0l.
         aDate readValueTo(&aValue).
@@ -244,15 +244,15 @@ public sealed struct Date :: BaseNumber
         ^ theValue less(aValue)
     ]
   
-    subtract(datetime aDate)
+    subtract(Date aDate)
     [
         T<SystemTime> aValue := 0l.
         aDate readValueTo(&aValue).
 
-        ^ TimeSpan new(theValue subtract(aValue))
+        ^ Timespan new(theValue subtract(aValue))
     ]
   
-    subtract(timespan aTimeSpan)
+    subtract(Timespan aTimeSpan)
     [
         T<SystemTime> aValue := 0l.
         aTimeSpan readValueTo(&aValue).
@@ -260,7 +260,7 @@ public sealed struct Date :: BaseNumber
         ^ Date new(theValue subtract(aValue)).
     ]
   
-    add(timespan aTimeSpan)
+    add(Timespan aTimeSpan)
     [
         T<SystemTime> aValue := 0l.
         aTimeSpan readValueTo(&aValue).
@@ -367,16 +367,16 @@ public sealed struct Date :: BaseNumber
     ]
 
     addDays(int val)
-        = self add(TimeSpan new(val, 0, 0, 0)).
+        = self add(Timespan new(val, 0, 0, 0)).
 
     addHours(int val)
-        = self add(TimeSpan new(0, val, 0, 0)).
+        = self add(Timespan new(0, val, 0, 0)).
 
     addMinutes(int val)
-        = self add(TimeSpan new(0, 0, val, 0)).
+        = self add(Timespan new(0, 0, val, 0)).
 
     addSeconds(int val)
-        = self add(TimeSpan new(0, 0, 0, val)).
+        = self add(Timespan new(0, 0, 0, val)).
 
     T<literal> literal
     [
@@ -395,6 +395,6 @@ public sealed struct Date :: BaseNumber
 
 // --- now ---
 
-datetime public now = Date now.
+public T<Date> now = Date now.
 
-datetime public utcNow = Date utcNow.
+public T<Date> utcNow = Date utcNow.

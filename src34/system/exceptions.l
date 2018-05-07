@@ -15,7 +15,7 @@ extension op
 /// A call stack
 public sealed /*nonstructural */class CallStack
 {
-    intarray theStack.
+    T<IntArray> theStack.
     
     /// Creates a current call stack
     constructor new
@@ -23,9 +23,9 @@ public sealed /*nonstructural */class CallStack
         T<int,64> aStack.
         int       aLength := 0.
         
-        aLength := system'external core_callstack_load(T<intarray>(aStack), 64).
+        aLength := system'external core_callstack_load(T<IntArray>(aStack), 64).
             
-        theStack := IntArray new(0, aLength, T<intarray>(aStack))
+        theStack := IntArray new(0, aLength, T<IntArray>(aStack))
     ]
     
     /// Generates the call stack literal representation
@@ -37,15 +37,15 @@ public sealed /*nonstructural */class CallStack
         int     address := 0.
 
         T<byte,512> aBuffer.
-        literal     aCallStackText := emptyLiteralValue.
+        literal     aCallStackText := emptyLiteral.
         while (anIndex < aLength)
         [
             theStack read(anIndex, &address).
             
-            aBufferLength := system'external LoadAddressInfo(address, T<bytearray>(aBuffer), 512).
+            aBufferLength := system'external LoadAddressInfo(address, T<ByteArray>(aBuffer), 512).
             
             if (aBufferLength > 0)
-                [ aCallStackText := aCallStackText add(LiteralValue fromByteArray(0, aBufferLength, T<bytearray>(aBuffer))); add(forwards'newLine) ].
+                [ aCallStackText := aCallStackText add(LiteralValue fromByteArray(0, aBufferLength, T<ByteArray>(aBuffer))); add(forwards'newLine) ].
             
             anIndex := anIndex + 1.
         ].

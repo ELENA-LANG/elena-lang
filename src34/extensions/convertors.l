@@ -11,9 +11,9 @@ class literalExConvertor =
 //    literal convert intmatrix:a
 //        = intmatrixExConvertor toLiteral intmatrix:a.
 
-    literal convert(indexer it)
+    literal convert(Indexer it)
     [
-        textbuffer anOutput := TextBuilder new.
+        auto anOutput := TextBuilder new.
         while (it available)
         [
             anOutput write(it get; toLiteral).
@@ -202,10 +202,10 @@ class literalExConvertor =
 
 public singleton arrayConvertorEx
 {
-    array convert : anObject
-        = T<array>(anObject).
+    T<Array> convert : anObject
+        = T<Array>(anObject).
     
-    array convert(array anArray)
+    T<Array> convert(Array anArray)
         = anArray.
 
 //    convert literal:l
@@ -214,16 +214,16 @@ public singleton arrayConvertorEx
 //    convert wide:l
 //        <= convert enumerator:l.
 
-    array convert(enumerator anEnumerator)
+    T<Array> convert(Enumerator anEnumerator)
     [
         T<ArrayList> aRetVal := ArrayList new.
 
         anEnumerator forEach(:anItem)[ aRetVal append:anItem ].
 
-        ^ T<array>(aRetVal)
+        ^ T<Array>(aRetVal)
     ]
 
-    array convert(indexer it)
+    T<Array> convert(Indexer it)
     [
         T<ArrayList> aRetVal := ArrayList new.
         while (it available)
@@ -233,13 +233,13 @@ public singleton arrayConvertorEx
             it appendIndex(1)
         ].
 
-        ^ T<array>(aRetVal)
+        ^ T<Array>(aRetVal)
     ]
 
 //    convert(Enumerable v)
 //        <= convert(v enumerator).
         
-    array convert(Indexable v)
+    T<Array> convert(Indexable v)
         <= convert(v indexer).
         
 //    convert void:val

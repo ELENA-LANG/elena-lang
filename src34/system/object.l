@@ -1,3 +1,5 @@
+public T<int> x = 2.
+
 // --- super object ---
 
 /// a common ancestor

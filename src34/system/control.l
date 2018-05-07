@@ -272,7 +272,7 @@ public interface Func1
 //    eval : aParam = $self(aParam).
 
     /// Executes the function for every enumeration item
-    sealed run(enumerator anEnumerator)
+    sealed run(Enumerator anEnumerator)
     [
         while(anEnumerator next)
         [
@@ -281,7 +281,7 @@ public interface Func1
     ]
     
     /// Executes the function for every enumeration item until it returns true
-    sealed retrieve(enumerator anEnumerator)
+    sealed retrieve(Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)
@@ -316,7 +316,7 @@ public interface Func2
 //    eval : aParam1 : aParam2 = $self(aParam1,aParam2).
     
     /// Executes the function for parameters and every enumeration item
-    sealed run(object aParam, enumerator anEnumerator)
+    sealed run(object aParam, Enumerator anEnumerator)
     [
         while(anEnumerator next)
         [
@@ -325,7 +325,7 @@ public interface Func2
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true
-    sealed retrieve(object aParam, enumerator anEnumerator)
+    sealed retrieve(object aParam, Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)
@@ -361,7 +361,7 @@ public interface Func3
 //    eval : aParam1 : aParam2 : aParam3 = $self(aParam1,aParam2,aParam3).
     
     /// Executes the function for parameters and every enumeration item
-    sealed run(object aParam1, object aParam2, enumerator anEnumerator)
+    sealed run(object aParam1, object aParam2, Enumerator anEnumerator)
     [
         while (anEnumerator next)
         [
@@ -370,7 +370,7 @@ public interface Func3
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    sealed retrieve(object aParam1, object aParam2, enumerator anEnumerator)
+    sealed retrieve(object aParam1, object aParam2, Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)
@@ -405,7 +405,7 @@ public interface Func4
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 = $self(aParam1,aParam2,aParam3,aParam4).
     
     /// Executes the function for parameters and every enumeration item
-    sealed run(object aParam1, object aParam2, object aParam3, enumerator anEnumerator)
+    sealed run(object aParam1, object aParam2, object aParam3, Enumerator anEnumerator)
     [
         while (anEnumerator next)
         [
@@ -414,7 +414,7 @@ public interface Func4
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    sealed retrieve(object aParam1, object aParam2, object aParam3, enumerator anEnumerator)
+    sealed retrieve(object aParam1, object aParam2, object aParam3, Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)
@@ -450,7 +450,7 @@ public interface Func5
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 = $self(aParam1,aParam2,aParam3,aParam4,aParam5).
     
     /// Executes the function for parameters and every enumeration item
-    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, enumerator anEnumerator)
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, Enumerator anEnumerator)
     [
         while (anEnumerator next)
         [
@@ -459,7 +459,7 @@ public interface Func5
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, enumerator anEnumerator)
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)
@@ -494,7 +494,7 @@ public interface Func6
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6).
     
     /// Executes the function for parameters and every enumeration item
-    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, enumerator anEnumerator)
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, Enumerator anEnumerator)
     [
         while (anEnumerator next)
         [
@@ -503,7 +503,7 @@ public interface Func6
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, enumerator anEnumerator)
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)
@@ -538,7 +538,7 @@ public interface Func7
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7).
     
     /// Executes the function for parameters and every enumeration item
-    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, enumerator anEnumerator)
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, Enumerator anEnumerator)
     [
         while (anEnumerator next)
         [
@@ -547,7 +547,7 @@ public interface Func7
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, enumerator anEnumerator)
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)
@@ -584,7 +584,7 @@ public interface Func8
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8).
     
     /// Executes the function for parameters and every enumeration item
-    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, enumerator anEnumerator)
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, Enumerator anEnumerator)
     [
         while (anEnumerator next)
         [
@@ -593,7 +593,7 @@ public interface Func8
     ]
     
     /// Executes the function for parameters and every enumeration item until it returns true    
-    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, enumerator anEnumerator)
+    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)
@@ -630,7 +630,8 @@ public interface Func9
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7,aParam8,aParam9).
     
     /// Executes the function for parameters and every enumeration item
-    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, object aParam8, enumerator anEnumerator)
+    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, 
+                object aParam8, Enumerator anEnumerator)
     [
         while (anEnumerator next)
         [
@@ -640,7 +641,7 @@ public interface Func9
     
     /// Executes the function for parameters and every enumeration item until it returns true    
     sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
-                        object aParam7, object aParam8, enumerator anEnumerator)
+                        object aParam7, object aParam8, Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)
@@ -678,7 +679,7 @@ public interface Func10
     
     /// Executes the function for parameters and every enumeration item
     sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, object aParam8, object aParam9,
-                enumerator anEnumerator)
+                Enumerator anEnumerator)
     [
         while (anEnumerator next)
         [
@@ -688,7 +689,7 @@ public interface Func10
     
     /// Executes the function for parameters and every enumeration item until it returns true    
     sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, 
-                        object aParam8, object aParam9, enumerator anEnumerator)
+                        object aParam8, object aParam9, Enumerator anEnumerator)
     [
         var anItem := nil.
         while (anEnumerator next)
@@ -728,7 +729,7 @@ public interface Func11
     
     /// Executes the function for parameters and every enumeration item
     sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, object aParam8, object aParam9,
-               object aParam10, enumerator anEnumerator)
+               object aParam10, Enumerator anEnumerator)
     [
         while (anEnumerator next)
         [
@@ -738,7 +739,7 @@ public interface Func11
     
     /// Executes the function for parameters and every enumeration item until it returns true    
     sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7, 
-                        object aParam8, object aParam9, object aParam10, enumerator anEnumerator)
+                        object aParam8, object aParam9, object aParam10, Enumerator anEnumerator)
     [
         var anItem := nil.
         while (anEnumerator next)

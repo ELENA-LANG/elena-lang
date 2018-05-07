@@ -14,13 +14,13 @@ public sealed /*nonstructural*/ class File
     T<literal> literal = thePath.
     
 //    wide = thePath wide.
-//    
-//    textreader = fileControl reader:thePath.
-//    
-//    textwriter = fileControl writer:thePath.
-//    
-//    logger = fileControl logger:thePath.
-//    
+    
+    T<TextReader> textreader = fileControl reader:thePath.
+    
+    T<TextWriter> textwriter = fileControl writer:thePath.
+    
+    T<TextWriter> logger = fileControl logger:thePath.
+    
 //    bool isAvailable
 //        = fileControl isAvailable:thePath.
 //    

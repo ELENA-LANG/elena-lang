@@ -2732,19 +2732,19 @@ public class charConvertor =
     internal convert(int anIndex, literal aLiteral, ref<char> char)
         => system'core_routines'__charconvertor.
         
-    internal convert(int anIndex, bytearray aLiteral, ref<char> char)
+    internal convert(int anIndex, ByteArray aLiteral, ref<char> char)
         => system'core_routines'__charconvertor.
   
     internal convert(int anIndex, wide aLiteral, ref<char> char)
         => system'core_routines'__charconvertor.
 
-    internal convert(int anIndex, shortarray aLiteral, ref<char> char)
+    internal convert(int anIndex, ShortArray aLiteral, ref<char> char)
         => system'core_routines'__charconvertor.
 
-    internal save(char aChar, int anIndex, shortarray aCharArray, ref<int> aLength)
+    internal save(char aChar, int anIndex, ShortArray aCharArray, ref<int> aLength)
         => system'core_routines'__charconvertor.
     
-    internal save(char aChar, int anIndex, bytearray aCharArray, ref<int> aLength)
+    internal save(char aChar, int anIndex, ByteArray aCharArray, ref<int> aLength)
         => system'core_routines'__charconvertor.
 
     /// Converts a literal string into a character

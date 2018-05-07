@@ -65,13 +65,7 @@ type object     = system'Object.
 // === basic logical types ===
 type bool       = system'BoolValue.
 
-//// === basic primitive types ===
-//
-//type keyvalue   = system'KeyValue.
-////type dto        = system'DTO.  
-
-//type ref        = system'Variable.
-
+// === basic type aliases ===
 type byte       = system'ByteNumber.
 type short      = system'ShortNumber.
 type int        = system'IntNumber.
@@ -81,67 +75,8 @@ type real       = system'RealNumber.
 type char       = system'CharValue.
 type mssg       = system'Message.
 //type ext_mssg   = system'ExtensionMessage.
-
-type signature  = system'Signature.
-//type symbol_ref = system'Symbol.
-
-// === basic dynamic types ===
-type bytearray  = system'ByteArray.
-type shortarray = system'ShortArray.
-type intarray   = system'IntArray.
-//type intmatrix  = system'IntMatrix.
-type realarray  = system'RealArray.
-//type realmatrix = system'RealMatrix.
-type chararray  = system'CharArray.
-type array      = system'Array.
-//type bitarray   = system'BitArray.
-//type bitset     = system'BitArray32.
-
-/// An instance of system'LiteralValue class. 
 type literal    = system'LiteralValue.
-
 type wide       = system'WideLiteralValue.
-
-// === function types ===
-type func       = system'Func.
-//type lazy_func  = system'BaseLazyExpression.
-
-/// An anonymous function with a generic parameter.
-type func1      = system'Func1.
-type func2      = system'Func2.
-type func3      = system'Func3.
-type func4      = system'Func4.
-type func5      = system'Func5.
-type func6      = system'Func6.
-type func7      = system'Func7.
-type func8      = system'Func8.
-type func9      = system'Func9.
-type func10     = system'Func10.
-type func11     = system'Func11.
-
-// === system handles ===
 type handle     = system'Handle.
 //type rt_ptr     = system'RTPointer.
 type dirty_ptr  = system'UnsafePointer.
-
-// --- Enumerators / Indexers ---
-type enumerator = system'Enumerator.
-type indexer    = system'Indexer.
-//type indexer2d  = system'Indexer2D.
-//
-//type void       = nil.
-
-type textbuffer = system'text'TextBuilder.
-type encoder    = system'text'Encoder.
-
-type datetime = system'calendar'Date.
-type timespan = system'calendar'TimeSpan.
-
-type stream       = system'io'Stream.
-type textreader   = system'io'TextReader.
-type binaryreader = system'io'BinaryReader.
-type textwriter   = system'io'TextWriter.
-type binarywriter = system'io'BinaryWriter.
-
-///// obsolete : use implicit instead
-//explicit        = #16387.  

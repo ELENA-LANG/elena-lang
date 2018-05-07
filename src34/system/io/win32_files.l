@@ -52,7 +52,7 @@ struct FileStream :: Stream
             [ IOException new("Cannot open the file"); raise ]
     ]
     
-    write(bytearray aDump, int aLength)
+    write(ByteArray aDump, int aLength)
     [
         int aWritten := 0.
         system'external'KERNEL32 WriteFile(
@@ -63,7 +63,7 @@ struct FileStream :: Stream
             0).
     ]
 
-    read(bytearray aDump, ref<int> aLength)
+    read(ByteArray aDump, ref<int> aLength)
     [
         system'external'KERNEL32 ReadFile(
             theHandle,
@@ -190,11 +190,11 @@ public class StreamWriter :: TextWriter
 
 public class StreamReader :: TextReader
 {
-    stream  theStream.
-    encoder theEncoder.
-    bool    theOpen.
+    T<Stream>  theStream.
+    T<Encoder> theEncoder.
+    bool       theOpen.
 
-    constructor new(stream aStream, encoder anEncoder)
+    constructor new(Stream aStream, Encoder anEncoder)
         <= new;
     [
         theStream := aStream.
@@ -205,7 +205,7 @@ public class StreamReader :: TextReader
     constructor new:aPath
         <= new(FileStream openForRead:aPath, UTF8Encoder).
 
-    constructor new(literal aPath, encoder anEncoder)
+    constructor new(literal aPath, Encoder anEncoder)
         <= new(FileStream openForRead:aPath, anEncoder).
 
     bool available = theOpen.
@@ -214,17 +214,17 @@ public class StreamReader :: TextReader
 //
 //    encoder = theEncoder.
 
-    read(chararray anOutput, ref<int> aLength)
+    read(CharArray anOutput, ref<int> aLength)
     [
         int        aBufferLength := 64.
         T<byte,64> aBuffer.
-        theStream read(T<bytearray>(aBuffer), &aBufferLength).
+        theStream read(T<ByteArray>(aBuffer), &aBufferLength).
         if(aBufferLength == 0)
             [ theOpen := false. aLength value := 0 ];
             [
                 int aRead := aBufferLength.
 
-                theEncoder convert(0, &aBufferLength, T<bytearray>(aBuffer), anOutput, aLength).
+                theEncoder convert(0, &aBufferLength, T<ByteArray>(aBuffer), anOutput, aLength).
                 
                 if(aRead > aBufferLength)
                     [ theStream reduceIndex(aRead - aBufferLength) ]
@@ -252,25 +252,25 @@ public class StreamReader :: TextReader
 //    constructor new:aPath
 //        <= new stream:(FileStream openForReWrite:aPath).
 //}
-//
-//// --- fileOp ---
-//
-//singleton fileControl
-//{
-//    openForRead : path = FileStream openForRead:path.
-//    
-//    openForReWrite : path = FileStream openForReWrite:path.
-//    
-//    openForEdit : path = FileStream openForEdit:path.
-//    
-//    openForAppend : path = FileStream openForAppend:path.
-//        
-//    textreader reader : path = StreamReader new:path.
-//    
-//    textwriter writer : path = StreamWriter new:path.
-//    
-//    textwriter logger :path = StreamWriter new(path, true).
-//    
+
+// --- fileOp ---
+
+singleton fileControl
+{
+    openForRead : path = FileStream openForRead:path.
+    
+    openForReWrite : path = FileStream openForReWrite:path.
+    
+    openForEdit : path = FileStream openForEdit:path.
+    
+    openForAppend : path = FileStream openForAppend:path.
+        
+    T<TextReader> reader : path = StreamReader new:path.
+    
+    T<TextWriter> writer : path = StreamWriter new:path.
+    
+    T<TextWriter> logger :path = StreamWriter new(path, true).
+    
 //    bool isAvailable:path
 //    [
 //        int ret := system'external'KERNEL32 GetFileAttributesW wide:(path wide).
@@ -291,8 +291,8 @@ public class StreamReader :: TextReader
 //        
 //       ^ ret != 0
 //    ]
-//}
-//
+}
+
 //// --- directoryExtOp
 //
 //singleton directoryControl

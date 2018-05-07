@@ -154,7 +154,7 @@ sealed class FileWriter
         theHandle := aHandle
     ]
 
-    write(bytearray buffer, int length)
+    write(ByteArray buffer, int length)
     [
         int written := 0.
         system'external'KERNEL32 WriteFile
@@ -176,7 +176,7 @@ sealed class FileWriter
                 [ subs_len := length ] ;
                 [ subs_len := 128 ].
             
-            OEMEncoder convert(index, &subs_len, literal, T<bytearray>(buffer), &buf_len).
+            OEMEncoder convert(index, &subs_len, literal, T<ByteArray>(buffer), &buf_len).
             
             self write(buffer, buf_len).
             
@@ -200,7 +200,7 @@ sealed class FileWriter
                 [ subs_len := length ];
                 [ subs_len := 128 ].
             
-            OEMEncoder convert(index, &subs_len, literal, T<bytearray>(buffer), &buf_len).
+            OEMEncoder convert(index, &subs_len, literal, T<ByteArray>(buffer), &buf_len).
             
             self write(buffer, buf_len).
             
@@ -246,20 +246,20 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
         [
             extern()
             [
-                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<bytearray>(aDump), 1, &aNumberRead).
+                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
             ].
 
-            byteArrayHelper read(T<bytearray>(aDump), 0, &anEventType).
+            byteArrayHelper read(T<ByteArray>(aDump), 0, &anEventType).
             if (anEventType == 1)
                 [  
-                    byteArrayHelper read(T<bytearray>(aDump), 4, &aKeyDown).
+                    byteArrayHelper read(T<ByteArray>(aDump), 4, &aKeyDown).
                     
                     found := aKeyDown == 1
                 ];
                 [ found := false ]
         ].
 
-        byteArrayHelper read(T<bytearray>(aDump), 14, aChar).
+        byteArrayHelper read(T<ByteArray>(aDump), 14, aChar).
     ]
 
     stacksafe read(ref<int> aKey)
@@ -274,20 +274,20 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
         [
             extern()
             [
-                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<bytearray>(aDump), 1, &aNumberRead).
+                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
             ].
 
-            byteArrayHelper read(T<bytearray>(aDump), 0, &anEventType).
+            byteArrayHelper read(T<ByteArray>(aDump), 0, &anEventType).
             if (anEventType == 1)
                 [  
-                    byteArrayHelper read(T<bytearray>(aDump), 4, &aKeyDown).
+                    byteArrayHelper read(T<ByteArray>(aDump), 4, &aKeyDown).
                     
                     found := aKeyDown == 1
                 ];
                 [ found := false ]
         ].
                     
-        byteArrayHelper read(T<bytearray>(aDump), 8, aKey)
+        byteArrayHelper read(T<ByteArray>(aDump), 8, aKey)
     ]
 
 //    bool isKeyAvailable
@@ -330,7 +330,7 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
 //        ^ false.                   
 //    ]
 
-    stacksafe read(shortarray aBuffer, ref<int> aRetVal)
+    stacksafe read(ShortArray aBuffer, ref<int> aRetVal)
     [
         int len := aRetVal value.
         
@@ -344,13 +344,13 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
     [
         T<short,127> aBuffer.
         int          aLength := 0.
-        var          anOutput := emptyWideLiteralValue.
+        var          anOutput := emptyWideLiteral.
         
         bool continue := true.
         while (continue)
         [
             aLength := 127.
-            self read(T<shortarray>(aBuffer), &aLength).
+            self read(T<ShortArray>(aBuffer), &aLength).
             
             short aShort := aBuffer[aLength - 1].
             if (aShort == 0Ah)
@@ -360,7 +360,7 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
                     continue := false
                 ].
             
-            var aTemp := WideLiteralValue fromShortArray(0, aLength, T<shortarray>(aBuffer)).
+            var aTemp := WideLiteralValue fromShortArray(0, aLength, T<ShortArray>(aBuffer)).
             
             anOutput := anOutput + aTemp.
         ].

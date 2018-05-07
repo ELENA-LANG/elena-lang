@@ -1892,6 +1892,8 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
    bool arrayMode = false;
    int paramIndex = 0;
    ref_t typeRef = mapNewTemplate(node, scope, arrayMode, paramIndex, templateMode, NULL);
+   if (!typeRef)
+      scope.raiseError(errUnknownSubject, node);
 
    if (templateMode) {
       // template in template should be copied "as is" (resolving all references)
@@ -3337,7 +3339,8 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
          DeclarationAttr attr = daNone;
          switch (attrRef) {
             case V_TYPETEMPL:
-               attr = daType;
+               if (!current.existChild(lxAttributeValue))
+                  attr = daType;
                break;
             case V_CLASS:
             case V_STRUCT:

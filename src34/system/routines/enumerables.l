@@ -122,7 +122,7 @@ symbol ifDecrescent
 
 // --- enumeratorOp ---
 
-public extension<enumerator> enumeratorOp
+public extension<Enumerator> enumeratorOp
 {
     forEach(Func1 aFunction)
         = aFunction run(self).
@@ -316,7 +316,7 @@ extension indexableOp
         
     stacksafe exchange(int anIndex1, int anIndex2)
     [
-        indexer anIndexer := self indexer.
+        T<Indexer> anIndexer := self indexer.
         
         anIndexer writeIndex(anIndex1).
         
@@ -427,8 +427,8 @@ extension indexableOp
 
     sort(Func2 aCompareFunc)
     [
-        indexer aFormer := self indexer.
-        indexer aLater := self indexer.
+        T<Indexer> aFormer := self indexer.
+        T<Indexer> aLater := self indexer.
 
         while (aFormer available)
         [

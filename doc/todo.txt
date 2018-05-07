@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * now, utcnow - should be strong typed
+
                  * debugger : the full symbol name should be used (rather than a relative one)
 
                  * migrate dynamic, templates, win32_app files

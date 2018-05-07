@@ -138,7 +138,7 @@ public interface TextReader
         theNewLineLength := theNewLineConstant length.
     ]
 
-    abstract stacksafe read(chararray anArray, ref<int> anActualLength) []
+    abstract stacksafe read(CharArray anArray, ref<int> anActualLength) []
 
 //    stream [ NotSupportedException new; raise ]
 //
@@ -150,7 +150,7 @@ public interface TextReader
             
     literal readLiteral
     [
-        literal aLine := emptyLiteralValue.
+        literal aLine := emptyLiteral.
         
         int aLength := -1.
         while (aLength == -1)
@@ -162,10 +162,10 @@ public interface TextReader
                     T<char,64> aBuffer.
                     int        aBufferLength := 64.
                     
-                    self read(T<chararray>(aBuffer), &aBufferLength).
+                    self read(T<CharArray>(aBuffer), &aBufferLength).
                     if(aBufferLength == 0)
                         [ aLength := -2 ];  // !! to indicate the eof
-                        [ theOutput write(T<chararray>(aBuffer), aBufferLength) ]
+                        [ theOutput write(T<CharArray>(aBuffer), aBufferLength) ]
                 ]
         ].
         
@@ -184,7 +184,7 @@ public interface TextReader
     
     wide readWide
     [
-        wide aLine := emptyWideLiteralValue.
+        wide aLine := emptyWideLiteral.
         wide nl := T<wide>(theNewLineConstant).
         int  nl_len := 0.
         nl readLengthTo(&nl_len).
@@ -199,10 +199,10 @@ public interface TextReader
                     T<char,64> aBuffer.
                     int        aBufferLength := 64.
                      
-                    self read(T<chararray>(aBuffer), &aBufferLength).
+                    self read(T<CharArray>(aBuffer), &aBufferLength).
                     if(aBufferLength == 0)
                         [ aLength := -2 ];  // !! to indicate the eof
-                        [ theOutput write(T<chararray>(aBuffer), aBufferLength) ]
+                        [ theOutput write(T<CharArray>(aBuffer), aBufferLength) ]
                 ]
         ].
         

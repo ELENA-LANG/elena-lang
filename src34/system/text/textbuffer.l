@@ -4,8 +4,8 @@ const int TextPageSize = 128.
 
 sealed public /*nonstructural */ class TextBuilder
 {
-    chararray theBuffer.
-    ref<int>  theLength.
+    T<CharArray> theBuffer.
+    ref<int>     theLength.
 
     constructor new
     [
@@ -39,7 +39,7 @@ sealed public /*nonstructural */ class TextBuilder
     set length:aLength
         <= setLength(T<int>(aLength)).
 
-    cast T<chararray> = theBuffer.
+    cast T<CharArray> = theBuffer.
 
     T<literal> literal
         = LiteralValue new(0, T<int>(theLength), theBuffer).
@@ -72,7 +72,7 @@ sealed public /*nonstructural */ class TextBuilder
             aNewLength := aNewLength + 1.
             aNewLength := aNewLength * TextPageSize.            
             
-            chararray aNewBuffer := CharArray new(aNewLength).
+            T<CharArray> aNewBuffer := CharArray new(aNewLength).
             
             aNewBuffer write(0, aBufferLength, theBuffer).
             
@@ -123,11 +123,11 @@ sealed public /*nonstructural */ class TextBuilder
         T<char,16> ch_tmp.
         int        len := 16.
         
-        literalConvertor convert(n, T<bytearray>(tmp), &len).
+        literalConvertor convert(n, T<ByteArray>(tmp), &len).
         
-        UTF8Encoding convert(0, &len, T<bytearray>(tmp), T<chararray>(ch_tmp), &len).
+        UTF8Encoding convert(0, &len, T<ByteArray>(tmp), T<CharArray>(ch_tmp), &len).
         
-        self write(T<chararray>(ch_tmp), len).
+        self write(T<CharArray>(ch_tmp), len).
     ]
 
     write : anObject
@@ -135,7 +135,7 @@ sealed public /*nonstructural */ class TextBuilder
         self write(anObject literal).
     ]
 
-    stacksafe write(chararray anArray, int aLength)
+    stacksafe write(CharArray anArray, int aLength)
     [
         ifnot (0 == aLength)
         [
@@ -232,7 +232,7 @@ sealed public /*nonstructural */ class TextBuilder
         ]
     ]
 
-    stacksafe insert(int anIndex, int aLength, chararray anArray)
+    stacksafe insert(int anIndex, int aLength, CharArray anArray)
     [
         self reserve(aLength).
         
@@ -421,7 +421,7 @@ sealed public /*nonstructural */ class TextBuilder
     stacksafe literal Substring(int anIndex, int aLength)
     [
         if (aLength == 0)
-            [ ^ emptyLiteralValue ].
+            [ ^ emptyLiteral ].
             
         ^ LiteralValue new(anIndex, aLength, theBuffer)
     ]
@@ -429,7 +429,7 @@ sealed public /*nonstructural */ class TextBuilder
     stacksafe wide WideSubstring(int anIndex, int aLength)
     [
         if (aLength == 0)
-            [ ^ emptyWideLiteralValue ].
+            [ ^ emptyWideLiteral ].
             
         ^ WideLiteralValue new(anIndex, aLength, theBuffer)
     ]
