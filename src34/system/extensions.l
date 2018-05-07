@@ -1485,35 +1485,35 @@ extension stringOp
     trim
         = stringOpDispatcher trim(self, $32).
 
-//    padLeft : padSymbol : len
-//        = $stringOpDispatcher padLeft(self, padSymbol, len).
+    padLeft(object padSymbol, object len)
+        = stringOpDispatcher padLeft(self, padSymbol, len).
+        
+    padRight(object padSymbol, object len)
+        = stringOpDispatcher padRight(self, padSymbol, len).
+
+    startingWith : s
+        = stringOpDispatcher startingWith(self, s).
+
+    endingWith : s
+        = stringOpDispatcher endingWith(self, s).
+
+    containing : s
+        = stringOpDispatcher containing(self, s).
+
+//    replaceFirst literal:aReplacee literal:aReplacer
+//    [
+//        var dispatcher := self cast:%eval to:stringOpDispatcher.
 //        
-//    padRight : padSymbol : len
-//        = $stringOpDispatcher padRight(self, padSymbol, len).
-//
-//    startingWith : s
-//        = $stringOpDispatcher startingWith(self, s).
-//
-//    endingWith : s
-//        = $stringOpDispatcher endingWith(self, s).
-//
-//    containing : s
-//        = $stringOpDispatcher containing(self, s).
-//
-////    replaceFirst literal:aReplacee literal:aReplacer
-////    [
-////        var dispatcher := self cast:%eval to:stringOpDispatcher.
-////        
-////        ^ self~dispatcher replaceFirst literal:aReplacee literal:aReplacer
-////    ]
-////    
-////    replace literal:aReplacee literal:aReplacer
-////    [
-////        var dispatcher := self cast:%eval to:stringOpDispatcher.
-////        
-////        ^ self~dispatcher replace literal:aReplacee literal:aReplacer
-////    ]
+//        ^ self~dispatcher replaceFirst literal:aReplacee literal:aReplacer
+//    ]
 //    
+//    replace literal:aReplacee literal:aReplacer
+//    [
+//        var dispatcher := self cast:%eval to:stringOpDispatcher.
+//        
+//        ^ self~dispatcher replace literal:aReplacee literal:aReplacer
+//    ]
+    
 //    stacksafe write object:aLiteral int:aCounter
 //    [
 //        int aNumber := aCounter.

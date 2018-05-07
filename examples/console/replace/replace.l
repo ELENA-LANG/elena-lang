@@ -3,7 +3,7 @@ import extensions'text.
 
 // --- Program ---
 
-Program =
+public program =
 [
     var aText := console print:"Enter the text:"; readLineTo(String new).
     var aSearchText := console print:"Enter the phrase to be found:"; readLine.  

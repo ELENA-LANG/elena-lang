@@ -39,7 +39,7 @@ interface Enumerator<type>
     Enumerator<type> enumerator = self.
 }
 
-public interface Enumarable
+public interface Enumerable
 {
     abstract T<Enumerator> enumerator []
 }

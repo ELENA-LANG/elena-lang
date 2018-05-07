@@ -21,7 +21,7 @@ sealed array<template_subj> :: Indexable<template_subj>
     
     cast Enumerable<template_subj> = Enumerable<template_subj>::{ embeddable dispatch => self. }.
 
-    cast T<Enumarable> = Enumarable::{ embeddable dispatch => self. }.
+    cast T<Enumerable> = Enumerable::{ embeddable dispatch => self. }.
 
     Indexer<template_subj> indexer = BaseIndexer<template_subj>::
     {

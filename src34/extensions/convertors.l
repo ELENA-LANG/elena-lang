@@ -285,9 +285,9 @@ extension convertorOp
     toLiteral
         = literalExConvertor convert:self.
     
-//    toLiteral(IntNumber radix)
-//        = literalConvertor convert(self, radix).
-//    
+    toLiteral(int radix)
+        = literalConvertor convert(self, radix).
+    
 //    toWide
 //        = wideExConvertor convert:self.
 //

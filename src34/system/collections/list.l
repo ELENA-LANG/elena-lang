@@ -208,311 +208,328 @@
 //        retVal int := theLength.
 //    ]    
 //}
-//
-//// --- ListItem ---
-//
-///// A list item
-//sealed class ListItem
-//{
-//    object    theContent.
-//    list_item theNext.
-//    
-//    /// Creates a new item
-//    constructor new : aValue
-//    [
-//        theContent := aValue.
-//    ]
-//
-//    /// Returns the item object
-//    get = theContent.
-//            
-//    /// Sets the item object
-//    set : anObject
-//    [
-//        theContent := anObject.
-//    ]    
-//
-//    /// Returns the next item
-//    list_item nextItem = theNext.
-//
-//    /// Sets the next item
-//    setNextItem list_item:aNext
-//    [
-//        theNext := aNext.
-//    ]
-//}
-//
-//// --- ListEnumerator ---
-//
-///// A list enumerator
-//class ListEnumerator :: Enumerator
-//{
-//    list      theList.
-//    list_item theCurrent.
-//    
-//    /// Creates a list enumerator
-//    constructor new list:aList
-//    [
-//        theList := aList.
-//    ]
-//
-//    /// Creates a list enumerator
-//    constructor new : anObject
-//        <= new list:anObject.
-//
-//    /// Returns the current object
-//    get = theCurrent get.
-//    
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theCurrent := $nil.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        if ($nil == theCurrent)
-//            [ theCurrent := theList topItem ];
-//            [ theCurrent := theCurrent nextItem ].
-//            
-//        ^ $nil != theCurrent
-//    ]
-//}
-//
-//// --- ListIndexer ---
-//
-///// A list indexer
-//class ListIndexer :: Indexer
-//{
-//    list      theList.
-//    list_item theCurrent.
-//    vint      theIndex.
-//    
-//    /// Creates a list indexer
-//    constructor new list:aList
-//    [
-//        theList := aList.
-//        theCurrent := aList topItem.
-//        theIndex := 0.
-//    ]
-//
-//    /// Creates a list indexer
-//    constructor new : anObject
-//        <= new list:anObject.
-//    
-//    /// Returns false if the index out of range
-//    bool available = $nil != theCurrent.
-//
-//    /// Returns the current member
-//    get = theCurrent get.
-//    
-//    /// Sets the current member
-//    set : anObject 
-//    [
-//        theCurrent set:anObject.
-//    ]
-//    
-//    /// Reads the current index into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex
-//    [
-//        int i := theIndex.
-//        
-//        if(anIndex < i)
-//        [
-//            theCurrent := theList topItem.
-//            i := 0.
-//        ].
-//        
-//        while (i < anIndex) 
-//        [
-//            if ($nil == theCurrent)
-//                [ OutOfRangeException new; raise. ].
-//            
-//            theCurrent := theCurrent nextItem.            
-//            i := i + 1
-//        ].
-//        
-//        theIndex set int:i.
-//    ]
-//}
-//
-//// --- List ---
-//
-///// A list object
-//sealed class List :: BaseEnumerable
-//{
-//    vint      theCount.
-//    list_item theTop.
-//    list_item theLast.
-//
-//    /// Creates a list
-//    constructor new
-//    [
-//        theCount := 0.
-//    ]
-//
-//    constructor new array:l
-//    [
-//        theCount := 0.
-//        
-//        var it := l enumerator.
-//        while (it next)
-//        [
-//            $self append(it get)
-//        ].
-//    ]
-//
-//    /// Returns the top item
-//    list_item topItem = theTop.
-//
-//    /// Returns the top object
-//    first = theTop get.
-//
-//    /// Returns the last object
-//    last = theLast get.    
-//
-//    append : anObject
-//    [
-//        theCount append int:1.
-//        if($nil == theTop)
-//        [
-//            theTop := ListItem new:anObject.
-//            theLast := theTop.
-//        ];
-//        [
-//            list_item aNewItem := ListItem new:anObject.
-//            
-//            theLast setNextItem list_item:aNewItem.        
-//            theLast := aNewItem.
-//        ].
-//
-//    ]
-//
-//    insert : anObject
-//    [
-//        theCount append int:1.        
-//        
-//        list_item aNewItem := ListItem new:anObject.
-//        aNewItem setNextItem list_item:theTop.        
-//        theTop := aNewItem.
-//    ]
-//    
-//    /// Returns the list item at the specified position
-//    stacksafe list_item getItemAt int:anIndex
-//    [
-//        int       aCurrentIndex := anIndex.
-//        list_item anItem := theTop.
-//        
-//        while (aCurrentIndex > 0)
-//        [
-//            anItem := anItem nextItem.
-//            if ($nil == anItem)
-//                [ OutOfRangeException new; raise ].
-//            
-//            aCurrentIndex := aCurrentIndex - 1
-//        ].
-//        
-//        ^ anItem.
-//    ]
-//
-//    /// Returns the object at the specified position
-//    stacksafe getAt int:anIndex
-//        = $self getItemAt int:anIndex; get.
-//
-//    /// Returns the object at the specified position
-//    stacksafe setAt int:anIndex object:anObject
-//        = $self getItemAt int:anIndex; set:anObject.
-//
-//    insert : anObject at:anIndex
-//        <= insert int:anIndex object:anObject.
-//
-//    /// Inserts a new object to the specified position
-//    insert int:anIndex object:anObject
-//    [
-//        if (anIndex == 0)
-//            [ $self insert:anObject ];
-//            [
-//                list_item aNew := ListItem new:anObject.        
-//                list_item aPrevious := $self getItemAt int:(anIndex - 1).
-//                list_item aNext := aPrevious nextItem.
-//                
-//                aPrevious setNextItem list_item:aNew.
-//                aNew setNextItem list_item:aNext
-//            ]
-//    ]
-//
-//    /// Removes an object at the specified position
-//    remove int:anIndex
-//    [
-//        if ($nil == theTop)
-//            [ OutOfRangeException new; raise ].
-//        
-//        if (0 == anIndex)
-//            [
-//                theTop := theTop nextItem.
-//                if ($nil == theTop)
-//                    [ theLast := $nil. ]
-//            ];
-//            [
-//                list_item aPrevious := $self getItemAt int:(anIndex - 1).
-//                list_item aNext := aPrevious nextItem.
-//                
-//                aPrevious setNextItem list_item:(aNext nextItem).
-//                
-//                if(aNext equal reference:theLast)
-//                    [ theLast := aPrevious ].
-//            ].
-//            
-//        theCount reduce int:1.
-//    ]
-//        
-//    remove at:anIndex
-//        <= remove int:anIndex.
-//
-//    int rvprop length :: readLengthTo.
-//        
-//    /// Reads the number of list item to the output parameter
-//    stacksafe readLengthTo vint:aLength
-//    [
-//        aLength int := theCount.
-//    ]
-//    
-//    /// Clears the list
-//    clear 
-//    [
-//        theCount int := 0.
-//        
-//        theTop := $nil.
-//        theLast := $nil.
-//    ]
-//
-//    /// Returns the list enumerator
-//    enumerator = ListEnumerator new list:$self.
-//
-//    /// Returns the list indexer
-//    indexer = ListIndexer new list:$self.
-//    
-//    /// Clones the list
-//    clone 
-//    [
-//        object aList := List new.
-//        
-//        list_item anItem := theTop.        
-//        while ($nil != anItem)
-//        [
-//            aList append:(anItem get).
-//            
-//            anItem := anItem nextItem
-//        ].
-//    ]
-//}
+
+// --- ListItem ---
+
+/// A list item
+sealed class ListItem
+{
+    object      theContent.
+    T<ListItem> theNext.
+    
+    /// Creates a new item
+    constructor new : aValue
+    [
+        theContent := aValue.
+    ]
+
+    /// Returns the item object
+    get = theContent.
+            
+    /// Sets the item object
+    set : anObject
+    [
+        theContent := anObject.
+    ]    
+
+    /// Returns the next item
+    T<ListItem> nextItem = theNext.
+
+    /// Sets the next item
+    setNextItem(ListItem aNext)
+    [
+        theNext := aNext.
+    ]
+}
+
+// --- ListEnumerator ---
+
+/// A list enumerator
+class ListEnumerator :: Enumerator
+{
+    T<List>     theList.
+    T<ListItem> theCurrent.
+    
+    /// Creates a list enumerator
+    constructor new(List aList)
+    [
+        theList := aList.
+    ]
+
+    /// Creates a list enumerator
+    constructor new : anObject
+        <= new(T<List>(anObject)).
+
+    /// Returns the current object
+    get = theCurrent get.
+    
+    /// Resets the enumerator
+    reset
+    [
+        theCurrent := nil.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next
+    [
+        if (nil == theCurrent)
+            [ theCurrent := theList topItem ];
+            [ theCurrent := theCurrent nextItem ].
+            
+        ^ nil != theCurrent
+    ]
+    
+    enumerable = theList.
+}
+
+// --- ListIndexer ---
+
+/// A list indexer
+class ListIndexer :: Indexer
+{
+    T<List>     theList.
+    T<ListItem> theCurrent.
+    ref<int>    theIndex.
+    
+    /// Creates a list indexer
+    constructor new(List aList)
+    [
+        theList := aList.
+        theCurrent := aList topItem.
+        theIndex := 0.
+    ]
+
+    /// Creates a list indexer
+    constructor new : anObject
+        <= new(T<List>(anObject)).
+    
+    /// Returns false if the index out of range
+    bool available = nil != theCurrent.
+
+    /// Returns the current member
+    get = theCurrent get.
+    
+    /// Sets the current member
+    set : anObject 
+    [
+        theCurrent set:anObject.
+    ]
+    
+    /// Reads the current index into an output parameter
+    readIndexTo(ref<int> anIndex)
+    [
+        theIndex readValueTo(anIndex).
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex(int anIndex)
+    [
+        int i := theIndex.
+        
+        if(anIndex < i)
+        [
+            theCurrent := theList topItem.
+            i := 0.
+        ].
+        
+        while (i < anIndex) 
+        [
+            if (nil == theCurrent)
+                [ OutOfRangeException new; raise. ].
+            
+            theCurrent := theCurrent nextItem.            
+            i := i + 1
+        ].
+        
+        theIndex value := i.
+    ]
+    
+    stacksafe appendIndex(int anIndex)
+    [
+        int i := theIndex.
+        i := i + anIndex.
+        
+        self writeIndex(i).
+    ]
+    
+    stacksafe readLengthTo(ref<int> retVal)
+    [
+        theList readLengthTo(retVal).
+    ]
+}
+
+// --- List ---
+
+/// A list object
+public sealed class List :: interface<Enumerable>
+{
+    ref<int>    theCount.
+    T<ListItem> theTop.
+    T<ListItem> theLast.
+
+    /// Creates a list
+    constructor new
+    [
+        theCount := 0.
+    ]
+
+    constructor new(Array l)
+    [
+        theCount := 0.
+        
+        auto it := l enumerator.
+        while (it next)
+        [
+            self append(it get)
+        ].
+    ]
+
+    /// Returns the top item
+    internal T<ListItem> topItem = theTop.
+
+    /// Returns the top object
+    first = theTop get.
+
+    /// Returns the last object
+    last = theLast get.    
+
+    append : anObject
+    [
+        theCount append(1).
+        if(nil == theTop)
+        [
+            theTop := ListItem new:anObject.
+            theLast := theTop.
+        ];
+        [
+            auto aNewItem := ListItem new:anObject.
+            
+            theLast setNextItem(aNewItem).
+            theLast := aNewItem.
+        ].
+
+    ]
+
+    insert : anObject
+    [
+        theCount append(1).
+        
+        auto aNewItem := ListItem new:anObject.
+        aNewItem setNextItem(theTop).
+        theTop := aNewItem.
+    ]
+    
+    /// Returns the list item at the specified position
+    internal stacksafe T<ListItem> getItemAt(int anIndex)
+    [
+        int         aCurrentIndex := anIndex.
+        T<ListItem> anItem := theTop.
+        
+        while (aCurrentIndex > 0)
+        [
+            anItem := anItem nextItem.
+            if (nil == anItem)
+                [ OutOfRangeException new; raise ].
+            
+            aCurrentIndex := aCurrentIndex - 1
+        ].
+        
+        ^ anItem.
+    ]
+
+    /// Returns the object at the specified position
+    stacksafe getAt(int anIndex)
+        = self getItemAt(anIndex); get.
+
+    /// Returns the object at the specified position
+    stacksafe setAt(int anIndex, object anObject)
+        = self getItemAt(anIndex); set:anObject.
+
+    insert : anObject at:anIndex
+        <= insert(anIndex, anObject).
+
+    /// Inserts a new object to the specified position
+    insert(int anIndex, object anObject)
+    [
+        if (anIndex == 0)
+            [ self insert:anObject ];
+            [
+                T<ListItem> aNew := ListItem new:anObject.        
+                T<ListItem> aPrevious := self getItemAt(anIndex - 1).
+                T<ListItem> aNext := aPrevious nextItem.
+                
+                aPrevious setNextItem(aNew).
+                aNew setNextItem(aNext)
+            ]
+    ]
+
+    /// Removes an object at the specified position
+    remove(int anIndex)
+    [
+        if (nil == theTop)
+            [ OutOfRangeException new; raise ].
+        
+        if (0 == anIndex)
+            [
+                theTop := theTop nextItem.
+                if (nil == theTop)
+                    [ theLast := nil. ]
+            ];
+            [
+                T<ListItem> aPrevious := self getItemAt(anIndex - 1).
+                T<ListItem> aNext := aPrevious nextItem.
+                
+                aPrevious setNextItem(aNext nextItem).
+                
+                if(aNext equalReference:theLast)
+                    [ theLast := aPrevious ].
+            ].
+            
+        theCount reduce(1).
+    ]
+        
+    removeAt:anIndex
+        <= remove(T<int>(anIndex)).
+
+    int rvprop length :: readLengthTo.
+        
+    /// Reads the number of list item to the output parameter
+    stacksafe readLengthTo(ref<int> aLength)
+    [
+        aLength value := theCount.
+    ]
+    
+    /// Clears the list
+    clear 
+    [
+        theCount value := 0.
+        
+        theTop := nil.
+        theLast := nil.
+    ]
+
+    /// Returns the list enumerator
+    T<Enumerator> enumerator = ListEnumerator new(self).
+
+    /// Returns the list indexer
+    T<Indexer> indexer = ListIndexer new(self).
+    
+    /// Clones the list
+    T<List> clone 
+    [
+        auto aList := List new.
+        
+        T<ListItem> anItem := theTop.        
+        while (nil != anItem)
+        [
+            aList append(anItem get).
+            
+            anItem := anItem nextItem
+        ].
+        
+        ^ aList
+    ]
+}
 
 // --- ArrayList ---
 

@@ -1,11 +1,16 @@
-﻿[project]
-debug=goods.dm
-executable=goods.exe
-arguments=list.txt
-namespace=goods
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
+<configuration>
+    <project>
+        <executable>goods.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>goods</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

@@ -1,12 +1,16 @@
-﻿[project]
-executable=replace.exe
-namespace=replace
-template=console
-debuginfo=-1
-
-[files]
-replace.l
-
-[forwards]
-'program=replace'Program
-
+<configuration>
+    <project>
+        <executable>replace.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>replace</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>replace.l</include>
+        </module>
+    </files>
+</configuration>
