@@ -408,7 +408,7 @@ public sealed struct ByteNumber :: IntBaseNumber
         <= multiply(T<byte>(n)).
 
     divide:n
-        <= divide(T<byte>n).
+        <= divide(T<byte>(n)).
 
     byte add(BaseVariable v)
         <= add(v value).

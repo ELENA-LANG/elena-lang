@@ -3,15 +3,15 @@ import extensions.
 
 // --- Control ---
 
-control =
+public control =
 {
     prompt
-        = "Please select your option:" + 'newLine +
-          " 1 - current local date" + 'newLine +
-          " 2 - current UTC date" + 'newLine +
-          " 3 - current year" + 'newLine +
-          " 4 - current time" + 'newLine +
-          " 7 - exit" + 'newLine +
+        = "Please select your option:" + forwards'newLine +
+          " 1 - current local date" + forwards'newLine +
+          " 2 - current UTC date" + forwards'newLine +
+          " 3 - current year" + forwards'newLine +
+          " 4 - current time" + forwards'newLine +
+          " 7 - exit" + forwards'newLine +
           ">".
     
     proceed : aChoice
@@ -21,7 +21,7 @@ control =
             2 [ ^utcNow literal ];
             3 [ ^now year; literal ];
             4 [ ^now toShortTimeLiteral ];
-            7 [ 'program stop. ^ emptyLiteralValue ];
+            7 [ forwards'program stop. ^ emptyLiteral ];
             ! [ ^"Invalid choice" ].
     ]
 }.

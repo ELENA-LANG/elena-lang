@@ -1964,6 +1964,8 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
          else scope.raiseError(errIllegalOperation, current);
       }
       else {
+         SNode exprOpNode;
+
          if (arrayMode) {
             writer.appendNode(lxOperator, -1);
          }
@@ -1972,9 +1974,12 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
          }
          else if (expr != lxNone) {
             if (expr == lxObject) {
-               writer.newNode(lxExpression);
-               generateObjectTree(writer, expr.firstChild(), scope);
-               writer.closeNode();
+               exprOpNode = expr.nextNode();
+
+               //writer.newNode(lxExpression);
+               //generateObjectTree(writer, expr.firstChild(), scope);
+               //writer.closeNode();
+               generateExpressionTree(writer, expr, scope);
             }
             else generateExpressionTree(writer, expr, scope);
          }
@@ -1982,6 +1987,15 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
 
          writer.insert(lxBoxing);
          writer.closeNode();
+
+         while (exprOpNode != lxNone) {
+            if (exprOpNode == lxMessage) {
+               generateMessageTree(writer, exprOpNode, scope);
+               writer.insert(lxExpression);
+               writer.closeNode();
+            }
+            exprOpNode = exprOpNode.nextNode();
+         }
       }
 
       node = current;

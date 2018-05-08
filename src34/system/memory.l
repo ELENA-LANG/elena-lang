@@ -1960,7 +1960,7 @@ public class literalConvertor =
                page := 127.
             ].
             
-            self convert(aLiteral Substring(i, page), T<ByteArray>(buffer)buffer, &m).
+            self convert(aLiteral Substring(i, page), T<ByteArray>(buffer), &m).
             
             retVal := retVal add(LiteralValue fromByteArray(0, m, T<ByteArray>(buffer))).
             

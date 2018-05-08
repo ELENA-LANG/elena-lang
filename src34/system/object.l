@@ -76,7 +76,7 @@ extension commonOp
 //    ]        
 }
 
-singleton __prober
+public singleton __prober
 {
     dispatch => system'core_routines'__prober.    
 }

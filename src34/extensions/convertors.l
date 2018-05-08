@@ -1,6 +1,6 @@
 import system'collections.
 import system'routines.
-//import system'calendar.
+import system'calendar.
 import system'text.
 //import system'dynamic.
 
@@ -302,20 +302,20 @@ extension convertorOp
 //
 //    toShort
 //        = shortConvertor convert:self.
-//
-//    toInt
-//        = intConvertor convert:self.
-//        
-//    toInt(IntNumber radix)
-//        = intConvertor convert(self, radix).
-//        
-////    toHexInt
-////        = self cast:%eval to:
-////            {
-////                literal : l = intConvertor convert literal:l base:16.
-////                
-////                wide : l = intConvertor convert wide:l base:16.
-////            }.
+
+    toInt
+        = intConvertor convert:self.
+        
+    toInt(IntNumber radix)
+        = intConvertor convert(self, radix).
+        
+//    toHexInt
+//        = self cast:%eval to:
+//            {
+//                literal : l = intConvertor convert literal:l base:16.
+//                
+//                wide : l = intConvertor convert wide:l base:16.
+//            }.
 //
 ////    toLong
 ////        = longConvertor convert:self.
@@ -340,9 +340,9 @@ extension convertorOp
 
 //convertor 
 //    = { generic : n = Wrap::(n, convertorOp)~$subject get. }.
-//
-//datetime extension dateFormatterOp 
-//{
-//    toShortTimeLiteral
-//        = self __time_st; toShortTime; literal.
-//}
+
+extension<Date> dateFormatterOp 
+{
+    toShortTimeLiteral
+        = T<TimeStruct>(self) toShortTime; literal.
+}

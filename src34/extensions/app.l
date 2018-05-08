@@ -1,6 +1,6 @@
 // --- ProgramLoop ---
 
-class $ProgramLoop
+class ProgramLoop
 {
     bool   theActive.
     object theControl.
@@ -16,10 +16,10 @@ class $ProgramLoop
     
     stop [ theActive := false. ]
     
-    eval
+    closure eval
     [
         // if grettings is not defined - do nothing
-        console printLine(theControl greeting \ back:emptyLiteralValue).
+        console printLine(theControl greeting \ back:emptyLiteral).
         
         var aPrompt := theControl prompt.
         
@@ -32,4 +32,4 @@ class $ProgramLoop
     ]
 }
 
-static programLoop = $ProgramLoop new:forwards'program'control.
+public static programLoop = ProgramLoop new:forwards'program'control.
