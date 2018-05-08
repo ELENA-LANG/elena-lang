@@ -3117,7 +3117,7 @@ public class longConvertor =
 }.
 
 /// A real number convertor
-class realConvertor =
+public class realConvertor =
 {
     /// Converts an integer into a real number and saves the result into an output parameter
     convert(int aValue, ref<real> aRetVal)

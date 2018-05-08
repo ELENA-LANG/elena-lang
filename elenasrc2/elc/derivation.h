@@ -82,7 +82,7 @@ class DerivationTransformer //: public _DerivationTransformer
       ident_t          ns;
       ident_t          sourcePath;
 
-      ref_t mapIdentifier(ident_t identifier);
+      ref_t mapIdentifier(ident_t identifier, bool referenceMode);
       ref_t mapReference(SNode terminal);
       ref_t mapAttribute(SNode terminal, int& paramIndex);
       ref_t mapAttribute(SNode terminal)

@@ -10,7 +10,7 @@ bin\elc examples\console\binary\binary.prj
 bin\elc examples\console\replace\replace.prj
 bin\elc examples\console\goods\goods.prj
 bin\elc examples\console\datetime\dtcalculator.prj
-rem bin\elc examples\console\random\random.prj
+bin\elc examples\console\random\random.prj
 rem bin\elc examples\files\textdb\textdb.prj
 rem bin\elc examples\console\trans\tanslit.prj
 rem bin\elc examples\console\matrix\matrix.prj

@@ -1514,65 +1514,65 @@ extension stringOp
 //        ^ self~dispatcher replace literal:aReplacee literal:aReplacer
 //    ]
     
-//    stacksafe write object:aLiteral int:aCounter
-//    [
-//        int aNumber := aCounter.
-//        
-//        while (aNumber > 0)
-//        [
-//            self write:aLiteral. 
-//            
-//            aNumber := aNumber - 1
-//        ].
-//            
-//        ^ self
-//    ]
-//
-//    write : aLine length:aCounter
-//        = self~stringOp write object:aLine int:aCounter.
-//        
-//    write : aLine paddingLeft:aWidth
-//        = self~stringOp write:aLine paddingLeft:aWidth with:$32.
-//
-//    write : aLine paddingLeft:aWidth with:aChar
-//    [
-//        var aPaddedStr := aLine padLeft(aChar, aWidth).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self
-//    ]
-//
-//    write : aLine paddingRight:aWidth
-//        = self~stringOp write:aLine paddingRight:aWidth with:$32.
-//
-//    write : aLine paddingRight:aWidth with:aChar
-//    [
-//        var aPaddedStr := aLine padRight(aChar, aWidth).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self
-//    ]
-//    
-//    write : aLine padding:aWidth with:aChar
-//    [
-//        int aWidthInt := aWidth int.
-//        int aLength := aLine length.        
-//        
-//        if (aLength < aWidthInt)
-//            [
-//                int aLen := aWidthInt - aLength.
-//                int aLeftLen := aLen / 2.
-//                
-//                self~stringOp write object:aChar int:aLeftLen.
-//                self write:aLine.
-//                self~stringOp write object:aChar int:(aLen - aLeftLen)
-//            ];
-//            [ self write:aLine ].
-//            
-//        ^ self
-//    ]    
+    stacksafe write(object aLiteral, int aCounter)
+    [
+        int aNumber := aCounter.
+        
+        while (aNumber > 0)
+        [
+            self write:aLiteral. 
+            
+            aNumber := aNumber - 1
+        ].
+            
+        ^ self
+    ]
+
+    write : aLine length:aCounter
+        = self~stringOp write(aLine, T<int>(aCounter)).
+        
+    write : aLine paddingLeft:aWidth
+        = self~stringOp write:aLine paddingLeft:aWidth with:$32.
+
+    write : aLine paddingLeft:aWidth with:aChar
+    [
+        var aPaddedStr := aLine padLeft(aChar, aWidth).
+
+        self write:aPaddedStr.
+            
+        ^ self
+    ]
+
+    write : aLine paddingRight:aWidth
+        = self~stringOp write:aLine paddingRight:aWidth with:$32.
+
+    write : aLine paddingRight:aWidth with:aChar
+    [
+        var aPaddedStr := aLine padRight(aChar, aWidth).
+
+        self write:aPaddedStr.
+            
+        ^ self
+    ]
+    
+    write : aLine padding:aWidth with:aChar
+    [
+        int aWidthInt := aWidth int.
+        int aLength := aLine length.        
+        
+        if (aLength < aWidthInt)
+            [
+                int aLen := aWidthInt - aLength.
+                int aLeftLen := aLen / 2.
+                
+                self~stringOp write(aChar, aLeftLen).
+                self write:aLine.
+                self~stringOp write(aChar, aLen - aLeftLen)
+            ];
+            [ self write:aLine ].
+            
+        ^ self
+    ]    
 }
 
 // --- charOp ---

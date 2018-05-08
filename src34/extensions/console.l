@@ -54,106 +54,93 @@ extension outputOp
         
         ^ self writeLine
     ]    
+}
 
-//    generic printPaddingRight(object<> list)
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        int len := list length.
-//        int i := 1.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            aBuffer write(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        var aWidth := list[0].
-//        
-//        self write(aBuffer literal) paddingRight:aWidth with:$32.
-//            
-//        ^ self
-//    ]
-//
-//    generic printPaddingLeft(object<> list)
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        int len := list length.
-//        int i := 1.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            aBuffer write(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        var aWidth := list[0].
-//        
-//        self write(aBuffer literal) paddingLeft:aWidth with:$32.
-//            
-//        ^ self
-//    ]
-//
-//    generic printPaddingRightChar(object<> list)
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        int len := list length.
-//        if (len < 2)
-//        [
-//            InvalidArgumentException new; raise
-//        ].
-//        
-//        int i := 2.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            aBuffer write(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        var aWidth := list[0].
-//        var ch := list[1].
-//        
-//        self write(aBuffer literal) paddingRight:aWidth with:ch.
-//            
-//        ^ self
-//    ]
-//
-//    generic printPaddingLeftChar(object<> list)
-//    [
-//        textbuffer aBuffer := TextBuilder new.
-//        
-//        int len := list length.
-//        if (len < 2)
-//        [
-//            InvalidArgumentException new; raise
-//        ].
-//        
-//        int i := 2.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            aBuffer write(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        var aWidth := list[0].        
-//        var ch := list[1].
-//        
-//        self write(aBuffer literal) paddingLeft:aWidth with:ch.
-//            
-//        ^ self
-//    ]    
+extension outputFormatterOp
+{
+    generic printPaddingRight(int width, V<object> list)
+    [
+        auto aBuffer := TextBuilder new.
+        
+        int len := list length.
+        int i := 0.
+        while (i < len)
+        [
+            object obj := list[i].
+            
+            aBuffer write(obj~convertorOp toLiteral).
+            
+            i := i + 1
+        ].
+        
+        self write:(aBuffer literal) paddingRight:width with:$32.
+            
+        ^ self
+    ]
+
+    generic printPaddingLeft(int width, V<object> list)
+    [
+        auto aBuffer := TextBuilder new.
+        
+        int len := list length.
+        int i := 0.
+        while (i < len)
+        [
+            object obj := list[i].
+            
+            aBuffer write(obj~convertorOp toLiteral).
+            
+            i := i + 1
+        ].
+        
+        self write:(aBuffer literal) paddingLeft:width with:$32.
+            
+        ^ self
+    ]
+}
+
+extension outputCharFormatterOp
+{
+    generic printPaddingRightChar(int width, char ch, V<object> list)
+    [
+        auto aBuffer := TextBuilder new.
+        
+        int len := list length.
+
+        int i := 0.
+        while (i < len)
+        [
+            object obj := list[i].
+            
+            aBuffer write(obj~convertorOp toLiteral).
+            
+            i := i + 1
+        ].
+        
+        self write:(aBuffer literal) paddingRight:width with:ch.
+            
+        ^ self
+    ]
+
+    generic printPaddingLeftChar(int width, char ch, V<object> list)
+    [
+        auto aBuffer := TextBuilder new.
+        
+        int len := list length.
+        int i := 0.
+        while (i < len)
+        [
+            object obj := list[i].
+            
+            aBuffer write(obj~convertorOp toLiteral).
+            
+            i := i + 1
+        ].
+        
+        self write:(aBuffer literal) paddingLeft:width with:ch.
+            
+        ^ self
+    ]    
 }
 
 // --- formatterOp ---

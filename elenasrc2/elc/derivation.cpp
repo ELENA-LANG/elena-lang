@@ -351,7 +351,7 @@ ref_t DerivationTransformer::DerivationScope :: mapAttribute(SNode attribute, in
    if (attribute.argument)
       return attribute.argument;
 
-   SNode terminal = attribute.findChild(/*lxPrivate, */lxIdentifier, lxExplicitAttr);
+   SNode terminal = attribute.firstChild(lxTerminalMask);
    if (terminal == lxNone)
       terminal = attribute;
 
@@ -374,9 +374,9 @@ ref_t DerivationTransformer::DerivationScope :: mapAttribute(SNode attribute, in
    }
 }
 
-ref_t DerivationTransformer::DerivationScope :: mapIdentifier(ident_t identifier)
+ref_t DerivationTransformer::DerivationScope :: mapIdentifier(ident_t identifier, bool referenceMode)
 {
-   return compilerScope->resolveImplicitIdentifier(ns, identifier, false, *imports);
+   return compilerScope->resolveImplicitIdentifier(ns, identifier, referenceMode, *imports);
 }
 
 ref_t DerivationTransformer::DerivationScope :: mapReference(SNode terminal)
@@ -386,7 +386,7 @@ ref_t DerivationTransformer::DerivationScope :: mapReference(SNode terminal)
       ref_t attrRef = compilerScope->attributes.get(terminal.identifier());
       if (!attrRef) {
          // otherwise try resolve as an identifier
-         return mapIdentifier(terminal.identifier());
+         return mapIdentifier(terminal.identifier(), false);
       }
       else return attrRef;
    }
@@ -1750,7 +1750,7 @@ ref_t DerivationTransformer :: mapNewTemplate(SNode node, DerivationScope& scope
       attrName.append('#');
       attrName.appendInt(prefixCounter);
 
-      attrRef = scope.mapIdentifier(attrName.c_str());
+      attrRef = scope.mapIdentifier(attrName.c_str(), false);
       if (!attrRef)
          scope.raiseError(errUnknownSubject, node);
 
@@ -2594,7 +2594,7 @@ inline bool checkVarTemplateBrackets(SNode node)
 bool DerivationTransformer :: checkVariableDeclaration(SNode node, DerivationScope& scope)
 {
    SNode current = node.firstChild();
-   if (current != lxObject || !current.existChild(lxIdentifier/*, lxPrivate*/))
+   if (current != lxObject || !current.existChild(lxIdentifier, lxReference, lxGlobalReference))
       return false;
 
    SNode nextNode = current.nextNode();
@@ -2759,7 +2759,7 @@ ref_t DerivationTransformer :: mapCodeTemplateName(SNode node, int codeCounter, 
 
    ref_t reference = 0;
    if (!globalOne) {
-      reference = scope.mapIdentifier(attrName);
+      reference = scope.mapIdentifier(attrName, node == lxReference);
       if (!reference && node == lxReference)
          reference = scope.compilerScope->mapFullReference(attrName.c_str(), true);
    }
@@ -2793,7 +2793,7 @@ ref_t DerivationTransformer :: mapTemplateName(SNode node, int prefixCounter, De
 
    ref_t reference = 0;
    if (!globalOne) {
-      reference = scope.mapIdentifier(className);
+      reference = scope.mapIdentifier(className, node == lxReference);
       if (!reference && node == lxReference)
          reference = scope.compilerScope->mapFullReference(className.c_str(), true);
    }

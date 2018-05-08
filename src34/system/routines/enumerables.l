@@ -309,7 +309,7 @@ public extension enumerableOp
 
 // --- indexableOp ---
 
-extension indexableOp
+public extension indexableOp
 {
 //    exchange : anIndex1 : anIndex2
 //        = self~indexableOp exchange int:anIndex1 int:anIndex2.

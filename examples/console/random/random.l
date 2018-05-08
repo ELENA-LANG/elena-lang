@@ -10,7 +10,7 @@ const int cols = 6.
 const int runCount = 1000000.
 const int distGroupCount = 20.
 
-program =
+public program =
 [
     var intGroupSize := (1.0r + IntNumber max) / distGroupCount.
 
@@ -57,12 +57,12 @@ program =
     0 till:distGroupCount do(:i)
     [
         console printPaddingLeft(12, (i * intGroupSize) toInt,"-").
-        console printPaddingLeft(12, ((i + 1) * intGroupSize - 1) toInt).
-        console printPaddingLeft(12, intCounts[i]).
+//        console printPaddingLeft(12, ((i + 1) * intGroupSize - 1) toInt).
+//        console printPaddingLeft(12, intCounts[i]).
 
-        console printPaddingLeft(14, i real / distGroupCount,"-").
-        console printPaddingLeft(12, (i + 1) real / distGroupCount).
-        console printPaddingLeft(12, realCounts[i]).
+//        console printPaddingLeft(14, i real / distGroupCount,"-").
+//        console printPaddingLeft(12, (i + 1) real / distGroupCount).
+//        console printPaddingLeft(12, realCounts[i]).
                 
         console writeLine.
     ].

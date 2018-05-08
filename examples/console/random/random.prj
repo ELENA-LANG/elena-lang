@@ -1,12 +1,16 @@
-﻿[project]
-executable=random.exe
-namespace=random
-template=console
-debuginfo=-1
-
-[files]
-random.l
-
-[forwards]
-'program=random'program
-
+<configuration>
+    <project>
+        <executable>random.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>random</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>random.l</include>
+        </module>
+    </files>
+</configuration>
