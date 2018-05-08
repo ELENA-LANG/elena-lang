@@ -1,7 +1,7 @@
 <configuration>
-    <project>
+    <project>        
         <executable>goods.exe</executable>
-        <arguments></arguments>
+        <arguments>list.txt</arguments>
         <output></output>
         <options></options>
         <namespace>goods</namespace>

@@ -2145,16 +2145,13 @@ void CompilerLogic :: optimizeBranchingOp(_CompilerScope&, SNode node)
 
 ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef)
 {
-   if (!implicitSignatureRef || !targetRef)
+   if (!targetRef)
       return 0;
 
    //compatible = isSignatureCompatible(scope, signatureRef, signatures);
 
 //   bool openArg = getAbsoluteParamCount(multiMessage) == OPEN_ARG_COUNT;
 //   ident_t sour_sign = scope.module->resolveSubject(implicitSignatureRef);
-
-   ref_t signatures[OPEN_ARG_COUNT];
-   size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
 
    ClassInfo info;
    if (defineClassInfo(scope, info, targetRef)) {
@@ -2167,7 +2164,16 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
          ref_t internalRef = scope.module->mapAction(internalName.c_str(), signRef, false);
 
          multiMessage = overwriteAction(multiMessage, internalRef);
+         if (!implicitSignatureRef)
+            // if no signature provided - return the general internal message
+            return multiMessage;
       }
+
+      if (!implicitSignatureRef)
+         return 0;
+
+      ref_t signatures[OPEN_ARG_COUNT];
+      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
 
       ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
       if (listRef) {
