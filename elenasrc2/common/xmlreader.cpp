@@ -294,7 +294,7 @@ bool XMLTree :: save(path_t path, int encoding, bool formatted)
       bool ignoreWhitespace = true;
       for (size_t i = 0; i < getlength(_content); i++) {
          if (_content[i] == '<') {
-            if (_content[i + 1] != '/') {
+            if (_content[i + 1] != '/') { 
                openning = true;
                inlineMode = false;
                indent += 4;
@@ -313,6 +313,7 @@ bool XMLTree :: save(path_t path, int encoding, bool formatted)
 
                indent -= 4;
             }
+            ignoreWhitespace = false;
          }
          else if (_content[i] == '>') {
             if (openning)

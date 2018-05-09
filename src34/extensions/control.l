@@ -111,13 +111,13 @@ extension forLoopOp
 
 extension loopOp
 {
-//    doWhile:anAction
-//    [
-//        while (self bool)
-//        [
-//            anAction eval.
-//        ].
-//    ]
+    doWhile:anAction
+    [
+        while (T<bool>(self))
+        [
+            anAction().
+        ].
+    ]
     
     doWhile
     [

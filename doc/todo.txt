@@ -3,7 +3,7 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * IDE : do not add extra new lines when saving the project, remove whitespaces on load
+                 * cast message : should not be generated for interface / limited implementation
 
                  * IDE : fix goto routine (with nested ns files)
 

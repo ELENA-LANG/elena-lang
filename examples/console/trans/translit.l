@@ -44,14 +44,14 @@ const rusLatRules =
 
 Transliteration = (:aText)
 [
-    var anOutput := TextBuffer new.
+    var anOutput := TextBuilder new.
     
     aText forEach(:aChar)
     [
         var aRule := rusLatRules seekEach
             (:x)( x from == aChar literal ).
                 
-        if ($nil == aRule)
+        if (nil == aRule)
             [ anOutput << aChar. ];
             [ anOutput << aRule to. ].
     ].

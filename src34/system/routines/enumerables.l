@@ -164,10 +164,10 @@ public extension enumerableOp
 //
 //    multi runFor:aParam eachPair:aFunction
 //        = self~enumerableOp runFor:aParam eachPair(:n:m)(aFunction(n,m)).
-//
-//    seekEach(BaseFunction1 aFunction)
-//        = aFunction retrieve enumerator:(self enumerator).
-//
+
+    seekEach(Func1 f)
+        = f retrieve(T<Enumerator>(self enumerator)).
+
 //    seekEach(ExtensionMessage anExtMessage)
 //        = self~enumerableOp seekEach(:n)(n~anExtMessage eval).
 //        

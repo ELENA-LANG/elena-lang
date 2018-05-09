@@ -27,12 +27,12 @@ interface Enumerator<type>
     abstract bool next []
     
     abstract type get []
-//    
-//    /// Resets the enumerator
-//    abstract reset []
-//    
-//    /// returns the enumerator owner
-//    abstract enumerable []
+    
+    /// Resets the enumerator
+    abstract reset []
+    
+    /// returns the enumerator owner
+    abstract enumerable []
 
     abstract cast T<Enumerator> []
     

@@ -15,6 +15,13 @@ sealed array<template_subj> :: Indexable<template_subj>
         @theLength := self length.
         
         template_subj get = self getAt(@theIndex).
+        
+        enumerable = self.
+        
+        reset
+        [
+            @theIndex := -1
+        ]
     }.
 
     cast T<Indexable> = Indexable::{ /*embeddable dispatch => self.*/T<Indexer> indexer => self. }.
@@ -1086,7 +1093,7 @@ const literal public emptyLiteral = "".
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-public sealed __string LiteralValue :: BaseValue
+public sealed __string LiteralValue :: BaseValue, interface<Enumerable<char>>
 {
     dynamic<byte> theArray.
 
@@ -1283,9 +1290,9 @@ public sealed __string LiteralValue :: BaseValue
     stacksafe internal save(int anIndex, ByteArray anArray, int aRetVal)
         => system'core_routines'__literal.
 
-//    /// Returns the string enumerator
-//    enumerator = LiteralEnumerator new literal:$self.
-//
+    /// Returns the string enumerator
+    enumerator = LiteralEnumerator new(self).
+
 //    /// Returns the string indexer
 //    indexer = LiteralIndexer new literal:$self.
     
@@ -2215,64 +2222,71 @@ public class wideConvertor =
         = T<wide>(anObject literal).
 }.
 
-//// === Enumerators / Indexers
-//
-//// --- LiteralEnumerator ---
-//
-///// A literal enumerator
-//class LiteralEnumerator :: Enumerator
-//{
-//    literal theLiteral.
-//    vint    theIndex.
-//    vint    theDiff.
-//    char    theChar.
-//    
-//    /// Creates an enumerator
-//    constructor new : anObject
-//        <= new literal:anObject.
-//    
-//    /// Creates an enumerator
-//    constructor new literal:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := $0.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex := -1.
-//        theDiff := 1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        int aLength := theLiteral length.
-//        
-//        theIndex append int:theDiff.
-//        
-//        if (theIndex < aLength)
-//            [
-//                theChar := theLiteral getAt int:theIndex.                
-//                
-//                theChar readLengthTo vint:theDiff.
-//                
-//                ^ true
-//            ].
-//
-//        theDiff := 0.
-//        theChar := $0.
-//
-//        ^ false
-//    ]
-//    
-//    /// Returns the current character
-//    get = theChar.
-//}
-//
+// === Enumerators / Indexers
+
+// --- LiteralEnumerator ---
+
+/// A literal enumerator
+class LiteralEnumerator :: Enumerator<char>
+{
+    literal  theLiteral.
+    ref<int> theIndex.
+    ref<int> theDiff.
+    char     theChar.
+    
+    /// Creates an enumerator
+    constructor new : anObject
+        <= new(T<literal>(anObject)).
+    
+    /// Creates an enumerator
+    constructor new(literal aLiteral)
+    [
+        theLiteral := aLiteral.
+        theIndex := -1.
+        theDiff := 1.
+        theChar := $0.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex value := -1.
+        theDiff value := 1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next
+    [
+        int aLength := theLiteral length.
+        
+        theIndex append(T<int>(theDiff)).
+        
+        if (theIndex < aLength)
+            [
+                theChar := theLiteral getAt(T<int>(theIndex)).
+                
+                theChar readLengthTo(theDiff).
+                
+                ^ true
+            ].
+
+        theDiff := 0.
+        theChar := $0.
+
+        ^ false
+    ]
+    
+    cast T<Enumerator> = Enumerator::
+    {
+        embeddable dispatch => self.
+    }.
+    
+    enumerable = theLiteral.
+    
+    /// Returns the current character
+    char get = theChar.
+}
+
 //// --- LiteralIndexer ---
 //
 ///// A literal value indexer

@@ -180,36 +180,6 @@ sealed public class StringWriter :: BaseVariable
         self write:forwards'newLine.
     ]    
 
-//    writeFormatted(object format, object o1)
-//        = self printFormatted(format, o1).
-//
-//    writeFormatted(object format, object o1, object o2)
-//        = self printFormatted(format, o1, o2).
-//
-//    writeFormatted(object format, object o1, object o2, object o3)
-//        = $self printFormatted(format, o1, o2, o3).
-//
-//    writeFormatted(object format, object o1, object o2, object o3, object o4)
-//        = $self printFormatted(format, o1, o2, o3, o4).
-//
-//    writeFormatted(object format, object o1, object o2, object o3, object o4, object o5)
-//        = $self printFormatted(format, o1, o2, o3, o4, o5).
-//
-//    writeFormatted(object format, object o1, object o2, object o3, object o4, object o5, object o5)
-//        = $self printFormatted(format, o1, o2, o3, o4, o5, o6).
-//
-//    writeFormatted : format : o1 : o2: o3: o4: o5: o6: o7
-//        = $self printFormatted(format, o1, o2, o3, o4, o5, o6, o7).
-//
-//    writeFormatted : format : o1 : o2: o3: o4: o5: o6: o7: o8
-//        = $self printFormatted(format, o1, o2, o3, o4, o5, o6, o7, o8).
-//
-//    writeFormatted : format : o1 : o2: o3: o4: o5: o6: o7: o8: o9
-//        = $self printFormatted(format, o1, o2, o3, o4, o5, o6, o7, o8, o9).
-
-//    generic writeFormatted(literal s, V<object> args)
-//        = self printFormatted(s, args).
-
     set value : aText
     [
         theValue := aText.
