@@ -854,13 +854,13 @@ public extension<T<IntArray>> intArrayOp
         ^ self
     ]
     
-//    populate(Func1 f)
-//        = self~intArrayOp populate(:n)<int,int>[ ^f(n) ].    
+    populate(Func1 f)
+        = self~intArrayOp populate(:n)<int,int>[ ^f(n) ].    
 }
 
 // --- arrayOp ---
 
-extension<Array> arrayOp
+public extension<Array> arrayOp
 {
 //    exchange : anIndex1 : anIndex2
 //        = self~arrayOp exchange int:anIndex1 int:anIndex2.
@@ -953,9 +953,9 @@ extension<Array> arrayOp
         ^ self
     ]
     
-//    populate(BaseFunction1 aFunction)
-//        = self~arrayOp populate(:n)<int>[ ^aFunction eval:n ].
-//
+    populate(Func1 f)
+        = self~arrayOp populate(:n)<int,object>[ ^f(T<int>(n)) ].
+
 //    multi populate : anAction
 //        = self~arrayOp populate(:n)<int>[ ^anAction eval:n ].    
 //    

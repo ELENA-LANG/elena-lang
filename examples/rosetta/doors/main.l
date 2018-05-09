@@ -3,7 +3,7 @@ import extensions.
 
 // --- program ---
 
-program =
+public program =
 [
     var Doors := Array new:100; populate(:n)( false ).
     
@@ -11,7 +11,7 @@ program =
     [
         i till:100 by(i + 1) do(:j)
         [  
-            Doors[j] := Doors[j] not
+            Doors[j] := Doors[j] inverted
         ]
     ].
             

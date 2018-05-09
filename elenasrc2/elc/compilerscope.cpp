@@ -476,7 +476,11 @@ ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage,
       closureName.append('#');
       closureName.appendInt(paramCount + 1);
 
-      ref_t templateReference = mapFullReference(closureName, true);
+      ref_t templateReference = 0;
+      if (isWeakReference(closureName)) {
+         templateReference = module->mapReference(closureName, true);
+      }
+      else templateReference = mapFullReference(closureName, true);
 
       return generateTemplate(compiler, templateReference, parameters);
    }

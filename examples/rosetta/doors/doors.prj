@@ -1,12 +1,16 @@
-﻿[project]
-executable=doors.exe
-namespace=doors
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
-[forwards]
-'program=doors'program
-
+<configuration>
+    <project>
+        <executable>doors.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>doors</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

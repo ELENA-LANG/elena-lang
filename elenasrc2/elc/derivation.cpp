@@ -2304,6 +2304,8 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
          case lxIdleMsgParameter:
          case lxMessageParameter:
          case lxMessage:
+            insertBookmarks(writer, bookmarks);
+
             expressionExpected = false;
             generateMessageTree(writer, current, scope);
             writer.insert(lxExpression);
@@ -4034,11 +4036,12 @@ void DerivationTransformer :: recognizeRootAttributes(SNode node, DerivationScop
       current = current.prevNode();
    }
    bool privateOne = true;
-      bool visibilitySet = false;
-      while (current == lxAttribute/* || current == lxAttributeDecl*/) {
+   bool visibilitySet = false;
+   while (current.compare(lxAttribute, lxRefAttribute)) {
+      if (current == lxAttribute) {
          bool templateParam = false;
          ref_t attrRef = mapAttribute(current, scope, templateParam);
-   
+
          if (templateParam) {
             // ignore template attributes
          }
@@ -4050,8 +4053,9 @@ void DerivationTransformer :: recognizeRootAttributes(SNode node, DerivationScop
             }
             else scope.raiseError(errInvalidHint, current);
          }
-         current = current.prevNode();
       }
+      current = current.prevNode();
+   }
 
    SNode nameTerminal = nameNode.firstChild(lxTerminalMask);
    if (nameTerminal != lxIdentifier)

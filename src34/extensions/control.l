@@ -68,10 +68,10 @@ extension forLoopOp
 //
 //    multi to:aMaxValue do:anAction
 //        = self~forLoopOp to:aMaxValue do(:n)[ anAction eval:n ].
-//
-//    to(object aMaxValue) by(object aStep) do(func1 aFunction)
-//        = aFunction run enumerator(RangeEnumerator new from:self to:aMaxValue by:aStep).
-//
+
+    to(object aMaxValue) by(object aStep) do(Func1 aFunction)
+        = aFunction run(RangeEnumerator from:self to:aMaxValue by:aStep).
+
 //    to(object aMaxValue) by(object aStep) do(ExtensionMessage aMessage)
 //        = self~forLoopOp to:aMaxValue by:aStep do(:n)[ n~aMessage get ].
 //
@@ -86,13 +86,13 @@ extension forLoopOp
 //
 //    multi till:aMaxValue do:anAction
 //        = self~forLoopOp to:aMaxValue do(:n)[ anAction eval:n ].
-//
-////    till(IntNumber aMaxValue) do(nfunc aFunction)
-////        = aFunction run enumerator:(IntervalEnumerator new from:self till:aMaxValue by:aStep).
-////
-//    till(object aMaxValue) by(object aStep) do(func1 aFunction)
+
+//    till(IntNumber aMaxValue) do(nfunc aFunction)
 //        = aFunction run enumerator:(IntervalEnumerator new from:self till:aMaxValue by:aStep).
 //
+    till(object aMaxValue) by(object aStep) do(Func1 aFunction)
+        = aFunction run(IntervalEnumerator from:self till:aMaxValue by:aStep).
+
 //    till(object aMaxValue) by(object aStep) do(ExtensionMessage aMessage)
 //        = self~forLoopOp to:aMaxValue by:aStep do(:n)[ n~aMessage get ].
 //
