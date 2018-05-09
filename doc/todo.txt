@@ -3,8 +3,6 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * cast message : should not be generated for interface / limited implementation
-
                  * IDE : fix goto routine (with nested ns files)
 
                  * debugger : the full symbol name should be used (rather than a relative one)

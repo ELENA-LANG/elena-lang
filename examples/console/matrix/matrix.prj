@@ -1,16 +1,20 @@
-﻿[project]
-executable=matrix.exe
-output=obj
-namespace=matrix
-template=console
-debuginfo=-1
-
-[files]
-matrix.l
-
-[forwards]
-'program=extensions'programLoop
-'program'control=matrix'control
-'program'output=extensions'consoleEx
-'program'input=extensions'consoleEx
-
+<configuration>
+    <project>
+        <executable>matrix.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>matrix</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>matrix.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="program">extensions'programLoop</forward>
+        <forward key="program'control">matrix'control</forward>
+    </forwards>
+</configuration>

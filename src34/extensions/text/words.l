@@ -186,10 +186,12 @@ public class TokenEnumerator :: Enumerator<literal>, interface<Enumerator>
     constructor new : val
         <= new(val literal, SimpleStatemachine new).
     
-//    reset 
-//    [
-//        theIndex int := 0.
-//    ]
+    reset 
+    [
+        theIndex value := 0.
+    ]
+    
+    enumerable = theLiteral.
     
     bool next
     [

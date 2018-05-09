@@ -904,104 +904,104 @@ public sealed RealArray :: Indexable<real>, array<real>
     clone = RealArray new(self).
 }
 
-//// --- RealMatrix ---
-//
-//sealed class RealMatrix
-//{
-//    realarray theArray.
-//    int       theRows.
-//    int       theColumns.
-//    
-//    stacksafe constructor new int:Rows int:Columns
-//    [
-//        theArray := RealArray new int:(Columns * Rows).
-//        
-//        theRows := IntNumber new int:Rows.
-//        theColumns := IntNumber new int:Columns.
-//    ]
-//        
-//    constructor multi new : Rows : Columns
-//        <= new int:Columns int:Rows.
-//
-//    /// Reads the matrix lengths to the output parameter
-//    stacksafe readLengthsTo vint:Rows vint:Columns
-//    [
-//        Columns int := theColumns.
-//        Rows int := theRows.
-//    ]
-//
-//    stacksafe readLengthTo vint:retVal
-//    [
-//        retVal int := theRows.
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//
-//    stacksafe readColumnsTo vint:retVal
-//    [
-//        retVal int := theColumns.
-//    ]
-//    
-//    int rvprop columns :: readColumnsTo.
-//
-//    stacksafe readRowsTo vint:retVal
-//    [
-//        retVal int := theRows
-//    ]
-//    
-//    int rvprop rows :: readRowsTo.
-//
-//    /// Writes an integer value at the specified position
-//    stacksafe write int:i int:j real:aValue
-//    [
-//        int anIndex := i * theColumns + j.
-//        
-//        theArray setAt int:anIndex real:aValue
-//    ]
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    stacksafe read int:i int:j vreal:aValue
-//    [
-//        int anIndex := i * theColumns + j.
-//        
-//        theArray read int:anIndex vreal:aValue
-//    ]
-//
-//    embeddable real getAt int:i int:j
-//    [
-//        real retVal := 0.0r.
-//        $self read int:i int:j vreal:retVal.
-//        
-//        ^ retVal
-//    ]
-//
-//    getAt : i : j
-//    [
-//        real aValue := 0.0r.
-//        $self read int:i int:j vreal:aValue.
-//        
-//        ^ RealNumber new real:aValue
-//    ]
-//
-//    setAt : i : j : aValue
-//    [
-//        $self write int:i int:j real:aValue
-//    ]
-//
-//    /// Returns a row
-//    getAt : i =
-//    {
-//        length = theColumns.
-//        
-//        getAt : j
-//            = $self getAt(i,j).
-//        
-//        setAt : j : aValue
-//        [
-//            $self setAt(i,j,aValue)
-//        ]
-//    }.
-//}
+// --- RealMatrix ---
+
+public sealed class RealMatrix
+{
+    T<RealArray> theArray.
+    int          theRows.
+    int          theColumns.
+    
+    stacksafe constructor new(int Rows, int Columns)
+    [
+        theArray := RealArray new(Columns * Rows).
+        
+        theRows := Rows.
+        theColumns := Columns.
+    ]
+        
+    constructor new(object Rows, object Columns)
+        <= new(T<int>(Columns), T<int>(Rows)).
+
+    /// Reads the matrix lengths to the output parameter
+    stacksafe readLengthsTo(ref<int> Rows, ref<int> Columns)
+    [
+        Columns value := theColumns.
+        Rows value := theRows.
+    ]
+
+    stacksafe readLengthTo(ref<int> retVal)
+    [
+        retVal value := theRows.
+    ]
+    
+    int rvprop length :: readLengthTo.
+
+    stacksafe readColumnsTo(ref<int> retVal)
+    [
+        retVal value := theColumns.
+    ]
+    
+    int rvprop columns :: readColumnsTo.
+
+    stacksafe readRowsTo(ref<int> retVal)
+    [
+        retVal value := theRows
+    ]
+    
+    int rvprop rows :: readRowsTo.
+
+    /// Writes an integer value at the specified position
+    stacksafe write(int i, int j, real aValue)
+    [
+        int anIndex := i * theColumns + j.
+        
+        theArray setAt(anIndex, aValue)
+    ]
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    stacksafe read(int i, int j, ref<real> aValue)
+    [
+        int anIndex := i * theColumns + j.
+        
+        theArray read(anIndex, aValue)
+    ]
+
+    embeddable real getAt(int i, int j)
+    [
+        real retVal := 0.0r.
+        self read(i, j, &retVal).
+        
+        ^ retVal
+    ]
+
+    getAt(object i, object j)
+    [
+        real aValue := 0.0r.
+        self read(T<int>(i), T<int>(j), &aValue).
+        
+        ^ RealNumber new(aValue)
+    ]
+
+    setAt(object i, object j, object aValue)
+    [
+        self write(i, j, aValue)
+    ]
+
+    /// Returns a row
+    getAt : i =
+    {
+        length = theColumns.
+        
+        getAt : j
+            = self getAt(i,j).
+        
+        setAt(object j, object aValue)
+        [
+            self setAt(i,j,aValue)
+        ]
+    }.
+}
 
 // --- CharArray ---
 
@@ -1012,9 +1012,9 @@ public sealed CharArray :: Indexable<char>, array<char>
     constructor new(int len)
         = dynamic<char>(len).
 
-//    /// Creates the new array with a specified length
-//    constructor new : aLength
-//        <= new int:aLength.
+    /// Creates the new array with a specified length
+    constructor new : aLength
+        <= new(T<int>(aLength)).
 
     /// Creates the copy of a subarray
     constructor new(int anIndex, int aLength, CharArray anArray)

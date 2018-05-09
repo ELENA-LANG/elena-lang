@@ -823,40 +823,40 @@ extension<real> realOp
         = self <= 0.0r.
 }
 
-//// --- intArrayOp ---
-//
-//intarray extension intArrayOp
-//{
-//    stacksafe exchange int:anIndex1 int:anIndex2
-//    [
-//        int n1 := 0.
-//        int n2 := 0.
-//
-//        self read int:anIndex1 vint:n1.
-//        self read int:anIndex2 vint:n2.
-//        
-//        self write int:anIndex1 int:n2.
-//        self write int:anIndex2 int:n1.
-//    ]
-//
-//    populate nfunc:anIndexFunc
-//    [
-//        int anIndex := 0.
-//        int aLength := self length.
-//        
-//        while (anIndex < aLength)
-//        [            
-//            self write int:anIndex int(anIndexFunc eval int:anIndex).
-//            
-//            anIndex := anIndex + 1
-//        ].
-//        
-//        ^ self
-//    ]
-//    
-//    populate(BaseFunction1 aFunction)
-//        = self~intArrayOp populate(:n)<int>[ ^aFunction eval:n ].    
-//}
+// --- intArrayOp ---
+
+public extension<T<IntArray>> intArrayOp
+{
+    stacksafe exchange(int anIndex1, int anIndex2)
+    [
+        int n1 := 0.
+        int n2 := 0.
+
+        self read(anIndex1, &n1).
+        self read(anIndex2, &n2).
+        
+        self write(anIndex1, n2).
+        self write(anIndex2, n1).
+    ]
+
+    populate(Func<int,int> f)
+    [
+        int anIndex := 0.
+        int aLength := self length.
+        
+        while (anIndex < aLength)
+        [            
+            self write(anIndex, f(anIndex)).
+            
+            anIndex := anIndex + 1
+        ].
+        
+        ^ self
+    ]
+    
+//    populate(Func1 f)
+//        = self~intArrayOp populate(:n)<int,int>[ ^f(n) ].    
+}
 
 // --- arrayOp ---
 

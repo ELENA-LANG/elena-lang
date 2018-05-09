@@ -952,7 +952,7 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
             //else if (test(flags, elDynamicSubjectRole)) {
             //   watch->write(this, fieldPtr, fieldName, _T("<subject>"));
             //}
-            //// if unknown check if it is a group object
+            // if unknown check if it is a group object
             //else if (test(flags, elGroup)) {
             //   watch->write(this, fieldPtr, fieldName, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
             //}
@@ -988,7 +988,7 @@ void DebugController :: readList(_DebuggerWatch* watch, int* list, int length)
          //else if (test(flags, elDynamicSubjectRole)) {
          //   watch->write(this, memberPtr, index, _T("<subject>"));
          //}
-         //// if unknown check if it is a group object
+         // if unknown check if it is a group object
          //else if (test(flags, elGroup)) {
          //   watch->write(this, memberPtr, index, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
          //}

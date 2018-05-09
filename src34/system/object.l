@@ -41,8 +41,6 @@ public enum class BoolValue
 
     abstract bool xor : aBool []
 
-//    abstract bool not []
-
     abstract bool inverted []
 
     abstract clone []

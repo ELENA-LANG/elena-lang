@@ -3240,7 +3240,7 @@ public class realConvertor =
 
 // --- realOpController ---
 
-class realOpController =
+public class realOpController =
 {
     stacksafe exp(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.

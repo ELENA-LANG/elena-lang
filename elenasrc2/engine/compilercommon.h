@@ -61,7 +61,7 @@
 #define V_EXTENSION      (ref_t)-8203
 //#define V_NOSTRUCT       (ref_t)-8204
 #define V_ACTION         (ref_t)-8205
-//#define V_GROUP          (ref_t)-8206
+#define V_GROUP          (ref_t)-8206
 #define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
 //#define V_TAPEGROUP      (ref_t)-8209
