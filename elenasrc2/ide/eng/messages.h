@@ -1,14 +1,14 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE Messages
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef messagesH
 #define messagesH
 
 // --- Common constants ---
-#define APP_NAME                                _T("ELENA IDE 3.3.0")
+#define APP_NAME                                _T("ELENA IDE 3.4.0")
 #define EDITOR_NAME                             _T("ELENA IDE Editor")
 
 // --- UI Messages ---

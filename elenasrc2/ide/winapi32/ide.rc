@@ -397,7 +397,7 @@ BEGIN
             VALUE "CompanyName", "ELENA Programming Language by Alex Rakov"
             VALUE "FileDescription", "ELENA IDE"
             VALUE "FileVersion", VER_FILE_VERSION_STR "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2016"
+            VALUE "LegalCopyright", "Copyright (C) 2018"
             VALUE "OriginalFilename", "elide"
             VALUE "ProductName", "ELENA Programming Language"
             VALUE "ProductVersion", VER_PRODUCT_VERSION_STR "\0"

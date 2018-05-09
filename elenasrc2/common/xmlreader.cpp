@@ -291,8 +291,9 @@ bool XMLTree :: save(path_t path, int encoding, bool formatted)
       int indent = -4;
       bool inlineMode = false;
       bool openning = true;
+      bool ignoreWhitespace = true;
       for (size_t i = 0; i < getlength(_content); i++) {
-         if (_content[i] == '<') {            
+         if (_content[i] == '<') {
             if (_content[i + 1] != '/') {
                openning = true;
                inlineMode = false;
@@ -313,9 +314,20 @@ bool XMLTree :: save(path_t path, int encoding, bool formatted)
                indent -= 4;
             }
          }
-         else if (_content[i] == '>' && openning) {
-            inlineMode = true;
+         else if (_content[i] == '>') {
+            if (openning)
+               inlineMode = true;
+
+            ignoreWhitespace = true;
          }
+         else if (isWhitespace(_content[i])) {
+            // ignore existing line breaks
+            if (ignoreWhitespace)
+               continue;
+         }
+         else if (inlineMode) {
+            ignoreWhitespace = false;
+         }            
 
          writer.writeChar(_content[i]);
       }

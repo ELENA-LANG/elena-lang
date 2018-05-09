@@ -12,7 +12,7 @@ bin\elc examples\console\goods\goods.prj
 bin\elc examples\console\datetime\dtcalculator.prj
 bin\elc examples\console\random\random.prj
 bin\elc examples\files\textdb\textdb.prj
-rem bin\elc examples\console\trans\tanslit.prj
+bin\elc examples\console\trans\tanslit.prj
 rem bin\elc examples\console\matrix\matrix.prj
 rem bin\elc examples\console\pi2\pi2.prj
 rem bin\elc examples\script\interpreter\interpreter.prj
