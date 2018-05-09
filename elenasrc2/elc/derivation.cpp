@@ -97,7 +97,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
          _writer.newNode(lxAssignOperator);
          break;
       case nsArrayOperation:
-         _writer.newNode(lxOperator, REFER_MESSAGE_ID);
+         _writer.newNode(lxArrOperator, REFER_MESSAGE_ID);
          break;
       case nsXInlineClosure:
          _writer.newNode(lxInlineClosure);
@@ -2304,8 +2304,7 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
          case lxIdleMsgParameter:
          case lxMessageParameter:
          case lxMessage:
-            insertBookmarks(writer, bookmarks);
-
+            //insertBookmarks(writer, bookmarks);
             expressionExpected = false;
             generateMessageTree(writer, current, scope);
             writer.insert(lxExpression);
@@ -2322,6 +2321,16 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
                writer.closeNode();
                expressionExpected = true;
             }
+            break;
+         case lxArrOperator:
+            expressionExpected = false;
+            copyOperator(writer, current);
+            if (isTemplateBracket(current.nextNode())) {
+               generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
+            }
+            else generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | EXPRESSION_IMPLICIT_MODE | EXPRESSION_OBJECT_REQUIRED);
+            writer.insert(lxExpression);
+            writer.closeNode();
             break;
          case lxOperator:
          {

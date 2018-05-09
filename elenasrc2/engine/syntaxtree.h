@@ -187,6 +187,7 @@ enum LexicalType
    lxBaseParent      = 0x10023,
    lxAssignOperator  = 0x10024,
    lxOperator        = 0x10025,
+   lxArrOperator     = 0x10026,
    lxIntVariable     = 0x10028,
    lxLongVariable    = 0x10029,
    lxReal64Variable  = 0x1002A,

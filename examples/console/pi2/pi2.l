@@ -8,7 +8,7 @@ public program =
 [
     int casas := 50.
     (forwards'program'arguments length > 1)?
-        [ casas := (forwards'program'arguments[1]) toInt. ].
+        [ casas := forwards'program'arguments[1] toInt. ].
     
     var aStart := now.
     
