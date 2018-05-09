@@ -1,24 +1,24 @@
 import system'calendar.
-import system'collections.
+//import system'collections.
 import extensions.
 
 const int ARRAY_SIZE = 32768.
 
-program =
+public program =
 [
-    var casas := 50.
-    ('program'arguments length > 1)?
-        [ casas := 'program'arguments[1] toInt. ].
+    int casas := 50.
+    (forwards'program'arguments length > 1)?
+        [ casas := (forwards'program'arguments[1]) toInt. ].
     
     var aStart := now.
     
 	//#var x := system'Array new &length:ARRAY_SIZE.
-    intarray x := system'IntArray new:ARRAY_SIZE.
+    auto x := system'IntArray new:ARRAY_SIZE.
 	int xc := 0.
 	int cnt := 0.
 	while (cnt < ARRAY_SIZE) [ x[cnt] := 0. cnt := cnt + 1. ].
 	xc := xc + 1.
-	x[xc] := x[xc] + casas int.
+	x[xc] := x[xc] + casas.
 	while (x[xc] != 0)
 	[
 		xc := xc - 1.
@@ -383,12 +383,12 @@ program =
 			while (x[xc] != 0)
 			[
 				xc := xc + 2.
-				console write(charConvertor convert int(x[xc])).
+				console write(charConvertor convert(x[xc])).
 				xc := xc -4.
 				while (x[xc] != 0)
 				[
 					x[xc] := x[xc] + 1.
-					console write(charConvertor convert int(x[xc])).
+					console write(charConvertor convert(x[xc])).
 					while (x[xc] != 0)
 					[
 						x[xc] := x[xc] - 1.
@@ -401,7 +401,7 @@ program =
 			while (x[xc] != 0)
 			[
 				xc := xc + 2.
-				console write(charConvertor convert int(x[xc])).
+				console write(charConvertor convert(x[xc])).
 				xc := xc -2.
 				x[xc] := x[xc] - 1.
 			].
@@ -443,7 +443,7 @@ program =
 		xc := xc -8.
 	].
 	x[xc] := x[xc] + 10.
-	console write(charConvertor convert int(x[xc])).
+	console write(charConvertor convert(x[xc])).
 
     var anEnd := now.
  

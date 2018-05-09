@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * fix : casas := forwards'program'arguments[1] toInt.
+
                  * IDE : fix goto routine (with nested ns files)
 
                  * debugger : the full symbol name should be used (rather than a relative one)
