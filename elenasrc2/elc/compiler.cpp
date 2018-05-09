@@ -2703,8 +2703,10 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
    if (name == lxNone)
       scope.raiseError(errInvalidOperation, node);
 
-   messageStr.copy(name.identifier()); // !! temporal
-//   ref_t verbRef = scope.mapSubject(name, messageStr);
+   // COMPILER MAGIC : recognize set property
+
+   messageStr.copy(name.identifier());
+   //   ref_t verbRef = scope.mapSubject(name, messageStr);
 //   if (verbRef) {
 //      if (arg.nextNode() == lxNone) {
 //         signature.append('$');
@@ -2713,11 +2715,6 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //      else scope.raiseError(errInvalidSubject, name);
 //   }
 //   else {
-//      // COMPILER MAGIC : recognize set property
-//      int verb_id = _verbs.get(messageStr.c_str());
-//      if (verb_id == SET_MESSAGE_ID) {
-//         actionFlags = PROPSET_MESSAGE;
-//      }
 //   }
 
    current = current.nextNode();
@@ -2792,6 +2789,10 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 
    // if signature is presented
    ref_t actionRef = scope.moduleScope->module->mapAction(messageStr, 0, false);
+   if (actionRef == SET_MESSAGE_ID && paramCount == 1) {
+      // HOTFIX : set method is a special case
+      actionFlags = PROPSET_MESSAGE;
+   }
 
    // create a message id
    return encodeMessage(actionRef, paramCount) | actionFlags;
@@ -5021,12 +5022,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         else scope.raiseError(errIllegalMethod, verb);
 //      }
 //      else if (verb != lxNone) {
-//         // COMPILER MAGIC : recognize set property
-//         int verb_id = _verbs.get(messageStr.c_str());
-//         if (verb_id == SET_MESSAGE_ID) {
-//            propMode = true;
-//            flags |= PROPSET_MESSAGE;
-//         }
 //      }
 //      else if (node.existChild(lxClassRefAttr) && arg == lxNone) {
 //         signature.append('$');
@@ -5281,6 +5276,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          if (actionRef == DISPATCH_MESSAGE_ID) {
             if (paramCount != 0)
                scope.raiseError(errIllegalMethod, node);
+         }
+         // COMPILER MAGIC : recognize set property
+         else if (actionRef == SET_MESSAGE_ID && paramCount == 1) {
+            flags |= PROPSET_MESSAGE;
          }
       }
       else scope.raiseError(errIllegalMethod, node);
@@ -6275,7 +6274,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
       // HOTFIX : generic with open argument list is compiled differently
       methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
    }
-   else if (_logic->isMethodGeneric(scope.info, methodScope.message))
+   else if (_logic->isMethodGeneric(scope.info, methodScope.message) && methodScope.closureMode)
       methodScope.genericClosure = true;
 }
 

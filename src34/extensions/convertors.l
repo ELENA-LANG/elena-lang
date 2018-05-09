@@ -330,9 +330,9 @@ extension convertorOp
 //    
 //    toChar
 //        = charConvertor convert:self.
-//
-//    toReal
-//        = realConvertor convert:self.
+
+    toReal
+        = realConvertor convert:self.
 
     convertTo : aTarget
         = Variant new:self; saveTo:aTarget.

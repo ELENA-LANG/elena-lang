@@ -89,19 +89,19 @@ public sealed struct Signature
     constructor new(Signature subject)
         = subject.
 
-//    /// Creates a dynamic signature
-//    constructor new literal:aSubjectName
-//    [
-//        system'core_routines'__signature load subject:$self literal:aSubjectName
-//    ]
-//
-//    /// Creates a dynamic signature
-//    constructor new wide:aSubjectName
-//        <= new literal:aSubjectName.
-//
-//    /// Compares the values
-//    stacksafe bool equal subject : subject
-//        = theValue == subject.
+    /// Creates a dynamic signature
+    constructor new(literal aSubjectName)
+    [
+        system'core_routines'__signature load(self, aSubjectName)
+    ]
+
+    /// Creates a dynamic signature
+    constructor new(wide aSubjectName)
+        <= new(T<literal>(aSubjectName)).
+
+    /// Compares the values
+    stacksafe bool equal(Signature subject)
+        = theValue == subject.
 
     T<literal> literal
     [

@@ -3780,6 +3780,29 @@ labDefault:
   
 end
 
+procedure __signature."load$system@Signature$system@LiteralValue[2]"
+
+  aloadsi 2
+  pusha
+  callextr extern : LoadSubject
+  pop
+  ifn labErr 0
+  bloadsi 1
+  nsave
+  acopyb
+
+  quitn 2
+ 
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
+  quitn 2
+
+end
+
 procedure __signature."load$system@Signature$system@Message[2]"
 
   bloadsi 1

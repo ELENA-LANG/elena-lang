@@ -1046,7 +1046,7 @@ extension<Array> arrayOp
 
 // --- literalOp ---
 
-extension<literal> literalOp
+public extension<literal> literalOp
 {
     indexOf : anObject
         = self indexOf:anObject at:0.

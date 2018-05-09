@@ -57,12 +57,12 @@ public program =
     0 till:distGroupCount do(:i)
     [
         console printPaddingLeft(12, (i * intGroupSize) toInt,"-").
-//        console printPaddingLeft(12, ((i + 1) * intGroupSize - 1) toInt).
-//        console printPaddingLeft(12, intCounts[i]).
+        console printPaddingLeft(12, ((i + 1) * intGroupSize - 1) toInt).
+        console printPaddingLeft(12, intCounts[i]).
 
-//        console printPaddingLeft(14, i real / distGroupCount,"-").
-//        console printPaddingLeft(12, (i + 1) real / distGroupCount).
-//        console printPaddingLeft(12, realCounts[i]).
+        console printPaddingLeft(14, i toReal / distGroupCount,"-").
+        console printPaddingLeft(12, (i + 1) toReal / distGroupCount).
+        console printPaddingLeft(12, realCounts[i]).
                 
         console writeLine.
     ].

@@ -12,7 +12,7 @@ extension fieldOp
 {
     Unserialized
     [
-        ^ Signature new literal:self.
+        ^ Signature new(T<literal>(self)).
     ]
 }
 
@@ -34,24 +34,24 @@ class Record
     
     set Name:aName
     [
-        aName convert to:theName.
+        aName convertTo:theName.
     ]
     
     Age = theAge Number.
     
     set Age:anAge
     [
-        anAge convert to:theAge.
+        anAge convertTo:theAge.
     ]
     
     Phone = thePhone literal.
     
     set Phone:aPhone
     [
-        thePhone set:aPhone.
+        aPhone convertTo:thePhone.
     ]
 
-    literal
+    T<literal> literal
         = StringWriter new;
             printLine("Name:",theName);
             printLine("Age:",theAge);
@@ -60,27 +60,27 @@ class Record
 
 // --- Program ---
 
-Program = 
+public program = 
 [
-    if ('program'arguments length == 1)
+    if (forwards'program'arguments length == 1)
         [  console << "Please provide the path to the file to view". AbortException new; raise ].
 
     var aDB := List new; append(Record new).
     
-    File new('program'arguments[1]); forEachLine(:aLine)
+    File new(forwards'program'arguments[1]); forEachLine(:aLine)
     [
         if (aLine length == 0)
             [ aDB append:(Record new). ];
             [
                 // split record line                    
-                var aKeyValue := aLine split by:":".
+                var aKeyValue := aLine splitBy:":".
                 var aName  := aKeyValue[0].
                 var aValue := aKeyValue[1].
 
                 // update field
                 var aSubj := aName Unserialized.
                 
-                (aDB last) ~ (aName Unserialized) set:aValue.
+                (aDB last) ~ /*(aName Unserialized)*/aSubj set:aValue.
             ].
     ].
     

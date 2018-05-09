@@ -1,4 +1,4 @@
-//import system'collections.
+import system'collections.
 
 // === actions ===
 
@@ -8,117 +8,117 @@ symbol ifOrdered
 symbol ifDecrescent
     = (:aFormer:aLater) [ ^aFormer > aLater ].
 
-//// --- literalSplitOp ---
-//
-//literal extension literalListOp
-//{
-//    array split
-//        = self~literalListOp split char:$32.
-//    
-//    array split char:aChar
-//    [
-//        array_list aList := ArrayList new.
-//        int        aStart := 0.
-//        int        anIndex := 0.
-//        int        aCharLen := aChar length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self indexOf int:aStart char:aChar vint:anIndex.
-//            if (-1 != anIndex)
-//            [
-//                aList append:(self Substring int:aStart int:(anIndex - aStart)).
-//                aStart := anIndex + aCharLen.
-//            ];
-//            [
-//                aList append:(self~literalOp Substring int:aStart)
-//            ]
-//        ].
-//        
-//        ^ aList array
-//    ]
-//    
-//    split literal:aValue
-//    [
-//        array_list aList := ArrayList new.
-//        int        aStart := 0.
-//        int        anIndex := 0.
-//        int        aValueLen := aValue length.
-//        int        aLiteralLen := self length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self indexOf int:aStart literal:aValue vint:anIndex.
-//            if (-1 != anIndex)
-//            [
-//                aList append:(self Substring int:aStart int:(anIndex - aStart)).
-//                aStart := anIndex + aValueLen
-//            ];
-//            [
-//                aList append:(self Substring int:aStart int:(aLiteralLen - aStart))
-//            ]
-//        ].
-//        
-//        ^ aList array
-//    ]
-//}
-//
-//// --- wideListOp ---
-//
-//wide extension wideListOp
-//{
-//    array split
-//        <= split char:$32.
-//    
-//    array split char:aChar
-//    [
-//        array_list aList := ArrayList new.
-//        int        aStart := 0.
-//        int        anIndex := 0.
-//        int        aCharLen := aChar length.
-//
-//        int        aLiteralLen := self length.
-//                
-//        while (anIndex >= 0)
-//        [
-//            self indexOf int:aStart char:aChar vint:anIndex.
-//            if (-1 != anIndex)
-//            [
-//                aList append:(self Substring int:aStart int:(anIndex - aStart)).
-//                aStart := anIndex + aCharLen
-//            ];
-//            [
-//                aList append:(self Substring int:aStart int:(aLiteralLen - aStart))
-//            ]
-//        ].
-//        
-//        ^ aList array
-//    ]
-//    
-//    split wide:aValue
-//    [
-//        array_list aList := ArrayList new.
-//        int        aStart := 0.
-//        int        anIndex := 0.
-//        int        aLiteralLen := self length.
-//        int        aValueLen := aValue length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self indexOf int:aStart wide:aValue vint:anIndex.
-//            if (-1 != anIndex)
-//            [
-//                aList append:(self Substring int:aStart int:(anIndex - aStart)).
-//                aStart := anIndex + aValueLen
-//            ];
-//            [
-//                aList append:(self Substring int:aStart int:(aLiteralLen - aStart))
-//            ]
-//        ].
-//        
-//        ^ aList array.
-//    ]
-//}
+// --- literalSplitOp ---
+
+public extension<literal> literalListOp
+{
+    T<Array> split
+        = self~literalListOp split($32).
+    
+    T<Array> split(char aChar)
+    [
+        T<ArrayList> aList := ArrayList new.
+        int          aStart := 0.
+        int          anIndex := 0.
+        int          aCharLen := aChar length.
+        
+        while (anIndex >= 0)
+        [
+            self indexOf(aStart, aChar, &anIndex).
+            if (-1 != anIndex)
+            [
+                aList append(self Substring(aStart,anIndex - aStart)).
+                aStart := anIndex + aCharLen.
+            ];
+            [
+                aList append(self Substring(aStart))
+            ]
+        ].
+        
+        ^ aList
+    ]
+    
+    T<Array> split(literal aValue)
+    [
+        T<ArrayList> aList := ArrayList new.
+        int          aStart := 0.
+        int          anIndex := 0.
+        int          aValueLen := aValue length.
+        int          aLiteralLen := self length.
+        
+        while (anIndex >= 0)
+        [
+            self indexOf(aStart, aValue, &anIndex).
+            if (-1 != anIndex)
+            [
+                aList append(self Substring(aStart, anIndex - aStart)).
+                aStart := anIndex + aValueLen
+            ];
+            [
+                aList append(self Substring(aStart, aLiteralLen - aStart))
+            ]
+        ].
+        
+        ^ aList
+    ]
+}
+
+// --- wideListOp ---
+
+public extension<wide> wideListOp
+{
+    T<Array> split
+        <= split($32).
+    
+    T<Array> split(char aChar)
+    [
+        T<ArrayList> aList := ArrayList new.
+        int          aStart := 0.
+        int          anIndex := 0.
+        int          aCharLen := aChar length.
+
+        int          aLiteralLen := self length.
+                
+        while (anIndex >= 0)
+        [
+            self indexOf(aStart, aChar, &anIndex).
+            if (-1 != anIndex)
+            [
+                aList append(self Substring(aStart, anIndex - aStart)).
+                aStart := anIndex + aCharLen
+            ];
+            [
+                aList append(self Substring(aStart, aLiteralLen - aStart))
+            ]
+        ].
+        
+        ^ aList
+    ]
+    
+    T<Array> split(wide aValue)
+    [
+        T<ArrayList> aList := ArrayList new.
+        int          aStart := 0.
+        int          anIndex := 0.
+        int          aLiteralLen := self length.
+        int          aValueLen := aValue length.
+        
+        while (anIndex >= 0)
+        [
+            self indexOf(aStart, aValue, &anIndex).
+            if (-1 != anIndex)
+            [
+                aList append(self Substring(aStart, anIndex - aStart)).
+                aStart := anIndex + aValueLen
+            ];
+            [
+                aList append(self Substring(aStart, aLiteralLen - aStart))
+            ]
+        ].
+        
+        ^ aList.
+    ]
+}
 
 // --- enumeratorOp ---
 
@@ -519,26 +519,26 @@ public extension indexableOp
 //    ]    
 }
 
-//// --- stringListOp ---
-//
-//singleton $stringController
-//{
-//    split literal:l char:ch
-//        = l~literalListOp split char:ch.
-//        
-//    split literal:l literal:sp_l
-//        = l~literalListOp split literal:sp_l.
-//        
-//    split wide:l char:ch
-//        = l~wideListOp split char:ch.
-//        
-//    split wide:l wide:sp_l
-//        = l~wideListOp split wide:sp_l.
-//        
-//}
-//
-//extension stringListOp
-//{
-//    split by:aSplitter
-//        = $stringController split(self, aSplitter).
-//}
+// --- stringListOp ---
+
+singleton stringController
+{
+    split(literal l, char ch)
+        = l~literalListOp split(ch).
+        
+    split(literal l, literal sp_l)
+        = l~literalListOp split(sp_l).
+        
+    split(wide l, char ch)
+        = l~wideListOp split(ch).
+        
+    split(wide l, wide sp_l)
+        = l~wideListOp split(sp_l).
+        
+}
+
+public extension stringListOp
+{
+    splitBy:aSplitter
+        = stringController split(self, aSplitter).
+}

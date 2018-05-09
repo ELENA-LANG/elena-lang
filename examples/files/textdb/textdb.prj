@@ -1,13 +1,16 @@
-﻿[project]
-executable=textdb.exe
-arguments=db.txt
-namespace=textdb
-template=console
-debuginfo=-1
-
-[files]
-textdb.l
-
-[forwards]
-'program=textdb'Program
-
+<configuration>
+    <project>
+        <executable>textdb.exe</executable>
+        <arguments>db.txt</arguments>
+        <output></output>
+        <options></options>
+        <namespace>textdb</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>textdb.l</include>
+        </module>
+    </files>
+</configuration>
