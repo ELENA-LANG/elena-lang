@@ -3,7 +3,10 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * fix : casas := forwards'program'arguments[1] toInt.
+                 * public and internal symbols
+                 * public and internal extensions (internal is used only inside the module)
+                 * public and internal templates
+                 * use V<type> to declare dynamic arrays
 
                  * IDE : fix goto routine (with nested ns files)
 

@@ -4763,10 +4763,16 @@ ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, Cod
       else {
          virtualReference.append("$");
          ident_t name = scope.module->resolveReference(signatures[i]);
-         if (isWeakReference(name))
-            virtualReference.append(scope.module->Name());
+         if (isTemplateWeakReference(name)) {
+            NamespaceName ns(name);
 
-         virtualReference.append(name);
+            virtualReference.append(name + getlength(ns));
+         }
+         else if (isWeakReference(name)) {
+            virtualReference.append(scope.module->Name());
+            virtualReference.append(name);
+         }
+         else virtualReference.append(name);
       }
    }
 

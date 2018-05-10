@@ -1,12 +1,16 @@
-﻿[project]
-executable=twentyfour.exe
-namespace=twentyfour
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
-[forwards]
-'program=twentyfour'program
-
+<configuration>
+    <project>
+        <executable>twentyfour.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>twentyfour</namespace>
+        <debuginfo>-1</debuginfo>
+        <template>console</template>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

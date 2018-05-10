@@ -11,40 +11,43 @@ class ExpressionTree
     
     constructor new : aLiteral
     [
-        var aLevel := Integer new:0.
+        auto aLevel := Integer new:0.
         
         aLiteral forEach(:ch)
         [
             var node := DynamicStruct new.
             
             ch =>
-                $43 [ node set level(aLevel + 1); set operation:%add ];       // +
-                $45 [ node set level(aLevel + 1); set operation:%subtract ];  // -
-                $42 [ node set level(aLevel + 2); set operation:%multiply ];  // *
-                $47 [ node set level(aLevel + 2); set operation:%divide ];    // /
-                $40 [ aLevel append int:10. ^ $self ]; // (
-                $41 [ aLevel reduce int:10. ^ $self ]; // )
+                $43 [ node level := aLevel + 1. node operation := %add ];       // +
+                $45 [ node level := aLevel + 1. node operation := %subtract ];  // -
+                $42 [ node level := aLevel + 2. node operation := %multiply ];  // *
+                $47 [ node level := aLevel + 2. node operation := %divide ];    // /
+                $40 [ aLevel append(10). ^ self ]; // (
+                $41 [ aLevel reduce(10). ^ self ]; // )
                 ! [
-                    node set leaf(ch literal; toReal); set level(aLevel + 3).
+                    node leaf := ch literal; toReal.
+                    node level := aLevel + 3.
                 ].
                     
-            if ($nil == theTree)
+            if (nil == theTree)
                 [ theTree := node ];
                 [
                     if (theTree level >= node level)
                         [
-                            node set left:theTree; set right:$nil.
+                            node left := theTree.
+                            node right := nil.
                             
                             theTree := node
                         ];
                         [
                             var aTop := theTree.
-                            while (($nil != aTop right)&&(aTop right; level < node level))
+                            while ((nil != aTop right)&&(aTop right; level < node level))
                                 [ aTop := aTop right ].
                             
-                            node set left(aTop right); set right:$nil.
+                            node left := aTop right.
+                            node right := nil.
                             
-                            aTop set right:node
+                            aTop right := node
                         ]
                 ]
         ]
@@ -55,8 +58,8 @@ class ExpressionTree
         if (aNode containsProperty:%leaf)
             [ ^ aNode leaf ];
             [
-                var aLeft := $self eval:(aNode left).
-                var aRight := $self eval:(aNode right).
+                var aLeft := self eval:(aNode left).
+                var aRight := self eval:(aNode right).
                 
                 ^ aLeft~(aNode operation) eval:aRight
             ]
@@ -67,14 +70,14 @@ class ExpressionTree
         
     readLeaves : aList at:aNode
     [
-        if ($nil == aNode)
+        if (nil == aNode)
             [ InvalidArgumentException new; raise ].
         
         if (aNode containsProperty:%leaf)
             [ aList append(aNode leaf) ];
             [
-                $self readLeaves:aList at(aNode left).
-                $self readLeaves:aList at(aNode right).
+                self readLeaves:aList at(aNode left).
+                self readLeaves:aList at(aNode right).
             ].
     ]        
     
@@ -90,7 +93,7 @@ class TwentyFourGame
     
     constructor new
     [
-        $self newPuzzle.        
+        self newPuzzle.        
     ]
     
     newPuzzle
@@ -133,14 +136,14 @@ class TwentyFourGame
         exp readLeaves:Leaves.
         
         ifnot (Leaves ascendant; sequenceEqual(theNumbers ascendant))
-            [ console printLine:"Invalid input. Enter an equation using all of those four digits. Try again.". ^ $self ].
+            [ console printLine:"Invalid input. Enter an equation using all of those four digits. Try again.". ^ self ].
             
         var aResult := exp value.
         if (aResult == 24)
             [
                 console printLine("Good work. ",aLine,"=",aResult).
                 
-                $self newPuzzle.
+                self newPuzzle.
             ];
             [ console printLine("Incorrect. ",aLine,"=",aResult) ]
     ]    
@@ -171,7 +174,7 @@ extension gameOp
 
 // --- program ---
 
-program =
+public program =
 [
     var aGame := TwentyFourGame new; help.
 

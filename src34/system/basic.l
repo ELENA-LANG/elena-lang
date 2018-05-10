@@ -2362,10 +2362,10 @@ public singleton nilValue
         ^ false.
     ]
     
-//    /// Returns nil
-//    ///
-//    /// Any typecasting message will be handled and nil value returned
-//    generic = $nil.
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    generic eval = nil.
 }
 
 //// === Basic Factory symbols ==

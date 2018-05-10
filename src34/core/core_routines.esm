@@ -2,6 +2,7 @@
 //      inline system library
 
 define elStructure          000000008h
+define elSubject            000002000h
 
 define EVAL_ACTION          005h
 define EVAL_MESSAGE_ID      050h
@@ -88,6 +89,73 @@ labTrue:
   acopyr const : system'true
   quitn 2
   
+end
+
+procedure __object."setField$system@IntNumber$system@Object[3]"
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  len
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  aloadsi 3
+  set
+  bcopya
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __object."getField$system@IntNumber[2]"
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  len
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload
+  notless labErr
+  lessn labErr 0
+  get
+  quitn 2
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __object."readLength$system@Object$@system@ref#1&IntNumber[2]"
+
+  ecopy 0
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labSkip 0
+  len
+  ecopyd 
+labSkip:
+  dcopye
+  bloadsi 2
+  nsave
+  quitn 2
+
 end
 
 procedure __dptr."system$setReference[2]"
@@ -3178,7 +3246,7 @@ labNext:
   less labNext
 
   count
-  acopyr const : system'nil
+  acopyr 0
 labNext2:
   xset
   inc
@@ -4292,5 +4360,58 @@ labNext:
   pope
   aloadbi 0
   ajumpvi 0
+
+end
+
+procedure __struct.dispatch[1]
+
+  bsredirect
+
+  pushe
+  dcopycount
+  elsen labEnd 0
+  dcopyverb
+  pushd
+  bcopya
+  pushn 0
+
+labNext:
+  count
+  dloadsi 0
+  if labEnd
+  get
+  inc
+  dsavesi 0
+
+  flag
+  andn elSubject
+  ifn  labNext 0
+
+  nload
+  ecopyd
+  dloadsi 1
+  else labNext
+
+labCall:
+  dloadsi 0
+  get
+  popi 3
+  quitn 1
+  
+labEnd:
+  popi 2
+  pope
+  open    4
+  reserve 2
+  esavesi 3
+  bcopys  -3
+  pushb
+  pusha
+  acopyr class : system'Message
+  pushr class : system'MethodNotFoundException
+  asavesi 5
+  aloadsi 0
+  pushr const : %"new[2]"
+  throw
 
 end
