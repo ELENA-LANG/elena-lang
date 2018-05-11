@@ -2368,18 +2368,21 @@ public singleton nilValue
     generic eval = nil.
 }
 
-//// === Basic Factory symbols ==
-//
-//class BaseExtender
-//{
-//    object theObject.
-//    
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    bool equal : anObject
-//        => theObject.
-//      
-//    dispatch => theObject.
-//}
+// === Basic Factory symbols ==
+
+public class BaseExtender
+{
+    object theObject.
+    
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    bool equal : anObject
+        => theObject.
+
+    T<literal> literal
+        => theObject.
+                  
+    dispatch => theObject.
+}
 
 /// A generic variable. 
 ///

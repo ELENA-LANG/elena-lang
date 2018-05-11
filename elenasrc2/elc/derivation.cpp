@@ -55,7 +55,7 @@ void DerivationWriter :: writeNode(Symbol symbol)
          _writer.newNode(lxAttribute);
          break;
       case nsExpression:
-//      case nsNestedRootExpression:
+      case nsNestedRootExpression:
          _writer.newNode(lxExpression);
          break;
       case nsCodeEnd:
@@ -139,9 +139,9 @@ void DerivationWriter :: writeNode(Symbol symbol)
       case nsAttribute:
          _writer.newNode(lxAttributeDecl);
          break;
-//      case nsNestedSubCode:
-//         _writer.newNode(lxCode);
-//         break;
+      case nsNestedSubCode:
+         _writer.newNode(lxCode);
+         break;
       case nsIdleMessageParameter:
          _writer.newNode(lxIdleMsgParameter);
          break;

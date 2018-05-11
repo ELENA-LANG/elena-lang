@@ -28,7 +28,7 @@ ackermann = (:m:n)
            ]
 ].
 
-program =
+public program =
 [
     0 to:3 do(:i)
     [

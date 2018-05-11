@@ -355,38 +355,38 @@ public extension indexableOp
 //    
 //    forEvery(BaseFunction1 aFunction)
 //        = self~indexableOp forEvery(:n)<int>(aFunction eval:n).
-//    
-//    indexOfElement : anObject
+    
+    indexOfElement : anObject
+    [
+        T<Indexer> anIndexer := self indexer.
+        
+        while (anIndexer available)
+        [
+            if (anObject == anIndexer get)
+                [ ^ anIndexer index ].
+            
+            anIndexer appendIndex:1.
+        ].
+        
+        ^ -1
+    ]
+    
+//    #method deepClone
 //    [
-//        indexer anIndexer := self indexer.
+//        #var aCopy := self clone.
 //        
-//        while (anIndexer available)
+//        #var(indexer)aIndexer := aCopy indexer.
+//        
+//        #loop (aIndexer available)?
 //        [
-//            if (anObject == anIndexer get)
-//                [ ^ anIndexer index ].
+//            aIndexer set:(aIndexer get clone).
 //            
-//            anIndexer append index:1.
+//            aIndexer append &index:1.
 //        ].
 //        
-//        ^ -1
+//        ^ aCopy.
 //    ]
-//    
-////    #method deepClone
-////    [
-////        #var aCopy := self clone.
-////        
-////        #var(indexer)aIndexer := aCopy indexer.
-////        
-////        #loop (aIndexer available)?
-////        [
-////            aIndexer set:(aIndexer get clone).
-////            
-////            aIndexer append &index:1.
-////        ].
-////        
-////        ^ aCopy.
-////    ]
-//        
+        
 //    populate(IndexFunction1 anIndexFunc)
 //    [
 //        indexer aIndexer := self indexer.

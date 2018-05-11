@@ -10,7 +10,7 @@ In development:
                  * public and internal symbols
                  * public and internal extensions (internal is used only inside the module)
                  * public and internal templates
-                 * use V<type> to declare dynamic arrays
+                 * use V<type> to declare dynamic arrays, and V<type,size> - to declare fixed size array (still keeping old style with T)
 
                  * IDE : fix goto routine (with nested ns files)
 

@@ -1,12 +1,16 @@
-﻿[project]
-executable=addfield.exe
-namespace=addfield
-template=console
-debuginfo=-1
-
-[files]
-program.l
-
-[forwards]
-'program=addfield'program
-
+<configuration>
+    <project>
+        <executable>addfield.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>addfield</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>program.l</include>
+        </module>
+    </files>
+</configuration>

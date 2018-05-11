@@ -11,14 +11,14 @@ extension<int> intLoopOp
             [ ^ aFunction rewind(aStart, anEnd, 1) ]
     ]
 
-//    stacksafe runIntLoop int:anEnd int:aStep nfunc:aFunction
-//    [
-//       int aStart := self.
-//
-//       if (aStep > 0)
-//            [ ^ aFunction run int:aStart int:anEnd int:aStep ];
-//            [ ^ aFunction rewind int:aStart int:anEnd int:aStep ]
-//    ]
+    stacksafe runIntLoop(int anEnd, int aStep, Func<int,object> aFunction)
+    [
+       int aStart := self.
+
+       if (aStep > 0)
+            [ ^ aFunction run(aStart, anEnd, aStep) ];
+            [ ^ aFunction rewind(aStart, anEnd, aStep) ]
+    ]
 
     stacksafe to(int anEnd) do(Func<int,object> aFunction)
         = self~intLoopOp runIntLoop(anEnd, aFunction).
@@ -37,16 +37,16 @@ extension<int> intLoopOp
 //        
 //    multi till:anEnd do:anAction
 //        = self~intLoopOp runIntLoop int(anEnd int - 1) nfunc(:n)<int>[ anAction eval:n ].
-//                
-//    stacksafe to(int anEnd) by(int aStep) do(nfunc aFunction)
-//        = self~intLoopOp runIntLoop int:anEnd int:aStep nfunc:aFunction.
-//            
+                
+    stacksafe to(int anEnd) by(int aStep) do(Func<int,object> aFunction)
+        = self~intLoopOp runIntLoop(anEnd, aStep, aFunction).
+            
 //    stacksafe till(int anEnd) by(int aStep) do(nfunc aFunction)
 //        = self~intLoopOp runIntLoop int(anEnd-1) int:aStep nfunc:aFunction.
-//            
-//    stacksafe to(int anEnd) by(int aStep) do(func1 aFunction)
-//        = self~intLoopOp runIntLoop int:anEnd int:aStep nfunc(:n)<int>[ aFunction eval:n ].
-//            
+            
+    stacksafe to(int anEnd) by(int aStep) do(Func1 aFunction)
+        = self~intLoopOp runIntLoop(anEnd, aStep, (:n)<int>[ aFunction(n) ]).
+            
 //    stacksafe to(int anEnd) by(int aStep) do(ext_mssg anExtension)
 //        = self~intLoopOp runIntLoop int:anEnd int:aStep nfunc(:n)<int>[ n~anExtension get ].
 //            

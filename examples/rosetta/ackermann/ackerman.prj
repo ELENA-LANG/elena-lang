@@ -1,12 +1,16 @@
-﻿[project]
-executable=ackermann.exe
-namespace=ackerman
-template=console
-debuginfo=-1
-
-[files]
-program.l
-
-[forwards]
-'program=ackerman'program
-
+<configuration>
+    <project>
+        <executable>ackerman.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>ackerman</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>program.l</include>
+        </module>
+    </files>
+</configuration>

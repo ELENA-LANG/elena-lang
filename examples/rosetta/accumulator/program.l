@@ -16,7 +16,7 @@ function =
 accumulator = 
     (:n)(function(Variable new(n))).
 
-program =
+public program =
 [
     var x := accumulator(1).
     
