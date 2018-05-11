@@ -1,6 +1,6 @@
 import system'routines.
 
-extension<int> intLoopOp
+public extension<int> intLoopOp
 {
     stacksafe runIntLoop(int anEnd, Func<int,object> aFunction)
     [
@@ -23,9 +23,9 @@ extension<int> intLoopOp
     stacksafe to(int anEnd) do(Func<int,object> aFunction)
         = self~intLoopOp runIntLoop(anEnd, aFunction).
             
-//    stacksafe till(int anEnd) do(nfunc aFunction)
-//        = self~intLoopOp runIntLoop int(anEnd-1) nfunc:aFunction.
-//            
+    stacksafe till(int anEnd) do(Func<int,object> aFunction)
+        = self~intLoopOp runIntLoop(anEnd-1, aFunction).
+            
 //    stacksafe to(int anEnd) do(func1 aFunction)
 //        = self~intLoopOp runIntLoop int:anEnd nfunc(:n)<int>[ aFunction eval:n ].
 //            
@@ -58,7 +58,7 @@ extension<int> intLoopOp
 //        
 }
 
-extension forLoopOp
+public extension forLoopOp
 {
     to(object aMaxValue) do(Func1 aFunction)
         = aFunction run(RangeEnumerator from:self to:aMaxValue).
@@ -87,9 +87,9 @@ extension forLoopOp
 //    multi till:aMaxValue do:anAction
 //        = self~forLoopOp to:aMaxValue do(:n)[ anAction eval:n ].
 
-//    till(IntNumber aMaxValue) do(nfunc aFunction)
+//    till(int aMaxValue) do(nfunc aFunction)
 //        = aFunction run enumerator:(IntervalEnumerator new from:self till:aMaxValue by:aStep).
-//
+
     till(object aMaxValue) by(object aStep) do(Func1 aFunction)
         = aFunction run(IntervalEnumerator from:self till:aMaxValue by:aStep).
 

@@ -8,22 +8,22 @@ joinable = (:aFormer:aLater)(aFormer[aFormer length - 1] == aLater[0]).
 
 dispatcher =
 {
-    eval object:anArray func2:aFunction
+    eval(object anArray, Func2 aFunction)
     [
         ^ aFunction(anArray[0],anArray[1]).
     ]
 
-    eval object:anArray func3:aFunction
+    eval(object anArray, Func3 aFunction)
     [
         ^ aFunction(anArray[0], anArray[1],anArray[2]).
     ]
     
-    eval object:anArray func4:aFunction
+    eval(object anArray, Func4 aFunction)
     [
         ^ aFunction(anArray[0],anArray[1],anArray[2],anArray[3]).
     ]
     
-    eval object:anArray func5:aFunction
+    eval(object anArray, Func5 aFunction)
     [
         ^ aFunction(anArray[0],anArray[1],anArray[2],anArray[3],anArray[4]).
     ]
@@ -36,7 +36,7 @@ class AmbValueCollection
 {
     object theCombinator.
     
-    constructor new object<>:Arguments
+    constructor new(V<object> Arguments)
     [
         theCombinator := SequentialEnumerator new(Arguments).
     ]
@@ -61,13 +61,13 @@ class AmbValueCollection
 
 ambOperator =
 {
-    generic for(object<> Arguments)
+    generic for(V<object> Arguments)
         = AmbValueCollection new(Arguments).
 }.
 
 // --- Program ---
 
-program1 =
+public program1 =
 [
     try(ambOperator for((1,2,4),(4,5,6)); seek(:a:b)(a * b == 8); do(:a:b)
         [ console printLine(a," * ",b," = 8") ])
@@ -81,7 +81,7 @@ program1 =
     console readChar.        
 ].
 
-program2 =
+public program2 =
 [
     try(ambOperator 
         for(("the","that","a"),("frog", "elephant", "thing"),("walked", "treaded", "grows"),("slowly", "quickly"));

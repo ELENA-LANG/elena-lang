@@ -34,11 +34,11 @@ extension outputOp
 //        
 //        ^ self
 //    ]
-//
-//    printLine
-//    [
-//        self writeLine.
-//    ]
+
+    printLine
+    [
+        self writeLine.
+    ]
             
     generic printLine(dynamic<object> list)
     [
