@@ -1,4 +1,3 @@
-import system'dynamic.
 import system'routines.
 import extensions.
 import extensions'routines.
@@ -20,11 +19,15 @@ extension bottleOp
                     printLine(target bottleDescription," of beer");
                     printLine("Take one down, pass it around");
                     printLine((target reduce:1) bottleDescription," of beer on the wall").
+                    
+            reset []
+            
+            enumerable = target.
         }
     ].
 }
 
-program =
+public program =
 [
     var bottles := 99.
     

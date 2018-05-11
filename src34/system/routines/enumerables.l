@@ -468,55 +468,55 @@ public extension indexableOp
 //        
 //        ^ Array new int:aLength; populate(:i)<int>(it writeIndex int(anIndex + i); get)
 //    ]
-//    
-//    sequenceEqual:anArray
-//    [
-//        if (self length != anArray length)
-//            [ ^ false ].
-//            
-//        indexer a := self indexer.
-//        indexer b := anArray indexer.
-//        
-//        while (a available)
-//        [
-//            ifnot (a get == b get)
-//                [ ^ false ].
-//                
-//            a append index:1.
-//            b append index:1
-//        ].
-//          
-//        ^ true                
-//    ]
-//            
-//    sequenceReverse
-//        = self~indexableOp sequenceReverse(self length) at:0.
-//            
-//    sequenceReverse:counter at:index
-//    [
-//        indexer it := self indexer.
-//        
-//        int      i := index int.
-//        int      j := counter int.
-//        j := j + i.
-//        j := j - 1.
-//        
-//        while (i < j)
-//        [
-//            it writeIndex int:i.
-//            var temp1 := it get.
-//            it writeIndex int:j.
-//            var temp2 := it get.
-//            it set:temp1.
-//            it writeIndex int:i.
-//            it set:temp2.
-//            
-//            i := i + 1.
-//            j := j - 1
-//        ].
-//        
-//        ^ self
-//    ]    
+    
+    sequenceEqual:anArray
+    [
+        if (self length != anArray length)
+            [ ^ false ].
+            
+        T<Indexer> a := self indexer.
+        T<Indexer> b := anArray indexer.
+        
+        while (a available)
+        [
+            ifnot (a get == b get)
+                [ ^ false ].
+                
+            a appendIndex:1.
+            b appendIndex:1
+        ].
+          
+        ^ true                
+    ]
+            
+    sequenceReverse
+        = self~indexableOp sequenceReverse(self length) at:0.
+            
+    sequenceReverse:counter at:index
+    [
+        T<Indexer> it := self indexer.
+        
+        int      i := index int.
+        int      j := counter int.
+        j := j + i.
+        j := j - 1.
+        
+        while (i < j)
+        [
+            it writeIndex(i).
+            var temp1 := it get.
+            it writeIndex(j).
+            var temp2 := it get.
+            it set:temp1.
+            it writeIndex(i).
+            it set:temp2.
+            
+            i := i + 1.
+            j := j - 1
+        ].
+        
+        ^ self
+    ]    
 }
 
 // --- stringListOp ---

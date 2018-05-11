@@ -2496,9 +2496,9 @@ public class ArrayIndexer :: Indexer
     ]
     
     /// Reads the current index and saves it into an output parameter
-    readIndexTo(ref<int> anIndex)
+    readIndexTo(ref<int> retVal)
     [
-        anIndex value := theIndex.
+        theIndex readValueTo(retVal).
     ]
     
     /// Sets the index by specified value
