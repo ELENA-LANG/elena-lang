@@ -2034,10 +2034,10 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
             break;
          case lxMessage:
          {
-            //if (invokeMode/* || invokeWithNoParamMode*/) {
-            //   // message should be considered as a new operation if followed after closure invoke
-            //   return;
-            //}
+            if (invokeMode/* || invokeWithNoParamMode*/) {
+               // message should be considered as a new operation if followed after closure invoke
+               return;
+            }
             generateMessage(writer, current, scope/*, scope.reference == INVALID_REF*/);
             break;
          }
@@ -2048,12 +2048,12 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
             scope.copyName(writer, current);
             writer.closeNode();
             break;
-//         case lxOperator:
+         case lxOperator:
 //         case lxObject:
-//            if (invokeMode/* || invokeWithNoParamMode*/) {
-//               // operator should be considered as a new operation if followed after closure invoke
-//               return;
-//            }
+            if (invokeMode/* || invokeWithNoParamMode*/) {
+               // operator should be considered as a new operation if followed after closure invoke
+               return;
+            }
          default:
             scope.raiseError(errInvalidSyntax, current);
             break;

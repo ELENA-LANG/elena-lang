@@ -13,4 +13,7 @@
             <include>amb.l</include>
         </module>
     </files>
+    <forwards>
+        <forward key="program">amb'program1</forward>
+    </forwards>
 </configuration>

@@ -85,7 +85,7 @@ public program2 =
 [
     try(ambOperator 
         for(("the","that","a"),("frog", "elephant", "thing"),("walked", "treaded", "grows"),("slowly", "quickly"));
-        seek(:a:b:c:d) ( joinable eval(a,b) && joinable eval(b,c) && joinable eval(c,d) );
+        seek(:a:b:c:d) ( joinable(a,b) && joinable(b,c) && joinable(c,d) );
         do(:a:b:c:d) [ console printLine(a," ",b," ",c," ",d) ])
     {
         on(Exception e)
