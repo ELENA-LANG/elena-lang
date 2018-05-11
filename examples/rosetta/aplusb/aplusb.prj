@@ -1,12 +1,16 @@
-﻿[project]
-executable=aplusb.exe
-namespace=aplusb
-template=console
-debuginfo=-1
-
-[files]
-program.l
-
-[forwards]
-'program=aplusb'program
-
+<configuration>
+    <project>
+        <executable>aplusb.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>aplusb</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>program.l</include>
+        </module>
+    </files>
+</configuration>

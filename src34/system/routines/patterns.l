@@ -408,11 +408,11 @@ class Selector :: Enumerator
         theEnumerator := anEnumerator.
     ]
     
-//    constructor new ext_mssg:anExtension enumerator:anEnumerator
-//    [
-//        theSelector := (:x)[ ^ x~anExtension eval ].
-//        theEnumerator := anEnumerator.
-//    ]
+    constructor new(ExtensionMessage anExtension, Enumerator anEnumerator)
+    [
+        theSelector := (:x)[ ^ x~anExtension eval ].
+        theEnumerator := anEnumerator.
+    ]
     
     get = theSelector(theEnumerator get).
     
@@ -766,35 +766,35 @@ public class IntervalEnumerator :: Enumerator
 //    bool next
 //        = theListEnumerator next.
 //}
-//
-//// === patterns ===
-//
-//// --- BasePattern ---
-//
-//class BasePattern :: BaseFunction1
-//{
-//    object theResult.
-//    
-//    run enumerator:anEnumerator
-//    [
-//        $super run enumerator:anEnumerator.
-//        
-//        ^ theResult
-//    ]
-//}
-//
-//// --- Summing ---
-//
-//class Summing :: BasePattern
-//{
-//    constructor new : aVariable
-//    [
-//        theResult := aVariable.
-//    ]
-//
-//    closure : aParam [ theResult append:aParam. ]
-//}
-//
+
+// === patterns ===
+
+// --- BasePattern ---
+
+public abstract class BasePattern :: Func1
+{
+    object theResult.
+    
+    run(Enumerator anEnumerator)
+    [
+        super run(anEnumerator).
+        
+        ^ theResult
+    ]
+}
+
+// --- Summing ---
+
+public class Summing :: BasePattern
+{
+    constructor new : aVariable
+    [
+        theResult := aVariable.
+    ]
+
+    closure eval : aParam [ theResult append:aParam. ]
+}
+
 //// --- Accumulating ---
 //
 //class Accumulating :: BasePattern
@@ -820,16 +820,6 @@ public class IntervalEnumerator :: Enumerator
 //
 //extension patternOp
 //{
-//    summarize : aVariable
-//    [
-//        Summing new:aVariable; run enumerator:(self enumerator).
-//        
-//        ^ aVariable value.
-//    ]
-//    
-//    summarize
-//        = self~patternOp summarize:(Variable new).
-//        
 //    accumulate : aVariable with:operation
 //    [
 //        Accumulating new(aVariable, operation); run enumerator:self.

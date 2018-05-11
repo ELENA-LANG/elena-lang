@@ -305,6 +305,16 @@ public extension enumerableOp
 //    
 //    allMatchedBy(ExtensionMessage extMessage)
 //        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
+
+    summarize : aVariable
+    [
+        Summing new:aVariable; run(T<Enumerator>(self enumerator)).
+        
+        ^ aVariable value.
+    ]
+    
+    summarize
+        = self~enumerableOp summarize:(Variable new).
 }
 
 // --- indexableOp ---

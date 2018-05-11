@@ -1,4 +1,4 @@
-//import system'routines.
+import system'routines.
 import system'text.
 
 // --- outputOp ---
@@ -221,7 +221,7 @@ extension formatterOp
 
 // --- inputOp ---
 
-extension inputOp
+public extension inputOp
 {
     readLineTo:var
     [
@@ -232,22 +232,22 @@ extension inputOp
         ^var.
     ]
     
-//    generic readLine(object<> Arguments)
-//    [
-//        literal aLine := self readLiteral.
-//        
-//        array aParams := aLine split char:$32.
-//        
-//        int aLength := Arguments length.
-//        
-//        int anIndex := 0.
-//        while (anIndex < aLength)
-//        [
-//            (aParams getAt int:anIndex)~convertorOp convert to(Arguments[anIndex]).
-//            
-//            anIndex := anIndex + 1
-//        ].
-//            
-//        ^ self
-//    ]
+    generic readLine(V<object> args)
+    [
+        literal aLine := self readLine.
+        
+        T<Array> aParams := aLine split($32).
+        
+        int aLength := args length.
+        
+        int anIndex := 0.
+        while (anIndex < aLength)
+        [
+            (aParams getAt(anIndex))~convertorOp convertTo(args[anIndex]).
+            
+            anIndex := anIndex + 1
+        ].
+            
+        ^ self
+    ]
 }

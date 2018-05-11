@@ -272,7 +272,7 @@ public interface Func1
 //    eval : aParam = $self(aParam).
 
     /// Executes the function for every enumeration item
-    sealed run(Enumerator anEnumerator)
+    run(Enumerator anEnumerator)
     [
         while(anEnumerator next)
         [
@@ -281,7 +281,7 @@ public interface Func1
     ]
     
     /// Executes the function for every enumeration item until it returns true
-    sealed retrieve(Enumerator anEnumerator)
+    retrieve(Enumerator anEnumerator)
     [
         object anItem := nil.
         while (anEnumerator next)

@@ -2528,9 +2528,9 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node,
       if (subject != 0) {
          signature.copy(message, subject);
          bool referenceOne = signature.ident().find('\'') != NOTFOUND_POS;
-         extensionRef = resolveImplicitIdentifier(scope, message, referenceOne);
+         extensionRef = resolveImplicitIdentifier(scope, signature.c_str(), referenceOne);
          if (extensionRef == 0)
-            scope.raiseError(errInvalidSubject, terminal);
+            scope.raiseError(errUnknownClass, terminal);
 
          subject++;
       }

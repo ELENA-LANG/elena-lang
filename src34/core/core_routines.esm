@@ -4340,6 +4340,15 @@ labDefault:
   
 end
 
+procedure __extmessage."equal$system@ExtensionMessage[2]"
+
+  bloadsi 2
+  lequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
 procedure __extension.dispatch[1]
 
   asavesi 1

@@ -51,26 +51,26 @@ public sealed struct Message
     dispatch => system'core_routines'__message.
 }
 
-//// --- ExtensionMessage ---
-//
-///// An extended message constant
-//sealed struct ExtensionMessage
-//{
-//    __extmssg<8> theValue.
-//    
-//    /// Loads a message
-//    stacksafe constructor new ext_mssg:message
-//        = message.
-//
-//    stacksafe subject
-//        => system'core_routines'__message.
-//
-//    stacksafe bool equal ext_mssg : aSubject    
-//        => system'core_routines'__extmessage.
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    dispatch => system'core_routines'__extmessage.
-//}
+// --- ExtensionMessage ---
+
+/// An extended message constant
+public sealed struct ExtensionMessage
+{
+    __extmssg theValue.
+    
+    /// Loads a message
+    constructor new(ExtensionMessage message)
+        = message.
+
+    T<Signature> signature
+        => system'core_routines'__message.
+
+    stacksafe bool equal(ExtensionMessage aSubject)
+        => system'core_routines'__extmessage.
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    dispatch => system'core_routines'__extmessage.
+}
 
 // --- Signature ---
 

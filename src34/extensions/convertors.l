@@ -248,7 +248,7 @@ public singleton arrayConvertorEx
 
 // --- convertorOp ---
 
-extension convertorOp
+public extension convertorOp
 {
     toArray
         = arrayConvertorEx convert:self.

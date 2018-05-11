@@ -17,12 +17,12 @@ Given 2 integer numbers, A and B. One needs to find their sum.
 import system'routines.
 import extensions.
 
-program =
+public program =
 [
     console writeLine(console readLine;split;selectBy(%"convertorOp.toInt[0]");summarize).
 ].
 
-program_alt =
+public program_alt =
 [
     var A := Integer new.
     var B := Integer new.
