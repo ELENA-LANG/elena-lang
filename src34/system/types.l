@@ -41,6 +41,7 @@ public          = #8211.
 private         = #8212.
 internal        = #8213.
 closed          = #8214.
+predefined      = #8215.
 
 __args          = #32. 
 

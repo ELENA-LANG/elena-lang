@@ -3,6 +3,10 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * comparision operators should be typied by default - compiler should warn if they are not
+
+                 * display signature value
+
                  * public and internal symbols
                  * public and internal extensions (internal is used only inside the module)
                  * public and internal templates
@@ -129,7 +133,7 @@ In development:
                  * extrnal operations without target - ignore the result
                  * extrnal operations : support long and real
                  * warn if there are several similar extension for given message
-
+	
               dev - general implementation
                  * typified enumerators / extensions #245                 
                  * Template based extensions #408

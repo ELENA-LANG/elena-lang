@@ -35,17 +35,17 @@ class ExpressionTree
                     if (theTree level >= node level)
                         [
                             node left := theTree.
-                            node right := nil.
+                            node right := nilValue.
                             
                             theTree := node
                         ];
                         [
                             var aTop := theTree.
-                            while ((nil != aTop right)&&(aTop right; level < node level))
+                            while ((nilValue != aTop right)&&(aTop right; level < node level))
                                 [ aTop := aTop right ].
                             
                             node left := aTop right.
-                            node right := nil.
+                            node right := nilValue.
                             
                             aTop right := node
                         ]

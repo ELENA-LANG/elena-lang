@@ -70,6 +70,7 @@
 #define V_PRIVATE        (ref_t)-8212
 #define V_INTERNAL       (ref_t)-8213
 #define V_CLOSED         (ref_t)-8214
+#define V_PREDEFINED     (ref_t)-8215
 
 #define V_CONSTRUCTOR    (ref_t)-16384
 #define V_VARIABLE       (ref_t)-16385
@@ -108,21 +109,22 @@ enum MethodHint
    tpNormal      = 0x00003,
 ////      tpDispatcher = 0x04,
    tpPrivate     = 0x00005,
-   tpStackSafe   = 0x0010,
-   tpEmbeddable  = 0x0020,
-   tpGeneric     = 0x0040,
-   tpAction      = 0x0080,
-   tpIfBranch    = 0x0100,
-   tpIfNotBranch = 0x0200,
+   tpStackSafe   = 0x00010,
+   tpEmbeddable  = 0x00020,
+   tpGeneric     = 0x00040,
+   tpAction      = 0x00080,
+   tpIfBranch    = 0x00100,
+   tpIfNotBranch = 0x00200,
    tpConstructor = 0x00400,
    tpConversion  = 0x00800,
    tpMultimethod = 0x01000,
-   tpArgDispatcher = 0x3000,
+   tpArgDispatcher=0x03000,
    tpStatic      = 0x04000,
    tpAccessor    = 0x08000,
    tpSpecial     = 0x10000,
    tpAbstract    = 0x20000,
    tpInternal    = 0x40000,
+   tpPredefined  = 0x80000, // virtual class declaration
 };
 
 // --- _Project ---

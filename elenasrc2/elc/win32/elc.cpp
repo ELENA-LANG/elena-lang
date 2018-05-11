@@ -584,8 +584,6 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
          info->importedNs.add(_ELENA_::ident_t(STANDARD_MODULE).clone());
       }
 
-      printInfo("%s", filePath);
-
       try {
          // based on the target type generate the syntax tree for the file
          _ELENA_::Path fullPath(StrSetting(_ELENA_::opProjectPath));

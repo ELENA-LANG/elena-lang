@@ -527,7 +527,8 @@ private:
          int hints = info.methodHints.get(attr);
          hints &= ~hintToRemove;
          info.methodHints.exclude(attr);
-         info.methodHints.add(attr, hints);
+         if (hints != 0)
+            info.methodHints.add(attr, hints);
       }
 
       bool include(ref_t message)
@@ -974,6 +975,7 @@ private:
    void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
+   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);

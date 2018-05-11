@@ -293,25 +293,6 @@ ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool refe
    return Scope::mapTerminal(identifier, referenceOne);
 }
 
-//ObjectInfo Compiler::ModuleScope :: mapObject(SNode identifier)
-//{
-//   ident_t terminal = identifier.identifier();
-//
-////   if (identifier==lxReference) {
-////      return mapReferenceInfo(terminal, false);
-////   }
-//   /*else */if (identifier==lxPrivate) {
-//      if (terminal.compare(NIL_VAR)) {
-//         return ObjectInfo(okNil);
-//      }
-//      else return /*defineObjectInfo(mapTerminal(identifier, true), true)*/ObjectInfo(); // !! temporal
-//   }
-//   else if (identifier==lxIdentifier) {
-//      return defineObjectInfo(mapTerminal(identifier, true), true);
-//   }
-//   else return ObjectInfo();
-//}
-
 ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier, bool referenceOne)
 {
    ref_t reference = forwards.get(identifier);
@@ -325,77 +306,6 @@ ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier, 
 
    return reference;
 }
-
-////ref_t Compiler::ModuleScope :: mapNewSubject(ident_t terminal)
-////{
-////   IdentifierString fullName(terminal);
-////   fullName.append('$');
-////
-////   ident_t ns = module->Name();
-////   if (ns.compare(STANDARD_MODULE)) {
-////   }
-////   else if (ns.compare(STANDARD_MODULE, STANDARD_MODULE_LEN)) {
-////      fullName.append(ns + STANDARD_MODULE_LEN + 1);
-////   }
-////   else fullName.append(ns);
-////
-////   return module->mapSubject(fullName, false);
-////}
-//
-////ref_t Compiler::ModuleScope :: mapSubject(SNode terminal)
-////{
-////   ident_t identifier = NULL;
-////   if (terminal.type == lxIdentifier || terminal.type == lxPrivate || terminal.type == lxMessage/* || terminal.type == lxAttribute*/) {
-////      identifier = terminal.identifier();
-////      if (emptystr(identifier))
-////         identifier = terminal.findChild(lxTerminal).identifier();
-////   }
-////   else if (terminal.type == lxReference) {
-////      identifier = terminal.identifier();
-////      if (emptystr(identifier))
-////         identifier = terminal.findChild(lxTerminal).identifier();
-////
-////      return module->mapReference(identifier);
-////   }
-////   else raiseError(errInvalidSubject, terminal);
-////
-////   ref_t classRef = 0;
-////   if (terminal.type == lxIdentifier) {
-////      classRef = attributes.get(identifier);
-////      if (isPrimitiveRef(classRef)/* && !isPrimitiveType(classRef)*/)
-////         classRef = 0; // ignore attributes in the message name
-////         //raiseError(errInvalidSubject, terminal);
-////   }
-////
-////   return classRef;
-////}
-////
-////ref_t Compiler::ModuleScope :: mapSubject(SNode terminal, IdentifierString& output)
-////{
-////   ident_t identifier = terminal.identifier();
-////   ref_t classRef = 0;
-////
-////   if (terminal == lxReference) {
-////      classRef = module->mapReference(identifier, false);
-////   }
-////   else {
-////      classRef = mapSubject(terminal);
-////
-////      // add a namespace for the private message
-////      if (terminal.type == lxPrivate) {
-////         output.append(project->Namespace());
-////         output.append('#');
-////         output.append(identifier.c_str() + 1);
-////
-////         return 0;
-////      }
-////   }
-////
-////   if (classRef == 0)
-////      output.append(identifier);
-////
-////   return classRef;
-////}
 
 ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
 {
@@ -5579,7 +5489,7 @@ void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNod
 
 void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope)
 {
-   if (node.existChild(lxArgDispatcherAttr)) {
+   if (node != lxClass && node.existChild(lxArgDispatcherAttr)) {
       // if it is a argument list unboxing routine
       MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
@@ -5667,7 +5577,7 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
       if (multiMethod) {
          ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-         compileMultidispatch(writer, SNode(), scope, *classScope);
+         compileMultidispatch(writer, node.parentNode(), scope, *classScope);
       }
 
       writer.newNode(lxNewFrame);
@@ -5721,7 +5631,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
       if (scope.multiMethod) {
          ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-         compileMultidispatch(writer, SNode(), codeScope, *classScope);
+         compileMultidispatch(writer, node.parentNode(), codeScope, *classScope);
       }
 
       writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
@@ -6310,6 +6220,12 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
             }
             else current = lxConstructor;
          }
+         else if (test(methodScope.hints, tpPredefined)) {
+            // recognize predefined message signatures
+            predefineMethod(current, scope, methodScope);
+
+            current = lxIdle;
+         }
          else if (test(methodScope.hints, tpStatic))
             current = lxStaticMethod;
 
@@ -6659,6 +6575,30 @@ inline bool isGeneralMessage(_Module* module, ref_t message)
    }
 }
 
+void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope)
+{
+   SNode body = node.findChild(lxCode);
+   if (body != lxCode || body.firstChild() != lxEOF)
+      scope.raiseError(errPedefineMethodCode, node);
+
+   if (testany(scope.hints, tpAbstract | tpPrivate))
+      // abstract or private methods cannot be predefined
+      scope.raiseError(errIllegalMethod, node);
+
+   if (scope.extensionMode)
+      // an extension cannot have predefined methods
+      scope.raiseError(errIllegalMethod, node);
+
+   ref_t signRef;
+   scope.module->resolveAction(scope.message, signRef);
+   if (signRef)
+      // a predefine method should not contain a strong typed signature
+      scope.raiseError(errIllegalMethod, node);
+
+   generateMethodAttributes(classScope, node, scope.message, true);
+
+}
+
 void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute/*, bool closureBaseClass*/)
 {
    ref_t message = current.argument;
@@ -6731,9 +6671,12 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       }
 
       if (!included && /*!scope.abstractMode && */test(methodHints, tpAbstract)) {
-         // reset the abstract hint for overridden method
-         scope.info.methodHints.exclude(Attribute(message, maHint));
-         scope.info.methodHints.add(Attribute(message, maHint), methodHints & ~tpAbstract);
+         scope.removeHint(message, tpAbstract);
+      }
+
+      if (test(methodHints, tpPredefined)) {
+         // exclude the predefined attribute from declared method
+         scope.removeHint(message, tpPredefined);
       }
 
       // create overloadlist if required
@@ -6776,8 +6719,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
                templateMethods = true;
 
                // HOTFIX : mark the generic message as a multi-method
-               int hints = scope.info.methodHints.get(ClassInfo::Attribute(multiMethAttr.argument, maHint));
-               scope.info.methodHints.add(ClassInfo::Attribute(multiMethAttr.argument, maHint), hints | tpMultimethod);
+               scope.addHint(multiMethAttr.argument, tpMultimethod);
             }
          }
       }

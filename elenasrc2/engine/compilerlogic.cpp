@@ -239,9 +239,14 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       }
       else return tpNormal | hint;
    }
-   //HOTFIX : to recognize the sealed private method call
-   //         hint search should be done even if the method is not declared
-   else return info.methodHints.get(Attribute(message, maHint));
+   else {
+      //HOTFIX : to recognize the predefined messages
+      result.outputReference = info.methodHints.get(Attribute(message, maReference));
+
+      //HOTFIX : to recognize the sealed private method call
+      //         hint search should be done even if the method is not declared
+      return info.methodHints.get(Attribute(message, maHint));
+   }
 }
 
 int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
@@ -1446,6 +1451,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          return true;
       case V_ABSTRACT:
          attrValue = tpAbstract;
+         return true;
+      case V_PREDEFINED:
+         attrValue = tpPredefined;
          return true;
       default:
          return false;

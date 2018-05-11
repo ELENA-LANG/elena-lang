@@ -15,6 +15,12 @@ public class Object
     bool equal : anObject => system'core_routines'__object.
     
     bool notequal : anObject = self equal:anObject; inverted.
+    
+    // virtual method declarations : forcing the output type                            
+    predefined bool less : anObject []
+    predefined bool greater : anObject []
+    predefined bool notless : anObject []
+    predefined bool notgreater : anObject []
                 
     T<literal> literal = self __className.
                 
