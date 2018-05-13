@@ -1,9 +1,9 @@
 //import system'collections.
 //
 //symbol idleFunc1 = (:x) [].
-//
-//// === pattern enumerators ==
-//
+
+// === pattern enumerators ==
+
 //// --- Toping ---
 //
 //class TopFilter :: Enumerator
@@ -96,304 +96,346 @@
 //        skipped := false.
 //    ]    
 //}
-//
-//// --- Filtering ---
-//
-//class Filter :: Enumerator
-//{
-//    func1      theFilter.
-//    enumerator theEnumerator.
-//
-//    constructor new func1:aSelector enumerator:anEnumerator
-//    [
-//        theFilter := aSelector.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    constructor new ext_mssg:anExtension enumerator:anEnumerator
-//    [
-//        theFilter := (:x)[ ^ x~anExtension eval ].
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(theEnumerator get))
-//                [ ^ true ]
-//        ].
-//        
-//        ^ false
-//    ]
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
-//
-//// --- PatternFilter2 ---
-//
-//class PatternFilter2 :: Enumerator
-//{
-//    func2      theFilter.
-//    enumerator theEnumerator.
-//    object     thePrevious.
-//    
-//    constructor new func2:aFilter enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        if ($nil == thePrevious)
-//        [
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//        
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false
-//    ]
-//}
-//
-//// --- PatternFilter3 ---
-//
-//class PatternFilter3 :: Enumerator
-//{
-//    func3      theFilter.
-//    enumerator theEnumerator.
-//    object     thePrevious.
-//    object     theBeforePrev.
-//    
-//    constructor new func3:aFilter enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        if ($nil == thePrevious)
-//        [
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get
-//        ].
-//                
-//        while (theEnumerator next)
-//        [
-//            if(theFilter(theBeforePrev,thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false
-//    ]
-//}
-//
-//// --- PatternFilter4 ---
-//
-//class PatternFilter4 :: Enumerator
-//{
-//    func4      theFilter.
-//    enumerator theEnumerator.
-//    object     thePrevious.
-//    object     theBeforePrev.
-//    object     theBefore2Prev.
-//    
-//    constructor new func4:aFilter enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        if($nil == thePrevious)
-//        [
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore2Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//                
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            theBefore2Prev := theBeforePrev.
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false.
-//    ]
-//}
-//
-//// --- PatternFilter5 ---
-//
-//class PatternFilter5 :: Enumerator
-//{
-//    func5      theFilter.
-//    enumerator theEnumerator.
-//    object     thePrevious.
-//    object     theBeforePrev.
-//    object     theBefore2Prev.
-//    object     theBefore3Prev.
-//    
-//    constructor new func5:aFilter enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        if ($nil == thePrevious)
-//        [
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore3Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore2Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//                
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            theBefore3Prev := theBefore2Prev.
-//            theBefore2Prev := theBeforePrev.
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false
-//    ]
-//}
-//
-//// --- PatternFilter6 ---
-//
-//class PatternFilter6 :: Enumerator
-//{
-//    func6      theFilter.
-//    enumerator theEnumerator.
-//    object     thePrevious.
-//    object     theBeforePrev.
-//    object     theBefore2Prev.
-//    object     theBefore3Prev.
-//    object     theBefore4Prev.
-//    
-//    constructor new func6:aFilter enumerator:anEnumerator
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        if ($nil == thePrevious)
-//        [
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore4Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore3Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore2Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get
-//        ].
-//                                
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(theBefore4Prev,theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            theBefore4Prev := theBefore3Prev.
-//            theBefore3Prev := theBefore2Prev.
-//            theBefore2Prev := theBeforePrev.
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false
-//    ]
-//}
+
+// --- Filtering ---
+
+public class Filter :: Enumerator
+{
+    T<Func1>      theFilter.
+    T<Enumerator> theEnumerator.
+
+    constructor new(Func1 aSelector, Enumerator anEnumerator)
+    [
+        theFilter := aSelector.
+        theEnumerator := anEnumerator.
+    ]
+    
+    constructor new(ExtensionMessage anExtension, Enumerator anEnumerator)
+    [
+        theFilter := (:x)[ ^ x~anExtension eval ].
+        theEnumerator := anEnumerator.
+    ]
+    
+    get = theEnumerator get.
+    
+    bool next
+    [
+        while (theEnumerator next)
+        [
+            if (theFilter(theEnumerator get))
+                [ ^ true ]
+        ].
+        
+        ^ false
+    ]
+    
+    reset 
+    [
+        theEnumerator reset.
+    ]    
+    
+    enumerable => theEnumerator.
+}
+
+// --- PatternFilter2 ---
+
+public class PatternFilter2 :: Enumerator
+{
+    T<Func2>      theFilter.
+    T<Enumerator> theEnumerator.
+    object        thePrevious.
+    
+    constructor new(Func2 aFilter, Enumerator anEnumerator)
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    get = theEnumerator get.
+    
+    bool next
+    [
+        if (nil == thePrevious)
+        [
+            ifnot (theEnumerator next)
+                [ ^ false ].
+            
+            thePrevious := theEnumerator get.
+        ].
+        
+        while (theEnumerator next)
+        [
+            if (theFilter(thePrevious,theEnumerator get))
+                [ ^ true ].
+            
+            thePrevious := theEnumerator get
+        ].
+        
+        ^ false
+    ]
+    
+    reset
+    [
+        theEnumerator reset.
+        thePrevious := nil.
+    ]
+    
+    enumerable => theEnumerator.
+}
+
+// --- PatternFilter3 ---
+
+public class PatternFilter3 :: Enumerator
+{
+    T<Func3>      theFilter.
+    T<Enumerator> theEnumerator.
+    object        thePrevious.
+    object        theBeforePrev.
+    
+    constructor new(Func3 aFilter, Enumerator anEnumerator)
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    get = theEnumerator get.
+    
+    reset
+    [
+        theEnumerator reset.
+        thePrevious := nil.
+    ]
+    
+    bool next
+    [
+        if (nil == thePrevious)
+        [
+            ifnot (theEnumerator next)
+                [ ^ false ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            ifnot (theEnumerator next)
+                [ ^ false ].
+            
+            thePrevious := theEnumerator get
+        ].
+                
+        while (theEnumerator next)
+        [
+            if(theFilter(theBeforePrev,thePrevious,theEnumerator get))
+                [ ^ true ].
+            
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get
+        ].
+        
+        ^ false
+    ]
+    
+    enumerable => theEnumerator.
+}
+
+// --- PatternFilter4 ---
+
+public class PatternFilter4 :: Enumerator
+{
+    T<Func4>      theFilter.
+    T<Enumerator> theEnumerator.
+    object        thePrevious.
+    object        theBeforePrev.
+    object        theBefore2Prev.
+    
+    constructor new(Func4 aFilter, Enumerator anEnumerator)
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    get = theEnumerator get.
+    
+    reset
+    [
+        theEnumerator reset.
+        thePrevious := nil.
+    ]
+    
+    bool next
+    [
+        if(nil == thePrevious)
+        [
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            theBefore2Prev := theEnumerator get.
+            
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            thePrevious := theEnumerator get.
+        ].
+                
+        while (theEnumerator next)
+        [
+            if (theFilter(theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
+                [ ^ true ].
+            
+            theBefore2Prev := theBeforePrev.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get
+        ].
+        
+        ^ false.
+    ]
+    
+    enumerable => theEnumerator.
+}
+
+// --- PatternFilter5 ---
+
+public class PatternFilter5 :: Enumerator
+{
+    T<Func5>      theFilter.
+    T<Enumerator> theEnumerator.
+    object        thePrevious.
+    object        theBeforePrev.
+    object        theBefore2Prev.
+    object        theBefore3Prev.
+    
+    constructor new(Func5 aFilter, Enumerator anEnumerator)
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    get = theEnumerator get.
+    
+    reset
+    [
+        theEnumerator reset.
+        thePrevious := nil.
+    ]
+    
+    bool next
+    [
+        if (nil == thePrevious)
+        [
+            ifnot (theEnumerator next)
+                [ ^ false ].
+            
+            theBefore3Prev := theEnumerator get.
+            
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            theBefore2Prev := theEnumerator get.
+            
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            ifnot (theEnumerator next)
+                [ ^ false ].
+            
+            thePrevious := theEnumerator get.
+        ].
+                
+        while (theEnumerator next)
+        [
+            if (theFilter(theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
+                [ ^ true ].
+            
+            theBefore3Prev := theBefore2Prev.
+            theBefore2Prev := theBeforePrev.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get
+        ].
+        
+        ^ false
+    ]
+    
+    enumerable => theEnumerator.
+}
+
+// --- PatternFilter6 ---
+
+public class PatternFilter6 :: Enumerator
+{
+    T<Func6>      theFilter.
+    T<Enumerator> theEnumerator.
+    object        thePrevious.
+    object        theBeforePrev.
+    object        theBefore2Prev.
+    object        theBefore3Prev.
+    object        theBefore4Prev.
+    
+    constructor new(Func6 aFilter, Enumerator anEnumerator)
+    [
+        theFilter := aFilter.
+        theEnumerator := anEnumerator.
+    ]
+    
+    get = theEnumerator get.
+    
+    reset
+    [
+        theEnumerator reset.
+        thePrevious := nil.
+    ]
+    
+    bool next
+    [
+        if (nil == thePrevious)
+        [
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            theBefore4Prev := theEnumerator get.
+            
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            theBefore3Prev := theEnumerator get.
+            
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            theBefore2Prev := theEnumerator get.
+            
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            theBeforePrev := theEnumerator get.
+    
+            ifnot(theEnumerator next)
+                [ ^ false ].
+            
+            thePrevious := theEnumerator get
+        ].
+                                
+        while (theEnumerator next)
+        [
+            if (theFilter(theBefore4Prev,theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
+                [ ^ true ].
+            
+            theBefore4Prev := theBefore3Prev.
+            theBefore3Prev := theBefore2Prev.
+            theBefore2Prev := theBeforePrev.
+            theBeforePrev := thePrevious.
+            thePrevious := theEnumerator get
+        ].
+        
+        ^ false
+    ]
+    
+    enumerable => theEnumerator.
+}
 
 // --- Selecting ---
 
@@ -551,75 +593,79 @@ public class RangeEnumerator :: Enumerator
     enumerable = theVariable.
 }
 
-//// --- BaseIndexer ---
-//
-//class IntRangeEnumerator :: Enumerator
-//{
-//    int theIndex.
-//    int theStart.
-//    int theEnd.
-//
-//    stacksafe constructor new(IntNumber start, IntNumber end)
-//    [
-//        theStart := start.
-//        theEnd := end.
-//        
-//        $self reset.
-//    ]
-//
-//    get = theIndex.
-//            
-//    /// Returns false if the index out of range
-//    bool next 
-//    [
-//        theIndex += 1.
-//        
-//        ^ theIndex < theEnd
-//    ]
-//    
-//    /// Sets the i-index by specified value
-//    reset
-//    [ 
-//        theIndex := theStart - 1.
-//    ] 
-//}
-//
-//// --- Range --
-//
-//class Range :: BaseEnumerable
-//{
-//    int theStart.
-//    int theEnd.
-//    
-//    constructor new(IntNumber start, IntNumber count)
-//    [
-//        theStart := start.
-//        theEnd := start + count.
-//    ]
-//    
-//    constructor from(IntNumber start) till(IntNumber end)
-//    [
-//        theStart := start.
-//        theEnd := end.
-//    ]
-//    
-//    constructor from(IntNumber start) to(IntNumber end)
-//    [
-//        theStart := start.
-//        theEnd := end + 1.
-//    ]
-//    
-//    stacksafe readLengthTo vint:retVal
-//    [
-//        int l := theEnd - theStart.
-//        
-//        retVal int := l.
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//    
-//    enumerator = IntRangeEnumerator new(theStart, theEnd).
-//}
+// --- BaseIndexer ---
+
+class IntRangeEnumerator :: Enumerator<int> 
+{
+    int theIndex.
+    int theStart.
+    int theEnd.
+
+    stacksafe constructor new(IntNumber start, IntNumber end)
+    [
+        theStart := start.
+        theEnd := end.
+        
+        self reset.
+    ]
+
+    int get = theIndex.
+            
+    /// Returns false if the index out of range
+    bool next 
+    [
+        theIndex += 1.
+        
+        ^ theIndex < theEnd
+    ]
+    
+    /// Sets the i-index by specified value
+    reset
+    [ 
+        theIndex := theStart - 1.
+    ] 
+    
+    cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
+    
+    enumerable = Range from:theStart till:theEnd.
+}
+
+// --- Range --
+
+public sealed class Range :: object, interface<Enumerable<int>>, interface<Enumerable>
+{
+    int theStart.
+    int theEnd.
+    
+    constructor new(IntNumber start, IntNumber count)
+    [
+        theStart := start.
+        theEnd := start + count.
+    ]
+    
+    constructor from(IntNumber start) till(IntNumber end)
+    [
+        theStart := start.
+        theEnd := end.
+    ]
+    
+    constructor from(IntNumber start) to(IntNumber end)
+    [
+        theStart := start.
+        theEnd := end + 1.
+    ]
+    
+    stacksafe readLengthTo(ref<int> retVal)
+    [
+        int l := theEnd - theStart.
+        
+        retVal value := l.
+    ]
+    
+    int rvprop length :: readLengthTo.
+    
+    Enumerator<int> enumerator = IntRangeEnumerator new(theStart, theEnd).
+}
 
 // --- IntervalEnumerator ---
 
@@ -839,24 +885,6 @@ public class Summing :: BasePattern
 //    last:counter
 //        = TopFilter new int:counter int(self length - counter) enumerator:(self enumerator).
 //
-//    filterBy func1:aSelector
-//        = Filter new(aSelector, self enumerator).
-//        
-//    filterBy func2:aSelector
-//        = PatternFilter2 new(aSelector, self enumerator).
-//        
-//    filterBy func3:aSelector
-//        = PatternFilter3 new(aSelector, self enumerator).
-//        
-//    filterBy func4:aSelector
-//        = PatternFilter4 new(aSelector, self enumerator).
-//        
-//    filterBy func5:aSelector
-//        = PatternFilter5 new(aSelector, self enumerator).
-//        
-//    filterBy func6:aSelector
-//        = PatternFilter6 new(aSelector, self enumerator).        
-//        
 //    zip:anEnumerable by:aZipper
 //        = ZipEnumerator new(aZipper, self enumerator, anEnumerable enumerator).
 //
@@ -878,9 +906,4 @@ public class Summing :: BasePattern
 //    to:max repeat:aRepeater
 //        = Repeater new(self, max + 1, aRepeater).
 //
-//    repeatTill:n
-//        = RangeEnumerator new from:self to(n - 1) by:1.              
-//        
-//    repeatTo:n
-//        = RangeEnumerator new from:self to:n by:1.              
 //}

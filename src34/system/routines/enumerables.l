@@ -315,6 +315,30 @@ public extension enumerableOp
     
     summarize
         = self~enumerableOp summarize:(Variable new).
+        
+    filterBy(Func1 aSelector)
+        = Filter new(aSelector, T<Enumerator>(self enumerator)).
+        
+    filterBy(Func2 aSelector)
+        = PatternFilter2 new(aSelector, T<Enumerator>(self enumerator)).
+        
+    filterBy(Func3 aSelector)
+        = PatternFilter3 new(aSelector, T<Enumerator>(self enumerator)).
+        
+    filterBy(Func4 aSelector)
+        = PatternFilter4 new(aSelector, T<Enumerator>(self enumerator)).
+        
+    filterBy(Func5 aSelector)
+        = PatternFilter5 new(aSelector, T<Enumerator>(self enumerator)).
+        
+    filterBy(Func6 aSelector)
+        = PatternFilter6 new(aSelector, T<Enumerator>(self enumerator)).
+        
+    repeatTill:n
+        = RangeEnumerator from:self to(n - 1) by:1.
+
+    repeatTo:n
+        = RangeEnumerator from:self to:n by:1.
 }
 
 // --- indexableOp ---

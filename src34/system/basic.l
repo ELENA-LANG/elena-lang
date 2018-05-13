@@ -3298,17 +3298,37 @@ real public e_value = realOpController e.
 
 // --- obsolete variables ---
 
-public class Integer =
+public sealed class Integer :: BaseVariable, ref<int>
 {
-    ref<int> new
-        = 0.
+    constructor new
+    [
+        theValue := 0.
+    ]
+    
+    constructor(int n) 
+    [
+        theValue := n.
+    ]
+    
+    constructor : n
+        <= new(T<int>(n)).
         
-    ref<int> new(int n)
-        = n.
+    stacksafe append(int n)
+    [
+        int v := theValue.
+        v := v + n.
         
-    ref<int> new:n
-        = T<int>(n).
-}.
+        theValue := v.
+    ]
+    
+    stacksafe reduce(int n)
+    [
+        int v := theValue.
+        v := v - n.
+        
+        theValue := v.
+    ]
+}
 
 //class LongInteger =
 //{

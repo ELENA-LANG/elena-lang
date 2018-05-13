@@ -31,7 +31,7 @@ class sequentialNext = BaseStrategy::
     [
         if(nil == (Indexers seekEach(:anIndexer)
                 [
-                    T<Indexer> it := anIndexer indexer. 
+                    auto it := T<Indexer>(anIndexer). 
                     
                     ifnot(it appendIndex:1; available)
                         [ it writeIndex(0). ^ false ].
@@ -45,7 +45,7 @@ class sequentialNext = BaseStrategy::
         
     getAt(Array Indexers, int aLength)
     [
-        ^ Array new(aLength); populate(:i)<int,int>(Indexers getAt(i); get)
+        ^ Array new(aLength); populate(:i)<int>(Indexers getAt(i); get)
     ]
 }.
 
@@ -79,7 +79,7 @@ class parallelNext = BaseStrategy::
         
     getAt(Array Indexers, int aLength)
     [
-        ^ Array new(aLength); populate(:i)<int,int>(T<Array>(Indexers) getAt(i); get ).
+        ^ Array new(aLength); populate(:i)<int>(T<Array>(Indexers) getAt(i); get ).
     ]
 }.
 
@@ -105,7 +105,7 @@ class combinationNext = BaseStrategy::
 
     getAt(Array Indexers, int aLength)
     [
-        ^ Array new(aLength); populate(:i)<int,int>(T<Array>(Indexers) getAt(i); get)
+        ^ Array new(aLength); populate(:i)<int>(T<Array>(Indexers) getAt(i); get)
     ]
         
     T<BaseStrategy> eval(Array Indexers, int aLength)
@@ -241,7 +241,7 @@ public class Combinator :: BaseRowEnumerator
     int theTotalLength.
     
     constructor new : aSubLength of:aSet
-        <= new : (Array new(aSubLength int); populate(:n)<int,int>(aSet));
+        <= new : (Array new(aSubLength int); populate(:n)<int>(aSet));
     [
         theTotalLength := aSet length.
     ]
