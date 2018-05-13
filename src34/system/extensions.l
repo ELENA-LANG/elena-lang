@@ -1514,7 +1514,7 @@ extension stringOp
 //        ^ self~dispatcher replace literal:aReplacee literal:aReplacer
 //    ]
     
-    stacksafe write(object aLiteral, int aCounter)
+    stacksafe fillString(object aLiteral, int aCounter)
     [
         int aNumber := aCounter.
         
@@ -1529,7 +1529,7 @@ extension stringOp
     ]
 
     write : aLine length:aCounter
-        = self~stringOp write(aLine, T<int>(aCounter)).
+        = self~stringOp fillString(aLine, T<int>(aCounter)).
         
     write : aLine paddingLeft:aWidth
         = self~stringOp write:aLine paddingLeft:aWidth with:$32.
@@ -1565,9 +1565,9 @@ extension stringOp
                 int aLen := aWidthInt - aLength.
                 int aLeftLen := aLen / 2.
                 
-                self~stringOp write(aChar, aLeftLen).
+                self~stringOp fillString(aChar, aLeftLen).
                 self write:aLine.
-                self~stringOp write(aChar, aLen - aLeftLen)
+                self~stringOp fillString(aChar, aLen - aLeftLen)
             ];
             [ self write:aLine ].
             

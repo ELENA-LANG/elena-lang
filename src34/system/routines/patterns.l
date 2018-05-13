@@ -4,54 +4,56 @@
 
 // === pattern enumerators ==
 
-//// --- Toping ---
-//
-//class TopFilter :: Enumerator
-//{
-//    vint       theOffset.    
-//    vint       theCounter.    
-//    enumerator theEnumerator.
-//    
-//    constructor new int:aCounter enumerator:anEnumerator
-//    [
-//        theCounter := aCounter.
-//        theOffset := 0.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    constructor new int:counter int:offset enumerator:enumerator
-//    [
-//        theCounter := counter int.
-//        theOffset := offset int.
-//        
-//        theEnumerator := enumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        if (theCounter != 0)
-//        [
-//            while (theEnumerator next)
-//            [
-//                if (theOffset == 0)
-//                    [  
-//                        theCounter reduce int:1. ^ true
-//                    ];
-//                    [ theOffset reduce int:1 ]
-//            ].
-//        ].
-//        
-//        ^ false
-//    ]
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//}
-//
+// --- Toping ---
+
+public class TopFilter :: Enumerator
+{
+    ref<int>      theOffset.    
+    ref<int>      theCounter.    
+    T<Enumerator> theEnumerator.
+    
+    constructor new(int aCounter, Enumerator anEnumerator)
+    [
+        theCounter := aCounter.
+        theOffset := 0.
+        theEnumerator := anEnumerator.
+    ]
+    
+    constructor new(int counter, int offset, Enumerator enumerator)
+    [
+        theCounter := counter.
+        theOffset := offset.
+        
+        theEnumerator := enumerator.
+    ]
+    
+    get = theEnumerator get.
+    
+    bool next
+    [
+        if (theCounter != 0)
+        [
+            while (theEnumerator next)
+            [
+                if (theOffset == 0)
+                    [  
+                        theCounter reduce(1). ^ true
+                    ];
+                    [ theOffset reduce(1) ]
+            ].
+        ].
+        
+        ^ false
+    ]
+    
+    reset 
+    [
+        theEnumerator reset.
+    ]    
+    
+    enumerable => theEnumerator.
+}
+
 //// --- SkipFilter ---
 //
 //class SkipFilter :: Enumerator
@@ -875,10 +877,6 @@ public class Summing :: BasePattern
 //    
 //    accumulate with:operation 
 //        = self~patternOp accumulate:(Variable new) with:operation.
-//
-//    top:aCounter
-//        = TopFilter new int:aCounter enumerator:(self enumerator).
-//
 //    skipping:aCounter
 //        = SkipFilter new int:aCounter enumerator:(self enumerator).
 //

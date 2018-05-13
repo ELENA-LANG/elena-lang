@@ -339,6 +339,9 @@ public extension enumerableOp
 
     repeatTo:n
         = RangeEnumerator from:self to:n by:1.
+
+    top:aCounter
+        = TopFilter new(aCounter, T<Enumerator>(self enumerator)).
 }
 
 // --- indexableOp ---

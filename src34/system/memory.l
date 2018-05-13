@@ -1291,7 +1291,7 @@ public sealed __string LiteralValue :: BaseValue, interface<Enumerable<char>>
         => system'core_routines'__literal.
 
     /// Returns the string enumerator
-    enumerator = LiteralEnumerator new(self).
+    Enumerator<char> enumerator = LiteralEnumerator new(self).
 
 //    /// Returns the string indexer
 //    indexer = LiteralIndexer new literal:$self.
@@ -1511,9 +1511,9 @@ public sealed __string WideLiteralValue :: BaseValue
     internal save(int anIndex, ShortArray anArray, int aRetVal)
         => system'core_routines'__wide.
 
-//    /// Returns the object enumerator
-//    enumerator = WideLiteralEnumerator new wide:$self.
-//    
+    /// Returns the object enumerator
+    Enumerator<char> enumerator = WideLiteralEnumerator new(self).
+    
 //    /// Returns the object indexer
 //    indexer = WideLiteralIndexer new wide:$self.
     
@@ -2345,65 +2345,73 @@ class LiteralEnumerator :: Enumerator<char>
 //    readLengthTo vint:anOutput
 //        => theLiteral.
 //}
-//
-//// --- WideLiteralEnumerator ---
-//
-///// A literal enumerator
-//class WideLiteralEnumerator :: Enumerator
-//{
-//    wide theLiteral.
-//    vint theIndex.
-//    vint theDiff.
-//    char theChar.
-//    
-//    /// Creates an enumerator
-//    constructor new : anObject
-//        <= new wide:anObject.
-//    
-//    /// Creates an enumerator
-//    constructor new wide:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := $0.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex set int:-1.
-//        theDiff set int:1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        int aLength := theLiteral length.
-//
-//        theIndex append int:theDiff.
-//        
-//        if (theIndex < aLength)
-//            [
-//                theChar := theLiteral getAt int:theIndex.
-//                
-//                theChar readLengthTo vint:theDiff.
-//                theDiff append int:1.
-//                theDiff int := theDiff / 2.
-//                
-//                ^ true
-//            ].
-//
-//        theDiff set int:0.
-//        theChar := $0.
-//
-//        ^ false
-//    ]
-//    
-//    /// Returns the current character
-//    get = theChar.
-//}
-//
+
+// --- WideLiteralEnumerator ---
+
+/// A literal enumerator
+class WideLiteralEnumerator :: Enumerator<char>
+{
+    wide      theLiteral.
+    ref<int>  theIndex.
+    ref<int>  theDiff.
+    ref<char> theChar.
+    
+    /// Creates an enumerator
+    constructor new : anObject
+        <= new(T<wide>(anObject)).
+    
+    /// Creates an enumerator
+    constructor new(wide aLiteral)
+    [
+        theLiteral := aLiteral.
+        theIndex := -1.
+        theDiff := 1.
+        theChar := $0.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex value := -1.
+        theDiff value := 1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next
+    [
+        int aLength := theLiteral length.
+
+        int diff := theDiff int.
+        theIndex append(diff).
+        
+        if (theIndex < aLength)
+            [
+                theChar := theLiteral getAt(T<int>(theIndex)).
+                
+                theChar readLengthTo(theDiff).
+                theDiff append:1.
+                theDiff value := theDiff / 2.
+                
+                ^ true
+            ].
+
+        theDiff value := 0.
+        theChar := $0.
+
+        ^ false
+    ]
+    
+    cast T<Enumerator> = Enumerator::
+    {
+        embeddable dispatch => self.
+    }.
+    
+    enumerable = theLiteral.
+    
+    /// Returns the current character
+    char get = theChar.
+}
+
 //// --- WideLiteralInexer ---
 //
 ///// A wide literal enumerator

@@ -1,12 +1,16 @@
-﻿[project]
-executable=anagram.exe
-namespace=anagram
-template=mta_console
-debuginfo=-1
-
-[files]
-anagram.l
-
-[forwards]
-'program=anagram'program
-
+<configuration>
+    <project>
+        <executable>anagram.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>anagram</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>anagram.l</include>
+        </module>
+    </files>
+</configuration>

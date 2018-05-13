@@ -9,18 +9,19 @@ import system'io.
 import system'collections.
 import extensions.
 import extensions'routines.
+import extensions'text.
 
 // --- Normalized ---
 
 extension op
 {
      normalized
-         = self toArray; ascendant; summarize(String new); literal.
+         = self toArray; ascendant; summarize(StringWriter new); literal.
 }
 
 // --- Program ---
 
-symbol program =
+public program =
 [
     var aStart := now.
 
@@ -31,7 +32,7 @@ symbol program =
         var s := aWord.
         var aKey := aWord normalized.
         var anItem := aDictionary[aKey].
-        if ($nil == anItem)
+        if (nil == anItem)
         [
             anItem := ArrayList new.
             aDictionary[aKey] := anItem.
@@ -40,7 +41,7 @@ symbol program =
         anItem append:aWord.
     ].
 
-    aDictionary array_list;
+    aDictionary values;
         sort(:aFormer:aLater)( aFormer length > aLater length );
         top:20; forEach(:aPair)[ console printLine(aPair value) ].
     

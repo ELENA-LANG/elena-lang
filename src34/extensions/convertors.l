@@ -208,11 +208,11 @@ public singleton arrayConvertorEx
     T<Array> convert(Array anArray)
         = anArray.
 
-//    convert literal:l
-//        <= convert enumerator:l.
-//
-//    convert wide:l
-//        <= convert enumerator:l.
+    T<Array> convert(literal l)
+        <= convert(T<Enumerator>(l enumerator)).
+
+    T<Array> convert(wide l)
+        <= convert(T<Enumerator>(l enumerator)).
 
     T<Array> convert(Enumerator anEnumerator)
     [

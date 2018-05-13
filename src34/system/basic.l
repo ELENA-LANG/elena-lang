@@ -2435,40 +2435,40 @@ sealed public class Variable :: BaseVariable, ref<object>
 //    ]    
 }
 
-//// --- KeyValue ---
-//
-///// A key - object pair
-/////
-///// Extends the object with a key property
-//sealed class KeyValue
-//{
-//    object theKey.
-//    object theObject.
-//    
-//    /// Creates a new objext
-//    constructor new key:aKey value:anObject
-//    [
-//        theKey := aKey.
-//        theObject := anObject.
-//    ]
-//    
-//    /// Returns the key
-//    key = theKey.
-//    
-//    /// Returns the key
-//    value = theObject.
-//
-//    set value:anObject
-//    [
-//        theObject := anObject.
-//    ]
-//           
-//    bool equal : o
-//        => theObject.
-//                                                                                      
-//    /// Redirects the incoming messages to the object
-//    dispatch => theObject.
-//}
+// --- KeyValue ---
+
+/// A key - object pair
+///
+/// Extends the object with a key property
+public sealed class KeyValue
+{
+    object theKey.
+    object theObject.
+    
+    /// Creates a new objext
+    constructor new(object aKey, object anObject)
+    [
+        theKey := aKey.
+        theObject := anObject.
+    ]
+    
+    /// Returns the key
+    key = theKey.
+    
+    /// Returns the key
+    value = theObject.
+
+    set value:anObject
+    [
+        theObject := anObject.
+    ]
+           
+    bool equal : o
+        => theObject.
+                                                                                      
+    /// Redirects the incoming messages to the object
+    dispatch => theObject.
+}
 
 // === Basic Convertors ===
 

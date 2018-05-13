@@ -858,275 +858,277 @@ public class ArrayListIndexer :: Indexer
     ]
 }
 
-//// --- Dictionary ---
-//
-///// Dictionary class
-//sealed  class Dictionary :: BaseEnumerable
-//{
-//    array_list theList.
-//    array      theHashTable.
-//    int        theHashMask.
-//    
-//    object     theDefault.
-//
-//    /// Creates a dictionary
-//    constructor new
-//        <= new int:32 int:32 object:$nil.
-//
-//    constructor new default:aDefault
-//        <= new int:32 int:32 object:aDefault.
-//
-//    constructor new:aCapacity default:aDefault
-//        <= new int:(aCapacity int) int:32 object:aDefault.
-//
-//    /// Creates a dictionary
-//    constructor new int:aCapacity int:aHashLength object:aDefault
-//    [
-//        int size := 32.
-//        while (size < aHashLength)
-//        [
-//            size := size << 1.
-//        ].
-//        
-//        size := size - 1.
-//        theHashMask := IntNumber new int:size.
-//        
-//        theHashTable := Array new int:aHashLength.
-//        theList := ArrayList new int:aCapacity.
-//        
-//        theDefault := aDefault.
-//    ]
-//    
-//    setAt int:aKey object:anObject
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        $self $getItem int:aHashCode object:aKey; set value:anObject
-//    ]
-//        
-//    setAt long:aKey object:anObject
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        $self $getItem int:aHashCode object:aKey; set value:anObject
-//    ]
-//        
-//    setAt real:aKey object:anObject
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        $self $getItem int:aHashCode object:aKey; set value:anObject
-//    ]
-//        
-//    setAt char:aKey object:anObject
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        $self $getItem int:aHashCode object:aKey; set value:anObject
-//    ]
-//        
-//    setAt literal:aKey object:anObject
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        $self $getItem int:aHashCode object:aKey; set value:anObject
-//    ]
-//        
-//    setAt wide:aKey object:anObject
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        $self $getItem int:aHashCode object:aKey; set value:anObject.
-//    ]
-//    
-//    /// Sets a dictionary item with the specified key
-//    multi setAt : aKey : anObject
-//    [
-//        int aHashCode := aKey hash_code.
-//        
-//        $self $getItem int:aHashCode object:aKey; set value:anObject.
-//    ]
-//        
-//    stacksafe $getItem int:aCode object:aKey
-//    [
-//        int aHashCode := aCode && theHashMask.
-//        
-//        var aHashItem := theHashTable getAt int:aHashCode.
-//        if ($nil == aHashItem)
-//        [
-//            aHashItem := IntArray new int:5.
-//            
-//            aHashItem write int:0 int:1.
-//            
-//            theHashTable setAt int:aHashCode object:aHashItem
-//        ].
-//        
-//        intarray aBacket := aHashItem intarray.        
-//        int      aLength := 0.
-//        aBacket read int:0 vint:aLength.
-//        
-//        int i := 1.
-//        while (i < aLength)
-//        [
-//            int anItemIndex := 0.
-//            aBacket read int:i vint:anItemIndex.
-//            
-//            var anItem := theList getAt int:anItemIndex.
-//            
-//            if(aKey equal(anItem key))
-//                [ ^ anItem ].
-//            
-//            i := i + 1
-//        ].
-//        
-//        var aNewItem := KeyValue new key:aKey value:theDefault.
-//        
-//        theList readLengthTo vint:i.
-//        theList append:aNewItem.
-//        
-//        // Extend a backet
-//        int aCapacity := 0.
-//        aBacket readLengthTo vint:aCapacity.
-//        if (aCapacity == aLength)
-//            [
-//                intarray aNewBacket := IntArray new int:(aCapacity + 5).
-//                aNewBacket write int:0 int:aCapacity intarray:aBacket.
-//
-//                aBacket := aNewBacket.
-//                theHashTable setAt int:aHashCode object:aNewBacket.
-//            ].
-//            
-//        aBacket write int:aLength int:i.
-//            
-//        aLength := aLength + 1.
-//        aBacket write int:0 int:aLength.
-//        
-//        ^ aNewItem.
-//    ]    
-//        
-//    multi getAt : aKey
-//    [
-//        int aHashCode := aKey hash_code.
-//        
-//        ^ $self $getItem int:aHashCode object:aKey; value.
-//    ]
-//            
-//    getAt int:aKey
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        ^ $self $getItem int:aHashCode object:aKey; value.
-//    ]
-//        
-//    getAt long:aKey
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        ^ $self $getItem int:aHashCode object:aKey; value.
-//    ]
-//        
-//    getAt real:aKey
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        ^ $self $getItem int:aHashCode object:aKey; value.
-//    ]
-//        
-//    getAt char:aKey
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        ^ $self $getItem int:aHashCode object:aKey; value.
-//    ]
-//        
-//    getAt literal:aKey
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        ^ $self $getItem int:aHashCode object:aKey; value.
-//    ]
-//        
-//    getAt wide:aKey
-//    [
-//        int aHashCode := 0.
-//        aKey readHashCodeTo vint:aHashCode.
-//        
-//        ^ $self $getItem int:aHashCode object:aKey; value.
-//    ]
-//
-//    bool containsKey(object aKey)
-//    [
-//        int aHashCode := aKey hash_code.
-//        
-//        aHashCode := aHashCode && theHashMask.
-//        
-//        var aHashItem := theHashTable getAt int:aHashCode.
-//        if ($nil == aHashItem)
-//        [
-//            aHashItem := IntArray new int:5.
-//            
-//            aHashItem write int:0 int:1.
-//            
-//            theHashTable setAt int:aHashCode object:aHashItem
-//        ].
-//        
-//        intarray aBacket := aHashItem intarray.        
-//        int      aLength := 0.
-//        aBacket read int:0 vint:aLength.
-//        
-//        int i := 1.
-//        while (i < aLength)
-//        [
-//            int anItemIndex := 0.
-//            aBacket read int:i vint:anItemIndex.
-//            
-//            var anItem := theList getAt int:anItemIndex.
-//            
-//            if(aKey equal(anItem key))
-//                [ ^ true ].
-//            
-//            i := i + 1
-//        ].        
-//        
-//        ^ false
-//    ]
-//
-//    /// Returns a dictionary enumerator
-//    enumerator => theList.
-//    
-//    array_list
-//        = theList clone.
-//
-//    /// Clones a dictionary
-//    clone 
-//    [
-//        var aList := Dictionary new.
-//
-//        enumerator it := theList enumerator.
-//        while (it next)
-//        [
-//            var anItem := it get.
-//            
-//            aList[anItem key] := anItem value.
-//        ].
-//        
-//        ^ aList.
-//    ]
-//    
-//    clear
-//    [
-//        theHashTable := Array new int:(theHashTable length).
-//        theList clear.
-//    ]
-//}
+// --- Dictionary ---
+
+/// Dictionary class
+public sealed  class Dictionary :: interface<Enumerable>
+{
+    T<ArrayList> theList.
+    T<Array>     theHashTable.
+    int          theHashMask.
+    
+    object       theDefault.
+
+    /// Creates a dictionary
+    constructor new
+        <= new(32, 32, nil).
+
+    constructor new(object aDefault)
+        <= new(32, 32, aDefault).
+
+    constructor new(int aCapacity, object aDefault)
+        <= new(aCapacity, 32, aDefault).
+
+    /// Creates a dictionary
+    constructor new(int aCapacity, int aHashLength, object aDefault)
+    [
+        int size := 32.
+        while (size < aHashLength)
+        [
+            size := size << 1.
+        ].
+        
+        size := size - 1.
+        theHashMask := IntNumber new(size).
+        
+        theHashTable := Array new(aHashLength).
+        theList := ArrayList new(aCapacity).
+        
+        theDefault := aDefault.
+    ]
+    
+    setAt(int aKey, object anObject)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        self getItem(aHashCode, aKey); value := anObject
+    ]
+        
+    setAt(long aKey, object anObject)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        self getItem(aHashCode, aKey); value := anObject
+    ]
+        
+    setAt(real aKey, object anObject)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        self getItem(aHashCode, aKey); value := anObject
+    ]
+        
+    setAt(char aKey, object anObject)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        self getItem(aHashCode, aKey); value := anObject
+    ]
+        
+    setAt(literal aKey, object anObject)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        self getItem(aHashCode, aKey); value := anObject
+    ]
+        
+    setAt(wide aKey, object anObject)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        self getItem(aHashCode, aKey); value := anObject.
+    ]
+    
+    /// Sets a dictionary item with the specified key
+    setAt(object aKey, object anObject)
+    [
+        int aHashCode := aKey hash_code.
+        
+        self getItem(aHashCode, aKey); value := anObject.
+    ]
+        
+    private stacksafe getItem(int aCode, object aKey)
+    [
+        int aHashCode := aCode && theHashMask.
+        
+        var aHashItem := theHashTable getAt(aHashCode).
+        if (nil == aHashItem)
+        [
+            aHashItem := IntArray new(5).
+            
+            aHashItem write(0, 1).
+            
+            theHashTable setAt(aHashCode, aHashItem)
+        ].
+        
+        auto aBacket := T<IntArray>(aHashItem).
+        int  aLength := 0.
+        aBacket read(0, &aLength).
+        
+        int i := 1.
+        while (i < aLength)
+        [
+            int anItemIndex := 0.
+            aBacket read(i, &anItemIndex).
+            
+            var anItem := theList getAt(anItemIndex).
+            
+            if(aKey equal(anItem key))
+                [ ^ anItem ].
+            
+            i := i + 1
+        ].
+        
+        var aNewItem := KeyValue new(aKey, theDefault).
+        
+        theList readLengthTo(&i).
+        theList append:aNewItem.
+        
+        // Extend a backet
+        int aCapacity := 0.
+        aBacket readLengthTo(&aCapacity).
+        if (aCapacity == aLength)
+            [
+                auto aNewBacket := IntArray new(aCapacity + 5).
+                aNewBacket write(0, aCapacity, aBacket).
+
+                aBacket := aNewBacket.
+                theHashTable setAt(aHashCode, aNewBacket).
+            ].
+            
+        aBacket write(aLength, i).
+            
+        aLength := aLength + 1.
+        aBacket write(0, aLength).
+        
+        ^ aNewItem
+    ]    
+        
+    getAt : aKey
+    [
+        int aHashCode := aKey hash_code.
+        
+        ^ self getItem(aHashCode, aKey); value.
+    ]
+            
+    getAt(int aKey)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        ^ self getItem(aHashCode, aKey); value.
+    ]
+        
+    getAt(long aKey)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        ^ self getItem(aHashCode, aKey); value.
+    ]
+        
+    getAt(real aKey)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        ^ self getItem(aHashCode, aKey); value.
+    ]
+        
+    getAt(char aKey)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        ^ self getItem(aHashCode, aKey); value.
+    ]
+        
+    getAt(literal aKey)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        ^ self getItem(aHashCode, aKey); value.
+    ]
+        
+    getAt(wide aKey)
+    [
+        int aHashCode := 0.
+        aKey readHashCodeTo(&aHashCode).
+        
+        ^ self getItem(aHashCode, aKey); value.
+    ]
+
+    bool containsKey(object aKey)
+    [
+        int aHashCode := aKey hash_code.
+        
+        aHashCode := aHashCode && theHashMask.
+        
+        var aHashItem := theHashTable getAt(aHashCode).
+        if (nil == aHashItem)
+        [
+            aHashItem := IntArray new(5).
+            
+            aHashItem write(0, 1).
+            
+            theHashTable setAt(aHashCode, aHashItem)
+        ].
+        
+        auto aBacket := T<IntArray>(aHashItem).
+        int  aLength := 0.
+        aBacket read(0, &aLength).
+        
+        int i := 1.
+        while (i < aLength)
+        [
+            int anItemIndex := 0.
+            aBacket read(i, &anItemIndex).
+            
+            var anItem := theList getAt(anItemIndex).
+            
+            if(aKey equal(anItem key))
+                [ ^ true ].
+            
+            i := i + 1
+        ].        
+        
+        ^ false
+    ]
+
+    /// Returns a dictionary enumerator
+    T<Enumerator> enumerator => theList.
+    
+    cast T<ArrayList>
+        = theList clone.
+
+    T<ArrayList> values = theList clone.
+
+    /// Clones a dictionary
+    clone 
+    [
+        var aList := Dictionary new.
+
+        T<Enumerator> it := theList enumerator.
+        while (it next)
+        [
+            var anItem := it get.
+            
+            aList[anItem key] := anItem value.
+        ].
+        
+        ^ aList.
+    ]
+    
+    clear
+    [
+        theHashTable := Array new(theHashTable length).
+        theList clear.
+    ]
+}
