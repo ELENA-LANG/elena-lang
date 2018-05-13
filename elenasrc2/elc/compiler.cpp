@@ -862,6 +862,11 @@ ObjectInfo Compiler::MethodScope :: mapSelf(bool forced)
    else return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
 }
 
+ObjectInfo Compiler::MethodScope :: mapGroup()
+{
+   return ObjectInfo(okParam, (size_t)-1);
+}
+
 ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
 {
    int prefix = closureMode ? 0 : -1;
@@ -884,12 +889,12 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
          }
          else return mapSelf();
       }
-      //   else if (terminal.compare(SELF_VAR) && !closureMode) {
-      //      if (extensionMode) {
-      //         return mapThis();
-      //      }
-      //      else return ObjectInfo(okParam, (size_t)-1);
-      //   }
+      else if (terminal.compare(GROUP_VAR) && !closureMode) {
+         if (extensionMode) {
+            return mapSelf();
+         }
+         else return mapGroup();
+      }
       else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
          ObjectInfo retVar = parent->mapTerminal(terminal, referenceOne);
          if (retVar.kind == okUnknown) {
@@ -965,6 +970,12 @@ ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
          return methodScope->mapSelf();
       }
    }
+   else if (identifier.compare(GROUP_VAR)) {
+      MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
+      if (methodScope != NULL) {
+         return methodScope->mapGroup();
+      }
+   }
    else {
       ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
       if (classScope != NULL) {
@@ -1009,7 +1020,7 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool reference
 
 ObjectInfo Compiler::ResendScope :: mapTerminal(ident_t identifier, bool referenceOne)
 {
-   if (!withFrame && (identifier.compare(SELF_VAR)/* || identifier.compare(SELF_VAR)*/))
+   if (!withFrame && (identifier.compare(SELF_VAR) || identifier.compare(GROUP_VAR)))
    {
       return ObjectInfo();
    }

@@ -29,16 +29,16 @@ public extension objectOp
     bool equalReference:anObject
         => system'core_routines'__object.
         
-//    evalSelf func1:aFunction
-//        = aFunction eval:self.
-//
+    evalSelf(Func1 aFunction)
+        = aFunction(self).
+
 //    evalSelf:aFunction
 //        = aFunction eval:self.
-//
-//    /// Returns true if the object is nil
-//    bool isNil
-//        = nil == self.
-//        
+
+    /// Returns true if the object is nil
+    bool isNil
+        = nil == self.
+        
 //    /// Returns true if the object is literal or character
 //    isLiteral
 //    [

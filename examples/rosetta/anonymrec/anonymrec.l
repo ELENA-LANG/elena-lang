@@ -9,8 +9,7 @@ extension mathOp
         if (self < 0)
             [ InvalidArgumentException new:"Must be non negative"; raise ].
             
-        ^ control do:self with
-            (:n)
+        ^ target evalSelf(:n)
                 [
                     if (n > 1)
                         [ ^ @self(n - 2) + @self(n - 1) ];
@@ -19,7 +18,7 @@ extension mathOp
     ]
 }
 
-program =
+public program =
 [
     -1 to:10 do(:i)
     [

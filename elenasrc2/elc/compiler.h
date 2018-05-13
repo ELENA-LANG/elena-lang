@@ -624,6 +624,7 @@ private:
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
 
       ObjectInfo mapSelf(bool forced = false);
+      ObjectInfo mapGroup();
       ObjectInfo mapParameter(Parameter param);
 
       MethodScope(ClassScope* parent);
