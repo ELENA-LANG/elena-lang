@@ -1,4 +1,4 @@
-interface<type>
+public interface<type>
 {
     cast T<type> = type::
     {
@@ -6,7 +6,7 @@ interface<type>
     }.
 }
 
-field prop<prop_name>
+public field prop<prop_name>
 {
     object field.
     
@@ -18,7 +18,7 @@ field prop<prop_name>
     prop_name = field.
 }
 
-field prop<prop_type, prop_name>
+public field prop<prop_type, prop_name>
 {
     prop_type field.
     
@@ -30,7 +30,7 @@ field prop<prop_type, prop_name>
     prop_type prop_name = field.
 }
 
-field rprop<prop_type, prop_name>
+public field rprop<prop_type, prop_name>
 {
     prop_type field.
     
@@ -75,7 +75,7 @@ field rprop<prop_type, prop_name>
 
 // --- vprop ---
 
-__accessor __accessor vprop<prop_type,prop_name>
+public __accessor __accessor vprop<prop_type,prop_name>
 {
     embeddable prop_type prop_name
     [
@@ -142,7 +142,7 @@ __accessor __accessor vprop<prop_type,prop_name>
 
 // --- rvprop ---
 
-__accessor rvprop<type,prop_name>
+public __accessor rvprop<type,prop_name>
 {
     stacksafe embeddable type prop_name
     [
@@ -155,7 +155,7 @@ __accessor rvprop<type,prop_name>
 
 // --- fnprop ---
 
-__accessor fnprop<type,template_fn>
+public __accessor fnprop<type,template_fn>
 {
     stacksafe embeddable type template_fn(type n)
     [
@@ -191,7 +191,7 @@ __accessor fnprop<type,template_fn>
 
 // --- while statement ---
 
-__loop while<expr>
+public __loop while<expr>
 [
     T<bool>(expr) ?
     [
@@ -200,7 +200,7 @@ __loop while<expr>
 
 // --- until statement ---
 
-__loop until<expr>
+public __loop until<expr>
 [
     T<bool>(expr) !
     [
@@ -209,7 +209,7 @@ __loop until<expr>
     
 // --- extern statement ---
 
-__extern template extern
+public __extern template extern
 [
     [
     ].
@@ -217,7 +217,7 @@ __extern template extern
 
 // --- if statement ---
 
-__block if<expr>
+public __block if<expr>
 [
     T<bool>(expr) ?
     [
@@ -226,7 +226,7 @@ __block if<expr>
 
 // --- ifnot statement ---
 
-__block ifnot<expr>
+public __block ifnot<expr>
 [
     T<bool>(expr) !
     [
@@ -235,7 +235,7 @@ __block ifnot<expr>
 
 // --- if-else statement ---
 
-__block __block if<expr>
+public __block __block if<expr>
 [
     T<bool>(expr) ?
     [
@@ -245,7 +245,7 @@ __block __block if<expr>
 ]
 
 
-__block __block ifnot<expr>
+public __block __block ifnot<expr>
 [
     T<bool>(expr) inverted ?
     [
@@ -256,7 +256,7 @@ __block __block ifnot<expr>
 
 // -- try-catch statement ---
 
-__nested try<expr>
+public __nested try<expr>
 [
     expr | catch:
     {

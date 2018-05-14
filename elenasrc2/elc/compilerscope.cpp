@@ -486,7 +486,10 @@ ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage,
       }
       else templateReference = mapFullReference(closureName, true);
 
-      return generateTemplate(compiler, templateReference, parameters);
+      if (templateReference) {
+         return generateTemplate(compiler, templateReference, parameters);
+      }
+      else return superReference;
    }
 }
 
@@ -500,8 +503,8 @@ void CompilerScope :: saveListMember(ident_t name, ident_t memberName)
    // check if the module alread included
    MemoryReader metaReader(section);
    while (!metaReader.Eof()) {
-      ident_t name = metaReader.getLiteral(DEFAULT_STR);
-      if (name.compare(memberName))
+      ident_t s = metaReader.getLiteral(DEFAULT_STR);
+      if (s.compare(memberName))
          return;
    }
 

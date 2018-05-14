@@ -5,7 +5,7 @@ public class BaseVariable
     value = nil.
 }
 
-sealed ref<template_subj> :: BaseVariable
+public sealed ref<template_subj> :: BaseVariable
 {
     template_subj theValue.
     
@@ -37,7 +37,7 @@ sealed ref<template_subj> :: BaseVariable
     embeddable dispatch => theValue.
 }
 
-extension<ref<int>> intRefOp
+public extension<ref<int>> intRefOp
 {
     stacksafe append(int n)
     [
@@ -56,7 +56,7 @@ extension<ref<int>> intRefOp
     ]
 }
 
-extension<ref<real>> realRefOp
+public extension<ref<real>> realRefOp
 {
     stacksafe append(real n)
     [

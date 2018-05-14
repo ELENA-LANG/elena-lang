@@ -210,6 +210,9 @@ Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t 
    this->ns = ns;
    this->sourcePath = path;
 
+   // load private namespaces
+   loadExtensions(moduleScope->module->Name(), ns, true);
+
    for (auto it = imported->start(); !it.Eof(); it++) {
       ident_t imported_ns = *it;
 
@@ -579,12 +582,12 @@ void Compiler::NamespaceScope :: loadExtensions(ident_t ns)
    }
 }
 
-void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t typeRef, ref_t role)
+void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t typeRef, ref_t role, bool internalOne)
 {
    if (typeRef == INVALID_REF || typeRef == moduleScope->superReference)
       typeRef = 0;
 
-   IdentifierString sectionName("'");
+   IdentifierString sectionName(internalOne ? PRIVATE_PREFIX_NS : "'");
    if (!emptystr(ns)) {
       sectionName.append(ns);
       sectionName.append("'");
@@ -701,6 +704,9 @@ Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference)
    : Scope(moduleScope)
 {
    this->reference = reference;
+
+   ident_t name = module->resolveReference(reference);
+   this->internalOne = name.startsWith(PRIVATE_PREFIX_NS);
 }
 
 // --- Compiler::SymbolScope ---
@@ -6559,16 +6565,16 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       scope.raiseWarning(WARNING_LEVEL_1, wrnTypeInherited, node);
 }
 
-void Compiler :: saveExtension(ClassScope& scope, ref_t message)
+void Compiler :: saveExtension(ClassScope& scope, ref_t message, bool internalOne)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-   nsScope->saveExtension(message, scope.extensionClassRef, scope.reference);
+   nsScope->saveExtension(message, scope.extensionClassRef, scope.reference, internalOne);
    if (isOpenArg(message)/* && _logic->isMethodGeneric(scope.info, message)*/) {
       // if it is an extension with open argument list generic handler
       // creates the references for all possible number of parameters
       for (int i = 1; i < OPEN_ARG_COUNT; i++) {
-         nsScope->saveExtension(overwriteParamCount(message, i), scope.extensionClassRef, scope.reference);
+         nsScope->saveExtension(overwriteParamCount(message, i), scope.extensionClassRef, scope.reference, internalOne);
       }
    }
 }
@@ -6702,12 +6708,12 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          // save extensions if required ; private method should be ignored
          if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
             // NOTE : only general message should be saved
-            saveExtension(scope, message);
+            saveExtension(scope, message, scope.internalOne);
          }
       }
       else if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate) && isGeneralMessage(scope.module, message)) {
          // save the extension message without parameters as well
-         saveExtension(scope, message);
+         saveExtension(scope, message, scope.internalOne);
       }
    }
 }

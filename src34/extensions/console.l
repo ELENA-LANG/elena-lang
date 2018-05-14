@@ -3,7 +3,7 @@ import system'text.
 
 // --- outputOp ---
 
-extension outputOp
+public extension outputOp
 {
     generic print(dynamic<object> list)
     [
@@ -56,7 +56,7 @@ extension outputOp
     ]    
 }
 
-extension outputFormatterOp
+public extension outputFormatterOp
 {
     generic printPaddingRight(int width, V<object> list)
     [
@@ -99,7 +99,7 @@ extension outputFormatterOp
     ]
 }
 
-extension outputCharFormatterOp
+public extension outputCharFormatterOp
 {
     generic printPaddingRightChar(int width, char ch, V<object> list)
     [
@@ -174,7 +174,7 @@ singleton helper
     ]
 }
 
-extension formatterOp
+public extension formatterOp
 {
     generic printFormatted(literal s, V<object> args)
     [

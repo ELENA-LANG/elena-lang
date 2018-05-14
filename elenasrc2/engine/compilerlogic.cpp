@@ -1382,7 +1382,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //         return true;
       case V_CLASS:
       case V_PUBLIC:
-      case V_PRIVATE:
+      case V_INTERNAL:
          attrValue = 0;
          return true;
       case V_SINGLETON:
@@ -1554,7 +1554,7 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
 
       return true;
    }
-   else if (attrValue == (int)V_PUBLIC || attrValue == (int)V_PRIVATE) {
+   else if (attrValue == (int)V_PUBLIC || attrValue == (int)V_INTERNAL) {
       return true;
    }
    else return false;

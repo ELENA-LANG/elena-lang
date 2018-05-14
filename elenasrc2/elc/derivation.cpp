@@ -434,77 +434,6 @@ ref_t DerivationTransformer::DerivationScope :: mapReference(SNode terminal)
    return 0;
 }
 
-//////ref_t DerivationTransformer::DerivationScope :: mapAttributeType(SNode node/*, bool& argMode, bool& paramMode*/)
-//////{
-//////   SNode current = node.findChild(lxIdentifier/*, lxReference, lxPrivate*/);
-//////
-////////   int paramIndex = 0;
-////////   ref_t ref = mapAttribute(current, paramIndex);
-////////   if (paramIndex != 0) {
-////////      paramMode = true;
-////////
-////////      return paramIndex;
-////////   }
-//////
-//////   ref_t ref = moduleScope->mapTerminal(current, true);
-//////   if (!ref) {
-////////      ref = mapAttribute(current);
-////////      if (ref == 0) {
-//////         ref = moduleScope->mapTerminal(current, false);
-////////      }
-////////      else if (ref == V_OBJARRAY && !argMode) {
-////////         argMode = true;
-////////         ref = moduleScope->mapTerminal(node.findChild(lxAttributeValue).findChild(lxIdentifier, lxReference, lxPrivate), true);
-////////         if (!ref)
-////////            raiseError(errInvalidHint, node);
-////////      }
-////////      else if ((int)ref < 0)
-////////         raiseError(errInvalidHint, node);
-//////   }
-//////
-//////   return ref;
-//////}
-////
-//////ref_t DerivationReader::DerivationScope :: mapNewReference(ident_t identifier)
-//////{
-//////   ReferenceNs name(moduleScope->module->Name(), identifier);
-//////
-//////   return moduleScope->module->mapReference(name);
-//////}
-////
-//////ref_t DerivationTransformer::DerivationScope :: mapAttribute(SNode attribute/*, int& paramIndex*/)
-//////{
-////////   SNode terminal = attribute.firstChild(lxTerminalMask);
-////////   if (terminal == lxNone)
-////////      terminal = attribute;
-////////
-////////   int index = mapParameter(terminal);
-////////   if (index) {
-////////      paramIndex = index;
-////////
-////////      return attribute.existChild(lxAttributeValue) ? V_ATTRTEMPLATE : INVALID_REF;
-////////   }
-////////   else if (attribute.existChild(lxAttributeValue)) {
-////////      return V_ATTRTEMPLATE;
-////////   }
-//////   /*else */return moduleScope->mapAttribute(attribute);
-//////}
-////
-//////ref_t DerivationReader::DerivationScope :: mapTerminal(SNode terminal, bool existing)
-//////{
-//////   return moduleScope->mapTerminal(terminal, existing);
-//////}
-//////
-//////ref_t DerivationReader::DerivationScope :: mapTypeTerminal(SNode terminal, bool existing)
-//////{
-//////   if (existing) {
-//////      ref_t attrRef = moduleScope->mapAttribute(terminal);
-//////      if (attrRef != 0 && !isPrimitiveRef(attrRef))
-//////         return attrRef;
-//////   }
-//////   return mapTerminal(terminal, existing);
-//////}
-////
 ////bool DerivationReader::DerivationScope :: isTypeAttribute(SNode terminal)
 ////{
 ////   ident_t name = terminal.identifier();
@@ -621,21 +550,6 @@ int DerivationTransformer::DerivationScope :: mapParameter(ident_t identifier)
 //   }
    /*else */return index;
 }
-
-//////int DerivationReader::DerivationScope :: mapIdentifier(SNode terminal)
-//////{
-//////   ident_t identifier = terminal.identifier();
-//////   if (emptystr(identifier))
-//////      identifier = terminal.findChild(lxTerminal).identifier();
-//////
-//////   if (type == DerivationScope::ttFieldTemplate) {
-//////      return fields.get(identifier);
-//////   }
-//////   else if (type == DerivationScope::ttCodeTemplate) {
-//////      return parameters.get(identifier);
-//////   }
-//////   else return 0;
-//////}
 
 void DerivationTransformer::DerivationScope :: copyName(SyntaxWriter& writer, SNode terminal)
 {
@@ -1423,14 +1337,6 @@ void DerivationTransformer :: generateAttributes(SyntaxWriter& writer, SNode nod
          else if (attrRef == V_ATTRTEMPLATE) {
             generateAttributeTemplate(writer, current, scope, templateMode, expressionMode);
          }
-         //      //else if (symbolMode && (attrRef == V_PRIVATE || attrRef == V_PUBLIC)) {
-         //      //   // the symbol visibility should be provided only once
-         //      //   if (!visibilitySet) {
-         //      //      privateOne = attrRef == V_PRIVATE;
-         //      //      visibilitySet = true;
-         //      //   }
-         //      //   else scope.raiseError(errInvalidHint, current);
-         //      //}
          else if (isAttribute(attrRef)) {
             writer.newNode(lxAttribute, attrRef);
             copyIdentifier(writer, current.findChild(lxIdentifier));
@@ -3361,6 +3267,7 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
       scope.raiseError(errInvalidSyntax, node);
 
    SNode current = nameNode.prevNode();
+   bool privateOne = true;
    while (current == lxAttribute/* || current == lxAttributeDecl*/) {
       ref_t attrRef = scope.mapAttribute(current);
 //      if (!attrRef) {
@@ -3423,6 +3330,13 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
                   scope.raiseError(errInvalidHint, node);
                }
                else attr = daNestedBlock;
+               break;
+            case V_PUBLIC:
+               privateOne = false;
+               break;
+            case V_INTERNAL:
+               if (!privateOne)
+                  scope.raiseError(errInvalidHint, current);
                break;
             default:
                break;
@@ -3526,7 +3440,7 @@ bool DerivationTransformer :: recognizeDeclaration(SNode node, DerivationScope& 
       templateName.append('#');
       templateName.appendInt(count);
 
-      node.set(lxTemplate, scope.mapNewIdentifier(templateName.c_str(), false));
+      node.set(lxTemplate, scope.mapNewIdentifier(templateName.c_str(), privateOne));
 
       recognizeScopeMembers(node, scope, mode);
 
@@ -4060,10 +3974,10 @@ void DerivationTransformer :: recognizeRootAttributes(SNode node, DerivationScop
          if (templateParam) {
             // ignore template attributes
          }
-         else if (attrRef == V_PRIVATE || attrRef == V_PUBLIC) {
+         else if (attrRef == V_PUBLIC || attrRef == V_INTERNAL) {
             // the symbol visibility should be provided only once
             if (!visibilitySet) {
-               privateOne = attrRef == V_PRIVATE;
+               privateOne = attrRef == V_INTERNAL;
                visibilitySet = true;
             }
             else scope.raiseError(errInvalidHint, current);

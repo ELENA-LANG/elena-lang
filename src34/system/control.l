@@ -22,7 +22,7 @@ public interface Enumerator
 
 // --- enumerator<> ---
 
-interface Enumerator<type>
+public interface Enumerator<type>
 {
     abstract bool next []
     
@@ -44,7 +44,7 @@ public interface Enumerable
     abstract T<Enumerator> enumerator []
 }
 
-interface Enumerable<type>
+public interface Enumerable<type>
 {
     abstract Enumerator<type> enumerator []
 }
@@ -81,7 +81,7 @@ public interface Indexer
     int rvprop length :: readLengthTo.
 }
 
-interface Indexer<type>
+public interface Indexer<type>
 {
     /// Returns false if the index out of range
     abstract bool available []
@@ -115,7 +115,7 @@ public abstract Indexable
    abstract T<Indexer> indexer []
 }
 
-abstract Indexable<type>
+public abstract Indexable<type>
 {
    abstract Indexer<type> indexer []
 }
@@ -296,7 +296,7 @@ public interface Func1
     ]
 }
 
-interface Func<type, ret_type>
+public interface Func<type, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type param) []
@@ -341,7 +341,7 @@ public interface Func2
     ]
 }
 
-interface Func<type1,type2, ret_type>
+public interface Func<type1,type2, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2) []
@@ -385,7 +385,7 @@ public interface Func3
     ]
 }
 
-interface Func<type1,type2,type3, ret_type>
+public interface Func<type1,type2,type3, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2, type3 param3) []
@@ -430,7 +430,7 @@ public interface Func4
     ]
 }
 
-interface Func<type1,type2,type3,type4, ret_type>
+public interface Func<type1,type2,type3,type4, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4) []
@@ -474,7 +474,7 @@ public interface Func5
     ]
 }
 
-interface Func<type1,type2,type3,type4,type5, ret_type>
+public interface Func<type1,type2,type3,type4,type5, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5) []
@@ -518,7 +518,7 @@ public interface Func6
     ]
 }
 
-interface Func<type1,type2,type3,type4,type5,type6, ret_type>
+public interface Func<type1,type2,type3,type4,type5,type6, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6) []
@@ -562,7 +562,7 @@ public interface Func7
     ]
 }
 
-interface Func<type1,type2,type3,type4,type5,type6,type7, ret_type>
+public interface Func<type1,type2,type3,type4,type5,type6,type7, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7) []
@@ -608,7 +608,7 @@ public interface Func8
     ]
 }
 
-interface Func<type1,type2,type3,type4,type5,type6,type7,type8, ret_type>
+public interface Func<type1,type2,type3,type4,type5,type6,type7,type8, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8) []
@@ -656,7 +656,7 @@ public interface Func9
     ]
 }
 
-interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9, ret_type>
+public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8, type9 param9) []
@@ -704,7 +704,7 @@ public interface Func10
     ]
 }
 
-interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10, ret_type>
+public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
@@ -754,7 +754,7 @@ public interface Func11
     ]
 }
 
-interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10,type11, ret_type>
+public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10,type11, ret_type>
 {
     /// Executes the action
     abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
@@ -776,7 +776,7 @@ public abstract closed BaseLazyExpression
 
 // --- IndexFunction ---
 
-extension<Func<int,object>> indexFunctionOp
+public extension<Func<int,object>> indexFunctionOp
 {
     /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
     stacksafe rewind(int aStart, int n, int dx)
@@ -1011,7 +1011,7 @@ extension<Func<int,object>> indexFunctionOp
 
 // --- BaseEnumerator<type> ---
 
-abstract class BaseEnumerator<type> :: Enumerator<type>
+public abstract class BaseEnumerator<type> :: Enumerator<type>
 {
     ref<int> theIndex.
     int theLength.
@@ -1059,7 +1059,7 @@ public abstract class BaseIndexer :: Indexer
     ]    
 }
 
-abstract BaseIndexer<type> :: Indexer<type>
+public abstract BaseIndexer<type> :: Indexer<type>
 {
     int theIndex.
     int theLength.
