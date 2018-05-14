@@ -2082,10 +2082,23 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
                copyIdentifier(writer, current);
                writer.closeNode();
             }
-            else if (nextNode == lxNestedClass && scope.mapParameter(current.identifier())) {
-               writer.newNode(lxTemplateParam, scope.mapParameter(current.identifier()));
-               copyIdentifier(writer, current);
-               writer.closeNode();
+            else if (nextNode == lxNestedClass && /*scope.mapParameter(current.identifier())*/scope.reference == INVALID_REF) {
+               int paramIndex = scope.mapParameter(current.identifier());
+               if (paramIndex) {
+                  writer.newNode(lxTemplateParam, paramIndex);
+                  copyIdentifier(writer, current);
+                  writer.closeNode();
+               }
+               else {
+                  ref_t reference = scope.mapReference(current);
+                  if (!reference) {
+                     scope.raiseError(errUnknownSubject, current);
+                  }
+                  else if (isPrimitiveRef(reference))
+                     scope.raiseError(errInvalidHint, current);
+
+                  writeFullReference(writer, scope.compilerScope->module, reference);
+               }
             }
             else copyIdentifier(writer, current);
          }
@@ -2750,6 +2763,10 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
          scope.raiseError(errInvalidHint, node);
    }
    else if (attrRef == V_TYPETEMPL && prefixCounter == 2) {
+      // OBSOLETE : if it is an array atrribute
+      arrayMode = true;
+   }
+   else if (attrRef == V_OBJARRAY && prefixCounter == 2) {
       // if it is an array atrribute
       arrayMode = true;
    }
@@ -3691,6 +3708,8 @@ void DerivationTransformer :: generateClassTree(SyntaxWriter& writer, SNode node
                int paramCounter = SyntaxTree::countChild(current, lxAttributeValue);
 
                ref_t attrRef = mapTemplateName(current.firstChild(lxTerminalMask), paramCounter, scope);
+               if (!attrRef)
+                  scope.raiseError(errInvalidHint, current);
 
                DerivationScope templateScope(&scope, attrRef);
                copyTemplateTree(writer, current, templateScope, current.firstChild(), &scope.parameterValues, MODE_IMPORTING);

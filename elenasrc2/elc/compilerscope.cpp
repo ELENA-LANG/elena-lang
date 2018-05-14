@@ -436,11 +436,19 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
 
    SourceFileInfo fileInfo;
    fileInfo.tree = &templateTree;
+//   fileInfo.importedNs.add(ident_t(STANDARD_MODULE).clone());
 
    SourceFileList files;
    files.add(&fileInfo);
 
-   compile(compiler, files);
+   try
+   {
+      compile(compiler, files);
+   }
+   catch(_Exception& e)
+   {
+      return 0;
+   }
 
    // HOTFIX : clear tree reference because it is stack allocated 
    fileInfo.tree = NULL;

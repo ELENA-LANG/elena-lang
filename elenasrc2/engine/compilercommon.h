@@ -211,6 +211,7 @@ struct _CompilerScope
    ref_t             charReference;
    ref_t             arrayReference;
    ref_t             refTemplateReference;
+   ref_t             arrayTemplateReference;
    ref_t             closureTemplateReference;
    ref_t             lazyExprReference;
 
@@ -306,6 +307,7 @@ struct _CompilerScope
       arrayReference = charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
       lazyExprReference = extMessageReference = 0;
+      arrayTemplateReference = 0;
    }
 };
 

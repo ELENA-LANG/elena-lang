@@ -850,6 +850,8 @@ private:
 
    void loadAttributes(_CompilerScope& scope, ident_t name, MessageMap* attributes);
 
+   ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef);
+   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef);
    ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_CompilerScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);

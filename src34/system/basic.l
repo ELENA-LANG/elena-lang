@@ -3305,12 +3305,12 @@ public sealed class Integer :: BaseVariable, ref<int>
         theValue := 0.
     ]
     
-    constructor(int n) 
+    constructor new(int n) 
     [
         theValue := n.
     ]
     
-    constructor : n
+    constructor new : n
         <= new(T<int>(n)).
         
     stacksafe append(int n)

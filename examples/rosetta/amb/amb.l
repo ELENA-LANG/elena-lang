@@ -36,7 +36,7 @@ class AmbValueCollection
 {
     object theCombinator.
     
-    constructor new(V<object> Arguments)
+    generic constructor new(V<object> Arguments)
     [
         theCombinator := SequentialEnumerator new(Arguments).
     ]

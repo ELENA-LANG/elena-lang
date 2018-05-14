@@ -160,21 +160,21 @@ public abstract class BaseRowEnumerator :: Enumerator
     int             theLength.    
     T<BaseStrategy> theStrategy.
 
-    constructor new(V<object> Arguments)
-    [
-        theLength := Arguments length.
-        theIndexers := Array new(theLength).
-        
-        int i := 0.
-        while (i < theLength)
-        [
-            theIndexers setAt(i, Arguments[i] indexer).
-            
-            i := i + 1
-        ].
-        
-        self reset.
-    ]
+//    generic constructor new(V<object> Arguments)
+//    [
+//        theLength := Arguments length.
+//        theIndexers := Array new(theLength).
+//        
+//        int i := 0.
+//        while (i < theLength)
+//        [
+//            theIndexers setAt(i, Arguments[i] indexer).
+//            
+//            i := i + 1
+//        ].
+//        
+//        self reset.
+//    ]
     
     constructor new : Arguments
     [
@@ -212,8 +212,8 @@ public class SequentialEnumerator :: BaseRowEnumerator
     constructor new : Arguments
         <= new:Arguments.
     
-    constructor new(V<object> Arguments)
-        <= new(Arguments).
+//    generic constructor new(V<object> Arguments)
+//        <= new(Arguments).
 
     reset
     [

@@ -81,6 +81,20 @@ typedef ClassInfo::Attribute Attribute;
 //   return reference == V_ARGARRAY;
 //}
 
+inline bool isPrimitiveArrRef(ref_t reference)
+{
+   switch (reference) {
+      case V_OBJARRAY:
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+      case V_BINARYARRAY:
+         return true;
+      default:
+         return false;
+   }
+}
+
 inline void findUninqueName(_Module* module, IdentifierString& name)
 {
    size_t pos = getlength(name);
@@ -2133,10 +2147,13 @@ void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
    //   writer.appendNode(lxTerminal, terminal.identifier());
 }
 
-inline void writeTarget(SyntaxWriter& writer, ref_t targetRef)
+inline void writeTarget(SyntaxWriter& writer, ref_t targetRef, ref_t elementRef)
 {
    if (targetRef)
       writer.appendNode(lxTarget, targetRef);
+
+   if (isPrimitiveRef(targetRef) && elementRef)
+      writer.appendNode(lxElement, elementRef);
 }
 
 int Compiler :: defineFieldSize(CodeScope& scope, int offset)
@@ -2325,7 +2342,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope&
          return;
    }
 
-   writeTarget(writer, resolveObjectReference(scope, object));
+   writeTarget(writer, resolveObjectReference(scope, object), object.element);
 
    if (!test(mode, HINT_NODEBUGINFO))
       writeTerminalInfo(writer, terminal);
@@ -3183,6 +3200,16 @@ ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
 //   else return 0;
 }
 
+ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef)
+{
+   if (isPrimitiveArrRef(argRef)) {
+      argRef = resolvePrimitiveArray(scope, elementRef);
+   }
+   else argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+
+   return argRef;
+}
+
 ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
 //   ObjectInfo target;
@@ -3241,10 +3268,12 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
          // try to recognize the message signature
          ref_t argRef = 0;
          if (!anonymous) {
-            argRef = resolveObjectReference(scope, compileExpression(writer, current, scope, 0, paramMode));
+            ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode);
+            argRef = resolveObjectReference(scope, paramInfo);
             if (argRef) {
-               if (isPrimitiveRef(argRef))
+               if (isPrimitiveRef(argRef)) {
                   argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+               }                  
 
                signatures[signatureLen++] = argRef;
             }
@@ -4276,6 +4305,18 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    return ObjectInfo(okObject, targetRef);
 }
 
+ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t operandRef)
+{
+   // generate an reference class
+   List<ref_t> parameters;
+   if (!operandRef)
+      operandRef = scope.moduleScope->superReference;
+
+   parameters.add(operandRef);
+
+   return scope.moduleScope->generateTemplate(*this, scope.moduleScope->arrayTemplateReference, parameters);
+}
+
 ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    writer.newBookmark(); // !! an extra breakpoint?
@@ -4381,8 +4422,12 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       objectInfo = compileOperation(writer, object.nextNode(), scope, objectInfo, mode);
    }   
 
-   if (targetRef) {
-      ref_t sourceRef = resolveObjectReference(scope, objectInfo, targetRef);
+   ref_t sourceRef = resolveObjectReference(scope, objectInfo, targetRef);
+   if (targetRef || isPrimitiveArrRef(sourceRef)) {
+      if (!targetRef && isPrimitiveRef(sourceRef)) {
+         targetRef = resolvePrimitiveArray(scope, objectInfo.element);
+      }
+
       if (convertObject(writer, scope, targetRef, sourceRef, objectInfo.element)) {
          objectInfo = ObjectInfo(okObject, targetRef);
       }
@@ -4986,6 +5031,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             }
             else classRef = declareArgumentType(attribute, scope, /*first, messageStr, signature, */elementRef);
             if (classRef == V_ARGARRAY) {
+               if (!test(scope.hints, tpGeneric) && !scope.withOpenArg)
+                  // !! temporal : only generic method may handle open argument list
+                  scope.raiseError(errNotApplicable, node);
+
                // the generic arguments should be free by the method exit
                scope.withOpenArg = true;
 
@@ -5536,7 +5585,7 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
 
          writer.newNode(lxOverridden);
          writeParamTerminal(writer, scope, target, HINT_DYNAMIC_OBJECT, lxSelfLocal);
-         writeTarget(writer, resolveObjectReference(scope, target));
+         writeTarget(writer, resolveObjectReference(scope, target), target.element);
          writer.closeNode();
          writer.closeNode();
       }
@@ -7572,7 +7621,7 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScop
 
       // adjust primitive target
       if (/*_logic->*/isPrimitiveRef(targetRef) && boxing) {
-         targetRef = _logic->resolvePrimitiveReference(*scope.moduleScope, targetRef);
+         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument);
          node.findChild(lxTarget).setArgument(targetRef);
       }
 
@@ -8217,6 +8266,7 @@ void Compiler :: initializeScope(ident_t name, _CompilerScope& scope, bool withD
    scope.boolReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
    scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
+   scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
    scope.signatureReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SIGNATURE_FORWARD));
    scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
    scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));

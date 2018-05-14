@@ -131,6 +131,10 @@ _ELC_::Project :: Project()
 
 void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
 {
+   if (_ELENA_::emptystr(path))
+      // !! HOTFIX
+      path = "autogeneated";
+
    _ELENA_::WideString wMsg(msg);
    _ELENA_::WideString wPath(path);
    _ELENA_::WideString wTerminal(terminal);

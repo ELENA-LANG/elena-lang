@@ -1,7 +1,7 @@
 
-// --- arrayof ---
+// --- Array template ---
 
-sealed array<template_subj> :: Indexable<template_subj>
+public sealed Array<template_subj> :: Indexable<template_subj>
 {
     dynamic<template_subj> theArray.
 
@@ -58,27 +58,27 @@ sealed array<template_subj> :: Indexable<template_subj>
     template_subj getAt(int n)
     [
         if (n < 0)
-            [ InvalidArgumentException new; raise ].
+            [ system'InvalidArgumentException new; raise ].
         
         int len := 0.
         theArray >> len.
 
         if (n < len)
             [ ^ theArray[n] ];
-            [ InvalidArgumentException new; raise ]
+            [ system'InvalidArgumentException new; raise ]
     ]
 
     setAt(int n, template_subj item)
     [
         if (n < 0)
-            [ InvalidArgumentException new; raise ].
+            [ system'InvalidArgumentException new; raise ].
         
         int len := 0.
         theArray >> len.
 
         if (n < len)
             [ theArray[n] := item ];
-            [ InvalidArgumentException new; raise ]
+            [ system'InvalidArgumentException new; raise ]
     ]
                
     setAt(object n, object object)
@@ -237,7 +237,7 @@ sealed array<template_subj> :: Indexable<template_subj>
 // --- ByteArray ---
 
 /// A byte array
-public sealed ByteArray :: Indexable<byte>, array<byte>
+public sealed ByteArray :: Indexable<byte>, Array<byte>
 {
     /// Creates the byte array with the specified length
     constructor new(int len)
@@ -384,7 +384,7 @@ public sealed ByteArray :: Indexable<byte>, array<byte>
 // --- ShortArray ---
 
 /// A short integer array
-public sealed ShortArray :: Indexable<short>, array<short>
+public sealed ShortArray :: Indexable<short>, Array<short>
 {
     /// Creates the short array with the specified length
     constructor new(int aLength)
@@ -459,7 +459,7 @@ public sealed ShortArray :: Indexable<short>, array<short>
 // --- IntArray ---
 
 /// An array of integers
-public sealed IntArray :: Indexable<int>, array<int>
+public sealed IntArray :: Indexable<int>, Array<int>
 {
     /// Creates the array with the specified length
     /*private*/ constructor new(int aLength)
@@ -836,7 +836,7 @@ public sealed class BitArray32
 // --- RealArray ---
 
 /// An array of real numbers
-public sealed RealArray :: Indexable<real>, array<real>
+public sealed RealArray :: Indexable<real>, Array<real>
 {
     /// Creates the array with the specified length
     constructor new(int aLength)
@@ -1006,7 +1006,7 @@ public sealed class RealMatrix
 // --- CharArray ---
 
 /// An array of unicode characters (UTF-32)
-public sealed CharArray :: Indexable<char>, array<char>
+public sealed CharArray :: Indexable<char>, Array<char>
 {
     /// Creates the new array with a specified length
     constructor new(int len)
@@ -1659,7 +1659,7 @@ public sealed class Variant
 // --- Array ---
 
 /// An array
-public sealed Array :: Indexable, array<object>
+public sealed Array :: Indexable, Array<object>
 {
     /// Creates an empty array
     constructor min

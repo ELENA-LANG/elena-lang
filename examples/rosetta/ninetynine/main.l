@@ -8,17 +8,17 @@ extension bottleOp
     bottleDescription
         = self literal + (self != 1) iif(" bottles"," bottle").
         
-    bottleEnumerator = Variable new:self; doWith(:target)
+    bottleEnumerator = Variable new:self; doWith(:n)
     [
         ^ Enumerator::
         {
-            next = target > 0.
+            bool next = n > 0.
             
             get = StringWriter new;
-                    printLine(target bottleDescription," of beer on the wall");
-                    printLine(target bottleDescription," of beer");
+                    printLine(n bottleDescription," of beer on the wall");
+                    printLine(n bottleDescription," of beer");
                     printLine("Take one down, pass it around");
-                    printLine((target reduce:1) bottleDescription," of beer on the wall").
+                    printLine((n reduce:1) bottleDescription," of beer on the wall").
                     
             reset []
             

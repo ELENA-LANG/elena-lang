@@ -145,7 +145,7 @@ public extension objectOp
 
 // --- byteOp ---
 
-extension<byte> byteOp
+public extension<byte> byteOp
 {
     stacksafe byte absolute
     [
@@ -212,7 +212,7 @@ extension<byte> byteOp
 
 // --- shortOp ---
 
-extension<short> shortOp
+public extension<short> shortOp
 {
     stacksafe short absolute
     [
@@ -297,7 +297,7 @@ extension<short> shortOp
 
 // --- intOp ---
 
-extension<int> intOp
+public extension<int> intOp
 {
     int rvprop absolute :: absolute.
     
@@ -430,7 +430,7 @@ extension<int> intOp
 
 // --- longOp ---
 
-extension<long> longOp
+public extension<long> longOp
 {
     stacksafe long absolute
     [
@@ -536,7 +536,7 @@ extension<long> longOp
 
 // --- realOp ---
 
-extension<real> realOp
+public extension<real> realOp
 {        
     stacksafe real absolute
     [
