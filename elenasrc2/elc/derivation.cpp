@@ -22,7 +22,7 @@ inline bool isPrimitiveRef(ref_t reference)
 
 #define MODE_ROOT            0x01
 #define MODE_CODETEMPLATE    0x02
-//#define MODE_OBJECTEXPR      0x04
+#define MODE_OBJECTEXPR      0x04
 //#define MODE_SIGNATURE       0x08
 #define MODE_IMPORTING       0x10
 
@@ -2096,8 +2096,8 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
 {
    SNode nextNode = current.nextNode();
 //   bool rootMode = test(mode, MODE_ROOT);
-//   bool objectMode = test(mode, MODE_OBJECTEXPR);
-//   bool singleMode = false;
+   bool objectMode = test(mode, MODE_OBJECTEXPR);
+   bool identMode = false;
 //   if (rootMode)
 //      writer.newBookmark();
 
@@ -2108,12 +2108,12 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
          writer.closeNode();
          break;
       case lxExpression:         
-//         if (objectMode) {
-//            writer.newNode(lxExpression);
-//            generateExpressionTree(writer, current, scope);
-//            writer.closeNode();
-//         }
-         /*else */generateExpressionTree(writer, current, scope);
+         if (objectMode) {
+            writer.newNode(lxExpression);
+            generateExpressionTree(writer, current, scope);
+            writer.closeNode();
+         }
+         else generateExpressionTree(writer, current, scope);
          break;
       case lxMessageReference:
 //         writer.newNode(lxExpression);
@@ -2161,7 +2161,7 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
       default:
       {
          if (isTerminal(current.type)) {
-//            singleMode = true;
+            identMode = true;
             if (scope.type == DerivationScope::ttFieldTemplate) {
                int index = scope.fields.get(current.identifier());
                if (index != 0) {
@@ -2189,10 +2189,16 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
    }
 
    if (nextNode != lxNone) {
-//      if (nextNode == lxExpression) {
-//         generateExpressionTree(writer, nextNode, scope);
-//      }
-      /*else */generateObjectTree(writer, nextNode, scope);
+      if (nextNode == lxExpression) {
+         generateExpressionTree(writer, nextNode, scope);
+
+         if (identMode) {
+            // HOTFIX : to parse a strong collection with operations
+            writer.insert(lxExpression);
+            writer.closeNode();
+         }
+      }
+      else generateObjectTree(writer, nextNode, scope);
 //
 //      if (rootMode && singleMode) {
 //         writer.insert(lxExpression);
@@ -2296,7 +2302,7 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
             if (isTemplateBracket(current.nextNode())) {
                generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
             }
-            else generateObjectTree(writer, current.firstChild(), scope/*, MODE_OBJECTEXPR*/);
+            else generateObjectTree(writer, current.firstChild(), scope, MODE_OBJECTEXPR);
             break;
          case lxCatchOperation:
          case lxAltOperation:

@@ -1,12 +1,16 @@
-﻿[project]
-executable=arraycallback.exe
-namespace=arraycallback
-template=console
-debuginfo=-1
-
-[files]
-arraycallback.l
-
-[forwards]
-'program=arraycallback'program
-
+<configuration>
+    <project>
+        <executable>arraycallback.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>arraycallback</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>arraycallback.l</include>
+        </module>
+    </files>
+</configuration>

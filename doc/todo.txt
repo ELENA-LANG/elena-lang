@@ -3,14 +3,13 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * comparision operators should be typied by default - compiler should warn if they are not
-
-                 * display signature value
-
                  * public and internal symbols
                  * public and internal extensions (internal is used only inside the module)
                  * public and internal templates
                  * use V<type> to declare dynamic arrays, and V<type,size> - to declare fixed size array (still keeping old style with T)
+                 * typecast primitive arrays to array#1 template
+
+                 * display signature value
 
                  * IDE : fix goto routine (with nested ns files)
 
@@ -133,6 +132,8 @@ In development:
                  * extrnal operations without target - ignore the result
                  * extrnal operations : support long and real
                  * warn if there are several similar extension for given message
+                 * template extension
+                 * simplify derivation code : a collection with operations - "(1,2) msg" and "Array::(1,2) msg"
 	
               dev - general implementation
                  * typified enumerators / extensions #245                 
