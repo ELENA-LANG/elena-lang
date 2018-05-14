@@ -3162,11 +3162,14 @@ bool Compiler :: convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetR
 bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef)
 {
    if (targetRef != 0 && !isPrimitiveRef(targetRef)) {
-      ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
-      ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
+      if (targetRef != scope.moduleScope->superReference) {
+         //HOTFIX : ignore super object
+         ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
+         ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
 
-      writer.insert(lxCalling, encodeMessage(actionRef, 0));
-      writer.closeNode();
+         writer.insert(lxCalling, encodeMessage(actionRef, 0));
+         writer.closeNode();
+      }
 
       return true;
    }
@@ -6062,9 +6065,9 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
          {
             MethodScope methodScope(&classScope);
             methodScope.message = current.argument;
-            declareArgumentList(current, methodScope);
 
             initialize(classClassScope, methodScope);
+            declareArgumentList(current, methodScope);
 
             compileConstructor(writer, current, methodScope, classClassScope);
             break;
