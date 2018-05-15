@@ -1690,32 +1690,32 @@ public sealed Array :: Indexable, Array<object>
 //        self setAt(0, singleItem).
 //    ]
 
-//    /// Concatinates the arrays    
-//    add(array anArray)
-//    [
-//        int aLength1 := self length.
-//        int aLength2 := anArray length.
-//        
-//        array aRetVal := Array new(aLength1 + aLength2).
-//
-//        int anIndex := 0.
-//        while(anIndex < aLength1)
-//        [
-//            aRetVal setAt(anIndex, self getAt(anIndex)).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//
-//        anIndex := 0.
-//        while(anIndex < aLength2)
-//        [
-//            aRetVal setAt(aLength1 + anIndex, anArray getAt(anIndex)).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//            
-//        ^ aRetVal
-//    ]
+    /// Concatinates the arrays    
+    add(Array anArray)
+    [
+        int aLength1 := self length.
+        int aLength2 := anArray length.
+        
+        auto aRetVal := Array new(aLength1 + aLength2).
+
+        int anIndex := 0.
+        while(anIndex < aLength1)
+        [
+            aRetVal setAt(anIndex, self getAt(anIndex)).
+            
+            anIndex := anIndex + 1.
+        ].
+
+        anIndex := 0.
+        while(anIndex < aLength2)
+        [
+            aRetVal setAt(aLength1 + anIndex, anArray getAt(anIndex)).
+            
+            anIndex := anIndex + 1.
+        ].
+            
+        ^ aRetVal
+    ]
 
     /// Reads the array length into an output parameter
     readLengthTo(ref<int> aLength)

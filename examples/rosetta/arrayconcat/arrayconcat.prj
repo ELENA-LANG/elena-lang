@@ -1,12 +1,16 @@
-﻿[project]
-executable=arrayconcat.exe
-namespace=arrayconcat
-template=console
-debuginfo=-1
-
-[files]
-arrayconcat.l
-
-[forwards]
-'program=arrayconcat'program
-
+<configuration>
+    <project>
+        <executable>arrayconcat.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>arrayconcat</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>arrayconcat.l</include>
+        </module>
+    </files>
+</configuration>

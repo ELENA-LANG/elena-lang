@@ -6,7 +6,7 @@ import extensions.
 
 // --- Program ---
 
-program =
+public program =
 [
     var a := console readLineTo(Integer new).
     var b := console readLineTo(Integer new).

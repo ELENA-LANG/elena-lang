@@ -109,7 +109,7 @@ public extension forLoopOp
 //        = aFunction retrieve enumerator(RangeEnumerator new from:self to:aMaxValue by:aStep).
 }
 
-extension loopOp
+public extension loopOp
 {
     doWhile:anAction
     [
@@ -221,9 +221,9 @@ extension loopOp
 
 public extension controlOp
 {
-    saveTo:target
+    saveTo:o
     [
-        target write:self.
+        o write:self.
         
         ^ self.
     ]

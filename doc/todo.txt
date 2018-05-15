@@ -130,6 +130,7 @@ In development:
                  * extension method should be only public
                  * critical error if the class is based on unknown template
                  * templates unresolved references - probably they should be tested with super object if all references are resolved
+                 * it should be possible to distinguish between built-in target variable and a local parameter
                  * simplify derivation code : a collection with operations - "(1,2) msg" and "Array::(1,2) msg"
 	
               dev - general implementation

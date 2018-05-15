@@ -205,7 +205,7 @@ public class MethodNotFoundException :: Exception
         <= new("Method " add(missingMessage); add(" not found")).
         
     constructor new(object object, mssg missingMessage)
-        <= new(object __className + " : Method " + missingMessage literal + " not found").
+        <= new(object   __className + " : Method " + missingMessage literal + " not found").
 }
 
 // --- MethodNotSupported ---

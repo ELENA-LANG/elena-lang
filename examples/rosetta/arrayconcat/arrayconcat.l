@@ -1,7 +1,7 @@
 /// concatenating two arrays in your language. 
 import extensions.
 
-program =
+public program =
 [
     var a := (1,2,3).
     var b := (4,5).
