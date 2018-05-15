@@ -2,6 +2,7 @@
 
 import system'routines.
 import extensions.
+import extensions'text.
 
 extension op
 {
@@ -21,7 +22,7 @@ extension op
             ].
         ].
     
-        ^ aShuffled summarize(String new); literal
+        ^ aShuffled summarize(StringWriter new); toLiteral
     ]
     
     score : anOriginalText
@@ -39,7 +40,7 @@ extension op
 
 // --- Program ---
 
-program =
+public program =
 [
     ("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") forEach(:aWord)
     [

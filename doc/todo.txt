@@ -5,10 +5,6 @@ In development:
               dev - redesign
                  * display signature value
 
-                 * IDE : fix goto routine (with nested ns files)
-
-                 * debugger : the full symbol name should be used (rather than a relative one)
-
                  * migrate dynamic, templates, win32_app files
 
                  * optimize embeddable function call

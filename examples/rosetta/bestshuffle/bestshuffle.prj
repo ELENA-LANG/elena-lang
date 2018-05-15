@@ -1,12 +1,16 @@
-﻿[project]
-executable=bestshuffle.exe
-namespace=bestshuffle
-template=console
-debuginfo=-1
-
-[files]
-bestshuffle.l
-
-[forwards]
-'program=bestshuffle'program
-
+<configuration>
+    <project>
+        <executable>bestshuffle.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>bestshuffle</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>bestshuffle.l</include>
+        </module>
+    </files>
+</configuration>

@@ -132,7 +132,7 @@ DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, iden
 //   }
 }
 
-DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &className, size_t& flags, size_t vmtPtr)
+DebugLineInfo* DebugController :: seekClassInfo(size_t address, IdentifierString &className, size_t& flags, size_t vmtPtr)
 {
    // read class VMT address if not provided
    if (vmtPtr == 0) {
@@ -153,7 +153,12 @@ DebugLineInfo* DebugController :: seekClassInfo(size_t address, ident_t &classNa
 
    if (position != 0 && section != NULL) {
       // to resolve class name we need offset in the section rather then the real address
-      className = module->resolveReference((ref_t)(position - (size_t)section->get_st(0)));
+      ident_t name = module->resolveReference((ref_t)(position - (size_t)section->get_st(0)));
+      if (isWeakReference(name)) {
+         className.copy(module->Name());
+         className.append(name);
+      }
+      else className.copy(name);
 
       return (DebugLineInfo*)position;
    }
@@ -631,7 +636,7 @@ void DebugController :: loadBreakpoints(List<Breakpoint>& breakpoints)
 void DebugController :: toggleBreakpoint(Breakpoint& breakpoint, bool adding)
 {
    if (_debugger.isStarted()) {
-      _Module* module = _modules.get(breakpoint.module);
+      _Module* module = resolveModule(breakpoint.module);
       if (module != NULL) {
          size_t address = findNearestAddress(module, breakpoint.source, breakpoint.row);
          if (address != 0xFFFFFFFF) {
@@ -769,7 +774,8 @@ void DebugController :: runToCursor(ident_t name, path_t path, int col, int row)
       _postponed.setGotoMode(col, row, name, path);
    }
    else {
-      _Module* module = _modules.get(name);
+      //_Module* module = _modules.get(name);
+      _Module* module = resolveModule(name);
       if (module != NULL) {
          size_t address = findNearestAddress(module, IdentifierString(path), row);
          if (address != 0xFFFFFFFF) {
@@ -943,10 +949,10 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
          }
          else {
             size_t flags = 0;
-            ident_t className = NULL;
+            IdentifierString className;
             DebugLineInfo* field = seekClassInfo(fieldPtr, className, flags);
             if (field) {
-               watch->write(this, fieldPtr, fieldName, className);
+               watch->write(this, fieldPtr, fieldName, className.c_str());
             }
             //// if unknown check if it is a dynamic subject
             //else if (test(flags, elDynamicSubjectRole)) {
@@ -979,10 +985,10 @@ void DebugController :: readList(_DebuggerWatch* watch, int* list, int length)
       }
       else {
          size_t flags = 0;
-         ident_t className = NULL;
+         IdentifierString className;
          DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
          if (item) {
-            watch->write(this, memberPtr, ident_t(index), className);
+            watch->write(this, memberPtr, ident_t(index), className.c_str());
          }
          //// if unknown check if it is a dynamic subject
          //else if (test(flags, elDynamicSubjectRole)) {
@@ -1087,11 +1093,11 @@ void DebugController :: readObject(_DebuggerWatch* watch, size_t address, ident_
 void DebugController :: readObject(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    if (address != 0) {
-      ident_t className = NULL;
+      IdentifierString className;
       size_t flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
 
-      readObject(watch, address, className, name);
+      readObject(watch, address, className.c_str(), name);
    }
    else watch->write(this, address, name, "<nil>");
 }
@@ -1099,11 +1105,11 @@ void DebugController :: readObject(_DebuggerWatch* watch, size_t address, ident_
 void DebugController::readLocalInt(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    if (address != 0) {
-      ident_t className = NULL;
+      IdentifierString className;
       size_t flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
-         watch->write(this, address, name, className);
+         watch->write(this, address, name, className.c_str());
       }
       else {
          int value = 0;
@@ -1118,11 +1124,11 @@ void DebugController::readLocalInt(_DebuggerWatch* watch, size_t address, ident_
 void DebugController::readLocalLong(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    if (address != 0) {
-      ident_t className = NULL;
+      IdentifierString className;
       size_t flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
-         watch->write(this, address, name, className);
+         watch->write(this, address, name, className.c_str());
       }
       else {
          long long value = 0;
@@ -1137,11 +1143,11 @@ void DebugController::readLocalLong(_DebuggerWatch* watch, size_t address, ident
 void DebugController::readLocalReal(_DebuggerWatch* watch, size_t address, ident_t name)
 {
    if (address != 0) {
-      ident_t className = NULL;
+      IdentifierString className;
       size_t flags = 0;
       DebugLineInfo* info = seekClassInfo(address, className, flags);
       if (info != NULL) {
-         watch->write(this, address, name, className);
+         watch->write(this, address, name, className.c_str());
       }
       else {
          double value = 0;
@@ -1171,11 +1177,11 @@ void DebugController::readParams(_DebuggerWatch* watch, size_t address, ident_t 
             break;
 
          size_t flags = 0;
-         ident_t className = NULL;
+         IdentifierString className;
 
          DebugLineInfo* item = seekClassInfo(memberPtr, className, flags);
          if (item) {
-            watch->write(this, memberPtr, ident_t(index), className);
+            watch->write(this, memberPtr, ident_t(index), className.c_str());
          }
          //// if unknown check if it is a dynamic subject
          //else if (test(flags, elDynamicSubjectRole)) {
@@ -1313,7 +1319,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 {
    if (_debugger.isStarted()) {
       size_t flags = 0;
-      ident_t className = NULL;
+      IdentifierString className;
       DebugLineInfo* info = seekClassInfo(selfPtr, className, flags, classPtr);
       if (info) {
          int type = info->addresses.symbol.flags & elDebugMask;

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugController class and its helpers header
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef debugcontrollerH
@@ -190,7 +190,7 @@ protected:
       return /*(lineInfoAddress < _tape.Length()) ? (DebugLineInfo*)_tape.get(lineInfoAddress) :*/ (DebugLineInfo*)lineInfoAddress;
    }
 
-   DebugLineInfo* seekClassInfo(size_t address, ident_t &className, size_t& flags, size_t vmtAddress = 0);
+   DebugLineInfo* seekClassInfo(size_t address, IdentifierString &className, size_t& flags, size_t vmtAddress = 0);
    DebugLineInfo* seekLineInfo(size_t address, ident_t &moduleName, ident_t &className,
       ident_t &methodName, ident_t &path);
 

@@ -1,12 +1,16 @@
-﻿[project]
-executable=brackets.exe
-namespace=brackets
-template=console
-debuginfo=-1
-
-[files]
-brackets.l
-
-[forwards]
-'program=brackets'program
-
+<configuration>
+    <project>
+        <executable>brackets.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>brackets</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>brackets.l</include>
+        </module>
+    </files>
+</configuration>

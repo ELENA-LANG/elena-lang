@@ -4,6 +4,7 @@
 
 import system'routines.
 import extensions.
+import extensions'text.
 
 // --- RandomBrackets ---
 
@@ -12,16 +13,16 @@ randomBrackets =
     new : aLength
     [
         if (0 == aLength)
-            [ ^emptyLiteralValue ];
+            [ ^emptyLiteral ];
             [
                 var aBrackets := 
-                    Array new length:(aLength int); populate(:i)($91) 
+                    Array new(aLength); populate(:i)($91) 
                     + 
-                    Array new length:(aLength int); populate(:i)($93).
+                    Array new(aLength); populate(:i)($93).
         
                 aBrackets := aBrackets randomize:(aLength * 2).
 
-                ^ aBrackets summarize:(String new); literal
+                ^ aBrackets summarize:(StringWriter new); toLiteral
             ]
     ]
 }.
@@ -40,7 +41,7 @@ extension op
 
 // --- Program ---
 
-program =                                             
+public program =                                             
 [
     0 to:9 do(:aLength)
     [
