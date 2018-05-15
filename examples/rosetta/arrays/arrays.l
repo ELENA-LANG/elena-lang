@@ -3,7 +3,7 @@
 import system'collections.
 import extensions.
 
-program =
+public program =
 [
     var aStaticArray := (1, 2, 3).
     
@@ -12,7 +12,7 @@ program =
     anArray[1] := 2.
     anArray[2] := 3.
     
-    int<3> aStackAllocatedArray.
+    V<int,3> aStackAllocatedArray.
     aStackAllocatedArray[0] := 1.
     aStackAllocatedArray[1] := 2.
     aStackAllocatedArray[2] := 3.            

@@ -1,12 +1,16 @@
-﻿[project]
-executable=arrays.exe
-namespace=arrays
-template=console
-debuginfo=-1
-
-[files]
-arrays.l
-
-[forwards]
-'program=arrays'program
-
+<configuration>
+    <project>
+        <executable>arrays.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>arrays</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>arrays.l</include>
+        </module>
+    </files>
+</configuration>

@@ -1,12 +1,16 @@
-﻿[project]
-executable=arithmmean.exe
-namespace=arithmmean
-template=console
-debuginfo=-1
-
-[files]
-arithmmean.l
-
-[forwards]
-'program=arithmmean'program
-
+<configuration>
+    <project>
+        <executable>arithmmean.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>arithmmean</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>arithmmean.l</include>
+        </module>
+    </files>
+</configuration>

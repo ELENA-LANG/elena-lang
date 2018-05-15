@@ -213,19 +213,19 @@ public extension enumerableOp
 //        
 //        ^ true
 //    ]
-//             
-////    sequenceEqual:list
-////        = self~enumerableOp equal enumerable:list.
-//                                                  
-//    firstMember
-//    [
-//        enumerator anEnumerator := self enumerator.
-//        
-//        if (anEnumerator next) 
-//            [ ^ anEnumerator get ];
-//            [ ^ $nil ]
-//    ]
-//
+             
+//    sequenceEqual:list
+//        = self~enumerableOp equal enumerable:list.
+                                                  
+    firstMember
+    [
+        auto anEnumerator := T<Enumerator>(self enumerator).
+        
+        if (anEnumerator next) 
+            [ ^ anEnumerator get ];
+            [ ^ nil ]
+    ]
+
 //    maximalMember
 //    [
 //        enumerator en := self enumerator.

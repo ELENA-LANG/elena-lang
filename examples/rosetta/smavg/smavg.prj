@@ -1,12 +1,16 @@
-﻿[project]
-executable=smavg.exe
-namespace=smavg
-template=console
-debuginfo=-1
-
-[files]
-smavg.l
-
-[forwards]
-'program=smavg'program
-
+<configuration>
+    <project>
+        <executable>smavg.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>smavg</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>smavg.l</include>
+        </module>
+    </files>
+</configuration>

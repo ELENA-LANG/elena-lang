@@ -1,12 +1,16 @@
-﻿[project]
-executable=arraymode.exe
-namespace=arraymode
-template=console
-debuginfo=-1
-
-[files]
-arraymode.l
-
-[forwards]
-'program=arraymode'program
-
+<configuration>
+    <project>
+        <executable>arraymode.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>arraymode</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>arraymode.l</include>
+        </module>
+    </files>
+</configuration>

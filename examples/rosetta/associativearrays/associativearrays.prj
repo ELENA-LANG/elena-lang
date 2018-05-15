@@ -1,12 +1,16 @@
-﻿[project]
-executable=associatearrays.exe
-namespace=associatearrays
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
-[forwards]
-'program=associatearrays'program
-
+<configuration>
+    <project>
+        <executable>associatearrays.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>associatearrays</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

@@ -3296,7 +3296,7 @@ real public pi_value = realOpController pi.
 
 real public e_value = realOpController e.
 
-// --- obsolete variables ---
+// --- variables ---
 
 public sealed class Integer :: BaseVariable, ref<int>
 {
@@ -3312,6 +3312,12 @@ public sealed class Integer :: BaseVariable, ref<int>
     
     constructor new : n
         <= new(T<int>(n)).
+        
+    append : n
+        <= append(T<int>(n)).
+
+    reduce : n
+        <= reduce(T<int>(n)).
         
     stacksafe append(int n)
     [
@@ -3330,29 +3336,78 @@ public sealed class Integer :: BaseVariable, ref<int>
     ]
 }
 
-//class LongInteger =
-//{
-//    vlong new
-//        = 0l.
-//        
-//    vlong new long:n
-//        = n.
-//        
-//    vlong new:n
-//        = n long.
-//}.
-
-public class Real =
+public sealed class LongInteger :: BaseVariable, ref<long>
 {
-    ref<real> new
-        = 0.0r.
+    constructor new
+    [
+        theValue := 0l.
+    ]
+    
+    constructor new(long n) 
+    [
+        theValue := n.
+    ]
+    
+    constructor new : n
+        <= new(T<long>(n)).
         
-    ref<real> new : n
-        = T<real>(n).
+    append : n
+        <= append(T<long>(n)).
+
+    reduce : n
+        <= reduce(T<long>(n)).
+                
+    stacksafe append(long n)
+    [
+        long v := theValue.
+        v := v + n.
         
-    ref<real> new(int n)
-        = T<real>(n).
+        theValue := v.
+    ]
+    
+    stacksafe reduce(long n)
+    [
+        long v := theValue.
+        v := v - n.
         
-    ref<real> new(real n)
-        = n.
-}.
+        theValue := v.
+    ]
+}
+
+public sealed class Real :: BaseVariable, ref<real>
+{
+    constructor new
+    [
+        theValue := 0.0r.
+    ]
+    
+    constructor new(real n) 
+    [
+        theValue := n.
+    ]
+    
+    constructor new : n
+        <= new(T<real>(n)).
+        
+    stacksafe append(real n)
+    [
+        real v := theValue.
+        v := v + n.
+        
+        theValue := v.
+    ]
+    
+    append : n
+        <= append(T<real>(n)).
+    
+    stacksafe reduce(real n)
+    [
+        real v := theValue.
+        v := v - n.
+        
+        theValue := v.
+    ]
+    
+    reduce : n
+        <= reduce(T<real>(n)).
+}

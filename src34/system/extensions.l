@@ -1459,7 +1459,7 @@ singleton stringOpDispatcher
         =s~wideOp trim(ch).
 }
 
-extension stringOp
+public extension stringOp
 {
     Substring : anIndex
         = self Substring:(self length - anIndex) at:anIndex.

@@ -23,7 +23,7 @@ extension op
 }
 // --- Program ---
 
-program =
+public program =
 [
     var anArray := (1, 2, 3, 4, 5, 6, 7, 8).
     console printLine("Arithmetic mean of {",anArray,"} is ",anArray average); readChar.

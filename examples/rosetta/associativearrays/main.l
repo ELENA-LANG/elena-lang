@@ -6,7 +6,7 @@ import extensions.
 
 // --- Program ---
 
-program =
+public program =
 [
     // 1. Create
     var aMap := Dictionary new.
@@ -18,5 +18,5 @@ program =
 
     // Enumerate
     aMap forEach
-        (:aKeyValue)[ console printLine(aKeyValue key," : ",aKeyValue) ].
+        (:aKeyValue)[ console printLine(aKeyValue key," : ",aKeyValue value) ].
 ].

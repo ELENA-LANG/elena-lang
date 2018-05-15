@@ -23,12 +23,12 @@ class SMA
             ! [
                 if (aCount > thePeriod)
                 [
-                    theList remove at:0.
+                    theList removeAt:0.
                     
                     aCount := thePeriod
                 ].
         
-                var aSum := theList summarize(Real new int:0).
+                var aSum := theList summarize(Real new).
                 
                 ^ aSum / aCount
             ]
@@ -37,7 +37,7 @@ class SMA
 
 // --- Program ---
 
-program =
+public program =
 [
     var SMA3 := SMA new:3.
     var SMA5 := SMA new:5.
