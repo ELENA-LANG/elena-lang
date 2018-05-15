@@ -219,7 +219,7 @@ mathController =
 
 // --- mathOp ---
 
-extension mathOp
+public extension mathOp
 {
     absolute
         = mathController absolute:self.

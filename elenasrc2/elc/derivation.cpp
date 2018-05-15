@@ -3819,11 +3819,11 @@ void DerivationTransformer :: recognizeScopeMembers(SNode& node, DerivationScope
       }
       else if (current == lxCode && test(mode, MODE_CODETEMPLATE)) {
       }
-//      else if (current == lxMethodParameter && mode == MODE_ROOT) {
-//         // one method class declaration
-//         node.injectNode(lxClassMethod);
-//         node.set(lxClass, (ref_t)-2);
-//      }
+      else if (current == lxMethodParameter && mode == MODE_ROOT) {
+         // one method class declaration
+         node.injectNode(lxClassMethod);
+         node.set(lxClass, (ref_t)-2);
+      }
       else scope.raiseError(errInvalidSyntax, current);
 
       current = current.nextNode();

@@ -8,11 +8,11 @@ import extensions'text.
 
 class Token
 {
-    object                theValue.
+    object theValue.
     
-    object rprop level :: theLevel.
+    int rprop level :: theLevel.
     
-    constructor new level:aLevel
+    constructor new(int aLevel)
     [
         theValue := StringWriter new.
         theLevel := aLevel + 9.
@@ -23,7 +23,7 @@ class Token
         theValue << aChar.
     ]
     
-    number = theValue get; toReal.
+    number = theValue toReal.
 }
 
 // --- Node ---
@@ -32,9 +32,9 @@ class Node
 {
     object prop  left  :: theLeft.
     object prop  right :: theRight.
-    object rprop level :: theLevel.
+    int    rprop level :: theLevel.
 
-    constructor new level:aLevel
+    constructor new(int aLevel)
     [
         theLevel := aLevel.
     ]
@@ -44,8 +44,8 @@ class Node
 
 class SummaryNode :: Node
 {
-    constructor new level:aLevel
-        <= new level(aLevel + 1).
+    constructor new(int aLevel)
+        <= new(aLevel + 1).
     
     number = theLeft number + theRight number.
 }
@@ -54,8 +54,8 @@ class SummaryNode :: Node
 
 class DifferenceNode :: Node
 {
-    constructor new level:aLevel
-        <= new level(aLevel + 1).
+    constructor new(int aLevel)
+        <= new(aLevel + 1).
     
     number = theLeft number - theRight number.
 }
@@ -64,8 +64,8 @@ class DifferenceNode :: Node
 
 class ProductNode :: Node
 {
-    constructor new level:aLevel
-        <= new level(aLevel + 2).
+    constructor new(int aLevel)
+        <= new(aLevel + 2).
     
     number = theLeft number * theRight number.
 }
@@ -74,8 +74,8 @@ class ProductNode :: Node
 
 class FractionNode :: Node
 {
-    constructor new level:aLevel
-        <= new level(aLevel + 2).
+    constructor new(int aLevel)
+        <= new(aLevel + 2).
     
     number = theLeft number / theRight number.
 }
@@ -84,10 +84,10 @@ class FractionNode :: Node
 
 class Expression
 {
-    object rprop level :: theLevel.
+    int    rprop level :: theLevel.
     object prop  top   :: theTop.
     
-    constructor new level:aLevel
+    constructor new(int aLevel)
     [
         theLevel := aLevel
     ]
@@ -105,10 +105,10 @@ operatorState : ch
 [
     ch =>
         $40 [      // (
-            ^ self newBracket; gotoStarting
+            ^ target newBracket; gotoStarting
         ];
         ! [
-            ^ self newToken; append:ch; gotoToken
+            ^ target newToken; append:ch; gotoToken
         ].
 ]
 
@@ -116,22 +116,22 @@ tokenState : ch
 [
     ch =>
         $41 [      // )
-            ^ self closeBracket; gotoToken
+            ^ target closeBracket; gotoToken
         ];
         $42 [      // *
-            ^ self newProduct; gotoOperator
+            ^ target newProduct; gotoOperator
         ];
         $43 [      // +
-            ^ self newSummary; gotoOperator
+            ^ target newSummary; gotoOperator
         ];
         $45 [      // -
-            ^ self newDifference; gotoOperator
+            ^ target newDifference; gotoOperator
         ];
         $47 [      // /
-            ^ self newFraction; gotoOperator
+            ^ target newFraction; gotoOperator
         ];
         ! [
-            ^ self append:ch
+            ^ target append:ch
         ].
 ]
 
@@ -139,13 +139,13 @@ startState : ch
 [
     ch =>
         $40 [      // (
-            ^ self newBracket; gotoStarting
+            ^ target newBracket; gotoStarting
         ];
         $45 [ // -
-            ^ self newToken; append literal:"0"; newDifference; gotoOperator
+            ^ target newToken; append:"0"; newDifference; gotoOperator
         ];
         ! [
-            ^ self newToken; append:ch; gotoToken
+            ^ target newToken; append:ch; gotoToken
         ].
 ]
 
@@ -154,50 +154,50 @@ startState : ch
 class Scope
 {
     object theState.
-    object theLevel.
+    int    theLevel.
     object theParser.
     object theToken.
     object theExpression.
     
-    constructor new parser:aParser
+    constructor new:aParser
     [
         theState := startState.
         theLevel := 0.
-        theExpression := Expression new level:0.
+        theExpression := Expression new(0).
         theParser := aParser.
     ]
                                        
     newToken
     [
-        theToken := theParser appendToken expression:theExpression level:theLevel.
+        theToken := theParser appendToken(theExpression, theLevel).
     ]                                                
     
     newSummary
     [
         theToken := nil.
         
-        theParser appendSummary expression:theExpression level:theLevel.
+        theParser appendSummary(theExpression, theLevel).
     ]                                                
     
     newDifference
     [
         theToken := nil.
         
-        theParser appendDifference expression:theExpression level:theLevel
+        theParser appendDifference(theExpression, theLevel)
     ]                                                
       
     newProduct
     [
         theToken := nil.
         
-        theParser appendProduct expression:theExpression level:theLevel
+        theParser appendProduct(theExpression, theLevel)
     ]                                                
     
     newFraction
     [
         theToken := nil.
         
-        theParser appendFraction expression:theExpression level:theLevel
+        theParser appendFraction(theExpression, theLevel)
     ]                                                
 
     newBracket
@@ -206,7 +206,7 @@ class Scope
         
         theLevel := theLevel + 10.
         
-        theParser appendSubexpression expression:theExpression level:theLevel.
+        theParser appendSubexpression(theExpression, theLevel).
     ]            
 
     closeBracket
@@ -224,7 +224,7 @@ class Scope
             [ InvalidArgumentException new:"Invalid expression"; raise ]
     ]
             
-    append literal:aLiteral
+    append(literal aLiteral)
     [
         aLiteral forEach(:ch)[ self append:ch ]
     ]
@@ -253,63 +253,63 @@ class Scope
 
 class Parser
 {
-    appendToken expression:anExpression level:aLevel
+    appendToken(object anExpression, int aLevel)
     [
-        var aToken := Token new level:aLevel.
+        var aToken := Token new(aLevel).
         
-        anExpression set top:($self append last(anExpression top) new:aToken).
+        anExpression top := self append(anExpression top, aToken).
         
         ^ aToken
     ]
 
-    appendSummary expression:anExpression level:aLevel
+    appendSummary(object anExpression, int aLevel)
     [
-        anExpression set top($self append last(anExpression top) new(SummaryNode new level:aLevel)).
+        anExpression top := self append(anExpression top, SummaryNode new(aLevel)).
     ]
 
-    appendDifference expression:anExpression level:aLevel
+    appendDifference(object anExpression, int aLevel)
     [
-        anExpression set top($self append last(anExpression top) new(DifferenceNode new level:aLevel)).
+        anExpression top := self append(anExpression top, DifferenceNode new(aLevel)).
     ]
 
-    appendProduct expression:anExpression level:aLevel
+    appendProduct(object anExpression, int aLevel)
     [
-        anExpression set top($self append last(anExpression top) new(ProductNode new level:aLevel)).
+        anExpression top := self append(anExpression top, ProductNode new(aLevel)).
     ]
 
-    appendFraction expression:anExpression level:aLevel
+    appendFraction(object anExpression, int aLevel)
     [
-        anExpression set top($self append last(anExpression top) new(FractionNode new level:aLevel))
+        anExpression top := self append(anExpression top, FractionNode new(aLevel))
     ]
 
-    appendSubexpression expression:anExpression level:aLevel
+    appendSubexpression(object anExpression, int aLevel)
     [
-        anExpression set top($self append last(anExpression top) new(Expression new level:aLevel)).
+        anExpression top := self append(anExpression top, Expression new(aLevel)).
     ]
 
-    append last:aLastNode new:aNewNode
+    append(object aLastNode, object aNewNode)
     [
-        if($nil == aLastNode)
+        if(nil == aLastNode)
             [ ^ aNewNode ].
         
         if (aNewNode level <= aLastNode level)
-            [ aNewNode set left:aLastNode. ^ aNewNode ].
+            [ aNewNode left := aLastNode. ^ aNewNode ].
             
         var aParent := aLastNode.
         var aCurrent := aLastNode right.
-        while (($nil != aCurrent) && (aNewNode level > aCurrent level))
+        while ((nil != aCurrent) && (aNewNode level > aCurrent level))
             [ aParent := aCurrent. aCurrent := aCurrent right. ].
         
-        if ($nil == aCurrent)
-            [ aParent set right:aNewNode. ];
-            [ aNewNode set left:aCurrent. aParent set right:aNewNode ].
+        if (nil == aCurrent)
+            [ aParent right := aNewNode. ];
+            [ aNewNode left := aCurrent. aParent right := aNewNode ].
             
         ^ aLastNode
     ]
     
     run : aText
     [
-        var aScope := Scope new parser:$self.
+        var aScope := Scope new(self).
 
         aText forEach(:ch)[ aScope eval:ch ].
 
@@ -317,9 +317,9 @@ class Parser
     ]
 }
 
-program =
+public program =
 [
-    var aText := String new.
+    var aText := StringWriter new.
     var aParser := Parser new.
 
     $(console readLine; saveTo:aText; length > 0) doWhile:

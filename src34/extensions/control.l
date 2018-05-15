@@ -216,22 +216,22 @@ extension loopOp
 //        ]
 //    ]
 //}
-//
-//// --- controlOp ---
-//
-//extension controlOp
-//{
-//    saveTo:target
-//    [
-//        target write:self.
-//        
-//        ^   self.
-//    ]
-//    
-//    exchangeWith:v
-//    [
-//        var tmp := self value.
-//        self set(v value).
-//        v set(tmp).
-//    ]
-//}
+
+// --- controlOp ---
+
+public extension controlOp
+{
+    saveTo:target
+    [
+        target write:self.
+        
+        ^ self.
+    ]
+    
+    exchangeWith:v
+    [
+        var tmp := self value.
+        self set(v value).
+        v set(tmp).
+    ]
+}

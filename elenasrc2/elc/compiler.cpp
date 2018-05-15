@@ -4977,7 +4977,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //   ref_t verbRef = 0;
 //   bool propMode = false;
 //   bool constantConversion = false;
-//   bool unnamedMessage = false;
+   bool unnamedMessage = false;
    ref_t flags = 0;
 
    SNode action = node.firstChild(lxTerminalMask);
@@ -4990,8 +4990,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      }
 //   }
 
-   if (action == lxIdentifier)
+   if (action == lxIdentifier) {
       actionStr.copy(action.identifier()); // !! temporal
+   }
+   else unnamedMessage = true;
+      
 //      verbRef = scope.mapSubject(verb, messageStr);
 
 //   if (node.argument == 0) {
@@ -5221,9 +5224,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       else if (test(scope.hints, tpPrivate)) {
          flags |= SEALED_MESSAGE;
       }
-//      else if (unnamedMessage && emptystr(messageStr))
-//         messageStr.append(EVAL_MESSAGE);
-//
+      else if (unnamedMessage && emptystr(actionStr))
+         actionStr.append(EVAL_MESSAGE);
+
 //      if (propMode && paramCount == 1 && messageStr.Length() > 3) {
 //         // COMPILER MAGIC : set&x => x
 //         messageStr.cut(0, 4);
