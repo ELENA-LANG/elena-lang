@@ -12,24 +12,9 @@ In development:
 
                  * migrating startUp code
 
-                 * interface class cannot be created directly
-
-                 * ref<int> n := 2. - the value should be copied directly
-
-                 *  int n := 2. MyValue new; read(ref<int>(n)). - should box the value??
-
-                 *  var n := 2. MyValue new; read(ref<int>(n)). - should be dispatched
-
                  * debugger : display template based classes
                  * debugger : debugging template based classes
                  * method not found wrong attribute
-
-                 * reimplement embeddable optimization
-
-                 * optimization : dirty_ptr ptr := self - cast method should be called directly without actually allocating the
-                   structure
-
-                 * internal extension methods should be used only inside the module
 
                  * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
                    normal classes cannot be inherited from enum / enum value
@@ -43,46 +28,25 @@ In development:
 
                  * move compiler code to project, only win32 specific code should stay in ElcProject
 
-                 * constructors should not be inherited if explicit one is declared (e.g. default one should not be always
-                   available)?
+                 * debugger : show self / target
 
-                 * namespaces and attributes??
-
-                 * warn if the class / variable is similar to the attribute
-
-                 * refactor module resloving algorithm, no need to replicate the name space structure on physical level
-
-                 * debugger : show self / __target
-
-                 * should be possible to rosolve the namespace ambiguity using an extra path
-                 * enum / stateless class should not have default constructor
                  * abstract class cannot be used directly (currently empty symbol is created)
                  * optimize external call routines
-                 * support interal messages
-                 * make sure that array<byte> can be passed as bytearray
                  * boxing : default constructor / field intializer should be auto called
                  * optimize equal generic implementation (in basic module)
-                 * a == b == c - not allowed
-                 * a < b < c - not allowed
-                 * reimplement nilValue generic handler
                  * nested classes around self variable should be compiled as a wrapper,
                    so in some cases they can be used without actually creating them
                  * #new method should not be created for an abstract class
-                 * constructor or static methods cannot be abstract
-                 * idle method should generate an method not found exception
                  * optimize interface dispatch implementation (interface template)
                  * validate that a field template contains exactly one a field with a name "field"
                  * test typified prop - the get accessor should be typiefied as well
                  * vprop - currently 0 is assigned, which is not correct, probably "prop_type min" should be used
-                 * uncomment WideLiteral class
                  * structure should contain at least one data field
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
                    directly (and get rid of hot fix in compileExternalArguments)
-                 * uncomment system'io'FileWriter
                  * optimize wideConvertor / literalConvertor
                  * optimize CallStack
                  * call console operations directly
-                 * private / internal extensions
                  * test #12 : Extension with stack allocated object 
                  * #15 : Returning double float and long value from external function
                  * test #40 : Typed Extensions : self should be typedcasted
@@ -90,14 +54,11 @@ In development:
                  * ide : call stack info
                  * call open argument list explicitly (a sum(dynamic<object>(1,2,3)))
                  * can generic handler be strong-typed?
-                 * uncomment objectOp
                  * elenart - switch to xml config
                  * reimplement IDE exclude the file
-                 * reimplement IDE add forward
                  * reimplement IDE clear forwards
                  * external calls - do not save the result if the target is not specified
                  * it should be possible to implicitly typecast the primitive array in compile-time
-                 * interface template - generate an error / warning if there is no abstract method implementation
                  * existing method cannot be declared abstract
                  * publish an example with the enumeration (list of enum values)
                  * optimize integerOp : append / reduce should be stacksafe
@@ -107,7 +68,6 @@ In development:
                       cast T<Indexable> = Indexable::{ embeddable dispatch => self. }.    
                  * there should be typified enumerableOp extensions
                  * optimize equal, less operation between chars
-                 * check if && and || works (partial evaluation)
                  * optimize TextBuilder
                  * a class cannot have a public and internal methods with the same name and similar number of parameters
                  * why the error - ArrayList :: Indexable, interface<Enumerable>
@@ -116,8 +76,6 @@ In development:
                  * review field / method template usage syntax
                  * reimplement manifest
                  * template extension
-                 * classes / symbols should be internal rather than private
-                 * template should be public or internal
                  * comparing int and ptr (handle, dirty_ptr)
                  * extrnal operations without target - ignore the result
                  * extrnal operations : support long and real
@@ -145,6 +103,10 @@ Pipeline:
                  * #401 : operator with array  (modify AKS test for primes)
                  * enable to emulate C# program structure - class with a main method, without program symbol
                  * compile <>, ><, ...
+                 * refactor module resolving algorithm, no need to replicate the name space structure on physical level
+                 * should be possible to rosolve the namespace ambiguity using an extra path
+                 * a == b == c - not allowed
+                 * a < b < c - not allowed
 
               xdev - general optimization  
                  * #371 : Pi sample optimization

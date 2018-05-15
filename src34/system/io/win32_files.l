@@ -121,71 +121,71 @@ public struct FileStream :: Stream
     ]
 }
 
-//// --- fileStreamHelper ---
-//
-//class $fileStreamHelper =
-//{
-//    stream openForWrite literal:aPath bool:anAppendMode
-//    [
-//        if(anAppendMode) [ ^ FileStream openForAppend:aPath ].
-//        
-//        ^ FileStream openForReWrite:aPath
-//    ]
-//}.
+// --- fileStreamHelper ---
+
+class fileStreamHelper =
+{
+    T<Stream> openForWrite(literal aPath, bool anAppendMode)
+    [
+        if(anAppendMode) [ ^ FileStream openForAppend:aPath ].
+        
+        ^ FileStream openForReWrite:aPath
+    ]
+}.
 
 // --- StreamWriter ---
 
 public class StreamWriter :: TextWriter
 {
-//    stream  theStream.
-//    encoder theEncoder.
-//
-//    constructor new stream:aStream encoder:anEncoder
-//        <= new;
-//    [
-//        theStream := aStream.
-//        theEncoder := anEncoder.
-//
-//        theNewLineConstant := system'text'newLine literal.
-//    ]
-//
-//    constructor new:aPath
-//        <= new stream:(FileStream openForReWrite:aPath) encoder:UTF8Encoder.
-//        
-//    constructor new literal:aPath bool:anAppendMode
-//        <= new stream($fileStreamHelper openForWrite(aPath, anAppendMode)) encoder:UTF8Encoder.
-//        
-//    stream = theStream.        
-//        
-//    encoder = theEncoder.        
-//        
-//    write chararray:anInput int:aLength
-//    [
-//        int      aTotal := aLength.
-//        byte<64> aBuffer.
-//        int      aBlockLength := 0.
-//        int      aBufferLength := 0.
-//        int      anOffset := 0.
-//        
-//        while (aTotal > 0)
-//        [
-//            if(aTotal < 64)
-//                [ aBlockLength := aTotal ];
-//                [ aBlockLength := 64 ].
-//                
-//            theEncoder convert int:anOffset vint:aBlockLength chararray:anInput bytearray:aBuffer vint:aBufferLength.
-//            
-//            theStream write bytearray:aBuffer int:aBufferLength.
-//            
-//            aTotal := aTotal - aBlockLength.
-//            anOffset := anOffset + aBlockLength
-//        ]
-//    ]
-//    
-//    close
-//    [
-//        theStream close
-//    ]
+    T<Stream>  theStream.
+    T<Encoder> theEncoder.
+
+    constructor new(Stream aStream, Encoder anEncoder)
+        <= new;
+    [
+        theStream := aStream.
+        theEncoder := anEncoder.
+
+        theNewLineConstant := system'text'newLine literal.
+    ]
+
+    constructor new:aPath
+        <= new(FileStream openForReWrite:aPath, UTF8Encoder).
+        
+    constructor new(literal aPath, bool anAppendMode)
+        <= new(fileStreamHelper openForWrite(aPath, anAppendMode), UTF8Encoder).
+        
+    T<Stream> stream = theStream.        
+        
+    T<Encoder> encoder = theEncoder.        
+        
+    write(CharArray anInput, int aLength)
+    [
+        int        aTotal := aLength.
+        V<byte,64> aBuffer.
+        int        aBlockLength := 0.
+        int        aBufferLength := 0.
+        int        anOffset := 0.
+        
+        while (aTotal > 0)
+        [
+            if(aTotal < 64)
+                [ aBlockLength := aTotal ];
+                [ aBlockLength := 64 ].
+                
+            theEncoder convert(anOffset, &aBlockLength, anInput, T<ByteArray>(aBuffer), &aBufferLength).
+            
+            theStream write(T<ByteArray>(aBuffer), aBufferLength).
+            
+            aTotal := aTotal - aBlockLength.
+            anOffset := anOffset + aBlockLength
+        ]
+    ]
+    
+    close
+    [
+        theStream close
+    ]
 }
 
 // --- StreamReader ---
@@ -212,9 +212,9 @@ public class StreamReader :: TextReader
 
     bool available = theOpen.
 
-//    stream = theStream.
-//
-//    encoder = theEncoder.
+    T<Stream> stream = theStream.
+
+    T<Encoder> encoder = theEncoder.
 
     read(CharArray anOutput, ref<int> aLength)
     [
@@ -239,21 +239,21 @@ public class StreamReader :: TextReader
     ]
 }
 
-//// --- BinaryFileReader ---
-//
-//sealed BinaryFileReader :: BinaryReader
-//{
-//    constructor new path:aPath
-//        <= new stream:(FileStream openForRead:aPath).
-//}
-//
-//// --- BinaryFileWriter ---
-//
-//sealed BinaryFileWriter :: BinaryWriter
-//{
-//    constructor new:aPath
-//        <= new stream:(FileStream openForReWrite:aPath).
-//}
+// --- BinaryFileReader ---
+
+sealed BinaryFileReader :: BinaryReader
+{
+    constructor new:aPath
+        <= new(FileStream openForRead:aPath).
+}
+
+// --- BinaryFileWriter ---
+
+sealed BinaryFileWriter :: BinaryWriter
+{
+    constructor new:aPath
+        <= new(FileStream openForReWrite:aPath).
+}
 
 // --- fileOp ---
 

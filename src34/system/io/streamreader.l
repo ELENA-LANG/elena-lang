@@ -5,121 +5,121 @@ import system'text.
 
 public interface BinaryReader
 {
-//    stream theStream.
-//    int    theLength.
-//    
-//    constructor new stream:aStream
-//    [
-//        theStream := aStream.
-//        
-//        theLength := aStream length.
-//    ]
-//    
-//    stacksafe read bytearray:anArray vint:anActualLength
-//    [
-//        theStream read bytearray:anArray vint:anActualLength.
-//    ]
-//
-//    stream = theStream.
-//
-//    close => theStream.
-//
-//    bool available
-//    [
-//        int aPosition := theStream index.
-//        
-//        ^ aPosition < theLength
-//    ]
-//            
-//    stacksafe read bytearray:anArray int:aLength
-//    [
-//        int aRead := aLength.
-//        
-//        $self read bytearray:anArray vint:aRead.
-//         
-//        if(aLength > aRead)
-//            [ IOException new; raise ]
-//    ]
-//
-//    read vbyte:anInt
-//    [
-//        byte<4> aBuffer.
-//        int     aRead := 1.
-//        
-//        $self read bytearray:aBuffer vint:aRead.
-//        
-//        if (aRead < 1)
-//            [ IOException new; raise ].
-//     
-//        byte b := aBuffer[0].
-//                          
-//        anInt byte := b.
-//    ]
-//
-//    read vshort:anInt
-//    [
-//        byte<4> aBuffer.
-//        int     aRead := 2.
-//        
-//        $self read bytearray:aBuffer vint:aRead.
-//        
-//        if (aRead < 1)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read bytearray:aBuffer int:0 vshort:anInt.
-//    ]
-//
-//    read vchar:anInt
-//    [
-//        byte<4> aBuffer.
-//        int     aRead := 4.
-//        
-//        $self read bytearray:aBuffer vint:aRead.
-//        
-//        if (aRead < 1)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read bytearray:aBuffer int:0 vchar:anInt.
-//    ]
-//
-//    read vint:anInt
-//    [
-//        byte<4> aBuffer.
-//        int     aRead := 4.
-//        
-//        $self read bytearray:aBuffer int:aRead.
-//        
-//        if (aRead < 4)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read bytearray:aBuffer int:0 vint:anInt.
-//    ]
-//
-//    read vlong:aLong
-//    [
-//        byte<8> aBuffer.
-//        int     aRead := 8.
-//        
-//        $self read bytearray:aBuffer vint:aRead.
-//        
-//        if(aRead < 8)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read bytearray:aBuffer int:0 vlong:aLong
-//    ]
-//
-//    read vreal:aReal
-//    [
-//        byte<8> aBuffer.
-//        int     aRead := 8.
-//        
-//        $self read bytearray:aBuffer vint:aRead.
-//        
-//        if(aRead < 8)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read bytearray:aBuffer int:0 vreal:aReal
-//    ]
+    T<Stream> theStream.
+    int       theLength.
+    
+    constructor new(Stream aStream)
+    [
+        theStream := aStream.
+        
+        theLength := aStream length.
+    ]
+    
+    stacksafe read(ByteArray anArray, ref<int> anActualLength)
+    [
+        theStream read(anArray, anActualLength).
+    ]
+
+    T<Stream> stream = theStream.
+
+    close => theStream.
+
+    bool available
+    [
+        int aPosition := theStream index.
+        
+        ^ aPosition < theLength
+    ]
+            
+    stacksafe read(ByteArray anArray, int aLength)
+    [
+        int aRead := aLength.
+        
+        self read(anArray, &aRead).
+         
+        if(aLength > aRead)
+            [ IOException new; raise ]
+    ]
+
+    read(ref<byte> anInt)
+    [
+        V<byte,4> aBuffer.
+        int       aRead := 1.
+        
+        self read(T<ByteArray>(aBuffer), &aRead).
+        
+        if (aRead < 1)
+            [ IOException new; raise ].
+     
+        byte b := aBuffer[0].
+                          
+        anInt byte := b.
+    ]
+
+    read(ref<short> anInt)
+    [
+        V<byte,4> aBuffer.
+        int       aRead := 2.
+        
+        self read(T<ByteArray>(aBuffer), &aRead).
+        
+        if (aRead < 1)
+            [ IOException new; raise ].
+            
+        byteArrayHelper read(T<ByteArray>(aBuffer), 0, anInt).
+    ]
+
+    read(ref<char> anInt)
+    [
+        V<byte,4> aBuffer.
+        int       aRead := 4.
+        
+        self read(T<ByteArray>(aBuffer), &aRead).
+        
+        if (aRead < 1)
+            [ IOException new; raise ].
+            
+        byteArrayHelper read(T<ByteArray>(aBuffer), 0, anInt).
+    ]
+
+    read(ref<int> anInt)
+    [
+        V<byte,4> aBuffer.
+        int       aRead := 4.
+        
+        self read(T<ByteArray>(aBuffer), &aRead).
+        
+        if (aRead < 4)
+            [ IOException new; raise ].
+            
+        byteArrayHelper read(T<ByteArray>(aBuffer), 0, anInt).
+    ]
+
+    read(ref<long> aLong)
+    [
+        V<byte,8> aBuffer.
+        int       aRead := 8.
+        
+        self read(T<ByteArray>(aBuffer), &aRead).
+        
+        if(aRead < 8)
+            [ IOException new; raise ].
+            
+        byteArrayHelper read(T<ByteArray>(aBuffer), 0, aLong)
+    ]
+
+    read(ref<real> aReal)
+    [
+        V<byte,8> aBuffer.
+        int       aRead := 8.
+        
+        self read(T<ByteArray>(aBuffer), &aRead).
+        
+        if(aRead < 8)
+            [ IOException new; raise ].
+            
+        byteArrayHelper read(T<ByteArray>(aBuffer), 0, aReal)
+    ]
 }
 
 // --- TextReader ---
@@ -140,9 +140,9 @@ public interface TextReader
 
     abstract stacksafe read(CharArray anArray, ref<int> anActualLength) []
 
-//    stream [ NotSupportedException new; raise ]
-//
-//    encoder [ NotSupportedException new; raise ]
+    abstract T<Stream> stream [ ]
+
+    abstract T<Encoder> encoder [ ]
 
     abstract close [ ]
     
