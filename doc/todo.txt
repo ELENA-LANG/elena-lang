@@ -7,7 +7,6 @@ In development:
 
                  * migrate dynamic, templates, win32_app files
 
-
                  * migrating startUp code
 
                  * debugger : display template based classes
@@ -57,7 +56,6 @@ In development:
                  * it should be possible to implicitly typecast the primitive array in compile-time
                  * existing method cannot be declared abstract
                  * publish an example with the enumeration (list of enum values)
-                 * optimize integerOp : append / reduce should be stacksafe
                  * collection : validate if the parent class can be array based class
                  * can cast method be overridden? so it means it should not have sealed attribute?
                  * find out why the following code does not work:
@@ -133,6 +131,7 @@ Pipeline:
                  * optimize CallStack
                  * optimize embeddable function call
                  * optimize embeddable function2 call
+                 * optimize integerOp : append / reduce should be stacksafe
 
               xdev - samples
                  * Short-circuit evaluation : do not use lazy expressions

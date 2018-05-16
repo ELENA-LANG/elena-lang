@@ -287,16 +287,6 @@ private:
             else return NULL;
          }
    
-//   //      virtual ref_t mapSubject(SNode terminal, IdentifierString& output)
-//   //      {
-//   //         return moduleScope->mapSubject(terminal, output);
-//   //      }
-//   //
-//   //      virtual ref_t mapSubject(SNode terminal)
-//   //      {
-//   //         return moduleScope->mapSubject(terminal);
-//   //      }
-   
          Scope(_CompilerScope* moduleScope)
          {
             this->parent = NULL;
@@ -325,9 +315,6 @@ private:
       ExtensionMap      extensions;
 //      AutoExtensionMap  autoExtensions;
 //
-//      // action hints
-//      SubjectMap        actionHints;
-//
 //      ref_t packageReference;
 
 //      // list of references to the current module which should be checked after the project is compiled
@@ -343,13 +330,6 @@ private:
          }
          else return Scope::getScope(level);
       }
-
-//      ObjectInfo mapObject(SNode identifier);
-//
-//      virtual ref_t mapReference(ident_t reference, bool existing = false);
-//      virtual ref_t mapAttribute(SNode terminal);
-
-//      ObjectInfo mapReferenceInfo(ident_t reference, bool existing = false);
 
       void defineConstantSymbol(ref_t reference, ref_t classReference)
       {
@@ -389,24 +369,8 @@ private:
       virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
 
 
-////      void raiseError(const char* message);
-////      void raiseError(const char* message, int row, int col, ident_t sourcePath, ident_t terminal);
-//////      void raiseWarning(int level, const char* message);
-////
-////      virtual void raiseError(const char* message, ident_t sourcePath, SNode terminal);
-////      virtual void raiseWarning(int level, const char* message, ident_t sourcePath, SNode terminal);
-//
-////      bool doesReferenceExist(ident_t referenceName);
-
       ref_t resolveFullReference(ident_t name);
       ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
-
-////      ref_t mapNewSubject(ident_t terminal);
-//
-//      // NOTE : the function returns 0 for implicit subjects
-//      // in any case output is set (for explicit one - the namespace is copied as well)
-//      ref_t mapSubject(SNode terminal, IdentifierString& output);
-//      ref_t mapSubject(SNode terminal);
 
       ref_t mapNewTerminal(SNode terminal);
 
@@ -781,39 +745,6 @@ private:
 
       InlineClassScope(CodeScope* owner, ref_t reference);
    };
-
-   //struct WarningScope
-   //{
-   //   ident_t terminal;
-
-   //   int warningMask;
-   //   int col;
-   //   int row;
-
-   //   //void raise(Scope& scope, int level, ident_t message, SNode node)
-   //   //{
-   //   //   if (test(warningMask, level)) {
-   //   //      if (col != 0) {
-   //   //         scope.raiseWarning(level, message, row, col, terminal);
-   //   //      }
-   //   //      else if(node != lxNone)
-   //   //         scope.raiseWarning(level, message, node);
-   //   //   }
-   //   //}
-
-   //   WarningScope(int mask)
-   //   {
-   //      warningMask = mask;
-   //      col = row = 0;
-   //      terminal = NULL;
-   //   }
-   //   WarningScope()
-   //   {
-   //      warningMask = 0;
-   //      col = row = 0;
-   //      terminal = NULL;
-   //   }
-   //};
 
    _CompilerLogic*  _logic;
 
