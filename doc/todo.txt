@@ -7,8 +7,6 @@ In development:
 
                  * migrate dynamic, templates, win32_app files
 
-                 * optimize embeddable function call
-                 * optimize embeddable function2 call
 
                  * migrating startUp code
 
@@ -44,8 +42,6 @@ In development:
                  * structure should contain at least one data field
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
                    directly (and get rid of hot fix in compileExternalArguments)
-                 * optimize wideConvertor / literalConvertor
-                 * optimize CallStack
                  * call console operations directly
                  * test #12 : Extension with stack allocated object 
                  * #15 : Returning double float and long value from external function
@@ -133,6 +129,10 @@ Pipeline:
               xdev - general optimization  
                  * #371 : Pi sample optimization
                  * pusha  new bcopya popa => bcopya new bswap nop??
+                 * optimize wideConvertor / literalConvertor
+                 * optimize CallStack
+                 * optimize embeddable function call
+                 * optimize embeddable function2 call
 
               xdev - samples
                  * Short-circuit evaluation : do not use lazy expressions
