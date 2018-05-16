@@ -747,8 +747,8 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
     cast T<Array>
         = Array new(0, T<int>(theLength), theArray).
 
-//    value 
-//        <= array.
+    value 
+        = Array new(0, T<int>(theLength), theArray).
 }
 
 // --- ArrayListEnumerator ---

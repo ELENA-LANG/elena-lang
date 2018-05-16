@@ -470,47 +470,49 @@ class Selector :: Enumerator
     enumerable => theEnumerator.
 }
 
-//// --- Repeater ---
-//
-//class Repeater :: Enumerator
-//{
-//    int   theMin.
-//    int   theMax.
-//    int   theCurrent.
-//    func1 theFunc.
-//
-//    constructor new int:minValue int:maxValue func1:aRepetition
-//    [
-//        theFunc := aRepetition.
-//        theMin := minValue.
-//        theMax := maxValue.
-//        theCurrent := theMin - 1.
-//    ]
-//    
-//    constructor new int:minValue int:maxValue ext_mssg:anExtension
-//    [
-//        theFunc := (:x)[ ^ x~anExtension eval ].
-//        theMin := minValue.
-//        theMax := maxValue.
-//        theCurrent := theMin - 1.
-//    ]
-//
-//
-//    get = theFunc(theCurrent).
-//    
-//    reset
-//    [
-//        theCurrent := theMin - 1.
-//    ]
-//    
-//    bool next
-//    [
-//        theCurrent := theCurrent + 1.
-//        
-//        ^ (theCurrent < theMax).
-//    ]
-//}
-//
+// --- Repeater ---
+
+public class Repeater :: Enumerator
+{
+    int      theMin.
+    int      theMax.
+    int      theCurrent.
+    T<Func1> theFunc.
+
+    constructor new(int minValue, int maxValue, Func1 aRepetition)
+    [
+        theFunc := aRepetition.
+        theMin := minValue.
+        theMax := maxValue.
+        theCurrent := theMin - 1.
+    ]
+    
+    constructor new(int minValue, int maxValue, ExtensionMessage anExtension)
+    [
+        theFunc := (:x)[ ^ x~anExtension eval ].
+        theMin := minValue.
+        theMax := maxValue.
+        theCurrent := theMin - 1.
+    ]
+
+
+    get = theFunc(theCurrent).
+    
+    reset
+    [
+        theCurrent := theMin - 1.
+    ]
+    
+    bool next
+    [
+        theCurrent := theCurrent + 1.
+        
+        ^ (theCurrent < theMax).
+    ]
+    
+    enumerable = Range from:theMin to:theMax.
+}
+
 //// --- ZipEnumerator ---
 //
 //class ZipEnumerator :: Enumerator
@@ -843,40 +845,31 @@ public class Summing :: BasePattern
     closure eval : aParam [ theResult append:aParam. ]
 }
 
-//// --- Accumulating ---
-//
-//class Accumulating :: BasePattern
-//{
-//    func2 theOperation.
-//    
-//    constructor new(object aVariable, func2 anOperation)
-//    [
-//        theResult := aVariable.
-//        theOperation := anOperation.
-//    ]
-//
-//    constructor new(object aVariable, ext_mssg anOperation)
-//    [
-//        theResult := aVariable.
-//        theOperation := (:a:b)[ a~anOperation eval:b ].
-//    ]
-//
-//    closure : aParam [ theResult set(theOperation(theResult,aParam)). ]
-//}
-//
+// --- Accumulating ---
+
+class Accumulating :: BasePattern
+{
+    T<Func2> theOperation.
+    
+    constructor new(object aVariable, Func2 anOperation)
+    [
+        theResult := aVariable.
+        theOperation := anOperation.
+    ]
+
+    constructor new(object aVariable, ExtensionMessage anOperation)
+    [
+        theResult := aVariable.
+        theOperation := (:a:b)[ a~anOperation eval:b ].
+    ]
+
+    closure eval : aParam [ theResult value := theOperation(theResult value,aParam). ]
+}
+
 //// --- patternOp ---
 //
 //extension patternOp
 //{
-//    accumulate : aVariable with:operation
-//    [
-//        Accumulating new(aVariable, operation); run enumerator:self.
-//        
-//        ^ aVariable value.
-//    ]
-//    
-//    accumulate with:operation 
-//        = self~patternOp accumulate:(Variable new) with:operation.
 //    skipping:aCounter
 //        = SkipFilter new int:aCounter enumerator:(self enumerator).
 //
@@ -897,11 +890,5 @@ public class Summing :: BasePattern
 //
 //    filter pattern:patternFun
 //        = Filter new(patternFun, self enumerator).
-//        
-//    till:max repeat:aRepeater
-//        = Repeater new(self, max, aRepeater).
-//        
-//    to:max repeat:aRepeater
-//        = Repeater new(self, max + 1, aRepeater).
 //
 //}

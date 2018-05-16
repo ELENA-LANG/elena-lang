@@ -153,11 +153,11 @@ singleton helper
         int  n := 0.
         int  v := 0.
         
-        s read(i, &ch).
+        s read(T<int>(i), &ch).
         while (ch != $125)
         [
             intConvertor convert(ch, &n).
-            if((n >= 30h)and:(n <= 39h))
+            if((n >= 30h)&&(n <= 39h))
             [                
                 n := n - 30h.
                 
@@ -167,7 +167,7 @@ singleton helper
             [ InvalidArgumentException new; raise ].
                 
             i append(1).
-            s read(i, &ch)
+            s read(T<int>(i), &ch)
         ].
         
         retVal value := v

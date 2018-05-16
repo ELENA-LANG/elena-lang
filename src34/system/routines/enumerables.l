@@ -342,6 +342,22 @@ public extension enumerableOp
 
     top:aCounter
         = TopFilter new(aCounter, T<Enumerator>(self enumerator)).
+        
+    till:max repeat:aRepeater
+        = Repeater new(self, max, aRepeater).
+        
+    to:max repeat:aRepeater
+        = Repeater new(self, max + 1, aRepeater).
+        
+    accumulate : aVariable with:operation
+    [
+        Accumulating new(aVariable, operation); run(T<Enumerator>(self enumerator)).
+        
+        ^ aVariable value.
+    ]
+    
+    accumulateWith:operation 
+        = self~enumerableOp accumulate(Variable new) with:operation.        
 }
 
 // --- indexableOp ---
