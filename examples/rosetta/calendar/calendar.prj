@@ -1,12 +1,16 @@
-﻿[project]
-executable=calendar.exe
-namespace=calendar
-template=console
-debuginfo=-1
-
-[files]
-calendar.l
-
-[forwards]
-'program=calendar'program
-
+<configuration>
+    <project>
+        <executable>calendar.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>calendar</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>calendar.l</include>
+        </module>
+    </files>
+</configuration>

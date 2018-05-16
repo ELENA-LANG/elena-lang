@@ -1229,10 +1229,16 @@ public sealed struct IntNumber :: IntBaseNumber
         ^ aCode.
     ]        
 
+    int shiftLeft(BaseVariable v)
+        <= shiftLeft(v value).
+
     int shiftLeft(int val)
     [
         ^ theValue << val
     ]
+
+    int shiftRight(BaseVariable v)
+        <= shiftRight(v value).
 
     int shiftRight(int val)
     [

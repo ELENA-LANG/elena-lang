@@ -1,6 +1,7 @@
 import system'routines.
 import system'math.
 import extensions.
+import extensions'text.
 
 // --- Constants ---
 
@@ -16,15 +17,17 @@ class Encrypting :: Enumerator
     object theKey.
     object theEnumerator.
     
-    constructor new key:aKey text:aText
+    constructor key:aKey text:aText
     [
         theKey := aKey.
         theEnumerator := aText enumerator.
     ]
     
-    next => theEnumerator.
+    bool next => theEnumerator.
     
     reset => theEnumerator.
+    
+    enumerable => theEnumerator.
     
     get
     [
@@ -54,15 +57,15 @@ class Encrypting :: Enumerator
 extension encryptOp
 {
     encrypt : aKey
-        = Encrypting new key:aKey text:self; summarize(String new). 
+        = Encrypting key:aKey text:self; summarize(StringWriter new). 
 
     decrypt :aKey
-        = Encrypting new key(26 - aKey) text:self; summarize(String new). 
+        = Encrypting key(26 - aKey) text:self; summarize(StringWriter new). 
 }
 
 // --- Program ---
 
-program =
+public program =
 [
     console printLine("Original text :",TestText).
         

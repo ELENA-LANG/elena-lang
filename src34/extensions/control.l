@@ -124,21 +124,21 @@ public extension loopOp
         while (T<bool>(self))
         [
         ].
-    ]    
+    ]        
 }
 
-//func extension blockOp
-//{
-//    repeatUntil:aCondition
-//    [
-//        $self eval.
-//        while (aCondition)
-//        [
-//            $self eval.
-//        ].
-//    ]        
-//}
-//
+public extension<Func> blockOp
+{
+    repeatUntil:aCondition
+    [
+        self().
+        until (T<bool>(aCondition))
+        [
+            self().
+        ].
+    ]        
+}
+
 //lazy_func extension lazyOp
 //{
 //    whileTrue func:action

@@ -469,7 +469,10 @@ ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage,
          closureName.appendInt(paramCount);
       }
 
-      return mapFullReference(closureName, true);
+      if (isWeakReference(closureName)) {
+         return module->mapReference(closureName, true);
+      }
+      else return mapFullReference(closureName, true);
    }
    else {   
       ref_t signatures[OPEN_ARG_COUNT];

@@ -17,18 +17,18 @@ class CalendarMonthPrinter
     object theYear.
     object theRow.
     
-    constructor new year:aYear month:aMonth
+    constructor year:aYear month:aMonth
     [
         theMonth := aMonth.
         theYear := aYear.
-        theLine := TextBuffer new.
-        theRow := Integer new int:0.
+        theLine := TextBuilder new.
+        theRow := Integer new(0).
     ]
 
     writeTitle
     [        
-        theRow set:0.
-        theDate := Date new year(theYear int) month(theMonth int) day:1.
+        theRow value := 0.
+        theDate := Date new(theYear, theMonth, 1).
         DayNames forEach(:aName)
             [ theLine print(" ",aName) ]
     ]
@@ -41,38 +41,44 @@ class CalendarMonthPrinter
             [
                 theLine write:"   " length((theDate dayOfWeek == 0)iif(7,theDate dayOfWeek) - 1).
                 
-                control do:
                 [
                     theLine write:(theDate day; literal) paddingLeft:3 with:$32.
                     
-                    theDate := theDate add days:1.
+                    theDate := theDate addDays:1.
                 ]         
-                until:$((theDate month != theMonth)||(theDate dayOfWeek == 1)).
+                repeatUntil:$((theDate month != theMonth)||(theDate dayOfWeek == 1)).
             ].
         
         int aLength := theLine length.
         if (aLength < 21)
             [ theLine write:" " length(21 - aLength). ].
             
-        theRow append int:1.            
+        theRow append(1).            
     ]
     
-    indexer = Indexer::
+    indexer = BaseIndexer::
     {
-        available = theRow < 7.
+        bool available = theRow < 7.
 
-        readIndexTo vint:anIndex [ anIndex int := theRow ]
+        readIndexTo(ref<int> anIndex) [ theRow readValueTo(anIndex) ]
 
-        writeIndex int:anIndex 
+        writeIndex(int anIndex)
         [
             if (anIndex <= theRow)
-                [ $self writeTitle ].
+                [ self writeTitle ].
                 
             while (anIndex > theRow)
-                [ $self writeLine ]
+                [ self writeLine ]
         ]
 
-        get = $self.
+        appendIndex(int anIndex)
+            <= writeIndex(theRow value + anIndex).
+        
+        readLengthTo(ref<int> retVal) [ retVal value := 7 ]
+
+        get = self.
+        
+        set : o [ NotSupportedException new; raise ]
     }.
     
     printTitleTo : anOutput
@@ -93,7 +99,7 @@ class Calendar
     
     constructor new : aYear
     [
-        theYear := aYear int.
+        theYear := aYear.
         theRowLength := 3.
     ]
     
@@ -105,10 +111,10 @@ class Calendar
         anOutput writeLine; writeLine.
         
         var aRowCount := 12 / theRowLength.
-        var Months := Array new length:aRowCount; populate(:i)
-            (Array new length:theRowLength; 
+        var Months := Array new(aRowCount); populate(:i)
+            (Array new:theRowLength; 
                 populate(:j)
-                    ( CalendarMonthPrinter new year(theYear int) month(i * theRowLength + j + 1))).
+                    ( CalendarMonthPrinter year:theYear month(i * theRowLength + j + 1))).
         
         Months forEach(:aRow)
         [
@@ -138,7 +144,7 @@ class Calendar
 
 // --- program ---
 
-program =
+public program =
 [
     var aCalender := Calendar new(console write:"ENTER THE YEAR:"; readLineTo(Integer new)).
     

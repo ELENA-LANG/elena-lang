@@ -958,59 +958,59 @@ public extension<Array> arrayOp
 
 //    multi populate : anAction
 //        = self~arrayOp populate(:n)<int>[ ^anAction eval:n ].    
-//    
-//    sort func2:aCompareFunc
-//    [
-//        int i := 0.
-//        int j := 0.
-//        int aLength := self length.
-//        var aCurrent := $nil.
-//        var aNext := $nil.
-//        
-//        while(i < aLength)
-//        [
-//            aCurrent := self getAt int:i.
-//            
-//            j := i + 1.
-//            while (j < aLength)
-//            [
-//                aNext := self getAt int:j.
-//                ifnot(aCompareFunc eval(aCurrent,aNext))
-//                    [                        
-//                        self setAt int:i object:aNext.
-//                        self setAt int:j object:aCurrent.
-//                        
-//                        aCurrent := aNext
-//                    ].
-//                    
-//                j := j + 1
-//            ].
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self
-//    ]
-//    
-//    ascendant
-//        = (self clone)~arrayOp sort:ifOrdered.
-//    
-//    bool isEmpty
-//    [
-//        int aLength := self length.
-//        
-//        ^ aLength == 0.
-//    ]
-//    
-//    array Subarray : aLength at:anIndex
-//        = self~arrayOp Subarray int:anIndex int:aLength.
-//    
-//    array Subarray int:anIndex int:aLength
-//    [
-//        indexer it := self indexer.
-//        
-//        ^ Array new int:aLength; populate(:i)<int>(it writeIndex int(anIndex + i); get).
-//    ]
+    
+    sort(Func2 aCompareFunc)
+    [
+        int i := 0.
+        int j := 0.
+        int aLength := self length.
+        var aCurrent := nil.
+        var aNext := nil.
+        
+        while(i < aLength)
+        [
+            aCurrent := self getAt(i).
+            
+            j := i + 1.
+            while (j < aLength)
+            [
+                aNext := self getAt(j).
+                ifnot(aCompareFunc(aCurrent,aNext))
+                    [                        
+                        self setAt(i, aNext).
+                        self setAt(j, aCurrent).
+                        
+                        aCurrent := aNext
+                    ].
+                    
+                j := j + 1
+            ].
+            
+            i := i + 1
+        ].
+        
+        ^ self
+    ]
+    
+    ascendant
+        = (self clone)~arrayOp sort(:aFormer:aLater)(aFormer < aLater).
+    
+    bool isEmpty
+    [
+        int aLength := self length.
+        
+        ^ aLength == 0.
+    ]
+    
+    T<Array> Subarray : aLength at:anIndex
+        = self~arrayOp Subarray(anIndex, aLength).
+    
+    T<Array> Subarray(int anIndex, int aLength)
+    [
+        auto it := T<Indexer>(self).
+        
+        ^ Array new(aLength); populate(:i)<int>(it writeIndex(anIndex + i); get).
+    ]
 }
 
 //// --- intmatrixOp ---
@@ -1557,7 +1557,7 @@ public extension stringOp
     
     write : aLine padding:aWidth with:aChar
     [
-        int aWidthInt := aWidth int.
+        int aWidthInt := aWidth.
         int aLength := aLine length.        
         
         if (aLength < aWidthInt)

@@ -1,12 +1,16 @@
-﻿[project]
-executable=bullscows.exe
-namespace=bullscows
-template=console
-debuginfo=-1
-
-[files]
-bullscows.l
-
-[forwards]
-'program=bullscows'program
-
+<configuration>
+    <project>
+        <executable>bullscows.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>bullscows</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>bullscows.l</include>
+        </module>
+    </files>
+</configuration>

@@ -439,28 +439,28 @@ public extension indexableOp
 //
 //    multi populate : anAction
 //        = self~indexableOp populate(:n)<int>[ ^anAction(n) ].
-//
-//    isSorted func2:aCompareFunc
-//    [
-//        indexer it := self indexer.
-//        if (it available)
-//        [
-//            var previous := it get.
-//            it append index:1.
-//            while (it available)
-//            [
-//                ifnot (aCompareFunc eval(previous, it get))
-//                [
-//                    ^ false
-//                ].
-//                
-//                previous := it get.
-//                it append index:1
-//            ]
-//        ].
-//        
-//        ^ true.
-//    ]
+
+    bool isSorted(Func2 aCompareFunc)
+    [
+        auto it := T<Indexer>(self indexer).
+        if (it available)
+        [
+            var previous := it get.
+            it appendIndex:1.
+            while (it available)
+            [
+                ifnot (aCompareFunc(previous, it get))
+                [
+                    ^ false
+                ].
+                
+                previous := it get.
+                it appendIndex:1
+            ]
+        ].
+        
+        ^ true.
+    ]
 
     sort(Func2 aCompareFunc)
     [
@@ -493,18 +493,18 @@ public extension indexableOp
     ascendant
         = (self clone)~indexableOp sort:ifOrdered.
 
-//    isAscendant
-//        = self~indexableOp isSorted:ifOrdered.
-//
-//    Subarray : aLength at:anIndex
-//        = self~indexableOp Subarray int:anIndex int:aLength.
-//                
-//    Subarray int:anIndex int:aLength
-//    [
-//        indexer it := self indexer.
-//        
-//        ^ Array new int:aLength; populate(:i)<int>(it writeIndex int(anIndex + i); get)
-//    ]
+    isAscendant
+        = self~indexableOp isSorted:ifOrdered.
+
+    Subarray : aLength at:anIndex
+        = self~indexableOp Subarray(anIndex, aLength).
+                
+    Subarray(int anIndex, int aLength)
+    [
+        auto it := T<Indexer>(self indexer).
+        
+        ^ Array new(aLength); populate(:i)<int>(it writeIndex(anIndex + i); get)
+    ]
     
     sequenceEqual:anArray
     [
