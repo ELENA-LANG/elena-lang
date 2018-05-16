@@ -74,11 +74,11 @@ In development:
                  * fix ide callstack info
                  * review the extensoin declaration syntax
                  * review field / method template usage syntax
-                 * reimplement manifest
                  * template extension
                  * comparing int and ptr (handle, dirty_ptr)
                  * extrnal operations without target - ignore the result
                  * extrnal operations : support long and real
+                 * fix console application with redirect mode
                  * warn if there are several similar extension for given message
                  * template extension
                  * extension method should be only public
@@ -126,7 +126,7 @@ Pipeline:
                  * port asm2binx
 
               adev - linux
-                 * migrate LIB33
+                 * migrate LIB34
 
                xdev - linux
                  * proting debugger
@@ -373,7 +373,8 @@ Pipeline:
               zdev 
                  * reg ex
 
-              adev - lib32
+              adev - lib34
+                 * return manifest info
                  * review toLiteral code, temporal size??
                  * it should be possible to work with TextBuffer as with an array
                  * LiteralValue <-> bytearray, WideLiteralValue <-> shortarray, LiteralValue <-> chararray, WideLiteralValue <-> chararray

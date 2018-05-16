@@ -17,7 +17,7 @@
 #include "compilerscope.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x008B
+#define ELC_REVISION_NUMBER             0x008C
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -91,10 +91,10 @@
 #define ELC_NAMESPACE_KEY           "namespace"
 #define ELC_NAME_KEY                "name"
 //#define ELC_OPTION                  "option"
-//
-//#define ELC_MANIFEST_NAME           "manifest/name"
-//#define ELC_MANIFEST_VERSION        "manifest/version"
-//#define ELC_MANIFEST_AUTHOR         "manifest/author"
+
+#define ELC_MANIFEST_NAME           "configuration/manifest/name"
+#define ELC_MANIFEST_VERSION        "configuration/manifest/version"
+#define ELC_MANIFEST_AUTHOR         "configuration/manifest/author"
 
 // --- ELC information messages ---
 #define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2018 by Alex Rakov\n"

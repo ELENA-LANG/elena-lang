@@ -1047,10 +1047,10 @@ private:
    void analizeClassTree(SNode node, ClassScope& scope/*, WarningScope& warningScope*/);
    void analizeSymbolTree(SNode node, Scope& scope);
 
-   void defineEmbeddableAttributes(ClassScope& scope, SyntaxTree::Node node);
+   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 
-//   void createPackageInfo(_Module* module, _ProjectManager& project);
-//
+   void createPackageInfo(_Module* module, _ProjectManager& project);
+
    bool compileDeclarations(SNode node, NamespaceScope& scope, bool& repeatMode);
    void compileImplementations(SNode node, NamespaceScope& scope);
 

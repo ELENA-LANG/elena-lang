@@ -8002,53 +8002,53 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
 //   //}
 //}
 
-////inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
-////{
-////   writer.newNode(lxMember);
-////   if (!emptystr(str)) {
-////      writer.appendNode(lxConstantString, module->mapConstant(str));
-////   }
-////   else writer.appendNode(lxNil);
-////   writer.closeNode();
-////}
-////
-////inline ref_t mapForwardRef(_Module* module, _ProjectManager& project, ident_t forward)
-////{
-////   ident_t name = project.resolveForward(forward);
-////
-////   return emptystr(name) ? 0 : module->mapReference(name);
-////}
-////
-////void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
-////{
-////   ReferenceNs sectionName(module->Name(), PACKAGE_SECTION);
-////   ref_t reference = module->mapReference(sectionName);
-////   ref_t vmtReference = mapForwardRef(module, project, SUPER_FORWARD);
-////   if (vmtReference == 0)
-////      return;
-////
-////   SyntaxTree tree;
-////   SyntaxWriter writer(tree);
-////
-////   writer.newNode(lxConstantList, reference);
-////   writer.appendNode(lxTarget, vmtReference);
-////
-////   // namespace
-////   addPackageItem(writer, module, module->Name());
-////
-////   // package name
-////   addPackageItem(writer, module, project.getManinfestName());
-////
-////   // package version
-////   addPackageItem(writer, module, project.getManinfestVersion());
-////
-////   // package author
-////   addPackageItem(writer, module, project.getManinfestAuthor());
-////
-////   writer.closeNode();
-////
-////   _writer.generateConstantList(tree.readRoot(), module, reference);
-////}
+inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
+{
+   writer.newNode(lxMember);
+   if (!emptystr(str)) {
+      writer.appendNode(lxConstantString, module->mapConstant(str));
+   }
+   else writer.appendNode(lxNil);
+   writer.closeNode();
+}
+
+inline ref_t mapForwardRef(_Module* module, _ProjectManager& project, ident_t forward)
+{
+   ident_t name = project.resolveForward(forward);
+
+   return emptystr(name) ? 0 : module->mapReference(name);
+}
+
+void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
+{
+   ReferenceNs sectionName(module->Name(), PACKAGE_SECTION);
+   ref_t reference = module->mapReference(sectionName);
+   ref_t vmtReference = mapForwardRef(module, project, SUPER_FORWARD);
+   if (vmtReference == 0)
+      return;
+
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxConstantList, reference);
+   writer.appendNode(lxTarget, vmtReference);
+
+   // namespace
+   addPackageItem(writer, module, module->Name());
+
+   // package name
+   addPackageItem(writer, module, project.getManinfestName());
+
+   // package version
+   addPackageItem(writer, module, project.getManinfestVersion());
+
+   // package author
+   addPackageItem(writer, module, project.getManinfestAuthor());
+
+   writer.closeNode();
+
+   _writer.generateConstantList(tree.readRoot(), module, reference);
+}
 
 void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 {
@@ -8284,7 +8284,7 @@ void Compiler :: initializeScope(ident_t name, _CompilerScope& scope, bool withD
       //loadModuleInfo(project->loadModule(STANDARD_MODULE, false), true);
    }
 
-//   createPackageInfo(info.codeModule, project);
+   createPackageInfo(scope.module, *scope.project);
 }
 
 void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef)

@@ -1,12 +1,16 @@
-﻿[project]
-executable=bitwise.exe
-namespace=bitwise
-template=console
-debuginfo=-1
-
-[files]
-bitwise.l
-
-[forwards]
-'program=bitwise'program
-
+<configuration>
+    <project>
+        <executable>bitwise.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>bitwise</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>bitwise.l</include>
+        </module>
+    </files>
+</configuration>

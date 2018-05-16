@@ -6,6 +6,11 @@
         <options>-w3</options>
         <output>..\..\lib34</output>
     </project>
+    <manifest>
+      <name>ELENA Extension Library</name>
+      <version>3.4.1</version>
+      <author>Alex Rakov</author>
+    </manifest>
     <files>
         <module>
             <include>control.l</include>
