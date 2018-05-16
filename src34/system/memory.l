@@ -1287,7 +1287,7 @@ public sealed __string LiteralValue :: BaseValue, interface<Enumerable<char>>
     stacksafe save(int anIndex, CharArray anArray, ref<int> aRetVal)
         => system'core_routines'__literal.
 
-    stacksafe internal save(int anIndex, ByteArray anArray, int aRetVal)
+    stacksafe internal saveToByteArray(int anIndex, ByteArray anArray, int aRetVal)
         => system'core_routines'__literal.
 
     /// Returns the string enumerator
@@ -1508,7 +1508,7 @@ public sealed __string WideLiteralValue :: BaseValue
     save(int anIndex, CharArray anArray, ref<int> aLength)
         => system'core_routines'__wide.
 
-    internal save(int anIndex, ShortArray anArray, int aRetVal)
+    internal saveToShortArray(int anIndex, ShortArray anArray, int aRetVal)
         => system'core_routines'__wide.
 
     /// Returns the object enumerator

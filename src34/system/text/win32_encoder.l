@@ -46,19 +46,20 @@ public struct WinEncoder :: Encoder
     [
         T<short,127> temp_buf.
         int          temp_len := 127.
+        int          chLen := aLength value.
 
-        UTF16Encoding convert(anIndex, aLength, aByteArray, T<ShortArray>(temp_buf), &temp_len).
+        UTF16Encoding convert(anIndex, chLen, aByteArray, T<ShortArray>(temp_buf), &temp_len).
         
         int retVal := system'external'KERNEL32 WideCharToMultiByte(
             theCodePage, 0,
             T<ShortArray>(temp_buf),
             temp_len, 0, 0, 0, 0).
 
-        if (retVal > anOutputLength)
+        if (retVal > chLen)
             [ InvalidArgumentException new; raise ].
                 
-        system'external'KERNEL32 WideCharToMultiByte(
-            theCodePage, 0, T<ShortArray>(temp_buf), temp_len, anOutput, retVal, 0, 0).
+        retVal := system'external'KERNEL32 WideCharToMultiByte(
+            theCodePage, 0, T<ShortArray>(temp_buf), temp_len, anOutput, chLen, 0, 0).
         
         anOutputLength value := retVal
     ]    

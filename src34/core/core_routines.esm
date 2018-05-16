@@ -2459,7 +2459,7 @@ procedure __literal."save$system@IntNumber$system@CharArray$@system@ref#1&IntNum
 
 end
 
-procedure __literal."system$$save$system@IntNumber$system@ByteArray$system@IntNumber[4]"
+procedure __literal."system$$saveToByteArray$system@IntNumber$system@ByteArray$system@IntNumber[4]"
 
   pusha
   bloadsi 4
@@ -2963,7 +2963,7 @@ procedure __wide."save$system@IntNumber$system@CharArray$@system@ref#1&IntNumber
 
 end
 
-procedure __wide."system$$save$system@IntNumber$system@ShortArray$system@IntNumber[4]"
+procedure __wide."system$$saveToShortArray$system@IntNumber$system@ShortArray$system@IntNumber[4]"
 
   pusha
   bloadsi 4

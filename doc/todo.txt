@@ -86,6 +86,28 @@ In development:
                  * templates unresolved references - probably they should be tested with super object if all references are resolved
                  * it should be possible to distinguish between built-in target variable and a local parameter
                  * simplify derivation code : a collection with operations - "(1,2) msg" and "Array::(1,2) msg"
+                 * the following code corrupt stack:
+    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int> anOutputLength)
+    [
+        T<short,127> temp_buf.
+        int          temp_len := 127.
+        int          chLen := aLength value.
+
+        UTF16Encoding convert(anIndex, chLen, aByteArray, T<ShortArray>(temp_buf), &temp_len).
+        
+        int retVal := system'external'KERNEL32 WideCharToMultiByte(
+            theCodePage, 0,
+            T<ShortArray>(temp_buf),
+            temp_len, 0, 0, 0, 0).
+
+        if (retVal > aLength)
+            [ InvalidArgumentException new; raise ].
+                
+        retVal := system'external'KERNEL32 WideCharToMultiByte(
+            theCodePage, 0, T<ShortArray>(temp_buf), temp_len, anOutput, chLen, 0, 0).
+        
+        anOutputLength value := retVal
+    ]    
 	
               dev - general implementation
                  * typified enumerators / extensions #245                 

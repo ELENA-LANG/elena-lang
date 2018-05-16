@@ -79,7 +79,7 @@ singleton ConsoleHandleFactory
         int    dwMode := system'external'KERNEL32 GetFileType(h).
         if (dwMode == FILE_TYPE_CHAR)
             [ ^ ConsoleWriter new(h) ];
-            [ ^ FileWriter new(h) ]
+            [  ^ FileWriter new(h) ]
     ]
 }
 
@@ -202,7 +202,7 @@ sealed class FileWriter
             
             OEMEncoder convert(index, &subs_len, literal, T<ByteArray>(buffer), &buf_len).
             
-            self write(buffer, buf_len).
+            self write(T<ByteArray>(buffer), buf_len).
             
             index := index + subs_len.
             length := length - subs_len
