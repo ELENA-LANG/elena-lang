@@ -1,12 +1,16 @@
-﻿[project]
-executable=complist.exe
-namespace=complist
-template=console
-debuginfo=-1
-
-[files]
-complist.l
-
-[forwards]
-'program=complist'program
-
+<configuration>
+    <project>
+        <executable>complist.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>complist</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>complist.l</include>
+        </module>
+    </files>
+</configuration>

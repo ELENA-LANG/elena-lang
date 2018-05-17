@@ -176,13 +176,13 @@ public extension enumerableOp
 //        
 //    multi seekEach:fn
 //        = self~enumerableOp seekEach(:n)[ fn(n) ].
-//
-//    seekFor(Object param) eachPair(BaseFunction2 aFunction)
-//        = aFunction retrieve object:param enumerator:self.
-//
-//    seekFor(Object param) eachPair(ExtensionMessage ext)
-//        = self~enumerableOp seekFor:param eachPair(:n:m)( n~ext eval(m) ).
-//
+
+    seekFor(object param) eachPair(Func2 f)
+        = f retrieve(param, T<Enumerator>(self enumerator)).
+
+    seekFor(Object param) eachPair(ExtensionMessage ext)
+        = self~enumerableOp seekFor:param eachPair(:n:m)( n~ext eval(m) ).
+
 //    multi seekFor:param eachPair:fn
 //        = self~enumerableOp seekFor:param eachPair(:n:m)( fn(n,m) ).
 //
@@ -358,6 +358,12 @@ public extension enumerableOp
     
     accumulateWith:operation 
         = self~enumerableOp accumulate(Variable new) with:operation.        
+        
+    zip:anEnumerable by:aZipper
+        = ZipEnumerator new(aZipper, T<Enumerator>(self enumerator), T<Enumerator>(anEnumerable enumerator)).
+
+    zip:anEnumerable forEach:func2
+        = self~enumerableOp zip:anEnumerable by:func2; forEach:idleFunc1.
 }
 
 // --- indexableOp ---
@@ -384,20 +390,20 @@ public extension indexableOp
         anIndexer set:anObject2
     ]
     
-//    forEvery nfunc:fn
-//    [
-//        indexer it := self indexer.
-//        
-//        while (it available)
-//        [
-//            fn eval int:(it index).
-//            
-//            it append index:1.
-//        ].
-//    ]
-//    
-//    forEvery(BaseFunction1 aFunction)
-//        = self~indexableOp forEvery(:n)<int>(aFunction eval:n).
+    forEvery(Func<int,object> fn)
+    [
+        T<Indexer> it := self indexer.
+        
+        while (it available)
+        [
+            fn(it index).
+            
+            it appendIndex:1.
+        ].
+    ]
+    
+    forEvery(Func1 fn)
+        = self~indexableOp forEvery(:n)<int>(fn(n)).
     
     indexOfElement : anObject
     [

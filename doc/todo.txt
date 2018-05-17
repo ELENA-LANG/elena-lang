@@ -65,7 +65,6 @@ In development:
                  * optimize TextBuilder
                  * a class cannot have a public and internal methods with the same name and similar number of parameters
                  * why the error - ArrayList :: Indexable, interface<Enumerable>
-                 * fix ide callstack info
                  * review the extensoin declaration syntax
                  * review field / method template usage syntax
                  * template extension
@@ -76,6 +75,7 @@ In development:
                  * warn if there are several similar extension for given message
                  * template extension
                  * extension method should be only public
+                 * call stack / debug watch - template based classes
                  * critical error if the class is based on unknown template
                  * templates unresolved references - probably they should be tested with super object if all references are resolved
                  * it should be possible to distinguish between built-in target variable and a local parameter

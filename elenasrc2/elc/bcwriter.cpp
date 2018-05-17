@@ -1569,8 +1569,12 @@ void ByteCodeWriter :: writeClassDebugInfo(_Module* debugModule, MemoryWriter* d
    debugModule->mapPredefinedReference(bookmark, debug->Position());
 
    ref_t position = debugStrings->Position();
+   if (isWeakReference(className)) {
+      IdentifierString fullName(debugModule->Name(), className);
 
-   debugStrings->writeLiteral(className);
+      debugStrings->writeLiteral(fullName.c_str());
+   }
+   else debugStrings->writeLiteral(className);
 
    DebugLineInfo symbolInfo(dsClass, 0, 0, 0);
    symbolInfo.addresses.symbol.nameRef = position;

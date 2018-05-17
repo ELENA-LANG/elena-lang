@@ -1,6 +1,6 @@
 //import system'collections.
-//
-//symbol idleFunc1 = (:x) [].
+
+symbol idleFunc1 = (:x) [].
 
 // === pattern enumerators ==
 
@@ -513,36 +513,38 @@ public class Repeater :: Enumerator
     enumerable = Range from:theMin to:theMax.
 }
 
-//// --- ZipEnumerator ---
-//
-//class ZipEnumerator :: Enumerator
-//{
-//    enumerator theEnumerator1.
-//    enumerator theEnumerator2.
-//    
-//    func2      theZipper.
-//    
-//    constructor new(BaseFunction2 fn, Enumerator enum1, Enumerator enum2)
-//    [
-//        theZipper := fn.
-//        
-//        theEnumerator1 := enum1.
-//        theEnumerator2 := enum2.
-//    ]
-//    
-//    constructor new(ExtensionMessage ext, Enumerator enum1, Enumerator enum2)
-//        <= new func2:(:n:m)(n~ext eval:m) enumerator:enum1 enumerator:enum2.
-//    
-//    get = theZipper(theEnumerator1 get, theEnumerator2 get).
-//    
-//    bool next = theEnumerator1 next && theEnumerator2 next.
-//    
-//    reset
-//    [
-//        theEnumerator1 reset.
-//        theEnumerator2 reset.
-//    ]
-//}
+// --- ZipEnumerator ---
+
+public class ZipEnumerator :: Enumerator
+{
+    T<Enumerator> theEnumerator1.
+    T<Enumerator> theEnumerator2.
+    
+    T<Func2>      theZipper.
+    
+    constructor new(Func2 fn, Enumerator enum1, Enumerator enum2)
+    [
+        theZipper := fn.
+        
+        theEnumerator1 := enum1.
+        theEnumerator2 := enum2.
+    ]
+    
+    constructor new(ExtensionMessage ext, Enumerator enum1, Enumerator enum2)
+        <= new((:n:m)(n~ext eval:m), enum1, enum2).
+    
+    get = theZipper(theEnumerator1 get, theEnumerator2 get).
+    
+    bool next = theEnumerator1 next && theEnumerator2 next.
+    
+    reset
+    [
+        theEnumerator1 reset.
+        theEnumerator2 reset.
+    ]
+    
+    enumerable => theEnumerator1.
+}
 
 // --- RangeEnumerator ---
 
@@ -875,12 +877,6 @@ class Accumulating :: BasePattern
 //
 //    last:counter
 //        = TopFilter new int:counter int(self length - counter) enumerator:(self enumerator).
-//
-//    zip:anEnumerable by:aZipper
-//        = ZipEnumerator new(aZipper, self enumerator, anEnumerable enumerator).
-//
-//    zip:anEnumerable forEach:func2
-//        = self~patternOp zip:anEnumerable by:func2; forEach:idleFunc1.
 //
 //    groupBy:groupFunc
 //        = GroupingEnumerator new(groupFunc, self enumerator).                                       
