@@ -114,12 +114,12 @@ class combinationNext = BaseStrategy::
         int      k := anArray length.
         int      i := k - 1.
         
-        T<Indexer> aCurrentIndexer := anArray getAt(i); indexer.
+        T<Indexer> aCurrentIndexer := anArray getAt(i).
         
         if(aCurrentIndexer appendIndex:1; available)
             [ ^ self ].
              
-        while ((i > 0) && (T<int>(anArray getAt(i - 1); indexer; index) + k - i + 1 >= aLength))
+        while ((i > 0) && (T<int>(anArray getAt(i - 1); index) + k - i + 1 >= aLength))
             [ i := i - 1 ].
         
         if(i == 0)
@@ -146,7 +146,7 @@ class combinationStart = BaseStrategy::
         auto anArray := T<Array>(Indexers).
         int aLength := anArray length.
         
-        0~intLoopOp to(aLength - 1) do(:i)<int>[ anArray getAt(i); indexer; writeIndex(i) ].
+        0~intLoopOp to(aLength - 1) do(:i)<int>[ anArray getAt(i); writeIndex(i) ].
         
         ^ combinationNext
     ]
@@ -241,7 +241,7 @@ public class Combinator :: BaseRowEnumerator
     int theTotalLength.
     
     constructor new : aSubLength of:aSet
-        <= new : (Array new(aSubLength int); populate(:n)<int>(aSet));
+        <= new : (Array new(T<int>(aSubLength)); populate(:n)<int>(aSet));
     [
         theTotalLength := aSet length.
     ]

@@ -124,5 +124,5 @@ public interface TextWriter
     ]
     
     writeLine
-        <= write:'newLine.
+        <= write:forwards'newLine.
 }

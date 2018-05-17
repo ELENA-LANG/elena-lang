@@ -146,7 +146,7 @@ public class StreamWriter :: TextWriter
         theStream := aStream.
         theEncoder := anEncoder.
 
-        theNewLineConstant := system'text'newLine literal.
+        theNewLineConstant := forwards'newLine literal.
     ]
 
     constructor new:aPath
@@ -273,60 +273,60 @@ singleton fileControl
     
     T<TextWriter> logger :path = StreamWriter new(path, true).
     
-//    bool isAvailable:path
-//    [
-//        int ret := system'external'KERNEL32 GetFileAttributesW wide:(path wide).
-//        
-//        if(ret != 0FFFFFFFFh)
-//            [
-//                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
-//                
-//                ^ ret == 0
-//            ].
-//            
-//        ^ false
-//    ]
-//    
-//    delete : path
-//    [
-//        int ret := system'external'KERNEL32 DeleteFileW wide:(path wide).
-//        
-//       ^ ret != 0
-//    ]
+    bool isAvailable:path
+    [
+        int ret := system'external'KERNEL32 GetFileAttributesW(T<wide>(path)).
+        
+        if(ret != 0FFFFFFFFh)
+            [
+                ret := ret && FILE_ATTRIBUTE_DIRECTORY.
+                
+                ^ ret == 0
+            ].
+            
+        ^ false
+    ]
+    
+    delete : path
+    [
+        int ret := system'external'KERNEL32 DeleteFileW(T<wide>(path)).
+        
+       ^ ret != 0
+    ]
 }
 
-//// --- directoryExtOp
-//
-//singleton directoryControl
-//{
-//    bool isAvailable:path
-//    [
-//        int ret := system'external'KERNEL32 GetFileAttributesW wide:(path wide).
-//     
-//        if(ret != 0FFFFFFFFh)
-//            [
-//                ret := ret && $FILE_ATTRIBUTE_DIRECTORY.
-//                
-//                ^ ret != 0
-//            ].
-//            
-//        ^ false
-//    ]    
-//    
-//    create : path
-//    [
-//        int ret := system'external'KERNEL32 CreateDirectoryW
-//            wide:(path wide)
-//            int:0.
-//            
-//        if(ret == 0)
-//            [ IOException new literal:"Cannot create a directory"; raise ]
-//    ]
-//    
-//    delete : path
-//    [
-//        int ret := system'external'KERNEL32 RemoveDirectoryW wide:(path wide).
-//        
-//       ^ ret != 0
-//    ]    
-//}
+// --- directoryExtOp
+
+singleton directoryControl
+{
+    bool isAvailable:path
+    [
+        int ret := system'external'KERNEL32 GetFileAttributesW(T<wide>(path)).
+     
+        if(ret != 0FFFFFFFFh)
+            [
+                ret := ret && FILE_ATTRIBUTE_DIRECTORY.
+                
+                ^ ret != 0
+            ].
+            
+        ^ false
+    ]    
+    
+    create : path
+    [
+        int ret := system'external'KERNEL32 CreateDirectoryW(
+            T<wide>(path),
+            0).
+            
+        if(ret == 0)
+            [ IOException new("Cannot create a directory"); raise ]
+    ]
+    
+    delete : path
+    [
+        int ret := system'external'KERNEL32 RemoveDirectoryW(T<wide>(path)).
+        
+       ^ ret != 0
+    ]    
+}
