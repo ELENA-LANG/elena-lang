@@ -224,7 +224,7 @@ class DerivationTransformer //: public _DerivationTransformer
 
    ref_t mapAttribute(SNode terminal, DerivationScope& scope, bool& templateParam);
 
-   ref_t mapNewTemplate(SNode node, DerivationScope& scope, bool& arrayMode, int& paramIndex, bool templateMode, List<int>* templateAttributes);
+   ref_t mapNewTemplate(SNode node, DerivationScope& scope, bool operationMode, bool& arrayMode, int& paramIndex, bool templateMode, List<int>* templateAttributes);
 
    void recognizeScopeMembers(SNode& node, DerivationScope& scope, int mode);
 

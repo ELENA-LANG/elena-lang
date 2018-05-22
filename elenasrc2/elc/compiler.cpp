@@ -3907,23 +3907,22 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
          }
          else scope.raiseError(errInvalidOperation, node);
       }
-//      else if (isCollection(objectNode, true)) {
-//         SNode argNode = isCollection(objectNode, true) ? objectNode : objectNode.findChild(lxExpression);
-//
-//         int paramCount = SyntaxTree::countChild(argNode, lxExpression);
-//
-//         ref_t actionRef = 0;
-//         compileMessageParameters(writer, argNode, scope, actionRef, HINT_PARAMETERSONLY);
-//         if (!_logic->injectImplicitConstructor(writer, *scope.moduleScope, *this, targetRef, actionRef, paramCount))
-//            scope.raiseError(errIllegalOperation, node);
-//      }
       else {
-         ObjectInfo object = compileExpression(writer, objectNode, scope, targetRef, mode);
-         if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, object), 0))
-            scope.raiseError(errIllegalOperation, node);
+         int paramCount = SyntaxTree::countChildMask(objectNode, lxObjectMask);
+         if (paramCount > 1) {
+            ref_t signRef = compileMessageParameters(writer, objectNode.firstChild(), scope);
+            if (!_logic->injectImplicitConstructor(writer, *scope.moduleScope, *this, targetRef, signRef))
+               scope.raiseError(errIllegalOperation, node);
 
-         //if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
-         //   scope.raiseError(errIllegalOperation, node);
+         }
+         else {
+            ObjectInfo object = compileExpression(writer, objectNode, scope, targetRef, mode);
+            if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, object), 0))
+               scope.raiseError(errIllegalOperation, node);
+
+            //if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
+            //   scope.raiseError(errIllegalOperation, node);
+         }
       }
    }
    else if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))

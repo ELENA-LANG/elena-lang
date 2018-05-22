@@ -1031,10 +1031,10 @@ public abstract class BaseEnumerator<type> :: Enumerator<type>
 public abstract class BaseIndexer :: Indexer
 {
     int theIndex.
-    int theBaseIndexerLength.
+    int theLength.
     
     /// Returns false if the index out of range
-    bool available = (theIndex < theBaseIndexerLength).
+    bool available = (theIndex < theLength).
     
     /// Reads the current i-index into an output parameter
     readIndexTo(ref<int> retVal)
@@ -1055,7 +1055,7 @@ public abstract class BaseIndexer :: Indexer
     
     readLengthTo(ref<int> retVal)
     [
-        retVal value := theBaseIndexerLength.
+        retVal value := theLength.
     ]    
 }
 

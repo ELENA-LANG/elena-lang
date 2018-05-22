@@ -4424,3 +4424,61 @@ labEnd:
   throw
 
 end
+
+procedure __event.dispatch[1]
+
+  bsredirect  
+
+  open 5
+  reserve 2
+
+  dcopye
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+
+  aloadai 0 // ; get the first field !! better to define a special array (like castover group object)
+  pusha
+  bcopya
+
+labNext:
+  count
+  dloadfi -2
+  if labEnd
+
+// ; define the message length
+  dloadfi -3
+  ecopyd
+  dcopycount
+  inc
+  
+// ; copy message
+  bcopyf -5
+labNextParam:
+  get
+  pusha
+  dec
+  elsen labNextParam 0
+
+  bloadfi 1
+  dloadfi -2
+  get
+  inc
+  dsavefi -2
+
+  dloadfi -3
+  ecopyd
+  acallvi 0
+  
+  bloadfi 1
+  jump labNext
+
+labEnd:
+  dloadfi -3
+  ecopyd
+  restore 4
+  close
+
+  equit
+
+end

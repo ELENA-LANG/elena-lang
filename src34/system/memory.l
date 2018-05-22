@@ -689,149 +689,147 @@ public sealed class BitArray32
 //    indexer = BitArray32Indexer new bitset:$self.
 }
 
-//// --- IntMatrix ---
-//
-//sealed class IntMatrix
-//{
-//    intarray theArray.
-//    int      theRows.
-//    int      theColumns.
-//    
-//    constructor new int:Rows int:Columns
-//    [
-//        theRows := Rows.
-//        theColumns := Columns.
-//        
-//        theArray := IntArray new int:(Columns * Rows).        
-//    ]
-//        
-////    constructor new : Rows : Columns
-////        <= new int:Rows int:Columns.
-//        
-//    /// Reads the matrix lengths to the output parameter
-//    stacksafe readLengthsTo vint:Rows vint:Columns
-//    [
-//        Rows int := theRows.
-//        Columns int := theColumns
-//    ]
-//
-//    stacksafe readLengthTo vint:retVal
-//    [
-//        retVal int := theRows
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//
-//    stacksafe readColumnsTo vint:retVal
-//    [
-//        retVal int := theColumns
-//    ]
-//    
-//    int rvprop columns :: readColumnsTo.
-//
-//    stacksafe readRowsTo vint:retVal
-//    [
-//        retVal int := theRows
-//    ]
-//    
-//    int rvprop rows :: readRowsTo.
-//
-//    /// Writes an integer value at the specified position
-//    stacksafe write int:i int:j int:aValue
-//    [
-//        theArray write int:(i * theColumns + j) int:aValue
-//    ]
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    stacksafe read int:i int:j vint:anInt
-//    [
-//        theArray read int:(i * theColumns + j) vint:anInt
-//    ]
-//
-//    embeddable int getAt int:i int:j
-//    [
-//        int retVal := 0.
-//        $self read int:i int:j vint:retVal.
-//        ^ retVal
-//    ]
-//
-//    getAt : i : j
-//    [
-//        int aValue := 0.
-//        $self read int:i int:j vint:aValue.
-//        
-//        ^ aValue
-//    ]
-//
-//    setAt : i : j : aValue
-//    [
-//        $self write int:i int:j int:aValue.    
-//    ]
-//
-//    /// Returns a row
-//    getAt : i = BaseIndexable::
-//    {
-//        length = theColumns.
-//        
-//        indexer = BaseIndexer::
-//        {
-//            @theIndex := 0.
-//            
-//            @theBaseIndexerLength := $self columns.
-//            
-//            get
-//                = $self getAt(i,theIndex).
-//                
-//            set : o
-//            [
-//                $self setAt(i,theIndex,o).
-//            ]                        
-//        }.    
-//        
-//        getAt : j
-//            = $self getAt(i,j).
-//        
-//        setAt : j : aValue
-//        [
-//            $self setAt(i,j,aValue).
-//        ]
-//    }.
-//    
-//    enumerator = Enumerator::
-//    {
-//        int i := -1.
-//        
-//        bool next
-//        [
-//            i += 1.
-//            if (i >= theRows)
-//            [
-//                ^ false
-//            ].
-//            
-//            ^ true
-//        ]
-//        
-//        get = Enumerator::
-//        {
-//            int j := -1.
-//        
-//            bool next
-//            [
-//                j += 1.
-//                if (j >= theColumns)
-//                [
-//                    ^ false
-//                ].
-//                
-//                ^ true
-//            ]
-//            
-//            get
-//                = $self[i][j].
-//        }.
-//    }.
-//}
+// --- IntMatrix ---
+
+public sealed class IntMatrix
+{
+    T<IntArray> theArray.
+    int         theRows.
+    int         theColumns.
+    
+    constructor new(int Rows, int Columns)
+    [
+        theRows := Rows.
+        theColumns := Columns.
+        
+        theArray := IntArray new(Columns * Rows).        
+    ]
+        
+//    constructor new : Rows : Columns
+//        <= new int:Rows int:Columns.
+        
+    /// Reads the matrix lengths to the output parameter
+    stacksafe readLengthsTo(ref<int> Rows, ref<int> Columns)
+    [
+        Rows value := theRows.
+        Columns value := theColumns
+    ]
+
+    stacksafe readLengthTo(ref<int> retVal)
+    [
+        retVal value := theRows
+    ]
+    
+    int rvprop length :: readLengthTo.
+
+    stacksafe readColumnsTo(ref<int> retVal)
+    [
+        retVal value := theColumns
+    ]
+    
+    int rvprop columns :: readColumnsTo.
+
+    stacksafe readRowsTo(ref<int> retVal)
+    [
+        retVal value := theRows
+    ]
+    
+    int rvprop rows :: readRowsTo.
+
+    /// Writes an integer value at the specified position
+    stacksafe write(int i, int j, int aValue)
+    [
+        theArray write(i * theColumns + j, aValue)
+    ]
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    stacksafe read(int i, int j, ref<int> anInt)
+    [
+        theArray read(i * theColumns + j, anInt)
+    ]
+
+    embeddable int getAt(int i, int j)
+    [
+        int retVal := 0.
+        self read(i, j, &retVal).
+        ^ retVal
+    ]
+
+    getAt(object i, object j)
+    [
+        int aValue := 0.
+        self read(T<int>(i), T<int>(j), &aValue).
+        
+        ^ aValue
+    ]
+
+    setAt(object i, object j, object aValue)
+    [
+        self write(T<int>(i), T<int>(j), T<int>(aValue)).
+    ]
+
+    /// Returns a row
+    getAt(int i) = Indexable<int>::
+    {
+        length = theColumns.
+        
+        Indexer<int> indexer = BaseIndexer<int>::
+        {
+            @theIndex := 0.
+            
+            @theLength := self columns.
+            
+            int get
+                = self getAt(i,theIndex).
+                
+            set(int o)
+            [
+                self setAt(i,theIndex,o).
+            ]                        
+        }.    
+        
+        getAt(int j)
+            = self getAt(i,j).
+        
+        setAt(int j, int aValue)
+        [
+            self setAt(i,j,aValue).
+        ]
+    }.
+    
+    enumerator = Enumerator::
+    {
+        int i := -1.
+        
+        bool next
+        [
+            i += 1.
+            if (i >= theRows)
+            [
+                ^ false
+            ].
+            
+            ^ true
+        ]
+        
+        get = BaseEnumerator<int>::
+        {
+            @theIndex := -1.
+            @theLength := theColumns.
+        
+            reset [ theIndex value := -1 ]
+            
+            enumerable = self.
+        
+            int get
+                = self[i][theIndex value].
+        }.
+        
+        reset [ i := -1 ]
+        
+        enumerable = self.
+    }.
+}
 
 // --- RealArray ---
 

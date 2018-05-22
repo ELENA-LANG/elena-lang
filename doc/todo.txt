@@ -3,11 +3,10 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * display signature value
+                 * reimplement tuples
 
-                 * migrate dynamic, templates, win32_app files
-
-                 * migrating startUp code
+                 * migrate script samples
+                 * migrate dynamic, templates
 
                  * debugger : display template based classes
                  * debugger : debugging template based classes

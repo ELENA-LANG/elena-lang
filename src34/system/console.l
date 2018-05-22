@@ -51,10 +51,10 @@ class Console
         self write:theNewLineConstant.
     ]
 
-//    /// Clears the console
-//    clear 
-//        => theWriter.
-//
+    /// Clears the console
+    clear 
+        => theWriter.
+
 //    stacksafe setCursorPosition int:x int:y
 //        => theWriter.
 

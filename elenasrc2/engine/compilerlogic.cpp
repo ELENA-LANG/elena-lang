@@ -975,14 +975,17 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerS
    return false;
 }
 
-//bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t actionRef, int paramCount)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, targetRef))
-//      return false;
-//
-//   return injectImplicitConstructor(writer, scope, compiler, info, targetRef, 0, actionRef, paramCount);
-//}
+bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, targetRef))
+      return false;
+
+   ref_t signature[OPEN_ARG_COUNT];
+   size_t paramCount = scope.module->resolveSignature(signRef, signature);
+
+   return injectImplicitConstructor(writer, scope, compiler, info, targetRef, 0, signature, paramCount);
+}
 
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
 {

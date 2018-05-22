@@ -1018,6 +1018,21 @@ public:
       return counter;
    }
 
+   static int countChildMask(Node node, LexicalType mask)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (test(current.type, mask))
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
    static int countChild(Node node, LexicalType type1, LexicalType type2)
    {
       int counter = 0;
