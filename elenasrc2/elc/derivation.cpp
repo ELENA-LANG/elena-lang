@@ -25,6 +25,7 @@ inline bool isPrimitiveRef(ref_t reference)
 #define MODE_OBJECTEXPR      0x04
 //#define MODE_SIGNATURE       0x08
 #define MODE_IMPORTING       0x10
+#define MODE_MESSAGE_BODY    0x20  // indicates that sub-expressions should be an expression themselves
 
 //void test2(SNode node)
 //{
@@ -1782,7 +1783,7 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
                //writer.newNode(lxExpression);
                //generateObjectTree(writer, expr.firstChild(), scope);
                //writer.closeNode();
-               generateExpressionTree(writer, expr, scope);
+               generateExpressionTree(writer, expr, scope, MODE_MESSAGE_BODY);
             }
             else generateExpressionTree(writer, expr, scope);
          }
@@ -2187,7 +2188,10 @@ void DerivationTransformer :: generateExpressionTree(SyntaxWriter& writer, SNode
          }
          case lxExpression:
             first = false;
-            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
+            if (test(mode, MODE_MESSAGE_BODY)) {
+               generateExpressionTree(writer, current, scope);
+            }
+            else generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
             break;
          case lxAssigning:
             insertBookmarks(writer, bookmarks);

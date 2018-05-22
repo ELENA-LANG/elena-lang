@@ -93,13 +93,22 @@ class DerivationTransformer //: public _DerivationTransformer
 
 //      ref_t mapIdentifier(ident_t identifier);
 
+      ident_t extractPath()
+      {
+         size_t pos = sourcePath.findLast('\'');
+         if (pos != NOTFOUND_POS) {
+            return sourcePath + pos + 1;
+         }
+         else return sourcePath;
+      }
+
       void raiseError(const char* message, SNode terminal)
       {
-         compilerScope->raiseError(message, sourcePath, terminal);
+         compilerScope->raiseError(message, extractPath(), terminal);
       }
       void raiseWarning(int level, const char* message, SNode terminal)
       {
-         compilerScope->raiseWarning(level, message, sourcePath, terminal);
+         compilerScope->raiseWarning(level, message, extractPath(), terminal);
       }
 
 //      bool isTypeAttribute(SNode terminal);

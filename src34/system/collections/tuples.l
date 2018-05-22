@@ -1,6 +1,6 @@
-//sealed template tuple :: type1
+//public sealed Tuple<type1>
 //{
-//    type1 prop item1 :: field1.
+//    T<type1> prop item1 :: field1.
 //
 //    getAt(int index)
 //    [
@@ -18,25 +18,25 @@
 //
 //    indexer = BaseIndexer::
 //    {
-//        @theBaseIndexerLength := 1.
+//        @theLength := 1.
 //        
 //        @theIndex := 0.
 //        
 //        get
-//            = $self getAt int:theIndex.
+//            = self getAt(theIndex).
 //            
 //        set : o
 //        [
-//            $self setAt int:theIndex type1:o.
+//            self setAt(theIndex, T<type1>(o)).
 //        ]                        
 //    }.
 //            
-//    implicit(type1 o1) 
+//    cast T<type1>:o1
 //    [
 //        field1 := o1.
 //    ]
 //}
-//
+
 //sealed template tuple :: type1, type2
 //{
 //    type1 prop item1 :: field1.
