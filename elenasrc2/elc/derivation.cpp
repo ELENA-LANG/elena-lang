@@ -353,7 +353,7 @@ ref_t DerivationTransformer::DerivationScope :: mapAttribute(SNode attribute, in
       return attribute.argument;
 
    SNode terminal = attribute.firstChild(lxTerminalMask);
-   if (terminal == lxNone)
+   if (terminal == lxNone || attribute == lxIdentifier)
       terminal = attribute;
 
    if (terminal == lxExplicitAttr) {
@@ -384,7 +384,7 @@ ref_t DerivationTransformer::DerivationScope :: mapReference(SNode terminal)
 {
    if (terminal == lxIdentifier) {
       // try to resolve as an attribute
-      ref_t attrRef = compilerScope->attributes.get(terminal.identifier());
+      ref_t attrRef = mapAttribute(terminal);
       if (!attrRef) {
          // otherwise try resolve as an identifier
          return mapIdentifier(terminal.identifier(), false);
@@ -471,18 +471,14 @@ void DerivationTransformer::DerivationScope :: loadFields(SNode node)
 
 int DerivationTransformer::DerivationScope :: mapParameter(ident_t identifier)
 {
-//   ident_t identifier = terminal.identifier();
-//   if (emptystr(identifier))
-//      identifier = terminal.findChild(lxTerminal).identifier();
-//
    int index = parameters.get(identifier);
-//   if (!index) {
-//      if (parent != NULL) {
-//         return parent->mapParameter(terminal);
-//      }
-//      else return 0;
-//   }
-   /*else */return index;
+   if (!index) {
+      if (parent != NULL) {
+         return parent->mapParameter(identifier);
+      }
+      else return 0;
+   }
+   else return index;
 }
 
 void DerivationTransformer::DerivationScope :: copyName(SyntaxWriter& writer, SNode terminal)
@@ -607,7 +603,10 @@ void DerivationTransformer :: loadParameterValues(SNode attributes, DerivationSc
                int paramIndex = 0;
 
                classRef = mapNewTemplate(current, scope, false, arrayMode, paramIndex, scope.reference == INVALID_REF, NULL);
-               if (!classRef || arrayMode || paramIndex != 0) {
+               if (paramIndex != 0) {
+                  classRef = -1 - paramIndex;
+               }
+               else if (!classRef || arrayMode) {
                   scope.raiseError(errInvalidHint, current);
                }
             }
@@ -615,11 +614,6 @@ void DerivationTransformer :: loadParameterValues(SNode attributes, DerivationSc
          }
             
 
-//         ref_t attr = scope.mapAttribute(terminalNode);
-//         if (attr == INVALID_REF) {
-//            attr = -1 - scope.mapParameter(terminalNode);
-//         }
-//         else if (attr == 0) {
 //            if (classMode) {
 //               // if it is not a declared type - check if it is a class
 //               attr = scope.mapTerminal(terminalNode, true);
@@ -771,11 +765,11 @@ void DerivationTransformer :: copyParamAttribute(SyntaxWriter& writer, SNode cur
    if ((scope.type == DerivationScope::ttFieldTemplate || scope.type == DerivationScope::ttMethodTemplate) && classRef == INVALID_REF) {
       copyIdentifier(writer, scope.identNode.firstChild(lxTerminalMask));
    }
-//   else if ((int)classRef < -1) {
-//      writer.newNode(lxTemplateAttribute, -((int)classRef + 1));
-//   SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
-//   writer.closeNode();
-   //   }
+   else if ((int)classRef < -1) {
+      writer.newNode(lxTemplateAttribute, -((int)classRef + 1));
+      SyntaxTree::copyNode(writer, current.findChild(lxIdentifier));
+      writer.closeNode();
+   }
    else writeFullReference(writer, scope.compilerScope->module, classRef, current);
 }
 
@@ -1551,7 +1545,7 @@ ref_t DerivationTransformer :: mapNewTemplate(SNode node, DerivationScope& scope
       attrName.append('#');
       attrName.appendInt(prefixCounter);
 
-      attrRef = scope.mapIdentifier(attrName.c_str(), false);
+      attrRef = scope.mapIdentifier(attrName.c_str(), attr == lxReference);
       if (!attrRef)
          scope.raiseError(errUnknownSubject, node);
 
@@ -1579,6 +1573,9 @@ ref_t DerivationTransformer :: mapNewTemplate(SNode node, DerivationScope& scope
    }
    else if (attrRef == V_TYPETEMPL || attrRef == V_OBJARRAY) {
       typeRef = scope.mapReference(attr.firstChild(lxTerminalMask));
+      if (typeRef == V_PARAMETER) {
+         paramIndex = scope.mapParameter(attr.firstChild(lxTerminalMask).identifier());
+      }
    }
    else if (classMode) {
       typeRef = generateNewTemplate(scope, attrRef, operatorNode);
