@@ -2184,7 +2184,7 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
          return 0;
 
       ref_t signatures[OPEN_ARG_COUNT];
-      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
+      /*size_t signatureLen = */scope.module->resolveSignature(implicitSignatureRef, signatures);
 
       ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
       if (listRef) {

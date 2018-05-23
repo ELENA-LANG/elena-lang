@@ -445,7 +445,7 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
    {
       compile(compiler, files);
    }
-   catch(_Exception& e)
+   catch(_Exception&)
    {
       return 0;
    }

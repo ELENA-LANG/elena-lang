@@ -267,7 +267,7 @@ class DerivationTransformer //: public _DerivationTransformer
    void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int nested = 0);
-   void generateTemplateScope(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void generateTemplateScope(SNode node, DerivationScope& scope);
 
    void recognizeRootAttributes(SNode node, DerivationScope& scope);
 

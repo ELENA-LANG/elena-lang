@@ -50,7 +50,7 @@ using namespace _ELENA_;
 #define HINT_PROP_MODE        0x00000040
 #define HINT_INT64EXPECTED    0x00000004
 #define HINT_REAL64EXPECTED   0x00000002
-//#define HINT_INQUIRY_MODE     0x00000001
+#define HINT_NOPRIMITIVES     0x00000001
 
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
@@ -2012,7 +2012,7 @@ void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, Obje
    else writer.newNode(type, object.param);
 }
 
-void Compiler :: writeTerminal(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ObjectInfo object, int mode)
+void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, int mode)
 {
    switch (object.kind) {
       case okUnknown:
@@ -2978,13 +2978,9 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
          // try to recognize the message signature
          ref_t argRef = 0;
          if (!anonymous) {
-            ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode);
+            ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode | HINT_NOPRIMITIVES);
             argRef = resolveObjectReference(scope, paramInfo);
             if (argRef) {
-               if (isPrimitiveRef(argRef)) {
-                  argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
-               }                  
-
                signatures[signatureLen++] = argRef;
             }
             else anonymous = true;
@@ -3916,8 +3912,8 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 
          }
          else {
-            ObjectInfo object = compileExpression(writer, objectNode, scope, targetRef, mode);
-            if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, object), 0))
+            ObjectInfo object = compileExpression(writer, objectNode, scope, /*targetRef*/0, mode);
+            if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, object), object.element))
                scope.raiseError(errIllegalOperation, node);
 
             //if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
@@ -3960,6 +3956,10 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 {
    writer.newBookmark();
 
+   bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
+   if (noPrimMode)
+      mode &= ~HINT_NOPRIMITIVES;
+
    int targetMode = mode & ~HINT_PROP_MODE;
 
    SNode object = node.firstChild(lxObjectMask);
@@ -3988,11 +3988,12 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    }   
 
    ref_t sourceRef = resolveObjectReference(scope, objectInfo, targetRef);
-   if (targetRef || isPrimitiveArrRef(sourceRef)) {
-      if (!targetRef && isPrimitiveRef(sourceRef)) {
-         targetRef = resolvePrimitiveArray(scope, objectInfo.element);
-      }
+   if (!targetRef && isPrimitiveRef(sourceRef) && noPrimMode) {
+      // resolve primitive object if required
+      targetRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element);
+   }
 
+   if (targetRef) {
       if (convertObject(writer, scope, targetRef, sourceRef, objectInfo.element)) {
          objectInfo = ObjectInfo(okObject, targetRef);
       }
