@@ -57,9 +57,9 @@ public extension commonOp
     /// Returns the parameter        
     back : anObject = anObject.
  
-//    then : code
-//        = code eval.
-//        
+    then(Func code)
+        = code().
+        
 //    thenClose:code
 //    [
 //        code eval.
@@ -67,12 +67,12 @@ public extension commonOp
 //        self close
 //    ]
     
-//    doFinally func:c1 func:c2
-//    [
-//        c1 eval; then:c2
-//            | raise:c2.
-//    ]
-//    
+    doFinally(Func c1, Func c2)
+    [
+        (c1()) then:c2
+            | raise:c2.
+    ]
+    
 //    doAndClose : code
 //    [
 //        self thenClose:code

@@ -263,13 +263,15 @@ public __nested try<expr>
     }.
 ]
 
-//// -- try-finally-catch statement ---
-////
-////__nested __block template try :: expr =
-////    expr then:[] | catch([],
-////    {
-////    }).
-//
+// -- try-finally-catch statement ---
+
+public __block __nested try<expr>
+[
+    expr then:[] | catch([],
+    {
+    }).
+]
+
 //// -- finally statement ---
 //
 //__block template finally :: expr
@@ -279,12 +281,11 @@ public __nested try<expr>
 //        ]                 
 //        | raise:[].
 //]        
-//
-//__block __block template finally
-//[
-//    true doFinally([],[]).
-//]
-//
+
+public __block __block template finally
+[
+    true doFinally([],[]).
+]
 //
 //// --- using statement ---
 //
