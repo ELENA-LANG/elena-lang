@@ -1078,9 +1078,16 @@ void JITLinker :: generateInitTape(MemoryDump& tape)
       IdentifierString initSymbol("'", INITIALIZER_SECTION);
       ref_t initRef = (*it)->mapReference(initSymbol, true);
       if (initRef != 0) {
-         void* initializer = resolveBytecodeSection(ReferenceInfo(*it, initSymbol), mskSymbolRef, helper.getSection(initRef | mskSymbolRef, *it));
-         if (initializer != LOADER_NOTLOADED)
-            _compiler->generateSymbolCall(tape, initializer);
+         void* initializer = resolveBytecodeSection(ReferenceInfo(*it, initSymbol), mskCodeRef, helper.getSection(initRef | mskSymbolRef, *it));
+         if (initializer != LOADER_NOTLOADED) {
+            if (!_virtualMode) {
+               // HOTFIX : in VM mode - use relative address
+               _Memory* image = _loader->getTargetSection(mskCodeRef);
+
+               _compiler->generateSymbolCall(tape, (void*)((size_t)initializer - (size_t)image->get(0)));
+            }
+            else _compiler->generateSymbolCall(tape, initializer);
+         }            
       }
 
       it++;

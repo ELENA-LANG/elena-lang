@@ -6,6 +6,8 @@ In development:
                  * migrate script samples
                  * migrate dynamic, templates
 
+                 * check why the vm console samples are always broken at the end
+
                  * debugger : display template based classes
                  * debugger : debugging template based classes
                  * method not found wrong attribute

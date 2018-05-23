@@ -341,7 +341,7 @@ public extension convertorOp
 //convertor 
 //    = { generic : n = Wrap::(n, convertorOp)~$subject get. }.
 
-extension<Date> dateFormatterOp 
+public extension<Date> dateFormatterOp 
 {
     toShortTimeLiteral
         = T<TimeStruct>(self) toShortTime; literal.

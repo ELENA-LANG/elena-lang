@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image loader class implementations
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -17,6 +17,9 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
 {
    switch (mask) {
       case mskConstantRef:
+         _constReferences.add(reference, (ref_t)vaddress);
+         break;
+      case mskConstArray:
          _constReferences.add(reference, (ref_t)vaddress);
          break;
       case mskInt64Ref:
@@ -85,6 +88,7 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
    if (mask != 0) {
       switch (mask) {
          case mskConstantRef:
+         case mskConstArray:
             return (void*)_constReferences.get(reference);
          case mskInt64Ref:
          case mskInt32Ref:

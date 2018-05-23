@@ -52,7 +52,7 @@ public enum class BoolValue
     abstract clone []
 }
 
-extension commonOp
+public extension commonOp
 {
     /// Returns the parameter        
     back : anObject = anObject.
