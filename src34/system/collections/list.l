@@ -33,12 +33,12 @@ public sealed List<type> :: Enumerable<type>
         theArray := V<type>(capacity).
     ]
     
-    constructor default
-    [
-        theCapacity := 16.
-        theLength := 0.
-        theArray := V<type>(16).
-    ]
+//    constructor default
+//    [
+//        theCapacity := 16.
+//        theLength := 0.
+//        theArray := V<type>(16).
+//    ]
     
     int rvprop length :: readLengthTo.
 

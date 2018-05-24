@@ -555,8 +555,8 @@ public extension indexableOp
     [
         T<Indexer> it := self indexer.
         
-        int      i := index int.
-        int      j := counter int.
+        int      i := T<int>(index).
+        int      j := T<int>(counter).
         j := j + i.
         j := j - 1.
         
