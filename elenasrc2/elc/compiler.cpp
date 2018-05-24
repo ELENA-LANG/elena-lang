@@ -5564,7 +5564,7 @@ void Compiler :: compilePreloadedCode(SymbolScope& scope)
 {
    _Module* module = scope.moduleScope->module;
 
-   ReferenceNs sectionName(module->Name(), INITIALIZER_SECTION);
+   IdentifierString sectionName("'", INITIALIZER_SECTION);
 
    CommandTape tape;
    _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbolReference, scope.reference);

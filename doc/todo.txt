@@ -81,6 +81,13 @@ In development:
                  * templates unresolved references - probably they should be tested with super object if all references are resolved
                  * it should be possible to distinguish between built-in target variable and a local parameter
                  * simplify derivation code : a collection with operations - "(1,2) msg" and "Array::(1,2) msg"
+                 * why the following code does not work:
+                     generic testWrite(V<object> args)
+                     [
+                        console writeLine:"testWrite is called with:".
+                        args forEach:printingLn.
+                     ]
+
                  * the following code corrupt stack:
     convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int> anOutputLength)
     [

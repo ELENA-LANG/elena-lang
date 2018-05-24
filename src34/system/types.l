@@ -32,7 +32,7 @@ mixin           = #8206.
 __accessor      = #16399.
 __block         = #16400.
 __nested        = #16401.
-//preloaded       = #8207.
+preloaded       = #8207.
 cast            = #16387.
 set             = #16402.  
 
