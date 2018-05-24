@@ -3557,7 +3557,7 @@ void DerivationTransformer :: generateClassTree(SyntaxWriter& writer, SNode node
          firstParent = false;
       }
       else if (current == lxClassMethod) {
-         generateMethodTree(writer, current, scope, false);
+         generateMethodTree(writer, current, scope, scope.reference == INVALID_REF);
       }
       else if (current == lxClassField || current == lxFieldInit) {
          withInPlaceInit |= generateFieldTree(writer, current, scope, buffer, false);

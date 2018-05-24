@@ -5,8 +5,8 @@ public sealed Array<template_subj> :: Indexable<template_subj>
 {
     dynamic<template_subj> theArray.
 
-//    implicit int:n
-//        = template_subj<>(n).
+//    cast T<int>:n
+//        = V<template_subj>(n).
 
     Enumerator<template_subj> enumerator = BaseEnumerator<template_subj>::
     {
@@ -26,9 +26,9 @@ public sealed Array<template_subj> :: Indexable<template_subj>
 
     cast T<Indexable> = Indexable::{ /*embeddable dispatch => self.*/T<Indexer> indexer => self. }.
     
-    cast Enumerable<template_subj> = Enumerable<template_subj>::{ embeddable dispatch => self. }.
+    cast Enumerable<template_subj> = Enumerable<template_subj>::{ /*embeddable dispatch => self.*/Enumerator<template_subj> enumerator => self. }.
 
-    cast T<Enumerable> = Enumerable::{ embeddable dispatch => self. }.
+    cast T<Enumerable> = Enumerable::{ /*embeddable dispatch => self.*/T<Enumerator> enumerator => self. }.
 
     Indexer<template_subj> indexer = BaseIndexer<template_subj>::
     {
@@ -1091,7 +1091,7 @@ const literal public emptyLiteral = "".
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-public sealed __string LiteralValue :: BaseValue, interface<Enumerable<char>>
+public sealed __string LiteralValue :: BaseValue
 {
     dynamic<byte> theArray.
 
@@ -1133,6 +1133,8 @@ public sealed __string LiteralValue :: BaseValue, interface<Enumerable<char>>
     
     /// Converts to UTF-16 literal
     cast T<wide> = wideConvertor convert(self).
+
+    cast Enumerable<char> = Enumerable<char>::{ Enumerator<char> enumerator => self. }.
 
     T<literal> literal = self.
 
@@ -1316,9 +1318,9 @@ public sealed __string WideLiteralValue :: BaseValue
 {
     dynamic<short> theArray.
 
-//    /// Creates the empty literal
-//    constructor min
-//        = emptyWideLiteralValue.
+    /// Creates the empty literal
+    constructor min
+        = emptyWideLiteral.
         
     /// Creates the literal string with specified length
     constructor new(int size)

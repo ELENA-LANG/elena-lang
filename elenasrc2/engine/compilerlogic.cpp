@@ -724,7 +724,7 @@ bool CompilerLogic :: isWithEmbeddableDispatcher(SNode node)
          SNode ident = current.firstChild(lxTerminalMask);
          if (ident == lxIdentifier && ident.identifier().compare(DISPATCH_MESSAGE)) {
             // find dispatch method
-            SNode attr = current.firstChild();
+            SNode attr = current.findChild(lxAttribute);
             while (attr == lxAttribute) {
                if (attr.argument == V_EMBEDDABLE) {
                   SNode dispatch = current.findChild(lxDispatchCode);

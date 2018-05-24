@@ -39,12 +39,12 @@ public interface Enumerator<type>
     Enumerator<type> enumerator = self.
 }
 
-public interface Enumerable
+public abstract Enumerable
 {
     abstract T<Enumerator> enumerator []
 }
 
-public interface Enumerable<type>
+public abstract Enumerable<type>
 {
     abstract Enumerator<type> enumerator []
 }

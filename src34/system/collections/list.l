@@ -1,213 +1,182 @@
-//type list_item  = system'collections'ListItem.
-//type list       = system'collections'List.
-//type array_list = system'collections'ArrayList.
-//type dictionary = system'collections'Dictionary.
-//
-//class BaseEnumerable
-//{
-//    // should be overridden
-//    enumerator = $nil.
-//}
-//
-//// --- listof ---
-//
-//sealed template<BaseEnumerable> list :: type
-//{
-//    array<type> theArray.
-//    vint        theLength.
-//    vint        theCapacity.
-//
-//    implicit array:list
-//    [
-//        int len := list length.
-//        int size := len / 32.
-//        size := size + 1.
-//        size := size * 32.
-//        
-//        theLength := len.
-//        theCapacity := size.
-//        theArray := type<>(size).
-//        
-//        int i := 0.
-//        while(i < len)
-//        [
-//            theArray[i] := list[i].
-//            
-//            i := i + 1.
-//        ].
-//    ]
-//    
-//    implicit int:capacity
-//    [
-//        theCapacity := capacity.
-//        theLength := 0.
-//        theArray := type<>(capacity).
-//    ]
-//    
-//    implicit
-//    [
-//        theCapacity := 16.
-//        theLength := 0.
-//        theArray := type<>(16).
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//
-//    $expand
-//    [
-//        if (theCapacity <= theLength)
-//        [
-//            theCapacity append int:32.
-//            
-//            array<type> newArray := type<>(theCapacity).
-//
-//            int i := 0.
-//            while (i < theLength)
-//            [
-//                newArray setAt int:i type:(theArray getAt int:i).
-//                
-//                i := i + 1.
-//            ].
-//            
-//            theArray := newArray.
-//        ].
-//    ]
-//    
-//    /// Returns the object at the specified position
-//    type getAt : anIndex
-//        = $self getAt int:anIndex.
-//
-//    /// Returns the object at the specified position
-//    type stacksafe getAt int:index
-//    [
-//        ifnot(index < theLength)
-//            [ OutOfRangeException new; raise ].
-//            
-//        ^ theArray getAt int:index
-//    ]
-//
-//    /// Returns the object at the specified position
-//    stacksafe setAt int:index type:object
-//    [
-//        ifnot(index < theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theArray setAt int:index type:object.
-//    ]
-//
-//    /// Returns the object at the specified position
-//    setAt : anIndex : anObject
-//        = $self setAt int:anIndex type:anObject.
-//
-//    append : object
-//        <= append type:object.
-//
-//    /// Appends a new object to the end of the list
-//    append type:object
-//    [
-//        $self $expand.
-//        
-//        theArray setAt int:theLength type:object.
-//        
-//        theLength append int:1.
-//    ]
-//
-//    /// Removes an object at the specified position
-//    stacksafe remove int:anIndex
-//    [
-//        ifnot (anIndex < theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theLength reduce int:1.
-//        
-//        int i := anIndex.
-//        while(i < theLength)
-//        [
-//            theArray setAt int:i type:(theArray getAt int:(i + 1)).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//        
-//    /// Returns the top object
-//    type first = theArray getAt int:0.
-//    
-//    /// Clears the list
-//    clear 
-//    [
-//        theLength int := 0.        
-//    ]
-//    
-//    stacksafe trim(IntNumber pos)
-//    [
-//        if (pos > theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theLength int := pos.
-//    ]
-//    
-//    enumerator 
-//    [
-//        vint index := -1.
-//        int length := theLength.
-//        
-//        ^ Enumerator::
-//          {
-//              get = $self getAt int:index.
-//              
-//              enumerable = $self.
-//              
-//              reset [ index int := -1. ]
-//              
-//              bool next
-//              [
-//                  index append int:1.
-//                  
-//                  ^ index < length
-//              ]
-//          }.
-//    ]
-//
-//    indexer = BaseIndexer::
-//    {
-//        implicit
-//        [
-//            theIndex := 0.
-//
-//            int len := 0.                                    
-//            $self readLengthTo vint:len.
-//            
-//            theBaseIndexerLength := len.
-//        ]
-//
-//        get
-//            = $self getAt int:theIndex.
-//            
-//        set : o
-//        [
-//            $self setAt int:theIndex type:o.
-//        ]                
-//    }.
-//                       
-//    array
-//    [
-//        array a := Array new(theLength).
-//        int i := 0.
-//        while (i < theLength)
-//        [
-//            a[i] := theArray[i].
-//            
-//            i += 1
-//        ].
-//        
-//        ^ a
-//    ]                       
-//                       
-//    stacksafe readLengthTo vint:retVal
-//    [
-//        retVal int := theLength.
-//    ]    
-//}
+// --- listof ---
+
+public sealed List<type> :: Enumerable<type>
+{
+    Array<type> theArray.
+    ref<int>    theLength.
+    ref<int>    theCapacity.
+
+    cast T<Array>:list
+    [
+        int len := list length.
+        int size := len / 32.
+        size := size + 1.
+        size := size * 32.
+        
+        theLength := len.
+        theCapacity := size.
+        theArray := V<type>(size).
+        
+        int i := 0.
+        while(i < len)
+        [
+            theArray[i] := list[i].
+            
+            i := i + 1.
+        ].
+    ]
+    
+    cast T<int>:capacity
+    [
+        theCapacity := capacity.
+        theLength := 0.
+        theArray := V<type>(capacity).
+    ]
+    
+    constructor default
+    [
+        theCapacity := 16.
+        theLength := 0.
+        theArray := V<type>(16).
+    ]
+    
+    int rvprop length :: readLengthTo.
+
+    private expand
+    [
+        if (theCapacity <= theLength)
+        [
+            theCapacity append(32).
+            
+            Array<type> newArray := V<type>(theCapacity).
+
+            int i := 0.
+            while (i < theLength)
+            [
+                newArray setAt(i, theArray getAt(i)).
+                
+                i := i + 1.
+            ].
+            
+            theArray := newArray.
+        ].
+    ]
+    
+    /// Returns the object at the specified position
+    type getAt : anIndex
+        = self getAt(T<int>(anIndex)).
+
+    /// Returns the object at the specified position
+    type stacksafe getAt(int index)
+    [
+        ifnot(index < theLength)
+            [ OutOfRangeException new; raise ].
+            
+        ^ theArray getAt(index)
+    ]
+
+    /// Returns the object at the specified position
+    stacksafe setAt(int index, type object)
+    [
+        ifnot(index < theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theArray setAt(index, object).
+    ]
+
+    /// Returns the object at the specified position
+    setAt(object anIndex, object anObject)
+        = self setAt(T<int>(anIndex), T<type>(anObject)).
+
+    append : object
+        <= append(T<type>(object)).
+
+    /// Appends a new object to the end of the list
+    append(type object)
+    [
+        self expand.
+        
+        theArray setAt(T<int>(theLength), object).
+        
+        theLength append(1).
+    ]
+
+    /// Removes an object at the specified position
+    stacksafe remove(int anIndex)
+    [
+        ifnot (anIndex < theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theLength reduce(1).
+        
+        int i := anIndex.
+        while(i < theLength)
+        [
+            theArray setAt(i, theArray getAt(i + 1)).
+            
+            i := i + 1
+        ]
+    ]
+        
+    /// Returns the top object
+    type first = theArray getAt(0).
+    
+    /// Clears the list
+    clear 
+    [
+        theLength value := 0.        
+    ]
+    
+    stacksafe trim(IntNumber pos)
+    [
+        if (pos > theLength)
+            [ OutOfRangeException new; raise ].
+        
+        theLength value := pos.
+    ]
+    
+    Enumerator<type> enumerator = BaseEnumerator<type>::
+    {
+        @theIndex := -1.
+        
+        @theLength := self length.
+        
+        type get = self getAt(@theIndex).
+        
+        enumerable = self.
+        
+        reset
+        [
+            @theIndex := -1
+        ]
+    }.
+
+    Indexer<type> indexer = BaseIndexer<type>::
+    {
+        @theIndex := 0.
+        
+        @theLength := self length.
+        
+        type get
+            = self getAt(theIndex).
+            
+        set(type o)
+        [
+            self setAt(theIndex, o).
+        ]
+    }.    
+        
+    cast T<Array>
+        = Array new(0, T<int>(theLength), theArray).
+
+    value 
+        = Array new(0, T<int>(theLength), theArray).
+                       
+    stacksafe readLengthTo(ref<int> retVal)
+    [
+        theLength readValueTo(retVal).
+    ]    
+}
 
 // --- ListItem ---
 
@@ -361,7 +330,7 @@ class ListIndexer :: Indexer
 // --- List ---
 
 /// A list object
-public sealed class List :: interface<Enumerable>
+public sealed class List :: Enumerable
 {
     ref<int>    theCount.
     T<ListItem> theTop.
@@ -861,7 +830,7 @@ public class ArrayListIndexer :: Indexer
 // --- Dictionary ---
 
 /// Dictionary class
-public sealed  class Dictionary :: interface<Enumerable>
+public sealed  class Dictionary :: Enumerable
 {
     T<ArrayList> theList.
     T<Array>     theHashTable.

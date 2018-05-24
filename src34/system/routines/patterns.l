@@ -638,7 +638,7 @@ class IntRangeEnumerator :: Enumerator<int>
 
 // --- Range --
 
-public sealed class Range :: object, interface<Enumerable<int>>, interface<Enumerable>
+public sealed class Range :: Enumerable<int>
 {
     int theStart.
     int theEnd.
@@ -671,6 +671,8 @@ public sealed class Range :: object, interface<Enumerable<int>>, interface<Enume
     int rvprop length :: readLengthTo.
     
     Enumerator<int> enumerator = IntRangeEnumerator new(theStart, theEnd).
+    
+    cast T<Enumerable> = Enumerable::{ T<Enumerator> enumerator => self. }.
 }
 
 // --- IntervalEnumerator ---
