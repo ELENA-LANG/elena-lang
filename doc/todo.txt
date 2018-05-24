@@ -42,6 +42,7 @@ In development:
                    directly (and get rid of hot fix in compileExternalArguments)
                  * call console operations directly
                  * test #12 : Extension with stack allocated object 
+                 * a do(1,2,3,4,5,6,7,8,9,10,11,12,13) can be compiled both as do[0,], do[1,] and do[2,]
                  * #15 : Returning double float and long value from external function
                  * test #40 : Typed Extensions : self should be typedcasted
                  * debugger : display message
@@ -68,6 +69,7 @@ In development:
                  * review field / method template usage syntax
                  * template extension
                  * comparing int and ptr (handle, dirty_ptr)
+                 * using templates with full name - system'collections'Tuple<int,int>(1,2)
                  * extrnal operations without target - ignore the result
                  * extrnal operations : support long and real
                  * fix console application with redirect mode
@@ -124,6 +126,7 @@ Pipeline:
                  * a < b < c - not allowed
 
               xdev - general optimization  
+                 * optimize using, finally, try, ...
                  * #371 : Pi sample optimization
                  * pusha  new bcopya popa => bcopya new bswap nop??
                  * optimize wideConvertor / literalConvertor

@@ -138,15 +138,15 @@ public extension enumerableOp
     forEach(Func1 aFunction)
         = aFunction run(T<Enumerator>(self enumerator)).
 
+    forEach(ExtensionMessage anExtMessage)
+        = self~enumerableOp forEach(:n)(n~anExtMessage eval).
+        
+    forEach:fn
+        = self~enumerableOp forEach(:n)[ fn(n) ].
+
     selectBy:aSelector
         = Selector new(aSelector, T<Enumerator>(self enumerator)).
 
-//    forEach(ExtensionMessage anExtMessage)
-//        = self~enumerableOp forEach(:n)(n~anExtMessage eval).
-//        
-//    multi forEach:fn
-//        = self~enumerableOp forEach(:n)[ fn(n) ].
-//    
 //    forEachPair(object object, ext_mssg anExtMessage)
 //        = self~enumerableOp forEachPair(object, (:o:n)(o~anExtMessage eval:n)).
 //    

@@ -2497,8 +2497,8 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
       current = current.nextNode();
    }
 
-   if (paramCount > MAX_ARG_COUNT)
-      scope.raiseError(errInvalidOperation, node);
+   if (paramCount >= OPEN_ARG_COUNT)
+      paramCount = OPEN_ARG_COUNT;
 
    // if signature is presented
    ref_t actionRef = scope.moduleScope->module->mapAction(messageStr, 0, false);
@@ -2952,19 +2952,10 @@ ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t el
 
 ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
-//   ObjectInfo target;
-//   IdentifierString signature;
-//
-//   if (test(mode, HINT_PARAMETERSONLY))
-//      target = ObjectInfo(okObject);
-
    bool externalMode = test(mode, HINT_EXTERNALOP);
 
    int paramMode = 0;
    SNode current = node;
-//   if (test(mode, HINT_RESENDEXPR) && (arg == lxMessage && arg.nextNode() != lxMessage)) {
-//      arg = arg.nextNode();
-//   }
 
    // compile the message argument list
    bool anonymous = false;
@@ -2981,7 +2972,10 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
             ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode | HINT_NOPRIMITIVES);
             argRef = resolveObjectReference(scope, paramInfo);
             if (argRef) {
-               signatures[signatureLen++] = argRef;
+               if (signatureLen == OPEN_ARG_COUNT) {
+                  anonymous = signatures[signatureLen - 1] != argRef;
+               }
+               else signatures[signatureLen++] = argRef;
             }
             else anonymous = true;
          }

@@ -60,12 +60,12 @@ public extension commonOp
     then(Func code)
         = code().
         
-//    thenClose:code
-//    [
-//        code eval.
-//        
-//        self close
-//    ]
+    thenClose(Func code)
+    [
+        code().
+        
+        self close
+    ]
     
     doFinally(Func c1, Func c2)
     [
@@ -73,11 +73,11 @@ public extension commonOp
             | raise:c2.
     ]
     
-//    doAndClose : code
-//    [
-//        self thenClose:code
-//            | raise:[ self close ].
-//    ]        
+    doAndClose(Func code)
+    [
+        self thenClose:code
+            | raise:[ self close ].
+    ]        
 }
 
 public singleton __prober

@@ -286,10 +286,10 @@ public __block __block template finally
 [
     true doFinally([],[]).
 ]
-//
-//// --- using statement ---
-//
-//__block template using :: expr
-//[
-//    expr doAndClose:[].
-//]    
+
+// --- using statement ---
+
+public __block using<expr>
+[
+    expr doAndClose:[].
+]    
