@@ -14,7 +14,7 @@ public sealed const struct Handle
         theHandle := h
     ]
 
-    cast T<int> : n
+    cast eval(int n)
     [
         theHandle := n.
     ]
@@ -68,7 +68,7 @@ public sealed const struct UnsafePointer
 //        $self $setReference:anObject.
 //    ]
     
-    cast T<object>:ref
+    cast eval(object ref)
     [
         self setReference:ref.
     ]

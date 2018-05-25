@@ -30,7 +30,7 @@ public sealed const struct SystemTime :: BaseValue
 {
     T<__int,8> theValue.
 
-    cast T<long>:value
+    cast eval(long value)
     [
         theValue := value.
     ]
@@ -90,7 +90,7 @@ public sealed struct TimeStruct
     short theSecond.
     short theMillisecond.
 
-    cast T<SystemTime>:aTime
+    cast eval(SystemTime aTime)
     [
         self write(aTime).
     ]

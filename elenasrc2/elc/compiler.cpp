@@ -1748,16 +1748,6 @@ void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo
          }
          else scope.raiseError(errInvalidHint, node);
       }
-      //else if (current == lxClassRefAttr/* || current == lxReference*/) {
-      //   if (variable.extraparam == 0) {
-      //      NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-
-      //      variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
-
-      ////      variable.extraparam = scope.moduleScope->module->mapReference(current.identifier(), false);
-      //   }
-      //   else scope.raiseError(errInvalidHint, node);
-      //}
       current = current.nextNode();
    }
 
@@ -4428,7 +4418,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
 //   ref_t verbRef = 0;
 //   bool propMode = false;
-//   bool constantConversion = false;
+   bool constantConversion = false;
    bool unnamedMessage = false;
    ref_t flags = 0;
 
@@ -4447,10 +4437,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
    else unnamedMessage = true;
       
-//   bool first = messageStr.Length() == 0;
    int paramCount = 0;
-//   int strongParamCounter = 0;
-//   // if method has an argument list
+   // if method has an argument list
    while (current != lxNone) {
       if (current == lxMethodParameter) {
          int index = 1 + scope.parameters.Count();
@@ -4530,10 +4518,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          signatureLen = 0;
    }
 
-//   // HOTFIX : validate that strong parameters are not mixed with generic ones
-//   if (signatureLen > 0 && signatureLen != paramCount && paramCount < OPEN_ARG_COUNT)
-//      scope.raiseError(errIllegalMethod, node);
-
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
       if (test(scope.hints, tpSealed | tpSpecial))
@@ -4581,33 +4565,26 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (test(scope.hints, tpSealed | tpConversion)) {
          SNode typeNode = node.findChild(lxClassRefAttr);
          if (typeNode != lxNone) {
-            // insert the leading type reference
-            if (signatureLen > 0) {
-               for (int i = signatureLen; i > 0; i--)
-                  signature[i] = signature[i - 1];
-
+            if (signatureLen == 0) {
+               signature[0] = scope.moduleScope->mapFullReference(typeNode.identifier(), true);
                signatureLen++;
+               actionStr.copy(CAST_MESSAGE);
             }
-            else signatureLen = 1;
-
-            signature[0] = scope.moduleScope->mapFullReference(typeNode.identifier(), true);
-
-            if (paramCount > 0) {
-               // HOTFIX : lxClassRefAttr should be treated like a parameter type rather than returning one
-               typeNode = lxIdle;
-
-               current = node.findChild(lxMethodParameter);
-               current.setArgument(signature[0]);
-            }
+            else scope.raiseError(errIllegalMethod, node);
+         }
+         else if (actionStr.compare(EVAL_MESSAGE)) {
+            actionStr.copy(CAST_MESSAGE);
+            if (paramCount > 0)
+               flags |= SPECIAL_MESSAGE;
+         }
+         else if (signatureLen == 1 && signature[0] == scope.moduleScope->literalReference) {
+            flags |= SPECIAL_MESSAGE;
+            constantConversion = true;
          }
          else scope.raiseError(errIllegalMethod, node);
 
-         if ((paramCount == 0 && signatureLen != 1) || (paramCount > 0 && (size_t)paramCount != signatureLen))
-            scope.raiseError(errIllegalMethod, node);
-
-         actionStr.copy(CAST_MESSAGE);
-         if (paramCount > 0)
-            flags |= SPECIAL_MESSAGE;
+         //if ((paramCount == 0 && signatureLen != 1) || (paramCount > 0 && (size_t)paramCount != signatureLen))
+         //   scope.raiseError(errIllegalMethod, node);
       }
       else if (test(scope.hints, tpPrivate)) {
          flags |= SEALED_MESSAGE;
@@ -4652,10 +4629,12 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
       scope.message = encodeMessage(actionRef, paramCount) | flags;
 
-//      // if it is an explicit constant conversion
-//      if (constantConversion) {
-//         scope.moduleScope->saveAction(scope.message, scope.getClassRef());
-//      }
+      // if it is an explicit constant conversion
+      if (constantConversion) {
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+         saveExtension(*classScope, scope.message, false);
+      }
    }
 
    if (scope.genericClosure && paramCount > OPEN_ARG_COUNT) {

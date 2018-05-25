@@ -6,7 +6,7 @@ public sealed List<type> :: Enumerable<type>
     ref<int>    theLength.
     ref<int>    theCapacity.
 
-    cast T<Array>:list
+    cast eval(Array list)
     [
         int len := list length.
         int size := len / 32.
@@ -26,7 +26,7 @@ public sealed List<type> :: Enumerable<type>
         ].
     ]
     
-    cast T<int>:capacity
+    cast eval(int capacity)
     [
         theCapacity := capacity.
         theLength := 0.
