@@ -605,15 +605,13 @@ void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info,
             ident_t actionName = scope.module->resolveAction(getAction(message), signatureRef);
 
             if (signatureRef) {
-               ref_t actionRef = 0;
-               /*if (index > 0) {
-                  IdentifierString content(messageName, index);
-
-                  */actionRef = scope.module->mapAction(actionName, 0, true);
-               //}
-               //else actionRef = SET_MESSAGE_ID;
-
+               ref_t actionRef = scope.module->mapAction(actionName, 0, true);
                ref_t flags = message & MESSAGE_FLAG_MASK;
+               if (actionRef == SET_MESSAGE_ID) {
+                  // HOTFIX : correctly recognize set method
+                  flags |= PROPSET_MESSAGE;
+               }
+
                ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getAbsoluteParamCount(message) | flags), maOverloadlist));
                if (listRef != 0) {
                   if (test(info.header.flags, elSealed) || test(message, SEALED_MESSAGE)) {

@@ -84,7 +84,7 @@ enum LexicalType
    lxCharacter       = 0x1800B,
    lxLong            = 0x1800C,
    lxWide            = 0x1800D,
-//   lxExplicitConst   = 0x1800E,
+   lxExplicitConst   = 0x1800E,
    lxExplicitAttr    = 0x1800F,
    lxMemberIdentifier= 0x18010,
    lxGlobalReference = 0x18011,

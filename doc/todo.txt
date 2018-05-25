@@ -3,10 +3,16 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * explicit constants
+
+                 * extrnal operations without target - ignore the result
+
                  * migrate script samples
                  * migrate dynamic, templates
 
                  * check why the vm console samples are always broken at the end
+
+                 * default constructor and explicit convertors
 
                  * debugger : display template based classes
                  * debugger : debugging template based classes
@@ -19,8 +25,6 @@ In development:
                    constructor
 
                  * field initializer - special name
-
-                 * implicit constructor - special name
 
                  * move compiler code to project, only win32 specific code should stay in ElcProject
 
@@ -46,14 +50,12 @@ In development:
                  * #15 : Returning double float and long value from external function
                  * test #40 : Typed Extensions : self should be typedcasted
                  * debugger : display message
-                 * ide : call stack info
                  * call open argument list explicitly (a sum(dynamic<object>(1,2,3)))
                  * can generic handler be strong-typed?
                  * elenart - switch to xml config
                  * reimplement IDE exclude the file
                  * reimplement IDE clear forwards
                  * external calls - do not save the result if the target is not specified
-                 * it should be possible to implicitly typecast the primitive array in compile-time
                  * existing method cannot be declared abstract
                  * publish an example with the enumeration (list of enum values)
                  * collection : validate if the parent class can be array based class
@@ -70,7 +72,6 @@ In development:
                  * template extension
                  * comparing int and ptr (handle, dirty_ptr)
                  * using templates with full name - system'collections'Tuple<int,int>(1,2)
-                 * extrnal operations without target - ignore the result
                  * extrnal operations : support long and real
                  * fix console application with redirect mode
                  * warn if there are several similar extension for given message

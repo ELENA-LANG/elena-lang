@@ -254,7 +254,7 @@ inline bool isTerminal(LexicalType type)
       case lxReference:
       case lxCharacter:
       case lxWide:
-      //case lxExplicitConst:
+      case lxExplicitConst:
       case lxMemberIdentifier:
       case lxGlobalReference:
          return true;

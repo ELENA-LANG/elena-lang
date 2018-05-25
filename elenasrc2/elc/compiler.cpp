@@ -179,7 +179,7 @@ inline bool isConstantArguments(SNode node)
          case lxLong:
          case lxHexInteger:
          case lxReal:
-         //case lxExplicitConst:
+         case lxExplicitConst:
          case lxMessage:
             break;
          default:
@@ -2267,12 +2267,7 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
          // if it is a temporal variable
          object = ObjectInfo(okLocal, terminal.argument);
          break;
-      default:
-         if (!emptystr(token)) {
-            object = scope.mapTerminal(token, terminal == lxReference);
-         }
-         break;
-         //   else if (terminal == lxExplicitConst) {
+      case lxExplicitConst:
          //      // try to resolve explicit constant
          //      size_t len = getlength(token);
          //
@@ -2285,7 +2280,12 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
          //      IdentifierString constant(token, len - 1);
          //
          //      object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(constant), postfixRef);
-         //   }
+         break;
+      default:
+         if (!emptystr(token)) {
+            object = scope.mapTerminal(token, terminal == lxReference);
+         }
+         break;
          //   else if (terminal == lxResult) {
          //      object = ObjectInfo(okObject);
          //   }
@@ -4615,31 +4615,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       else if (unnamedMessage && emptystr(actionStr))
          actionStr.append(EVAL_MESSAGE);
 
-//      if (propMode && paramCount == 1 && messageStr.Length() > 3) {
-//         // COMPILER MAGIC : set&x => x
-//         messageStr.cut(0, 4);
-//
-//         propMode = false;
-//      }
-
-      //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-      if (paramCount > 0 && (signatureLen > 0 || paramCount >= OPEN_ARG_COUNT) && flags != SPECIAL_MESSAGE) {
-         actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
-
-         ref_t genericMessage = encodeMessage(actionRef, paramCount) | flags;
-
-         node.appendNode(lxMultiMethodAttr, genericMessage);
-      }
-
 //      if (scope.moduleScope->attributes.exist(messageStr) != 0)
 //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousMessageName, verb);
 //
-//      if (propMode && paramCount == 1 && !emptystr(signature)) {
-//         // COMPILER MAGIC :_ set$int => $int
-//         messageStr.copy(signature);
-//      }
-//      else messageStr.append(signature);
-
       if (actionRef == NEWOBJECT_MESSAGE_ID) {
          // HOTFIX : for implicit constructor
       }
@@ -4659,6 +4637,18 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          }
       }
       else scope.raiseError(errIllegalMethod, node);
+
+      //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
+      if (paramCount > 0 && (signatureLen > 0 || paramCount >= OPEN_ARG_COUNT) && flags != SPECIAL_MESSAGE) {
+         ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
+         ref_t genericMessage = encodeMessage(genericActionRef, paramCount) | flags;
+         if (genericActionRef == SET_MESSAGE_ID && paramCount == 1) {
+            // HOTFIX : properly recognize generic set method
+            genericMessage |= PROPSET_MESSAGE;
+         }
+
+         node.appendNode(lxMultiMethodAttr, genericMessage);
+      }
 
       scope.message = encodeMessage(actionRef, paramCount) | flags;
 
