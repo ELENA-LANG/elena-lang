@@ -937,10 +937,10 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerS
          ref_t signatureRef = 0;
          scope.module->resolveAction(getAction(implicitMessage), signatureRef);
          bool compatible = false;
-         //if (actionRef == V_STRCONSTANT && subj == elementRef) {
-         //   // try to resolve explicit constant conversion routine
-         //   compatible = true;
-         //}
+         if (paramCount == 1 && signatures[0] == V_STRCONSTANT && signatureRef == elementRef) {
+            // try to resolve explicit constant conversion routine
+            compatible = true;
+         }
          //else if (paramCount == 1) {
          //   ref_t subjRef = scope.module->mapReference(scope.module->resolveSubject(subj).c_str() + 1);
          //   if (subjRef != 0) {
@@ -948,7 +948,7 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerS
          //   }
          //   else compatible = true;
          //}
-         /*else */compatible = isSignatureCompatible(scope, signatureRef, signatures);
+         else compatible = isSignatureCompatible(scope, signatureRef, signatures);
 
          if (compatible) {
             bool stackSafe = isMethodStacksafe(info, implicitMessage);
@@ -1094,7 +1094,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerSc
          test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, sourceRef, true);
    }
    // HOTFIX : recognize primitive data except of a constant literal
-   else if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
+   else if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
       sourceRef = resolvePrimitiveReference(scope, sourceRef);
 
    // otherwise we have to go through the list

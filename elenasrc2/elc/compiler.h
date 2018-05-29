@@ -139,7 +139,7 @@ public:
       okParams,                       // param - local offset
 //      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
-//      okExplicitConstant,             // param - reference, extraparam - subject
+      okExplicitConstant,             // param - reference, extraparam - subject
 
       okExternal,
       okInternal,
@@ -401,7 +401,6 @@ private:
 
 //      virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension);
       void saveExtension(ref_t message, ref_t type, ref_t role, bool internalOne);
-//      void saveAction(ref_t message, ref_t reference);      
 
 //      void loadModuleInfo(_Module* extModule)
 //      {
@@ -791,7 +790,7 @@ private:
    ref_t resolveImplicitIdentifier(Scope& scope, ident_t identifier, bool referenceOne, bool gloabalOne = false);
 
    void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
-   //ref_t mapExtension(_CompilerScope& scope, SubjectMap* typeExtensions, ref_t& messageRef, ref_t implicitSignatureRef);
+   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
    ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, bool& dynamicReqiered);
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
