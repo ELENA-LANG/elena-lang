@@ -3,7 +3,7 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * explicit constants
+                 * test : ELENA Script Engine : compiling JavaScript file
 
                  * extrnal operations without target - ignore the result
 
@@ -75,6 +75,7 @@ In development:
                  * extrnal operations : support long and real
                  * fix console application with redirect mode
                  * warn if there are several similar extension for given message
+                 * static methods and singleton
                  * template extension
                  * extension method should be only public
                  * call stack / debug watch - template based classes

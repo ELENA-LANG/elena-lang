@@ -2879,7 +2879,7 @@ bool DerivationTransformer :: generateFieldTemplateTree(SyntaxWriter& writer, SN
 bool DerivationTransformer :: generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode)
 {
    if (node == lxClassField) {
-      writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
+      writer.newNode(lxClassField, templateMode ? -1 : 0);
 
       SNode name = node.prevNode().firstChild(lxTerminalMask);
 

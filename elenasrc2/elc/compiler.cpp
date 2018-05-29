@@ -3085,7 +3085,7 @@ void Compiler ::compileClassConstantAssigning(SyntaxWriter& writer, SNode node, 
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
    bool accumulatorMode = false;
 
-   if (scope.getMessageID() == (encodeAction(INIT_MESSAGE_ID)) && classScope != NULL) {
+   if (scope.getMessageID() == (encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE) && classScope != NULL) {
       ref_t valueRef = classScope->info.staticValues.get(retVal.param);
       SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::slNamespace), valueRef & ~mskAnyRef);
 
@@ -3109,7 +3109,8 @@ void Compiler ::compileClassConstantAssigning(SyntaxWriter& writer, SNode node, 
             sourceNode = operatorNode.nextNode();
          }
       }
-      ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, 0);
+      //ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, 0);
+      ObjectInfo source = compileObject(writer, sourceNode, scope, 0);
       ref_t targetRef = accumulatorMode ? retVal.element : retVal.extraparam;
       ref_t sourceRef = resolveConstantObjectReference(scope, source);
 

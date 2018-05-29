@@ -37,38 +37,38 @@ public field rprop<prop_type, prop_name>
     prop_type prop_name = field.
 }
 
-//field template dto_prop :: prop_type, prop_name
+//field dto_prop<prop_type, prop_name>
 //{
-//    const static object<> theProperties.
+//    const static V<object> theProperties.
 //
-//    prop_type $field.
+//    prop_type field.
 //    
 //    @theProperties := theProperties + %prop_name.
 //    
-//    set prop_name prop_type:val
+//    set prop_name(prop_type val)
 //    [
-//        $field := val
+//        field := val
 //    ]
 //    
-//    prop_type prop_name = $field.
+//    prop_type prop_name = field.
 //    
 //    static __properties = theProperties.
 //}
 //
-//field template dto_prop :: prop_name
+//field dto_prop<prop_name>
 //{
-//    const static object<> theProperties.
+//    const static V<object> theProperties.
 //
-//    object $field.
+//    object field.
 //    
 //    @theProperties := theProperties + %prop_name.
 //    
 //    set prop_name:val
 //    [
-//        $field := val
+//        field := val
 //    ]
 //    
-//    prop_name = $field.
+//    prop_name = field.
 //    
 //    static __properties = theProperties.
 //}
