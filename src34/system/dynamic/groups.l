@@ -16,24 +16,24 @@ public mixin Extension
     dispatch => system'core_routines'__extension.
 }
 
-//// --- Group ---
-//
-//mixin Group
-//{
-//    object<> $item.
-//    
-//    stacksafe constructor $new int:aLength
-//        = object<>(aLength).
-//        
-//    constructor new args:objects
-//        <= $new int(objects length);
-//    [
-//        $self setFields args:objects.
-//    ]
-//    
-//    dispatch => system'core_routines'__group.
-//}
-//
+// --- Group ---
+
+public mixin Group
+{
+    V<object> items.
+    
+    internal stacksafe constructor newInteral(int aLength)
+        = V<object>(aLength).
+        
+    generic constructor new(V<object> objects)
+        <= newInteral(objects length);
+    [
+        self setFields(objects).
+    ]
+    
+    dispatch => system'core_routines'__group.
+}
+
 //// --- Cast ---
 //
 //mixin Cast

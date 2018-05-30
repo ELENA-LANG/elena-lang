@@ -4482,3 +4482,89 @@ labEnd:
   equit
 
 end
+
+procedure __group.dispatch[1]
+
+  open 5
+  reserve 2
+
+  dcopye
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+
+  pusha
+
+  hook labNotFound
+
+// ; define the message length
+  dloadfi -3
+  ecopyd
+  dcopycount
+  inc
+  
+// ; copy message
+  bcopyf -5
+labNextParam:
+  get
+  pusha
+  dec
+  elsen labNextParam 0
+
+  bloadfi 1
+
+labNext:
+  count
+  dloadfi -2
+  if labEnd
+  get
+  inc
+  dsavefi -2
+
+  dloadfi -3
+  ecopyd
+  acallvi 0
+
+labReturn:
+  unhook
+  dloadfi -3
+  ecopyd
+  restore 4
+  close
+
+  equit
+  
+labNotFound:  
+  dloadsi 9
+  address labReturn
+  else labContinueError
+
+  restore 1
+  close
+  close
+  popi 1
+  bloadfi 1
+  jump labNext
+
+labContinueError:
+  unhook
+  dloadfi -3
+  throw
+                         
+labEnd:
+  unhook
+
+  open    4
+  reserve 2
+  esavesi 3
+  bcopys  -3
+  pushb
+  pusha
+  acopyr class : system'Message
+  pushr class : system'MethodNotFoundException
+  asavesi 5
+  aloadsi 0
+  pushr const : %"new[2]"
+  throw
+        
+end

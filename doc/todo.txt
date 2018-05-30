@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * do we need Tape and Class, probably better to use ClosureTape and ClosureClass
+
                  * test : ELENA Script Engine : compiling JavaScript file
 
                  * extrnal operations without target - ignore the result

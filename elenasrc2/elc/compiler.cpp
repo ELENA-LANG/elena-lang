@@ -1342,8 +1342,10 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
    // declare built-in variables
    if (withSelf) {
       if (scope.stackSafe && scope.classEmbeddable) {
+         IdentifierString className(scope.moduleScope->module->resolveReference(scope.getClassRef()));
+
          SNode debugNode = node.insertNode(lxBinarySelf, 1);
-         debugNode.appendNode(lxClassName, scope.moduleScope->module->resolveReference(scope.getClassRef()));
+         debugNode.appendNode(lxClassName, className.c_str());
       }
       else writer.appendNode(lxSelfVariable, 1);
    }
@@ -6071,6 +6073,11 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    else {
       bool privateOne = test(message, SEALED_MESSAGE);
       bool castingOne = test(methodHints, tpConversion);
+      if (test(message, SPECIAL_MESSAGE) && message == encodeAction(NEWOBJECT_MESSAGE_ID) | SPECIAL_MESSAGE) {
+         // initialize method can be overridden
+         castingOne = true;
+      }
+
       bool included = scope.include(message);
       bool sealedMethod = (methodHints & tpMask) == tpSealed;
       // if the class is closed, no new methods can be declared
@@ -6081,7 +6088,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
       // if the method is sealed, it cannot be overridden
       if (!included && sealedMethod && !castingOne) {
-         scope.raiseError(errClosedMethod, findParent(current, lxClass/*, lxNestedClass*/));
+         scope.raiseError(errClosedMethod, findParent(current, lxClass, lxNestedClass));
       }
 
       // HOTFIX : make sure there are no duplicity between public and private ones

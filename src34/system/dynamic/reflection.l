@@ -54,21 +54,21 @@ public extension classROp
 //
 //        ^ array.
 //    ]
-//    
-//    setFields args:objects
-//    [
-//        int i := 0.
-//        int l := objects length.
-//        
-//        while (i < l)
-//        [
-//            self setField int:i object(objects[i]).
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self
-//    ]
+    
+    generic setFields(V<object> objects)
+    [
+        int i := 0.
+        int l := objects length.
+        
+        while (i < l)
+        [
+            self setField(i, objects[i]).
+            
+            i := i + 1
+        ].
+        
+        ^ self
+    ]
 }
 
 //// --- manifestOp ---
