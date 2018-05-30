@@ -483,13 +483,13 @@ int DerivationTransformer::DerivationScope :: mapParameter(ident_t identifier)
 
 void DerivationTransformer::DerivationScope :: copyName(SyntaxWriter& writer, SNode terminal)
 {
-   int index = /*mapParameter(terminal)*/0;
-//   if (index) {
-//      writer.newNode(lxTemplateParam, index);
-//      copyIdentifier(writer, terminal);
-//      writer.closeNode();
-//   }
-   /*else */if (type == DerivationScope::ttMethodTemplate) {
+   int index = mapParameter(terminal.identifier());
+   if (index) {
+      writer.newNode(lxTemplateParam, index);
+      copyIdentifier(writer, terminal);
+      writer.closeNode();
+   }
+   else if (type == DerivationScope::ttMethodTemplate) {
       ident_t identifier = terminal.identifier();
       if (emptystr(identifier))
          identifier = terminal.identifier();
@@ -1919,10 +1919,10 @@ void DerivationTransformer :: generateObjectTree(SyntaxWriter& writer, SNode cur
       case lxMessageReference:
 //         writer.newNode(lxExpression);
          writer.newNode(current.type);
-//         if (scope.type == DerivationScope::ttFieldTemplate) {
-//            scope.copySubject(writer, current.findChild(lxIdentifier, lxPrivate, lxLiteral));
-//         }
-         /*else */copyIdentifier(writer, current.findChild(lxIdentifier, lxLiteral));
+         if (scope.type == DerivationScope::ttFieldTemplate) {
+            scope.copyName(writer, current.findChild(lxIdentifier, lxLiteral));
+         }
+         else copyIdentifier(writer, current.findChild(lxIdentifier, lxLiteral));
          writer.closeNode();
 //         writer.closeNode();
          break;
@@ -2896,7 +2896,7 @@ bool DerivationTransformer :: generateFieldTree(SyntaxWriter& writer, SNode node
 
       writer.closeNode();
    }
-   else if (node == lxFieldInit/* && !templateMode*/) {
+   else if (node == lxFieldInit && !templateMode) {
       SNode nameNode = node.prevNode().firstChild(lxTerminalMask);
 
       writer.newNode(lxFieldInit);
@@ -3343,7 +3343,7 @@ void DerivationTransformer :: generateTemplateTree(SyntaxWriter& writer, SNode n
          generateMethodTree(writer, current, scope, true);
 //         subAttributes = SNode();
       }
-      else if (current == lxClassField/* || current == lxFieldInit*/) {
+      else if (current == lxClassField || current == lxFieldInit) {
          if (generateFieldTree(writer, current, scope, buffer, true)) {
             SyntaxTree::moveNodes(writer, buffer, lxFieldInit);
          }

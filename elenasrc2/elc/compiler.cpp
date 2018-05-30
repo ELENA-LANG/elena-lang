@@ -6493,6 +6493,12 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
          parentRef = scope.moduleScope->charReference;
       }
+      else if (retVal.kind == okSignatureConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskSignature, dataWriter.Position());
+         dataWriter.writeDWord(0);
+
+         parentRef = scope.moduleScope->signatureReference;
+      }
       else if (retVal.kind == okObject) {
          SNode root = node.findSubNodeMask(lxObjectMask);
 
