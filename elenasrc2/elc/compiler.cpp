@@ -133,26 +133,15 @@ inline SNode goToNode(SNode current, LexicalType type)
    return current;
 }
 
-////inline bool validateGenericClosure(ident_t signature)
-////{
-////   size_t len = getlength(signature);
-////   size_t start = 0;
-////
-////   while (true) {
-////      size_t middle = signature.findSubStr(start + 1, "$", len);
-////      size_t end = signature.findSubStr(middle + 1, "$", len);
-////
-////      IdentifierString first(signature, start, middle - start);
-////      IdentifierString second(signature, middle, end - middle);
-////      if (!first.compare(second))
-////         return false;
-////
-////      if (end == len)
-////         return true;
-////
-////      start = middle;
-////   }
-////}
+inline bool validateGenericClosure(ref_t* signature, size_t length)
+{
+   for (int i = 1; i < length; i++) {
+      if (signature[i - 1] != signature[i])
+         return false;
+   }
+
+   return true;
+}
 
 ////inline bool checkNode(SNode node, LexicalType type, ref_t argument)
 ////{
@@ -4505,18 +4494,18 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    if (signatureLen > 0 && !scope.withOpenArg) {
       // validate generic signature (except an open argument one)
-      bool genericSignature = true;
+      bool weakSignature = true;
       for (size_t i = 0; i < signatureLen; i++) {
          // primitive arguments should be replaced with wrapper classes
          if (isPrimitiveRef(signature[i]))
             signature[i] = _logic->resolvePrimitiveReference(*scope.moduleScope, signature[i]);
 
          if (signature[i] != scope.moduleScope->superReference) {
-            genericSignature = false;
+            weakSignature = false;
          }
       }
       // if the signature consists only of generic parameters - ignore it
-      if (genericSignature)
+      if (weakSignature)
          signatureLen = 0;
    }
 
@@ -4536,20 +4525,20 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             scope.raiseError(errInvalidHint, action);
 
          actionStr.copy(INVOKE_MESSAGE);
-//         // Compiler Magic : if it is a generic closure - ignore fixed argument
-//         if (test(scope.hints, tpGeneric) && paramCount > OPEN_ARG_COUNT) {
-//            if (validateGenericClosure(signature)) {
-//               signature.truncate(signature.ident().findSubStr(1, "$"));
-//               paramCount = OPEN_ARG_COUNT;
-//               scope.genericClosure = true;               
-//               if (scope.moduleScope->mapReference(signature.ident() + 1) == scope.moduleScope->superReference) {
-//                  // HOTFIX : ignore super object reference
-//                  signature.clear();
-//               }
-//            }
-//            // generic clsoure should have a homogeneous signature (i.e. same types)
-//            else scope.raiseError(errIllegalMethod, node);
-//         }
+         // Compiler Magic : if it is a generic closure - ignore fixed argument
+         if (test(scope.hints, tpGeneric) && paramCount > OPEN_ARG_COUNT) {
+            if (validateGenericClosure(signature, signatureLen)) {
+               signatureLen = 1;
+               paramCount = OPEN_ARG_COUNT;
+               scope.genericClosure = true;               
+               if (signature[0] == scope.moduleScope->superReference) {
+                  // HOTFIX : ignore super object reference
+                  signatureLen = 0;
+               }
+            }
+            // generic clsoure should have a homogeneous signature (i.e. same types)
+            else scope.raiseError(errIllegalMethod, node);
+         }
       }
 
       if (test(scope.hints, tpInternal)) {
@@ -5667,7 +5656,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
    }
 }
 
-void Compiler :: generateClassFlags(ClassScope& scope, SNode root/*, bool& closureBaseClass*/)
+void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 {
    ref_t extensionTypeRef = 0;
 
@@ -5692,9 +5681,6 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root/*, bool& closu
 //      else if (current == lxTarget) {
 //         extensionTypeRef = current.argument;
 //      }
-      //else if (current == lxClosureAttr) {
-      //   closureBaseClass = true;
-      //}
 
       current = current.nextNode();
    }
@@ -5963,10 +5949,10 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    }
 
    if (hintChanged) {
-      //if (test(hint, tpSealed | tpGeneric) && getAction(message) == INVOKE_MESSAGE_ID) {
-      //   // HOTFIX : generic closure cannot be sealed
-      //   hint &= ~tpSealed;
-      //}
+      if (test(hint, tpSealed | tpGeneric | tpAction)) {
+         // HOTFIX : generic closure cannot be sealed
+         hint &= ~tpSealed;
+      }
       scope.info.methodHints.exclude(Attribute(message, maHint));
       scope.info.methodHints.add(Attribute(message, maHint), hint);
    }
@@ -6035,7 +6021,7 @@ void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope
 
 }
 
-void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute/*, bool closureBaseClass*/)
+void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute)
 {
    ref_t message = current.argument;
 
@@ -6062,9 +6048,6 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    else if (_logic->isMethodGeneric(scope.info, message)) {
       scope.info.header.flags |= elWithGenerics;
    }
-//   if (test(methodHints, tpAction) && closureBaseClass) {
-//      scope.moduleScope->saveAction(message, scope.reference);
-//   }
 
    // check if there is no duplicate method
    if (scope.info.methods.exist(message, true)) {
@@ -6073,7 +6056,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    else {
       bool privateOne = test(message, SEALED_MESSAGE);
       bool castingOne = test(methodHints, tpConversion);
-      if (test(message, SPECIAL_MESSAGE) && message == encodeAction(NEWOBJECT_MESSAGE_ID) | SPECIAL_MESSAGE) {
+      if (test(message, SPECIAL_MESSAGE) && message == (encodeAction(NEWOBJECT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
          // initialize method can be overridden
          castingOne = true;
       }
@@ -6205,7 +6188,6 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
 void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool nestedDeclarationMode)
 {
    bool closed = test(scope.info.header.flags, elClosed);
-//   bool closureBaseClass = false;
 
    if (classClassMode) {
       if (_logic->isDefaultConstructorEnabled(scope.info)) {
@@ -6214,7 +6196,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    }
    else {
       // HOTFIX : flags / fields should be compiled only for the class itself
-      generateClassFlags(scope, node/*, closureBaseClass*/);
+      generateClassFlags(scope, node);
 
       if (test(scope.info.header.flags, elExtension)) {
          scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;

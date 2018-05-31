@@ -3,9 +3,11 @@
 
 define elStructure          000000008h
 define elSubject            000002000h
+define elMessage            000008000h
 
 define EVAL_ACTION          005h
 define EVAL_MESSAGE_ID      050h
+define INVOKE_ACTION        01Eh
 
 procedure __object.dispatch[1]
 
@@ -4567,4 +4569,140 @@ labEnd:
   pushr const : %"new[2]"
   throw
         
+end
+
+procedure __mssg_closure."#invoke$system@Object[13]"
+
+  nloade
+  aloadsi 1
+  ajumpvi 0
+
+end
+
+procedure __closuretape.dispatch[1]
+
+  dcopyverb
+  elsen labDefault INVOKE_ACTION
+
+  dcopycount
+  ecopyd  
+
+  open 5
+  reserve 2
+  pusha
+  
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+  
+  pushn 0
+  
+  bcopyf -6
+  
+// ; copy message parameters
+  dcopye
+  ifn  labSkipCopy 0
+labNextParam:
+  dec
+  get
+  pusha
+  elsen labNextParam 0
+
+labSkipCopy:
+  bloadfi 1
+
+labNext:
+  breakpoint
+
+  count
+  dloadfi -2
+  if labEnd
+  get
+  inc
+  dsavefi -2
+
+  xindexrm system'dynamic'DynamicClosure %"#invoke[12]"
+  acallvd
+  pusha
+  bloadfi 1
+  jump labNext
+
+labEnd:
+  popa
+
+  dloadfi -3
+  dec
+  ecopyd
+  restore 4
+  close
+
+  equit
+
+labDefault:
+  ecopyd
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[1]
+  throw
+
+end
+
+procedure __closureclass.dispatch[1]
+
+  bsredirect
+
+  pushe
+  bcopya
+  pushn 0
+
+labNext:
+  count
+  dloadsi 0
+  if labEnd
+  get
+  inc
+  dsavesi 0
+
+  flag
+  andn elMessage
+  ifn  labNext 0
+
+  nload
+  ecopyd
+  dloadsi 1
+  else labNext
+
+labCall:
+  dloadsi 0
+  get
+  pop
+  pope
+  setverb INVOKE_ACTION
+  eaddn 1
+  ajumpvi 0
+
+labQuit:
+  quitn 1
+  
+labEnd:
+  popi 2
+  pope
+  open    4
+  reserve 2
+  esavesi 3
+  bcopys  -3
+  pushb
+  pusha
+  acopyr class : system'Message
+  pushr class : system'MethodNotFoundException
+  asavesi 5
+  aloadsi 0
+  pushr const : %"new[2]"
+  throw
+
 end

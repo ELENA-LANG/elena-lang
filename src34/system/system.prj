@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>3.4.4</version>
+     <version>3.4.5</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -52,6 +52,8 @@
        <include>dynamic\reflection.l</include>
        <include>dynamic\groups.l</include>
        <include>dynamic\interpreters.l</include>
+       <include>dynamic\closures.l</include>
+       <include>dynamic\tape.l</include>
      </module>
   </files>
 </configuration>

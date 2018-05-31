@@ -3,9 +3,12 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * do we need Tape and Class, probably better to use ClosureTape and ClosureClass
+                 * do we need Tape and Class, probably better to use ClosureTape and ClosureClass?
+                 * post : Passing argument list explicitly
 
                  * test : ELENA Script Engine : compiling JavaScript file
+
+                 * test collatz
 
                  * extrnal operations without target - ignore the result
 
