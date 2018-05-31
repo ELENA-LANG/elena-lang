@@ -3,6 +3,12 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * comparing handler with a numeric constant
+                 * comparing char with a numeric constant
+                 * equal - default implementation should not allow to compare different types (e.g. int and literal)
+                 * reading non existing file : no exception is raised (see getting started tutoral)
+                 * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
+
                  * do we need Tape and Class, probably better to use ClosureTape and ClosureClass?
                  * post : Passing argument list explicitly
 
@@ -42,12 +48,12 @@ In development:
                  * nested classes around self variable should be compiled as a wrapper,
                    so in some cases they can be used without actually creating them
                  * #new method should not be created for an abstract class
+                 * warn if the local variable / param is called target, self, super
                  * optimize interface dispatch implementation (interface template)
                  * validate that a field template contains exactly one a field with a name "field"
                  * test typified prop - the get accessor should be typiefied as well
                  * vprop - currently 0 is assigned, which is not correct, probably "prop_type min" should be used
                  * structure should contain at least one data field
-                 * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
                    directly (and get rid of hot fix in compileExternalArguments)
                  * call console operations directly
                  * test #12 : Extension with stack allocated object 

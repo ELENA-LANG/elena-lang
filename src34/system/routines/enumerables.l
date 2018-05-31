@@ -265,18 +265,18 @@ public extension enumerableOp
 //        
 //        ^ maximal   
 //    ]
-//    
-//    lastMember
-//    [
-//        enumerator anEnumerator := self enumerator.
-//        object     aLastItem := $nil.
-//        
-//        while (anEnumerator next)
-//            [ aLastItem := anEnumerator get ].
-//            
-//        ^ aLastItem
-//    ]
-//    
+    
+    lastMember
+    [
+        auto   anEnumerator := T<Enumerator>(self enumerator).
+        object aLastItem := nil.
+        
+        while (anEnumerator next)
+            [ aLastItem := anEnumerator get ].
+            
+        ^ aLastItem
+    ]
+    
 //    int countMembers
 //    [
 //        enumerator en := self enumerator.
