@@ -3,6 +3,7 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * test words
                  * comparing handler with a numeric constant
                  * comparing char with a numeric constant
                  * equal - default implementation should not allow to compare different types (e.g. int and literal)
