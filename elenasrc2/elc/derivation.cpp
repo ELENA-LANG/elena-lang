@@ -2555,8 +2555,11 @@ ref_t DerivationTransformer :: mapTemplateName(SNode node, int prefixCounter, De
    ref_t reference = 0;
    if (!globalOne) {
       reference = scope.mapIdentifier(className, node == lxReference);
-      if (!reference && node == lxReference)
-         reference = scope.compilerScope->mapFullReference(className.c_str(), true);
+      if (!reference && node == lxReference) {
+         reference = scope.mapIdentifier(className, false);
+         if (!reference)
+            reference = scope.compilerScope->mapFullReference(className.c_str(), true);
+      }         
    }
    else reference = scope.compilerScope->mapFullReference(className.c_str(), true);
 
@@ -2565,7 +2568,7 @@ ref_t DerivationTransformer :: mapTemplateName(SNode node, int prefixCounter, De
 
 void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode/*, int mode*/, bool expressionMode)
 {
-    ref_t classRef = 0;
+   ref_t classRef = 0;
 
    bool arrayMode = false;
    bool dynamicMode = false;
@@ -2604,7 +2607,7 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
 
       attrRef = mapTemplateName(identNode, prefixCounter, scope);
       if (!attrRef)
-         scope.raiseError(errUnknownSubject, node);
+         scope.raiseError(errUnknownTemplate, node);
 
       newTemplateMode = true;
    }

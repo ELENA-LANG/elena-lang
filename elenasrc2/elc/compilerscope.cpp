@@ -181,54 +181,6 @@ ref_t CompilerScope :: mapNewIdentifier(ident_t ns, ident_t identifier, bool pri
    else return ::mapNewIdentifier(module, identifier, privateOne);
 }
 
-//ref_t CompilerScope :: mapNewTerminal(SNode terminal, bool privateOne)
-//{
-//   ident_t identifier = terminal.identifier();
-//   switch (terminal) {
-//      case lxIdentifier:
-//      case lxReference:
-//         return mapNewIdentifier(identifier, privateOne);
-////         return mapIdentifier(identifier, existing);
-//      //   return module->mapReference(identifier, false);
-//      default:
-//         return 0;
-//   }
-//   //ident_t identifier = terminal.identifier();
-//   //if (terminal == lxIdentifier) {
-//      //      ref_t reference = forwards.get(identifier);
-//      //      if (reference == 0) {
-//      //         if (!existing) {
-//      //            ReferenceNs name(module->Name(), identifier);
-//      //
-//     // return module->mapReference(/*name*/identifier);
-//      //         }
-//      //         else return resolveImplicitIdentifier(identifier);
-//      //      }
-//      //      else return reference;
-//   //}
-//   ////   else if (terminal == lxPrivate) {
-//   ////      ReferenceNs name(module->Name(), "#");
-//   ////      name.append(identifier.c_str() + 1);
-//   ////
-//   ////      return mapReference(name, existing);
-//   ////   }
-//   //else return /*mapReference(identifier, existing)*/0;
-//}
-
-//ref_t CompilerScope :: mapIdentifier(ident_t identifier, bool existing)
-//{
-//   if (!existing) {
-//      if (isWeakReference(identifier)) {
-//         if (identifier.findLast('\'') == 0) {
-//            return module->mapReference(identifier + 1);
-//         }
-//         else return module->mapReference(identifier);
-//      }
-//      else return module->mapReference(identifier);
-//   }
-//   else return 0; // !! temporal
-//}
-
 ref_t CompilerScope :: mapFullReference(ident_t referenceName, bool existing)
 {
    if (emptystr(referenceName))

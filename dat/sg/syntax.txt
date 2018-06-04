@@ -452,7 +452,7 @@ PARAMETER ->
 TOKEN ->
 	identifier TOKEN_BODY
 	| member
-	| reference
+	| reference TOKEN_BODY
 
 TOKEN_PARAM ->
 	identifier TOKEN_BODY

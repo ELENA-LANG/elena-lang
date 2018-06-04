@@ -4,12 +4,10 @@ In development:
 	                            
               dev - redesign
                  * test words
-                 * comparing handler with a numeric constant
-                 * comparing char with a numeric constant
-                 * equal - default implementation should not allow to compare different types (e.g. int and literal)
-                 * reading non existing file : no exception is raised (see getting started tutoral)
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
-
+                 * local / parameter with name self / target should have precedence over the built-in
+                 * optimize - if (0 == theTop) (where theTop is ref<int>)
+                   
                  * do we need Tape and Class, probably better to use ClosureTape and ClosureClass?
                  * post : Passing argument list explicitly
 
@@ -21,6 +19,9 @@ In development:
 
                  * migrate script samples
                  * migrate dynamic, templates
+
+                 * comparing handler with a numeric constant
+                 * comparing char with a numeric constant
 
                  * check why the vm console samples are always broken at the end
 
@@ -78,12 +79,12 @@ In development:
                  * optimize equal, less operation between chars
                  * optimize TextBuilder
                  * a class cannot have a public and internal methods with the same name and similar number of parameters
+                 * optimize IntNumber.equal[1] method
                  * why the error - ArrayList :: Indexable, interface<Enumerable>
                  * review the extensoin declaration syntax
                  * review field / method template usage syntax
                  * template extension
                  * comparing int and ptr (handle, dirty_ptr)
-                 * using templates with full name - system'collections'Tuple<int,int>(1,2)
                  * extrnal operations : support long and real
                  * fix console application with redirect mode
                  * warn if there are several similar extension for given message
@@ -155,6 +156,7 @@ Pipeline:
                  * optimize embeddable function call
                  * optimize embeddable function2 call
                  * optimize integerOp : append / reduce should be stacksafe
+                 * optimize : var n := T<int>(h) \ back:nil. (where h is Handle)
 
               xdev - samples
                  * Short-circuit evaluation : do not use lazy expressions

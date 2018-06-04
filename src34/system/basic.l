@@ -983,7 +983,7 @@ public sealed struct IntNumber :: IntBaseNumber
     
     bool equal:o
     [
-        var n := o int \ back:nil.
+        var n := T<int>(o) \ back:nil.
         (nil == n)
             ? [ ^ false ]
             ! [ ^ self equal(n) ]
@@ -1688,7 +1688,7 @@ public sealed struct LongNumber :: IntBaseNumber
     
     bool equal:o
     [
-        var n := o long \ back:nil.
+        var n := T<long>(o) \ back:nil.
         (nil == n)
             ? [ ^ false ]
             ! [ ^ self equal(n) ]

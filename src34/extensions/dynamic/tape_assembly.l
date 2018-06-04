@@ -637,14 +637,14 @@ import system'dynamic.
 //        context[pos] := $JumpIfNotClosure new(offset).        
 //    ]        
 //}
-//
-//class TapeAssembly
+
+//public class TapeAssembly
 //{
 //    stack<$Strategy>        _states.
-//    type<$Strategy>         _state.
+//    T<$Strategy>         _state.
 //
-//    type<$ClassContext>     _context.
-//    type<$ParameterContext> _parameters.
+//    T<$ClassContext>     _context.
+//    T<$ParameterContext> _parameters.
 //    
 //    constructor new
 //    [
@@ -775,156 +775,156 @@ import system'dynamic.
 //    first => _context.
 //}
 
-//public singleton openSymbolClosure :: DynamicClosure
-//{
-//    generic closure eval(object target, V<object> args)
-//        = target openSymbol.
-//}
+public singleton openSymbolClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t openSymbol.
+}
 
-//singleton openPreloadedSymbolClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target openSymbol.
-//}
-//
-//singleton openSingletonClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target openSingleton.
-//}
-//
-//singleton openMethodClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target openMethod.
-//}
-//
-//singleton openCodeClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target openCode.
-//}
-//
-//singleton openExpressionClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target openExpression.
-//}
-//
-//singleton openReturningClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target openReturning.
-//}
-//
-//singleton openVariableClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target openVariable.
-//}
-//
-//singleton openLoopClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target openLoop.
-//}
-//
-//singleton closeClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target close.
-//}
-//
-//singleton newAssignClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target newAssignToken:"=".
-//}
-//
-//assignClosureFactory =
-//{
-//    new : x = newAssignClosure.
-//}.
-//
-//singleton ifClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target if.
-//}
-//
-//singleton nextClosure :: DynamicClosure
-//{
-//    generic closure(object target, object<> args)
-//        = target nextOperation.
-//}
-//
-//class includeClosure :: DynamicClosure
-//{
-//    literal forward.
-//    literal reference.
-//    
-//    constructor new(literal forward, literal reference)
-//    [
-//        @forward:=forward.
-//        @reference:=reference.
-//    ]
-//    
-//    generic closure(object target, object<> args)
-//        = target include(forward,reference).
-//}
-//
-//class DynamicClosureWithParam :: DynamicClosure
-//{
-//    object param.
-//    
-//    constructor new : param
-//    [
-//        @param := param
-//    ]
-//}
-//
-//class newReferenceClosure :: DynamicClosureWithParam
-//{    
-//    generic closure(object target, object<> args)
-//        = target newReference:param.    
-//}
-//
-//class newMessageClosure :: DynamicClosureWithParam
-//{    
-//    generic closure(object target, object<> args)
-//        = target newMessageToken:param.    
-//}
-//
-//class newConstantClosure :: DynamicClosureWithParam
-//{    
-//    generic closure(object target, object<> args)
-//        = target newConstant:param.    
-//}
-//
-//class newLiteralClosure :: DynamicClosureWithParam
-//{    
-//    generic closure(object target, object<> args)
-//        = target newLiteralToken:param.    
-//}
-//
-//class newNumericClosure :: DynamicClosureWithParam
-//{    
-//    generic closure(object target, object<> args)
-//        = target newNumericToken:param.    
-//}
-//
-//class newParamTokenClosure :: DynamicClosureWithParam
-//{    
-//    generic closure(object target, object<> args)
-//        = target newParamToken:param.    
-//}
-//
-//class newIdentifierClosure :: DynamicClosureWithParam
-//{    
-//    generic closure(object target, object<> args)
-//        = target newIdentToken:param.    
-//}
-//
+public singleton openPreloadedSymbolClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t openSymbol.
+}
+
+public singleton openSingletonClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t openSingleton.
+}
+
+public singleton openMethodClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t openMethod.
+}
+
+public singleton openCodeClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t openCode.
+}
+
+public singleton openExpressionClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t openExpression.
+}
+
+public singleton openReturningClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t openReturning.
+}
+
+public singleton openVariableClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t openVariable.
+}
+
+public singleton openLoopClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t openLoop.
+}
+
+public singleton closeClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t close.
+}
+
+public singleton newAssignClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t newAssignToken:"=".
+}
+
+public assignClosureFactory =
+{
+    new : x = newAssignClosure.
+}.
+
+public singleton ifClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t if.
+}
+
+public singleton nextClosure :: DynamicClosure
+{
+    generic closure eval(object t, V<object> args)
+        = t nextOperation.
+}
+
+public class includeClosure :: DynamicClosure
+{
+    literal forward.
+    literal reference.
+    
+    constructor new(literal forward, literal reference)
+    [
+        @forward:=forward.
+        @reference:=reference.
+    ]
+    
+    generic closure eval(object t, V<object> args)
+        = t include(forward,reference).
+}
+
+public abstract class DynamicClosureWithParam :: DynamicClosure
+{
+    object param.
+    
+    constructor new : param
+    [
+        @param := param
+    ]
+}
+
+public class newReferenceClosure :: DynamicClosureWithParam
+{    
+    generic closure eval(object t, V<object> args)
+        = t newReference:param.    
+}
+
+public class newMessageClosure :: DynamicClosureWithParam
+{    
+    generic closure eval(object t, V<object> args)
+        = t newMessageToken:param.    
+}
+
+public class newConstantClosure :: DynamicClosureWithParam
+{    
+    generic closure eval(object t, V<object> args)
+        = t newConstant:param.    
+}
+
+public class newLiteralClosure :: DynamicClosureWithParam
+{    
+    generic closure eval(object t, V<object> args)
+        = t newLiteralToken:param.    
+}
+
+public class newNumericClosure :: DynamicClosureWithParam
+{    
+    generic closure eval(object t, V<object> args)
+        = t newNumericToken:param.    
+}
+
+public class newParamTokenClosure :: DynamicClosureWithParam
+{    
+    generic closure eval(object t, V<object> args)
+        = t newParamToken:param.    
+}
+
+public class newIdentifierClosure :: DynamicClosureWithParam
+{    
+    generic closure eval(object t, V<object> args)
+        = t newIdentToken:param.    
+}
+
 //singleton $popClosure :: DynamicClosure
 //{
 //    generic closure(object elementToRemove, object nextElement, object<> args)
@@ -936,7 +936,7 @@ import system'dynamic.
 //    generic closure(object prevElement, object elementToRemove, object<> args)
 //        = prevElement.    
 //}
-//
+
 //singleton $exitClosure :: DynamicClosure
 //{
 //    generic closure(object<> args)

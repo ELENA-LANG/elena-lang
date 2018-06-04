@@ -3767,7 +3767,13 @@ void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope
    int tempLocal = scope.newLocal();
    writer.newNode(lxAssigning);
    writer.appendNode(lxLocal, tempLocal);
-   ObjectInfo objectInfo = compileObject(writer, targetNode, scope, 0);
+   ObjectInfo objectInfo;
+   if (firstExpr == lxBoxing) {
+      // HOTFIX : to correctly compile alternative operation with typecasting expression
+      objectInfo = compileObject(writer, firstExpr, scope, 0);
+      firstExpr = lxExpression;
+   }
+   else objectInfo = compileObject(writer, targetNode, scope, 0);
    writer.closeNode();
 
    targetNode.set(lxLocal, tempLocal);
@@ -3797,6 +3803,12 @@ void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope
             //
             //      target = ObjectInfo(okObject);
 
+         }
+         else if (current == lxExpression) {
+            // HOTFIX : to correctly compile alternative operation with typecasting expression
+            writer.newNode(lxExpression);
+            compileExpression(writer, current, scope, 0, 0);
+            writer.closeNode();
          }
          else compileExpression(writer, current, scope, 0, 0);
 
@@ -4531,10 +4543,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
                signatureLen = 1;
                paramCount = OPEN_ARG_COUNT;
                scope.genericClosure = true;               
-               if (signature[0] == scope.moduleScope->superReference) {
-                  // HOTFIX : ignore super object reference
-                  signatureLen = 0;
-               }
             }
             // generic clsoure should have a homogeneous signature (i.e. same types)
             else scope.raiseError(errIllegalMethod, node);
