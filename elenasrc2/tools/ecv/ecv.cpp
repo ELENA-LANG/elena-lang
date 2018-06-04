@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   23
+#define REVISION_VERSION   24
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -217,6 +217,11 @@ ref_t resolveMessage(_Module* module, ident_t method)
       flags |= SEALED_MESSAGE;
 
       method = method.c_str() + getlength("#private&");
+   }
+   else if (method.startsWith("#conversion&")) {
+      flags |= SPECIAL_MESSAGE;
+
+      method = method.c_str() + getlength("#conversion&");
    }
 
    IdentifierString actionName;
@@ -453,10 +458,10 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    //   else command.append("#new");
    //}
    else if (actionRef <= PREDEFINED_MESSAGE_ID) {
-      //if (test(reference, CONVERSION_MESSAGE)) {
-      //   command.append("#conversion&");
-      //}
-      /*else */if (test(reference, SEALED_MESSAGE)) {
+      if (test(reference, SPECIAL_MESSAGE)) {
+         command.append("#conversion&");
+      }
+      else if (test(reference, SEALED_MESSAGE)) {
          command.append("#private&");
       }
 

@@ -5371,6 +5371,10 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
                   // if it is in-place class member initialization
                   compileImplicitConstructor(writer, current, methodScope);
                }
+               else if (methodScope.message == (encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
+                  // if it is in-place class member initialization
+                  compileImplicitConstructor(writer, current, methodScope);
+               }
                else if (methodScope.abstractMethod) {
                   compileAbstractMethod(writer, current, methodScope);
                }

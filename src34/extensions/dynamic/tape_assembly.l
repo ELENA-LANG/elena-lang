@@ -1,4 +1,4 @@
-//import system'collections.
+import system'collections.
 import system'dynamic.
 //import system'text.
 //import extensions.
@@ -14,16 +14,16 @@ import system'dynamic.
 //
 //const int $METHOD_PARAM = 1.
 //const int $FORWARD_PARAM = 2.
-//
-//sealed class $ClassContext
-//{
-//    stack<object> _stack.
-//    list<object>  _tape.
+
+sealed class ClassContext
+{
+//    Stack<object> _stack.
+//    List<object>  _tape.
 //    
 //    constructor new
 //    [
-//        _stack := stack<object>().
-//        _tape := list<object>().
+//        _stack := Stack<object>().
+//        _tape := List<object>().
 //    ]
 //
 //    push : object
@@ -56,11 +56,11 @@ import system'dynamic.
 //    [
 //        _tape[index] := object.
 //    ]
-//}
-//
-//sealed class $ParameterContext
-//{
-//    type<ArrayList> _buffer.
+}
+
+sealed class ParameterContext
+{
+//    T<ArrayList> _buffer.
 //    
 //    constructor new
 //    [
@@ -80,7 +80,7 @@ import system'dynamic.
 //    [
 //        int index := level * 3.
 //        
-//        _buffer trim int(index).
+//        _buffer trim(index).
 //    ]
 //        
 //    add(LiteralValue name, IntNumber type, Object value)
@@ -88,7 +88,7 @@ import system'dynamic.
 //        _buffer append(name); append(type); append(value)
 //    ]
 //    
-//    resolve literal:name vint:type
+//    resolve(literal name, ref<int> type)
 //    [
 //        int len := _buffer length.
 //        int i := len - 3.
@@ -96,7 +96,7 @@ import system'dynamic.
 //        [
 //            if (name == _buffer[i])
 //            [
-//                type set int(_buffer[i+1]).
+//                type value := _buffer[i+1].
 //
 //                ^ _buffer[i+2].
 //            ].
@@ -104,12 +104,12 @@ import system'dynamic.
 //            i := i - 3.
 //        ].
 //        
-//        ^ $nil.
+//        ^ nil.
 //    ]        
-//}
-//
-//limited class $Strategy
-//{
+}
+
+interface class Strategy
+{
 //    type<$Strategy> preloaded_one []
 //    type<$Strategy> symbol_one    []
 //    type<$Strategy> expression    []
@@ -134,8 +134,8 @@ import system'dynamic.
 //    setAssignToken($ClassContext context, LiteralValue t)     []
 //    setIdentToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
 //    setParamToken($ClassContext context, LiteralValue m, $ParameterContext parameters) []
-//}
-//
+}
+
 //singleton $StartOne :: $Strategy
 //{
 //    type<$Strategy> preloaded_one = $PreloadedOne.
@@ -638,14 +638,14 @@ import system'dynamic.
 //    ]        
 //}
 
-//public class TapeAssembly
-//{
-//    stack<$Strategy>        _states.
-//    T<$Strategy>         _state.
+public class TapeAssembly
+{
+//    Stack<Strategy>     _states.
+//    T<Strategy>         _state.
 //
-//    T<$ClassContext>     _context.
-//    T<$ParameterContext> _parameters.
-//    
+//    T<ClassContext>     _context.
+//    T<ParameterContext> _parameters.
+    
 //    constructor new
 //    [
 //        _state := $StartOne.
@@ -773,7 +773,7 @@ import system'dynamic.
 //    ]
 //    
 //    first => _context.
-//}
+}
 
 public singleton openSymbolClosure :: DynamicClosure
 {
