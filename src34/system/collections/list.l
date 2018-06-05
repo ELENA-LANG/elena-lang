@@ -88,9 +88,6 @@ public sealed List<type> :: Enumerable<type>
     setAt(object anIndex, object anObject)
         = self setAt(T<int>(anIndex), T<type>(anObject)).
 
-    append : object
-        <= append(T<type>(object)).
-
     /// Appends a new object to the end of the list
     append(type object)
     [
@@ -100,6 +97,9 @@ public sealed List<type> :: Enumerable<type>
         
         theLength append(1).
     ]
+
+    append : object
+        <= append(T<type>(object)).
 
     /// Removes an object at the specified position
     stacksafe remove(int anIndex)
