@@ -78,7 +78,8 @@ size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, char
       pos_t nextPosition = reader.Position() + size;
 
       // check the class
-      if (symbol[0] != '#') {
+      size_t pos = symbol.findLast('\'');
+      if (symbol[pos + 1] != '#') {
          int vmtAddress = reader.getDWord();
          if (vmtAddress == classVAddress) {
             size_t len = maxLength;
@@ -99,6 +100,7 @@ size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, char
 void* RTManager :: loadSymbol(StreamReader& reader, ident_t name)
 {
    ident_t symbol;
+   size_t len = getlength(name);
 
    // search through debug section until the ret point is inside two consecutive steps within the same object
    while (!reader.Eof()/* && !found*/) {
@@ -110,10 +112,11 @@ void* RTManager :: loadSymbol(StreamReader& reader, ident_t name)
       pos_t nextPosition = reader.Position() + size;
 
       // check the class
-      if (symbol[0] == '#') {
+      size_t pos = symbol.findLast('\'');
+      if (symbol[pos+1] == '#') {
          int address = reader.getDWord();
 
-         if (name.compare(symbol + 1)) {
+         if (name.compare(symbol, pos + 1) & name.compare(symbol + pos + 2, pos + 1, len - pos)) {
             return (void*)address;
          }
       }
@@ -293,59 +296,54 @@ void* RTManager :: loadSubject(StreamReader& reader, ident_t name)
 
 void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap& verbs)
 {
-   //ReferenceMap subjects(0);
-   //subjects.read(&reader);
+   ReferenceMap subjects(0);
+   subjects.read(&reader);
 
-   //IdentifierString signature;
-   //size_t subject = 0;
-   //size_t param = 0;
-   //int paramCount = -1;
-   //for (size_t i = 0; i < getlength(message); i++) {
-   //   if (message[i] == '.') {
-   //      return NULL;
-   //   }
-   //   else if (message[i] == '[') {
-   //      if (message[i + 1] == ']') {
-   //         //HOT FIX : support open argument list
-   //         paramCount = OPEN_ARG_COUNT;
-   //      }
-   //      else if (message[getlength(message) - 1] == ']') {
-   //         signature.copy(message + i + 1, getlength(message) - i - 2);
-   //         paramCount = signature.ident().toInt();
-   //         if (paramCount > 12)
-   //            return NULL;
-   //      }
-   //      else return NULL;
+   IdentifierString signature;
+   size_t subject = 0;
+   size_t param = 0;
+   int paramCount = -1;
+   for (size_t i = 0; i < getlength(message); i++) {
+      if (message[i] == '.') {
+         return NULL;
+      }
+      else if (message[i] == '[') {
+         if (message[i + 1] == ']') {
+            //HOT FIX : support open argument list
+            paramCount = OPEN_ARG_COUNT;
+         }
+         else if (message[getlength(message) - 1] == ']') {
+            signature.copy(message + i + 1, getlength(message) - i - 2);
+            paramCount = signature.ident().toInt();
+            if (paramCount > 12)
+               return NULL;
+         }
+         else return NULL;
 
-   //      param = i;
-   //   }
-   //   else if (message[i] == '&') {
+         param = i;
+      }
+      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+      }
+      else if (message[i] == ']' && i == (getlength(message) - 1)) {
+      }
+      else return NULL;
+   }
 
-   //   }
-   //   else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-   //   }
-   //   else if (message[i] == ']' && i == (getlength(message) - 1)) {
-   //   }
-   //   else return NULL;
-   //}
+   int flags = 0;
+   if (message.startsWith("set&")) {
+      subject = 4;
+      flags = PROPSET_MESSAGE;
+   }
+   else if (message.compare("set", param)) {
+      flags = PROPSET_MESSAGE;
+   }
 
-   //int flags = 0;
-   //if (message.startsWith("set&")) {
-   //   subject = 4;
-   //   flags = PROPSET_MESSAGE;
-   //}
-   //else if (message.compare("set", param)) {
-   //   flags = PROPSET_MESSAGE;
-   //}
+   if (param != 0) {
+      signature.copy(message + subject, param - subject);
+   }
+   else signature.copy(message + subject);
 
-   //if (param != 0) {
-   //   signature.copy(message + subject, param - subject);
-   //}
-   //else signature.copy(message + subject);
+   ref_t signatureId = subjects.get(signature);
 
-   //ref_t signatureId = subjects.get(signature);
-
-   //return (void*)(encodeMessage(signatureId, paramCount) | flags);
-
-   return NULL; // !! temporal
+   return (void*)(encodeMessage(signatureId, paramCount) | flags);
 }

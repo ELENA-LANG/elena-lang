@@ -3,6 +3,8 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * debugger : display template based classes
+
                  * test words
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
                  * local / parameter with name self / target should have precedence over the built-in
@@ -27,7 +29,6 @@ In development:
 
                  * default constructor and explicit convertors
 
-                 * debugger : display template based classes
                  * debugger : debugging template based classes
                  * method not found wrong attribute
 
