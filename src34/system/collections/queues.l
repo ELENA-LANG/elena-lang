@@ -138,6 +138,22 @@ public sealed Stack<type> :: Enumerable<type>
         theArray clear.
         theTop value := 0.
     ]    
+    
+    Enumerator<type> enumerator = BaseEnumerator<type>::
+    {
+        @theIndex := -1.
+        
+        @theLength := self length.
+        
+        type get = theArray getAt(T<int>(theTop) - @theIndex - 1).
+        
+        enumerable = self.
+        
+        reset
+        [
+            @theIndex := -1
+        ]
+    }.    
 }
 
 // --- Queue ---

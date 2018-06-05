@@ -4706,3 +4706,89 @@ labEnd:
   throw
 
 end
+
+procedure __symbol.dispatch[1]
+
+  pushe
+  acalli 0
+  pope
+  ajumpvi 0
+
+end
+
+procedure __symbol."load$system@Symbol$system@LiteralValue[2]"
+
+  aloadsi 2   // ; read aName parameter
+  pusha
+  callextr extern : LoadSymbol
+  pop
+  ifn labError 0
+  bloadsi 1
+  nsave
+  acopyb
+  quitn 2
+
+labError:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
+end
+                                         
+procedure __exit_closure."#invoke$system@Object[13]"
+
+  bloadfi 1
+  count
+  dcopye
+  dsavefi -2  
+  aloadsi 1
+  quit
+
+end
+
+procedure __jumpif_closure."#invoke$system@Object[13]"
+
+  bcopya
+  aloadsi 1
+  elser labSkip const : system'true
+  acopyb
+  nloade
+  dloadfi -2
+  add
+  dsavefi -2  
+
+labSkip:
+  aloadsi 2
+  quitn 2
+
+end
+
+procedure __jumpifnot_closure."#invoke$system@Object[13]"
+
+  bcopya
+  aloadsi 1
+  elser labSkip const : system'false
+  acopyb
+  nloade
+  dloadfi -2
+  add
+  dsavefi -2  
+
+labSkip:
+  aloadsi 2
+  quitn 2
+
+end
+
+procedure __jump_closure."#invoke$system@Object[13]"
+
+  nloade
+  dloadfi -2
+  add
+  dsavefi -2
+  aloadsi 1
+  quitn 1
+
+end

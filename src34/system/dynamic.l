@@ -1,19 +1,19 @@
-//// --- Symbol ---
-//
-///// A dynamic symbol
-//sealed struct Symbol
-//{
-//    __symbol theValue.
-//    
-//    /// Loads a symbol
-//    constructor new literal:name
-//    [
-//        system'core_routines'__symbol load symbol_ref:$self literal:name
-//    ]
-//        
-//    /// Redirects incoming messages to the symbol
-//    dispatch => system'core_routines'__symbol.
-//}
+// --- Symbol ---
+
+/// A dynamic symbol
+public sealed struct Symbol
+{
+    __symbol theValue.
+    
+    /// Loads a symbol
+    constructor new(literal name)
+    [
+        system'core_routines'__symbol load(self, name)
+    ]
+        
+    /// Redirects incoming messages to the symbol
+    dispatch => system'core_routines'__symbol.
+}
 
 // --- Message ---
 
