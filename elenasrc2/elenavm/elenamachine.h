@@ -16,7 +16,7 @@
 #define VM_INTERPRET      "$native'core_vm'eval"
 #define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
 
-#define ELENAVM_REVISION  3
+#define ELENAVM_REVISION  4
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2018 by Alex Rakov"
@@ -212,6 +212,7 @@ protected:
 
    virtual ident_t resolveForward(ident_t forward);
 
+   ident_t resolveTemplateWeakReference(ident_t referenceName);
    virtual ReferenceInfo retrieveReference(_Module* module, ref_t reference, ref_t mask);
    virtual ident_t retrieveReference(void* address, ref_t mask);
 

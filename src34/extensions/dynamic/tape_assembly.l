@@ -156,6 +156,9 @@ singleton SymbolOne :: Strategy
     
     end(ClassContext context, ParameterContext parameters)
     [
+        var t := context tape.
+        var s := t __className.
+        
         int index := context pop.
         int len := context length - index.
         var tape := ClosureTape new(context tape, index, len).

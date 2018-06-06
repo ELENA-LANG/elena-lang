@@ -247,6 +247,43 @@ ident_t ExecutableImage :: getNamespace()
    return _project->StrSetting(opNamespace);
 }
 
+ident_t ExecutableImage :: resolveTemplateWeakReference(ident_t referenceName)
+{
+   ident_t resolvedName = _project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+   if (emptystr(resolvedName)) {
+      if (referenceName.endsWith(CLASSCLASS_POSTFIX)) {
+         // HOTFIX : class class reference should be resolved simultaneously with class one
+         IdentifierString classReferenceName(referenceName, getlength(referenceName) - getlength(CLASSCLASS_POSTFIX));
+
+         classReferenceName.copy(resolveTemplateWeakReference(classReferenceName.c_str()));
+         classReferenceName.append(CLASSCLASS_POSTFIX);
+
+         _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, classReferenceName.c_str());
+
+         return _project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      }
+
+      // COMPILER MAGIC : try to find a template implementation
+      ref_t resolvedRef = 0;
+      _Module* refModule = _project->resolveWeakModule(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedRef, true);
+      if (refModule != nullptr) {
+         ident_t resolvedReferenceName = refModule->resolveReference(resolvedRef);
+         if (isWeakReference(resolvedReferenceName)) {
+            IdentifierString fullName(refModule->Name(), resolvedReferenceName);
+
+            _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, fullName);
+         }
+         else _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedReferenceName);
+
+         referenceName = _project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      }
+      else throw JITUnresolvedException(referenceName);
+   }
+   else referenceName = resolvedName;
+
+   return referenceName;
+}
+
 ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
    if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef) {
@@ -269,25 +306,7 @@ ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t refere
 
       if (isWeakReference(referenceName)) {
          if (isTemplateWeakReference(referenceName)) {
-            ident_t resolvedName = _project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
-            if (emptystr(resolvedName)) {
-               // COMPILER MAGIC : try to find a template implementation
-               ref_t resolvedRef = 0;
-               _Module* refModule = _project->resolveWeakModule(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedRef, true);
-               if (refModule != nullptr) {
-                  ident_t resolvedReferenceName = refModule->resolveReference(resolvedRef);
-                  if (isWeakReference(resolvedReferenceName)) {
-                     IdentifierString fullName(refModule->Name(), resolvedReferenceName);
-
-                     _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, fullName);
-                  }
-                  else _project->addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedReferenceName);
-
-                  referenceName = _project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
-               }
-               else throw JITUnresolvedException(referenceName);
-            }
-            else referenceName = resolvedName;
+            referenceName = resolveTemplateWeakReference(referenceName);
          }
 
          return ReferenceInfo(module, referenceName);

@@ -265,6 +265,43 @@ void Instance :: printInfo(const wchar_t* msg, ...)
    fflush(stdout);
 }
 
+ident_t Instance :: resolveTemplateWeakReference(ident_t referenceName)
+{
+   ident_t resolvedName = resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+   if (emptystr(resolvedName)) {
+      if (referenceName.endsWith(CLASSCLASS_POSTFIX)) {
+         // HOTFIX : class class reference should be resolved simultaneously with class one
+         IdentifierString classReferenceName(referenceName, getlength(referenceName) - getlength(CLASSCLASS_POSTFIX));
+
+         classReferenceName.copy(resolveTemplateWeakReference(classReferenceName.c_str()));
+         classReferenceName.append(CLASSCLASS_POSTFIX);
+
+         addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, classReferenceName.c_str());
+
+         return resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      }
+
+      // COMPILER MAGIC : try to find a template implementation
+      ref_t resolvedRef = 0;
+      _Module* refModule = resolveWeakModule(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedRef);
+      if (refModule != nullptr) {
+         ident_t resolvedReferenceName = refModule->resolveReference(resolvedRef);
+         if (isWeakReference(resolvedReferenceName)) {
+            IdentifierString fullName(refModule->Name(), resolvedReferenceName);
+
+            addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, fullName);
+         }
+         else addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedReferenceName);
+
+         referenceName = resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      }
+      else throw JITUnresolvedException(referenceName);
+   }
+   else referenceName = resolvedName;
+
+   return referenceName;
+}
+
 ReferenceInfo Instance :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
    if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef) {
@@ -288,25 +325,7 @@ ReferenceInfo Instance :: retrieveReference(_Module* module, ref_t reference, re
 
       if (isWeakReference(referenceName)) {
          if (isTemplateWeakReference(referenceName)) {
-            ident_t resolvedName = resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
-            if (emptystr(resolvedName)) {
-               // COMPILER MAGIC : try to find a template implementation
-               ref_t resolvedRef = 0;
-               _Module* refModule = resolveWeakModule(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedRef);
-               if (refModule != nullptr) {
-                  ident_t resolvedReferenceName = refModule->resolveReference(resolvedRef);
-                  if (isWeakReference(resolvedReferenceName)) {
-                     IdentifierString fullName(refModule->Name(), resolvedReferenceName);
-
-                     addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, fullName);
-                  }
-                  else addForward(referenceName + TEMPLATE_PREFIX_NS_LEN, resolvedReferenceName);
-
-                  referenceName = resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
-               }
-               else throw JITUnresolvedException(referenceName);
-            }
-            else referenceName = resolvedName;
+            referenceName = resolveTemplateWeakReference(referenceName);
          }
 
          return ReferenceInfo(module, referenceName);

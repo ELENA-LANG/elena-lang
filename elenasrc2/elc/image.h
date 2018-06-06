@@ -79,6 +79,7 @@ public:
    virtual ident_t getSignatureClass();
    virtual ident_t getNamespace();
 
+   ident_t resolveTemplateWeakReference(ident_t referenceName);
    virtual ReferenceInfo retrieveReference(_Module* module, ref_t reference, ref_t mask);
 
    Project* getProject() const { return _project; }

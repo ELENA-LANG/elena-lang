@@ -3124,108 +3124,81 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScop
 
 ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode)
 {
-//   writer.newBookmark();
-
    ObjectInfo retVal;
    LexicalType operationType = lxAssigning;
    int operand = 0;
 
-//   SNode exprNode = node;
-   SNode current = /*node.findChild(lxMessage, lxExpression, lxAssign)*/node;
-//   while (operation == lxExpression) {
-//      exprNode = operation;
-//      operation = exprNode.findChild(lxMessage, lxOperator, lxExpression);
-//   }
-//
-//   // if it setat operator
-//   if (operation == lxOperator) {
-//      retVal = compileOperator(writer, node, scope, mode, SET_REFER_MESSAGE_ID);
-//
-//      operationType = lxNone;
-//   }
-//   else {
-      SNode sourceNode = current.nextNode(lxObjectMask);
+   SNode current = node;
+   SNode sourceNode = current.nextNode(lxObjectMask);
 
-      if (scope.isInitializer()) {
-         // HOTFIX : recognize static field initializer
-         if (target.kind == okStaticField || target.kind == okStaticConstantField) {
-            // HOTFIX : static field initializer should be compiled as preloaded symbol
-            if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
-               compileClassConstantAssigning(writer, sourceNode, scope, target);
-            }
-            else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::slClass)));
-
-            writer.trim();
-
-            //writer.removeBookmark();
-
-            return ObjectInfo();
+   if (scope.isInitializer()) {
+      // HOTFIX : recognize static field initializer
+      if (target.kind == okStaticField || target.kind == okStaticConstantField) {
+         // HOTFIX : static field initializer should be compiled as preloaded symbol
+         if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
+            compileClassConstantAssigning(writer, sourceNode, scope, target);
          }
+         else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::slClass)));
+
+         writer.trim();
+
+         //writer.removeBookmark();
+
+         return ObjectInfo();
       }
+   }
 
-      ref_t targetRef = resolveObjectReference(scope, target);
-      switch (target.kind) {
-         case okLocal:
-         case okField:
-         case okStaticField:
-         case okOuterField:
-         case okOuterStaticField:
-            break;
-         case okLocalAddress:
-         case okFieldAddress:
-         {
-            size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
-            if (size != 0) {
-               operand = size;
-            }
-            else scope.raiseError(errInvalidOperation, sourceNode);
-            break;
+   ref_t targetRef = resolveObjectReference(scope, target);
+   switch (target.kind) {
+      case okLocal:
+      case okField:
+      case okStaticField:
+      case okOuterField:
+      case okOuterStaticField:
+         break;
+      case okLocalAddress:
+      case okFieldAddress:
+      {
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+         if (size != 0) {
+            operand = size;
          }
-         case okOuter:
-         // case okParam
-         {
-            InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+         else scope.raiseError(errInvalidOperation, sourceNode);
+         break;
+      }
+      case okOuter:
+      // case okParam
+      {
+         InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
             
-            if (!closure->markAsPresaved(target))
-               scope.raiseError(errInvalidOperation, sourceNode);
-
-            break;
-         }
-         default:
+         if (!closure->markAsPresaved(target))
             scope.raiseError(errInvalidOperation, sourceNode);
-            break;
-      }
-      //else if (retVal.kind == okLocal || retVal.kind == okField || retVal.kind == okOuterField || retVal.kind == okStaticField || retVal.kind == okOuterStaticField) {
-      //}
-//      else if (/*retVal.kind == okParam || */retVal.kind == okOuter) {
-//      }
-//      else scope.raiseError(errInvalidOperation, node);
-//
-//      writer.newBookmark();
 
-      //   writer.newNode(lxExpression);
-      //   //writer.appendNode(lxBreakpoint, dsStep);
+         break;
+      }
+      default:
+         scope.raiseError(errInvalidOperation, sourceNode);
+         break;
+   }
       
-      int assignMode = HINT_NOUNBOXING;
-      if (targetRef == 0 || targetRef == V_AUTO)
-         assignMode |= HINT_DYNAMIC_OBJECT;
+   int assignMode = HINT_NOUNBOXING;
+   if (targetRef == 0 || targetRef == V_AUTO)
+      assignMode |= HINT_DYNAMIC_OBJECT;
 
-      if (targetRef == V_AUTO) {
-         // support auto attribute
-         retVal = compileExpression(writer, sourceNode, scope, 0, assignMode);
-         if (resolveAutoType(retVal, target, scope)) {
-            targetRef = resolveObjectReference(scope, retVal);
-         }
-         else scope.raiseError(errInvalidOperation, node);
+   if (targetRef == V_AUTO) {
+      // support auto attribute
+      retVal = compileExpression(writer, sourceNode, scope, 0, assignMode);
+      if (resolveAutoType(retVal, target, scope)) {
+         targetRef = resolveObjectReference(scope, retVal);
       }
-      else retVal = compileExpression(writer, sourceNode, scope, targetRef, assignMode);
+      else scope.raiseError(errInvalidOperation, node);
+   }
+   else retVal = compileExpression(writer, sourceNode, scope, targetRef, assignMode);
       
    if (operationType != lxNone) {
       writer.insert(operationType, operand);
       writer.closeNode();
    }
-
-//   writer.removeBookmark();
 
    return retVal;
 }

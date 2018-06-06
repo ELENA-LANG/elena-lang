@@ -122,8 +122,18 @@ ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool head
       return 0;
 
    if (isTemplateWeakReference(vmtName)) {
-      // COMPILER MAGIC : try to find a template implementation
-      return loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
+      // COMPILER MAGIC : try to find a template
+      bool found = loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
+      if (found && info.header.classRef != 0) {
+         if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
+            // HOTFIX : class class ref should be template weak reference as well
+            IdentifierString classClassName(vmtName, CLASSCLASS_POSTFIX);
+
+            info.header.classRef = module->mapReference(classClassName);
+         }
+      }
+
+      return found;
    }
    else {
       // load class meta data

@@ -242,6 +242,7 @@ Pipeline:
                  * Word search
                  * implementing enum analogue
                  * support field template with an intializer	
+                 * duplicat code ExecutableImage :: retrieveReference and Instance :: retrieveReference
 
               xdev - general implementation
                  * strings module : do we need long (toLong) at all? probably only int and ref_t should be used
