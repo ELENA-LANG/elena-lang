@@ -167,7 +167,7 @@ public singleton UTF8Encoder :: Encoder
 
 // --- UTF8Encoding ---
 
-class UTF8Encoding =
+public class UTF8Encoding =
 {
     T<Encoder> encoder = UTF8Encoder.
     

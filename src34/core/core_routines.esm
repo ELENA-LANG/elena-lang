@@ -4792,3 +4792,16 @@ procedure __jump_closure."#invoke$system@Object[13]"
   quitn 1
 
 end
+
+procedure __vmtape."evaluateTape$system@UnsafePointer[2]"
+
+  aloadsi 2
+  nload
+  pushd
+  callextr extern : EvaluateTape
+  pop
+  pushd
+  popa
+  quitn 2
+
+end

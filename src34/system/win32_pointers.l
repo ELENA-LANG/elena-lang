@@ -144,9 +144,9 @@ public sealed const struct UnsafePointer
 //    [
 //        target write int:offs int:thePointer.
 //    ]
-//    
-//    stacksafe bool isEmpty
-//        = 0 == thePointer.
+    
+    stacksafe bool isEmpty
+        = 0 == thePointer.
 }
 
 // --- COORD ---

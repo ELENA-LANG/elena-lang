@@ -1,30 +1,12 @@
+import extensions.
 import extensions'scripting.
 
-//symbol program2 =
-//[
-//    var n := script_test'mytest'States state0.
-//].
-
-//class tester =
-//{
-//    newLeaf : n
-//    [
-//        var l := n level.
-//        var s := n evalToken:"2".
-//    ]
-//    
-//    addContent : ch
-//    [
-//    ]
-//    
-//    digit
-//    [
-//    ]
-//}.
-
-symbol program =
+public program =
 [
-    var o := jscript eval path("test.es").
+    escript eval("system'console writeLine(""Hello World"").").
 
-    var r := o test("Hello World").
+    var o := escript eval(
+       "^ { eval(x) [ ^extensions'math'mathControl power(x, 2 ) ]}").
+
+    console printLine(o eval(2)).
 ].
