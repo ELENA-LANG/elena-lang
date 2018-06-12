@@ -532,7 +532,11 @@ bool DerivationTransformer::DerivationScope :: generateClassName()
          name.append(param + getlength(rootNs) + 1);
       }
       else if (isWeakReference(param) && !isTemplateWeakReference(param)) {
-         name.append(param + 1);
+         if (!compilerScope->module->Name().compare(rootNs.c_str())) {
+            name.append(compilerScope->module->Name());
+            name.append(param);
+         }
+         else name.append(param + 1);
       }
       else name.append(param);
 

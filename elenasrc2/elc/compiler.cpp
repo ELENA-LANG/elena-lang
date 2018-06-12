@@ -6023,9 +6023,9 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    if (isOpenArg(message)) {
       if (_logic->isMethodGeneric(scope.info, message)) {
          // HOTFIX : verify that only generics with similar argument signature available
-         int extraParamCount = retrieveGenericArgParamCount(scope);
-         if (extraParamCount != -1 && getParamCount(message) != extraParamCount)
-            scope.raiseError(errIllegalMethod, current);
+         //int extraParamCount = retrieveGenericArgParamCount(scope);
+         //if (extraParamCount != -1 && getParamCount(message) != extraParamCount)
+         //   scope.raiseError(errIllegalMethod, current);
 
          scope.info.header.flags |= elWithArgGenerics;
       }
