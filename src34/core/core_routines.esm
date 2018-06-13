@@ -4805,3 +4805,53 @@ procedure __vmtape."evaluateTape$system@UnsafePointer[2]"
   quitn 2
 
 end
+
+procedure __wrap.dispatch[1]
+
+  bcopya
+  len
+
+  aloadbi 0
+  pushe
+  asavesi 2
+
+  elsen labGroup 02
+  
+  aloadbi 1
+  pope
+  ajumpvi 0
+
+labGroup:
+  dcopy 1
+
+labNext:
+  pope
+  get
+  pushd
+  mindex
+  elsen labFound 0FFFFFFFFh
+  popd
+  pushe
+  inc
+  count
+  less labNext
+
+  pope
+  open    4
+  reserve 2
+  esavesi 3
+  bcopys  -3
+  pushb
+  pusha
+  acopyr class : system'Message
+  pushr class : system'MethodNotFoundException
+  asavesi 5
+  aloadsi 0
+  pushr const : %"new[2]"
+  throw
+
+labFound:
+  pop
+  ajumpvi 0
+
+end

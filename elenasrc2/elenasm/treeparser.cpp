@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2017, by Alexei Rakov
+//                                              (C)2011-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -17,31 +17,31 @@ using namespace _ELENA_TOOL_;
 
 TreeScriptParser :: TreeScriptParser()
 {
-   //_tokens.add("root", lxRoot);
-   //_tokens.add("class", lxClass);
-   //_tokens.add("singleton", lxClass);
-   //_tokens.add("nested", lxNestedClass);
-   //_tokens.add("method", lxClassMethod);
-   //_tokens.add("message", lxMessage);
-   //_tokens.add("code", lxCode);
-   //_tokens.add("expression", lxExpression);
-   //_tokens.add("returning", lxReturning);
-   //_tokens.add("symbol", lxSymbol);
-   //_tokens.add("preloaded_symbol", lxSymbol);
-   //_tokens.add("literal", lxLiteral);
-   //_tokens.add("identifier", lxIdentifier);
-   //_tokens.add("numeric", lxInteger);
-   //_tokens.add("parameter", lxMethodParameter);
+   _tokens.add("root", lxRoot);
+   _tokens.add("class", lxClass);
+   _tokens.add("singleton", lxClass);
+   _tokens.add("nested", lxNestedClass);
+   _tokens.add("method", lxClassMethod);
+   _tokens.add("message", lxMessage);
+   _tokens.add("code", lxCode);
+   _tokens.add("expression", lxExpression);
+   _tokens.add("returning", lxReturning);
+   _tokens.add("symbol", lxSymbol);
+   _tokens.add("preloaded_symbol", lxSymbol);
+   _tokens.add("literal", lxLiteral);
+   _tokens.add("identifier", lxIdentifier);
+   _tokens.add("numeric", lxInteger);
+   _tokens.add("parameter", lxMethodParameter);
    //_tokens.add("include", lxInclude);
    //_tokens.add("forward", lxForward);
-   //_tokens.add("reference", lxReference);
-   //_tokens.add("variable", lxVariable);
-   //_tokens.add("assign", lxAssign);
-   //_tokens.add("operator", lxOperator);
-   //_tokens.add("loop", lxLoop);
+   _tokens.add("reference", lxReference);
+   _tokens.add("variable", lxVariable);
+   _tokens.add("assign", lxAssign);
+   _tokens.add("operator", lxOperator);
+   _tokens.add("loop", lxLoop);
 
-   //_attributes.add("singleton", V_SINGLETON);
-   //_attributes.add("preloaded_symbol", V_PRELOADED);
+   _attributes.add("singleton", V_SINGLETON);
+   _attributes.add("preloaded_symbol", V_PRELOADED);
 }
 
 void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer, LexicalType type)

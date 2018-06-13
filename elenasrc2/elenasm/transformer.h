@@ -25,8 +25,6 @@ protected:
       bool                 appendMode;
       DynamicString<char/*, 2048*/>  buffer1;
       DynamicString<char/*, 2048*/>  buffer2;
-      //String<char, 2048>  buffer1;
-      //String<char, 2048>  buffer2;
 
       void writeToken(ident_t token, ScriptLog& log);
       void writeLevel(ScriptLog& log)

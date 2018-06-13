@@ -725,7 +725,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
 
             // new n, vmt
             ecodes.writeByte(bcNew);
-            helper.writeTape(ecodes, extra_param, mskVMTRef);
+            helper.writeTape(ecodes, extra_param, /*mskVMTRef*/mskRDataRef);
             ecodes.writeDWord(param);
 
             // ; assign content

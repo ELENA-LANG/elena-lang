@@ -74,71 +74,70 @@ _Parser* Session :: newParser(int id, ParserType type)
 
 void Session :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
 {
-   //TapeWriter writer(&tape);
+   TapeWriter writer(&tape);
 
-   //do {
-   //   if (reader.compare(";")) {
-   //      break;
-   //   }
-   //   else if(reader.compare("#start")) {
-   //      writer.writeCommand(START_VM_MESSAGE_ID);
-   //   }
-   //   else if (reader.compare("#config")) {
-   //      ScriptBookmark bm = reader.read();
-   //      if (bm.state == dfaIdentifier) {
-   //         writer.writeCommand(LOAD_VM_MESSAGE_ID, reader.lookup(bm));
-   //      }
-   //      //else throw EParseError(reader.info.column, reader.info.row);
-   //   }
-   //   else if (reader.compare("#map")) {
-   //      ScriptBookmark bm = reader.read();
+   do {
+      if (reader.compare(";")) {
+         break;
+      }
+      else if(reader.compare("#start")) {
+         writer.writeCommand(START_VM_MESSAGE_ID);
+      }
+      else if (reader.compare("#config")) {
+         ScriptBookmark bm = reader.read();
+         if (bm.state == dfaIdentifier) {
+            writer.writeCommand(LOAD_VM_MESSAGE_ID, reader.lookup(bm));
+         }
+      }
+      else if (reader.compare("#map")) {
+         ScriptBookmark bm = reader.read();
 
-   //      IdentifierString forward;
-   //      if (bm.state == dfaFullIdentifier) {
-   //         forward.append(reader.lookup(bm));
+         IdentifierString forward;
+         if (bm.state == dfaFullIdentifier) {
+            forward.append(reader.lookup(bm));
 
-   //         bm = reader.read();
-   //         if (!reader.compare("="))
-   //            throw EParseError(bm.column, bm.row);
+            bm = reader.read();
+            if (!reader.compare("="))
+               throw EParseError(bm.column, bm.row);
 
-   //         bm = reader.read();
-   //         if (bm.state == dfaFullIdentifier) {
-   //            forward.append('=');
-   //            forward.append(reader.lookup(bm));
-   //            writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
-   //         }
-   //         else throw EParseError(bm.column, bm.row);
-   //      }
-   //      else throw EParseError(bm.column, bm.row);
-   //   }
-   //   else if (reader.compare("#use")) {
-   //      ScriptBookmark bm = reader.read();
+            bm = reader.read();
+            if (bm.state == dfaFullIdentifier) {
+               forward.append('=');
+               forward.append(reader.lookup(bm));
+               writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
+            }
+            else throw EParseError(bm.column, bm.row);
+         }
+         else throw EParseError(bm.column, bm.row);
+      }
+      else if (reader.compare("#use")) {
+         ScriptBookmark bm = reader.read();
 
-   //      if (bm.state == dfaQuote) {
-   //         writer.writeCommand(USE_VM_MESSAGE_ID, reader.lookup(bm));
-   //      }
-   //      else {
-   //         IdentifierString package;
-   //         package.append(reader.lookup(bm));
+         if (bm.state == dfaQuote) {
+            writer.writeCommand(USE_VM_MESSAGE_ID, reader.lookup(bm));
+         }
+         else {
+            IdentifierString package;
+            package.append(reader.lookup(bm));
 
-   //         bm = reader.read();
-   //         if (!reader.compare("="))
-   //            throw EParseError(bm.column, bm.row);
+            bm = reader.read();
+            if (!reader.compare("="))
+               throw EParseError(bm.column, bm.row);
 
-   //         bm = reader.read();
-   //         if (bm.state == dfaQuote) {
-   //            package.append('=');
-   //            package.append(reader.lookup(bm));
-   //            writer.writeCommand(USE_VM_MESSAGE_ID, package);
-   //         }
-   //         else throw EParseError(bm.column, bm.row);
-   //      }
-   //   }
-   //   else return;
+            bm = reader.read();
+            if (bm.state == dfaQuote) {
+               package.append('=');
+               package.append(reader.lookup(bm));
+               writer.writeCommand(USE_VM_MESSAGE_ID, package);
+            }
+            else throw EParseError(bm.column, bm.row);
+         }
+      }
+      else return;
 
-   //   reader.read();
-   //}
-   //while(true);
+      reader.read();
+   }
+   while(true);
 }
 
 void Session :: parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader)

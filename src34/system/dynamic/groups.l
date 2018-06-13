@@ -1,11 +1,11 @@
-//// --- Wrap ---
-//
-//mixin Wrap
-//{
-//    object<> $item.
-//    
-//    dispatch => system'core_routines'__wrap.
-//}
+// --- Wrap ---
+
+public mixin Wrap
+{
+    V<object> items.
+    
+    dispatch => system'core_routines'__wrap.
+}
 
 // --- Extension ---
 

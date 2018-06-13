@@ -58,7 +58,7 @@ public:
 
    void writeCallCommand(ident_t reference)
    {
-//      writeCommand(CALL_TAPE_MESSAGE_ID, reference);
+      writeCommand(CALL_TAPE_MESSAGE_ID, reference);
    }
 
    void writeCommand(pos_t command, ident_t param)

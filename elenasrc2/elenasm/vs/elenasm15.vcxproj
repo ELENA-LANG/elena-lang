@@ -124,7 +124,6 @@
     </ClCompile>
     <ClCompile Include="..\..\common\dump.cpp" />
     <ClCompile Include="..\session.cpp" />
-    <ClCompile Include="..\scriptparser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\common\altstrings.h" />
@@ -144,7 +143,6 @@
     <ClInclude Include="..\treeparser.h" />
     <ClInclude Include="..\scriptengine.h" />
     <ClInclude Include="..\session.h" />
-    <ClInclude Include="..\scriptparser.h" />
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\tools.h" />
     <ClInclude Include="resource.h" />
