@@ -1677,6 +1677,9 @@ void DerivationTransformer :: generateSubTemplate(SNode& node, DerivationScope& 
       node = lxAttributeValue;
 
       SNode terminalNode = node.firstChild(lxTerminalMask);
+      if (terminalNode == lxNone)
+         terminalNode = node.firstChild();
+
       terminalNode.set(lxReference, scope.compilerScope->module->resolveReference(paramRef));
    }
 }

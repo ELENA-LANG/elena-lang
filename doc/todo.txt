@@ -7,7 +7,6 @@ In development:
 
                  * Generic map
                  * Static methods
-                 * fix - ELENA 3.3 : nested templates
                  * Auto attribute
                  * ELENA 3.3 : Inheritance
                  * fix locale toUpper / toLower
