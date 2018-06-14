@@ -167,10 +167,22 @@ public sealed List<type> :: Enumerable<type>
     }.    
         
     cast T<Array>
-        = Array new(0, T<int>(theLength), theArray).
+    [
+        int len := T<int>(theLength).
+        auto copy := Array new(len).
+        int i := 0.
+        while (i < len)
+        [
+            copy[i] := theArray[i].
+            
+            i += 1.
+        ].
+        
+        ^ copy.
+    ]
 
     value 
-        = Array new(0, T<int>(theLength), theArray).
+        = T<Array>(self).
                        
     stacksafe readLengthTo(ref<int> retVal)
     [

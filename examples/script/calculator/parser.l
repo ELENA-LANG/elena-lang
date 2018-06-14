@@ -95,10 +95,10 @@ class TreeNode :: BaseTreeNode
 
     append : aNode
     [
-        if ($nil == theLeft)
+        if (nil == theLeft)
             [ theLeft := aNode ];
             [
-                if ($nil == theRight)
+                if (nil == theRight)
                     [ theRight := aNode ];
                     [ theRight := theRight + aNode ]
             ]
@@ -106,10 +106,10 @@ class TreeNode :: BaseTreeNode
     
     value
     [
-        if ($nil == theLeft)
+        if (nil == theLeft)
             [ InvalidArgumentException new; raise ].
         
-        if ($nil == theRight)
+        if (nil == theRight)
             [ InvalidArgumentException new; raise ].
         
         ^ theStrategy evalNode(theLeft value, theRight value)
@@ -135,7 +135,7 @@ class TreeLeaf :: BaseTreeNode
 
     newArgument
     [
-        if ($nil == theFunction)
+        if (nil == theFunction)
             [ InvalidArgumentException new; raise ].
             
         ^ theFunction eval
@@ -166,12 +166,12 @@ class FunctionNode :: TreeLeaf
     
     value
     [
-        var subj := Signature new literal:theToken.
+        var subj := Signature new(theToken).
         
-        if ($nil == theArg1)
+        if (nil == theArg1)
             [ ^ theStrategy~subj get ].
             
-        if ($nil == theArg2)
+        if (nil == theArg2)
             [ ^ theStrategy~subj eval(theArg1 value) ].
             
         ^ theStrategy~subj eval(theArg1 value, theArg2 value).
@@ -179,16 +179,16 @@ class FunctionNode :: TreeLeaf
 
     first_arg:node
     [
-        if ($nil == theArg1)
-            [ theArg1 := node setFunction:$self ];
-            [ theArg1 := theArg1 + node setFunction:$self ]
+        if (nil == theArg1)
+            [ theArg1 := node setFunction:self ];
+            [ theArg1 := theArg1 + node setFunction:self ]
     ]
 
     second_arg:node
     [
-        if ($nil == theArg2)
-            [ theArg2 := node setFunction:$self ];
-            [ theArg2 := theArg2 + node setFunction:$self ]
+        if (nil == theArg2)
+            [ theArg2 := node setFunction:self ];
+            [ theArg2 := theArg2 + node setFunction:self ]
     ]
         
     first_arg
@@ -231,16 +231,16 @@ class StateMachine
         theLevel := 0
     ]
 
-    generic
+    generic eval
     [
-        theCurrentState := theStates~$subject get
+        theCurrentState := theStates~received get
     ]
 
     opening : ch
     [
         theLevel := theLevel + 10.
         
-        $self~theCurrentState opening:ch
+        self~theCurrentState opening:ch
     ]
 
     closing : ch
@@ -250,19 +250,19 @@ class StateMachine
         if (0 > theLevel)
             [ InvalidOperationException new; raise ].
         
-        $self~theCurrentState closing:ch
+        self~theCurrentState closing:ch
     ]
 
     comma : ch
     [
         theDerivationTree newArgument.
         
-        $self~theCurrentState comma:ch
+        self~theCurrentState comma:ch
     ]
 
     invalidate
     [
-        theDerivationTree := $nil
+        theDerivationTree := nil
     ]
 
     func1 = (:aChar)
@@ -274,9 +274,9 @@ class StateMachine
 
     value
     [
-        var aValue := $nil.
+        var aValue := nil.
         
-        if ($nil == theDerivationTree)
+        if (nil == theDerivationTree)
             [ aValue := "Invalid expression" ];
             [
                 aValue := theDerivationTree value
@@ -313,7 +313,7 @@ class StateMachine
 
 extension parserOp
 {
-    evaluated with:states
+    evaluatedWith:states
     [
         var aStateMachine := StateMachine new:states; state0.
         

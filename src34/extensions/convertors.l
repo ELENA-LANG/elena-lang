@@ -2,7 +2,7 @@ import system'collections.
 import system'routines.
 import system'calendar.
 import system'text.
-//import system'dynamic.
+import system'dynamic.
 
 // --- convertors ---
 
@@ -338,8 +338,8 @@ public extension convertorOp
         = Variant new:self; saveTo:aTarget.
 }
 
-//convertor 
-//    = { generic : n = Wrap::(n, convertorOp)~$subject get. }.
+public convertor 
+    = { generic eval : n = Wrap::(n, convertorOp)~received get. }.
 
 public extension<Date> dateFormatterOp 
 {

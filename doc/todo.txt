@@ -3,7 +3,19 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * validate : why vm client ends with broken message
+
+                 * Generic map
+                 * Static methods
+                 * fix - ELENA 3.3 : nested templates
+                 * Auto attribute
+                 * ELENA 3.3 : Inheritance
+                 * fix locale toUpper / toLower
+                 * wiki tutorials
                  * debugger : display template based classes
+                 * an option to make all classes public (to be compatible with previous versions)??
+
+                 * test why interpreter with sample4.txt / sample2.txt crashes
 
                  * test words
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field

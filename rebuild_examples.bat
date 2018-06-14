@@ -15,7 +15,7 @@ bin\elc examples\files\textdb\textdb.prj
 bin\elc examples\console\trans\tanslit.prj
 bin\elc examples\console\matrix\matrix.prj
 bin\elc examples\console\pi2\pi2.prj
-rem bin\elc examples\script\interpreter\interpreter.prj
+bin\elc examples\script\interpreter\interpreter.prj
 rem bin\elc examples\script\calculator\calc.xprj
 rem bin\elc examples\script\calculator\calc.prj
 rem bin\elc examples\script\js\vmconsole.prj

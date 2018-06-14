@@ -1,17 +1,22 @@
-﻿[project]
-package=calc
-vmpath=..\..\bin
-executable=calc.exe
-namespace=calc
-template=vm_console
-debuginfo=-1
-
-[files]
-parser.l
-control.l
-
-[forwards]
-'program=extensions'programLoop
-'program'control=calc'control
-'rules=calc'dynamicRules
-
+<configuration>
+    <project>
+        <executable>calc.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>calc</namespace>
+        <template>vm_console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>control.l</include>
+            <include>parser.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="program">extensions'programLoop</forward>
+        <forward key="program'control">calc'control</forward>
+        <forward key="rules">calc'dynamicRules</forward>
+    </forwards>
+</configuration>

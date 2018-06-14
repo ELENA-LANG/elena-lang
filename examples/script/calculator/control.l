@@ -6,17 +6,17 @@ import extensions'dynamic.
 ////'program=extensions'programLoop
 // --- testCase ---
 
-static dynamicRules = 
-    jscript eval path:"calc.es".
+public static dynamicRules = 
+    jscript evalPath:"calc.es".
     
-symbol staticRules =
+public symbol staticRules =
     calc'rules'States.
 
 extension testOp
 {
     testEvaluation
     [
-        var result := self evaluated with:dynamicRules.
+        var result := self evaluatedWith:dynamicRules.
         
         console printLine(self," evaluated as ",result).
     ]    
@@ -26,7 +26,7 @@ extension staticTestOp
 {
     testStaticEvaluation
     [
-        var result := self evaluated with:staticRules.
+        var result := self evaluatedWith:staticRules.
         
         console printLine(self," evaluated as ",result)
     ]
@@ -66,7 +66,7 @@ staticTestCases =
 
 // --- controller ---
 
-class control =
+public class control =
 {
     greeting = "Enter the expression to evaluate (e.g. 2+2) or -q to exit".
     
@@ -75,9 +75,9 @@ class control =
     proceed : aLine
     [
         if ("-q" == aLine)
-            [ 'program stop. ^emptyLiteralValue ];
+            [ forwards'program stop. ^emptyLiteral ];
             [
-                ^ aLine evaluated with:'rules
+                ^ aLine evaluatedWith:forwards'rules
             ].
     ]    
 }.

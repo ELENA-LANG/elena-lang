@@ -1,15 +1,19 @@
-﻿[project]
-debug=interpreter.dm
-vmpath=..\..\bin
-executable=interpreter.exe
-arguments=sample1.txt
-namespace=interpreter
-template=vm_console
-debuginfo=-1
-
-[files]
-interpreter.l
-
-[forwards]
-'program=interpreter'program3
-
+<configuration>
+    <project>
+        <executable>interpreter.exe</executable>
+        <arguments>sample1.txt</arguments>
+        <output></output>
+        <options></options>
+        <namespace>interpreter</namespace>
+        <template>vm_console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>interpreter.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="program">interpreter'program3</forward>
+    </forwards>
+</configuration>

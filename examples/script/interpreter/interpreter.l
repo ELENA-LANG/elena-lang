@@ -1,22 +1,22 @@
 import system'collections.
-import system'routines.
-import system'dynamic.
+//import system'routines.
+//import system'dynamic.
 
 import extensions.
 import extensions'scripting.
-import extensions'dynamic.
+//import extensions'dynamic.
 
 import extensions'dynamic'expressions.
 
 class TapeAssembler
 {    
-    stack                theBrackets.
-    list<TapeExpression> theTape.
+    T<Stack>             theBrackets.
+    List<TapeExpression> theTape.
     
     constructor new
     [
         theBrackets := Stack new.
-        theTape := list<TapeExpression>().
+        theTape := List<TapeExpression>().
         
         theTape append(TapeExpression Declaring("ptr")).
         theTape append(TapeExpression Assigning("ptr", TapeExpression Constant(0))).
@@ -25,13 +25,13 @@ class TapeAssembler
     constructor new : assembly_program
         <= new;
     [
-        assembly_program($self).
+        assembly_program(self).
     ]    
     
     open
     [
         theBrackets push(theTape).
-        theTape := list<TapeExpression>().
+        theTape := List<TapeExpression>().
     ]
     
     close
@@ -45,7 +45,7 @@ class TapeAssembler
                              ),
                              "notequal",
                              TapeExpression Constant($0)),
-                          TapeExpression Code(theTape array)).
+                          TapeExpression Code(theTape value)).
                           
         theTape := theBrackets pop.
         theTape append(loop).                        
@@ -145,7 +145,7 @@ class TapeAssembler
         var program := TapeExpression Singleton(
                 TapeExpression Method(
                    "eval",
-                   TapeExpression Code(theTape array),
+                   TapeExpression Code(theTape value),
                    TapeExpression Parameter("tape"))).
                    
         var o := (program compiled)().
@@ -166,7 +166,7 @@ class TapeCGenerator
     constructor new : assembly_program
         <= new;
     [
-        assembly_program($self).
+        assembly_program(self).
     ]    
     
     open
@@ -218,97 +218,10 @@ class TapeCGenerator
     ]
 }
 
-program0 =
+public program1 =
 [
     // .[,.]
     
-    var a1 := ClosureTape::(
-        // declare a singleton
-        openSingletonClosure,
-        // declare a method
-        openMethodClosure,
-        newMessageClosure new:"eval",
-        newParamTokenClosure new:"tape",
-        newParamTokenClosure new:"self",        
-        openCodeClosure,                
-
-        // declare a variable - ptr
-        openVariableClosure,
-         newIdentifierClosure new:"ptr",
-        closeClosure,        
-        
-        // ptr := 0
-        openExpressionClosure,
-         newIdentifierClosure new:"ptr",
-         newAssignClosure,
-         newNumericClosure new:"0",
-        closeClosure,
-        
-        // tape[ptr] := console readChar
-        openExpressionClosure,
-         newIdentifierClosure new:"tape",
-         newMessageClosure new:"setAt",
-         newIdentifierClosure new:"ptr",
-         openExpressionClosure,
-          newReferenceClosure new:"system'console",
-          newMessageClosure new:"readChar",
-         closeClosure,
-        closeClosure,
-
-        // while (tape[ptr]!=0) [
-        openLoopClosure,
-         openExpressionClosure,
-          ifClosure,
-          openExpressionClosure,
-           openExpressionClosure,
-            newIdentifierClosure new:"tape",
-            newMessageClosure new:"getAt",
-            newIdentifierClosure new:"ptr",
-            nextClosure,
-            newMessageClosure new:"notequal",
-            newNumericClosure new:"0",
-           closeClosure,  
-          closeClosure,
-          openExpressionClosure,
-           openCodeClosure,
-            // console write(tape[ptr])
-            openExpressionClosure,
-             newReferenceClosure new:"system'console",             
-             newMessageClosure new:"write",
-             openExpressionClosure,
-              newIdentifierClosure new:"tape",
-              newMessageClosure new:"getAt",
-              newIdentifierClosure new:"ptr",
-             closeClosure,
-            closeClosure,
-            
-            // tape[ptr] := console readChar
-            openExpressionClosure,
-             newIdentifierClosure new:"tape",
-             newMessageClosure new:"setAt",
-             newIdentifierClosure new:"ptr",
-             openExpressionClosure,
-              newReferenceClosure new:"system'console",
-              newMessageClosure new:"readChar",
-             closeClosure,
-            closeClosure,
-            
-           closeClosure,
-          closeClosure,
-         closeClosure,
-        closeClosure,
-
-        closeClosure,        
-        closeClosure,
-        closeClosure).
-
-    var bf_tape := Array new:1024; populate(:n)($0).
-    var p := TapeAssembly new(a1); eval.
-    p eval(bf_tape).
-].    
-
-program1 =
-[
     var c := TapeExpression Singleton(
                 TapeExpression Method(
                    "eval",
@@ -319,7 +232,7 @@ program1 =
                         "ptr",
                         TapeExpression Constant(0)
                       ),
-                      
+
                       // tape[ptr] := console readChar
                       TapeExpression MessageCall(
                         TapeExpression Variable("tape"),
@@ -329,7 +242,7 @@ program1 =
                            TapeExpression Constant(console),
                            "readChar"
                         )),
-                      
+
                       // while (tape[ptr]!=0) [
                       TapeExpression Loop(
                           TapeExpression MessageCall(
@@ -362,25 +275,25 @@ program1 =
 
     var bf_tape := Array new:1024; populate(:n)($0).
     var o := (c compiled)().   
-    
-    o eval(bf_tape).
-].
 
-symbol program2 =
+    o eval(bf_tape).
+].    
+
+public symbol program2 =
 [
     var bfProgram := TapeAssembler new;
         input; open; output; input; close; get.
                     
     var bfTape := Array new:1024; populate(:n)<int>($0).
     
-    bfProgram eval:bfTape.
+    bfProgram(bfTape).
 ].
 
-symbol program3bis =
+public symbol program3bis =
 [
     var bfAssemblyProgram := ScriptEngine 
         new;
-        load path:"asmrules.es";
+        loadPath:"asmrules.es";
         eval (">,[.,]").
 
     var bfProgram := TapeAssembler new(bfAssemblyProgram); get.
@@ -390,15 +303,15 @@ symbol program3bis =
     bfProgram(bfTape).
 ].
 
-symbol program3 =
+public symbol program3 =
 [
-    if ('program'arguments length == 1)
+    if (forwards'program'arguments length == 1)
         [ console write:"Please provide the path to the file to interpret". AbortException new; raise. ].
 
     var bfAssemblyProgram := ScriptEngine 
         new;
-        load path:"asmrules.es";
-        eval path('program'arguments[1]).
+        loadPath:"asmrules.es";
+        evalPath(forwards'program'arguments[1]).
 
     var bfProgram := TapeAssembler new(bfAssemblyProgram); get.
 
@@ -407,15 +320,15 @@ symbol program3 =
     bfProgram(bfTape).
 ].
 
-symbol program4 =
+public symbol program4 =
 [
-    if ('program'arguments length == 1)
+    if (forwards'program'arguments length == 1)
         [ console write:"Please provide the path to the file to interpret". AbortException new; raise ].
 
     var bfAssemblyProgram := ScriptEngine 
         new;
-        load path:"asmrules.es";
-        eval path:('program'arguments[1]).
+        loadPath:"asmrules.es";
+        evalPath:(forwards'program'arguments[1]).
 
     var bfProgram := TapeCGenerator new(bfAssemblyProgram); get.
 
