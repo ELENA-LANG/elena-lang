@@ -3023,7 +3023,9 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
    //   bool externalMode = false;
    if (target.kind == okExternal) {
-      retVal = compileExternalCall(writer, node.prevNode(), scope);
+      int extMode = mode & HINT_ROOT;
+      
+      retVal = compileExternalCall(writer, node.prevNode(), scope, extMode);
    }
    else {
       ref_t messageRef = mapMessage(node, scope/*, paramCount*/);
@@ -4115,7 +4117,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
    }
 }
 
-ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope)
+ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    ObjectInfo retVal(okExternal);
 
@@ -4174,7 +4176,9 @@ ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, Cod
    else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
    writer.closeNode();
 
-   retVal = assignResult(writer, scope, V_INT32);
+   if (!test(mode, HINT_ROOT)) {
+      retVal = assignResult(writer, scope, V_INT32);
+   }   
 
    return retVal;
 }

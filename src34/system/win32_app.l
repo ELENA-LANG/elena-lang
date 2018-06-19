@@ -19,7 +19,7 @@ class StartUpEvents
 {
     T<Func1> event onStop :: theFinializeEvent.
     
-    internal onStop : arg
+    /*internal */stopping : arg
     [
         ifnot (nil == theFinializeEvent)
             [ theFinializeEvent(arg) ]
@@ -30,7 +30,7 @@ public static startUpEvents = StartUpEvents new.
 
 public symbol startUp =
     {
-        start : events
+        start(StartUpEvents events)
         [
             system'core_routines'__exception register.
             
@@ -41,7 +41,7 @@ public symbol startUp =
                     on(AbortException e) []                    
                 }.
     
-            events onStop:nil
+            events stopping:nil
         ]        
     }
     start:startUpEvents.

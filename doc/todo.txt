@@ -3,6 +3,29 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * the following code corrupt stack:
+    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int> anOutputLength)
+    [
+        T<short,127> temp_buf.
+        int          temp_len := 127.
+        int          chLen := aLength value.
+
+        UTF16Encoding convert(anIndex, chLen, aByteArray, T<ShortArray>(temp_buf), &temp_len).
+        
+        int retVal := system'external'KERNEL32 WideCharToMultiByte(
+            theCodePage, 0,
+            T<ShortArray>(temp_buf),
+            temp_len, 0, 0, 0, 0).
+
+        if (retVal > aLength)
+            [ InvalidArgumentException new; raise ].
+                
+        retVal := system'external'KERNEL32 WideCharToMultiByte(
+            theCodePage, 0, T<ShortArray>(temp_buf), temp_len, anOutput, chLen, 0, 0).
+        
+        anOutputLength value := retVal
+    ]    
+
                  * validate : why vm client ends with broken message
 
                  * Generic map
@@ -16,6 +39,8 @@ In development:
 
                  * test why interpreter with sample4.txt / sample2.txt crashes
 
+	         * test arraymode
+
                  * test words
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
                  * local / parameter with name self / target should have precedence over the built-in
@@ -27,8 +52,6 @@ In development:
                  * test : ELENA Script Engine : compiling JavaScript file
 
                  * test collatz
-
-                 * extrnal operations without target - ignore the result
 
                  * migrate script samples
                  * migrate dynamic, templates
@@ -80,7 +103,6 @@ In development:
                  * elenart - switch to xml config
                  * reimplement IDE exclude the file
                  * reimplement IDE clear forwards
-                 * external calls - do not save the result if the target is not specified
                  * existing method cannot be declared abstract
                  * publish an example with the enumeration (list of enum values)
                  * collection : validate if the parent class can be array based class
@@ -108,36 +130,14 @@ In development:
                  * templates unresolved references - probably they should be tested with super object if all references are resolved
                  * it should be possible to distinguish between built-in target variable and a local parameter
                  * simplify derivation code : a collection with operations - "(1,2) msg" and "Array::(1,2) msg"
-                 * why the following code does not work:
+                 * StartUpEvent.stopping should be internal, but the compiler do recognize it and send public one
+                 * why the folloswing code does not work:
                      generic testWrite(V<object> args)
                      [
                         console writeLine:"testWrite is called with:".
                         args forEach:printingLn.
                      ]
 
-                 * the following code corrupt stack:
-    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int> anOutputLength)
-    [
-        T<short,127> temp_buf.
-        int          temp_len := 127.
-        int          chLen := aLength value.
-
-        UTF16Encoding convert(anIndex, chLen, aByteArray, T<ShortArray>(temp_buf), &temp_len).
-        
-        int retVal := system'external'KERNEL32 WideCharToMultiByte(
-            theCodePage, 0,
-            T<ShortArray>(temp_buf),
-            temp_len, 0, 0, 0, 0).
-
-        if (retVal > aLength)
-            [ InvalidArgumentException new; raise ].
-                
-        retVal := system'external'KERNEL32 WideCharToMultiByte(
-            theCodePage, 0, T<ShortArray>(temp_buf), temp_len, anOutput, chLen, 0, 0).
-        
-        anOutputLength value := retVal
-    ]    
-	
               dev - general implementation
                  * typified enumerators / extensions #245                 
                  * Template based extensions #408

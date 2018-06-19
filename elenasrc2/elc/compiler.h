@@ -885,7 +885,7 @@ private:
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
-   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
