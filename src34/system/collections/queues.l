@@ -21,7 +21,7 @@ public sealed class Stack :: Enumerable
     
     stacksafe readLengthTo(ref<int> aLength)
     [
-        theTop copyValueTo(theTop).
+        theTop readValueTo(aLength).
     ]
     
     bool isEmpty
@@ -92,7 +92,7 @@ public sealed Stack<type> :: Enumerable<type>
     
     stacksafe readLengthTo(ref<int> aLength)
     [
-        theTop copyValueTo(aLength).
+        theTop readValueTo(aLength).
     ]
     
     bool isEmpty

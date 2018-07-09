@@ -3,31 +3,6 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * the following code corrupt stack:
-    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int> anOutputLength)
-    [
-        T<short,127> temp_buf.
-        int          temp_len := 127.
-        int          chLen := aLength value.
-
-        UTF16Encoding convert(anIndex, chLen, aByteArray, T<ShortArray>(temp_buf), &temp_len).
-        
-        int retVal := system'external'KERNEL32 WideCharToMultiByte(
-            theCodePage, 0,
-            T<ShortArray>(temp_buf),
-            temp_len, 0, 0, 0, 0).
-
-        if (retVal > aLength)
-            [ InvalidArgumentException new; raise ].
-                
-        retVal := system'external'KERNEL32 WideCharToMultiByte(
-            theCodePage, 0, T<ShortArray>(temp_buf), temp_len, anOutput, chLen, 0, 0).
-        
-        anOutputLength value := retVal
-    ]    
-
-                 * validate : why vm client ends with broken message
-
                  * Generic map
                  * Static methods
                  * Auto attribute

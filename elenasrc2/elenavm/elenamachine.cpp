@@ -953,7 +953,13 @@ int Instance::interprete(void* tape, ident_t interpreter)
    if(_debugMode)
       raiseBreakpoint();
 
+   _Memory* m = getTargetSection(mskStatRef);
+   int bef = (*m)[8];
+
    int retVal = (*entry.evaluate)(vaddress);
+
+   m = getTargetSection(mskStatRef);
+   int aft = (*m)[8];
 
    if (retVal == 0)
       setStatus("Broken");

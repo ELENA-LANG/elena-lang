@@ -27,12 +27,7 @@ class ProgramLoop
         [
             console write:aPrompt.
 
-            var s := console readLine.
-            var c1 := console.
-            var s2 := theControl proceed(s).
-            var c2 := console.
-                                    
-            console printLine(/*theControl proceed(console readLine)*/s2).
+            console printLine(theControl proceed(console readLine)).
         ].
     ]
 }

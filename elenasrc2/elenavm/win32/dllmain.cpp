@@ -323,7 +323,15 @@ EXTERN_DLL_EXPORT int EvaluateTape(void* tape)
       return 0;
 
    try {
-      return instance->interprete(tape, VM_INTERPRET);
+      _Memory* m = instance->getTargetSection(mskStatRef);
+      int bef = (*m)[8];
+
+      int r = instance->interprete(tape, VM_INTERPRET);
+
+      m = instance->getTargetSection(mskStatRef);
+      int aft = (*m)[8];
+
+      return r;
    }
    catch (JITUnresolvedException& e)
    {
