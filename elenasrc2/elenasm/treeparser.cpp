@@ -32,8 +32,8 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("identifier", lxIdentifier);
    _tokens.add("numeric", lxInteger);
    _tokens.add("parameter", lxMethodParameter);
-   //_tokens.add("include", lxInclude);
-   //_tokens.add("forward", lxForward);
+   _tokens.add("include", lxInclude);
+   _tokens.add("forward", lxForward);
    _tokens.add("reference", lxReference);
    _tokens.add("variable", lxVariable);
    _tokens.add("assign", lxAssign);

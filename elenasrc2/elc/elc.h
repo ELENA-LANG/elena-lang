@@ -17,7 +17,7 @@
 #include "compilerscope.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x00A3
+#define ELC_REVISION_NUMBER             0x00A4
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -59,7 +59,7 @@
 #define WINAPI_CATEGORY             "configuration/winapi/*"
 #define EXTERNALS_CATEGORY          "configuration/externals/*"
 #define REFERENCE_CATEGORY          "configuration/references/*"
-//#define TARGET_CATEGORY             "targets/*"
+#define TARGET_CATEGORY             "configuration/targets/*"
 
 // --- ELC config settings ---
 #define ELC_DEBUGINFO               "configuration/project/debuginfo"
@@ -86,11 +86,11 @@
 //#define ELC_L1                      "compiler/l1"                // optimization: source code optimization
 
 #define ELC_TARGET_NAME             "target"
-//#define ELC_TYPE_NAME               "type"
+#define ELC_TYPE_NAME               "type"
 #define ELC_INCLUDE                 "include"
 #define ELC_NAMESPACE_KEY           "namespace"
 #define ELC_NAME_KEY                "name"
-//#define ELC_OPTION                  "option"
+#define ELC_OPTION                  "option"
 
 #define ELC_MANIFEST_NAME           "configuration/manifest/name"
 #define ELC_MANIFEST_VERSION        "configuration/manifest/version"
@@ -143,6 +143,7 @@ class Project : public _ELENA_::Project
    virtual _ELENA_::ident_t getOption(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting);
 
    void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope, _ELENA_::SourceFileList& files);
+   void buildSyntaxTree(_ELENA_::ScriptParser& parser, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope, _ELENA_::SourceFileList& files);
 
 public:
    _ELENA_::Path appPath;
@@ -166,7 +167,7 @@ public:
    bool loadProject(_ELENA_::path_t path);
 
    virtual void addModule(_ELENA_::_ConfigFile::Node moduleNode);
-//   virtual void addTarget(_ELENA_::_ConfigFile::Node moduleNode);
+   virtual void addTarget(_ELENA_::_ConfigFile::Node moduleNode);
 
    virtual void loadConfig(_ELENA_::_ConfigFile& config, _ELENA_::path_t configPath)
    {

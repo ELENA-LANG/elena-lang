@@ -38,7 +38,7 @@ inline ident_t getLoadError(LoadResult result)
 // --- Project ---
 
 Project :: Project()
-   : _sources(true)//, _targets(true)
+   : _sources(true), _targets(true)
 {
    _hasWarning = false;
    _numberOfWarnings = 100;
@@ -200,15 +200,15 @@ void Project :: loadSourceCategory(_ConfigFile& config)
    }
 }
 
-////void Project :: loadTargetCategory(_ConfigFile& config)
-////{
-////   _ConfigFile::Nodes nodes;
-////   if (readCategory(config, opTargets, nodes)) {
-////      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
-////         addTarget(*it);
-////      }
-////   }
-////}
+void Project :: loadTargetCategory(_ConfigFile& config)
+{
+   _ConfigFile::Nodes nodes;
+   if (readCategory(config, opTargets, nodes)) {
+      for (_ConfigFile::Nodes::Iterator it = nodes.start(); !it.Eof(); it++) {
+         addTarget(*it);
+      }
+   }
+}
 
 void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 {
@@ -249,8 +249,8 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadCategory(config, opWinAPI, NULL);
    loadCategory(config, opReferences, configPath);
 
-//   // load targets
-//   loadTargetCategory(config);
+   // load targets
+   loadTargetCategory(config);
 
    // load sources
    loadSourceCategory(config);

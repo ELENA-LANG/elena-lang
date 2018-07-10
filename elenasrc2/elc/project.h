@@ -11,20 +11,20 @@
 
 #include "libman.h"
 #include "compilercommon.h"
-//#include "separser.h"
+#include "separser.h"
 
 namespace _ELENA_
 {
 
 // --- Project list types ---
 typedef Dictionary2D<int, ident_t>           ProjectSettings;
-//typedef Dictionary2D<ident_t, ident_t> TargetSettings;
+typedef Dictionary2D<ident_t, ident_t>       TargetSettings;
 typedef Map<ident_t, ProjectSettings::VItem> FileMapping;
 
 typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
 typedef _Iterator<ProjectSettings::VItem, _MapItem<int, ProjectSettings::VItem>, int>         SourceIterator;
-//typedef _Iterator<TargetSettings::VItem, _MapItem<ident_t, TargetSettings::VItem>, ident_t>   TargetIterator;
-//
+typedef _Iterator<TargetSettings::VItem, _MapItem<ident_t, TargetSettings::VItem>, ident_t>   TargetIterator;
+
 ////typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ProjectSettingIterator;
 
 // --- ELENA Project options ---
@@ -72,7 +72,7 @@ enum ProjectSetting
    opExternals             = 0x0064,
    opWinAPI                = 0x0065,   // used only for WIN32
    opReferences            = 0x0066,
-//   opTargets               = 0x0067,   // compiler targets (only xml project)
+   opTargets               = 0x0067,   // compiler targets (only xml project)
 
    // compiler manfifest
    opManifestName          = 0x0070,
@@ -92,7 +92,7 @@ protected:
    LibraryManager  _loader;
 
    ProjectSettings _settings;
-//   TargetSettings  _targets;
+   TargetSettings  _targets;
    ProjectSettings _sources;
 
    virtual bool readCategory(_ConfigFile& config, ProjectSetting setting, _ConfigFile::Nodes& list) = 0;
@@ -110,7 +110,7 @@ protected:
    void loadSourceCategory(_ConfigFile& config);
    void loadPrimitiveCategory(_ConfigFile& config, path_t configPath);
    void loadForwardCategory(_ConfigFile& config);
-//   void loadTargetCategory(_ConfigFile& config);
+   void loadTargetCategory(_ConfigFile& config);
 
 public:
    // project
@@ -148,7 +148,7 @@ public:
 
    virtual void addSource(path_t path) = 0;
    virtual void addModule(_ConfigFile::Node moduleNode) = 0;
-//   virtual void addTarget(_ConfigFile::Node moduleNode) = 0;
+   virtual void addTarget(_ConfigFile::Node moduleNode) = 0;
 
    virtual void loadConfig(_ConfigFile& config, path_t configPath);
 

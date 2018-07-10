@@ -416,12 +416,12 @@ private:
 
       /*virtual */ref_t mapAnonymous();
 
-//      bool defineForward(ident_t forward, ident_t referenceName)
-//      {
-//         ObjectInfo info = mapReferenceInfo(referenceName, false);
-//      
-//         return forwards.add(forward, info.param, true);
-//      }
+      bool defineForward(ident_t forward, ident_t referenceName)
+      {
+         ObjectInfo info = mapTerminal(referenceName, true);
+      
+         return forwards.add(forward, info.param, true);
+      }
 
 //      virtual SubjectList* getAutogerenatedExtensions(ref_t attr)
 //      {
@@ -948,8 +948,8 @@ private:
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
 ////   void compileIncludeModule(SNode node, ModuleScope& scope);
-//   void compileForward(SNode node, ModuleScope& scope);
-//
+   void compileForward(SNode node, NamespaceScope& scope);
+
 //   bool validate(_ProjectManager& project, _Module* module, int reference);
 
    ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
