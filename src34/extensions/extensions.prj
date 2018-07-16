@@ -36,6 +36,7 @@
             <include>scripting\interpreter.l</include>
             <include>scripting\escript.l</include>
             <include>scripting\jscript.l</include>
+            <include>scripting\assembly.l</include>
         </module>
     </files>
 </configuration>

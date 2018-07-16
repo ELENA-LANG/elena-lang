@@ -514,7 +514,7 @@ void CompilerScope :: declareNamespace(ident_t ns)
       saveListMember(NAMESPACES_SECTION, ns);
 }
 
-bool CompilerScope ::includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)
+bool CompilerScope :: includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)
 {
    // check if the namespace exists
    ReferenceNs virtualRef(name, NAMESPACE_REF);

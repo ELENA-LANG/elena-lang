@@ -235,3 +235,11 @@ public extension controlOp
         v set(tmp).
     ]
 }
+
+public singleton control
+{
+    do:action
+    [
+        action().
+    ]
+}

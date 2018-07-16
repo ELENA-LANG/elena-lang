@@ -4,12 +4,12 @@ import extensions'scripting.
 
 program =
 [
-    if ('program'arguments length == 1)
+    if (forwards'program'arguments length == 1)
         [  console << "Please provide the path to the file to interpret". AbortException new; raise ].
 
     try(control do:
     [
-        assemblyScript eval path:"grammar_js.es" path('program'arguments[1]).
+        script loadAndEval("grammar_js.es", forwards'program'arguments[1]).
     ])
     {
         on(Exception e)
@@ -19,7 +19,7 @@ program =
     }.    
 ].
 
-stat_program =
+public stat_program =
 [
    console writeLine:"Javascript code executed"
 ].

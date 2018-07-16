@@ -561,14 +561,40 @@ inline void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _E
    }
 }
 
+inline _ELENA_::SourceFileInfo* _ELC_::Project :: initSourceFileInfo(_ELENA_::CompilerScope& scope, _ELENA_::ident_t filePath)
+{
+   auto info = new _ELENA_::SourceFileInfo();
+
+   info->tree = new _ELENA_::SyntaxTree();
+
+   retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, info->ns);
+   //size_t index = filePath.find(PATH_SEPARATOR);
+   //if (index != NOTFOUND_POS) {
+   //   info->ns.copy(filePath, index);
+   //}
+   info->path.copy(filePath);
+
+   // declare a namespace
+   scope.declareNamespace(info->ns.c_str());
+
+   // add the module itself
+   info->importedNs.add(scope.module->Name().clone());
+
+   // system module should be included by default
+   if (!scope.module->Name().compare(STANDARD_MODULE)) {
+      info->importedNs.add(_ELENA_::ident_t(STANDARD_MODULE).clone());
+   }
+
+   return info;
+}
+
 void _ELC_::Project::buildSyntaxTree(_ELENA_::ScriptParser& parser, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope, _ELENA_::SourceFileList& files)
 {
    _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
    while (!file_it.Eof()) {
-      _ELENA_::SourceFileInfo* info = new _ELENA_::SourceFileInfo();
-      info->tree = new _ELENA_::SyntaxTree();
-
       _ELENA_::ident_t filePath = *file_it;
+
+      _ELENA_::SourceFileInfo* info = initSourceFileInfo(scope, filePath);
 
       try {
          // based on the target type generate the syntax tree for the file
@@ -610,28 +636,9 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
 {
    _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
    while (!file_it.Eof()) {
-      _ELENA_::SourceFileInfo* info = new _ELENA_::SourceFileInfo();
-      info->tree = new _ELENA_::SyntaxTree();
-
       _ELENA_::ident_t filePath = *file_it;
 
-      retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, info->ns);
-      //size_t index = filePath.find(PATH_SEPARATOR);
-      //if (index != NOTFOUND_POS) {
-      //   info->ns.copy(filePath, index);
-      //}
-      info->path.copy(filePath);
-
-      // declare a namespace
-      scope.declareNamespace(info->ns.c_str());
-
-      // add the module itself
-      info->importedNs.add(scope.module->Name().clone());
-
-      // system module should be included by default
-      if (!scope.module->Name().compare(STANDARD_MODULE)) {
-         info->importedNs.add(_ELENA_::ident_t(STANDARD_MODULE).clone());
-      }
+      _ELENA_::SourceFileInfo* info = initSourceFileInfo(scope, filePath);
 
       try {
          // based on the target type generate the syntax tree for the file

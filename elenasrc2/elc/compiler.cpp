@@ -3609,7 +3609,7 @@ ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeS
 {
    ref_t parentRef = scope.moduleScope->arrayReference;
    SNode parentNode = node.firstChild(lxTerminalMask);
-   if (parentNode != lxNone) {
+   if (parentNode.compare(lxIdentifier, lxReference, lxGlobalReference)) {
       parentRef = resolveImplicitIdentifier(scope, parentNode);
       if (parentRef == 0)
          scope.raiseError(errUnknownBaseClass, node);
@@ -4404,6 +4404,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t flags = 0;
 
    SNode action = node.firstChild(lxTerminalMask);
+   if (action == lxNone)
+      action = node.findChild(lxMessage);
+
    SNode current = /*action == lxNone ? */node.findChild(lxMethodParameter)/* : action.nextNode()*/;
 
 //   if (verb == lxNone) {
@@ -4413,7 +4416,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      }
 //   }
 
-   if (action == lxIdentifier) {
+   if (action.compare(lxIdentifier, lxMessage)) {
       actionStr.copy(action.identifier()); // !! temporal
    }
    else unnamedMessage = true;
