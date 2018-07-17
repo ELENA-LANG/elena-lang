@@ -2640,11 +2640,9 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
    }
 }
 
-ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode& node, CodeScope& scope, ObjectInfo loperand, int mode, int operator_id)
+ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, ObjectInfo loperand, int mode, int operator_id)
 {
    ObjectInfo retVal(okObject);
-
-   SNode roperandNode = node.nextNode(lxObjectMask);
 
    compileBranchingOperand(writer, roperandNode, scope, mode, operator_id, loperand, retVal);
 
@@ -2746,15 +2744,19 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    SNode operatorNode = node;
    int operator_id = operatorNode.argument != 0 ? operatorNode.argument : _operators.get(operatorNode.identifier());
 
+   SNode roperand = node.nextNode();
+   if (operatorNode.prevNode() == lxNone)
+      roperand = roperand.nextNode(lxObjectMask);
+
    if (test(mode, HINT_PROP_MODE) && operator_id == REFER_MESSAGE_ID) {
       operator_id = SET_REFER_MESSAGE_ID;
    }
 
    // if it is branching operators
    if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
-      return compileBranchingOperator(writer, node, scope, target, mode, operator_id);
+      return compileBranchingOperator(writer, roperand, scope, target, mode, operator_id);
    }
-   else return compileOperator(writer, node.nextNode(), scope, target, mode, operator_id);
+   else return compileOperator(writer, roperand, scope, target, mode, operator_id);
 }
 
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
@@ -3925,8 +3927,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    int targetMode = mode & ~HINT_PROP_MODE;
 
    SNode object = node.firstChild(lxObjectMask);
-   SNode nextNode = object.nextNode();
-   if (nextNode == lxAssign) {
+   SNode operationNode = node.findChild(lxAssign, lxMessage, lxOperator, lxExtension);
+
+   if (operationNode == lxAssign) {
       // recognize the property set operation
       targetMode |= HINT_PROP_MODE;
       if (isSingleStatement(object))
@@ -3940,13 +3943,16 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       objectInfo = compileObject(writer, node, scope, targetMode);
    }
    else {
-      if (nextNode == lxExpression) {
+      if (operationNode == lxNone && object.nextNode() == lxExpression) {
          targetMode |= HINT_COLLECTION_MODE;
       }
 
       objectInfo = compileObject(writer, object, scope, targetMode);
 
-      objectInfo = compileOperation(writer, object.nextNode(), scope, objectInfo, mode);
+      if (operationNode != lxNone) {
+         operationNode.refresh(); // HOTFIX : to compile property assigmment properly
+         objectInfo = compileOperation(writer, operationNode, scope, objectInfo, mode);
+      }         
    }   
 
    ref_t sourceRef = resolveObjectReference(scope, objectInfo, targetRef);
