@@ -59,7 +59,7 @@
                              "method" "(" message meth_params meth_body ")"
                               <= += " extensions'dynamic'closeClosure " =>;
 
-   #define meth_params ::= parameter* <= += " ""self"" extensions'dynamic'newParamTokenClosure ^ ""new[1]"" " =>;
+   #define meth_params ::= parameter* <= += " ""target"" extensions'dynamic'newParamTokenClosure ^ ""new[1]"" " =>;
 
    #define parameter   ::=   "parameter" "=" ident_quote
                            <= += " extensions'dynamic'newParamTokenClosure ^ ""new[1]"" " => ;

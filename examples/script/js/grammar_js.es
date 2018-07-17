@@ -222,7 +222,7 @@ root
 <=
              expression
              (
-                identifier = self
+                identifier = target
 =>                
                 function_name "(" parameter? next_parameter* ")"
 <=                                           
