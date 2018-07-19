@@ -2,7 +2,7 @@ import extensions.
 import extensions'dynamic.
 import extensions'scripting.
 
-program =
+public program =
 [
     if (forwards'program'arguments length == 1)
         [  console << "Please provide the path to the file to interpret". AbortException new; raise ].

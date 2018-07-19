@@ -3950,7 +3950,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       objectInfo = compileObject(writer, object, scope, targetMode);
 
       if (operationNode != lxNone) {
-         operationNode.refresh(); // HOTFIX : to compile property assigmment properly
+         // HOTFIX : to compile property assigmment properly - reread them
+         operationNode = node.findChild(lxAssign, lxMessage, lxOperator, lxExtension);
+
          objectInfo = compileOperation(writer, operationNode, scope, objectInfo, mode);
       }         
    }   

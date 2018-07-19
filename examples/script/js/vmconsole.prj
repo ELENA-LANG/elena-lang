@@ -1,10 +1,16 @@
-﻿[project]
-executable=vmconsole.exe
-arguments=test2.js
-namespace=vmconsole
-template=vm_console
-debuginfo=-1
-
-[files]
-main.l
-
+<configuration>
+    <project>
+        <executable>vmconsole.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>vmconsole</namespace>
+        <template>vm_console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>
