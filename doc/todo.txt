@@ -5,6 +5,12 @@ In development:
               exp - live programming
                  * class to expression tree
                  * expression tree to class
+
+              dev - revision
+                 * tutorials
+                 * reddit
+                 * rosetta code
+                 * samples
                                                                                                         
               dev - redesign
                  * Generic map

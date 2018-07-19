@@ -29,6 +29,9 @@ public extension<int> intLoopOp
     stacksafe to(int anEnd) do(Func1 aFunction)
         = self~intLoopOp runIntLoop(anEnd, (:n)<int>[ aFunction(n) ]).
             
+    stacksafe till(int anEnd) do(Func1 aFunction)
+        = self~intLoopOp runIntLoop(anEnd-1, (:n)<int>[ aFunction(n) ]).
+            
 //    stacksafe to(int anEnd) do(ext_mssg anExtension)
 //        = self~intLoopOp runIntLoop int:anEnd nfunc(:n)<int>[ n~anExtension get ].
 //            

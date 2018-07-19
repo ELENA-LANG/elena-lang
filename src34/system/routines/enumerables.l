@@ -2,10 +2,10 @@ import system'collections.
 
 // === actions ===
 
-symbol ifOrdered
+public symbol ifOrdered
     = (:aFormer:aLater) [ ^aFormer < aLater ].
 
-symbol ifDecrescent
+public symbol ifDecrescent
     = (:aFormer:aLater) [ ^aFormer > aLater ].
 
 // --- literalSplitOp ---
@@ -149,10 +149,10 @@ public extension enumerableOp
 
 //    forEachPair(object object, ext_mssg anExtMessage)
 //        = self~enumerableOp forEachPair(object, (:o:n)(o~anExtMessage eval:n)).
-//    
-//    forEachPair(object anObject, func2 aFunction)
-//      = aFunction run object:anObject enumerator:(self enumerator).
-//    
+    
+    forEachPair(object anObject, Func2 aFunction)
+      = aFunction run(anObject, T<Enumerator>(self enumerator)).
+    
 //    multi forEachPair:object:fn
 //        = self~enumerableOp forEachPair(object, (:o:n)[ fn(o,n) ]).
 //
@@ -277,18 +277,18 @@ public extension enumerableOp
         ^ aLastItem
     ]
     
-//    int countMembers
-//    [
-//        enumerator en := self enumerator.
-//        int        counter := 0.
-//        while (en next)
-//        [
-//            counter := counter + 1
-//        ].
-//        
-//        ^ counter
-//    ]
-//    
+    int countMembers
+    [
+        auto   en := T<Enumerator>(self enumerator).
+        int    counter := 0.
+        while (en next)
+        [
+            counter := counter + 1
+        ].
+        
+        ^ counter
+    ]
+    
 //    allMatchedBy(BaseFunction1 f)
 //    [
 //        enumerator en := self enumerator.
@@ -364,6 +364,12 @@ public extension enumerableOp
 
     zip:anEnumerable forEach:func2
         = self~enumerableOp zip:anEnumerable by:func2; forEach:idleFunc1.
+        
+    orderBy:orderFunc
+        = OrderingEnumerator new(orderFunc, T<Enumerator>(self enumerator)).
+        
+    groupBy:groupFunc
+        = GroupingEnumerator new(groupFunc, T<Enumerator>(self enumerator)).                                       
 }
 
 // --- indexableOp ---

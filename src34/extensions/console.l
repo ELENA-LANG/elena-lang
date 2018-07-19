@@ -52,7 +52,7 @@ public extension outputOp
             i := i + 1
         ].
         
-        ^ self writeLine
+        ^   self writeLine
     ]    
 }
 

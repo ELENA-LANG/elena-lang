@@ -1,4 +1,4 @@
-//import system'collections.
+import system'collections.
 
 symbol idleFunc1 = (:x) [].
 
@@ -728,98 +728,104 @@ public class IntervalEnumerator :: Enumerator
     enumerable = theVariable.
 }
 
-//// --- GroupingEnumerator ---
-//
-//class GroupingEnumerator :: Enumerator
-//{
-//    dictionary theDictionary.
-//    enumerator theEnumerator.
-//    func1      theGroupFunc.    
-//    enumerator theGroupEnumerator.
-//    
-//    constructor new func1:grouper enumerator:enumerator
-//    [
-//        theGroupFunc := grouper.
-//        theDictionary := Dictionary new.
-//        theEnumerator := enumerator.
-//        
-//        $self reset.
-//    ]
-//    
-//    constructor new ext_mssg:fn enumerator:enumerator
-//        <= new func1:(:x)(x~fn eval) enumerator:enumerator.
-//    
-//    reset
-//    [
-//        theEnumerator reset.
-//        
-//        while (theEnumerator next)
-//        [
-//            var item := theEnumerator get.
-//            var key := theGroupFunc(item).
-//            
-//            var groupItem := theDictionary[key].
-//            if ($nil == groupItem)
-//            [
-//                groupItem := ArrayList new.
-//                
-//                theDictionary[key] := groupItem.
-//            ].
-//            
-//            groupItem append:item.
-//        ].
-//        
-//        theGroupEnumerator := theDictionary enumerator.
-//    ]
-//    
-//    get = theGroupEnumerator get.
-//    
-//    bool next
-//        = theGroupEnumerator next.
-//}
-//
-//// --- OrderingEnumerator ---
-//
-//class OrderingEnumerator :: Enumerator
-//{
-//    enumerator theEnumerator.
-//    func2      theOrderFunc.    
-//    enumerator theListEnumerator.
-//    
-//    constructor new func2:orderFunc enumerator:enumerator
-//    [
-//        theOrderFunc := orderFunc.
-//        theEnumerator := enumerator.
-//        
-//        $self reset.
-//    ]
-//    
-//    constructor new func1:orderVal enumerator:enumerator
-//    [
-//        theOrderFunc := (:p:n)(orderVal(p) < orderVal(n) ).
-//        theEnumerator := enumerator.
-//        
-//        $self reset.
-//    ]
-//    
-//    constructor new ext_mssg:fn enumerator:enumerator
-//        <= new func2:(:x:y)(x~fn eval:y) enumerator:enumerator.
-//    
-//    reset
-//    [
-//        theEnumerator reset.
-//        
-//        array list := Summing new:(ArrayList new); run enumerator:theEnumerator.
-//        list sort func2:theOrderFunc.
-//        
-//        theListEnumerator := list enumerator.
-//    ]
-//    
-//    get = theListEnumerator get.
-//    
-//    bool next
-//        = theListEnumerator next.
-//}
+// --- GroupingEnumerator ---
+
+public class GroupingEnumerator :: Enumerator
+{
+    T<Dictionary> theDictionary.
+    T<Enumerator> theEnumerator.
+    T<Func1>      theGroupFunc.    
+    T<Enumerator> theGroupEnumerator.
+    
+    constructor new(Func1 grouper, Enumerator enumerator)
+    [
+        theGroupFunc := grouper.
+        theDictionary := Dictionary new.
+        theEnumerator := enumerator.
+        
+        self reset.
+    ]
+    
+    constructor new(ExtensionMessage fn, Enumerator enumerator)
+        <= new((:x)(x~fn eval), enumerator).
+    
+    reset
+    [
+        theEnumerator reset.
+        
+        while (theEnumerator next)
+        [
+            var item := theEnumerator get.
+            var key := theGroupFunc(item).
+            
+            var groupItem := theDictionary[key].
+            if (nil == groupItem)
+            [
+                groupItem := ArrayList new.
+                
+                theDictionary[key] := groupItem.
+            ].
+            
+            groupItem append:item.
+        ].
+        
+        theGroupEnumerator := theDictionary enumerator.
+    ]
+    
+    get = theGroupEnumerator get.
+    
+    bool next
+        = theGroupEnumerator next.
+        
+    enumerable
+        => theEnumerator.
+}
+
+// --- OrderingEnumerator ---
+
+public class OrderingEnumerator :: Enumerator
+{
+    T<Enumerator> theEnumerator.
+    T<Func2>      theOrderFunc.    
+    T<Enumerator> theListEnumerator.
+    
+    constructor new(Func2 orderFunc, Enumerator enumerator)
+    [
+        theOrderFunc := orderFunc.
+        theEnumerator := enumerator.
+        
+        self reset.
+    ]
+    
+    constructor new(Func1 orderVal, Enumerator enumerator)
+    [
+        theOrderFunc := (:p:n)(orderVal(p) < orderVal(n) ).
+        theEnumerator := enumerator.
+        
+        self reset.
+    ]
+    
+    constructor new(ExtensionMessage fn, Enumerator enumerator)
+        <= new((:x:y)(x~fn eval:y), enumerator).
+    
+    reset
+    [
+        theEnumerator reset.
+        
+        T<Array> list := Summing new:(ArrayList new); run(theEnumerator).
+        list sort:theOrderFunc.
+        
+        theListEnumerator := list enumerator.
+    ]
+    
+    get = theListEnumerator get.
+    
+    bool next
+        = theListEnumerator next.
+        
+    enumerable
+        => theEnumerator.
+}
 
 // === patterns ===
 
@@ -879,9 +885,6 @@ class Accumulating :: BasePattern
 //
 //    last:counter
 //        = TopFilter new int:counter int(self length - counter) enumerator:(self enumerator).
-//
-//    groupBy:groupFunc
-//        = GroupingEnumerator new(groupFunc, self enumerator).                                       
 //
 //    orderBy:orderFunc
 //        = OrderingEnumerator new(orderFunc, self enumerator).

@@ -29,26 +29,26 @@ class literalExConvertor =
         ^ anOutput literal
     ]
 
-//    literal convert enumerator:aList
-//    [
-//        textbuffer anOutput := TextBuilder new.
-//
-//        aList forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toLiteral); write:"," ]).
-//        
-//        int aLength := anOutput length.
-//
-//        if (0 < aLength)
-//            [ anOutput setLength int:(-1 + aLength) ].
-//        
-//        ^ anOutput literal
-//    ]
+    literal convert(Enumerator en)
+    [
+        auto anOutput := TextBuilder new.
+
+        en forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toLiteral); write:"," ]).
+        
+        int aLength := anOutput length.
+
+        if (0 < aLength)
+            [ anOutput setLength(-1 + aLength) ].
+        
+        ^ anOutput literal
+    ]
 
 //    literal convert datetime:aValue = aValue literal.
 //        
 //    literal convert timestamp:aValue = aValue literal.
-//
-//    literal convert(BaseEnumerable o)
-//        <= convert enumerator:o.
+
+    literal convert(Enumerable o)
+        <= convert(o enumerator).
 
     literal convert(Indexable o)
         <= convert(o indexer).
