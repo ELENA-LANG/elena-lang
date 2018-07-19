@@ -1,12 +1,16 @@
-﻿[project]
-classsymbolload=-1
-warn:unresolved=0
-executable=live.exe
-options=-w3
-namespace=live
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
+<configuration>
+    <project>
+        <executable>live.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>live</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

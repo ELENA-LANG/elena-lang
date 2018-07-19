@@ -2,6 +2,10 @@
 In development:
 ------                              
 	                            
+              exp - live programming
+                 * class to expression tree
+                 * expression tree to class
+                                                                                                        
               dev - redesign
                  * Generic map
                  * Static methods
@@ -117,11 +121,6 @@ In development:
                  * typified enumerators / extensions #245                 
                  * Template based extensions #408
 
-              exp - live programming
-                 * class to expression tree
-
-                 * expression tree to class
-                                                                                                        
 ------                                                           
 Pipeline:
 ------                                                                                         

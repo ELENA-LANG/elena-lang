@@ -51,7 +51,7 @@ import system'dynamic.
 import extensions.
 import extensions'dynamic.
  
-program =
+public program =
 [
 //    var a1 := ClosureTape::(
 //        openSingletonClosure,
