@@ -3875,6 +3875,10 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
                scope.raiseError(errIllegalOperation, node);
 
          }
+         else if (paramCount == 0) {
+            if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
+               scope.raiseError(errIllegalOperation, node);
+         }
          else {
             ObjectInfo object = compileExpression(writer, objectNode, scope, /*targetRef*/0, mode);
             if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, object), object.element))

@@ -1,13 +1,13 @@
-///// Map template
-//public sealed map<key_type, value_type> //:: Enumerable<Tuple<key_type, value_type>>
-//{
-//    int theHashMask.
-//    
+/// Map template
+public sealed map<key_type, value_type> //:: Enumerable<Tuple<key_type, value_type>>
+{
+    int theHashMask.
+    
 //    List<Tuple<key_type, value_type>> theList.
 //    Array<IntArray>                   theHashTable. 
-//    
-////    value_type     theDefault.
-//
+    
+//    value_type     theDefault.
+
 //    private stacksafe init(int capacity, int hashLength)
 //    [
 //        int size := 32.
@@ -137,4 +137,4 @@
 //        theHashTable := v<intArray>(theHashTable length).
 //        theList clear.
 //    ]
-//}
+}

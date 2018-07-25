@@ -7,7 +7,6 @@ In development:
                  * expression tree to class
 
               dev - revision
-                 * tutorials
                  * reddit
                  * rosetta code
                  * samples
@@ -16,9 +15,7 @@ In development:
                  * Generic map
                  * Static methods
                  * Auto attribute
-                 * ELENA 3.3 : Inheritance
                  * fix locale toUpper / toLower
-                 * wiki tutorials
                  * debugger : display template based classes
                  * an option to make all classes public (to be compatible with previous versions)??
 
@@ -126,6 +123,9 @@ In development:
               dev - general implementation
                  * typified enumerators / extensions #245                 
                  * Template based extensions #408
+
+              dev - revision
+                 * tutorials
 
 ------                                                           
 Pipeline:
