@@ -1771,7 +1771,7 @@ void DerivationTransformer :: generateNewTemplate(SyntaxWriter& writer, SNode& n
       }
       writer.closeNode();
 
-      node = goToNode(node, lxOperator);
+      node = goToNode(node.nextNode(), lxOperator);
    }
    else {
       writeFullReference(writer, scope.compilerScope->module, typeRef, node);
