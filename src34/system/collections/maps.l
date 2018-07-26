@@ -1,9 +1,9 @@
 /// Map template
-public sealed map<key_type, value_type> //:: Enumerable<Tuple<key_type, value_type>>
+public sealed Map<key_type, value_type> //:: Enumerable<Tuple<key_type, value_type>>
 {
     int theHashMask.
     
-//    List<Tuple<key_type, value_type>> theList.
+    List<Tuple<key_type, value_type>> theList.
 //    Array<IntArray>                   theHashTable. 
     
 //    value_type     theDefault.
