@@ -37,7 +37,7 @@ public sealed Map<key_type, value_type> :: Enumerable<Tuple<key_type, value_type
     
     private Tuple<key_type, value_type> retrieve(int index, key_type key)
     [
-        IntArray backet := theHashTable[index].        
+        T<IntArray> backet := theHashTable[index].        
         if (nil == backet)
         [
             backet := V<int>(5).
@@ -71,7 +71,7 @@ public sealed Map<key_type, value_type> :: Enumerable<Tuple<key_type, value_type
         int capacity := backet length.
         if (capacity == len)
         [
-            intarray new_backet := IntArray new(capacity + 4).
+            auto new_backet := IntArray new(capacity + 4).
             new_backet write(0, capacity, backet).
 
             backet := new_backet.

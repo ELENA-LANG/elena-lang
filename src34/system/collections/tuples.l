@@ -48,6 +48,11 @@ public sealed Tuple<type1, type2>
         field2 := o2.
     ]
 
+    cast eval(type1 o1)
+    [
+        field1 := o1.
+    ]
+
     getAt(int index)
     [
         index =>
@@ -91,6 +96,17 @@ public sealed Tuple<type1, type2, type3>
         field1 := o1.
         field2 := o2.
         field3 := o3.
+    ]
+
+    cast eval(type1 o1, type2 o2)
+    [
+        field1 := o1.
+        field2 := o2.
+    ]
+
+    cast eval(type1 o1)
+    [
+        field1 := o1.
     ]
 
     getAt(int index)
@@ -140,6 +156,24 @@ public sealed Tuple<type1, type2, type3, type4>
         field2 := o2.
         field3 := o3.
         field4 := o4.
+    ]
+
+    cast eval(type1 o1, type2 o2, type3 o3)
+    [
+        field1 := o1.
+        field2 := o2.
+        field3 := o3.
+    ]
+
+    cast eval(type1 o1, type2 o2)
+    [
+        field1 := o1.
+        field2 := o2.
+    ]
+
+    cast eval(type1 o1)
+    [
+        field1 := o1.
     ]
 
     getAt(int index)
@@ -193,6 +227,32 @@ public sealed Tuple<type1, type2, type3, type4, type5>
         field3 := o3.
         field4 := o4.
         field5 := o5.
+    ]
+
+    cast eval(type1 o1, type2 o2, type3 o3, type4 o4)
+    [
+        field1 := o1.
+        field2 := o2.
+        field3 := o3.
+        field4 := o4.
+    ]
+
+    cast eval(type1 o1, type2 o2, type3 o3)
+    [
+        field1 := o1.
+        field2 := o2.
+        field3 := o3.
+    ]
+
+    cast eval(type1 o1, type2 o2)
+    [
+        field1 := o1.
+        field2 := o2.
+    ]
+
+    cast eval(type1 o1)
+    [
+        field1 := o1.
     ]
 
     getAt(int index)
@@ -250,6 +310,41 @@ public sealed Tuple<type1, type2, type3, type4, type5, type6>
         field4 := o4.
         field5 := o5.
         field6 := o6.
+    ]
+
+    cast eval(type1 o1, type2 o2, type3 o3, type4 o4, type5 o5)
+    [
+        field1 := o1.
+        field2 := o2.
+        field3 := o3.
+        field4 := o4.
+        field5 := o5.
+    ]
+
+    cast eval(type1 o1, type2 o2, type3 o3, type4 o4)
+    [
+        field1 := o1.
+        field2 := o2.
+        field3 := o3.
+        field4 := o4.
+    ]
+
+    cast eval(type1 o1, type2 o2, type3 o3)
+    [
+        field1 := o1.
+        field2 := o2.
+        field3 := o3.
+    ]
+
+    cast eval(type1 o1, type2 o2)
+    [
+        field1 := o1.
+        field2 := o2.
+    ]
+
+    cast eval(type1 o1)
+    [
+        field1 := o1.
     ]
 
     getAt(int index)
