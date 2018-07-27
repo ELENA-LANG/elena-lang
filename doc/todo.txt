@@ -12,7 +12,6 @@ In development:
                  * samples
                                                                                                         
               dev - redesign
-                 * Generic map
                  * Static methods
                  * Auto attribute
                  * fix locale toUpper / toLower
