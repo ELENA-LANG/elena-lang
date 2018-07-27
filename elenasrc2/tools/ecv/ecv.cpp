@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   24
+#define REVISION_VERSION   25
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -703,10 +703,14 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printMessage(command, module, argument2);
          break;
       case bcCopyM:
-      case bcSetVerb:
          command.append(opcode);
          command.append(' ');
          printMessage(command, module, argument);
+         break;
+      case bcSetVerb:
+         command.append(opcode);
+         command.append(' ');
+         printMessage(command, module, encodeAction(argument));
          break;
       case bcSelectR:
       case bcXSelectR:

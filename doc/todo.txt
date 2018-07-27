@@ -2,6 +2,13 @@
 In development:
 ------                              
 	                            
+              dev - redesign
+                 * fix #167 : stack allocated variable and $nil 
+                 * fix #399 : Assinging $nil value to a structure 
+                 * fix #355 : Multimethods : nil
+                 * fix #377 : invoke message only if the object is not nil, otherwise return nil 
+                 * fix locale toUpper / toLower
+
               exp - live programming
                  * class to expression tree
                  * expression tree to class
@@ -12,7 +19,6 @@ In development:
                  * samples
                                                                                                         
               dev - redesign
-                 * fix locale toUpper / toLower
                  * debugger : display template based classes
                  * an option to make all classes public (to be compatible with previous versions)??
 

@@ -233,9 +233,9 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    if (signature) {
       // if the message signature is provided
       ref_t signatures[OPEN_ARG_COUNT];
-      paramCount = module->resolveSignature(signature, signatures);
+      size_t signLen = module->resolveSignature(signature, signatures);
 
-      actionRef = resolveAction(actionName, module, signatures, paramCount);
+      actionRef = resolveAction(actionName, module, signatures, signLen);
    }
    else actionRef = (ref_t)_loader->resolveReference(actionName, 0);
 
