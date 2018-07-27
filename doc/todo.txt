@@ -12,8 +12,6 @@ In development:
                  * samples
                                                                                                         
               dev - redesign
-                 * Static methods
-                 * Auto attribute
                  * fix locale toUpper / toLower
                  * debugger : display template based classes
                  * an option to make all classes public (to be compatible with previous versions)??
@@ -118,6 +116,7 @@ In development:
                         console writeLine:"testWrite is called with:".
                         args forEach:printingLn.
                      ]
+                 * do we need tpSpecial hint?
 
               dev - general implementation
                  * typified enumerators / extensions #245                 

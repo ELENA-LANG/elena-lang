@@ -3075,7 +3075,7 @@ void Compiler :: inheritClassConstantList(_CompilerScope& scope, ref_t sourceRef
    }
 }
 
-void Compiler ::compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal)
+void Compiler :: compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
    bool accumulatorMode = false;
@@ -6060,10 +6060,10 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    }
    else {
       bool privateOne = test(message, SEALED_MESSAGE);
-      bool castingOne = test(methodHints, tpConversion);
-      if (test(message, SPECIAL_MESSAGE) && message == (encodeAction(NEWOBJECT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
+      bool specialOne = test(methodHints, tpConversion);
+      if (test(message, SPECIAL_MESSAGE)) {
          // initialize method can be overridden
-         castingOne = true;
+         specialOne = true;
       }
 
       bool included = scope.include(message);
@@ -6075,7 +6075,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       }
 
       // if the method is sealed, it cannot be overridden
-      if (!included && sealedMethod && !castingOne) {
+      if (!included && sealedMethod && !specialOne) {
          scope.raiseError(errClosedMethod, findParent(current, lxClass, lxNestedClass));
       }
 
