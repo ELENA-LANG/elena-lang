@@ -71,6 +71,7 @@
 #define V_INTERNAL       (ref_t)-8213
 #define V_CLOSED         (ref_t)-8214
 #define V_PREDEFINED     (ref_t)-8215
+#define V_DISPATCHER     (ref_t)-8216
 
 #define V_CONSTRUCTOR    (ref_t)-16384
 #define V_VARIABLE       (ref_t)-16385
@@ -107,7 +108,7 @@ enum MethodHint
    tpSealed      = 0x00001,
    tpClosed      = 0x00002,
    tpNormal      = 0x00003,
-////      tpDispatcher = 0x04,
+   tpDispatcher  = 0x00004,
    tpPrivate     = 0x00005,
    tpStackSafe   = 0x00010,
    tpEmbeddable  = 0x00020,
@@ -243,13 +244,6 @@ struct _CompilerScope
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly) = 0;
 
    virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef) = 0;
-
-////   virtual bool includeModule(ident_t name, bool& duplicateExtensions, bool& duplicateAttributes, bool& duplicateInclusion) = 0;
-////
-////   virtual void validateReference(SNode terminal, ref_t reference) = 0;
-////
-////   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
-////   virtual SubjectList* getAutogerenatedExtensions(ref_t attr) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
@@ -418,12 +412,13 @@ public:
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
    virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
+   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          
    virtual bool isAbstract(ClassInfo& info) = 0;
 
-   virtual bool isWithEmbeddableDispatcher(SNode node) = 0;
+   virtual bool isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node) = 0;
 
 //   virtual bool isPrimitiveRef(ref_t reference) = 0;
 //   virtual bool isPrimitiveArray(ref_t reference) = 0;
@@ -446,16 +441,15 @@ public:
    virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
    virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
-////   virtual bool validateClassFlag(ClassInfo& info, int flag) = 0;
    virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
-   virtual bool validateMethodAttribute(int& attrValue) = 0;
+   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
+   virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant) = 0;
    virtual bool validateLocalAttribute(int& attrValue) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
-////   virtual bool validateWarningAttribute(int& attrValue) = 0;
    virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;

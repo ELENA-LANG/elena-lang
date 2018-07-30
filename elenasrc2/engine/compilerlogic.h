@@ -120,6 +120,7 @@ public:
    virtual bool isMethodInternal(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
    virtual bool isClosure(ClassInfo& info, ref_t message);
+   virtual bool isDispatcher(ClassInfo& info, ref_t message);
    virtual bool isReadonly(ClassInfo& info);
    virtual bool isReadonly(_CompilerScope& scope, ref_t reference)
    {
@@ -128,7 +129,7 @@ public:
 
       return isReadonly(info);
    }
-   virtual bool isWithEmbeddableDispatcher(SNode node);
+   virtual bool isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node);
 
    virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
    virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
@@ -148,7 +149,8 @@ public:
    virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
-   virtual bool validateMethodAttribute(int& attrValue);
+   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
+   virtual bool validateImplicitMethodAttribute(int& attrValue);
    virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant);
    virtual bool validateLocalAttribute(int& attrValue);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);

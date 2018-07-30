@@ -356,7 +356,7 @@ namespace _ELENA_
    #define CORE_ALIAS                "core"          // Core functionality
   
   // --- ELENA verb messages ---
-   #define DISPATCH_MESSAGE         "dispatch"
+   #define DISPATCH_MESSAGE         "#dispatch"
    #define NEWOBJECT_MESSAGE        "#new"
    #define NEW_MESSAGE              "new"
    #define GET_MESSAGE              "get"

@@ -695,6 +695,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->subCodeMode = false;
    this->abstractMethod = false;
    this->genericClosure = false;
+   this->dispatchMode = false;
 }
 
 ObjectInfo Compiler::MethodScope :: mapSelf(bool forced)
@@ -3413,7 +3414,7 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
    if (!node.argument) {
       compileParentDeclaration(node, scope);
 
-      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(node)) {
+      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
          // COMPILER MAGIC : inject interface implementation
          _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef); 
       }
@@ -4519,7 +4520,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (test(scope.hints, tpSealed | tpSpecial))
          flags |= SPECIAL_MESSAGE;
 
-      if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
+      if ((scope.hints & tpMask) == tpDispatcher) {
+         if (paramCount == 0) {
+            actionRef = DISPATCH_MESSAGE_ID;
+            unnamedMessage = false;
+         }
+         else scope.raiseError(errIllegalMethod, node);
+      }
+      else if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
          if (signatureLen > 0 || !actionStr.compare(EVAL_MESSAGE))
             scope.raiseError(errInvalidHint, action);
 
@@ -4587,8 +4595,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //      if (scope.moduleScope->attributes.exist(messageStr) != 0)
 //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousMessageName, verb);
 //
-      if (actionRef == NEWOBJECT_MESSAGE_ID) {
-         // HOTFIX : for implicit constructor
+      if (/*actionRef == NEWOBJECT_MESSAGE_ID || */actionRef == DISPATCH_MESSAGE_ID) {
+         // HOTFIX : for dispatcher
       }
       else if (actionStr.Length() > 0) {
          ref_t signatureRef = 0;
@@ -4596,12 +4604,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             signatureRef = scope.moduleScope->module->mapSignature(signature, signatureLen, false);
 
          actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), signatureRef, false);
-         if (actionRef == DISPATCH_MESSAGE_ID) {
-            if (paramCount != 0)
-               scope.raiseError(errIllegalMethod, node);
-         }
          // COMPILER MAGIC : recognize set property
-         else if (actionRef == SET_MESSAGE_ID && paramCount == 1) {
+         if (actionRef == SET_MESSAGE_ID && paramCount == 1) {
             flags |= PROPSET_MESSAGE;
          }
       }
@@ -5343,13 +5347,12 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
          {
             MethodScope methodScope(&scope);
             methodScope.message = current.argument;
+            initialize(scope, methodScope);
 
             // if it is a dispatch handler
             if (methodScope.message == encodeAction(DISPATCH_MESSAGE_ID)) {
                //if (test(scope.info.header.flags, elRole))
                //   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-
-               initialize(scope, methodScope);
 
                compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope,
                   test(scope.info.header.flags, elWithGenerics),
@@ -5357,7 +5360,6 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
             }
             // if it is a normal method
             else {
-               initialize(scope, methodScope);
                declareArgumentList(current, methodScope);
 
                if (methodScope.message == (encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
@@ -5605,6 +5607,7 @@ void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNo
 
 void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 {
+   methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
    methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
    methodScope.withOpenArg = isOpenArg(methodScope.message);
@@ -6245,10 +6248,11 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 {
    SNode current = node.firstChild();
+   bool explicitMode = false;
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (_logic->validateMethodAttribute(value)) {
+         if (_logic->validateMethodAttribute(value, explicitMode)) {
             scope.hints |= value;
 
             current.setArgument(value);
@@ -6257,6 +6261,14 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
             current = lxIdle;
 
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+      }
+      else if (current == lxIdentifier && !explicitMode) {
+         // resolving implicit method attributes
+         int attr = scope.moduleScope->attributes.get(current.identifier());
+         if (_logic->validateImplicitMethodAttribute(attr)) {
+            scope.hints |= attr;
+            current.set(lxAttribute, attr);
          }
       }
       else if (current == lxClassRefAttr) {

@@ -3,8 +3,13 @@ In development:
 ------                              
 	                            
               dev - redesign
+                 * #420 : Calling default constructor 
+                 * declare generic argument list
+
+
                  * fix #167 : stack allocated variable and $nil 
                  * fix #399 : Assinging $nil value to a structure 
+
                  * fix #355 : Multimethods : nil
                  * fix #377 : invoke message only if the object is not nil, otherwise return nil 
                  * fix locale toUpper / toLower
@@ -105,7 +110,6 @@ In development:
                  * template extension
                  * comparing int and ptr (handle, dirty_ptr)
                  * extrnal operations : support long and real
-                 * fix console application with redirect mode
                  * warn if there are several similar extension for given message
                  * static methods and singleton
                  * template extension

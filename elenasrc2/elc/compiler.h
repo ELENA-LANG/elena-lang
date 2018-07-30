@@ -554,6 +554,7 @@ private:
       bool         nestedMode;
       bool         subCodeMode;
       bool         abstractMethod;
+      bool         dispatchMode;
       
       virtual Scope* getScope(ScopeLevel level)
       {

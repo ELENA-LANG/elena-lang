@@ -594,6 +594,11 @@ bool CompilerLogic :: isClosure(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpAction);
 }
 
+bool CompilerLogic :: isDispatcher(ClassInfo& info, ref_t message)
+{
+   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpDispatcher;
+}
+
 void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
 {
    for (auto it = info.methods.start(); !it.Eof(); it++) {
@@ -714,23 +719,49 @@ void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode nod
    }
 }
 
-bool CompilerLogic :: isWithEmbeddableDispatcher(SNode node)
+bool isEmbeddableDispatcher(_CompilerScope& scope, SNode current)
+{
+   SNode attr = current.firstChild();
+   bool embeddable = false;
+   bool implicit = true;
+   while (attr != lxNone) {
+      if (attr == lxAttribute) {
+         switch (attr.argument) {
+         case V_EMBEDDABLE:
+         {
+            SNode dispatch = current.findChild(lxDispatchCode);
+
+            embeddable = isSingleStatement(dispatch);
+            break;
+         }
+         case V_METHOD:
+         case V_CONSTRUCTOR:
+         case V_DISPATCHER:
+            implicit = false;
+            break;
+
+         }
+      }
+      else if (attr == lxIdentifier && embeddable && implicit) {
+         if (scope.attributes.get(attr.identifier()) == V_DISPATCHER) {
+            return true;
+         }
+         else break;
+      }
+
+      attr = attr.nextNode();
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod && current.existChild(lxDispatchCode)) {
-         SNode ident = current.firstChild(lxTerminalMask);
-         if (ident == lxIdentifier && ident.identifier().compare(DISPATCH_MESSAGE)) {
-            // find dispatch method
-            SNode attr = current.findChild(lxAttribute);
-            while (attr == lxAttribute) {
-               if (attr.argument == V_EMBEDDABLE) {
-                  SNode dispatch = current.findChild(lxDispatchCode);
-
-                  return isSingleStatement(dispatch);
-               }
-               attr = attr.nextNode();
-            }
+         if (isEmbeddableDispatcher(scope, current)) {
+            return true;
          }
       }
       current = current.nextNode();
@@ -746,12 +777,11 @@ void CompilerLogic :: injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& 
    SNode dispatchNode;
    while (current != lxNone) {
       if (current == lxClassMethod && current.existChild(lxDispatchCode)) {
-         dispatchMethodNode = current;
-         SNode ident = current.firstChild(lxTerminalMask);
-         if (ident == lxIdentifier && ident.identifier().compare(DISPATCH_MESSAGE)) {
+         if (isEmbeddableDispatcher(scope, current)) {
+            dispatchMethodNode = current;
             dispatchNode = current.findChild(lxDispatchCode).firstChild();
-            break;
-         }         
+         }
+
       }
       current = current.nextNode();
    }
@@ -1394,7 +1424,21 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
    }
 }
 
-bool CompilerLogic :: validateMethodAttribute(int& attrValue)
+bool CompilerLogic::validateImplicitMethodAttribute(int& attrValue)
+{
+   bool dummy = false;
+   switch ((size_t)attrValue)
+   {
+      case V_METHOD:
+      case V_CONSTRUCTOR:
+      case V_DISPATCHER:
+         return validateMethodAttribute(attrValue, dummy);
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
 {
    switch ((size_t)attrValue)
    {
@@ -1430,6 +1474,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          return true;
       case V_CONSTRUCTOR:
          attrValue = tpConstructor;
+         explicitMode = true;
          return true;
       case V_CONVERSION:
          attrValue = (tpConversion | tpSealed);
@@ -1443,6 +1488,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
       //   return true;
       case V_METHOD:
          attrValue = 0;
+         explicitMode = true;
          return true;
       case V_STATIC:
          attrValue = (tpStatic | tpSealed);
@@ -1455,6 +1501,10 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue)
          return true;
       case V_PREDEFINED:
          attrValue = tpPredefined;
+         return true;
+      case V_DISPATCHER:
+         attrValue = tpDispatcher;
+         explicitMode = true;
          return true;
       default:
          return false;

@@ -9,7 +9,7 @@ define EVAL_ACTION          005h
 define EVAL_MESSAGE_ID      050h
 define INVOKE_ACTION        01Eh
 
-procedure __object.dispatch[1]
+procedure __object."#dispatch[1]"
 
   bsredirect  
 
@@ -3682,7 +3682,7 @@ procedure critical_exception_handler
 
 end
 
-procedure __prober.dispatch[1]
+procedure __prober."#dispatch[1]"
 
   aloadsi 1
   flag 
@@ -3749,7 +3749,7 @@ labContinueError:
 
 end
 
-procedure __message.dispatch[1]
+procedure __message."#dispatch[1]"
 
   bloadsi 1
   ifb labDefault
@@ -3823,7 +3823,7 @@ labError:
 
 end
 
-procedure __signature.dispatch[1]
+procedure __signature."#dispatch[1]"
 
   bloadsi 1
   ifb labDefault
@@ -4275,7 +4275,7 @@ procedure __utf16encoder."charCount$system@WideLiteralValue$@system@ref#1&IntNum
 
 end
 
-procedure __lazyexpression.dispatch[1]
+procedure __lazyexpression."#dispatch[1]"
 
   pushe
   pusha
@@ -4306,7 +4306,7 @@ procedure __timest."empty$system@calendar@TimeStruct[1]"
 
 end
 
-procedure __extmessage.dispatch[1]
+procedure __extmessage."#dispatch[1]"
 
   bloadsi 1
   ifb labDefault
@@ -4351,7 +4351,7 @@ procedure __extmessage."equal$system@ExtensionMessage[2]"
   
 end
 
-procedure __extension.dispatch[1]
+procedure __extension."#dispatch[1]"
 
   asavesi 1
   pushe
@@ -4374,7 +4374,7 @@ labNext:
 
 end
 
-procedure __struct.dispatch[1]
+procedure __struct."#dispatch[1]"
 
   bsredirect
 
@@ -4427,7 +4427,7 @@ labEnd:
 
 end
 
-procedure __event.dispatch[1]
+procedure __event."#dispatch[1]"
 
   bsredirect  
 
@@ -4485,7 +4485,7 @@ labEnd:
 
 end
 
-procedure __group.dispatch[1]
+procedure __group."#dispatch[1]"
 
   open 5
   reserve 2
@@ -4579,7 +4579,7 @@ procedure __mssg_closure."#invoke$system@Object[13]"
 
 end
 
-procedure __closuretape.dispatch[1]
+procedure __closuretape."#dispatch[1]"
 
   dcopyverb
   elsen labDefault INVOKE_ACTION
@@ -4652,7 +4652,7 @@ labDefault:
 
 end
 
-procedure __closureclass.dispatch[1]
+procedure __closureclass."#dispatch[1]"
 
   bsredirect
 
@@ -4707,7 +4707,7 @@ labEnd:
 
 end
 
-procedure __symbol.dispatch[1]
+procedure __symbol."#dispatch[1]"
 
   pushe
   acalli 0
@@ -4806,7 +4806,7 @@ procedure __vmtape."evaluateTape$system@UnsafePointer[2]"
 
 end
 
-procedure __wrap.dispatch[1]
+procedure __wrap."#dispatch[1]"
 
   bcopya
   len

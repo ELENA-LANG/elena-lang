@@ -3452,11 +3452,6 @@ bool DerivationTransformer :: recognizeMethodScope(SNode node, DerivationScope& 
          nameAttr = lxAttribute;
       }
 
-      //if (nameAttr == lxNameAttr && isImplicitAttribute(nameAttr, scope)) {
-      //   // HOTFIX : recognize explicit / generic attributes
-      //   nameAttr = lxAttribute;
-      //}
-
       // convert attributes into message or attribute values
       SNode args = node.firstChild();
       while (args != lxNone) {
@@ -3472,40 +3467,6 @@ bool DerivationTransformer :: recognizeMethodScope(SNode node, DerivationScope& 
 
          args = args.nextNode();
       }
-
-//      SNode lastAttr = findLastAttribute(attributes);
-//      SNode firstMember = node.findChild(lxMethodParameter, lxAttribute, lxAttributeValue);
-//
-//      if (scope.isImplicitAttribute(lastAttr.findChild(lxIdentifier, lxPrivate)) && (firstMember == lxAttributeValue || firstMember == lxMethodParameter || firstMember == lxNone)) {
-//         
-//      }
-//      else {
-//         if (node.firstChild(lxExprMask) == lxMethodParameter) {
-//            // HOTFIX : recognize type
-//            current = lastAttr.prevNode();
-//            if (current == lxAttribute && (scope.isTypeAttribute(lastAttr.findChild(lxIdentifier, lxPrivate))
-//               || scope.isSubject(current.findChild(lxIdentifier, lxPrivate))))
-//            {
-//               if (!scope.isAttribute(current.findChild(lxIdentifier, lxPrivate)) && !current.existChild(lxAttributeValue)) {
-//                  lastAttr = lxMessage;
-//                  lastAttr = current;
-//
-//                  current = current.prevNode();
-//
-//                  if (!isVerbAttribute(lastAttr) && isVerbAttribute(current)) {
-//                     // HOTFIX : to support "verb subject type[]"
-//                     lastAttr = lxMessage;
-//                     lastAttr = current;
-//                  }
-//               }
-//            }
-//         }
-//
-//         if (!lastAttr.existChild(lxAttributeValue)) {
-//            // mark the last message as a name if the attributes are not available
-//            lastAttr = lxNameAttr;
-//         }
-//      }
 
       node = lxClassMethod;
 
