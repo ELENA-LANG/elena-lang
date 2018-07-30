@@ -16,7 +16,7 @@ class ProgramLoop
     
     stop [ theActive := false. ]
     
-    closure eval
+    closure
     [
         // if grettings is not defined - do nothing
         console printLine(theControl greeting \ back:emptyLiteral).

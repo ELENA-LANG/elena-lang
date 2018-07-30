@@ -1432,6 +1432,8 @@ bool CompilerLogic::validateImplicitMethodAttribute(int& attrValue)
       case V_METHOD:
       case V_CONSTRUCTOR:
       case V_DISPATCHER:
+      case V_GENERIC:
+      case V_ACTION:
          return validateMethodAttribute(attrValue, dummy);
       default:
          return false;
@@ -1471,6 +1473,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          return true;
       case V_ACTION:
          attrValue = tpAction;
+         explicitMode = true;
          return true;
       case V_CONSTRUCTOR:
          attrValue = tpConstructor;

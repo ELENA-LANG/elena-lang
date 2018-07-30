@@ -97,7 +97,7 @@ public class DynamicStruct
 
     cast T<Struct> = theStruct.
     
-    generic eval:anObject
+    generic:anObject
     [
         // looking for the current subject
         int  anIndex := 0.

@@ -852,7 +852,7 @@ public class Summing :: BasePattern
         theResult := aVariable.
     ]
 
-    closure eval : aParam [ theResult append:aParam. ]
+    closure : aParam [ theResult append:aParam. ]
 }
 
 // --- Accumulating ---
@@ -873,7 +873,7 @@ class Accumulating :: BasePattern
         theOperation := (:a:b)[ a~anOperation eval:b ].
     ]
 
-    closure eval : aParam [ theResult value := theOperation(theResult value,aParam). ]
+    closure : aParam [ theResult value := theOperation(theResult value,aParam). ]
 }
 
 //// --- patternOp ---

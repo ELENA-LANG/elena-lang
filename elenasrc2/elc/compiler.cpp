@@ -4521,20 +4521,21 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          flags |= SPECIAL_MESSAGE;
 
       if ((scope.hints & tpMask) == tpDispatcher) {
-         if (paramCount == 0) {
+         if (paramCount == 0 && unnamedMessage) {
             actionRef = DISPATCH_MESSAGE_ID;
             unnamedMessage = false;
          }
          else scope.raiseError(errIllegalMethod, node);
       }
       else if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
-         if (signatureLen > 0 || !actionStr.compare(EVAL_MESSAGE))
+         if (signatureLen > 0 || !unnamedMessage)
             scope.raiseError(errInvalidHint, action);
 
+         unnamedMessage = false;
          actionStr.copy(GENERIC_PREFIX);
       }
       else if (test(scope.hints, tpAction)) {
-         if (!actionStr.compare(EVAL_MESSAGE))
+         if (!unnamedMessage)
             scope.raiseError(errInvalidHint, action);
 
          actionStr.copy(INVOKE_MESSAGE);

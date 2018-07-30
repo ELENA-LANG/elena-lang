@@ -11,9 +11,9 @@ public singleton mathControl
     max(object l, object r)
         = (l > r) iif(l,r).
 
-    generic eval : n = Wrap::(n, mathOp)~received get.
+    generic : n = Wrap::(n, mathOp)~received get.
     
-    generic eval(object n, object m) = Wrap::(n, mathOp)~received eval(m).
+    generic (object n, object m) = Wrap::(n, mathOp)~received eval(m).
     
     absolute : v
         = v absolute.

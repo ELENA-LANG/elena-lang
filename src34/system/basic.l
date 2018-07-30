@@ -2371,7 +2371,7 @@ public singleton nilValue
     /// Returns nil
     ///
     /// Any typecasting message will be handled and nil value returned
-    generic eval = nil.
+    generic = nil.
 }
 
 // === Basic Factory symbols ==

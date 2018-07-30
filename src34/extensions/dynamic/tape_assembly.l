@@ -779,67 +779,67 @@ public class TapeAssembly
 
 public singleton openSymbolClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t openSymbol.
 }
 
 public singleton openPreloadedSymbolClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t openSymbol.
 }
 
 public singleton openSingletonClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t openSingleton.
 }
 
 public singleton openMethodClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t openMethod.
 }
 
 public singleton openCodeClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t openCode.
 }
 
 public singleton openExpressionClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t openExpression.
 }
 
 public singleton openReturningClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t openReturning.
 }
 
 public singleton openVariableClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t openVariable.
 }
 
 public singleton openLoopClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t openLoop.
 }
 
 public singleton closeClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t close.
 }
 
 public singleton newAssignClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t newAssignToken:"=".
 }
 
@@ -850,13 +850,13 @@ public assignClosureFactory =
 
 public singleton ifClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t if.
 }
 
 public singleton nextClosure :: DynamicClosure
 {
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t nextOperation.
 }
 
@@ -871,7 +871,7 @@ public class includeClosure :: DynamicClosure
         @reference:=reference.
     ]
     
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t include(forward,reference).
 }
 
@@ -887,61 +887,61 @@ public abstract class DynamicClosureWithParam :: DynamicClosure
 
 public class newReferenceClosure :: DynamicClosureWithParam
 {    
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t newReference:param.    
 }
 
 public class newMessageClosure :: DynamicClosureWithParam
 {    
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t newMessageToken:param.    
 }
 
 public class newConstantClosure :: DynamicClosureWithParam
 {    
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t newConstant:param.    
 }
 
 public class newLiteralClosure :: DynamicClosureWithParam
 {    
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t newLiteralToken:param.    
 }
 
 public class newNumericClosure :: DynamicClosureWithParam
 {    
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t newNumericToken:param.    
 }
 
 public class newParamTokenClosure :: DynamicClosureWithParam
 {    
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t newParamToken:param.    
 }
 
 public class newIdentifierClosure :: DynamicClosureWithParam
 {    
-    generic closure eval(object t, V<object> args)
+    generic closure(object t, V<object> args)
         = t newIdentToken:param.    
 }
 
 singleton popClosure :: DynamicClosure
 {
-    generic closure eval(object elementToRemove, object nextElement, V<object> args)
+    generic closure(object elementToRemove, object nextElement, V<object> args)
         = nextElement.    
 }
 
 singleton popPrevClosure :: DynamicClosure
 {
-    generic closure eval(object prevElement, object elementToRemove, V<object> args)
+    generic closure(object prevElement, object elementToRemove, V<object> args)
         = prevElement.    
 }
 
 singleton exitClosure :: DynamicClosure
 {
-    generic closure eval(V<object> args)
+    generic closure(V<object> args)
         => system'core_routines'__exit_closure.
 }
 
@@ -954,7 +954,7 @@ struct VarClosure :: DynamicClosure
         @index := index.
     ]
     
-    generic closure eval(V<object> args)
+    generic closure(V<object> args)
     [
         int len := args length.
         int n := len.
@@ -973,7 +973,7 @@ struct StackClosure :: DynamicClosure
         @index := index.
     ]
     
-    generic closure eval(V<object> args)
+    generic closure(V<object> args)
     [
         ^ args[index]
     ]
@@ -988,7 +988,7 @@ struct AssignClosure :: DynamicClosure
         @index := index.
     ]
     
-    generic closure eval(object target, V<object> args)
+    generic closure(object target, V<object> args)
     [
         int len := args length.
         int n := len.
@@ -1009,7 +1009,7 @@ struct JumpIfClosure :: DynamicClosure
         @index := index.
     ]
     
-    generic closure eval(V<object> args)
+    generic closure(V<object> args)
         => system'core_routines'__jumpif_closure.    
 }
 
@@ -1022,7 +1022,7 @@ struct JumpIfNotClosure :: DynamicClosure
         @index := index.
     ]
     
-    generic closure eval(V<object> args)
+    generic closure(V<object> args)
         => system'core_routines'__jumpifnot_closure.    
 }
         
@@ -1035,6 +1035,6 @@ struct GoToClosure :: DynamicClosure
         @index := index.
     ]
     
-    generic closure eval(V<object> args)
+    generic closure(V<object> args)
         => system'core_routines'__jump_closure.    
 }

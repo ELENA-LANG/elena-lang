@@ -232,7 +232,7 @@ public abstract Indexable<type>
 public interface Func
 {
     /// Executes the action
-    abstract closure eval []
+    abstract closure []
     
 //    /// Executes the action
 //    eval = $self().
@@ -266,7 +266,7 @@ public interface Func
 public interface Func1
 {
     /// Executes the action
-    abstract closure eval:aParam []
+    abstract closure:aParam []
     
 //    /// Executes the function
 //    eval : aParam = $self(aParam).
@@ -299,7 +299,7 @@ public interface Func1
 public interface Func<type, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type param) []
+    abstract ret_type closure(type param) []
     
 //    run(enumerator<type> e)
 //    [
@@ -310,7 +310,7 @@ public interface Func<type, ret_type>
 public interface Func2
 {
     /// Executes the action
-    abstract closure eval(object aParam1, object aParam2) []
+    abstract closure(object aParam1, object aParam2) []
     
 //    /// Executes the function
 //    eval : aParam1 : aParam2 = $self(aParam1,aParam2).
@@ -344,7 +344,7 @@ public interface Func2
 public interface Func<type1,type2, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2) []
+    abstract ret_type closure(type1 param1, type2 param2) []
     
 //    run(enumerator<type> e)
 //    [
@@ -355,7 +355,7 @@ public interface Func<type1,type2, ret_type>
 public interface Func3
 {
     /// Executes the function
-    abstract closure eval(object aParam1, object aParam2, object aParam3) []
+    abstract closure(object aParam1, object aParam2, object aParam3) []
     
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 = $self(aParam1,aParam2,aParam3).
@@ -388,7 +388,7 @@ public interface Func3
 public interface Func<type1,type2,type3, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3) []
+    abstract ret_type closure(type1 param1, type2 param2, type3 param3) []
     
 //    run(enumerator<type> e)
 //    [
@@ -399,7 +399,7 @@ public interface Func<type1,type2,type3, ret_type>
 public interface Func4
 {
     /// Executes the function
-    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4) []
+    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4) []
 //    
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 = $self(aParam1,aParam2,aParam3,aParam4).
@@ -433,7 +433,7 @@ public interface Func4
 public interface Func<type1,type2,type3,type4, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4) []
+    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4) []
     
 //    run(enumerator<type> e)
 //    [
@@ -444,7 +444,7 @@ public interface Func<type1,type2,type3,type4, ret_type>
 public interface Func5
 {
     /// Executes the function
-    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5) []
+    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5) []
 
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 = $self(aParam1,aParam2,aParam3,aParam4,aParam5).
@@ -477,7 +477,7 @@ public interface Func5
 public interface Func<type1,type2,type3,type4,type5, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5) []
+    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5) []
     
 //    run(enumerator<type> e)
 //    [
@@ -488,7 +488,7 @@ public interface Func<type1,type2,type3,type4,type5, ret_type>
 public interface Func6
 {
     /// Executes the function
-    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6) []
+    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6) []
 
 //    /// Executes the function
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6).
@@ -521,7 +521,7 @@ public interface Func6
 public interface Func<type1,type2,type3,type4,type5,type6, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6) []
+    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6) []
     
 //    run(enumerator<type> e)
 //    [
@@ -532,7 +532,7 @@ public interface Func<type1,type2,type3,type4,type5,type6, ret_type>
 public interface Func7
 {
     /// Executes the function
-    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7) []
+    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7) []
 //    
 //    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 
 //        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7).
@@ -565,7 +565,7 @@ public interface Func7
 public interface Func<type1,type2,type3,type4,type5,type6,type7, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7) []
+    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7) []
     
 //    run(enumerator<type> e)
 //    [
@@ -576,7 +576,7 @@ public interface Func<type1,type2,type3,type4,type5,type6,type7, ret_type>
 public interface Func8
 {
     /// Executes the function
-    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
+    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
                         object aParam7, object aParam8) []
 //    
 //    /// Executes the function    
@@ -611,7 +611,7 @@ public interface Func8
 public interface Func<type1,type2,type3,type4,type5,type6,type7,type8, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8) []
+    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8) []
     
 //    run(enumerator<type> e)
 //    [
@@ -622,7 +622,7 @@ public interface Func<type1,type2,type3,type4,type5,type6,type7,type8, ret_type>
 public interface Func9
 {
     /// Executes the function
-    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
+    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
                         object aParam7, object aParam8, object aParam9) []
 
 //    /// Executes the function
@@ -659,7 +659,7 @@ public interface Func9
 public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8, type9 param9) []
+    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8, type9 param9) []
     
 //    run(enumerator<type> e)
 //    [
@@ -670,7 +670,7 @@ public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9, ret
 public interface Func10
 {
     /// Executes the function
-    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
+    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
                         object aParam7, object aParam8, object aParam9, object aParam10) []
 
 //    /// Executes the function    
@@ -707,7 +707,7 @@ public interface Func10
 public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
+    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
                             type9 param9, type10 param10) []
     
 //    run(enumerator<type> e)
@@ -719,7 +719,7 @@ public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type
 public interface Func11
 {
     /// Executes the function
-    abstract closure eval(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
+    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, 
                         object aParam7, object aParam8, object aParam9, object aParam10, object aParam11) []
 
 //    
@@ -757,7 +757,7 @@ public interface Func11
 public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10,type11, ret_type>
 {
     /// Executes the action
-    abstract ret_type closure eval(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
+    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
                             type9 param9, type10 param10, type11 param11) []
     
 //    run(enumerator<type> e)
