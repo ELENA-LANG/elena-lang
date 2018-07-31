@@ -133,6 +133,14 @@ inline SNode goToNode(SNode current, LexicalType type)
    return current;
 }
 
+inline SNode goToNode(SNode current, LexicalType type, ref_t argument)
+{
+   while (current != lxNone && current != type && current.argument != argument)
+      current = current.nextNode();
+
+   return current;
+}
+
 inline bool validateGenericClosure(ref_t* signature, size_t length)
 {
    for (size_t i = 1; i < length; i++) {
@@ -3538,16 +3546,8 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
          writer.closeNode();
       }
 
-      ref_t implicitConstructor = encodeMessage(DEFAULT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
       ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
 
-      if (scope.info.methods.exist(implicitConstructor)) {
-         // if implicit constructor is declared - it should be automatically called
-         writer.newNode(lxOvreriddenMessage, implicitConstructor);
-         if (scope.reference != closureRef)
-            writer.appendNode(lxTarget, scope.reference);
-         writer.closeNode();
-      }
       if (scope.info.methods.exist(initConstructor)) {
          // if implicit constructor is declared - it should be automatically called
          writer.newNode(lxOvreriddenMessage, initConstructor);
@@ -4563,7 +4563,32 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          else scope.raiseError(errIllegalMethod, node);
       }
 
-      if (test(scope.hints, tpSealed | tpConversion)) {
+      //if (test(scope.hints, tpSealed | tpConversion)) {
+      if (test(scope.hints, tpConstructor) && unnamedMessage) {
+         if (paramCount > 0) {
+            //HOTFIX : replace constructor attribute with conversion one
+            SNode attrNode = goToNode(node.firstChild(), lxAttribute, tpConstructor);
+            attrNode.setArgument(tpSealed | tpConversion);
+            scope.hints &= ~tpConstructor;
+            scope.hints |= tpSealed | tpConversion;
+
+            actionStr.copy(CAST_MESSAGE);
+            flags |= SPECIAL_MESSAGE;
+         }
+         else actionStr.copy(DEFAULT_MESSAGE);
+
+         unnamedMessage = false;
+
+         //else if (signatureLen == 1 && signature[0] == scope.moduleScope->literalReference) {
+         //   flags |= SPECIAL_MESSAGE;
+         //   constantConversion = true;
+         //}
+         //else scope.raiseError(errIllegalMethod, node);
+
+         //if ((paramCount == 0 && signatureLen != 1) || (paramCount > 0 && (size_t)paramCount != signatureLen))
+         //   scope.raiseError(errIllegalMethod, node);
+      }
+      else if (test(scope.hints, tpSealed | tpConversion)) {
          SNode typeNode = node.findChild(lxClassRefAttr);
          if (typeNode != lxNone) {
             if (signatureLen == 0) {
@@ -4572,11 +4597,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
                actionStr.copy(CAST_MESSAGE);
             }
             else scope.raiseError(errIllegalMethod, node);
-         }
-         else if (actionStr.compare(EVAL_MESSAGE)) {
-            actionStr.copy(CAST_MESSAGE);
-            if (paramCount > 0)
-               flags |= SPECIAL_MESSAGE;
          }
          else if (signatureLen == 1 && signature[0] == scope.moduleScope->literalReference) {
             flags |= SPECIAL_MESSAGE;
@@ -5312,9 +5332,6 @@ void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& sc
    // call field initilizers if available
    compileSpecialMethodCall(writer, *classScope, encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE);
 
-   // call implicit constructor if available
-   compileSpecialMethodCall(writer, *classScope, encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE);
-
    writer.closeNode();
 }
 
@@ -5364,10 +5381,6 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
                declareArgumentList(current, methodScope);
 
                if (methodScope.message == (encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
-                  // if it is in-place class member initialization
-                  compileImplicitConstructor(writer, current, methodScope);
-               }
-               else if (methodScope.message == (encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
                   // if it is in-place class member initialization
                   compileImplicitConstructor(writer, current, methodScope);
                }

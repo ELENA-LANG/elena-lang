@@ -6,7 +6,7 @@ public sealed List<type> :: Enumerable<type>
     ref<int>    theLength.
     ref<int>    theCapacity.
 
-    cast eval(Array list)
+    constructor(Array list)
     [
         int len := list length.
         int size := len / 32.
@@ -26,14 +26,14 @@ public sealed List<type> :: Enumerable<type>
         ].
     ]
     
-    cast eval(int capacity)
+    constructor(int capacity)
     [
         theCapacity := capacity.
         theLength := 0.
         theArray := V<type>(capacity).
     ]
     
-    constructor default
+    constructor
     [
         theCapacity := 16.
         theLength := 0.

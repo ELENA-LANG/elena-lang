@@ -3,13 +3,7 @@ In development:
 ------                              
 	                            
               dev - redesign
-                 * redesign conversion method
-                 * redesign default constructor
-                 * redesign cast method
-
                  * #420 : Calling default constructor 
-                 * declare generic argument list
-
 
                  * fix #167 : stack allocated variable and $nil 
                  * fix #399 : Assinging $nil value to a structure 

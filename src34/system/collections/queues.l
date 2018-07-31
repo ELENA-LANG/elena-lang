@@ -76,13 +76,13 @@ public sealed Stack<type> :: Enumerable<type>
     collections'List<type> theArray.
     ref<int>   theTop.
     
-    constructor default
+    constructor
     [
         theArray := collections'List<type>(8).
         theTop := 0.
     ]
     
-    cast eval(int capacity)
+    constructor(int capacity)
     [
         theArray := collections'List<type>(capacity).
         theTop := 0.
@@ -255,14 +255,14 @@ public sealed Queue<type> :: Enumerable<type>
     ref<int>       theTop.
     ref<int>       theTale.
     
-    constructor default
+    constructor
     [
         theArray := collections'List<type>(8).
         theTop := 0.
         theTale := 0.
     ]
     
-    cast eval(int capacity)
+    constructor(int capacity)
     [
         theArray := collections'List<type>(capacity).
         theTop := 0.

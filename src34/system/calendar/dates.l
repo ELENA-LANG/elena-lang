@@ -11,7 +11,7 @@ public sealed struct Timespan :: BaseNumber
 
 //    #constructor min <= new &__time:(SystemTime $new &long:0l).
 
-    cast eval(SystemTime aValue)
+    constructor(SystemTime aValue)
     [
         theValue := aValue.
     ]
@@ -190,7 +190,7 @@ public sealed struct Date :: BaseNumber
         systemTimeFactory readUtcNow(&theValue).
     ]
             
-    cast eval(SystemTime aValue)
+    constructor(SystemTime aValue)
     [
         theValue := aValue.
     ]

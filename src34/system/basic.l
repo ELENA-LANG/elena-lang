@@ -11,7 +11,7 @@ public sealed ref<template_subj> :: BaseVariable
     
     template_subj value = theValue.
     
-    cast eval(template_subj val)
+    constructor(template_subj val)
     [
         theValue := val.
     ]
@@ -305,7 +305,7 @@ public sealed struct ByteNumber :: IntBaseNumber
 {
     T<__int,1> theValue.
 
-    cast eval(int n)
+    constructor(int n)
     [
         theValue := n && 255.
     ]
@@ -608,7 +608,7 @@ public sealed struct ShortNumber :: IntBaseNumber
 {
     T<__int,2> theValue.
 
-    cast eval(int n)
+    constructor(int n)
     [
         (n < 0)
             ? [ 
@@ -928,12 +928,12 @@ public sealed struct IntNumber :: IntBaseNumber
 {
     type<__int, 4> theValue.
 
-    cast eval(byte n)
+    constructor(byte n)
     [
         theValue := n.
     ]
     
-    cast eval(short n)
+    constructor(short n)
     [
         theValue := n.
     ]
@@ -1262,17 +1262,17 @@ public sealed struct UIntNumber :: IntBaseNumber
 {
     T<__int,4> theValue.
 
-    cast eval(byte n)
+    constructor(byte n)
     [
         theValue := n.
     ]
     
-    cast eval(short n)
+    constructor(short n)
     [
         theValue := n.
     ]
     
-    cast eval(int n)
+    constructor(int n)
     [
         theValue := n.
     ]
@@ -1960,7 +1960,7 @@ public sealed struct RealNumber :: BaseNumber
 {
     T<__real,8> theValue.
 
-    cast eval(int n)
+    constructor(int n)
     [
         realConvertor convert(n,&self).
     ]

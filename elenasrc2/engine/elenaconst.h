@@ -388,7 +388,7 @@ namespace _ELENA_
    #define IF_ELSE_MESSAGE          "if:else"
    #define INVOKE_MESSAGE           "#invoke"
    #define CAST_MESSAGE             "#cast"
-   #define DEFAULT_MESSAGE          "default"
+#define DEFAULT_MESSAGE             "#default"
    #define INIT_MESSAGE             "#init"
 
    // ELENA verb operators
