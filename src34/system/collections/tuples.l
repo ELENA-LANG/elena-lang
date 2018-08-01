@@ -42,13 +42,13 @@ public sealed Tuple<type1, type2>
     T<type1> prop item1 :: field1.
     T<type2> prop item2 :: field2.
     
-    cast eval(type1 o1, type2 o2)
+    constructor(type1 o1, type2 o2)
     [
         field1 := o1.
         field2 := o2.
     ]
 
-    cast eval(type1 o1)
+    constructor(type1 o1)
     [
         field1 := o1.
     ]
@@ -91,20 +91,20 @@ public sealed Tuple<type1, type2, type3>
     T<type2> prop item2 :: field2.
     T<type3> prop item3 :: field3.
     
-    cast eval(type1 o1, type2 o2, type3 o3)
+    constructor(type1 o1, type2 o2, type3 o3)
     [
         field1 := o1.
         field2 := o2.
         field3 := o3.
     ]
 
-    cast eval(type1 o1, type2 o2)
+    constructor(type1 o1, type2 o2)
     [
         field1 := o1.
         field2 := o2.
     ]
 
-    cast eval(type1 o1)
+    constructor(type1 o1)
     [
         field1 := o1.
     ]
@@ -150,7 +150,7 @@ public sealed Tuple<type1, type2, type3, type4>
     T<type3> prop item3 :: field3.
     T<type4> prop item4 :: field4.
     
-    cast eval(type1 o1, type2 o2, type3 o3, type4 o4)
+    constructor(type1 o1, type2 o2, type3 o3, type4 o4)
     [
         field1 := o1.
         field2 := o2.
@@ -158,20 +158,20 @@ public sealed Tuple<type1, type2, type3, type4>
         field4 := o4.
     ]
 
-    cast eval(type1 o1, type2 o2, type3 o3)
+    constructor(type1 o1, type2 o2, type3 o3)
     [
         field1 := o1.
         field2 := o2.
         field3 := o3.
     ]
 
-    cast eval(type1 o1, type2 o2)
+    constructor(type1 o1, type2 o2)
     [
         field1 := o1.
         field2 := o2.
     ]
 
-    cast eval(type1 o1)
+    constructor(type1 o1)
     [
         field1 := o1.
     ]
@@ -220,7 +220,7 @@ public sealed Tuple<type1, type2, type3, type4, type5>
     T<type4> prop item4 :: field4.
     T<type5> prop item5 :: field5.
     
-    cast eval(type1 o1, type2 o2, type3 o3, type4 o4, type5 o5)
+    constructor(type1 o1, type2 o2, type3 o3, type4 o4, type5 o5)
     [
         field1 := o1.
         field2 := o2.
@@ -229,7 +229,7 @@ public sealed Tuple<type1, type2, type3, type4, type5>
         field5 := o5.
     ]
 
-    cast eval(type1 o1, type2 o2, type3 o3, type4 o4)
+    constructor(type1 o1, type2 o2, type3 o3, type4 o4)
     [
         field1 := o1.
         field2 := o2.
@@ -237,20 +237,20 @@ public sealed Tuple<type1, type2, type3, type4, type5>
         field4 := o4.
     ]
 
-    cast eval(type1 o1, type2 o2, type3 o3)
+    constructor(type1 o1, type2 o2, type3 o3)
     [
         field1 := o1.
         field2 := o2.
         field3 := o3.
     ]
 
-    cast eval(type1 o1, type2 o2)
+    constructor(type1 o1, type2 o2)
     [
         field1 := o1.
         field2 := o2.
     ]
 
-    cast eval(type1 o1)
+    constructor(type1 o1)
     [
         field1 := o1.
     ]
@@ -302,7 +302,7 @@ public sealed Tuple<type1, type2, type3, type4, type5, type6>
     T<type5> prop item5 :: field5.
     T<type6> prop item6 :: field6.
     
-    cast eval(type1 o1, type2 o2, type3 o3, type4 o4, type5 o5, type6 o6)
+    constructor(type1 o1, type2 o2, type3 o3, type4 o4, type5 o5, type6 o6)
     [
         field1 := o1.
         field2 := o2.
@@ -312,7 +312,7 @@ public sealed Tuple<type1, type2, type3, type4, type5, type6>
         field6 := o6.
     ]
 
-    cast eval(type1 o1, type2 o2, type3 o3, type4 o4, type5 o5)
+    constructor(type1 o1, type2 o2, type3 o3, type4 o4, type5 o5)
     [
         field1 := o1.
         field2 := o2.
@@ -321,7 +321,7 @@ public sealed Tuple<type1, type2, type3, type4, type5, type6>
         field5 := o5.
     ]
 
-    cast eval(type1 o1, type2 o2, type3 o3, type4 o4)
+    constructor(type1 o1, type2 o2, type3 o3, type4 o4)
     [
         field1 := o1.
         field2 := o2.
@@ -329,20 +329,20 @@ public sealed Tuple<type1, type2, type3, type4, type5, type6>
         field4 := o4.
     ]
 
-    cast eval(type1 o1, type2 o2, type3 o3)
+    constructor(type1 o1, type2 o2, type3 o3)
     [
         field1 := o1.
         field2 := o2.
         field3 := o3.
     ]
 
-    cast eval(type1 o1, type2 o2)
+    constructor(type1 o1, type2 o2)
     [
         field1 := o1.
         field2 := o2.
     ]
 
-    cast eval(type1 o1)
+    constructor(type1 o1)
     [
         field1 := o1.
     ]

@@ -912,7 +912,7 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
    bool stackSafe = isMethodStacksafe(info, implicitConstructor);
 
    if (test(info.header.flags, elStructureRole)) {
-      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingStruct, info.size, info.header.classRef, targetRef, stackSafe);
+      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingStruct, info.size, targetRef, targetRef, stackSafe);
       //compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, targetRef, stackSafe);
 
       return true;
@@ -921,7 +921,7 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
       return false;
    }
    else {
-      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), info.header.classRef, targetRef, stackSafe);
+      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef, targetRef, stackSafe);
       //compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, targetRef, stackSafe);
 
       return true;

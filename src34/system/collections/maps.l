@@ -25,12 +25,12 @@ public sealed Map<key_type, value_type> :: Enumerable<Tuple<key_type, value_type
 //        theDefault := aDefault.
     ]
 
-    constructor default
+    constructor
     [
         self init(32,32).
     ]
 
-    stacksafe cast eval(int capacity, int hashLength)
+    stacksafe constructor(int capacity, int hashLength)
     [
         self init(capacity,hashLength).
     ]

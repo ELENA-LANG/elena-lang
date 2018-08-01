@@ -17,7 +17,9 @@ public sealed class Locale
         <= new(emptyWideLiteral).
     
     constructor invariant
-        <= new(nil).
+    [
+        theName := nil.
+    ]
         
     stacksafe strToUpper(ShortArray aSrc, int aLength, ShortArray aDest, ref<int> aDestLength)
     [
