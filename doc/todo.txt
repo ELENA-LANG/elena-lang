@@ -3,11 +3,10 @@ In development:
 ------                              
 	                            
              dev - syntax redesign
-                 * existing method cannot be declared abstract
+                 * extension method should be only public
 
                  * publish an example with the enumeration (list of enum values)
                  * a class cannot have a public and internal methods with the same name and similar number of parameters
-                 * extension method should be only public
                  * it should be possible to distinguish between built-in target variable and a local parameter
                  * call open argument list explicitly (a sum(dynamic<object>(1,2,3)))
                  * test #12 : Extension with stack allocated object 

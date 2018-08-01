@@ -6129,6 +6129,10 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.removeHint(message, tpPredefined);
       }
 
+      if (test(scope.info.header.flags, elExtension) && (test(methodHints, tpPrivate) || test(methodHints, tpInternal)))
+         // private / internal methods cannot be declared in the extension
+         scope.raiseError(errIllegalPrivate, current);
+
       // create overloadlist if required
       if (test(methodHints, tpMultimethod)) {
          NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
