@@ -3,8 +3,9 @@ In development:
 ------                              
 	                            
              dev - syntax redesign
-                 * publish an example with the enumeration (list of enum values)
                  * it should be possible to distinguish between built-in target variable and a local parameter
+
+                 * publish an example with the enumeration (list of enum values)
                  * call open argument list explicitly (a sum(dynamic<object>(1,2,3)))
                  * test #12 : Extension with stack allocated object 
                  * test #40 : Typed Extensions : self should be typedcasted

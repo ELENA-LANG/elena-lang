@@ -741,32 +741,32 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool referenceOne)
 {
    if (!referenceOne) {
-      if (terminal.compare(SELF_VAR)) {
-         if (closureMode || nestedMode) {
-            return parent->mapTerminal(OWNER_VAR, false);
-         }
-         else return mapSelf();
-      }
-      else if (terminal.compare(GROUP_VAR) && !closureMode) {
-         if (extensionMode) {
-            return mapSelf();
-         }
-         else return mapGroup();
-      }
-      else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
-         ObjectInfo retVar = parent->mapTerminal(terminal, referenceOne);
-         if (retVar.kind == okUnknown) {
-            InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
-      
-            retVar = closure->allocateRetVar();
-         }
-      
-         return retVar;
+      Parameter param = parameters.get(terminal);
+      if (param.offset >= 0) {
+         return mapParameter(param);
       }
       else {
-         Parameter param = parameters.get(terminal);
-         if (param.offset >= 0) {
-            return mapParameter(param);
+         if (terminal.compare(SELF_VAR)) {
+            if (closureMode || nestedMode) {
+               return parent->mapTerminal(OWNER_VAR, false);
+            }
+            else return mapSelf();
+         }
+         else if (terminal.compare(GROUP_VAR) && !closureMode) {
+            if (extensionMode) {
+               return mapSelf();
+            }
+            else return mapGroup();
+         }
+         else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
+            ObjectInfo retVar = parent->mapTerminal(terminal, referenceOne);
+            if (retVar.kind == okUnknown) {
+               InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
+
+               retVar = closure->allocateRetVar();
+            }
+
+            return retVar;
          }
       }
    }
