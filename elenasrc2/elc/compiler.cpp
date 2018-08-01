@@ -5966,7 +5966,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       ref_t publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
       if (scope.info.methods.exist(publicMessage)) {
          // there should be no public method with the same name
-         scope.raiseError(errDuplicatedMethod, current);
+         scope.raiseError(errDupPublicMethod, node.findChild(lxIdentifier));
       }
       else {
          scope.info.methodHints.exclude(Attribute(publicMessage, maHint));
@@ -6103,7 +6103,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       // HOTFIX : make sure there are no duplicity between public and private ones
       if (privateOne) {
          if (scope.info.methods.exist(message & ~SEALED_MESSAGE))
-            scope.raiseError(errDuplicatedMethod, current);
+            scope.raiseError(errDupPublicMethod, current.findChild(lxIdentifier));
       }
       else  if (scope.info.methods.exist(message | SEALED_MESSAGE))
          scope.raiseError(errDuplicatedMethod, current);

@@ -84,6 +84,7 @@ namespace _ELENA_
    #define errNotAbstractClass      "%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n"
    #define errNoMethodOverload      "%s(%d:%d): error 165: An attribute '%s' cannot be applied for an already existing method\n"
    #define errIllegalPrivate        "%s(%d:%d): error 166: An attribute '%s' cannot be applied for an extension\n"
+   #define errDupPublicMethod       "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
