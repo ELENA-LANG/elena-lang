@@ -5913,6 +5913,10 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
             if (!_logic->isAbstract(scope.info))
                // only abstract class may have an abstract methods
                scope.raiseError(errNotAbstractClass, current);
+
+            if (scope.info.methods.exist(message))
+               // abstract method should be newly declared
+               scope.raiseError(errNoMethodOverload, current);
          }
 
          hint |= current.argument;
