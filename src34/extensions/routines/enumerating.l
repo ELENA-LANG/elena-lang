@@ -75,7 +75,7 @@ public extension<File> fileExOp
 
 // --- stringExOp ---
 
-extension stringExOp
+public extension stringExOp
 {
     forEachWord(Func1 aFunction)
         = aFunction run(T<Enumerator>(TokenEnumerator new(self))).

@@ -27,9 +27,6 @@ In development:
 
                  * test why interpreter with sample4.txt / sample2.txt crashes
 
-	         * test arraymode
-
-                 * test words
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
                  * local / parameter with name self / target should have precedence over the built-in
                  * optimize - if (0 == theTop) (where theTop is ref<int>)

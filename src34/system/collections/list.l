@@ -960,7 +960,7 @@ public sealed  class Dictionary :: Enumerable
             
             var anItem := theList getAt(anItemIndex).
             
-            if(aKey equal(anItem key))
+            if(aKey safeEqual(anItem key))
                 [ ^ anItem ].
             
             i := i + 1
