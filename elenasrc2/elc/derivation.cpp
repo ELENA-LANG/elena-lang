@@ -2953,26 +2953,19 @@ void DerivationTransformer :: generateMethodTree(SyntaxWriter& writer, SNode nod
 
    generateAttributes(writer, node.prevNode(), scope, false, templateMode, false);
 
-   //// copy method signature
-   //SNode current = goToNode(attributes, lxNameAttr);
-   //while (current == lxNameAttr || current == lxMessage) {
-   //   if (current == lxMessage) {
-   //      generateMessage(writer, current, scope, templateMode);
-   //   }
-
-   //   current = current.nextNode();
-   //}
-
    // copy method arguments
    SNode current = node.firstChild();
    SNode attribute;
    while (current != lxNone) {
       switch (current) {
          case lxAttributeValue:
-            attribute = current;
-            break;
+            if (current.nextNode() == lxMethodParameter) {
+               attribute = current;
+               break;
+            }
+            else attribute = SNode();             
          case lxMethodParameter:
-            writer.newNode(current.type, current.argument);
+            writer.newNode(lxMethodParameter, current.argument);
             copyIdentifier(writer, current.firstChild(lxTerminalMask));
             if (attribute != lxNone) {
                // if the type attribute available

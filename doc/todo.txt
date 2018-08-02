@@ -3,14 +3,8 @@ In development:
 ------                              
 	                            
              dev - syntax redesign
-                 * it should be possible to distinguish between built-in target variable and a local parameter
-
-                 * publish an example with the enumeration (list of enum values)
-                 * call open argument list explicitly (a sum(dynamic<object>(1,2,3)))
-                 * test #12 : Extension with stack allocated object 
-                 * test #40 : Typed Extensions : self should be typedcasted
-
                  * weak argument list : MyClass { myMehtod(myArg) [] }
+
                  * syntax, declare a closure :
                        public program
                        [
@@ -26,6 +20,8 @@ In development:
                  * samples
                                                                                                         
               dev - redesign
+                 * publish an example with the enumeration (list of enum values)
+
                  * probably __className should return the class name, rather than the class class name??
 
                  * debugger : display template based classes
