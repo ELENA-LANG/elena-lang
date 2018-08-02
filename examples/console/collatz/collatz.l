@@ -72,7 +72,7 @@ altcol = (:x)
 ].
 
 col = (:x)
-    ( x int; isEven; iif($(x / 2), $(3*x + 1)) ).
+    ( T<int>(x) isEven; iif($(x / 2), $(3*x + 1)) ).
 
 //function x = col(x)
 //if ~mod(x,2)
@@ -148,11 +148,11 @@ altcolsingle = (:x)
 ].
 //end
 
-program =
+public program =
 [
-    altcol eval:7.
-    altcol eval:44.
+    altcol(7).
+    altcol(44).
     
-    altcolsingle eval:7.
-    altcolsingle eval:44.
+    altcolsingle(7).
+    altcolsingle(44).
 ].

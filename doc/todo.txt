@@ -33,13 +33,6 @@ In development:
                    
                  * post : Passing argument list explicitly
 
-                 * test : ELENA Script Engine : compiling JavaScript file
-
-                 * test collatz
-
-                 * migrate script samples
-                 * migrate dynamic, templates
-
                  * do we need Tape and Class, probably better to use ClosureTape and ClosureClass?
 
                  * comparing handler with a numeric constant

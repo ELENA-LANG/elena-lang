@@ -1868,7 +1868,7 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
             writer.closeNode();
             break;
          case lxOperator:
-//         case lxObject:
+         case lxObject:
             if (invokeMode/* || invokeWithNoParamMode*/) {
                // operator should be considered as a new operation if followed after closure invoke
                return;
