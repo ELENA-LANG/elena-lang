@@ -88,7 +88,7 @@ The ELENA source code is organized as follows:
     elenasrc2\gui       source for IDE
     elenasrc2\tools     source for ELENA utilities
     examples            ELENA examples
-    src33               source for ELENA libraries
+    src34               source for ELENA libraries
 
 ## License
 
