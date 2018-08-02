@@ -314,6 +314,10 @@ public sealed struct ByteNumber :: IntBaseNumber
     constructor new
         = 0.
 
+//    /// return the default value
+//    constructor
+//        = 0.
+
     /// Returns the minimal value (0)
     constructor min
         = 0.
@@ -618,6 +622,10 @@ public sealed struct ShortNumber :: IntBaseNumber
             ]
             ! [ theValue := n && 0FFFFh ]
     ]
+    
+//    /// returns the default value
+//    constructor
+//        = 0.
     
     /// Returns the minimal value (-32768)
     constructor min
@@ -937,6 +945,10 @@ public sealed struct IntNumber :: IntBaseNumber
     [
         theValue := n.
     ]
+    
+//    /// return the default value
+//    constructor
+//        = 0.
     
     /// Creates the object with the minimal value
     constructor min
@@ -1277,10 +1289,14 @@ public sealed struct UIntNumber :: IntBaseNumber
         theValue := n.
     ]
     
-//    implicit u literal:s
-//    [
-//        theValue := intConvertor convertUnsigned literal:s.
-//    ]
+    cast u(literal s)
+    [
+        theValue := intConvertor convertUnsigned(s).
+    ]
+    
+//    /// return the default value
+//    constructor
+//        = 0.
     
     /// Creates the object with the minimal value
     constructor min
@@ -1635,6 +1651,10 @@ public sealed struct LongNumber :: IntBaseNumber
 {
     T<__int,8> theValue.
     
+//    /// return the default value
+//    constructor
+//        = 0l.
+    
     /// Returns the minimal value
     constructor min
         = -9223372036854775808l.
@@ -1965,6 +1985,10 @@ public sealed struct RealNumber :: BaseNumber
         realConvertor convert(n,&self).
     ]
             
+//    /// return the default value
+//    constructor
+//        = 0.0r.
+            
     /// Returns the minimal value
     constructor min
         = -1.7976931348623157e+308r.
@@ -2230,6 +2254,10 @@ public sealed const struct CharValue :: BaseValue
     /// Creates the object with specified numeric value
     constructor new(int anOperand)
         <= new(charConvertor convert(anOperand)).
+
+//    /// return the default value
+//    constructor
+//        = $0.
 
     /// Returns the minimal possible character value (0)
     constructor min

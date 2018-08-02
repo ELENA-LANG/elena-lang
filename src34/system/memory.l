@@ -1098,6 +1098,10 @@ public sealed __string LiteralValue :: BaseValue
     constructor new
         <= min.
 
+//    /// return the default value
+//    constructor
+//        = emptyLiteral.
+        
     /// Creates the empty literal
     constructor min
         = emptyLiteral.
@@ -1317,6 +1321,10 @@ const wide emptyWideLiteral = ""w.
 public sealed __string WideLiteralValue :: BaseValue
 {
     dynamic<short> theArray.
+
+//    /// return the default value
+//    constructor
+//        = emptyWideLiteral.
 
     /// Creates the empty literal
     constructor min

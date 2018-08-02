@@ -18,21 +18,16 @@ In development:
                  * samples
                                                                                                         
               dev - redesign
-                 * publish an example with the enumeration (list of enum values)
+                 * vprop - currently 0 is assigned, which is not correct, probably "prop_type min" should be used
+
 
                  * probably __className should return the class name, rather than the class class name??
-
-                 * debugger : display template based classes
-                 * an option to make all classes public (to be compatible with previous versions)??
 
                  * test why interpreter with sample4.txt / sample2.txt crashes
 
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
-                 * local / parameter with name self / target should have precedence over the built-in
                  * optimize - if (0 == theTop) (where theTop is ref<int>)
                    
-                 * post : Passing argument list explicitly
-
                  * do we need Tape and Class, probably better to use ClosureTape and ClosureClass?
 
                  * comparing handler with a numeric constant
@@ -40,35 +35,14 @@ In development:
 
                  * check why the vm console samples are always broken at the end
 
-                 * default constructor and explicit convertors
-
-                 * debugger : debugging template based classes
                  * method not found wrong attribute
 
                  * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
                    normal classes cannot be inherited from enum / enum value
 
-                 * default constructor method - NEWOBJECT_MESSAGE_ID, it calls field initializer method, implicit
-                   constructor
-
-                 * field initializer - special name
-
-                 * move compiler code to project, only win32 specific code should stay in ElcProject
-
-                 * debugger : show self / target
-
                  * abstract class cannot be used directly (currently empty symbol is created)
-                 * optimize external call routines
-                 * boxing : default constructor / field intializer should be auto called
-                 * optimize equal generic implementation (in basic module)
-                 * nested classes around self variable should be compiled as a wrapper,
-                   so in some cases they can be used without actually creating them
                  * #new method should not be created for an abstract class
-                 * warn if the local variable / param is called target, self, super
-                 * optimize interface dispatch implementation (interface template)
-                 * validate that a field template contains exactly one a field with a name "field"
-                 * test typified prop - the get accessor should be typiefied as well
-                 * vprop - currently 0 is assigned, which is not correct, probably "prop_type min" should be used
+
                  * structure should contain at least one data field
                    directly (and get rid of hot fix in compileExternalArguments)
                  * call console operations directly
@@ -92,10 +66,8 @@ In development:
                  * review field / method template usage syntax
                  * template extension
                  * comparing int and ptr (handle, dirty_ptr)
-                 * extrnal operations : support long and real
                  * warn if there are several similar extension for given message
                  * static methods and singleton
-                 * template extension
                  * call stack / debug watch - template based classes
                  * critical error if the class is based on unknown template
                  * templates unresolved references - probably they should be tested with super object if all references are resolved
@@ -122,6 +94,9 @@ In development:
 ------                                                           
 Pipeline:
 ------                                                                                         
+              dev - tutorials
+                 * publish an example with the enumeration (list of enum values)
+
               dev - general implementation
                  * #401 : operator with array  (modify AKS test for primes)
                  * enable to emulate C# program structure - class with a main method, without program symbol
@@ -132,6 +107,9 @@ Pipeline:
                  * a < b < c - not allowed
 
               xdev - general optimization  
+                 * optimize interface dispatch implementation (interface template)
+                 * optimize external call routines
+                 * optimize equal generic implementation (in basic module)
                  * optimize using, finally, try, ...
                  * #371 : Pi sample optimization
                  * pusha  new bcopya popa => bcopya new bswap nop??
@@ -141,6 +119,8 @@ Pipeline:
                  * optimize embeddable function2 call
                  * optimize integerOp : append / reduce should be stacksafe
                  * optimize : var n := T<int>(h) \ back:nil. (where h is Handle)
+                 * nested classes around self variable should be compiled as a wrapper,
+                   so in some cases they can be used without actually creating them
 
               xdev - samples
                  * Short-circuit evaluation : do not use lazy expressions
@@ -178,6 +158,9 @@ Pipeline:
               dev - usability
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well
                  * ecv : display class size
+                 * an option to make all classes public (to be compatible with previous versions)??
+                 * validate that a field template contains exactly one a field with a name "field"
+                 * warn if the local variable / param is called target, self, super
 
               dev - general implementation
                  * compileExpression, compileObject : refactor collection compilation
@@ -203,6 +186,9 @@ Pipeline:
                  * support void type to be used in multimethod with $nil?
 
               dev - debugger
+                 * debugger : show self / target
+                 * debugger : display template based classes
+                 * debugger : debugging template based classes
                  * #263 - fix goto
                  * DebugController::loadDebugModule should use LibraryManager to avoid code duplication
 
