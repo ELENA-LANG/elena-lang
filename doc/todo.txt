@@ -3,8 +3,6 @@ In development:
 ------                              
 	                            
              dev - syntax redesign
-                 * weak argument list : MyClass { myMehtod(myArg) [] }
-
                  * syntax, declare a closure :
                        public program
                        [
