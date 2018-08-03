@@ -896,6 +896,23 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
    return test(info.header.flags, elReadOnlyRole);
 }
 
+bool CompilerLogic :: injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classClassRef))
+      return false;
+
+   ref_t defaultConstructor = encodeMessage(DEFAULT_MESSAGE_ID, 0);
+   if (!info.methods.exist(defaultConstructor, true))
+      return false;
+
+   writer.insertChild(0, lxConstantClass, targetRef);
+
+   compiler.injectDirectMethodCall(writer, classClassRef, defaultConstructor);
+
+   return true;
+}
+
 bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef)
 {
    ClassInfo info;
@@ -907,7 +924,7 @@ bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScop
 
    ref_t implicitConstructor = encodeMessage(DEFAULT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
    if (!info.methods.exist(implicitConstructor, true))
-      return false;
+      return injectDefaultCreation(writer, scope, compiler, targetRef, info.header.classRef);
 
    bool stackSafe = isMethodStacksafe(info, implicitConstructor);
 

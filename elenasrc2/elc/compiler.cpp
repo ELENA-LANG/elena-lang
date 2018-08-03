@@ -604,6 +604,7 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference)
    classClassMode = false;
    abstractMode = false;
    abstractBaseMode = false;
+   withImplicitConstructor = false;
 }
 
 void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
@@ -5363,6 +5364,10 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
       switch(current) {
          case lxClassMethod:
          {
+            if (current.argument == (encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
+               scope.withImplicitConstructor = true;
+            }
+
             MethodScope methodScope(&scope);
             methodScope.message = current.argument;
             initialize(scope, methodScope);
@@ -5608,6 +5613,11 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
 
 void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
+   // HOTFIX : due to current implementation the default constructor can be declared as a special method and a constructor;
+   //          only one is allowed
+   if (classScope.withImplicitConstructor && classClassScope.info.methods.exist(encodeAction(DEFAULT_MESSAGE_ID)))
+      classScope.raiseError(errOneDefaultConstructor, node.findChild(lxNameAttr));
+
    expressionTree.clear();
 
    SyntaxWriter writer(expressionTree);
@@ -5621,6 +5631,10 @@ void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNo
 
 void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 {
+   // HOTFIX : due to current implementation the default constructor can be declared as a special method and a constructor;
+   //          only one is allowed
+
+
    methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
    methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
@@ -5656,7 +5670,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
                // abstract class cannot have constructors
                scope.raiseError(errIllegalMethod, current);
             }
-            else if (methodScope.message == encodeAction(DEFAULT_MESSAGE_ID)) {
+            else if (methodScope.message == encodeAction(DEFAULT_MESSAGE_ID) && !current.existChild(lxReturning)) {
                // if it is a special default constructor
                current.setArgument(methodScope.message | SPECIAL_MESSAGE);
             }
@@ -7971,6 +7985,15 @@ void Compiler :: injectVirtualReturningMethod(_CompilerScope&, SNode classNode, 
 
    SNode expr = methNode.appendNode(lxReturning).appendNode(lxExpression);
    expr.appendNode(lxIdentifier, variable);
+}
+
+void Compiler :: injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message)
+{
+   writer.appendNode(lxCallTarget, targetRef);
+
+   writer.insert(lxDirectCalling, message);
+   writer.closeNode();
+
 }
 
 void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)

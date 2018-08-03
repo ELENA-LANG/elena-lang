@@ -314,9 +314,9 @@ public sealed struct ByteNumber :: IntBaseNumber
     constructor new
         = 0.
 
-//    /// return the default value
-//    constructor
-//        = 0.
+    /// return the default value
+    constructor
+        = 0.
 
     /// Returns the minimal value (0)
     constructor min
@@ -623,9 +623,9 @@ public sealed struct ShortNumber :: IntBaseNumber
             ! [ theValue := n && 0FFFFh ]
     ]
     
-//    /// returns the default value
-//    constructor
-//        = 0.
+    /// returns the default value
+    constructor
+        = 0.
     
     /// Returns the minimal value (-32768)
     constructor min
@@ -946,9 +946,9 @@ public sealed struct IntNumber :: IntBaseNumber
         theValue := n.
     ]
     
-//    /// return the default value
-//    constructor
-//        = 0.
+    /// return the default value
+    constructor
+        = 0.
     
     /// Creates the object with the minimal value
     constructor min
@@ -1294,9 +1294,9 @@ public sealed struct UIntNumber :: IntBaseNumber
         theValue := intConvertor convertUnsigned(s).
     ]
     
-//    /// return the default value
-//    constructor
-//        = 0.
+    /// return the default value
+    constructor
+        = 0.
     
     /// Creates the object with the minimal value
     constructor min
@@ -1651,9 +1651,9 @@ public sealed struct LongNumber :: IntBaseNumber
 {
     T<__int,8> theValue.
     
-//    /// return the default value
-//    constructor
-//        = 0l.
+    /// return the default value
+    constructor
+        = 0l.
     
     /// Returns the minimal value
     constructor min
@@ -1985,9 +1985,9 @@ public sealed struct RealNumber :: BaseNumber
         realConvertor convert(n,&self).
     ]
             
-//    /// return the default value
-//    constructor
-//        = 0.0r.
+    /// return the default value
+    constructor
+        = 0.0r.
             
     /// Returns the minimal value
     constructor min
@@ -2255,9 +2255,9 @@ public sealed const struct CharValue :: BaseValue
     constructor new(int anOperand)
         <= new(charConvertor convert(anOperand)).
 
-//    /// return the default value
-//    constructor
-//        = $0.
+    /// return the default value
+    constructor
+        = $0.
 
     /// Returns the minimal possible character value (0)
     constructor min
