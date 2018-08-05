@@ -35,18 +35,27 @@ inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* import
 
 // --- CompilerScope ---
 
-void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly)
+void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode)
 {
    target.header = copy.header;
    target.size = copy.size;
 
    if (!headerOnly) {
-      // import method references and mark them as inherited
+      // import method references and mark them as inherited as required
       ClassInfo::MethodMap::Iterator it = copy.methods.start();
-      while (!it.Eof()) {
-         target.methods.add(importMessage(exporter, it.key(), module), false);
+      if (inheritMode) {
+         while (!it.Eof()) {
+            target.methods.add(importMessage(exporter, it.key(), module), false);
 
-         it++;
+            it++;
+         }
+      }
+      else {
+         while (!it.Eof()) {
+            target.methods.add(importMessage(exporter, it.key(), module), *it);
+
+            it++;
+         }
       }
 
       target.fields.add(copy.fields);
@@ -159,7 +168,7 @@ ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool head
          ClassInfo copy;
          copy.load(&reader, headerOnly);
 
-         importClassInfo(copy, info, argModule, headerOnly);
+         importClassInfo(copy, info, argModule, headerOnly, false);
       }
       else info.load(&reader, headerOnly);
 

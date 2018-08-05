@@ -241,7 +241,7 @@ struct _CompilerScope
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
    virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 
-   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly) = 0;
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode) = 0;
 
    virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef) = 0;
 

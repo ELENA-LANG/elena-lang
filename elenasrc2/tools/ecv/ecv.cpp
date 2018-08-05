@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   25
+#define REVISION_VERSION   26
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -412,10 +412,10 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       charConstant = true;
    }
    else if (reference == 0) {
-      referenceName = "$nil";
+      referenceName = "nil";
    }
    else if (reference == -1) {
-      referenceName = "$undefined";
+      referenceName = "undefined";
    }
    else referenceName = module->resolveReference(reference & ~mskAnyRef);
 
@@ -819,8 +819,8 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
    ref_t message = 0;
 
    // resolve method
-   if (methodName[0] == '$' && methodName[1] >= '0' && methodName[1] <= '9') {
-      message = resolveMessageByIndex(module, className.ident(), methodName.toInt(1));
+   if (methodName[0] >= '0' && methodName[0] <= '9') {
+      message = resolveMessageByIndex(module, className.ident(), methodName.toInt());
    }
    else message = resolveMessage(module, methodName);
    

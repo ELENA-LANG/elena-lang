@@ -1486,7 +1486,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
          ClassInfo copy;
          copy.load(&reader);
 
-         moduleScope->importClassInfo(copy, scope.info, module, false);
+         moduleScope->importClassInfo(copy, scope.info, module, false, true);
       }
       else {
          scope.info.load(&reader);
@@ -5607,7 +5607,6 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
       it++;
    }
 
-   // save declaration
    classClassScope.save();
 }
 

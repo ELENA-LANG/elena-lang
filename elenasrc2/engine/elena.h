@@ -514,7 +514,7 @@ struct ClassInfo
 
    ClassHeader    header;
    int            size;           // Object size
-   MethodMap      methods;
+   MethodMap      methods;        // list of methods, true means the method was declared in this instance
    FieldMap       fields;
    StaticFieldMap statics;
    StaticInfoMap  staticValues;
