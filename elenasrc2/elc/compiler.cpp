@@ -2846,8 +2846,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    if (classReference)
       writer.appendNode(lxCallTarget, classReference);
 
-//   if (result.outputReference)
-//      writer.appendNode(lxTarget, result.outputReference);
+   if (result.outputReference)
+      writer.appendNode(lxTarget, result.outputReference);
 
    if (!test(mode, HINT_NODEBUGINFO)) {
       // set a breakpoint

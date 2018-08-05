@@ -1098,9 +1098,9 @@ public sealed __string LiteralValue :: BaseValue
     constructor new
         <= min.
 
-//    /// return the default value
-//    constructor
-//        = emptyLiteral.
+    /// return the default value
+    constructor
+        = emptyLiteral.
         
     /// Creates the empty literal
     constructor min
@@ -1322,9 +1322,9 @@ public sealed __string WideLiteralValue :: BaseValue
 {
     dynamic<short> theArray.
 
-//    /// return the default value
-//    constructor
-//        = emptyWideLiteral.
+    /// return the default value
+    constructor
+        = emptyWideLiteral.
 
     /// Creates the empty literal
     constructor min

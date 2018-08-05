@@ -79,7 +79,7 @@ public __accessor __accessor vprop<prop_type,prop_name>
 {
     embeddable prop_type prop_name
     [
-        prop_type val := 0.        
+        prop_type val := T<prop_type>().
         self __get(&val).
 
         ^ val.
@@ -146,7 +146,7 @@ public __accessor rvprop<type,prop_name>
 {
     stacksafe embeddable type prop_name
     [
-        type val := 0.        
+        type val := T<type>().     
         self __get(&val).
 
         ^ val.
@@ -159,7 +159,7 @@ public __accessor fnprop<type,template_fn>
 {
     stacksafe embeddable type template_fn(type n)
     [
-        type retVal := 0.
+        type retVal := T<type>().
         self __get(n, &retVal).
         ^ retVal.            
     ]
@@ -171,7 +171,7 @@ public __accessor fn2prop<type,template_fn>
 {
     stacksafe embeddable type template_fn(type n, type m)
     [
-        type retVal := 0.
+        type retVal := T<type>().
         self __get(n, m, &retVal).
         ^ retVal.            
     ]
@@ -183,7 +183,7 @@ public __accessor fn3prop<type,template_fn>
 {
     stacksafe embeddable type template_fn(type n, type m, type o)
     [
-        type retVal := 0.
+        type retVal := T<type>().
         self __get(n, m, o, &retVal).
         ^ retVal.            
     ]
