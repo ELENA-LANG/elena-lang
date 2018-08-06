@@ -18,7 +18,8 @@ In development:
                  * samples
                                                                                                         
               dev - redesign
-                 * vprop - currently 0 is assigned, which is not correct, probably "prop_type min" should be used
+                 * abstract class cannot be used directly (currently empty symbol is created)
+                 * #new method should not be created for an abstract class
 
 
                  * probably __className should return the class name, rather than the class class name??
@@ -39,9 +40,6 @@ In development:
 
                  * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
                    normal classes cannot be inherited from enum / enum value
-
-                 * abstract class cannot be used directly (currently empty symbol is created)
-                 * #new method should not be created for an abstract class
 
                  * structure should contain at least one data field
                    directly (and get rid of hot fix in compileExternalArguments)
@@ -80,6 +78,7 @@ In development:
                         args forEach:printingLn.
                      ]
                  * do we need tpSpecial hint?
+                 * the following code should generate an error - test<2>.
 
               dev - general implementation
                  * typified enumerators / extensions #245                 
