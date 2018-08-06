@@ -5585,7 +5585,10 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
 
          classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
       }
-      else classClassScope.info.header.parentRef = classScope.moduleScope->superReference;;
+      else {
+         classClassScope.info.header.parentRef = classScope.moduleScope->superReference;
+         classClassScope.abstractMode = true;
+      }
    }
 
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef, true);
@@ -6233,7 +6236,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    bool closed = test(scope.info.header.flags, elClosed);
 
    if (classClassMode) {
-      if (_logic->isDefaultConstructorEnabled(scope.info)) {
+      if (!scope.abstractMode && _logic->isDefaultConstructorEnabled(scope.info)) {
          scope.include(encodeAction(NEWOBJECT_MESSAGE_ID));
       }
    }

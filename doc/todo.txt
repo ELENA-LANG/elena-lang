@@ -2,13 +2,6 @@
 In development:
 ------                              
 	                            
-             dev - syntax redesign
-                 * syntax, declare a closure :
-                       public program
-                       [
-                       ]
-                   ; redesign - declaring one method class
-
               exp - live programming
                  * class to expression tree
                  * expression tree to class
@@ -18,8 +11,9 @@ In development:
                  * samples
                                                                                                         
               dev - redesign
-                 * abstract class cannot be used directly (currently empty symbol is created)
                  * #new method should not be created for an abstract class
+
+                 * abstract class cannot be used directly (currently empty symbol is created)
 
 
                  * probably __className should return the class name, rather than the class class name??
