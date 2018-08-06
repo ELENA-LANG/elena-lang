@@ -11,11 +11,6 @@ In development:
                  * samples
                                                                                                         
               dev - redesign
-                 * #new method should not be created for an abstract class
-
-                 * abstract class cannot be used directly (currently empty symbol is created)
-
-
                  * probably __className should return the class name, rather than the class class name??
 
                  * test why interpreter with sample4.txt / sample2.txt crashes
