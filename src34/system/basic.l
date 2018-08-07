@@ -1,8 +1,8 @@
 // base variable mixin
-public class BaseVariable
+public abstract class BaseVariable
 {
     // should be overridden
-    value = nil.
+    abstract value []
 }
 
 public sealed ref<template_subj> :: BaseVariable

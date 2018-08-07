@@ -102,10 +102,10 @@ public sealed const struct UnsafePointer
 //                
 //    stacksafe read vint:aPointer
 //        => system'core_routines'__dptr.
-//
-//    stacksafe read bytearray:arr int:len
-//        => system'core_routines'__dptr.
-//
+
+    stacksafe read(ByteArray arr, int len)
+        => system'core_routines'__dptr.
+
 //    // unsafe code
 //    stacksafe int
 //    [

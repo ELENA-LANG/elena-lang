@@ -272,15 +272,15 @@ public __block __nested try<expr>
     }).
 ]
 
-//// -- finally statement ---
-//
-//__block template finally :: expr
-//[
-//    expr then:
-//        [
-//        ]                 
-//        | raise:[].
-//]        
+// -- finally statement ---
+
+public __block finally<expr>
+[
+    expr then:
+        [
+        ]                 
+        | raise:[].
+]        
 
 public __block __block template finally
 [

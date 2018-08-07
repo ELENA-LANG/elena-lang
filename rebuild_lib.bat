@@ -19,7 +19,7 @@ bin\elc src34\system\system.prj
 bin\elc src34\extensions\extensions.prj
 rem bin\elc src33\net\net.prj
 rem bin\elc src33\forms\forms.prj
-rem bin\elc src33\sqlite\sqlite.prj
+bin\elc src34\sqlite\sqlite.prj
 bin\elc src34\cellular\cellular.prj
 rem bin\elc src33\graphics\graphics.prj
 rem bin\elc src33\xforms\xforms.prj

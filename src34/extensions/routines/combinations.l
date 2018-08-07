@@ -176,22 +176,6 @@ public abstract class BaseRowEnumerator :: Enumerator
 //        self reset.
 //    ]
     
-    constructor new : Arguments
-    [
-        theLength := Arguments length.
-        theIndexers := Array new(theLength).
-        
-        int i := 0.
-        while (i < theLength)
-        [
-            theIndexers setAt(i, Arguments[i] indexer).
-            
-            i := i + 1
-        ].
-        
-        self reset
-    ]
-    
     bool next
     [
         theStrategy := theStrategy eval(theIndexers, theLength).
@@ -210,8 +194,21 @@ public abstract class BaseRowEnumerator :: Enumerator
 public class SequentialEnumerator :: BaseRowEnumerator
 {
     constructor new : Arguments
-        <= new:Arguments.
-    
+    [
+        theLength := Arguments length.
+        theIndexers := Array new(theLength).
+        
+        int i := 0.
+        while (i < theLength)
+        [
+            theIndexers setAt(i, Arguments[i] indexer).
+            
+            i := i + 1
+        ].
+        
+        self reset
+    ]
+        
 //    generic constructor new(V<object> Arguments)
 //        <= new(Arguments).
 
@@ -226,8 +223,21 @@ public class SequentialEnumerator :: BaseRowEnumerator
 public class ParallelEnumerator :: BaseRowEnumerator
 {
     constructor new : Arguments
-        <= new:Arguments.
-    
+    [
+        theLength := Arguments length.
+        theIndexers := Array new(theLength).
+        
+        int i := 0.
+        while (i < theLength)
+        [
+            theIndexers setAt(i, Arguments[i] indexer).
+            
+            i := i + 1
+        ].
+        
+        self reset
+    ]
+        
     reset
     [
         theStrategy := parallelStart.
@@ -240,6 +250,22 @@ public class Combinator :: BaseRowEnumerator
 {
     int theTotalLength.
     
+    constructor new : Arguments
+    [
+        theLength := Arguments length.
+        theIndexers := Array new(theLength).
+        
+        int i := 0.
+        while (i < theLength)
+        [
+            theIndexers setAt(i, Arguments[i] indexer).
+            
+            i := i + 1
+        ].
+        
+        self reset
+    ]
+        
     constructor new : aSubLength of:aSet
         <= new : (Array new(T<int>(aSubLength)); populate(:n)<int>(aSet));
     [

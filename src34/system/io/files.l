@@ -4,12 +4,14 @@ import system'text.
 
 public sealed /*nonstructural*/ class File
 {
-    literal thePath.
+    literal thePath. 
     
     constructor new:aPath
     [
         thePath := aPath.
     ]
+
+    T<literal> rprop path :: thePath.
 
     T<literal> literal = thePath.
     

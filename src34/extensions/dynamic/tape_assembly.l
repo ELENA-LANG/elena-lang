@@ -877,52 +877,82 @@ public class includeClosure :: DynamicClosure
 
 public abstract class DynamicClosureWithParam :: DynamicClosure
 {
-    object param.
-    
-    constructor new : param
-    [
-        @param := param
-    ]
+    object param.    
 }
 
 public class newReferenceClosure :: DynamicClosureWithParam
 {    
+    constructor new : param
+    [
+        @param := param
+    ]
+    
     generic closure(object t, V<object> args)
         = t newReference:param.    
 }
 
 public class newMessageClosure :: DynamicClosureWithParam
 {    
+    constructor new : param
+    [
+        @param := param
+    ]
+    
     generic closure(object t, V<object> args)
         = t newMessageToken:param.    
 }
 
 public class newConstantClosure :: DynamicClosureWithParam
 {    
+    constructor new : param
+    [
+        @param := param
+    ]
+    
     generic closure(object t, V<object> args)
         = t newConstant:param.    
 }
 
 public class newLiteralClosure :: DynamicClosureWithParam
 {    
+    constructor new : param
+    [
+        @param := param
+    ]
+    
     generic closure(object t, V<object> args)
         = t newLiteralToken:param.    
 }
 
 public class newNumericClosure :: DynamicClosureWithParam
 {    
+    constructor new : param
+    [
+        @param := param
+    ]
+    
     generic closure(object t, V<object> args)
         = t newNumericToken:param.    
 }
 
 public class newParamTokenClosure :: DynamicClosureWithParam
 {    
+    constructor new : param
+    [
+        @param := param
+    ]
+    
     generic closure(object t, V<object> args)
         = t newParamToken:param.    
 }
 
 public class newIdentifierClosure :: DynamicClosureWithParam
 {    
+    constructor new : param
+    [
+        @param := param
+    ]
+    
     generic closure(object t, V<object> args)
         = t newIdentToken:param.    
 }

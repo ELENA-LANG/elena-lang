@@ -873,36 +873,36 @@ public extension<Array> arrayOp
         self setAt(anIndex2, aTemp).
     ]
     
-//    stacksafe indexOf int:anIndex object:anObject vint:aRetVal
-//    [
-//        aRetVal int := -1.
-//        
-//        int aLength := self length.
-//        
-//        int i := anIndex.
-//        while(i < aLength)
-//        [
-//            var anArrayItem := self getAt int:i.
-//            
-//            if (anObject == anArrayItem)
-//                [ aRetVal int := i ].
-//            
-//            i := i + 1
-//        ]
-//    ]        
-//        
-//    stacksafe indexOf int:anIndex object:anObject
-//    [
-//        int aRetVal := 0.
-//        
-//        self~arrayOp indexOf int:anIndex object:anObject vint:aRetVal.
-//        
-//        ^ IntNumber new int:aRetVal
-//    ]
-//    
-//    indexOf : anObject
-//        = self~arrayOp indexOf int:0 object:anObject.
-//        
+    stacksafe indexOf(int anIndex, object anObject, ref<int> aRetVal)
+    [
+        aRetVal value := -1.
+        
+        int aLength := self length.
+        
+        int i := anIndex.
+        while(i < aLength)
+        [
+            var anArrayItem := self getAt(i).
+            
+            if (anObject == anArrayItem)
+                [ aRetVal value := i ].
+            
+            i := i + 1
+        ]
+    ]        
+        
+    int stacksafe indexOf(int anIndex, object anObject)
+    [
+        int aRetVal := 0.
+        
+        self~arrayOp indexOf(anIndex, anObject, &aRetVal).
+        
+        ^ aRetVal
+    ]
+    
+    int indexOf : anObject
+        = self~arrayOp indexOf(0, anObject).
+        
 ////    safeSeek : aValue
 ////    [
 ////        int aLength := self length.

@@ -38,11 +38,11 @@ extension dbTestOp
 
 // --- program ---
 
-program =
+public program
 [
     var dbFile := File new:DBFileName.
     
-    var cnn := DBConnection new path:dbFile.
+    var cnn := DBConnection new:dbFile.
     
     ifnot (dbFile isAvailable)
     [
@@ -90,4 +90,4 @@ program =
     ].
 
     console readChar.
-].
+]

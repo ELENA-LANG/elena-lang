@@ -170,6 +170,20 @@ procedure __dptr."system$setReference[2]"
 
 end
 
+procedure __dptr."read$system@ByteArray$system@IntNumber[3]"
+
+  bloadsi 2
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 1
+
+  callextr api : subcopy  
+  
+  quitn 3
+
+end
+
 procedure __byte."inverted[1]"
 
   newn   class : system'ByteNumber 4

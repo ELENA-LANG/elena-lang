@@ -6,9 +6,6 @@ In development:
                  * class to expression tree
                  * expression tree to class
 
-              dev - redesign
-                 * #15 : Returning double float and long value from external function
-
               xdev - samples
                  * db sample
 
@@ -38,6 +35,7 @@ Pipeline:
                  * publish an example with the enumeration (list of enum values)
 
               dev - general implementation
+                 * DBTable.appendRow - should be internal
                  * #401 : operator with array  (modify AKS test for primes)
                  * enable to emulate C# program structure - class with a main method, without program symbol
                  * compile <>, ><, ...
@@ -72,6 +70,7 @@ Pipeline:
                  * comparing handler with a numeric constant
                  * comparing char with a numeric constant
                  * call console operations directly
+                 * redesign sqlite - use strong typed collections
 
               xdev - samples
                  * Short-circuit evaluation : do not use lazy expressions
@@ -189,6 +188,7 @@ Pipeline:
                       cast T<Indexable> = Indexable::{ embeddable dispatch => self. }.    
                  * why the error - ArrayList :: Indexable, interface<Enumerable>
                  * critical error if the class is based on unknown template
+                 * interface / abstract class cannot have constructors
 
               xdev - general implementation
                  * strings module : do we need long (toLong) at all? probably only int and ref_t should be used

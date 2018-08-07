@@ -6,11 +6,6 @@ public interface BinaryWriter
 {
     T<Stream> theStream.
     
-    constructor new(Stream aStream)
-    [
-        theStream := aStream.
-    ]
-    
     T<Stream> stream = theStream.
 
     close => theStream.
@@ -82,11 +77,6 @@ public interface TextWriter
     T<TextBuilder> theBuffer.
     literal        theNewLineConstant.
 
-    constructor new
-    [
-        theBuffer := TextBuilder new.
-    ]
-    
     abstract T<Stream> stream [ ]
 
     abstract T<Encoder> encoder [ ]

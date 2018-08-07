@@ -24,7 +24,7 @@ rem bin\elc examples\gui\agenda\agenda.prj
 rem bin\elc examples\gui\graphs\graphs.prj
 rem bin\elc examples\gui\c_a_g\c_area_gui.prj
 rem bin\elc examples\gui\notepad\notepad.prj
-rem bin\elc examples\db\sqlite\sqlite_test.prj
+bin\elc examples\db\sqlite\sqlite_test.prj
 rem bin\elc examples\net\chat\chatserver.prj
 rem bin\elc examples\net\chat\chat.prj
 rem bin\elc examples\gui\helloworld\xforms_hellowindow.prj

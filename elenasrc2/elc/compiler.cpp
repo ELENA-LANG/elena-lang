@@ -5047,7 +5047,7 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
 
       ObjectInfo target = scope.mapMember(SELF_VAR);
       writeTerminal(writer, node, scope, target, HINT_NODEBUGINFO);
-      compileMessage(writer, node.firstChild(lxObjectMask).findChild(lxMessage), scope, target, 0, /*(*//*extensionMode ? HINT_EXT_RESENDEXPR : *//*HINT_RESENDEXPR) | HINT_PARAMETERSONLY*/0);
+      compileMessage(writer, node.firstChild(lxObjectMask).findChild(lxMessage), scope, 0, target, /*(*//*extensionMode ? HINT_EXT_RESENDEXPR : *//*HINT_RESENDEXPR) | HINT_PARAMETERSONLY*/0);
 
       writer.removeBookmark();
       writer.closeNode();

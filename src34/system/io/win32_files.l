@@ -143,6 +143,7 @@ public class StreamWriter :: TextWriter
     constructor new(Stream aStream, Encoder anEncoder)
         <= new;
     [
+        theBuffer := TextBuilder new.
         theStream := aStream.
         theEncoder := anEncoder.
 
@@ -197,8 +198,11 @@ public class StreamReader :: TextReader
     bool       theOpen.
 
     constructor new(Stream aStream, Encoder anEncoder)
-        <= new;
     [
+        theOutput := TextBuilder new.
+        theNewLineConstant := forwards'newLine.                
+        theNewLineLength := theNewLineConstant length.        
+        
         theStream := aStream.
         theEncoder := anEncoder.
         theOpen := true.
@@ -243,6 +247,13 @@ public class StreamReader :: TextReader
 
 sealed BinaryFileReader :: BinaryReader
 {
+    constructor new(Stream aStream)
+    [
+        theStream := aStream.
+        
+        theLength := aStream length.
+    ]
+    
     constructor new:aPath
         <= new(FileStream openForRead:aPath).
 }
@@ -251,6 +262,11 @@ sealed BinaryFileReader :: BinaryReader
 
 sealed BinaryFileWriter :: BinaryWriter
 {
+    constructor new(Stream aStream)
+    [
+        theStream := aStream.
+    ]
+    
     constructor new:aPath
         <= new(FileStream openForReWrite:aPath).
 }

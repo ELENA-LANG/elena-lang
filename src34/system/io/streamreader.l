@@ -8,13 +8,6 @@ public interface BinaryReader
     T<Stream> theStream.
     int       theLength.
     
-    constructor new(Stream aStream)
-    [
-        theStream := aStream.
-        
-        theLength := aStream length.
-    ]
-    
     stacksafe read(ByteArray anArray, ref<int> anActualLength)
     [
         theStream read(anArray, anActualLength).
@@ -129,14 +122,6 @@ public interface TextReader
     T<TextBuilder> theOutput.
     literal        theNewLineConstant.
     int            theNewLineLength.
-
-    constructor new
-    [
-        theOutput := TextBuilder new.
-        theNewLineConstant := forwards'newLine.
-                
-        theNewLineLength := theNewLineConstant length.
-    ]
 
     abstract stacksafe read(CharArray anArray, ref<int> anActualLength) []
 
