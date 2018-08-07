@@ -6,82 +6,34 @@ In development:
                  * class to expression tree
                  * expression tree to class
 
-              dev - revision
-                 * rosetta code
-                 * samples
-                                                                                                        
               dev - redesign
-                 * probably __className should return the class name, rather than the class class name??
-
-                 * test why interpreter with sample4.txt / sample2.txt crashes
-
-                 * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
-                 * optimize - if (0 == theTop) (where theTop is ref<int>)
-                   
-                 * do we need Tape and Class, probably better to use ClosureTape and ClosureClass?
-
-                 * comparing handler with a numeric constant
-                 * comparing char with a numeric constant
-
-                 * check why the vm console samples are always broken at the end
-
-                 * method not found wrong attribute
-
-                 * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
-                   normal classes cannot be inherited from enum / enum value
-
-                 * structure should contain at least one data field
-                   directly (and get rid of hot fix in compileExternalArguments)
-                 * call console operations directly
-                 * a do(1,2,3,4,5,6,7,8,9,10,11,12,13) can be compiled both as do[0,], do[1,] and do[2,]
                  * #15 : Returning double float and long value from external function
-                 * debugger : display message
-                 * can generic handler be strong-typed?
-                 * elenart - switch to xml config
-                 * reimplement IDE exclude the file
-                 * reimplement IDE clear forwards
 
-                 * collection : validate if the parent class can be array based class
-                 * can cast method be overridden? so it means it should not have sealed attribute?
-                 * find out why the following code does not work:
-                      cast T<Indexable> = Indexable::{ embeddable dispatch => self. }.    
-                 * there should be typified enumerableOp extensions
-                 * optimize equal, less operation between chars
-                 * optimize TextBuilder
-                 * optimize IntNumber.equal[1] method
-                 * why the error - ArrayList :: Indexable, interface<Enumerable>
-                 * review field / method template usage syntax
-                 * template extension
-                 * comparing int and ptr (handle, dirty_ptr)
-                 * warn if there are several similar extension for given message
-                 * static methods and singleton
-                 * call stack / debug watch - template based classes
-                 * critical error if the class is based on unknown template
-                 * templates unresolved references - probably they should be tested with super object if all references are resolved
-                 * simplify derivation code : a collection with operations - "(1,2) msg" and "Array::(1,2) msg"
-                 * StartUpEvent.stopping should be internal, but the compiler do recognize it and send public one
-                 * why the folloswing code does not work:
-                     generic testWrite(V<object> args)
-                     [
-                        console writeLine:"testWrite is called with:".
-                        args forEach:printingLn.
-                     ]
-                 * do we need tpSpecial hint?
-                 * the following code should generate an error - test<2>.
+              xdev - samples
+                 * db sample
 
               dev - general implementation
                  * typified enumerators / extensions #245                 
                  * Template based extensions #408
 
-              dev - revision
-                 * reddit : Implicit constructor for the nested class
-
-              dev - revision
-                 * tutorials
-
 ------                                                           
 Pipeline:
 ------                                                                                         
+              dev - revision
+                 * rosetta code
+                 * samples
+                 * reddit : Implicit constructor for the nested class
+                 * tutorials
+
+              dev - redesign
+                 * probably __className should return the class name, rather than the class class name??
+                 * do we need Tape and Class, probably better to use ClosureTape and ClosureClass?
+                 * StartUpEvent.stopping should be internal, but the compiler do recognize it and send public one
+                 * can generic handler be strong-typed?
+                 * there should be typified enumerableOp extensions
+                 * review field / method template usage syntax
+                 * simplify derivation code : a collection with operations - "(1,2) msg" and "Array::(1,2) msg"
+
               dev - tutorials
                  * publish an example with the enumeration (list of enum values)
 
@@ -93,8 +45,11 @@ Pipeline:
                  * should be possible to rosolve the namespace ambiguity using an extra path
                  * a == b == c - not allowed
                  * a < b < c - not allowed
+                 * static methods and singleton
+                 * do we need tpSpecial hint?
 
               xdev - general optimization  
+                 * comparing int and ptr (handle, dirty_ptr)
                  * optimize interface dispatch implementation (interface template)
                  * optimize external call routines
                  * optimize equal generic implementation (in basic module)
@@ -109,6 +64,14 @@ Pipeline:
                  * optimize : var n := T<int>(h) \ back:nil. (where h is Handle)
                  * nested classes around self variable should be compiled as a wrapper,
                    so in some cases they can be used without actually creating them
+                 * optimize equal, less operation between chars
+                 * optimize TextBuilder
+                 * optimize IntNumber.equal[1] method
+                 * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
+                 * optimize - if (0 == theTop) (where theTop is ref<int>)
+                 * comparing handler with a numeric constant
+                 * comparing char with a numeric constant
+                 * call console operations directly
 
               xdev - samples
                  * Short-circuit evaluation : do not use lazy expressions
@@ -149,6 +112,15 @@ Pipeline:
                  * an option to make all classes public (to be compatible with previous versions)??
                  * validate that a field template contains exactly one a field with a name "field"
                  * warn if the local variable / param is called target, self, super
+                 * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
+                   normal classes cannot be inherited from enum / enum value
+                 * a do(1,2,3,4,5,6,7,8,9,10,11,12,13) can be compiled both as do[0,], do[1,] and do[2,]
+                 * elenart - switch to xml config
+                 * structure should contain at least one data field
+                 * collection : validate if the parent class can be array based class
+                 * can cast method be overridden? so it means it should not have sealed attribute?
+                 * warn if there are several similar extension for given message
+                 * templates unresolved references - probably they should be tested with super object if all references are resolved
 
               dev - general implementation
                  * compileExpression, compileObject : refactor collection compilation
@@ -179,6 +151,8 @@ Pipeline:
                  * debugger : debugging template based classes
                  * #263 - fix goto
                  * DebugController::loadDebugModule should use LibraryManager to avoid code duplication
+                 * debugger : display message
+                 * call stack / debug watch - template based classes
 
               exp - web
 
@@ -200,6 +174,21 @@ Pipeline:
                  * implementing enum analogue
                  * support field template with an intializer	
                  * duplicat code ExecutableImage :: retrieveReference and Instance :: retrieveReference
+
+              xdev - test
+                 * test why interpreter with sample4.txt / sample2.txt crashes
+                 * why the following code does not work:
+                     generic testWrite(V<object> args)
+                     [
+                        console writeLine:"testWrite is called with:".
+                        args forEach:printingLn.
+                     ]
+                 * check why the vm console samples are always broken at the end
+                 * the following code should generate an error - test<2>.
+                 * find out why the following code does not work:
+                      cast T<Indexable> = Indexable::{ embeddable dispatch => self. }.    
+                 * why the error - ArrayList :: Indexable, interface<Enumerable>
+                 * critical error if the class is based on unknown template
 
               xdev - general implementation
                  * strings module : do we need long (toLong) at all? probably only int and ref_t should be used
@@ -258,6 +247,8 @@ Pipeline:
                  * allow to create xml project
                  * xml : format the xml on save
                  * switch to xml config files #14
+                 * reimplement IDE exclude the file
+                 * reimplement IDE clear forwards
 
               xdev - general optimization  
                  * hexadecimal - uint32

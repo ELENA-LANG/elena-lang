@@ -4790,7 +4790,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
             saveInt(tape, target.type, target.argument);
          }
          else if (node.argument == 8) {
-            if (node.existChild(lxFPUTarget)) {
+            if (node.findSubNode(lxFPUTarget) == lxFPUTarget) {
                saveReal(tape, target.type, target.argument);               
             }
             else saveLong(tape, target.type, target.argument);

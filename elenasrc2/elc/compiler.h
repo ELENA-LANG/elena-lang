@@ -846,7 +846,7 @@ private:
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, int mode);
 
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
@@ -860,7 +860,7 @@ private:
 
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);
 
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, ObjectInfo target, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
    ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 
@@ -877,7 +877,7 @@ private:
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
    void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 
-   ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, int mode);
+   ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, ref_t expectedRef, int mode);
 
    void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -887,7 +887,7 @@ private:
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
 
-   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, int mode);
    ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
@@ -959,24 +959,24 @@ private:
    bool convertObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
    bool typecastObject(SyntaxWriter& writer, Scope& scope, ref_t targetRef);
 
-   void compileExternalArguments(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
+   void compileExternalArguments(SNode node, NamespaceScope& scope);
 
-   ref_t analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/);
-   ref_t analizeSymbol(SNode& node, NamespaceScope& scope/*, WarningScope& warningScope*/);
-   ref_t analizeAssigning(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
-   ref_t analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
-   ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
-   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode);
+   ref_t analizeOp(SNode current, NamespaceScope& scope);
+   ref_t analizeSymbol(SNode& node, NamespaceScope& scope);
+   ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);
+   ref_t analizeBoxing(SNode node, NamespaceScope& scope, int mode);
+   ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, int mode);
+   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
-   ref_t analizeExpression(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
-   ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope/*, WarningScope& warningScope*/);
-   ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope/*, WarningScope& warningScope*/, int mode);
-   ref_t analizeNestedExpression(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
-   void analizeExpressionTree(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
-   void analizeBranching(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode = 0);
-   void analizeCode(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
-   void analizeMethod(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/);
-   void analizeClassTree(SNode node, ClassScope& scope/*, WarningScope& warningScope*/);
+   ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
+   ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope);
+   ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope, int mode);
+   ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
+   void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
+   void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
+   void analizeCode(SNode node, NamespaceScope& scope);
+   void analizeMethod(SNode node, NamespaceScope& scope);
+   void analizeClassTree(SNode node, ClassScope& scope);
    void analizeSymbolTree(SNode node, Scope& scope);
 
    void defineEmbeddableAttributes(ClassScope& scope, SNode node);

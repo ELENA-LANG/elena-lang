@@ -121,6 +121,8 @@ ELENA byte codes (or ecodes)
   
  nloadi                     - int[acc+i*4] >> index
  
+ lsave                      - long[base] << long index
+ 
  nread                      - acc[index * 4] >> ext                               
  
  nsave                      - int[base] << index
