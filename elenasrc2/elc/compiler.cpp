@@ -3298,7 +3298,9 @@ bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScop
       parentRef = scope.moduleScope->lazyExprReference;
    }
    else {
-      ref_t closureRef = scope.moduleScope->resolveClosure(*this, methodScope.message, outputRef);
+      NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+      ref_t closureRef = scope.moduleScope->resolveClosure(*this, methodScope.message, outputRef, &nsScope->extensions);
 //      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
       if (closureRef)
          parentRef = closureRef;
@@ -3780,7 +3782,7 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
 
    parameters.add(operandRef);
 
-   ref_t targetRef = scope.moduleScope->generateTemplate(*this, scope.moduleScope->refTemplateReference, parameters);
+   ref_t targetRef = scope.moduleScope->generateTemplate(*this, scope.moduleScope->refTemplateReference, parameters, NULL);
 
    if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, objectInfo), objectInfo.element))
       scope.raiseError(errInvalidOperation, node);
@@ -3799,7 +3801,7 @@ ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t operandRef)
 
    parameters.add(operandRef);
 
-   return scope.moduleScope->generateTemplate(*this, scope.moduleScope->arrayTemplateReference, parameters);
+   return scope.moduleScope->generateTemplate(*this, scope.moduleScope->arrayTemplateReference, parameters, NULL);
 }
 
 ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
@@ -7530,12 +7532,20 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
    return declared;
 }
 
-bool Compiler :: declareModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode)
+bool Compiler :: declareModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode, ExtensionMap* extensions)
 {
    // declare classes several times to ignore the declaration order
    NamespaceScope namespaceScope(&scope, path, ns, imported, false);
 
-   return compileDeclarations(syntaxTree.readRoot(), namespaceScope, repeatMode);
+   bool retVal = compileDeclarations(syntaxTree.readRoot(), namespaceScope, repeatMode);
+
+   if (extensions != NULL) {
+      for (auto it = namespaceScope.extensions.start(); !it.Eof(); it++) {
+         extensions->add(it.key(), *it);
+      }
+   }
+
+   return retVal;
 }
 
 void Compiler :: compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/)

@@ -242,7 +242,7 @@ struct _CompilerScope
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode) = 0;
 
-   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef) = 0;
+   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensionsToExport) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
@@ -285,7 +285,7 @@ struct _CompilerScope
       project->raiseWarning(level, message, sourcePath);
    }
 
-   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters) = 0;
+   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensionsToExport) = 0;
 
    virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
@@ -333,7 +333,7 @@ public:
    virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
    virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
 
-   virtual bool declareModule(SyntaxTree& tree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode) = 0;
+   virtual bool declareModule(SyntaxTree& tree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode, ExtensionMap* extensionsToExport) = 0;
    virtual void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/) = 0;
 
 //   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;

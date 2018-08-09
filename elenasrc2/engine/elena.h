@@ -702,6 +702,9 @@ typedef Memory32HashTable<ref64_t, ref_t, __map64Key, 64>       ActionMap;
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;
 
+// --- Extensions ---
+typedef Map<ref_t, Pair<ref_t, ref_t>> ExtensionMap;
+
 // --- ParserTable auxiliary types ---
 typedef Stack<int>                                          ParserStack;
 typedef MemoryMap<ident_t, int>                             SymbolMap;

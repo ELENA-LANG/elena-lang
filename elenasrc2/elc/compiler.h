@@ -211,7 +211,6 @@ public:
    };
 
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
-   typedef Map<ref_t, Pair<ref_t, ref_t>> ExtensionMap;
 
 private:
    // - Scope -
@@ -991,7 +990,7 @@ public:
    }
 
    // return true if no forward class declarations are encountered
-   bool declareModule(SyntaxTree& tree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode);
+   bool declareModule(SyntaxTree& tree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode, ExtensionMap* extensionsToExport);
    void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/);
 
 //   void compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& tree, ModuleInfo& moduleInfo, Unresolveds& unresolveds);

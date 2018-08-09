@@ -724,7 +724,7 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
 
          printInfo("Compiling %s", name);
 
-         scope.compile(compiler, files);
+         scope.compile(compiler, files, NULL);
       }
       else if (type == 2) {
          // if it is a script file
@@ -747,7 +747,7 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
 
          buildSyntaxTree(scriptParser, source, scope, files);
 
-         scope.compile(compiler, files);
+         scope.compile(compiler, files, NULL);
       }
 
       saveModule(scope.module, "nl");

@@ -372,7 +372,7 @@ ref_t CompilerScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier,
    }   
 }
 
-void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files)
+void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files, ExtensionMap* extensions)
 {
    // declare classes / symbols based on the derivation tree
    bool repeatMode = true;
@@ -383,7 +383,7 @@ void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files)
       for (auto it = files.start(); !it.Eof(); it++) {
          SourceFileInfo* info = *it;
 
-         idle &= !compiler.declareModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs, repeatMode);
+         idle &= !compiler.declareModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs, repeatMode, extensions);
       }
    }
 
@@ -395,7 +395,7 @@ void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files)
    }
 }
 
-ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters)
+ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensions)
 {
    SyntaxTree templateTree;
 
@@ -414,7 +414,7 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
 
    try
    {
-      compile(compiler, files);
+      compile(compiler, files, extensions);
    }
    catch(_Exception&)
    {
@@ -427,7 +427,7 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
    return generatedReference;
 }
 
-ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef)
+ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensions)
 {
    ref_t signRef = 0;
    module->resolveAction(getAction(closureMessage), signRef);
@@ -469,7 +469,7 @@ ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage,
       else templateReference = mapFullReference(closureName, true);
 
       if (templateReference) {
-         return generateTemplate(compiler, templateReference, parameters);
+         return generateTemplate(compiler, templateReference, parameters, extensions);
       }
       else return superReference;
    }
