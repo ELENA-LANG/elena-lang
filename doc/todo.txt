@@ -6,9 +6,6 @@ In development:
                  * class to expression tree
                  * expression tree to class
 
-              xdev - samples
-                 * db sample
-
               dev - general implementation
                  * typified enumerators / extensions #245                 
                  * Template based extensions #408
@@ -17,14 +14,13 @@ In development:
 Pipeline:
 ------                                                                                         
               dev - revision
-                 * rosetta code
+                 * rosetta code - Abundant, deficient and perfect number classifications
                  * samples
                  * reddit : Implicit constructor for the nested class
                  * tutorials
 
               dev - redesign
                  * probably __className should return the class name, rather than the class class name??
-                 * do we need Tape and Class, probably better to use ClosureTape and ClosureClass?
                  * StartUpEvent.stopping should be internal, but the compiler do recognize it and send public one
                  * can generic handler be strong-typed?
                  * there should be typified enumerableOp extensions
@@ -36,10 +32,8 @@ Pipeline:
 
               dev - general implementation
                  * DBTable.appendRow - should be internal
-                 * #401 : operator with array  (modify AKS test for primes)
                  * enable to emulate C# program structure - class with a main method, without program symbol
                  * compile <>, ><, ...
-                 * refactor module resolving algorithm, no need to replicate the name space structure on physical level
                  * should be possible to rosolve the namespace ambiguity using an extra path
                  * a == b == c - not allowed
                  * a < b < c - not allowed
@@ -47,7 +41,6 @@ Pipeline:
                  * do we need tpSpecial hint?
 
               xdev - general optimization  
-                 * comparing int and ptr (handle, dirty_ptr)
                  * optimize interface dispatch implementation (interface template)
                  * optimize external call routines
                  * optimize equal generic implementation (in basic module)
@@ -73,6 +66,7 @@ Pipeline:
                  * redesign sqlite - use strong typed collections
 
               xdev - samples
+                 * Cartesian product of two or more lists
                  * Short-circuit evaluation : do not use lazy expressions
                  * test chat sample
                  * test rosetta socket sample
@@ -84,11 +78,7 @@ Pipeline:
                  * port compiler
                  * port elenart
                  * port asm2binx
-
-              adev - linux
                  * migrate LIB34
-
-               xdev - linux
                  * proting debugger
 
               exp - live programming
@@ -101,9 +91,6 @@ Pipeline:
               exp - built-in script
                  * graph : provide function in the script
                  * escript : support closures
-
-              dev - samples
-                 * Cartesian product of two or more lists
 
               dev - usability
                  * ecv : when class members displayed, in pagination the flags / parent should be taken into account as well

@@ -442,7 +442,7 @@ namespace _ELENA_
    #define PACKAGE_SECTION          "#package"
    #define IMPORTS_SECTION          "#import"
    #define NAMESPACES_SECTION       "#namespaces"
-//   #define AUTOEXTENSION_SECTION    "#auto_extensions"
+   #define AUTOEXTENSION_SECTION    "#auto_extensions"
    #define NAMESPACE_REF            "#namespace"
 
   // --- ELENA class prefixes / postfixes ---

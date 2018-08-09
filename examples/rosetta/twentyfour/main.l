@@ -174,9 +174,9 @@ extension gameOp
 
 // --- program ---
 
-public program =
+public program
 [
     var aGame := TwentyFourGame new; help.
 
     while (aGame prompt; playRound(console readLine)) [].
-].
+]

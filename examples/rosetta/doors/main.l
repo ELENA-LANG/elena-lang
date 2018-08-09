@@ -3,7 +3,7 @@ import extensions.
 
 // --- program ---
 
-public program =
+public program
 [
     var Doors := Array new:100; populate(:n)( false ).
     
@@ -21,4 +21,4 @@ public program =
     ].
     
     console readChar.
-].
+]

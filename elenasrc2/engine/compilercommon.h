@@ -98,7 +98,7 @@
 namespace _ELENA_
 {
 
-typedef Map<ident_t, ref_t> ForwardMap;
+typedef Map<ident_t, ref_t>      ForwardMap;
 
 enum MethodHint
 {
@@ -226,11 +226,10 @@ struct _CompilerScope
 
 //   virtual ref_t mapAttribute(SNode terminal) = 0;
 //   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
-////   virtual ref_t mapReference(ident_t reference, bool existing = false) = 0;
-////   virtual ref_t mapTemplateClass(ident_t templateName, bool& alreadyDeclared) = 0;
-////   virtual ref_t mapAnonymous() = 0;
 
+   virtual SubjectList* getAutogerenatedExtensions(ref_t attr) = 0;
    virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
+   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
    virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
