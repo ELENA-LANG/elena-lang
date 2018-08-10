@@ -3690,10 +3690,17 @@ void DerivationTransformer :: recognizeScopeMembers(SNode& node, DerivationScope
       else if (current == lxCode && test(mode, MODE_CODETEMPLATE)) {
       }
       else if (current.compare(lxMethodParameter, lxAttributeValue, lxCode) && mode == MODE_ROOT) {
+         // HOTFIX : recognize returning expression
+         SNode body = node.findChild(lxCode, lxExpression, lxDispatchCode/*, lxReturning*/, lxResendExpression);
+         if (body == lxExpression)
+            body = lxReturning;
+
          // one method class declaration
          node.injectNode(lxClassMethod, V_ACTION);
 
          node.set(lxClass, (ref_t)-2);
+
+
 
          current.refresh();
       }

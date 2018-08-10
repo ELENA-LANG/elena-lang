@@ -12,7 +12,7 @@ import extensions.
 
 // --- Ackermann function ---
 
-ackermann = (:m:n)
+ackermann(m,n)
 [
     if((n < 0)||(m < 0))
     [
@@ -26,9 +26,9 @@ ackermann = (:m:n)
                 0 [ ^ackermann(m - 1,1) ];
                 ! [ ^ackermann(m - 1,ackermann(m,n-1)) ]
            ]
-].
+]
 
-public program =
+public program
 [
     0 to:3 do(:i)
     [
@@ -38,5 +38,5 @@ public program =
         ]
     ].
 
-    console readChar.
-].
+    console readChar
+]

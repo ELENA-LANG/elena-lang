@@ -6,15 +6,13 @@ In development:
                  * class to expression tree
                  * expression tree to class
 
-              dev - general implementation
-                 * typified enumerators / extensions #245                 
-                 * Template based extensions #408
+              dev - revision
+                 * rosetta code - Add a variable to a class instance at runtime
 
 ------                                                           
 Pipeline:
 ------                                                                                         
               dev - revision
-                 * rosetta code - Abundant, deficient and perfect number classifications
                  * samples
                  * reddit : Implicit constructor for the nested class
                  * tutorials
@@ -39,31 +37,6 @@ Pipeline:
                  * a < b < c - not allowed
                  * static methods and singleton
                  * do we need tpSpecial hint?
-
-              xdev - general optimization  
-                 * optimize interface dispatch implementation (interface template)
-                 * optimize external call routines
-                 * optimize equal generic implementation (in basic module)
-                 * optimize using, finally, try, ...
-                 * #371 : Pi sample optimization
-                 * pusha  new bcopya popa => bcopya new bswap nop??
-                 * optimize wideConvertor / literalConvertor
-                 * optimize CallStack
-                 * optimize embeddable function call
-                 * optimize embeddable function2 call
-                 * optimize integerOp : append / reduce should be stacksafe
-                 * optimize : var n := T<int>(h) \ back:nil. (where h is Handle)
-                 * nested classes around self variable should be compiled as a wrapper,
-                   so in some cases they can be used without actually creating them
-                 * optimize equal, less operation between chars
-                 * optimize TextBuilder
-                 * optimize IntNumber.equal[1] method
-                 * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
-                 * optimize - if (0 == theTop) (where theTop is ref<int>)
-                 * comparing handler with a numeric constant
-                 * comparing char with a numeric constant
-                 * call console operations directly
-                 * redesign sqlite - use strong typed collections
 
               xdev - samples
                  * Cartesian product of two or more lists
@@ -110,35 +83,13 @@ Pipeline:
 
               dev - general implementation
                  * compileExpression, compileObject : refactor collection compilation
-                 * Read-only classes should be enforced #282
-                 * #283 : unboxing duplicate object 
                  * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
                    no other overload functions provided)
-                 * implementing #350
                  * cache isEmbeddable operation result
-                 * #223 : exiting the lock / extern statement , throwing an exception, try-finally construction should be 
-                   as light as possible
                  * fn3prop : embeddable option for the function with three arguments should be recognized
-                 * NilReferenceException, AccessViolationException, DivisionByZeroException should be recognized
-                 * method returning a constant #381
                  * ByteNumber.get&min - could we return the constant object?
                  * constant numbers / strings should be used directly?? (e.g. replace a constant with its value)
-                 * Constant fields #351
-                 * print nan value
-                 * nil and $nil
-                 * fixing open issues
                  * duplicate nested classes (see array template)
-                 * #355 : Multimethods and $nil 
-                 * support void type to be used in multimethod with $nil?
-
-              dev - debugger
-                 * debugger : show self / target
-                 * debugger : display template based classes
-                 * debugger : debugging template based classes
-                 * #263 - fix goto
-                 * DebugController::loadDebugModule should use LibraryManager to avoid code duplication
-                 * debugger : display message
-                 * call stack / debug watch - template based classes
 
               exp - web
 
@@ -152,11 +103,6 @@ Pipeline:
                  * web server
 
               xdev - general implementation
-                 * #195 : impelement rosetta code samples
-                 * Elementary cellular automaton
-                 * Zebra puzzle
-                 * Write float arrays to a text file
-                 * Word search
                  * implementing enum analogue
                  * support field template with an intializer	
                  * duplicat code ExecutableImage :: retrieveReference and Instance :: retrieveReference
@@ -180,7 +126,6 @@ Pipeline:
               xdev - general implementation
                  * strings module : do we need long (toLong) at all? probably only int and ref_t should be used
                  * constant field should always have assigning part
-                 * #266: sealed static constant fields
 
               xdev - generic development                                            
                  * warn on boxing
@@ -199,31 +144,6 @@ Pipeline:
                  * test local : assign field struct
                  * invalid error message for the code:
                        symbol plotter = { .. }.
-
-              xdev - general optimization  
-                 * optimize anagram sample, after recent changes it is slowed down
-                 * opimized alt operator implementation : resolve it in compile-time if the operand is known
-                 * opimized alt operator implementation : if the object has no custom dispatch handler check it before
-                   otherwise use try catch statement ; check $nil?
-                 * optimize using, finally, try template implementations (get rid of dynamic closures)
-                 * optimize listof.setAt&int$&object[2]: there should be primitive comparison operation
-                 * optimize listof.$expand
-                 * optimize ArrayList / list template insert operation (use xset for moving the references rather than set)
-                 * optimize multimethod implementation for sealed class containing only one overload class
-                 * external function : duplicate assigning
-                 * do not allocate a virtual vmt (for the object initilizer code)
-                 * direct and, or, xor, shift, mul, div, equal, less
-                 * get rid of acopyb after each operation
-                 * optimize n + m * k
-                 * optimize n + 1
-                 * optimize n + m * 2
-                 * optimize int n := 3 + 2.
-                 * Assigning stack allocated real number with integer constant #360
-                 * support #var(real)r := 2. // assigning int to real by constant
-                 * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
-                 * optimize : #constructor(stacksafe) new &int:size = byte:(size + 1).
-                 * redesign mtredirect / xmtredirect, for three, four parameters (?)
-                 * mtredirect / xmtredirect : do not need to save ecx twice
 
               exp - remoting
               exp - workflow

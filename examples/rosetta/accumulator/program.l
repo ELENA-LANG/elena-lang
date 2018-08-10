@@ -10,13 +10,13 @@ and returns the sum of all the numeric values passed in so far to that accumulat
 ELENA is OO language, so a function is in fact an object
 */
 
-function = 
-    (:acc)((:n)(acc append:n)).
+function(acc)
+    = (:n)(acc append:n).
 
-accumulator = 
-    (:n)(function(Variable new(n))).
+accumulator(n)
+    = function(Variable new(n)).
 
-public program =
+public program
 [
     var x := accumulator(1).
     
@@ -24,5 +24,5 @@ public program =
     
     var y := accumulator(3).
     
-    console write(x(2.3r)).
-].
+    console write(x(2.3r))
+]
