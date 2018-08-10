@@ -291,6 +291,8 @@ ident_t CompilerScope:: resolveWeakTemplateReference(ident_t referenceName)
             IdentifierString fullName(refModule->Name(), resolvedName);
 
             project->addForward(referenceName, fullName.c_str());
+
+            resolvedName = project->resolveForward(referenceName);
          }
          else project->addForward(referenceName, resolvedName);
       }

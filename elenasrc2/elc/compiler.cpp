@@ -6308,9 +6308,9 @@ ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
    ident_t baseClassName = node.identifier();
 
    if (emptystr(baseClassName))
-      baseClassName = scope.moduleScope->resolveFullName(node.findChild(lxClassRefAttr).identifier());
+      baseClassName = node.findChild(lxClassRefAttr).identifier();
 
-   if (isWeakReference(baseClassName)) {
+   if (isWeakReference(baseClassName) && !isTemplateWeakReference(baseClassName)) {
       parentRef = scope.module->mapReference(baseClassName, true);
    }
    else parentRef = scope.moduleScope->mapFullReference(baseClassName, true);
