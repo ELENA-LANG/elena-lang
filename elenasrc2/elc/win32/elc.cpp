@@ -552,6 +552,8 @@ inline void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _E
       if (moduleNs.compare(filePath, start, ns_index)) {
          start = ns_index + 1;
          ns_index = moduleNs.find(start, '\'', NOTFOUND_POS);
+
+         filePath += start;
       }
       else break;
    }

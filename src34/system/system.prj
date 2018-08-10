@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>3.4.21</version>
+     <version>3.4.22</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -50,6 +50,9 @@
      <module name="routines">
        <include>routines\enumerables.l</include>
        <include>routines\patterns.l</include>
+     </module>
+     <module name="routines'stex">
+       <include>routines\stex\strong_extensions.l </include>
      </module>
      <module name="dynamic">
        <include>dynamic\reflection.l</include>
