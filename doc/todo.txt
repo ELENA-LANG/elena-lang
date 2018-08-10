@@ -6,13 +6,11 @@ In development:
                  * class to expression tree
                  * expression tree to class
 
-              dev - revision
-                 * rosetta code - Add a variable to a class instance at runtime
-
 ------                                                           
 Pipeline:
 ------                                                                                         
               dev - revision
+                 * rosetta code - amb
                  * samples
                  * reddit : Implicit constructor for the nested class
                  * tutorials
