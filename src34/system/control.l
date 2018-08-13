@@ -301,9 +301,13 @@ public interface Func<type, ret_type>
     /// Executes the action
     abstract ret_type closure(type param) []
     
-//    run(enumerator<type> e)
-//    [
-//    ]
+    run(Enumerator<type> e)
+    [
+        while(e next)
+        [
+            self(e get)
+        ].        
+    ]
 }
 
 /// A base two variable function

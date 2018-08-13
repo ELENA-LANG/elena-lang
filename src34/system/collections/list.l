@@ -26,6 +26,18 @@ public sealed List<type> :: Enumerable<type>
         ].
     ]
     
+    constructor(Enumerator<type> e)
+    [
+        theCapacity := 16.
+        theLength := 0.
+        theArray := V<type>(16).
+
+        while(e next)
+        [
+            self append(e get)
+        ]
+    ]
+    
     constructor(int capacity)
     [
         theCapacity := capacity.
