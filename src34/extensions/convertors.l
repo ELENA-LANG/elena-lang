@@ -139,19 +139,34 @@ class literalExConvertor =
 //    convert wide : s
 //        = UTF16Encoder toByteArray int:0 int:(s length) wide:s.
 //}.
+
+public singleton intarrayConvertorEx
+{
+    T<IntArray> convert(Enumerator<int> e)
+    [
+        List<int> list := List<int>().
+
+        while (e next)
+        [
+            list append(e get)
+        ].
+
+        ^ IntArray new(list indexer).
+    ]
+    
+    T<IntArray> convert(o)
+        <= convert(Enumerator<int>(o enumerator)).
+    
+//    convert enumerable:aList
+//    [
+//        array_list alist := ArrayList new.
 //
-////class intarrayExConvertor =
-////{
-////    convert enumerable:aList
-////    [
-////        array_list alist := ArrayList new.
-////
-////        aList run each: (:anItem)[ alist append:anItem ].
-////        
-////        ^ IntArray new int:(alist length); set every: (&int:i)[ alist getAt int:i; toInt ]
-////    ]
-////}.
-//
+//        aList run each: (:anItem)[ alist append:anItem ].
+//        
+//        ^ IntArray new int:(alist length); set every: (&int:i)[ alist getAt int:i; toInt ]
+//    ]
+}
+
 //class intmatrixExConvertor =
 //{
 ////    convert array:a
@@ -250,24 +265,11 @@ public singleton arrayConvertorEx
 
 public extension convertorOp
 {
-    toArray
+    T<Array> toArray
         = arrayConvertorEx convert:self.
 
-//    toIntArray
-//        = self cast:%eval to:
-//            {
-//                intarray : anArray
-//                    = anArray.
-//                
-//                array : anArray
-//                    = intarrayExConvertor convert enumerable:anArray.
-//                    
-//                enumerable : aList
-//                    = intarrayExConvertor convert enumerable:aList.
-//                    
-//                enumerator : anEnumerator
-//                    = intarrayExConvertor convert enumerable:anEnumerator.
-//            }.
+    T<IntArray> toIntArray
+        = intarrayConvertorEx convert:self.
     
 //    toByteArray        
 //        = byteArrayExConvertor convert:self.

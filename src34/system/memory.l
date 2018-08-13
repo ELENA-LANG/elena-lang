@@ -493,6 +493,23 @@ public sealed IntArray :: Indexable<int>, Array<int>
     stacksafe constructor new(IntArray anArray)
         <= new(0, anArray length, anArray).
     
+    constructor new(Indexer<int> it)
+        <= new(it length);
+    [
+        int len := self length.
+        int i := 0.
+        while (i < len)
+        [
+            it writeIndex(i).
+            
+            int val := it get.
+            
+            self write(i, val).
+            
+            i += 1
+        ]
+    ]
+    
     /// Reads the array length to the output parameter
     readLengthTo(ref<int> aLength)
         => system'core_routines'__intarray.

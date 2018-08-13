@@ -2547,9 +2547,14 @@ inline bool checkVarTemplateBrackets(SNode node)
 
             if (isClosingOperator(current)) {
                level--;
-               if (level == 0 && current.existChild(lxObject))
-                  // if it is an template based variable with an initialier or without
-                  return current.nextNode().compare(lxAssigning, lxNone);
+               if (level == 0) {
+                  SNode objNode = current.findChild(lxObject);
+                  if (objNode != lxNone) {
+                     SNode childNode = objNode.firstChild();
+                     if (childNode == lxIdentifier) 
+                        return current.nextNode().compare(lxAssigning, lxNone);
+                  }
+               }
             }
             else level++;
          }
