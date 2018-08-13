@@ -16,7 +16,7 @@ public extension strongEnumerableOp<type>
     system'Enumerator<type> selectBy(Func<type,type> f)
         = StrongSelector<type,type>(f, system'Enumerator<type>(self enumerator)).
         
-    system'Enumerator<type> selectBy(Func<type,object> f)
+    system'Enumerator<object> selectBy(Func<type,object> f)
         = StrongSelector<type,object>(f, system'Enumerator<type>(self enumerator)).
         
     summarize
@@ -26,4 +26,10 @@ public extension strongEnumerableOp<type>
         ^ p run(system'Enumerator<type>(self enumerator)).
     ]    
 //        = StrongSumming<type>() run(system'Enumerator<type>(self enumerator)).
+}
+
+public extension strongEnumerableOp<type1,type2>
+{
+    system'Enumerator<type2> selectBy(Func<type1,type2> f)
+        = StrongSelector<type1,type2>(f, system'Enumerator<type1>(self enumerator)).    
 }

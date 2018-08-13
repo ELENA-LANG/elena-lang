@@ -1,5 +1,14 @@
 public sealed Tuple<type1>
 {
+    constructor
+    [
+    ]    
+    
+    constructor(type1 o1)
+    [
+        field1 := o1.
+    ]
+    
     T<type1> prop item1 :: field1.
 
     getAt(int index)
@@ -41,6 +50,10 @@ public sealed Tuple<type1, type2>
 {
     T<type1> prop item1 :: field1.
     T<type2> prop item2 :: field2.
+    
+    constructor
+    [
+    ]    
     
     constructor(type1 o1, type2 o2)
     [
