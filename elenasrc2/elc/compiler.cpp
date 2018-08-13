@@ -289,7 +289,7 @@ ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier, 
    if (reference)
       return reference;
 
-   reference = moduleScope->resolveImplicitIdentifier(ns, identifier, referenceOne, importedNs);
+   reference = moduleScope->resolveImplicitIdentifier(ns, identifier, referenceOne, &importedNs);
    if (reference) {
       forwards.add(identifier, reference);
    }
@@ -3302,8 +3302,10 @@ bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScop
 
       ref_t closureRef = scope.moduleScope->resolveClosure(*this, methodScope.message, outputRef, &nsScope->extensions);
 //      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
-      if (closureRef)
+      if (closureRef) {
          parentRef = closureRef;
+      }
+      else throw InternalError(errClosureError);
    }
 
    compileParentDeclaration(SNode(), scope, parentRef);

@@ -4,28 +4,28 @@ import extensions'routines.
 
 // --- Joinable --
 
-joinable = (:aFormer:aLater)(aFormer[aFormer length - 1] == aLater[0]).
+joinable(former,later) = (former[former length - 1] == later[0]).
 
 dispatcher =
 {
-    eval(object anArray, Func2 aFunction)
+    eval(object a, Func2 f)
     [
-        ^ aFunction(anArray[0],anArray[1]).
+        ^ f(a[0],a[1]).
     ]
 
-    eval(object anArray, Func3 aFunction)
+    eval(object a, Func3 f)
     [
-        ^ aFunction(anArray[0], anArray[1],anArray[2]).
+        ^ f(a[0], a[1],a[2]).
     ]
     
-    eval(object anArray, Func4 aFunction)
+    eval(object a, Func4 f)
     [
-        ^ aFunction(anArray[0],anArray[1],anArray[2],anArray[3]).
+        ^ f(a[0],a[1],a[2],a[3]).
     ]
     
-    eval(object anArray, Func5 aFunction)
+    eval(object a, Func5 f)
     [
-        ^ aFunction(anArray[0],anArray[1],anArray[2],anArray[3],anArray[4]).
+        ^ f(a[0],a[1],a[2],a[3],a[4]).
     ]
 
 }.
@@ -36,16 +36,16 @@ class AmbValueCollection
 {
     object theCombinator.
     
-    generic constructor new(V<object> Arguments)
+    generic constructor new(V<object> args)
     [
-        theCombinator := SequentialEnumerator new(Arguments).
+        theCombinator := SequentialEnumerator new(args).
     ]
 
-    seek : aCondition
+    seek : cond
     [
         theCombinator reset.
 
-        theCombinator seekEach(:v)(dispatcher eval(v,aCondition))
+        theCombinator seekEach(:v)(dispatcher eval(v,cond))
     ]
     
     do : aFunction
@@ -61,13 +61,13 @@ class AmbValueCollection
 
 ambOperator =
 {
-    generic for(V<object> Arguments)
-        = AmbValueCollection new(Arguments).
+    generic for(V<object> args)
+        = AmbValueCollection new(args).
 }.
 
 // --- Program ---
 
-public program1 =
+public program1
 [
     try(ambOperator for((1,2,4),(4,5,6)); seek(:a:b)(a * b == 8); do(:a:b)
         [ console printLine(a," * ",b," = 8") ])
@@ -78,10 +78,10 @@ public program1 =
         ]
     }.
         
-    console readChar.        
-].
+    console readChar
+]
 
-public program2 =
+public program2
 [
     try(ambOperator 
         for(("the","that","a"),("frog", "elephant", "thing"),("walked", "treaded", "grows"),("slowly", "quickly"));
@@ -94,5 +94,5 @@ public program2 =
         ]        
     }.
         
-    console readChar.
-].
+    console readChar
+]

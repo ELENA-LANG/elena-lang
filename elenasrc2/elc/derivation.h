@@ -217,6 +217,7 @@ class DerivationTransformer //: public _DerivationTransformer
    void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyOperator(SyntaxWriter& writer, SNode& node);
    void copyClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
+   void copyTemplateInitBody(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 
    void autoGenerateExtensions(DerivationScope& templateScope);
    ref_t generateNewTemplate(DerivationScope& scope);

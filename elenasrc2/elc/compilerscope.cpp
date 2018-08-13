@@ -301,7 +301,7 @@ ident_t CompilerScope:: resolveWeakTemplateReference(ident_t referenceName)
    return resolvedName;
 }
 
-inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _Module* module, _ProjectManager* project, IdentifierList& importedNs)
+inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _Module* module, _ProjectManager* project, IdentifierList* importedNs)
 {
    ref_t reference = 0;
    if (!referenceOne) {
@@ -313,23 +313,24 @@ inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _M
          return reference;
       }
 
-      // check imported references
-      List<ident_t>::Iterator it = importedNs.start();
-      while (!it.Eof()) {
-         ReferenceNs fullName(*it, identifier);
+      // check imported references if available
+      if (importedNs) {
+         List<ident_t>::Iterator it = importedNs->start();
+         while (!it.Eof()) {
+            ReferenceNs fullName(*it, identifier);
 
-         reference = 0;
-         _Module* ext_module = project->resolveModule(fullName, reference, true);
-         if (ext_module && reference) {
-            if (ext_module != module) {
-               return module->mapReference(fullName.c_str(), false);
+            reference = 0;
+            _Module* ext_module = project->resolveModule(fullName, reference, true);
+            if (ext_module && reference) {
+               if (ext_module != module) {
+                  return module->mapReference(fullName.c_str(), false);
+               }
+               else return reference;
             }
-            else return reference;
+
+            it++;
          }
-
-         it++;
       }
-
       return 0;
    }
    else {
@@ -339,7 +340,7 @@ inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _M
    }
 }
 
-ref_t CompilerScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList& importedNs)
+ref_t CompilerScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs)
 {
    ref_t reference = 0;
    if (isWeakReference(identifier)) {
@@ -409,7 +410,8 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
 
    SourceFileInfo fileInfo;
    fileInfo.tree = &templateTree;
-//   fileInfo.importedNs.add(ident_t(STANDARD_MODULE).clone());
+   fileInfo.path = "template generated code";
+   fileInfo.importedNs.add(ident_t(STANDARD_MODULE).clone());
 
    SourceFileList files;
    files.add(&fileInfo);
@@ -420,6 +422,9 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
    }
    catch(_Exception&)
    {
+      // HOTFIX : clear tree reference because it is stack allocated 
+      fileInfo.tree = NULL;
+
       return 0;
    }
 

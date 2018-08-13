@@ -9,4 +9,7 @@ public extension strongEnumerableOp<type>
             f(e get).
         ]
     ]
+    
+//    filterBy(Func<type,bool> f)
+//        = StrongFilter<type> new(aSelector, Enumerator<type>(self enumerator)).
 }

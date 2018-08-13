@@ -247,7 +247,7 @@ struct _CompilerScope
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
 
-   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList& importedNs) = 0;
+   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
    virtual ident_t resolveFullName(ref_t reference) = 0;
    virtual ident_t resolveFullName(ident_t referenceName) = 0;
 
