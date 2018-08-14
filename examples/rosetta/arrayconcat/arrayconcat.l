@@ -1,10 +1,10 @@
 /// concatenating two arrays in your language. 
 import extensions.
 
-public program =
+public program
 [
     var a := (1,2,3).
     var b := (4,5).
 
     console printLine("(",a,") + (",b,") = (",a + b,")"); readChar.
-].
+]

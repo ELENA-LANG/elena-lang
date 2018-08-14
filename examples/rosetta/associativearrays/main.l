@@ -6,10 +6,10 @@ import extensions.
 
 // --- Program ---
 
-public program =
+public program
 [
     // 1. Create
-    var aMap := Dictionary new.
+    auto aMap := Map<literal,literal>().
     aMap["key"] := "foox".
     aMap["key"] := "foo".
     aMap["key2"]:= "foo2".
@@ -18,5 +18,5 @@ public program =
 
     // Enumerate
     aMap forEach
-        (:aKeyValue)[ console printLine(aKeyValue key," : ",aKeyValue value) ].
-].
+        (:tuple)[ console printLine(tuple item1," : ",tuple item2) ].
+]

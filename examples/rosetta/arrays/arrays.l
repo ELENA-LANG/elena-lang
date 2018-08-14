@@ -3,7 +3,7 @@
 import system'collections.
 import extensions.
 
-public program =
+public program
 [
     var aStaticArray := (1, 2, 3).
     
@@ -27,4 +27,4 @@ public program =
     system'console writeLine(anArray[0]).
     system'console writeLine(aStackAllocatedArray[1]).
     system'console writeLine(aDynamicArray[2]).
-].
+]

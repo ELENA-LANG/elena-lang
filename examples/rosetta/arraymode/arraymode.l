@@ -27,7 +27,7 @@ extension op
     ]
 }
 
-public program =
+public program
 [
     var anArray1 := (1, 1, 2, 4, 4).
     var anArray2 := (1, 3, 6, 6, 6, 6, 7, 7, 12, 12, 17).
@@ -38,4 +38,4 @@ public program =
         printLine("mode of (",anArray2,") is (",anArray2 mode,")");
         printLine("mode of (",anArray3,") is (",anArray3 mode,")");
         readChar.
-].
+]

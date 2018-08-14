@@ -2,9 +2,6 @@
 In development:
 ------                              
 	                            
-              exp - live programming
-                 * tiny script
-
               dev - general implementation
                  * (re)implement multi-threading
 
@@ -12,7 +9,7 @@ In development:
                  * #440 - LiteralValue.readHashCodeTo optimization
 
               dev - revision
-                 * rosetta code - anagram
+                 * rosetta code - Balanced brackets
 
 ------                                                           
 Pipeline:

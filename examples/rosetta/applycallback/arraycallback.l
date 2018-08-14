@@ -2,10 +2,9 @@
 
 import system'routines.
 
-PrintSecondPower =
-    (:n) [ console writeLine(n * n) ].
+PrintSecondPower(n) [ console writeLine(n * n) ]
 
-public program =
+public program
 [
-    (1, 2, 3, 4, 5, 6, 7, 8, 9, 10) forEach:PrintSecondPower.
-].
+    (1, 2, 3, 4, 5, 6, 7, 8, 9, 10) forEach:PrintSecondPower
+]

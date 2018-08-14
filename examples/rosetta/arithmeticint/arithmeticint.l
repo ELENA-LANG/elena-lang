@@ -6,7 +6,7 @@ import extensions.
 
 // --- Program ---
 
-public program =
+public program
 [
     var a := console readLineTo(Integer new).
     var b := console readLineTo(Integer new).
@@ -16,4 +16,4 @@ public program =
     console printLine(a," * ",b," = ",a * b).
     console printLine(a," / ",b," = ",a / b).   // truncates towards 0
     console printLine(a," % ",b," = ",a mod:b). // matches sign of first operand
-].
+]
