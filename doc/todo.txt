@@ -6,6 +6,7 @@ In development:
                  * tiny script
 
               dev - general implementation
+                 * (re)implement multi-threading
 
               dev - general optimization
                  * #440 - LiteralValue.readHashCodeTo optimization

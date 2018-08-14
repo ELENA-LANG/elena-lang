@@ -22,7 +22,8 @@ define elSizeOffset      0008h
 define elVMTSizeOffset   000Ch
 
 // verbs
-define EVAL_MESSAGE_ID  0050h
+define EVAL_MESSAGE_ID   0050h
+define INVOKE_MESSAGE_ID 01E0h
 
 define SUBJECT_MASK     000FFFFF0h
 
@@ -4115,8 +4116,7 @@ procedure coreapi'start_thread
   test eax, eax
   jz   short lErr
 
-  push  eax
-  mov   ecx, EVAL_MESSAGE_ID
+  mov   ecx, INVOKE_MESSAGE_ID
   mov   esi, [eax - 4]
   call [esi + 4]
   

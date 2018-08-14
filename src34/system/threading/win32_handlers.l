@@ -10,6 +10,8 @@ public sealed struct ThreadHandle
     constructor new(Func f)
     [
         theActionPtr := RTPointer new:f.
+        
+        int index := theActionPtr index.
 
         int procPtr := 0.
         system'core_routines'__thread readThreadProc(&procPtr).
@@ -18,7 +20,7 @@ public sealed struct ThreadHandle
                         0, 
                         0, 
                         procPtr, 
-                        theActionPtr, 
+                        index, 
                         4, 
                         0).
     ]
