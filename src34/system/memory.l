@@ -1321,8 +1321,14 @@ public sealed __string LiteralValue :: BaseValue
     clone = LiteralValue new(self).
 
     /// Reads the object hash code into the output parameter
-    stacksafe readHashCodeTo(ref<int> aCode)
-        => system'core_routines'__literal.
+    stacksafe readHashCodeTo(ref<int> retVal)
+    [
+        int len := self length.
+        
+        int h := system'external core_utf8hashcode(self, len).
+        
+        retVal value := h.
+    ]    
         
     int rvprop hash_code :: readHashCodeTo.
 }
@@ -1545,9 +1551,14 @@ public sealed __string WideLiteralValue :: BaseValue
     /// Clones the value
     clone = WideLiteralValue new(self).
 
-    // Reads the object hash code into the output parameter
-    readHashCodeTo(ref<int> aCode)
-        => system'core_routines'__wide.
+    stacksafe readHashCodeTo(ref<int> retVal)
+    [
+        int len := self length.
+        
+        int h := system'external core_utf16hashcode(self, len).
+        
+        retVal value := h.
+    ]    
         
     int rvprop hash_code :: readHashCodeTo.
 }

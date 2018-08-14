@@ -1685,7 +1685,12 @@ void x86Assembler :: compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWr
 		   x86Helper::writeModRM(code, sour, sour);
 		   code->writeByte(dest.offset);
 	   }
-	   else if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otR32)) {
+      else if (test(sour.type, x86Helper::otR32) && dest.type == x86Helper::otDD) {
+         code->writeByte(0x69);
+         x86Helper::writeModRM(code, sour, sour);
+         x86Helper::writeImm(code, dest);
+      }
+      else if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otR32)) {
 		   code->writeByte(0x0F);
 		   code->writeByte(0xAF);
 		   x86Helper::writeModRM(code, sour, dest);

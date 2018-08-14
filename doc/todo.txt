@@ -3,14 +3,24 @@ In development:
 ------                              
 	                            
               exp - live programming
-                 * class to expression tree
-                 * expression tree to class
+                 * tiny script
+
+              dev - general implementation
+
+              dev - general optimization
+                 * #440 - LiteralValue.readHashCodeTo optimization
+
+              dev - revision
+                 * rosetta code - anagram
 
 ------                                                           
 Pipeline:
 ------                                                                                         
+              exp - live programming
+                 * class to expression tree
+                 * expression tree to class
+
               dev - revision
-                 * rosetta code - amb
                  * samples
                  * reddit : Implicit constructor for the nested class
                  * tutorials

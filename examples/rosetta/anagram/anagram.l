@@ -21,7 +21,7 @@ extension op
 
 // --- Program ---
 
-public program =
+public program
 [
     var aStart := now.
 
@@ -52,4 +52,4 @@ public program =
     console printLine("Time elapsed in msec:",aDiff milliseconds).
     
     console readChar.
-].
+]

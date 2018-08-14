@@ -2551,13 +2551,6 @@ labEmpty:
 
 end
 
-procedure __literal."readHashCodeTo$@system@ref#1&IntNumber[2]"
-
-  bloadsi 2
-  ncopy
-  quitn 2
-
-end
 procedure __literal."new$system@IntNumber$system@CharValue[3]"
   
   pusha
@@ -3053,14 +3046,6 @@ labEmpty:
   nsave
   acopyb
   quitn 4  
-
-end
-
-procedure __wide."readHashCodeTo$@system@ref#1&IntNumber[2]"
-
-  bloadsi 2
-  ncopy
-  quitn 2
 
 end
 

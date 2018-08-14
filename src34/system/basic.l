@@ -18,7 +18,7 @@ public sealed ref<template_subj> :: BaseVariable
     
     cast T<template_subj> = theValue.
     
-    set value(template_subj val)
+    stacksafe set value(template_subj val)
     [
         theValue := val.
     ]
