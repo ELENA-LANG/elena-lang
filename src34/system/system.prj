@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>3.4.26</version>
+     <version>3.4.27</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -52,8 +52,8 @@
        <include>routines\patterns.l</include>
      </module>
      <module name="routines'stex">
-       <include>routines\stex\strong_extensions.l </include>
-       <include>routines\stex\strong_patterns.l </include>
+       <include>routines\stex\strong_extensions.l</include>
+       <include>routines\stex\strong_patterns.l</include>
      </module>
      <module name="dynamic">
        <include>dynamic\reflection.l</include>
@@ -62,6 +62,11 @@
        <include>dynamic\closures.l</include>
        <include>dynamic\tape.l</include>
        <include>dynamic\expressions\expressions.l</include>
+     </module>
+     <module name="threading">
+       <include>threading\win32_handlers.l</include>
+       <include>threading\thread.l</include>
+       <include>threading\thread_patterns.l</include>
      </module>
   </files>
 </configuration>

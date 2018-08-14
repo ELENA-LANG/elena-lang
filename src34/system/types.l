@@ -80,5 +80,5 @@ type mssg       = system'Message.
 type literal    = system'LiteralValue.
 type wide       = system'WideLiteralValue.
 type handle     = system'Handle.
-//type rt_ptr     = system'RTPointer.
+type rt_ptr     = system'RTPointer.
 type dirty_ptr  = system'UnsafePointer.

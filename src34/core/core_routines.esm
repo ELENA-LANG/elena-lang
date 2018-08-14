@@ -4854,3 +4854,107 @@ labFound:
   ajumpvi 0
 
 end
+
+procedure __thread.enterCriticalSection[1]
+
+  aloadsi 1
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0
+
+  pop
+  quitn 1
+  
+end
+
+procedure __thread.leaveCriticalSection[1]
+
+  aloadsi 1
+  freelock
+
+  quitn 1
+  
+end
+
+procedure __rtptr."new[2]"
+
+  callr system'rt_sync
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
+  callextr api : alloc_index
+  bcopya
+  aloadsi 3
+  set  
+
+  popa
+  freelock
+
+  bloadsi 1
+  nsave
+  acopyb
+
+  quitn 2
+
+end
+
+procedure __rtptr."free[1]"
+                      
+  callr system'rt_sync
+  pusha
+labWait:
+  snop
+  trylock
+  elsen labWait 0 
+
+  aloadsi 2
+  nload
+  callextr api : free_index
+
+  popa
+  freelock
+
+  quitn 1
+  
+end
+
+procedure __rtptr.get[1]
+
+  pusha
+  callextr api : resolve_index
+
+  quitn 1
+
+end
+
+procedure win_thread_start
+
+  acopys 1  
+  pusha
+  callextr api : resolve_index
+  pusha
+  callextr api : start_thread
+  ifr labError 0
+  quitn 1
+
+labError:
+  open 1
+  pushr class : system'NotSupportedException
+  pushr const : %new[0]
+  throw
+  
+end
+
+procedure __thread."readThreadProc$@system@ref#1&IntNumber[1]"
+
+  acopyr intern : system'core_routines'win_thread_start
+  bloadsi 1
+  axsavebi 0
+  quitn 1
+
+end

@@ -4307,7 +4307,7 @@ labNext:
   jmp  labStart
 
 labReuse:
-  mov  [eax + ebx * 4], const : "system'nil"
+  mov  [eax + ebx * 4], const : "system'nilValue"
 
   ret
 

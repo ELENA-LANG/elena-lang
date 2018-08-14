@@ -25,37 +25,37 @@ public sealed const struct Handle
         = theHandle == anOperand.
 }
 
-//// --- RTPointer ---
-//
-//static rt_sync = Object new.
-//
-//sealed const struct RTPointer
-//{
-//    __dword theIndex.
-//    
-//    stacksafe implicit int:n
-//    [
-//        theIndex := n.
-//    ]
-//    
-//    constructor new : anObject
-//    [
-//        system'core_routines'__rtptr new object:$self object:anObject.
-//    ]
-//
-//    int rvprop index :: readIndexTo.
-//
-//    stacksafe readIndexTo vint:aRetVal
-//    [
-//        aRetVal int := theIndex.
-//    ]
-//        
-//    stacksafe get
-//        => system'core_routines'__rtptr.
-//
-//    stacksafe  free
-//        => system'core_routines'__rtptr.
-//}
+// --- RTPointer ---
+
+public static rt_sync = Object new.
+
+public sealed const struct RTPointer
+{
+    int theIndex.
+
+    stacksafe constructor(int n)
+    [
+        theIndex := n.
+    ]
+    
+    constructor new : anObject
+    [
+        system'core_routines'__rtptr new(self, anObject).
+    ]
+
+    int rvprop index :: readIndexTo.
+
+    stacksafe readIndexTo(ref<int> retVal)
+    [
+        retVal value := theIndex.
+    ]
+        
+    stacksafe get
+        => system'core_routines'__rtptr.
+
+    stacksafe  free
+        => system'core_routines'__rtptr.
+}
 
 // --- UnsafePointer ---
 
