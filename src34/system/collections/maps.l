@@ -113,9 +113,8 @@ public sealed Map<key_type, value_type> :: Enumerable<Tuple<key_type, value_type
     /// Returns a dictionary enumerator
     Enumerator<Tuple<key_type, value_type>> enumerator => theList.
     
-//    array_list
-//        = theList clone.
-//
+    Array<Tuple<key_type, value_type>> values = theList value.
+
 //    /// Clones a dictionary
 //    clone 
 //    [

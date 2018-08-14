@@ -15,8 +15,8 @@ import extensions'text.
 
 extension op
 {
-     normalized
-         = self toArray; ascendant; summarize(StringWriter new); literal.
+     T<literal> normalized
+         = self toArray; ascendant; summarize(StringWriter new).
 }
 
 // --- Program ---
@@ -25,7 +25,7 @@ public program
 [
     var aStart := now.
 
-    var aDictionary := Dictionary new.
+    auto aDictionary := Map<literal,object>().
 
     File new("unixdict.txt"); forEachLine(:aWord)
     [    
@@ -42,8 +42,8 @@ public program
     ].
 
     aDictionary values;
-        sort(:aFormer:aLater)( aFormer length > aLater length );
-        top:20; forEach(:aPair)[ console printLine(aPair value) ].
+        sort(:aFormer:aLater)( aFormer item2; length > aLater item2; length );
+        top:20; forEach(:aPair)[ console printLine(aPair item2) ].
     
     var anEnd := now.
    
@@ -51,5 +51,5 @@ public program
 
     console printLine("Time elapsed in msec:",aDiff milliseconds).
     
-    console readChar.
+    console readChar
 ]

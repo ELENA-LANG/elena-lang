@@ -102,6 +102,8 @@ public interface Indexer<type>
     /// Should be overidden(or set&index)
     abstract writeIndex(int anIndex) []
 
+    abstract stacksafe appendIndex(int anIndex) []
+
     /// Reads the length to the output parameter    
     abstract readLengthTo(ref<int> retVal) []
     
@@ -1082,6 +1084,11 @@ public abstract BaseIndexer<type> :: Indexer<type>
     [ 
         theIndex := anIndex
     ] 
+    
+    appendIndex(int anIndex)
+    [ 
+        theIndex := theIndex + anIndex.
+    ]     
     
     readLengthTo(ref<int> retVal)
     [

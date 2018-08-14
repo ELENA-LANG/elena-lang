@@ -25,7 +25,46 @@ public sealed List<type> :: Enumerable<type>
             i := i + 1.
         ].
     ]
-    
+
+    constructor(Array<type> list)
+    [
+        int len := list length.
+        int size := len / 32.
+        size := size + 1.
+        size := size * 32.
+        
+        theLength := len.
+        theCapacity := size.
+        theArray := V<type>(size).
+        
+        int i := 0.
+        while(i < len)
+        [
+            theArray[i] := list[i].
+            
+            i := i + 1.
+        ].
+    ]
+        
+    constructor(Array<type> list, int len)
+    [
+        int size := len / 32.
+        size := size + 1.
+        size := size * 32.
+        
+        theLength := len.
+        theCapacity := size.
+        theArray := V<type>(size).
+        
+        int i := 0.
+        while(i < len)
+        [
+            theArray[i] := list[i].
+            
+            i := i + 1.
+        ].
+    ]
+        
     constructor(Enumerator<type> e)
     [
         theCapacity := 16.
@@ -193,13 +232,29 @@ public sealed List<type> :: Enumerable<type>
         ^ copy.
     ]
 
-    value 
-        = T<Array>(self).
-                       
+    Array<type> value
+    [
+        int len := T<int>(theLength).
+        Array<type> copy := V<type>(len).
+        
+        int i := 0.
+        while (i < len)
+        [
+            copy[i] := theArray[i].
+            
+            i += 1.
+        ].
+        
+        ^ copy.
+    ]
+
     stacksafe readLengthTo(ref<int> retVal)
     [
         theLength readValueTo(retVal).
     ]    
+    
+    clone
+        = List<type>(theArray, T<int>(theLength)).
 }
 
 // --- ListItem ---
