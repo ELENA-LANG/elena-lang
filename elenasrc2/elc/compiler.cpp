@@ -334,7 +334,7 @@ ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
 ref_t Compiler::NamespaceScope :: mapAnonymous()
 {
    // auto generate the name
-   IdentifierString name("'", INLINE_POSTFIX);
+   IdentifierString name("'", INLINE_CLASSNAME);
 
    findUninqueName(moduleScope->module, name);
 

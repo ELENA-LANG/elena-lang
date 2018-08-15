@@ -434,6 +434,8 @@ namespace _ELENA_
 
    #define ENUM_VAR                 "values"          // is auto generated for enum classes and contains the list of all possible enum values
 
+   #define INLINE_CLASSNAME         "$inline"         // nested class generic name
+
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"
    #define EXTENSION_SECTION        "#extensions"
@@ -454,7 +456,6 @@ namespace _ELENA_
    #define FORWARD_PREFIX_NS        "$forwards'"
    #define FORWARD_PREFIX_NS_LEN    10
 
-   #define INLINE_POSTFIX           "#inline"
    #define CLASSCLASS_POSTFIX       "#class"
    #define GENERIC_PREFIX           "#generic"
 //   #define EMBEDDED_PREFIX          "#embedded"
