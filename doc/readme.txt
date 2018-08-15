@@ -52,7 +52,7 @@ You may need to add a path to BIN folder to system environment (e.g. <app root>\
 
 Otherwise you may use setup executable.
 
-The language requires Visual C++ Redistributable for VS 2015
+The language requires Visual C++ Redistributable for VS 2017
 
 To open, compile or debug the programs and libraries use ELENA GUI IDE 
 (<app root>\bin\elide.exe) or ELENA Command Line Compiler 
@@ -94,20 +94,20 @@ There you also can find Getting Started tutorial
 Suggestions, Help ...
 ---------------------
 http://github.com/ELENA-LANG/elena-lang/issues
-    - tickets / issues / questions
+    - tickets / issues / questions / bug reports
 
-http://elenalang.blogspot.com/
-    - tutorials
+https://www.reddit.com/r/elena_lang/
+    - reddit
 
 elenaprolang@gmail.com
-    - questions / bug reports
+    - questions
 
 ****************************************************************************
 * ELENA Language modules and programs
 ****************************************************************************
                                                 
 The complete source code of ELENA Standard library could be found
-in the folder <app root>\src30.
+in the folder <app root>\src34.
 
 The source code of ELENA samples could be found
 in the folder <app root>\examples.
@@ -126,8 +126,6 @@ or github - https://github.com/ELENA-LANG/elena-lang/issues
 * ELENA Project Source code
 ****************************************************************************
 
-The project source code is compiled with CodeBlocks and Mingw32
+The project source code is compiled with Visual Studio 2017
 
 The project files could be found in <app root>\elenasrc2 folder.
-
-Visual studio express projects are available as well.

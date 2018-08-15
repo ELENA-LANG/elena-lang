@@ -714,7 +714,10 @@ inline void writeFullReference(SyntaxWriter& writer, _Module* module, ref_t refe
 
       writer.newNode(lxClassRefAttr, fullName.c_str());
    }
-   else writer.newNode(lxClassRefAttr, referenceName);
+   else if (!emptystr(referenceName)) {
+      writer.newNode(lxClassRefAttr, referenceName);
+   }
+   else throw InternalError(errCrUnknownReference);
 
    if (test(node.type, lxTerminalMask)) {
       copyIdentifier(writer, node);
@@ -1793,6 +1796,10 @@ ref_t DerivationTransformer :: mapNewTemplate(SNode node, DerivationScope& scope
       typeRef = scope.mapReference(attr.firstChild(lxTerminalMask));
       if (typeRef == V_PARAMETER) {
          paramIndex = scope.mapParameter(attr.firstChild(lxTerminalMask).identifier());
+      }
+      else if (isPrimitiveRef(typeRef)) {
+         // HOTFIX : all attributes are treated as class references
+         typeRef = scope.mapIdentifier(attr.firstChild(lxTerminalMask).identifier(), false);
       }
    }
    else if (classMode) {

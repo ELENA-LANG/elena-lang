@@ -3,7 +3,7 @@
 //
 //		This file contains the ELENA Compiler error messages
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jeterrorsH
@@ -91,8 +91,7 @@ namespace _ELENA_
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
    #define errNoDispatcher	         "internal error 502: Default dispatch method is not declared in the base class\n"
    #define errClosureError          "internal error 503: closure cannot be generated"
-//   #define errInternalError         "internal error 599"
-//   #define errInvalidDynamicError   "internal error 600"
+   #define errCrUnknownReference    "reference cannot be resolved"
    #define errCommandSetAbsent     "internal error 600: command set is not defined"
    #define errFatalLinker          "internal error 601: linker fatal error"
 
