@@ -17,7 +17,7 @@ rem bin\asm2binx -amd64 asm\amd64\coreapi.asm bin\amd64
 
 bin\elc src34\system\system.prj
 bin\elc src34\extensions\extensions.prj
-rem bin\elc src33\net\net.prj
+bin\elc src34\net\net.prj
 rem bin\elc src33\forms\forms.prj
 bin\elc src34\sqlite\sqlite.prj
 bin\elc src34\cellular\cellular.prj

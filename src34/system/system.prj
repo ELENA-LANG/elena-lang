@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>3.4.27</version>
+     <version>3.4.28</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -67,6 +67,10 @@
        <include>threading\win32_handlers.l</include>
        <include>threading\thread.l</include>
        <include>threading\thread_patterns.l</include>
+     </module>
+     <module name="net">
+       <include>net\win32_common.l</include>
+       <include>net\win32_sockets.l</include>
      </module>
   </files>
 </configuration>

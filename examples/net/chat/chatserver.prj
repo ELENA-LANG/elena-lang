@@ -1,11 +1,17 @@
-﻿[project]
-executable=chatserver.exe
-namespace=chatserver
-template=mta_console
-debuginfo=-1
-
-[files]
-chatcommon.l
-chatserver.l
-servermain.l
-
+<configuration>
+    <project>
+        <executable>chatserver.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>chatserver</namespace>
+        <template>mta_console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>servermain.l</include>
+            <include>chatserver.l</include>
+        </module>
+    </files>
+</configuration>

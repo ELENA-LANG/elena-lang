@@ -1,14 +1,14 @@
 const int DEFAULT_PORT = 6881.
 
-// --- progrma ---
+// --- program ---
 
-program =
+public program
 [
     console writeLine:"ELENA Chat Server".
     
-    var server := ChatServer new port:DEFAULT_PORT.
-    
-    server start.
-    
+    var server := ChatServer new(DEFAULT_PORT).
+
+//    server start.
+
     console readChar.
-].
+]
