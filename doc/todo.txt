@@ -9,7 +9,7 @@ In development:
                  * #440 - LiteralValue.readHashCodeTo optimization
 
               dev - revision
-                 * rosetta code - Balanced brackets
+                 * rosetta code - Bitwise operations
 
 ------                                                           
 Pipeline:

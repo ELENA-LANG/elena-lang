@@ -5,10 +5,10 @@ import extensions.
 
 // --- Program ---
 
-public program =
+public program
 [
     (5,50,9000) forEach(:n)
     [
         console printLine(n toLiteral(2)).
     ].
-].
+]

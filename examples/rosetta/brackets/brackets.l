@@ -8,24 +8,21 @@ import extensions'text.
 
 // --- RandomBrackets ---
 
-randomBrackets =
-{
-    new : aLength
-    [
-        if (0 == aLength)
-            [ ^emptyLiteral ];
-            [
-                var aBrackets := 
-                    Array new(aLength); populate(:i)($91) 
-                    + 
-                    Array new(aLength); populate(:i)($93).
-        
-                aBrackets := aBrackets randomize:(aLength * 2).
+randomBrackets(len)
+[
+    if (0 == len)
+        [ ^emptyLiteral ];
+        [
+            var aBrackets := 
+                Array new(len); populate(:i)($91) 
+                + 
+                Array new(len); populate(:i)($93).
+    
+            aBrackets := aBrackets randomize(len * 2).
 
-                ^ aBrackets summarize:(StringWriter new); toLiteral
-            ]
-    ]
-}.
+            ^ aBrackets summarize(StringWriter new); toLiteral
+        ]
+]
 
 extension op
 {
@@ -33,7 +30,7 @@ extension op
     [
         var aCounter := Integer new:0.
     
-        self seekEach(:aChar)(aCounter append((aChar==$91)iif (1,-1)) < 0).
+        self seekEach(:ch)(aCounter append((ch==$91)iif (1,-1)) < 0).
     
         ^ (0 == aCounter)
     ]
@@ -41,14 +38,14 @@ extension op
 
 // --- Program ---
 
-public program =                                             
+public program
 [
-    0 to:9 do(:aLength)
+    0 to:9 do(:len)
     [
-        var anStr := randomBrackets new:aLength.
+        var str := randomBrackets(len).
 
-        console printLine("""",anStr,"""",anStr isBalanced; iif(" is balanced"," is not balanced"))
+        console printLine("""",str,"""",str isBalanced; iif(" is balanced"," is not balanced"))
     ].
 
     console readChar
-].
+]
