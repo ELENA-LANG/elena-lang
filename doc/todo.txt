@@ -6,7 +6,6 @@ In development:
                  * (re)implement multi-threading
 
               dev - general optimization
-                 * #440 - LiteralValue.readHashCodeTo optimization
 
               dev - revision
                  * rosetta code - Bitwise operations

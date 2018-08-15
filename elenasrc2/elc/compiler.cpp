@@ -3194,7 +3194,7 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
    SNode current = node.parentNode().parentNode().findChild(lxAssign);
    SNode sourceNode = current.nextNode(lxObjectMask);
 
-   ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, /*(classRef != 0) ? 0 : */HINT_DYNAMIC_OBJECT);
+   ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, 0);
    
    messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
    
