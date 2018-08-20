@@ -2067,7 +2067,7 @@ bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& com
    return false;
 }
 
-bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected)
+bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired)
 {
    SNode exprNode = node.findSubNodeMask(lxObjectMask);   
 
@@ -2088,24 +2088,25 @@ bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler,
    }
    else return false;
 
-   bool localBoxing = false;
-   if (exprNode == lxFieldAddress && exprNode.argument > 0) {
-      localBoxing = true;
-   }
-   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
-      localBoxing = true;
-   }
-   else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
-      // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
-      localBoxing = true;
-   }
+   if (!dynamicRequired) {
+      bool localBoxing = false;
+      if (exprNode == lxFieldAddress && exprNode.argument > 0) {
+         localBoxing = true;
+      }
+      else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
+         localBoxing = true;
+      }
+      else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+         // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+         localBoxing = true;
+      }
+      if (localBoxing) {
+         bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
 
-   if (localBoxing) {
-      bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
+         compiler.injectLocalBoxing(exprNode, node.argument);
 
-      compiler.injectLocalBoxing(exprNode, node.argument);
-
-      node = unboxingMode ? lxLocalUnboxing : lxBoxing;
+         node = unboxingMode ? lxLocalUnboxing : lxBoxing;
+      }
    }
 
    return true;

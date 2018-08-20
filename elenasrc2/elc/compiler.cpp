@@ -7020,7 +7020,7 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScop
          node.findChild(lxTarget).setArgument(targetRef);
       }
 
-      if (!_logic->validateBoxing(*scope.moduleScope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED))) {
+      if (!_logic->validateBoxing(*scope.moduleScope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED), test(mode, HINT_DYNAMIC_OBJECT))) {
          scope.raiseError(errIllegalOperation, node);
       }
    }

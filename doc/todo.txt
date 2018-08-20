@@ -169,8 +169,6 @@ Pipeline:
                  * uint16
 
               xdev - general implementation
-                 * declaring varof:type, before declaring type class
-                 * declaring varof:struct - is not correctly recognized if declared before the struct
                  * support sealed accumulator constants
                  * warn on method duplications in the template
                  * warn on field duplications in the template
@@ -226,7 +224,6 @@ Pipeline:
                  * partial-evaluation
 
               xdev - general optimization  
-                 * replace "vint int := int" with direct assinging
                  * map isEmbeddable results, to reuse them
 
               sdev - samples
@@ -391,7 +388,6 @@ Pipeline:
                        * try to use lamda expressin for brackets example
 
               xdev - generic development
-                       * #237 : Multidimensional arrays 
                        * Implicit constructor should not have return statements
 
                        * embeddable dispatcher validation : only redirection to the field is allowed

@@ -182,7 +182,7 @@ public:
    virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node);
    virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node);
 
-   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected);
+   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired);
 
 ////   virtual void optimizeDuplicateBoxing(SNode node);
 

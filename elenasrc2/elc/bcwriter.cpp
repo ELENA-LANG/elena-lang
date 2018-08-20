@@ -2240,6 +2240,16 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int off
 
          tape.write(bcLCopy);
       }
+      else if ((offset & 3) == 0) {
+         // nloadi 0
+         // nsavei offset
+         // nloadi 4
+         // nsavei offset + 4
+         tape.write(bcNLoadI, 0);
+         tape.write(bcNSaveI, offset);
+         tape.write(bcNLoadI, 4);
+         tape.write(bcNSaveI, offset + 4);
+      }
       else {
          // dcopy 0
          // bread
