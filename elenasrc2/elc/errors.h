@@ -86,6 +86,7 @@ namespace _ELENA_
    #define errIllegalPrivate        "%s(%d:%d): error 166: An attribute '%s' cannot be applied for an extension\n"
    #define errDupPublicMethod       "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n"
    #define errOneDefaultConstructor "%s(%d:%d): error 168: a class '%s' should have only one default constructor\n"
+   #define errEmptyStructure        "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"

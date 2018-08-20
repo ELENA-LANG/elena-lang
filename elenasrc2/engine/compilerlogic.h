@@ -159,7 +159,7 @@ public:
    virtual bool validateMessage(ref_t message, bool isClassClass);
 //
 //   virtual bool validateClassFlag(ClassInfo& info, int flag);
-   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed);
+   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info)
    {

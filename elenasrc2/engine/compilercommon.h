@@ -442,7 +442,7 @@ public:
    virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
    virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
-   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed) = 0;
+   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;

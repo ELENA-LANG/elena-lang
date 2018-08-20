@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * (re)implement multi-threading
 
               dev - general optimization
 
@@ -80,7 +79,6 @@ Pipeline:
                    normal classes cannot be inherited from enum / enum value
                  * a do(1,2,3,4,5,6,7,8,9,10,11,12,13) can be compiled both as do[0,], do[1,] and do[2,]
                  * elenart - switch to xml config
-                 * structure should contain at least one data field
                  * collection : validate if the parent class can be array based class
                  * can cast method be overridden? so it means it should not have sealed attribute?
                  * warn if there are several similar extension for given message
@@ -146,7 +144,6 @@ Pipeline:
 
                  * #215 : Operations with structure fields
                  * optimize : aResult int := 0.
-                 * test local : assign field struct
                  * invalid error message for the code:
                        symbol plotter = { .. }.
 

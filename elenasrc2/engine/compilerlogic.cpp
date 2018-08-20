@@ -1757,7 +1757,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t element
 ////   return true;
 ////}
 
-void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed)
+void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure)
 {
    if (!isAbstract(info)) {
       for (auto it = info.methodHints.start(); !it.Eof(); it++) {
@@ -1770,6 +1770,10 @@ void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstra
    // interface class cannot have a custom dispatcher method
    if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true))
       disptacherNotAllowed = true;
+
+   // a structure class should contain fields
+   if (test(info.header.flags, elStructureRole) && info.size == 0)
+      emptyStructure = true;
 }
 
 bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject)

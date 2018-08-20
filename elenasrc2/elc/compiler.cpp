@@ -6236,12 +6236,15 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 
    bool withAbstractMethods = false;
    bool disptacherNotAllowed = false;
-   _logic->validateClassDeclaration(scope.info, withAbstractMethods, disptacherNotAllowed);
+   bool emptyStructure = false;
+   _logic->validateClassDeclaration(scope.info, withAbstractMethods, disptacherNotAllowed, emptyStructure);
    if (withAbstractMethods) {
       scope.raiseError(errAbstractMethods, node);
    }      
    if (disptacherNotAllowed)
       scope.raiseError(errDispatcherInInterface, node);
+   if (emptyStructure)
+      scope.raiseError(errEmptyStructure, node.findChild(lxNameAttr));
 
    // do not set flags for closure declaration - they will be set later
    if (!nestedDeclarationMode) {
