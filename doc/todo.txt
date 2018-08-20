@@ -3,6 +3,9 @@ In development:
 ------                              
 	                            
               dev - general implementation
+                 * redesign UnsafePointer - it is constant , so offset method should not be supported
+                 * (re)implement sockets
+                 * (re)implement tcpserver / tcpclient
 
               dev - general optimization
 

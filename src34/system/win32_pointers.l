@@ -63,11 +63,11 @@ public sealed const struct UnsafePointer
 {
     __ptr thePointer.
 
-//    constructor new : anObject
-//    [
-//        $self $setReference:anObject.
-//    ]
-    
+    embeddable constructor new(int ptr)
+    [
+        thePointer := ptr.
+    ]
+
     constructor(object ref)
     [
         self setReference:ref.
@@ -81,11 +81,6 @@ public sealed const struct UnsafePointer
 //    
 //    set reference:anObject
 //        <= $setReference:anObject.
-//                
-//    stacksafe set int:aValue
-//    [
-//        thePointer := aValue.
-//    ]
                 
 //    stacksafe set reference(object anObject)
 //    [

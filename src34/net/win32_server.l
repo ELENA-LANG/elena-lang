@@ -1,6 +1,6 @@
 //import system'collections.
 //import system'routines.
-//import system'net.
+import system'net.
 //import system'threading.
 //import system'text.
 //
@@ -54,7 +54,7 @@
 
 public sealed class TcpServer
 {
-//    socket     theListenSocket.
+    T<Socket>   theListenSocket.
 //    array_list theClients.
 //    thread     theListenThread.
 //    bytearray  theBuffer.
@@ -71,9 +71,6 @@ public sealed class TcpServer
 //        theBuffer := ByteArray new int:theMaxLength.
 //        
 //        theClients := ArrayList new.
-//        
-//        // winsock start up
-//        WSAStartUp22.
 //        
 //        //resolve server address and port
 //        addrinfo addrinfo := AddrInfo new.
