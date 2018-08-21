@@ -4,8 +4,8 @@
 //import system'threading.
 //import extensions.
 //import extensions'dynamic.
-//import net.
-//
+import net.
+
 //type chatter = ChatMember.
 //
 //sealed class ChatMember :: BaseClient
@@ -28,20 +28,20 @@
 //    chatter = $self.
 //}
 
-class ChatServer
+sealed class ChatServer
 {
 //    object     theLock.
 //    
-//    tcp_server theNetworkServer.
+    T<TcpServer> theNetworkServer.
 //    thread     theBroadcastThread.
     
     constructor new(int port)
     [
 //        theLock := Object new.
-//        
-//        theNetworkServer := TcpServer new(port).
-//        
-//        theNetworkServer blocking := false.
+        
+        theNetworkServer := TcpServer new(port).
+        
+        theNetworkServer Blocking := false.
     ]
     
 //    translate : command
@@ -83,9 +83,9 @@ class ChatServer
 //        
 //        ^ true.
 //    ]
-//    
-//    start
-//    [
+    
+    start
+    [
 //        theNetworkServer set tcp_server_listener:TcpServerListener::
 //        {
 //            onConnect:client
@@ -131,5 +131,5 @@ class ChatServer
 //        ].
 //        
 //        theBroadcastThread start.
-//    ]
+    ]
 }

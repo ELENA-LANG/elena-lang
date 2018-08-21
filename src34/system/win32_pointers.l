@@ -68,6 +68,11 @@ public sealed const struct UnsafePointer
         thePointer := ptr.
     ]
 
+    constructor
+    [
+        thePointer := 0.
+    ]
+
     constructor(object ref)
     [
         self setReference:ref.

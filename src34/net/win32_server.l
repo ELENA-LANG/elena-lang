@@ -71,60 +71,52 @@ public sealed class TcpServer
 //        theBuffer := ByteArray new int:theMaxLength.
 //        
 //        theClients := ArrayList new.
-//        
-//        //resolve server address and port
-//        addrinfo addrinfo := AddrInfo new.
-//        
-//        // set address info
-//        addrinfo setFamily int:AF_INET.
-//        addrinfo setSocketType int:SOCK_STREAM.
-//        addrinfo setProtocol int:IPPROTO_TCP.
-//        addrinfo setFlags int:AI_PASSIVE.
-//        
-//        dirty_ptr ptr := 0.
-//        addrinfo readAddrInfo literal(aPort literal) dirty_ptr:ptr.
-//        
-//        // Create a SOCKET for connecting to server
-//        addr_reader aReader := ptr.
-//        aReader read addrinfo:addrinfo.
-//        
-//        int       ai_family := 0.
-//        int       ai_socktype := 0.
-//        int       ai_protocol := 0.
-//        int       ai_addrlen := 0.
-//        dirty_ptr ai_addrptr := 0.
-//        addrinfo readInfo vint:ai_family vint:ai_socktype vint:ai_protocol.
-//        
-//        theListenSocket := Socket new int:ai_family int:ai_socktype int:ai_protocol.
-//        
-//        addrinfo readAddrPtr dirty_ptr:ai_addrptr vint:ai_addrlen.
-//        
-//        theListenSocket bind dirty_ptr:ai_addrptr int:ai_addrlen.
-//        
-//        aReader close.
-//        
-//        theListenSocket listen int:SOMAXCONN.
+        
+        //resolve server address and port
+        T<AddrInfo> addrinfo := AddrInfo new.
+        
+        // set address info
+        addrinfo Family := AF_INET.
+        addrinfo SocketType := SOCK_STREAM.
+        addrinfo Protocol := IPPROTO_TCP.
+        addrinfo Flags  := AI_PASSIVE.
+        
+        // Create a SOCKET for connecting to server
+        T<AddrInfoReader> reader := AddrInfoReader new(port literal, addrinfo).
+        
+        reader read(addrinfo).        
+        int       ai_family := addrinfo Family.
+        int       ai_socktype := addrinfo SocketType.
+        int       ai_protocol := addrinfo Protocol.
+        int       ai_addrlen := addrinfo AddressLen.
+        dirty_ptr ai_addrptr := addrinfo Address.
+
+        theListenSocket := Socket new(ai_family, ai_socktype, ai_protocol).
+        
+        theListenSocket bind(ai_addrptr, ai_addrlen).
+        
+        reader close.
+        
+        theListenSocket listen(SOMAXCONN).
     ]
 
 //    run eachConnection:func1
 //    [
 //        theClients forEach:func1.
 //    ]
-//
-//    set blocking:aValue
-//    [
-//        int aMode := 0.
-//        
-//        ifnot (aValue)
-//            [
-//                aMode := 1.
-//            ].
-//
-//        theListenSocket iocommand int:FIONBIO vint:aMode.
-//    ]    
-//    
-//    tcp_server = $self.
-//    
+
+    set Blocking(bool val)
+    [
+        int mode := 0.
+        
+        ifnot (val)
+            [
+                mode := 1.
+            ].
+
+        theListenSocket iocommand(FIONBIO, &mode).
+    ]    
+    
 //    set tcp_server_listener:listener
 //    [
 //        theListener := listener.

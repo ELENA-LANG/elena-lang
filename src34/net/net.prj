@@ -2,12 +2,17 @@
     <project>
         <executable></executable>
         <arguments></arguments>
-        <output>..\..\lib33</output>
+        <output>..\..\lib34</output>
         <options></options>
         <namespace>net</namespace>
         <template>lib</template>
         <debuginfo>-1</debuginfo>
     </project>
+    <manifest>
+       <name>ELENA Network Provider Library</name>
+        <version>3.4.1</version>
+        <author>Alex Rakov</author>
+    </manifest>
     <files>
         <module>
             <include>win32_server.l</include>

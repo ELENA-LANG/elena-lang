@@ -6,9 +6,9 @@ public program
 [
     console writeLine:"ELENA Chat Server".
     
-    var server := ChatServer new(DEFAULT_PORT).
+    auto server := ChatServer new(DEFAULT_PORT).
 
-//    server start.
+    server start.
 
     console readChar.
 ]
