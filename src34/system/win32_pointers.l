@@ -63,7 +63,7 @@ public sealed const struct UnsafePointer
 {
     __ptr thePointer.
 
-    embeddable constructor new(int ptr)
+    /*embeddable */constructor load(int ptr)
     [
         thePointer := ptr.
     ]
@@ -75,21 +75,14 @@ public sealed const struct UnsafePointer
     
     private setReference:anObject
         => system'core_routines'__dptr.
-    
-//    stacksafe $setUnsafeReference:anObject
-//        => system'core_routines'__dptr.
-//    
-//    set reference:anObject
-//        <= $setReference:anObject.
-                
-//    stacksafe set reference(object anObject)
-//    [
-//        $self $setUnsafeReference:anObject.
-//    ]
-                                                
-    stacksafe offset(int offs)
+                                         
+    dirty_ptr stacksafe add(int offs)
     [
-        thePointer := thePointer + offs.
+        dirty_ptr ptr := self.
+        
+        ptr := ptr + 1.
+        
+        ^ ptr
     ]
 
 //    stacksafe write int:anObject

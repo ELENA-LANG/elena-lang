@@ -23,8 +23,8 @@ public struct WinEncoder :: Encoder
         if (anIndex != 0)
             [
                 dirty_ptr ptr := /*0*/aByteArray.
-//                ptr set:aByteArray.
-                ptr offset(anIndex).
+                
+                ptr := ptr + anIndex.
 
                 aConverted := system'external'KERNEL32 MultiByteToWideChar(theCodePage, MB_ERR_INVALID_CHARS, ptr, n, T<ShortArray>(temp_buf), 127).
             ];
