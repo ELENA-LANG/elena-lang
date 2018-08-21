@@ -87,21 +87,21 @@ public sealed const struct UnsafePointer
 
 //    stacksafe write int:anObject
 //        => system'core_routines'__dptr.
-//                
-//    stacksafe read vint:aPointer
-//        => system'core_routines'__dptr.
+                
+    stacksafe read(ref<int> retVal)
+        => system'core_routines'__dptr.
 
     stacksafe read(ByteArray arr, int len)
         => system'core_routines'__dptr.
 
-//    // unsafe code
-//    stacksafe int
-//    [
-//        int aValue := 0.
-//        $self read vint:aValue.
-//        
-//        ^ IntNumber new int:aValue
-//    ]
+    // unsafe code
+    stacksafe int
+    [
+        int val := 0.
+        self read(&val).
+        
+        ^ val
+    ]
 
     // unsafe code
     T<literal> literal

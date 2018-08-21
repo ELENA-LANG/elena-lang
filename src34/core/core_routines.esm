@@ -184,6 +184,19 @@ procedure __dptr."read$system@ByteArray$system@IntNumber[3]"
 
 end
 
+procedure __dptr."read$@system@ref#1&IntNumber[2]"
+
+  nload
+  pushd
+  popa
+  nload
+  bloadsi 2
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
 procedure __byte."inverted[1]"
 
   newn   class : system'ByteNumber 4
