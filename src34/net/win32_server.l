@@ -121,11 +121,11 @@ public sealed class TcpServer
 //    [
 //        theListener := listener.
 //    ]
-//    
-//    newClient
-//    [
-//        var socket := theListenSocket accept.
-//        var client := $nil.
+    
+    private T<TcpRemoteClient> newClient
+    [
+//        auto socket := theListenSocket accept.
+        T<TcpRemoteClient> client := nil.
 //        if ($nil != socket)
 //        [
 //            socket option int:IPPROTO_TCP int:TCP_NODELAY bool:true.
@@ -134,10 +134,10 @@ public sealed class TcpServer
 //            
 //            theClients append:client.
 //        ].
-//        
-//        ^ client.
-//    ]
-//    
+        
+        ^ client.
+    ]
+    
 //    closeClient : client
 //        <= close int(theClients indexOfElement:client).
 //    
@@ -190,10 +190,10 @@ public sealed class TcpServer
 //            i := i + 1.
 //        ].
 //    ]
-//    
-//    private proceed
-//    [
-//        var client := $self newClient.
+    
+    private T<bool> proceed
+    [
+        auto client := self newClient.
 //        if ($nil != client)
 //        [
 //            if ($nil != theListener)
@@ -201,20 +201,20 @@ public sealed class TcpServer
 //        ].
 //        
 //        $self readClients.
-//        
-//        ^ true.
-//    ]
-//    
-//    start
-//    [
-//        theListenThread := Thread new func:
-//        [
-//            while ($self proceed)[].
-//        ].
-//        
-//        theListenThread start.
-//    ]
-//    
+        
+        ^ true.
+    ]
+    
+    start
+    [
+        theListenThread := Thread new:
+        [
+            while (self proceed)[].
+        ].
+        
+        theListenThread start.
+    ]
+    
 //    stacksafe sendAll bytearray:buffer int:length
 //    [
 //        int i := 0.
