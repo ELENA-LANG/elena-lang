@@ -125,6 +125,7 @@ public:
       okFieldAddress,                 // param - field offset, extraparam - class reference
       okOuter,                        // param - field offset, extraparam - class reference
       okOuterField,                   // param - field offset, extraparam - outer field offset
+      okOuterSelf,                    // param - field offset, extraparam - outer field offset
       okOuterStaticField,             // param - field offset, extraparam - outer field offset
       okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
 ////      okCurrent,                      // param - stack offset

@@ -1,11 +1,11 @@
 //import system'collections.
 //import system'routines.
 import system'net.
-//import system'threading.
+import system'threading.
 //import system'text.
-//
-//sealed class TcpRemoteClient
-//{
+
+sealed class TcpRemoteClient
+{
 //    socket theSocket.
 //    object theParameter.
 //    
@@ -36,8 +36,8 @@ import system'net.
 //        => theSocket.
 //    
 //    Parameter = theParameter.
-//}
-//
+}
+
 //type tcp_server_listener = TcpServerListener.
 //limited class TcpServerListener
 //{
@@ -56,7 +56,7 @@ public sealed class TcpServer
 {
     T<Socket>   theListenSocket.
 //    array_list theClients.
-//    thread     theListenThread.
+    T<Thread>   theListenThread.
 //    bytearray  theBuffer.
 //    int        theMaxLength.
 //    
@@ -191,7 +191,7 @@ public sealed class TcpServer
 //        ].
 //    ]
 //    
-//    proceed
+//    private proceed
 //    [
 //        var client := $self newClient.
 //        if ($nil != client)

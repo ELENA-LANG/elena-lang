@@ -928,7 +928,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
       Outer owner = mapOwner();
 
       // map as an outer field (reference to outer object and outer object field index)
-      return ObjectInfo(okOuter, owner.reference, owner.outerObject.extraparam/*, owner.outerObject.type*/);
+      return ObjectInfo(okOuterSelf, owner.reference, owner.outerObject.extraparam/*, owner.outerObject.type*/);
    }
    //else if (identifier.compare(SELF_VAR) && !closureMode) {
    //   return ObjectInfo(okParam, (size_t)-1);
@@ -973,6 +973,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
             case okFieldAddress:
             case okOuterField:
             case okOuterStaticField:
+            case okOuterSelf:
             case okParams:
             {
                // map if the object is outer one
@@ -984,6 +985,10 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
                if (outer.outerObject.kind == okOuter && identifier.compare(RETVAL_VAR)) {
                   // HOTFIX : quitting several clsoures
                   (*outers.getIt(identifier)).preserved = true;
+               }
+               else if (outer.outerObject.kind == okOuterSelf) {
+                  // HOTFIX : to support self in deep nested closures
+                  return ObjectInfo(okOuterSelf, outer.reference, outer.outerObject.extraparam);
                }
 
                return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
@@ -1273,6 +1278,7 @@ ref_t Compiler :: resolveObjectReference(_CompilerScope& scope, ObjectInfo objec
       case okLocal:
       case okFieldAddress:
       case okOuter:
+      case okOuterSelf:
       case okParam:
       case okSymbol:
       case okStaticField:
@@ -2011,6 +2017,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          break;
       case okField:
       case okOuter:
+      case okOuterSelf:
          writer.newNode(lxField, object.param);
          break;
       case okStaticField:
@@ -2746,7 +2753,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       retVal.param = result.outputReference;
    }
 
-   if (target.kind == okSelfParam && callType == tpPrivate) {
+   if ((target.kind == okSelfParam || target.kind == okOuterSelf) && callType == tpPrivate) {
       messageRef |= SEALED_MESSAGE;
 
       callType = tpSealed;
@@ -3138,6 +3145,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          break;
       }
       case okOuter:
+      case okOuterSelf:
       // case okParam
       {
          InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
