@@ -3,9 +3,8 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * fix dirty_ptr usage
+                 * #425 : Comparing int and ptr (handle, char) - use __dword for handle and char
                  *  #77 : retiring core / corex 
-                 * #425 : Comparing int and ptr (handle, char)
                  * (re)implement sockets
                  * (re)implement tcpserver / tcpclient
 

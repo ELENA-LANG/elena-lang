@@ -223,6 +223,12 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(ADD_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
    operators.add(OperatorInfo(SUB_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
+
+   // dword primitive operations
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
@@ -479,6 +485,7 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
    switch (targetRef) {
       case V_PTR:
+      case V_DWORD:
          return sourceRef == V_INT32;
       default:
          return false;
@@ -1187,6 +1194,11 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
          info.header.flags = elDebugPTR | elStructureRole;
          info.size = 4;
          break;
+      case V_DWORD:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elStructureRole;
+         info.size = 4;
+         break;
       case V_SIGNATURE:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugSubject | elStructureRole;
@@ -1559,9 +1571,8 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       //   attrValue = 0;
       //   return true;
       case V_REAL64:
-         attrValue = 0;
-         return true;
       case V_PTR:
+      case V_DWORD:
          attrValue = 0;
          return true;
       case V_SIGNATURE:
@@ -1669,6 +1680,10 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
          case V_PTR:
             info.header.flags |= (elDebugPTR | elWrapper);
             info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));
+            return info.size == 4;
+         case V_DWORD:
+            info.header.flags |= (elWrapper);
+            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_DWORD, 0));
             return info.size == 4;
          case V_SIGNATURE:
             info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);

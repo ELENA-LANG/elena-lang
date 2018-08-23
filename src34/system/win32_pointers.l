@@ -2,7 +2,7 @@
 
 public sealed const struct Handle
 {
-    int theHandle.
+    __dword theHandle.
 
     constructor new(handle h)
     [

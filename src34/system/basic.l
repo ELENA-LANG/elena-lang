@@ -2241,7 +2241,7 @@ public sealed struct RealNumber :: BaseNumber
 /// An UTF-32 character symbol
 public sealed const struct CharValue :: BaseValue
 {
-    int theValue.
+    __dword theValue.
 
     /// Creates the object with a default value (0)
     constructor new

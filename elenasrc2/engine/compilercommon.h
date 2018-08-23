@@ -23,6 +23,7 @@
 #define V_INT32          (ref_t)-13
 #define V_INT64          (ref_t)-14
 #define V_REAL64         (ref_t)-15
+#define V_DWORD          (ref_t)-16
 #define V_SIGNATURE      (ref_t)-18
 #define V_MESSAGE        (ref_t)-19
 #define V_EXTMESSAGE     (ref_t)-21

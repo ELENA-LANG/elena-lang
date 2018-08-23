@@ -4087,6 +4087,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
             switch (primitiveRef) {
                case V_INT32:
                case V_PTR:
+               case V_DWORD:
                //case V_SIGNATURE:
                //case V_MESSAGE:
                   current.set(variableOne ? lxExtArgument : lxIntExtArgument, 0);

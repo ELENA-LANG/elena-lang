@@ -50,6 +50,7 @@ __string        = #8200.
 __int           = #11.
 __ptr           = #12.
 __real          = #15.
+__dword         = #16.
 __mssg          = #19.
 __subj          = #18.
 __extmssg       = #21.
