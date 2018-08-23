@@ -215,6 +215,14 @@ CompilerLogic :: CompilerLogic()
    // boolean primitive operations
    operators.add(OperatorInfo(AND_MESSAGE_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
    operators.add(OperatorInfo(OR_MESSAGE_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
+
+   // pointer primitive operations
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_PTR, V_PTR, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_PTR, V_PTR, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
+   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)

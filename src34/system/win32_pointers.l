@@ -66,7 +66,7 @@ public sealed const struct UnsafePointer
 {
     __ptr thePointer.
 
-    /*embeddable */constructor load(int ptr)
+    embeddable constructor load(int ptr)
     [
         thePointer := ptr.
     ]
