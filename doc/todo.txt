@@ -3,6 +3,7 @@ In development:
 ------                              
 	                            
               dev - general implementation
+                 * fix dirty_ptr usage
                  *  #77 : retiring core / corex 
                  * #425 : Comparing int and ptr (handle, char)
                  * (re)implement sockets

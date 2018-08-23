@@ -469,27 +469,13 @@ int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t lopera
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
-   switch (sourceRef)
-   {
+   switch (targetRef) {
       case V_PTR:
-         return targetRef == V_INT32;
-      case V_INT32:
-         return targetRef == V_PTR;
+         return sourceRef == V_INT32;
       default:
          return false;
    }
 }
-
-//inline bool isPrimitiveArrayCompatible(ref_t targetRef, ref_t sourceRef)
-//{
-//   switch (sourceRef)
-//   {
-//      case V_PTR32:
-//         return targetRef == V_INT32;
-//      default:
-//         return false;
-//   }
-//}
 
 bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
 {
@@ -499,7 +485,7 @@ bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t
    if (sourceRef == V_NIL)
       return true;
 
-   if (isPrimitiveCompatible(targetRef, sourceRef))
+   if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
       return true;
 
    if (targetRef == scope.superReference && !isPrimitiveRef(sourceRef))
@@ -668,10 +654,16 @@ void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t
             SNode attr = current.firstChild();
             while (attr != lxNone) {
                if (attr == lxAttribute && attr.argument == tpEmbeddable) {
-                  generatedConstructors.add(Attribute(current.argument, current.findChild(lxMultiMethodAttr).argument));
+                  SNode multiMethodAttr = current.findChild(lxMultiMethodAttr);
+
+                  generatedConstructors.add(Attribute(current.argument, multiMethodAttr.argument));
 
                   current.set(lxClassMethod, current.argument | SEALED_MESSAGE);
                   attr.argument = tpPrivate;
+
+                  if (multiMethodAttr != lxNone)
+                     // HOTFIX : replace the multimethod message with correct one
+                     multiMethodAttr.setArgument(multiMethodAttr.argument | SEALED_MESSAGE);
 
                   found = true;
                   break;

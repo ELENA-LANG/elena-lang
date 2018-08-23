@@ -4990,7 +4990,7 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
       else scope.raiseError(errIllegalOperation, node);
 
       if (node == lxResendExpression) {
-         ref_t openArgMessage = encodeMessage(getAction(message), getParamCount(message) + OPEN_ARG_COUNT - 1);
+         ref_t openArgMessage = encodeMessage(getAction(message), getParamCount(message) + OPEN_ARG_COUNT - 1) | (message & MESSAGE_FLAG_MASK);
          if (classScope.info.methods.exist(openArgMessage)) {
             writer.newNode(lxResending);
 
@@ -7941,7 +7941,7 @@ void Compiler :: injectVirtualMultimethod(_CompilerScope& scope, SNode classNode
       }
       ref_t signRef = scope.module->mapAction(actionName, scope.module->mapSignature(signatures, signatureLen, false), false);
 
-      resendMessage = encodeMessage(signRef, paramCount);
+      resendMessage = encodeMessage(signRef, paramCount) | (message & MESSAGE_FLAG_MASK);
    }
 
    SNode methNode = classNode.appendNode(methodType, message);
