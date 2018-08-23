@@ -168,6 +168,11 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 
       return binary->mapReference(token.value) | mskInternalRef;
    }
+   else if (word.compare("entry")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
+      return binary->mapReference(token.value) | mskEntryRef;
+   }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
 

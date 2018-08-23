@@ -57,13 +57,10 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
    linker.prepareCompiler(verbs);
 
   // create the image
-   ident_t startUpClass = project->resolveForward(STARTUP_SYMBOL);
-   _entryPoint = emptystr(startUpClass) ? LOADER_NOTLOADED : linker.resolve(startUpClass, mskSymbolRef, true);
+   ident_t entryName = project->resolveForward(SYSTEM_ENTRY);
+   _entryPoint = emptystr(entryName) ? LOADER_NOTLOADED : linker.resolve(entryName, mskSymbolRef, true);
    if(_entryPoint == LOADER_NOTLOADED)
-      throw JITUnresolvedException(ReferenceInfo(STARTUP_SYMBOL));
-
-  // inject initializing code into the entry point
-   _entryPoint = linker.resolveEntry(_entryPoint);
+      throw JITUnresolvedException(ReferenceInfo(SYSTEM_ENTRY));
 
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
@@ -76,7 +73,7 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
 
 ref_t ExecutableImage :: getDebugEntryPoint()
 {
-   ident_t starter = _project->resolveForward(STARTUP_SYMBOL);
+   ident_t starter = _project->resolveForward(PROGRAM_ENTRY);
    while (isForwardReference(starter)) {
       starter = _project->resolveForward(starter + FORWARD_PREFIX_NS_LEN);
    }
@@ -421,7 +418,7 @@ ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* proje
    writeTapeRecord(data, START_VM_MESSAGE_ID);
 
    // CALL_TAPE_MESSAGE_ID 'program
-   writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, STARTUP_SYMBOL, true);
+   writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, PROGRAM_ENTRY, true);
 
    data.writeDWord(0);
 

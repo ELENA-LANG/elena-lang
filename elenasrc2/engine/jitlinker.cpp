@@ -1184,6 +1184,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskMessageTableRef:
             vaddress = resolveMessageTable(referenceInfo, mskMessageTableRef);
             break;
+         case mskEntryRef:
+            vaddress = resolveEntry(resolve(referenceInfo, mskSymbolRef, silentMode));
+            break;
       }
    }
    if (!silentMode && vaddress == LOADER_NOTLOADED)

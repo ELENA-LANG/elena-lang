@@ -144,6 +144,7 @@ namespace _ELENA_
       mskClassRef            = 0x11000000u,   // class code
 //      mskClassRelRef         = 0x31000000u,   // class relative code
       mskStatSymbolRef       = 0x82000000u,   // reference to static symbol
+      mskEntryRef            = 0x14000000u,   // reference to the program entry
 
       mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000u,   // meta data
@@ -491,8 +492,8 @@ namespace _ELENA_
    #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
 
    // predefined system forwards
-   #define SUPER_FORWARD            "$super"                    // the common class predecessor
-   #define LAZYEXPR_FORWARD         "$lazyexpression"               // the base lazy expression class
+   #define SUPER_FORWARD            "$super"                         // the common class predecessor
+   #define LAZYEXPR_FORWARD         "$lazyexpression"                // the base lazy expression class
    #define INT_FORWARD              "$int"
    #define LONG_FORWARD             "$long"
    #define REAL_FORWARD             "$real"
@@ -508,7 +509,8 @@ namespace _ELENA_
    #define CLOSURETEMPLATE_FORWARD  "$closure"
    #define ARRAYTEMPLATE_FORWARD    "$parray"
 
-   #define STARTUP_SYMBOL           "$startUp"
+   #define PROGRAM_ENTRY            "$program"                     // the program entry
+   #define SYSTEM_ENTRY             "$system_entry"                // the system entry
    
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)
