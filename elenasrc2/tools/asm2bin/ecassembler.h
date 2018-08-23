@@ -87,7 +87,7 @@ class ECodesAssembler : public Assembler
 
    void compileCommand(TokenInfo& token, MemoryWriter& writer, LabelInfo& info, _Module* binary);
 
-   void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned);
+   void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned, int mask);
 
 public:
 	virtual void compile(TextReader* reader, path_t outputPath);

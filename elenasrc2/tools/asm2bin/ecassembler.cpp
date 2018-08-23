@@ -171,7 +171,10 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
    else if (word.compare("entry")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
-      return binary->mapReference(token.value) | mskEntryRef;
+
+      IdentifierString s(token.terminal.line + 1, token.terminal.length - 2);
+
+      return binary->mapReference(s.c_str()) | mskEntryRef;
    }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
@@ -535,7 +538,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
    token.read();
 }
 
-void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned)
+void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned, int mask)
 {
    LabelInfo info;
    
@@ -559,7 +562,7 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
    }
 
    IdentifierString refName("'", method);
-   ref_t reference = binary->mapReference(refName) | mskCodeRef;
+   ref_t reference = binary->mapReference(refName) | mask;
 
 	if (binary->mapSection(reference, true)!=NULL) {
 		throw AssemblerException("Procedure already exists (%d)\n", token.terminal.row);
@@ -614,11 +617,16 @@ void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
 			token.read();
 		}
 		else if (token.check("procedure")) {
-         compileProcedure(token, &binary, true, true);
+         compileProcedure(token, &binary, true, true, mskCodeRef);
 
          token.read();
 		}
-		else if (token.value[0] == '#') {
+      else if (token.check("symbol")) {
+         compileProcedure(token, &binary, true, true, mskSymbolRef);
+
+         token.read();
+      }
+      else if (token.value[0] == '#') {
 			token.read();
 			token.read();
 			token.read();

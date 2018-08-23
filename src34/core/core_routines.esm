@@ -4972,8 +4972,8 @@ procedure __thread."readThreadProc$@system@ref#1&IntNumber[1]"
 
 end
 
-procedure start
+symbol start
 
-  callr entry : "$forwards'$startUp"
+  callr entry : "$forwards'$program"
 
 end
