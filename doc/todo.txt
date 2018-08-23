@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * #425 : Comparing int and ptr (handle, char) - use __dword for handle and char
                  *  #77 : retiring core / corex 
                  * (re)implement sockets
                  * (re)implement tcpserver / tcpclient
