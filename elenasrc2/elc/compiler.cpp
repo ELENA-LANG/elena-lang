@@ -2662,7 +2662,22 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       retVal = assignResult(writer, scope, resultClassRef, loperand.element);
    }
    // if not , replace with appropriate method call
-   else retVal = compileMessage(writer, node, scope, loperand, encodeMessage(operator_id, paramCount), HINT_NODEBUGINFO);
+   else {
+      bool dynamicReqiered = false;
+      int operationMode = HINT_NODEBUGINFO;
+      ref_t implicitSignatureRef = 0;
+      if (roperand2.kind != okUnknown) {
+         implicitSignatureRef = resolveStrongArgument(scope, roperand, roperand2);
+      }
+      else implicitSignatureRef = resolveStrongArgument(scope, roperand);
+
+      int messageRef = resolveMessageAtCompileTime(loperand, scope, encodeMessage(operator_id, paramCount), implicitSignatureRef, true, dynamicReqiered);
+
+      if (dynamicReqiered)
+         operationMode |= HINT_DYNAMIC_OBJECT;
+
+      retVal = compileMessage(writer, node, scope, loperand, messageRef, operationMode);
+   }
 
    return retVal;
 }
@@ -2886,14 +2901,21 @@ ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
       argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
 
    return scope.module->mapSignature(&argRef, 1, false);
+}
 
-//   bool anonymous = false;
-//   IdentifierString signature;
-//   resolveStrongArgument(scope, info, anonymous, signature);
-//   if (!anonymous) {
-//      return scope.moduleScope->module->mapSubject(signature.ident(), false);
-//   }
-//   else return 0;
+ref_t Compiler::resolveStrongArgument(CodeScope& scope, ObjectInfo info1, ObjectInfo info2)
+{
+   ref_t argRef[2];
+
+   argRef[0] = resolveObjectReference(scope, info1);
+   argRef[1] = resolveObjectReference(scope, info2);
+
+   if (isPrimitiveRef(argRef[0]))
+      argRef[0] = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef[0]);
+   if (isPrimitiveRef(argRef[1]))
+      argRef[1] = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef[1]);
+
+   return scope.module->mapSignature(argRef, 2, false);
 }
 
 ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef)

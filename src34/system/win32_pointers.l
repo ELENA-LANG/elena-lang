@@ -23,6 +23,9 @@ public sealed const struct Handle
 
     bool equal(handle anOperand)
         = theHandle == anOperand.
+        
+    stacksafe bool equal(int anOperand)
+        = theHandle == anOperand.
 }
 
 // --- RTPointer ---

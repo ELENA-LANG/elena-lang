@@ -3,9 +3,13 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * #425 : Comparing int and ptr (handle, dirty_ptr) 
+                 *  #77 : retiring core / corex 
+                 * #425 : Comparing int and ptr (handle, char)
                  * (re)implement sockets
                  * (re)implement tcpserver / tcpclient
+
+              dev - tests          
+                 * test realOp<real>.round<int>[1] extension
 
               dev - general optimization
 
