@@ -3,7 +3,10 @@ In development:
 ------                              
 	                            
               dev - general implementation
+                 * elenart - switch to xml config
                  *  #77 : retiring core / corex 
+                 *  #11 : Debug info structure redesign 
+                 *  #16 : Debug information in executable 
                  * (re)implement sockets
                  * (re)implement tcpserver / tcpclient
 
@@ -84,7 +87,6 @@ Pipeline:
                  * enum - base class cannot be created, value class cannot be declared, base enum class cannot be singleton,
                    normal classes cannot be inherited from enum / enum value
                  * a do(1,2,3,4,5,6,7,8,9,10,11,12,13) can be compiled both as do[0,], do[1,] and do[2,]
-                 * elenart - switch to xml config
                  * collection : validate if the parent class can be array based class
                  * can cast method be overridden? so it means it should not have sealed attribute?
                  * warn if there are several similar extension for given message

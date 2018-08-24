@@ -114,7 +114,7 @@
     <ClCompile Include="..\..\engine\rtman.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\win32\pehelper.cpp" />
-    <ClCompile Include="..\instance.cpp" />
+    <ClCompile Include="..\elenartmachine.cpp" />
     <ClCompile Include="..\win32\dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -142,7 +142,7 @@
     <ClInclude Include="..\..\engine\rtman.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\win32\pehelper.h" />
-    <ClInclude Include="..\instance.h" />
+    <ClInclude Include="..\elenartmachine.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

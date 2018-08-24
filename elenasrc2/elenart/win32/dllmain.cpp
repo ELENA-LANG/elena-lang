@@ -1,6 +1,6 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "instance.h"
+#include "elenartmachine.h"
 #include <windows.h>
 #include "pehelper.h"
 
@@ -102,6 +102,11 @@ EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
 EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
 {
    return instance->loadSymbol((const char*)referenceName);
+}
+
+EXTERN_DLL_EXPORT void Initialize(void* entryPoint)
+{
+   return instance->start(entryPoint);
 }
 
 // --- dllmain ---

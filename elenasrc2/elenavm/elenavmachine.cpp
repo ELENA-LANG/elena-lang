@@ -6,7 +6,7 @@
 
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "elenamachine.h"
+#include "elenavmachine.h"
 #include "bytecode.h"
 #include "rtman.h"
 

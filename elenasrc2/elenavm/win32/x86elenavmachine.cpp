@@ -6,7 +6,7 @@
 
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "x86elenamachine.h"
+#include "x86elenavmachine.h"
 #include "x86jitcompiler.h"
 
 #include <fcntl.h>

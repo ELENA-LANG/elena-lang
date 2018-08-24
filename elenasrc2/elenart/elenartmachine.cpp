@@ -1,20 +1,28 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2017, by Alexei Rakov
+//                                              (C)2009-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "instance.h"
+#include "elenartmachine.h"
 #include "rtman.h"
 #include "config.h"
 #include "bytecode.h"
 
-#define LIBRARY_CATEGORY            "library"
-#define LIBRARY_PATH                "path"
+#define LIBRARY_PATH                "configuration/library/path"
 
 using namespace _ELENA_;
+
+// --- Instance ---
+
+void Instance::start(void* programEntry)
+{
+
+}
+
+// !! --
 
 // --- Instance::ImageSection ---
 
@@ -33,8 +41,6 @@ bool Instance::ImageSection :: read(pos_t position, void* s, pos_t length)
    else return false;
 }
 
-// --- Instance ---
-
 Instance :: Instance(path_t rootPath)
    : _rootPath(rootPath), _verbs(0)
 {
@@ -46,12 +52,12 @@ bool Instance :: loadConfig(path_t configFile)
    Path configPath((path_t)_rootPath);
    configPath.combine(configFile);
 
-   IniConfigFile config;
+   XmlConfigFile config;
    if (!config.load(configPath.c_str(), feUTF8)) {
       return false;
    }
 
-   Path path(_rootPath.c_str(), config.getSetting(LIBRARY_CATEGORY, LIBRARY_PATH, NULL));
+   Path path(_rootPath.c_str(), config.getSetting(LIBRARY_PATH));
 
    if (!emptystr(path)) {
       _loader.setRootPath(path.c_str());

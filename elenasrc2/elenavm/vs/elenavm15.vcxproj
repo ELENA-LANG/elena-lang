@@ -121,7 +121,7 @@
     </ClCompile>
     <ClCompile Include="..\..\common\xmlreader.cpp" />
     <ClCompile Include="..\..\common\dump.cpp" />
-    <ClCompile Include="..\elenamachine.cpp" />
+    <ClCompile Include="..\elenavmachine.cpp" />
     <ClCompile Include="..\..\common\files.cpp" />
     <ClCompile Include="..\..\engine\jitcompiler.cpp" />
     <ClCompile Include="..\..\engine\jitlinker.cpp" />
@@ -129,7 +129,7 @@
     <ClCompile Include="..\..\engine\loader.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
-    <ClCompile Include="..\win32\x86elenamachine.cpp" />
+    <ClCompile Include="..\win32\x86elenavmachine.cpp" />
     <ClCompile Include="..\..\engine\x86helper.cpp" />
     <ClCompile Include="..\win32\x86process.cpp" />
   </ItemGroup>
@@ -144,7 +144,7 @@
     <ClInclude Include="..\..\engine\elenaconst.h" />
     <ClInclude Include="..\..\engine\rtman.h" />
     <ClInclude Include="..\..\engine\x86jitcompiler.h" />
-    <ClInclude Include="..\elenamachine.h" />
+    <ClInclude Include="..\elenavmachine.h" />
     <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\engine\jitcompiler.h" />
     <ClInclude Include="..\..\engine\jitlinker.h" />
@@ -155,7 +155,7 @@
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\tools.h" />
-    <ClInclude Include="..\win32\x86elenamachine.h" />
+    <ClInclude Include="..\win32\x86elenavmachine.h" />
     <ClInclude Include="..\..\engine\x86helper.h" />
     <ClInclude Include="..\win32\x86process.h" />
     <ClInclude Include="resource.h" />

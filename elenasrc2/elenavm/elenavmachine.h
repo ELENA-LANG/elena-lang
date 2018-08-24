@@ -4,8 +4,8 @@
 //                                              (C)2009-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
-#ifndef elenamachineH
-#define elenamachineH 1
+#ifndef elenavmachineH
+#define elenavmachineH 1
 
 #include "loader.h"
 #include "config.h"
@@ -453,4 +453,4 @@ public:
 
 } // _ELENA_
 
-#endif // elenamachineH
+#endif // elenavmachineH

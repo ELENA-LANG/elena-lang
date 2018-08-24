@@ -1,11 +1,11 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2017, by Alexei Rakov
+//                                              (C)2009-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
-#ifndef elenamachineH
-#define elenamachineH 1
+#ifndef elenartmachineH
+#define elenartmachineH 1
 
 #include "libman.h"
 
@@ -127,6 +127,8 @@ public:
 
    void init(void* debugSection, void* messageTable,  path_t configPath);
 
+   void start(void* programEntry);
+
    Instance(path_t rootPath);
 
    virtual ~Instance()
@@ -136,5 +138,5 @@ public:
 
 } // _ELENA_
 
-#endif // elenamachineH
+#endif // elenartmachineH
 

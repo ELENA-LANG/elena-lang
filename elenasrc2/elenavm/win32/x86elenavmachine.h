@@ -4,11 +4,11 @@
 //                                              (C)2009-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
-#ifndef x86elenamachineH
-#define x86elenamachineH 1
+#ifndef x86elenavmachineH
+#define x86elenavmachineH 1
 
 #include "elena.h"
-#include "elenamachine.h"
+#include "elenavmachine.h"
 
 #include "x86process.h"
 
@@ -75,4 +75,4 @@ public:
 
 } // _ELENA_
 
-#endif // x86elenamachineH
+#endif // x86elenavmachineH
