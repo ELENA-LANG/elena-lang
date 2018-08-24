@@ -1,43 +1,41 @@
 //import system'routines.
 //import system'text.
 //import system'io.
-//import system'threading.
+import system'threading.
 //import extensions.
 //import extensions'dynamic.
 import net.
 
-//type chatter = ChatMember.
-//
-//sealed class ChatMember :: BaseClient
-//{
-//    tcp_remoteclient theOwner.
-//    object           theServer.
+sealed class ChatMember :: BaseClient
+{
+    T<TcpRemoteClient> theOwner.
+    T<ChatServer>      theServer.
 //    
 //    literal prop Name :: theName.
-//
-//    constructor new:owner of:server
-//        <= new;
-//    [
-//        theOwner := owner tcp_remoteclient.
-//        
-//        theServer := server.
-//    ]    
-//    
+
+    constructor new(TcpRemoteClient owner) of(ChatServer server)
+        <= new;
+    [
+        theOwner := owner.
+        
+        theServer := server.
+    ]    
+    
 //    server = theServer.
 //    
 //    chatter = $self.
-//}
+}
 
 sealed class ChatServer
 {
-//    object     theLock.
-//    
+    object     theLock.
+    
     T<TcpServer> theNetworkServer.
-//    thread     theBroadcastThread.
+    T<Thread>    theBroadcastThread.
     
     constructor new(int port)
     [
-//        theLock := Object new.
+        theLock := Object new.
         
         theNetworkServer := TcpServer new(port).
         
@@ -50,9 +48,9 @@ sealed class ChatServer
 //        
 //        theNetworkServer sendAll int(json length); sendAll literal:json.
 //    ]
-//    
-//    proceed
-//    [
+    
+    private proceed
+    [
 //        theNetworkServer run eachConnection(:client)
 //        [
 //            lock (theLock)
@@ -80,53 +78,53 @@ sealed class ChatServer
 //                ].
 //            ].
 //        ].        
-//        
-//        ^ true.
-//    ]
+        
+        ^ true.
+    ]
     
     start
     [
         theNetworkServer onConnect := (:client)<TcpRemoteClient>
         [
-//                lock (theLock)
-//                [
-//                    console writeLine:"new client joint".
-//                
-//                    client set Parameter(ChatMember new:client of:$self).
-//                ].                                
+                lock (theLock)
+                [
+                    console writeLine:"new client joint".
+                
+                    client Parameter := ChatMember new:client of:self.
+                ].                                
         ].
         
         theNetworkServer onLeave := (:client)<TcpRemoteClient>
         [
-//                lock (theLock)
-//                [
-//                    console writeLine:"client left".
-//                ].
+                lock (theLock)
+                [
+                    console writeLine:"client left".
+                ].
         ].
         
         theNetworkServer onError := (:client:e)<TcpRemoteClient,Exception>
         [
-//                lock (theLock)
-//                [
-//                    console printLine("exception #",e error_code).
-//                ].
+                lock (theLock)
+                [
+                    console printLine("exception #",e error_code).
+                ].
         ].
         
         theNetworkServer onReceived := (:client:data:length)<TcpRemoteClient,ByteArray,int>
         [
-//                lock (theLock)
-//                [
-//                    client Parameter; chatter; write bytearray:buffer int:length.
-//                ].                        
+                lock (theLock)
+                [
+                    T<ChatMember>(client Parameter) write(data, length).
+                ].                        
         ].
         
         theNetworkServer start.
         
-//        theBroadcastThread := Thread new func:
-//        [
-//            while($self proceed) [].
-//        ].
-//        
-//        theBroadcastThread start.
+        theBroadcastThread := Thread new:
+        [
+            while(self proceed) [].
+        ].
+       
+        theBroadcastThread start.
     ]
 }

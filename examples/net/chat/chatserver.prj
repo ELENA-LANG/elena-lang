@@ -12,6 +12,7 @@
         <module>
             <include>servermain.l</include>
             <include>chatserver.l</include>
+            <include>chatcommon.l</include>
         </module>
     </files>
 </configuration>
