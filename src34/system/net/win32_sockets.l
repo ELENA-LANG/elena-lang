@@ -166,7 +166,7 @@ public sealed struct AddrInfoReader
     dirty_ptr paddrinfo.
     dirty_ptr prootinfo.
     
-    stacksafe /*embeddable*/ constructor new(literal service, AddrInfo info)
+    stacksafe embeddable constructor new(literal service, AddrInfo info)
     [
         dirty_ptr ptr := T<dirty_ptr>().
         int retVal := system'external'WS2_32 getaddrinfo(0, service, info, ptr).
@@ -178,7 +178,7 @@ public sealed struct AddrInfoReader
         prootinfo := ptr.
     ]
 
-    stacksafe /*embeddable*/ constructor new(literal node, literal service, AddrInfo info)
+    stacksafe embeddable constructor new(literal node, literal service, AddrInfo info)
     [
         dirty_ptr ptr := T<dirty_ptr>().
         int retVal := system'external'WS2_32 getaddrinfo(node, service, info, ptr).
@@ -216,7 +216,7 @@ public sealed struct AddrInfoReader
 
 public sealed const struct Socket
 {
-    int theHandle.
+    __dword theHandle.
     
     constructor(int handle)
     [
@@ -337,7 +337,7 @@ public sealed const struct Socket
     [
         T<Socket> socket := system'external'WS2_32 accept(theHandle, 0, 0).
             
-        if (INVALID_SOCKET != socket)
+        if (socket != INVALID_SOCKET)
             [
                 ^ socket
             ];

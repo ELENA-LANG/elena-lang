@@ -2930,9 +2930,13 @@ ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t el
 
 ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
-   bool externalMode = test(mode, HINT_EXTERNALOP);
-
    int paramMode = 0;
+   bool externalMode = false;
+   if (test(mode, HINT_EXTERNALOP)) {
+      externalMode = true;
+   }
+   else paramMode |= HINT_NOPRIMITIVES;
+
    SNode current = node;
 
    // compile the message argument list
@@ -2947,7 +2951,7 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
          // try to recognize the message signature
          ref_t argRef = 0;
          if (!anonymous) {
-            ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode | HINT_NOPRIMITIVES);
+            ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode);
             argRef = resolveObjectReference(scope, paramInfo);
             if (argRef) {
                if (signatureLen == OPEN_ARG_COUNT) {
@@ -4115,7 +4119,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
                   //   //HOTFIX : allow to pass a normal object
                   //   current.set(lxExtArgument, 0);
                   //}
-                  else nsScope.raiseError(errInvalidOperation, current.firstChild(lxObjectMask));
+                  else nsScope.raiseError(errInvalidOperation, current.findSubNodeMask(lxObjectMask));
                   break;
             }
          }
