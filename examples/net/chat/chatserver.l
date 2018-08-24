@@ -1,4 +1,4 @@
-//import system'routines.
+//import system'routines'stex.
 //import system'text.
 //import system'io.
 import system'threading.
@@ -51,6 +51,10 @@ sealed class ChatServer
     
     private proceed
     [
+//        theNetworkServer Clients; forEach(:client)<TcpRemoteClient>
+//        [
+//        ].
+        
 //        theNetworkServer run eachConnection(:client)
 //        [
 //            lock (theLock)

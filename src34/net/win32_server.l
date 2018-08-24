@@ -95,6 +95,8 @@ public sealed class TcpServer
         theListenSocket listen(SOMAXCONN).
     ]
 
+//    Enumerable<TcpRemoteClient> Clients = Enumerable<TcpRemoteClient>::{ /*embeddable dispatch => theClients.*/Enumerator<TcpRemoteClient> enumerator => theClients. }.
+
 //    run eachConnection:func1
 //    [
 //        theClients forEach:func1.
