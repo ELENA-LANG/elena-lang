@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * elenart - switch to xml config
                  *  #77 : retiring core / corex 
                  *  #11 : Debug info structure redesign 
                  *  #16 : Debug information in executable 

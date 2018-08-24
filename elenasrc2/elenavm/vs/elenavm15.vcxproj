@@ -142,6 +142,7 @@
     <ClInclude Include="..\..\common\dump.h" />
     <ClInclude Include="..\..\engine\elena.h" />
     <ClInclude Include="..\..\engine\elenaconst.h" />
+    <ClInclude Include="..\..\engine\elenamachine.h" />
     <ClInclude Include="..\..\engine\rtman.h" />
     <ClInclude Include="..\..\engine\x86jitcompiler.h" />
     <ClInclude Include="..\elenavmachine.h" />

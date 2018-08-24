@@ -17,21 +17,24 @@ using namespace _ELENA_;
 
 // --- Instance ---
 
-void Instance::start(void* programEntry)
+void ELENARTMachine :: start(void* programEntry)
 {
+   _Entry entry;
+   entry.address = programEntry;
 
+   (*entry.entry)();
 }
 
 // !! --
 
 // --- Instance::ImageSection ---
 
-void* Instance::ImageSection :: get(pos_t position) const
+void* ELENARTMachine :: ImageSection :: get(pos_t position) const
 {
    return (unsigned char*)_section + position;
 }
 
-bool Instance::ImageSection :: read(pos_t position, void* s, pos_t length)
+bool ELENARTMachine :: ImageSection :: read(pos_t position, void* s, pos_t length)
 {
    if (position < _length && _length >= position + length) {
       memcpy(s, (unsigned char*)_section + position, length);
@@ -41,13 +44,13 @@ bool Instance::ImageSection :: read(pos_t position, void* s, pos_t length)
    else return false;
 }
 
-Instance :: Instance(path_t rootPath)
+ELENARTMachine :: ELENARTMachine(path_t rootPath)
    : _rootPath(rootPath), _verbs(0)
 {
    ByteCodeCompiler::loadVerbs(_verbs);
 }
 
-bool Instance :: loadConfig(path_t configFile)
+bool ELENARTMachine :: loadConfig(path_t configFile)
 {
    Path configPath((path_t)_rootPath);
    configPath.combine(configFile);
@@ -66,7 +69,7 @@ bool Instance :: loadConfig(path_t configFile)
    return true;
 }
 
-void Instance :: init(void* debugSection, void* messageTable, path_t configPath)
+void ELENARTMachine :: init(void* debugSection, void* messageTable, path_t configPath)
 {
    IdentifierString package;
 
@@ -77,7 +80,7 @@ void Instance :: init(void* debugSection, void* messageTable, path_t configPath)
    _loader.setNamespace(package);
 }
 
-int Instance :: readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+int ELENARTMachine :: readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
 {
    RTManager manager;
 
@@ -87,7 +90,7 @@ int Instance :: readCallStack(size_t framePosition, size_t currentAddress, size_
    return manager.readCallStack(reader, framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
-int Instance :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
+int ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
 {
    RTManager manager;
    MemoryReader reader(&_debugSection, _debugOffset);
@@ -95,7 +98,7 @@ int Instance :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
    return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
 
-int Instance :: loadClassName(size_t classAddress, char* buffer, size_t length)
+int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t length)
 {
    RTManager manager;
    MemoryReader reader(&_debugSection, _debugOffset);
@@ -103,7 +106,7 @@ int Instance :: loadClassName(size_t classAddress, char* buffer, size_t length)
    return manager.readClassName(reader, classAddress, buffer, length);
 }
 
-bool Instance :: initSubjectSection(ImageSection& subjectSection)
+bool ELENARTMachine :: initSubjectSection(ImageSection& subjectSection)
 {
    void* ptr = _debugSection.get(_debugSection.Length());
    int size = *((int*)ptr);
@@ -116,7 +119,7 @@ bool Instance :: initSubjectSection(ImageSection& subjectSection)
    else return false;
 }
 
-int Instance::loadSubjectName(size_t subject, char* buffer, size_t length)
+int ELENARTMachine :: loadSubjectName(size_t subject, char* buffer, size_t length)
 {
    RTManager manager;
 
@@ -131,7 +134,7 @@ int Instance::loadSubjectName(size_t subject, char* buffer, size_t length)
    else return 0;
 }
 
-int Instance :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
+int ELENARTMachine :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
 {
    RTManager manager;
 
@@ -172,7 +175,7 @@ int Instance :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
    else return 0;
 }
 
-void* Instance :: loadSymbol(ident_t name)
+void* ELENARTMachine :: loadSymbol(ident_t name)
 {
    RTManager manager;
    MemoryReader reader(&_debugSection, _debugOffset);
@@ -180,7 +183,7 @@ void* Instance :: loadSymbol(ident_t name)
    return manager.loadSymbol(reader, name);
 }
 
-void* Instance :: loadSubject(ident_t name)
+void* ELENARTMachine :: loadSubject(ident_t name)
 {
    if (name.find('$') != -1) {
       //setStatus("Invalid subject");
@@ -206,7 +209,7 @@ void* Instance :: loadSubject(ident_t name)
    else return NULL;
 }
 
-void* Instance :: loadMessage(ident_t name)
+void* ELENARTMachine :: loadMessage(ident_t name)
 {
    if (name.find('$') != -1) {
       //setStatus("Invalid subject");

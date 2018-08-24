@@ -10,7 +10,14 @@
 
 using namespace _ELENA_;
 
-static Instance* instance = NULL;
+static ELENARTMachine* Instance = NULL;
+
+EXTERN_DLL_EXPORT void Initialize(void* entryPoint)
+{
+   return Instance->start(entryPoint);
+}
+
+// !!
 
 void loadDLLPath(HMODULE hModule, Path& rootPath)
 {
@@ -29,11 +36,11 @@ void init(HMODULE hModule)
    Path rootPath;
    loadDLLPath(hModule, rootPath);
 
-   instance = new Instance(rootPath.c_str());
+   Instance = new ELENARTMachine(rootPath.c_str());
 
    void* debugSection = NULL;
    void* messageSection = NULL;
-   Instance::ImageSection section;
+   ELENARTMachine::ImageSection section;
    section.init((void*)0x400000, 0x1000);
 
    size_t ptr = 0;
@@ -44,22 +51,22 @@ void init(HMODULE hModule)
    messageSection = (void*)ptr;
 
    Path configPath(CONFIG_PATH);
-   instance->init(debugSection, messageSection, configPath.c_str());
+   Instance->init(debugSection, messageSection, configPath.c_str());
 }
 
 EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
 {
-   return ((Instance*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
+   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
 EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
 {
-   return instance->loadAddressInfo(retPoint, lineInfo, length);
+   return Instance->loadAddressInfo(retPoint, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)
 {
-   return instance->loadClassName((size_t)object, buffer, length);
+   return Instance->loadClassName((size_t)object, buffer, length);
 }
 
 EXTERN_DLL_EXPORT void* EvaluateTape(void* tape)
@@ -81,32 +88,27 @@ EXTERN_DLL_EXPORT void* GetVMLastError(void* retVal)
 
 EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, char* lineInfo, int length)
 {
-   return instance->loadSubjectName((size_t)subject, lineInfo, length);
+   return Instance->loadSubjectName((size_t)subject, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
 {
-   return instance->loadSubject((const char*)subjectName);
+   return Instance->loadSubject((const char*)subjectName);
 }
 
 EXTERN_DLL_EXPORT int LoadMessageName(void* subject, char* lineInfo, int length)
 {
-   return instance->loadMessageName((size_t)subject, lineInfo, length);
+   return Instance->loadMessageName((size_t)subject, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
 {
-   return instance->loadMessage((const char*)messageName);
+   return Instance->loadMessage((const char*)messageName);
 }
 
 EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
 {
-   return instance->loadSymbol((const char*)referenceName);
-}
-
-EXTERN_DLL_EXPORT void Initialize(void* entryPoint)
-{
-   return instance->start(entryPoint);
+   return Instance->loadSymbol((const char*)referenceName);
 }
 
 // --- dllmain ---
@@ -128,7 +130,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
    case DLL_THREAD_DETACH:
       return TRUE;
    case DLL_PROCESS_DETACH:
-      freeobj(instance);
+      freeobj(Instance);
       break;
    }
    return TRUE;

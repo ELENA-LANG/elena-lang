@@ -8,13 +8,14 @@
 #define elenartmachineH 1
 
 #include "libman.h"
+#include "elenamachine.h"
 
 namespace _ELENA_
 {
 
-// --- Instance ---
+// --- ELENARTMachine ---
 
-class Instance
+class ELENARTMachine
 {
 public:
    class ImageSection : public _Memory
@@ -129,9 +130,9 @@ public:
 
    void start(void* programEntry);
 
-   Instance(path_t rootPath);
+   ELENARTMachine(path_t rootPath);
 
-   virtual ~Instance()
+   virtual ~ELENARTMachine()
    {
    }
 };

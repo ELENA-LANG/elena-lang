@@ -10,6 +10,7 @@
 #include "loader.h"
 #include "config.h"
 #include "libman.h"
+#include "elenamachine.h"
 
 #define VM_INIT           "$native'coreapi'vm_console_entry"
 
@@ -23,22 +24,6 @@
 
 namespace _ELENA_
 {
-
-// --- _Entry ---
-
-struct _Entry
-{
-   union {
-      void* address;
-      void(*entry)(void);
-      int(*evaluate)(void*);
-   };
-
-   _Entry()
-   {
-      address = NULL;
-   }
-};
 
 typedef Map<ident_t, char*> Templates;
 typedef Map<ident_t, char*> Primitives;
