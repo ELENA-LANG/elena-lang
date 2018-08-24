@@ -4,7 +4,7 @@ import system'net.
 import system'threading.
 //import system'text.
 
-sealed class TcpRemoteClient
+public sealed class TcpRemoteClient
 {
     T<Socket> theSocket.
     
@@ -52,10 +52,10 @@ public sealed class TcpServer
     T<ByteArray>          theBuffer.
     int                   theMaxLength.
 
-    Func<TcpRemoteClient,object>           event onConnect  :: theConnectFunc.
-    Func<TcpRemoteClient,object>           event onLeave    :: theLeaveFunc.
-    Func<TcpRemoteClient,ByteArray,int>    event onReceived :: theReadFunc.
-    Func<TcpRemoteClient,Exception,object> event onError    :: theErrorFunc.
+    Func<TcpRemoteClient,object>               event onConnect  :: theConnectFunc.
+    Func<TcpRemoteClient,object>               event onLeave    :: theLeaveFunc.
+    Func<TcpRemoteClient,ByteArray,int,object> event onReceived :: theReadFunc.
+    Func<TcpRemoteClient,Exception,object>     event onError    :: theErrorFunc.
     
     constructor new(int port)
         <= new(port, 1024).

@@ -86,45 +86,42 @@ sealed class ChatServer
     
     start
     [
-//        theNetworkServer set tcp_server_listener:TcpServerListener::
-//        {
-//            onConnect:client
-//            [
+        theNetworkServer onConnect := (:client)<TcpRemoteClient>
+        [
 //                lock (theLock)
 //                [
 //                    console writeLine:"new client joint".
 //                
 //                    client set Parameter(ChatMember new:client of:$self).
-//                ].                    
-//            ]
-//            
-//            onLeave:client
-//            [
+//                ].                                
+        ].
+        
+        theNetworkServer onLeave := (:client)<TcpRemoteClient>
+        [
 //                lock (theLock)
 //                [
 //                    console writeLine:"client left".
 //                ].
-//            ]
-//            
-//            onError:e for:client
-//            [
+        ].
+        
+        theNetworkServer onError := (:client:e)<TcpRemoteClient,Exception>
+        [
 //                lock (theLock)
 //                [
 //                    console printLine("exception #",e error_code).
 //                ].
-//            ]
-//            
-//            onReceived object:client bytearray:buffer int:length 
-//            [
+        ].
+        
+        theNetworkServer onReceived := (:client:data:length)<TcpRemoteClient,ByteArray,int>
+        [
 //                lock (theLock)
 //                [
 //                    client Parameter; chatter; write bytearray:buffer int:length.
-//                ].                
-//            ]
-//        }.
-//        
-//        theNetworkServer start.
-//        
+//                ].                        
+        ].
+        
+        theNetworkServer start.
+        
 //        theBroadcastThread := Thread new func:
 //        [
 //            while($self proceed) [].
