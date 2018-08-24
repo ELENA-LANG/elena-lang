@@ -1,4 +1,4 @@
-//import system'collections.
+import system'collections.
 //import system'routines.
 import system'net.
 import system'threading.
@@ -6,36 +6,28 @@ import system'threading.
 
 sealed class TcpRemoteClient
 {
-//    socket theSocket.
-//    object theParameter.
-//    
-//    constructor new socket:socket
-//    [
-//        theSocket := socket.
-//    ]
-//    
-//    stacksafe read bytearray:buffer int:maxLength vint:received
-//    [
-//        theSocket read bytearray:buffer int:maxLength int:0 vint:received.
-//    ]
-//    
+    T<Socket> theSocket.
+    
+    object prop Parameter :: theParameter.
+    
+    constructor new(Socket socket)
+    [
+        theSocket := socket.
+    ]
+    
+    stacksafe read(ByteArray buffer, int maxLength, ref<int> recv)
+    [
+        theSocket read(buffer, maxLength, 0, recv).
+    ]
+    
 //    stacksafe write bytearray:buffer int:length
 //    [
 //        int sent := 0.
 //        theSocket write bytearray:buffer int:length int:0 vint:sent.
 //    ]
-//    
-//    tcp_remoteclient = $self.
-//    
-//    set Parameter:object
-//    [
-//        theParameter := object.
-//    ]
-//    
-//    close
-//        => theSocket.
-//    
-//    Parameter = theParameter.
+    
+    close
+        => theSocket.
 }
 
 //type tcp_server_listener = TcpServerListener.
@@ -54,23 +46,26 @@ sealed class TcpRemoteClient
 
 public sealed class TcpServer
 {
-    T<Socket>   theListenSocket.
-//    array_list theClients.
-    T<Thread>   theListenThread.
-//    bytearray  theBuffer.
-//    int        theMaxLength.
-//    
-//    tcp_server_listener theListener.
+    T<Socket>             theListenSocket.
+    List<TcpRemoteClient> theClients.
+    T<Thread>             theListenThread.
+    T<ByteArray>          theBuffer.
+    int                   theMaxLength.
+
+    Func<TcpRemoteClient,object>           event onConnect  :: theConnectFunc.
+    Func<TcpRemoteClient,object>           event onLeave    :: theLeaveFunc.
+    Func<TcpRemoteClient,ByteArray,int>    event onReceived :: theReadFunc.
+    Func<TcpRemoteClient,Exception,object> event onError    :: theErrorFunc.
     
     constructor new(int port)
         <= new(port, 1024).
     
     constructor new(int port, int bufferSize)
     [
-//        theMaxLength := size int.
-//        theBuffer := ByteArray new int:theMaxLength.
-//        
-//        theClients := ArrayList new.
+        theMaxLength := bufferSize.
+        theBuffer := ByteArray new(theMaxLength).
+
+        theClients := List<TcpRemoteClient>().
         
         //resolve server address and port
         T<AddrInfo> addrinfo := AddrInfo new.
@@ -124,83 +119,83 @@ public sealed class TcpServer
     
     private T<TcpRemoteClient> newClient
     [
-//        auto socket := theListenSocket accept.
+        auto socket := theListenSocket accept.
         T<TcpRemoteClient> client := nil.
-//        if ($nil != socket)
-//        [
-//            socket option int:IPPROTO_TCP int:TCP_NODELAY bool:true.
-//            
-//            client := TcpRemoteClient new socket:socket.
-//            
-//            theClients append:client.
-//        ].
+        if (nil != socket)
+        [
+            socket option(IPPROTO_TCP, TCP_NODELAY, true).
+            
+            client := TcpRemoteClient new(socket).
+            
+            theClients append:client
+        ].
         
-        ^ client.
+        ^ client
     ]
     
-//    closeClient : client
-//        <= close int(theClients indexOfElement:client).
-//    
-//    close int:index
-//    [
-//        var client := theClients getAt int:index.
-//        
-//        theClients remove int:index.
-//        
-//        client close.
-//                
-//        if ($nil != theListener)
-//            [ theListener onLeave:client. ].        
-//    ]
-//    
-//    onError:e for:client
-//    [
-//        if ($nil != theListener)
-//            [ theListener onError:e for:client. ].
-//        
-//        int err := e error_code.
-//        if (err == WSAECONNRESET)
-//            [ $self closeClient:client. ].
-//    ]
-//    
-//    readClients
-//    [
-//        int i := 0.
-//        int counter := theClients length.
-//        
-//        while (i < counter)
-//        [
-//            tcp_remoteclient client := theClients getAt int:i; tcp_remoteclient.
-//            int              received := 0.
-//            try(client read bytearray:theBuffer int:theMaxLength vint:received)
-//            {
-//                on(SocketException e)
-//                [
-//                    $self onError:e for:client.
-//                ]                
-//            }.
-//            
-//            if (received == 0)
-//                [ $self closeClient:client. ];
-//                [ 
-//                    if (received > 0)
-//                        [ theListener onReceived object:client bytearray:theBuffer int:received. ].
-//                ].
-//            
-//            i := i + 1.
-//        ].
-//    ]
+    private stacksafe closeClient(TcpRemoteClient client, int index)
+    [
+        theClients remove(index).
+        
+        client close.
+                
+        if (nil != theLeaveFunc)
+            [ theLeaveFunc(client) ].            
+    ]
+    
+    
+    private stacksafe handleError(SocketException e) for(TcpRemoteClient client) at(int n)
+    [
+        if (nil != theErrorFunc)
+            [ theErrorFunc(client, e) ].
+        
+        int err := e error_code.
+        if (err == WSAECONNRESET)
+            [ self closeClient(client, n) ].
+    ]
+    
+    private readClients
+    [
+        int i := 0.
+        int counter := theClients length.
+        
+        while (i < counter)
+        [
+            T<TcpRemoteClient> client := theClients[i].
+
+            int rcvd := 0.
+            try(client read(theBuffer, theMaxLength, &rcvd))
+            {
+                on(SocketException e)
+                [
+                    self handleError:e for:client at:i.
+                ]                
+            }.
+            
+            if (rcvd == 0)
+                [ self closeClient(client, i) ];
+                [ 
+                    if (rcvd > 0)
+                    [
+                        if (nil != theReadFunc)
+                            [ theReadFunc(client,theBuffer,rcvd) ]
+                    ]
+                ].
+            
+            i := i + 1
+        ].
+    ]
     
     private T<bool> proceed
     [
         auto client := self newClient.
-//        if ($nil != client)
-//        [
-//            if ($nil != theListener)
-//                [ theListener onConnect:client. ].
-//        ].
-//        
-//        $self readClients.
+        if (nil != client)
+        [
+            if(nil != theConnectFunc)
+                [ theConnectFunc(client) ]
+        ].
+
+        self readClients.
         
         ^ true.
     ]

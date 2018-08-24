@@ -234,7 +234,7 @@ public sealed const struct Socket
     [
         theHandle := system'external'WS2_32 socket(adressFamily, type, protocol).
         
-        if (INVALID_SOCKET == theHandle)
+        if (theHandle == INVALID_SOCKET)
             [ SocketException new:"Error at socket"; raise. ].
     ]
     
@@ -253,7 +253,7 @@ public sealed const struct Socket
     [
         int retVal := system'external'WS2_32 bind(theHandle, sockAddrPtr, nameLen).
             
-        if (SOCKET_ERROR == retVal)
+        if (retVal == SOCKET_ERROR)
             [ SocketException new:"Error at socket"; raise ].
     ]
 
@@ -261,7 +261,7 @@ public sealed const struct Socket
     [
         int aRetVal := system'external'WS2_32 listen(theHandle, backLog).
             
-        if (SOCKET_ERROR == aRetVal)
+        if (aRetVal == SOCKET_ERROR)
             [ SocketException new:"Error at socket"; raise ].
     ]
 
@@ -314,24 +314,20 @@ public sealed const struct Socket
 //            
 //        sent int := retVal.            
 //    ]
-//
-//    stacksafe read bytearray:buffer int:maxLength int:flags vint:received
-//    [
-//        int retVal := system'external'WS2_32 recv
-//            int:theHandle
-//            bytearray:buffer
-//            int:maxLength
-//            int:flags.
-//        
-//        if (SOCKET_ERROR == retVal)
-//        [
-//            int err := system'external'WS2_32 WSAGetLastError.
-//            if (err != WSAEWOULDBLOCK)
-//                [ SocketException new:"Error at socket"; raise ].
-//        ].
-//            
-//        received int := retVal.    
-//    ]
+
+    stacksafe read(ByteArray buffer, int maxLength, int flags, ref<int> recvd)
+    [
+        int retVal := system'external'WS2_32 recv(theHandle,buffer,maxLength,flags).
+        
+        if (retVal == SOCKET_ERROR)
+        [
+            int err := system'external'WS2_32 WSAGetLastError.
+            if (err != WSAEWOULDBLOCK)
+                [ SocketException new:"Error at socket"; raise ].
+        ].
+            
+        recvd value := retVal.    
+    ]
 
     T<Socket> accept  
     [
@@ -358,28 +354,23 @@ public sealed const struct Socket
     [
         int retVal := system'external'WS2_32 ioctlsocket(theHandle, command, parameter).
             
-        if (SOCKET_ERROR == retVal)
+        if (retVal == SOCKET_ERROR)
             [ SocketException new:"Error at socket"; raise ].
     ]
 
-//    stacksafe option int:aLevel int:anOption bool:aValue
-//    [
-//        int n := aValue iif(1,0).
-//        
-//        int aRetVal := system'external'WS2_32 setsockopt
-//            int:theHandle
-//            int:aLevel
-//            int:anOption
-//            vint:n
-//            int:1.
-//            
-//        if (SOCKET_ERROR == aRetVal)
-//            [ SocketException new:"Error at socket"; raise ]
-//    ]
-//
-//    stacksafe close
-//    [
-//        system'external'WS2_32 closesocket
-//            int:theHandle
-//    ]
+    stacksafe option(int level, int option, bool value)
+    [
+        int n := value iif(1,0).
+        
+        int retVal := system'external'WS2_32 setsockopt(
+                        theHandle, level, option, &n, 1).
+            
+        if (retVal == SOCKET_ERROR)
+            [ SocketException new:"Error at socket"; raise ]
+    ]
+
+    stacksafe close
+    [
+        system'external'WS2_32 closesocket(theHandle)
+    ]
 }

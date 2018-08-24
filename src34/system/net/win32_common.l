@@ -20,7 +20,7 @@ public const int SD_BOTH = 2.
 
 // --- WSAException ---
 
-class SocketException :: Exception
+public class SocketException :: Exception
 {
     int theCode.
     
