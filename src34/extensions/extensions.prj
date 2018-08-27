@@ -8,7 +8,7 @@
     </project>
     <manifest>
       <name>ELENA Extension Library</name>
-      <version>3.4.12</version>
+      <version>3.4.13</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>
@@ -29,6 +29,8 @@
             <include>routines\combinations.l</include>
         </module>
         <module name="dynamic">
+            <include>dynamic\json.l</include>
+            <include>dynamic\derserializer.l</include>
             <include>dynamic\tape_assembly.l</include>
             <include>dynamic\expressions\expressions.l</include>
         </module>

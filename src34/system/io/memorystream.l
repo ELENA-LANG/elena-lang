@@ -18,7 +18,7 @@ public sealed class MemoryBuffer
     constructor new
         <= new(TextPageSize).
     
-//    bytearray = ByteArray new int:0 int:theUsed bytearray:theBuffer.
+    cast T<ByteArray> = ByteArray new(0, theUsed value, theBuffer).
     
     private stacksafe reserve(int len)
     [

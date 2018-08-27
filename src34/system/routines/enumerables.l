@@ -155,10 +155,10 @@ public extension enumerableOp
     
 //    multi forEachPair:object:fn
 //        = self~enumerableOp forEachPair(object, (:o:n)[ fn(o,n) ]).
-//
-//    runFor(object aParam) eachPair(BaseFunction2 aFunction)
-//      = aFunction run object:aParam enumerator:(self enumerator).
-//
+
+    runFor(object param) eachPair(Func2 f)
+        = f run(param, T<Enumerator>(self enumerator)).
+
 //    runFor(object aParam) eachPair(ExtensionMessage anExtMessage)
 //        = self~enumerableOp runFor:aParam eachPair(:n:m)(n~anExtMessage eval:m).
 //

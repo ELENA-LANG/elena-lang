@@ -1,11 +1,11 @@
-//import system'text.
+import system'text.
 import system'io.
 //import extensions.
 //import extensions'dynamic.
-//
-//const int INTRODUCTION = 1.
-//const int SEND         = 2.
-//const int TRANSLATE    = 3.
+
+const int INTRODUCTION = 1.
+const int SEND         = 2.
+const int TRANSLATE    = 3.
 
 class BaseClient
 {
@@ -21,35 +21,35 @@ class BaseClient
         theBuffer write(0, length, buffer)
     ]
     
-//    readCommand
-//    [
-//        int len := theBuffer length.
-//        if (len > 0)
-//        [
-//            int package_len := 0.
-//            theBuffer read int:0 vint:package_len.
-//            
-//            if (package_len + 4 <= len)
-//            [
-//                literal literal := UTF8Encoding toLiteral int:4 int:package_len bytearray(theBuffer bytearray).
-//                
-//                var llen := literal length.
-//                
-//                theBuffer delete int:0 int(package_len + 4).
-//                
-//                ^ literal fromJson.
-//            ].
-//        ].
-//        
-//        ^ $nil.
-//    ]        
+    readCommand
+    [
+        int len := theBuffer length.
+        if (len > 0)
+        [
+            int package_len := 0.
+            theBuffer read(0, &package_len).
+            
+            if (package_len + 4 <= len)
+            [
+                literal literal := UTF8Encoding toLiteral(4, package_len, T<ByteArray>(theBuffer)). // !! should be optimized
+                
+                int llen := literal length.
+                
+                theBuffer delete(0, package_len + 4).
+                
+                ^ literal fromJson.
+            ].
+        ].
+        
+        ^ nil
+    ]        
 }
 
-//class CommandDTO
-//{
-//    dto_prop Command :: _command.
-//    
-//    dto_prop Value :: _value.
-//    
-//    dto_prop User :: _user.
-//}
+class CommandDTO
+{
+    dto_prop Command :: _command.
+    
+    dto_prop Value :: _value.
+    
+    dto_prop User :: _user.
+}

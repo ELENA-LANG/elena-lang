@@ -1,4 +1,4 @@
-//import system'routines'stex.
+import system'routines'stex.
 //import system'text.
 //import system'io.
 import system'threading.
@@ -51,37 +51,33 @@ sealed class ChatServer
     
     private proceed
     [
-//        theNetworkServer Clients; forEach(:client)<TcpRemoteClient>
-//        [
-//        ].
-        
-//        theNetworkServer run eachConnection(:client)
-//        [
-//            lock (theLock)
-//            [
-//                var member := client Parameter.
-//                if($nil != member)
-//                [
-//                    var command := member readCommand.
-//                    if ($nil != command)
-//                        [
-//                            (command Command) =>
-//                                INTRODUCTION
-//                                [
-//                                    member Name := command Value.
-//                                    
-//                                    console printLine(command Value," joined").
-//                                ];
-//                                SEND
-//                                [
-//                                    console printLine(member Name,":",command Value).
-//                                    
-//                                    member server; translate:CommandDTO::{ @_command := TRANSLATE. @_value := command Value. @_user := member Name. }.
-//                                ].
-//                        ].                
-//                ].
-//            ].
-//        ].        
+        theNetworkServer Clients; forEach(:client)<TcpRemoteClient>
+        [
+            lock (theLock)
+            [
+                auto member := T<ChatMember>(client Parameter).
+                if(nil != member)
+                [
+                    var command := member readCommand.
+                    if (nil != command)
+                        [
+                            (command Command) =>
+                                INTRODUCTION
+                                [
+                                    member Name := command Value.
+                                    
+                                    console printLine(command Value," joined").
+                                ];
+                                SEND
+                                [
+                                    console printLine(member Name,":",command Value).
+                                    
+                                    member server; translate:CommandDTO::{ @_command := TRANSLATE. @_value := command Value. @_user := member Name. }.
+                                ]
+                        ]
+                ]
+            ]
+        ].
         
         ^ true.
     ]

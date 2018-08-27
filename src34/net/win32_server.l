@@ -30,20 +30,6 @@ public sealed class TcpRemoteClient
         => theSocket.
 }
 
-//type tcp_server_listener = TcpServerListener.
-//limited class TcpServerListener
-//{
-//    onConnect:client []
-//    
-//    onLeave:client []
-//    
-//    onError:e for:client []
-//    
-//    stacksafe onReceived object:client bytearray:buffer int:length []    
-//    
-//    tcp_server_listener = $self.
-//}
-
 public sealed class TcpServer
 {
     T<Socket>             theListenSocket.
@@ -95,12 +81,7 @@ public sealed class TcpServer
         theListenSocket listen(SOMAXCONN).
     ]
 
-//    Enumerable<TcpRemoteClient> Clients = Enumerable<TcpRemoteClient>::{ /*embeddable dispatch => theClients.*/Enumerator<TcpRemoteClient> enumerator => theClients. }.
-
-//    run eachConnection:func1
-//    [
-//        theClients forEach:func1.
-//    ]
+    Enumerable<TcpRemoteClient> Clients = Enumerable<TcpRemoteClient>::{ /*embeddable dispatch => theClients.*/Enumerator<TcpRemoteClient> enumerator => theClients. }.
 
     set Blocking(bool val)
     [

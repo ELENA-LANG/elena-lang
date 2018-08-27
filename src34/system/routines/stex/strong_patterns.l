@@ -6,9 +6,9 @@ public StrongSumming<type> :: Func<type,object>
 {
     ref<type> result.
     
-    constructor
+    constructor(ref<type> acc)
     [
-        result := T<type>().
+        result := acc.
     ]
 
     run(Enumerator<type> e)
