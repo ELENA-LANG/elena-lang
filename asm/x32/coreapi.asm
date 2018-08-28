@@ -12,7 +12,6 @@ define CLOSETHREAD       1001Ch
 define EXIT              1001Dh
 define CALC_SIZE         1001Fh
 define GET_COUNT         10020h
-define PREPARE           10027h
 define EXITTHREAD        1002Ah
 
 define CORE_OS_TABLE     20009h

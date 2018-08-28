@@ -114,6 +114,7 @@
     <ClCompile Include="..\..\engine\rtman.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\win32\pehelper.cpp" />
+    <ClCompile Include="..\..\engine\win32\systemroutines.cpp" />
     <ClCompile Include="..\elenartmachine.cpp" />
     <ClCompile Include="..\win32\dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

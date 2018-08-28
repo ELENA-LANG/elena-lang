@@ -17,7 +17,6 @@ define GET_COUNT            10020h
 define THREAD_WAIT          10021h
 define NEW_HEAP             10025h
 define BREAK                10026h
-define PREPARE              10027h
 define EXPAND_HEAP          10028h
 
 define CORE_EXCEPTION_TABLE 20001h

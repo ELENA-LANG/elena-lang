@@ -17,7 +17,6 @@ define UNLOCK               10022h
 define LOAD_CALLSTACK       10024h
 define NEW_HEAP             10025h
 define BREAK                10026h
-define PREPARE              10027h
 define EXPAND_HEAP          10028h
 define EXITTHREAD           1002Ah
 define NEW_EVENT            10101h
@@ -29,12 +28,6 @@ define GC_HEAP_ATTRIBUTE    00Dh
 structure % CORE_OS_TABLE
 
   dd 0 // ; dummy
-
-end
-
-procedure % PREPARE
-
-  ret    // ; idle
 
 end
 

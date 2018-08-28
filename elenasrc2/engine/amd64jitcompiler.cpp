@@ -37,7 +37,6 @@ const int elObjectOffset = 0x0010;           // object header / offset constant
 //#define THREAD_WAIT          0x10021
 //#define NEW_HEAP             0x10025
 //#define BREAK                0x10026
-#define PREPARE              0x10027
 //#define EXPAND_HEAP          0x10028
 //#define EXITTHREAD           0x1002A
 //#define NEW_EVENT            0x10101
@@ -59,12 +58,12 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = /*22*/4;
+const int coreFunctionNumber = /*22*/3;
 const int coreFunctions[coreFunctionNumber] =
 {
 /*   NEW_HEAP, EXPAND_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, */INIT, NEWFRAME, //INIT_ET, ENDFRAME, RESTORE_ET,
 /*   OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, */EXIT, //CALC_SIZE, GET_COUNT,
-/*   THREAD_WAIT, EXITTHREAD, */PREPARE//, NEW_EVENT
+/*   THREAD_WAIT, EXITTHREAD, NEW_EVENT*/
 };
 
 // preloaded gc commands
@@ -1599,9 +1598,6 @@ void AMD64JITCompiler :: generateProgramStart(MemoryDump& tape)
    JITCompiler64::generateProgramStart(tape);
 
    MemoryWriter ecodes(&tape);
-   ecodes.writeByte(bcCallExtR);
-   ecodes.writeDWord(PREPARE | mskPreloadCodeRef);
-
    ecodes.writeByte(bcCallExtR);
    ecodes.writeDWord(INIT | mskPreloadCodeRef);
 

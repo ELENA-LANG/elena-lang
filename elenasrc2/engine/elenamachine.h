@@ -26,6 +26,20 @@ struct _Entry
    }
 };
 
+// --- SystemRoutineProvider ---
+
+static class SystemRoutineProvider
+{
+public:
+   static void Prepare();
+
+   static void InitSTA();
+
+   static void NewFrame();
+
+   static void Exit();
+
+} __routineProvider;
 
 } // _ELENA_
 

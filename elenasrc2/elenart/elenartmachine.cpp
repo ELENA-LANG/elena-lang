@@ -17,10 +17,12 @@ using namespace _ELENA_;
 
 // --- Instance ---
 
-void ELENARTMachine :: start(void* programEntry)
+void ELENARTMachine :: startSTA(void* programEntry)
 {
    // setting up system
-   //prepare();
+   __routineProvider.Prepare();
+   __routineProvider.InitSTA();
+   __routineProvider.NewFrame();
 
    _Entry entry;
    entry.address = programEntry;
@@ -28,6 +30,7 @@ void ELENARTMachine :: start(void* programEntry)
    (*entry.entry)();
 
    // winding down system
+   __routineProvider.Exit();
 }
 
 // !! --
