@@ -80,8 +80,11 @@ void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Modul
          if (test(key.value2, maActionMask)) {
             value = importAction(exporter, value, module);
          }
-         else if (test(key.value2, maRefefernceMask))
+         else if (test(key.value2, maRefefernceMask)) {
             value = importReference(exporter, value, module);
+         }
+         else if (test(key.value2, maMessageMask))
+            value = importMessage(exporter, value, module);
 
          target.methodHints.add(
             Attribute(importMessage(exporter, key.value1, module), key.value2),

@@ -169,7 +169,7 @@ public sealed struct AddrInfoReader
     stacksafe embeddable constructor new(literal service, AddrInfo info)
     [
         dirty_ptr ptr := T<dirty_ptr>().
-        int retVal := system'external'WS2_32 getaddrinfo(0, service, info, ptr).
+        int retVal := system'external'WS2_32 getaddrinfo(0, service, info, &ptr).
             
         ifnot (0 == retVal)
             [ SocketException new:"getaddrinfo failed" error_code(retVal); raise ].
@@ -300,20 +300,16 @@ public sealed const struct Socket
 //        
 //        ^ sent.
 //    ]
-//
-//    stacksafe write bytearray:buffer int:length int:flags vint:sent
-//    [
-//        int retVal := system'external'WS2_32 send 
-//            int:theHandle
-//            bytearray:buffer
-//            int:length
-//            int:flags.
-//            
-//        if (SOCKET_ERROR == retVal)
-//            [ SocketException new:"Error at socket"; raise ].
-//            
-//        sent int := retVal.            
-//    ]
+
+    stacksafe write(ByteArray buffer, int length, int flags, ref<int> sent)
+    [
+        int retVal := system'external'WS2_32 send(theHandle, buffer, length, flags).
+            
+        if (retVal == SOCKET_ERROR)
+            [ SocketException new:"Error at socket"; raise ].
+            
+        sent value := retVal.            
+    ]
 
     stacksafe read(ByteArray buffer, int maxLength, int flags, ref<int> recvd)
     [
@@ -340,15 +336,13 @@ public sealed const struct Socket
             [ ^ nil ]
     ]
 
-//    stacksafe shutdown int:how
-//    [
-//        int aRetVal := system'external'WS2_32 shutdown
-//            int:theHandle
-//            int:how.
-//            
-//        if (SOCKET_ERROR == aRetVal)
-//            [ SocketException new:"Error at socket"; raise. ].
-//    ]
+    stacksafe shutdown(int how)
+    [
+        int retVal := system'external'WS2_32 shutdown(theHandle, how).
+            
+        if (retVal == SOCKET_ERROR)
+            [ SocketException new:"Error at socket"; raise ]
+    ]
 
     stacksafe iocommand(int command, ref<int> parameter)
     [

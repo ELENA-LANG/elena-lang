@@ -114,6 +114,9 @@ private:
    bool initSubjectSection(ImageSection& subjectSection);
 
 public:
+   void start(void* programEntry);
+
+   // !! 
    int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
    int loadAddressInfo(size_t retPoint, char* lineInfo, size_t length);
@@ -127,8 +130,6 @@ public:
    void* loadMessage(ident_t name);
 
    void init(void* debugSection, void* messageTable,  path_t configPath);
-
-   void start(void* programEntry);
 
    ELENARTMachine(path_t rootPath);
 

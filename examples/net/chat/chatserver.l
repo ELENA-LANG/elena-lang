@@ -10,8 +10,8 @@ sealed class ChatMember :: BaseClient
 {
     T<TcpRemoteClient> theOwner.
     T<ChatServer>      theServer.
-//    
-//    literal prop Name :: theName.
+    
+    literal prop Name :: theName.
 
     constructor new(TcpRemoteClient owner) of(ChatServer server)
         <= new;
@@ -21,9 +21,7 @@ sealed class ChatMember :: BaseClient
         theServer := server.
     ]    
     
-//    server = theServer.
-//    
-//    chatter = $self.
+    T<ChatServer> server = theServer.
 }
 
 sealed class ChatServer
@@ -42,12 +40,12 @@ sealed class ChatServer
         theNetworkServer Blocking := false.
     ]
     
-//    translate : command
-//    [
-//        literal json := command toJson; literal.
-//        
-//        theNetworkServer sendAll int(json length); sendAll literal:json.
-//    ]
+    translate : command
+    [
+        literal json := command toJson.
+        
+        theNetworkServer sendAll(json length); sendAll(json).
+    ]
     
     private proceed
     [

@@ -1,7 +1,7 @@
 import system'text.
 import system'io.
 //import extensions.
-//import extensions'dynamic.
+import extensions'dynamic.
 
 const int INTRODUCTION = 1.
 const int SEND         = 2.

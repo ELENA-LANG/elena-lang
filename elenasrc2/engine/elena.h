@@ -486,7 +486,7 @@ enum MethodAttribute
 {
    maActionMask         = 0x100,
    maRefefernceMask     = 0x200,
-//   maVerb               = 0x400,
+   maMessageMask        = 0x400,
 
    maNone               = 0x000,
    maHint               = 0x001,

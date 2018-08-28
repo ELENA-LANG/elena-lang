@@ -1647,7 +1647,7 @@ public extension<char> charOp
 
 // --- byteArrayHelper ---
 
-singleton byteArrayHelper
+public singleton byteArrayHelper
 {
     stacksafe read(ByteArray array, int offset, ref<short> retVal)
     [

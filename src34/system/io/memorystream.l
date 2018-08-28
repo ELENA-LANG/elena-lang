@@ -84,13 +84,16 @@ public sealed class MemoryBuffer
             ]
     ]
     
-//    stacksafe read int:index vint:retVal
-//    [
-//        if(index > theUsed)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theBuffer read int:index vint:retVal
-//    ]
+    stacksafe read(int index, ref<int> retVal)
+    [
+        int used := 0.
+        theUsed readValueTo(&used).
+        
+        if(index > used)
+            [ OutOfRangeException new; raise ].
+        
+        theBuffer read(index, retVal)
+    ]
     
     stacksafe read(int index, int length, ByteArray array)
     [

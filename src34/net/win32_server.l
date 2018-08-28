@@ -2,7 +2,7 @@ import system'collections.
 //import system'routines.
 import system'net.
 import system'threading.
-//import system'text.
+import system'text.
 
 public sealed class TcpRemoteClient
 {
@@ -20,11 +20,11 @@ public sealed class TcpRemoteClient
         theSocket read(buffer, maxLength, 0, recv).
     ]
     
-//    stacksafe write bytearray:buffer int:length
-//    [
-//        int sent := 0.
-//        theSocket write bytearray:buffer int:length int:0 vint:sent.
-//    ]
+    stacksafe write(ByteArray buffer, int length)
+    [
+        int sent := 0.
+        theSocket write(buffer, length, 0, &sent).
+    ]
     
     close
         => theSocket.
@@ -94,11 +94,6 @@ public sealed class TcpServer
 
         theListenSocket iocommand(FIONBIO, &mode).
     ]    
-    
-//    set tcp_server_listener:listener
-//    [
-//        theListener := listener.
-//    ]
     
     private T<TcpRemoteClient> newClient
     [
@@ -193,59 +188,59 @@ public sealed class TcpServer
         theListenThread start.
     ]
     
-//    stacksafe sendAll bytearray:buffer int:length
-//    [
-//        int i := 0.
-//        int counter := theClients length.
-//        
-//        while (i < counter)
-//        [
-//            tcp_remoteclient client := theClients getAt int:i; tcp_remoteclient.
-//            
-//            client write bytearray:buffer int:length.
-//            
-//            i := i + 1.
-//        ].
-//    ]
-//    
-//    stacksafe sendAll literal:s
-//    [
-//        byte<256> buffer.
-//        int       len := s length.
-//        int       buf_len := 256.
-//        int       index := 0.
-//        while (len > 0)
-//        [
-//            if (len < 256)
-//                [ buf_len := len. ];
-//                [ buf_len := 256. ].
-//            
-//            UTF8Encoding convert int:index int:buf_len literal:s bytearray:buffer.
-//            
-//            $self sendAll bytearray:buffer int:buf_len.
-//            
-//            len := len - buf_len.
-//            index := index + buf_len.
-//        ].
-//    ]
-//    
-//    stacksafe sendAll int:n
-//    [
-//        byte<4> buffer.
-//        byteArrayHelper write bytearray:buffer int:0 int:n.
-//        
-//        $self sendAll bytearray:buffer int:4.
-//    ]
-//    
+    T<TcpServer> stacksafe sendAll(ByteArray buffer, int length)
+    [
+        int i := 0.
+        int counter := theClients length.
+        
+        while (i < counter)
+        [
+            T<TcpRemoteClient> client := theClients[i].
+            
+            client write(buffer, length).
+            
+            i := i + 1
+        ]
+    ]
+    
+    T<TcpServer> stacksafe sendAll(literal s)
+    [
+        T<byte,256> buffer.
+        int         len := s length.
+        int         buf_len := 256.
+        int         index := 0.
+        while (len > 0)
+        [
+            if (len < 256)
+                [ buf_len := len. ];
+                [ buf_len := 256. ].
+            
+            UTF8Encoding convert(index, buf_len, s, T<ByteArray>(buffer)).
+            
+            self sendAll(T<ByteArray>(buffer), buf_len).
+            
+            len := len - buf_len.
+            index := index + buf_len.
+        ].
+    ]
+    
+    T<TcpServer> stacksafe sendAll(int n)
+    [
+        T<byte,4> buffer.
+        byteArrayHelper write(buffer, 0, n).
+        
+        self sendAll(T<ByteArray>(buffer), 4).
+    ]
+    
 //    stacksafe send int:index bytearray:buffer int:length    
 //    [
 //        theClients getAt int:index; tcp_remoteclient; write bytearray:buffer int:length.
 //    ]
-//    
-//    close
-//    [
-//        theListenSocket shutdown int:SD_BOTH.
-//        
-//        theListenSocket close.
-//    ]
+    
+    close
+    [
+        theListenSocket shutdown(SD_BOTH).
+        
+        theListenSocket close.
+    ]
 }

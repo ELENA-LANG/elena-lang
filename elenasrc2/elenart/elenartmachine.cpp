@@ -19,10 +19,15 @@ using namespace _ELENA_;
 
 void ELENARTMachine :: start(void* programEntry)
 {
+   // setting up system
+   //prepare();
+
    _Entry entry;
    entry.address = programEntry;
 
    (*entry.entry)();
+
+   // winding down system
 }
 
 // !! --

@@ -14,7 +14,7 @@ static ELENARTMachine* Instance = NULL;
 
 EXTERN_DLL_EXPORT void Initialize(void* entryPoint)
 {
-   return Instance->start(entryPoint);
+   Instance->start(entryPoint);
 }
 
 // !!
