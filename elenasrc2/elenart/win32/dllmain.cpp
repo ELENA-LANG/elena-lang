@@ -12,9 +12,9 @@ using namespace _ELENA_;
 
 static ELENARTMachine* Instance = NULL;
 
-EXTERN_DLL_EXPORT void Initialize(void* entryPoint)
+EXTERN_DLL_EXPORT void InitializeSTA(void* systeEnv, void* entryPoint)
 {
-   Instance->startSTA(entryPoint);
+   Instance->startSTA(systeEnv, entryPoint);
 }
 
 // !!

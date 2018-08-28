@@ -59,6 +59,7 @@ enum ByteCode
    bcTryLock         = 0x27,
    bcFreeLock        = 0x28,
    bcRethrow         = 0x29,
+   bcSystem          = 0x2A,
    bcESwap           = 0x2C,
    bcBSwap           = 0x2D,
    bcCopy            = 0x2E,           

@@ -26,6 +26,14 @@ struct _Entry
    }
 };
 
+// --- SystemEnv ---
+
+struct SystemEnv
+{
+   size_t StatLength;
+   void*  StatRoots;
+};
+
 // --- SystemRoutineProvider ---
 
 static class SystemRoutineProvider
@@ -33,7 +41,7 @@ static class SystemRoutineProvider
 public:
    static void Prepare();
 
-   static void InitSTA();
+   static void InitSTA(SystemEnv* env);
 
    static void NewFrame();
 

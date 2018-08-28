@@ -17,11 +17,11 @@ using namespace _ELENA_;
 
 // --- Instance ---
 
-void ELENARTMachine :: startSTA(void* programEntry)
+void ELENARTMachine :: startSTA(void* env, void* programEntry)
 {
    // setting up system
    __routineProvider.Prepare();
-   __routineProvider.InitSTA();
+   __routineProvider.InitSTA((SystemEnv*)env);
    __routineProvider.NewFrame();
 
    _Entry entry;

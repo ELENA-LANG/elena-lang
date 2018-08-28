@@ -368,6 +368,8 @@ ELENA byte codes (or ecodes)
  
  freelock                   - free eax
 
+ system                     - %SYSTEM_ENV => ext 
+
 
  Frame operations:
  -----------------              

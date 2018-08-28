@@ -21,7 +21,7 @@ const char* _fnOpcodes[256] =
    "get", "set", "inc", "equit", "count", "unhook", "add", "create",
 
    "ecopyd", "dcopye", "pushd", "popd", "xcopy", "include", "exclude", "trylock",
-   "freelock", "rethrow", "unknown", "unknown", "eswap", "bswap", "copy", "xset",
+   "freelock", "rethrow", "system", "unknown", "eswap", "bswap", "copy", "xset",
 
    "xlen", "blen", "wlen", "flag", "nlen", "parent", "class", "mindex",
    "check", "acallvd", "validate", "unknown", "unknown", "unknown", "unknown", "unknown",

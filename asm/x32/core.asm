@@ -22,11 +22,11 @@ define EXPAND_HEAP          10028h
 define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
 define CORE_GC_SIZE         20003h
-define CORE_STAT_COUNT      20004h
 define CORE_STATICROOT      20005h
 define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
 define CORE_ET_TABLE        2000Bh
+define SYSTEM_ENV           2000Ch
 
 // CORE GC SIZE OFFSETS
 define gcs_MGSize	0000h
@@ -46,6 +46,9 @@ define gc_end                0024h
 define gc_ext_stack_frame    002Ch
 define gc_mg_wbar            0030h
 define gc_stack_bottom       0034h
+
+// SYSTEM_ENV OFFSETS
+define se_statlen            0000h
 
 // Page Size
 define page_size               10h
@@ -101,6 +104,13 @@ structure %CORE_GC_TABLE
 
 end
 
+rstructure %SYSTEM_ENV
+
+  dd 0
+  dd data : %CORE_STATICROOT
+
+end
+
 // --- GC_ALLOC ---
 // in: ecx - counter ; ebx - size ; ecx - actual size ; out: eax - created object ; edi contains the object or zero
 procedure %GC_ALLOC
@@ -138,7 +148,7 @@ labYGCollect:
 
   // ; save static roots
   mov  esi, data : %CORE_STATICROOT
-  mov  ecx, [data : %CORE_STAT_COUNT]
+  mov  ecx, [data : %SYSTEM_ENV + se_statlen]
   push esi
   push ecx
 
@@ -834,7 +844,7 @@ procedure % INIT
 
   // ; initialize
 
-  mov  ecx, [data : %CORE_STAT_COUNT]
+  mov  ecx, [data : %SYSTEM_ENV + se_statlen]
   mov  edi, data : %CORE_STATICROOT
   shr  ecx, 2
   xor  eax, eax
@@ -1282,6 +1292,14 @@ inline % 29h
   mov  [data : %CORE_EXCEPTION_TABLE ], esi
 
   jmp  [data : %CORE_EXCEPTION_TABLE]
+
+end
+
+// ; system
+
+inline % 2Ah
+
+  mov  ecx, rdata : %SYSTEM_ENV
 
 end
 

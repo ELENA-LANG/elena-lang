@@ -114,7 +114,7 @@ private:
    bool initSubjectSection(ImageSection& subjectSection);
 
 public:
-   void startSTA(void* programEntry);
+   void startSTA(void* env, void* programEntry);
 
    // !! 
    int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);

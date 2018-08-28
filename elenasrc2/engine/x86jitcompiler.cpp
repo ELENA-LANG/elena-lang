@@ -43,13 +43,13 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define CORE_EXCEPTION_TABLE 0x20001
 #define CORE_GC_TABLE        0x20002
 #define CORE_GC_SIZE         0x20003
-#define CORE_STAT_COUNT      0x20004
 #define CORE_STATICROOT      0x20005
 #define CORE_TLS_INDEX       0x20007
 #define CORE_THREADTABLE     0x20008
 #define CORE_OS_TABLE        0x20009
 #define CORE_MESSAGE_TABLE   0x2000A
 #define CORE_EH_TABLE        0x2000B
+#define SYSTEM_ENV           0x2000C
 
 // preloaded gc routines
 const int coreVariableNumber = 4;
@@ -68,7 +68,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 151;
+const int gcCommandNumber = 152;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcParent,
@@ -94,7 +94,7 @@ const int gcCommands[gcCommandNumber] =
    bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
    bcCreate, bcExclude, bcDCopyR, bcInclude,
    bcSelectR, bcNext, bcXSelectR, bcCount,
-   bcRAbs, bcRExp, bcRInt, bcValidate,
+   bcRAbs, bcRExp, bcRInt, bcValidate, bcSystem,
    bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
    bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
    bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
@@ -124,7 +124,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
 
    &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
-   &loadOneByteOp, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
+   &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1595,6 +1595,15 @@ void x86JITCompiler :: writeCoreReference(x86JITScope& scope, ref_t reference, i
    _ELENA_::writeCoreReference(scope, reference, position, offset, code);
 }
 
+inline void loadCoreData(_ReferenceHelper& helper, x86JITScope& dataScope, ref_t reference)
+{
+   // due to optimization section must be ROModule::ROSection instance
+   SectionInfo info = helper.getCoreSection(reference);
+   dataScope.module = info.module;
+
+   loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
+}
+
 void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 {
    // preload core data
@@ -1609,15 +1618,11 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    MemoryWriter codeWriter(code);
 
    x86JITScope dataScope(NULL, &dataWriter, &helper, this);
-   for (int i = 0 ; i < coreVariableNumber ; i++) {
+   for (int i = 0; i < coreVariableNumber; i++) {
       if (!_preloaded.exist(coreVariables[i])) {
          _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
 
-         // due to optimization section must be ROModule::ROSection instance
-         SectionInfo info = helper.getCoreSection(coreVariables[i]);
-         dataScope.module = info.module;
-
-         loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
+         loadCoreData(helper, dataScope, coreVariables[i]);
       }
    }
 
@@ -1634,14 +1639,15 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    // load GC static root
    _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
 
-   // STAT COUNT
-   _preloaded.add(CORE_STAT_COUNT, helper.getVAddress(rdataWriter, mskRDataRef));
-   rdataWriter.writeDWord(0);
+   // SYSTEM_ENV
+   x86JITScope rdataScope(NULL, &rdataWriter, &helper, this);
+   _preloaded.add(SYSTEM_ENV, helper.getVAddress(rdataWriter, mskRDataRef));
+   loadCoreData(helper, rdataScope, SYSTEM_ENV);
 
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance));
 
    x86JITScope scope(NULL, &codeWriter, &helper, this);
-   for (int i = 0 ; i < coreFunctionNumber ; i++) {
+   for (int i = 0; i < coreFunctionNumber; i++) {
       if (!_preloaded.exist(coreFunctions[i])) {
          _preloaded.add(coreFunctions[i], helper.getVAddress(codeWriter, mskCodeRef));
 
@@ -1654,7 +1660,7 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    }
 
    // preload vm commands
-   for (int i = 0 ; i < gcCommandNumber ; i++) {
+   for (int i = 0; i < gcCommandNumber; i++) {
       SectionInfo info = helper.getCoreSection(gcCommands[i]);
 
       // due to optimization section must be ROModule::ROSection instance
@@ -1673,11 +1679,11 @@ void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, 
    if (virtualMode) {
       _Memory* data = loader->getTargetSection(mskRDataRef);
 
-      size_t offset = ((size_t)_preloaded.get(CORE_STAT_COUNT) & ~mskAnyRef);
+      size_t offset = ((size_t)_preloaded.get(SYSTEM_ENV) & ~mskAnyRef);
       (*data)[offset] = (counter << 2);
    }
    else {
- 	   size_t offset = (size_t)_preloaded.get(CORE_STAT_COUNT);
+ 	   size_t offset = (size_t)_preloaded.get(SYSTEM_ENV);
  	   *(int*)offset = (counter << 2);
    }
 }

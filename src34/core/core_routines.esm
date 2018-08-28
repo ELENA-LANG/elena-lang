@@ -4975,7 +4975,9 @@ end
 symbol start
 
   pushr entry : "$forwards'$program"
-  callextr extern : Initialize
+  system
+  pushe
+  callextr extern : InitializeSTA
   quit
 
 end
