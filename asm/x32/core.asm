@@ -21,16 +21,11 @@ define EXPAND_HEAP          10028h
 
 define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
-define CORE_GC_SIZE         20003h
 define CORE_STATICROOT      20005h
 define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
 define CORE_ET_TABLE        2000Bh
 define SYSTEM_ENV           2000Ch
-
-// CORE GC SIZE OFFSETS
-define gcs_MGSize	0000h
-define gcs_YGSize	0004h
 
 // GC TABLE OFFSETS
 define gc_header             0000h
@@ -49,6 +44,8 @@ define gc_stack_bottom       0034h
 
 // SYSTEM_ENV OFFSETS
 define se_statlen            0000h
+define se_mgsize	     0008h
+define se_ygsize	     000Ch
 
 // Page Size
 define page_size               10h
@@ -104,6 +101,7 @@ structure %CORE_GC_TABLE
 
 end
 
+// ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
 rstructure %SYSTEM_ENV
 
   dd 0
@@ -852,14 +850,14 @@ procedure % INIT
 
 labNext:
   mov  ecx, 8000000h // ; 10000000h
-  mov  ebx, [data : %CORE_GC_SIZE]
+  mov  ebx, [data : %SYSTEM_ENV + se_mgsize]
   and  ebx, 0FFFFFF80h     // ; align to 128
   shr  ebx, page_size_order_minus2
   call code : %NEW_HEAP
   mov  [data : %CORE_GC_TABLE + gc_header], eax
 
   mov  ecx, 20000000h // ; 40000000h
-  mov  ebx, [data : %CORE_GC_SIZE]
+  mov  ebx, [data : %SYSTEM_ENV + se_mgsize]
   and  ebx, 0FFFFFF80h     // align to 128
   call code : %NEW_HEAP
   mov  [data : %CORE_GC_TABLE + gc_start], eax
@@ -870,13 +868,13 @@ labNext:
   mov  [data : %CORE_GC_TABLE + gc_yg_current], eax
 
   // ; initialize gc end
-  mov  ecx, [data : %CORE_GC_SIZE]
+  mov  ecx, [data : %SYSTEM_ENV + se_mgsize]
   and  ecx, 0FFFFFF80h     // ; align to 128
   add  ecx, eax
   mov  [data : %CORE_GC_TABLE + gc_end], ecx
 
   // ; initialize gc shadow
-  mov  ecx, [data : %CORE_GC_SIZE + gcs_YGSize]
+  mov  ecx, [data : %SYSTEM_ENV + se_ygsize]
   and  ecx, page_mask
   add  eax, ecx
   mov  [data : %CORE_GC_TABLE + gc_yg_end], eax

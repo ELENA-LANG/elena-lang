@@ -32,6 +32,9 @@ struct SystemEnv
 {
    size_t StatLength;
    void*  StatRoots;
+   size_t GCMGSize;
+   size_t GCYGSize;
+   size_t MaxThread;
 };
 
 // --- SystemRoutineProvider ---

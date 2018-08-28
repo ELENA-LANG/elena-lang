@@ -42,7 +42,6 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 
 #define CORE_EXCEPTION_TABLE 0x20001
 #define CORE_GC_TABLE        0x20002
-#define CORE_GC_SIZE         0x20003
 #define CORE_STATICROOT      0x20005
 #define CORE_TLS_INDEX       0x20007
 #define CORE_THREADTABLE     0x20008
@@ -1626,12 +1625,6 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
       }
    }
 
-   // GC SIZE Table
-   _preloaded.add(CORE_GC_SIZE, helper.getVAddress(rdataWriter, mskRDataRef));
-   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
-   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
-   rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
-
    // MESSAGE TABLE POINTER
    _preloaded.add(CORE_MESSAGE_TABLE, helper.getVAddress(rdataWriter, mskRDataRef));
    rdataWriter.writeDWord(0);
@@ -1643,6 +1636,10 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    x86JITScope rdataScope(NULL, &rdataWriter, &helper, this);
    _preloaded.add(SYSTEM_ENV, helper.getVAddress(rdataWriter, mskRDataRef));
    loadCoreData(helper, rdataScope, SYSTEM_ENV);
+   // NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
 
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance));
 
