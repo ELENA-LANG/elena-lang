@@ -21,7 +21,6 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define GC_ALLOC             0x10001
 #define HOOK                 0x10010
 #define INIT_RND             0x10012
-#define INIT                 0x10013
 #define NEWFRAME             0x10014
 #define INIT_ET              0x10015
 #define ENDFRAME             0x10016
@@ -34,7 +33,6 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define CALC_SIZE            0x1001F
 #define GET_COUNT            0x10020
 #define THREAD_WAIT          0x10021
-#define NEW_HEAP             0x10025
 #define BREAK                0x10026
 #define EXPAND_HEAP          0x10028
 #define EXITTHREAD           0x1002A
@@ -58,10 +56,10 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 21;
+const int coreFunctionNumber = 19;
 const int coreFunctions[coreFunctionNumber] =
 {
-   NEW_HEAP, BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, INIT, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
+   BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
    OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT, CALC_SIZE, GET_COUNT,
    THREAD_WAIT, EXITTHREAD, NEW_EVENT
 };
@@ -1792,8 +1790,6 @@ void x86JITCompiler :: generateProgramStart(MemoryDump& tape)
    JITCompiler32::generateProgramStart(tape);
 
    MemoryWriter ecodes(&tape);
-   ecodes.writeByte(bcCallExtR);
-   ecodes.writeDWord(INIT | mskPreloadCodeRef);
 
    ecodes.writeByte(bcCallExtR);
    ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);

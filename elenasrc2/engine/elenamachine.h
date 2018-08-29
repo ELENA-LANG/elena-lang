@@ -26,15 +26,36 @@ struct _Entry
    }
 };
 
+// --- GCTable ---
+
+struct GCTable
+{
+   pos_t gc_header;
+   pos_t gc_start;
+   pos_t gc_yg_start;
+   pos_t gc_yg_current;
+   pos_t gc_yg_end;
+   pos_t gc_shadow;
+   pos_t gc_shadow_end;
+   pos_t gc_mg_start;
+   pos_t gc_mg_current;
+   pos_t gc_end;
+   pos_t reserved;
+   pos_t gc_ext_stack_frame;
+   pos_t gc_mg_wbar;
+   pos_t gc_stack_bottom;
+};
+
 // --- SystemEnv ---
 
 struct SystemEnv
 {
-   size_t StatLength;
-   void*  StatRoots;
-   size_t GCMGSize;
-   size_t GCYGSize;
-   size_t MaxThread;
+   pos_t    StatLength;
+   void*    StatRoots;
+   GCTable* Table;
+   pos_t    GCMGSize;
+   pos_t    GCYGSize;
+   pos_t    MaxThread;
 };
 
 // --- SystemRoutineProvider ---

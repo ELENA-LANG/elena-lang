@@ -19,6 +19,8 @@ using namespace _ELENA_;
 
 void ELENARTMachine :: startSTA(void* env, void* programEntry)
 {
+
+
    // setting up system
    __routineProvider.Prepare();
    __routineProvider.InitSTA((SystemEnv*)env);

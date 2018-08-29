@@ -15,7 +15,6 @@ define EXIT                 1001Dh
 define LOCK                 10021h
 define UNLOCK               10022h
 define LOAD_CALLSTACK       10024h
-define NEW_HEAP             10025h
 define BREAK                10026h
 define EXPAND_HEAP          10028h
 define EXITTHREAD           1002Ah
@@ -28,27 +27,6 @@ define GC_HEAP_ATTRIBUTE    00Dh
 structure % CORE_OS_TABLE
 
   dd 0 // ; dummy
-
-end
-
-// ; in - ecx - total size, ebx - reserved
-// ; out - eax - heap
-procedure % NEW_HEAP
-
-  push 4
-  push 00001000h
-  push ebx
-
-  push 4
-  push 00002000h
-  push ecx
-  push 0
-  call extern 'dlls'KERNEL32.VirtualAlloc
-
-  push eax
-  call extern 'dlls'KERNEL32.VirtualAlloc
-
-  ret
 
 end
 

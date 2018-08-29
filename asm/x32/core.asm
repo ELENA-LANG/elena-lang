@@ -2,7 +2,6 @@
 define GC_ALLOC	            10001h
 define HOOK                 10010h
 define INIT_RND             10012h
-define INIT                 10013h
 define NEWFRAME             10014h
 define INIT_ET              10015h
 define ENDFRAME             10016h
@@ -15,7 +14,6 @@ define EXIT                 1001Dh
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
-define NEW_HEAP             10025h
 define BREAK                10026h
 define EXPAND_HEAP          10028h
 
@@ -106,6 +104,7 @@ rstructure %SYSTEM_ENV
 
   dd 0
   dd data : %CORE_STATICROOT
+  dd data : %CORE_GC_TABLE
 
 end
 
@@ -835,67 +834,6 @@ procedure %HOOK
 end
 
 // --- System Core Functions --
-
-procedure % INIT
-  // ; initialize fpu
-  finit
-
-  // ; initialize
-
-  mov  ecx, [data : %SYSTEM_ENV + se_statlen]
-  mov  edi, data : %CORE_STATICROOT
-  shr  ecx, 2
-  xor  eax, eax
-  rep  stos
-
-labNext:
-  mov  ecx, 8000000h // ; 10000000h
-  mov  ebx, [data : %SYSTEM_ENV + se_mgsize]
-  and  ebx, 0FFFFFF80h     // ; align to 128
-  shr  ebx, page_size_order_minus2
-  call code : %NEW_HEAP
-  mov  [data : %CORE_GC_TABLE + gc_header], eax
-
-  mov  ecx, 20000000h // ; 40000000h
-  mov  ebx, [data : %SYSTEM_ENV + se_mgsize]
-  and  ebx, 0FFFFFF80h     // align to 128
-  call code : %NEW_HEAP
-  mov  [data : %CORE_GC_TABLE + gc_start], eax
-
-  // ; initialize yg
-  mov  [data : %CORE_GC_TABLE + gc_start], eax
-  mov  [data : %CORE_GC_TABLE + gc_yg_start], eax
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], eax
-
-  // ; initialize gc end
-  mov  ecx, [data : %SYSTEM_ENV + se_mgsize]
-  and  ecx, 0FFFFFF80h     // ; align to 128
-  add  ecx, eax
-  mov  [data : %CORE_GC_TABLE + gc_end], ecx
-
-  // ; initialize gc shadow
-  mov  ecx, [data : %SYSTEM_ENV + se_ygsize]
-  and  ecx, page_mask
-  add  eax, ecx
-  mov  [data : %CORE_GC_TABLE + gc_yg_end], eax
-  mov  [data : %CORE_GC_TABLE + gc_shadow], eax
-
-  // ; initialize gc mg
-  add  eax, ecx
-  mov  [data : %CORE_GC_TABLE + gc_shadow_end], eax
-  mov  [data : %CORE_GC_TABLE + gc_mg_start], eax
-  mov  [data : %CORE_GC_TABLE + gc_mg_current], eax
-  
-  // ; initialize wbar start
-  mov  edx, eax
-  sub  edx, [data : %CORE_GC_TABLE + gc_start]
-  shr  edx, page_size_order
-  add  edx, [data : %CORE_GC_TABLE + gc_header]
-  mov  [data : %CORE_GC_TABLE + gc_mg_wbar], edx
-
-  ret
-
-end
 
 procedure % NEWFRAME
 
