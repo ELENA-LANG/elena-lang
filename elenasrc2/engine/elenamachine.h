@@ -19,8 +19,8 @@ struct ExceptionStruct
 
 struct CriticalStruct
 {
-   pos_t handler;
    pos_t previousStruct;
+   pos_t handler;
 };
 
 // --- _Entry ---

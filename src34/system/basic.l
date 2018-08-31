@@ -2269,7 +2269,9 @@ public sealed const struct CharValue :: BaseValue
 
     internal readValue(ref<int> retVal)
     [
-        retVal value := theValue.
+        int val := theValue.
+        
+        retVal value := val.
     ]
 
     bool equal:o
@@ -2299,19 +2301,16 @@ public sealed const struct CharValue :: BaseValue
         = val == T<wide>(self).
 
     bool equal(char val)
-    [
-        int v := 0.
-        val readValue(&v).
-        
-        ^ theValue == v.
-    ]
+        = val == theValue.
 
     bool less(char val)
     [
-        int v := 0.
-        val readValue(&v).
+        int c := theValue.
         
-        ^ theValue < v.
+        int v := 0.
+        val readValue(&v).        
+        
+        ^ c < v.
     ]
     
     bool less(literal val)

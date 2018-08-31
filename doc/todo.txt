@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - tests          
-                 * test sta : critical exception handling
                  * test sta : anagram
 
                  * test mta : exception handling
@@ -14,6 +13,7 @@ In development:
                  * test vm : GC
 
               dev - general implementation
+                 * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
                  *  #11 : Debug info structure redesign 
