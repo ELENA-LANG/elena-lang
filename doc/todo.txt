@@ -2,7 +2,19 @@
 In development:
 ------                              
 	                            
+              dev - tests          
+                 * test sta : exception handling
+                 * test sta : critical exception handling
+                 * test sta : GC
+                 * test mta : exception handling
+                 * test mta : critical exception handling
+                 * test mta : GC
+                 * test vm : exception handling
+                 * test vm : critical exception handling
+                 * test vm : GC
+
               dev - general implementation
+                 *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
                  *  #11 : Debug info structure redesign 
                  *  #16 : Debug information in executable 

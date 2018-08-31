@@ -3,13 +3,10 @@ define GC_ALLOC	         10001h
 define HOOK              10010h
 define INIT_RND          10012h
 define INIT              10013h
-define NEWFRAME          10014h
-define INIT_ET           10015h
 define OPENFRAME         10019h
 define CLOSEFRAME        1001Ah
 define NEWTHREAD         1001Bh
 define CLOSETHREAD       1001Ch
-define EXIT              1001Dh
 define CALC_SIZE         1001Fh
 define GET_COUNT         10020h
 define EXITTHREAD        1002Ah
@@ -4146,7 +4143,8 @@ end
 procedure coreapi'default_handler                                                       
 
   // ; exit code
-  call code : % EXIT
+  push 0
+  call extern 'rt_dlls.Exit
 
 end
 

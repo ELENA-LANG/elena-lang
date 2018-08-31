@@ -100,39 +100,44 @@ void SystemRoutineProvider :: InitSTA(SystemEnv* env)
    env->Table->gc_mg_wbar = ((mg_ptr - env->Table->gc_start) >> page_size_order) + env->Table->gc_header;
 }
 
-void SystemRoutineProvider :: NewFrame()
+void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler)
 {
-  //// ; put frame end and move procedure returning address
-  //pop  edx           
+   pos_t previousHeader = 0;
 
-  //// ; set SEH handler
-  //mov  ebx, code : "$native'coreapi'seh_handler"
-  //push ebx
-  //mov  ecx, fs:[0]
-  //push ecx
-  //mov  fs:[0], esp
+   // ; set SEH handler / frame / stack pointers
+   __asm {
+      mov  eax, header
+      mov  ecx, fs:[0]
+      mov  previousHeader, ecx
+      mov  fs : [0], eax
+   }
 
-  //xor  ebx, ebx
-
-  //push ebp
-  //push ebx                      
-  //push ebx
-
-  //// ; set stack frame pointer / bottom stack pointer
-  //mov  ebp, esp 
-  //mov  [data : %CORE_GC_TABLE + gc_stack_bottom], esp
-  //
-  //push edx
-  //mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], ebx
-
-  //mov  ebx, code : "$native'coreapi'default_handler"
-  //call code : % INIT_ET
-
-  //ret
-
+   header->previousStruct = previousHeader;
+   header->handler = criticalHandler;
 }
 
-void SystemRoutineProvider :: Exit()
+void SystemRoutineProvider :: NewFrame(SystemEnv* env, ExceptionStruct* header, pos_t exceptionHandler)
 {
+  // ; set stack frame pointer / bottom stack pointer
+  //mov  ebp, esp 
+  //mov  [data : %CORE_GC_TABLE + gc_stack_bottom], esp
+   env->Table->gc_stack_bottom = header->core_catch_level;
 
+  //mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], ebx
+   env->Table->gc_ext_stack_frame = 0;
+
+  // ; set default exception handler
+  //pop  ecx
+  //mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
+  //mov  [data : %CORE_EXCEPTION_TABLE], ebx
+  //mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
+  //push ecx
+   env->ExTable->core_catch_addr = exceptionHandler;
+   env->ExTable->core_catch_level = header->core_catch_level;
+   env->ExTable->core_catch_frame = header->core_catch_frame;
+}
+
+void SystemRoutineProvider :: Exit(pos_t exitCode)
+{
+   ExitProcess(exitCode);
 }

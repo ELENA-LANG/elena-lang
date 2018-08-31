@@ -2,15 +2,12 @@
 define GC_ALLOC	            10001h
 define HOOK                 10010h
 define INIT_RND             10012h
-define NEWFRAME             10014h
-define INIT_ET              10015h
 define ENDFRAME             10016h
 define RESTORE_ET           10017h
 define OPENFRAME            10019h
 define CLOSEFRAME           1001Ah
 define NEWTHREAD            1001Bh
 define CLOSETHREAD          1001Ch
-define EXIT                 1001Dh
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
@@ -42,8 +39,8 @@ define gc_stack_bottom       0034h
 
 // SYSTEM_ENV OFFSETS
 define se_statlen            0000h
-define se_mgsize	     0008h
-define se_ygsize	     000Ch
+define se_mgsize	     0010h
+define se_ygsize	     0014h
 
 // Page Size
 define page_size               10h
@@ -105,6 +102,7 @@ rstructure %SYSTEM_ENV
   dd 0
   dd data : %CORE_STATICROOT
   dd data : %CORE_GC_TABLE
+  dd data : %CORE_EXCEPTION_TABLE
 
 end
 
@@ -835,38 +833,6 @@ end
 
 // --- System Core Functions --
 
-procedure % NEWFRAME
-
-  // ; put frame end and move procedure returning address
-  pop  edx           
-
-  // ; set SEH handler
-  mov  ebx, code : "$native'coreapi'seh_handler"
-  push ebx
-  mov  ecx, fs:[0]
-  push ecx
-  mov  fs:[0], esp
-
-  xor  ebx, ebx
-
-  push ebp
-  push ebx                      
-  push ebx
-
-  // ; set stack frame pointer / bottom stack pointer
-  mov  ebp, esp 
-  mov  [data : %CORE_GC_TABLE + gc_stack_bottom], esp
-  
-  push edx
-  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], ebx
-
-  mov  ebx, code : "$native'coreapi'default_handler"
-  call code : % INIT_ET
-
-  ret
-
-end
-
 procedure % ENDFRAME
 
   // ; save return pointer
@@ -885,23 +851,6 @@ procedure % ENDFRAME
   ret
 
 end
-
-// ; init exception table, ebx contains default handler address
-procedure % INIT_ET
-
-  // ; set default exception handler
-  pop  ecx
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
-  mov  [data : %CORE_EXCEPTION_TABLE], ebx
-  mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
-  push ecx
-
-  // ; init default critical handler
-  mov  [data : % CORE_ET_TABLE], ebx
-
-  ret
-
-end 
 
 procedure % RESTORE_ET
 

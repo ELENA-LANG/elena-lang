@@ -12,9 +12,21 @@ using namespace _ELENA_;
 
 static ELENARTMachine* Instance = NULL;
 
-EXTERN_DLL_EXPORT void InitializeSTA(void* systeEnv, void* entryPoint)
+EXTERN_DLL_EXPORT void InitializeSTA(void* systeEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
 {
-   Instance->startSTA(systeEnv, entryPoint);
+   FrameHeader header;
+   // ; initialize the stack frame
+   __asm {
+      mov header.root_exception_struct.core_catch_frame, ebp
+      mov header.root_exception_struct.core_catch_level, esp
+   }
+
+   Instance->startSTA(&header, (SystemEnv*)systeEnv, exceptionHandler, criticalHandler, entryPoint);
+}
+
+EXTERN_DLL_EXPORT void Exit(int exitCode)
+{
+   Instance->Exit(exitCode);
 }
 
 // !!

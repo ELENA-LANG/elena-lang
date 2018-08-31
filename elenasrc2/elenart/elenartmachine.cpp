@@ -17,14 +17,14 @@ using namespace _ELENA_;
 
 // --- Instance ---
 
-void ELENARTMachine :: startSTA(void* env, void* programEntry)
+void ELENARTMachine :: startSTA(FrameHeader* frameHeader, SystemEnv* env, void* exceptionHandler, void* criticalHandler, void* programEntry)
 {
-
+   __routineProvider.InitCriticalStruct(&frameHeader->root_critical_struct, (pos_t)criticalHandler);
 
    // setting up system
    __routineProvider.Prepare();
    __routineProvider.InitSTA((SystemEnv*)env);
-   __routineProvider.NewFrame();
+   __routineProvider.NewFrame((SystemEnv*)env, &frameHeader->root_exception_struct, (pos_t)exceptionHandler);
 
    _Entry entry;
    entry.address = programEntry;
@@ -32,7 +32,12 @@ void ELENARTMachine :: startSTA(void* env, void* programEntry)
    (*entry.entry)();
 
    // winding down system
-   __routineProvider.Exit();
+   Exit(0);
+}
+
+void ELENARTMachine :: Exit(int exitCode)
+{
+   __routineProvider.Exit(exitCode);
 }
 
 // !! --

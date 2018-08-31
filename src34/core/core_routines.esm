@@ -4975,6 +4975,8 @@ end
 symbol start
 
   pushr entry : "$forwards'$program"
+  pushr api : seh_handler
+  pushr api : default_handler
   system
   pushe
   callextr extern : InitializeSTA

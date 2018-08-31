@@ -176,6 +176,15 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 
       return binary->mapReference(s.c_str()) | mskEntryRef;
    }
+   else if (word.compare("api")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
+
+      ReferenceNs functionName(NATIVE_MODULE, CORE_MODULE);
+      functionName.combine(token.value);
+
+      return binary->mapReference(functionName) | mskNativeCodeRef;
+   }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
 

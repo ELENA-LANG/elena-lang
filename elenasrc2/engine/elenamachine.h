@@ -10,6 +10,19 @@
 namespace _ELENA_
 {
 
+struct ExceptionStruct
+{
+   pos_t core_catch_addr;
+   pos_t core_catch_level;
+   pos_t core_catch_frame;
+};
+
+struct CriticalStruct
+{
+   pos_t handler;
+   pos_t previousStruct;
+};
+
 // --- _Entry ---
 
 struct _Entry
@@ -50,12 +63,21 @@ struct GCTable
 
 struct SystemEnv
 {
-   pos_t    StatLength;
-   void*    StatRoots;
-   GCTable* Table;
-   pos_t    GCMGSize;
-   pos_t    GCYGSize;
-   pos_t    MaxThread;
+   pos_t             StatLength;
+   void*             StatRoots;
+   GCTable*          Table;
+   ExceptionStruct*  ExTable;
+   pos_t             GCMGSize;
+   pos_t             GCYGSize;
+   pos_t             MaxThread;
+};
+
+// --- ProgramHeader ---
+
+struct FrameHeader
+{
+   ExceptionStruct root_exception_struct;
+   CriticalStruct  root_critical_struct;
 };
 
 // --- SystemRoutineProvider ---
@@ -63,13 +85,15 @@ struct SystemEnv
 static class SystemRoutineProvider
 {
 public:
+   static void InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler);
+
    static void Prepare();
 
    static void InitSTA(SystemEnv* env);
 
-   static void NewFrame();
+   static void NewFrame(SystemEnv* env, ExceptionStruct* topHeader, pos_t exceptionHandler);
 
-   static void Exit();
+   static void Exit(pos_t exitCode);
 
 } __routineProvider;
 

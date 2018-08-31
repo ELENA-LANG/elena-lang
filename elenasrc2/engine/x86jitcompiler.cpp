@@ -21,15 +21,12 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define GC_ALLOC             0x10001
 #define HOOK                 0x10010
 #define INIT_RND             0x10012
-#define NEWFRAME             0x10014
-#define INIT_ET              0x10015
 #define ENDFRAME             0x10016
 #define RESTORE_ET           0x10017
 #define OPENFRAME            0x10019
 #define CLOSEFRAME           0x1001A
 #define NEWTHREAD            0x1001B
 #define CLOSETHREAD          0x1001C
-#define EXIT                 0x1001D
 #define CALC_SIZE            0x1001F
 #define GET_COUNT            0x10020
 #define THREAD_WAIT          0x10021
@@ -56,11 +53,11 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 19;
+const int coreFunctionNumber = 16;
 const int coreFunctions[coreFunctionNumber] =
 {
-   BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, NEWFRAME, INIT_ET, ENDFRAME, RESTORE_ET,
-   OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, EXIT, CALC_SIZE, GET_COUNT,
+   BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, ENDFRAME, RESTORE_ET,
+   OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, CALC_SIZE, GET_COUNT,
    THREAD_WAIT, EXITTHREAD, NEW_EVENT
 };
 
@@ -1785,30 +1782,10 @@ void x86JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& write
    writer.seekEOF();
 }
 
-void x86JITCompiler :: generateProgramStart(MemoryDump& tape)
-{
-   JITCompiler32::generateProgramStart(tape);
-
-   MemoryWriter ecodes(&tape);
-
-   ecodes.writeByte(bcCallExtR);
-   ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
-}
-
 void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
 {
    MemoryWriter ecodes(&tape);
 
    ecodes.writeByte(bcCallR);
    ecodes.writeDWord((size_t)address | mskCodeRef);
-}
-
-void x86JITCompiler :: generateProgramEnd(MemoryDump& tape)
-{
-   MemoryWriter ecodes(&tape);
-
-   ecodes.writeByte(bcCallExtR);
-   ecodes.writeDWord(mskPreloadCodeRef | EXIT);
-
-   JITCompiler32::generateProgramEnd(tape);
 }

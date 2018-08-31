@@ -1,6 +1,5 @@
 
 // --- System Core API  --
-define NEWFRAME          10014h
 define INIT_ET           10015h
 define ENDFRAME          10016h
 define RESTORE_ET        10017h

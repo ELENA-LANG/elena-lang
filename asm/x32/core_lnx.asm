@@ -3,7 +3,6 @@ define GC_ALLOC	            10001h
 define HOOK                 10010h
 define INIT_RND             10012h
 define INIT                 10013h
-define NEWFRAME             10014h
 define INIT_ET              10015h
 define ENDFRAME             10016h
 define RESTORE_ET           10017h
@@ -11,7 +10,6 @@ define OPENFRAME            10019h
 define CLOSEFRAME           1001Ah
 define NEWTHREAD            1001Bh
 define CLOSETHREAD          1001Ch
-define EXIT                 1001Dh
 define LOCK                 10021h
 define UNLOCK               10022h
 define LOAD_CALLSTACK       10024h

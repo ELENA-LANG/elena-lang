@@ -2560,6 +2560,17 @@ void x86Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWr
 
 	      code->writeRef(ref, 0);
       }
+      else if (token.check("'rt_dlls")) {
+         ReferenceNs function(DLL_NAMESPACE, RTDLL_FORWARD);
+
+         token.read(".", "dot expected (%d)\n");
+         function.append(".");
+         function.append(token.read());
+
+         int ref = info.binary->mapReference(function) | mskImportRef;
+
+         code->writeRef(ref, 0);
+      }
       else token.raiseErr("Invalid call label (%d)\n");
    }
 	else if (token.check("[")) {
