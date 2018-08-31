@@ -564,9 +564,15 @@ void DerivationTransformer :: loadParameterValues(SNode attributes, DerivationSc
 
          SNode terminalNode = current.findChild(lxClassRefAttr);
          if (terminalNode == lxNone) {
-            terminalNode = current.firstChild(lxTerminalMask);
+            if (current.existChild(lxAttributeValue)) {
+               // if it is a template-based declaration 
+               classRef = V_TYPETEMPL;
+            }
+            else {
+               terminalNode = current.firstChild(lxTerminalMask);
 
-            classRef = scope.mapReference(terminalNode);
+               classRef = scope.mapReference(terminalNode);
+            }
          }
          else classRef = scope.compilerScope->mapFullReference(terminalNode.identifier(), true);
 

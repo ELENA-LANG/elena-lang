@@ -5,7 +5,7 @@
         <output></output>
         <options></options>
         <namespace>anagram</namespace>
-        <template>mta_console</template>
+        <template>console</template>
         <debuginfo>-1</debuginfo>
     </project>
     <files>

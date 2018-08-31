@@ -3,9 +3,9 @@ In development:
 ------                              
 	                            
               dev - tests          
-                 * test sta : exception handling
                  * test sta : critical exception handling
-                 * test sta : GC
+                 * test sta : anagram
+
                  * test mta : exception handling
                  * test mta : critical exception handling
                  * test mta : GC
