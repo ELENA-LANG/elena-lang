@@ -3,8 +3,6 @@ In development:
 ------                              
 	                            
               dev - tests          
-                 * test sta : anagram
-
                  * test mta : exception handling
                  * test mta : critical exception handling
                  * test mta : GC
@@ -14,6 +12,7 @@ In development:
 
               dev - general implementation
                  * move system'core_routines'__exception register call to the system entry symbol
+                 *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
                  *  #11 : Debug info structure redesign 
@@ -23,6 +22,10 @@ In development:
 
               dev - tests          
                  * test realOp<real>.round<int>[1] extension
+
+              dev - tests          
+                 * test sta : anagram
+                 * test mta : anagram
 
               dev - general optimization
 

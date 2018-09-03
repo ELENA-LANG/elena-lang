@@ -135,6 +135,10 @@ void SystemRoutineProvider :: NewFrame(SystemEnv* env, ExceptionStruct* header, 
    env->ExTable->core_catch_addr = exceptionHandler;
    env->ExTable->core_catch_level = header->core_catch_level;
    env->ExTable->core_catch_frame = header->core_catch_frame;
+
+   // ; fill the top exception header with empty
+   header->core_catch_frame = header->core_catch_addr = 0;
+   
 }
 
 void SystemRoutineProvider :: Exit(pos_t exitCode)

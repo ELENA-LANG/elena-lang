@@ -15,7 +15,7 @@
 #endif
 #endif
 
-#define ELENART_REVISION_NUMBER        9
+#define ELENART_REVISION_NUMBER        10
 
 #define STRINGIZE2(s) #s
 #define STRINGIZE(s) STRINGIZE2(s)
@@ -27,5 +27,5 @@
 
 #define VER_PRODUCT_VERSION_STR     STRINGIZE(ENGINE_MAJOR_VERSION)        \
                                     "." STRINGIZE(ENGINE_MINOR_VERSION)    \
-                                    ".0"                                   \
+                                    "." STRINGIZE(ENGINE_RELEASE_VERSION)  \
                                     ".0"                                   
