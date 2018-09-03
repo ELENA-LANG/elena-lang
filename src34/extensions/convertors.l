@@ -55,44 +55,41 @@ class literalExConvertor =
 
     literal convert:o
         = literalConvertor convert:o.
-
-//    literal convert:o base:b
-//        = literalConvertor convert(o, b int).
 }.
 
-//class wideExConvertor =
-//{
-//    wide convert indexer:it
-//    [
-//        textbuffer anOutput := TextBuilder new.
-//        while (it available)
-//        [
-//            anOutput write(it get; toWide).
-//            anOutput write:","w.
-//            
-//            it append index:1
-//        ].
-//        
-//        int aLength := anOutput length.
-//        if (0 < aLength)
-//            [ anOutput setLength int:(-1 + aLength) ].
-//        
-//        ^ anOutput wide
-//    ]
-//
-//    wide convert enumerator:aList
-//    [
-//        textbuffer anOutput := TextBuilder new.
-//
-//        aList forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:","w ]).
-//        
-//        int aLength := anOutput length.
-//
-//        if (0 < aLength)
-//            [ anOutput setLength int:(-1 + aLength) ].
-//        
-//        ^ anOutput wide
-//    ]
+class wideExConvertor =
+{
+    wide convert(Indexer it)
+    [
+        auto anOutput := TextBuilder new.
+        while (it available)
+        [
+            anOutput write(it get; toWide).
+            anOutput write:",".
+            
+            it appendIndex:1
+        ].
+        
+        int aLength := anOutput length.
+        if (0 < aLength)
+            [ anOutput setLength(-1 + aLength) ].
+        
+        ^ anOutput
+    ]
+
+    wide convert(Enumerator en)
+    [
+        auto anOutput := TextBuilder new.
+
+        en forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ]).
+        
+        int aLength := anOutput length.
+
+        if (0 < aLength)
+            [ anOutput setLength(-1 + aLength) ].
+        
+        ^ anOutput
+    ]
 //        
 //    wide convert datetime:aValue = aValue literal; wide.
 //        
@@ -101,19 +98,16 @@ class literalExConvertor =
 ////                intmatrix : m
 ////                    = intmatrixExConvertor toLiteral intmatrix:m.
 //
-//    wide convert(BaseEnumerable o)
-//        <= convert enumerator:o.
-//
-//    wide convert(BaseIndexable o)
-//        <= convert indexer:o.
-//
-//    wide multi convert:o
-//        = wideConvertor convert:o.
-//
-//    wide convert:o base:b
-//        = wideConvertor convert(o, b int).
-//}.
-//
+    wide convert(Enumerable o)
+        <= convert(o enumerator).
+
+    wide convert(Indexable o)
+        <= convert(o indexer).
+
+    wide convert:o
+        = wideConvertor convert:o.
+}.
+
 ////class wideExConvertor =
 ////{
 ////    convert enumerable:aList
@@ -284,31 +278,28 @@ public extension convertorOp
 ////                    = intmatrixExConvertor convert array:anArray.
 ////            }.
     
-    toLiteral
+    T<literal> toLiteral
         = literalExConvertor convert:self.
     
-    toLiteral(int radix)
+    T<literal> toLiteral(int radix)
         = literalConvertor convert(self, radix).
     
-//    toWide
-//        = wideExConvertor convert:self.
-//
-//    toLiteral base:aBase
-//        = literalExConvertor convert:self base:aBase.
-//        
-//    toWide base:aBase
-//        = wideExConvertor convert:self base:aBase.
-//            
-//    toByte
-//        = byteConvertor convert:self.
-//
-//    toShort
-//        = shortConvertor convert:self.
+    T<wide> toWide
+        = wideExConvertor convert:self.
 
-    toInt
+    toWide(int radix)
+        = wideConvertor convert(self, radix).
+            
+    T<byte> toByte
+        = byteConvertor convert:self.
+
+    T<short> toShort
+        = shortConvertor convert:self.
+
+    T<int> toInt
         = intConvertor convert:self.
         
-    toInt(IntNumber radix)
+    T<int> toInt(IntNumber radix)
         = intConvertor convert(self, radix).
         
 //    toHexInt
