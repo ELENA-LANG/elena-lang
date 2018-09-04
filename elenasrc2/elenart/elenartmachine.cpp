@@ -17,14 +17,15 @@ using namespace _ELENA_;
 
 // --- Instance ---
 
-void ELENARTMachine :: startSTA(FrameHeader* frameHeader, SystemEnv* env, void* exceptionHandler, void* criticalHandler, void* programEntry)
+void ELENARTMachine :: startSTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry)
 {
-   __routineProvider.InitCriticalStruct(&frameHeader->root_critical_struct, (pos_t)criticalHandler);
-
    // setting up system
    __routineProvider.Prepare();
    __routineProvider.InitSTA((SystemEnv*)env);
-   __routineProvider.NewFrame((SystemEnv*)env, &frameHeader->root_exception_struct, (pos_t)exceptionHandler);
+
+   // setting current exception handler (only for STA)
+   env->Table->gc_et_current = &frameHeader->root_exception_struct;
+   env->Table->gc_ext_stack_frame = 0;
 
    _Entry entry;
    entry.address = programEntry;

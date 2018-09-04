@@ -115,7 +115,7 @@ private:
 
 public:
    // frameHeader contains initialized frame fields
-   void startSTA(FrameHeader* frameHeader, SystemEnv* env, void* exceptionHandler, void* criticalHandler, void* programEntry);
+   void startSTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry);
    void Exit(int exitCode);
 
    // !! 

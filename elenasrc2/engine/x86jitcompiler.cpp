@@ -22,7 +22,6 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define HOOK                 0x10010
 #define INIT_RND             0x10012
 #define ENDFRAME             0x10016
-#define RESTORE_ET           0x10017
 #define OPENFRAME            0x10019
 #define CLOSEFRAME           0x1001A
 #define NEWTHREAD            0x1001B
@@ -35,7 +34,6 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define EXITTHREAD           0x1002A
 #define NEW_EVENT            0x10101
 
-#define CORE_EXCEPTION_TABLE 0x20001
 #define CORE_GC_TABLE        0x20002
 #define CORE_STATICROOT      0x20005
 #define CORE_TLS_INDEX       0x20007
@@ -46,17 +44,17 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define SYSTEM_ENV           0x2000C
 
 // preloaded gc routines
-const int coreVariableNumber = 4;
+const int coreVariableNumber = 3;
 const int coreVariables[coreVariableNumber] =
 {
-   CORE_EXCEPTION_TABLE, CORE_GC_TABLE, CORE_OS_TABLE, CORE_EH_TABLE
+   CORE_GC_TABLE, CORE_OS_TABLE, CORE_EH_TABLE
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 16;
+const int coreFunctionNumber = 15;
 const int coreFunctions[coreFunctionNumber] =
 {
-   BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, ENDFRAME, RESTORE_ET,
+   BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, ENDFRAME,
    OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, CALC_SIZE, GET_COUNT,
    THREAD_WAIT, EXITTHREAD, NEW_EVENT
 };
@@ -914,17 +912,8 @@ void _ELENA_::compileIfHeap(int opcode, x86JITScope& scope)
    // load bottom boundary
    loadOneByteOp(opcode, scope);
 
-   // cmp eax, [ebx]
-   // ja short label
-   // cmp eax, esp
-   // jb short label
-
-   scope.code->writeWord(0x033B);
-  // try to use short jump if offset small (< 0x10?)
-   compileJumpAbove(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
-
-   scope.code->writeWord(0xC43B);
-   compileJumpBelow(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+   // jz short label
+   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
 }
 
 void _ELENA_::compileCreate(int opcode, x86JITScope& scope)

@@ -14,9 +14,9 @@ define THREAD_WAIT          10021h
 define BREAK                10026h
 define EXPAND_HEAP          10028h
 
-define CORE_EXCEPTION_TABLE 20001h
 define CORE_GC_TABLE        20002h
 define CORE_STATICROOT      20005h
+define CORE_TLS_INDEX       20007h
 define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
 define CORE_ET_TABLE        2000Bh
@@ -33,9 +33,13 @@ define gc_shadow_end         0018h
 define gc_mg_start           001Ch
 define gc_mg_current         0020h
 define gc_end                0024h
-define gc_ext_stack_frame    002Ch
-define gc_mg_wbar            0030h
-define gc_stack_bottom       0034h
+define gc_mg_wbar            0028h
+define gc_et_current         002Ch 
+define gc_ext_stack_frame    0030h 
+define gc_lock               0034h 
+define gc_signal             0038h 
+define tt_ptr                003Ch 
+define tt_lock               0040h 
 
 // SYSTEM_ENV OFFSETS
 define se_statlen            0000h
@@ -64,13 +68,6 @@ define SUBJ_MASK          1FFFFFFh
 
 // --- System Core Preloaded Routines --
 
-structure % CORE_EXCEPTION_TABLE
-
-  dd 0 // ; core_catch_addr       : +x00   - exception point of return
-  dd 0 // ; core_catch_level      : +x04   - stack level
-  dd 0 // ; core_catch_frame      : +x08   - stack frame pointer
-end
-
 structure % CORE_ET_TABLE
 
   dd 0 // ; critical_exception    ; +x00   - pointer to critical exception handler
@@ -89,10 +86,13 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_mg_start           : +1Ch
   dd 0 // ; gc_mg_current         : +20h
   dd 0 // ; gc_end                : +24h
-  dd 0 // ; reserved          : +28h
-  dd 0 // ; gc_ext_stack_frame    : +2Ch 
-  dd 0 // ; gc_mg_wbar            : +30h
-  dd 0 // ; gc_stack_bottom       : +34h
+  dd 0 // ; gc_mg_wbar            : +28h
+  dd 0 // ; gc_et_current         : +2Ch 
+  dd 0 // ; gc_ext_stack_frame    : +30h 
+  dd 0 // ; gc_lock               : +34h 
+  dd 0 // ; gc_signal             : +38h 
+  dd 0 // ; tt_ptr                : +3Ch 
+  dd 0 // ; tt_lock               : +40h 
 
 end
 
@@ -102,7 +102,7 @@ rstructure %SYSTEM_ENV
   dd 0
   dd data : %CORE_STATICROOT
   dd data : %CORE_GC_TABLE
-  dd data : %CORE_EXCEPTION_TABLE
+  dd data : %CORE_TLS_INDEX
 
 end
 
@@ -852,16 +852,6 @@ procedure % ENDFRAME
 
 end
 
-procedure % RESTORE_ET
-
-  pop  edx
-  mov  esp, [data : %CORE_EXCEPTION_TABLE + 4]
-  push edx
-
-  ret
-
-end 
-
 // ; NOTE : some functions (e.g. system'core_routines'win_WndProc) assumes the function reserves 12 bytes
 // ; does not affect eax
 procedure % OPENFRAME
@@ -970,7 +960,8 @@ end
 // ; throw
 inline % 7
 
-  jmp  [data : %CORE_EXCEPTION_TABLE]
+  mov  esi, [data : %CORE_GC_TABLE + gc_et_current]
+  jmp  [esi]
 
 end
 
@@ -1086,16 +1077,11 @@ end
 // ; unhook
 inline % 1Dh
 
-  mov  esp, [data : %CORE_EXCEPTION_TABLE + 4]
-  mov  ebp, [data : %CORE_EXCEPTION_TABLE + 8]
-
-  mov  edx, [esp]
-  mov  [data : %CORE_EXCEPTION_TABLE + 8], edx
-  mov  esi, [esp+4]
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], esi
-  mov  edx, [esp+8]
-  mov  [data : %CORE_EXCEPTION_TABLE], edx
-  add  esp, 12
+  mov  esi, [data : %CORE_GC_TABLE + gc_et_current]
+  mov  esp, [esi + 4]
+  mov  ebp, [esi + 8]
+  pop  edx
+  mov  [data : %CORE_GC_TABLE + gc_et_current], edx
   
 end
 
@@ -1168,15 +1154,12 @@ end
 // ; rethrow
 inline % 29h
 
-  mov  edx, [data : %CORE_EXCEPTION_TABLE + 4]
+  mov  esi, [data : %CORE_GC_TABLE + gc_et_current]
+  mov  edx, [esi + 4]
   mov  esi, [edx]
-  mov  [data : %CORE_EXCEPTION_TABLE + 8], esi
-  mov  esi, [edx+4]
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], esi
-  mov  esi, [edx+8]
-  mov  [data : %CORE_EXCEPTION_TABLE ], esi
+  mov  [data : %CORE_GC_TABLE + gc_et_current], esi
 
-  jmp  [data : %CORE_EXCEPTION_TABLE]
+  jmp  [data : %CORE_GC_TABLE + gc_et_current]
 
 end
 
@@ -2327,7 +2310,15 @@ end
 
 inline % 96h
 
-  lea  ebx,[data : %CORE_GC_TABLE + gc_stack_bottom]
+  xor    edx, edx
+  mov    ebx,[data : %CORE_GC_TABLE + gc_start]
+  mov    esi, 1
+  mov    ecx,[data : %CORE_GC_TABLE + gc_end]
+  cmp    eax, ebx
+  cmovl  edx, esi
+  cmp    eax, ecx
+  cmovg  edx, esi
+  and    edx, edx
 
 end
 
@@ -2375,12 +2366,14 @@ inline % 0A6h
 
   call code : %HOOK
 
-  push [data : %CORE_EXCEPTION_TABLE]
-  push [data : %CORE_EXCEPTION_TABLE + 4]
-  push [data : %CORE_EXCEPTION_TABLE + 8]
-  mov  [data : %CORE_EXCEPTION_TABLE], ecx
-  mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
-  mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
+  push [data : %CORE_GC_TABLE + gc_et_current]
+
+  mov  edx, esp 
+  push ebp
+  push edx
+  push ecx
+
+  mov  [data : %CORE_GC_TABLE + gc_et_current], esp
   
 end
 

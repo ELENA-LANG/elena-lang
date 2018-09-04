@@ -116,31 +116,6 @@ void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, pos_t c
    header->handler = criticalHandler;
 }
 
-void SystemRoutineProvider :: NewFrame(SystemEnv* env, ExceptionStruct* header, pos_t exceptionHandler)
-{
-  // ; set stack frame pointer / bottom stack pointer
-  //mov  ebp, esp 
-  //mov  [data : %CORE_GC_TABLE + gc_stack_bottom], esp
-   env->Table->gc_stack_bottom = header->core_catch_level;
-
-  //mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], ebx
-   env->Table->gc_ext_stack_frame = 0;
-
-  // ; set default exception handler
-  //pop  ecx
-  //mov  [data : %CORE_EXCEPTION_TABLE + 4], esp
-  //mov  [data : %CORE_EXCEPTION_TABLE], ebx
-  //mov  [data : %CORE_EXCEPTION_TABLE + 8], ebp
-  //push ecx
-   env->ExTable->core_catch_addr = exceptionHandler;
-   env->ExTable->core_catch_level = header->core_catch_level;
-   env->ExTable->core_catch_frame = header->core_catch_frame;
-
-   // ; fill the top exception header with empty
-   header->core_catch_frame = header->core_catch_addr = 0;
-   
-}
-
 void SystemRoutineProvider :: Exit(pos_t exitCode)
 {
    ExitProcess(exitCode);

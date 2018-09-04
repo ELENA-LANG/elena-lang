@@ -73,17 +73,17 @@ public:
    virtual void beforeLoad(_ELENA_::_JITCompiler* compiler, _ELENA_::ExecutableImage& image)
    {
       _ELENA_::Project* project = image.getProject();
+      _ELENA_::_JITLoader* loader = dynamic_cast<_ELENA_::_JITLoader*>(&image);
 
       // compile TLS section if it is a multi-threading app
       if (project->IntSetting(_ELENA_::opThreadMax) > 1) {
-         _ELENA_::_JITLoader* loader = dynamic_cast<_ELENA_::_JITLoader*>(&image);
-
          _linker->prepareTLS(image, compiler->allocateTLSVariable(loader), tls_directory);
 
          // load GC thread table, should be allocated before static roots
          // thread table contains TLS reference
          compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
       }
+      else compiler->allocateTLSVariable(loader);
    }
 
    virtual void afterLoad(_ELENA_::ExecutableImage& image)
