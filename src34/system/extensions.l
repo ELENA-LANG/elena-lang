@@ -1013,36 +1013,36 @@ public extension<Array> arrayOp
     ]
 }
 
-//// --- intmatrixOp ---
-//
-//intmatrix extension intmatrixOp
-//{
-//    populate nnfunc:func
-//    [
-//        int n := 0.
-//        int m := 0.
-//        self readLengthsTo vint:n vint:m.
-//        
-//        int i := 0.
-//        int j := 0.
-//        while (i < n)
-//        [
-//            j := 0.
-//            while (j < m)
-//            [
-//                int v := func eval int:i int:j.
-//                
-//                self write int:i int:j int:v.
-//                
-//                j := j + 1
-//            ].
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ self
-//    ]
-//}
+// --- intmatrixOp ---
+
+public extension<IntMatrix> intMatrixOp
+{
+    populate(Func<int,int,int> fn)
+    [
+        int n := 0.
+        int m := 0.
+        self readLengthsTo(&n, &m).
+        
+        int i := 0.
+        int j := 0.
+        while (i < n)
+        [
+            j := 0.
+            while (j < m)
+            [
+                int v := fn(i, j).
+                
+                self write(i, j, v).
+                
+                j := j + 1
+            ].
+            
+            i := i + 1
+        ].
+        
+        ^ self
+    ]
+}
 
 // --- literalOp ---
 

@@ -65,7 +65,7 @@ extension encryptOp
 
 // --- Program ---
 
-public program =
+public program
 [
     console printLine("Original text :",TestText).
         
@@ -77,5 +77,5 @@ public program =
 
     console printLine("Decrypted text:",aDecryptedText).
 
-    console readChar.
-].
+    console readChar
+]

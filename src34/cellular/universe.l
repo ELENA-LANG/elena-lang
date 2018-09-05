@@ -3,8 +3,8 @@ public interface class Space
 {
     int fn3prop getLiveCell :: calcLiveCells.
     
-//    int rvprop rows         :: readRowsTo.
-//    int rvprop columns      :: readColumnsTo.
+    int rvprop rows         :: readRowsTo.
+    int rvprop columns      :: readColumnsTo.
     
     abstract update(RuleSet rs)
     [
@@ -44,15 +44,15 @@ public interface class Space
         retVal value := counter
     ]
     
-//    /// Returns the space actual number of rows    
-//    stacksafe readRowsTo vint:retVal
-//    [
-//    ]
-//    
-//    /// Returns the space actual number of columns
-//    stacksafe readColumnsTo vint:retVal
-//    [
-//    ]
+    /// Returns the space actual number of rows    
+    abstract stacksafe readRowsTo(ref<int> retVal)
+    [
+    ]
+    
+    /// Returns the space actual number of columns
+    abstract stacksafe readColumnsTo(ref<int> retVal)
+    [
+    ]
 }
 
 public sealed class IntMatrixSpace :: Space
@@ -146,13 +146,13 @@ public sealed class IntMatrixSpace :: Space
         theMatrix read(i, j, retVal).
     ]
     
-//    readRowsTo vint:retVal
-//    [
-//        retVal int := theN.
-//    ]
-//    
-//    readColumnsTo vint:retVal
-//    [
-//        retVal int := theM.
-//    ]
+    readRowsTo(ref<int> retVal)
+    [
+        retVal value := theN.
+    ]
+    
+    readColumnsTo(ref<int> retVal)
+    [
+        retVal value := theM.
+    ]
 }

@@ -30,7 +30,7 @@ In development:
               dev - general optimization
 
               dev - revision
-                 * rosetta code - Bitwise operations
+                 * rosetta code - Conway's Game of Life
 
 ------                                                           
 Pipeline:

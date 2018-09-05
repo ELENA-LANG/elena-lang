@@ -74,11 +74,11 @@ class GameMaster
     ]
 }
 
-public program =
+public program
 [
     var aGameMaster := GameMaster new.
 
     $(aGameMaster proceed:(aGameMaster ask)) doWhile.
     
     console readChar.
-].
+]

@@ -144,11 +144,11 @@ class Calendar
 
 // --- program ---
 
-public program =
+public program
 [
     var aCalender := Calendar new(console write:"ENTER THE YEAR:"; readLineTo(Integer new)).
     
     aCalender printTo:console.
     
-    console readChar.
-].
+    console readChar
+]

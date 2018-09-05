@@ -55,8 +55,8 @@ class Console
     clear 
         => theWriter.
 
-//    stacksafe setCursorPosition int:x int:y
-//        => theWriter.
+    stacksafe setCursorPosition(int x, int y)
+        => theWriter.
 
     /// Reads the next line of characters from the standard input stream.
     literal readLine
@@ -75,8 +75,8 @@ class Console
         ^  ch.
     ]
 
-//    bool isKeyAvailable
-//        => theReader.
+    bool isKeyAvailable
+        => theReader.
 
     /// Reads the next key code from the input stream
     readKey

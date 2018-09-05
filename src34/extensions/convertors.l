@@ -161,51 +161,51 @@ public singleton intarrayConvertorEx
 //    ]
 }
 
-//class intmatrixExConvertor =
-//{
-////    convert array:a
-////    [
-////        int n := a length.
-////        int m := a@0 length.
-////        
-////        ^ IntMatrix new int:n int:m; set every_ij: (&int:i&int:j)[ a getAt int:i; array; getAt int:j; toInt ].
-////    ]
-//    
-//    toLiteral intmatrix:matrix
-//    [
-//        textbuffer anOutput := TextBuilder new.
-//        
-//        int i := 0.
-//        int j := 0.
-//        int n := 0.
-//        int m := 0.
-//        int l := 0.
-//        
-//        matrix readLengthsTo vint:n vint:m.
-//        
-//        while (i < n)
-//        [
-//            j := 0.
-//            while (j < m)
-//            [
-//                int r := 0.
-//                matrix read int:i int:j vint:r.
-//                
-//                anOutput write:r; write:",".
-//                
-//                j := j + 1
-//            ].
-//            anOutput readLengthTo vint:l.            
-//            anOutput setLength int:(l - 1).
-//            
-//            anOutput write:'newLine.
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ anOutput literal
-//    ]
-//}.
+public singleton intmatrixExConvertor
+{
+    convert(Array a)
+    [
+        int n := a length.
+        int m := a[0] length.
+        
+        ^ IntMatrix new(n, m); populate(:i:j)<int,int,int>( a getAt(i); toArray; getAt(j); toInt ).
+    ]
+    
+    toLiteral(IntMatrix matrix)
+    [
+        auto anOutput := TextBuilder new.
+        
+        int i := 0.
+        int j := 0.
+        int n := 0.
+        int m := 0.
+        int l := 0.
+        
+        matrix readLengthsTo(&n, &m).
+        
+        while (i < n)
+        [
+            j := 0.
+            while (j < m)
+            [
+                int r := 0.
+                matrix read(i, j, &r).
+                
+                anOutput write:r; write:",".
+                
+                j := j + 1
+            ].
+            anOutput readLengthTo(&l).            
+            anOutput setLength(l - 1).
+            
+            anOutput write:forwards'newLine.
+            
+            i := i + 1
+        ].
+        
+        ^ anOutput literal
+    ]
+}
 
 // --- arrayConvertorEx ---
 
@@ -267,16 +267,9 @@ public extension convertorOp
     
 //    toByteArray        
 //        = byteArrayExConvertor convert:self.
-////    
-////    toIntMatrix
-////        = self cast:%eval to:
-////            {
-////                intmatrix : anArray
-////                    = anArray.
-////                
-////                array : anArray
-////                    = intmatrixExConvertor convert array:anArray.
-////            }.
+//    
+    T<IntMatrix> toIntMatrix
+        = intmatrixExConvertor convert:self.
     
     T<literal> toLiteral
         = literalExConvertor convert:self.

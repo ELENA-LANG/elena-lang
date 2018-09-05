@@ -11,6 +11,8 @@ public interface IConsoleReader
     abstract read(ref<int> retVal) []
     
     abstract read(ref<char> retVal) []
+    
+    abstract bool isKeyAvailable []
 }
 
 const int FILE_TYPE_CHAR = 2.
@@ -124,12 +126,12 @@ sealed struct ConsoleWriter
         system'external'KERNEL32 SetConsoleCursorPosition(theHandle, 0).
     ]
 
-//    stacksafe setCursorPosition int:x int:y
-//    [
-//        int coord := y * 10000h + x.
-//                
-//        system'external'KERNEL32 SetConsoleCursorPosition int:theHandle int:coord.
-//    ]
+    stacksafe setCursorPosition(int x, int y)
+    [
+        int coord := y * 10000h + x.
+                
+        system'external'KERNEL32 SetConsoleCursorPosition(theHandle, coord)
+    ]
 
     refresh
     [
@@ -288,45 +290,42 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
         byteArrayHelper read(T<ByteArray>(aDump), 8, aKey)
     ]
 
-//    bool isKeyAvailable
-//    [
-//        byte<20> aDump.
-//        int      aNumberRead := 1.
-//        short    anEventType := 0.
-//        int      aKeyDown := 0.
-//        
-//        while (true)
-//        [
-//            aNumberRead := 0.
-//            
-//            system'external'KERNEL32 PeekConsoleInputW 
-//                        int           : theHandle
-//                        bytearray     : aDump
-//                        int           : 1
-//                        vint          : aNumberRead.
-//                        
-//            if (0 == aNumberRead)
-//                [ ^ false ].
-//                                                                                    
-//            byteArrayHelper read bytearray:aDump int:0 vshort:anEventType.
-//            if (anEventType == 1)
-//                [ 
-//                    byteArrayHelper read bytearray:aDump int:4 vint:aKeyDown.
-//                        
-//                    if (aKeyDown == 1)
-//                        [ ^ true ]
-//                ].
-//
-//            system'external'KERNEL32 ReadConsoleInputW
-//                int           : theHandle
-//                bytearray     : aDump
-//                int           : 1
-//                vint          : aNumberRead
-//                
-//        ].
-//        
-//        ^ false.                   
-//    ]
+    bool isKeyAvailable
+    [
+        T<byte,20> aDump.
+        int        aNumberRead := 0.
+        short      anEventType := 0.
+        int        aKeyDown := 0.
+        
+        while (true)
+        [
+            aNumberRead := 0.
+            
+            extern()
+            [
+                system'external'KERNEL32 PeekConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
+            ].
+                        
+            if (0 == aNumberRead)
+                [ ^ false ].
+                                                                                    
+            byteArrayHelper read(T<ByteArray>(aDump), 0, &anEventType).
+            if (anEventType == 1)
+                [ 
+                    byteArrayHelper read(T<ByteArray>(aDump), 4, &aKeyDown).
+                        
+                    if (aKeyDown == 1)
+                        [ ^ true ]
+                ].
+
+            extern()
+            [
+                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
+            ].                
+        ].
+        
+        ^ false.                   
+    ]
 
     stacksafe read(ShortArray aBuffer, ref<int> aRetVal)
     [

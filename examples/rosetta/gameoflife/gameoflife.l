@@ -1,15 +1,15 @@
-//import system'routines.
-//import system'threading.
-//import extensions.
+////import system'routines.
+import system'threading.
+////import extensions.
 import cellular.
 
-//const int DELAY = 50.
-//
-//symbol testSet = ((0,1,0),
-//                  (0,1,0),
-//                  (0,1,0)).
+const int DELAY = 50.
 
-class gameOfLifeRuleSet = RuleSet::
+symbol testSet = ((0,1,0),
+                  (0,1,0),
+                  (0,1,0)).
+
+singleton gameOfLifeRuleSet :: RuleSet
 {
     proceed(Space s, int x, int y, ref<int> retVal)
     [
@@ -28,22 +28,30 @@ class gameOfLifeRuleSet = RuleSet::
             retVal value := 0
         ]
     ]
-}.
+}
 
-public program =
+playGame(Model model)
 [
     console clear.
     
-    var model := Model newRandomset(gameOfLifeRuleSet).
+    model onUpdate := (:sp)<Space>[ sp print ].
 
-//    model onUpdate listener_func(:sp)<space>[ sp print ].
-//
-//    until (console isKeyAvailable)
-//    [
-//        model run.
-//        
-//        thread sleep:DELAY.
-//    ].
-    
-    console readChar.
-].
+    until (console isKeyAvailable)
+    [
+        model run.
+        
+        threadControl sleep:DELAY
+    ].
+
+    console readChar
+]
+
+public test
+[
+    playGame(Model newLoaded(LoadedSet load(testSet), gameOfLifeRuleSet)).
+]
+
+public program
+[
+    playGame(Model newRandomset(gameOfLifeRuleSet)).
+]
