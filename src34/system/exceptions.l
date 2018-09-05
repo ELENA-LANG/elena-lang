@@ -121,7 +121,7 @@ public class Exception
     ]    
     
     constructor new
-        <= new(self className).
+        <= new(self __className).
 }
 
 // --- FormatException ---

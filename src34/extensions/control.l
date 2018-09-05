@@ -160,65 +160,65 @@ public extension<Func> blockOp
 //        ]
 //    ]        
 //}
-//
-//// --- testOp ---
-//
-//extension testOp
-//{
-//    assertTrue
-//    [
-//        ifnot (self)
-//            [ console writeLine:"Assertion fails!" ].
-//    ]
-//    
-//    assertFalse
-//    [
-//        if(self)
-//            [ console writeLine:"Assertion fails!" ].
-//    ]
-//}
-//
-//// --- Assert ---
-//
-//class AssertException :: Exception.
-//
-//singleton Assert
-//{
-//    ifEqual(object expr, object val)
-//    [
-//        ifnot(val == expr)
-//        [
-//            AssertException new("Assertion failed"); raise
-//        ]
-//    ]
-//    
-//    notFailed(BaseFunction f)
-//    [
-//        f eval 
-//            | if(:e)
-//            [
-//                console writeLine:(e message).
-//                
-//                AssertException new("Assertion failed"); raise
-//            ].
-//    ]
-//    
-//    ifTrue : b
-//    [
-//        ifnot(b)
-//        [
-//            AssertException new("Assertion failed"); raise
-//        ]
-//    ]
-//    
-//    ifFalse : b
-//    [
-//        if(b)
-//        [
-//            AssertException new("Assertion failed"); raise
-//        ]
-//    ]
-//}
+
+// --- testOp ---
+
+extension testOp
+{
+    assertTrue
+    [
+        ifnot (self)
+            [ console writeLine:"Assertion fails!" ].
+    ]
+    
+    assertFalse
+    [
+        if(self)
+            [ console writeLine:"Assertion fails!" ].
+    ]
+}
+
+// --- Assert ---
+
+class AssertException :: Exception.
+
+public singleton Assert
+{
+    ifEqual(object expr, object val)
+    [
+        ifnot(val == expr)
+        [
+            AssertException new("Assertion failed"); raise
+        ]
+    ]
+    
+    notFailed(Func f)
+    [
+        (f())
+            | if(:e)
+            [
+                console writeLine:(e message).
+                
+                AssertException new("Assertion failed"); raise
+            ].
+    ]
+    
+    ifTrue : b
+    [
+        ifnot(b)
+        [
+            AssertException new("Assertion failed"); raise
+        ]
+    ]
+    
+    ifFalse : b
+    [
+        if(b)
+        [
+            AssertException new("Assertion failed"); raise
+        ]
+    ]
+}
 
 // --- controlOp ---
 

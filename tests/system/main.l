@@ -1,6 +1,6 @@
 // --- Main ---
 
-symbol program =
+public program
 [   
     console writeLine:"Starting...".
 
@@ -45,4 +45,4 @@ symbol program =
     shortCircuitBooleanOperation().
 
     console writeLine:"Passed".
-].
+]
