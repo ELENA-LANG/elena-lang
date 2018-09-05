@@ -710,7 +710,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
             }
             else return mapSelf();
          }
-         else if (terminal.compare(GROUP_VAR) && !closureMode) {
+         else if (!closureMode && (terminal.compare(GROUP_VAR) || terminal.compare(OLD_GROUP_VAR))) {
             if (extensionMode) {
                return mapSelf();
             }
@@ -786,7 +786,7 @@ ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
          return methodScope->mapSelf();
       }
    }
-   else if (identifier.compare(GROUP_VAR)) {
+   else if (identifier.compare(GROUP_VAR) || identifier.compare(OLD_GROUP_VAR)) {
       MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
       if (methodScope != NULL) {
          return methodScope->mapGroup();
@@ -836,7 +836,7 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool reference
 
 ObjectInfo Compiler::ResendScope :: mapTerminal(ident_t identifier, bool referenceOne)
 {
-   if (!withFrame && (identifier.compare(SELF_VAR) || identifier.compare(GROUP_VAR)))
+   if (!withFrame && (identifier.compare(SELF_VAR) || identifier.compare(GROUP_VAR) || identifier.compare(OLD_GROUP_VAR)))
    {
       return ObjectInfo();
    }

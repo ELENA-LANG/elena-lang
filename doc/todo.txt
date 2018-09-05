@@ -27,6 +27,7 @@ In development:
                  * sta : anagram
                  * mta : anagram
                  * vm : Dynamic variable names
+                 * vm : Execute Brain****
 
               dev - general optimization
 

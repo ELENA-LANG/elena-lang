@@ -418,7 +418,8 @@ namespace _ELENA_
    #define READ_OPERATOR            ">>"
 
   // --- ELENA explicit variables ---
-   #define GROUP_VAR               "target"           // the current method target / closure owner method target
+   #define OLD_GROUP_VAR           "target"           // obsolete : the current method target / closure owner method target
+   #define GROUP_VAR               "__target"         // the current method target / closure owner method target
    #define SELF_VAR                "self"             // the current method class reference / closure owner class reference
 
    #define SUPER_VAR               "super"            // the predecessor class
