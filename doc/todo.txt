@@ -24,13 +24,14 @@ In development:
                  * test realOp<real>.round<int>[1] extension
 
               dev - tests          
-                 * test sta : anagram
-                 * test mta : anagram
+                 * sta : anagram
+                 * mta : anagram
+                 * vm : Dynamic variable names
 
               dev - general optimization
 
               dev - revision
-                 * rosetta code - Conway's Game of Life
+                 * rosetta code - Exceptions
 
 ------                                                           
 Pipeline:

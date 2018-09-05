@@ -1,12 +1,16 @@
-﻿[project]
-executable=evolutionary.exe
-namespace=evolutionary
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
-[forwards]
-'program=evolutionary'program
-
+<configuration>
+    <project>
+        <executable>evolutionary.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>evolutionary</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

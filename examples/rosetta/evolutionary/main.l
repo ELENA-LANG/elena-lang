@@ -1,13 +1,12 @@
 import system'routines.
 import extensions.
+import extensions'text.
 
-// --- program ---
+const literal Target = "METHINKS IT IS LIKE A WEASEL".
+const literal AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ".
 
-const Target = "METHINKS IT IS LIKE A WEASEL".
-const AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ".
-
-const C = 100.
-const P = 0.05r.
+const int C = 100.
+const real P = 0.05r.
 
 rnd = randomGenerator.
 
@@ -17,13 +16,13 @@ randomChar
 extension evoHelper
 {
     randomString
-        = 0 till:self repeat(:x)( randomChar ); summarize:(String new); literal.
+        = 0 till:self repeat(:x)( randomChar ); summarize(StringWriter new); literal.
         
     fitnessOf:s
-        = self zip:s by(:a:b)( (a == b)iif(1,0) ); summarize(Integer new); int.
+        = self zip:s by(:a:b)( (a == b)iif(1,0) ); summarize(Integer new); toInt.
         
     mutate : p
-        = self selectBy(:ch)( (rnd nextReal <= p) iif(randomChar,ch) ); summarize(String new); literal.
+        = self selectBy(:ch)( (rnd nextReal <= p) iif(randomChar,ch) ); summarize(StringWriter new); literal.
 }
 
 class EvoAlgorithm :: Enumerator
@@ -35,28 +34,35 @@ class EvoAlgorithm :: Enumerator
     constructor new : s of:count
     [
         theTarget := s.
-        theVariantCount := count int.
+        theVariantCount := count toInt.
     ]
 
     get = theCurrent.
 
-    next
+    bool next
     [
-        if ($nil == theCurrent)
+        if (nil == theCurrent)
             [ theCurrent := theTarget length; randomString. ^ true ].
             
         if (theTarget == theCurrent)
             [ ^ false ].
             
-        var variants := Array new:theVariantCount; populate(:x)( theCurrent mutate:P ).
+        auto variants := Array new:theVariantCount; populate(:x)( theCurrent mutate:P ).
         
-        theCurrent := variants array; sort(:a:b)( a fitnessOf:Target > b fitnessOf:Target ); getAt:0.
+        theCurrent := variants sort(:a:b)( a fitnessOf:Target > b fitnessOf:Target ); getAt:0.
         
         ^ true.
-    ]            
+    ] 
+    
+    reset
+    [
+        theCurrent := nil.
+    ]
+    
+    enumerable => theTarget.                          
 }
 
-program =
+public program
 [
     var attempt := Integer new.
     EvoAlgorithm new:Target of:C; forEach(:current)
@@ -66,5 +72,5 @@ program =
             printLine(" ",current," fitness: ",current fitnessOf:Target).
     ].
     
-    console readChar.
-].
+    console readChar
+]

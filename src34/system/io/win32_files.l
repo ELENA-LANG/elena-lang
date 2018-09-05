@@ -141,7 +141,6 @@ public class StreamWriter :: TextWriter
     T<Encoder> theEncoder.
 
     constructor new(Stream aStream, Encoder anEncoder)
-        <= new;
     [
         theBuffer := TextBuilder new.
         theStream := aStream.

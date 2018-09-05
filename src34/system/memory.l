@@ -722,8 +722,8 @@ public sealed class IntMatrix
         theArray := IntArray new(Columns * Rows).        
     ]
         
-//    constructor new : Rows : Columns
-//        <= new int:Rows int:Columns.
+    constructor new(Rows,Columns)
+        <= new(T<int>(Rows), T<int>(Columns)).
         
     /// Reads the matrix lengths to the output parameter
     stacksafe readLengthsTo(ref<int> Rows, ref<int> Columns)
