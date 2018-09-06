@@ -136,4 +136,36 @@ public sealed Map<key_type, value_type> :: Enumerable<Tuple<key_type, value_type
         theHashTable := V<IntArray>(theHashTable length).
         theList clear.
     ]
+    
+    bool containsKey(key_type key)
+    [
+        int index := 0.
+        key readHashCodeTo(&index).
+
+        index := index && theHashMask.
+        
+        T<IntArray> backet := theHashTable[index].        
+        if (nil == backet)
+        [
+            ^ false
+        ].
+        
+        int len := 0.
+        backet read(0, &len).
+        int i := 1.
+        while (i < len)
+        [
+            int j := 0.
+            backet read(i, &j).
+            
+            Tuple<key_type, value_type> item := theList[j].
+            
+            if(key equal(item item1))
+                [ ^ true ].
+            
+            i := i + 1
+        ].
+        
+        ^ false
+    ]    
 }

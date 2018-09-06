@@ -3,6 +3,9 @@ In development:
 ------                              
 	                            
               dev - tests          
+                 * Building dynamic code with Expressions : Expression is an interface and cannot be used directly
+
+              dev - tests          
                  * test mta : exception handling
                  * test mta : critical exception handling
                  * test mta : GC
@@ -11,6 +14,7 @@ In development:
                  * test vm : GC
 
               dev - general implementation
+                 * #456 : Compilation critical error 
                  * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
@@ -24,15 +28,16 @@ In development:
                  * test realOp<real>.round<int>[1] extension
 
               dev - tests          
-                 * sta : anagram
-                 * mta : anagram
+                 * sta / gc : anagram, Hailstone sequence
+                 * mta / gc : anagram, Hailstone sequence
                  * vm : Dynamic variable names
                  * vm : Execute Brain****
+                 * gui : GUI component interaction, Hello world/Graphical
 
               dev - general optimization
 
               dev - revision
-                 * rosetta code - Execute Brain****
+                 * rosetta code - JSON
 
 ------                                                           
 Pipeline:

@@ -295,27 +295,17 @@ public extension convertorOp
     T<int> toInt(IntNumber radix)
         = intConvertor convert(self, radix).
         
-//    toHexInt
-//        = self cast:%eval to:
-//            {
-//                literal : l = intConvertor convert literal:l base:16.
-//                
-//                wide : l = intConvertor convert wide:l base:16.
-//            }.
-//
-////    toLong
-////        = longConvertor convert:self.
-////
-////    toHexLong
-////        = self cast:%eval to:
-////            {
-////                literal : l = longConvertor convert literal:l base:16.
-////                
-////                wide : l = longConvertor convert wide:l base:16.
-////            }.
-//    
-//    toChar
-//        = charConvertor convert:self.
+    T<int> toHexInt
+        = intConvertor convert(self, 16).
+
+    T<long> toLong
+        = longConvertor convert:self.
+
+    T<long> toHexLong
+        = longConvertor convert(self, 16).
+    
+    T<char> toChar
+        = charConvertor convert:self.
 
     toReal
         = realConvertor convert:self.

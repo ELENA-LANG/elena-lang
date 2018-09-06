@@ -5,7 +5,7 @@ import extensions'text.
 
 // --- ReaderEnumerator ---
 
-class ReaderEnumerator :: Enumerator
+public class ReaderEnumerator :: Enumerator
 {
     T<TextReader> theReader.
     object        theLine.

@@ -51,62 +51,62 @@ public mixin Group
 //    
 //    dispatch => system'core_routines'__castover.
 //}
-//
-//// --- extensions ---
-//
-//extension dynamicOp
-//{
-//    mixInto:role
-//        = Extension::(role, self).
-//        
-//    groupWith:object
-//    [
-//        if($nil == object)
-//            [ ^ self ].
-//        
-//        if(Group == self class_ref)
-//            [ 
-//                int length := self fieldCount.
-//            
-//                var retVal := Group $new int(length + 1).
-//                                
-//                int i := 0.
-//                
-//                while (i < length)
-//                [
-//                    retVal setField int:i object(self getField int:i).
-//                    
-//                    i := i + 1.
-//                ].
-//                
-//                retVal setField int:length object:object.
-//                
-//                ^ retVal
-//            ];
-//            [ 
-//                if (Group == object class_ref)
-//                    [
-//                        int length := object fieldCount.
-//                    
-//                        var retVal := Group $new int(length + 1).
-//                                        
-//                        int i := 0.
-//                        
-//                        while (i < length)
-//                        [
-//                            retVal setField int(i + 1) object(self getField int:i).
-//                            
-//                            i := i + 1
-//                        ].
-//                        
-//                        retVal setField int:0 object:object.
-//                        
-//                        ^ retVal
-//                    ];
-//                    [ ^ Group new args:(self,object) ]
-//            ].
-//    ]        
-//        
+
+// --- extensions ---
+
+public extension dynamicOp
+{
+    mixInto:role
+        = Extension::(role, self).
+        
+    groupWith:object
+    [
+        if(nil == object)
+            [ ^ self ].
+        
+        if(Group == self __class)
+            [ 
+                int length := self fieldCount.
+            
+                var retVal := Group newInteral(length + 1).
+                                
+                int i := 0.
+                
+                while (i < length)
+                [
+                    retVal setField(i, self getField(i)).
+                    
+                    i := i + 1.
+                ].
+                
+                retVal setField(length, object).
+                
+                ^ retVal
+            ];
+            [ 
+                if (Group == object __class)
+                    [
+                        int length := object fieldCount.
+                    
+                        var retVal := Group newInteral(length + 1).
+                                        
+                        int i := 0.
+                        
+                        while (i < length)
+                        [
+                            retVal setField(i + 1, self getField(i)).
+                            
+                            i := i + 1
+                        ].
+                        
+                        retVal setField(0, object).
+                        
+                        ^ retVal
+                    ];
+                    [ ^ Group new(self,object) ]
+            ].
+    ]        
+        
 //    castWith:object
 //    [
 //        if ($nil == object)
@@ -154,4 +154,4 @@ public mixin Group
 //                    [ ^ Cast new args:(self,object) ]
 //            ].
 //    ]        
-//}
+}
