@@ -2072,6 +2072,8 @@ void DerivationTransformer :: generateMessageTree(SyntaxWriter& writer, SNode no
             generateClosureTree(writer, current, scope);
             break;
          case lxMessage:
+         case lxCatchOperation:
+         case lxAltOperation:
          {
             if (invokeMode/* || invokeWithNoParamMode*/) {
                // message should be considered as a new operation if followed after closure invoke

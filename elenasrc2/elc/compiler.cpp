@@ -3785,7 +3785,10 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    // generate an reference class
    List<ref_t> parameters;
    ref_t operandRef = resolveObjectReference(scope, objectInfo);
-   if (!operandRef)
+   if (isPrimitiveRef(operandRef)) {
+      operandRef = _logic->resolvePrimitiveReference(*scope.moduleScope, operandRef);
+   }
+   else if (!operandRef)
       operandRef = scope.moduleScope->superReference;
 
    parameters.add(operandRef);
