@@ -2,48 +2,48 @@ import system'dynamic.
 import extensions.
 import system'routines.
 import system'collections.
-
+ 
 extension algorithmOp
 {
     s_of_n
     [
         var counter := Integer new.
         var n := self.
-        
+ 
         ^ ArrayList new; mixInto:
             {
                 eval : i
                 [
                     counter append:1.
-                    
-                    if (self length < n)
-                        [ self append:i ];
+ 
+                    if (__target length < n)
+                        [ __target append:i ];
                         [ 
                             if(randomGenerator eval:counter < n)
-                                [ self[randomGenerator eval:n] := i ].
+                                [ __target[randomGenerator eval:n] := i ].
                         ].
-                        
-                    ^ self array
+ 
+                    ^ __target value
                 ]
             }.
     ]
 }
-
-program =
+ 
+public program
 [
     var bin := Array new:10; populate(:n)( Integer new ).
     0 till:10000 do(:trial)
     [
         var s_of_n := 3 s_of_n.
-        
+ 
         0 till:10 do(:n)
         [
             var sample := s_of_n eval:n.
-            
+ 
             if (n == 9)
                 [ sample forEach(:i) [ bin[i] append:1 ] ]
         ]
     ].    
-    
-    console printLine:bin; readChar.
-].
+ 
+    console printLine:bin; readChar
+]

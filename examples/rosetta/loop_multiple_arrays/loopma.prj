@@ -1,12 +1,16 @@
-﻿[project]
-executable=loopmultarrays.exe
-namespace=loopma
-template=console
-debuginfo=-1
-
-[files]
-loopma.l
-
-[forwards]
-'program=loopma'programUsingZip
-
+<configuration>
+    <project>
+        <executable>loopmultarrays.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>loopma</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>loopma.l</include>
+        </module>
+    </files>
+</configuration>

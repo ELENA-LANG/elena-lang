@@ -8,8 +8,8 @@ import system'dynamic.
 
 class literalExConvertor =
 {
-//    literal convert intmatrix:a
-//        = intmatrixExConvertor toLiteral intmatrix:a.
+    literal convert(IntMatrix a)
+        = intmatrixExConvertor toLiteral(a).
 
     literal convert(Indexer it)
     [

@@ -126,17 +126,52 @@ void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Modul
    target.header.parentRef = importReference(exporter, target.header.parentRef, module);
 }
 
+ref_t CompilerScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
+{
+   _Module* argModule = NULL;
+
+   if (emptystr(symbol))
+      return 0;
+
+   // load class meta data
+   ref_t moduleRef = 0;
+   if (isWeakReference(symbol)) {
+      // if it is a weak reference - do not need to resolve the module
+      argModule = module;
+      moduleRef = module->mapReference(symbol);
+   }
+   else argModule = project->resolveModule(symbol, moduleRef, true);
+
+   if (argModule == NULL || moduleRef == 0)
+      return 0;
+
+   // load argument VMT meta data
+   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
+   if (metaData == NULL || metaData->Length() != sizeof(SymbolExpressionInfo))
+      return 0;
+
+   MemoryReader reader(metaData);
+
+   info.load(&reader);
+
+   if (argModule != module) {
+      // import type
+      info.expressionClassRef = importReference(argModule, info.expressionClassRef, module);
+   }
+   return moduleRef;
+}
+
 ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
 {
-   _Module* argModule;
+   _Module* argModule = NULL;
 
    if (emptystr(vmtName))
       return 0;
 
    if (isTemplateWeakReference(vmtName)) {
       // COMPILER MAGIC : try to find a template
-      bool found = loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
-      if (found && info.header.classRef != 0) {
+      ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
+      if (ref != 0 && info.header.classRef != 0) {
          if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
             // HOTFIX : class class ref should be template weak reference as well
             IdentifierString classClassName(vmtName, CLASSCLASS_POSTFIX);
@@ -145,7 +180,7 @@ ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool head
          }
       }
 
-      return found;
+      return ref;
    }
    else {
       // load class meta data

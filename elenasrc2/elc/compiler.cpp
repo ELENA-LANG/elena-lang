@@ -381,7 +381,7 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
          // check if the object is typed expression
          SymbolExpressionInfo symbolInfo;
          // check if the object can be treated like a constant object
-         r = loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
+         r = moduleScope->loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
          if (r) {
             // if it is a constant
             if (symbolInfo.constant) {
@@ -402,34 +402,6 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
 
    // otherwise it is a normal one
    return ObjectInfo(okSymbol, reference);
-}
-
-ref_t Compiler::NamespaceScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
-{
-   if (emptystr(symbol))
-      return 0;
-
-   // load class meta data
-   ref_t moduleRef = 0;
-   _Module* argModule =  moduleScope->project->resolveModule(symbol, moduleRef, true);
-
-   if (argModule == NULL || moduleRef == 0)
-      return 0;
-
-   // load argument VMT meta data
-   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
-   if (metaData == NULL || metaData->Length() != sizeof(SymbolExpressionInfo))
-      return 0;
-
-   MemoryReader reader(metaData);
-
-   info.load(&reader);
-
-   if (argModule != module) {
-      // import type
-      info.expressionClassRef = importReference(argModule, info.expressionClassRef, module);
-   }
-   return moduleRef;
 }
 
 //void Compiler::ModuleScope :: validateReference(SNode terminal, ref_t reference)

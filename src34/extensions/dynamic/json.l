@@ -276,7 +276,7 @@ class helper =
             [ ^ helper getQuote(token) ];
             [
                 if(ch == $91) // [
-                    [ ^ helper deserialize(ArrayList new, e); array ];
+                    [ ^ helper deserialize(ArrayList new, e); value ];
                     [
                         if (ch == $123) //{
                             [ ^ helper deserialize(DynamicStruct new, e) ];

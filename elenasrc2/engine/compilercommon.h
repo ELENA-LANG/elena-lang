@@ -234,6 +234,7 @@ struct _CompilerScope
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
    virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
+   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
 
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
    virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;

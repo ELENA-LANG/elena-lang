@@ -3,7 +3,7 @@
 import system'routines.
 import extensions.
 
-program = 
+public program
 [  
     var a1 := ("a","b","c").
     var a2 := ("A","B","C").
@@ -11,18 +11,18 @@ program =
     
     0 till(a1 length) do(:i)
     [
-        console printLine(a1[i], a2[i], a3[i]).
+        console printLine(a1[i], a2[i], a3[i])
     ].
     
-    console readChar.    
-].
+    console readChar
+]
 
 // To build the program to use 'programUsingZip' symbol, just change
 // the forward to use programUsingZip as entry point
 // --
-// 'program=loopma'programUsingZip
+// program=loopma'programUsingZip
 // --
-programUsingZip =
+public programUsingZip
 [
     var a1 := ("a","b","c").
     var a2 := ("A","B","C").
@@ -33,5 +33,5 @@ programUsingZip =
     zipped forEach(:e)
         [ console writeLine:e. ].
         
-    console readChar.            
-].
+    console readChar
+]

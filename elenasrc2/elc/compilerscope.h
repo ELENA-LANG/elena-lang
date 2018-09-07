@@ -63,6 +63,7 @@ struct CompilerScope : _CompilerScope
    {
       return loadClassInfo(info, module->resolveReference(reference), headerOnly);
    }
+   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName);
 
    //   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false);

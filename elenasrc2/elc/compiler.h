@@ -372,15 +372,8 @@ private:
 
       ref_t mapNewTerminal(SNode terminal);
 
-//      ///*virtual */ref_t mapTerminal(SNode terminal, bool existing = false);
-
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-//      virtual _Module* loadReferenceModule(ref_t& reference);
-
-      ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol);
-
-//      bool loadAttributes(_Module* module);
       void loadExtensions(ident_t ns);
       void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
       {

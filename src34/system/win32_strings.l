@@ -1,4 +1,4 @@
-public const newLine
+public literal const newLine
     = $13$10.
 
 // --- characterController ---
