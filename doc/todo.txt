@@ -26,7 +26,7 @@ In development:
               dev - general optimization
 
               dev - revision
-                 * rosetta code - Random number generator (included)
+                 * rosetta code - Reflection/List methods
 
 ------                                                           
 Pipeline:

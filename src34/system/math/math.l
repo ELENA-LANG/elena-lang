@@ -281,16 +281,16 @@ public extension mathOp
   
     real log2
     [
-        real x := self ln.
-        real y := 2 ln.
+        real x := self~mathOp ln.
+        real y := 2~mathOp ln.
         
         ^ x / y.
     ]
         
     real log10
     [
-        real x := self ln.
-        real y := 10 ln.
+        real x := self~mathOp ln.
+        real y := 10~mathOp ln.
         
         ^ x / y.
     ]

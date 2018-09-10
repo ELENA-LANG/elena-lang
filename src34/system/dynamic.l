@@ -27,10 +27,10 @@ public sealed struct Message
         system'core_routines'__message load(self, name)
     ]
     
-//    stacksafe constructor $new(int message)
-//    [
-//        system'core_routines'__message copy mssg:$self int:message.
-//    ]
+    internal stacksafe constructor newInteral(int message)
+    [
+        system'core_routines'__message copy(self, message).
+    ]
     
     /// Loads a message
     constructor new(mssg message)
