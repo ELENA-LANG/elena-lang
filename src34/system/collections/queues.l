@@ -193,7 +193,7 @@ public sealed class Queue :: Enumerable
         if (theTale == theTop)
             [ InvalidOperationException new:"Queue is empty"; raise ].
             
-        ^ theList getAt(theTop)
+        ^ theList getAt(T<int>(theTop))
     ]
     
     pop
@@ -201,7 +201,7 @@ public sealed class Queue :: Enumerable
         if(theTale == theTop)
             [ InvalidOperationException new:"Queue is empty"; raise ].
 
-        var item := theList getAt(theTop).
+        var item := theList getAt(T<int>(theTop)).
                                     
         theTop append(1).
         
