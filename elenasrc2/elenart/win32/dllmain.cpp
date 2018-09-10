@@ -29,6 +29,23 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systeEnv, void* exceptionHandler, voi
    Instance->startSTA(&header, (SystemEnv*)systeEnv, entryPoint);
 }
 
+EXTERN_DLL_EXPORT void InitializeMTA(void* systeEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
+{
+   FrameHeader header;
+   // initialize the exception handler
+   __asm {
+      mov header.root_exception_struct.core_catch_frame, ebp
+      mov header.root_exception_struct.core_catch_level, esp
+   }
+   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+
+   // initialize the critical exception handler
+   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
+
+   // start the system
+   Instance->startMTA(&header, (SystemEnv*)systeEnv, entryPoint);
+}
+
 EXTERN_DLL_EXPORT void Exit(int exitCode)
 {
    Instance->Exit(exitCode);

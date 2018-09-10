@@ -16,7 +16,6 @@ define LOAD_CALLSTACK       10024h
 define BREAK                10026h
 define EXPAND_HEAP          10028h
 define EXITTHREAD           1002Ah
-define NEW_EVENT            10101h
 
 define CORE_OS_TABLE        20009h
 
@@ -80,17 +79,5 @@ procedure % EXITTHREAD
   push eax
   // ; exit
   call extern 'dlls'KERNEL32.ExitThread
-
-end
-
-procedure % NEW_EVENT
-
-  // ; set thread event handle
-  push 0
-  push 0
-  push 0FFFFFFFFh // -1
-  push 0
-  call extern 'dlls'KERNEL32.CreateEventW  
-  ret
 
 end

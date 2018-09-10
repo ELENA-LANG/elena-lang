@@ -5,16 +5,8 @@ In development:
               dev - tests          
                  * Building dynamic code with Expressions : Expression is an interface and cannot be used directly
 
-              dev - tests          
-                 * test mta : exception handling
-                 * test mta : critical exception handling
-                 * test mta : GC
-                 * test vm : exception handling
-                 * test vm : critical exception handling
-                 * test vm : GC
-
               dev - general implementation
-                 * #456 : Compilation critical error 
+                 * migrate vm client
                  * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
@@ -37,7 +29,7 @@ In development:
               dev - general optimization
 
               dev - revision
-                 * rosetta code - Polymorphic copy
+                 * rosetta code - Quaternion type
 
 ------                                                           
 Pipeline:

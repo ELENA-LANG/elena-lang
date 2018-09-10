@@ -10,6 +10,7 @@
 // --------------------------------------------------------------------------
 #include "linker.h"
 #include "errors.h"
+#include "elenamachine.h"
 
 #include <windows.h>
 
@@ -693,15 +694,11 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
 
 void Linker :: prepareTLS(Image& image, int tls_variable, ref_t& tls_directory)
 {
+   TLSEntry entry = {};
+
    // allocate tls section
    MemoryWriter tlsWriter(image.getTLSSection());
-   tlsWriter.writeDWord(0);   // stack frame pointer
-   tlsWriter.writeDWord(0);   // stack bottom pointer
-   tlsWriter.writeDWord(0);   // catch address
-   tlsWriter.writeDWord(0);   // catch stack level
-   tlsWriter.writeDWord(0);   // catch stack frame
-   tlsWriter.writeDWord(0);   // syncronization event
-   tlsWriter.writeDWord(0);   // thread flags
+   tlsWriter.write(&entry, sizeof(TLSEntry));
 
    // map IMAGE_TLS_DIRECTORY
    MemoryWriter rdataWriter(image.getRDataSection());

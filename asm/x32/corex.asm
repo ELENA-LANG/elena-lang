@@ -4,7 +4,6 @@ define HOOK                 10010h
 define INIT_RND             10012h
 define INIT                 10013h
 define NEWFRAME             10014h
-define INIT_ET              10015h
 define ENDFRAME             10016h
 define RESTORE_ET           10017h
 define OPENFRAME            10019h
@@ -43,20 +42,22 @@ define gc_mg_current         0020h
 define gc_end                0024h
 define gc_mg_wbar            0028h
 define gc_et_current         002Ch 
-define gc_ext_stack_frame    0030h 
+define gc_stack_frame        0030h 
 define gc_lock               0034h 
 define gc_signal             0038h 
 define tt_ptr                003Ch 
 define tt_lock               0040h 
 
+// SYSTEM_ENV OFFSETS
+define se_statlen            0000h
+define se_mgsize	     0014h
+define se_ygsize	     001Ch
+
 // GCXT TLS TABLE
-define tls_stack_frame       0000h
-define tls_stack_bottom      0004h
-define tls_catch_addr        0008h
-define tls_catch_level       000Ch
-define tls_catch_frame       0010h
-define tls_sync_event        0014h
-define tls_flags             0018h
+define tls_et_current        0000h
+define tls_stack_frame       0004h
+define tls_sync_event        0008h
+define tls_flags             000Ch
 
 // Page Size
 define page_size               10h
@@ -958,89 +959,6 @@ labFixResume:
 
 end
 
-// --- System Core Functions --
-
-procedure % INIT
-  // ; initialize fpu
-  finit
-
-  // GCXT: initialize signal
-  xor  ebx, ebx
-  mov  [data : %CORE_GC_TABLE + gc_signal], ebx
-
-  // ; initialize
-  mov  ecx, [data : %CORE_STAT_COUNT]
-  mov  edi, data : %CORE_STATICROOT
-  shr  ecx, 2
-  xor  eax, eax
-  rep  stos
-
-labNext:
-  mov  ecx, 10000000h
-  mov  ebx, [data : %CORE_GC_SIZE]
-  and  ebx, 0FFFFFF80h     // ; align to 128
-  shr  ebx, page_size_order_minus2
-  call code : %NEW_HEAP
-  mov  [data : %CORE_GC_TABLE + gc_header], eax
-
-  mov  ecx, 40000000h
-  mov  ebx, [data : %CORE_GC_SIZE]
-  and  ebx, 0FFFFFF80h     // align to 128
-  call code : %NEW_HEAP
-  mov  [data : %CORE_GC_TABLE + gc_start], eax
-
-  // ; initialize yg
-  mov  [data : %CORE_GC_TABLE + gc_start], eax
-  mov  [data : %CORE_GC_TABLE + gc_yg_start], eax
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], eax
-
-  // ; initialize gc end
-  mov  ecx, [data : %CORE_GC_SIZE]
-  and  ecx, 0FFFFFF80h     // ; align to 128
-  add  ecx, eax
-  mov  [data : %CORE_GC_TABLE + gc_end], ecx
-
-  // ; initialize gc shadow
-  mov  ecx, [data : %CORE_GC_SIZE + gcs_YGSize]
-  and  ecx, page_mask
-  add  eax, ecx
-  mov  [data : %CORE_GC_TABLE + gc_yg_end], eax
-  mov  [data : %CORE_GC_TABLE + gc_shadow], eax
-
-  // ; initialize gc mg
-  add  eax, ecx
-  mov  [data : %CORE_GC_TABLE + gc_shadow_end], eax
-  mov  [data : %CORE_GC_TABLE + gc_mg_start], eax
-  mov  [data : %CORE_GC_TABLE + gc_mg_current], eax
-  
-  // ; initialize wbar start
-  mov  edx, eax
-  sub  edx, [data : %CORE_GC_TABLE + gc_start]
-  shr  edx, page_size_order
-  add  edx, [data : %CORE_GC_TABLE + gc_header]
-  mov  [data : %CORE_GC_TABLE + gc_mg_wbar], edx
-  
-  // ; GCXT: assign tls entry
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  esi, [ecx + ebx*4]
-
-  // ; init thread flags  
-  mov  [esi + tls_flags], 0       
-
-  call code : %NEW_EVENT
-  mov  [esi + tls_sync_event], eax     
-
-  mov  eax, data : %THREAD_TABLE
-  mov  [eax], esi       // ; save tls reference 
-
-  mov  ecx, [data : %CORE_GC_SIZE + gcs_TTSize]
-  mov  [eax-4], ecx
-  
-  ret
-
-end
-
 procedure % NEWFRAME
 
   // ; put frame end and move procedure returning address
@@ -1068,7 +986,6 @@ procedure % NEWFRAME
   // ; GCXT
   // ; set stack frame pointer / bottom stack pointer
   mov  ebp, esp 
-  mov  [esi + tls_stack_bottom], esp
   push edx
   mov  [esi + tls_stack_frame], ebx
   
@@ -1082,7 +999,7 @@ procedure % NEWFRAME
   // ; init default critical handler
   mov  [data : % CORE_ET_TABLE], ebx
 
-  call code : % INIT_ET  
+  // ; call code : % INIT_ET  
 
   ret
 
@@ -1103,29 +1020,6 @@ procedure % ENDFRAME
 
 end
 
-// ; init exception table, ebx contains default handler address
-procedure % INIT_ET
-
-  pop esi
-
-  mov edx, ebx
-
-  // ; GCXT: get current thread frame
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ebx, [ecx+ebx*4]
-
-  // ; set default exception handler
-  mov  [ebx + tls_catch_addr], edx
-  mov  [ebx + tls_catch_level], esp
-  mov  [ebx + tls_catch_frame], ebp
-
-  push esi
-
-  ret
-
-end 
-
 procedure % RESTORE_ET
 
   // ; GCXT: get current thread frame
@@ -1134,7 +1028,8 @@ procedure % RESTORE_ET
   mov  ebx, [ecx+ebx*4]
 
   pop  edx
-  mov  esp, [ebx + tls_catch_level]
+  mov  ebx, [ebx + tls_et_current]
+  mov  esp, [ebx + 4]
   push edx
 
   ret
@@ -1262,15 +1157,15 @@ labSkipSave:
   push ebx
 
   // ; set stack frame pointer  
-  mov  ebp, esp 
-  mov  [esi + tls_stack_frame], ebx
-  mov  [esi + tls_stack_bottom], esp
+  // ; mov  ebp, esp 
+  // ; mov  [esi + tls_stack_frame], ebx
+  // ; mov  [esi + tls_stack_bottom], esp
 
   // ; restore return pointer
   push edx              
 
   mov  ebx, code : "$native'coreapi'core_thread_handler"
-  call code : % INIT_ET
+//;  call code : % INIT_ET
 
   ret
 
@@ -1426,7 +1321,9 @@ inline % 7
   mov  esi, [data : %CORE_TLS_INDEX]
   mov  edx, fs:[2Ch]
   mov  esi, [edx+esi*4]
-  jmp  [esi + tls_catch_addr]
+  mov  edx, [esi + tls_et_current]
+
+  jmp  [esi]
 
 end
 
@@ -1438,15 +1335,12 @@ inline % 1Dh
   mov  esi, fs:[2Ch]
   mov  edx, [esi+edx*4]
 
-  mov  esp, [edx + tls_catch_level]  
-  mov  ebp, [edx + tls_catch_frame]
-  mov  esi, [esp]
-  mov  [edx + tls_catch_level], esi
-  mov  esi, [esp+4]
-  mov  [edx + tls_catch_frame], esi
-  mov  esi, [esp+8]
-  mov  [edx + tls_catch_addr], esi
-  add  esp, 12
+  mov  esi, [edx + tls_et_current]
+
+  mov  esp, [esi + 4]
+  mov  ebp, [esi + 8]
+  pop  esi
+  mov  [edx + tls_et_current], esi
   
 end
 
@@ -1504,15 +1398,12 @@ inline % 29h
   mov  edx, fs:[2Ch]
   mov  edx, [edx+esi*4]
 
-  mov  esi, [edx + tls_catch_level]  
-  mov  ebx, [esi]
-  mov  [edx + tls_catch_level], ebx
-  mov  ebx, [esi+4]
-  mov  [edx + tls_catch_frame], ebx
-  mov  ebx, [esi+8]
-  mov  [edx + tls_catch_addr], ebx
+  mov  esi, [edx + tls_et_current]
+  mov  esi, [esi + 4]
+  mov  esi, [esi]
+  mov  [edx + tls_et_current], esi
 
-  jmp  [edx + tls_catch_addr]
+  jmp  [edx + tls_et_current]
 
 end
 
@@ -1528,11 +1419,13 @@ inline % 0A6h
   mov  edx, fs:[2Ch]
   mov  ebx, [edx+ebx*4]
 
-  push [ebx + tls_catch_addr]
-  push [ebx + tls_catch_frame]
-  push [ebx + tls_catch_level]  
-  mov  [ebx + tls_catch_addr], ecx
-  mov  [ebx + tls_catch_level], esp
-  mov  [ebx + tls_catch_frame], ebp
+  push [ebx + tls_et_current]
+
+  mov  esi, esp 
+  push ebp
+  push esi
+  push ecx
+
+  mov  [ebx + gc_et_current], esp
   
 end

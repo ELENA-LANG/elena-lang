@@ -55,11 +55,22 @@ struct GCTable
    pos_t gc_end;
    pos_t gc_mg_wbar;
    ExceptionStruct* gc_et_current;     // !! is not used for MTA
-   pos_t gc_ext_stack_frame;           // !! is not used for MTA
+   pos_t gc_stack_frame;               // !! is not used for MTA
    pos_t gc_lock;                      // !! is not used for STA
    pos_t gc_signal;                    // !! is not used for STA
    pos_t tt_ptr;                       // !! is not used for STA
    pos_t tt_lock;                      // !! is not used for STA
+};
+
+// --- TLSEntry ---
+
+struct TLSEntry
+{
+   ExceptionStruct* tls_et_current;
+   pos_t            tls_stack_frame;           // !! is not used for MTA
+   void*            tls_sync_event;
+   pos_t            tls_flags;
+
 };
 
 // --- SystemEnv ---
@@ -70,6 +81,7 @@ struct SystemEnv
    void*             StatRoots;
    GCTable*          Table;
    pos_t*            TLSIndex;
+   pos_t*            ThreadTable;
    pos_t             GCMGSize;
    pos_t             GCYGSize;
    pos_t             MaxThread;
@@ -89,10 +101,12 @@ static class SystemRoutineProvider
 {
 public:
    static void InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler);
+   static void InitTLSEntry(pos_t index, FrameHeader* frameHeader, pos_t* threadTable);
 
    static void Prepare();
 
-   static void InitSTA(SystemEnv* env);
+   static void InitSTA(SystemEnv* env, FrameHeader* frameHeader);
+   static void InitMTA(SystemEnv* env, FrameHeader* frameHeader);
 
    static void Exit(pos_t exitCode);
 

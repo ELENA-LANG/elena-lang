@@ -4972,7 +4972,7 @@ procedure __thread."readThreadProc$@system@ref#1&IntNumber[1]"
 
 end
 
-symbol start
+symbol sta_start
 
   pushr entry : "$forwards'$program"
   pushr api : seh_handler
@@ -4980,6 +4980,18 @@ symbol start
   system
   pushe
   callextr extern : InitializeSTA
+  quit
+
+end
+
+symbol mta_start
+
+  pushr entry : "$forwards'$program"
+  pushr api : seh_handler
+  pushr api : default_handler
+  system
+  pushe
+  callextr extern : InitializeMTA
   quit
 
 end

@@ -21,11 +21,22 @@ void ELENARTMachine :: startSTA(FrameHeader* frameHeader, SystemEnv* env, void* 
 {
    // setting up system
    __routineProvider.Prepare();
-   __routineProvider.InitSTA((SystemEnv*)env);
+   __routineProvider.InitSTA((SystemEnv*)env, frameHeader);
 
-   // setting current exception handler (only for STA)
-   env->Table->gc_et_current = &frameHeader->root_exception_struct;
-   env->Table->gc_ext_stack_frame = 0;
+   _Entry entry;
+   entry.address = programEntry;
+
+   (*entry.entry)();
+
+   // winding down system
+   Exit(0);
+}
+
+void ELENARTMachine :: startMTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry)
+{
+   // setting up system
+   __routineProvider.Prepare();
+   __routineProvider.InitMTA((SystemEnv*)env, frameHeader);
 
    _Entry entry;
    entry.address = programEntry;

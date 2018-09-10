@@ -32,7 +32,6 @@ const int elObjectOffset   = 0x0008;           // object header / offset constan
 #define BREAK                0x10026
 #define EXPAND_HEAP          0x10028
 #define EXITTHREAD           0x1002A
-#define NEW_EVENT            0x10101
 
 #define CORE_GC_TABLE        0x20002
 #define CORE_STATICROOT      0x20005
@@ -51,12 +50,12 @@ const int coreVariables[coreVariableNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 15;
+const int coreFunctionNumber = 14;
 const int coreFunctions[coreFunctionNumber] =
 {
    BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, ENDFRAME,
    OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, CALC_SIZE, GET_COUNT,
-   THREAD_WAIT, EXITTHREAD, NEW_EVENT
+   THREAD_WAIT, EXITTHREAD
 };
 
 // preloaded gc commands
@@ -1681,10 +1680,11 @@ void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumb
 
    // size place holder
    dataWriter.writeDWord(0);
-
-   // reserve space for the thread table
    int position = dataWriter.Position();
-   allocateArray(dataWriter, maxThreadNumber);
+   if (maxThreadNumber > 0) {
+      // reserve space for the thread table      
+      allocateArray(dataWriter, maxThreadNumber);
+   }
 
    // map thread table
    loader->mapReference(ReferenceInfo(GC_THREADTABLE), (void*)(position | mskDataRef), (ref_t)mskDataRef);

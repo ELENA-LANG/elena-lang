@@ -17,6 +17,7 @@ define EXPAND_HEAP          10028h
 define CORE_GC_TABLE        20002h
 define CORE_STATICROOT      20005h
 define CORE_TLS_INDEX       20007h
+define THREAD_TABLE         20008h
 define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
 define CORE_ET_TABLE        2000Bh
@@ -35,7 +36,7 @@ define gc_mg_current         0020h
 define gc_end                0024h
 define gc_mg_wbar            0028h
 define gc_et_current         002Ch 
-define gc_ext_stack_frame    0030h 
+define gc_stack_frame        0030h 
 define gc_lock               0034h 
 define gc_signal             0038h 
 define tt_ptr                003Ch 
@@ -43,8 +44,8 @@ define tt_lock               0040h
 
 // SYSTEM_ENV OFFSETS
 define se_statlen            0000h
-define se_mgsize	     0010h
-define se_ygsize	     0014h
+define se_mgsize	     0014h
+define se_ygsize	     001Ch
 
 // Page Size
 define page_size               10h
@@ -88,7 +89,7 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_end                : +24h
   dd 0 // ; gc_mg_wbar            : +28h
   dd 0 // ; gc_et_current         : +2Ch 
-  dd 0 // ; gc_ext_stack_frame    : +30h 
+  dd 0 // ; gc_stack_frame        : +30h 
   dd 0 // ; gc_lock               : +34h 
   dd 0 // ; gc_signal             : +38h 
   dd 0 // ; tt_ptr                : +3Ch 
@@ -103,6 +104,7 @@ rstructure %SYSTEM_ENV
   dd data : %CORE_STATICROOT
   dd data : %CORE_GC_TABLE
   dd data : %CORE_TLS_INDEX
+  dd data : %THREAD_TABLE
 
 end
 
@@ -129,7 +131,7 @@ labYGCollect:
   push ebp
 
   // ; lock frame
-  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esp
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
 
   push ecx
   push ebx                        
@@ -148,7 +150,7 @@ labYGCollect:
   push ecx
 
   // ; collect frames
-  mov  eax, [data : %CORE_GC_TABLE + gc_ext_stack_frame]  
+  mov  eax, [data : %CORE_GC_TABLE + gc_stack_frame]  
   mov  ecx, eax
 
 labYGNextFrame:
@@ -861,7 +863,7 @@ procedure % OPENFRAME
 
   xor  edi, edi
 
-  mov  esi, [data : %CORE_GC_TABLE + gc_ext_stack_frame]
+  mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
   // ; save previous pointer / size field
   push ebp
   push esi                                
@@ -882,7 +884,7 @@ procedure % CLOSEFRAME
   
   lea  esp, [esp+4]
   pop  edx
-  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], edx
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
   pop  ebp
   
   // ; restore return pointer
@@ -1133,7 +1135,7 @@ end
 inline % 26h
                                                        
   push ebp     
-  mov  [data : %CORE_GC_TABLE + gc_ext_stack_frame], esp
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
 
 end
 
