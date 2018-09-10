@@ -448,7 +448,9 @@ ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, Li
 
    SourceFileInfo fileInfo;
    fileInfo.tree = &templateTree;
-   fileInfo.path = "compiling template...";
+   fileInfo.path.copy("compiling ");
+   fileInfo.path.append(resolveFullName(generatedReference));
+   fileInfo.path.append(" template...");
    fileInfo.importedNs.add(ident_t(STANDARD_MODULE).clone());
 
    SourceFileList files;

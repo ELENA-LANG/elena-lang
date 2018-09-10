@@ -387,13 +387,13 @@ ref_t DerivationTransformer::DerivationScope :: mapIdentifier(ident_t identifier
 ref_t DerivationTransformer::DerivationScope :: mapReference(SNode terminal)
 {
    if (terminal == lxIdentifier) {
-      // try to resolve as an attribute
-      ref_t attrRef = mapAttribute(terminal);
-      if (!attrRef) {
-         // otherwise try resolve as an identifier
-         return mapIdentifier(terminal.identifier(), false);
+      // try try resolve as an identifier
+      ref_t ref = mapIdentifier(terminal.identifier(), false);
+      if (!ref) {
+         // otherwise try to resolve it as an attribute
+         ref = mapAttribute(terminal);
       }
-      else return attrRef;
+      return ref;
    }
    else if (terminal == lxReference) {
       ref_t reference = compilerScope->resolveImplicitIdentifier(ns, terminal.identifier(), true, imports);
