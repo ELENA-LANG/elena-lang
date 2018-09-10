@@ -8,8 +8,8 @@ In development:
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
-                 *  #11 : Debug info structure redesign 
-                 *  #16 : Debug information in executable 
+
+              dev - general implementation
                  * (re)implement sockets
                  * (re)implement tcpserver / tcpclient
 

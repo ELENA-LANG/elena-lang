@@ -82,6 +82,8 @@ public:
       return *this;
    }
 
+   bool empty() const { return emptystr(_string); }
+
    bool copyTo(char* dest, size_t length, size_t& destLength);
    bool copyTo(wide_c* dest, size_t length, size_t& destLength);
 

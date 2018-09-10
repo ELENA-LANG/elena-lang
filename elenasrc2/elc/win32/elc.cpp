@@ -547,20 +547,26 @@ inline void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _E
    }
    else moduleNs = NULL;
 
-   size_t start = 0;
-   size_t ns_index = moduleNs ? moduleNs.find(start, '\'', getlength(moduleNs)) : NOTFOUND_POS;
-   while (ns_index != NOTFOUND_POS) {
-      if (moduleNs.compare(filePath, start, ns_index)) {
-         start = ns_index + 1;
-         ns_index = moduleNs.find(start, '\'', NOTFOUND_POS);
+   size_t ns_index = filePath.find(PATH_SEPARATOR);
+   while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
+      if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
+         filePath += (ns_index + 1);
+         moduleNs += (ns_index + 1);
 
-         filePath += start;
+         ns_index = filePath.find(PATH_SEPARATOR);
       }
       else break;
    }
-   size_t index = filePath.findLast(PATH_SEPARATOR);
-   if (index != NOTFOUND_POS) {
-      retVal.copy(filePath, index);
+
+   size_t index = filePath.find(PATH_SEPARATOR);
+   while (index != NOTFOUND_POS) {
+      if (retVal.Length() != 0) {
+         retVal.append('\'');
+      }
+      retVal.append(filePath, index);
+
+      filePath += (index + 1);
+      index = filePath.find(PATH_SEPARATOR);
    }
 }
 
