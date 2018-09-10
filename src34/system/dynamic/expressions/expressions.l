@@ -2,10 +2,10 @@ import system'collections.
 
 public interface class Expression
 {
-    constructor Constant(object o)
+    T<Expression> static Constant(object o)
         = ConstantExpression new(o).
         
-    generic constructor MessageCall(mssg message, Expression t, V<Expression> arguments)
+    T<Expression> generic static MessageCall(mssg message, Expression t, V<Expression> arguments)
         = MessageCallExpression new(message,t,arguments).
         
     abstract saveTo(List<DynamicClosure> list)

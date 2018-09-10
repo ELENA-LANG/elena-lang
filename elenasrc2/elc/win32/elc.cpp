@@ -559,8 +559,8 @@ inline void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _E
       else break;
    }
    size_t index = filePath.findLast(PATH_SEPARATOR);
-   if (index != NOTFOUND_POS && index > start) {
-      retVal.copy(filePath + start, index - start);
+   if (index != NOTFOUND_POS) {
+      retVal.copy(filePath, index);
    }
 }
 

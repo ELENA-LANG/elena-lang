@@ -2,9 +2,6 @@
 In development:
 ------                              
 	                            
-              dev - tests          
-                 * Building dynamic code with Expressions : Expression is an interface and cannot be used directly
-
               dev - general implementation
                  * migrate vm client
                  * move system'core_routines'__exception register call to the system entry symbol
