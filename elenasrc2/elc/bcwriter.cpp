@@ -2242,13 +2242,13 @@ void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int off
       }
       else if ((offset & 3) == 0) {
          // nloadi 0
-         // nsavei offset
-         // nloadi 4
-         // nsavei offset + 4
+         // nsavei offset / 4
+         // nloadi 1
+         // nsavei (offset + 1) / 4
          tape.write(bcNLoadI, 0);
-         tape.write(bcNSaveI, offset);
-         tape.write(bcNLoadI, 4);
-         tape.write(bcNSaveI, offset + 4);
+         tape.write(bcNSaveI, offset >> 2);
+         tape.write(bcNLoadI, 1);
+         tape.write(bcNSaveI, (offset >> 2) + 1);
       }
       else {
          // dcopy 0
