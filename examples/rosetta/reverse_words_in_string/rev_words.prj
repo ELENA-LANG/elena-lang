@@ -1,9 +1,16 @@
-﻿[project]
-executable=rev_words.exe
-namespace=reverse_words
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
+<configuration>
+    <project>
+        <executable>reverse_words.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>reverse_words</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

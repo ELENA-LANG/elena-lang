@@ -19,14 +19,14 @@ In development:
               dev - tests          
                  * sta / gc : anagram, Hailstone sequence
                  * mta / gc : anagram, Hailstone sequence
-                 * vm : Dynamic variable names
+                 * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
                  * vm : Execute Brain****
                  * gui : GUI component interaction, Hello world/Graphical
 
               dev - general optimization
 
               dev - revision
-                 * rosetta code - Return multiple values
+                 * rosetta code - Search a list
 
 ------                                                           
 Pipeline:

@@ -14,7 +14,7 @@ public sealed Array<template_subj> :: Indexable<template_subj>
         
         @theLength := self length.
         
-        template_subj get = self getAt(@theIndex).
+        template_subj get = self getAt(@theIndex value).
         
         enumerable = self.
         

@@ -1457,6 +1457,15 @@ singleton stringOpDispatcher
         
     trim(wide s, char ch)
         =s~wideOp trim(ch).
+        
+    replace(literal s, object src, object dst)
+        = s~literalOp replace(T<literal>(src), T<literal>(dst)).
+        
+    replace(literal s, literal src, literal dst)
+        = s~literalOp replace(src, dst).
+        
+    replace(wide s, wide src, wide dst)
+        = s~wideOp replace(src, dst).
 }
 
 public extension stringOp
@@ -1506,13 +1515,9 @@ public extension stringOp
 //        
 //        ^ self~dispatcher replaceFirst literal:aReplacee literal:aReplacer
 //    ]
-//    
-//    replace literal:aReplacee literal:aReplacer
-//    [
-//        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//        
-//        ^ self~dispatcher replace literal:aReplacee literal:aReplacer
-//    ]
+    
+    replace(aReplacee, aReplacer)
+        = stringOpDispatcher replace(self, aReplacee, aReplacer).
     
     stacksafe fillString(object aLiteral, int aCounter)
     [

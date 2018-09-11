@@ -1,7 +1,7 @@
 import extensions.
 import system'routines.
-
-program =
+ 
+public program
 [
     var text := ("---------- Ice and Fire ------------",
                   "",
@@ -13,13 +13,13 @@ program =
                   "... elided paragraph last ...",
                   "",
                   "Frost Robert -----------------------").
-                 
+ 
     text forEach(:line)
     [ 
-        line split by:" "; sequenceReverse; forEach(:word)
+        line splitBy:" "; sequenceReverse; forEach(:word)
         [
             console print(word," ")
         ].
         console writeLine.
     ].
-].
+]

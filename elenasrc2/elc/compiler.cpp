@@ -711,6 +711,7 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
 {
    this->level = 0;
    this->saved = this->reserved = 0;
+   this->genericMethod = false;
 }
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
@@ -718,6 +719,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 {
    this->level = 0;
    this->saved = this->reserved = 0;
+   this->genericMethod = parent->generic;
 }
 
 Compiler::CodeScope :: CodeScope(CodeScope* parent)
@@ -726,6 +728,7 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->level = parent->level;
    this->saved = parent->saved;
    this->reserved = parent->reserved;
+   this->genericMethod = parent->genericMethod;
 }
 
 ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
@@ -739,7 +742,7 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      if (identifier.compare(SUBJECT_VAR)) {
+      if (genericMethod && identifier.compare(SUBJECT_VAR)) {
          return ObjectInfo(okSubject, local.offset);
       }
       else if (local.size != 0) {
@@ -747,7 +750,7 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.element_ref);
    }
-   else if (identifier.compare(OLD_SUBJECT_VAR)) {
+   else if (genericMethod && identifier.compare(OLD_SUBJECT_VAR)) {
       // NOTE : temporally to support old built-in variable
       return ObjectInfo(okSubject, local.offset);
    }

@@ -583,6 +583,7 @@ private:
       // scope local variables
       LocalMap     locals;
       int          level;
+      bool         genericMethod;
 
       // scope stack allocation
       int          reserved;  // allocated for the current statement

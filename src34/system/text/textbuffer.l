@@ -156,7 +156,9 @@ sealed public /*nonstructural */ class TextBuilder
         int  n := 0.
         int  v := 0.
         
-        s read(i, &ch).
+        int i_val := i.
+        
+        s read(i_val, &ch).
         while (ch != $125)
         [
             intConvertor convert(ch, &n).
@@ -170,7 +172,8 @@ sealed public /*nonstructural */ class TextBuilder
             [ InvalidArgumentException new; raise ].
                 
             i append(1).
-            s read(i, &ch)
+            i_val := i.
+            s read(i_val, &ch)
         ].
         
         retVal value := v
