@@ -747,6 +747,10 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.element_ref);
    }
+   else if (identifier.compare(OLD_SUBJECT_VAR)) {
+      // NOTE : temporally to support old built-in variable
+      return ObjectInfo(okSubject, local.offset);
+   }
    else return ObjectInfo();
 }
 

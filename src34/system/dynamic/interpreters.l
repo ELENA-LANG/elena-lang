@@ -68,7 +68,7 @@ public class DynamicStruct
         [
             var aCurrent := theStruct~classROp getField(anIndex).
             
-            if(T<Signature>(aCurrent) equal(received))
+            if(T<Signature>(aCurrent) equal(__received))
                 [ aNotFound := false ];
                 [ anIndex := anIndex + 2 ]
         ].

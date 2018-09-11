@@ -423,7 +423,8 @@ namespace _ELENA_
    #define SELF_VAR                "self"             // the current method class reference / closure owner class reference
 
    #define SUPER_VAR               "super"            // the predecessor class
-   #define SUBJECT_VAR             "received"         // the current message
+   #define OLD_SUBJECT_VAR         "received"         // obsolete : the current message
+   #define SUBJECT_VAR             "__received"       // the current message
    #define NIL_VAR                 "nil"              // the nil pseudo symbol - representing the null value
    #define RETVAL_VAR              "$$ret"            // the closure returning value
    #define OWNER_VAR               "$$owner"          // the nested class / closure owner
