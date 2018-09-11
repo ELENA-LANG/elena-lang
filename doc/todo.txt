@@ -21,12 +21,12 @@ In development:
                  * mta / gc : anagram, Hailstone sequence
                  * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
                  * vm : Execute Brain****
-                 * gui : GUI component interaction, Hello world/Graphical
+                 * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
 
               dev - general optimization
 
               dev - revision
-                 * rosetta code - Search a list
+                 * rosetta code - Singly-linked list/Element definition
 
 ------                                                           
 Pipeline:

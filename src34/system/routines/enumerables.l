@@ -289,22 +289,22 @@ public extension enumerableOp
         ^ counter
     ]
     
-//    allMatchedBy(BaseFunction1 f)
-//    [
-//        enumerator en := self enumerator.
-//        while (en next)
-//        [
-//            ifnot (f eval(en get))
-//            [
-//                ^ false
-//            ]
-//        ].
-//        
-//        ^ true.
-//    ]
-//    
-//    allMatchedBy(ExtensionMessage extMessage)
-//        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
+    allMatchedBy(Func1 f)
+    [
+        auto   en := T<Enumerator>(self enumerator).
+        while (en next)
+        [
+            ifnot (f(en get))
+            [
+                ^ false
+            ]
+        ].
+        
+        ^ true.
+    ]
+    
+    allMatchedBy(ExtensionMessage extMessage)
+        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
 
     summarize : aVariable
     [

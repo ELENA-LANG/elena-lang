@@ -163,7 +163,7 @@ public extension<Func> blockOp
 
 // --- testOp ---
 
-extension testOp
+public extension testOp
 {
     assertTrue
     [
