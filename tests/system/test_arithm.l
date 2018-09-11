@@ -182,20 +182,12 @@ import extensions.
 //    ]
 //}.
 
-//class MyException :: Exception
-//{
-//    constructor new : message
-//        <= new literal:message.
-//}
-//
-//class MyException2 :: Exception
-//{
-//    constructor new : message
-//        <= new literal:message.
-//}
-//
-//ExecTester =
-//{
+class MyException :: Exception.
+
+class MyException2 :: Exception.
+
+ExecTester =
+{
 //    do : anAction [ anAction eval. ]
 //
 //    do:x with:y
@@ -206,22 +198,22 @@ import extensions.
 //    [
 //        anAction eval x:"Eval Works!!".
 //    ]
-//    
-//    break
-//    [
-//        MyException new:"OnError handler works"; raise.
-//    ]
-//    
-//    break2
-//    [
-//        MyException2 new:"OnError2 handler works"; raise.
-//    ]
-//    
-//    break3
-//    [
-//        MyException2 new:"Nested OnError2 handler works"; raise.
-//    ]
-//}.
+    
+    break
+    [
+        MyException new:"OnError handler works"; raise.
+    ]
+    
+    break2
+    [
+        MyException2 new:"OnError2 handler works"; raise.
+    ]
+    
+    break3
+    [
+        MyException2 new:"Nested OnError2 handler works"; raise.
+    ]
+}.
 
 //#symbol ObjectTest =
 //[
@@ -486,38 +478,38 @@ import extensions.
 //    &until:[j == 0].
 //].
 
-//// --- ExceptionTest ---
-//
-//symbol ExceptionTest =
-//[
-//    ExecTester break | if(:e) [ console writeLine:"Throw works!". ].
-//    
-//    ExecTester break | if (:e) [ console writeLine:(e message). ].
-//    
-//    try(ExecTester break2)
-//    {
-//        on(MyException e) [ console writeLine:"!!Wrong handler" ]
-//        
-//        on(MyException2 e) [ console writeLine:(e message). ]
-//    }.
-//    
-//    try(control do:
-//    [
-//        try(ExecTester break3)
-//        {
-//            on(MyException e)
-//            [
-//                console writeLine:"!!Wrong handler"
-//            ]
-//        }
-//    ])
-//    {
-//        on(MyException2 e)
-//        [
-//            console printLine(e message).
-//        ]
-//    }.
-//].
+// --- ExceptionTest ---
+
+ExceptionTest
+[
+    ExecTester break | if(:e) [ console writeLine:"Throw works!". ].
+    
+    ExecTester break | if (:e) [ console writeLine:(e message). ].
+    
+    try(ExecTester break2)
+    {
+        on(MyException e) [ console writeLine:"!!Wrong handler" ]
+        
+        on(MyException2 e) [ console writeLine:(e message). ]
+    }.
+    
+    try(control do:
+    [
+        try(ExecTester break3)
+        {
+            on(MyException e)
+            [
+                console writeLine:"!!Wrong handler"
+            ]
+        }
+    ])
+    {
+        on(MyException2 e)
+        [
+            console printLine(e message).
+        ]
+    }.
+]
 
 //// --- TextBufferTest ---
 //

@@ -26,7 +26,7 @@ In development:
               dev - general optimization
 
               dev - revision
-                 * rosetta code - Reflection/List methods
+                 * rosetta code - Remove duplicate elements
 
 ------                                                           
 Pipeline:

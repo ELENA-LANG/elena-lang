@@ -22,7 +22,7 @@ public program
 //    ArrayTest eval.
 //    OpenArgTest eval.
 //    MethodNotFoundTest eval.
-//    ExceptionTest eval.
+    ExceptionTest().
 //    DateTest eval.
 //    ListTest eval.
 //    DictionaryTest eval.

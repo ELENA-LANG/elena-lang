@@ -43,7 +43,10 @@ public extension classROp
         int i := 0.
         while (i < retVal)
         [
-           array[i] := Message newInternal(tmp_array[i]).
+           T<Message> message.
+           system'core_routines'__message copy(message, tmp_array[i]).
+            
+           array[i] := message.
             
            i += 1.
         ].
