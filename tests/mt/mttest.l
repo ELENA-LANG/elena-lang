@@ -66,8 +66,7 @@ class GCXTester
 }
 
 public program
-[
-    
+[    
     GCXTester new; start1; start2.
 
     console readChar.

@@ -2,10 +2,8 @@
 define GC_ALLOC	         10001h
 define HOOK              10010h
 define INIT_RND          10012h
-define INIT              10013h
 define OPENFRAME         10019h
 define CLOSEFRAME        1001Ah
-define NEWTHREAD         1001Bh
 define CLOSETHREAD       1001Ch
 define CALC_SIZE         1001Fh
 define GET_COUNT         10020h
@@ -4099,31 +4097,6 @@ procedure coreapi'rsqrt
   fstp  qword ptr [edi]    // store result 
   ret
 
-end
-
-// ; start_thread(param)
-procedure coreapi'start_thread
-
-  mov  eax, [esp + 4]
-           
-  // ; init thread
-  call code : % NEWTHREAD
-  mov  ecx, 1
-  test eax, eax
-  jz   short lErr
-
-  mov   ecx, INVOKE_MESSAGE_ID
-  mov   esi, [eax - 4]
-  call [esi + 4]
-  
- // ; close thread
-  call code : % CLOSETHREAD
-
-  xor  eax, eax
-
-lErr:
-  
-  ret 4
 end
 
 procedure coreapi'openframe

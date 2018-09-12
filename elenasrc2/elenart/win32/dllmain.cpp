@@ -46,6 +46,13 @@ EXTERN_DLL_EXPORT void InitializeMTA(void* systeEnv, void* exceptionHandler, voi
    Instance->startMTA(&header, (SystemEnv*)systeEnv, entryPoint);
 }
 
+EXTERN_DLL_EXPORT int StartThread(void* systeEnv, void* entryPoint, int index)
+{
+   Instance->startThread((SystemEnv*)systeEnv);
+
+   return 0;
+}
+
 EXTERN_DLL_EXPORT void Exit(int exitCode)
 {
    Instance->Exit(exitCode);

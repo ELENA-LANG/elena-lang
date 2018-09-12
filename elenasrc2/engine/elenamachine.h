@@ -108,6 +108,8 @@ public:
    static void InitSTA(SystemEnv* env, FrameHeader* frameHeader);
    static void InitMTA(SystemEnv* env, FrameHeader* frameHeader);
 
+   static bool NewThread(SystemEnv* env);
+
    static void Exit(pos_t exitCode);
 
 } __routineProvider;

@@ -6,7 +6,6 @@ define ENDFRAME             10016h
 define RESTORE_ET           10017h
 define OPENFRAME            10019h
 define CLOSEFRAME           1001Ah
-define NEWTHREAD            1001Bh
 define CLOSETHREAD          1001Ch
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
@@ -889,13 +888,6 @@ procedure % CLOSEFRAME
   
   // ; restore return pointer
   push ecx   
-  ret
-
-end
-
-procedure % NEWTHREAD
-
-  xor eax, eax
   ret
 
 end

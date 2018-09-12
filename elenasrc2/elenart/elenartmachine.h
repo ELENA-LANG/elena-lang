@@ -118,6 +118,8 @@ public:
    void startSTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry);
    void startMTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry);
 
+   void startThread(SystemEnv* env);
+
    void Exit(int exitCode);
 
    // !! 

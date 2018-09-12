@@ -2,22 +2,16 @@
 define GC_ALLOC	            10001h
 define HOOK                 10010h
 define INIT_RND             10012h
-define INIT                 10013h
-define NEWFRAME             10014h
 define ENDFRAME             10016h
-define RESTORE_ET           10017h
 define OPENFRAME            10019h
 define CLOSEFRAME           1001Ah
-define NEWTHREAD            1001Bh
 define CLOSETHREAD          1001Ch
-define EXIT                 1001Dh
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
 define NEW_HEAP             10025h
 define BREAK                10026h
 define EXPAND_HEAP          10028h
-define NEW_EVENT            10101h
 
 define CORE_GC_TABLE        20002h
 define CORE_GC_SIZE         20003h

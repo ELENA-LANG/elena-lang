@@ -8,6 +8,7 @@ define elMessage            000008000h
 define EVAL_ACTION          005h
 define EVAL_MESSAGE_ID      050h
 define INVOKE_ACTION        01Eh
+define INVOKE_MESSAGE_ID   01E0h
 
 procedure __object."#dispatch[1]"
 
@@ -4956,13 +4957,14 @@ procedure __rtptr.get[1]
 
 end
 
-procedure win_thread_start
+procedure invoker
 
   acopys 1  
   pusha
   callextr api : resolve_index
   pusha
-  callextr api : start_thread
+  copym INVOKE_MESSAGE_ID
+  acallvi 0
   ifr labError 0
   quitn 1
 
@@ -4971,14 +4973,26 @@ labError:
   pushr class : system'NotSupportedException
   pushr const : %new[0]
   throw
-  
+
 end
 
 procedure __thread."readThreadProc$@system@ref#1&IntNumber[1]"
 
-  acopyr intern : system'core_routines'win_thread_start
+  acopyr intern : system'core_routines'thread_start
   bloadsi 1
   axsavebi 0
+  quitn 1
+
+end
+
+procedure thread_start
+
+  eloadsi 1
+  pushe
+  pushr intern : system'core_routines'invoker
+  system
+  pushe
+  callextr extern : StartThread
   quitn 1
 
 end

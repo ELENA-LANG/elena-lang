@@ -120,7 +120,7 @@ void SystemRoutineProvider :: InitMTA(SystemEnv* env, FrameHeader* frameHeader)
    env->ThreadTable[-1] = env->MaxThread;
 }
 
-void SystemRoutineProvider ::InitTLSEntry(pos_t tlsIndex, FrameHeader* frameHeader, pos_t* threadTable)
+void SystemRoutineProvider :: InitTLSEntry(pos_t tlsIndex, FrameHeader* frameHeader, pos_t* threadTable)
 {
    TLSEntry* entry = nullptr;
 
@@ -153,6 +153,98 @@ void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, pos_t c
 
    header->previousStruct = previousHeader;
    header->handler = criticalHandler;
+}
+
+bool SystemRoutineProvider :: NewThread(SystemEnv* env)
+{
+   //   push eax
+
+   //   // ; GCXT
+   //   mov  edx, data : %THREAD_TABLE
+   //   mov  esi, data : %CORE_GC_TABLE + tt_lock
+   //   mov  ecx, [edx - 4]
+
+   void* tt_ptr = &env->Table->tt_ptr;
+   __asm {
+      mov  esi, tt_ptr
+
+      labWait :
+      // ; set lock
+      xor  eax, eax
+      mov  edx, 1
+      lock cmpxchg dword ptr[esi], edx
+      jnz  short labWait
+   }
+
+   bool valid = false;
+   if (env->Table->tt_ptr != 0) {
+      env->Table->tt_ptr--;
+
+      valid = true;
+   }
+   
+   // ; free lock
+   __asm {
+      mov  esi, tt_ptr
+
+      // ; could we use mov [esi], 0 instead?
+      mov  edx, -1
+      lock xadd[esi], edx
+   }
+
+   if (valid) {
+      //   sub  ebx, 1
+      //   mov  esi, data : %THREAD_TABLE
+      //   lea  esi, [esi + ebx * 4]
+
+      //   // ; assign tls entry
+      //   mov  ebx, [data:%CORE_TLS_INDEX]
+      //   push 0
+
+      //   mov  eax, fs:[2Ch]
+      //   push 0
+
+      //   mov  eax, [eax + ebx * 4]
+      //   push 0FFFFFFFFh //-1
+
+      //   mov[esi], eax               // ; save tls entry
+      //   push 0
+      //   mov  esi, eax
+
+      //   call extern 'dlls'kernel32.CreateEventW
+
+      //   // ; initialize thread entry
+      //   mov[esi + tls_sync_event], eax     // ; set thread event handle
+
+      //   mov[esi + tls_flags], 0              // ; init thread flags  
+
+      //   pop  eax
+      //   pop  edx                             // ; put frame end and move procedure returning address
+
+      //   xor  ebx, ebx
+      //   push ebp
+      //   push ebx
+      //   push ebx
+
+      //   // ; set stack frame pointer  
+      //   // ; mov  ebp, esp 
+      //   // ; mov  [esi + tls_stack_frame], ebx
+      //   // ; mov  [esi + tls_stack_bottom], esp
+
+      //   // ; restore return pointer
+      //   push edx
+
+      //   mov  ebx, code : "$native'coreapi'core_thread_handler"
+      //   //;  call code : % INIT_ET
+
+      //   ret
+
+      //   lErr :
+      //   add esp, 4
+      //   ret
+   }
+
+   return valid;
 }
 
 void SystemRoutineProvider :: Exit(pos_t exitCode)
