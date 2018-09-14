@@ -4990,6 +4990,7 @@ procedure thread_start
   eloadsi 1
   pushe
   pushr intern : system'core_routines'invoker
+  pushr api : thread_default_handler
   system
   pushe
   callextr extern : StartThread

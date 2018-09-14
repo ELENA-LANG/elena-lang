@@ -70,7 +70,7 @@ struct TLSEntry
    pos_t            tls_stack_frame;           // !! is not used for MTA
    void*            tls_sync_event;
    pos_t            tls_flags;
-
+   pos_t            tls_threadindex;
 };
 
 // --- SystemEnv ---
@@ -101,16 +101,17 @@ static class SystemRoutineProvider
 {
 public:
    static void InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler);
-   static void InitTLSEntry(pos_t index, FrameHeader* frameHeader, pos_t* threadTable);
+   static void InitTLSEntry(pos_t threadIndex, pos_t index, FrameHeader* frameHeader, pos_t* threadTable);
 
    static void Prepare();
 
    static void InitSTA(SystemEnv* env, FrameHeader* frameHeader);
    static void InitMTA(SystemEnv* env, FrameHeader* frameHeader);
 
-   static bool NewThread(SystemEnv* env);
+   static bool NewThread(SystemEnv* env, FrameHeader* frameHeader);
 
    static void Exit(pos_t exitCode);
+   static void ExitThread(SystemEnv* env, pos_t exitCode, bool withExit);
 
 } __routineProvider;
 

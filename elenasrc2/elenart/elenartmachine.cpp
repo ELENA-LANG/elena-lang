@@ -47,35 +47,26 @@ void ELENARTMachine :: startMTA(FrameHeader* frameHeader, SystemEnv* env, void* 
    Exit(0);
 }
 
-void ELENARTMachine :: startThread(SystemEnv* env)
+void ELENARTMachine :: startThread(FrameHeader* frameHeader, SystemEnv* env, void* entryPoint, int index)
 {
-   //mov  eax, [esp + 4]
+   __routineProvider.NewThread(env, frameHeader);
 
-   // ; init thread
-   //call code : % NEWTHREAD
-   __routineProvider.NewThread(env);
+   _Entry entry;
+   entry.address = entryPoint;
 
-   //mov  ecx, 1
-   //test eax, eax
-   //jz   short lErr
+   (*entry.evaluate)((void*)index);
 
-   //mov   ecx, INVOKE_MESSAGE_ID
-   //mov   esi, [eax - 4]
-   //call[esi + 4]
-
-   //// ; close thread
-   //call code : % CLOSETHREAD
-
-   //xor  eax, eax
-
-   //lErr :
-
-   //ret 4
+   __routineProvider.ExitThread(env, 0, false);
 }
 
 void ELENARTMachine :: Exit(int exitCode)
 {
    __routineProvider.Exit(exitCode);
+}
+
+void ELENARTMachine :: ExitThread(SystemEnv* env, int exitCode)
+{
+   __routineProvider.ExitThread(env, exitCode, true);
 }
 
 // !! --

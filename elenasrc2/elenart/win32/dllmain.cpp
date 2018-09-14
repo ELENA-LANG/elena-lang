@@ -10,9 +10,10 @@
 
 using namespace _ELENA_;
 
-static ELENARTMachine* Instance = NULL;
+static ELENARTMachine* _Instance = NULL;
+static void*           _SystemEnv = NULL;
 
-EXTERN_DLL_EXPORT void InitializeSTA(void* systeEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
+EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
 {
    FrameHeader header;
    // initialize the exception handler
@@ -25,11 +26,14 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systeEnv, void* exceptionHandler, voi
    // initialize the critical exception handler
    __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
 
+   // initialize system env variable
+   _SystemEnv = systemEnv;
+
    // start the system
-   Instance->startSTA(&header, (SystemEnv*)systeEnv, entryPoint);
+   _Instance->startSTA(&header, (SystemEnv*)systemEnv, entryPoint);
 }
 
-EXTERN_DLL_EXPORT void InitializeMTA(void* systeEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
+EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
 {
    FrameHeader header;
    // initialize the exception handler
@@ -42,20 +46,36 @@ EXTERN_DLL_EXPORT void InitializeMTA(void* systeEnv, void* exceptionHandler, voi
    // initialize the critical exception handler
    __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
 
+   // initialize system env variable
+   _SystemEnv = systemEnv;
+
    // start the system
-   Instance->startMTA(&header, (SystemEnv*)systeEnv, entryPoint);
+   _Instance->startMTA(&header, (SystemEnv*)systemEnv, entryPoint);
 }
 
-EXTERN_DLL_EXPORT int StartThread(void* systeEnv, void* entryPoint, int index)
+EXTERN_DLL_EXPORT int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int index)
 {
-   Instance->startThread((SystemEnv*)systeEnv);
+   FrameHeader header;
+   // initialize the exception handler
+   __asm {
+      mov header.root_exception_struct.core_catch_frame, ebp
+      mov header.root_exception_struct.core_catch_level, esp
+   }
+   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+
+   _Instance->startThread(&header, (SystemEnv*)systemEnv, entryPoint, index);
 
    return 0;
 }
 
 EXTERN_DLL_EXPORT void Exit(int exitCode)
 {
-   Instance->Exit(exitCode);
+   _Instance->Exit(exitCode);
+}
+
+EXTERN_DLL_EXPORT void StopThread(int exitCode)
+{
+   _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);
 }
 
 // !!
@@ -77,7 +97,7 @@ void init(HMODULE hModule)
    Path rootPath;
    loadDLLPath(hModule, rootPath);
 
-   Instance = new ELENARTMachine(rootPath.c_str());
+   _Instance = new ELENARTMachine(rootPath.c_str());
 
    void* debugSection = NULL;
    void* messageSection = NULL;
@@ -92,7 +112,7 @@ void init(HMODULE hModule)
    messageSection = (void*)ptr;
 
    Path configPath(CONFIG_PATH);
-   Instance->init(debugSection, messageSection, configPath.c_str());
+   _Instance->init(debugSection, messageSection, configPath.c_str());
 }
 
 EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
@@ -102,12 +122,12 @@ EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t
 
 EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
 {
-   return Instance->loadAddressInfo(retPoint, lineInfo, length);
+   return _Instance->loadAddressInfo(retPoint, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)
 {
-   return Instance->loadClassName((size_t)object, buffer, length);
+   return _Instance->loadClassName((size_t)object, buffer, length);
 }
 
 EXTERN_DLL_EXPORT void* EvaluateTape(void* tape)
@@ -129,27 +149,27 @@ EXTERN_DLL_EXPORT void* GetVMLastError(void* retVal)
 
 EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, char* lineInfo, int length)
 {
-   return Instance->loadSubjectName((size_t)subject, lineInfo, length);
+   return _Instance->loadSubjectName((size_t)subject, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
 {
-   return Instance->loadSubject((const char*)subjectName);
+   return _Instance->loadSubject((const char*)subjectName);
 }
 
 EXTERN_DLL_EXPORT int LoadMessageName(void* subject, char* lineInfo, int length)
 {
-   return Instance->loadMessageName((size_t)subject, lineInfo, length);
+   return _Instance->loadMessageName((size_t)subject, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
 {
-   return Instance->loadMessage((const char*)messageName);
+   return _Instance->loadMessage((const char*)messageName);
 }
 
 EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
 {
-   return Instance->loadSymbol((const char*)referenceName);
+   return _Instance->loadSymbol((const char*)referenceName);
 }
 
 // --- dllmain ---
@@ -171,7 +191,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
    case DLL_THREAD_DETACH:
       return TRUE;
    case DLL_PROCESS_DETACH:
-      freeobj(Instance);
+      freeobj(_Instance);
       break;
    }
    return TRUE;

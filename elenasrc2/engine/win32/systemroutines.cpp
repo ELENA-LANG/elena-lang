@@ -43,7 +43,7 @@ inline void Init(SystemEnv* env)
  //  shr  ecx, 2
  //  xor  eax, eax
  //  rep  stos
-   memset(env->StatRoots, 0, env->StatLength << 2);
+   memset(env->StatRoots, 0, env->StatLength);
 
    // ; allocate memory heap
 //  mov  ecx, 8000000h // ; 10000000h
@@ -114,13 +114,13 @@ void SystemRoutineProvider :: InitSTA(SystemEnv* env, FrameHeader* frameHeader)
 void SystemRoutineProvider :: InitMTA(SystemEnv* env, FrameHeader* frameHeader)
 {
    Init(env);
-   InitTLSEntry(*env->TLSIndex, frameHeader, env->ThreadTable);
+   InitTLSEntry(0, *env->TLSIndex, frameHeader, env->ThreadTable);
 
    // set the thread table size
    env->ThreadTable[-1] = env->MaxThread;
 }
 
-void SystemRoutineProvider :: InitTLSEntry(pos_t tlsIndex, FrameHeader* frameHeader, pos_t* threadTable)
+inline TLSEntry* GetTLSEntry(pos_t tlsIndex)
 {
    TLSEntry* entry = nullptr;
 
@@ -132,11 +132,19 @@ void SystemRoutineProvider :: InitTLSEntry(pos_t tlsIndex, FrameHeader* frameHea
       mov  entry, edx
    }
 
+   return entry;
+}
+
+void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, FrameHeader* frameHeader, pos_t* threadTable)
+{
+   TLSEntry* entry = GetTLSEntry(tlsIndex);
+
    entry->tls_flags = 0;
    entry->tls_sync_event = ::CreateEvent(0, -1, 0, 0);
    entry->tls_et_current =  &frameHeader->root_exception_struct;
+   entry->tls_threadindex = threadIndex;
 
-   threadTable[0] = (pos_t)entry;
+   threadTable[threadIndex] = (pos_t)entry;
 }
 
 void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler)
@@ -155,93 +163,50 @@ void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, pos_t c
    header->handler = criticalHandler;
 }
 
-bool SystemRoutineProvider :: NewThread(SystemEnv* env)
+inline void entryCriticalSection(void* tt_lock)
 {
-   //   push eax
-
-   //   // ; GCXT
-   //   mov  edx, data : %THREAD_TABLE
-   //   mov  esi, data : %CORE_GC_TABLE + tt_lock
-   //   mov  ecx, [edx - 4]
-
-   void* tt_ptr = &env->Table->tt_ptr;
    __asm {
-      mov  esi, tt_ptr
+      mov  esi, tt_lock
 
       labWait :
       // ; set lock
       xor  eax, eax
-      mov  edx, 1
-      lock cmpxchg dword ptr[esi], edx
-      jnz  short labWait
+         mov  edx, 1
+         lock cmpxchg dword ptr[esi], edx
+         jnz  short labWait
    }
+}
 
-   bool valid = false;
-   if (env->Table->tt_ptr != 0) {
-      env->Table->tt_ptr--;
-
-      valid = true;
-   }
-   
+inline void leaveCriticalSection(void* tt_lock)
+{
    // ; free lock
    __asm {
-      mov  esi, tt_ptr
+      mov  esi, tt_lock
 
       // ; could we use mov [esi], 0 instead?
       mov  edx, -1
       lock xadd[esi], edx
    }
+}
+
+bool SystemRoutineProvider :: NewThread(SystemEnv* env, FrameHeader* frameHeader)
+{
+   entryCriticalSection(&env->Table->tt_lock);
+
+   bool valid = false;
+   pos_t threadIndex = 0;
+   for (pos_t i = 0; i < env->MaxThread; i++) {
+      if (env->ThreadTable[i] == 0) {
+         threadIndex = i;
+         valid = true;
+         break;
+      }
+   }
+
+   leaveCriticalSection(&env->Table->tt_lock);
 
    if (valid) {
-      //   sub  ebx, 1
-      //   mov  esi, data : %THREAD_TABLE
-      //   lea  esi, [esi + ebx * 4]
-
-      //   // ; assign tls entry
-      //   mov  ebx, [data:%CORE_TLS_INDEX]
-      //   push 0
-
-      //   mov  eax, fs:[2Ch]
-      //   push 0
-
-      //   mov  eax, [eax + ebx * 4]
-      //   push 0FFFFFFFFh //-1
-
-      //   mov[esi], eax               // ; save tls entry
-      //   push 0
-      //   mov  esi, eax
-
-      //   call extern 'dlls'kernel32.CreateEventW
-
-      //   // ; initialize thread entry
-      //   mov[esi + tls_sync_event], eax     // ; set thread event handle
-
-      //   mov[esi + tls_flags], 0              // ; init thread flags  
-
-      //   pop  eax
-      //   pop  edx                             // ; put frame end and move procedure returning address
-
-      //   xor  ebx, ebx
-      //   push ebp
-      //   push ebx
-      //   push ebx
-
-      //   // ; set stack frame pointer  
-      //   // ; mov  ebp, esp 
-      //   // ; mov  [esi + tls_stack_frame], ebx
-      //   // ; mov  [esi + tls_stack_bottom], esp
-
-      //   // ; restore return pointer
-      //   push edx
-
-      //   mov  ebx, code : "$native'coreapi'core_thread_handler"
-      //   //;  call code : % INIT_ET
-
-      //   ret
-
-      //   lErr :
-      //   add esp, 4
-      //   ret
+      InitTLSEntry(threadIndex, *env->TLSIndex, frameHeader, env->ThreadTable);
    }
 
    return valid;
@@ -249,5 +214,21 @@ bool SystemRoutineProvider :: NewThread(SystemEnv* env)
 
 void SystemRoutineProvider :: Exit(pos_t exitCode)
 {
-   ExitProcess(exitCode);
+   ::ExitProcess(exitCode);
+}
+
+void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool withExit)
+{
+   entryCriticalSection(&env->Table->tt_lock);
+
+   TLSEntry* entry = GetTLSEntry(*env->TLSIndex);
+
+   env->ThreadTable[entry->tls_threadindex] = 0;
+
+   leaveCriticalSection(&env->Table->tt_lock);
+
+   ::CloseHandle(entry->tls_sync_event);
+
+   if (withExit)
+      ::ExitThread(exitCode);
 }

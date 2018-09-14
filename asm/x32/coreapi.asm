@@ -4,10 +4,8 @@ define HOOK              10010h
 define INIT_RND          10012h
 define OPENFRAME         10019h
 define CLOSEFRAME        1001Ah
-define CLOSETHREAD       1001Ch
 define CALC_SIZE         1001Fh
 define GET_COUNT         10020h
-define EXITTHREAD        1002Ah
 
 define CORE_OS_TABLE     20009h
 define CORE_ET_TABLE     2000Bh
@@ -51,13 +49,6 @@ labSave:
   
 labEnd:
   ret  
-
-end
-
-procedure coreapi'core_thread_handler
-
-  // ; exit code
-  call code : % EXITTHREAD
 
 end
 
@@ -4121,6 +4112,14 @@ procedure coreapi'default_handler
 
 end
 
+procedure coreapi'thread_default_handler
+
+  // ; exit code
+  push 0FFFFFFFFh
+  call extern 'rt_dlls.StopThread
+
+end
+
 procedure coreapi'seh_handler
 
   push ebp
@@ -4180,7 +4179,7 @@ procedure coreapi'vm_console_entry
   push esi
   push ebp
   
-  call code : % INIT
+//  call code : % INIT
 
   pop  ebp
   pop  esi

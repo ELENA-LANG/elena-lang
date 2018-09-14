@@ -6,7 +6,6 @@ define ENDFRAME             10016h
 define RESTORE_ET           10017h
 define OPENFRAME            10019h
 define CLOSEFRAME           1001Ah
-define CLOSETHREAD          1001Ch
 define LOCK                 10021h
 define UNLOCK               10022h
 define LOAD_CALLSTACK       10024h

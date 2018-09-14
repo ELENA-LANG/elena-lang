@@ -5,7 +5,6 @@ define INIT_RND             10012h
 define ENDFRAME             10016h
 define OPENFRAME            10019h
 define CLOSEFRAME           1001Ah
-define CLOSETHREAD          1001Ch
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
@@ -953,52 +952,6 @@ labFixResume:
 
 end
 
-procedure % NEWFRAME
-
-  // ; put frame end and move procedure returning address
-  pop  edx           
-
-  // ; set SEH handler
-  mov  ebx, code : "$native'coreapi'seh_handler"
-  push ebx
-  mov  ecx, fs:[0]
-  push ecx
-  mov  fs:[0], esp
-
-  // ; GCXT                                                               
-  // ; get thread table entry from tls
-  mov  ecx, [data : %CORE_TLS_INDEX]
-  mov  esi, fs:[2Ch]
-  mov  esi, [esi+ecx*4]
-
-  xor  ebx, ebx
-
-  push ebp
-  push ebx
-  push ebx
-
-  // ; GCXT
-  // ; set stack frame pointer / bottom stack pointer
-  mov  ebp, esp 
-  push edx
-  mov  [esi + tls_stack_frame], ebx
-  
-  // ; GCXT
-  // ; set thread table length
-  mov  ebx, 1
-  mov  [data : %CORE_GC_TABLE + tt_ptr], ebx   
-
-  mov  ebx, code : "$native'coreapi'default_handler"
-
-  // ; init default critical handler
-  mov  [data : % CORE_ET_TABLE], ebx
-
-  // ; call code : % INIT_ET  
-
-  ret
-
-end
-
 procedure % ENDFRAME
 
   // ; save return pointer
@@ -1014,6 +967,7 @@ procedure % ENDFRAME
 
 end
 
+/*
 procedure % RESTORE_ET
 
   // ; GCXT: get current thread frame
@@ -1029,6 +983,7 @@ procedure % RESTORE_ET
   ret
 
 end 
+*/
 
 // ; NOTE : some functions (e.g. system'core_routines'win_WndProc) assumes the function reserves 12 bytes
 // ; does not affect eax
@@ -1079,163 +1034,6 @@ procedure % CLOSEFRAME
   push ecx   
   ret
 
-end
-
-procedure % NEWTHREAD
-
-  push eax
-  
-  // ; GCXT
-  mov  edx, data : %THREAD_TABLE
-  mov  esi, data : %CORE_GC_TABLE + tt_lock
-  mov  ecx, [edx - 4]
-
-labWait:
-  // ; set lock
-  xor  eax, eax
-  mov  edx, 1
-  lock cmpxchg dword ptr[esi], edx
-  jnz  short labWait
-
-  mov  ebx, [data : %CORE_GC_TABLE + tt_ptr]
-  sub  ecx, ebx
-  jz   short labSkipSave
-
-  add  ebx, 1
-  mov  [data : %CORE_GC_TABLE + tt_ptr], ebx
-
-labSkipSave:
-
-  // ; free lock
-  // ; could we use mov [esi], 0 instead?
-  mov  edx, -1
-  lock xadd [esi], edx
-
-  xor  eax, eax
-
-  // check if there is a place in thread table
-  test ecx, ecx
-  jz   short lErr
-  
-  sub  ebx, 1
-  mov  esi, data : %THREAD_TABLE
-  lea  esi, [esi+ebx*4]
-
-  // ; assign tls entry
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  push 0
-
-  mov  eax, fs:[2Ch]
-  push 0
-
-  mov  eax, [eax + ebx*4] 
-  push 0FFFFFFFFh //-1
-
-  mov  [esi], eax               // ; save tls entry
-  push 0
-  mov  esi, eax
-
-  call extern 'dlls'kernel32.CreateEventW
-
-  // ; initialize thread entry
-  mov  [esi + tls_sync_event], eax     // ; set thread event handle
-
-  mov  [esi+tls_flags], 0              // ; init thread flags  
-
-  pop  eax
-  pop  edx                             // ; put frame end and move procedure returning address
-
-  xor  ebx, ebx
-  push ebp
-  push ebx                      
-  push ebx
-
-  // ; set stack frame pointer  
-  // ; mov  ebp, esp 
-  // ; mov  [esi + tls_stack_frame], ebx
-  // ; mov  [esi + tls_stack_bottom], esp
-
-  // ; restore return pointer
-  push edx              
-
-  mov  ebx, code : "$native'coreapi'core_thread_handler"
-//;  call code : % INIT_ET
-
-  ret
-
-lErr:
-  add esp, 4 
-  ret
-
-end
-
-procedure % CLOSETHREAD
-
-  // ; GCXT
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  edi, fs:[2Ch]
-
-  mov  esi, data : %CORE_GC_TABLE + tt_lock
-
-labWait:
-  // ; set lock
-  xor  eax, eax  
-  mov  edx, 1
-  lock cmpxchg dword ptr[esi], edx
-  jnz  short labWait
-
-  // ; tls reference
-  mov  eax, [edi + ebx*4]           
-  mov  ecx, [data : %CORE_GC_TABLE + tt_ptr]
-  mov  edi, data : %THREAD_TABLE
-
-  // ; find the current thread entry
-labSearch:
-  test ecx, ecx
-  jz   short labNotFound
-
-  cmp  [edi], eax
-  lea  edi, [edi+4]
-  lea  ecx, [ecx-1]
-  jnz   short labSearch
-
-  // ; delete the entry
-  test ecx, ecx
-  jz   short labSkipDelete
-
-labDelete:
-  mov  ebx, [edi]
-  mov  [edi-4], ebx
-  lea  edi, [edi+4]
-  sub  ecx, 1
-  jnz   short labDelete
-  
-labSkipDelete:
-  mov  ecx, [data : %CORE_GC_TABLE + tt_ptr]
-  mov  edi, eax
-  sub  ecx, 1
-  mov  ebx, [edi + tls_sync_event]
-  mov  [data : %CORE_GC_TABLE + tt_ptr], ecx
-
-  // ; close handle
-
-  push ebx
-  call extern 'dlls'kernel32.CloseHandle
-
-labNotFound:
-
-  // ; free lock
-  // ; could we use mov [esi], 0 instead?
-  mov  edx, -1
-  lock xadd [esi], edx
-
-  pop  edx
-  lea  esp, [esp+0Ch]
-  push edx
-
-lErr:
-  ret
-  
 end
 
 // --- THREAD_WAIT ---

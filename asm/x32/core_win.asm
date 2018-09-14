@@ -7,13 +7,11 @@ define ENDFRAME             10016h
 define RESTORE_ET           10017h
 define OPENFRAME            10019h
 define CLOSEFRAME           1001Ah
-define CLOSETHREAD          1001Ch
 define LOCK                 10021h
 define UNLOCK               10022h
 define LOAD_CALLSTACK       10024h
 define BREAK                10026h
 define EXPAND_HEAP          10028h
-define EXITTHREAD           1002Ah
 
 define CORE_OS_TABLE        20009h
 
@@ -66,16 +64,4 @@ procedure % INIT_RND
   pop  edx
   ret
   
-end
-
-procedure % EXITTHREAD
-  
-  // ; close thread
-  call code : % CLOSETHREAD
-
-  mov  eax, 0FFFFFFFFh
-  push eax
-  // ; exit
-  call extern 'dlls'KERNEL32.ExitThread
-
 end

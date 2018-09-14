@@ -117,10 +117,10 @@ public:
    // frameHeader contains initialized frame fields
    void startSTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry);
    void startMTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry);
-
-   void startThread(SystemEnv* env);
+   void startThread(FrameHeader* frameHeader, SystemEnv* env, void* entryPoint, int index);
 
    void Exit(int exitCode);
+   void ExitThread(SystemEnv* env, int exitCode);
 
    // !! 
    int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
