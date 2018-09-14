@@ -26,7 +26,7 @@ In development:
               dev - general optimization
 
               dev - revision
-                 * rosetta code - Singly-linked list/Element definition
+                 * rosetta code - Socket
 
 ------                                                           
 Pipeline:
