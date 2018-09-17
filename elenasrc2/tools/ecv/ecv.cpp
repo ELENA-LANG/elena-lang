@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   26
+#define REVISION_VERSION   27
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -696,6 +696,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcXCallRM:
       case bcXJumpRM:
       case bcXIndexRM:
+      case bcXMTRedirect:
          command.append(opcode);
          command.append(' ');
          printReference(command, module, argument);

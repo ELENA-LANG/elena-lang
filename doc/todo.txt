@@ -3,6 +3,10 @@ In development:
 ------                              
 	                            
               dev - general implementation
+                 * #459 : Ambiguity between an array and a variadic argument
+                 * #414 : Multi-method : mixing normal and variadic signatures
+                 * #413 : Resolving methods with variadic signatures in run-time 
+
                  * mta system : check the situation when too many threads (> MAX_THREAD)
 
                  * migrate vm client

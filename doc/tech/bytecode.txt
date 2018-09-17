@@ -347,7 +347,7 @@ ELENA byte codes (or ecodes)
  
  xlen                       - [acc].Count >> ext ;
 
- xmtredirect r              - search in message table r the message in ext and provided parameter list; if found jumps to direct address;
+ xmtredirect r,m            - search in message table r the message in ext and provided parameter list; if found jumps to direct address;
 
 
  Misc operations:
