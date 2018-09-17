@@ -203,11 +203,11 @@ bool SystemRoutineProvider :: NewThread(SystemEnv* env, FrameHeader* frameHeader
       }
    }
 
-   leaveCriticalSection(&env->Table->tt_lock);
-
    if (valid) {
       InitTLSEntry(threadIndex, *env->TLSIndex, frameHeader, env->ThreadTable);
    }
+
+   leaveCriticalSection(&env->Table->tt_lock);
 
    return valid;
 }

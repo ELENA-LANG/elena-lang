@@ -13,14 +13,13 @@ define BREAK                10026h
 define EXPAND_HEAP          10028h
 
 define CORE_GC_TABLE        20002h
-define CORE_GC_SIZE         20003h
-define CORE_STAT_COUNT      20004h
 define CORE_STATICROOT      20005h
 define CORE_TLS_INDEX       20007h
 define THREAD_TABLE         20008h
 define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
 define CORE_ET_TABLE        2000Bh
+define SYSTEM_ENV           2000Ch
 
 // GC TABLE OFFSETS
 define gc_header             0000h
@@ -38,7 +37,6 @@ define gc_et_current         002Ch
 define gc_stack_frame        0030h 
 define gc_lock               0034h 
 define gc_signal             0038h 
-define tt_ptr                003Ch 
 define tt_lock               0040h 
 
 // SYSTEM_ENV OFFSETS
@@ -166,11 +164,13 @@ labConinue:
 
   // ; create list of threads need to be stopped
   mov  eax, esi
-  mov  edi, [data : %CORE_GC_TABLE + tt_ptr]
   // ; get tls entry address  
   mov  esi, data : %THREAD_TABLE
+  mov  edi, [esi - 4]
 labNext:
   mov  edx, [esi]
+  test edx, edx
+  jz   short labSkipTT
   cmp  eax, [edx + tls_sync_event]
   setz cl
   or  ecx, [edx + tls_flags]
@@ -186,6 +186,7 @@ labSkipSave:
 
   lea  esi, [esi+4]
   mov  eax, [data : %CORE_GC_TABLE + gc_signal]
+labSkipTT:
   sub  edi, 1
   jnz  short labNext
 
@@ -224,12 +225,13 @@ labSkipWait:
 
   // ; save static roots
   mov  esi, data : %CORE_STATICROOT
-  mov  ecx, [data : %CORE_STAT_COUNT]
+  mov  ecx, [data : %SYSTEM_ENV + se_statlen]
   push esi
   push ecx
 
   // ; == GCXT: save frames ==
-  mov  ebx, [data : %CORE_GC_TABLE + tt_ptr]
+  mov  eax, data : %THREAD_TABLE
+  mov  ebx, [eax - 4]
 
 labYGNextThread:  
   sub  ebx, 1
@@ -237,6 +239,9 @@ labYGNextThread:
   
   // ; get tls entry address
   mov  esi, [eax+ebx*4]            
+  test esi, esi
+  jz   short labYGNextThreadSkip
+
   // ; get the top frame pointer
   mov  eax, [esi + tls_stack_frame]
   mov  ecx, eax
@@ -258,6 +263,8 @@ labYGNextFrame:
   jnz  short labYGNextFrame
   nop
   nop
+
+labYGNextThreadSkip:
   test ebx, ebx
   jnz  short labYGNextThread
   // ; == GCXT: end ==
@@ -1218,6 +1225,6 @@ inline % 0A6h
   push esi
   push ecx
 
-  mov  [ebx + gc_et_current], esp
+  mov  [ebx + tls_et_current], esp
   
 end
