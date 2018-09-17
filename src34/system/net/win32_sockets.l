@@ -1,65 +1,65 @@
-//// --- IN_ADDR ---
-//
-//sealed struct IN_ADDR
-//{
-//    long addr.    
-//    
-//    stacksafe set long(LongNumber addr)
-//    [
-//        @addr := addr.
-//    ]
-//    
-//    stacksafe clear
-//    [
-//        addr := 0l.
-//    ]
-//}
-//
-//// --- SOCKADDR_IN ---
-//
-//sealed struct SOCKADDR_IN
-//{
-//    short      prop family :: sin_family.
-//    short      prop port   :: sin_port.
-//    T<IN_ADDR> sin_addr.
-//    V<byte,4>  sin_zero. 
-//
-//    set family(IntNumber n)
-//    [
-//        short n16 := n.
-//        
-//        self family := n16.
-//    ]
-//
-//    set port(IntNumber n)
-//    [
-//        short n16 := n.
-//        
-//        self port := n16.
-//    ]
-//
-//    set ip_address(LiteralValue ip)
-//    [
-//        long addr := system'external'WS2_32 inet_addr(ip).
-//        
-//        sin_addr long := addr.
-//    ]
-//
-//    embeddable constructor new
-//    [
-//        sin_family := 0.
-//        sin_port := 0.
-//        
-//        sin_zero[0]:=0.
-//        sin_zero[1]:=0.
-//        sin_zero[2]:=0.
-//        sin_zero[3]:=0.
-//
-//        sin_addr clear.
-//    ]
-//}
-//
-////const int SOCKADDR_IN_SIZE = 16.
+// --- IN_ADDR ---
+
+sealed struct IN_ADDR
+{
+    long addr.    
+    
+    stacksafe set value(LongNumber addr)
+    [
+        @addr := addr.
+    ]
+    
+    stacksafe clear
+    [
+        addr := 0l.
+    ]
+}
+
+// --- SOCKADDR_IN ---
+
+sealed struct SOCKADDR_IN
+{
+    short      prop family :: sin_family.
+    short      prop port   :: sin_port.
+    T<IN_ADDR> sin_addr.
+    V<byte,4>  sin_zero. 
+
+    set family(IntNumber n)
+    [
+        short n16 := n.
+        
+        self family := n16.
+    ]
+
+    set port(IntNumber n)
+    [
+        short n16 := n.
+        
+        self port := n16.
+    ]
+
+    set ip_address(LiteralValue ip)
+    [
+        long addr := system'external'WS2_32 inet_addr(ip).
+        
+        sin_addr value := addr.
+    ]
+
+    embeddable constructor new
+    [
+        sin_family := 0.
+        sin_port := 0.
+        
+        sin_zero[0]:=0.
+        sin_zero[1]:=0.
+        sin_zero[2]:=0.
+        sin_zero[3]:=0.
+
+        sin_addr clear.
+    ]
+}
+
+const int SOCKADDR_IN_SIZE = 16.
 
 // --- AddrInfo ---
 
@@ -274,32 +274,29 @@ public sealed const struct Socket
 //            
 //        ^ (SOCKET_ERROR != aRetVal).
 //    ]
-//
-//    stacksafe connect(literal ip_address, int port)
-//    [
-//        type<SOCKADDR_IN> addr := SOCKADDR_IN new.
-//        addr port := port.
-//        addr family := system'net'AF_INET.
-//        addr ip_address := ip_address.
-//        
-//        dirty_ptr ptr := addr.        
-//        int retVal := system'external'WS2_32 connect 
-//            int:theHandle
-//            int:ptr
-//            int:SOCKADDR_IN_SIZE.
-//            
-//        if (SOCKET_ERROR == retVal)
-//            [ SocketException new:"Error at socket"; raise ].
-//    ]
-//
-//    stacksafe write bytearray:buffer
-//    [
-//        int len := buffer length.
-//        int sent := 0.
-//        $self write bytearray:buffer int:len int:0 vint:sent.        
-//        
-//        ^ sent.
-//    ]
+
+    stacksafe connect(literal ip_address, int port)
+    [
+        T<SOCKADDR_IN> addr := SOCKADDR_IN new.
+        addr port := port.
+        addr family := system'net'AF_INET.
+        addr ip_address := ip_address.
+        
+        dirty_ptr ptr := addr.        
+        int retVal := system'external'WS2_32 connect(theHandle, ptr, SOCKADDR_IN_SIZE).
+            
+        if (SOCKET_ERROR == retVal)
+            [ SocketException new:"Error at socket"; raise ].
+    ]
+
+    stacksafe write(ByteArray buffer)
+    [
+        int len := buffer length.
+        int sent := 0.
+        self write(buffer, len, 0, &sent).        
+        
+        ^ sent.
+    ]
 
     stacksafe write(ByteArray buffer, int length, int flags, ref<int> sent)
     [
