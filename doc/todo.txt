@@ -3,11 +3,7 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * #459 : Ambiguity between an array and a variadic argument
-                 * #414 : Multi-method : mixing normal and variadic signatures
                  * #413 : Resolving methods with variadic signatures in run-time 
-
-                 * mta system : check the situation when too many threads (> MAX_THREAD)
 
                  * migrate vm client
                  * move system'core_routines'__exception register call to the system entry symbol
@@ -21,6 +17,7 @@ In development:
                  * (re)implement tcpserver / tcpclient
 
               dev - tests          
+                 * test mta : exception handlers, an exception in a thread
                  * test realOp<real>.round<int>[1] extension
 
               dev - tests          
@@ -29,8 +26,10 @@ In development:
                  * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
                  * vm : Execute Brain****
                  * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
+                 * mta system : check the situation when too many threads (> MAX_THREAD)
 
               dev - general optimization
+                 * #459 : Ambiguity between an array and a variadic argument
 
               dev - revision
                  * rosetta code - Socket

@@ -402,7 +402,7 @@ private:
 //         loadActions(extModule);
       }
 
-      /*virtual */ref_t mapAnonymous();
+      ref_t mapAnonymous(ident_t prefix = NULL);
 
       bool defineForward(ident_t forward, ident_t referenceName)
       {
