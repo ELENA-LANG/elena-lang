@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   27
+#define REVISION_VERSION   28
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -449,7 +449,7 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    decodeMessage(reference, actionRef, paramCount);
 
    if (actionRef == DISPATCH_MESSAGE_ID) {
-      command.append("dispatch");
+      command.append("#dispatch");
    }
    ///*else */if (actionRef == NEWOBJECT_MESSAGE_ID) {
    //   if (test(reference, CONVERSION_MESSAGE)) {

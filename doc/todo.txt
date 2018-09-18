@@ -3,6 +3,7 @@ In development:
 ------                              
 	                            
               dev - general implementation
+                 * #413 : dispath should try to resolve all possible variadic message
                  * #413 : Resolving methods with variadic signatures in run-time 
 
                  * migrate vm client
@@ -32,7 +33,7 @@ In development:
                  * #459 : Ambiguity between an array and a variadic argument
 
               dev - revision
-                 * rosetta code - Socket
+                 * rosetta code - Sorting algorithms/Counting sort
 
 ------                                                           
 Pipeline:

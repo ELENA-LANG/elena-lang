@@ -234,8 +234,8 @@ public extension controlOp
     exchangeWith:v
     [
         var tmp := self value.
-        self set(v value).
-        v set(tmp).
+        self value := v value.
+        v value := tmp.
     ]
 }
 
