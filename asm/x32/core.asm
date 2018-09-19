@@ -1297,6 +1297,7 @@ labStart:
   nop
   nop
 labEnd:
+  mov  ebx, 0FFFFFFFFh
 labFound:
   pop  edi  
 

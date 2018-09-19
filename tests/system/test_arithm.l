@@ -822,3 +822,46 @@ shortCircuitBooleanOperation =
     
     console writeLine("done").
 ].
+
+sealed class VariadicTested
+{
+    bool test1Called := false.
+    bool test2Called := false.
+    
+    generic test1(V<int> others)
+    [
+        test1Called := true.
+    ]
+    
+    generic test2(literal s, V<int> others)
+    [
+        test2Called := true.
+    ]    
+    
+    validate
+    [
+        Assert ifTrue(test1Called); ifTrue(test2Called).
+    ]
+}
+
+
+variadicTest =
+[
+    console write("variadicTest..").
+    
+    // run-time
+    var tester := VariadicTested new.
+    tester test1(1,3,3).
+    tester test2("hello",3,3).
+    
+    tester validate.
+    
+    // compile-time
+    auto tester2 := VariadicTested new.
+    tester2 test1(1,3,3).
+    tester2 test2("hello",3,3).
+    
+    tester2 validate.
+    
+    console writeLine("done").
+].

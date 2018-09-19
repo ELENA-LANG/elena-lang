@@ -43,6 +43,7 @@ public program
 
     nestedFieldsTest().
     shortCircuitBooleanOperation().
+    variadicTest().
 
     console writeLine:"Passed".
 ]

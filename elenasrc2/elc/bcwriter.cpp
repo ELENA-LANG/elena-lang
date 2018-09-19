@@ -1161,7 +1161,21 @@ void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
    tape.write(bcBSRedirect);
 }
 
-void ByteCodeWriter :: unboxMessage(CommandTape& tape, int paramCount)
+void ByteCodeWriter :: changeMessageCounter(CommandTape& tape, int paramCount)
+{
+   // ; change param count
+   // dcopyfi - 1
+   // and ~PARAM_MASK
+   // orn OPEN_ARG_COUNT
+   // ecopyd
+
+   tape.write(bcDLoadFI, -1);
+   tape.write(bcAndN, ~PARAM_MASK);
+   tape.write(bcOrN, paramCount);
+   tape.write(bcECopyD);
+}
+
+void ByteCodeWriter :: unboxMessage(CommandTape& tape)
 {
    // ; copy the call stack
    // bcopyf -2
@@ -1174,11 +1188,6 @@ void ByteCodeWriter :: unboxMessage(CommandTape& tape, int paramCount)
    // pusha
    // dec
    // elsen labNextParam 0
-   // ; change param count
-   // dcopyfi - 1
-   // and ~PARAM_MASK
-   // orn OPEN_ARG_COUNT
-   // ecopyd
 
    tape.write(bcBCopyF, -2);
    tape.write(bcDCopyCount);
@@ -1191,10 +1200,6 @@ void ByteCodeWriter :: unboxMessage(CommandTape& tape, int paramCount)
    tape.write(bcDec);
    tape.write(bcElseN, baCurrentLabel, 0);
    tape.releaseLabel();
-   tape.write(bcDLoadFI, -1);
-   tape.write(bcAndN, ~PARAM_MASK);
-   tape.write(bcOrN, paramCount);
-   tape.write(bcECopyD);
 }
 
 void ByteCodeWriter :: resend(CommandTape& tape)
@@ -5194,8 +5199,26 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
          tape.write(bcOpen, 1);
          tape.write(bcPushA);
 
-         unboxMessage(tape, getAbsoluteParamCount(message.argument));
+         unboxMessage(tape);
+         changeMessageCounter(tape, getAbsoluteParamCount(message.argument));
          loadObject(tape, lxLocal, 1);
+
+         tape.newLabel(); // declare labCall
+
+         // HOTFIX : if several variadic messages
+         SNode nextMessage = goToNode(message.nextNode(), lxMessage);
+         while (nextMessage != lxNone) {
+            tape.write(bcMIndex);
+            tape.write(bcElseN, baCurrentLabel, -1);
+
+            changeMessageCounter(tape, getAbsoluteParamCount(nextMessage.argument));
+            loadObject(tape, lxLocal, 1);
+
+            nextMessage = goToNode(nextMessage.nextNode(), lxMessage);
+         }
+         
+         tape.setLabel(); // labCall:
+
          callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument, false, false);
 
          closeFrame(tape);

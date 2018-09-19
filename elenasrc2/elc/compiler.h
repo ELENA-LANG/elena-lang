@@ -762,7 +762,7 @@ private:
       return _logic->checkMethod(scope, reference, message, dummy);
    }
 
-   int retrieveGenericArgParamCount(ClassScope& scope);
+   bool verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount);
 
    void loadAttributes(_CompilerScope& scope, ident_t name, MessageMap* attributes);
 

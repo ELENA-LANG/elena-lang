@@ -4648,17 +4648,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    }
 }
 
-int Compiler :: retrieveGenericArgParamCount(ClassScope& scope)
+bool Compiler :: verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount)
 {
-   int extraParamCount = -1;
    for (auto it = scope.info.methods.start(); !it.Eof(); it++) {
-      if (isOpenArg(it.key()) && _logic->isMethodGeneric(scope.info, it.key())) {
-         extraParamCount = getParamCount(it.key());
-         break;
+      if (isOpenArg(it.key()) && _logic->isMethodGeneric(scope.info, it.key()) && getAbsoluteParamCount(it.key()) == expectedParamCount) {
+         return true;
       }
    }
 
-   return extraParamCount;
+   return false;
 }
 
 void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
@@ -4703,12 +4701,13 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
       }
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
-         // retrieve the number of extra arguments
-         int extraParamCount = retrieveGenericArgParamCount(*(ClassScope*)scope.parent);
-
          writer.newNode(lxResending);
 
-         writer.appendNode(lxMessage, encodeMessage(DISPATCH_MESSAGE_ID, OPEN_ARG_COUNT + extraParamCount));
+         for (int paramCount = MAX_ARG_COUNT; paramCount >= OPEN_ARG_COUNT; paramCount--) {
+            if (verifyGenericArgParamCount(*(ClassScope*)scope.parent, paramCount)) {
+               writer.appendNode(lxMessage, encodeMessage(DISPATCH_MESSAGE_ID, paramCount));
+            }
+         }
 
          writer.newNode(lxTarget, scope.moduleScope->superReference);
          writer.appendNode(lxMessage, encodeAction(DISPATCH_MESSAGE_ID));
