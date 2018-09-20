@@ -226,45 +226,45 @@ public extension enumerableOp
             [ ^ nil ]
     ]
 
-//    maximalMember
-//    [
-//        enumerator en := self enumerator.
-//        
-//        object maximal := $nil.
-//        while (en next)
-//        [
-//            var item := en get.
-//            if ($nil == maximal)
-//            [
-//                maximal := item
-//            ]; if (maximal < item)
-//            [
-//                maximal := item
-//            ]
-//        ].
-//        
-//        ^ maximal   
-//    ]
-//    
-//    minimalMember
-//    [
-//        enumerator en := self enumerator.
-//        
-//        object maximal := $nil.
-//        while (en next)
-//        [
-//            var item := en get.
-//            if ($nil == maximal)
-//            [
-//                maximal := item
-//            ]; if (maximal > item)
-//            [
-//                maximal := item
-//            ]
-//        ].
-//        
-//        ^ maximal   
-//    ]
+    maximalMember
+    [
+        auto en := T<Enumerator>(self enumerator).
+        
+        object maximal := nil.
+        while (en next)
+        [
+            var item := en get.
+            if (nil == maximal)
+            [
+                maximal := item
+            ]; if (maximal < item)
+            [
+                maximal := item
+            ]
+        ].
+        
+        ^ maximal   
+    ]
+    
+    minimalMember
+    [
+        auto en := T<Enumerator>(self enumerator).
+        
+        object maximal := nil.
+        while (en next)
+        [
+            var item := en get.
+            if (nil == maximal)
+            [
+                maximal := item
+            ]; if (maximal > item)
+            [
+                maximal := item
+            ]
+        ].
+        
+        ^ maximal   
+    ]
     
     lastMember
     [
@@ -442,30 +442,30 @@ public extension indexableOp
 //        ^ aCopy.
 //    ]
         
-//    populate(IndexFunction1 anIndexFunc)
-//    [
-//        indexer aIndexer := self indexer.
-//
-//        while (aIndexer available)
-//        [
-//            int anIndex := 0.
-//            aIndexer readIndexTo vint:anIndex.
-//            
-//            aIndexer set:(anIndexFunc eval int:anIndex).
-//            
-//            aIndexer append index:1
-//        ].
-//        
-//        ^ self
-//    ]    
-//
-//    populate(ExtensionMessage anExtMessage)
-//        = self~indexableOp populate(:n)<int>[ ^n~anExtMessage get ].
-//
+    populate(Func<int,object> f)
+    [
+        T<Indexer> it := self indexer.
+
+        while (it available)
+        [
+            int i := 0.
+            it readIndexTo(&i).
+            
+            it set(f(i)).
+            
+            it appendIndex:1
+        ].
+        
+        ^ self
+    ]    
+
+    populate(ExtensionMessage ext_mssg)
+        = self~indexableOp populate(:n)<int>[ ^n~ext_mssg get ].
+
 //    populate(BaseFunction1 aFunction)
 //        = self~indexableOp populate(:n)<int>[ ^aFunction(n) ].
 //
-//    multi populate : anAction
+//    populate : anAction
 //        = self~indexableOp populate(:n)<int>[ ^anAction(n) ].
 
     bool isSorted(Func2 aCompareFunc)

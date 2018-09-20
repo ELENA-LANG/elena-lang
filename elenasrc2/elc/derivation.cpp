@@ -2498,17 +2498,17 @@ void DerivationTransformer:: generateAssignmentOperator(SyntaxWriter& writer, SN
    SNode loperand = node.findChild(lxObject);
    SNode operatorNode = node.findChild(lxAssignOperator);
 
-   if (loperand.nextNode() == lxOperator) {
+   if (loperand.nextNode() == lxArrOperator) {
       // HOTFIX : if it is an assign operator with array brackets
       SNode loperatorNode = loperand.nextNode();
 
       writer.newBookmark();
       writer.newNode(lxExpression);
-      generateObjectTree(writer, loperand, scope);
+      generateObjectTree(writer, loperand.firstChild(), scope);
       copyOperator(writer, loperatorNode);
       generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
       writer.closeNode();
-      while (loperatorNode.nextNode() == lxOperator) {
+      while (loperatorNode.nextNode() == lxArrOperator) {
          loperatorNode = loperatorNode.nextNode();
          generateObjectTree(writer, loperatorNode, scope);
       }      
@@ -2519,11 +2519,11 @@ void DerivationTransformer:: generateAssignmentOperator(SyntaxWriter& writer, SN
       writer.newBookmark();
       writer.newNode(lxExpression);
       writer.newNode(lxExpression);
-      generateObjectTree(writer, loperand, scope);
+      generateObjectTree(writer, loperand.firstChild(), scope);
       copyOperator(writer, loperatorNode);
       generateExpressionTree(writer, loperatorNode, scope, EXPRESSION_OPERATOR_MODE);
       writer.closeNode();
-      while (loperatorNode.nextNode() == lxOperator) {
+      while (loperatorNode.nextNode() == lxArrOperator) {
          loperatorNode = loperatorNode.nextNode();
          generateObjectTree(writer, loperatorNode, scope);
       }

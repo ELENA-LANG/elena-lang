@@ -30,7 +30,7 @@ In development:
                  * #459 : Ambiguity between an array and a variadic argument
 
               dev - revision
-                 * rosetta code - Sorting algorithms/Counting sort
+                 * rosetta code - Sorting algorithms/Gnome sort
 
 ------                                                           
 Pipeline:
