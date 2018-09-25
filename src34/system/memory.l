@@ -2417,7 +2417,7 @@ class WideLiteralEnumerator :: Enumerator<char>
     [
         int aLength := theLiteral length.
 
-        int diff := theDiff int.
+        int diff := theDiff value.
         theIndex append(diff).
         
         if (theIndex < aLength)
@@ -2426,7 +2426,7 @@ class WideLiteralEnumerator :: Enumerator<char>
                 
                 theChar readLengthTo(theDiff).
                 theDiff append:1.
-                theDiff value := theDiff / 2.
+                theDiff value := theDiff value / 2.
                 
                 ^ true
             ].

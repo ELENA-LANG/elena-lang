@@ -27,12 +27,13 @@ In development:
                  * vm : Execute Brain****
                  * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
                  * mta system : check the situation when too many threads (> MAX_THREAD)
+                 * rosetta : Sorting algorithms/Sleep sort
 
               dev - general optimization
                  * #459 : Ambiguity between an array and a variadic argument
 
               dev - revision
-                 * rosetta code - Sorting algorithms/Sleep sort
+                 * rosetta code - Temperature conversion
 
 ------                                                           
 Pipeline:

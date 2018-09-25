@@ -41,7 +41,7 @@ public sealed class Locale
     [
         int aRetVal := system'external'KERNEL32 LCMapStringEx(
             theName,
-            LCMAP_UPPERCASE,
+            LCMAP_LOWERCASE,
             aSrc,
             aLength,
             aDest,

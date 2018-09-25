@@ -29,7 +29,7 @@ public interface Encoder
             [ temp_len := aLength value ];
             [ aLength value := temp_len ].
         
-        aLiteral Substring(anIndex, aLength); save(0, T<CharArray>(temp), &temp_len).
+        aLiteral Substring(anIndex, aLength value); save(0, T<CharArray>(temp), &temp_len).
         
         self convert(0, &temp_len, T<CharArray>(temp), anOutput, anOutputLength).
     ]
@@ -158,7 +158,7 @@ public singleton UTF8Encoder :: Encoder
         int l := aLength value.
         aLiteral saveToByteArray(anIndex, anOutput, l).
 
-        anOutputLength value := aLength
+        aLength readValueTo(anOutputLength).
     ]
     
     stacksafe toLiteral(int anIndex, int aLength, ByteArray anArray)

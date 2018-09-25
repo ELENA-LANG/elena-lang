@@ -124,15 +124,15 @@ class wideExConvertor =
 ////        ^ anOutput wide
 ////    ]
 ////}.
-//
-//class byteArrayExConvertor =
-//{
-//    convert literal : s
-//        = UTF8Encoder toByteArray int:0 int:(s length) literal:s.
-//    
-//    convert wide : s
-//        = UTF16Encoder toByteArray int:0 int:(s length) wide:s.
-//}.
+
+public singleton class byteArrayExConvertor
+{
+    T<ByteArray> convert(literal s)
+        = UTF8Encoder toByteArray(0, s length, s).
+    
+    T<ByteArray> convert(wide s)
+        = UTF16Encoder toByteArray(0, s length, s).
+}
 
 public singleton intarrayConvertorEx
 {
@@ -265,9 +265,9 @@ public extension convertorOp
     T<IntArray> toIntArray
         = intarrayConvertorEx convert:self.
     
-//    toByteArray        
-//        = byteArrayExConvertor convert:self.
-//    
+    T<ByteArray> toByteArray        
+        = byteArrayExConvertor convert:self.
+    
     T<IntMatrix> toIntMatrix
         = intmatrixExConvertor convert:self.
     
