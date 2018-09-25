@@ -182,17 +182,17 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 {
    switch (ul_reason_for_call)
    {
-   case DLL_PROCESS_ATTACH:
-   {
-      init(hModule);
-      return TRUE;
-   }
-   case DLL_THREAD_ATTACH:
-   case DLL_THREAD_DETACH:
-      return TRUE;
-   case DLL_PROCESS_DETACH:
-      freeobj(_Instance);
-      break;
+      case DLL_PROCESS_ATTACH:
+      {
+         init(hModule);
+         return TRUE;
+      }
+      case DLL_THREAD_ATTACH:
+      case DLL_THREAD_DETACH:
+         return TRUE;
+      case DLL_PROCESS_DETACH:
+         freeobj(_Instance);
+         break;
    }
    return TRUE;
 }

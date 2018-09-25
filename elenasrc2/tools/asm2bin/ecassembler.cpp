@@ -157,6 +157,14 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       }
       else return binary->mapReference(token.value) | mskConstantRef;
    }
+   else if (word.compare("rdata")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
+
+      IdentifierString s(token.terminal.line + 1, token.terminal.length - 2);
+
+      return binary->mapReference(s.c_str()) | mskNativeRDataRef;
+   }
    else if (word.compare("class")) {
       token.read(":", "Invalid operand (%d)");
       token.read();

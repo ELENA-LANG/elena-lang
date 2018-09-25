@@ -1164,7 +1164,7 @@ void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
 void ByteCodeWriter :: changeMessageCounter(CommandTape& tape, int paramCount)
 {
    // ; change param count
-   // dcopyfi - 1
+   // dloadfi - 1
    // and ~PARAM_MASK
    // orn OPEN_ARG_COUNT
    // ecopyd

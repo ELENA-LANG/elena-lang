@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: I64
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1621,4 +1621,9 @@ void AMD64JITCompiler :: generateProgramEnd(MemoryDump& tape)
    ecodes.writeDWord(mskPreloadCodeRef | EXIT);
 
    JITCompiler64::generateProgramEnd(tape);
+}
+
+int AMD64JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t length)
+{
+   return -1; // !! temporal
 }

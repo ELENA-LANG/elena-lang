@@ -21,10 +21,20 @@ public:
    // --- Helper ---
    class _Helper
    {
+   protected:
+      bool _vmMode;
+
+      void createTape(_Memory& data, Project* project, bool withNewConsole);
+
    public:
       virtual void beforeLoad(_JITCompiler* compiler, ExecutableImage& image) = 0;
 
       virtual void afterLoad(ExecutableImage& image) = 0;
+
+      _Helper()
+      {
+         _vmMode = false;
+      }
    };
 
 private:
@@ -97,59 +107,59 @@ public:
    ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper);
 };
 
-// --- VirtualMachineClientImage ---
-
-class VirtualMachineClientImage : public Image
-{
-   ReferenceMap   _exportReferences;
-   Project*       _project;
-
-   class VMClientHelper : public _BinaryHelper
-   {
-      VirtualMachineClientImage* _owner;
-      ReferenceMap*              _references;
-      MemoryWriter*              _dataWriter;
-      _Module*                   _module;
-
-   public:
-      virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask);
-
-      VMClientHelper(VirtualMachineClientImage* owner, ReferenceMap* references, MemoryWriter* writer, _Module* module)
-      {
-         _owner = owner;
-         _references = references;
-         _dataWriter = writer;
-         _module = module;
-      }
-   };
-
-   friend class VMClientHelper;
-
-   ref_t resolveExternal(ident_t function)
-   {
-      return mapKey(_exportReferences, function, mskImportRef | (_exportReferences.Count() + 1));
-   }
-
-   ref_t createTape(MemoryWriter& data, Project* project, bool withNewConsole);
-
-public:
-   virtual ReferenceMap::Iterator getExternalIt()
-   {
-      return _exportReferences.start();
-   }
-
-   virtual ref_t getEntryPoint()
-   {
-      return 0; // !! temporal
-   }
-
-   virtual ref_t getDebugEntryPoint()
-   {
-      return 0; // !! temporal
-   }
-
-   VirtualMachineClientImage(Project* project, _JITCompiler* compiler, bool guiMode = false);
-};
+//// --- VirtualMachineClientImage ---
+//
+//class VirtualMachineClientImage : public Image
+//{
+//   ReferenceMap   _exportReferences;
+//   Project*       _project;
+//
+//   class VMClientHelper : public _BinaryHelper
+//   {
+//      VirtualMachineClientImage* _owner;
+//      ReferenceMap*              _references;
+//      MemoryWriter*              _dataWriter;
+//      _Module*                   _module;
+//
+//   public:
+//      virtual void writeReference(MemoryWriter& writer, ident_t reference, int mask);
+//
+//      VMClientHelper(VirtualMachineClientImage* owner, ReferenceMap* references, MemoryWriter* writer, _Module* module)
+//      {
+//         _owner = owner;
+//         _references = references;
+//         _dataWriter = writer;
+//         _module = module;
+//      }
+//   };
+//
+//   friend class VMClientHelper;
+//
+//   ref_t resolveExternal(ident_t function)
+//   {
+//      return mapKey(_exportReferences, function, mskImportRef | (_exportReferences.Count() + 1));
+//   }
+//
+//   ref_t createTape(MemoryWriter& data, Project* project, bool withNewConsole);
+//
+//public:
+//   virtual ReferenceMap::Iterator getExternalIt()
+//   {
+//      return _exportReferences.start();
+//   }
+//
+//   virtual ref_t getEntryPoint()
+//   {
+//      return 0; // !! temporal
+//   }
+//
+//   virtual ref_t getDebugEntryPoint()
+//   {
+//      return 0; // !! temporal
+//   }
+//
+//   VirtualMachineClientImage(Project* project, _JITCompiler* compiler, bool guiMode = false);
+//};
 
 } // _ELENA_
 

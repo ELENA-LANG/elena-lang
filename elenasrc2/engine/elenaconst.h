@@ -492,6 +492,7 @@ namespace _ELENA_
 
    #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
    #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
+   #define TAPE_KEY                 "$elena'@tapekey"                // VM Tape key
    #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
 
    // predefined system forwards

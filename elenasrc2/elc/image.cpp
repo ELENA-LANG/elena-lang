@@ -13,12 +13,12 @@
 
 using namespace _ELENA_;
 
-// Virtual machine client built-in references
-#define VM_LOADER          "$native'core_vm'console_vm_start"
-//#define VM_GUI_LOADER      "$package'core_vm'gui_vm_start"
-
-#define VM_TAPE            "$vm_tape"
-#define VM_HOOK            "$vm_hook"
+//// Virtual machine client built-in references
+//#define VM_LOADER          "$native'core_vm'console_vm_start"
+////#define VM_GUI_LOADER      "$package'core_vm'gui_vm_start"
+//
+//#define VM_TAPE            "$vm_tape"
+//#define VM_HOOK            "$vm_hook"
 
 // --- ExecutableImage ---
 
@@ -42,6 +42,8 @@ ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _He
    _message = project->resolveForward(MESSAGE_FORWARD);
    _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
    _signature = project->resolveForward(SIGNATURE_FORWARD);
+
+   //resolveExternal()
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef,
       project->BoolSetting(opClassSymbolAutoLoad));
@@ -312,7 +314,7 @@ ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t refere
    }
 }
 
-// --- VirtualMachineClientImage ---
+// --- ExecutableImage::_Helper ---
 
 inline void writeTapeRecord(MemoryWriter& tape, size_t command)
 {
@@ -353,98 +355,98 @@ inline void writeTapeRecord(MemoryWriter& tape, size_t command, ident_t value1, 
    else tape.writeChar((char)0);
 }
 
-VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCompiler* compiler, bool guiMode)
-   : Image(false), _exportReferences((size_t)-1)
+void ExecutableImage::_Helper :: createTape(_Memory& tape, Project* project, bool withNewConsole)
 {
-   _project = project;
-
-   MemoryWriter   data(&_data);
-   MemoryWriter   code(&_text);
-
-   // setup debugger hook record
-   _bss.writeDWord(0, 0);               // reserve place for debug_mode, debug_address fields
-   _bss.writeDWord(4, 0);
-
-   size_t vmHook = data.Position();
-   data.writeRef((ref_t)mskNativeDataRef, 0); // hook address
-
-//   int type = project->IntSetting(opPlatform, ptWin32Console);
-
-   ref_t reference = 0;
-   _Module* module = project->resolveModule(ReferenceNs(/*test(type, mtUIMask, mtGUI) ? VM_GUI_LOADER : */VM_LOADER), reference, true);
-   _Memory* section = NULL;
-
-   if (module != NULL) {
-      section = module->mapSection(reference | mskNativeCodeRef, true);
-   }
-   if (section == NULL)
-      throw InternalError("Cannnot load vm client loader");
-
-   // setup startup VM script
-   ReferenceMap consts((size_t)-1);
-   VMClientHelper helper(this, &consts, &data, module);
-
-   consts.add(VM_TAPE, createTape(data, project, guiMode));
-   consts.add(VM_HOOK, vmHook);
-
-   compiler->loadNativeCode(helper, code, module, section);
-}
-
-ref_t VirtualMachineClientImage :: createTape(MemoryWriter& data, Project* project, bool withNewConsole)
-{
-   size_t tapeRef = data.Position();
+   MemoryWriter data(&tape);
 
    // write tape
-
+   
    // USE_VM_MESSAGE_ID path, package
    writeTapeRecord(data, USE_VM_MESSAGE_ID, project->StrSetting(opNamespace), project->StrSetting(opOutputPath));
-
+   
    // LOAD_VM_MESSAGE_ID name
    writeTapeRecord(data, LOAD_VM_MESSAGE_ID, project->StrSetting(opTemplate));
-
+   
    // { MAP_VM_MESSAGE_ID fwrd, ref }*
    ForwardIterator it = project->getForwardIt();
    while (!it.Eof()) {
       writeTapeRecord(data, MAP_VM_MESSAGE_ID, it.key(), *it);
-
+   
       it++;
    }
-
+   
    if (withNewConsole) {
       writeTapeRecord(data, OPEN_VM_CONSOLE);
    }
-
+   
    // START_VM_MESSAGE_ID debugMode ??
    writeTapeRecord(data, START_VM_MESSAGE_ID);
-
+   
    // CALL_TAPE_MESSAGE_ID 'program
    writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, PROGRAM_ENTRY, true);
 
    data.writeDWord(0);
-
-   return tapeRef;
 }
 
-// --- VirtualMachineClientImage::VMClientHelper ---
-
-void VirtualMachineClientImage::VMClientHelper :: writeReference(MemoryWriter& writer, ident_t reference, int mask)
-{
-   if (mask == mskImportRef) {
-      writer.writeRef(_owner->resolveExternal(reference), 0);
-   }
-   else {
-      size_t offset = _references->get(reference);
-
-      if ((int)offset == -1) {
-         offset = _dataWriter->Position();
-
-         _Memory* constant = _module->mapSection(_module->mapReference(reference, true) | mask, true);
-         if (constant != NULL) {
-            _dataWriter->write((char*)constant->get(0), constant->Length());
-         }
-         else throw InternalError("Cannnot load vm client loader");
-      }
-
-      writer.writeRef(mskRDataRef, offset);
-   }
-}
+//// --- VirtualMachineClientImage ---
+//
+//VirtualMachineClientImage :: VirtualMachineClientImage(Project* project, _JITCompiler* compiler, bool guiMode)
+//   : Image(false), _exportReferences((size_t)-1)
+//{
+////   _project = project;
+////
+////   
+////   MemoryWriter   code(&_text);
+////
+////   // setup debugger hook record
+////   _bss.writeDWord(0, 0);               // reserve place for debug_mode, debug_address fields
+////   _bss.writeDWord(4, 0);
+////
+////   size_t vmHook = data.Position();
+////   data.writeRef((ref_t)mskNativeDataRef, 0); // hook address
+////
+//////   int type = project->IntSetting(opPlatform, ptWin32Console);
+////
+////   ref_t reference = 0;
+////   _Module* module = project->resolveModule(ReferenceNs(/*test(type, mtUIMask, mtGUI) ? VM_GUI_LOADER : */VM_LOADER), reference, true);
+////   _Memory* section = NULL;
+////
+////   if (module != NULL) {
+////      section = module->mapSection(reference | mskNativeCodeRef, true);
+////   }
+////   if (section == NULL)
+////      throw InternalError("Cannnot load vm client loader");
+////
+////   // setup startup VM script
+////   ReferenceMap consts((size_t)-1);
+////   VMClientHelper helper(this, &consts, &data, module);
+////
+////   consts.add(VM_TAPE, createTape(data, project, guiMode));
+////   consts.add(VM_HOOK, vmHook);
+////
+////   compiler->loadNativeCode(helper, code, module, section);
+//}
+//
+//// --- VirtualMachineClientImage::VMClientHelper ---
+//
+//void VirtualMachineClientImage::VMClientHelper :: writeReference(MemoryWriter& writer, ident_t reference, int mask)
+//{
+//   if (mask == mskImportRef) {
+//      writer.writeRef(_owner->resolveExternal(reference), 0);
+//   }
+//   else {
+//      size_t offset = _references->get(reference);
+//
+//      if ((int)offset == -1) {
+//         offset = _dataWriter->Position();
+//
+//         _Memory* constant = _module->mapSection(_module->mapReference(reference, true) | mask, true);
+//         if (constant != NULL) {
+//            _dataWriter->write((char*)constant->get(0), constant->Length());
+//         }
+//         else throw InternalError("Cannnot load vm client loader");
+//      }
+//
+//      writer.writeRef(mskRDataRef, offset);
+//   }
+//}

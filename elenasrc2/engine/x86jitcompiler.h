@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef x86jitcompilerH
@@ -182,6 +182,7 @@ public:
 
    virtual int allocateTLSVariable(_JITLoader* loader);
    virtual void allocateThreadTable(_JITLoader* loader, int length);
+   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length);
 
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
    virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
@@ -191,6 +192,8 @@ public:
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
 
    virtual void generateSymbolCall(MemoryDump& tape, void* address);
+   virtual void generateArg(MemoryDump& tape, void* address);
+   virtual void generateExternalCall(MemoryDump& tape, ref_t functionReference);
 
    x86JITCompiler(bool debugMode);
 };

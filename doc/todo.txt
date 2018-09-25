@@ -4,6 +4,8 @@ In development:
 	                            
               dev - general implementation
                  * migrate vm client
+                 * get rid of corevm
+
                  * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
@@ -30,7 +32,7 @@ In development:
                  * #459 : Ambiguity between an array and a variadic argument
 
               dev - revision
-                 * rosetta code - Sorting algorithms/Gnome sort
+                 * rosetta code - Sorting algorithms/Sleep sort
 
 ------                                                           
 Pipeline:

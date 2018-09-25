@@ -1703,6 +1703,21 @@ int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
    return position;
 }
 
+int x86JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t length)
+{
+   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
+
+   // reserve space for TLS index
+   int position = dataWriter.Position();
+
+   dataWriter.write(tape, length);
+
+   // map VMTape
+   loader->mapReference(ReferenceInfo(TAPE_KEY), (void*)(position | mskRDataRef), (ref_t)mskRDataRef);
+
+   return position;
+}
+
 inline void compileTape(MemoryReader& tapeReader, size_t endPos, x86JITScope& scope)
 {
    unsigned char code = 0;
@@ -1773,5 +1788,20 @@ void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
    MemoryWriter ecodes(&tape);
 
    ecodes.writeByte(bcCallR);
-   ecodes.writeDWord((size_t)address | mskCodeRef);
+   ecodes.writeDWord((size_t)address | mskCodeRef);}
+
+void x86JITCompiler :: generateArg(MemoryDump& tape, void* address)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcPushR);
+   ecodes.writeDWord((size_t)address | mskRDataRef);
+}
+
+void x86JITCompiler :: generateExternalCall(MemoryDump& tape, ref_t functionReference)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcCallExtR);
+   ecodes.writeDWord(functionReference | mskImportRef);
 }

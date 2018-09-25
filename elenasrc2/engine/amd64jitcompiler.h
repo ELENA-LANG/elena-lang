@@ -102,6 +102,7 @@ public:
 
    virtual int allocateTLSVariable(_JITLoader* loader);
    virtual void allocateThreadTable(_JITLoader* loader, int length);
+   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length);
 
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
    virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);

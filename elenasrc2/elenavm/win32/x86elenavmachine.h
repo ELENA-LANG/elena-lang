@@ -10,67 +10,67 @@
 #include "elena.h"
 #include "elenavmachine.h"
 
-#include "x86process.h"
+//#include "x86process.h"
 
 namespace _ELENA_
 {
 
-// --- x86Instance ---
-
-class x86Instance : public Instance
-{
-   path_t _rootPath;
-
-   x86Process     _codeProcess, _dataProcess, _bssProcess, _statProcess, _debugProcess, _messageProcess;
-
-   virtual ref_t resolveExternal(ident_t reference);
-
-protected:
-   virtual _Memory* getTargetSection(size_t mask);
-   virtual _Memory* getTargetDebugSection();
-   virtual _Memory* getMessageSection();
-
-   virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
-
-   virtual bool restart(bool debugMode);
-
-   virtual void resumeVM();
-   virtual void stopVM();
-
-public:
-   virtual void createConsole();
-
-   virtual void* loadDebugSection();
-
-   virtual void raiseBreakpoint();
-
-   x86Instance(ELENAMachine* machine);
-};
+//// --- x86Instance ---
+//
+//class x86Instance : public Instance
+//{
+//   path_t _rootPath;
+//
+//   x86Process     _codeProcess, _dataProcess, _bssProcess, _statProcess, _debugProcess, _messageProcess;
+//
+//   virtual ref_t resolveExternal(ident_t reference);
+//
+//protected:
+//   virtual _Memory* getTargetSection(size_t mask);
+//   virtual _Memory* getTargetDebugSection();
+//   virtual _Memory* getMessageSection();
+//
+//   virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
+//
+//   virtual bool restart(bool debugMode);
+//
+//   virtual void resumeVM();
+//   virtual void stopVM();
+//
+//public:
+//   virtual void createConsole();
+//
+//   virtual void* loadDebugSection();
+//
+//   virtual void raiseBreakpoint();
+//
+//   x86Instance(ELENAMachine* machine);
+//};
 
 // --- x86ELENAMachine ---
 
-class x86ELENAMachine : public ELENAMachine
+class x86ELENAVMMachine : public ELENAVMMachine
 {
-   x86Instance* _instance;
+//   x86Instance* _instance;
 
 public:
-   Instance* getInstance()
-   {
-      return _instance;
-   }
+//   Instance* getInstance()
+//   {
+//      return _instance;
+//   }
+//
+//   void newInstance(x86Instance* instance)
+//   {
+//      _instance = instance;
+//   }
+//
+//   void deleteInstance()
+//   {
+//      freeobj(_instance);
+//      _instance = NULL;
+//   }
 
-   void newInstance(x86Instance* instance)
-   {
-      _instance = instance;
-   }
-
-   void deleteInstance()
-   {
-      freeobj(_instance);
-      _instance = NULL;
-   }
-
-   x86ELENAMachine(path_t rootPath);
+   x86ELENAVMMachine(/*path_t rootPath*/);
 };
 
 } // _ELENA_
