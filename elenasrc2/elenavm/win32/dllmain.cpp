@@ -9,55 +9,22 @@
 
 using namespace _ELENA_;
 
-static x86ELENAVMMachine* _Instance = NULL;
-//x86ELENAMachine* machine = NULL;
-//Path rootPath;
+static x86ELENAVMMachine* _Machine = NULL;
+static Path rootPath;
 
 // --- getAppPath ---
 
-//void loadDLLPath(HMODULE hModule)
-//{
-//   TCHAR path[MAX_PATH + 1];
-//
-//   ::GetModuleFileName(hModule, path, MAX_PATH);
-//
-//   rootPath.copySubPath(path);
-//   rootPath.lower();
-//}
-//
-//Instance* getCurrentInstance()
-//{
-//   Instance* instance = machine ? machine->getInstance() : NULL;
-//
-//   return instance;
-//}
+void loadDLLPath(HMODULE hModule)
+{
+   TCHAR path[MAX_PATH + 1];
+
+   ::GetModuleFileName(hModule, path, MAX_PATH);
+
+   rootPath.copySubPath(path);
+   rootPath.lower();
+}
 
 // ==== DLL entries ====
-
-void init(HMODULE hModule)
-{
-   //Path rootPath;
-   //loadDLLPath(hModule, rootPath);
-
-   //_Instance = new ELENARTMachine(rootPath.c_str());
-
-   _Instance = new x86ELENAVMMachine(/*rootPath.c_str()*/);
-
-   //void* debugSection = NULL;
-   //void* messageSection = NULL;
-   //ELENARTMachine::ImageSection section;
-   //section.init((void*)0x400000, 0x1000);
-
-   //size_t ptr = 0;
-   //PEHelper::seekSection(MemoryReader(&section), ".debug", ptr);
-   //debugSection = (void*)ptr;
-
-   //PEHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
-   //messageSection = (void*)ptr;
-
-   //Path configPath(CONFIG_PATH);
-   //_Instance->init(debugSection, messageSection, configPath.c_str());
-}
 
 EXTERN_DLL_EXPORT void InitializeVMSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape)
 {
@@ -76,12 +43,12 @@ EXTERN_DLL_EXPORT void InitializeVMSTA(void* systemEnv, void* exceptionHandler, 
    //_SystemEnv = systemEnv;
 
    // start the system
-   _Instance->startSTA(&header, (SystemEnv*)systemEnv, vmTape);
+   _Machine->startSTA(&header, (SystemEnv*)systemEnv, vmTape);
 }
 
 EXTERN_DLL_EXPORT void Exit(int exitCode)
 {
-   _Instance->Exit(exitCode);
+   _Machine->Exit(exitCode);
 }
 
 // !! temporally
@@ -341,12 +308,14 @@ EXTERN_DLL_EXPORT void Exit(int exitCode)
 //      return 0;
 //   }
 //}
-//
-//EXTERN_DLL_EXPORT int InterpretTape(void* tape)
-//{
+
+EXTERN_DLL_EXPORT int InterpretTape(void* tape)
+{
+   // !! temporal
+
 //   Instance* instance = getCurrentInstance();
 //   if (instance == NULL)
-//      return 0;
+      return 0;
 //
 //   try {
 //      return instance->interprete(tape, VM_INTERPRET_EXT);
@@ -367,8 +336,8 @@ EXTERN_DLL_EXPORT void Exit(int exitCode)
 //   {
 //      return 0;
 //   }
-//}
-//
+}
+
 //EXTERN_DLL_EXPORT int EvaluateTape(void* tape)
 //{
 //   Instance* instance = getCurrentInstance();
@@ -414,36 +383,28 @@ EXTERN_DLL_EXPORT void Exit(int exitCode)
 //
 //   return (size_t)instance->loadDebugSection();
 //}
-//
-//EXTERN_DLL_EXPORT const char* GetVMLastError()
-//{
+
+EXTERN_DLL_EXPORT const char* GetVMLastError()
+{
 //   Instance* instance = getCurrentInstance();
 //
-//   return  instance ? instance->getStatus() : "Not initialized";
-//}
-//
-//// --- initmachine ---
-//
-//void initMachine(path_t rootPath)
-//{
-//   machine = new x86ELENAMachine(rootPath);
-//}
-//
-//// --- createInstace ---
-//
-//void createInstance()
-//{
-//   machine->newInstance(new x86Instance(machine));
-//}
-//
-//// --- freeinstace ---
-//
-//void freeInstance()
-//{
-//   machine->deleteInstance();
-//
-//   freeobj(machine);
-//}
+   return  /*instance ? instance->getStatus() : */"Not initialized";
+}
+
+// --- initmachine ---
+
+void initMachine(path_t rootPath)
+{
+   _Machine = new x86ELENAVMMachine(rootPath);
+}
+
+// --- freeMachine ---
+
+void freeMachine()
+{
+   freeobj(_Machine);
+   _Machine = nullptr;
+}
 
 // --- dllmain ---
 
@@ -457,14 +418,15 @@ BOOL APIENTRY DllMain( HMODULE hModule,
    {
    case DLL_PROCESS_ATTACH:
    {
-      init(hModule);
+      loadDLLPath(hModule);
+      initMachine(rootPath.c_str());
       return TRUE;
    }
    case DLL_THREAD_ATTACH:
    case DLL_THREAD_DETACH:
       return TRUE;
    case DLL_PROCESS_DETACH:
-      freeobj(_Instance);
+      freeMachine();
       break;
    }
    return TRUE;

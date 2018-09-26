@@ -1705,7 +1705,7 @@ int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
 
 int x86JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t length)
 {
-   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
+   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskRDataRef));
 
    // reserve space for TLS index
    int position = dataWriter.Position();
