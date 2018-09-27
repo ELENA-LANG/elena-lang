@@ -265,15 +265,12 @@ public sealed const struct Socket
             [ SocketException new:"Error at socket"; raise ].
     ]
 
-//    stacksafe bool tryOpen dirty_ptr:aSockAddrPtr int:aNameLen
-//    [
-//        int aRetVal := system'external'WS2_32 connect 
-//            int:theHandle
-//            int:aSockAddrPtr
-//            int:aNameLen.
-//            
-//        ^ (SOCKET_ERROR != aRetVal).
-//    ]
+    stacksafe bool tryOpen(dirty_ptr ptr, int len)
+    [
+        int retVal := system'external'WS2_32 connect(theHandle, ptr, len).            
+            
+        ^ (SOCKET_ERROR != retVal).
+    ]
 
     stacksafe connect(literal ip_address, int port)
     [

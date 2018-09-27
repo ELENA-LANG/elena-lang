@@ -1,23 +1,23 @@
-import extensions.
-import extensions'dynamic.
+//import extensions.
+//import extensions'dynamic.
 import net.
 
 class ChatClient :: BaseClient
 {
-    tcp_client theNetworkClient.
+    T<TcpClient> theNetworkClient.
     
-    object     theAddress.
-    object     thePort.
-    object     theUserName.    
+    literal      theAddress.
+    int          thePort.
+    literal      theUserName.    
     
-    constructor new ip:ip port:port userName:userName
+    constructor new(literal ip, int port, literal userName)
         <= new;
     [
         theNetworkClient := TcpClient new.
         
         theAddress := ip.
         thePort := port.
-        theUserName := userName literal.
+        theUserName := userName.
     ]
     
     sendNickname
@@ -25,49 +25,46 @@ class ChatClient :: BaseClient
         literal json := CommandDTO::{ @_command := INTRODUCTION. @_value := theUserName. } toJson; literal.
         int len := json length.
         
-        theNetworkClient write int:len; write literal:json.
+        theNetworkClient write(len); write(json).
     ]
     
-    send text:text
+    send(literal text)
     [
-        literal json := CommandDTO::{ @_command := SEND. @_value := text. @_user := $nil. } toJson; literal.
+        literal json := CommandDTO::{ @_command := SEND. @_value := text. @_user := nil. } toJson; literal.
         int len := json length.
         
-        theNetworkClient write int:len; write literal:json.
+        theNetworkClient write(len); write(json).
     ]
     
     start
     [
-        theNetworkClient set tcp_client_listener(TcpClientListener::
-        {
-            onConnect:client
-            [
-                console writeLine:"connected".
-                
-                $self sendNickname.
-            ]
+        theNetworkClient onConnect := (:client)<TcpClient>
+        [            
+            console writeLine:"connected".
             
-            onError:e for:client
-            [
-                console printLine("Exception #",e error_code).
-            ]
-            
-            onReceived object:client bytearray:buffer int:length
-            [
-                $self write bytearray:buffer int:length.
-                var command := $self readCommand.
-                if ($nil != command)
-                    [
-                        (command Command) =>
-                            TRANSLATE
-                            [
-                                console printLine; printLine(command User,":",command Value); print:">".
-                            ].
-                    ].                
-            ]
-        }).
+            self sendNickname.
+        ].
         
-        theNetworkClient connect ip:theAddress port:thePort.
+        theNetworkClient onError := (:client:e)<TcpClient,Exception>
+        [
+            console printLine("Exception #",e error_code).
+        ].
+        
+        theNetworkClient onReceived := (:client:buffer:length)<TcpClient,ByteArray,int>
+        [
+            self write(buffer, length).
+            var command := self readCommand.
+            if (nil != command)
+                [
+                    (command Command) =>
+                        TRANSLATE
+                        [
+                            console printLine; printLine(command User,":",command Value); print:">".
+                        ].
+                ].                
+        ].
+        
+        theNetworkClient connect(theAddress, thePort).
         
         theNetworkClient blocking := false.
         theNetworkClient nodelay := true.        
@@ -75,7 +72,7 @@ class ChatClient :: BaseClient
         theNetworkClient start.
     ]
     
-    method stop
+    stop
     [
         theNetworkClient close.
     ]

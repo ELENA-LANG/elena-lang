@@ -9,13 +9,15 @@
         <debuginfo>-1</debuginfo>
     </project>
     <manifest>
-       <name>ELENA Network Provider Library</name>
-        <version>3.4.1</version>
+        <name>ELENA Network Provider Library</name>
+        <version>3.4.2</version>
         <author>Alex Rakov</author>
     </manifest>
     <files>
         <module>
+            <include>common.l</include>
             <include>win32_server.l</include>
+            <include>win32_client.l</include>
         </module>
     </files>
 </configuration>

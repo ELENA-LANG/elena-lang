@@ -33,7 +33,7 @@ In development:
                  * #459 : Ambiguity between an array and a variadic argument
 
               dev - revision
-                 * rosetta code - Ternary logic
+                 * rosetta code - Time a function
 
 ------                                                           
 Pipeline:

@@ -4,16 +4,16 @@ const int DEFAULT_PORT = 6881.
 
 class Client
 {
-    object theClient.
+    T<ChatClient> theClient.
     
-    start name:userName ip:ip port:port
+    start(literal userName, literal ip, int port)
     [
-        theClient := ChatClient new ip:ip port:port userName:userName.
+        theClient := ChatClient new(ip, port, userName).
         
         theClient start.
     ]
     
-    send text:text
+    send(text)
         => theClient.
     
     stop
@@ -22,7 +22,7 @@ class Client
     ]
 }
 
-symbol control = Client new; mixInto:
+public control = Client new; mixInto:
 {
     greeting
     [
@@ -30,10 +30,10 @@ symbol control = Client new; mixInto:
         
         var userName := console write:"Enter nickname:"; readLine.
         
-        self start name:userName ip:"127.0.0.1" port:DEFAULT_PORT
-            | if(:e)[ console writeLine:"Cannot esteblish connection!". AbortException new; raise. ].
+        __target start(userName, "127.0.0.1", DEFAULT_PORT)
+            | if(:e)[ console writeLine:"Cannot esteblish connection!". AbortException new; raise ].
             
-        ^ "Enter -q to exit the chat".
+        ^ "Enter -q to exit the chat"
     ]
     
     prompt
@@ -43,14 +43,14 @@ symbol control = Client new; mixInto:
     [
         if(line == "-q")
             [
-                self stop.
+                __target stop.
         
-                'program stop.
+                forwards'program stop.
             ];
             [
-                self send text:line.
+                __target send(line).
             ].
             
-        ^ emptyLiteralValue.
+        ^ emptyLiteral.
     ]
 }.

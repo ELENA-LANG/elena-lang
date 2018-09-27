@@ -2935,7 +2935,7 @@ void DerivationTransformer :: generateAttributeTemplate(SyntaxWriter& writer, SN
    else if (classRef) {
       writeFullReference(writer, scope.compilerScope->module, classRef, node);
    }
-   else scope.raiseError(errUnknownSubject, node);
+   else scope.raiseError(errUnknownClass, attr);
 
    if (arrayMode) {
       if (!insertSize(writer, attr, dynamicMode))
