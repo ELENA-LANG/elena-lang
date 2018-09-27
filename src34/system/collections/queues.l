@@ -321,7 +321,23 @@ public sealed Queue<type> :: Enumerable<type>
         
         ^ item
     ]
-    
+
+    Enumerator<type> enumerator = BaseEnumerator<type>::
+    {
+        @theIndex := -1.
+        
+        @theLength := self length.
+        
+        type get = theArray getAt(@theIndex).
+        
+        enumerable = self.
+        
+        reset
+        [
+            @theIndex := -1
+        ]
+    }.    
+        
     clear
     [
         theArray clear.

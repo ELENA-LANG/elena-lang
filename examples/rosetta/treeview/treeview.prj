@@ -1,9 +1,16 @@
-﻿[project]
-executable=treeview.exe
-namespace=treeview
-template=console
-debuginfo=-1
-
-[files]
-treeview.l
-
+<configuration>
+    <project>
+        <executable>treeview.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>treeview</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>treeview.l</include>
+        </module>
+    </files>
+</configuration>
