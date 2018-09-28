@@ -4240,13 +4240,25 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
       SNode larg;
       SNode rarg;
       assignOpArguments(node, larg, rarg);
+      if (larg.compare(lxCalling, lxDirectCalling, lxSDirctCalling) && getParamCount(larg.argument) == 0 && larg.existChild(lxTypecasting)) {
+         declareTry(tape);
 
-      generateObjectExpression(tape, rarg, ACC_REQUIRED);
-      loadBase(tape, lxResult);
-      generateObjectExpression(tape, larg, ACC_REQUIRED);
+         generateObjectExpression(tape, larg, ACC_REQUIRED);
 
-      tape.write(bcEqualR, 0);
-      tape.write(bcSelect);
+         declareAlt(tape);
+
+         generateObjectExpression(tape, rarg, ACC_REQUIRED);
+
+         endAlt(tape);
+      }
+      else {
+         generateObjectExpression(tape, rarg, ACC_REQUIRED);
+         loadBase(tape, lxResult);
+         generateObjectExpression(tape, larg, ACC_REQUIRED);
+
+         tape.write(bcEqualR, 0);
+         tape.write(bcSelect);
+      }
    }
 }
 

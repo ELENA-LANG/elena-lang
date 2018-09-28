@@ -273,6 +273,7 @@ enum LexicalType
 //   lxTemplateParamAttr = 0x20043,
    lxRefAttribute    = 0x20042,
    lxElement         = 0x20043,
+   lxTypecasting     = 0x20044,
 
    lxTempAttr        = 0x2010D,
 };

@@ -2880,6 +2880,8 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, Scope& scope, ref_t target
          ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
          ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
 
+         writer.appendNode(lxTypecasting);
+
          writer.insert(lxCalling, encodeMessage(actionRef, 0));
          writer.closeNode();
       }
