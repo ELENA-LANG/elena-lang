@@ -368,7 +368,7 @@ public sealed struct ByteNumber :: IntBaseNumber
         
     bool equal : o
     [
-        var n := T<byte>(o) \ back:nil.
+        var n := T<byte>(o) ?? nil.
         (nil == n)
             ? [ ^ false ]
             ! [ ^ self equal(n) ]
@@ -668,7 +668,7 @@ public sealed struct ShortNumber :: IntBaseNumber
 
     bool equal:o
     [
-        var n := T<short>(o) \ back:nil.
+        var n := T<short>(o) ?? nil.
         (nil == n)
             ? [ ^ false ]
             ! [ ^ self equal(n) ]
@@ -995,7 +995,7 @@ public sealed struct IntNumber :: IntBaseNumber
     
     bool equal:o
     [
-        var n := T<int>(o) \ back:nil.
+        var n := T<int>(o) ?? nil.
         (nil == n)
             ? [ ^ false ]
             ! [ ^ self equal(n) ]
@@ -1353,7 +1353,7 @@ public sealed struct UIntNumber :: IntBaseNumber
 
     bool equal:o
     [
-        var n := T<int>(o) \ back:nil.
+        var n := T<int>(o) ?? nil.
         (nil == n)
             ? [ ^ false ]
             ! [ ^ self equal(n) ]
@@ -1708,7 +1708,7 @@ public sealed struct LongNumber :: IntBaseNumber
     
     bool equal:o
     [
-        var n := T<long>(o) \ back:nil.
+        var n := T<long>(o) ?? nil.
         (nil == n)
             ? [ ^ false ]
             ! [ ^ self equal(n) ]
@@ -2043,7 +2043,7 @@ public sealed struct RealNumber :: BaseNumber
         
     bool equal:o
     [
-        var n := T<real>(o) \ back:nil.
+        var n := T<real>(o) ?? nil.
         (nil == n)
             ? [ ^ false ]
             ! [ ^ self equal(n) ]
@@ -2276,7 +2276,7 @@ public sealed const struct CharValue :: BaseValue
 
     bool equal:o
     [
-        var n := T<char>(o) \ back:nil.
+        var n := T<char>(o) ?? nil.
         (nil == n)
             ? [ ^ false ]
             ! [ ^ self equal(n) ]

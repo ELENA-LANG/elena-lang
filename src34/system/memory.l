@@ -1161,7 +1161,7 @@ public sealed __string LiteralValue :: BaseValue
 
     bool equal:n
     [
-        var l := T<literal>(n) \ back:nil.
+        var l := T<literal>(n) ?? nil.
         if (nil == l)
         [
             ^ false.
@@ -1389,7 +1389,7 @@ public sealed __string WideLiteralValue :: BaseValue
     
     bool equal:n
     [
-        var l := T<wide>(n) \ back:nil.
+        var l := T<wide>(n) ?? nil.
         if (nil == l)
         [
             ^ false.
