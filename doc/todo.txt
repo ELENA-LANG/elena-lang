@@ -4,9 +4,6 @@ In development:
 	                            
               dev - general implementation
                  * redesign operator \ : it should work only for closure call
-
-                 * #431 : optimize : var n := T(h) \ back:nil. (where h is Handle); the operation shoule be redesigned
-                   as var n := T(h) ?? nil.
                  * test proberTest
 
                  * migrate vm client
