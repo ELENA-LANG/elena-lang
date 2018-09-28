@@ -865,3 +865,25 @@ variadicTest =
     
     console writeLine("done").
 ].
+
+singleton ProberTester
+{
+    abort
+    [
+        AbortException new; raise
+    ]
+}
+
+proberTest =
+[
+    console write("proberTest..").
+    
+    var passed := false.
+    
+    ProberTester~__prober abort2.
+    ProberTester abort | if(:e)[ passed := true. ].
+    
+    Assert ifTrue(passed).
+    
+    console writeLine("done").
+].
