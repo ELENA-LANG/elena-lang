@@ -6,10 +6,10 @@ In development:
                  * redesign operator \ : it should work only for a message call / closure call
                  * #431 : optimize : var n := T(h) \ back:nil. (where h is Handle); the operation shoule be redesigned
                    as var n := T(h) ?? nil.
+                 * test proberTest
 
                  * migrate vm client
                  * get rid of corevm
-
                  * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
@@ -23,7 +23,6 @@ In development:
               dev - tests          
                  * test mta : exception handlers, an exception in a thread
                  * test realOp<real>.round<int>[1] extension
-                 * test proberTest
 
               dev - tests          
                  * sta / gc : anagram, Hailstone sequence

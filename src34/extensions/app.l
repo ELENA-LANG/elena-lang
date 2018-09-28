@@ -19,7 +19,7 @@ class ProgramLoop
     closure
     [
         // if grettings is not defined - do nothing
-        console printLine(theControl greeting \ back:emptyLiteral).
+        console printLine((theControl~__prober greeting) ?? emptyLiteral).
         
         var aPrompt := theControl prompt.
         
