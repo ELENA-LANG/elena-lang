@@ -46,6 +46,8 @@ acopyf bcopya acopyr => bcopyf nop acopyr;
 acopyf bcopya aloadfi => bcopyf nop aloadfi;
 acopyf bcopya aloadsi => bcopyf nop aloadsi;
 acopyf bcopya acopyf => bcopyf nop acopyf;
+acopyr bcopya aloadfi => bcopyr nop aloadfi;
+acopyr bcopya acopyr => bcopyr nop acopyr;
 
 acopyf nload ifn => dloadfi nop ifn;
 acopyf nload elsen => dloadfi nop elsen;

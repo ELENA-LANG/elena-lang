@@ -21,7 +21,7 @@ const char* _fnOpcodes[256] =
    "get", "set", "inc", "equit", "count", "unhook", "add", "create",
 
    "ecopyd", "dcopye", "pushd", "popd", "xcopy", "include", "exclude", "trylock",
-   "freelock", "rethrow", "system", "unknown", "eswap", "bswap", "copy", "xset",
+   "freelock", "rethrow", "system", "select", "eswap", "bswap", "copy", "xset",
 
    "xlen", "blen", "wlen", "flag", "nlen", "parent", "class", "mindex",
    "check", "acallvd", "validate", "unknown", "unknown", "unknown", "unknown", "unknown",
@@ -54,7 +54,7 @@ const char* _fnOpcodes[256] =
    "bloadfi", "bloadsi", "nloadi", "nsavei", "asaver", "aloadai", "aloadbi", "axsavebi",
 
    "popi", "nreadi", "scopyf", "setverb", "shiftln", "andn", "addn", "orn",
-   "eaddn", "shiftrn", "muln", "divn", "bloadr", "init", "unknown", "unknown",
+   "eaddn", "shiftrn", "muln", "divn", "bloadr", "init", "equalr", "unknown",
 
    "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown",
    "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", "subfi", "addfi", "savefi",
@@ -719,6 +719,7 @@ void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
    addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
    addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
    addVerb(verbs, IF_ELSE_MESSAGE,    IF_ELSE_MESSAGE_ID);
+   addVerb(verbs, ISNIL_MESSAGE, ISNIL_MESSAGE_ID);
 }
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)
@@ -743,6 +744,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    addVerb(operators, REDUCE_OPERATOR, REDUCE_MESSAGE_ID);
    addVerb(operators, WRITE_OPERATOR, WRITE_MESSAGE_ID);
    addVerb(operators, READ_OPERATOR, READ_MESSAGE_ID);
+   addVerb(operators, ISNIL_OPERATOR, ISNIL_MESSAGE_ID);
 }
 
 ByteCode ByteCodeCompiler :: code(ident_t s)

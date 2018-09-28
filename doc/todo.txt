@@ -3,6 +3,16 @@ In development:
 ------                              
 	                            
               dev - general implementation
+                 * #376 : ?? Operator should work for typecasting as well : T(h) ?? nil
+
+                 * #431 : optimize : var n := T(h) \ back:nil. (where h is Handle); the operation shoule be redesigned
+                   as var n := T(h) ?? nil.
+
+                 * redesign operator \ : it should work only for a message call
+
+                 * operator \ should be invoked only if the method was not resolved ; using a special command to get the last
+                   return point and compare it with the expected one (like in __group.#dispatcher)
+
                  * migrate vm client
                  * get rid of corevm
 

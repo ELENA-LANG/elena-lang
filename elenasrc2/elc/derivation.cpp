@@ -2268,7 +2268,7 @@ inline int defineOperatorLevel(SNode node)
 {
    SNode ident = node.firstChild();
    if (emptystr(ident.identifier())) {
-      return ident.type - nsL1Operator + 1;
+      return ident.type - nsL0Operator + 1;
    }
    return 10;
 }

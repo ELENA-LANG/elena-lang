@@ -1122,7 +1122,7 @@ inline % 7
   mov  esi, [edx+esi*4]
   mov  edx, [esi + tls_et_current]
 
-  jmp  [esi]
+  jmp  [edx]
 
 end
 

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser Symbol constants
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxH
@@ -110,8 +110,8 @@ enum Symbol
    nsL8Operation                = 0x0105C,
    nsIdleMessageParameter       = 0x0105D,
    nsExprMessageParameter       = 0x0105E,
-   nsDynamicSize                = 0x0105F,
-   nsReferenceExpression        = 0x01060,
+   nsReferenceExpression        = 0x0105F,
+   nsL0Operator                 = 0x01060,
    nsL1Operator                 = 0x01061,
    nsL2Operator                 = 0x01062,
    nsL3Operator                 = 0x01063,

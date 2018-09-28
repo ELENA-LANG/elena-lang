@@ -1,5 +1,5 @@
 ELENA byte codes (or ecodes)
-============================
+==============================
 
  ELENA virtual machine registers:
  --------------------------------
@@ -64,13 +64,13 @@ ELENA byte codes (or ecodes)
  
  scopyf i                   - sp <= fp + i
  
+ select                     - index = 0 ? acc : base
+
  selectr r1, r2             - acc = (index = 0 ? r1 : r2)
  
  setverb m                  - ext.verb << m
  
  xselectr r1, r2            - acc = (acc = 0 ? r1 : r2)
-
- 
  
 
  Memory operations:
@@ -508,3 +508,4 @@ ELENA byte codes (or ecodes)
  
  rless                      - real[acc] < real[base] ; if true - index = 1, if false - index = 0
 
+ equalr r                   - acc == r ; if true - index = 1, if false - index = 0

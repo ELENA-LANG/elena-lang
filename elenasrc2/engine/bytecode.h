@@ -60,6 +60,7 @@ enum ByteCode
    bcFreeLock        = 0x28,
    bcRethrow         = 0x29,
    bcSystem          = 0x2A,
+   bcSelect          = 0x2B,
    bcESwap           = 0x2C,
    bcBSwap           = 0x2D,
    bcCopy            = 0x2E,           
@@ -229,6 +230,7 @@ enum ByteCode
    bcDivN            = 0xDB,
    bcBLoadR          = 0xDC,
    bcInit            = 0xDD,
+   bcEqualR          = 0xDE,
 
    bcMTRedirect      = 0xE8,
    bcXMTRedirect     = 0xE9,

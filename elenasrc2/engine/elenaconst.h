@@ -14,7 +14,7 @@ namespace _ELENA_
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION     3                 // ELENA Engine version
    #define ENGINE_MINOR_VERSION     4
-   #define ENGINE_RELEASE_VERSION   3
+   #define ENGINE_RELEASE_VERSION   4
 
    #define LINE_LEN                 0x1000            // the maximal source line length
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
@@ -68,7 +68,8 @@ namespace _ELENA_
    #define DEFAULT_MESSAGE_ID      0x001F             // virtual method used for the implicit constructor
    #define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
    #define IF_ELSE_MESSAGE_ID      0x0021
-   #define PREDEFINED_MESSAGE_ID   0x0021
+   #define ISNIL_MESSAGE_ID        0x0022
+   #define PREDEFINED_MESSAGE_ID   0x0022
 
    // virtual operator
    #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -390,8 +391,9 @@ namespace _ELENA_
    #define IF_ELSE_MESSAGE          "if:else"
    #define INVOKE_MESSAGE           "#invoke"
    #define CAST_MESSAGE             "#cast"
-#define DEFAULT_MESSAGE             "#default"
+   #define DEFAULT_MESSAGE          "#default"
    #define INIT_MESSAGE             "#init"
+   #define ISNIL_MESSAGE            "#isnil"
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="
@@ -416,6 +418,7 @@ namespace _ELENA_
    #define SEPARATE_OPERATOR			"/="
    #define WRITE_OPERATOR           "<<"
    #define READ_OPERATOR            ">>"
+   #define ISNIL_OPERATOR           "??"
 
   // --- ELENA explicit variables ---
    #define OLD_GROUP_VAR           "target"           // obsolete : the current method target / closure owner method target

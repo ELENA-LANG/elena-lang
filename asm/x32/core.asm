@@ -1157,6 +1157,15 @@ inline % 2Ah
 
 end
 
+// ; select
+
+inline % 2Bh
+
+  test   ebx, ebx
+  cmovnz eax, edi
+
+end
+
 // ; eswap
 inline % 2Ch
 
@@ -2638,6 +2647,16 @@ inline %0DDh
   xor  eax, eax
   mov  edi, esp
   rep  stos
+
+end
+
+// ; equalr r
+
+inline %0DEh
+
+  xor  ebx, ebx
+  cmp  eax, __arg1
+  setz bl
 
 end
 

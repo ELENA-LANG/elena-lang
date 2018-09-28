@@ -56,7 +56,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 152;
+const int gcCommandNumber = 154;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcParent,
@@ -89,7 +89,8 @@ const int gcCommands[gcCommandNumber] =
    bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
    bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
    bcCheck, bcMTRedirect, bcDCopyVerb, bcXCopy, bcXMTRedirect,
-   bcSaveFI, bcAddFI, bcSubFI, bcNShiftR, bcLSave
+   bcSaveFI, bcAddFI, bcSubFI, bcNShiftR, bcLSave,
+   bcSelect, bcEqualR
 };
 
 const int gcCommandExNumber = 10;
@@ -112,7 +113,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteOp, &loadOneByteOp, &compileIndexInc, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileDAdd, &loadOneByteOp,
 
    &compileECopyD, &compileDCopyE, &compilePushD, &compilePopD, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
-   &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
+   &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -145,7 +146,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadIndexOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileALoadAI, &loadIndexOp, &loadIndexOp,
 
    &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileDShiftN, &compileDAndN, &compileDAddN, &compileDOrN,
-   &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &compileNop, &compileNop,
+   &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &loadROp, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
@@ -416,7 +417,10 @@ void _ELENA_::loadROp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0]==-1) {
-         scope.writeReference(*scope.code, scope.argument, 0);
+         if (scope.argument == 0) {
+            scope.code->writeDWord(0);
+         }
+         else scope.writeReference(*scope.code, scope.argument, 0);
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 

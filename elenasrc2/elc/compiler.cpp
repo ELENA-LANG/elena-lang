@@ -1514,7 +1514,7 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
          parentRef = resolveImplicitIdentifier(scope, terminal);
 
          if (!parentRef)
-            scope.raiseError(errUnknownBaseClass, terminal);
+            scope.raiseError(errInvalidParent, terminal);
       }
       else {
          SNode classNode = node.findChild(lxClassRefAttr);
@@ -2602,6 +2602,19 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode rope
    return retVal;
 }
 
+ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand)
+{
+   ref_t loperandRef = resolveObjectReference(scope, loperand);
+   ref_t roperandRef = resolveObjectReference(scope, roperand);
+   
+   ref_t resultRef = loperandRef == roperandRef ? loperandRef : 0;
+
+   writer.insert(lxNilOp, ISNIL_MESSAGE_ID);
+   writer.closeNode();
+
+   return ObjectInfo(okObject, resultRef);
+}
+
 ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2)
 {
    ObjectInfo retVal;
@@ -2700,7 +2713,10 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       else roperand = compileExpression(writer, roperandNode, scope, 0, 0);*/
    }
 
-   retVal = compileOperator(writer, node, scope, operator_id, paramCount, loperand, roperand, roperand2);
+   if (operator_id == ISNIL_MESSAGE_ID) {
+      retVal = compileIsNilOperator(writer, node, scope, loperand, roperand);
+   }
+   else retVal = compileOperator(writer, node, scope, operator_id, paramCount, loperand, roperand, roperand2);
 
 //   writer.removeBookmark();
 

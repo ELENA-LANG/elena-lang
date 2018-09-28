@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "sg.h"
@@ -9,7 +9,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_NUMBER 1
+#define BUILD_NUMBER 2
 
 // !! code duplication (syntax.h)
 const int mskAnySymbolMask             = 0x07000;               // masks
@@ -53,7 +53,7 @@ int registerSymbol(ParserTable& table, ident_t symbol, int new_id)
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line syntax generator %d.%d.%d (C)2005-2015 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_NUMBER);
+   printf("ELENA command line syntax generator %d.%d.%d (C)2005-2018 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_NUMBER);
    if (argc < 2 || argc > 3) {
       printLine("sg <syntax_file> [-cp<codepage>]");
       return 0;

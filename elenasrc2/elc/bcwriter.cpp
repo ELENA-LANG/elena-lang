@@ -4228,13 +4228,25 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
 
 void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node)
 {
-   generateExpression(tape, node, ACC_REQUIRED);
-
-   SNode ifParam = node.findChild(lxIfValue);
-   SNode elseParam = node.findChild(lxElseValue);
-
    if (node.argument == EQUAL_MESSAGE_ID) {
+      generateExpression(tape, node, ACC_REQUIRED);
+
+      SNode ifParam = node.findChild(lxIfValue);
+      SNode elseParam = node.findChild(lxElseValue);
+
       selectByAcc(tape, elseParam.argument, ifParam.argument);
+   }
+   else if (node.argument == ISNIL_MESSAGE_ID) {
+      SNode larg;
+      SNode rarg;
+      assignOpArguments(node, larg, rarg);
+
+      generateObjectExpression(tape, rarg, ACC_REQUIRED);
+      loadBase(tape, lxResult);
+      generateObjectExpression(tape, larg, ACC_REQUIRED);
+
+      tape.write(bcEqualR, 0);
+      tape.write(bcSelect);
    }
 }
 
