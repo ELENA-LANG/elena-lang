@@ -274,6 +274,7 @@ enum LexicalType
    lxRefAttribute    = 0x20042,
    lxElement         = 0x20043,
    lxTypecasting     = 0x20044,
+   lxIntConversion   = 0x20045,
 
    lxTempAttr        = 0x2010D,
 };

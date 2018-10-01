@@ -2691,6 +2691,19 @@ void ByteCodeWriter :: saveSubject(CommandTape& tape)
    tape.write(bcPushD);
 }
 
+void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id, int immArg)
+{
+   switch (operator_id) {
+      case SET_MESSAGE_ID:
+         tape.write(bcDCopy, immArg);
+         tape.write(bcRCopy);
+         tape.write(bcRSave);
+         break;
+      default:
+         break;
+   }
+}
+
 void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg)
 {
    switch (operator_id) {
@@ -3014,6 +3027,9 @@ void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id)
          break;
       case LESS_MESSAGE_ID:
          tape.write(bcRLess);
+         break;
+      case SET_MESSAGE_ID:
+         tape.write(bcRSave);
          break;
       default:
          break;
@@ -4172,7 +4188,21 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       doLongOperation(tape, operation);
    }
    else if (node == lxRealOp) {
-      doRealOperation(tape, operation);
+      if (operation == SET_MESSAGE_ID) {
+         if (rargConst) {
+            SNode immArg = rarg.findChild(lxIntValue);
+
+            doRealOperation(tape, operation, immArg.argument);
+         }
+         else {
+            if (node.existChild(lxIntConversion)) {
+               tape.write(bcNLoad);
+               tape.write(bcRCopy);
+            }
+            doRealOperation(tape, operation);
+         }
+      }
+      else doRealOperation(tape, operation);
    }
 
    if (selectMode) {

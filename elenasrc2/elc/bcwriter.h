@@ -259,6 +259,7 @@ class ByteCodeWriter
    void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
    void doLongOperation(CommandTape& tape, int operator_id);
    void doRealOperation(CommandTape& tape, int operator_id);
+   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
    void doArrayOperation(CommandTape& tape, int operator_id);
    void doArgArrayOperation(CommandTape& tape, int operator_id);
    void doIntArrayOperation(CommandTape& tape, int operator_id);

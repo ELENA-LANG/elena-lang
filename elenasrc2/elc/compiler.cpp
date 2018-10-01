@@ -39,7 +39,7 @@ using namespace _ELENA_;
 //#define HINT_ALT_MODE         0x00200000
 #define HINT_SINGLETON        0x00100000
 //#define HINT_EXT_RESENDEXPR   0x00080400
-//#define HINT_ASSIGNING_EXPR   0x00040000
+#define HINT_ASSIGNING_EXPR   0x00040000
 #define HINT_NODEBUGINFO      0x00020000
 //#define HINT_PARAMETERSONLY   0x00010000
 #define HINT_SUBCODE_CLOSURE  0x00008800
@@ -3183,7 +3183,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          break;
    }
       
-   int assignMode = HINT_NOUNBOXING;
+   int assignMode = HINT_NOUNBOXING | HINT_ASSIGNING_EXPR;
    if (targetRef == 0 || targetRef == V_AUTO)
       assignMode |= HINT_DYNAMIC_OBJECT;
 
@@ -3196,8 +3196,17 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       else scope.raiseError(errInvalidOperation, node);
    }
    else retVal = compileExpression(writer, sourceNode, scope, targetRef, assignMode);
-      
-   if (operationType != lxNone) {
+
+   if (retVal.kind == okPrimitiveConv) {
+      if (retVal.param == V_REAL64) {
+         if (retVal.extraparam == V_INT32) {
+            writer.appendNode(lxIntConversion);
+         }
+         writer.insert(lxRealOp, SET_MESSAGE_ID);
+         writer.closeNode();
+      }
+   }
+   else {
       writer.insert(operationType, operand);
       writer.closeNode();
    }
@@ -3922,8 +3931,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    writer.newBookmark();
 
    bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
-   if (noPrimMode)
-      mode &= ~HINT_NOPRIMITIVES;
+   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
+
+   mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
 
    int targetMode = mode & ~HINT_PROP_MODE;
 
@@ -3968,7 +3978,10 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    }
 
    if (exptectedRef) {
-      if (convertObject(writer, scope, exptectedRef, sourceRef, objectInfo.element)) {
+      if (assignMode && exptectedRef == scope.moduleScope->realReference && (sourceRef == V_INT32 || sourceRef == scope.moduleScope->intReference)) {
+         objectInfo = ObjectInfo(okPrimitiveConv, V_REAL64, V_INT32);
+      }
+      else if (convertObject(writer, scope, exptectedRef, sourceRef, objectInfo.element)) {
          objectInfo = ObjectInfo(okObject, exptectedRef);
       }
       else scope.raiseError(errInvalidOperation, node);

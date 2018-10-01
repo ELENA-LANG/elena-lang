@@ -144,6 +144,7 @@ public:
 
       okExternal,
       okInternal,
+      okPrimitiveConv
    };
 
    struct ObjectInfo

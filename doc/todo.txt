@@ -2,8 +2,12 @@
 In development:
 ------                              
 	                            
+
+              xdev - general optimization  
+                 - optimize r * n + 0.5r
+
               dev - general implementation
-                 * migrate vm client
+                 * migrate vm client; #82 default event handler 
                  * get rid of corevm
                  * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : migrate GC algorithm
@@ -14,6 +18,10 @@ In development:
               dev - general implementation
                  * (re)implement sockets
                  * (re)implement tcpserver / tcpclient
+
+              exp - live programming
+                 * class to expression tree
+                 * expression tree to class
 
               dev - tests          
                  * test mta : exception handlers, an exception in a thread
@@ -32,15 +40,11 @@ In development:
                  * #459 : Ambiguity between an array and a variadic argument
 
               dev - revision
-                 * rosetta code - Tree traversal
+                 * rosetta code - Truncatable primes
 
 ------                                                           
 Pipeline:
 ------                                                                                         
-              exp - live programming
-                 * class to expression tree
-                 * expression tree to class
-
               dev - revision
                  * samples
                  * reddit : Implicit constructor for the nested class
@@ -162,8 +166,6 @@ Pipeline:
                  * idle optimization: sending get message to $nil - should always return $nil
 
               xdev - refactoring
-                 * review cellular library
-
                  * test if outnprop works correctly with optimization
 
                  * #215 : Operations with structure fields
