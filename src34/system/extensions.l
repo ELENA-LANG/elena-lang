@@ -666,7 +666,9 @@ public extension<real> realOp
         ].
            
         int b := 10 power:precision.
-        int c := (a * b + 0.5r) roundedInt.
+        real r := a * b + 0.5r.
+        
+        int c := intConvertor convert(r rounded).
     
         a := c realDiv:b.
     
