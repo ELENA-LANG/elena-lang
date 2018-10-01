@@ -3,9 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * redesign operator \ : it should work only for closure call
-                 * test proberTest
-
                  * migrate vm client
                  * get rid of corevm
                  * move system'core_routines'__exception register call to the system entry symbol

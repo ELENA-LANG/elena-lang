@@ -4481,6 +4481,8 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    bool argUnboxMode = false;
    bool unboxMode = false;
    bool openArg = false;
+   bool accTarget = false;
+   bool accPresaving = false; // if the message target is in acc
 
    int paramCount = 0;
    int presavedCount = 0;
@@ -4499,7 +4501,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
          unboxArgList(tape, current.argument != 0);
       }
       else if (test(member.type, lxObjectMask)) {
-         if (member.type == lxLocalUnboxing)
+         if (member == lxResult && !accTarget) {
+            accTarget = true;
+         }
+         else if (member.type == lxLocalUnboxing)
             unboxMode = true;
 
          paramCount++;
@@ -4507,6 +4512,12 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 
       // presave the boxed arguments if required
       if (member == lxUnboxing) {
+         if (accTarget) {
+            pushObject(tape, lxResult);
+            presavedCount++;
+            accPresaving = true;
+         }
+
          generateObjectExpression(tape, member, ACC_REQUIRED);
          pushObject(tape, lxResult);
          presavedCount++;
@@ -4514,6 +4525,12 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       }
       // presave the nested object if outer operation is required
       else if (member == lxNested && member.existChild(lxOuterMember, lxCode)) {
+         if (accTarget) {
+            pushObject(tape, lxResult);
+            presavedCount++;
+            accPresaving = true;
+         }
+
          generateObjectExpression(tape, member, ACC_REQUIRED);
          pushObject(tape, lxResult);
          presavedCount++;
@@ -4567,6 +4584,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
             loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
             presavedCount--;
          }
+         else if (accPresaving && current == lxResult) {
+            loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
+            presavedCount--;
+         }
          else generateObjectExpression(tape, current, ACC_REQUIRED);
 
          if (directMode) {
@@ -4590,8 +4611,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    }
 
    // unbox the arguments
-   if(unboxMode)
+   if (unboxMode)
       unboxCallParameters(tape, node);
+
+   if (accPresaving)
+      releaseObject(tape);
 }
 
 void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node node)

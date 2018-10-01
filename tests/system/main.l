@@ -44,7 +44,7 @@ public program
     nestedFieldsTest().
     shortCircuitBooleanOperation().
     variadicTest().
-//    proberTest().
+    proberTest().
 
     console writeLine:"Passed".
 ]
