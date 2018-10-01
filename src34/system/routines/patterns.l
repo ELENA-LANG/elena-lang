@@ -54,50 +54,52 @@ public class TopFilter :: Enumerator
     enumerable => theEnumerator.
 }
 
-//// --- SkipFilter ---
-//
-//class SkipFilter :: Enumerator
-//{
-//    vint       theCounter.    
-//    bool       skipped.    
-//    enumerator theEnumerator.
-//    
-//    constructor new int:aCounter enumerator:anEnumerator
-//    [
-//        theCounter := aCounter.
-//        skipped := false.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        ifnot (skipped)
-//        [
-//            skipped := true.
-//            
-//            int i := theCounter.
-//            while (i > 0)            
-//            [
-//                ifnot (theEnumerator next)
-//                [
-//                    ^ false
-//                ].
-//                
-//                i -= 1.
-//            ]
-//        ].
-//        
-//        ^ theEnumerator next
-//    ]
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//        skipped := false.
-//    ]    
-//}
+// --- SkipFilter ---
+
+public class SkipFilter :: Enumerator
+{
+    ref<int>      theCounter.    
+    bool          skipped.    
+    T<Enumerator> theEnumerator.
+    
+    constructor new(int aCounter, Enumerator en)
+    [
+        theCounter := aCounter.
+        skipped := false.
+        theEnumerator := en.
+    ]
+    
+    get = theEnumerator get.
+    
+    bool next
+    [
+        ifnot (skipped)
+        [
+            skipped := true.
+            
+            int i := theCounter.
+            while (i > 0)            
+            [
+                ifnot (theEnumerator next)
+                [
+                    ^ false
+                ].
+                
+                i -= 1.
+            ]
+        ].
+        
+        ^ theEnumerator next
+    ]
+    
+    reset 
+    [
+        theEnumerator reset.
+        skipped := false.
+    ]    
+    
+    enumerable => theEnumerator.
+}
 
 // --- Filtering ---
 
@@ -800,20 +802,19 @@ class Accumulating :: BasePattern
     closure : aParam [ theResult value := theOperation(theResult value,aParam). ]
 }
 
-//// --- patternOp ---
-//
-//extension patternOp
-//{
-//    skipping:aCounter
-//        = SkipFilter new int:aCounter enumerator:(self enumerator).
-//
-//    last:counter
-//        = TopFilter new int:counter int(self length - counter) enumerator:(self enumerator).
-//
-//    orderBy:orderFunc
-//        = OrderingEnumerator new(orderFunc, self enumerator).
-//
+// --- patternOp ---
+
+public extension patternOp
+{
+    skipping:counter
+        = SkipFilter new(counter, T<Enumerator>(self enumerator)).
+
+    last:counter
+        = TopFilter new(counter, self length - counter, T<Enumerator>(self enumerator)).
+
+    orderBy:orderFunc
+        = OrderingEnumerator new(orderFunc, T<Enumerator>(self enumerator)).
+
 //    filter pattern:patternFun
-//        = Filter new(patternFun, self enumerator).
-//
-//}
+//        = Filter new(patternFun, T<Enumerator>(self enumerator)).
+}

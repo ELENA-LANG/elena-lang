@@ -634,11 +634,11 @@ public sealed class BitArray
         theArray write(arr_index, bits)
     ]
     
-//    /// Returns the array enumerator
-//    enumerator = BitArrayEnumerator new bitarray:$self.
-//
-//    /// Returns the array indexer
-//    indexer = BitArrayIndexer new bitarray:$self.    
+    /// Returns the array enumerator
+    Enumerator<bool> enumerator = BitArrayEnumerator new(self).
+
+    /// Returns the array indexer
+    Indexer<bool> indexer = BitArrayIndexer new(self).
 }
 
 // --- BitArray32 ---
@@ -699,11 +699,11 @@ public sealed class BitArray32
 //            ].
     ]
     
-//    /// Returns the array enumerator
-//    enumerator = BitArray32Enumerator new bitset:$self.
-//
-//    /// Returns the array indexer
-//    indexer = BitArray32Indexer new bitset:$self.
+    /// Returns the array enumerator
+    T<Enumerator> enumerator = BitArray32Enumerator new(self).
+
+    /// Returns the array indexer
+    T<Indexer> indexer = BitArray32Indexer new(self).
 }
 
 // --- IntMatrix ---
@@ -1314,8 +1314,8 @@ public sealed __string LiteralValue :: BaseValue
     /// Returns the string enumerator
     Enumerator<char> enumerator = LiteralEnumerator new(self).
 
-//    /// Returns the string indexer
-//    indexer = LiteralIndexer new literal:$self.
+    /// Returns the string indexer
+    Indexer<char> indexer = LiteralIndexer new(self).
     
     /// Clones the value
     clone = LiteralValue new(self).
@@ -1545,8 +1545,8 @@ public sealed __string WideLiteralValue :: BaseValue
     /// Returns the object enumerator
     Enumerator<char> enumerator = WideLiteralEnumerator new(self).
     
-//    /// Returns the object indexer
-//    indexer = WideLiteralIndexer new wide:$self.
+    /// Returns the object indexer
+    Indexer<char> indexer = WideLiteralIndexer new(self).
     
     /// Clones the value
     clone = WideLiteralValue new(self).
@@ -1765,8 +1765,8 @@ public sealed Array :: Indexable, Array<object>
     object getAt(int anIndex)
         => system'core_routines'__array.
  
-//    /// Returns the array enumerator
-//    enumerator = ArrayEnumerator new array:$self.
+    /// Returns the array enumerator
+    T<Enumerator> enumerator = ArrayEnumerator new(self).
 
     /// Returns the array indexer
     T<Indexer> indexer = ArrayIndexer new(self).
@@ -2323,64 +2323,72 @@ class LiteralEnumerator :: Enumerator<char>
     char get = theChar.
 }
 
-//// --- LiteralIndexer ---
-//
-///// A literal value indexer
-//class LiteralIndexer :: Indexer
-//{
-//    literal theLiteral.
-//    vint    theIndex.
-//    
-//    /// Creates an indexer
-//    constructor new : anObject
-//        <= new literal:anObject.
-//    
-//    /// Creates an indexer
-//    constructor new literal:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    bool available
-//    [
-//        int aLength := theLiteral length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current character
-//    get
-//    [
-//        char aChar := $0.
-//        theLiteral read int:theIndex vchar:aChar.
-//        
-//        ^ CharValue new char:aChar.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    set : anObject 
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theLiteral.
-//}
+// --- LiteralIndexer ---
+
+/// A literal value indexer
+class LiteralIndexer :: Indexer<char>
+{
+    literal  theLiteral.
+    ref<int> theIndex.
+    
+    /// Creates an indexer
+    constructor new : anObject
+        <= new(T<literal>(anObject)).
+    
+    /// Creates an indexer
+    constructor new(literal aLiteral)
+    [
+        theLiteral := aLiteral.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    bool available
+    [
+        int aLength := theLiteral length.
+        int val := theIndex.
+        
+        ^ val < aLength.
+    ]
+
+    /// Returns the current character
+    char get
+    [
+        char ch := $0.
+        theLiteral read(T<int>(theIndex), &ch).
+        
+        ^ ch.
+    ]
+    
+    /// Sets the index by specified value
+    set (char ch)
+    [
+        system'NotSupportedException new; raise.
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref<int> retVal)
+    [
+        theIndex readValueTo(retVal).
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex(int val)
+    [
+        theIndex value := val.
+    ]
+    
+    appendIndex(int val)
+    [
+        theIndex append(val).
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo(ref<int> retVal)
+        => theLiteral.
+        
+    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.
+}
 
 // --- WideLiteralEnumerator ---
 
@@ -2448,58 +2456,65 @@ class WideLiteralEnumerator :: Enumerator<char>
     char get = theChar.
 }
 
-//// --- WideLiteralInexer ---
-//
-///// A wide literal enumerator
-//class WideLiteralIndexer :: Indexer
-//{
-//    wide theLiteral.
-//    vint theIndex.
-//    
-//    /// Creates an indexer
-//    constructor new : anObject
-//        <= new wide:anObject.
-//    
-//    /// Creates an indexer
-//    constructor new wide:aLiteral
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := 0.
-//    ]
-//
-//    /// Returns false if the index out of range    
-//    bool available
-//    [
-//        int aLength := theLiteral length.
-//        
-//        ^ theIndex < aLength
-//    ]
-//
-//    /// Returns the current character
-//    get
-//        = theLiteral getAt int:theIndex.
-//    
-//    set : anObject 
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theLiteral.
-//}
+// --- WideLiteralInexer ---
+
+/// A wide literal enumerator
+class WideLiteralIndexer :: Indexer<wide>
+{
+    wide     theLiteral.
+    ref<int> theIndex.
+    
+    /// Creates an indexer
+    constructor new : anObject
+        <= new(T<wide>(anObject)).
+    
+    /// Creates an indexer
+    constructor new(wide s)
+    [
+        theLiteral := s.
+        theIndex := 0.
+    ]
+
+    /// Returns false if the index out of range    
+    bool available
+    [
+        int aLength := theLiteral length.
+        
+        ^ theIndex < aLength
+    ]
+
+    /// Returns the current character
+    wide get
+        = theLiteral getAt(T<int>(theIndex)).
+    
+    set(wide ch)
+    [
+        system'NotSupportedException new; raise
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref<int> retVal)
+    [
+        theIndex readValueTo(retVal).
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex(int val)
+    [
+        theIndex value := val.
+    ]
+    
+    appendIndex(int val)
+    [
+        theIndex append(val).
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo(ref<int> retVal)
+        => theLiteral.
+        
+    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.        
+}
 
 // --- ArrayIndexer ---
 
@@ -2562,226 +2577,250 @@ public class ArrayIndexer :: Indexer
         => theArray.
 }
 
-//// --- ArrayEnumerator ---
-//
-///// An array enumerator
-//class ArrayEnumerator :: Enumerator
-//{
-//    array theArray.
-//    vint  theIndex.
-//    
-//    /// Creates an array enumerator
-//    constructor new : anArray
-//        <= new array:anArray.
-//    
-//    /// Creates an array enumerator
-//    constructor new array:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex set int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        int aLength := theArray length.
-//        
-//        theIndex append int:1.
-//
-//        ^ theIndex < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    get
-//        = theArray getAt int:theIndex.
-//}
-//
-//// --- BitArrayIndexer ---
-//
-///// An array indexer
-//class BitArrayIndexer :: Indexer
-//{
-//    bitarray theArray.
-//    vint  theIndex.
-//
-//    /// Returns the parameter indexer
-//    constructor new : anArray
-//        <= new bitarray:anArray.
-//    
-//    /// Returns the parameter indexer
-//    constructor new bitarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    bool available
-//    [
-//        int aLength := theArray length.
-//        
-//        ^ theIndex < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    bool get
-//        = theArray getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt int:theIndex bool:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theArray.
-//}
-//
-//// --- BitArrayEnumerator ---
-//
-///// An array enumerator
-//class BitArrayEnumerator :: Enumerator
-//{
-//    bitarray theArray.
-//    vint     theIndex.
-//    
-//    /// Creates an array enumerator
-//    constructor new : anArray
-//        <= new bitarray:anArray.
-//    
-//    /// Creates an array enumerator
-//    constructor new bitarray:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex set int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        int aLength := theArray length.
-//        
-//        theIndex append int:1.
-//
-//        ^ theIndex < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    bool get
-//        = theArray getAt int:theIndex.
-//}
-//
-//// --- BitArray32Indexer ---
-//
-///// An array indexer
-//class BitArray32Indexer :: Indexer
-//{
-//    bitset theArray.
-//    vint   theIndex.
-//
-//    /// Returns the parameter indexer
-//    constructor new : anArray
-//        <= new bitset:anArray.
-//    
-//    /// Returns the parameter indexer
-//    constructor new bitset:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    bool available
-//    [
-//        ^ theIndex < 32
-//    ]
-//
-//    /// Returns the current member
-//    bool get
-//        = theArray getAt int:theIndex.
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt int:theIndex bool:anObject.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo  vint:anIndex
-//    [
-//        anIndex int := theIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex int:anIndex 
-//    [
-//        theIndex set int:anIndex.
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo vint:anOutput
-//        => theArray.
-//}
-//
-//// --- BitArray32Enumerator ---
-//
-///// An array enumerator
-//class BitArray32Enumerator :: Enumerator
-//{
-//    bitset theArray.
-//    vint   theIndex.
-//    
-//    /// Creates an array enumerator
-//    constructor new : anArray
-//        <= new bitset:anArray.
-//    
-//    /// Creates an array enumerator
-//    constructor new bitset:anArray
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex set int:-1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        theIndex append int:1.
-//
-//        ^ theIndex < 32.
-//    ]
-//    
-//    /// Returns the current object
-//    get
-//        = theArray getAt int:theIndex.
-//}
+// --- ArrayEnumerator ---
+
+/// An array enumerator
+class ArrayEnumerator :: Enumerator
+{
+    T<Array> theArray.
+    ref<int> theIndex.
+    
+    /// Creates an array enumerator
+    constructor new : anArray
+        <= new(T<Array>(anArray)).
+    
+    /// Creates an array enumerator
+    constructor new(Array anArray)
+    [
+        theArray := anArray.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex value := -1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next
+    [
+        int aLength := theArray length.
+        
+        theIndex append(1).
+
+        ^ T<int>(theIndex) < aLength.
+    ]
+    
+    /// Returns the current object
+    get
+        = theArray getAt(T<int>(theIndex)).
+        
+    enumerable = theArray.
+}
+
+// --- BitArrayIndexer ---
+
+/// An array indexer
+class BitArrayIndexer :: Indexer<bool>
+{
+    T<BitArray> theArray.
+    ref<int>    theIndex.
+
+    /// Returns the parameter indexer
+    constructor new : anArray
+        <= new(T<BitArray>(anArray)).
+    
+    /// Returns the parameter indexer
+    constructor new(BitArray anArray)
+    [
+        theArray := anArray.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    bool available
+    [
+        int aLength := theArray length.
+        
+        ^ T<int>(theIndex) < aLength.
+    ]
+
+    /// Returns the current member
+    bool get
+        = theArray getAt(T<int>(theIndex)).
+    
+    /// Sets the current member
+    set(bool val)
+    [
+        theArray setAt(T<int>(theIndex), val).
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref<int> retVal)
+    [
+        theIndex readValueTo(retVal)
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex(int val)
+    [
+        theIndex value := val.
+    ]
+    
+    appendIndex(int val)
+    [
+        theIndex append(val).
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo(ref<int> retVal)
+        => theArray.
+        
+    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.        
+}
+
+// --- BitArrayEnumerator ---
+
+/// An array enumerator
+class BitArrayEnumerator :: Enumerator<bool>
+{
+    T<BitArray> theArray.
+    ref<int>    theIndex.
+    
+    /// Creates an array enumerator
+    constructor new : anArray
+        <= new(T<BitArray>(anArray)).
+    
+    /// Creates an array enumerator
+    constructor new(BitArray a)
+    [
+        theArray := a.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex value := -1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next
+    [
+        int aLength := theArray length.
+        
+        theIndex append(1).
+
+        ^ T<int>(theIndex) < aLength.
+    ]
+    
+    /// Returns the current object
+    bool get
+        = theArray getAt(T<int>(theIndex)).
+        
+    enumerable = theArray.
+    
+    cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
+}
+
+// --- BitArray32Indexer ---
+
+/// An array indexer
+class BitArray32Indexer :: Indexer<bool>
+{
+    T<BitArray32> theArray.
+    ref<int>      theIndex.
+
+    /// Returns the parameter indexer
+    constructor new : anArray
+        <= new(T<BitArray32>(anArray)).
+    
+    /// Returns the parameter indexer
+    constructor new(BitArray32 bs)
+    [
+        theArray := bs.
+        theIndex := 0.
+    ]
+    
+    /// Returns false if the index out of range
+    bool available
+    [
+        ^ T<int>(theIndex) < 32
+    ]
+
+    /// Returns the current member
+    bool get
+        = theArray getAt(T<int>(theIndex)).
+    
+    /// Sets the current member
+    set(bool val)
+    [
+        theArray setAt(T<int>(theIndex), val)
+    ]
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref<int> retVal)
+    [
+        theIndex readValueTo(retVal).
+    ]
+    
+    /// Sets the index by specified value
+    writeIndex(int val)
+    [
+        theIndex value := val.
+    ]
+    
+    appendIndex(int val)
+    [
+        theIndex append(val).
+    ]
+    
+    /// Reads the length to the output parameter    
+    readLengthTo(ref<int> retVal)
+        => theArray.
+        
+    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.        
+}
+
+// --- BitArray32Enumerator ---
+
+/// An array enumerator
+class BitArray32Enumerator :: Enumerator<bool>
+{
+    T<BitArray32> theArray.
+    ref<int>      theIndex.
+    
+    /// Creates an array enumerator
+    constructor new : anArray
+        <= new(T<BitArray32>(anArray)).
+    
+    /// Creates an array enumerator
+    constructor new(BitArray32 bs)
+    [
+        theArray := bs.
+        theIndex := -1.
+    ]
+
+    /// Resets the enumerator
+    reset
+    [
+        theIndex value := -1.
+    ]
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next
+    [
+        theIndex append(1).
+
+        ^ T<int>(theIndex) < 32.
+    ]
+    
+    /// Returns the current object
+    bool get
+        = theArray getAt(T<int>(theIndex)).
+        
+    enumerable = theArray.        
+    
+    cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
+}

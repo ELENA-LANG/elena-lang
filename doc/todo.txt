@@ -3,9 +3,6 @@ In development:
 ------                              
 	                            
 
-              xdev - general optimization  
-                 - optimize r * n + 0.5r
-
               dev - general implementation
                  * migrate vm client; #82 default event handler 
                  * get rid of corevm
@@ -25,7 +22,9 @@ In development:
 
               dev - tests          
                  * test mta : exception handlers, an exception in a thread
-                 * test realOp<real>.round<int>[1] extension
+
+              xdev - general optimization  
+                 - optimize r * n + 0.5r
 
               dev - tests          
                  * sta / gc : anagram, Hailstone sequence
@@ -40,7 +39,7 @@ In development:
                  * #459 : Ambiguity between an array and a variadic argument
 
               dev - revision
-                 * rosetta code - Truncatable primes
+                 * rosetta code - Twelve statements
 
 ------                                                           
 Pipeline:

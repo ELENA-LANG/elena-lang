@@ -3224,21 +3224,22 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
       messageRef = encodeMessage(getAction(messageRef), 1) | PROPSET_MESSAGE;
    }
    else scope.raiseError(errInvalidOperation, node);
-   //
-   //         // compile target
-   //         // NOTE : compileMessageParameters does not compile the parameter, it'll be done in the next statement
-   //         ref_t dummy = 0;
-   //         ObjectInfo target = compileMessageParameters(writer, exprNode, scope, dummy);
-   
+
    // find and compile the parameter
    SNode current = node.parentNode().parentNode().findChild(lxAssign);
    SNode sourceNode = current.nextNode(lxObjectMask);
 
    ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, 0);
    
-   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
-   
-   retVal = compileMessage(writer, node, scope, target, messageRef, HINT_NODEBUGINFO/* | HINT_ASSIGNING_EXPR*/);
+   //messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
+   //
+   int mode = HINT_NODEBUGINFO;
+   bool dynamicReqiered = false;
+   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source), true, dynamicReqiered);
+   if (dynamicReqiered)
+      mode |= HINT_DYNAMIC_OBJECT;
+
+   retVal = compileMessage(writer, node, scope, target, messageRef, mode);
 
    // remove the assign node to prevent the duplication
    current = lxIdle;

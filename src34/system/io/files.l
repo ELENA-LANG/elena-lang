@@ -11,6 +11,10 @@ public sealed /*nonstructural*/ class File
         thePath := aPath.
     ]
 
+    cast T<literal> = thePath.
+
+    cast T<wide> = thePath.
+
     T<literal> rprop path :: thePath.
 
     T<literal> literal = thePath.
