@@ -4253,8 +4253,15 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
       }
       else {
          generateObjectExpression(tape, rarg, ACC_REQUIRED);
-         loadBase(tape, lxResult);
-         generateObjectExpression(tape, larg, ACC_REQUIRED);
+         if (isSimpleObject(larg)) {
+            loadBase(tape, lxResult);
+            generateObjectExpression(tape, larg, ACC_REQUIRED);
+         }
+         else {
+            pushObject(tape, lxResult);
+            generateObjectExpression(tape, larg, ACC_REQUIRED);
+            tape.write(bcPopB);
+         }
 
          tape.write(bcEqualR, 0);
          tape.write(bcSelect);
