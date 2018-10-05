@@ -778,7 +778,7 @@ private:
 
    void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
    void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
-   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, bool& dynamicReqiered);
+   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
 
@@ -809,10 +809,10 @@ private:
    bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
-                                     bool withExtension, bool& dynamicReqiered);
+                                     bool withExtension, int& stackSafeAttr);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
    {
-      bool dummy;
+      int dummy;
       return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
    }
    ref_t mapMessage(SNode node, CodeScope& scope);
@@ -847,7 +847,7 @@ private:
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, ObjectInfo target, int mode);
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
    ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);

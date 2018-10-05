@@ -66,6 +66,9 @@ class CompilerLogic : public _CompilerLogic
    bool isSignatureCompatible(_CompilerScope& scope, ref_t targetSignature, ref_t* sourceSignatures);
    bool isSignatureCompatible(_CompilerScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures);
 
+   void setSignatureStacksafe(_CompilerScope& scope, ref_t targetSignature, int& stackSafeAttr);
+   void setSignatureStacksafe(_CompilerScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
+
    bool loadBranchingInfo(_CompilerScope& scope, ref_t reference);
    bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef, ref_t elementRef, ref_t* signatures, int signatureLen);
 
@@ -186,7 +189,7 @@ public:
 
 ////   virtual void optimizeDuplicateBoxing(SNode node);
 
-   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef);
+   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr);
    virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
 
    CompilerLogic();

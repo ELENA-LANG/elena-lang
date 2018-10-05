@@ -2444,7 +2444,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
    return encodeMessage(actionRef, paramCount) | actionFlags;
 }
 
-ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, bool& dynamicReqiered)
+ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, int& stackSafeAttr)
 {
    ref_t objectRef = resolveObjectReference(scope, object);
    if (isPrimitiveRef(objectRef)) {
@@ -2468,7 +2468,7 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
    for (auto it = nsScope->extensions.getIt(messageRef); !it.Eof(); it = nsScope->extensions.nextIt(messageRef, it)) {
       if (_logic->isCompatible(*scope.moduleScope, (*it).value1, objectRef)) {
-         ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, (*it).value2, implicitSignatureRef);
+         ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, (*it).value2, implicitSignatureRef, stackSafeAttr);
          if (resolvedMessageRef) {
             if ((*it).value1) {
                if (!roleRef2) {
@@ -2497,25 +2497,24 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
    if (roleRef2) {
       // if it is strong typed message and extension
       messageRef = strongMessage2;
+      stackSafeAttr |= 1;
 
       return roleRef2;
    }
    else if (roleRef1) {
       // if it is strong typed message and general extension
-      dynamicReqiered = true;
-
       messageRef = strongMessage1;
 
       return roleRef1;
    }
    else if (generalRoleRef2) {
+      stackSafeAttr |= 1;
+
       // if it is general message and strong typed extension
       return generalRoleRef2;
    }
    else if (generalRoleRef1) {
       // if it is general message and extension
-      dynamicReqiered = true;
-
       return generalRoleRef1;
    }
 
@@ -2584,7 +2583,7 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
       }
       compileObject(writer, roperandNode, scope, 0, HINT_SUBCODE_CLOSURE);
 
-      retVal = compileMessage(writer, roperandNode, scope, loperand, message, 0);
+      retVal = compileMessage(writer, roperandNode, scope, loperand, message, 0, 0);
 
       if (loopMode) {
          writer.insert(lxLooping);
@@ -2663,12 +2662,13 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       }
       else implicitSignatureRef = resolveStrongArgument(scope, roperand);
 
-      int messageRef = resolveMessageAtCompileTime(loperand, scope, encodeMessage(operator_id, paramCount), implicitSignatureRef, true, dynamicReqiered);
+      int stackSafeAttr = 0;
+      int messageRef = resolveMessageAtCompileTime(loperand, scope, encodeMessage(operator_id, paramCount), implicitSignatureRef, true, stackSafeAttr);
 
       if (dynamicReqiered)
          operationMode |= HINT_DYNAMIC_OBJECT;
 
-      retVal = compileMessage(writer, node, scope, loperand, messageRef, operationMode);
+      retVal = compileMessage(writer, node, scope, loperand, messageRef, operationMode, stackSafeAttr);
    }
 
    return retVal;
@@ -2743,7 +2743,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    else return compileOperator(writer, roperand, scope, target, mode, operator_id);
 }
 
-ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode)
+ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr)
 {
    ObjectInfo retVal(okObject);
 
@@ -2798,9 +2798,6 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 2);
       }
 
-      if (result.stackSafe && target.kind != okParams && !test(mode, HINT_DYNAMIC_OBJECT))
-         writer.appendNode(lxStacksafeAttr);
-
       if (result.embeddable)
          writer.appendNode(lxEmbeddableAttr);
    }
@@ -2813,6 +2810,12 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          else */scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
       }         
    }
+
+   if (stackSafeAttr)
+      writer.appendNode(lxStacksafeAttr, stackSafeAttr);
+
+   //if (result.stackSafe && target.kind != okParams && !test(mode, HINT_DYNAMIC_OBJECT))
+   //   writer.appendNode(lxStacksafeAttr);
 
    if (result.closure)
       writer.appendNode(lxClosureAttr);
@@ -2976,12 +2979,12 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
 }
 
 ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef, 
-   bool withExtension, bool& dynamicReqiered)
+   bool withExtension, int& stackSafeAttr)
 {
    ref_t resolvedMessageRef = 0;
    ref_t targetRef = resolveObjectReference(scope, target);
 
-   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef);
+   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, stackSafeAttr);
 
    if (resolvedMessageRef != 0) {
       // if the object handles the compile-time resolved message - use it
@@ -2995,7 +2998,7 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
          return generalMessageRef;
       }
 
-      ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, dynamicReqiered);
+      ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, stackSafeAttr);
       if (extensionRef != 0) {
          // if there is an extension to handle the compile-time resolved message - use it
          target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
@@ -3033,13 +3036,13 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          retVal = compileInternalCall(writer, node, scope, messageRef, implicitSignatureRef, target);
       }
       else {
-         bool dynamicReqiered = false;
-         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, dynamicReqiered);
+         int stackSafeAttr = 0;
+         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, stackSafeAttr);
 
-         if (dynamicReqiered)
+         if (!test(stackSafeAttr, 1))
             mode |= HINT_DYNAMIC_OBJECT;
 
-         retVal = compileMessage(writer, node, scope, target, messageRef, mode);
+         retVal = compileMessage(writer, node, scope, target, messageRef, mode, stackSafeAttr);
       }
    }
 
@@ -3234,12 +3237,12 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
    //messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
    //
    int mode = HINT_NODEBUGINFO;
-   bool dynamicReqiered = false;
-   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source), true, dynamicReqiered);
-   if (dynamicReqiered)
+   int stackSafeAttr = 0;
+   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source), true, stackSafeAttr);
+   if (!test(stackSafeAttr, 1))
       mode |= HINT_DYNAMIC_OBJECT;
 
-   retVal = compileMessage(writer, node, scope, target, messageRef, mode);
+   retVal = compileMessage(writer, node, scope, target, messageRef, mode, stackSafeAttr);
 
    // remove the assign node to prevent the duplication
    current = lxIdle;
@@ -3319,7 +3322,7 @@ ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node,
 
    messageRef = resolveMessageAtCompileTime(role, scope, messageRef, implicitSignatureRef);
 
-   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE);
+   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE, 0);
 }
 
 bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode)
@@ -4915,7 +4918,7 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    if (found) {
       writer.appendNode(lxCallTarget, classRef);
 
-      compileMessage(writer, expr, resendScope, target, messageRef, /*HINT_RESENDEXPR*/0);
+      compileMessage(writer, expr, resendScope, target, messageRef, /*HINT_RESENDEXPR*/0, 0);
 
       writer.removeBookmark();
 
@@ -5668,10 +5671,6 @@ void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNo
 
 void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 {
-   // HOTFIX : due to current implementation the default constructor can be declared as a special method and a constructor;
-   //          only one is allowed
-
-
    methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
    methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);

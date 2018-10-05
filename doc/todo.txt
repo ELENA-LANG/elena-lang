@@ -4,6 +4,20 @@ In development:
 	                            
 
               dev - general implementation
+                 * get rid of stacksafe
+                 * get rid of cond boxing??
+
+                 * if the object is embeddable it should be boxed, it it is not readonly it should be unboxed after the operation
+                 * if the method is found and is strong typed it can be passed directly without boxing
+
+                 * #463 : Redesigning stacksafe and stack embeddable classes 
+                 * stacksafe template method : box this variable if required
+                 * probably we could get rid of conditional branching? (what about unboxing?)
+
+              dev - usability
+                 * no need in ? char for looking into class / method
+
+              dev - general implementation
                  * migrate vm client; #82 default event handler 
                  * get rid of corevm
                  * move system'core_routines'__exception register call to the system entry symbol
@@ -39,7 +53,7 @@ In development:
                  * #459 : Ambiguity between an array and a variadic argument
 
               dev - revision
-                 * rosetta code - Twelve statements
+                 * rosetta code - Variadic function
 
 ------                                                           
 Pipeline:
@@ -433,7 +447,6 @@ Pipeline:
 
                        * system test : new test with generic array / list / map
                        
-                       * stacksafe template method : box this variable if required
 
                        * test not, shift, negative operations
                        * test notepad
@@ -473,7 +486,6 @@ Pipeline:
                          does not affect GC, a special hint should be used to skip external block declaration
                        * #238 : Manifest - store the manifest info into the resource
                        * support abstract attribute                       
-                       * probably we could get rid of conditional branching? (what about unboxing?)
                        * MemoryMap, MemoryHashTable are not compatible with amd64 ; they should be retired and replaced
                          with Memory32Map, Memory32HashTable
 
