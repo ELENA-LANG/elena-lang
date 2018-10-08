@@ -2,6 +2,10 @@
 In development:
 ------                              
 	                            
+              exp - live programming
+                 * dynamic code : print the number sum
+                 * dynamic code : build tape to : print the number sum
+
               dev - general implementation
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
@@ -10,7 +14,6 @@ In development:
                  * get rid of corevm
                  * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : get rid of tt_ptr field
-                 * #359 : Stack allocated embeddable structure constructor 
 
               dev - general implementation
                  * (re)implement sockets
@@ -25,6 +28,7 @@ In development:
 
               xdev - general optimization  
                  - optimize r * n + 0.5r
+                 - closers passed as parameters should be stack-allocated
 
               dev - tests          
                  * sta / gc : anagram, Hailstone sequence

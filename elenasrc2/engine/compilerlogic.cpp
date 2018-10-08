@@ -2105,9 +2105,12 @@ bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& com
       EmbeddableOp op = embeddableOps[i];
       ref_t subject = info.methodHints.get(Attribute(callNode.argument, op.attribute));
 
+      ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
+      bool initializer = info.methods.exist(initConstructor);
+
       // if it is possible to replace get&subject operation with eval&subject2:local
       if (subject != 0) {
-         compiler.injectEmbeddableOp(node, callNode, subject, op.paramCount, op.verb);
+         compiler.injectEmbeddableOp(scope, node, callNode, subject, op.paramCount, op.verb);
 
          return true;
       }

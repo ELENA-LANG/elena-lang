@@ -14,6 +14,7 @@ using namespace _ELENA_;
 
 #define ACC_REQUIRED    0x0001
 #define BOOL_ARG_EXPR   0x0002
+#define EMBEDDABLE_EXPR 0x0004
 
 // check if the node contains only the simple nodes
 
@@ -3837,9 +3838,15 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    }
 }
 
-void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node)
+void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, int mode)
 {
    loadObject(tape, node.type, node.argument);
+
+   if (node.type == lxLocalAddress && test(mode, EMBEDDABLE_EXPR)) {
+      SNode implicitNode = node.findChild(lxImplicitCall);
+      if (implicitNode != lxNone)
+         callImplicitConstructorMethod(tape, implicitNode.findChild(lxTarget).argument, implicitNode.argument, false);
+   }
 }
 
 //void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
@@ -4524,6 +4531,8 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    int paramCount = 0;
    int presavedCount = 0;
 
+   int argMode = ACC_REQUIRED;
+
    // analizing a sub tree
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -4545,6 +4554,9 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
             unboxMode = true;
 
          paramCount++;
+      }
+      else if (current == lxEmbeddableAttr) {
+         argMode |= EMBEDDABLE_EXPR;
       }
 
       // presave the boxed arguments if required
@@ -4625,7 +4637,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
             loadObject(tape, lxCurrent, paramCount + presavedCount - 1);
             presavedCount--;
          }
-         else generateObjectExpression(tape, current, ACC_REQUIRED);
+         else generateObjectExpression(tape, current, argMode);
 
          if (directMode) {
             pushObject(tape, lxResult);
@@ -5463,7 +5475,7 @@ void ByteCodeWriter :: generateObjectExpression(CommandTape& tape, SNode node, i
          generateCodeBlock(tape, node);
          break;
       default:
-         loadObject(tape, node);
+         loadObject(tape, node, mode);
          break;
    }
 }

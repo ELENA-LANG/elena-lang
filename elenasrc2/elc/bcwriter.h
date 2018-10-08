@@ -277,7 +277,7 @@ class ByteCodeWriter
 
    void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-   void loadObject(CommandTape& tape, SyntaxTree::Node node);
+   void loadObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 

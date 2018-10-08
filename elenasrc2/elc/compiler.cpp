@@ -2999,6 +2999,9 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
    // check the existing extensions if allowed
    if (withExtension) {
       if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
+         // could be stacksafe
+         stackSafeAttr |= 1;
+
          // if the object handles the message - do not use extensions
          return generalMessageRef;
       }
@@ -7895,7 +7898,7 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t sub
    }
 }
 
-void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
+void Compiler :: injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
 {
    SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
 
@@ -7909,16 +7912,22 @@ void Compiler :: injectEmbeddableOp(SNode assignNode, SNode callNode, ref_t subj
       callNode.setArgument(subject);
 
       SNode targetNode = assignTarget.findChild(lxTarget);
+
       SNode callTarget = callNode.findChild(lxCallTarget);
       callTarget.setArgument(targetNode.argument);
 
       assignNode = lxExpression;
       sourceNode = lxIdle;
 
-      //assignNode.set(callNode.type, subject);
-      //callNode = lxIdle;
-      
-      //assignNode.appendNode(lxCallTarget, targetNode.argument);
+      // check if inline initializer is declared
+      ClassInfo targetInfo;
+      scope.loadClassInfo(targetInfo, targetNode.argument);
+      ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
+      if (targetInfo.methods.exist(initConstructor)) {
+         // inject inline initializer call
+         SNode initNode = callTargetNode.appendNode(lxImplicitCall, initConstructor);
+         initNode.appendNode(lxTarget, targetNode.argument);
+      }
    }
    else {
       // removing assinging operation
