@@ -3,26 +3,14 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * test : check with extension : ch isDigit
-                 * test : embeddable length - int n := s length.
-
-                 * get rid of cond boxing??
-
-                 * if the object is embeddable it should be boxed, it it is not readonly it should be unboxed after the operation
-                 * if the method is found and is strong typed it can be passed directly without boxing
-
-                 * #463 : Redesigning stacksafe and stack embeddable classes 
-                 * stacksafe template method : box this variable if required
-                 * probably we could get rid of conditional branching? (what about unboxing?)
-
-              dev - general implementation
-                 * migrate vm client; #82 default event handler 
-                 * get rid of corevm
-                 * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
+                 * migrate vm client; #82 default event handler 
+                 * get rid of corevm
+                 * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : get rid of tt_ptr field
+                 * #359 : Stack allocated embeddable structure constructor 
 
               dev - general implementation
                  * (re)implement sockets

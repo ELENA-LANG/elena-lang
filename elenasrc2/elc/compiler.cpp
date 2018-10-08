@@ -2654,7 +2654,6 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    }
    // if not , replace with appropriate method call
    else {
-      bool dynamicReqiered = false;
       int operationMode = HINT_NODEBUGINFO;
       ref_t implicitSignatureRef = 0;
       if (roperand2.kind != okUnknown) {
@@ -2665,8 +2664,10 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       int stackSafeAttr = 0;
       int messageRef = resolveMessageAtCompileTime(loperand, scope, encodeMessage(operator_id, paramCount), implicitSignatureRef, true, stackSafeAttr);
 
-      if (dynamicReqiered)
+      if (!test(stackSafeAttr, 1)) {
          operationMode |= HINT_DYNAMIC_OBJECT;
+      }
+      else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
       retVal = compileMessage(writer, node, scope, loperand, messageRef, operationMode, stackSafeAttr);
    }
@@ -3046,7 +3047,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          if (!test(stackSafeAttr, 1)) {
             mode |= HINT_DYNAMIC_OBJECT;
          }
-         else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
+         else if (target.kind != okConstantRole)
+            stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode, stackSafeAttr);
       }
