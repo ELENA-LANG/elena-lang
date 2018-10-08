@@ -19,7 +19,7 @@ public sealed class Stack :: Enumerable
     
     int rvprop length :: readLengthTo.
     
-    stacksafe readLengthTo(ref<int> aLength)
+    readLengthTo(ref<int> aLength)
     [
         theTop readValueTo(aLength).
     ]
@@ -90,7 +90,7 @@ public sealed Stack<type> :: Enumerable<type>
         
     int rvprop length :: readLengthTo.
     
-    stacksafe readLengthTo(ref<int> aLength)
+    readLengthTo(ref<int> aLength)
     [
         theTop readValueTo(aLength).
     ]
@@ -215,7 +215,7 @@ public sealed class Queue :: Enumerable
         ^ item
     ]
     
-    stacksafe readLengthTo(ref<int> aRetVal)
+    readLengthTo(ref<int> aRetVal)
     [
         int n := T<int>(theTale) - T<int>(theTop).
         
@@ -271,7 +271,7 @@ public sealed Queue<type> :: Enumerable<type>
         
     int rvprop length :: readLengthTo.
     
-    stacksafe readLengthTo(ref<int> aLength)
+    readLengthTo(ref<int> aLength)
     [
         int n := T<int>(theTale) - T<int>(theTop).
         

@@ -15,12 +15,12 @@ public sealed class TcpRemoteClient
         theSocket := socket.
     ]
     
-    stacksafe read(ByteArray buffer, int maxLength, ref<int> recv)
+    read(ByteArray buffer, int maxLength, ref<int> recv)
     [
         theSocket read(buffer, maxLength, 0, recv).
     ]
     
-    stacksafe write(ByteArray buffer, int length)
+    write(ByteArray buffer, int length)
     [
         int sent := 0.
         theSocket write(buffer, length, 0, &sent).
@@ -111,7 +111,7 @@ public sealed class TcpServer
         ^ client
     ]
     
-    private stacksafe closeClient(TcpRemoteClient client, int index)
+    private closeClient(TcpRemoteClient client, int index)
     [
         theClients remove(index).
         
@@ -122,7 +122,7 @@ public sealed class TcpServer
     ]
     
     
-    private stacksafe handleError(SocketException e) for(TcpRemoteClient client) at(int n)
+    private handleError(SocketException e) for(TcpRemoteClient client) at(int n)
     [
         if (nil != theErrorFunc)
             [ theErrorFunc(client, e) ].
@@ -188,7 +188,7 @@ public sealed class TcpServer
         theListenThread start.
     ]
     
-    T<TcpServer> stacksafe sendAll(ByteArray buffer, int length)
+    T<TcpServer> sendAll(ByteArray buffer, int length)
     [
         int i := 0.
         int counter := theClients length.
@@ -203,7 +203,7 @@ public sealed class TcpServer
         ]
     ]
     
-    T<TcpServer> stacksafe sendAll(literal s)
+    T<TcpServer> sendAll(literal s)
     [
         T<byte,256> buffer.
         int         len := s length.
@@ -224,7 +224,7 @@ public sealed class TcpServer
         ].
     ]
     
-    T<TcpServer> stacksafe sendAll(int n)
+    T<TcpServer> sendAll(int n)
     [
         T<byte,4> buffer.
         byteArrayHelper write(buffer, 0, n).

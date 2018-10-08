@@ -24,7 +24,7 @@ public sealed const struct Handle
     bool equal(handle anOperand)
         = theHandle == anOperand.
         
-    stacksafe bool equal(int anOperand)
+    bool equal(int anOperand)
         = theHandle == anOperand.
 }
 
@@ -36,7 +36,7 @@ public sealed const struct RTPointer
 {
     int theIndex.
 
-    stacksafe constructor(int n)
+    constructor(int n)
     [
         theIndex := n.
     ]
@@ -48,15 +48,15 @@ public sealed const struct RTPointer
 
     int rvprop index :: readIndexTo.
 
-    stacksafe readIndexTo(ref<int> retVal)
+    readIndexTo(ref<int> retVal)
     [
         retVal value := theIndex.
     ]
         
-    stacksafe get
+    get
         => system'core_routines'__rtptr.
 
-    stacksafe  free
+    free
         => system'core_routines'__rtptr.
 }
 
@@ -84,7 +84,7 @@ public sealed const struct UnsafePointer
     private setReference:anObject
         => system'core_routines'__dptr.
                                          
-    dirty_ptr stacksafe add(int offs)
+    dirty_ptr add(int offs)
     [
         dirty_ptr ptr := self.
         
@@ -96,14 +96,14 @@ public sealed const struct UnsafePointer
 //    stacksafe write int:anObject
 //        => system'core_routines'__dptr.
                 
-    stacksafe read(ref<int> retVal)
+    read(ref<int> retVal)
         => system'core_routines'__dptr.
 
-    stacksafe read(ByteArray arr, int len)
+    read(ByteArray arr, int len)
         => system'core_routines'__dptr.
 
     // unsafe code
-    stacksafe int
+    int
     [
         int val := 0.
         self read(&val).
@@ -141,7 +141,7 @@ public sealed const struct UnsafePointer
 //        target write int:offs int:thePointer.
 //    ]
     
-    stacksafe bool isEmpty
+    bool isEmpty
         = 0 == thePointer.
 }
 
@@ -158,13 +158,13 @@ public sealed struct COORD
         theY := 0.
     ]
     
-    stacksafe write(short X, short Y)
+    write(short X, short Y)
     [
         theX := X.
         theY := Y.
     ]
     
-    stacksafe write(COORD r)
+    write(COORD r)
     [
         short tmp := r X.
         theX := tmp.
@@ -173,14 +173,14 @@ public sealed struct COORD
         theY := tmp.
     ]
     
-    stacksafe readXTo(ref<short> aRetVal)
+    readXTo(ref<short> aRetVal)
     [
         aRetVal value := theX.
     ]
     
     short rvprop X :: readXTo.
     
-    stacksafe readYTo(ref<short> aRetVal)
+    readYTo(ref<short> aRetVal)
     [
         aRetVal value := theY.
     ]
@@ -205,22 +205,22 @@ public sealed struct SMALL_RECT
     
     short rvprop Bottom :: readBottomTo.
     
-    stacksafe readLeftTo(ref<short> aRetVal)
+    readLeftTo(ref<short> aRetVal)
     [
         aRetVal value := theLeft.
     ]
     
-    stacksafe readTopTo(ref<short> aRetVal)
+    readTopTo(ref<short> aRetVal)
     [
         aRetVal value := theTop.
     ]
     
-    stacksafe readRightTo(ref<short> aRetVal)
+    readRightTo(ref<short> aRetVal)
     [
         aRetVal value := theRight.
     ]
     
-    stacksafe readBottomTo(ref<short> aRetVal)
+    readBottomTo(ref<short> aRetVal)
     [
         aRetVal value := theBottom.
     ]

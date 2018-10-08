@@ -61,7 +61,7 @@ public mixin ClosureClass
 {
     V<object> items.
     
-    stacksafe internal constructor newInternal(int n)
+    internal constructor newInternal(int n)
         = V<object>(n).
     
     constructor new(Array list)
@@ -78,7 +78,7 @@ public mixin ClosureClass
         ]
     ]    
     
-    stacksafe constructor new(ArrayList list, int index, int length)
+    constructor new(ArrayList list, int index, int length)
         <= newInternal(length);
     [
         int i := 0.
@@ -90,7 +90,7 @@ public mixin ClosureClass
         ]
     ]
     
-    stacksafe constructor new(List<object> list, int index, int length)
+    constructor new(List<object> list, int index, int length)
         <= newInternal(length);
     [
         int i := 0.

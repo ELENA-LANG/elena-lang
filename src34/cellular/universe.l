@@ -10,11 +10,11 @@ public interface class Space
     [
     ]
     
-    abstract stacksafe read(int i, int j, ref<int> retVal)
+    abstract read(int i, int j, ref<int> retVal)
     [        
     ]
     
-    embeddable stacksafe int getAt(int i, int j)
+    embeddable int getAt(int i, int j)
     [
         int retVal := 0.
         self read(i, j, &retVal).
@@ -22,7 +22,7 @@ public interface class Space
         ^ retVal
     ]
     
-    stacksafe calcLiveCells(int k, int l, int state, ref<int> retVal)
+    calcLiveCells(int k, int l, int state, ref<int> retVal)
     [
         int i := -1.
         int j := -1.
@@ -45,12 +45,12 @@ public interface class Space
     ]
     
     /// Returns the space actual number of rows    
-    abstract stacksafe readRowsTo(ref<int> retVal)
+    abstract readRowsTo(ref<int> retVal)
     [
     ]
     
     /// Returns the space actual number of columns
-    abstract stacksafe readColumnsTo(ref<int> retVal)
+    abstract readColumnsTo(ref<int> retVal)
     [
     ]
 }
@@ -120,7 +120,7 @@ public sealed class IntMatrixSpace :: Space
         theMatrix := newMatrix.
     ]
 
-    stacksafe read(int k, int l, ref<int> retVal)
+    read(int k, int l, ref<int> retVal)
     [
         int i := k.
         (i < 0)?

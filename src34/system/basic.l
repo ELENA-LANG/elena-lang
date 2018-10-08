@@ -18,12 +18,12 @@ public sealed ref<template_subj> :: BaseVariable
     
     cast T<template_subj> = theValue.
     
-    stacksafe set value(template_subj val)
+    set value(template_subj val)
     [
         theValue := val.
     ]
 
-    stacksafe readValueTo(ref<template_subj> retVal)
+    readValueTo(ref<template_subj> retVal)
     [
         retVal value := theValue.
     ]
@@ -39,7 +39,7 @@ public sealed ref<template_subj> :: BaseVariable
 
 public extension<ref<int>> intRefOp
 {
-    stacksafe append(int n)
+    append(int n)
     [
         int v := self.
         v := v + n.
@@ -47,7 +47,7 @@ public extension<ref<int>> intRefOp
         self value := v.
     ]
     
-    stacksafe reduce(int n)
+    reduce(int n)
     [
         int v := self.
         v := v - n.
@@ -58,7 +58,7 @@ public extension<ref<int>> intRefOp
 
 public extension<ref<real>> realRefOp
 {
-    stacksafe append(real n)
+    append(real n)
     [
         real v := self.
         v := v + n.
@@ -66,7 +66,7 @@ public extension<ref<real>> realRefOp
         self value := v.
     ]
     
-    stacksafe reduce(real n)
+    reduce(real n)
     [
         real v := self.
         v := v - n.
@@ -3281,37 +3281,37 @@ public class realConvertor =
 
 public class realOpController =
 {
-    stacksafe exp(real aReal, ref<real> aRetVal)
+    exp(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.
         
-    stacksafe abs(real aReal, ref<real> aRetVal)
+    abs(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.
         
-    stacksafe ln(real aReal, ref<real> aRetVal)
+    ln(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.
         
-    stacksafe round(real aReal, ref<real> aRetVal)
+    round(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.
         
-    stacksafe truncate(real aReal, ref<real> aRetVal)
+    truncate(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.
         
-    stacksafe sin(real aReal, ref<real> aRetVal)
+    sin(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.
         
-    stacksafe cos(real aReal, ref<real> aRetVal)
+    cos(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.
         
-    stacksafe arctan(real aReal, ref<real> aRetVal)
+    arctan(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.
                 
-    stacksafe sqrt(real aReal, ref<real> aRetVal)
+    sqrt(real aReal, ref<real> aRetVal)
         => system'core_routines'__real.
         
-    stacksafe pi(ref<real> aRetVal)
+    pi(ref<real> aRetVal)
         => system'core_routines'__real.
         
-    stacksafe embeddable real pi
+    embeddable real pi
     [
         real aRetVal := 0.0r.
         self pi(&aRetVal).
@@ -3319,7 +3319,7 @@ public class realOpController =
         ^ aRetVal
     ]        
     
-    stacksafe embeddable real e
+    embeddable real e
     [
         real aRetVal := 0.0r.
         self exp(1.0r, &aRetVal).
@@ -3355,7 +3355,7 @@ public sealed class Integer :: BaseVariable, ref<int>
     reduce : n
         <= reduce(T<int>(n)).
         
-    stacksafe append(int n)
+    append(int n)
     [
         int v := theValue.
         v := v + n.
@@ -3363,7 +3363,7 @@ public sealed class Integer :: BaseVariable, ref<int>
         theValue := v.
     ]
     
-    stacksafe reduce(int n)
+    reduce(int n)
     [
         int v := theValue.
         v := v - n.
@@ -3393,7 +3393,7 @@ public sealed class LongInteger :: BaseVariable, ref<long>
     reduce : n
         <= reduce(T<long>(n)).
                 
-    stacksafe append(long n)
+    append(long n)
     [
         long v := theValue.
         v := v + n.
@@ -3401,7 +3401,7 @@ public sealed class LongInteger :: BaseVariable, ref<long>
         theValue := v.
     ]
     
-    stacksafe reduce(long n)
+    reduce(long n)
     [
         long v := theValue.
         v := v - n.
@@ -3425,7 +3425,7 @@ public sealed class Real :: BaseVariable, ref<real>
     constructor new : n
         <= new(T<real>(n)).
         
-    stacksafe append(real n)
+    append(real n)
     [
         real v := theValue.
         v := v + n.
@@ -3436,7 +3436,7 @@ public sealed class Real :: BaseVariable, ref<real>
     append : n
         <= append(T<real>(n)).
     
-    stacksafe reduce(real n)
+    reduce(real n)
     [
         real v := theValue.
         v := v - n.

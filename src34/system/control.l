@@ -66,17 +66,17 @@ public interface Indexer
     int vprop index :: readIndexTo, writeIndex.
 
     /// Reads the current index into an output parameter
-    abstract stacksafe readIndexTo(ref<int> retVal) []
+    abstract readIndexTo(ref<int> retVal) []
 
     /// Sets the index by specified value
     ///
     /// Should be overidden(or set&index)
-    abstract stacksafe writeIndex(int anIndex) []
+    abstract writeIndex(int anIndex) []
 
-    abstract stacksafe appendIndex(int anIndex) []
+    abstract appendIndex(int anIndex) []
 
     /// Reads the length to the output parameter    
-    abstract stacksafe readLengthTo(ref<int> retVal) []
+    abstract readLengthTo(ref<int> retVal) []
     
     int rvprop length :: readLengthTo.
 }
@@ -102,7 +102,7 @@ public interface Indexer<type>
     /// Should be overidden(or set&index)
     abstract writeIndex(int anIndex) []
 
-    abstract stacksafe appendIndex(int anIndex) []
+    abstract appendIndex(int anIndex) []
 
     /// Reads the length to the output parameter    
     abstract readLengthTo(ref<int> retVal) []
@@ -785,7 +785,7 @@ public abstract closed BaseLazyExpression
 public extension<Func<int,object>> indexFunctionOp
 {
     /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
-    stacksafe rewind(int aStart, int n, int dx)
+    rewind(int aStart, int n, int dx)
     [
         int i := aStart.
         
@@ -800,7 +800,7 @@ public extension<Func<int,object>> indexFunctionOp
     ]          
     
     /// Executes the function for every value in the specified range (starting value, ending value, step)
-    stacksafe run(int aStart, int n, int dx)
+    run(int aStart, int n, int dx)
     [
         int i := aStart.
         
@@ -1162,7 +1162,7 @@ class IntRangeEnumerator :: Enumerator<int>
     int theStart.
     int theEnd.
 
-    stacksafe constructor new(IntNumber start, IntNumber end)
+    constructor new(IntNumber start, IntNumber end)
     [
         theStart := start.
         theEnd := end.
@@ -1214,7 +1214,7 @@ public sealed class Range :: Enumerable<int>
         theEnd := end + 1.
     ]
     
-    stacksafe readLengthTo(ref<int> retVal)
+    readLengthTo(ref<int> retVal)
     [
         int l := theEnd - theStart.
         

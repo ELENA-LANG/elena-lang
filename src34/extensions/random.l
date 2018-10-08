@@ -11,12 +11,12 @@ sealed struct RandomGenerator
         system'external core_rnd_init(&theSeed).
     ]
 
-    stacksafe eval(int aMaxValue, ref<int> aRetVal)
+    eval(int aMaxValue, ref<int> aRetVal)
     [
         system'external core_rnd_next(theSeed, aMaxValue, &aRetVal).
     ]
 
-    stacksafe eval(ref<int> aRetVal)
+    eval(ref<int> aRetVal)
     [
         system'external core_rnd_nextint(theSeed, &aRetVal).
     ]

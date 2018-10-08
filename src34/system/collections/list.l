@@ -118,7 +118,7 @@ public sealed List<type> :: Enumerable<type>
         = self getAt(T<int>(anIndex)).
 
     /// Returns the object at the specified position
-    type stacksafe getAt(int index)
+    type getAt(int index)
     [
         ifnot(index < theLength)
             [ OutOfRangeException new; raise ].
@@ -127,7 +127,7 @@ public sealed List<type> :: Enumerable<type>
     ]
 
     /// Returns the object at the specified position
-    stacksafe setAt(int index, type object)
+    setAt(int index, type object)
     [
         ifnot(index < theLength)
             [ OutOfRangeException new; raise ].
@@ -153,7 +153,7 @@ public sealed List<type> :: Enumerable<type>
         <= append(T<type>(object)).
 
     /// Removes an object at the specified position
-    stacksafe remove(int anIndex)
+    remove(int anIndex)
     [
         ifnot (anIndex < theLength)
             [ OutOfRangeException new; raise ].
@@ -178,7 +178,7 @@ public sealed List<type> :: Enumerable<type>
         theLength value := 0.        
     ]
     
-    stacksafe trim(IntNumber pos)
+    trim(IntNumber pos)
     [
         if (pos > theLength)
             [ OutOfRangeException new; raise ].
@@ -248,7 +248,7 @@ public sealed List<type> :: Enumerable<type>
         ^ copy.
     ]
 
-    stacksafe readLengthTo(ref<int> retVal)
+    readLengthTo(ref<int> retVal)
     [
         theLength readValueTo(retVal).
     ]    
@@ -392,7 +392,7 @@ class ListIndexer :: Indexer
         theIndex value := i.
     ]
     
-    stacksafe appendIndex(int anIndex)
+    appendIndex(int anIndex)
     [
         int i := theIndex.
         i := i + anIndex.
@@ -400,7 +400,7 @@ class ListIndexer :: Indexer
         self writeIndex(i).
     ]
     
-    stacksafe readLengthTo(ref<int> retVal)
+    readLengthTo(ref<int> retVal)
     [
         theList readLengthTo(retVal).
     ]
@@ -468,7 +468,7 @@ public sealed class List :: Enumerable
     ]
     
     /// Returns the list item at the specified position
-    internal stacksafe T<ListItem> getItemAt(int anIndex)
+    internal T<ListItem> getItemAt(int anIndex)
     [
         int         aCurrentIndex := anIndex.
         T<ListItem> anItem := theTop.
@@ -486,11 +486,11 @@ public sealed class List :: Enumerable
     ]
 
     /// Returns the object at the specified position
-    stacksafe getAt(int anIndex)
+    getAt(int anIndex)
         = self getItemAt(anIndex); get.
 
     /// Returns the object at the specified position
-    stacksafe setAt(int anIndex, object anObject)
+    setAt(int anIndex, object anObject)
         = self getItemAt(anIndex); set:anObject.
 
     insert : anObject at:anIndex
@@ -542,7 +542,7 @@ public sealed class List :: Enumerable
     int rvprop length :: readLengthTo.
         
     /// Reads the number of list item to the output parameter
-    stacksafe readLengthTo(ref<int> aLength)
+    readLengthTo(ref<int> aLength)
     [
         theCount readValueTo(aLength).
     ]
@@ -607,7 +607,7 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
         <= fromArray(a, a length).
     
     /// Creates the list
-    stacksafe internal constructor fromArray(Array anArray, int aLength)
+    internal constructor fromArray(Array anArray, int aLength)
     [
         int capacity := anArray length.
         
@@ -622,7 +622,7 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
     int rvprop capacity :: readCapacityTo.
     
     /// Returns the object at the specified position
-    stacksafe getAt(int anIndex)
+    getAt(int anIndex)
     [
         ifnot (theLength > anIndex)
             [ OutOfRangeException new; raise ].
@@ -631,7 +631,7 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
     ]
     
     /// Returns the object at the specified position
-    stacksafe setAt(int anIndex, object anObject)
+    setAt(int anIndex, object anObject)
     [
         ifnot (theLength > anIndex)
             [ OutOfRangeException new; raise ].
@@ -727,7 +727,7 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
         <= insert(T<int>(anIndex), anObject).
         
     /// Removes an object at the specified position
-    stacksafe remove(int anIndex)
+    remove(int anIndex)
     [
         if (anIndex >= theLength)
             [ OutOfRangeException new; raise ].
@@ -747,12 +747,12 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
         <= remove(T<int>(anIndex)).
     
     /// Reads the number of list item to the output parameter
-    stacksafe readLengthTo(ref<int> aLength)
+    readLengthTo(ref<int> aLength)
     [
         theLength readValueTo(aLength).
     ]
     
-    stacksafe readCapacityTo(ref<int> aCapacity)
+    readCapacityTo(ref<int> aCapacity)
     [
         aCapacity value := theCapacity.
     ]
@@ -763,7 +763,7 @@ public sealed class ArrayList :: Indexable//, interface<Enumerable>
         theLength value := 0
     ]
     
-    stacksafe trim(int pos)
+    trim(int pos)
     [
         if (pos > theLength)
             [ OutOfRangeException new; raise ].
@@ -1001,7 +1001,7 @@ public sealed  class Dictionary :: Enumerable
         self getItem(aHashCode, aKey); value := anObject.
     ]
         
-    private stacksafe getItem(int aCode, object aKey)
+    private getItem(int aCode, object aKey)
     [
         int aHashCode := aCode && theHashMask.
         

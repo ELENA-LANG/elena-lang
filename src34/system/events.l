@@ -2,7 +2,7 @@ public sealed template eventhandler<function>
 {
     Array<function> functions.
     
-    stacksafe constructor(function func)
+    constructor(function func)
     [
         functions := V<function>(1).
         functions[0] := func.

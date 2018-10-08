@@ -10,15 +10,15 @@ public interface Stream
     
     int vprop index :: readIndexTo,writeIndex.
     
-    abstract stacksafe writeLength(int aLength) [ ]
+    abstract writeLength(int aLength) [ ]
         
-    abstract stacksafe readLengthTo(ref<int> aLength) [ ]
+    abstract readLengthTo(ref<int> aLength) [ ]
     
-    abstract stacksafe readIndexTo(ref<int> anIndex) []
+    abstract readIndexTo(ref<int> anIndex) []
     
-    abstract stacksafe writeIndex(int anIndex) []
+    abstract writeIndex(int anIndex) []
 
-    stacksafe appendIndex(int anIndex)
+    appendIndex(int anIndex)
     [
         int aNewIndex := self index.
         
@@ -27,7 +27,7 @@ public interface Stream
         self writeIndex(aNewIndex).
     ]
         
-    stacksafe reduceIndex(int anIndex)
+    reduceIndex(int anIndex)
     [
         int aNewIndex := self index.
         
@@ -36,9 +36,9 @@ public interface Stream
         self writeIndex(aNewIndex).
     ]
         
-    abstract stacksafe read(ByteArray aDump, ref<int> aLength) []
+    abstract read(ByteArray aDump, ref<int> aLength) []
     
-    abstract stacksafe write(ByteArray aDump, int aLength) []
+    abstract write(ByteArray aDump, int aLength) []
     
     abstract close []
 }

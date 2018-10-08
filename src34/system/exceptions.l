@@ -201,7 +201,7 @@ public class MethodNotFoundException :: Exception
     constructor new
         <= new("Method not found").
 
-    stacksafe constructor new(mssg missingMessage)
+    constructor new(mssg missingMessage)
         <= new("Method " add(missingMessage); add(" not found")).
         
     constructor new(object object, mssg missingMessage)

@@ -26,12 +26,12 @@ sealed public /*nonstructural */ class TextBuilder
         theLength value := 0.
     ]
 
-    stacksafe readLengthTo(ref<int> aRetVal)
+    readLengthTo(ref<int> aRetVal)
     [
         theLength readValueTo(aRetVal).
     ]
 
-    stacksafe setLength(int aLength)
+    setLength(int aLength)
     [
         theLength value := aLength.
     ]
@@ -60,7 +60,7 @@ sealed public /*nonstructural */ class TextBuilder
         self write:aLine.
     ]
                                     
-    stacksafe reserve(int aLength)
+    reserve(int aLength)
     [
         int aNewLength := aLength.
         
@@ -111,7 +111,7 @@ sealed public /*nonstructural */ class TextBuilder
         ].
     ]
 
-    stacksafe write(char aChar)
+    write(char aChar)
     [
         self reserve(1).
         
@@ -120,7 +120,7 @@ sealed public /*nonstructural */ class TextBuilder
         theLength append(1).
     ]
 
-    stacksafe write(int n)
+    write(int n)
     [
         T<byte,16> tmp.
         T<char,16> ch_tmp.
@@ -138,7 +138,7 @@ sealed public /*nonstructural */ class TextBuilder
         self write(anObject literal).
     ]
 
-    stacksafe write(CharArray anArray, int aLength)
+    write(CharArray anArray, int aLength)
     [
         ifnot (0 == aLength)
         [
@@ -150,7 +150,7 @@ sealed public /*nonstructural */ class TextBuilder
         ].
     ]
 
-    private stacksafe readIndex(literal s, ref<int> i, ref<int> retVal)
+    private readIndex(literal s, ref<int> i, ref<int> retVal)
     [
         char ch := $0.
         int  n := 0.
@@ -209,7 +209,7 @@ sealed public /*nonstructural */ class TextBuilder
         ]
     ]
 
-    stacksafe fill(literal s, int counter)
+    fill(literal s, int counter)
     [
         int i := 0.
         while (i < counter)
@@ -218,7 +218,7 @@ sealed public /*nonstructural */ class TextBuilder
         ]
     ]
 
-    stacksafe fill(wide s, int counter)
+    fill(wide s, int counter)
     [
         int i := 0.
         while (i < counter)
@@ -227,7 +227,7 @@ sealed public /*nonstructural */ class TextBuilder
         ]
     ]
 
-    stacksafe fill(char ch, int counter)
+    fill(char ch, int counter)
     [
         int i := 0.
         while (i < counter)
@@ -238,7 +238,7 @@ sealed public /*nonstructural */ class TextBuilder
         ]
     ]
 
-    stacksafe insert(int anIndex, int aLength, CharArray anArray)
+    insert(int anIndex, int aLength, CharArray anArray)
     [
         self reserve(aLength).
         
@@ -249,7 +249,7 @@ sealed public /*nonstructural */ class TextBuilder
         theLength append(aLength).
     ]
 
-    stacksafe insert(int anIndex, literal aLiteral)
+    insert(int anIndex, literal aLiteral)
     [
         int aLength := 0.
         UTF8Encoding charCount(aLiteral, &aLength).
@@ -263,7 +263,7 @@ sealed public /*nonstructural */ class TextBuilder
         theLength append(aLength).
     ]
 
-    stacksafe insert(int anIndex, wide aLiteral)
+    insert(int anIndex, wide aLiteral)
     [
         int aLength := 0.
         UTF16Encoding charCount(aLiteral, &aLength).
@@ -277,7 +277,7 @@ sealed public /*nonstructural */ class TextBuilder
         theLength append(aLength).
     ]
     
-    stacksafe insert(int anIndex, char aChar)
+    insert(int anIndex, char aChar)
     [
         self reserve(1).
         
@@ -291,7 +291,7 @@ sealed public /*nonstructural */ class TextBuilder
     insert : anObject at:anIndex
         <= insert(T<int>(anIndex), anObject).
 
-    stacksafe indexOf(int aPosition, char aValue, ref<int> aRetVal)
+    indexOf(int aPosition, char aValue, ref<int> aRetVal)
     [
         int  anIndex := 0.
         char aCurrent := $0.
@@ -309,7 +309,7 @@ sealed public /*nonstructural */ class TextBuilder
         aRetVal value := -1
     ]
 
-    stacksafe indexOf(int aPosition, literal aLiteral, ref<int> aRetVal)
+    indexOf(int aPosition, literal aLiteral, ref<int> aRetVal)
     [
         int  aLiteralLength := 0.
         int  anIndex := 0.
@@ -356,7 +356,7 @@ sealed public /*nonstructural */ class TextBuilder
         aRetVal value := -1
     ]
 
-    stacksafe indexOf(int aPosition, wide aLiteral, ref<int> aRetVal)
+    indexOf(int aPosition, wide aLiteral, ref<int> aRetVal)
     [
         int  aLiteralLength := 0.
         int  anIndex := 0.
@@ -424,7 +424,7 @@ sealed public /*nonstructural */ class TextBuilder
         ^ IntNumber new(aRetVal)
     ]
 
-    stacksafe literal Substring(int anIndex, int aLength)
+    literal Substring(int anIndex, int aLength)
     [
         if (aLength == 0)
             [ ^ emptyLiteral ].
@@ -432,7 +432,7 @@ sealed public /*nonstructural */ class TextBuilder
         ^ LiteralValue new(anIndex, aLength, theBuffer)
     ]
 
-    stacksafe wide WideSubstring(int anIndex, int aLength)
+    wide WideSubstring(int anIndex, int aLength)
     [
         if (aLength == 0)
             [ ^ emptyWideLiteral ].
@@ -440,7 +440,7 @@ sealed public /*nonstructural */ class TextBuilder
         ^ WideLiteralValue new(anIndex, aLength, theBuffer)
     ]
 
-    stacksafe delete(int anIndex, int aLength)
+    delete(int anIndex, int aLength)
     [
         int n := 0 - aLength.
         int l := theLength.
@@ -452,7 +452,7 @@ sealed public /*nonstructural */ class TextBuilder
         theLength reduce(aLength)
     ]
     
-    stacksafe trim(int n)
+    trim(int n)
     [
         theLength reduce(n)
     ]

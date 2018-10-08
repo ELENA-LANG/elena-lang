@@ -4,7 +4,7 @@ import system'text.
 
 public interface Statemachine
 {
-    abstract stacksafe bool proceed(char aChar) []
+    abstract bool proceed(char aChar) []
     
     abstract bool isWhitespace []
     
@@ -22,7 +22,7 @@ public class SimpleStatemachine :: Statemachine
         theSpaceMode := true.
     ]
     
-    stacksafe bool proceed(char aChar)
+    bool proceed(char aChar)
     [
         if (aChar isWhitespace)
             [

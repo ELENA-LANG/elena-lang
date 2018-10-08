@@ -6,7 +6,7 @@ public mixin Struct
 {
     V<object> items.
     
-    stacksafe internal constructor new(int n)
+    internal constructor new(int n)
         = V<object>(n).
     
     constructor new(Array list)
@@ -23,7 +23,7 @@ public mixin Struct
         ]
     ]
     
-    stacksafe constructor new(ArrayList list, int index, int length)
+    constructor new(ArrayList list, int index, int length)
         <= new(length);
     [
         int i := 0.

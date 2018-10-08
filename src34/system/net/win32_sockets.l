@@ -4,12 +4,12 @@ sealed struct IN_ADDR
 {
     long addr.    
     
-    stacksafe set value(LongNumber addr)
+    set value(LongNumber addr)
     [
         @addr := addr.
     ]
     
-    stacksafe clear
+    clear
     [
         addr := 0l.
     ]
@@ -74,79 +74,79 @@ public sealed struct AddrInfo
     dirty_ptr ai_addr.
     dirty_ptr ai_next.
     
-    embeddable stacksafe constructor new
+    embeddable constructor new
     [
         self clear.
     ]
     
     int rvprop Flags :: readFlagsTo.
     
-    stacksafe set Flags(int val)
+    set Flags(int val)
     [
         ai_flags := val.
     ]
     
-    stacksafe readFlagsTo(ref<int> retVal)
+    readFlagsTo(ref<int> retVal)
     [
         retVal value := ai_flags.
     ]
     
     int rvprop Family :: readFamilyTo.
     
-    stacksafe set Family(int val)
+    set Family(int val)
     [
         ai_family := val.
     ]
 
-    stacksafe readFamilyTo(ref<int> retVal)
+    readFamilyTo(ref<int> retVal)
     [
         retVal value := ai_family.
     ]
         
     int rvprop SocketType :: readSocketTypeTo.        
         
-    stacksafe set SocketType(int val)
+    set SocketType(int val)
     [
         ai_socktype := val.
     ]
     
-    stacksafe readSocketTypeTo(ref<int> retVal)
+    readSocketTypeTo(ref<int> retVal)
     [
         retVal value := ai_socktype.
     ]
     
     int rvprop Protocol :: readProtocolTo.        
     
-    stacksafe set Protocol(int val)
+    set Protocol(int val)
     [
         ai_protocol := val.
     ]
     
-    stacksafe readProtocolTo(ref<int> retVal)
+    readProtocolTo(ref<int> retVal)
     [
         retVal value := ai_protocol.
     ]
     
     int rvprop AddressLen :: readAddressLenTo.
     
-    stacksafe set AddressLen(int val)
+    set AddressLen(int val)
     [
         ai_addrlen := val.
     ]
 
-    stacksafe readAddressLenTo(ref<int> retVal)
+    readAddressLenTo(ref<int> retVal)
     [
         retVal value := ai_addrlen.
     ]
         
     dirty_ptr rvprop Address :: readAddressTo.
 
-    stacksafe readAddressTo(ref<dirty_ptr> retVal)
+    readAddressTo(ref<dirty_ptr> retVal)
     [
         retVal value := ai_addr.
     ]
                 
-    stacksafe clear
+    clear
     [
         ai_flags := 0.
         ai_family := 0.
@@ -166,7 +166,7 @@ public sealed struct AddrInfoReader
     dirty_ptr paddrinfo.
     dirty_ptr prootinfo.
     
-    stacksafe embeddable constructor new(literal service, AddrInfo info)
+    embeddable constructor new(literal service, AddrInfo info)
     [
         dirty_ptr ptr := T<dirty_ptr>().
         int retVal := system'external'WS2_32 getaddrinfo(0, service, info, &ptr).
@@ -178,7 +178,7 @@ public sealed struct AddrInfoReader
         prootinfo := ptr.
     ]
 
-    stacksafe embeddable constructor new(literal node, literal service, AddrInfo info)
+    embeddable constructor new(literal node, literal service, AddrInfo info)
     [
         dirty_ptr ptr := T<dirty_ptr>().
         int retVal := system'external'WS2_32 getaddrinfo(node, service, info, ptr).
@@ -190,10 +190,10 @@ public sealed struct AddrInfoReader
         prootinfo := ptr.
     ]
 
-    bool stacksafe available
+    bool available
         = paddrinfo isEmpty; inverted.
     
-    stacksafe next
+    next
     [
         dirty_ptr ptr := paddrinfo.
         ptr := ptr + 28.
@@ -201,12 +201,12 @@ public sealed struct AddrInfoReader
         paddrinfo := ptr.
     ]
     
-    stacksafe read(AddrInfo info)
+    read(AddrInfo info)
     [
         system'external'KERNEL32 RtlMoveMemory(info, paddrinfo, 32).
     ]
     
-    stacksafe close
+    close
     [
         system'external'WS2_32 freeaddrinfo(prootinfo).
     ]
@@ -223,14 +223,14 @@ public sealed const struct Socket
         theHandle := handle.
     ]
     
-    stacksafe constructor new(Socket socket)
+    constructor new(Socket socket)
     [
         theHandle := T<int>(socket).
     ]
     
     cast T<int> = theHandle.
     
-    stacksafe constructor new(int adressFamily, int type, int protocol)
+    constructor new(int adressFamily, int type, int protocol)
     [
         theHandle := system'external'WS2_32 socket(adressFamily, type, protocol).
         
@@ -249,7 +249,7 @@ public sealed const struct Socket
 //            [ SocketException new:"Error at socket"; raise. ].
 //    ]
 
-    stacksafe bind(dirty_ptr sockAddrPtr, int nameLen)
+    bind(dirty_ptr sockAddrPtr, int nameLen)
     [
         int retVal := system'external'WS2_32 bind(theHandle, sockAddrPtr, nameLen).
             
@@ -257,7 +257,7 @@ public sealed const struct Socket
             [ SocketException new:"Error at socket"; raise ].
     ]
 
-    stacksafe listen(int backLog)
+    listen(int backLog)
     [
         int aRetVal := system'external'WS2_32 listen(theHandle, backLog).
             
@@ -265,14 +265,14 @@ public sealed const struct Socket
             [ SocketException new:"Error at socket"; raise ].
     ]
 
-    stacksafe bool tryOpen(dirty_ptr ptr, int len)
+    bool tryOpen(dirty_ptr ptr, int len)
     [
         int retVal := system'external'WS2_32 connect(theHandle, ptr, len).            
             
         ^ (SOCKET_ERROR != retVal).
     ]
 
-    stacksafe connect(literal ip_address, int port)
+    connect(literal ip_address, int port)
     [
         T<SOCKADDR_IN> addr := SOCKADDR_IN new.
         addr port := port.
@@ -286,7 +286,7 @@ public sealed const struct Socket
             [ SocketException new:"Error at socket"; raise ].
     ]
 
-    stacksafe write(ByteArray buffer)
+    write(ByteArray buffer)
     [
         int len := buffer length.
         int sent := 0.
@@ -295,7 +295,7 @@ public sealed const struct Socket
         ^ sent.
     ]
 
-    stacksafe write(ByteArray buffer, int length, int flags, ref<int> sent)
+    write(ByteArray buffer, int length, int flags, ref<int> sent)
     [
         int retVal := system'external'WS2_32 send(theHandle, buffer, length, flags).
             
@@ -305,7 +305,7 @@ public sealed const struct Socket
         sent value := retVal.            
     ]
 
-    stacksafe read(ByteArray buffer, int maxLength, int flags, ref<int> recvd)
+    read(ByteArray buffer, int maxLength, int flags, ref<int> recvd)
     [
         int retVal := system'external'WS2_32 recv(theHandle,buffer,maxLength,flags).
         
@@ -330,7 +330,7 @@ public sealed const struct Socket
             [ ^ nil ]
     ]
 
-    stacksafe shutdown(int how)
+    shutdown(int how)
     [
         int retVal := system'external'WS2_32 shutdown(theHandle, how).
             
@@ -338,7 +338,7 @@ public sealed const struct Socket
             [ SocketException new:"Error at socket"; raise ]
     ]
 
-    stacksafe iocommand(int command, ref<int> parameter)
+    iocommand(int command, ref<int> parameter)
     [
         int retVal := system'external'WS2_32 ioctlsocket(theHandle, command, parameter).
             
@@ -346,7 +346,7 @@ public sealed const struct Socket
             [ SocketException new:"Error at socket"; raise ].
     ]
 
-    stacksafe option(int level, int option, bool value)
+    option(int level, int option, bool value)
     [
         int n := value iif(1,0).
         
@@ -357,7 +357,7 @@ public sealed const struct Socket
             [ SocketException new:"Error at socket"; raise ]
     ]
 
-    stacksafe close
+    close
     [
         system'external'WS2_32 closesocket(theHandle)
     ]

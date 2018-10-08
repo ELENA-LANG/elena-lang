@@ -379,7 +379,7 @@ public extension indexableOp
 //    exchange : anIndex1 : anIndex2
 //        = self~indexableOp exchange int:anIndex1 int:anIndex2.
         
-    stacksafe exchange(int anIndex1, int anIndex2)
+    exchange(int anIndex1, int anIndex2)
     [
         T<Indexer> anIndexer := self indexer.
         

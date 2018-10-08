@@ -27,7 +27,7 @@ public sealed struct Message
         system'core_routines'__message load(self, name)
     ]
     
-    internal stacksafe constructor newInteral(int message)
+    internal constructor newInteral(int message)
     [
         system'core_routines'__message copy(self, message).
     ]
@@ -65,7 +65,7 @@ public sealed struct ExtensionMessage
     T<Signature> signature
         => system'core_routines'__message.
 
-    stacksafe bool equal(ExtensionMessage aSubject)
+    bool equal(ExtensionMessage aSubject)
         => system'core_routines'__extmessage.
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
@@ -80,7 +80,7 @@ public sealed struct Signature
     __subj theValue.
     
     /// Creates a dynamic signature
-    stacksafe constructor new(mssg message)
+    constructor new(mssg message)
     [
         system'core_routines'__signature load(self, message)
     ]
@@ -100,7 +100,7 @@ public sealed struct Signature
         <= new(T<literal>(aSubjectName)).
 
     /// Compares the values
-    stacksafe bool equal(Signature subject)
+    bool equal(Signature subject)
         = theValue == subject.
 
     T<literal> literal
@@ -112,5 +112,5 @@ public sealed struct Signature
     ]
 
     /// Qualifies incoming messages and redirects to the target
-    stacksafe dispatch => system'core_routines'__signature.
+    dispatch => system'core_routines'__signature.
 }

@@ -13,7 +13,7 @@ public sealed class DBReader :: Enumerable
         theCommandHandle := T<Handle>(aCommand).
     ]
     
-    stacksafe readNext(ref<int> aResult)
+    readNext(ref<int> aResult)
     [
         int aRetVal := system'external'sqlite3 sqlite3_step(theCommandHandle).
         
@@ -28,7 +28,7 @@ public sealed class DBReader :: Enumerable
         ^ aResult == SQLITE_ROW
     ]
     
-    stacksafe getAt(int anIndex)
+    getAt(int anIndex)
         = theCommand getAt(anIndex).
     
     getAt(literal aFieldName)

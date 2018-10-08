@@ -2,9 +2,10 @@
 In development:
 ------                              
 	                            
-
               dev - general implementation
-                 * get rid of stacksafe
+                 * test : check with extension : ch isDigit
+                 * test : embeddable length - int n := s length.
+
                  * get rid of cond boxing??
 
                  * if the object is embeddable it should be boxed, it it is not readonly it should be unboxed after the operation
@@ -13,9 +14,6 @@ In development:
                  * #463 : Redesigning stacksafe and stack embeddable classes 
                  * stacksafe template method : box this variable if required
                  * probably we could get rid of conditional branching? (what about unboxing?)
-
-              dev - usability
-                 * no need in ? char for looking into class / method
 
               dev - general implementation
                  * migrate vm client; #82 default event handler 

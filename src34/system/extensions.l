@@ -130,7 +130,7 @@ public extension objectOp
     doWith:action
         = action(self).
         
-    stacksafe reallocate(int aNewLength)
+    reallocate(int aNewLength)
         => system'core_routines'__array.
         
     shift(int n)
@@ -147,7 +147,7 @@ public extension objectOp
 
 public extension<byte> byteOp
 {
-    stacksafe byte absolute
+    byte absolute
     [
         byte n := self.
         if (n < 0)
@@ -163,7 +163,7 @@ public extension<byte> byteOp
         ^ byteConvertor convert(retVal)
     ]    
     
-    stacksafe byte power(int y)
+    byte power(int y)
     [
         byte x := self.
         byte r := 1.
@@ -179,7 +179,7 @@ public extension<byte> byteOp
         ^ ByteNumber new(r)
     ]
     
-    stacksafe byte sqr
+    byte sqr
     [
         byte aRetVal := 0.
         
@@ -197,16 +197,16 @@ public extension<byte> byteOp
     bool isEven
         = self~byteOp mod:2 == 0.
         
-    stacksafe bool isZero
+    bool isZero
         = self equal(0).
         
-    stacksafe bool isPositive
+    bool isPositive
         = self > 0.
         
-    stacksafe bool isNegative
+    bool isNegative
         = self < 0.
         
-    stacksafe bool isNonnegative
+    bool isNonnegative
         = self <= 0.
 }
 
@@ -214,7 +214,7 @@ public extension<byte> byteOp
 
 public extension<short> shortOp
 {
-    stacksafe short absolute
+    short absolute
     [
         short n := self.
         if (n < 0)
@@ -230,7 +230,7 @@ public extension<short> shortOp
         ^ shortConvertor convert(retVal)
     ]
     
-    stacksafe short power(int y)
+    short power(int y)
     [
         short x := self.
         short r := 1.
@@ -246,7 +246,7 @@ public extension<short> shortOp
         ^ ShortNumber new(r)
     ]
     
-    stacksafe short sqr
+    short sqr
     [
         short n := self.
         short aRetVal := 0.
@@ -265,19 +265,19 @@ public extension<short> shortOp
     bool isEven
         = self~shortOp mod:2 == 0.
         
-    stacksafe bool isZero
+    bool isZero
         = self equal(0).
         
-    stacksafe bool isPositive
+    bool isPositive
         = self > 0.
         
-    stacksafe bool isNegative
+    bool isNegative
         = self < 0.
         
-    stacksafe bool isNonnegative
+    bool isNonnegative
         = self <= 0.
     
-    stacksafe byte high
+    byte high
     [
         short aWord := self.
         aWord := aWord && 0FF00h.
@@ -286,7 +286,7 @@ public extension<short> shortOp
         ^ byteConvertor convert(aWord)
     ]
         
-    stacksafe byte low
+    byte low
     [
         short aWord := self.
         aWord := aWord && 0FFh.
@@ -309,7 +309,7 @@ public extension<int> intOp
     
     int rvprop sqrt     :: sqrt.
     
-    stacksafe absolute(ref<int> retVal)
+    absolute(ref<int> retVal)
     [
         int n := self.
 
@@ -319,7 +319,7 @@ public extension<int> intOp
         retVal value := n
     ]
     
-    stacksafe mod(int y, ref<int> retVal)
+    mod(int y, ref<int> retVal)
     [
         int x := self.
         
@@ -339,7 +339,7 @@ public extension<int> intOp
     real realDiv : anOperand
         = RealNumber new(T<int>(self)); divide:anOperand.
     
-    stacksafe power(int y, ref<int> retVal)
+    power(int y, ref<int> retVal)
     [
         int x := self.
         int r := 1.
@@ -357,14 +357,14 @@ public extension<int> intOp
         retVal value := r
     ]
     
-    stacksafe sqr(ref<int> retVal)
+    sqr(ref<int> retVal)
     [
         int n := self.        
         
         retVal value := n * n.
     ]
     
-    stacksafe sqrt(ref<int> retVal)
+    sqrt(ref<int> retVal)
     [
         int num := self.
         
@@ -385,22 +385,22 @@ public extension<int> intOp
     power : aPower
         = self~intOp power(T<int>(aPower)).
                 
-    stacksafe bool isOdd
+    bool isOdd
         = self and(1) != 0.
         
-    stacksafe bool isEven
+    bool isEven
         = self and(1) == 0.
         
-    stacksafe bool isZero
+    bool isZero
         = self equal(0).
         
-    stacksafe bool isPositive
+    bool isPositive
         = self > 0.
         
-    stacksafe bool isNegative
+    bool isNegative
         = self < 0.
         
-    stacksafe bool isNonnegative
+    bool isNonnegative
         = self <= 0.
 
     high
@@ -432,7 +432,7 @@ public extension<int> intOp
 
 public extension<long> longOp
 {
-    stacksafe long absolute
+    long absolute
     [
         long n := self.
 
@@ -453,7 +453,7 @@ public extension<long> longOp
         ^ LongNumber new(x - z)
     ]
     
-    stacksafe long power(long y)
+    long power(long y)
     [
         long x := self.
         long r := 1.
@@ -469,7 +469,7 @@ public extension<long> longOp
         ^ LongNumber new(r)
     ]
     
-    stacksafe long power(int y)
+    long power(int y)
     [
         long x := self.
         long r := 1.
@@ -485,7 +485,7 @@ public extension<long> longOp
         ^ LongNumber new(r)
     ]
     
-    stacksafe long sqr
+    long sqr
     [
         long n := self.        
         long aRetVal := 0l.
@@ -504,19 +504,19 @@ public extension<long> longOp
     bool isEven
         = self~longOp mod:2l == 0.
         
-    stacksafe bool isZero
+    bool isZero
         = self equal(0l).
         
-    stacksafe bool isPositive
+    bool isPositive
         = self > 0l.
         
-    stacksafe bool isNegative
+    bool isNegative
         = self < 0l.
         
-    stacksafe bool isNonnegative
+    bool isNonnegative
         = self <= 0l.
 
-    stacksafe int high
+    int high
     [
         long aWord := self.
         aWord := aWord && -4294967296l.
@@ -525,7 +525,7 @@ public extension<long> longOp
         ^ intConvertor convert(aWord)
     ]
 
-    stacksafe int low
+    int low
     [
         long aWord := self.
         aWord := aWord && 4294967295l.
@@ -538,7 +538,7 @@ public extension<long> longOp
 
 public extension<real> realOp
 {        
-    stacksafe real absolute
+    real absolute
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -548,7 +548,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal)
     ]
         
-    stacksafe real exp
+    real exp
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -558,7 +558,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal).
     ]
     
-    stacksafe real ln
+    real ln
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -568,7 +568,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal)
     ]
     
-    stacksafe real sqrt
+    real sqrt
     [
         real n := self.      
         real aRetVal := 0.0r.
@@ -578,7 +578,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal)
     ]
 
-    stacksafe real power(real y)
+    real power(real y)
     [
         real x := self.
         
@@ -598,7 +598,7 @@ public extension<real> realOp
             
     ]
 
-    stacksafe real power(int y)
+    real power(int y)
     [
         real x := self.
 
@@ -635,7 +635,7 @@ public extension<real> realOp
     power : aPower
         = self~realOp power(T<int>(aPower)).
 
-    stacksafe real sqr
+    real sqr
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -645,7 +645,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal)
     ]
 
-    stacksafe real rounded
+    real rounded
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -655,7 +655,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal)
     ]
     
-    stacksafe real round(int precision)
+    real round(int precision)
     [
         real a := self.
         bool neg := false.
@@ -675,7 +675,7 @@ public extension<real> realOp
         ^neg iif(a * -1.0r, a). 
     ]
     
-    stacksafe real truncate(int precision)
+    real truncate(int precision)
     [
         real a := self.
         bool neg := false.
@@ -693,7 +693,7 @@ public extension<real> realOp
         ^(neg) iif(a * -1.0r, a). 
     ]
 
-    stacksafe real integer
+    real integer
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -703,7 +703,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal)
     ]
 
-    stacksafe real frac
+    real frac
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -713,7 +713,7 @@ public extension<real> realOp
         ^ RealNumber new(n - aRetVal)
     ]
 
-    stacksafe real sin
+    real sin
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -723,7 +723,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal)
     ]
 
-    stacksafe real cos
+    real cos
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -733,7 +733,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal)
     ]
 
-    stacksafe real tan
+    real tan
     [
         real n := self.        
         real aSinVal := 0.0r.
@@ -745,7 +745,7 @@ public extension<real> realOp
         ^ RealNumber new(aSinVal / aCosVal)
     ]
 
-    stacksafe real arctan
+    real arctan
     [
         real n := self.        
         real aRetVal := 0.0r.
@@ -755,7 +755,7 @@ public extension<real> realOp
         ^ RealNumber new(aRetVal)
     ]
             
-    stacksafe real arcsin
+    real arcsin
     [
         real n := self.        
         real arg := 0.0r.
@@ -771,7 +771,7 @@ public extension<real> realOp
         ^ RealNumber new(retVal)
     ]
             
-    stacksafe real arccos
+    real arccos
     [
         real n := self.        
         real arg := 0.0r.
@@ -787,7 +787,7 @@ public extension<real> realOp
         ^ RealNumber new(retVal)
     ]
             
-    stacksafe real radian
+    real radian
     [
         real aValue := self.
         
@@ -796,7 +796,7 @@ public extension<real> realOp
         ^ RealNumber new(aValue / 180.0r)
     ]
             
-    stacksafe real degree
+    real degree
     [
         real aValue := self.
         
@@ -805,23 +805,23 @@ public extension<real> realOp
         ^ RealNumber new(aValue / pi_value)
     ]
             
-    stacksafe real reciprocal
+    real reciprocal
     [
         real aValue := self.
         
         ^ RealNumber new(1.0r / aValue)
     ]    
             
-    stacksafe bool isZero
+    bool isZero
         = self == 0.0r.
         
-    stacksafe bool isPositive
+    bool isPositive
         = self > 0.0r.
         
-    stacksafe bool isNegative
+    bool isNegative
         = self < 0.0r.
         
-    stacksafe bool isNonnegative
+    bool isNonnegative
         = self <= 0.0r.
 }
 
@@ -829,7 +829,7 @@ public extension<real> realOp
 
 public extension<T<IntArray>> intArrayOp
 {
-    stacksafe exchange(int anIndex1, int anIndex2)
+    exchange(int anIndex1, int anIndex2)
     [
         int n1 := 0.
         int n2 := 0.
@@ -875,7 +875,7 @@ public extension<Array> arrayOp
         self setAt(anIndex2, aTemp).
     ]
     
-    stacksafe indexOf(int anIndex, object anObject, ref<int> aRetVal)
+    indexOf(int anIndex, object anObject, ref<int> aRetVal)
     [
         aRetVal value := -1.
         
@@ -893,7 +893,7 @@ public extension<Array> arrayOp
         ]
     ]        
         
-    int stacksafe indexOf(int anIndex, object anObject)
+    int indexOf(int anIndex, object anObject)
     [
         int aRetVal := 0.
         
@@ -1062,7 +1062,7 @@ public extension<literal> literalOp
     literal Substring : anIndex
         = self~literalOp Substring(T<int>(anIndex)).
         
-    stacksafe literal Substring(int anIndex)
+    literal Substring(int anIndex)
     [
         int aLength := self length.
         if (aLength > anIndex)
@@ -1251,7 +1251,7 @@ public extension<wide> wideOp
     wide Substring:anIndex
         = self~wideOp Substring(T<int>(anIndex)).
         
-    stacksafe wide Substring(int anIndex)
+    wide Substring(int anIndex)
     [
         int aLength := self length.
         
@@ -1521,7 +1521,7 @@ public extension stringOp
     replace(aReplacee, aReplacer)
         = stringOpDispatcher replace(self, aReplacee, aReplacer).
     
-    stacksafe fillString(object aLiteral, int aCounter)
+    fillString(object aLiteral, int aCounter)
     [
         int aNumber := aCounter.
         
@@ -1586,7 +1586,7 @@ public extension stringOp
 
 public extension<char> charOp
 {
-    stacksafe bool isWhitespace
+    bool isWhitespace
     [
         self =>
             $9  [ ^ true ];
@@ -1598,7 +1598,7 @@ public extension<char> charOp
         ^ false
     ]
     
-    stacksafe bool isDigit
+    bool isDigit
     [
         int ch := 0.
         intConvertor convert(self, &ch).
@@ -1606,12 +1606,12 @@ public extension<char> charOp
         ^ (ch >= 30h) and: (ch <= 39h)
     ]
     
-    stacksafe bool isNewLine
+    bool isNewLine
     [
         ^ self == $10
     ]
     
-    stacksafe bool isLetter
+    bool isLetter
     [
         int ch := 0.
         intConvertor convert(self, &ch).
@@ -1631,7 +1631,7 @@ public extension<char> charOp
         ^ false
     ]
     
-    stacksafe bool isLToken
+    bool isLToken
     [
         int ch := 0.
         intConvertor convert(self, &ch).
@@ -1656,57 +1656,57 @@ public extension<char> charOp
 
 public singleton byteArrayHelper
 {
-    stacksafe read(ByteArray array, int offset, ref<short> retVal)
+    read(ByteArray array, int offset, ref<short> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe read(ByteArray array, int offset, ref<int> retVal)
+    read(ByteArray array, int offset, ref<int> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe read(ByteArray array, int offset, ref<long> retVal)
+    read(ByteArray array, int offset, ref<long> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe read(ByteArray array, int offset, ref<real> retVal)
+    read(ByteArray array, int offset, ref<real> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe read(ByteArray array, int offset, ref<char> retVal)
+    read(ByteArray array, int offset, ref<char> retVal)
     [
         array read(offset, retVal)
     ]
     
-    stacksafe write(ByteArray array, int offset, short retVal)
+    write(ByteArray array, int offset, short retVal)
     [
         array write(offset, retVal)
     ]
     
-    stacksafe write(ByteArray array, int offset, int retVal)
+    write(ByteArray array, int offset, int retVal)
     [
         array write(offset, retVal)
     ]
     
-    stacksafe write(ByteArray array, int offset, long retVal)
+    write(ByteArray array, int offset, long retVal)
     [
         array write(offset, retVal).
     ]
     
-    stacksafe write(ByteArray array, int offset, real retVal)
+    write(ByteArray array, int offset, real retVal)
     [
         array write(offset, retVal)
     ]
     
-    stacksafe write(ByteArray array, int offset, char retVal)
+    write(ByteArray array, int offset, char retVal)
     [
         array write(offset, retVal)
     ]
     
-    stacksafe fill(ByteArray array, int offset, int length, byte val)
+    fill(ByteArray array, int offset, int length, byte val)
     [
         array fill(offset, length, val).
     ]

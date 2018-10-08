@@ -20,7 +20,7 @@ singleton characterController
         ^ (aRetVal != 0)
     ]
     
-    stacksafe toUpperCase(char aChar, ref<char> aRetVal)
+    toUpperCase(char aChar, ref<char> aRetVal)
     [
         int        aLength := 0.
         T<short,3> aBuffer.
@@ -34,7 +34,7 @@ singleton characterController
         charConvertor convert(0, T<ShortArray>(aBuffer), aRetVal)
     ]
     
-    stacksafe toLowerCase(char aChar, ref<char> aRetVal)
+    toLowerCase(char aChar, ref<char> aRetVal)
     [
         int        aLength := 0.
         T<short,3> aBuffer.

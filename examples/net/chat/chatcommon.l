@@ -16,7 +16,7 @@ class BaseClient
         theBuffer := MemoryBuffer new.
     ]    
 
-    stacksafe write(T<ByteArray> buffer, length)
+    write(T<ByteArray> buffer, length)
     [
         theBuffer write(0, length, buffer)
     ]

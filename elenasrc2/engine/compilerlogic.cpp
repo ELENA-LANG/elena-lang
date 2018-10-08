@@ -311,9 +311,6 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
-   if (result.found) {
-      result.stackSafe = true;
-   }
 
    //if (callType == tpClosed || callType == tpSealed || callType == tpPrivate) {
    //   result.stackSafe = test(methodHint, tpStackSafe);
@@ -994,7 +991,7 @@ void CompilerLogic :: setSignatureStacksafe(_CompilerScope& scope, ref_t targetS
 
    int flag = 1;
    for (size_t i = 0; i < len; i++) {
-      flag << 1;
+      flag <<= 1;
 
       if (isEmbeddable(scope, targetSignatures[i]))
          stackSafeAttr |= flag;
@@ -1010,7 +1007,7 @@ void CompilerLogic :: setSignatureStacksafe(_CompilerScope& scope, _Module* targ
 
    int flag = 1;
    for (size_t i = 0; i < len; i++) {
-      flag << 1;
+      flag <<= 1;
 
       if (isEmbeddable(scope, importReference(targetModule, targetSignatures[i], scope.module)))
          stackSafeAttr |= flag;
@@ -1514,9 +1511,6 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          return true;
       case V_IFNOTBRANCH:
          attrValue = tpIfNotBranch;
-         return true;
-      case V_STATCKSAFE:
-         attrValue = tpStackSafe;
          return true;
       case V_EMBEDDABLE:
          attrValue = tpEmbeddable;
@@ -2328,6 +2322,9 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
 
             if (argModule == scope.module) {
                if (isSignatureCompatible(scope, argSign, signatures)) {
+                  if (isEmbeddable(info))
+                     stackSafeAttr |= 1;
+
                   setSignatureStacksafe(scope, argSign, stackSafeAttr);
 
                   return argMessage;
@@ -2335,6 +2332,9 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
             }
             else {
                if (isSignatureCompatible(scope, argModule, argSign, signatures)) {
+                  if (isEmbeddable(info))
+                     stackSafeAttr |= 1;
+
                   setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
 
                   return importMessage(argModule, argMessage, scope.module);

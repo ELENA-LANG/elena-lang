@@ -8,7 +8,7 @@ public interface BinaryReader
     T<Stream> theStream.
     int       theLength.
     
-    stacksafe read(ByteArray anArray, ref<int> anActualLength)
+    read(ByteArray anArray, ref<int> anActualLength)
     [
         theStream read(anArray, anActualLength).
     ]
@@ -24,7 +24,7 @@ public interface BinaryReader
         ^ aPosition < theLength
     ]
             
-    stacksafe read(ByteArray anArray, int aLength)
+    read(ByteArray anArray, int aLength)
     [
         int aRead := aLength.
         
@@ -123,7 +123,7 @@ public interface TextReader
     literal        theNewLineConstant.
     int            theNewLineLength.
 
-    abstract stacksafe read(CharArray anArray, ref<int> anActualLength) []
+    abstract read(CharArray anArray, ref<int> anActualLength) []
 
     abstract T<Stream> stream [ ]
 

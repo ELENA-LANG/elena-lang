@@ -8,7 +8,7 @@ public sealed Map<key_type, value_type> :: Enumerable<Tuple<key_type, value_type
     
 //    value_type     theDefault.
 
-    private stacksafe init(int capacity, int hashLength)
+    private init(int capacity, int hashLength)
     [
         int size := 32.
         while (size < hashLength)
@@ -30,7 +30,7 @@ public sealed Map<key_type, value_type> :: Enumerable<Tuple<key_type, value_type
         self init(32,32).
     ]
 
-    stacksafe constructor(int capacity, int hashLength)
+    constructor(int capacity, int hashLength)
     [
         self init(capacity,hashLength).
     ]

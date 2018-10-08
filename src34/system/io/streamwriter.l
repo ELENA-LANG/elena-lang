@@ -10,7 +10,7 @@ public interface BinaryWriter
 
     close => theStream.
     
-    stacksafe write(ByteArray anArray, int aLength)
+    write(ByteArray anArray, int aLength)
     [
         theStream write(anArray, aLength).
     ]
@@ -83,7 +83,7 @@ public interface TextWriter
 
     abstract close [ ]
     
-    abstract stacksafe write(CharArray anArray, int aLength)
+    abstract write(CharArray anArray, int aLength)
     [
     ]
     

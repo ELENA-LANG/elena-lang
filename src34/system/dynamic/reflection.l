@@ -18,15 +18,15 @@ public extension classROp
         ^ aLength
     ]     
 
-    stacksafe readFieldCountTo(ref<int> retVal)
+    readFieldCountTo(ref<int> retVal)
     [
         system'core_routines'__object readLength(self, retVal)
     ]
 
-    stacksafe setField(int anIndex, object anObject)
+    setField(int anIndex, object anObject)
         => system'core_routines'__object.
         
-    stacksafe getField(int anIndex)
+    getField(int anIndex)
         => system'core_routines'__object.
         
 //    stacksafe respondTo mssg:aMessage

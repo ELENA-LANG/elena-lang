@@ -20,7 +20,7 @@ public sealed class MemoryBuffer
     
     cast T<ByteArray> = ByteArray new(0, theUsed value, theBuffer).
     
-    private stacksafe reserve(int len)
+    private reserve(int len)
     [
         int used := 0.
         theUsed readValueTo(&used).
@@ -36,7 +36,7 @@ public sealed class MemoryBuffer
         theBuffer := newBuffer.
     ]
     
-    private stacksafe writeInternal(int index, int length, ByteArray array)
+    private writeInternal(int index, int length, ByteArray array)
     [        
         V<byte,64> temp.
         int        n := index.
@@ -60,7 +60,7 @@ public sealed class MemoryBuffer
         ]
     ]
     
-    stacksafe write(int index, int length, ByteArray array)
+    write(int index, int length, ByteArray array)
     [
         int used := 0.
         theUsed readValueTo(&used).
@@ -84,7 +84,7 @@ public sealed class MemoryBuffer
             ]
     ]
     
-    stacksafe read(int index, ref<int> retVal)
+    read(int index, ref<int> retVal)
     [
         int used := 0.
         theUsed readValueTo(&used).
@@ -95,7 +95,7 @@ public sealed class MemoryBuffer
         theBuffer read(index, retVal)
     ]
     
-    stacksafe read(int index, int length, ByteArray array)
+    read(int index, int length, ByteArray array)
     [
         int used := 0.
         theUsed readValueTo(&used).
@@ -106,7 +106,7 @@ public sealed class MemoryBuffer
         theBuffer read(index, length, array)
     ]
     
-    stacksafe delete(int index, int length)
+    delete(int index, int length)
     [
         int n := 0 - length.
         int l := 0.
@@ -122,7 +122,7 @@ public sealed class MemoryBuffer
     
     int rvprop length :: readLengthTo.
     
-    stacksafe readLengthTo(ref<int> retVal)
+    readLengthTo(ref<int> retVal)
     [
         theUsed readValueTo(retVal).
     ]

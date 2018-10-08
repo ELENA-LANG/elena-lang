@@ -182,7 +182,7 @@ sealed class DBCommand
         ^ (aRetPrc == SQLITE_ROW)
     ]
     
-    stacksafe evalScalar
+    evalScalar
     [
         int aRetPrc := system'external'sqlite3 sqlite3_step(theCommandHandle).
 
@@ -195,7 +195,7 @@ sealed class DBCommand
     
     T<Enumerator> enumerator = sqlite'DBReader new(self).
     
-    stacksafe getAt(int anIndex)
+    getAt(int anIndex)
     [
         int columnType := system'external'sqlite3 sqlite3_column_type(theCommandHandle, anIndex).
         
@@ -239,7 +239,7 @@ sealed class DBCommand
                 ]
     ]
     
-    stacksafe readFieldCount(ref<int> aCount)
+    readFieldCount(ref<int> aCount)
     [
         int ret := system'external'sqlite3 sqlite3_column_count(theCommandHandle).
         

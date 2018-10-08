@@ -55,7 +55,7 @@ class Console
     clear 
         => theWriter.
 
-    stacksafe setCursorPosition(int x, int y)
+    setCursorPosition(int x, int y)
         => theWriter.
 
     /// Reads the next line of characters from the standard input stream.

@@ -31,7 +31,7 @@ public class SocketException :: Exception
         theCode := code.
     ]
     
-    constructor stacksafe new(literal message)
+    constructor new(literal message)
         <= new(message);
     [
         theCode := system'external'WS2_32 WSAGetLastError.
@@ -63,7 +63,7 @@ sealed struct WSADATA
     constructor init(version,highVersion)
         <= init(T<byte>(version), T<byte>(highVersion)).
     
-    stacksafe constructor init(byte version, byte highVersion)
+    constructor init(byte version, byte highVersion)
     [
         short wVersionRequested := version * 10h + highVersion.
 

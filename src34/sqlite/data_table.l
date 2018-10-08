@@ -14,10 +14,10 @@ public sealed class DBRow
         theTable := aTable.
     ]
     
-    stacksafe getAt(int anIndex)
+    getAt(int anIndex)
         = theRow getAt(anIndex).
 
-    stacksafe getAt(literal aFieldName)
+    getAt(literal aFieldName)
     [
         int anIndex := -1.
 

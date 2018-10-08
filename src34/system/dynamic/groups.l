@@ -22,7 +22,7 @@ public mixin Group
 {
     V<object> items.
     
-    internal stacksafe constructor newInteral(int aLength)
+    internal constructor newInteral(int aLength)
         = V<object>(aLength).
         
     generic constructor new(V<object> objects)

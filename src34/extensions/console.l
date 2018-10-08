@@ -147,7 +147,7 @@ public extension outputCharFormatterOp
 
 singleton helper
 {
-    stacksafe readIndex(literal s, ref<int> i, ref<int> retVal)
+    readIndex(literal s, ref<int> i, ref<int> retVal)
     [
         char ch := $0.
         int  n := 0.

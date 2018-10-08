@@ -21,7 +21,7 @@ public sealed class Locale
         theName := nil.
     ]
         
-    stacksafe strToUpper(ShortArray aSrc, int aLength, ShortArray aDest, ref<int> aDestLength)
+    strToUpper(ShortArray aSrc, int aLength, ShortArray aDest, ref<int> aDestLength)
     [
         int aRetVal := system'external'KERNEL32 LCMapStringEx(
             theName,
@@ -37,7 +37,7 @@ public sealed class Locale
         aDestLength value := aRetVal.            
     ]
 
-    stacksafe strToLower(ShortArray aSrc, int aLength, ShortArray aDest, ref<int> aDestLength)
+    strToLower(ShortArray aSrc, int aLength, ShortArray aDest, ref<int> aDestLength)
     [
         int aRetVal := system'external'KERNEL32 LCMapStringEx(
             theName,

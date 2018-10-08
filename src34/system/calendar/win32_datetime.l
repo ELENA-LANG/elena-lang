@@ -5,7 +5,7 @@ const int DATE_LONGDATE   = 00000002h.
 
 singleton systemTimeFactory
 {
-    stacksafe readUtcNow(ref<SystemTime> retVal)
+    readUtcNow(ref<SystemTime> retVal)
     [
         T<SystemTime> aTime := 0l.        
         system'external'KERNEL32 GetSystemTimeAsFileTime(aTime).
@@ -13,7 +13,7 @@ singleton systemTimeFactory
         retVal value := aTime.
     ]
     
-    stacksafe readNow(ref<SystemTime> retVal)
+    readNow(ref<SystemTime> retVal)
     [
         T<SystemTime> aTime := 0l.
         T<SystemTime> aLocalTime := 0l.
@@ -100,7 +100,7 @@ public sealed struct TimeStruct
         system'core_routines'__timest empty(self).
     ]
 
-    stacksafe constructor new(SystemTime aTime)
+    constructor new(SystemTime aTime)
     [
         self write(aTime).
     ]
@@ -114,112 +114,112 @@ public sealed struct TimeStruct
     int vprop  second      :: readSecondTo,writeSecond.
     int vprop  millisecond :: readMillisecondTo,writeMillisecond.
 
-    stacksafe readYearTo(ref<int> aRetVal)
+    readYearTo(ref<int> aRetVal)
     [
         int val := theYear.
         
         aRetVal value := val.
     ]
 
-    stacksafe readMonthTo(ref<int> aRetVal)
+    readMonthTo(ref<int> aRetVal)
     [
         int val := theMonth.
         
         aRetVal value := val.
     ]
 
-    stacksafe readDayOfWeekTo(ref<int> aRetVal)
+    readDayOfWeekTo(ref<int> aRetVal)
     [
         int val := theDayOfWeek.
         
         aRetVal value := val.
     ]
 
-    stacksafe readDayTo(ref<int> aRetVal)
+    readDayTo(ref<int> aRetVal)
     [
         int val := theDay.
         
         aRetVal value := val.
     ]
 
-    stacksafe readHourTo(ref<int> aRetVal)
+    readHourTo(ref<int> aRetVal)
     [
         int val := theHour.
         
         aRetVal value := val.
     ]
 
-    stacksafe readMinuteTo(ref<int> aRetVal)
+    readMinuteTo(ref<int> aRetVal)
     [
         int val := theMinute.
         
         aRetVal value := val.
     ]
 
-    stacksafe readSecondTo(ref<int> aRetVal)
+    readSecondTo(ref<int> aRetVal)
     [
         int val := theSecond.
         
         aRetVal value := val.
     ]
 
-    stacksafe readMillisecondTo(ref<int> aRetVal)
+    readMillisecondTo(ref<int> aRetVal)
     [
         int val := theMillisecond.
         
         aRetVal value := val.
     ]
 
-    stacksafe writeYear(int aValue)
+    writeYear(int aValue)
     [
         short n := aValue.
 
         theYear := n.
     ]
 
-    stacksafe writeMonth(int aValue)
+    writeMonth(int aValue)
     [ 
         short n := aValue.
             
         theMonth := n.
     ]
 
-    stacksafe writeDay(int aValue)
+    writeDay(int aValue)
     [ 
         short n := aValue.
             
         theDay := n.
     ]
 
-    stacksafe writeHour(int aValue)
+    writeHour(int aValue)
     [ 
         short n := aValue.
             
         theHour := n.
     ]
 
-    stacksafe writeMinute(int aValue)
+    writeMinute(int aValue)
     [ 
         short n := aValue.
             
         theMinute := n.
     ]
 
-    stacksafe writeSecond(int aValue)
+    writeSecond(int aValue)
     [ 
         short n := aValue.
             
         theSecond := n.
     ]
 
-    stacksafe writeMillisecond(int aValue)
+    writeMillisecond(int aValue)
     [ 
         short n := aValue.
             
         theMillisecond := n.
     ]
 
-    stacksafe read(ref<SystemTime> aRetVal)
+    read(ref<SystemTime> aRetVal)
     [
         T<SystemTime> value := 0l.        
         system'external'KERNEL32 SystemTimeToFileTime(self, value).
@@ -227,12 +227,12 @@ public sealed struct TimeStruct
         aRetVal value := value.
     ]    
     
-    stacksafe write(SystemTime aFileTime)
+    write(SystemTime aFileTime)
     [
         system'external'KERNEL32 FileTimeToSystemTime(aFileTime, self).
     ]
       
-    private stacksafe wide dateToWide(int Flags)
+    private wide dateToWide(int Flags)
     [
         T<short,127> aBuffer.
 
@@ -245,7 +245,7 @@ public sealed struct TimeStruct
         ^ WideLiteralValue fromShortArray(0, aLength - 1, T<ShortArray>(aBuffer)).
     ]
     
-    private stacksafe wide timeToWide(int Flags)
+    private wide timeToWide(int Flags)
     [
         T<short,127> aBuffer.
 
@@ -258,9 +258,9 @@ public sealed struct TimeStruct
         ^ WideLiteralValue fromShortArray(0, aLength - 1, T<ShortArray>(aBuffer)).
     ]
 
-    stacksafe wide toShortDate
+    wide toShortDate
         = self dateToWide(DATE_SHORTDATE).
 
-    stacksafe wide toShortTime
+    wide toShortTime
         = self timeToWide(0).
 }

@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   29
+#define REVISION_VERSION   30
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -155,9 +155,9 @@ void printHelp()
    printf("-b                      - hide / show breakpoints\n");
    printf("-q                      - quit\n");
    printf("-h                      - help\n");
-   printf("?<class>.<method name>  - view method byte codes\n");
-   printf("?<class>                - list all class methods\n");
-   printf("??<symbol>              - view symbol byte codes\n");
+   printf("<class>.<method name>   - view method byte codes\n");
+   printf("<class>                 - list all class methods\n");
+   printf("#<symbol>               - view symbol byte codes\n");
    printf("-o<path>                - save the output\n");
    printf("-l                      - list all classes with methods\n");
    printf("?                       - list all classes\n");
@@ -1244,16 +1244,10 @@ void runSession(_Module* module, int pageSize)
 
       // execute command
       if (line[0]=='?') {
-         if (line[1]=='?') {
-            printSymbol(module, line + 2, pageSize);
-         }
-         else if (line.ident().findSubStr(1, '.', getlength(line) - 1, -1) != -1) {
-            printMethod(module, line + 1, pageSize);   
-         }
-         else if (line[1]==0) {
+         if (line[1]==0) {
             listClasses(module, pageSize);
          }
-         else listClassMethods(module, line + 1, pageSize, true, false);
+         else printHelp();
       }
       else if (line[0]=='-') {
          switch(line[1]) {
@@ -1281,7 +1275,15 @@ void runSession(_Module* module, int pageSize)
                printHelp();
          }
       }
-      else printHelp();
+      else if (line[0] == '#') {
+         printSymbol(module, line + 1, pageSize);
+      }
+      else {
+         if (line.ident().find('.') != NOTFOUND_POS) {
+            printMethod(module, line, pageSize);
+         }
+         else listClassMethods(module, line, pageSize, true, false);
+      }      
    }
 }
 

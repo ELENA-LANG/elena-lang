@@ -21,7 +21,7 @@ public class ScriptEngine
         scopeId := system'external'elenasm NewScope.
     ]
     
-    internal stacksafe lastScriptError
+    internal lastScriptError
     [
         V<byte,256> aBuffer.
         int         aLength := system'external'elenasm GetStatus
@@ -30,17 +30,17 @@ public class ScriptEngine
         ^ UTF8Encoding toLiteral(0, aLength, T<ByteArray>(aBuffer))
     ]
     
-    internal stacksafe lastVMError
+    internal lastVMError
     [
         dirty_ptr err := system'external GetVMLastError.
             
         ^ err literal.  
     ]
     
-    stacksafe evaluateTape(dirty_ptr tape)
+    evaluateTape(dirty_ptr tape)
         => system'core_routines'__vmtape.
     
-    stacksafe evaluateScript(literal aScript)
+    evaluateScript(literal aScript)
     [
         dirty_ptr tape := system'external'elenasm InterpretScopeScript
                                 (scopeId, aScript).
@@ -58,7 +58,7 @@ public class ScriptEngine
         ^ retVal
     ]
 
-    stacksafe loadScriptFile(literal path, int anEncoding, int anAutoDetect)
+    loadScriptFile(literal path, int anEncoding, int anAutoDetect)
     [
         dirty_ptr tape := system'external'elenasm InterpretScopeFile
                             (scopeId, path, anEncoding, anAutoDetect).
@@ -69,7 +69,7 @@ public class ScriptEngine
         system'external'elenasm Release(tape).
     ]
     
-    stacksafe evalScriptFile(literal path, int anEncoding, int anAutoDetect)
+    evalScriptFile(literal path, int anEncoding, int anAutoDetect)
     [
         dirty_ptr tape := system'external'elenasm InterpretScopeFile
                             (scopeId, path, anEncoding, anAutoDetect).

@@ -2,7 +2,7 @@ import system'routines.
 
 public extension<int> intLoopOp
 {
-    stacksafe runIntLoop(int anEnd, Func<int,object> aFunction)
+    runIntLoop(int anEnd, Func<int,object> aFunction)
     [
        int aStart := self.
 
@@ -11,7 +11,7 @@ public extension<int> intLoopOp
             [ ^ aFunction rewind(aStart, anEnd, 1) ]
     ]
 
-    stacksafe runIntLoop(int anEnd, int aStep, Func<int,object> aFunction)
+    runIntLoop(int anEnd, int aStep, Func<int,object> aFunction)
     [
        int aStart := self.
 
@@ -20,16 +20,16 @@ public extension<int> intLoopOp
             [ ^ aFunction rewind(aStart, anEnd, aStep) ]
     ]
 
-    stacksafe to(int anEnd) do(Func<int,object> aFunction)
+    to(int anEnd) do(Func<int,object> aFunction)
         = self~intLoopOp runIntLoop(anEnd, aFunction).
             
-    stacksafe till(int anEnd) do(Func<int,object> aFunction)
+    till(int anEnd) do(Func<int,object> aFunction)
         = self~intLoopOp runIntLoop(anEnd-1, aFunction).
             
-    stacksafe to(int anEnd) do(Func1 aFunction)
+    to(int anEnd) do(Func1 aFunction)
         = self~intLoopOp runIntLoop(anEnd, (:n)<int>[ aFunction(n) ]).
             
-    stacksafe till(int anEnd) do(Func1 aFunction)
+    till(int anEnd) do(Func1 aFunction)
         = self~intLoopOp runIntLoop(anEnd-1, (:n)<int>[ aFunction(n) ]).
             
 //    stacksafe to(int anEnd) do(ext_mssg anExtension)
@@ -41,13 +41,13 @@ public extension<int> intLoopOp
 //    multi till:anEnd do:anAction
 //        = self~intLoopOp runIntLoop int(anEnd int - 1) nfunc(:n)<int>[ anAction eval:n ].
                 
-    stacksafe to(int anEnd) by(int aStep) do(Func<int,object> aFunction)
+    to(int anEnd) by(int aStep) do(Func<int,object> aFunction)
         = self~intLoopOp runIntLoop(anEnd, aStep, aFunction).
             
 //    stacksafe till(int anEnd) by(int aStep) do(nfunc aFunction)
 //        = self~intLoopOp runIntLoop int(anEnd-1) int:aStep nfunc:aFunction.
             
-    stacksafe to(int anEnd) by(int aStep) do(Func1 aFunction)
+    to(int anEnd) by(int aStep) do(Func1 aFunction)
         = self~intLoopOp runIntLoop(anEnd, aStep, (:n)<int>[ aFunction(n) ]).
             
 //    stacksafe to(int anEnd) by(int aStep) do(ext_mssg anExtension)

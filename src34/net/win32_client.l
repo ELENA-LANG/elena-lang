@@ -140,13 +140,13 @@ public sealed class TcpClient
             ]
     ]
     
-    stacksafe write(int index, ByteArray buffer, int length)
+    write(int index, ByteArray buffer, int length)
     [
         int sent := 0.
         theSocket write(buffer, length, 0, &sent).
     ]
     
-    stacksafe write(literal s)
+    write(literal s)
     [
         T<ByteNumber,256> buffer.
         
@@ -168,7 +168,7 @@ public sealed class TcpClient
         ]
     ]
     
-    stacksafe write(int n)
+    write(int n)
     [
         T<ByteNumber,4> buffer.
         byteArrayHelper write(T<ByteArray>(buffer), 0, n).

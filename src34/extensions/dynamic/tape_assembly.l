@@ -49,10 +49,10 @@ sealed class ClassContext
         _tape append:object.
     ]    
     
-    stacksafe getAt(IntNumber index)
+    getAt(IntNumber index)
         = _tape[index].        
         
-    stacksafe setAt(IntNumber index, Object object)
+    setAt(IntNumber index, Object object)
     [
         _tape[index] := object.
     ]
@@ -998,7 +998,7 @@ struct StackClosure :: DynamicClosure
 {
     int index.
     
-    stacksafe constructor new(int index)
+    constructor new(int index)
     [
         @index := index.
     ]
@@ -1013,7 +1013,7 @@ struct AssignClosure :: DynamicClosure
 {
     int index.
     
-    stacksafe constructor new(int index)
+    constructor new(int index)
     [
         @index := index.
     ]

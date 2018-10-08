@@ -2798,6 +2798,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          argument = overwriteParamCount(messageRef, OPEN_ARG_COUNT + 2);
       }
 
+      if (!test(mode, HINT_DYNAMIC_OBJECT) && _logic->isEmbeddable(*scope.moduleScope, classReference))
+         // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
+         stackSafeAttr |= 1;
+
       if (result.embeddable)
          writer.appendNode(lxEmbeddableAttr);
    }
@@ -3039,8 +3043,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          int stackSafeAttr = 0;
          messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, stackSafeAttr);
 
-         if (!test(stackSafeAttr, 1))
+         if (!test(stackSafeAttr, 1)) {
             mode |= HINT_DYNAMIC_OBJECT;
+         }
+         else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode, stackSafeAttr);
       }
@@ -6167,12 +6173,12 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       if (included && _logic->isEmbeddable(scope.info) && !test(methodHints, tpMultimethod)) {
          // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
          scope.info.methodHints.exclude(Attribute(message, maHint));
-         scope.info.methodHints.add(Attribute(message, maHint), methodHints | tpStackSafe);
+         scope.info.methodHints.add(Attribute(message, maHint), methodHints);
 
          //HOTFIX : for the private message : update the virtual method as well
          if ((message & MESSAGE_FLAG_MASK) == SEALED_MESSAGE) {
             scope.info.methodHints.exclude(Attribute(message & ~SEALED_MESSAGE, maHint));
-            scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), methodHints | tpStackSafe);
+            scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), methodHints);
          }
       }
 
@@ -6871,20 +6877,30 @@ ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope/*, W
 }
 
 ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int mode)
-{
-   int paramMode = 0;
-
-   if (node.existChild(lxStacksafeAttr) && !test(mode, HINT_DYNAMIC_OBJECT)) {
-      paramMode |= HINT_NOBOXING;
-   }
-   else paramMode |= HINT_DYNAMIC_OBJECT;
-
+{   
    if (node.existChild(lxEmbeddableAttr)) {
       if (!_logic->optimizeEmbeddable(node, *scope.moduleScope))
          node.appendNode(lxEmbeddable);
    }
 
-   analizeExpressionTree(node, scope, paramMode);
+   int stackSafeAttr = node.findChild(lxStacksafeAttr).argument;
+   int flag = 1;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         int paramMode = 0;
+         if (test(stackSafeAttr, flag)) {
+            paramMode |= HINT_NOBOXING;
+         }
+         else paramMode |= HINT_DYNAMIC_OBJECT;
+
+         analizeExpression(current, scope, /*warningScope, */paramMode);
+
+         flag <<= 1;
+      }
+      current = current.nextNode();
+   }
 
    return node.findChild(lxTarget).argument;
 }

@@ -16,7 +16,7 @@ public sealed struct Timespan :: BaseNumber
         theValue := aValue.
     ]
 
-    stacksafe constructor new(SystemTime aValue)
+    constructor new(SystemTime aValue)
     [
         theValue := aValue.
     ]
@@ -66,7 +66,7 @@ public sealed struct Timespan :: BaseNumber
 
     cast T<SystemTime> = theValue.
 
-    stacksafe readValueTo(ref<SystemTime> retVal)
+    readValueTo(ref<SystemTime> retVal)
     [
         retVal value := theValue.
     ]
@@ -195,7 +195,7 @@ public sealed struct Date :: BaseNumber
         theValue := aValue.
     ]
     
-    stacksafe constructor new(SystemTime aValue)
+    constructor new(SystemTime aValue)
     [
         theValue := aValue.
     ]
@@ -221,9 +221,9 @@ public sealed struct Date :: BaseNumber
   
     cast T<SystemTime> = SystemTime new(theValue).
 
-    stacksafe cast T<TimeStruct> = TimeStruct new(theValue).
+    cast T<TimeStruct> = TimeStruct new(theValue).
 
-    stacksafe readValueTo(ref<SystemTime> aRetVal)
+    readValueTo(ref<SystemTime> aRetVal)
     [
         aRetVal value := theValue.
     ]

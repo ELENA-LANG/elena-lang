@@ -25,7 +25,7 @@ sealed struct CONSOLE_SCREEN_BUFFER_INFO
     T<SMALL_RECT> srWindow.
     T<COORD>      dwMaximumWindowSize.
     
-    stacksafe embeddable constructor new
+    embeddable constructor new
     [
     ]
 
@@ -33,17 +33,17 @@ sealed struct CONSOLE_SCREEN_BUFFER_INFO
     
     short rvprop SizeY :: readSizeYTo.
 
-    stacksafe readSizeXTo(ref<short> aRetVal)
+    readSizeXTo(ref<short> aRetVal)
     [
         dwSize readXTo(aRetVal).
     ]
 
-    stacksafe readSizeYTo(ref<short> aRetVal)
+    readSizeYTo(ref<short> aRetVal)
     [
         dwSize readYTo(aRetVal).
     ]
 
-    stacksafe readSizeTo(COORD r)
+    readSizeTo(COORD r)
     [
         short x := dwSize X.
         short y := dwSize Y.
@@ -51,7 +51,7 @@ sealed struct CONSOLE_SCREEN_BUFFER_INFO
         r write(x, y).
     ]
 
-    stacksafe readCursorPositionTo(COORD r)
+    readCursorPositionTo(COORD r)
     [
         T<COORD> aCopy := dwCursorPosition.
         
@@ -126,7 +126,7 @@ sealed struct ConsoleWriter
         system'external'KERNEL32 SetConsoleCursorPosition(theHandle, 0).
     ]
 
-    stacksafe setCursorPosition(int x, int y)
+    setCursorPosition(int x, int y)
     [
         int coord := y * 10000h + x.
                 
@@ -234,7 +234,7 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
         theHandle := aHandle.
     ]
 
-    stacksafe read(ref<char> aChar)
+    read(ref<char> aChar)
     [
         T<byte,20> aDump.
         int        aNumberRead := 0.
@@ -262,7 +262,7 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
         byteArrayHelper read(T<ByteArray>(aDump), 14, aChar).
     ]
 
-    stacksafe read(ref<int> aKey)
+    read(ref<int> aKey)
     [
         T<byte,20> aDump.
         int        aNumberRead := 0.
@@ -327,7 +327,7 @@ sealed struct ConsoleReader :: Object, interface<IConsoleReader>
         ^ false.                   
     ]
 
-    stacksafe read(ShortArray aBuffer, ref<int> aRetVal)
+    read(ShortArray aBuffer, ref<int> aRetVal)
     [
         int len := aRetVal value.
         
