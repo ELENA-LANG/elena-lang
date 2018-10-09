@@ -13,13 +13,6 @@
 
 using namespace _ELENA_;
 
-//// Virtual machine client built-in references
-//#define VM_LOADER          "$native'core_vm'console_vm_start"
-////#define VM_GUI_LOADER      "$package'core_vm'gui_vm_start"
-//
-//#define VM_TAPE            "$vm_tape"
-//#define VM_HOOK            "$vm_hook"
-
 // --- ExecutableImage ---
 
 ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper)

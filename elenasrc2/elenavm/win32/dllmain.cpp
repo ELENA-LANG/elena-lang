@@ -396,6 +396,10 @@ EXTERN_DLL_EXPORT const char* GetVMLastError()
 void initMachine(path_t rootPath)
 {
    _Machine = new x86ELENAVMMachine(rootPath);
+
+   if (::IsDebuggerPresent()) {
+      _Machine->getInstance()->setDebugMode();
+   }
 }
 
 // --- freeMachine ---

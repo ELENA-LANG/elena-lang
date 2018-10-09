@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-#define ELENAVM_REVISION  8
+#define ELENAVM_REVISION  9
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2018 by Alex Rakov"

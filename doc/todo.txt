@@ -7,10 +7,10 @@ In development:
                  * dynamic code : build tape to : print the number sum
 
               dev - tests          
+                 * test vm sta : debugger
                  * test vm sta : preloaded symbols / initializers
                  * test vm sta : exception handlers
                  * test vm sta : critical exception handlers
-                 * test vm sta : debugger
 
               dev - general implementation
                  *  #77 : migrate GC algorithm
