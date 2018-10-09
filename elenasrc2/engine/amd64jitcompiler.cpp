@@ -1627,3 +1627,23 @@ int AMD64JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t len
 {
    return -1; // !! temporal
 }
+
+void AMD64JITCompiler :: setTLSKey(void* ptr)
+{
+   // !! temporal
+}
+
+void AMD64JITCompiler :: setThreadTable(void* ptr)
+{
+   // !! temporal
+}
+
+void AMD64JITCompiler :: setEHTable(void* ptr)
+{
+   // !! temporal
+}
+
+void AMD64JITCompiler :: setGCTable(void* ptr)
+{
+   // !! temporal
+}

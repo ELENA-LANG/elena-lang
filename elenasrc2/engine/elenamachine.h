@@ -29,8 +29,8 @@ struct _Entry
 {
    union {
       void* address;
-      void(*entry)(void);
-      int(*evaluate)(void*);
+      int  (*entry)(void);
+      int  (*evaluate)(void*);
    };
 
    _Entry()

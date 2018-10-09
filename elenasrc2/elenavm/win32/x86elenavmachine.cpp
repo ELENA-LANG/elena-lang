@@ -130,7 +130,7 @@ void* x86Instance :: loadDebugSection()
    return _debugProcess.get(0);
 }
 
-bool x86Instance :: restart(bool debugMode)
+bool x86Instance :: restart(SystemEnv* env, bool debugMode)
 {
    // !! make sure all threads are stopped
 
@@ -156,7 +156,7 @@ bool x86Instance :: restart(bool debugMode)
    _compiler = new _ELENA_::x86JITCompiler(debugMode);
    _linker = new JITLinker(this, _compiler, false, _codeProcess.get(0)/*, _config.maxThread*/);
 
-   return Instance::restart(debugMode);
+   return Instance::restart(env, debugMode);
 }
 
 void x86Instance :: createConsole()

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: I64
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef amd64jitcompilerH
@@ -110,6 +110,10 @@ public:
    virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
+   virtual void setTLSKey(void* ptr);
+   virtual void setThreadTable(void* ptr);
+   virtual void setEHTable(void* ptr);
+   virtual void setGCTable(void* ptr);
 
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateSymbolCall(MemoryDump& tape, void* address);

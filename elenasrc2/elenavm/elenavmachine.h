@@ -12,12 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-//#define VM_INIT           "$native'coreapi'vm_console_entry"
-//
-//#define VM_INTERPRET      "$native'core_vm'eval"
-//#define VM_INTERPRET_EXT  "$native'core_vm'start_n_eval"
-
-#define ELENAVM_REVISION  7
+#define ELENAVM_REVISION  8
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2018 by Alex Rakov"
@@ -134,51 +129,51 @@ public:
 class Instance : public _ImageLoader
 {
 protected:
-//   // --- ImageReferenceHelper ---
-//   // in most cases the references are already real ones
-//   // so only some of the methods are implemented
-//   class ImageReferenceHelper : public _ReferenceHelper
-//   {
-//      Instance* _instance;
-//      size_t    _codeBase, _statBase;
-//
-//   public:
-//      virtual ref_t getLinkerConstant(ref_t constant)
-//      {
-//         return _instance->getLinkerConstant(constant);
-//      }
-//
-//      virtual SectionInfo getCoreSection(ref_t reference) { return SectionInfo(); }
-//      virtual SectionInfo getSection(ref_t reference, _Module* module) { return SectionInfo(); }
-//
-//      virtual void* getVAddress(MemoryWriter& writer, int mask) { return NULL; }
-//
-//      virtual ref_t resolveMessage(ref_t reference, _Module* module) { return reference; }
-//
-//      virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
-//      virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
-//      virtual void writeMTReference(MemoryWriter& writer);
-//
-//      virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
-//      {
-//         throw InternalError("Currently not supported");
-//      }
-//
-//      virtual void addBreakpoint(size_t position);
-//
-//      void writeTape(MemoryWriter& tape, void* vaddress, int mask);
-//
-//      ImageReferenceHelper(Instance* instance)
-//      {
-//         _instance = instance;
-//
-//         _Memory* image = instance->getTargetSection(mskCodeRef);
-//         _Memory* data = instance->getTargetSection(mskRDataRef);
-//
-//         _codeBase = (size_t)image->get(0);
-//         _statBase = (size_t)data->get(0);
-//      }
-//   };
+   // --- ImageReferenceHelper ---
+   // in most cases the references are already real ones
+   // so only some of the methods are implemented
+   class ImageReferenceHelper : public _ReferenceHelper
+   {
+      Instance* _instance;
+      size_t    _codeBase, _statBase;
+
+   public:
+      virtual ref_t getLinkerConstant(ref_t constant)
+      {
+         return _instance->getLinkerConstant(constant);
+      }
+
+      virtual SectionInfo getCoreSection(ref_t reference) { return SectionInfo(); }
+      virtual SectionInfo getSection(ref_t reference, _Module* module) { return SectionInfo(); }
+
+      virtual void* getVAddress(MemoryWriter& writer, int mask) { return NULL; }
+
+      virtual ref_t resolveMessage(ref_t reference, _Module* module) { return reference; }
+
+      virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
+      virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
+      virtual void writeMTReference(MemoryWriter& writer);
+
+      virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
+      {
+         throw InternalError("Currently not supported");
+      }
+
+      virtual void addBreakpoint(size_t position);
+
+      void writeTape(MemoryWriter& tape, void* vaddress, int mask);
+
+      ImageReferenceHelper(Instance* instance)
+      {
+         _instance = instance;
+
+         _Memory* image = instance->getTargetSection(mskCodeRef);
+         _Memory* data = instance->getTargetSection(mskRDataRef);
+
+         _codeBase = (size_t)image->get(0);
+         _statBase = (size_t)data->get(0);
+      }
+   };
 
    bool            _debugMode;
 //   int             _platform;
@@ -235,10 +230,10 @@ protected:
 
    bool loadTemplate(ident_t name);
 
-   virtual bool restart(bool debugMode);
+   virtual bool restart(SystemEnv* env, bool debugMode);
 
-//   void translate(MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator);
-   void configurate(MemoryReader& reader, int terminator);
+   void translate(MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator);
+   void configurate(SystemEnv* env, MemoryReader& reader, int terminator);
    void resolveMessageTable();
 
    void onNewCode();
@@ -435,10 +430,10 @@ public:
    void* loadSymbol(ident_t reference, int mask, bool silentMode = false);
 //   //size_t loadMessage(ident_t reference);
 
-   int interprete(void* tape/*, ident_t interpreter*/);
+   int interprete(SystemEnv* env, void* tape);
 
-//   bool loadAddressInfo(void* address, char* buffer, size_t& maxLength);
-//
+   bool loadAddressInfo(void* address, char* buffer, size_t& maxLength);
+
 //   //bool loadSubjectInfo(size_t subjectId, ident_c* buffer, size_t& maxLength);
 //   //bool loadMessageInfo(size_t messageId, ident_c* buffer, size_t& maxLength);
 

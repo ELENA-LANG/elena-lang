@@ -57,257 +57,257 @@ EXTERN_DLL_EXPORT void Exit(int exitCode)
 //{
 //   return 0; // !! temporally
 //}
-//
-//EXTERN_DLL_EXPORT int LoadAddressInfo(void* retPoint, char* buffer, size_t maxLength)
-//{
-//   Instance* instance = getCurrentInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      if (instance->loadAddressInfo(retPoint, buffer, maxLength)) {
-//         return maxLength;
-//      }
-//      else return 0;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLength)
-//{
-//   Instance* instance = getCurrentInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      ident_t className = instance->getClassName(vmtAddress);
-//      size_t length = getlength(className);
-//      if (length > 0) {
-//         if (maxLength >= (int)length) {
-//            Convertor::copy(buffer, className, length, length);
-//         }
-//         else buffer[0] = 0;
-//      }
-//
-//      return length;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, char* buffer, int maxLength)
-//{
-//   Instance* instance = getCurrentInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      size_t subj_id = (size_t)subjectRef;
-//
-//      ident_t subjectName = instance->getSubject(subj_id);
-//      size_t length = getlength(subjectName);
-//      if (length > 0) {
-//         if (maxLength >= (int)length) {
-//            Convertor::copy(buffer, subjectName, length, length);
-//         }
-//         else buffer[0] = 0;
-//      }
-//
-//      return length;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
-//{
-//   Instance* instance = getCurrentInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      ref_t subj_id = instance->getSubjectRef((const char*)subjectName);
-//
-//      return (void*)subj_id;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength)
-//{
-//   Instance* instance = getCurrentInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      ref_t action;
-//      int count;
-//      decodeMessage((ref_t)message, action, count);
-//
-//      size_t used = 0;
-//      //if (test((ref_t)message, encodeAction(SIGNATURE_FLAG))) {
-//      //   ImageSection messageSection;
-//      //   messageSection.init(_messageSection, 0x10000); // !! dummy size
-//
-//      //   ref_t verb = messageSection[action];
-//      //   used += manager.readSubjectName(reader, verb, buffer + used, length - used);
-//      //}
-//      //else {
-//         ident_t subjectName = instance->getSubject(action);
-//         size_t length = getlength(subjectName);
-//         if (length > 0) {
-//            if (maxLength >= (int)(length + used)) {
-//               Convertor::copy(buffer + used, subjectName, length, length);
-//
-//               used += length;
-//            }
-//            else buffer[used] = 0;
-//         }
-//      //}
-//
-//      if (count > 0) {
-//         size_t dummy = 10;
-//         String<char, 10>temp;
-//         temp.appendInt(count);
-//
-//         buffer[used++] = '[';
-//         Convertor::copy(buffer + used, temp, getlength(temp), dummy);
-//         used += dummy;
-//         buffer[used++] = ']';
-//      }
-//      buffer[used] = 0;
-//
-//      return used;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
-//{
-//   Instance* instance = getCurrentInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      return (void*)(instance->getMessageRef((const char*)messageName));
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
-//{
-//   Instance* instance = getCurrentInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      return instance->getSymbolRef((const char*)referenceName, false);
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
+
+EXTERN_DLL_EXPORT int LoadAddressInfo(void* retPoint, char* buffer, size_t maxLength)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      if (instance->loadAddressInfo(retPoint, buffer, maxLength)) {
+         return maxLength;
+      }
+      else return 0;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLength)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      ident_t className = instance->getClassName(vmtAddress);
+      size_t length = getlength(className);
+      if (length > 0) {
+         if (maxLength >= (int)length) {
+            Convertor::copy(buffer, className, length, length);
+         }
+         else buffer[0] = 0;
+      }
+
+      return length;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, char* buffer, int maxLength)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      size_t subj_id = (size_t)subjectRef;
+
+      ident_t subjectName = instance->getSubject(subj_id);
+      size_t length = getlength(subjectName);
+      if (length > 0) {
+         if (maxLength >= (int)length) {
+            Convertor::copy(buffer, subjectName, length, length);
+         }
+         else buffer[0] = 0;
+      }
+
+      return length;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      ref_t subj_id = instance->getSubjectRef((const char*)subjectName);
+
+      return (void*)subj_id;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      ref_t action;
+      int count;
+      decodeMessage((ref_t)message, action, count);
+
+      size_t used = 0;
+      //if (test((ref_t)message, encodeAction(SIGNATURE_FLAG))) {
+      //   ImageSection messageSection;
+      //   messageSection.init(_messageSection, 0x10000); // !! dummy size
+
+      //   ref_t verb = messageSection[action];
+      //   used += manager.readSubjectName(reader, verb, buffer + used, length - used);
+      //}
+      //else {
+         ident_t subjectName = instance->getSubject(action);
+         size_t length = getlength(subjectName);
+         if (length > 0) {
+            if (maxLength >= (int)(length + used)) {
+               Convertor::copy(buffer + used, subjectName, length, length);
+
+               used += length;
+            }
+            else buffer[used] = 0;
+         }
+      //}
+
+      if (count > 0) {
+         size_t dummy = 10;
+         String<char, 10>temp;
+         temp.appendInt(count);
+
+         buffer[used++] = '[';
+         Convertor::copy(buffer + used, temp, getlength(temp), dummy);
+         used += dummy;
+         buffer[used++] = ']';
+      }
+      buffer[used] = 0;
+
+      return used;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      return (void*)(instance->getMessageRef((const char*)messageName));
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      return instance->getSymbolRef((const char*)referenceName, false);
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
 
 EXTERN_DLL_EXPORT int InterpretTape(void* tape)
 {

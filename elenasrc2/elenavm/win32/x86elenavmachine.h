@@ -32,7 +32,7 @@ protected:
 
    virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
 
-   virtual bool restart(bool debugMode);
+   virtual bool restart(SystemEnv* env, bool debugMode);
 
    virtual void resumeVM();
    virtual void stopVM();
@@ -52,10 +52,10 @@ public:
 class x86ELENAVMMachine : public ELENAVMMachine
 {
 public:
-//   Instance* getInstance()
-//   {
-//      return _instance;
-//   }
+   Instance* getInstance()
+   {
+      return _instance;
+   }
 
    x86ELENAVMMachine(path_t rootPath);
 };
