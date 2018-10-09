@@ -2,10 +2,6 @@
 In development:
 ------                              
 	                            
-              exp - live programming
-                 * dynamic code : print the number sum
-                 * dynamic code : build tape to : print the number sum
-
               dev - tests          
                  * test vm sta : debugger
                  * test vm sta : preloaded symbols / initializers
@@ -21,6 +17,9 @@ In development:
                  * get rid of corevm
                  * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : get rid of tt_ptr field
+
+              exp - live programming
+                 * dynamic code : build tape to : print the number sum
 
               dev - general implementation
                  * (re)implement sockets

@@ -166,11 +166,25 @@ import extensions.
 
 singleton Algorithm
 {
+    execute(n)
+    [
+        var previous := Expression Constant(n).
+        
+        var printing := Expression MessageCall(
+                                %"writeLine[1]",
+                                Expression Constant(console), 
+                                previous).
+    
+        var t1 := printing compiled.
+    
+        t1().           
+    ]
+    
     generic execute(V<object> args)
     [
         var previous := Expression Constant(args[0]).
         
-        1 to(args length) do(:i)
+        1 till(args length) do(:i)<int>
         [
             previous := Expression MessageCall(
                                         %"add[1]",
@@ -192,5 +206,8 @@ singleton Algorithm
 
 public program
 [
+    Algorithm execute(2).
     Algorithm execute(2,3).
+    Algorithm execute(2,3,4).
+    Algorithm execute(2,3,4,5).
 ]
