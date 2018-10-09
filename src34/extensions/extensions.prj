@@ -29,6 +29,7 @@
             <include>routines\enumerating.l</include>
             <include>routines\combinations.l</include>
             <include>routines\compound.l</include>
+            <include>routines\patterns.l</include>
         </module>
         <module name="dynamic">
             <include>dynamic\json.l</include>

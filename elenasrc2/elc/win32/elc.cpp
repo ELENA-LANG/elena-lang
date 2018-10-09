@@ -945,7 +945,7 @@ int main()
 
          linker.run(project, image, (_ELENA_::ref_t) - 1);
 
-      //   print(ELC_SUCCESSFUL_LINKING);
+         print(ELC_SUCCESSFUL_LINKING);
       }
       else if (platform == _ELENA_::ptWin32GUI) {
          print(ELC_LINKING);

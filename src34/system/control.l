@@ -122,111 +122,85 @@ public abstract Indexable<type>
    abstract Indexer<type> indexer []
 }
 
-//// --- MatrixIndexer ---
-//
-///// An indexer prototype
-//limited class Indexer2D
-//{
-//    /// Returns false if the index out of range
-//    bool available = $nil.
-//
-//    /// Returns the current member
-//    get = $nil.
-//    
-//    /// Sets the current member
-//    set : anObject []
-//    
-//    /// Reads the current i-index into an output parameter
-//    stacksafe readIndex1To vint:anIndex []
-//    
-//    /// Reads the current j-index into an output parameter
-//    stacksafe readIndex2To vint:anIndex []
-//    
-//    int rvprop index1 :: readIndex1To.
-//    
-//    int rvprop index2 :: readIndex2To.
-//    
-//    /// Sets the i-index by specified value
-//    stacksafe writeIndex1 int:anIndex [ ] 
-//    
-//    /// Sets the i-index by specified value
-//    stacksafe writeIndex2 int:anIndex [ ] 
-//    
-//    /// Sets the index by specified value
-//    set index1:anIndex 
-//        <= writeIndex1 int:anIndex.
-//    
-//    /// Sets the index by specified value
-//    set index2:anIndex 
-//        <= writeIndex2 int:anIndex.
-//    
-//    /// Increaments the index by specified value
-//    indexer2d append index1:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex1To vint:anIndex.
-//        
-//        anIndex := anIndex + anOffset int.
-//        
-//        $self writeIndex1 int:anIndex.
-//        
-//        ^ $self.
-//    ]
-//    
-//    /// Increaments the index by specified value
-//    indexer2d append index2:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex2To vint:anIndex.
-//        
-//        anIndex := anIndex + anOffset int.
-//        
-//        $self writeIndex2 int:anIndex.
-//        
-//        ^ $self.
-//    ]
-//
-//    /// Decreaments the index by specified value
-//    reduce index1:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex1To vint:anIndex.
-//        
-//        anIndex := anIndex - anOffset int.
-//        
-//        $self writeIndex1 int:anIndex.
-//    ]
-//
-//    /// Decreaments the index by specified value
-//    reduce index2:anOffset
-//    [
-//        int anIndex := 0.
-//        $self readIndex2To vint:anIndex.
-//        
-//        anIndex := anIndex - anOffset int.
-//        
-//        $self writeIndex2 int:anIndex.
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readSizeTo vint:n vint:m
-//    [
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readColumnsTo vint:m
-//    [
-//    ]
-//
-//    int rvprop columns :: readColumnsTo.
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readRownsTo vint:n
-//    [
-//    ]
-//    
-//    int rvprop rows :: readRownsTo.
-//}
+// --- MatrixIndexer ---
+
+/// An indexer prototype
+public interface Indexer2D
+{
+    /// Returns false if the index out of range
+    abstract bool available []
+
+    /// Returns the current member
+    abstract get []
+    
+    /// Sets the current member
+    abstract set : anObject []
+    
+    /// Reads the current i-index into an output parameter
+    abstract readIndex1To(ref<int> retVal) []
+    
+    /// Reads the current j-index into an output parameter
+    abstract readIndex2To(ref<int> retVal) []
+    
+    int rvprop index1 :: readIndex1To.
+    
+    int rvprop index2 :: readIndex2To.
+    
+    /// Sets the i-index by specified value
+    abstract writeIndex1(int i) [ ] 
+    
+    /// Sets the i-index by specified value
+    abstract writeIndex2(int j) [ ] 
+    
+    /// Sets the index by specified value
+    set index1(int i)
+        <= writeIndex1(i).
+    
+    /// Sets the index by specified value
+    set index2(int j)
+        <= writeIndex2(j).
+    
+    /// Increaments the index by specified value
+    appendIndex1(int offs)
+    [
+        int anIndex := 0.
+        self readIndex1To(&anIndex).
+        
+        anIndex := anIndex + offs.
+        
+        self writeIndex1(anIndex).
+    ]
+    
+    /// Increaments the index by specified value
+    appendIndex2(int offs)
+    [
+        int anIndex := 0.
+        self readIndex2To(&anIndex).
+        
+        anIndex := anIndex + offs.
+        
+        self writeIndex2(anIndex).
+    ]
+
+    /// Reads the length to the output parameter    
+    abstract readSizeTo(ref<int> n, ref<int> m)
+    [
+    ]
+
+    /// Reads the length to the output parameter    
+    abstract readColumnsTo(ref<int> m)
+    [
+    ]
+
+    int rvprop columns :: readColumnsTo.
+
+    /// Reads the length to the output parameter    
+    abstract readRowsTo(ref<int> n)
+    [
+    ]
+    
+    int rvprop rows :: readRowsTo.
+}
 
 // --- base functions ---
 
@@ -1098,61 +1072,61 @@ public abstract BaseIndexer<type> :: Indexer<type>
     cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.
 }
 
-//// --- BaseMatrixIndexer ---
-//
-//class BaseMatrixIndexer :: Indexer2D
-//{
-//    int theIndex1.
-//    int theIndex2.
-//    int theLength1.
-//    int theLength2.
-//    
-//    /// Returns false if the index out of range
-//    bool available = (theIndex1 <= theLength1) && (theIndex2 <= theLength2).
-//    
-//    /// Reads the current i-index into an output parameter
-//    readIndex1To vint:retVal
-//    [
-//        retVal int := theIndex1.
-//    ]    
-//    
-//    /// Reads the current j-index into an output parameter
-//    readIndex2To vint:retVal
-//    [
-//        retVal int := theIndex2.
-//    ]
-//    
-//    /// Sets the i-index by specified value
-//    writeIndex1 int:anIndex 
-//    [ 
-//        theIndex1 := anIndex.
-//    ] 
-//    
-//    /// Sets the i-index by specified value
-//    writeIndex2 int:anIndex 
-//    [
-//        theIndex2 := anIndex.
-//    ] 
-//
-//    /// Reads the length to the output parameter    
-//    stacksafe readSizeTo vint:n vint:m
-//    [
-//        n int := theLength1.
-//        m int := theLength2.
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    readColumnsTo vint:m
-//    [
-//        m int := theLength2.
-//    ]
-//
-//    /// Reads the length to the output parameter    
-//    readRownsTo vint:n
-//    [
-//        n int := theLength1.
-//    ]    
-//}
+// --- BaseMatrixIndexer ---
+
+public abstract BaseMatrixIndexer :: Indexer2D
+{
+    int theIndex1.
+    int theIndex2.
+    int theLength1.
+    int theLength2.
+    
+    /// Returns false if the index out of range
+    bool available = (theIndex1 <= theLength1) && (theIndex2 <= theLength2).
+    
+    /// Reads the current i-index into an output parameter
+    readIndex1To(ref<int> retVal)
+    [
+        retVal value := theIndex1.
+    ]    
+    
+    /// Reads the current j-index into an output parameter
+    readIndex2To(ref<int> retVal)
+    [
+        retVal value := theIndex2.
+    ]
+    
+    /// Sets the i-index by specified value
+    writeIndex1(int anIndex)
+    [ 
+        theIndex1 := anIndex.
+    ] 
+    
+    /// Sets the i-index by specified value
+    writeIndex2(int anIndex)
+    [
+        theIndex2 := anIndex.
+    ] 
+
+    /// Reads the length to the output parameter    
+    readSizeTo(ref<int> n, ref<int> m)
+    [
+        n value := theLength1.
+        m value := theLength2.
+    ]
+
+    /// Reads the length to the output parameter    
+    readColumnsTo(ref<int> retVal)
+    [
+        retVal value := theLength2.
+    ]
+
+    /// Reads the length to the output parameter    
+    readRowsTo(ref<int> retVal)
+    [
+        retVal value := theLength1.
+    ]    
+}
 
 // --- Range --
 

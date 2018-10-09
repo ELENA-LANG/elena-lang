@@ -89,148 +89,148 @@ public sealed Array<template_subj> :: Indexable<template_subj>
         <= getAt(T<int>(aParam)).
 }
 
-//// --- matrixof ---
-//
-//sealed template matrix :: template_subj
-//{
-//    array<template_subj> theArray.
-//    int                  theRows.
-//    int                  theColumns.
+// --- matrixof ---
+
+public sealed Matrix<template_subj>
+{
+    Array<template_subj> theArray.
+    int                  theRows.
+    int                  theColumns.
+    
+    constructor(params)
+    [
+        theRows := params rows.
+        theColumns := params columns.
+        
+        int len := theRows * theColumns.
+        
+        theArray := V<template_subj>(/*theRows * theColumns*/len).
+        
+        auto it := T<Indexer2D>(params) ?? nil.
+        ifnot(nil == it)
+            [
+                int i := 0.
+                int j := 0.
+                
+                while (i < theRows)
+                [
+                    j := 0.
+                    while (j < theColumns)
+                    [
+                        it writeIndex1(i).
+                        it writeIndex2(j).
+                        
+                        template_subj val := it get.
+                        
+                        self setAt(i, j, val).
+                        
+                        j := j + 1
+                    ].
+                    
+                    i := i + 1
+                ]
+            ]
+    ]
+    
+    /// Reads the matrix lengths to the output parameter
+    readLengths(ref<int> Rows, ref<int> Columns)
+    [
+        Rows value := theRows.
+        Columns value := theColumns.
+    ]
+
+    int rvprop length  :: readLengthTo.    
+    int rvprop columns :: readColumnsTo.
+    int rvprop rows    :: readRowsTo.
+
+    readLengthTo(ref<int> retVal)
+    [
+        retVal int := theRows.
+    ]
+
+    readColumnsTo(ref<int> retVal)
+    [
+        retVal value := theColumns.
+    ]
+
+    readRowsTo(ref<int> retVal)
+    [
+        retVal value := theRows.
+    ]
+
+    /// Writes an integer value at the specified position
+    setAt(int i, int j, template_subj v)
+    [
+        theArray setAt(i * theColumns + j, v).
+    ]
+
+    embeddable template_subj getAt(int i, int j)
+        = theArray getAt(i * theColumns + j).
+
+    getAt(i,j)
+        = self getAt(T<int>(i), T<int>(j)).
+
+    setAt(i, j, v)
+    [
+        self setAt(T<int>(i), T<int>(j), T<template_subj>(v)).    
+    ]
+
+    /// Returns a row
+    getAt(i) =
+    {
+        length = theColumns.
+        
+        getAt(j)
+            = self getAt(i,j).
+        
+        setAt(j, v)
+        [
+            self setAt(i,j,v).
+        ]
+    }.
 //    
-//    implicit object:params
-//    [
-//        theRows := params rows.
-//        theColumns := params columns.
-//        
-//        int len := theRows * theColumns.
-//        
-//        theArray := template_subj<>(/*theRows * theColumns*/len).
-//        
-//        var it := params indexer2d \ back:$nil.
-//        ifnot($nil == it)
-//            [
-//                int i := 0.
-//                int j := 0.
-//                
-//                while (i < theRows)
-//                [
-//                    j := 0.
-//                    while (j < theColumns)
-//                    [
-//                        it writeIndex1 int:i.
-//                        it writeIndex2 int:j.
-//                        
-//                        var val := it get.
-//                        
-//                        $self setAt int:i int:j template_subj:val.
-//                        
-//                        j := j + 1
-//                    ].
-//                    
-//                    i := i + 1
-//                ]
-//            ]
-//    ]
-//    
-//    /// Reads the matrix lengths to the output parameter
-//    stacksafe readLengths vint:Rows vint:Columns
-//    [
-//        Rows int := theRows.
-//        Columns int := theColumns.
-//    ]
-//
-//    int rvprop length  :: readLength.    
-//    int rvprop columns :: readColumns.
-//    int rvprop rows    :: readRows.
-//
-//    stacksafe readLength vint:retVal
-//    [
-//        retVal int := theRows.
-//    ]
-//
-//    stacksafe readColumns vint:retVal
-//    [
-//        retVal int := theColumns.
-//    ]
-//
-//    stacksafe readRows vint:retVal
-//    [
-//        retVal int := theRows.
-//    ]
-//
-//    /// Writes an integer value at the specified position
-//    stacksafe setAt int:i int:j template_subj:aValue
-//    [
-//        theArray setAt int(i * theColumns + j) template_subj:aValue.
-//    ]
-//
-//    embeddable template_subj getAt int:i int:j
-//        = theArray getAt int(i * theColumns + j).
-//
-//    getAt : i : j
-//        = $self getAt int:i int:j.
-//
-//    setAt : i : j : aValue
-//    [
-//        $self setAt int:i int:j template_subj:aValue.    
-//    ]
-//
-//    /// Returns a row
-//    getAt : i =
+//    indexer2d = Indexer2D
 //    {
-//        length = theColumns int.
 //        
-//        getAt : j
-//            = $self getAt(i,j).
-//        
-//        setAt : j : aValue
-//        [
-//            $self setAt(i,j,aValue).
-//        ]
 //    }.
-////    
-////    indexer2d = Indexer2D
-////    {
-////        
-////    }.
-//
-//    enumerator 
-//    [
-//        vint i := 0.
-//        vint j := -1.
-//        int length1 := theRows.
-//        int length2 := theColumns.
-//        
-//        ^ Enumerator::
-//          {
-//              get = $self getAt int:i int:j.
-//              
-//              enumerable = $self.
-//              
-//              reset [ i := 0. j := -1. ]
-//              
-//              next
-//              [
-//                  ifnot (i < length1)
-//                  [
-//                     ^ false.
-//                  ].
-//                  
-//                  j := j + 1.
-//                  
-//                  ifnot (j < length2)
-//                  [
-//                      j := -1.
-//                      i := i + 1.
-//                      
-//                      ^ false
-//                  ].
-//                  
-//                  ^ true
-//              ]
-//          }.
-//    ]
-//}
+
+    enumerator 
+    [
+        ref<int> i := 0.
+        ref<int> j := -1.
+        int length1 := theRows.
+        int length2 := theColumns.
+        
+        ^ Enumerator::
+          {
+              get = self getAt(i value, j value).
+              
+              enumerable = self.
+              
+              reset [ i value := 0. j value := -1. ]
+              
+              bool next
+              [
+                  ifnot (i < length1)
+                  [
+                     ^ false.
+                  ].
+                  
+                  j := j + 1.
+                  
+                  ifnot (j < length2)
+                  [
+                      j := -1.
+                      i := i + 1.
+                      
+                      ^ false
+                  ].
+                  
+                  ^ true
+              ]
+          }.
+    ]
+}
 
 // === basic memory classes ===
 
@@ -1720,11 +1720,11 @@ public sealed Array :: Indexable, Array<object>
         system'core_routines'__array copy(self, anIndex, aLength, anArray).
     ]
         
-//    constructor new(object singleItem)
-//        <= new(1);
-//    [
-//        self setAt(0, singleItem).
-//    ]
+    constructor single(object singleItem)
+        <= new(1);
+    [
+        self setAt(0, singleItem).
+    ]
 
     /// Concatinates the arrays    
     add(Array anArray)
@@ -1778,7 +1778,7 @@ public sealed Array :: Indexable, Array<object>
 
 // --- paramsOp ---
 
-extension<__args> paramsOp
+public extension<__args> paramsOp
 {
     readLengthTo(ref<int> aLength)
         => system'core_routines'__args.            

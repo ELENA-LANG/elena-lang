@@ -13,6 +13,7 @@ In development:
                  * test vm sta : critical exception handlers
 
               dev - general implementation
+                 *  #77 : migrate script engine
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
@@ -43,7 +44,7 @@ In development:
                  * vm : Execute Brain****
                  * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
                  * mta system : check the situation when too many threads (> MAX_THREAD)
-                 * rosetta : Sorting algorithms/Sleep sort
+                 * rosetta : Sorting algorithms/Sleep sort/Wireworld/World Cup group stage/Y combinator/Zeckendorf arithmetic/Zhang-Suen thinning algorithm
 
               dev - general optimization
                  * #459 : Ambiguity between an array and a variadic argument

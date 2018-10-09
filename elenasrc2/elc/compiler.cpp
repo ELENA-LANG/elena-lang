@@ -2518,6 +2518,12 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
       return generalRoleRef1;
    }
 
+   if (objectRef == V_ARGARRAY) {
+      // HOTFIX : variadic target - try to resolve extension for the array
+
+      return mapExtension(scope, messageRef, implicitSignatureRef, ObjectInfo(okObject, scope.moduleScope->arrayReference), stackSafeAttr);
+   }
+
    return 0;
 }
 
