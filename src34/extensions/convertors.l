@@ -8,6 +8,9 @@ import system'dynamic.
 
 class literalExConvertor =
 {
+    literal convert(RealMatrix a)
+        = realmatrixExConvertor toLiteral(a).
+
     literal convert(IntMatrix a)
         = intmatrixExConvertor toLiteral(a).
 
@@ -189,6 +192,52 @@ public singleton intmatrixExConvertor
             while (j < m)
             [
                 int r := 0.
+                matrix read(i, j, &r).
+                
+                anOutput write:r; write:",".
+                
+                j := j + 1
+            ].
+            anOutput readLengthTo(&l).            
+            anOutput setLength(l - 1).
+            
+            anOutput write:forwards'newLine.
+            
+            i := i + 1
+        ].
+        
+        ^ anOutput literal
+    ]
+}
+
+public singleton realmatrixExConvertor
+{
+    convert(Array a)
+    [
+        int n := a length.
+        int m := a[0] length.
+        
+        ^ RealMatrix new(n, m); populate(:i:j)<int,int,real>( a getAt(i); toArray; getAt(j); toReal ).
+    ]
+    
+    toLiteral(RealMatrix matrix)
+    [
+        auto anOutput := TextBuilder new.
+        
+        int i := 0.
+        int j := 0.
+        int n := 0.
+        int m := 0.
+        int l := 0.
+        
+        matrix readLengthsTo(&n, &m).
+        
+        while (i < n)
+        [
+            j := 0.
+            while (j < m)
+            [
+                real r := 0.0r.
                 matrix read(i, j, &r).
                 
                 anOutput write:r; write:",".

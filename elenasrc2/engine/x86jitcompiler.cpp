@@ -1600,7 +1600,7 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    MemoryWriter sdataWriter(sdata);
    MemoryWriter codeWriter(code);
 
-   x86JITScope dataScope(NULL, &dataWriter, &helper, this);
+    x86JITScope dataScope(NULL, &dataWriter, &helper, this);
    for (int i = 0; i < coreVariableNumber; i++) {
       if (!_preloaded.exist(coreVariables[i])) {
          _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
@@ -1620,12 +1620,15 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    x86JITScope rdataScope(NULL, &rdataWriter, &helper, this);
    _preloaded.add(SYSTEM_ENV, helper.getVAddress(rdataWriter, mskRDataRef));
    loadCoreData(helper, rdataScope, SYSTEM_ENV);
-   // NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
+   // NOTE : the table is tailed with GCMGSize,GCYGSize,MaxThread and DebugPtr fields
    rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
    rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
    rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
 
-   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance));
+   // resolve reference to SYSTEM_ENV at rdata header
+   rdata->addReference((ref_t)_preloaded.get(SYSTEM_ENV), 0);
+
+   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance)); // ??
 
    x86JITScope scope(NULL, &codeWriter, &helper, this);
    for (int i = 0; i < coreFunctionNumber; i++) {

@@ -104,7 +104,7 @@ public:
       _project->addLoaderListener(listener);
    }
 
-   ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper);
+   ExecutableImage(bool standAlone, Project* project, _JITCompiler* compiler, _Helper& helper);
 };
 
 //// --- VirtualMachineClientImage ---

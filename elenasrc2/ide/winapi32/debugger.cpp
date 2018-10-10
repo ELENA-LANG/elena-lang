@@ -10,6 +10,7 @@
 #include "debugger.h"
 #include "..\idecommon.h"
 #include "win32\pehelper.h"
+#include "elenamachine.h"
 
 using namespace _ELENA_;
 
@@ -697,31 +698,37 @@ bool Debugger :: findSignature(StreamReader& reader, char* signature)
    PEHelper::seekSection(reader, ".rdata", rdata);
 
    // load Executable image
-   Context()->readDump(rdata, signature, strlen(ELENACLIENT_SIGNITURE));
+   Context()->readDump(rdata + 4, signature, strlen(ELENACLIENT_SIGNITURE));
    signature[strlen(ELENACLIENT_SIGNITURE)] = 0;
 
    return true;
 }
 
-bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr)
+bool Debugger :: initDebugInfo(bool standAlone, StreamReader& reader, size_t& debugInfoPtr)
 {
-   if (standalone) {
+   size_t rdata = 0;
+   PEHelper::seekSection(reader, ".rdata", rdata);
+
+   if (standAlone) {
+      // if it is a standalone
       reader.seek((pos_t)baseAddress);
 
       _ELENA_::PEHelper::seekSection(reader, ".debug", debugInfoPtr);
    }
-   else if (_vmHook == 0) {
-      size_t rdata = Context()->readDWord(0x4000D0);
-      //HOTFIX : the actual length should be used
-      _vmHook = Context()->readDWord((pos_t)baseAddress + rdata + _ELENA_::align(strlen(ELENACLIENT_SIGNITURE) + 3, 4));
+   else {
+      // read SystemEnv
+      SystemEnv env;
+      Context()->readDump(Context()->readDWord(rdata), (char*)&env, sizeof(SystemEnv));
 
-      // enable debug mode
-      Context()->writeDWord(_vmHook, -1);
+      // read Table
+      GCTable table;
+      Context()->readDump((size_t)env.Table, (char*)&table, sizeof(GCTable));
 
-      return false;
+      if (table.dbg_ptr != 0) {
+         debugInfoPtr = table.dbg_ptr;
+
+         return true;
+      }
+      else return false;
    }
-   // load VM debug section address
-   else debugInfoPtr = Context()->readDWord(_vmHook + 4);
-
-   return true;
 }

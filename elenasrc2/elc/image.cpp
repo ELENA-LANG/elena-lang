@@ -15,8 +15,8 @@ using namespace _ELENA_;
 
 // --- ExecutableImage ---
 
-ExecutableImage :: ExecutableImage(Project* project, _JITCompiler* compiler, _Helper& helper)
-   : Image(true)
+ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompiler* compiler, _Helper& helper)
+   : Image(standAlone)
 {
    _project = project;
    _objectHeaderSize = compiler->getObjectHeaderSize();

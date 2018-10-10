@@ -2,12 +2,6 @@
 In development:
 ------                              
 	                            
-              dev - tests          
-                 * test vm sta : debugger
-                 * test vm sta : preloaded symbols / initializers
-                 * test vm sta : exception handlers
-                 * test vm sta : critical exception handlers
-
               dev - general implementation
                  *  #77 : migrate script engine
                  *  #77 : migrate GC algorithm
@@ -37,6 +31,9 @@ In development:
                  - closers passed as parameters should be stack-allocated
 
               dev - tests          
+                 * test vm sta : preloaded symbols / initializers
+                 * test vm sta : exception handlers
+                 * test vm sta : critical exception handlers
                  * sta / gc : anagram, Hailstone sequence
                  * mta / gc : anagram, Hailstone sequence
                  * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment

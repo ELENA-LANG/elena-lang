@@ -158,8 +158,10 @@ Image :: Image(bool standAlone)
    // put signature
    MemoryWriter writer(&_data);
 
+   writer.writeDWord(0);  // put SYSTEM_ENV reference place holder
+
    if (standAlone) {
-      writer.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));      
+      writer.write(ELENA_SIGNITURE, strlen(ELENA_SIGNITURE));
    }
    else writer.write(ELENACLIENT_SIGNITURE, strlen(ELENACLIENT_SIGNITURE));
 

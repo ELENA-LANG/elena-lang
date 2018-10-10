@@ -396,19 +396,21 @@ void DebugController :: onInitBreakpoint()
       char signature[0x10];
       _debugger.findSignature(reader, signature);
 
-      if (strcmp(signature, ELENACLIENT_SIGNITURE) == 0) {
-         if (!_debugger.initDebugInfo(false, reader, _debugInfoPtr))
-         {
+      if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) == 0) {
+         reader.seek(_debugger.getBaseAddress());
+
+         _debugger.initDebugInfo(true, reader, _debugInfoPtr);
+      }
+      else if (strncmp(signature, ELENACLIENT_SIGNITURE, strlen(ELENACLIENT_SIGNITURE)) == 0) {
+         reader.seek(_debugger.getBaseAddress());
+
+         if (!_debugger.initDebugInfo(false, reader, _debugInfoPtr)) {
             // continue debugging
             _events.setEvent(DEBUG_RESUME);
             return;
          }
       }
-      else if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) == 0) {
-         DebugReader reader(&_debugger);
 
-         _debugger.initDebugInfo(true, reader, _debugInfoPtr);
-      }
       // !! notify if the executable is not supported
       _debugInfoSize = 4;
    }

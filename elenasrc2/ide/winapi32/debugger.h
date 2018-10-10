@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Debugger class and its helpers header
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef debuggerH
@@ -257,7 +257,7 @@ public:
    void activate();
 
    void initHook() { init_breakpoint = -1; }
-   bool initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr);
+   bool initDebugInfo(bool standAlone, StreamReader& reader, size_t& debugInfoPtr);
 
    size_t findEntryPoint(const wchar_t* programPath);
    bool findSignature(StreamReader& reader, char* signature);

@@ -545,7 +545,7 @@ bool Instance :: restart(SystemEnv* env, bool debugMode)
    _signClass.copy(_config.forwards.get(SIGNATURE_FORWARD));
 
    // init debug section
-   if (_linker->getDebugMode()) {
+   if (_debugMode) {
       printInfo(L"Debug mode...");
    }
 
@@ -564,6 +564,11 @@ bool Instance :: restart(SystemEnv* env, bool debugMode)
    resolveMessageTable();
 
    _initialized = true;
+
+   // set debug ptr if requiered
+   if (_debugMode) {
+      env->Table->dbg_ptr = (pos_t)loadDebugSection();
+   }
 
    printInfo(L"Done...");
 
@@ -939,8 +944,9 @@ int Instance :: interprete(SystemEnv* env, void* tape)
    resumeVM();
 
    // raise an exception to warn debugger
-   if(_debugMode)
+   if (_debugMode) {
       raiseBreakpoint();
+   }      
 
    _Memory* m = getTargetSection(mskStatRef);
    int bef = (*m)[8];

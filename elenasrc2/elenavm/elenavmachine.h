@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-#define ELENAVM_REVISION  9
+constexpr auto ELENAVM_REVISION = 10;
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2018 by Alex Rakov"
@@ -423,7 +423,7 @@ public:
 
    virtual size_t getLinkerConstant(int id);
 
-//   virtual void* loadDebugSection() = 0;
+   virtual void* loadDebugSection() = 0;
 
 //   bool init();
 

@@ -60,6 +60,7 @@ struct GCTable
    pos_t gc_signal;                    // !! is not used for STA
    pos_t tt_ptr;                       // !! is not used for STA
    pos_t tt_lock;                      // !! is not used for STA
+   pos_t dbg_ptr;                      // NOTE : used only for VM Client
 };
 
 // --- TLSEntry ---

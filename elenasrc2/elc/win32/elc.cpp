@@ -907,7 +907,7 @@ int main()
 
          _ELENA_::Linker linker;
          ImageHelper helper(&linker, true);
-         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
          linker.run(project, image, (_ELENA_::ref_t) - 1);
 
          print(ELC_SUCCESSFUL_LINKING);
@@ -917,7 +917,7 @@ int main()
 
          _ELENA_::Linker linker(true);
          ImageHelper helper(&linker, true);
-         _ELENA_::ExecutableImage image(&project, project.createJITCompiler64(), helper);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler64(), helper);
          linker.run(project, image, (_ELENA_::ref_t) - 1);
 
          print(ELC_SUCCESSFUL_LINKING);
@@ -927,7 +927,7 @@ int main()
 
          _ELENA_::Linker linker;
          ImageHelper helper(&linker, true);
-         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
 
          linker.run(project, image, helper.tls_directory);
 
@@ -941,7 +941,7 @@ int main()
 
          _ELENA_::Linker linker;
          ImageHelper helper(&linker, true, true);
-         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
+         _ELENA_::ExecutableImage image(false, &project, project.createJITCompiler(), helper);
 
          linker.run(project, image, (_ELENA_::ref_t) - 1);
 
@@ -952,7 +952,7 @@ int main()
 
          _ELENA_::Linker linker;
          ImageHelper helper(&linker, false);
-         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
          linker.run(project, image, (_ELENA_::ref_t) - 1);
 
          print(ELC_SUCCESSFUL_LINKING);
@@ -962,7 +962,7 @@ int main()
 
          _ELENA_::Linker linker;
          ImageHelper helper(&linker, false);
-         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
          linker.run(project, image, helper.tls_directory);
 
          print(ELC_SUCCESSFUL_LINKING);
