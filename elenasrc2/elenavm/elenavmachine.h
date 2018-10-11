@@ -117,6 +117,9 @@ public:
       _instance = nullptr;
    }
 
+   void OpenFrame(FrameHeader* frameHeader, SystemEnv* env);
+   void CloseFrame(FrameHeader* frameHeader, SystemEnv* env);
+
    ELENAVMMachine(path_t rootPath);
    virtual ~ELENAVMMachine()
    {

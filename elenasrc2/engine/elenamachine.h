@@ -109,6 +109,9 @@ public:
    static void InitSTA(SystemEnv* env, FrameHeader* frameHeader);
    static void InitMTA(SystemEnv* env, FrameHeader* frameHeader);
 
+   static void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader);
+   static void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader);
+
    static bool NewThread(SystemEnv* env, FrameHeader* frameHeader);
 
    static void Exit(pos_t exitCode);

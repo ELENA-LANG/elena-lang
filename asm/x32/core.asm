@@ -4,8 +4,6 @@ define HOOK                 10010h
 define INIT_RND             10012h
 define ENDFRAME             10016h
 define RESTORE_ET           10017h
-define OPENFRAME            10019h
-define CLOSEFRAME           1001Ah
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
@@ -847,45 +845,6 @@ procedure % ENDFRAME
   mov  fs:[0], ebx
   lea  esp, [esp+4]
 
-  // ; restore return pointer
-  push ecx   
-  ret
-
-end
-
-// ; NOTE : some functions (e.g. system'core_routines'win_WndProc) assumes the function reserves 12 bytes
-// ; does not affect eax
-procedure % OPENFRAME
-
-  // ; save return pointer
-  pop  ecx  
-
-  xor  edi, edi
-
-  mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
-  // ; save previous pointer / size field
-  push ebp
-  push esi                                
-  push edi                              
-  mov  ebp, esp
-  
-  // ; restore return pointer
-  push ecx   
-  ret
-
-end
-
-// ; does not affect eax
-procedure % CLOSEFRAME
-
-  // ; save return pointer
-  pop  ecx  
-  
-  lea  esp, [esp+4]
-  pop  edx
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
-  pop  ebp
-  
   // ; restore return pointer
   push ecx   
   ret

@@ -1087,3 +1087,17 @@ void ELENAVMMachine :: Exit(int exitCode)
 {
    __routineProvider.Exit(exitCode);
 }
+
+void ELENAVMMachine :: OpenFrame(FrameHeader* frameHeader, SystemEnv* env)
+{
+   if (env->MaxThread <= 1) {
+      __routineProvider.OpenSTAFrame(env, frameHeader);
+   }
+}
+
+void ELENAVMMachine :: CloseFrame(FrameHeader* frameHeader, SystemEnv* env)
+{
+   if (env->MaxThread <= 1) {
+      __routineProvider.CloseSTAFrame(env, frameHeader);
+   }
+}

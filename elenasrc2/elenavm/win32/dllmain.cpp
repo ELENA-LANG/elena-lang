@@ -338,41 +338,51 @@ EXTERN_DLL_EXPORT int InterpretTape(void* tape)
 //   }
 }
 
-//EXTERN_DLL_EXPORT int EvaluateTape(void* tape)
-//{
-//   Instance* instance = getCurrentInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
+EXTERN_DLL_EXPORT int EvaluateTape(void* systemEnv, void* tape)
+{
+   FrameHeader header;
+
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+   
+   try {
 //      _Memory* m = instance->getTargetSection(mskStatRef);
 //      int bef = (*m)[8];
-//
-//      int r = instance->interprete(tape, VM_INTERPRET);
+
+      // open frame
+      _Machine->OpenFrame(&header, (SystemEnv*)systemEnv);
+
+      int retVal = instance->interprete((SystemEnv*)systemEnv, tape);
+
+      // close frame
+      _Machine->CloseFrame(&header, (SystemEnv*)systemEnv);
+
+      return retVal;
 //
 //      m = instance->getTargetSection(mskStatRef);
 //      int aft = (*m)[8];
 //
 //      return r;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch(InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch(InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
 //EXTERN_DLL_EXPORT size_t SetDebugMode()
 //{
 //   Instance* instance = getCurrentInstance();

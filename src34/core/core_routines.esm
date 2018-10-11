@@ -4821,9 +4821,13 @@ procedure __vmtape."evaluateTape$system@UnsafePointer[2]"
 
   aloadsi 2
   nload
+  exclude
   pushd
+  system
+  pushe
   callextr extern : EvaluateTape
-  pop
+  popi 2
+  include
   pushd
   popa
   quitn 2

@@ -232,3 +232,41 @@ void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool wi
    if (withExit)
       ::ExitThread(exitCode);
 }
+
+void SystemRoutineProvider :: OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
+{
+   /*
+     // ; save return pointer
+     pop  ecx
+
+     xor  edi, edi
+
+     mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
+     // ; save previous pointer / size field
+     push ebp
+     push esi
+     push edi
+     mov  ebp, esp
+
+     // ; restore return pointer
+     push ecx
+     ret
+   */
+}
+
+void SystemRoutineProvider :: CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
+{
+   /*
+  // ; save return pointer
+  pop  ecx
+
+  lea  esp, [esp+4]
+  pop  edx
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
+  pop  ebp
+
+  // ; restore return pointer
+  push ecx
+  ret
+*/
+}
