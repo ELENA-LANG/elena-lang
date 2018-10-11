@@ -36,6 +36,7 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
       case mskWideLiteralRef:
          _wideReferences.add(reference, (size_t)vaddress);
          break;
+      case mskSymbolRelRef:
       case mskSymbolRef:
          _symbolReferences.add(reference, (ref_t)vaddress);
          break;
@@ -100,7 +101,7 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
             return (void*)_literalReferences.get(reference);
          case mskWideLiteralRef:
             return (void*)_wideReferences.get(reference);
-//         case mskSymbolRelRef:
+         case mskSymbolRelRef:
          case mskSymbolRef:
            return (void*)_symbolReferences.get(reference);
          case mskImportRef:
