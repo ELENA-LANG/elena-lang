@@ -884,7 +884,7 @@ void Instance :: configurate(SystemEnv* env, MemoryReader& reader, int terminato
 ////   return NULL;
 ////}
 
-int Instance :: interprete(SystemEnv* env, void* tape)
+int Instance :: interprete(SystemEnv* env, void* tape, bool standAlone)
 {
    ByteArray    tapeArray(tape, -1);
    MemoryReader tapeReader(&tapeArray);
@@ -953,10 +953,12 @@ int Instance :: interprete(SystemEnv* env, void* tape)
 
    _Entry entry;
    entry.address = vaddress;
-   int retVal = (*entry.entry)();
 
-   //m = getTargetSection(mskStatRef);
-   //int aft = (*m)[8];
+   int retVal = 0;
+   if (!standAlone) {
+      retVal = __routineProvider.ExecuteInFrame(env, entry);
+   }
+   else retVal = (*entry.entry)();
 
    if (retVal == 0)
       setStatus("Broken");
@@ -1067,7 +1069,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t rootPath)
    config.load(configPath.c_str(), &templates);
 }
 
-void ELENAVMMachine :: startSTA(FrameHeader* frameHeader, SystemEnv* env, void* tape)
+void ELENAVMMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* tape)
 {
    // setting up system
    __routineProvider.Prepare();
@@ -1075,7 +1077,7 @@ void ELENAVMMachine :: startSTA(FrameHeader* frameHeader, SystemEnv* env, void* 
 
    //_Entry entry;
    //entry.address = programEntry;
-   _instance->interprete(env, tape);
+   _instance->interprete(env, tape, true);
 
    //(*entry.entry)();
 
@@ -1086,18 +1088,4 @@ void ELENAVMMachine :: startSTA(FrameHeader* frameHeader, SystemEnv* env, void* 
 void ELENAVMMachine :: Exit(int exitCode)
 {
    __routineProvider.Exit(exitCode);
-}
-
-void ELENAVMMachine :: OpenFrame(FrameHeader* frameHeader, SystemEnv* env)
-{
-   if (env->MaxThread <= 1) {
-      __routineProvider.OpenSTAFrame(env, frameHeader);
-   }
-}
-
-void ELENAVMMachine :: CloseFrame(FrameHeader* frameHeader, SystemEnv* env)
-{
-   if (env->MaxThread <= 1) {
-      __routineProvider.CloseSTAFrame(env, frameHeader);
-   }
 }

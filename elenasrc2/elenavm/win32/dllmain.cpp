@@ -28,7 +28,7 @@ void loadDLLPath(HMODULE hModule)
 
 EXTERN_DLL_EXPORT void InitializeVMSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape)
 {
-   FrameHeader header;
+   ProgramHeader header;
    // initialize the exception handler
    __asm {
       mov header.root_exception_struct.core_catch_frame, ebp
@@ -340,30 +340,14 @@ EXTERN_DLL_EXPORT int InterpretTape(void* tape)
 
 EXTERN_DLL_EXPORT int EvaluateTape(void* systemEnv, void* tape)
 {
-   FrameHeader header;
-
    Instance* instance = _Machine->getInstance();
    if (instance == NULL)
       return 0;
    
    try {
-//      _Memory* m = instance->getTargetSection(mskStatRef);
-//      int bef = (*m)[8];
-
-      // open frame
-      _Machine->OpenFrame(&header, (SystemEnv*)systemEnv);
-
-      int retVal = instance->interprete((SystemEnv*)systemEnv, tape);
-
-      // close frame
-      _Machine->CloseFrame(&header, (SystemEnv*)systemEnv);
+      int retVal = instance->interprete((SystemEnv*)systemEnv, tape, false);
 
       return retVal;
-//
-//      m = instance->getTargetSection(mskStatRef);
-//      int aft = (*m)[8];
-//
-//      return r;
    }
    catch (JITUnresolvedException& e)
    {

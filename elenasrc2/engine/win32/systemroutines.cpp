@@ -102,7 +102,7 @@ inline void Init(SystemEnv* env)
    env->Table->gc_signal = 0 ;
 }
 
-void SystemRoutineProvider :: InitSTA(SystemEnv* env, FrameHeader* frameHeader)
+void SystemRoutineProvider :: InitSTA(SystemEnv* env, ProgramHeader* frameHeader)
 {
    Init(env);
 
@@ -111,7 +111,7 @@ void SystemRoutineProvider :: InitSTA(SystemEnv* env, FrameHeader* frameHeader)
    env->Table->gc_stack_frame = 0;
 }
 
-void SystemRoutineProvider :: InitMTA(SystemEnv* env, FrameHeader* frameHeader)
+void SystemRoutineProvider :: InitMTA(SystemEnv* env, ProgramHeader* frameHeader)
 {
    Init(env);
    InitTLSEntry(0, *env->TLSIndex, frameHeader, env->ThreadTable);
@@ -135,7 +135,7 @@ inline TLSEntry* GetTLSEntry(pos_t tlsIndex)
    return entry;
 }
 
-void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, FrameHeader* frameHeader, pos_t* threadTable)
+void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, ProgramHeader* frameHeader, pos_t* threadTable)
 {
    TLSEntry* entry = GetTLSEntry(tlsIndex);
 
@@ -189,7 +189,7 @@ inline void leaveCriticalSection(void* tt_lock)
    }
 }
 
-bool SystemRoutineProvider :: NewThread(SystemEnv* env, FrameHeader* frameHeader)
+bool SystemRoutineProvider :: NewThread(SystemEnv* env, ProgramHeader* frameHeader)
 {
    entryCriticalSection(&env->Table->tt_lock);
 
@@ -233,40 +233,46 @@ void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool wi
       ::ExitThread(exitCode);
 }
 
-void SystemRoutineProvider :: OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
+inline void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
 {
-   /*
-     // ; save return pointer
-     pop  ecx
-
-     xor  edi, edi
-
-     mov  esi, [data : %CORE_GC_TABLE + gc_stack_frame]
-     // ; save previous pointer / size field
-     push ebp
-     push esi
-     push edi
-     mov  ebp, esp
-
-     // ; restore return pointer
-     push ecx
-     ret
-   */
+   frameHeader->previousFrame = env->Table->gc_stack_frame;
+   frameHeader->currentFrame = (pos_t)frameHeader + sizeof(FrameHeader);
+   frameHeader->reserved = 0;
 }
 
-void SystemRoutineProvider :: CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
+inline void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
 {
-   /*
-  // ; save return pointer
-  pop  ecx
+   env->Table->gc_stack_frame = frameHeader->previousFrame;
 
-  lea  esp, [esp+4]
-  pop  edx
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], edx
-  pop  ebp
+}
 
-  // ; restore return pointer
-  push ecx
-  ret
-*/
+int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry)
+{
+   int entryPtr = (int)&entry;
+   int retVal = 0;
+   FrameHeader frameHeader;
+   int framePtr = (int)&frameHeader;
+
+   if (env->MaxThread <= 1) {
+      OpenSTAFrame(env, &frameHeader);
+   }
+
+   __asm {
+      mov  eax, entryPtr
+      mov  edx, framePtr
+
+      push ebp
+      mov  ebp, edx
+
+      call [eax]
+
+      pop  ebp
+      
+      mov retVal, eax
+   }
+
+   if (env->MaxThread <= 1) {
+      CloseSTAFrame(env, &frameHeader);
+   }
+
 }

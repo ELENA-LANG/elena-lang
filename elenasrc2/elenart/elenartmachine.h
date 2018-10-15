@@ -115,9 +115,9 @@ private:
 
 public:
    // frameHeader contains initialized frame fields
-   void startSTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry);
-   void startMTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry);
-   void startThread(FrameHeader* frameHeader, SystemEnv* env, void* entryPoint, int index);
+   void startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry);
+   void startMTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry);
+   void startThread(ProgramHeader* frameHeader, SystemEnv* env, void* entryPoint, int index);
 
    void Exit(int exitCode);
    void ExitThread(SystemEnv* env, int exitCode);

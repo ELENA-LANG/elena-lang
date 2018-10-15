@@ -15,7 +15,7 @@ static void*           _SystemEnv = NULL;
 
 EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
 {
-   FrameHeader header;
+   ProgramHeader header;
    // initialize the exception handler
    __asm {
       mov header.root_exception_struct.core_catch_frame, ebp
@@ -35,7 +35,7 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, vo
 
 EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
 {
-   FrameHeader header;
+   ProgramHeader header;
    // initialize the exception handler
    __asm {
       mov header.root_exception_struct.core_catch_frame, ebp
@@ -55,7 +55,7 @@ EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, vo
 
 EXTERN_DLL_EXPORT int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int index)
 {
-   FrameHeader header;
+   ProgramHeader header;
    // initialize the exception handler
    __asm {
       mov header.root_exception_struct.core_catch_frame, ebp

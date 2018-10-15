@@ -17,7 +17,7 @@ using namespace _ELENA_;
 
 // --- Instance ---
 
-void ELENARTMachine :: startSTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry)
+void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)
 {
    // setting up system
    __routineProvider.Prepare();
@@ -32,7 +32,7 @@ void ELENARTMachine :: startSTA(FrameHeader* frameHeader, SystemEnv* env, void* 
    Exit(0);
 }
 
-void ELENARTMachine :: startMTA(FrameHeader* frameHeader, SystemEnv* env, void* programEntry)
+void ELENARTMachine :: startMTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)
 {
    // setting up system
    __routineProvider.Prepare();
@@ -47,7 +47,7 @@ void ELENARTMachine :: startMTA(FrameHeader* frameHeader, SystemEnv* env, void* 
    Exit(0);
 }
 
-void ELENARTMachine :: startThread(FrameHeader* frameHeader, SystemEnv* env, void* entryPoint, int index)
+void ELENARTMachine :: startThread(ProgramHeader* frameHeader, SystemEnv* env, void* entryPoint, int index)
 {
    __routineProvider.NewThread(env, frameHeader);
 

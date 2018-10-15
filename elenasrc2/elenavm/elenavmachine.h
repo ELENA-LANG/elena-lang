@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 10;
+constexpr auto ELENAVM_REVISION = 11;
 
 // --- ELENAVM common constants ---
 #define ELENAVM_GREETING        L"ELENA VM %d.%d.%d (C)2005-2018 by Alex Rakov"
@@ -104,7 +104,7 @@ public:
    Templates templates;
    Config    config;
 
-   void startSTA(FrameHeader* frameHeader, SystemEnv* env, void* tape);
+   void startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* tape);
 
    void Exit(int exitCode);
 
@@ -116,9 +116,6 @@ public:
       freeobj(_instance);
       _instance = nullptr;
    }
-
-   void OpenFrame(FrameHeader* frameHeader, SystemEnv* env);
-   void CloseFrame(FrameHeader* frameHeader, SystemEnv* env);
 
    ELENAVMMachine(path_t rootPath);
    virtual ~ELENAVMMachine()
@@ -433,7 +430,7 @@ public:
    void* loadSymbol(ident_t reference, int mask, bool silentMode = false);
 //   //size_t loadMessage(ident_t reference);
 
-   int interprete(SystemEnv* env, void* tape);
+   int interprete(SystemEnv* env, void* tape, bool standAlone);
 
    bool loadAddressInfo(void* address, char* buffer, size_t& maxLength);
 
