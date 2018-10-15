@@ -102,7 +102,6 @@ struct FrameHeader
 {
    pos_t reserved; // should be zero
    pos_t previousFrame;
-   pos_t currentFrame;
 };
 
 // --- SystemRoutineProvider ---

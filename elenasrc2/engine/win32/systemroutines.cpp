@@ -236,7 +236,6 @@ void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool wi
 inline void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
 {
    frameHeader->previousFrame = env->Table->gc_stack_frame;
-   frameHeader->currentFrame = (pos_t)frameHeader + sizeof(FrameHeader);
    frameHeader->reserved = 0;
 }
 
@@ -246,33 +245,50 @@ inline void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
 
 }
 
+int Execute(void* address, FrameHeader* framePtr)
+{
+   int retVal = 0;
+   int prevFrame = framePtr->previousFrame;
+   int resrv = framePtr->reserved;
+
+   __asm {
+      mov  eax, address
+
+      push esi
+      push edi
+      push ecx
+      push ebx
+      push ebp
+      mov  ebp, esp
+      push prevFrame
+      push resrv
+      mov  ebp, esp
+      call eax
+      add  esp, 8
+      pop  ebp
+      pop  ebx
+      pop  ecx
+      pop  edi
+      pop  esi
+
+      mov  retVal, eax
+   }
+
+   return retVal;
+}
+
 int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry)
 {
-   int entryPtr = (int)&entry;
-   int retVal = 0;
    FrameHeader frameHeader;
-   int framePtr = (int)&frameHeader;
-
    if (env->MaxThread <= 1) {
       OpenSTAFrame(env, &frameHeader);
    }
-
-   __asm {
-      mov  eax, entryPtr
-      mov  edx, framePtr
-
-      push ebp
-      mov  ebp, edx
-
-      call [eax]
-
-      pop  ebp
-      
-      mov retVal, eax
-   }
+   
+   int retVal = Execute(entry.address, &frameHeader);
 
    if (env->MaxThread <= 1) {
       CloseSTAFrame(env, &frameHeader);
    }
 
+   return retVal;
 }
