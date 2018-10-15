@@ -12,20 +12,26 @@ using namespace _ELENA_;
 
 // --- x86Process ---
 
-x86Process :: x86Process(size_t size, bool writeAccess, bool executeAccess)
+x86Process :: x86Process(size_t size, bool writeAccess, bool executeAccess, size_t allocated)
 {
    _allocated = _used = 0;
    _size = size;
    _code = ::VirtualAlloc(NULL, size, MEM_RESERVE, getProtectedMode(writeAccess, executeAccess));
    ::GetSystemInfo(&_sysInfo); 
+
+   if (allocated != 0)
+      allocate(allocated);
 }
 
-x86Process :: x86Process(size_t size, int address, bool writeAccess, bool executeAccess)
+x86Process :: x86Process(size_t size, int address, bool writeAccess, bool executeAccess, size_t allocated)
 {
    _allocated = _used = 0;
    _size = size;
    _code = ::VirtualAlloc((LPVOID)address, size, MEM_RESERVE, getProtectedMode(writeAccess, executeAccess));
    ::GetSystemInfo(&_sysInfo); 
+
+   if (allocated != 0)
+      allocate(allocated);
 }
 
 x86Process :: ~x86Process()

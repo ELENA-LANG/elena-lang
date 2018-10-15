@@ -76,8 +76,8 @@ public:
 
    void protect(bool writeAccess, bool executeAccess);
 
-   x86Process(size_t size, bool writeAccess, bool executeAccess);
-   x86Process(size_t size, int address, bool writeAccess, bool executeAccess);
+   x86Process(size_t size, bool writeAccess, bool executeAccess, size_t allocated = 0);
+   x86Process(size_t size, int address, bool writeAccess, bool executeAccess, size_t allocated = 0);
    virtual ~x86Process();
 };
 

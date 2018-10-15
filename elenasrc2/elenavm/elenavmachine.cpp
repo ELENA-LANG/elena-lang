@@ -570,6 +570,9 @@ bool Instance :: restart(SystemEnv* env, bool debugMode)
       env->Table->dbg_ptr = (pos_t)loadDebugSection();
    }
 
+   // HOTFIX : set gc_roots
+   env->Table->gc_roots = (pos_t)getTargetSection(mskStatRef)->get(0);
+
    printInfo(L"Done...");
 
    return true;
@@ -948,9 +951,6 @@ int Instance :: interprete(SystemEnv* env, void* tape, bool standAlone)
       raiseBreakpoint();
    }      
 
-   _Memory* m = getTargetSection(mskStatRef);
-   int bef = (*m)[8];
-
    _Entry entry;
    entry.address = vaddress;
 
@@ -1075,11 +1075,7 @@ void ELENAVMMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
    __routineProvider.Prepare();
    __routineProvider.InitSTA((SystemEnv*)env, frameHeader);
 
-   //_Entry entry;
-   //entry.address = programEntry;
    _instance->interprete(env, tape, true);
-
-   //(*entry.entry)();
 
    // winding down system
    Exit(0);

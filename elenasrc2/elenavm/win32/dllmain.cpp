@@ -309,35 +309,6 @@ EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
    }
 }
 
-EXTERN_DLL_EXPORT int InterpretTape(void* tape)
-{
-   // !! temporal
-
-//   Instance* instance = getCurrentInstance();
-//   if (instance == NULL)
-      return 0;
-//
-//   try {
-//      return instance->interprete(tape, VM_INTERPRET_EXT);
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch(InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-}
-
 EXTERN_DLL_EXPORT int EvaluateTape(void* systemEnv, void* tape)
 {
    Instance* instance = _Machine->getInstance();

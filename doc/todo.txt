@@ -4,11 +4,11 @@ In development:
 	                            
               dev - general implementation
                  *  #77 : support elt
+                 * get rid of corevm
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
                  *  #82 default event handler 
-                 * get rid of corevm
                  * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : get rid of tt_ptr field
 

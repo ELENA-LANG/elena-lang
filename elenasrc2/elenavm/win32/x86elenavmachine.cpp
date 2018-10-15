@@ -28,7 +28,7 @@ x86Instance :: x86Instance(ELENAVMMachine* machine)
      _dataProcess(0x500000, false, false),
      _messageProcess(0x10000, false, false),
      _bssProcess(0x1000, true, false),
-     _statProcess(0x10000, true, false)  // !! temporal
+     _statProcess(0x10000, true, false, 0x100)  // !! temporal
 {
    _rootPath = machine->getRootPath();
 }

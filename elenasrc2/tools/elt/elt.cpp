@@ -9,15 +9,18 @@
 #include <stdarg.h>
 #include "elenasm.h"
 #include "elenavm.h"
+#include "elenamachine.h"
 
 using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   2
+#define ELT_BUILD_NUMBER   3
  
 // global variables
-int   _encoding = feAnsi;
+int       _encoding = feAnsi;
+GCTable   _table = { 0 };
+SystemEnv _env = { 0 };
 
 void print(const char* str, ...)
 {
@@ -47,7 +50,7 @@ void printHelp()
 
 void executeTape(void* tape)
 {
-   int retVal = InterpretTape(tape);
+   int retVal = EvaluateTape(&_env, tape);
    Release(tape);
 
    // copy vm error if retVal is zero
@@ -166,7 +169,12 @@ void runSession()
 int main(int argc, char* argv[])
 {
    print("ELENA command line VM terminal %d.%d.%d (C)2011-2018 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
-   
+
+   _env.MaxThread = 1;
+   _env.Table = &_table;
+
+   InitializeVMSTA(&_env, nullptr, nullptr, nullptr);
+
    loadScript("~\\elt.es");
    loadScript("~\\scripts\\assembly.es");
    loadScript("~\\scripts\\escript.es");

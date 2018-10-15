@@ -91,6 +91,7 @@ structure %CORE_GC_TABLE
   dd 0 // ; tt_ptr                : +3Ch 
   dd 0 // ; tt_lock               : +40h 
   dd 0 // ; dbg_ptr               : +44h 
+  dd 0 // ; gc_roots              : +48h 
 
 end
 

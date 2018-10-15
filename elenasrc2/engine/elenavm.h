@@ -9,7 +9,9 @@
 #define elenavmH 1
 
 // Should be used from stand-alone application
-extern "C" __declspec(dllimport) int InterpretTape(void* tape);
+extern "C" __declspec(dllimport) int InitializeVMSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape);
+
+extern "C" __declspec(dllimport) int EvaluateTape(void* systemEnv, void* tape);
 
 extern "C" __declspec(dllimport) const char* GetVMLastError();
 
