@@ -15,10 +15,11 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   3
+#define ELT_BUILD_NUMBER   4
  
 // global variables
 int       _encoding = feAnsi;
+pos_t     _tlsIndex = 0;
 GCTable   _table = { 0 };
 SystemEnv _env = { 0 };
 
@@ -172,6 +173,7 @@ int main(int argc, char* argv[])
 
    _env.MaxThread = 1;
    _env.Table = &_table;
+   _env.TLSIndex = &_tlsIndex;
 
    InitializeVMSTA(&_env, nullptr, nullptr, nullptr);
 

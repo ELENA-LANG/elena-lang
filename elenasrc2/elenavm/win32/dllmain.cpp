@@ -37,7 +37,8 @@ EXTERN_DLL_EXPORT void InitializeVMSTA(void* systemEnv, void* exceptionHandler, 
    header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
+   if (criticalHandler != nullptr)
+      __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
 
    //// initialize system env variable
    //_SystemEnv = systemEnv;

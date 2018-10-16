@@ -1075,10 +1075,14 @@ void ELENAVMMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
    __routineProvider.Prepare();
    __routineProvider.InitSTA((SystemEnv*)env, frameHeader);
 
-   _instance->interprete(env, tape, true);
+   if (tape != nullptr) {
+      // if it is a stand alone application
+      _instance->interprete(env, tape, true);
 
-   // winding down system
-   Exit(0);
+      // winding down system
+      Exit(0);
+   }
+   // if it is part of the terminal - do nothing
 }
 
 void ELENAVMMachine :: Exit(int exitCode)
