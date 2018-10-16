@@ -517,7 +517,7 @@ labError:
   pop  edi 
 
 labError2:
-  mov  ebx, 0C0000017h
+  mov  ebx, 17h
   call code : % BREAK
   ret  
 
