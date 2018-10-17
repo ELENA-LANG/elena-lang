@@ -367,8 +367,12 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
       // check if the object can be treated like a constant object
       ref_t r = moduleScope->loadClassInfo(info, reference, true);
       if (r) {
+         // if it is an extension
+         if (test(info.header.flags, elExtension)) {
+            return ObjectInfo(okExtension, reference, reference);
+         }
          // if it is a stateless symbol
-         if (test(info.header.flags, elStateless)) {
+         else if (test(info.header.flags, elStateless)) {
             return ObjectInfo(okConstantSymbol, reference, reference);
          }
          // if it is a normal class
@@ -1219,6 +1223,7 @@ ref_t Compiler :: resolveObjectReference(_CompilerScope& scope, ObjectInfo objec
          // if external role is provided
          return object.param;
       case okConstantSymbol:
+      case okExtension:
          if (object.extraparam != 0) {
             return object.extraparam;
          }
@@ -1958,6 +1963,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okConstantClass:
          writer.newNode(lxConstantClass, object.param);
          break;
+      case okExtension:
+         scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
       case okConstantSymbol:
          writer.newNode(lxConstantSymbol, object.param);
          break;
@@ -3280,8 +3287,8 @@ ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeSc
       int flags = 0;
 
       role = scope.mapTerminal(roleTerminal.identifier(), roleTerminal == lxReference);
-      if (role.kind == okSymbol || role.kind == okConstantSymbol) {
-         ref_t classRef = role.kind == okConstantSymbol ? role.extraparam : role.param;
+      if (role.kind == okSymbol || role.kind == okConstantSymbol || role.kind == okExtension) {
+         ref_t classRef = role.kind != okSymbol ? role.extraparam : role.param;
 
          // if the symbol is used inside itself
          if (classRef == scope.getClassRefId()) {
@@ -7153,6 +7160,7 @@ ref_t Compiler :: analizeSymbol(SNode& node, NamespaceScope& scope/*, WarningSco
          node = lxConstantClass;
          break;
       case okConstantSymbol:
+      case okExtension:
          node = lxConstantSymbol;
          break;
    }

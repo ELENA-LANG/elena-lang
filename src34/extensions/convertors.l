@@ -364,7 +364,7 @@ public extension convertorOp
 }
 
 public convertor 
-    = { generic : n = Wrap::(n, convertorOp)~received get. }.
+      = { generic : n = Wrap::(n, convertorOp)~received get. }.
 
 public extension<Date> dateFormatterOp 
 {
