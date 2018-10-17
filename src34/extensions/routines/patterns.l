@@ -20,7 +20,7 @@ public interface MatrixSpace
     
     abstract setAt(int i, int j, object o) []
     
-    T<Indexer2D> cast = BaseMatrixIndexer::
+    cast T<Indexer2D> = BaseMatrixIndexer::
     {
         constructor
         [
