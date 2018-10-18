@@ -111,7 +111,8 @@ public:
    virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
    {
       ClassInfo info;
-      defineClassInfo(scope, info, reference, true);
+      if(!defineClassInfo(scope, info, reference, true))
+         return false;
 
       return isEmbeddable(info);
    }

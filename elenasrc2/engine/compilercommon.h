@@ -110,6 +110,7 @@ enum MethodHint
    tpNormal      = 0x00003,
    tpDispatcher  = 0x00004,
    tpPrivate     = 0x00005,
+   tpStackSafe   = 0x00010,
    tpEmbeddable  = 0x00020,
    tpGeneric     = 0x00040,
    tpAction      = 0x00080,
@@ -350,7 +351,7 @@ public:
       bool  directResolved;
       bool  withCustomDispatcher;
 //      //bool  closed;
-//      bool  stackSafe;
+      bool  stackSafe;
       bool  embeddable;
       bool  withOpenArgDispatcher;
       bool  withOpenArg1Dispatcher;
@@ -364,7 +365,7 @@ public:
          embeddable = /*closed = */found = false;
          outputReference = 0;
          withCustomDispatcher = false;
-         //stackSafe = false;
+         stackSafe = false;
          withOpenArgDispatcher = false;
          withOpenArg1Dispatcher = false;
          withOpenArg2Dispatcher = false;
