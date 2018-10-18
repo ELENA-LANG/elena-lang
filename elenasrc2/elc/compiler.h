@@ -923,9 +923,9 @@ private:
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
-   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute/*, bool closureBaseClass*/);
-   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType/*, bool closureBaseClass*/);
-   void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool nestedDeclarationMode = false);
+   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool embeddableClass);
+   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, bool embeddableClass);
+   void generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool embeddableClass, bool nestedDeclarationMode = false);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
 

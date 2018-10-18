@@ -10,19 +10,10 @@ In development:
                  * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : get rid of tt_ptr field
 
-              dev - general implementation
-                 * (re)implement sockets
-                 * (re)implement tcpserver / tcpclient
-                 * #459 : Ambiguity between an array and a variadic argument
-
               exp - live programming
                  * dynamic code : build tape to : print the number sum
                  * class to expression tree
                  * expression tree to class
-
-              xdev - general optimization  
-                 - optimize r * n + 0.5r
-                 - closers passed as parameters should be stack-allocated
 
               dev - tests          
                  * test mta : exception handlers, an exception in a thread
@@ -37,7 +28,16 @@ In development:
                  * vm : Execute Brain****
                  * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
                  * mta system : check the situation when too many threads (> MAX_THREAD)
-                 * rosetta : Sorting algorithms/Sleep sort/Wireworld/World Cup group stage/Y combinator/Zeckendorf arithmetic/Zhang-Suen thinning algorithm
+                 * rosetta : Sorting algorithms/Sleep sort/Wireworld/World Cup group stage/Zeckendorf arithmetic
+
+              dev - general implementation
+                 * (re)implement sockets
+                 * (re)implement tcpserver / tcpclient
+                 * #459 : Ambiguity between an array and a variadic argument
+
+              xdev - general optimization  
+                 - optimize r * n + 0.5r
+                 - closers passed as parameters should be stack-allocated
 
 ------                                                           
 Pipeline:

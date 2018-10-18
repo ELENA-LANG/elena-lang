@@ -101,15 +101,15 @@ public extension forLoopOp
 //
 //    multi till:aMaxValue by:aStep do:anAction
 //        = self~forLoopOp to:aMaxValue by:aStep do(:n)[ anAction eval:n ].
-//
-//    to:aMaxValue seek:aFunction
-//        = aFunction retrieve enumerator(RangeEnumerator new from:self to:aMaxValue).
-//        
-//    till:aMaxValue seek:aFunction
-//        = aFunction retrieve enumerator(IntervalEnumerator new from:self till:aMaxValue).
-//        
-//    to:aMaxValue by:aStep seek:aFunction
-//        = aFunction retrieve enumerator(RangeEnumerator new from:self to:aMaxValue by:aStep).
+
+    to(object maxValue) seek(Func1 func)
+        = func retrieve(RangeEnumerator from:self to:maxValue).
+        
+    till(object maxValue) seek(Func1 func)
+        = func retrieve(IntervalEnumerator from:self till:maxValue).
+        
+    to(object maxValue) by(object step) seek(Func1 func)
+        = func retrieve(RangeEnumerator from:self to:maxValue by:step).
 }
 
 public extension loopOp

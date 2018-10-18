@@ -312,9 +312,7 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
 
-   //if (callType == tpClosed || callType == tpSealed || callType == tpPrivate) {
-   //   result.stackSafe = test(methodHint, tpStackSafe);
-   //}      
+   result.stackSafe = test(methodHint, tpStackSafe);
 
    if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
       // HOTFIX : calling closure
@@ -568,7 +566,7 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 
 bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 {
-   return /*test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe)*/true;
+   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
 }
 
 bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
@@ -2105,8 +2103,7 @@ bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& com
       EmbeddableOp op = embeddableOps[i];
       ref_t subject = info.methodHints.get(Attribute(callNode.argument, op.attribute));
 
-      ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
-      bool initializer = info.methods.exist(initConstructor);
+      //ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
 
       // if it is possible to replace get&subject operation with eval&subject2:local
       if (subject != 0) {
