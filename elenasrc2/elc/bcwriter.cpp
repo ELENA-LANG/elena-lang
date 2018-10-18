@@ -2090,6 +2090,14 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offs
          tape.write(bcBLoadFI, 1, bpFrame);
          tape.write(bcNCopy);
       }
+      else if ((offset & 3) == 0) {
+         // nload
+         // bloadfi 1
+         // nsavei offset / 4
+         tape.write(bcNLoad);
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcNSaveI, offset >> 2);
+      }
       else {
          // nload
          // ecopyd

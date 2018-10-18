@@ -6955,7 +6955,8 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int mode)
       }
       else {
          SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
-         if (subNode == lxAssigning) {
+         if (subNode == lxAssigning && targetNode != lxFieldAddress) {
+            // HOTFIX : an extra assignment should be removed only for the operations with local variables
             bool tempAttr = subNode.existChild(lxTempAttr);
 
             // assignment operation
