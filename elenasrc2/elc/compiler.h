@@ -530,7 +530,6 @@ private:
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
       bool         withOpenArg;
-      bool         stackSafe;
       bool         classEmbeddable;
       bool         generic;
       bool         genericClosure;

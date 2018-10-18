@@ -628,7 +628,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->rootToFree = 1;
    this->hints = 0;
    this->withOpenArg = false;
-   this->stackSafe = this->classEmbeddable = false;
+   this->classEmbeddable = false;
    this->generic = false;
    this->extensionMode = false;
    this->multiMethod = false;
@@ -648,7 +648,7 @@ ObjectInfo Compiler::MethodScope :: mapSelf(bool forced)
 
       return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, extensionScope->embeddable ? -1 : 0);
    }
-   else if (stackSafe && classEmbeddable) {
+   else if (classEmbeddable) {
       return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
    }
    else return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
@@ -666,7 +666,7 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
    if (withOpenArg && param.class_ref == V_ARGARRAY) {
       return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
    }
-   else if (stackSafe && param.class_ref != 0 && param.size != 0) {
+   else if (param.class_ref != 0 && param.size != 0) {
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, (ref_t)-1);
    }
    return ObjectInfo(okParam, prefix - param.offset, param.class_ref);
@@ -1287,7 +1287,7 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
 
    // declare built-in variables
    if (withSelf) {
-      if (scope.stackSafe && scope.classEmbeddable) {
+      if (scope.classEmbeddable) {
          IdentifierString className(scope.moduleScope->module->resolveReference(scope.getClassRef()));
 
          SNode debugNode = node.insertNode(lxBinarySelf, 1);
@@ -1322,7 +1322,7 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
             else if (param.class_ref == moduleScope->realReference) {
                writer.newNode(lxReal64Variable);
             }
-            else if (scope.stackSafe && param.class_ref != 0) {
+            else if (param.size != 0 && param.class_ref != 0) {
                ref_t classRef = param.class_ref;
                if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
                   writer.newNode(lxBinaryVariable);
@@ -5696,7 +5696,6 @@ void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNo
 void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 {
    methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
-   methodScope.stackSafe = _logic->isMethodStacksafe(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
    methodScope.withOpenArg = isOpenArg(methodScope.message);
    methodScope.closureMode = _logic->isClosure(scope.info, methodScope.message);
