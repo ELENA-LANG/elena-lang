@@ -4274,7 +4274,17 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
 void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node)
 {
    if (node.argument == EQUAL_MESSAGE_ID) {
-      generateExpression(tape, node, ACC_REQUIRED);
+      SNode larg;
+      SNode rarg;
+      assignOpArguments(node, larg, rarg);
+
+      if (larg == lxNil) {
+         generateObjectExpression(tape, rarg, ACC_REQUIRED);
+      }
+      else if (rarg == lxNil) {
+         generateObjectExpression(tape, larg, ACC_REQUIRED);
+      }
+      else generateExpression(tape, node, ACC_REQUIRED); // ?? is this code reachable
 
       SNode ifParam = node.findChild(lxIfValue);
       SNode elseParam = node.findChild(lxElseValue);

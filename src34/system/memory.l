@@ -5,7 +5,7 @@ public sealed Array<template_subj> :: Indexable<template_subj>
 {
     dynamic<template_subj> theArray.
 
-//    cast T<int>:n
+//    cast T<int>:nint
 //        = V<template_subj>(n).
 
     Enumerator<template_subj> enumerator = BaseEnumerator<template_subj>::
@@ -462,21 +462,21 @@ public sealed ShortArray :: Indexable<short>, Array<short>
 public sealed IntArray :: Indexable<int>, Array<int>
 {
     /// Creates the array with the specified length
-    /*private*/ constructor new(int aLength)
-        = dynamic<int>(aLength).
+    private constructor newPrivate(int length)
+        = dynamic<int>(length).
         
     /// Creates the array with the specified length
-//    stacksafe constructor new int : aLength
-//        <= $new(aLength);
-//    [
-//        int i := 0.
-//        while (i < aLength)
-//        [
-//            $self[i] := 0.
-//            
-//            i := i + 1
-//        ]
-//    ]
+    constructor new(int length)
+        <= newPrivate(length);
+    [
+        int i := 0.
+        while (i < length)
+        [
+            self[i] := 0.
+            
+            i := i + 1
+        ]
+    ]
 
 //    /// Creates the array with the specified length
 //    constructor new : aLength

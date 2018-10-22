@@ -122,6 +122,7 @@ public:
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
    virtual bool isMethodInternal(ClassInfo& info, ref_t message);
+   virtual bool isMethodPrivate(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
    virtual bool isClosure(ClassInfo& info, ref_t message);
    virtual bool isDispatcher(ClassInfo& info, ref_t message);

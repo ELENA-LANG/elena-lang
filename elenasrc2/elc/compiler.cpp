@@ -1273,6 +1273,8 @@ ref_t Compiler :: resolveObjectReference(_CompilerScope& scope, ObjectInfo objec
       case okOuterStaticField:
       case okClassStaticField:
          return object.element;
+      case okClassSelf:
+         return object.param;
       default:
          if (object.kind == okObject) {
             return object.param;
@@ -2619,7 +2621,7 @@ ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode, CodeSco
    ref_t loperandRef = resolveObjectReference(scope, loperand);
    ref_t roperandRef = resolveObjectReference(scope, roperand);
    
-   ref_t resultRef = loperandRef == roperandRef ? loperandRef : 0;
+   ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef) ? loperandRef : 0;
 
    writer.insert(lxNilOp, ISNIL_MESSAGE_ID);
    writer.closeNode();
@@ -2646,7 +2648,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
 
       if (roperand2Ref == V_NIL && loperandRef == V_INT32ARRAY && operator_id == SET_REFER_MESSAGE_ID) {
-         //HOTFIX : allow set operation with $nil
+         //HOTFIX : allow set operation with nil
          operator_id = SETNIL_REFER_MESSAGE_ID;
       }
    }
@@ -2777,7 +2779,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       retVal.param = result.outputReference;
    }
 
-   if ((target.kind == okSelfParam || target.kind == okOuterSelf) && callType == tpPrivate) {
+   if ((target.kind == okSelfParam || target.kind == okOuterSelf || target.kind == okClassSelf) && callType == tpPrivate) {
       messageRef |= SEALED_MESSAGE;
 
       callType = tpSealed;
@@ -2829,7 +2831,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       }         
    }
 
-   if (stackSafeAttr)
+   if (stackSafeAttr && !dispatchCall)
       writer.appendNode(lxStacksafeAttr, stackSafeAttr);
 
    //if (result.stackSafe && target.kind != okParams && !test(mode, HINT_DYNAMIC_OBJECT))
@@ -4913,17 +4915,19 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
 
    ref_t implicitSignatureRef = compileMessageParameters(writer, expr.findChild(lxMessage).nextNode(), resendScope);
 
-   ObjectInfo target(okObject, classRef);
-   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef);
+   ObjectInfo target(okClassSelf, classRef);
+   int stackSafeAttr = 0;
+   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
 
    // find where the target constructor is declared in the current class
    // but it is not equal to the current method
-   if (methodScope->message != messageRef && classClassScope.info.methods.exist(messageRef)) {
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   int hints = methodScope->message != messageRef ? checkMethod(*moduleScope, classScope->info.header.classRef, messageRef) : tpUnknown;
+   if (hints != tpUnknown) {
       found = true;
    }
    // otherwise search in the parent class constructors
    else {
-      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
       ref_t parent = classScope->info.header.parentRef;
       ClassInfo info;
       while (parent != 0) {
@@ -4942,7 +4946,7 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    if (found) {
       writer.appendNode(lxCallTarget, classRef);
 
-      compileMessage(writer, expr, resendScope, target, messageRef, /*HINT_RESENDEXPR*/0, 0);
+      compileMessage(writer, expr, resendScope, target, messageRef, /*HINT_RESENDEXPR*/0, stackSafeAttr);
 
       writer.removeBookmark();
 
@@ -7346,8 +7350,6 @@ void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
             break;
          case lxExpression:
          case lxExternFrame:
-         case lxDirectCalling:
-         case lxSDirctCalling:
          case lxCalling:
             analizeExpressionTree(current, scope);
             break;

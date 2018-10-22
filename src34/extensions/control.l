@@ -140,6 +140,15 @@ public extension<Func> blockOp
             self().
         ].
     ]        
+    
+    repeatWhile:aCondition
+    [
+        self().
+        while (T<bool>(aCondition))
+        [
+            self().
+        ].
+    ]         
 }
 
 //lazy_func extension lazyOp

@@ -127,6 +127,8 @@ CompilerLogic :: CompilerLogic()
    // nil
    operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
+   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, 0, V_NIL, lxNilOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, 0, V_NIL, lxNilOp, V_FLAG));
 
    // int32 primitive operations
    operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
@@ -324,7 +326,7 @@ int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReferenc
 
 int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 {
-   if (loperand == 0 || (roperand == 0 && loperand != V_NIL))
+   if ((loperand == 0 && roperand != V_NIL) || (roperand == 0 && loperand != V_NIL))
       return 0;
 
    OperatorList::Iterator it = operators.start();
@@ -334,6 +336,13 @@ int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId,
       if (info.operatorId == operatorId) {
          if (info.loperand == V_NIL) {
             if (loperand == V_NIL) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (info.roperand == V_NIL) {
+            if (roperand == V_NIL) {
                result = info.result;
 
                return info.operationType;
@@ -577,6 +586,11 @@ bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
 bool CompilerLogic :: isMethodInternal(ClassInfo& info, ref_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpInternal);
+}
+
+bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpPrivate);
 }
 
 bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
@@ -2302,9 +2316,12 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
          return 0;
 
       ref_t signatures[OPEN_ARG_COUNT];
-      /*size_t signatureLen = */scope.module->resolveSignature(implicitSignatureRef, signatures);
+      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
 
       ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
+      if (listRef == 0 && isMethodPrivate(info, multiMessage))
+         listRef = info.methodHints.get(Attribute(multiMessage | SEALED_MESSAGE, maOverloadlist));
+
       if (listRef) {
          _Module* argModule = scope.loadReferenceModule(listRef, listRef);
 

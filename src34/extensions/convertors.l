@@ -260,8 +260,26 @@ public singleton realmatrixExConvertor
 
 public singleton arrayConvertorEx
 {
-    T<Array> convert : anObject
-        = T<Array>(anObject).
+    T<Array> convert : o
+    [
+        T<Array> arr := T<Array>(o) ?? nil.
+        if (arr == nil)
+        [
+            var it := o indexer.
+            int len := it length.
+            arr := Array new(len).
+            int i := 0.
+            while (i < len)
+            [
+                arr[i] := it get.
+                it appendIndex(1).
+                
+                i += 1.
+            ]
+        ].
+        
+        ^ arr.
+    ]
     
     T<Array> convert(Array anArray)
         = anArray.

@@ -142,6 +142,7 @@ public:
       okConstantRole,                 // param - role reference
       okExplicitConstant,             // param - reference, extraparam - subject
       okExtension,
+      okClassSelf,                    // param - class reference; used in class resending expression
 
       okExternal,
       okInternal,
