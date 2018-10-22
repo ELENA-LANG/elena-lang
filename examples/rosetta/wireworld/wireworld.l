@@ -2,16 +2,16 @@ import system'routines.
 import extensions.
 import cellular.
 
-literal sample = 
-        " tH......" + 'newLine +
-        ".        ......" + 'newLine +
-        " ...Ht...      ." + 'newLine +
-        "              ...." + 'newLine +
-        "              .  ....." + 'newLine +
-        "              ...." + 'newLine +
-        " ......tH      ." + 'newLine +
-        ".        ......" + 'newLine +
-        " ...Ht...".
+const literal sample = 
+" tH......
+.        ......
+ ...Ht...      .
+              ....
+              .  .....
+              ....
+ ......tH      .
+.        ......
+ ...Ht...".
 
 const literal conductorLabel = ".".
 const literal headLabel = "H".
@@ -23,49 +23,49 @@ const int conductor = 1.
 const int electronHead = 2.
 const int electronTail = 3.
 
-wireWorldRuleSet = BaseRuleSet::
+wireWorldRuleSet = RuleSet::
 {
-    proceed space:s int:x int:y vint:retVal
+    proceed(Space s, int x, int y, ref<int> retVal)
     [
-        int cell := s getAt int:x int:y.
+        int cell := s getAt(x, y).
         
         cell =>
             conductor 
             [
-                int number := s getLiveCell int:x int:y int:electronHead.
+                int number := s getLiveCell(x, y, electronHead).
                 if ((number == 1)||(number == 2))
                 [
-                    retVal int := electronHead
+                    retVal value := electronHead
                 ];
                 [
-                    retVal int := conductor
+                    retVal value := conductor
                 ]                
             ];
             electronHead 
             [
-                retVal int := electronTail
+                retVal value := electronTail
             ];
             electronTail
             [
-                retVal int := conductor
+                retVal value := conductor
             ];
             ![
-                retVal int := cell
+                retVal value := cell
             ].
     ]
 }.
 
 sealed class Model
 {
-    space   theSpace.
+    T<Space>   theSpace.
     
     constructor load(LiteralValue stateString,int maxX, int maxY)
     [
-        var strings := stateString split('newLine); selectBy(:s)(s toArray); toArray.
+        var strings := stateString split(newLine); selectBy(:s)(s toArray); toArray.
         
-        theSpace := IntMatrixSpace new int:maxX int:maxY ruleset:BaseRuleSet::
+        theSpace := IntMatrixSpace new(maxX, maxY, RuleSet::
         {
-            proceed space:s int:x int:y vint:retVal
+            proceed(Space s, int x, int y, ref<int> retVal)
             [
                 if (x < strings length)
                 [
@@ -73,26 +73,26 @@ sealed class Model
                     if (y < l length)
                     [
                         (l[y]) =>
-                            conductorLabel [ retVal int := conductor ];
-                            headLabel      [ retVal int := electronHead ];
-                            tailLabel      [ retVal int := electronTail ];
-                            emptyLabel     [ retVal int := empty ].
+                            conductorLabel [ retVal value := conductor ];
+                            headLabel      [ retVal value := electronHead ];
+                            tailLabel      [ retVal value := electronTail ];
+                            emptyLabel     [ retVal value := empty ].
                     ];
                     [
-                        retVal int := empty
+                        retVal value := empty
                     ]                    
                 ];
                 [
-                    retVal int := empty
+                    retVal value := empty
                 ]
                 
             ]
-        }.
+        }).
     ]
     
     run
     [
-        theSpace update ruleset:wireWorldRuleSet.
+        theSpace update(wireWorldRuleSet).
     ]    
     
     print
@@ -109,7 +109,7 @@ sealed class Model
             while (j < columns)
             [
                 var label := emptyLabel.
-                int cell := theSpace getAt int:i int:j.
+                int cell := theSpace getAt(i, j).
                 
                 cell =>
                     conductor    [ label := conductorLabel ];
@@ -127,12 +127,12 @@ sealed class Model
     ]
 }
 
-program =
+public program
 [
-    type<Model> model := Model load(sample,10,30).
+    T<Model> model := Model load(sample,10,30).
     0 to:10 do(:i)
     [
         console printLineFormatted("Iteration {0}",i).
         model print; run.
     ]    
-].
+]

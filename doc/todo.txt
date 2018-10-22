@@ -28,7 +28,9 @@ In development:
                  * vm : Execute Brain****
                  * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
                  * mta system : check the situation when too many threads (> MAX_THREAD)
-                 * rosetta : Sorting algorithms/Sleep sort/Wireworld
+
+              dev - tests          
+                 * rosetta : Sorting algorithms/Sleep sort
 
               dev - general implementation
                  * (re)implement sockets
