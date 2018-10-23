@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * get rid of template generation duplicate messages
                  * #439 : Amicable pairs optimization 
                  * &0l - should be dynamically created
 

@@ -418,6 +418,7 @@ void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files, Extens
    // declare classes / symbols based on the derivation tree
    bool repeatMode = true;
    bool idle = false;
+   bool nothingToCompile = true;
    while (repeatMode && !idle) {
       repeatMode = false;
       idle = true;
@@ -426,13 +427,17 @@ void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files, Extens
 
          idle &= !compiler.declareModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs, repeatMode, extensions);
       }
+
+      nothingToCompile &= idle;
    }
+   
+   if (!nothingToCompile) {
+      // compile classes / symbols if not idle 
+      for (auto it = files.start(); !it.Eof(); it++) {
+         SourceFileInfo* info = *it;
 
-   // compile classes / symbols
-   for (auto it = files.start(); !it.Eof(); it++) {
-      SourceFileInfo* info = *it;
-
-      compiler.compileModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs);
+         compiler.compileModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs);
+      }
    }
 }
 
