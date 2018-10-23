@@ -3,6 +3,11 @@ In development:
 ------                              
 	                            
               dev - general implementation
+                 * get rid of template generation duplicate messages
+                 * #439 : Amicable pairs optimization 
+                 * &0l - should be dynamically created
+
+              dev - general implementation
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 

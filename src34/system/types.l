@@ -56,6 +56,7 @@ __extmssg       = #21.
 //__tape_mixin    = #8209.
 __symbol        = #22.
 dynamic         = #30.
+stackunsafe     = #16403.
 
 __ifoperator    = #4097.
 __ifnotoperator = #4098.

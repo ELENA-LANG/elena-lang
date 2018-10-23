@@ -243,6 +243,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
 
       result.embeddable = test(hint, tpEmbeddable);
       result.closure = test(hint, tpAction);
+      result.dynamicRequired = test(hint, tpDynamic);
 
       if ((hint & tpMask) == tpSealed) {
          return hint;
@@ -1580,6 +1581,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          attrValue = tpDispatcher;
          explicitMode = true;
          return true;
+      case V_STACKUNSAFE:
+         attrValue = tpDynamic;
+         return true;
       default:
          return false;
    }
@@ -2316,7 +2320,7 @@ ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMess
          return 0;
 
       ref_t signatures[OPEN_ARG_COUNT];
-      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
+      /*size_t signatureLen = */scope.module->resolveSignature(implicitSignatureRef, signatures);
 
       ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
       if (listRef == 0 && isMethodPrivate(info, multiMessage))

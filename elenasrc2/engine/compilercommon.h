@@ -91,6 +91,7 @@
 #define V_BLOCK          (ref_t)-16400
 #define V_NESTEDBLOCK    (ref_t)-16401
 #define V_SET            (ref_t)-16402
+#define V_STACKUNSAFE    (ref_t)-16403
 //
 //// obsolete
 //#define V_MULTI          (ref_t)-16397
@@ -102,30 +103,31 @@ typedef Map<ident_t, ref_t>      ForwardMap;
 
 enum MethodHint
 {
-   tpMask        = 0x0000F,
+   tpMask        = 0x00000F,
 
-   tpUnknown     = 0x00000,
-   tpSealed      = 0x00001,
-   tpClosed      = 0x00002,
-   tpNormal      = 0x00003,
-   tpDispatcher  = 0x00004,
-   tpPrivate     = 0x00005,
-   tpStackSafe   = 0x00010,
-   tpEmbeddable  = 0x00020,
-   tpGeneric     = 0x00040,
-   tpAction      = 0x00080,
-   tpIfBranch    = 0x00100,
-   tpIfNotBranch = 0x00200,
-   tpConstructor = 0x00400,
-   tpConversion  = 0x00800,
-   tpMultimethod = 0x01000,
-   tpArgDispatcher=0x03000,
-   tpStatic      = 0x04000,
-   tpAccessor    = 0x08000,
-   tpSpecial     = 0x10000,
-   tpAbstract    = 0x20000,
-   tpInternal    = 0x40000,
-   tpPredefined  = 0x80000, // virtual class declaration
+   tpUnknown     = 0x000000,
+   tpSealed      = 0x000001,
+   tpClosed      = 0x000002,
+   tpNormal      = 0x000003,
+   tpDispatcher  = 0x000004,
+   tpPrivate     = 0x000005,
+   tpStackSafe   = 0x000010,
+   tpEmbeddable  = 0x000020,
+   tpGeneric     = 0x000040,
+   tpAction      = 0x000080,
+   tpIfBranch    = 0x000100,
+   tpIfNotBranch = 0x000200,
+   tpConstructor = 0x000400,
+   tpConversion  = 0x000800,
+   tpMultimethod = 0x001000,
+   tpArgDispatcher=0x003000,
+   tpStatic      = 0x004000,
+   tpAccessor    = 0x008000,
+   tpSpecial     = 0x010000,
+   tpAbstract    = 0x020000,
+   tpInternal    = 0x040000,
+   tpPredefined  = 0x080000, // virtual class declaration
+   tpDynamic     = 0x100000  // indicates that the method does not accept stack allocated parameters
 };
 
 // --- _Project ---
@@ -357,6 +359,7 @@ public:
       bool  withOpenArg1Dispatcher;
       bool  withOpenArg2Dispatcher;
       bool  closure;
+      bool  dynamicRequired;
       ref_t outputReference;
 
       ChechMethodInfo()
@@ -370,6 +373,7 @@ public:
          withOpenArg1Dispatcher = false;
          withOpenArg2Dispatcher = false;
          closure = false;
+         dynamicRequired = false;
       }
    };
 

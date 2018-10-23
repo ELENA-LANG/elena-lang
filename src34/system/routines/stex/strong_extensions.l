@@ -28,11 +28,15 @@ public extension strongEnumerableOp<type1,type2>
 
 public extension strongEnumerableOp2<type>
 {
-    type summarize(ref<type> retVal)
+    stackunsafe type summarize(ref<type> retVal)
     [
         auto p := StrongSumming<type>(retVal).
         
         p run(system'Enumerator<type>(self enumerator)).
+        
+//        var rr := retVal.
+//        
+//        var o := rr value.
         
         ^ retVal value
     ]

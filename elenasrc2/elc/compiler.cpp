@@ -2831,7 +2831,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       }         
    }
 
-   if (stackSafeAttr && !dispatchCall)
+   if (stackSafeAttr && !dispatchCall && !result.dynamicRequired)
       writer.appendNode(lxStacksafeAttr, stackSafeAttr);
 
    //if (result.stackSafe && target.kind != okParams && !test(mode, HINT_DYNAMIC_OBJECT))
@@ -3423,12 +3423,12 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
       _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), scope.info, *this, implicitMultimethods, lxClassMethod);
 
-      generateClassDeclaration(virtualTree.readRoot(), scope, false, _logic->isEmbeddable(scope.info));
+      generateClassDeclaration(virtualTree.readRoot(), scope, ClassType::ctNone);
 
       compileVMT(writer, virtualTree.readRoot(), scope);
    }
    else {
-      generateClassDeclaration(SNode(), scope, false, _logic->isEmbeddable(scope.info));
+      generateClassDeclaration(SNode(), scope, ClassType::ctNone);
 
       if (test(scope.info.header.flags, elWithMuti)) {
          // HOTFIX: temporally the closure does not generate virtual multi-method
@@ -3480,7 +3480,7 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
       if (virtualClass)
          scope.info.header.flags |= elVirtualVMT;
 
-      generateClassDeclaration(node, scope, false, _logic->isEmbeddable(scope.info), true);
+      generateClassDeclaration(node, scope, ClassType::ctNone, true);
 
       scope.save();
    }
@@ -3857,7 +3857,8 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
 
    parameters.add(operandRef);
 
-   ref_t targetRef = scope.moduleScope->generateTemplate(*this, scope.moduleScope->refTemplateReference, parameters, NULL);
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+   ref_t targetRef = scope.moduleScope->generateTemplate(*this, scope.moduleScope->refTemplateReference, parameters, &nsScope->extensions);
 
    if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, objectInfo), objectInfo.element))
       scope.raiseError(errInvalidOperation, node);
@@ -3876,7 +3877,8 @@ ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t operandRef)
 
    parameters.add(operandRef);
 
-   return scope.moduleScope->generateTemplate(*this, scope.moduleScope->arrayTemplateReference, parameters, NULL);
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+   return scope.moduleScope->generateTemplate(*this, scope.moduleScope->arrayTemplateReference, parameters, &nsScope->extensions);
 }
 
 ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
@@ -5662,7 +5664,7 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
    //// !! hotfix : remove closed
    //classClassScope.info.header.flags &= ~elClosed;
 
-   generateClassDeclaration(node, classClassScope, true, _logic->isEmbeddable(classScope.info));
+   generateClassDeclaration(node, classClassScope, _logic->isEmbeddable(classScope.info) ? ClassType::ctEmbeddableClass : ClassType::ctNormalClass);
 
    // generate constructor attributes
    ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
@@ -6191,7 +6193,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       else  if (scope.info.methods.exist(message | SEALED_MESSAGE))
          scope.raiseError(errDuplicatedMethod, current);
 
-      if (included && embeddableClass && !test(methodHints, tpMultimethod)) {
+      if (/*included && */embeddableClass && !test(methodHints, tpMultimethod)) {
          // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
          scope.info.methodHints.exclude(Attribute(message, maHint));
          scope.info.methodHints.add(Attribute(message, maHint), methodHints | tpStackSafe);
@@ -6295,11 +6297,11 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
       _logic->verifyMultimethods(*scope.moduleScope, root, scope.info, implicitMultimethods);
 }
 
-void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool classClassMode, bool embeddableClass, bool nestedDeclarationMode)
+void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassType classClassType, bool nestedDeclarationMode)
 {
    bool closed = test(scope.info.header.flags, elClosed);
 
-   if (classClassMode) {
+   if (classClassType != ClassType::ctNone) {
       if (!scope.abstractMode && _logic->isDefaultConstructorEnabled(scope.info)) {
          scope.include(encodeAction(NEWOBJECT_MESSAGE_ID));
       }
@@ -6322,11 +6324,14 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
    _logic->injectVirtualCode(*scope.moduleScope, node, scope.reference, scope.info, *this, closed);
 
    // generate methods
-   if (classClassMode) {
+   if (classClassType != ClassType::ctNone) {
+      bool embeddableClass = classClassType == ClassType::ctEmbeddableClass;
+
       generateMethodDeclarations(node, scope, closed, lxConstructor, embeddableClass);
       generateMethodDeclarations(node, scope, closed, lxStaticMethod, embeddableClass);
    }
-   else generateMethodDeclarations(node, scope, closed, lxClassMethod, embeddableClass);
+   else generateMethodDeclarations(node, scope, closed, lxClassMethod, 
+      scope.extensionClassRef != 0 ? _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef) : _logic->isEmbeddable(scope.info));
 
    bool withAbstractMethods = false;
    bool disptacherNotAllowed = false;
@@ -6342,7 +6347,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool cl
 
    // do not set flags for closure declaration - they will be set later
    if (!nestedDeclarationMode) {
-      _logic->tweakClassFlags(*scope.moduleScope, *this, scope.reference, scope.info, classClassMode);
+      _logic->tweakClassFlags(*scope.moduleScope, *this, scope.reference, scope.info, classClassType != ClassType::ctNone);
    }
    else if (test(scope.info.header.flags, elNestedClass)) {
       // HOTFIX : nested class should be marked as sealed to generate multi-method properly
@@ -6448,8 +6453,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
    declareVMT(node, scope);
 
-   bool embebdableClass = scope.extensionClassRef != 0 ? _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef) : _logic->isEmbeddable(scope.info);
-   generateClassDeclaration(node, scope, false, embebdableClass);
+   generateClassDeclaration(node, scope, ClassType::ctNone);
 
    if (_logic->isRole(scope.info)) {
       // class is its own class class
