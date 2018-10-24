@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      IDE main window class header
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef appwindowH
@@ -71,7 +71,7 @@ class IDEController : public _Controller
       bool open(_ELENA_::path_t path);
       void refresh();
       void reset();
-      void save(_ELENA_::path_t extension);
+      void save(_ELENA_::path_t extension, bool withBOM);
 
       void rename(_ELENA_::path_t path);
 

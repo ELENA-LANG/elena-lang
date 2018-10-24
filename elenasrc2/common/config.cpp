@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class implementation
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -279,11 +279,11 @@ bool XmlConfigFile :: load(path_t path, int encoding)
    return false;
 }
 
-bool XmlConfigFile :: save(path_t path, int encoding)
+bool XmlConfigFile :: save(path_t path, int encoding, bool withBOM)
 {
    try
    {
-      return _tree.save(path, encoding, true);
+      return _tree.save(path, encoding, withBOM, true);
    }
    catch (XMLException&)
    {
@@ -427,6 +427,10 @@ ident_t XmlConfigFile :: getNodeAttribute(void* reference, ident_t name)
 
 void XmlConfigFile :: setSetting(ident_t key, const char* value)
 {
+   // clear cached values
+   _values.clear();
+   _attributes.clear();
+
    size_t position = find(key);
 
    if (position != NOTFOUND_POS) {

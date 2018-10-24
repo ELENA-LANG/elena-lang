@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Settings class implementation
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "settings.h"
@@ -145,6 +145,7 @@ void Settings :: load(Model* model, _ELENA_::XmlConfigFile& config)
    loadSetting(config.getSetting(AUTO_DETECTING_SETTING), model->autoDetecting);
    loadSetting(config.getSetting(AUTO_RECOMPILE_SETTING), model->autoRecompile);
    loadSetting(config.getSetting(AUTO_PROJECT_LOAD_SETTING), model->autoProjectLoad);
+   loadSetting(config.getSetting(PROJECT_SAVEBOM_SETTING), model->saveWithBOM);
    //loadSetting(config.getSetting(SETTINGS_SECTION, DEBUG_TAPE_SETTING), model->debugTape);
 
    loadSetting(config.getSetting(TAB_SIZE_SETTING), model->tabSize, 1, 20, 4);
@@ -177,6 +178,7 @@ void Settings :: save(Model* model, _ELENA_::XmlConfigFile& config)
    saveSetting(config, AUTO_PROJECT_LOAD_SETTING, model->autoProjectLoad, false);
    saveSetting(config, AUTO_DETECTING_SETTING, model->autoDetecting, true);
    saveSetting(config, AUTO_RECOMPILE_SETTING, model->autoRecompile, true);
+   saveSetting(config, PROJECT_SAVEBOM_SETTING, model->saveWithBOM, false);
    //saveSetting(config, SETTINGS_SECTION, DEBUG_TAPE_SETTING, model->debugTape, false);
 
    saveSetting(config, LINE_NUMBERS_SETTING, model->lineNumberVisible, true);

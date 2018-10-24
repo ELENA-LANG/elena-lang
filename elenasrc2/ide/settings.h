@@ -27,6 +27,7 @@
 #define MAXIMIZED_SETTING           "configuration/settings/app_maximized"
 #define PATH_REMEMBER_SETTING       "configuration/settings/remeber_path"
 #define PROJECT_REMEMBER_SETTING    "configuration/settings/remeber_project"
+#define PROJECT_SAVEBOM_SETTING     "configuration/settings/save_bom"
 #define AUTO_DETECTING_SETTING      "configuration/settings/encoding_detecting"
 #define LINE_NUMBERS_SETTING        "configuration/settings/linenumbers"
 #define HIGHLIGHT_SETTING           "configuration/settings/highlightsyntax"

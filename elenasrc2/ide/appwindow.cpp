@@ -811,7 +811,7 @@ bool IDEController :: doSaveProject(bool saveAsMode)
       }
 	   else return false;
    }
-   _project.save(_model->project.extension.str());
+   _project.save(_model->project.extension.str(), _model->saveWithBOM);
 
    onChange();
 
@@ -2182,13 +2182,13 @@ void IDEController::ProjectManager::reset()
    _model->project.changed = false;
 }
 
-void IDEController::ProjectManager::save(_ELENA_::path_t extension)
+void IDEController::ProjectManager :: save(_ELENA_::path_t extension, bool withBOM)
 {
    _ELENA_::Path cfgPath(_model->project.path);
    cfgPath.combine(_model->project.name.str());
    cfgPath.appendExtension(extension);
 
-   _model->project.xmlConfig.save(cfgPath.c_str(), _ELENA_::feUTF8);
+   _model->project.xmlConfig.save(cfgPath.c_str(), _ELENA_::feUTF8, withBOM);
 
    _model->project.changed = false;
 }

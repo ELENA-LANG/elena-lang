@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains XML Reader / Writer File class implementation
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -280,9 +280,9 @@ bool XMLTree :: loadXml(ident_t content)
    return true;
 }
 
-bool XMLTree :: save(path_t path, int encoding, bool formatted)
+bool XMLTree :: save(path_t path, int encoding, bool withBOM, bool formatted)
 {
-   TextFileWriter  writer(path, encoding, false);
+   TextFileWriter  writer(path, encoding, withBOM);
 
    if (!writer.isOpened())
       return false;

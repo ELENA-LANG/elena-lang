@@ -3,15 +3,22 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * #439 : Amicable pairs optimization 
+                 *  #82 default event handler 
+                 * move system'core_routines'__exception register call to the system entry symbol
                  * &0l - should be dynamically created
+                 * #20 : Project config files - add an option to use BOM
+                 * #56 : MemoryStack 
+                 * #78 : Memory optimized for-loop 
+                 * #178 : source call optimization
+                 * #256 : Assigning the structure field 
+                 * #230 : Extension dispatch statement 
+                 * #200 : unboxing explicit local allocated extension 
+                 * #254 : Implicit boxing 
 
               dev - general implementation
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
-                 *  #82 default event handler 
-                 * move system'core_routines'__exception register call to the system entry symbol
                  *  #77 : get rid of tt_ptr field
 
               exp - live programming
@@ -26,14 +33,12 @@ In development:
                  * test vm sta : preloaded symbols / initializers
                  * test vm sta : exception handlers
                  * test vm sta : critical exception handlers
-                 * sta / gc : anagram, Hailstone sequence
-                 * mta / gc : anagram, Hailstone sequence
                  * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
                  * vm : Execute Brain****
                  * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
                  * mta system : check the situation when too many threads (> MAX_THREAD)
-
-              dev - tests          
+                 * sta / gc : Hailstone sequence
+                 * mta / gc : Hailstone sequence
                  * rosetta : Sorting algorithms/Sleep sort
 
               dev - general implementation
@@ -181,10 +186,6 @@ Pipeline:
 
               idev - generic development
                  * xml : include / exclude
-                 * allow to opem xml project
-                 * allow to create xml project
-                 * xml : format the xml on save
-                 * switch to xml config files #14
                  * reimplement IDE exclude the file
                  * reimplement IDE clear forwards
 
@@ -384,12 +385,6 @@ Pipeline:
 
               idev - generic development
                        * modify color scheme
-                       * ini to xml
-
-                       * xml to ini not allowed
-                       * xmlreader : after deleting / changing presaved settings should be remove, problably ProjectManager
-                         should keep the string copies or be reloaded every time
-                       * #14 : switch to xml config files (.xprj project)
 
                        * show internal errors in message list
                        * refactor IDEController::ProjectManager - get rid of duplicate code
@@ -544,8 +539,6 @@ Pipeline:
                        * rosetta sample : Abundant, deficient and perfect number classifications
                        * rosetta sample : Active object
                        * rosetta sample : 9 bil names
-                       
-                       * refactor cpu_sim : assembler
 
               sdev - rosetta code samples
                        * linux : migrate two rosetta samples to linux

@@ -111,7 +111,7 @@ void saveSettings(_ELENA_::path_t path, Model* model, IDEWindow* view)
 
    view->saveHistory(file, RECENTFILES_SECTION_NAME, RECENTRPOJECTS_SECTION_NAME);
 
-   file.save(path, _ELENA_::feUTF8);
+   file.save(path, _ELENA_::feUTF8, false);
 }
 
 // --- WinMain ---

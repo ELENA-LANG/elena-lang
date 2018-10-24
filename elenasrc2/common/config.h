@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class header
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef configH
@@ -106,7 +106,7 @@ public:
    void clear();
 
    virtual bool load(path_t path, int encoding);
-   virtual bool save(path_t path, int encoding);
+   virtual bool save(path_t path, int encoding, bool withBOM);
 
    XmlConfigFile();
    virtual ~XmlConfigFile() { }
