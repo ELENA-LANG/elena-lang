@@ -2951,9 +2951,15 @@ void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, i
          tape.write(bcBWrite);
          break;
       case SET_MESSAGE_ID:
-         tape.write(bcECopy, immArg);
-         tape.write(bcDCopy, offset);
-         tape.write(bcBWrite);
+         if ((offset & 3) == 0) {
+            tape.write(bcDCopy, immArg);
+            tape.write(bcNSaveI, offset >> 2);
+         }
+         else {
+            tape.write(bcECopy, immArg);
+            tape.write(bcDCopy, offset);
+            tape.write(bcBWrite);
+         }
          break;
       default:
          break;
@@ -4136,6 +4142,10 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    // direct mode is possible only with a numeric constant
    if (directMode && (!rargConst || larg != lxLocalAddress))
       directMode = false;
+
+   // if larg=fieldaddress, rargConst - base should not be saved
+   if (rargConst && larg == lxFieldAddress)
+      largSimple = true;
 
    if (!directMode) {
       if (!largSimple) {

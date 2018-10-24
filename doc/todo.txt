@@ -3,23 +3,22 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 *  #82 default event handler 
-                 * move system'core_routines'__exception register call to the system entry symbol
-                 * &0l - should be dynamically created
-                 * #20 : Project config files - add an option to use BOM
-                 * #56 : MemoryStack 
+                 * #254 : Implicit boxing 
+
                  * #78 : Memory optimized for-loop 
-                 * #178 : source call optimization
-                 * #256 : Assigning the structure field 
                  * #230 : Extension dispatch statement 
                  * #200 : unboxing explicit local allocated extension 
-                 * #254 : Implicit boxing 
 
               dev - general implementation
                  *  #77 : migrate GC algorithm
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
                  *  #77 : get rid of tt_ptr field
+                 *  #82 default event handler 
+                 * move system'core_routines'__exception register call to the system entry symbol
+
+              dev - general implementation
+                 * &0l - should be dynamically created
 
               exp - live programming
                  * dynamic code : build tape to : print the number sum
