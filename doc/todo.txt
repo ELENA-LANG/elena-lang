@@ -3,11 +3,23 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * #254 : Implicit boxing 
-
                  * #78 : Memory optimized for-loop 
                  * #230 : Extension dispatch statement 
                  * #200 : unboxing explicit local allocated extension 
+
+              exp - live programming
+                 * dynamic code : build tape to : print the number sum
+
+              dev - tests          
+                 * test mta : exception handlers, an exception in a thread
+                 * test : script samples
+                 * test elt
+                 * test vm sta : preloaded symbols / initializers
+                 * test vm sta : exception handlers
+                 * test vm sta : critical exception handlers
+                 * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
+                 * vm : Execute Brain****
+                 * mta system : check the situation when too many threads (> MAX_THREAD)
 
               dev - general implementation
                  *  #77 : migrate GC algorithm
@@ -21,22 +33,10 @@ In development:
                  * &0l - should be dynamically created
 
               exp - live programming
-                 * dynamic code : build tape to : print the number sum
-                 * class to expression tree
-                 * expression tree to class
 
               dev - tests          
-                 * test mta : exception handlers, an exception in a thread
-                 * test : script samples
-                 * test elt
-                 * test vm sta : preloaded symbols / initializers
-                 * test vm sta : exception handlers
-                 * test vm sta : critical exception handlers
-                 * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
-                 * vm : Execute Brain****
-                 * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
-                 * mta system : check the situation when too many threads (> MAX_THREAD)
                  * sta / gc : Hailstone sequence
+                 * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
                  * mta / gc : Hailstone sequence
                  * rosetta : Sorting algorithms/Sleep sort
 

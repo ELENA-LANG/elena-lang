@@ -7890,15 +7890,15 @@ void Compiler :: injectBoxing(SyntaxWriter& writer, _CompilerScope&, LexicalType
    writer.closeNode();
 }
 
-void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, ref_t targetRef, bool stacksafe)
+void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, ref_t targetRef, int stackSafeAttr)
 {
    writer.insertChildren(0, createOp, createArg, lxTarget, targetClassRef);
 
    if (convertOp != lxNone) {
       writer.appendNode(lxCallTarget, targetRef);
       writer.appendNode(lxBoxableAttr);
-      if (stacksafe)
-         writer.appendNode(lxStacksafeAttr);
+      if (stackSafeAttr)
+         writer.appendNode(lxStacksafeAttr, stackSafeAttr);
       
       writer.insert(convertOp, convertArg);
       writer.closeNode();

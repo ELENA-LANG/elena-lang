@@ -1051,17 +1051,20 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _CompilerS
          else compatible = isSignatureCompatible(scope, signatureRef, signatures);
 
          if (compatible) {
-            bool stackSafe = isMethodStacksafe(info, implicitMessage);
+            // recognize stacksafe attributes
+            int stackSafeAttr = isMethodStacksafe(info, implicitMessage) ? 1 : 0;
+            setSignatureStacksafe(scope, signatureRef, stackSafeAttr);
+
             if (test(info.header.flags, elStructureRole)) {
             //   compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
                compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), 
-                  info.header.classRef, targetRef, stackSafe);
+                  info.header.classRef, targetRef, stackSafeAttr);
             }
             else if (test(info.header.flags, elDynamicRole)) {
                return false;
             }
             else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), 
-               info.header.classRef, targetRef, stackSafe);
+               info.header.classRef, targetRef, stackSafeAttr);
 
             return true;
          }
