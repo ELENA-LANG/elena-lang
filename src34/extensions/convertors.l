@@ -6,6 +6,31 @@ import system'dynamic.
 
 // --- convertors ---
 
+singleton charArrayExConvertor
+{
+    T<CharArray> convert(literal s)
+    [
+        int len := 0.
+        UTF8Encoding charCount(s, &len).
+        
+        auto retVal := CharArray new(len).
+        s save(0, retVal, &len).
+        
+        ^ retVal.
+    ]
+    
+    T<CharArray> convert(wide s)
+    [
+        int len := 0.
+        UTF16Encoding charCount(s, &len).
+        
+        auto retVal := CharArray new(len).
+        s save(0, retVal, &len).
+        
+        ^ retVal.
+    ]
+} 
+
 class literalExConvertor =
 {
     literal convert(RealMatrix a)
@@ -343,6 +368,9 @@ public extension convertorOp
     
     T<literal> toLiteral(int radix)
         = literalConvertor convert(self, radix).
+        
+    T<CharArray> toCharArray
+        = charArrayExConvertor convert:self.
     
     T<wide> toWide
         = wideExConvertor convert:self.

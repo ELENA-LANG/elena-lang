@@ -3,8 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * literalvalue.add&char$ #104
-
                  * literal / wide : chararray #105
                  * enumerable.join extension #224
                  * IntNumber.invert&vint$[1] #225
