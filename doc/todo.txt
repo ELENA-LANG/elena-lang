@@ -2,18 +2,15 @@
 In development:
 ------                              
 	                            
-              dev - general implementation
-                 * #78 : Memory optimized for-loop 
-                 * #230 : Extension dispatch statement 
-                 * #200 : unboxing explicit local allocated extension 
+              dev - tests          
+                 * test mta : exception handlers, an exception in a thread
+                 * test : script samples
+                 * test elt
 
               exp - live programming
                  * dynamic code : build tape to : print the number sum
 
               dev - tests          
-                 * test mta : exception handlers, an exception in a thread
-                 * test : script samples
-                 * test elt
                  * test vm sta : preloaded symbols / initializers
                  * test vm sta : exception handlers
                  * test vm sta : critical exception handlers
@@ -30,6 +27,7 @@ In development:
                  * move system'core_routines'__exception register call to the system entry symbol
 
               dev - general implementation
+                 * #200 : unboxing explicit local allocated extension 
                  * &0l - should be dynamically created
 
               exp - live programming
