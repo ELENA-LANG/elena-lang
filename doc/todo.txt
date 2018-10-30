@@ -2,6 +2,31 @@
 In development:
 ------                              
 	                            
+              dev - general implementation
+                 * literalvalue.add&char$ #104
+
+                 * literal / wide : chararray #105
+                 * enumerable.join extension #224
+                 * IntNumber.invert&vint$[1] #225
+                 * shortarray, intarray, chararray, literal and wide should return bytearray (save / get) #106
+                 * byte array field : writing / reading / boxing / unboxing #302
+                 * realOp / mathOp optimization #289
+                 * Read-only classes should be enforced #282
+                 * Dynamic array inheriting #276
+                 * Extra assignment #452
+                 * Support enumeration list #265
+                 * Optimization : operation with structure fields (byte or short) #278
+                 * Operations with structure fields #215
+                 * literalValue.indexOf&index&char / wideLiteralValue.indexOf&index&char #94
+                 * WideLiteralValue#class : new&length&bytearray #93
+                 * LiteralValue#class : new&length&shortarray #92
+                 * direct conversion literal / wide into bytearray / shortarray #87
+                 * primitive operations #86
+                 * Class field initializing code is not called for the singleton #372
+                 * explicit conversion and set$system'Object #367
+                 * Operation with primitive arrays #357
+                 * long to int raise a index is out of range exception #335
+
               dev - tests          
                  * test mta : exception handlers, an exception in a thread
                  * test : script samples

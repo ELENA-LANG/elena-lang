@@ -1134,7 +1134,7 @@ public sealed __string LiteralValue :: BaseValue
         system'core_routines'__literal copy(aLiteral, self).
     ]
 
-    /// Creates the literal string with specified length fills with spciefied character value        
+    /// Creates the literal string with specified length fills with specified character value        
     constructor new(int aSize, char aChar)
         => system'core_routines'__literal.
 
@@ -1225,8 +1225,19 @@ public sealed __string LiteralValue :: BaseValue
         => system'core_routines'__literal.
 
     /// Concatinates the values
-    literal add(char aChar)
-        = self add(T<literal>(aChar)).
+    literal add(char ch)
+    [
+        int len := self length. 
+        int ch_len := ch length.
+        
+        int new_len := len + ch_len.        
+        auto retVal := LiteralValue new(new_len).
+        
+        system'core_routines'__literal copy(self, retVal).
+        system'core_routines'__literal insert(retVal, len, ch).
+        
+        ^ retVal.
+    ]    
 
     // Reads the character at the specified index and saves into an output parameter
     read(int anIndex, ref<char> aChar)
@@ -1275,8 +1286,8 @@ public sealed __string LiteralValue :: BaseValue
         => system'core_routines'__literal.
 
     /// Inserts a character into and returns the new one
-    literal insert(int anIndex, char aChar)
-        = self insert(anIndex, T<literal>(aChar)).
+    literal insert(int index, char ch)
+        = self insert(index, T<literal>(ch)).
 
     /// Inserts an object into and returns the new one
     insert : anObject at:anIndex

@@ -2680,6 +2680,33 @@ labEnd:
   
 end
 
+procedure __literal."insert$system@LiteralValue$system@IntNumber$system@CharValue[3]"
+  
+  pusha
+
+  aloadsi 4
+  nload
+  pushd
+  acopys 0
+  pushn 0
+  pushn 0
+  bcopys 0
+  
+  callextr api : chartostr
+
+  aloadsi 6
+  nload
+  bloadsi 5
+  acopys 0
+
+  callextr api : insert
+
+  acopyb
+  popi 4
+  quitn 3
+  
+end
+
 procedure __literal."copy$system@LiteralValue$system@LiteralValue[2]"
 
   aloadsi 2
