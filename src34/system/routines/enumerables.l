@@ -370,6 +370,9 @@ public extension enumerableOp
         
     groupBy:groupFunc
         = GroupingEnumerator new(groupFunc, T<Enumerator>(self enumerator)).                                       
+        
+    join(object list) on(Func2 filter_f) selectBy(Func2 select_f)
+        = JoinEnumerator new(filter_f, select_f, T<Enumerator>(self enumerator), T<Enumerator>(list enumerator)).        
 }
 
 // --- indexableOp ---

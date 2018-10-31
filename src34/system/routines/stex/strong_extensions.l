@@ -26,6 +26,12 @@ public extension strongEnumerableOp<type1,type2>
         = StrongSelector<type1,type2>(f, system'Enumerator<type1>(self enumerator)).    
 }
 
+public extension strongEnumerableOp<type1,type2,type3>
+{
+    system'Enumerator<type3> join(object list) on(Func<type1,type2,bool> filter_f) selectBy(Func<type1,type2,type3> select_f)
+        = StrongJoinEnumerator<type1,type2,type3>(filter_f, select_f, system'Enumerator<type1>(self enumerator), system'Enumerator<type2>(list enumerator)).        
+}
+
 public extension strongEnumerableOp2<type>
 {
     stackunsafe type summarize(ref<type> retVal)

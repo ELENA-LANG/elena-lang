@@ -31,6 +31,10 @@ public class Object
 /// A common boolean value
 public enum class BoolValue
 {
+    /// return the default value
+    constructor
+        = false.
+        
     abstract bool equal(bool aBool) []
 
     abstract if : aTrueAction []

@@ -81,3 +81,53 @@ public StrongSelector<type1, type2> :: Enumerator<type2>
     
     cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
 }
+
+// --- StrongJoinEnumerator ---
+
+public StrongJoinEnumerator<type1, type2, type3> :: Enumerator<type3>
+{
+    Enumerator<type1> _left.
+    Enumerator<type2> _right.
+
+    Func<type1,type2,bool>  _filter.
+    Func<type1,type2,type3> _selector.
+    
+    constructor(Func<type1,type2,bool> filter_f, Func<type1,type2,type3> select_f, Enumerator<type1> left_e, Enumerator<type2> right_e)
+    [
+        _left := left_e.
+        _right := right_e.
+        
+        _filter := filter_f.
+        _selector := select_f.
+    ]
+    
+    reset
+    [
+        _left reset.
+        _right reset.
+    ]
+    
+    bool next
+    [
+        while(_left next)
+        [
+            _right reset.
+            
+            while (_right next)
+            [
+                if(_filter(_left get, _right get)) 
+                [
+                    ^ true.
+                ]
+            ]
+        ].
+        
+        ^ false.
+    ]
+    
+    type3 get = _selector(_left get, _right get).
+    
+    enumerable => _left.    
+    
+    cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
+}

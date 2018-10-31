@@ -802,6 +802,54 @@ class Accumulating :: BasePattern
     closure : aParam [ theResult value := theOperation(theResult value,aParam). ]
 }
 
+// --- JoinEnumerator ---
+
+public class JoinEnumerator :: Enumerator
+{
+    T<Enumerator> _left.
+    T<Enumerator> _right.
+
+    T<Func2> _filter.
+    T<Func2> _selector.
+
+    constructor new(Func2 filter_f, Func2 select_f, Enumerator left_e, Enumerator right_e)
+    [
+        _left := left_e.
+        _right := right_e.
+        
+        _filter := filter_f.
+        _selector := select_f.
+    ]
+    
+    reset
+    [
+        _left reset.
+        _right reset.
+    ]
+    
+    bool next
+    [
+        while(_left next)
+        [
+            _right reset.
+            
+            while (_right next)
+            [
+                if(_filter(_left get, _right get)) 
+                [
+                    ^ true.
+                ]
+            ]
+        ].
+        
+        ^ false.
+    ]
+    
+    get = _selector(_left get, _right get).
+    
+    enumerable => _left.
+}
+
 // --- patternOp ---
 
 public extension patternOp
