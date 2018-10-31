@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * literal / wide : chararray #105
                  * enumerable.join extension #224
                  * IntNumber.invert&vint$[1] #225
                  * shortarray, intarray, chararray, literal and wide should return bytearray (save / get) #106
