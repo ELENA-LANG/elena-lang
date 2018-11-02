@@ -1258,8 +1258,16 @@ public sealed struct IntNumber :: IntBaseNumber
     ]
     
     /// Bitwise inversion
-    int inverted
-        => system'core_routines'__int.  
+    readInvertedTo(ref<int> retVal)
+        => system'core_routines'__int.
+    
+    embeddable int inverted
+    [
+        int val := 0.
+        self readInvertedTo(&val).
+        
+        ^ val
+    ]
         
     /// Negates the value
     negative

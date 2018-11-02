@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * enumerable.join extension #224
                  * IntNumber.invert&vint$[1] #225
                  * shortarray, intarray, chararray, literal and wide should return bytearray (save / get) #106
                  * byte array field : writing / reading / boxing / unboxing #302
@@ -39,6 +38,7 @@ In development:
                  * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
                  * vm : Execute Brain****
                  * mta system : check the situation when too many threads (> MAX_THREAD)
+                 * test anagram sample : the wrong result
 
               dev - general implementation
                  *  #77 : migrate GC algorithm
