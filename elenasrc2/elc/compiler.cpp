@@ -2952,6 +2952,7 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
 {
    int paramMode = 0;
    bool externalMode = false;
+   bool anonymousVariadic = false;
    if (test(mode, HINT_EXTERNALOP)) {
       externalMode = true;
    }
@@ -2960,7 +2961,6 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
    SNode current = node;
 
    // compile the message argument list
-   bool anonymous = false;
    ref_t signatures[OPEN_ARG_COUNT];
    ref_t signatureLen = 0;
    while (/*current != lxMessage && */current != lxNone) {
@@ -2969,19 +2969,15 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
             writer.newNode(lxExtArgument);
 
          // try to recognize the message signature
-         ref_t argRef = 0;
-         if (!anonymous) {
-            ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode);
-            argRef = resolveObjectReference(scope, paramInfo);
-            if (argRef) {
-               if (signatureLen == OPEN_ARG_COUNT) {
-                  anonymous = signatures[signatureLen - 1] != argRef;
-               }
-               else signatures[signatureLen++] = argRef;
-            }
-            else anonymous = true;
+         ref_t argRef = resolveObjectReference(scope, compileExpression(writer, current, scope, 0, paramMode));
+         if (signatureLen == OPEN_ARG_COUNT) {
+            if (signatures[signatureLen - 1] != argRef)
+               anonymousVariadic = true;
          }
-         else compileExpression(writer, current, scope, 0, paramMode);
+         else if (argRef) {
+            signatures[signatureLen++] = argRef;
+         }
+         else signatures[signatureLen++] = scope.moduleScope->superReference;
 
          if (externalMode) {
             writer.appendNode(lxExtArgumentRef, argRef);
@@ -2992,10 +2988,19 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
       current = current.nextNode();
    }
 
-   if (!anonymous && signatureLen > 0) {
-      return scope.module->mapSignature(signatures, signatureLen, false);
+   if (signatureLen > 0 && !anonymousVariadic) {
+      bool anonymous = true;
+      for (ref_t i = 0; i < signatureLen; i++) {
+         if (signatures[i] != scope.moduleScope->superReference) {
+            anonymous = false;
+            break;
+         }
+      }
+      if (!anonymous)
+         return scope.module->mapSignature(signatures, signatureLen, false);
    }
-   else return 0;
+
+   return 0;
 }
 
 ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef, 

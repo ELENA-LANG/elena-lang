@@ -176,8 +176,20 @@ public singleton intarrayConvertorEx
         ^ IntArray new(list indexer).
     ]
     
+    T<IntArray> convert(Enumerator e)
+    [
+        List<int> list := List<int>().
+
+        while (e next)
+        [
+            list append(e get)
+        ].
+
+        ^ IntArray new(list indexer).        
+    ]
+    
     T<IntArray> convert(o)
-        <= convert(Enumerator<int>(o enumerator)).
+        <= convert(o enumerator).
     
 //    convert enumerable:aList
 //    [

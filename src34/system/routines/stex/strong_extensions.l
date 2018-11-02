@@ -40,11 +40,6 @@ public extension strongEnumerableOp2<type>
         
         p run(system'Enumerator<type>(self enumerator)).
         
-//        var rr := retVal.
-//        
-//        var o := rr value.
-        
         ^ retVal value
     ]
-//        = StrongSumming<type>() run(system'Enumerator<type>(self enumerator)).
 }
