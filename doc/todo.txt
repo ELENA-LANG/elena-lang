@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * IntNumber.invert&vint$[1] #225
                  * shortarray, intarray, chararray, literal and wide should return bytearray (save / get) #106
                  * byte array field : writing / reading / boxing / unboxing #302
                  * realOp / mathOp optimization #289
