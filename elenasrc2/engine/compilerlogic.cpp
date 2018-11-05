@@ -1919,14 +1919,13 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
    if (returningRef != 0 && defineStructSize(scope, returningRef, 0) > 0) {
       root = root.findChild(lxNewFrame);
 
-      if (root.existChild(lxReturning))
-      {
+      if (root.existChild(lxReturning)) {
          SNode message = SyntaxTree::findPattern(root, 2,
             SNodePattern(lxExpression),
             SNodePattern(lxDirectCalling, lxSDirctCalling));
 
          // if it is read&subject&var[2] message
-         if (getParamCount(message.argument) != 2 || getAction(message.argument) != (ref_t)verb)
+         if (getParamCount(message.argument) != 2 || (verb != EVAL_MESSAGE_ID && getAction(message.argument) != (ref_t)verb))
             return false;
 
          // check if it is operation with $self
@@ -1934,6 +1933,18 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
             SNodePattern(lxExpression),
             SNodePattern(lxDirectCalling, lxSDirctCalling),
             SNodePattern(lxSelfLocal, lxLocal));
+
+         SNode indexArg;
+         if (target == lxNone) {
+            target = SyntaxTree::findPattern(root, 4,
+               SNodePattern(lxExpression),
+               SNodePattern(lxDirectCalling, lxSDirctCalling),
+               SNodePattern(lxExpression),
+               SNodePattern(lxSelfLocal, lxLocal));
+
+            indexArg = target.parentNode().nextNode(lxObjectMask);
+         }
+         else indexArg = target.nextNode(lxObjectMask);
 
          if (target == lxLocal && target.argument == -1 && extensionRef != 0) {
             if (message.findChild(lxCallTarget).argument != extensionRef)
@@ -1943,8 +1954,6 @@ bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, r
             return false;
 
          // check if the index is used
-         SNode indexArg = target.nextNode(lxObjectMask);
-
          if (indexArg == lxExpression)
             indexArg = indexArg.firstChild(lxObjectMask);
 
@@ -1995,7 +2004,7 @@ bool CompilerLogic :: recognizeEmbeddableOp2(_CompilerScope& scope, SNode root, 
             SNodePattern(lxDirectCalling, lxSDirctCalling));
 
          // if it is read&index1&index2&var[2] message
-         if (getParamCount(message.argument) != 3 || getAction(message.argument) != verb)
+         if (getParamCount(message.argument) != 3 || (verb != EVAL_MESSAGE_ID && getAction(message.argument) != verb))
             return false;
 
          // check if it is operation with $self

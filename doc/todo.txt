@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * realOp / mathOp optimization #289
                  * Read-only classes should be enforced #282
                  * Dynamic array inheriting #276
                  * Extra assignment #452
