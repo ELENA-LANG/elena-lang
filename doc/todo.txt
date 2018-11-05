@@ -3,8 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * shortarray, intarray, chararray, literal and wide should return bytearray (save / get) #106
-                 * byte array field : writing / reading / boxing / unboxing #302
                  * realOp / mathOp optimization #289
                  * Read-only classes should be enforced #282
                  * Dynamic array inheriting #276

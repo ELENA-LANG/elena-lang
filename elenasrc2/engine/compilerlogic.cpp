@@ -1314,18 +1314,26 @@ bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, re
 int CompilerLogic :: defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable)
 {
    if (reference == V_BINARYARRAY && elementRef != 0) {
+      variable = true;
+
       return -defineStructSizeVariable(scope, elementRef, 0, variable);
    }
    //else if (reference == V_OBJARRAY && elementRef != 0) {
    //   return defineStructSizeVariable(scope, elementRef, 0, variable);
    //}
    else if (reference == V_INT32ARRAY) {
+      variable = true;
+
       return -4;
    }
    else if (reference == V_INT16ARRAY) {
+      variable = true;
+
       return -2;
    }
    else if (reference == V_INT8ARRAY) {
+      variable = true;
+
       return -1;
    }
    else {
