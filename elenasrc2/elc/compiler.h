@@ -119,12 +119,15 @@ public:
       okSignatureConstant,            // param - reference
       okArrayConst,
       okField,                        // param - reference, param - field offset, extraparam - class reference
+      okReadOnlyField,                // param - reference, param - field offset, extraparam - class reference
       okStaticField,                  // param - reference
       okStaticConstantField,          // param - reference
       okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
       okFieldAddress,                 // param - field offset, extraparam - class reference
+      okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
       okOuter,                        // param - field offset, extraparam - class reference
       okOuterField,                   // param - field offset, extraparam - outer field offset
+      okOuterReadOnlyField,           // param - field offset, extraparam - outer field offset
       okOuterSelf,                    // param - field offset, extraparam - outer field offset
       okOuterStaticField,             // param - field offset, extraparam - outer field offset
       okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
@@ -280,10 +283,10 @@ private:
             else return false;
          }
    
-         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne)
+         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode)
          {
             if (parent) {
-               return parent->mapTerminal(identifier, referenceOne);
+               return parent->mapTerminal(identifier, referenceOne, mode);
             }
             else return ObjectInfo();
          }
@@ -369,7 +372,7 @@ private:
       //   moduleScope->raiseWarning(level, message, sourcePath, );
       //}
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
       ObjectInfo mapGlobal(ident_t identifier);
 
@@ -416,7 +419,7 @@ private:
 
       bool defineForward(ident_t forward, ident_t referenceName)
       {
-         ObjectInfo info = mapTerminal(referenceName, true);
+         ObjectInfo info = mapTerminal(referenceName, true, 0);
       
          return forwards.add(forward, info.param, true);
       }
@@ -448,9 +451,9 @@ private:
 
       void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 
-      ObjectInfo mapField(ident_t identifier);
+      ObjectInfo mapField(ident_t identifier, int scopeMode);
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -534,6 +537,7 @@ private:
    {
       ref_t        message;
       LocalMap     parameters;
+      int          scopeMode;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
@@ -577,7 +581,7 @@ private:
          return scope ? scope->reference : 0;
       }
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
       ObjectInfo mapSelf(bool forced = false);
       ObjectInfo mapGroup();
@@ -629,7 +633,7 @@ private:
 
       ObjectInfo mapLocal(ident_t identifier);
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
       virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -684,7 +688,7 @@ private:
       bool withFrame;
       bool consructionMode;
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
       ResendScope(CodeScope* parent)
          : CodeScope(parent)
@@ -735,7 +739,7 @@ private:
          else return Scope::getScope(level);
       }
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
       InlineClassScope(CodeScope* owner, ref_t reference);
    };

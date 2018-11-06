@@ -3,7 +3,6 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * Read-only classes should be enforced #282
                  * Dynamic array inheriting #276
                  * Extra assignment #452
                  * Support enumeration list #265
@@ -35,6 +34,7 @@ In development:
                  * vm : Execute Brain****
                  * mta system : check the situation when too many threads (> MAX_THREAD)
                  * test anagram sample : the wrong result
+                 * nested code : read only outer field
 
               dev - general implementation
                  *  #77 : migrate GC algorithm

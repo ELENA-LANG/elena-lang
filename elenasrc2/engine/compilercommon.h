@@ -77,7 +77,7 @@
 #define V_VARIABLE       (ref_t)-16385
 #define V_CLASS          (ref_t)-16386
 #define V_CONVERSION     (ref_t)-16387
-#define V_IMPLICIT       (ref_t)-16388
+#define V_INITIALIZER    (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
@@ -117,8 +117,8 @@ enum MethodHint
    tpAction      = 0x000080,
    tpIfBranch    = 0x000100,
    tpIfNotBranch = 0x000200,
-   tpConstructor = 0x000400,
-   tpConversion  = 0x000800,
+   tpConstructor = 0x200400,
+   tpConversion  = 0x200800,
    tpMultimethod = 0x001000,
    tpArgDispatcher=0x003000,
    tpStatic      = 0x004000,
@@ -127,7 +127,8 @@ enum MethodHint
    tpAbstract    = 0x020000,
    tpInternal    = 0x040000,
    tpPredefined  = 0x080000, // virtual class declaration
-   tpDynamic     = 0x100000  // indicates that the method does not accept stack allocated parameters
+   tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
+   tpInitializer = 0x200000
 };
 
 // --- _Project ---

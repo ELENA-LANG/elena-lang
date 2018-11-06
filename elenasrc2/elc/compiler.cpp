@@ -52,6 +52,8 @@ using namespace _ELENA_;
 #define HINT_REAL64EXPECTED   0x00000002
 #define HINT_NOPRIMITIVES     0x00000001
 
+constexpr int INITIALIZER_SCOPE = 0x0000001;   // indicates the constructor or initializer method
+
 typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute Attribute;
 
@@ -266,7 +268,7 @@ ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
    else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), false);
 }
 
-ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool referenceOne)
+ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
    ref_t reference = resolveImplicitIdentifier(identifier, referenceOne);
    if (reference)
@@ -280,7 +282,7 @@ ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool refe
          return ObjectInfo(okNil);
       }
    }
-   return Scope::mapTerminal(identifier, referenceOne);
+   return Scope::mapTerminal(identifier, referenceOne, mode);
 }
 
 ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier, bool referenceOne)
@@ -559,15 +561,16 @@ void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics
    }
 }
 
-ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
+ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, int scopeMode)
 {
    int offset = info.fields.get(terminal);
    if (offset >= 0) {
+      bool readOnlyMode = test(info.header.flags, elReadOnlyRole) && !test(scopeMode, INITIALIZER_SCOPE);
       ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
       if (test(info.header.flags, elStructureRole)) {
-         return ObjectInfo(okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
+         return ObjectInfo(readOnlyMode ? okReadOnlyFieldAddress : okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2);
       }
-      else return ObjectInfo(okField, offset, fieldInfo.value1/*, fieldInfo.value2*/);
+      else return ObjectInfo(readOnlyMode ? okReadOnlyField : okField, offset, fieldInfo.value1/*, fieldInfo.value2*/);
    }
    else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
       return ObjectInfo(okSelfParam, 1, -2, info.fieldTypes.get(-1).value1);
@@ -602,19 +605,19 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal)
    }
 }
 
-ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenceOne)
+ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
    if (!referenceOne && identifier.compare(SUPER_VAR)) {
       return ObjectInfo(okSuper, info.header.parentRef);
    }
    else {
       if (!referenceOne) {
-         ObjectInfo fieldInfo = mapField(identifier);
+         ObjectInfo fieldInfo = mapField(identifier, mode);
          if (fieldInfo.kind != okUnknown) {
             return fieldInfo;
          }
       }
-      return Scope::mapTerminal(identifier, referenceOne);
+      return Scope::mapTerminal(identifier, referenceOne, mode);
    }
 }
 
@@ -625,6 +628,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 {
    this->message = 0;
    this->reserved = 0;
+   this->scopeMode = 0;
    this->rootToFree = 1;
    this->hints = 0;
    this->withOpenArg = false;
@@ -672,7 +676,7 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
    return ObjectInfo(okParam, prefix - param.offset, param.class_ref);
 }
 
-ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool referenceOne)
+ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool referenceOne, int mode)
 {
    if (!referenceOne) {
       Parameter param = parameters.get(terminal);
@@ -682,7 +686,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
       else {
          if (terminal.compare(SELF_VAR)) {
             if (closureMode || nestedMode) {
-               return parent->mapTerminal(OWNER_VAR, false);
+               return parent->mapTerminal(OWNER_VAR, false, mode | scopeMode);
             }
             else return mapSelf();
          }
@@ -693,7 +697,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
             else return mapGroup();
          }
          else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
-            ObjectInfo retVar = parent->mapTerminal(terminal, referenceOne);
+            ObjectInfo retVar = parent->mapTerminal(terminal, referenceOne, mode | scopeMode);
             if (retVar.kind == okUnknown) {
                InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
 
@@ -705,7 +709,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
       }
    }
 
-   return Scope::mapTerminal(terminal, referenceOne);
+   return Scope::mapTerminal(terminal, referenceOne, mode | scopeMode);
 }
 
 // --- Compiler::CodeScope ---
@@ -763,14 +767,13 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
 
 ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
 {
-   if (identifier.compare(SELF_VAR)) {
-      MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
+   MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
+   if (identifier.compare(SELF_VAR)) {      
       if (methodScope != NULL) {
          return methodScope->mapSelf();
       }
    }
    else if (identifier.compare(GROUP_VAR) || identifier.compare(OLD_GROUP_VAR)) {
-      MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
       if (methodScope != NULL) {
          return methodScope->mapGroup();
       }
@@ -778,7 +781,7 @@ ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
    else {
       ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
       if (classScope != NULL) {
-         return classScope->mapField(identifier);
+         return classScope->mapField(identifier, methodScope->scopeMode);
       }      
    }
    return ObjectInfo();
@@ -805,27 +808,39 @@ bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, r
    return Scope::resolveAutoType(info, reference, element);
 }
 
-ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool referenceOne)
+ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
    if (!referenceOne) {
       ObjectInfo info = mapLocal(identifier);
       if (info.kind != okUnknown)
          return info;
    }
-   return Scope::mapTerminal(identifier, referenceOne);
+   return Scope::mapTerminal(identifier, referenceOne, mode);
 }
 
 // --- Compiler::ResendScope ---
 
-ObjectInfo Compiler::ResendScope :: mapTerminal(ident_t identifier, bool referenceOne)
+inline bool isField(Compiler::ObjectKind kind)
+{
+   switch (kind) {
+      case  Compiler::okField:
+      case  Compiler::okReadOnlyField:
+      case  Compiler::okFieldAddress:
+      case  Compiler::okReadOnlyFieldAddress:
+      default:
+         return false;
+   }
+}
+
+ObjectInfo Compiler::ResendScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
    if (!withFrame && (identifier.compare(SELF_VAR) || identifier.compare(GROUP_VAR) || identifier.compare(OLD_GROUP_VAR)))
    {
       return ObjectInfo();
    }
 
-   ObjectInfo info = CodeScope::mapTerminal(identifier, referenceOne);
-   if (consructionMode && (info.kind == okField || info.kind == okFieldAddress)) {
+   ObjectInfo info = CodeScope::mapTerminal(identifier, referenceOne, mode);
+   if (consructionMode && isField(info.kind)) {
       return ObjectInfo();
    }
    else return info;
@@ -867,7 +882,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
    if (owner.outerObject.kind == okUnknown) {
       owner.reference = info.fields.Count();
 
-      owner.outerObject = parent->mapTerminal(SELF_VAR, false);
+      owner.outerObject = parent->mapTerminal(SELF_VAR, false, 0);
       if (owner.outerObject.kind == okUnknown) {
          // HOTFIX : if it is a singleton nested class
          owner.outerObject = ObjectInfo(okSelfParam, 1, reference);
@@ -887,7 +902,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
    Outer owner = outers.get(OWNER_VAR);
    // if owner reference is not yet mapped, add it
    if (owner.outerObject.kind == okUnknown) {
-      owner.outerObject = parent->mapTerminal(OWNER_VAR, false);
+      owner.outerObject = parent->mapTerminal(OWNER_VAR, false, 0);
       if (owner.outerObject.kind != okUnknown) {
          owner.reference = info.fields.Count();
 
@@ -902,7 +917,7 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
    return owner;
 }
 
-ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool referenceOne)
+ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
    //if (identifier.compare(SUPER_VAR)) {
    //   return ObjectInfo(okSuper, info.header.parentRef);
@@ -927,8 +942,9 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
          else return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
       }
       else {
-         outer.outerObject = parent->mapTerminal(identifier, referenceOne);
+         outer.outerObject = parent->mapTerminal(identifier, referenceOne, mode);
          switch (outer.outerObject.kind) {
+            case okReadOnlyField:
             case okField:
             case okStaticField:
             {
@@ -939,11 +955,17 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
                if (outer.outerObject.kind == okOuterField) {
                   return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
                }
+               else if (outer.outerObject.kind == okOuterReadOnlyField) {
+                  return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
+               }
                else if (outer.outerObject.kind == okOuterStaticField) {
                   return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
                }
                else if (outer.outerObject.kind == okStaticField) {
                   return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
+               }
+               else if (outer.outerObject.kind == okReadOnlyField) {
+                  return ObjectInfo(okOuterReadOnlyField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
                }
                else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
             }
@@ -954,6 +976,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
             case okSelfParam:
             case okLocalAddress:
             case okFieldAddress:
+            case okReadOnlyFieldAddress:
             case okOuterField:
             case okOuterStaticField:
             case okOuterSelf:
@@ -979,7 +1002,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
             case okUnknown:
             {
                // check if there is inherited fields
-               ObjectInfo fieldInfo = mapField(identifier);
+               ObjectInfo fieldInfo = mapField(identifier, 0);
                if (fieldInfo.kind != okUnknown) {
                   return fieldInfo;
                }
@@ -1259,8 +1282,10 @@ ref_t Compiler :: resolveObjectReference(_CompilerScope& scope, ObjectInfo objec
       case okNil:
          return V_NIL;
       case okField:
+      case okReadOnlyField:
       case okLocal:
       case okFieldAddress:
+      case okReadOnlyFieldAddress:
       case okOuter:
       case okOuterSelf:
       case okParam:
@@ -1270,6 +1295,7 @@ ref_t Compiler :: resolveObjectReference(_CompilerScope& scope, ObjectInfo objec
          return object.extraparam;
       case okClassStaticConstantField:
       case okOuterField:
+      case okOuterReadOnlyField:
       case okOuterStaticField:
       case okClassStaticField:
          return object.element;
@@ -2003,6 +2029,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okSuper:
          writer.newNode(lxLocal, 1);
          break;
+      case okReadOnlyField:
       case okField:
       case okOuter:
       case okOuterSelf:
@@ -2043,6 +2070,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          writer.appendNode(lxStaticConstField, object.extraparam);
          break;
       case okOuterField:
+      case okOuterReadOnlyField:
          writer.newNode(lxFieldExpression, 0);
          writer.appendNode(lxField, object.param);
          writer.appendNode(lxResultField, object.extraparam);
@@ -2062,6 +2090,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          break;
       case okLocalAddress:
       case okFieldAddress:
+      case okReadOnlyFieldAddress:
       {
          LexicalType type = object.kind == okLocalAddress ? lxLocalAddress : lxFieldAddress;
          if (!test(mode, HINT_NOBOXING) || test(mode, HINT_DYNAMIC_OBJECT)) {
@@ -2225,7 +2254,7 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
       }
       default:
          if (!emptystr(token)) {
-            object = scope.mapTerminal(token, terminal == lxReference);
+            object = scope.mapTerminal(token, terminal == lxReference, 0);
          }
          break;
          //   else if (terminal == lxResult) {
@@ -3119,7 +3148,7 @@ void Compiler :: compileClassConstantAssigning(SyntaxWriter& writer, SNode node,
       SNode operatorNode = sourceNode.findSubNode(lxOperator);
       if (operatorNode != lxNone && operatorNode.identifier().compare("+")) {
          SNode firstNode = sourceNode.findSubNodeMask(lxObjectMask);
-         ObjectInfo info = scope.mapTerminal(firstNode.identifier(), firstNode == lxReference);
+         ObjectInfo info = scope.mapTerminal(firstNode.identifier(), firstNode == lxReference, 0);
          if (info.kind == retVal.kind && info.param == retVal.param) {
             // HOTFIX : support accumulating attribute list
             ClassInfo parentInfo;
@@ -3212,6 +3241,11 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
          break;
       }
+      case okReadOnlyField:
+      case okReadOnlyFieldAddress:
+      case okOuterReadOnlyField:
+         scope.raiseError(errReadOnlyField, node.parentNode());
+         break;
       default:
          scope.raiseError(errInvalidOperation, sourceNode);
          break;
@@ -3293,7 +3327,7 @@ ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeSc
    if (roleTerminal != lxNone) {
       int flags = 0;
 
-      role = scope.mapTerminal(roleTerminal.identifier(), roleTerminal == lxReference);
+      role = scope.mapTerminal(roleTerminal.identifier(), roleTerminal == lxReference, 0);
       if (role.kind == okSymbol || role.kind == okConstantSymbol || role.kind == okExtension) {
          ref_t classRef = role.kind != okSymbol ? role.extraparam : role.param;
 
@@ -3721,7 +3755,7 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 
    // HOTFIX : implementing closure exit
    if (test(mode, HINT_ROOT)) {
-      ObjectInfo retVar = scope.mapTerminal(RETVAL_VAR, false);
+      ObjectInfo retVar = scope.mapTerminal(RETVAL_VAR, false, 0);
       if (retVar.kind != okUnknown) {
          writer.insertChild(0, lxField, retVar.param);
 
@@ -4466,8 +4500,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    ref_t signature[MAX_ARG_COUNT];
    size_t signatureLen = 0;
 
-//   ref_t verbRef = 0;
-//   bool propMode = false;
    bool constantConversion = false;
    bool unnamedMessage = false;
    ref_t flags = 0;
@@ -4477,13 +4509,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       action = node.findChild(lxMessage);
 
    SNode current = /*action == lxNone ? */node.findChild(lxMethodParameter)/* : action.nextNode()*/;
-
-//   if (verb == lxNone) {
-//      if (arg == lxMessage) {
-//         verb = arg;
-//         arg = verb.nextNode();
-//      }
-//   }
 
    if (action.compare(lxIdentifier, lxMessage)) {
       actionStr.copy(action.identifier()); // !! temporal
@@ -4634,15 +4659,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          else actionStr.copy(DEFAULT_MESSAGE);
 
          unnamedMessage = false;
-
-         //else if (signatureLen == 1 && signature[0] == scope.moduleScope->literalReference) {
-         //   flags |= SPECIAL_MESSAGE;
-         //   constantConversion = true;
-         //}
-         //else scope.raiseError(errIllegalMethod, node);
-
-         //if ((paramCount == 0 && signatureLen != 1) || (paramCount > 0 && (size_t)paramCount != signatureLen))
-         //   scope.raiseError(errIllegalMethod, node);
       }
       else if (test(scope.hints, tpSealed | tpConversion)) {
          SNode typeNode = node.findChild(lxClassRefAttr);
@@ -4659,9 +4675,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             constantConversion = true;
          }
          else scope.raiseError(errIllegalMethod, node);
-
-         //if ((paramCount == 0 && signatureLen != 1) || (paramCount > 0 && (size_t)paramCount != signatureLen))
-         //   scope.raiseError(errIllegalMethod, node);
       }
       else if (test(scope.hints, tpPrivate)) {
          flags |= SEALED_MESSAGE;
@@ -4669,9 +4682,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       else if (unnamedMessage && emptystr(actionStr))
          actionStr.append(EVAL_MESSAGE);
 
-//      if (scope.moduleScope->attributes.exist(messageStr) != 0)
-//         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousMessageName, verb);
-//
       if (/*actionRef == NEWOBJECT_MESSAGE_ID || */actionRef == DISPATCH_MESSAGE_ID) {
          // HOTFIX : for dispatcher
       }
@@ -4860,13 +4870,13 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
       if (isSingleStatement(node)) {
          SNode terminal = node.firstChild(lxTerminalMask);
 
-         target = scope.mapTerminal(terminal.identifier(), terminal == lxReference);
+         target = scope.mapTerminal(terminal.identifier(), terminal == lxReference, 0);
       }
 
-      if (target.kind == okConstantSymbol || target.kind == okField) {
+      if (target.kind == okConstantSymbol || target.kind == okField || target.kind == okReadOnlyField) {
          writer.newNode(lxResending, methodScope->message);
          writer.newNode(lxExpression);
-         if (target.kind == okField) {
+         if (target.kind == okField || target.kind == okReadOnlyField) {
             writer.appendNode(lxResultField, target.param);
          }
          else writer.appendNode(lxConstantSymbol, target.param);
@@ -5420,12 +5430,13 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
       switch(current) {
          case lxClassMethod:
          {
+            MethodScope methodScope(&scope);
+            methodScope.message = current.argument;
+
             if (current.argument == (encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
                scope.withImplicitConstructor = true;
             }
 
-            MethodScope methodScope(&scope);
-            methodScope.message = current.argument;
             initialize(scope, methodScope);
 
             // if it is a dispatch handler
@@ -5586,7 +5597,7 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
       else if (current == lxFieldInit) {
          // HOTFIX : reallocate static constant
          SNode nameNode = current.findChild(lxMemberIdentifier);
-         ObjectInfo info = scope.mapField(nameNode.identifier().c_str() + 1);
+         ObjectInfo info = scope.mapField(nameNode.identifier().c_str() + 1, 0);
          if (info.kind == okStaticConstantField) {
             ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
             name.append(STATICFIELD_POSTFIX);
@@ -5706,6 +5717,10 @@ void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNo
 
 void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 {
+   methodScope.hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+   if (test(methodScope.hints, tpInitializer))
+      methodScope.scopeMode |= INITIALIZER_SCOPE;
+
    methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
    methodScope.withOpenArg = isOpenArg(methodScope.message);

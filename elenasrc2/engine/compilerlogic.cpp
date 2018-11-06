@@ -1565,8 +1565,8 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_CONVERSION:
          attrValue = (tpConversion | tpSealed);
          return true;
-      case V_IMPLICIT:
-         attrValue = (tpSpecial | tpSealed);
+      case V_INITIALIZER:
+         attrValue = (tpSpecial | tpSealed | tpInitializer);
          return true;
          //case V_MULTI:
       //   // obsolete
