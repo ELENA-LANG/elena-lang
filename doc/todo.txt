@@ -3,7 +3,7 @@ In development:
 ------                              
 	                            
               dev - general implementation
-                 * Dynamic array inheriting #276
+                 * Dynamic array inheriting #276 : constructor should be explicitly declared
                  * Extra assignment #452
                  * Support enumeration list #265
                  * Optimization : operation with structure fields (byte or short) #278

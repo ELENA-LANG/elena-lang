@@ -5663,7 +5663,8 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
       classScope.info.header.parentRef = classScope.moduleScope->superReference;
    }
    else {
-      if (!classScope.abstractMode) {
+      // the constructors aren't inherited for abstract or dynamic classes
+      if (!classScope.abstractMode && !test(classScope.info.header.flags, elDynamicRole)) {
          IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
          classClassParentName.append(CLASSCLASS_POSTFIX);
 
@@ -6215,8 +6216,11 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
       if (/*included && */embeddableClass && !test(methodHints, tpMultimethod)) {
          // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
+
+         methodHints |= tpStackSafe;
+
          scope.info.methodHints.exclude(Attribute(message, maHint));
-         scope.info.methodHints.add(Attribute(message, maHint), methodHints | tpStackSafe);
+         scope.info.methodHints.add(Attribute(message, maHint), methodHints);
 
          //HOTFIX : for the private message : update the virtual method as well
          if ((message & MESSAGE_FLAG_MASK) == SEALED_MESSAGE) {
