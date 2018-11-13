@@ -396,6 +396,9 @@ public extension convertorOp
     T<short> toShort
         = shortConvertor convert:self.
 
+    T<uint> toUInt
+        = uintConvertor convert:self.
+        
     T<int> toInt
         = intConvertor convert:self.
         
