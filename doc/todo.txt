@@ -1,9 +1,8 @@
 ------                                 
 In development:
 ------                              
-	                            
+
               dev - tests          
-                 * test mta : exception handlers, an exception in a thread
                  * test : script samples
                  * test elt
 
@@ -25,7 +24,6 @@ In development:
                  *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
                  *  #77 : retiring core / corex 
                  *  #77 : get rid of tt_ptr field
-                 *  #82 default event handler 
                  * move system'core_routines'__exception register call to the system entry symbol
 
               dev - general implementation
@@ -38,7 +36,6 @@ In development:
                  * sta / gc : Hailstone sequence
                  * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
                  * mta / gc : Hailstone sequence
-                 * rosetta : Sorting algorithms/Sleep sort
 
               dev - general implementation
                  * (re)implement sockets
@@ -77,6 +74,7 @@ Pipeline:
                  * a < b < c - not allowed
                  * static methods and singleton
                  * do we need tpSpecial hint?
+                 * threadControl start:[...] should raise an exception in STA mode
 
               xdev - samples
                  * Cartesian product of two or more lists

@@ -4945,7 +4945,7 @@ procedure __thread.leaveCriticalSection[1]
   
 end
 
-procedure __rtptr."new[2]"
+procedure __rtptr."new$system@RTPointer$system@Object[2]"
 
   callr system'rt_sync
   pusha
@@ -5008,6 +5008,7 @@ procedure invoker
   copym INVOKE_MESSAGE_ID
   acallvi 0
   ifr labError 0
+  pop
   quitn 1
 
 labError:
@@ -5036,6 +5037,7 @@ procedure thread_start
   system
   pushe
   callextr extern : StartThread
+  popi 4
   quitn 1
 
 end
@@ -5048,6 +5050,7 @@ symbol sta_start
   system
   pushe
   callextr extern : InitializeSTA
+  popi 4
   quit
 
 end
@@ -5060,6 +5063,7 @@ symbol mta_start
   system
   pushe
   callextr extern : InitializeMTA
+  popi 4
   quit
 
 end
@@ -5072,6 +5076,7 @@ symbol vm_sta_start
   system
   pushe
   callextr extern : InitializeVMSTA
+  popi 4
   quit
 
 end
