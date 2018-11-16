@@ -1235,6 +1235,7 @@ public sealed __string LiteralValue :: BaseValue
         
         system'core_routines'__literal copy(self, retVal).
         system'core_routines'__literal insert(retVal, len, ch).
+        system'core_routines'__literal insert(retVal, new_len, $0).
         
         ^ retVal.
     ]    

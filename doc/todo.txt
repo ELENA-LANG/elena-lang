@@ -16,7 +16,6 @@ In development:
                  * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
                  * vm : Execute Brain****
                  * mta system : check the situation when too many threads (> MAX_THREAD)
-                 * test anagram sample : the wrong result
                  * nested code : read only outer field
 
               dev - general implementation
