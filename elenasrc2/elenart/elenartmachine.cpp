@@ -255,26 +255,26 @@ void* ELENARTMachine :: loadSubject(ident_t name)
 
 void* ELENARTMachine :: loadMessage(ident_t name)
 {
-   if (name.find('$') != -1) {
-      //setStatus("Invalid subject");
+   //if (name.find('$') != -1) {
+   //   //setStatus("Invalid subject");
 
-      return 0;
-   }
+   //   return 0;
+   //}
 
-   RTManager manager;
+   //RTManager manager;
 
-   // initialize image section ;
-   // it directly follows debug section
-   ImageSection subjectSection;
-   if (initSubjectSection(subjectSection)) {
-      void* ptr = _debugSection.get(_debugSection.Length());
-      int size = *((int*)ptr);
+   //// initialize image section ;
+   //// it directly follows debug section
+   //ImageSection subjectSection;
+   //if (initSubjectSection(subjectSection)) {
+   //   void* ptr = _debugSection.get(_debugSection.Length());
+   //   int size = *((int*)ptr);
 
-      subjectSection.init(ptr, size + 8);
+   //   subjectSection.init(ptr, size + 8);
 
-      MemoryReader reader(&subjectSection);
+   //   MemoryReader reader(&subjectSection);
 
-      return manager.loadMessage(reader, name, _verbs);
-   }
-   else return NULL;
+   //   return manager.loadMessage(reader, name, _verbs);
+   //}
+   /*else*/ return NULL;
 }

@@ -106,8 +106,8 @@ wchar_t* ProcessException :: Text()
          return PRIV_INSTRUCTION_EXCEPTION_TEXT;
       case EXCEPTION_STACK_OVERFLOW:
          return STACK_OVERFLOW_EXCEPTION_TEXT;
-      case ELENA_ERR_OUTOF_MEMORY:
-         return GC_OUTOF_MEMORY_EXCEPTION_TEXT;
+      //case ELENA_ERR_OUTOF_MEMORY:
+      //   return GC_OUTOF_MEMORY_EXCEPTION_TEXT;
 	  default:
          return UNKNOWN_EXCEPTION_TEXT;
    }
@@ -714,6 +714,8 @@ bool Debugger :: initDebugInfo(bool standAlone, StreamReader& reader, size_t& de
       reader.seek((pos_t)baseAddress);
 
       _ELENA_::PEHelper::seekSection(reader, ".debug", debugInfoPtr);
+
+      return true;
    }
    else {
       // read SystemEnv

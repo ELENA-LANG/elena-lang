@@ -31,7 +31,7 @@ public:
 
    void* loadSymbol(StreamReader& debug, ident_t name);
    void* loadSubject(StreamReader& debug, ident_t name);
-   void* loadMessage(StreamReader& debug, ident_t name, MessageMap& verbs);
+   //void* loadMessage(StreamReader& debug, ident_t name, MessageMap& verbs);
 
    RTManager()
    {

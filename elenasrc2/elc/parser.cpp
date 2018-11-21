@@ -34,19 +34,19 @@ SyntaxError :: SyntaxError(int column, int row, ident_t token, const char* error
 inline const char* getError(Symbol symbol)
 {
    switch(symbol) {
-      case nsDeclarationEndExpected:
-      case nsStatementEndExpected:
-      case nsDirectiveEndExpected:
-      case nsInlineExpressionEndExpected:
-         return errDotExpectedSyntax;
-      case nsErrClosingSBracketExpected:
-         return errCSBrExpectedSyntax;
-      //case nsErrNestedMemberExpected:
-      //   return errMethodNameExpected;
-      //case nsErrObjectExpected:
-      //   return errObjectExpected;
-      //case nsErrMessageExpected:
-      //   return errMessageExpected;
+      //case nsDeclarationEndExpected:
+      //case nsStatementEndExpected:
+      //case nsDirectiveEndExpected:
+      //case nsInlineExpressionEndExpected:
+      //   return errDotExpectedSyntax;
+      //case nsErrClosingSBracketExpected:
+      //   return errCSBrExpectedSyntax;
+      ////case nsErrNestedMemberExpected:
+      ////   return errMethodNameExpected;
+      ////case nsErrObjectExpected:
+      ////   return errObjectExpected;
+      ////case nsErrMessageExpected:
+      ////   return errMessageExpected;
       default:
          return errInvalidSyntax;
    }
@@ -61,69 +61,69 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
    terminal.disp = info.position;
    terminal.length = info.length;
    switch (info.state) {
-      case dfaQuote:
-         terminal.symbol = tsLiteral;
-         break;
-      case dfaCharacter:
-         terminal.symbol = tsCharacter;
-         break;
-      case dfaEOF:
-         terminal.symbol = tsEof;
-         terminal.value = _eof_message;
-         break;
-      case dfaIdentifier:
-         terminal.symbol = tsIdentifier;
-         break;
-      case dfaFullIdentifier:
-         terminal.symbol = tsReference;
-         break;
-      case dfaMember:
-         terminal.symbol = tsMember;
-         break;
-      case dfaGlobal:
-         terminal.symbol = tsGlobal;
-         break;
-      case dfaPrivate:
-         if (terminal.value[1] == 0) {
-            //HOTFIX : if it is $ symbol
-            terminal.symbol = (Symbol)table.defineSymbol(terminal);
-         }
-         else terminal.symbol = tsPrivate;
-         break;
-      case dfaInteger:
-         terminal.symbol = tsInteger;
-         break;
-      case dfaAttribute:
-         terminal.symbol = tsAttribute;
-         break;
-      case dfaExplicitConst:
-         switch (terminal.value[getlength(terminal.value) - 1]) {
-            case 'h':
-               terminal.symbol = tsHexInteger;
-               break;
-            case 'l':
-               terminal.symbol = tsLong;
-               break;
-            case 'r':
-               terminal.symbol = tsReal;
-               break;
-            default:
-               terminal.symbol = tsExplicitConst;
-               break;
-         }
-         break;
-      case dfaLong:
-         terminal.symbol = tsLong;
-         break;
-	   case dfaHexInteger:
-         terminal.symbol = tsHexInteger;
-         break;
-	   case dfaReal:
-         terminal.symbol = tsReal;
-         break;
-      case dfaWideQuote:
-         terminal.symbol = tsWide;
-         break;
+    //  case dfaQuote:
+    //     terminal.symbol = tsLiteral;
+    //     break;
+    //  case dfaCharacter:
+    //     terminal.symbol = tsCharacter;
+    //     break;
+    //  case dfaEOF:
+    //     terminal.symbol = tsEof;
+    //     terminal.value = _eof_message;
+    //     break;
+    //  case dfaIdentifier:
+    //     terminal.symbol = tsIdentifier;
+    //     break;
+    //  case dfaFullIdentifier:
+    //     terminal.symbol = tsReference;
+    //     break;
+    //  case dfaMember:
+    //     terminal.symbol = tsMember;
+    //     break;
+    //  case dfaGlobal:
+    //     terminal.symbol = tsGlobal;
+    //     break;
+    //  case dfaPrivate:
+    //     if (terminal.value[1] == 0) {
+    //        //HOTFIX : if it is $ symbol
+    //        terminal.symbol = (Symbol)table.defineSymbol(terminal);
+    //     }
+    //     else terminal.symbol = tsPrivate;
+    //     break;
+    //  case dfaInteger:
+    //     terminal.symbol = tsInteger;
+    //     break;
+    //  case dfaAttribute:
+    //     terminal.symbol = tsAttribute;
+    //     break;
+    //  case dfaExplicitConst:
+    //     switch (terminal.value[getlength(terminal.value) - 1]) {
+    //        case 'h':
+    //           terminal.symbol = tsHexInteger;
+    //           break;
+    //        case 'l':
+    //           terminal.symbol = tsLong;
+    //           break;
+    //        case 'r':
+    //           terminal.symbol = tsReal;
+    //           break;
+    //        default:
+    //           terminal.symbol = tsExplicitConst;
+    //           break;
+    //     }
+    //     break;
+    //  case dfaLong:
+    //     terminal.symbol = tsLong;
+    //     break;
+	   //case dfaHexInteger:
+    //     terminal.symbol = tsHexInteger;
+    //     break;
+	   //case dfaReal:
+    //     terminal.symbol = tsReal;
+    //     break;
+    //  case dfaWideQuote:
+    //     terminal.symbol = tsWide;
+    //     break;
 	   default:
          terminal.symbol = (Symbol)table.defineSymbol(terminal);
    }

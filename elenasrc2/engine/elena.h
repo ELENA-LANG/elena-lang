@@ -140,16 +140,16 @@ public:
 
    virtual size_t getLinkerConstant(int id) = 0;
 
-   virtual ident_t getLiteralClass() = 0;
-   virtual ident_t getWideLiteralClass() = 0;
-   virtual ident_t getCharacterClass() = 0;
-   virtual ident_t getIntegerClass() = 0;
-   virtual ident_t getRealClass() = 0;
-   virtual ident_t getLongClass() = 0;
-   virtual ident_t getMessageClass() = 0;
-   virtual ident_t getExtMessageClass() = 0;
-   virtual ident_t getSignatureClass() = 0;
-   virtual ident_t getNamespace() = 0;
+//   virtual ident_t getLiteralClass() = 0;
+//   virtual ident_t getWideLiteralClass() = 0;
+//   virtual ident_t getCharacterClass() = 0;
+//   virtual ident_t getIntegerClass() = 0;
+//   virtual ident_t getRealClass() = 0;
+//   virtual ident_t getLongClass() = 0;
+//   virtual ident_t getMessageClass() = 0;
+//   virtual ident_t getExtMessageClass() = 0;
+//   virtual ident_t getSignatureClass() = 0;
+//   virtual ident_t getNamespace() = 0;
 
    virtual ReferenceInfo retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 
@@ -388,70 +388,70 @@ public:
    }
 };
 
-// --- Quote ---
-
-template<class S> class QuoteTemplate
-{
-   S _string;
-
-public:
-   size_t Length() { return _string.Length(); }
-
-   ident_t ident() { return (const char*)_string; }
-
-   QuoteTemplate(ident_t string)
-   {
-      int mode = 0; // 1 - normal, 2 - character code
-      int index = 0;
-      for (size_t i = 0 ; i <= getlength(string) ; i++) {
-         switch (mode) {
-            case 0:
-               if (string[i]=='"') {
-                  mode = 1;
-               }
-               else if (string[i]=='$') {
-                  mode = 2;
-                  index = i + 1;
-               }
-               else return;
-
-               break;
-            case 1:
-               if (string[i]==0) {
-                  mode = 0;
-               }
-               else if (string[i]=='"') {
-                  if (string[i + 1]=='"')
-                     _string.append(string[i]);
-
-                  mode = 0;
-               }
-               else _string.append(string[i]);
-               break;
-            case 2:
-               if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
-                  String<char, 12> number(string + index, i - index);
-                  unic_c ch = (string[i] == 'h') ? ((ident_t)number).toLong(16) : ((ident_t)number).toInt();
-
-                  String<char, 5> temp;
-                  size_t temp_len = 4;
-                  Convertor::copy(temp, &ch, 1, temp_len);
-                  _string.append(temp, temp_len);
-
-                  if(string[i] == '"') {
-                     mode = 1;
-                  }
-                  else if(string[i] == '$') {
-                     index = i + 1;
-                     mode = 2;
-                  }
-                  else mode = 0;
-               }
-               break;
-         }
-      }
-   }
-};
+//// --- Quote ---
+//
+//template<class S> class QuoteTemplate
+//{
+//   S _string;
+//
+//public:
+//   size_t Length() { return _string.Length(); }
+//
+//   ident_t ident() { return (const char*)_string; }
+//
+//   QuoteTemplate(ident_t string)
+//   {
+//      int mode = 0; // 1 - normal, 2 - character code
+//      int index = 0;
+//      for (size_t i = 0 ; i <= getlength(string) ; i++) {
+//         switch (mode) {
+//            case 0:
+//               if (string[i]=='"') {
+//                  mode = 1;
+//               }
+//               else if (string[i]=='$') {
+//                  mode = 2;
+//                  index = i + 1;
+//               }
+//               else return;
+//
+//               break;
+//            case 1:
+//               if (string[i]==0) {
+//                  mode = 0;
+//               }
+//               else if (string[i]=='"') {
+//                  if (string[i + 1]=='"')
+//                     _string.append(string[i]);
+//
+//                  mode = 0;
+//               }
+//               else _string.append(string[i]);
+//               break;
+//            case 2:
+//               if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
+//                  String<char, 12> number(string + index, i - index);
+//                  unic_c ch = (string[i] == 'h') ? ((ident_t)number).toLong(16) : ((ident_t)number).toInt();
+//
+//                  String<char, 5> temp;
+//                  size_t temp_len = 4;
+//                  Convertor::copy(temp, &ch, 1, temp_len);
+//                  _string.append(temp, temp_len);
+//
+//                  if(string[i] == '"') {
+//                     mode = 1;
+//                  }
+//                  else if(string[i] == '$') {
+//                     index = i + 1;
+//                     mode = 2;
+//                  }
+//                  else mode = 0;
+//               }
+//               break;
+//         }
+//      }
+//   }
+//};
 
 // --- VMTEntry ---
 
@@ -484,109 +484,109 @@ struct ClassHeader
 
 enum MethodAttribute
 {
-   maActionMask         = 0x100,
-   maRefefernceMask     = 0x200,
-   maMessageMask        = 0x400,
+//   maActionMask         = 0x100,
+//   maRefefernceMask     = 0x200,
+//   maMessageMask        = 0x400,
 
    maNone               = 0x000,
-   maHint               = 0x001,
-   maReference          = 0x202,
-   maEmbeddableGet      = 0x103,
-   maEmbeddableEval     = 0x104,
-   maEmbeddableIdle     = 0x005,
-   maEmbeddableGetAt    = 0x106,
-   maEmbeddableGetAt2   = 0x107,
-   maEmbeddableEval2    = 0x108,
-   maEmbeddableNew      = 0x409,
-   maOverloadlist       = 0x20A,
+//   maHint               = 0x001,
+//   maReference          = 0x202,
+//   maEmbeddableGet      = 0x103,
+//   maEmbeddableEval     = 0x104,
+//   maEmbeddableIdle     = 0x005,
+//   maEmbeddableGetAt    = 0x106,
+//   maEmbeddableGetAt2   = 0x107,
+//   maEmbeddableEval2    = 0x108,
+//   maEmbeddableNew      = 0x409,
+//   maOverloadlist       = 0x20A,
 };
 
 struct ClassInfo
 {
-   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
-   typedef Pair<ref_t, int>                    Attribute;
-   typedef MemoryMap<ref_t, bool, false>       MethodMap;
-   typedef MemoryMap<ident_t, int, true>       FieldMap;
-   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
-   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
-   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
-   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
+//   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
+//   typedef Pair<ref_t, int>                    Attribute;
+//   typedef MemoryMap<ref_t, bool, false>       MethodMap;
+//   typedef MemoryMap<ident_t, int, true>       FieldMap;
+//   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
+//   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
+//   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
+//   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader    header;
-   int            size;           // Object size
-   MethodMap      methods;        // list of methods, true means the method was declared in this instance
-   FieldMap       fields;
-   StaticFieldMap statics;
-   StaticInfoMap  staticValues;
-
-   FieldTypeMap   fieldTypes;
-   MethodInfoMap  methodHints;
-
-   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
-   {
-      writer->write((void*)this, sizeof(ClassHeader));
-      writer->writeDWord(size);
-      if (!headerAndSizeOnly) {
-         staticValues.write(writer);
-         methods.write(writer);
-         fields.write(writer);
-         fieldTypes.write(writer);
-         methodHints.write(writer);
-         statics.write(writer);
-      }
-   }
-
-   void load(StreamReader* reader, bool headerOnly = false)
-   {
-      reader->read((void*)&header, sizeof(ClassHeader));
-      size = reader->getDWord();
-      if (!headerOnly) {
-         staticValues.read(reader);
-         methods.read(reader);
-         fields.read(reader);
-         fieldTypes.read(reader);
-         methodHints.read(reader);
-         statics.read(reader);
-      }
-   }
+//   int            size;           // Object size
+//   MethodMap      methods;        // list of methods, true means the method was declared in this instance
+//   FieldMap       fields;
+//   StaticFieldMap statics;
+//   StaticInfoMap  staticValues;
+//
+//   FieldTypeMap   fieldTypes;
+//   MethodInfoMap  methodHints;
+//
+//   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+//   {
+//      writer->write((void*)this, sizeof(ClassHeader));
+//      writer->writeDWord(size);
+//      if (!headerAndSizeOnly) {
+//         staticValues.write(writer);
+//         methods.write(writer);
+//         fields.write(writer);
+//         fieldTypes.write(writer);
+//         methodHints.write(writer);
+//         statics.write(writer);
+//      }
+//   }
+//
+//   void load(StreamReader* reader, bool headerOnly = false)
+//   {
+//      reader->read((void*)&header, sizeof(ClassHeader));
+//      size = reader->getDWord();
+//      if (!headerOnly) {
+//         staticValues.read(reader);
+//         methods.read(reader);
+//         fields.read(reader);
+//         fieldTypes.read(reader);
+//         methodHints.read(reader);
+//         statics.read(reader);
+//      }
+//   }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+//      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
    }
 };
 
-// --- SymbolExpressionInfo ---
-
-struct SymbolExpressionInfo
-{
-   ref_t expressionClassRef;
-   ref_t listRef;
-   bool  constant;
-
-   void save(StreamWriter* writer)
-   {
-      writer->writeDWord(listRef);
-      writer->writeDWord(constant ? -1: 0);
-      writer->writeDWord(expressionClassRef);
-   }
-
-   void load(StreamReader* reader)
-   {
-      listRef = reader->getDWord();
-      constant = (reader->getDWord() != 0);
-      expressionClassRef = reader->getDWord();
-   }
-
-   SymbolExpressionInfo()
-   {
-      expressionClassRef = 0;
-      listRef = 0;
-      constant = false;
-   }
-};
+//// --- SymbolExpressionInfo ---
+//
+//struct SymbolExpressionInfo
+//{
+//   ref_t expressionClassRef;
+//   ref_t listRef;
+//   bool  constant;
+//
+//   void save(StreamWriter* writer)
+//   {
+//      writer->writeDWord(listRef);
+//      writer->writeDWord(constant ? -1: 0);
+//      writer->writeDWord(expressionClassRef);
+//   }
+//
+//   void load(StreamReader* reader)
+//   {
+//      listRef = reader->getDWord();
+//      constant = (reader->getDWord() != 0);
+//      expressionClassRef = reader->getDWord();
+//   }
+//
+//   SymbolExpressionInfo()
+//   {
+//      expressionClassRef = 0;
+//      listRef = 0;
+//      constant = false;
+//   }
+//};
 
 // --- DebugLineInfo ---
 
@@ -689,21 +689,21 @@ inline ref_t mapReferenceKey(ident_t key)
 
 typedef Map<ident_t, _Module*> ModuleMap;
 typedef List<_Module*>         ModuleList;
-typedef List<ident_t>          IdentifierList;
+//typedef List<ident_t>          IdentifierList;
 
 // --- Reference mapping types ---
-//typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
+////typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
-typedef Memory32HashTable<ref_t, ref_t, __mapKey, 64>           AddressMap;
-typedef Map<ref_t, ref_t>                                       SubjectMap;
-typedef List<ref_t>                                             SubjectList;
+//typedef Memory32HashTable<ref_t, ref_t, __mapKey, 64>           AddressMap;
+//typedef Map<ref_t, ref_t>                                       SubjectMap;
+//typedef List<ref_t>                                             SubjectList;
 typedef Memory32HashTable<ref64_t, ref_t, __map64Key, 64>       ActionMap;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> MessageMap;
 
-// --- Extensions ---
-typedef Map<ref_t, Pair<ref_t, ref_t>> ExtensionMap;
+//// --- Extensions ---
+//typedef Map<ref_t, Pair<ref_t, ref_t>> ExtensionMap;
 
 // --- ParserTable auxiliary types ---
 typedef Stack<int>                                          ParserStack;
@@ -713,20 +713,20 @@ typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
 // --- miscellaneous routines ---
 
-inline bool isSealedStaticField(ref_t ref)
-{
-   return (int)ref >= 0;
-}
+//inline bool isSealedStaticField(ref_t ref)
+//{
+//   return (int)ref >= 0;
+//}
 
 inline bool isTemplateWeakReference(ident_t referenceName)
 {
    return referenceName[0] == '\'' && referenceName.startsWith(TEMPLATE_PREFIX_NS);
 }
 
-inline bool isForwardReference(ident_t referenceName)
-{
-   return referenceName.startsWith(FORWARD_PREFIX_NS);
-}
+//inline bool isForwardReference(ident_t referenceName)
+//{
+//   return referenceName.startsWith(FORWARD_PREFIX_NS);
+//}
 
 inline ref_t encodeMessage(ref_t actionRef, int paramCount)
 {
@@ -755,21 +755,21 @@ inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
    paramCount = message & PARAM_MASK;
 }
 
-inline ref_t overwriteParamCount(ref_t message, int paramCount)
-{
-   message &= ~PARAM_MASK;
-   message |= paramCount;
-
-   return message;
-}
-
-inline ref_t overwriteAction(ref_t message, ref_t action)
-{
-   message &= PARAM_MASK;
-   message |= (action << 4);
-
-   return message;
-}
+//inline ref_t overwriteParamCount(ref_t message, int paramCount)
+//{
+//   message &= ~PARAM_MASK;
+//   message |= paramCount;
+//
+//   return message;
+//}
+//
+//inline ref_t overwriteAction(ref_t message, ref_t action)
+//{
+//   message &= PARAM_MASK;
+//   message |= (action << 4);
+//
+//   return message;
+//}
 
 inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
 {
@@ -828,50 +828,50 @@ inline ref_t fromMessage64(ref64_t message)
    return encodeMessage(actionRef, paramCount);
 }
 
-inline bool IsExprOperator(int operator_id)
-{
-   switch (operator_id) {
-      case ADD_MESSAGE_ID:
-      case SUB_MESSAGE_ID:
-      case MUL_MESSAGE_ID:
-      case DIV_MESSAGE_ID:
-      case AND_MESSAGE_ID:
-      case OR_MESSAGE_ID:
-      case XOR_MESSAGE_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-inline bool IsShiftOperator(int operator_id)
-{
-   switch (operator_id) {
-      case READ_MESSAGE_ID:
-      case WRITE_MESSAGE_ID:
-         return true;
-      default:
-         return false;
-   }
-}
-
-//inline bool IsRealExprOperator(int operator_id)
+//inline bool IsExprOperator(int operator_id)
 //{
 //   switch (operator_id) {
-//   case ADD_MESSAGE_ID:
-//   case SUB_MESSAGE_ID:
-//   case MUL_MESSAGE_ID:
-//   case DIV_MESSAGE_ID:
-//      return true;
-//   default:
-//      return false;
+//      case ADD_MESSAGE_ID:
+//      case SUB_MESSAGE_ID:
+//      case MUL_MESSAGE_ID:
+//      case DIV_MESSAGE_ID:
+//      case AND_MESSAGE_ID:
+//      case OR_MESSAGE_ID:
+//      case XOR_MESSAGE_ID:
+//         return true;
+//      default:
+//         return false;
 //   }
 //}
-
-inline bool isOpenArg(ref_t message)
-{
-   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
-}
+//
+//inline bool IsShiftOperator(int operator_id)
+//{
+//   switch (operator_id) {
+//      case READ_MESSAGE_ID:
+//      case WRITE_MESSAGE_ID:
+//         return true;
+//      default:
+//         return false;
+//   }
+//}
+//
+////inline bool IsRealExprOperator(int operator_id)
+////{
+////   switch (operator_id) {
+////   case ADD_MESSAGE_ID:
+////   case SUB_MESSAGE_ID:
+////   case MUL_MESSAGE_ID:
+////   case DIV_MESSAGE_ID:
+////      return true;
+////   default:
+////      return false;
+////   }
+////}
+//
+//inline bool isOpenArg(ref_t message)
+//{
+//   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
+//}
 
 inline bool isPrimitiveRef(ref_t reference)
 {

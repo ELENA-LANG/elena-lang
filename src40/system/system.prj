@@ -1,0 +1,19 @@
+﻿<configuration>
+  <project>
+      <template>lib</template>
+      <namespace>system</namespace>
+      <debuginfo>-1</debuginfo>
+      <options>-w3</options>
+      <output>..\..\lib40</output>
+  </project>
+  <manifest>
+     <name>ELENA Standard Library</name>
+     <version>4.0.0</version>
+     <author>Alex Rakov</author>
+  </manifest>
+  <files>
+     <module>
+       <include>object.l</include>
+     </module>
+  </files>
+</configuration>
