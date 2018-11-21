@@ -12,8 +12,8 @@
 namespace _ELENA_
 {
   // --- Parser error messages ---
-//   #define errLineTooLong           "%s(%d:%d): error 001: Line too long\n"
-//   #define errInvalidChar           "%s(%d:%d): error 002: Invalid char %c\n"
+   #define errLineTooLong           "%s(%d:%d): error 001: Line too long\n"
+   #define errInvalidChar           "%s(%d:%d): error 002: Invalid char %c\n"
    #define errInvalidSyntax         "%s(%d:%d): error 004: Invalid syntax near '%s'\n"
 //   #define errDotExpectedSyntax     "%s(%d:%d): error 005: '.' expected\n"
 //   #define errCBrExpectedSyntax     "%s(%d:%d): error 006: ')' expected\n"

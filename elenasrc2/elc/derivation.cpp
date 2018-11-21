@@ -1,20 +1,19 @@
-////---------------------------------------------------------------------------
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA Engine Derivation Tree class implementation
-////
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "derivation.h"
-//#include "errors.h"
-//#include "bytecode.h"
+//		This file contains ELENA Engine Derivation Tree class implementation
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2018, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "derivation.h"
+#include "errors.h"
+#include "bytecode.h"
+
+using namespace _ELENA_;
+
 //inline bool isPrimitiveRef(ref_t reference)
 //{
 //   return (int)reference < 0;
@@ -26,32 +25,32 @@
 ////#define MODE_SIGNATURE       0x08
 //#define MODE_IMPORTING       0x10
 //#define MODE_MESSAGE_BODY    0x20  // indicates that sub-expressions should be an expression themselves
-//
-////void test2(SNode node)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      test2(current);
-////      current = current.nextNode();
-////   }
-////}
-//
-//// --- DerivationWriter ---
-//
-//void DerivationWriter :: begin()
+
+//void test2(SNode node)
 //{
-//   _writer.newNode(lxRoot);
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
 //}
-//
-//void DerivationWriter :: close()
-//{
-//   _writer.closeNode();
-//}
-//
-//void DerivationWriter :: writeNode(Symbol symbol)
-//{
-//   switch (symbol)
-//   {
+
+// --- DerivationWriter ---
+
+void DerivationWriter :: begin()
+{
+   _writer.newNode(lxRoot);
+}
+
+void DerivationWriter :: close()
+{
+   _writer.closeNode();
+}
+
+void DerivationWriter :: newNode(Symbol symbol)
+{
+   switch (symbol)
+   {
 //      case nsToken:
 //         _writer.newNode(lxAttribute);
 //         break;
@@ -152,22 +151,27 @@
 //      case nsClosingOperator:
 //         _writer.newNode((LexicalType)nsL3Operator);
 //         break;
-//      default:
-//         _writer.newNode((LexicalType)symbol);
-//         break;
-//   }
-//}
-//
-//void DerivationWriter :: writeSymbol(Symbol symbol)
-//{
-//   if (symbol != nsNone) {
-//      writeNode(symbol);
-//   }
-//   else _writer.closeNode();
-//}
-//
-//void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
-//{
+      default:
+         _writer.newNode((LexicalType)symbol);
+         break;
+   }
+}
+
+void DerivationWriter :: closeNode()
+{
+   _writer.closeNode();
+}
+
+void DerivationWriter :: writeSymbol(Symbol symbol)
+{
+   if (symbol != nsNone) {
+      newNode(symbol);
+   }
+   else closeNode();
+}
+
+void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
+{
 //   // HOT FIX : if there are several constants e.g. $10$13, it should be treated like literal terminal
 //   if (terminal == tsCharacter && terminal.value.findSubStr(1, '$', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
 //      terminal.symbol = tsLiteral;
@@ -196,8 +200,8 @@
 //   //   _writer->writeDWord(terminal.disp);
 //
 //   _writer.closeNode();
-//}
-//
+}
+
 //// ---  DerivationTransformer ---
 //
 //inline void copyIdentifier(SyntaxWriter& writer, SNode ident)

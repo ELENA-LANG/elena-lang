@@ -1,46 +1,47 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////               
-////		This file contains ELENA Engine Derivation Tree classes
-////
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
+//               
+//		This file contains ELENA Engine Derivation Tree classes
 //
-//#ifndef derivationH
-//#define derivationH 1
-//
-//#include "syntax.h"
-//#include "compilercommon.h"
-//
+//                                              (C)2005-2018, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef derivationH
+#define derivationH 1
+
+#include "syntax.h"
+#include "compilercommon.h"
+
 //#define EXPRESSION_IMPLICIT_MODE   1
 ////#define EXPRESSION_MESSAGE_MODE    2
 //#define EXPRESSION_OPERATOR_MODE   4
 //#define EXPRESSION_OBJECT_REQUIRED 8
-//
-//namespace _ELENA_
-//{
-//
-//// --- DerivationWriter ---
-//
-//class DerivationWriter : public _DerivationWriter
-//{
-//   SyntaxWriter _writer;
-//
-//   void writeNode(Symbol symbol);
-//
-//public:
-//   void begin();
-//   void close();
-//
-//   virtual void writeSymbol(Symbol symbol);
-//   virtual void writeTerminal(TerminalInfo& terminal);
-//
-//   DerivationWriter(SyntaxTree& target)
-//      : _writer(target)
-//   {
-//   }
-//};
-//
+
+namespace _ELENA_
+{
+
+// --- DerivationWriter ---
+
+class DerivationWriter : public _DerivationWriter
+{
+   SyntaxWriter _writer;
+
+   void newNode(Symbol symbol);
+   void closeNode();
+
+public:
+   void begin();
+   void close();
+
+   virtual void writeSymbol(Symbol symbol);
+   virtual void writeTerminal(TerminalInfo& terminal);
+
+   DerivationWriter(SyntaxTree& target)
+      : _writer(target)
+   {
+   }
+};
+
 //// --- DerivationWriter ---
 //
 //class DerivationTransformer //: public _DerivationTransformer
@@ -306,7 +307,7 @@
 //
 //   DerivationTransformer(SyntaxTree& tree);
 //};
-//
-//} // _ELENA_
-//
-//#endif // derivationH
+
+} // _ELENA_
+
+#endif // derivationH

@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * uncomment _ELC_::Project::compileSources
                  * uncomment ELENARTMachine::loadMessage
                  * review / redesign message structure (number of parameters, number of parameters with variadic argument)
                  * review predefined message constants

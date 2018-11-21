@@ -177,12 +177,11 @@ public:
 
 //// class forward declaration
 //class _Compiler;
-//
-//// --- _CompileScope ---
-//
-//
-//struct _CompilerScope
-//{
+
+// --- _CompileScope ---
+
+struct _CompilerScope
+{
 //   struct BranchingInfo
 //   {
 //      ref_t reference;
@@ -195,9 +194,9 @@ public:
 //         trueRef = falseRef = 0;
 //      }
 //   };
-//
-//   _ProjectManager*  project;
-//
+
+   _ProjectManager*  project;
+
 //   _Module*          module;
 //   _Module*          debugModule;
 //
@@ -292,11 +291,11 @@ public:
 //   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensionsToExport) = 0;
 //
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
-//
-//   _CompilerScope()
+
+   _CompilerScope()
 //      : attributes(0), savedPaths(-1)
-//   {
-//      project = NULL;
+   {
+      project = NULL;
 //      debugModule = module = NULL;
 //      intReference = boolReference = superReference = 0;
 //      signatureReference = messageReference = 0;
@@ -305,14 +304,14 @@ public:
 //      closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
 //      arrayTemplateReference = 0;
-//   }
-//};
-//
-//// --- _Compiler ---
-//
-//class _Compiler
-//{
-//public:
+   }
+};
+
+// --- _Compiler ---
+
+class _Compiler
+{
+public:
 //   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
 //   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, 
 //      ref_t targetRef, int stacksafeAttr) = 0;
@@ -336,18 +335,18 @@ public:
 //   virtual void generateOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
 //   virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
 //   virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
-//
-//   virtual bool declareModule(SyntaxTree& tree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode, ExtensionMap* extensionsToExport) = 0;
-//   virtual void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/) = 0;
-//
+
+   virtual bool declareModule(SyntaxTree& tree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*/, bool& repeatMode/*, ExtensionMap* extensionsToExport*/) = 0;
+   virtual void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*//*, Unresolveds& unresolveds*/) = 0;
+
 ////   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
-//};
-//
-//// --- _CompilerLogic ---
-//
-//class _CompilerLogic
-//{
-//public:
+};
+
+// --- _CompilerLogic ---
+
+class _CompilerLogic
+{
+public:
 //   struct ChechMethodInfo
 //   {
 //      bool  found;
@@ -477,7 +476,7 @@ public:
 //   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
 //
 //   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& resolveMultimethod) = 0;
-//};
+};
 
 }  // _ELENA_
 

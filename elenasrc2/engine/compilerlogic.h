@@ -1,22 +1,22 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA compiler logic class.
-////
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#ifndef compilerLogicH
-//#define compilerLogicH
+//		This file contains ELENA compiler logic class.
 //
-//#include "elena.h"
-//#include "compilercommon.h"
-//
-//namespace _ELENA_
-//{
-//
-//class CompilerLogic : public _CompilerLogic
-//{
+//                                              (C)2005-2018, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef compilerLogicH
+#define compilerLogicH
+
+#include "elena.h"
+#include "compilercommon.h"
+
+namespace _ELENA_
+{
+
+class CompilerLogic : public _CompilerLogic
+{
 //   struct OperatorInfo
 //   {
 //      int         operatorId;
@@ -73,8 +73,8 @@
 //   bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef, ref_t elementRef, ref_t* signatures, int signatureLen);
 //
 //   bool isBoolean(_CompilerScope& scope, ref_t reference);
-//
-//public:
+
+public:
 //   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
 //   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
 //
@@ -193,10 +193,10 @@
 //
 //   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr);
 //   virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
-//
-//   CompilerLogic();
-//};
-//
-//} // _ELENA_
-//
-//#endif // compilerLogicH
+
+   CompilerLogic();
+};
+
+} // _ELENA_
+
+#endif // compilerLogicH

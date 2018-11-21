@@ -1,19 +1,19 @@
-﻿////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA compiler class implementation.
-////
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+﻿//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "compiler.h"
-//#include "errors.h"
-//#include <errno.h>
+//		This file contains ELENA compiler class implementation.
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2018, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "compiler.h"
+#include "errors.h"
+#include <errno.h>
+
+using namespace _ELENA_;
+
 ////void test2(SNode node)
 ////{
 ////   SNode current = node.firstChild();
@@ -1058,20 +1058,20 @@
 //
 //   return ObjectInfo(okOuter, outer.reference);
 //}
-//
-//// --- Compiler ---
-//
-//Compiler :: Compiler(_CompilerLogic* logic)
+
+// --- Compiler ---
+
+Compiler :: Compiler(_CompilerLogic* logic)
 //   : _verbs(0)
-//{
+{
 //   _optFlag = 0;
-//
-//   this->_logic = logic;
-//
+
+   this->_logic = logic;
+
 //   ByteCodeCompiler::loadVerbs(_verbs);
 //   ByteCodeCompiler::loadOperators(_operators);
-//}
-//
+}
+
 //void Compiler :: writeMessageInfo(SyntaxWriter& writer, _CompilerScope& scope, ref_t messageRef)
 //{
 //   ref_t actionRef;
@@ -7574,14 +7574,14 @@
 //
 //   _writer.generateConstantList(tree.readRoot(), module, reference);
 //}
-//
-//void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
-//{
+
+void Compiler :: compileImplementations(SNode node/*, NamespaceScope& scope*/)
+{
 //   SyntaxTree expressionTree; // expression tree is reused
-//
-//   // second pass - implementation
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
+
+   // second pass - implementation
+   SNode current = node.firstChild();
+   while (current != lxNone) {
 //      switch (current) {
 //         case lxInclude:
 //            compileForward(current, scope);
@@ -7613,20 +7613,20 @@
 //            break;
 //         }
 //      }
-//      current = current.nextNode();
-//   }
-//}
-//
-//bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& repeatMode)
-//{
-//   SNode current = node.firstChild();
-//
+      current = current.nextNode();
+   }
+}
+
+bool Compiler :: compileDeclarations(SNode node/*, NamespaceScope& scope*/, bool& repeatMode)
+{
+   SNode current = node.firstChild();
+
 //   if (scope.moduleScope->superReference == 0)
 //      scope.raiseError(errNotDefinedBaseClass);
-//
-//   // first pass - declaration
-//   bool declared = false;
-//   while (current != lxNone) {
+
+   // first pass - declaration
+   bool declared = false;
+   while (current != lxNone) {
 //      //      if (scope.mapAttribute(name) != 0)
 //      //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
 //
@@ -7664,39 +7664,39 @@
 //            }
 //         }
 //      }
-//      current = current.nextNode();
-//   }
-//
-//   return declared;
-//}
-//
-//bool Compiler :: declareModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode, ExtensionMap* extensions)
-//{
+      current = current.nextNode();
+   }
+
+   return declared;
+}
+
+bool Compiler :: declareModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*/, bool& repeatMode/*, ExtensionMap* extensions*/)
+{
 //   // declare classes several times to ignore the declaration order
 //   NamespaceScope namespaceScope(&scope, path, ns, imported, false);
-//
-//   bool retVal = compileDeclarations(syntaxTree.readRoot(), namespaceScope, repeatMode);
-//
+
+   bool retVal = compileDeclarations(syntaxTree.readRoot()/*, namespaceScope*/, repeatMode);
+
 //   if (extensions != NULL) {
 //      for (auto it = namespaceScope.extensions.start(); !it.Eof(); it++) {
 //         extensions->add(it.key(), *it);
 //      }
 //   }
-//
-//   return retVal;
-//}
-//
-//void Compiler :: compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/)
-//{
+
+   return retVal;
+}
+
+void Compiler :: compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*//*, Unresolveds& unresolveds*/)
+{
 //   // declare classes several times to ignore the declaration order
 //   NamespaceScope namespaceScope(&scope, path, ns, imported, true);
 //
 //   if (!emptystr(namespaceScope.sourcePath))
 //      scope.project->printInfo("%s", namespaceScope.sourcePath);
-//
-//   compileImplementations(syntaxTree.readRoot(), namespaceScope);
-//}
-//
+
+   compileImplementations(syntaxTree.readRoot()/*, namespaceScope*/);
+}
+
 //inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t referenceName)
 //{
 //   if (!emptystr(referenceName)) {

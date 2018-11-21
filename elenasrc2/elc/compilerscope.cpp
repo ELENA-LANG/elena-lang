@@ -1,18 +1,18 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA compiler class scope implementation.
-////
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "compilerscope.h"
-//#include "derivation.h"
+//		This file contains ELENA compiler class scope implementation.
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2018, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "compilerscope.h"
+#include "derivation.h"
+
+using namespace _ELENA_;
+
 //typedef ClassInfo::Attribute Attribute;
 //
 //inline ref_t importAction(_Module* exporter, ref_t exportRef, _Module* importer)
@@ -32,9 +32,9 @@
 //   }
 //   else return 0;
 //}
-//
-//// --- CompilerScope ---
-//
+
+// --- CompilerScope ---
+
 //void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode)
 //{
 //   target.header = copy.header;
@@ -412,35 +412,35 @@
 //      return ::resolveImplicitIdentifier(referenceOne, identifier, module, project, importedNs);
 //   }   
 //}
-//
-//void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files, ExtensionMap* extensions)
-//{
-//   // declare classes / symbols based on the derivation tree
-//   bool repeatMode = true;
-//   bool idle = false;
-//   bool nothingToCompile = true;
-//   while (repeatMode && !idle) {
-//      repeatMode = false;
-//      idle = true;
-//      for (auto it = files.start(); !it.Eof(); it++) {
-//         SourceFileInfo* info = *it;
-//
-//         idle &= !compiler.declareModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs, repeatMode, extensions);
-//      }
-//
-//      nothingToCompile &= idle;
-//   }
-//   
-//   if (!nothingToCompile) {
-//      // compile classes / symbols if not idle 
-//      for (auto it = files.start(); !it.Eof(); it++) {
-//         SourceFileInfo* info = *it;
-//
-//         compiler.compileModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs);
-//      }
-//   }
-//}
-//
+
+void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files/*, ExtensionMap* extensions*/)
+{
+   // declare classes / symbols based on the derivation tree
+   bool repeatMode = true;
+   bool idle = false;
+   bool nothingToCompile = true;
+   while (repeatMode && !idle) {
+      repeatMode = false;
+      idle = true;
+      for (auto it = files.start(); !it.Eof(); it++) {
+         SourceFileInfo* info = *it;
+
+         idle &= !compiler.declareModule(*info->tree, *this/*, info->path.c_str(), info->ns.c_str(), &info->importedNs*/, repeatMode/*, extensions*/);
+      }
+
+      nothingToCompile &= idle;
+   }
+   
+   if (!nothingToCompile) {
+      // compile classes / symbols if not idle 
+      for (auto it = files.start(); !it.Eof(); it++) {
+         SourceFileInfo* info = *it;
+
+         compiler.compileModule(*info->tree, *this/*, info->path.c_str(), info->ns.c_str(), &info->importedNs*/);
+      }
+   }
+}
+
 //ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensions)
 //{
 //   SyntaxTree templateTree;

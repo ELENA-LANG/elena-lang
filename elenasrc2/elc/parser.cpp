@@ -67,10 +67,10 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
     //  case dfaCharacter:
     //     terminal.symbol = tsCharacter;
     //     break;
-    //  case dfaEOF:
-    //     terminal.symbol = tsEof;
-    //     terminal.value = _eof_message;
-    //     break;
+      case dfaEOF:
+         terminal.symbol = tsEof;
+         terminal.value = _eof_message;
+         break;
     //  case dfaIdentifier:
     //     terminal.symbol = tsIdentifier;
     //     break;

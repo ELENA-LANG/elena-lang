@@ -252,8 +252,8 @@ namespace _ELENA_
 //      mtThreadMask       = 0xF0000,
 //      mtSingleThread     = 0x00000,
 //      mtMultyThread      = 0x10000,
-//
-//      ptLibrary          = 0x00000,
+
+      ptLibrary          = 0x00000,
       ptWin32Console     = 0x00001,
       ptWin64Console     = 0x00081,
 //      ptWin32GUI         = 0x01001,
