@@ -14,15 +14,15 @@
 
 using namespace _ELENA_;
 
-////void test2(SNode node)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      test2(current);
-////      current = current.nextNode();
-////   }
-////}
-//
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
+
 //// --- Hint constants ---
 //#define HINT_CLOSURE_MASK     0xC0008800
 //
@@ -53,8 +53,8 @@ using namespace _ELENA_;
 //#define HINT_NOPRIMITIVES     0x00000001
 //
 //constexpr int INITIALIZER_SCOPE = 0x0000001;   // indicates the constructor or initializer method
-//
-//typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
+
+typedef Compiler::ObjectInfo ObjectInfo;       // to simplify code, ommiting compiler qualifier
 //typedef ClassInfo::Attribute Attribute;
 //
 //// --- Auxiliary routines ---
@@ -190,28 +190,28 @@ using namespace _ELENA_;
 //
 //   return true;
 //}
-//
-//// --- Compiler::NamespaceScope ---
-//
-//Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported, bool withFullInfo)
-//   : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0))
-//{
-//   this->ns = ns;
-//   this->sourcePath = path;
-//
+
+// --- Compiler::NamespaceScope ---
+
+Compiler::NamespaceScope :: NamespaceScope(_CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported/*, bool withFullInfo*/)
+   : Scope(moduleScope)//, constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0))
+{
+   this->ns = ns;
+   this->sourcePath = path;
+
 //   // load private namespaces
 //   loadExtensions(moduleScope->module->Name(), ns, true);
-//
-//   for (auto it = imported->start(); !it.Eof(); it++) {
-//      ident_t imported_ns = *it;
-//
-//      importedNs.add(imported_ns);
-//
+
+   for (auto it = imported->start(); !it.Eof(); it++) {
+      ident_t imported_ns = *it;
+
+      importedNs.add(imported_ns);
+
 //      if (withFullInfo) {
 //         loadModuleInfo(imported_ns);
 //      }         
-//   }
-//
+   }
+
 //  //   this->forwardsUnresolved = forwardsUnresolved;
 //
 ////   // HOTFIX : package section should be created if at least literal class is declated
@@ -221,8 +221,8 @@ using namespace _ELENA_;
 ////   else packageReference = 0;
 //
 ////   loadModuleInfo(module, true);
-//}
-//
+}
+
 //pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
 //{
 //   return saveSourcePath(writer, sourcePath);
@@ -242,97 +242,97 @@ using namespace _ELENA_;
 //   }
 //   else return 0;
 //}
-//
-//ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
-//{
-//   if (NamespaceName::isIncluded(FORWARD_MODULE, identifier)) {
-//      IdentifierString forwardName(FORWARD_PREFIX_NS, identifier + getlength(FORWARD_MODULE) + 1);
-//
-//      // if it is a forward reference
-//      return defineObjectInfo(moduleScope->mapFullReference(forwardName.c_str(), false), false);
-//   }
-//   else if (NamespaceName::isIncluded(EXTERNAL_MODULE, identifier)) {
-//      return ObjectInfo(okExternal);
-//   }
-//   // To tell apart primitive modules, the name convention is used
-//   else if (identifier.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
-//      return ObjectInfo(okInternal, module->mapReference(identifier));
-//   }
-//   
-//   // if it is an existing full reference
-//   ref_t reference = moduleScope->mapFullReference(identifier, true);
-//   if (reference) {
-//      return defineObjectInfo(reference, true);
-//   }
-//   // if it is a forward reference
-//   else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), false);
-//}
-//
-//ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
-//{
-//   ref_t reference = resolveImplicitIdentifier(identifier, referenceOne);
-//   if (reference)
-//      return defineObjectInfo(reference, true);
-//
-//   if (parent == NULL) {
-//      if (referenceOne) {
-//         return mapGlobal(identifier);
-//      }
-//      else if (identifier.compare(NIL_VAR)) {
-//         return ObjectInfo(okNil);
-//      }
-//   }
-//   return Scope::mapTerminal(identifier, referenceOne, mode);
-//}
-//
-//ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier, bool referenceOne)
-//{
-//   ref_t reference = forwards.get(identifier);
-//   if (reference)
-//      return reference;
-//
-//   reference = moduleScope->resolveImplicitIdentifier(ns, identifier, referenceOne, &importedNs);
-//   if (reference) {
-//      forwards.add(identifier, reference);
-//   }
-//
-//   return reference;
-//}
-//
-//ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
-//{
-//   if (terminal == lxNameAttr) {
-//      // verify if the name is unique
-//      ident_t name = module->resolveReference(terminal.argument);
-//      ref_t reference = terminal.argument;
-//      if (name.startsWith(PRIVATE_PREFIX_NS)) {
-//         IdentifierString altName("'", name.c_str() + getlength(PRIVATE_PREFIX_NS));
-//         // if the public symbol with the same name was already declared -
-//         // raise an error
-//         ref_t dup = module->mapReference(altName.c_str(), true);
-//         if (dup)
-//            reference = dup;
-//      }
-//      else {
-//         IdentifierString altName(PRIVATE_PREFIX_NS, name.c_str() + 1);
-//         // if the private symbol with the same name was already declared -
-//         // raise an error
-//         ref_t dup = module->mapReference(altName.c_str(), true);
-//         if (dup)
-//            reference = dup;
-//      }
-//
-//      if (module->mapSection(reference | mskSymbolRef, true))
-//         raiseError(errDuplicatedSymbol, terminal.firstChild(lxTerminalMask));
-//
-//      return terminal.argument;
-//   }
+
+ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
+{
+   if (NamespaceName::isIncluded(FORWARD_MODULE, identifier)) {
+      IdentifierString forwardName(FORWARD_PREFIX_NS, identifier + getlength(FORWARD_MODULE) + 1);
+
+      // if it is a forward reference
+      return defineObjectInfo(moduleScope->mapFullReference(forwardName.c_str(), false), false);
+   }
+   //else if (NamespaceName::isIncluded(EXTERNAL_MODULE, identifier)) {
+   //   return ObjectInfo(okExternal);
+   //}
+   //// To tell apart primitive modules, the name convention is used
+   //else if (identifier.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
+   //   return ObjectInfo(okInternal, module->mapReference(identifier));
+   //}
+   
+   // if it is an existing full reference
+   ref_t reference = moduleScope->mapFullReference(identifier, true);
+   if (reference) {
+      return defineObjectInfo(reference, true);
+   }
+   // if it is a forward reference
+   else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), false);
+}
+
+ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
+{
+   ref_t reference = resolveImplicitIdentifier(identifier, referenceOne);
+   if (reference)
+      return defineObjectInfo(reference, true);
+
+   if (parent == NULL) {
+      if (referenceOne) {
+         return mapGlobal(identifier);
+      }
+      else if (identifier.compare(NIL_VAR)) {
+         return ObjectInfo(okNil);
+      }
+   }
+   return Scope::mapTerminal(identifier, referenceOne, mode);
+}
+
+ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier, bool referenceOne)
+{
+   ref_t reference = forwards.get(identifier);
+   if (reference)
+      return reference;
+
+   reference = moduleScope->resolveImplicitIdentifier(ns, identifier, referenceOne, &importedNs);
+   if (reference) {
+      forwards.add(identifier, reference);
+   }
+
+   return reference;
+}
+
+ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
+{
+   if (terminal == lxNameAttr) {
+      // verify if the name is unique
+      ident_t name = module->resolveReference(terminal.argument);
+      ref_t reference = terminal.argument;
+      if (name.startsWith(PRIVATE_PREFIX_NS)) {
+         IdentifierString altName("'", name.c_str() + getlength(PRIVATE_PREFIX_NS));
+         // if the public symbol with the same name was already declared -
+         // raise an error
+         ref_t dup = module->mapReference(altName.c_str(), true);
+         if (dup)
+            reference = dup;
+      }
+      else {
+         IdentifierString altName(PRIVATE_PREFIX_NS, name.c_str() + 1);
+         // if the private symbol with the same name was already declared -
+         // raise an error
+         ref_t dup = module->mapReference(altName.c_str(), true);
+         if (dup)
+            reference = dup;
+      }
+
+      if (module->mapSection(reference | mskSymbolRef, true))
+         raiseError(errDuplicatedSymbol, terminal.firstChild(lxTerminalMask));
+
+      return terminal.argument;
+   }
 //   else if (terminal == lxNone) {
 //      return mapAnonymous();
 //   }
-//   else return moduleScope->mapNewIdentifier(ns, terminal.identifier(), false);
-//}
-//
+   else return moduleScope->mapNewIdentifier(ns, terminal.identifier(), false);
+}
+
 //ref_t Compiler::NamespaceScope :: mapAnonymous(ident_t prefix)
 //{
 //   // auto generate the name
@@ -353,13 +353,13 @@ using namespace _ELENA_;
 ////
 ////   return module->mapReference(referenceName, true) != 0;
 ////}
-//
-//ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool checkState)
-//{
-//   // if reference is zero the symbol is unknown
-//   if (reference == 0) {
-//      return ObjectInfo();
-//   }
+
+ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool checkState)
+{
+   // if reference is zero the symbol is unknown
+   if (reference == 0) {
+      return ObjectInfo();
+   }
 //   // check if symbol should be treated like constant one
 //   else if (constantHints.exist(reference)) {
 //      return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
@@ -405,11 +405,11 @@ using namespace _ELENA_;
 //         }
 //      }
 //   }
-//
-//   // otherwise it is a normal one
-//   return ObjectInfo(okSymbol, reference);
-//}
-//
+
+   // otherwise it is a normal one
+   return ObjectInfo(okSymbol, reference);
+}
+
 ////void Compiler::ModuleScope :: validateReference(SNode terminal, ref_t reference)
 ////{
 ////   // check if the reference may be resolved
@@ -483,29 +483,29 @@ using namespace _ELENA_;
 //
 //   extensions.add(message, Pair<ref_t, ref_t>(typeRef, role));
 //}
-//
-//// --- Compiler::SourceScope ---
-//
-//Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference)
-//   : Scope(moduleScope)
-//{
-//   this->reference = reference;
-//
+
+// --- Compiler::SourceScope ---
+
+Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference)
+   : Scope(moduleScope)
+{
+   this->reference = reference;
+
 //   ident_t name = module->resolveReference(reference);
 //   this->internalOne = name.startsWith(PRIVATE_PREFIX_NS);
-//}
-//
-//// --- Compiler::SymbolScope ---
-//
-//Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference)
-//   : SourceScope(parent, reference)
-//{
+}
+
+// --- Compiler::SymbolScope ---
+
+Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference)
+   : SourceScope(parent, reference)
+{
 //   outputRef = 0;
 //   constant = false;
 //   staticOne = false;
 //   preloaded = false;
-//}
-//
+}
+
 ////ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
 ////{
 ////   return Scope::mapTerminal(identifier);
@@ -711,17 +711,17 @@ using namespace _ELENA_;
 //
 //   return Scope::mapTerminal(terminal, referenceOne, mode | scopeMode);
 //}
-//
-//// --- Compiler::CodeScope ---
-//
-//Compiler::CodeScope :: CodeScope(SourceScope* parent)
-//   : Scope(parent), locals(Parameter(0))
-//{
-//   this->level = 0;
-//   this->saved = this->reserved = 0;
-//   this->genericMethod = false;
-//}
-//
+
+// --- Compiler::CodeScope ---
+
+Compiler::CodeScope :: CodeScope(SourceScope* parent)
+   : Scope(parent)//, locals(Parameter(0))
+{
+   //this->level = 0;
+   //this->saved = this->reserved = 0;
+   //this->genericMethod = false;
+}
+
 //Compiler::CodeScope :: CodeScope(MethodScope* parent)
 //   : Scope(parent), locals(Parameter(0))
 //{
@@ -1062,13 +1062,13 @@ using namespace _ELENA_;
 // --- Compiler ---
 
 Compiler :: Compiler(_CompilerLogic* logic)
-//   : _verbs(0)
+   : _verbs(0)
 {
 //   _optFlag = 0;
 
    this->_logic = logic;
 
-//   ByteCodeCompiler::loadVerbs(_verbs);
+   ByteCodeCompiler::loadVerbs(_verbs);
 //   ByteCodeCompiler::loadOperators(_operators);
 }
 
@@ -2151,12 +2151,12 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //
 //   writer.closeNode();
 //}
-//
-//ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
-//{
-//   ident_t token = terminal.identifier();
-//
-//   ObjectInfo object;
+
+/*ObjectInfo*/void Compiler :: compileTerminal(/*SyntaxWriter& writer, */SNode terminal, CodeScope& scope/*, int mode*/)
+{
+   ident_t token = terminal.identifier();
+
+   ObjectInfo object;
 //   switch (terminal.type) {
 //      case lxConstantList:
 //            // HOTFIX : recognize predefined constant lists
@@ -2254,7 +2254,7 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //      }
 //      default:
 //         if (!emptystr(token)) {
-//            object = scope.mapTerminal(token, terminal == lxReference, 0);
+            object = scope.mapTerminal(token, terminal == lxReference, 0);
 //         }
 //         break;
 //         //   else if (terminal == lxResult) {
@@ -2284,10 +2284,10 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //   else writeTerminal(writer, terminal, scope, object, mode);
 //
 //   return object;
-//}
-//
-//ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode)
-//{
+}
+
+/*ObjectInfo*/void Compiler :: compileObject(/*SyntaxWriter& writer, */SNode node, CodeScope& scope/*, ref_t targetRef, int mode*/)
+{
 //   ObjectInfo result;
 //
 //   if (test(mode, HINT_COLLECTION_MODE)) {
@@ -2337,13 +2337,13 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //            result = ObjectInfo(okObject);
 //            break;
 //         default:
-//            result = compileTerminal(writer, node, scope, mode);
+            /*result = */compileTerminal(/*writer, */node, scope/*, mode*/);
 //      }
 //   }
 //
 //   return result;
-//}
-//
+}
+
 //ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 //{
 //   SNode terminal = node.findChild(lxIdentifier, lxLiteral);
@@ -3996,9 +3996,9 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //
 //   return objectInfo;
 //}
-//
-//ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, int mode)
-//{
+
+/*ObjectInfo*/void Compiler :: compileExpression(/*SyntaxWriter& writer, */SNode node, CodeScope& scope/*, ref_t exptectedRef, int mode*/)
+{
 //   writer.newBookmark();
 //
 //   bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
@@ -4007,8 +4007,8 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //   mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
 //
 //   int targetMode = mode & ~HINT_PROP_MODE;
-//
-//   SNode object = node.firstChild(lxObjectMask);
+
+   SNode object = node.firstChild(lxObjectMask);
 //   SNode operationNode = node.findChild(lxAssign, lxMessage, lxOperator, lxExtension);
 //
 //   if (operationNode == lxAssign) {
@@ -4031,7 +4031,7 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //
 //      if (operationNode != lxNone) {
 //         // if the object is not single, do not pass the target reference
-//         objectInfo = compileObject(writer, object, scope, 0, targetMode);
+         /*objectInfo = */compileObject(/*writer, */object, scope/*, 0, targetMode*/);
 //
 //         // HOTFIX : to compile property assigmment properly - reread them
 //         operationNode = node.findChild(lxAssign, lxMessage, lxOperator, lxExtension);
@@ -4061,8 +4061,8 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //   writer.removeBookmark();
 //
 //   return objectInfo;
-//}
-//
+}
+
 //ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
 //{
 //   CodeScope subScope(&scope);
@@ -6553,16 +6553,16 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //      compileSymbolCode(scope);
 //   }
 //}
-//
-//void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
-//{
+
+void Compiler :: compileSymbolDeclaration(SNode node/*, SymbolScope& scope*/)
+{
 //   declareSymbolAttributes(node, scope);
 //
 //   if ((scope.constant || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
 //      scope.save();
 //   }
-//}
-//
+}
+
 //bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode)
 //{
 //   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
@@ -6668,9 +6668,9 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //
 //   return true;
 //}
-//
-//void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope)
-//{
+
+void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope)
+{
 //   expressionTree.clear();
 //
 //   SyntaxWriter writer(expressionTree);
@@ -6678,17 +6678,17 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //   declareSymbolAttributes(node, scope);
 //
 //   bool isStatic = scope.staticOne;
-//
-//   SNode expression = node.findChild(lxExpression);
-//
-//   CodeScope codeScope(&scope);
-//
+
+   SNode expression = node.findChild(lxExpression);
+
+   CodeScope codeScope(&scope);
+
 //   writer.newNode(lxSymbol, node.argument);
 //   writer.newNode(lxExpression);
 //   writer.appendNode(lxBreakpoint, dsStep);
 //   writer.newBookmark();
-//   // HOTFIX : due to implementation (compileSymbolConstant requires constant types) typecast should be done explicitly
-//   ObjectInfo retVal = compileExpression(writer, expression, codeScope, 0, isSingleStatement(expression) ? HINT_ROOTSYMBOL : 0);
+   // HOTFIX : due to implementation (compileSymbolConstant requires constant types) typecast should be done explicitly
+   /*ObjectInfo retVal = */compileExpression(/*writer, */expression, codeScope/*, 0, isSingleStatement(expression) ? HINT_ROOTSYMBOL : 0*/);
 //   if (scope.outputRef == 0) {
 //      if (resolveObjectReference(*scope.moduleScope, retVal) != 0) {
 //         // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
@@ -6729,8 +6729,8 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //
 //   // create byte code sections
 //   _writer.save(tape, *scope.moduleScope);
-//}
-//
+}
+
 //void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/)
 //{
 //   SyntaxTree expressionTree;
@@ -7575,14 +7575,14 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //   _writer.generateConstantList(tree.readRoot(), module, reference);
 //}
 
-void Compiler :: compileImplementations(SNode node/*, NamespaceScope& scope*/)
+void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 {
 //   SyntaxTree expressionTree; // expression tree is reused
 
    // second pass - implementation
    SNode current = node.firstChild();
    while (current != lxNone) {
-//      switch (current) {
+      switch (current) {
 //         case lxInclude:
 //            compileForward(current, scope);
 //            break;
@@ -7606,20 +7606,22 @@ void Compiler :: compileImplementations(SNode node/*, NamespaceScope& scope*/)
 //            }
 //            break;
 //         }
-//         case lxSymbol:
-//         {
-//            SymbolScope symbolScope(&scope, current.argument);
-//            compileSymbolImplementation(expressionTree, current, symbolScope);
-//            break;
-//         }
-//      }
+         case lxSymbol:
+         {
+            SymbolScope symbolScope(&scope, current.argument);
+            compileSymbolImplementation(/*expressionTree, */current, symbolScope);
+            break;
+         }
+      }
       current = current.nextNode();
    }
 }
 
-bool Compiler :: compileDeclarations(SNode node/*, NamespaceScope& scope*/, bool& repeatMode)
+bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& repeatMode)
 {
    SNode current = node.firstChild();
+
+//   test2(node);
 
 //   if (scope.moduleScope->superReference == 0)
 //      scope.raiseError(errNotDefinedBaseClass);
@@ -7627,12 +7629,12 @@ bool Compiler :: compileDeclarations(SNode node/*, NamespaceScope& scope*/, bool
    // first pass - declaration
    bool declared = false;
    while (current != lxNone) {
-//      //      if (scope.mapAttribute(name) != 0)
-//      //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
-//
-//      if (current.argument == 0 || current.argument == INVALID_REF) {
-//         // hotfix : ignore already declared classes and symbols
-//         switch (current) {
+      //      if (scope.mapAttribute(name) != 0)
+      //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
+
+      if (current.argument == 0 || current.argument == INVALID_REF) {
+         // hotfix : ignore already declared classes and symbols
+         switch (current) {
 //            case lxClass:
 //               if (!isDependentOnNotDeclaredClass(findBaseParent(current), scope)) {
 //                  current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
@@ -7649,33 +7651,33 @@ bool Compiler :: compileDeclarations(SNode node/*, NamespaceScope& scope*/, bool
 //               }
 //               else repeatMode = true;
 //               break;
-//            case lxSymbol:
-//            {
-//               current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
-//
-//               SymbolScope symbolScope(&scope, current.argument);
-//
-//               scope.moduleScope->mapSection(symbolScope.reference | mskSymbolRef, false);
-//               
-//               // declare symbol
-//               compileSymbolDeclaration(current, symbolScope);
-//               declared = true;
-//               break;
-//            }
-//         }
-//      }
+            case lxSymbol:
+            {
+               current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
+
+               SymbolScope symbolScope(&scope, current.argument);
+
+               scope.moduleScope->mapSection(symbolScope.reference | mskSymbolRef, false);
+
+               // declare symbol
+               compileSymbolDeclaration(current/*, symbolScope*/);
+               declared = true;
+               break;
+            }
+         }
+      }
       current = current.nextNode();
    }
 
    return declared;
 }
 
-bool Compiler :: declareModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*/, bool& repeatMode/*, ExtensionMap* extensions*/)
+bool Compiler :: declareModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode/*, ExtensionMap* extensions*/)
 {
-//   // declare classes several times to ignore the declaration order
-//   NamespaceScope namespaceScope(&scope, path, ns, imported, false);
+   // declare classes several times to ignore the declaration order
+   NamespaceScope namespaceScope(&scope, path, ns, imported/*, false*/);
 
-   bool retVal = compileDeclarations(syntaxTree.readRoot()/*, namespaceScope*/, repeatMode);
+   bool retVal = compileDeclarations(syntaxTree.readRoot(), namespaceScope, repeatMode);
 
 //   if (extensions != NULL) {
 //      for (auto it = namespaceScope.extensions.start(); !it.Eof(); it++) {
@@ -7686,15 +7688,15 @@ bool Compiler :: declareModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, 
    return retVal;
 }
 
-void Compiler :: compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*//*, Unresolveds& unresolveds*/)
+void Compiler :: compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/)
 {
-//   // declare classes several times to ignore the declaration order
-//   NamespaceScope namespaceScope(&scope, path, ns, imported, true);
-//
+   // declare classes several times to ignore the declaration order
+   NamespaceScope namespaceScope(&scope, path, ns, imported/*, true*/);
+
 //   if (!emptystr(namespaceScope.sourcePath))
 //      scope.project->printInfo("%s", namespaceScope.sourcePath);
 
-   compileImplementations(syntaxTree.readRoot()/*, namespaceScope*/);
+   compileImplementations(syntaxTree.readRoot(), namespaceScope);
 }
 
 //inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t referenceName)
@@ -7753,19 +7755,19 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, 
 //   }
 //   //   return duplicates;
 //}
-//
-//void Compiler :: initializeScope(ident_t name, _CompilerScope& scope, bool withDebugInfo)
-//{
-//   scope.module = scope.project->createModule(name);
-//
-//   // load predefine messages
-//   for (MessageMap::Iterator it = _verbs.start(); !it.Eof(); it++) {
-//      scope.module->mapPredefinedAction(it.key(), *it);
-//   }
-//
-//   if (withDebugInfo)
-//      scope.debugModule = scope.project->createDebugModule(name);
-//
+
+void Compiler :: initializeScope(ident_t name, _CompilerScope& scope, bool withDebugInfo)
+{
+   scope.module = scope.project->createModule(name);
+
+   // load predefine messages
+   for (MessageMap::Iterator it = _verbs.start(); !it.Eof(); it++) {
+      scope.module->mapPredefinedAction(it.key(), *it);
+   }
+
+   if (withDebugInfo)
+      scope.debugModule = scope.project->createDebugModule(name);
+
 //   // cache the frequently used references
 //   scope.superReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SUPER_FORWARD));
 //   scope.intReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(INT_FORWARD));
@@ -7791,8 +7793,8 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, 
 //   }
 //
 //   createPackageInfo(scope.module, *scope.project);
-//}
-//
+}
+
 //void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef)
 //{
 //   // injecting auto-generated static sealed constant field, (argument=INVALID_REF)

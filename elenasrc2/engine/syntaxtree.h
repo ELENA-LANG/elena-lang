@@ -20,9 +20,9 @@ enum LexicalType
 {
 //   lxSimpleMask      = 0x02000,
 //   lxCodeScopeMask   = 0x04000,
-//   lxObjectMask      = 0x08000,
+   lxObjectMask      = 0x08000,
 //   lxExprMask        = 0x0C000,
-//   lxTerminalMask    = 0x10000,
+   lxTerminalMask    = 0x10000,
 ////   lxTerminalObjMask = 0x18000,
 //////   lxReferenceMask   = 0x40000,
 //   lxPrimitiveOpMask = 0x80000,
@@ -33,14 +33,16 @@ enum LexicalType
 
    // scopes
    lxRoot            = 0x00001,
-//   lxIdle            = 0x00002,
+   lxIdle            = 0x00002,
+   lxToken           = 0x00010,
+   lxSymbol          = 0x00011,
+   
 //   lxObject          = 0x00003,
 //   lxAttributeDecl   = 0x00004,
 ////   lxAngleOperator   = 0x00005,
 //   lxNamespace       = 0x00006,
 //   lxClass           = 0x0000E,
 //   lxTemplate        = 0x0000F,
-//   lxSymbol          = 0x00011,
 //   lxClassField      = 0x00013,
 //   lxFieldTemplate   = 0x00014,
 //   lxAttributeValue  = 0x00015,
@@ -75,9 +77,9 @@ enum LexicalType
 //   // parameters
 //   lxEOF             = 0x18003, // indicating closing code bracket
 //   lxLiteral         = 0x18004,
-//   lxIdentifier      = 0x18005,
+   lxIdentifier      = 0x18005,
 //   lxPrivate         = 0x18006,
-//   lxReference       = 0x18007,
+   lxReference       = 0x18007,
 //   lxInteger         = 0x18008,
 //   lxHexInteger      = 0x18009,
 //   lxReal            = 0x1800A,
@@ -138,7 +140,7 @@ enum LexicalType
 //   lxBranching       = 0x0C00F,   // branch expression      
 //   lxSwitching       = 0x0C010,
 //   lxLooping         = 0x0C011,
-//   lxExpression      = 0x0C012,
+   lxExpression      = 0x0C012,
 ////   lxThrowing        = 0x0C013,
 //   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
 //   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
@@ -202,12 +204,13 @@ enum LexicalType
 //   lxParamsVariable  = 0x1003E,
 //   lxInlineClosure   = 0x1003F,
 //
-//   // attributes
+   // attributes
+   lxCol             = 0x20003,
+   lxRow             = 0x20004,
+   lxNameAttr        = 0x20029,
 //   lxAttribute       = 0x20000,
 //   lxSourcePath      = 0x20001,
 // //  lxTerminal        = 0x20002,
-//   lxCol             = 0x20003,
-//   lxRow             = 0x20004,
 //   lxLength          = 0x02005,
 //   lxBreakpoint      = 0x20006,
 ////   lxImport          = 0x20007,
@@ -244,7 +247,6 @@ enum LexicalType
 //////   lxPreloadedAttr   = 0x20026,
 //   lxInclude         = 0x20027,
 //   lxTemplateField   = 0x20028,
-//   lxNameAttr        = 0x20029,
 //   lxTypeAttr        = 0x2002A,
 //   lxStacksafeAttr   = 0x2002B,
 //   lxTemplateAttribute = 0x2002C,
@@ -670,6 +672,18 @@ public:
          return current;
       }
 
+      Node lastNode() const
+      {
+         Node last = *this;
+         Node current = nextNode();
+         while (current != lxNone) {
+            last = current;
+            current = current.nextNode();
+         }
+
+         return last;
+      }
+
       Node parentNode() const
       {
          return tree->readParentNode(position);
@@ -951,7 +965,7 @@ private:
    void refresh(Node& node);
 
 public:
-   //static void moveNodes(Writer& writer, SyntaxTree& buffer);
+   static void moveNodes(Writer& writer, SyntaxTree& buffer);
    //static bool moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type);
    //static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2);
    //static void moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3);
@@ -1053,7 +1067,7 @@ public:
    //static Node findPattern(Node node, int counter, ...);
    //static bool matchPattern(Node node, int mask, int counter, ...);
 
-   //static Node findTerminalInfo(Node node);
+   static Node findTerminalInfo(Node node);
 
    Node readRoot();
    Node readFirstNode(size_t position);

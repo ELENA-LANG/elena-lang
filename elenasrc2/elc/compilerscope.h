@@ -15,23 +15,23 @@
 namespace _ELENA_
 {
 
-//inline void freeident(ident_t s)
-//{
-//   if (s != NULL) {
-//      free((void*)s.c_str());
-//   }
-//}
+inline void freeident(ident_t s)
+{
+   if (s != NULL) {
+      free((void*)s.c_str());
+   }
+}
 
 // --- SourceFileInfo ---
 struct SourceFileInfo
 {
    _ELENA_::SyntaxTree*       tree;
-//   _ELENA_::IdentifierString  path;
-//   _ELENA_::IdentifierString  ns;
-//   _ELENA_::IdentifierList    importedNs; // importedns contains the list of dynamically allocated strings
+   _ELENA_::IdentifierString  path;
+   _ELENA_::IdentifierString  ns;
+   _ELENA_::IdentifierList    importedNs; // importedns contains the list of dynamically allocated strings
 
    SourceFileInfo()
-//      : importedNs(NULL, freeident)
+      : importedNs(NULL, freeident)
    {
       tree = NULL;
    }
@@ -64,31 +64,31 @@ struct CompilerScope : _CompilerScope
 //      return loadClassInfo(info, module->resolveReference(reference), headerOnly);
 //   }
 //   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName);
-//
+
 //   //   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
-//   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false);
+   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false);
 //   ///*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
-//   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne);
-//
-//   virtual _Memory* mapSection(ref_t reference, bool existing)
-//   {
-//      ref_t mask = reference & mskAnyRef;
-//   
-//      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
-//      if (isTemplateWeakReference(referenceName)) {
-//         return module->mapSection(module->mapReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN)) | mask, existing);
-//      }
-//      else return module->mapSection(reference, existing);
-//   }
-//   
-//   ident_t resolveWeakTemplateReference(ident_t referenceName);
-//
+   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne);
+
+   virtual _Memory* mapSection(ref_t reference, bool existing)
+   {
+      ref_t mask = reference & mskAnyRef;
+   
+      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+      if (isTemplateWeakReference(referenceName)) {
+         return module->mapSection(module->mapReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN)) | mask, existing);
+      }
+      else return module->mapSection(reference, existing);
+   }
+   
+   ident_t resolveWeakTemplateReference(ident_t referenceName);
+
 //   void saveIncludedModule(_Module* extModule);
-//   void saveListMember(ident_t sectionName, ident_t memberName);
-//
-//   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs);
-//
+   void saveListMember(ident_t sectionName, ident_t memberName);
+
+   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs);
+
 //   virtual ident_t resolveFullName(ref_t reference)
 //   {
 //      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
@@ -110,8 +110,8 @@ struct CompilerScope : _CompilerScope
 //   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensionsToExport);
 //
 //   virtual void saveAttribute(ident_t typeName, ref_t classReference);
-//
-//   virtual void declareNamespace(ident_t name);
+
+   virtual void declareNamespace(ident_t name);
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);
 //
 //   virtual SubjectList* getAutogerenatedExtensions(ref_t attr)

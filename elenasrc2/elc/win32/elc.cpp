@@ -548,56 +548,52 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
 //{
 //   return new _ELENA_::AMD64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
 //}
-//
-//inline void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
-//{
-//   if (!moduleNs.compare(rootNs)) {
-//      moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
-//   }
-//   else moduleNs = NULL;
-//
-//   size_t ns_index = filePath.find(PATH_SEPARATOR);
-//   while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
-//      if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
-//         filePath += (ns_index + 1);
-//         moduleNs += (ns_index + 1);
-//
-//         ns_index = filePath.find(PATH_SEPARATOR);
-//      }
-//      else break;
-//   }
-//
-//   size_t index = filePath.find(PATH_SEPARATOR);
-//   while (index != NOTFOUND_POS) {
-//      if (retVal.Length() != 0) {
-//         retVal.append('\'');
-//      }
-//      retVal.append(filePath, index);
-//
-//      filePath += (index + 1);
-//      index = filePath.find(PATH_SEPARATOR);
-//   }
-//}
 
-inline _ELENA_::SourceFileInfo* _ELC_::Project :: initSourceFileInfo(/*_ELENA_::CompilerScope& scope, _ELENA_::ident_t filePath*/)
+inline void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
+{
+   if (!moduleNs.compare(rootNs)) {
+      moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
+   }
+   else moduleNs = NULL;
+
+   size_t ns_index = filePath.find(PATH_SEPARATOR);
+   while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
+      if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
+         filePath += (ns_index + 1);
+         moduleNs += (ns_index + 1);
+
+         ns_index = filePath.find(PATH_SEPARATOR);
+      }
+      else break;
+   }
+
+   size_t index = filePath.find(PATH_SEPARATOR);
+   while (index != NOTFOUND_POS) {
+      if (retVal.Length() != 0) {
+         retVal.append('\'');
+      }
+      retVal.append(filePath, index);
+
+      filePath += (index + 1);
+      index = filePath.find(PATH_SEPARATOR);
+   }
+}
+
+inline _ELENA_::SourceFileInfo* _ELC_::Project :: initSourceFileInfo(_ELENA_::CompilerScope& scope, _ELENA_::ident_t filePath)
 {
    auto info = new _ELENA_::SourceFileInfo();
 
    info->tree = new _ELENA_::SyntaxTree();
 
-//   retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, info->ns);
-//   //size_t index = filePath.find(PATH_SEPARATOR);
-//   //if (index != NOTFOUND_POS) {
-//   //   info->ns.copy(filePath, index);
-//   //}
-//   info->path.copy(filePath);
-//
-//   // declare a namespace
-//   scope.declareNamespace(info->ns.c_str());
-//
-//   // add the module itself
-//   info->importedNs.add(scope.module->Name().clone());
-//
+   retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, info->ns);
+   info->path.copy(filePath);
+
+   // declare a namespace
+   scope.declareNamespace(info->ns.c_str());
+
+   // add the module itself
+   info->importedNs.add(scope.module->Name().clone());
+
 //   // system module should be included by default
 //   if (!scope.module->Name().compare(STANDARD_MODULE)) {
 //      info->importedNs.add(_ELENA_::ident_t(STANDARD_MODULE).clone());
@@ -650,13 +646,13 @@ inline _ELENA_::SourceFileInfo* _ELC_::Project :: initSourceFileInfo(/*_ELENA_::
 //   }
 //}
 
-void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source/*, _ELENA_::CompilerScope& scope*/, _ELENA_::SourceFileList& files)
+void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope, _ELENA_::SourceFileList& files)
 {
    _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
    while (!file_it.Eof()) {
       _ELENA_::ident_t filePath = *file_it;
 
-      _ELENA_::SourceFileInfo* info = initSourceFileInfo(/*scope, filePath*/);
+      _ELENA_::SourceFileInfo* info = initSourceFileInfo(scope, filePath);
 
       try {
          // based on the target type generate the syntax tree for the file
@@ -718,8 +714,8 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
 
 bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
 {
-//   bool debugMode = BoolSetting(_ELENA_::opDebugMode);
-//
+   bool debugMode = BoolSetting(_ELENA_::opDebugMode);
+
 //   //_ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
    for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
       _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ProjectSettings::VItem>* source = *it;
@@ -728,7 +724,7 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
       _ELENA_::CompilerScope scope(this);
 
       _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
-//      compiler.initializeScope(name, scope, debugMode);
+      compiler.initializeScope(name, scope, debugMode);
 
       _ELENA_::ident_t target = source->get(ELC_TARGET_NAME);
       int type = !emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : 1;
@@ -738,7 +734,7 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
          printInfo("Parsing %s", name);
 
          // build derivation tree, recognize scopes and register all symbols
-         buildSyntaxTree(parser, source/*, scope*/, files);
+         buildSyntaxTree(parser, source, scope, files);
 
          printInfo("Compiling %s", name);
 

@@ -98,13 +98,13 @@ public:
 //      irInvalid,
 //      irObsolete
 //   };
-//
-//   enum ObjectKind
-//   {
-//      okUnknown = 0,
-//
+
+   enum ObjectKind
+   {
+      okUnknown = 0,
+
 //      okObject,                       // param - class reference
-//      okSymbol,                       // param - reference
+      okSymbol,                       // param - reference
 //      okConstantSymbol,               // param - reference, extraparam - class reference
 //      okConstantClass,                // param - reference, extraparam - class reference
 //      okLiteralConstant,              // param - reference
@@ -137,7 +137,7 @@ public:
 //////      okParamField,
 //      okSubject,                      // param - parameter offset
 //      okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
-//      okNil,
+      okNil,
 //      okSuper,
 //      okLocalAddress,                 // param - local offset, extraparam - class reference
 //      okParams,                       // param - local offset
@@ -150,8 +150,8 @@ public:
 //      okExternal,
 //      okInternal,
 //      okPrimitiveConv
-//   };
-//
+   };
+
 //   enum ClassType
 //   {
 //      ctNone = 0,
@@ -159,41 +159,41 @@ public:
 //      ctEmbeddableClass
 //   };
 //
-//   struct ObjectInfo
-//   {
-//      ObjectKind kind;
-//      ref_t      param;
+   struct ObjectInfo
+   {
+      ObjectKind kind;
+      ref_t      param;
 //      ref_t      extraparam;
 //      ref_t      element;
-//
-//      ObjectInfo()
-//      {
-//         this->kind = okUnknown;
-//         this->param = 0;
+
+      ObjectInfo()
+      {
+         this->kind = okUnknown;
+         this->param = 0;
 //         this->extraparam = 0;
 //         this->element = 0;
-//      }
-//      ObjectInfo(ObjectKind kind)
+      }
+      ObjectInfo(ObjectKind kind)
+      {
+         this->kind = kind;
+         this->param = 0;
+//         this->extraparam = 0;
+//         this->element = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param)
+      {
+         this->kind = kind;
+         this->param = param;
+//         this->extraparam = 0;
+//         this->element = 0;
+      }
+//      ObjectInfo(ObjectKind kind, int param)
 //      {
 //         this->kind = kind;
-//         this->param = 0;
+//         this->param = (ref_t)param;
 //         this->extraparam = 0;
 //         this->element = 0;
 //      }
-//      ObjectInfo(ObjectKind kind, ref_t param)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = 0;
-//         this->element = 0;
-//      }
-////      ObjectInfo(ObjectKind kind, int param)
-////      {
-////         this->kind = kind;
-////         this->param = (ref_t)param;
-////         this->extraparam = 0;
-////         this->element = 0;
-////      }
 //      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam)
 //      {
 //         this->kind = kind;
@@ -222,14 +222,14 @@ public:
 //         this->extraparam = (ref_t)extraparam;
 //         this->element = element;
 //      }
-//   };
-//
+   };
+
 //   typedef MemoryMap<ident_t, Parameter>  LocalMap;
-//
-//private:
-//   // - Scope -
-//   struct Scope
-//   {
+
+private:
+   // - Scope -
+   struct Scope
+   {
 //         enum ScopeLevel
 //         {
 //            slNamespace,
@@ -240,19 +240,19 @@ public:
 //            slOwnerClass,
 //            //slTemplate,
 //         };
-//   
-//         _CompilerScope* moduleScope;
-//         _Module*        module;
-//         Scope*          parent;
-//   
+   
+         _CompilerScope* moduleScope;
+         _Module*        module;
+         Scope*          parent;
+
 //         virtual void raiseError(const char* message)
 //         {
 //            moduleScope->project->raiseError(message);
 //         }
-//         virtual void raiseError(const char* message, SNode terminal)
-//         {
-//            parent->raiseError(message, terminal);
-//         }
+         virtual void raiseError(const char* message, SNode terminal)
+         {
+            parent->raiseError(message, terminal);
+         }
 //         virtual void raiseWarning(int level, const char* message, SNode terminal)
 //         {
 //            parent->raiseWarning(level, message, terminal);
@@ -282,15 +282,15 @@ public:
 //            }
 //            else return false;
 //         }
-//   
-//         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode)
-//         {
-//            if (parent) {
-//               return parent->mapTerminal(identifier, referenceOne, mode);
-//            }
-//            else return ObjectInfo();
-//         }
-//   
+   
+         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode)
+         {
+            if (parent) {
+               return parent->mapTerminal(identifier, referenceOne, mode);
+            }
+            else return ObjectInfo();
+         }
+   
 //         virtual Scope* getScope(ScopeLevel level)
 //         {
 //            if (parent) {
@@ -299,27 +299,27 @@ public:
 //            else return NULL;
 //         }
 //   
-//         Scope(_CompilerScope* moduleScope)
-//         {
-//            this->parent = NULL;
-//            this->moduleScope = moduleScope;
-//            this->module = moduleScope->module;
-//         }
-//         Scope(Scope* parent)
-//         {
-//            this->parent = parent;
-//            this->moduleScope = parent->moduleScope;
-//            this->module = parent->module;
-//         }
-//   };
-//
-//   // - NamespaceScope -
-//   struct NamespaceScope : Scope
-//   {
-//      // imported namespaces
-//      IdentifierList importedNs;
-//      ForwardMap     forwards;       // forward declarations
-//
+         Scope(_CompilerScope* moduleScope)
+         {
+            this->parent = NULL;
+            this->moduleScope = moduleScope;
+            this->module = moduleScope->module;
+         }
+         Scope(Scope* parent)
+         {
+            this->parent = parent;
+            this->moduleScope = parent->moduleScope;
+            this->module = parent->module;
+         }
+   };
+
+   // - NamespaceScope -
+   struct NamespaceScope : Scope
+   {
+      // imported namespaces
+      IdentifierList importedNs;
+      ForwardMap     forwards;       // forward declarations
+
 //      // symbol hints
 //      Map<ref_t, ref_t> constantHints;
 //
@@ -330,10 +330,10 @@ public:
 //
 ////      // list of references to the current module which should be checked after the project is compiled
 ////      Unresolveds* forwardsUnresolved;
-//
-//      ident_t        ns;
-//      ident_t        sourcePath;
-//
+
+      ident_t        ns;
+      ident_t        sourcePath;
+
 //      virtual Scope* getScope(ScopeLevel level)
 //      {
 //         if (level == slNamespace) {
@@ -351,10 +351,10 @@ public:
 //      {
 //         Scope::raiseError(message);
 //      }
-//      virtual void raiseError(const char* message, SNode terminal)
-//      {
-//         moduleScope->raiseError(message, sourcePath, terminal);
-//      }
+      virtual void raiseError(const char* message, SNode terminal)
+      {
+         moduleScope->raiseError(message, sourcePath, terminal);
+      }
 //      virtual void raiseWarning(int level, const char* message, SNode terminal)
 //      {
 //         moduleScope->raiseWarning(level, message, sourcePath, terminal);
@@ -371,22 +371,22 @@ public:
 //      //{
 //      //   moduleScope->raiseWarning(level, message, sourcePath, );
 //      //}
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
-//
-//      ObjectInfo mapGlobal(ident_t identifier);
-//
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+
+      ObjectInfo mapGlobal(ident_t identifier);
+
 //      virtual pos_t saveSourcePath(ByteCodeWriter& writer);
 //      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
 //
 //
 //      ref_t resolveFullReference(ident_t name);
-//      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
-//
-//      ref_t mapNewTerminal(SNode terminal);
-//
-//      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
-//
+      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
+
+      ref_t mapNewTerminal(SNode terminal);
+
+      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
+
 //      void loadExtensions(ident_t ns);
 //      void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
 //      {
@@ -425,19 +425,19 @@ public:
 //      }
 //
 ////      pos_t saveSourcePath(ByteCodeWriter& writer, ident_t sourcePath);
-//
-//      NamespaceScope(_CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported, bool withFullInfo);
-//   };
-//
-//   // - SourceScope -
-//   struct SourceScope : public Scope
-//   {
-//      ref_t          reference;
+
+      NamespaceScope(_CompilerScope* moduleScope, ident_t path, ident_t ns, IdentifierList* imported/*, bool withFullInfo*/);
+   };
+
+   // - SourceScope -
+   struct SourceScope : public Scope
+   {
+      ref_t          reference;
 //      bool           internalOne;
-//
-//      SourceScope(Scope* parent, ref_t reference/*, ident_t sourcePath*/);
-//   };
-//
+
+      SourceScope(Scope* parent, ref_t reference/*, ident_t sourcePath*/);
+   };
+
 //   // - ClassScope -
 //   struct ClassScope : public SourceScope
 //   {
@@ -508,10 +508,10 @@ public:
 //
 //      ClassScope(Scope* parent, ref_t reference);
 //   };
-//
-//   // - SymbolScope -
-//   struct SymbolScope : public SourceScope
-//   {
+
+   // - SymbolScope -
+   struct SymbolScope : public SourceScope
+   {
 //      bool  constant;
 //      bool  staticOne;
 //      bool  preloaded;
@@ -528,10 +528,10 @@ public:
 //      }
 //
 //      void save();
-//
-//      SymbolScope(NamespaceScope* parent, ref_t reference);
-//   };
-//
+
+      SymbolScope(NamespaceScope* parent, ref_t reference);
+   };
+
 //   // - MethodScope -
 //   struct MethodScope : public Scope
 //   {
@@ -589,10 +589,10 @@ public:
 //
 //      MethodScope(ClassScope* parent);
 //   };
-//
-//   // - CodeScope -
-//   struct CodeScope : public Scope
-//   {
+
+   // - CodeScope -
+   struct CodeScope : public Scope
+   {
 //      // scope local variables
 //      LocalMap     locals;
 //      int          level;
@@ -676,12 +676,12 @@ public:
 //
 //         return scope ? scope->info.header.flags : 0;
 //      }
-//
-//      CodeScope(SourceScope* parent);
+
+      CodeScope(SourceScope* parent);
 //      CodeScope(MethodScope* parent);
 //      CodeScope(CodeScope* parent);
-//   };
-//
+   };
+
 //   // --- ResendScope ---
 //   struct ResendScope : public CodeScope
 //   {
@@ -747,8 +747,8 @@ public:
    _CompilerLogic*  _logic;
 
 //   ByteCodeWriter _writer;
-//
-//   MessageMap     _verbs;                            // list of verbs
+
+   MessageMap     _verbs;                            // list of verbs
 //   MessageMap     _operators;                        // list of operators
 //
 //   int            _optFlag;
@@ -841,9 +841,9 @@ public:
 //   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, int mode);
 //   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
 //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
-//
-//   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-//   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, int mode);
+
+   /*ObjectInfo*/void compileTerminal(/*SyntaxWriter& writer, */SNode node, CodeScope& scope/*, int mode*/);
+   /*ObjectInfo*/void compileObject(/*SyntaxWriter& writer, */SNode objectNode, CodeScope& scope/*, ref_t targetRef, int mode*/);
 //
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
@@ -867,7 +867,7 @@ public:
 //   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
-//   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
+   /*ObjectInfo*/void compileExpression(/*SyntaxWriter& writer, */SNode node, CodeScope& scope/*, ref_t targetRef, int mode*/);
 //   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 //
 //   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
@@ -945,8 +945,8 @@ public:
 //   void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
 //   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileSymbolDeclaration(SNode node, SymbolScope& scope);
-//   void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
+   void compileSymbolDeclaration(SNode node/*, SymbolScope& scope*/);
+   void compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
 //////   void compileIncludeModule(SNode node, ModuleScope& scope);
 //   void compileForward(SNode node, NamespaceScope& scope);
@@ -982,8 +982,8 @@ public:
 //
 //   void createPackageInfo(_Module* module, _ProjectManager& project);
 
-   bool compileDeclarations(SNode node/*, NamespaceScope& scope*/, bool& repeatMode);
-   void compileImplementations(SNode node/*, NamespaceScope& scope*/);
+   bool compileDeclarations(SNode node, NamespaceScope& scope, bool& repeatMode);
+   void compileImplementations(SNode node, NamespaceScope& scope);
 
 ////   void generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope, SyntaxTree& autogenerated);
 //
@@ -991,8 +991,8 @@ public:
 //
 //   void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
 ////   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
-//
-//public:
+
+public:
 //   void loadRules(StreamReader* optimization);
 //   void turnOnOptimiation(int level)
 //   {
@@ -1000,13 +1000,13 @@ public:
 //   }
 
    // return true if no forward class declarations are encountered
-   bool declareModule(SyntaxTree& tree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*/, bool& repeatMode/*, ExtensionMap* extensionsToExport*/);
-   void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*//*, Unresolveds& unresolveds*/);
+   bool declareModule(SyntaxTree& tree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode/*, ExtensionMap* extensionsToExport*/);
+   void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/);
 
 ////   void compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& tree, ModuleInfo& moduleInfo, Unresolveds& unresolveds);
-//
-//   void initializeScope(ident_t name, _CompilerScope& scope, bool withDebugInfo);
-//
+
+   void initializeScope(ident_t name, _CompilerScope& scope, bool withDebugInfo);
+
 ////   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 //
 //   // _Compiler interface implementation

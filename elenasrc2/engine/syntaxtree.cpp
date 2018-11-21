@@ -157,25 +157,25 @@ void SyntaxTree :: loadNode(Node node, _Memory* dump)
    copyNode(tree.readRoot(), node);
 }
 
-//void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer)
-//{
-//   SNode current = buffer.readRoot();
-//   while (current != lxNone) {
-//      if (current != lxIdle) {
-//         if (current.strArgument >= 0) {
-//            writer.newNode(current.type, current.identifier());
-//         }
-//         else writer.newNode(current.type, current.argument);
-//
-//         SyntaxTree::copyNode(writer, current);
-//         writer.closeNode();
-//
-//         current = lxIdle;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
+void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer)
+{
+   SNode current = buffer.readRoot();
+   while (current != lxNone) {
+      if (current != lxIdle) {
+         if (current.strArgument >= 0) {
+            writer.newNode(current.type, current.identifier());
+         }
+         else writer.newNode(current.type, current.argument);
+
+         SyntaxTree::copyNode(writer, current);
+         writer.closeNode();
+
+         current = lxIdle;
+      }
+      current = current.nextNode();
+   }
+}
+
 //bool SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type)
 //{
 //   bool moved = false;
@@ -599,20 +599,20 @@ SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
 //   return nodes[0];
 //}
 
-//SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
-//{
-//   if (node.existChild(lxRow))
-//      return node;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      SNode terminalNode = findTerminalInfo(current);
-//      if (terminalNode != lxNone)
-//         return terminalNode;
-//
-//      current = current.nextNode();
-//   }
-//
-//   return current;
-//}
+SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
+{
+   if (node.existChild(lxRow))
+      return node;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      SNode terminalNode = findTerminalInfo(current);
+      if (terminalNode != lxNone)
+         return terminalNode;
+
+      current = current.nextNode();
+   }
+
+   return current;
+}
 

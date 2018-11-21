@@ -37,27 +37,49 @@ using namespace _ELENA_;
 
 // --- DerivationWriter ---
 
-void DerivationWriter :: begin()
+//void DerivationWriter :: begin()
+//{
+//   _writer.newNode(lxRoot);
+//}
+//
+//void DerivationWriter :: close()
+//{
+//   _writer.closeNode();
+//}
+
+void DerivationWriter :: saveCache()
 {
-   _writer.newNode(lxRoot);
+   SyntaxTree::moveNodes(_writer, _cache);
+
+   _cache.clear();
+   _cacheWriter.clear();
+
+   _cachingMode = false;
 }
 
-void DerivationWriter :: close()
+void DerivationWriter :: newScope(Symbol symbol)
 {
-   _writer.closeNode();
+   // set name
+   SNode nameNode = _cache.readRoot().lastNode();
+   nameNode = lxNameAttr;
+
+   _writer.newNode((LexicalType)(symbol & ~mskTraceble));
+
+   saveCache();
 }
 
 void DerivationWriter :: newNode(Symbol symbol)
 {
+   bool startCaching = false;
    switch (symbol)
    {
 //      case nsToken:
 //         _writer.newNode(lxAttribute);
 //         break;
-//      case nsExpression:
+      case nsExpression:
 //      case nsNestedRootExpression:
-//         _writer.newNode(lxExpression);
-//         break;
+         newNode(lxExpression);
+         break;
 //      case nsCodeEnd:
 //         _writer.newNode(lxEOF);
 //         break;
@@ -151,15 +173,29 @@ void DerivationWriter :: newNode(Symbol symbol)
 //      case nsClosingOperator:
 //         _writer.newNode((LexicalType)nsL3Operator);
 //         break;
+      case nsSymbol:
+         newScope(symbol);
+         break;
+      case nsStart:
+         startCaching = true;
       default:
-         _writer.newNode((LexicalType)symbol);
+         if (_cachingMode) {
+            _cacheWriter.newNode((LexicalType)(symbol & ~mskTraceble));
+         }
+         else _writer.newNode((LexicalType)(symbol & ~mskTraceble));         
          break;
    }
+
+   if (startCaching)
+      _cachingMode = true;
 }
 
 void DerivationWriter :: closeNode()
 {
-   _writer.closeNode();
+   if (_cachingMode) {
+      _cacheWriter.closeNode();
+   }
+   else _writer.closeNode();
 }
 
 void DerivationWriter :: writeSymbol(Symbol symbol)
@@ -170,15 +206,31 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
    else closeNode();
 }
 
+void DerivationWriter::newNode(LexicalType type)
+{
+   if (_cachingMode) {
+      _cacheWriter.newNode(type);
+   }
+   else _writer.newNode(type);
+}
+
+void DerivationWriter :: newNode(LexicalType type, ident_t value)
+{
+   if (_cachingMode) {
+      _cacheWriter.newNode(type, value);
+   }
+   else _writer.newNode(type, value);
+}
+
 void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 {
 //   // HOT FIX : if there are several constants e.g. $10$13, it should be treated like literal terminal
 //   if (terminal == tsCharacter && terminal.value.findSubStr(1, '$', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
 //      terminal.symbol = tsLiteral;
 //   }
-//
-//   LexicalType type = (LexicalType)(terminal.symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask);
-//
+
+   LexicalType type = (LexicalType)(terminal.symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask);
+
 //   if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
 //      // try to use local storage if the quote is not too big
 //      if (getlength(terminal.value) < 0x100) {
@@ -192,14 +244,14 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 //         _writer.newNode(type, quote.ident());
 //      }
 //   }
-//   else _writer.newNode(type, terminal.value);
-//
-//   _writer.appendNode(lxCol, terminal.col);
-//   _writer.appendNode(lxRow, terminal.row);
+   /*else*/ newNode(type, terminal.value);
+
+   _writer.appendNode(lxCol, terminal.col);
+   _writer.appendNode(lxRow, terminal.row);
 //   _writer.appendNode(lxLength, terminal.length);
 //   //   _writer->writeDWord(terminal.disp);
-//
-//   _writer.closeNode();
+
+   closeNode();
 }
 
 //// ---  DerivationTransformer ---

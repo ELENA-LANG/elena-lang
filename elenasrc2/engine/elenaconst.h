@@ -419,8 +419,8 @@ namespace _ELENA_
 //   #define WRITE_OPERATOR           "<<"
 //   #define READ_OPERATOR            ">>"
 //   #define ISNIL_OPERATOR           "??"
-//
-//  // --- ELENA explicit variables ---
+
+  // --- ELENA explicit variables ---
 //   #define OLD_GROUP_VAR           "target"           // obsolete : the current method target / closure owner method target
 //   #define GROUP_VAR               "__target"         // the current method target / closure owner method target
 //   #define SELF_VAR                "self"             // the current method class reference / closure owner class reference
@@ -428,7 +428,7 @@ namespace _ELENA_
 //   #define SUPER_VAR               "super"            // the predecessor class
 //   #define OLD_SUBJECT_VAR         "received"         // obsolete : the current message
 //   #define SUBJECT_VAR             "__received"       // the current message
-//   #define NIL_VAR                 "nil"              // the nil pseudo symbol - representing the null value
+   #define NIL_VAR                 "nil"              // the nil pseudo symbol - representing the null value
 //   #define RETVAL_VAR              "$$ret"            // the closure returning value
 //   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
 //   #define PARENT_VAR              "$$parent"         // the closure parent
@@ -454,15 +454,15 @@ namespace _ELENA_
 //   #define AUTOEXTENSION_SECTION    "#auto_extensions"
    #define NAMESPACE_REF            "#namespace"
 
-//  // --- ELENA class prefixes / postfixes ---
-//   #define PRIVATE_PREFIX_NS        "'$private'"
+  // --- ELENA class prefixes / postfixes ---
+   #define PRIVATE_PREFIX_NS        "'$private'"
 
    #define TEMPLATE_PREFIX_NS       "'$auto'"
-//   #define TEMPLATE_PREFIX_NS_LEN   7 
-//
-//   #define FORWARD_PREFIX_NS        "$forwards'"
-//   #define FORWARD_PREFIX_NS_LEN    10
-//
+   #define TEMPLATE_PREFIX_NS_LEN   7 
+
+   #define FORWARD_PREFIX_NS        "$forwards'"
+   #define FORWARD_PREFIX_NS_LEN    10
+
 //   #define CLASSCLASS_POSTFIX       "#class"
 //   #define GENERIC_PREFIX           "#generic"
 ////   #define EMBEDDED_PREFIX          "#embedded"
@@ -479,8 +479,8 @@ namespace _ELENA_
 //
 //   #define CORE_MODULE              "coreapi"
 //   #define STANDARD_MODULE          "system"                         // the standard module name
-//   #define FORWARD_MODULE           "forwards"
-//   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
+   #define FORWARD_MODULE           "forwards"
+   #define EXTERNAL_MODULE          "system'external"                  // external pseudo symbol
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
 //                                                                     // will be treated like internal core api one
 //   #define INTERNAL_MASK            "system'core_"                   // primitive module mask

@@ -29,9 +29,9 @@ namespace _ELENA_
 ////   #define errCommaExpectedSyntax   "%s(%d:%d): error 016: ',' expected\n"
 //   #define errObjectExpected        "%s(%d:%d): error 017: object expected\n"
 //   #define errMessageExpected       "%s(%d:%d): error 018: message expected\n"
-//
-//  // --- Compiler error messages ---
-//   #define errDuplicatedSymbol	   "%s(%d:%d): error 102: Class '%s' already exists\n"
+
+  // --- Compiler error messages ---
+   #define errDuplicatedSymbol	   "%s(%d:%d): error 102: Class '%s' already exists\n"
 //   #define errDuplicatedMethod      "%s(%d:%d): error 103: Method '%s' already exists in the class\n"
 //   #define errUnknownClass          "%s(%d:%d): error 104: Class '%s' doesn't exists\n"
 //   #define errDuplicatedLocal       "%s(%d:%d): error 105: Variable '%s' already exists\n"

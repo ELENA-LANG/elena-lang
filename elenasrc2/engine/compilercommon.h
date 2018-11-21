@@ -99,8 +99,8 @@
 namespace _ELENA_
 {
 
-//typedef Map<ident_t, ref_t>      ForwardMap;
-//
+typedef Map<ident_t, ref_t>      ForwardMap;
+
 //enum MethodHint
 //{
 //   tpMask        = 0x00000F,
@@ -158,20 +158,20 @@ public:
 //
 //   virtual void raiseWarning(int level, ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
 //   virtual void raiseWarning(int level, ident_t msg, ident_t path) = 0;
-//
-//   virtual _Module* createModule(ident_t name) = 0;
-//   virtual _Module* createDebugModule(ident_t name) = 0;
-//
+
+   virtual _Module* createModule(ident_t name) = 0;
+   virtual _Module* createDebugModule(ident_t name) = 0;
+
 //   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
 //   //   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
-//
-//   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
-//   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
-//
-//   virtual ident_t resolveForward(ident_t forward) = 0;
-//
-//   virtual bool addForward(ident_t forward, ident_t reference) = 0;
-//
+
+   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
+   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false) = 0;
+
+   virtual ident_t resolveForward(ident_t forward) = 0;
+
+   virtual bool addForward(ident_t forward, ident_t reference) = 0;
+
 //   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
@@ -197,9 +197,9 @@ struct _CompilerScope
 
    _ProjectManager*  project;
 
-//   _Module*          module;
-//   _Module*          debugModule;
-//
+   _Module*          module;
+   _Module*          debugModule;
+
 //   // cached references
 //   ref_t             superReference;
 //   ref_t             intReference;
@@ -239,34 +239,34 @@ struct _CompilerScope
 //
 //   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
 //   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
-//
-//   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
+
+   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 //
 //   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode) = 0;
 //
 //   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensionsToExport) = 0;
-//
-//   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
-//   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
-//
-//   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
+
+   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
+   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
+
+   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
 //   virtual ident_t resolveFullName(ref_t reference) = 0;
 //   virtual ident_t resolveFullName(ident_t referenceName) = 0;
-//
-//   void raiseError(const char* message, ident_t sourcePath, SNode node)
-//   {
-//      SNode terminal = SyntaxTree::findTerminalInfo(node);
-//
-//      int col = terminal.findChild(lxCol).argument;
-//      int row = terminal.findChild(lxRow).argument;
-//      ident_t identifier = terminal.identifier();
-//      if (emptystr(identifier))
-//         identifier = terminal.identifier();
-//
-//      project->raiseError(message, sourcePath, row, col, identifier);
-//   }
-//
+
+   void raiseError(const char* message, ident_t sourcePath, SNode node)
+   {
+      SNode terminal = SyntaxTree::findTerminalInfo(node);
+
+      int col = terminal.findChild(lxCol).argument;
+      int row = terminal.findChild(lxRow).argument;
+      ident_t identifier = terminal.identifier();
+      if (emptystr(identifier))
+         identifier = terminal.identifier();
+
+      project->raiseError(message, sourcePath, row, col, identifier);
+   }
+
 //   void raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
 //   {
 //      SNode terminal = SyntaxTree::findTerminalInfo(node);
@@ -296,7 +296,7 @@ struct _CompilerScope
 //      : attributes(0), savedPaths(-1)
    {
       project = NULL;
-//      debugModule = module = NULL;
+      debugModule = module = NULL;
 //      intReference = boolReference = superReference = 0;
 //      signatureReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
@@ -336,8 +336,8 @@ public:
 //   virtual void generateClosedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
 //   virtual void generateSealedOverloadListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
 
-   virtual bool declareModule(SyntaxTree& tree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*/, bool& repeatMode/*, ExtensionMap* extensionsToExport*/) = 0;
-   virtual void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*//*, Unresolveds& unresolveds*/) = 0;
+   virtual bool declareModule(SyntaxTree& tree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported, bool& repeatMode/*, ExtensionMap* extensionsToExport*/) = 0;
+   virtual void compileModule(SyntaxTree& syntaxTree, _CompilerScope& scope, ident_t path, ident_t ns, IdentifierList* imported/*, Unresolveds& unresolveds*/) = 0;
 
 ////   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };

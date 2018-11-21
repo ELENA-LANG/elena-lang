@@ -29,7 +29,7 @@ enum Symbol
 
    tsEof                        = 0x03003,               // terminals
 //   tsLiteral                    = 0x03004,
-//   tsIdentifier                 = 0x03005,
+   tsIdentifier                 = 0x03005,
 //   tsPrivate                    = 0x03006,
 //   tsReference                  = 0x03007,
 //   tsInteger                    = 0x03008,
@@ -42,12 +42,13 @@ enum Symbol
 //   tsAttribute                  = 0x0300F,
 //   tsMember                     = 0x03010,
 //   tsGlobal                     = 0x03011,
-//
-////   nsClass                      = 0x0100E,               // non-terminals
+
+   nsToken                      = 0x01010,
+   nsSymbol                     = 0x01011,               // non-terminals
+////   nsClass                      = 0x0100E,               
 ////   nsTemplate                   = 0x0100F,
 //   nsSubjectArg                 = 0x01010,
-////   nsSymbol                     = 0x01011,
-//   nsExpression                 = 0x01012,
+   nsExpression                 = 0x01012,
 ////   nsField                      = 0x01013,
 //////   nsHint                       = 0x01014,
 //   nsTokenParam                 = 0x01015,
@@ -91,7 +92,6 @@ enum Symbol
 ////   nsSubject                    = 0x01047,
 ////   nsInlineClosure              = 0x01048,
 //////   nsImplicitConstructor        = 0x0104B,
-//   nsToken                      = 0x0104C,
 //   nsScope                      = 0x0104D,
 //   nsAttribute                  = 0x0104E,
 ////   nsRootMessage                = 0x0104F,

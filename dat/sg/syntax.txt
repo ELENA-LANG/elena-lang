@@ -1,7 +1,28 @@
 __define START          	1
 __define eps            	2
 
+__define TOKEN			4112
+__define SYMBOL_EXPRESSION	4113
+__define EXPRESSION             4114
+
 __define eof            	12291
+__define identifier		12293
 
 START ->
-	eof
+	TOKEN DECLARATION eof
+	| eof
+
+TOKEN ->
+	identifier
+
+DECLARATION ->
+	= SYMBOL_EXPRESSION DECLARATION_END
+
+SYMBOL_EXPRESSION ->
+	EXPRESSION
+
+EXPRESSION ->
+	identifier
+
+DECLARATION_END ->
+	;
