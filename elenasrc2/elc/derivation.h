@@ -25,11 +25,15 @@ namespace _ELENA_
 class DerivationWriter : public _DerivationWriter
 {
    bool         _cachingMode;
+   int          _cachingLevel;
    SyntaxTree   _cache;
    SyntaxWriter _cacheWriter;
 
    SyntaxWriter _writer;
 
+   void appendNode(LexicalType type, int argument);
+
+   void newNode(LexicalType type, int argument);
    void newNode(LexicalType type, ident_t value);
    void newNode(LexicalType type);
 
@@ -40,8 +44,11 @@ class DerivationWriter : public _DerivationWriter
    void saveCache();
 
 public:
-   //void begin();
-   //void close();
+   void begin();
+   void end();
+
+   void newNamespace(ident_t ns);
+   void closeNamespace();
 
    virtual void writeSymbol(Symbol symbol);
    virtual void writeTerminal(TerminalInfo& terminal);
@@ -49,7 +56,8 @@ public:
    DerivationWriter(SyntaxTree& target)
       :  _writer(target), _cacheWriter(_cache)
    {
-      _cachingMode = false;
+      _cachingMode = true; 
+      _cachingLevel = 0;
    }
 };
 

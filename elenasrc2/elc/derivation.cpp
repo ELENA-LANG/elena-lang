@@ -37,15 +37,25 @@ using namespace _ELENA_;
 
 // --- DerivationWriter ---
 
-//void DerivationWriter :: begin()
-//{
-//   _writer.newNode(lxRoot);
-//}
-//
-//void DerivationWriter :: close()
-//{
-//   _writer.closeNode();
-//}
+void DerivationWriter :: begin()
+{
+   _writer.newNode(lxRoot);
+}
+
+void DerivationWriter :: end()
+{
+   _writer.closeNode();
+}
+
+void DerivationWriter :: newNamespace(ident_t ns)
+{
+   _writer.newNode(lxNamespace, ns);
+}
+
+void DerivationWriter :: closeNamespace()
+{
+   _writer.closeNode();
+}
 
 void DerivationWriter :: saveCache()
 {
@@ -55,6 +65,7 @@ void DerivationWriter :: saveCache()
    _cacheWriter.clear();
 
    _cachingMode = false;
+   _cachingLevel = 0;
 }
 
 void DerivationWriter :: newScope(Symbol symbol)
@@ -70,7 +81,6 @@ void DerivationWriter :: newScope(Symbol symbol)
 
 void DerivationWriter :: newNode(Symbol symbol)
 {
-   bool startCaching = false;
    switch (symbol)
    {
 //      case nsToken:
@@ -176,24 +186,25 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsSymbol:
          newScope(symbol);
          break;
-      case nsStart:
-         startCaching = true;
       default:
-         if (_cachingMode) {
-            _cacheWriter.newNode((LexicalType)(symbol & ~mskTraceble));
-         }
-         else _writer.newNode((LexicalType)(symbol & ~mskTraceble));         
+         newNode((LexicalType)(symbol & ~mskTraceble));
          break;
    }
-
-   if (startCaching)
-      _cachingMode = true;
 }
 
 void DerivationWriter :: closeNode()
 {
    if (_cachingMode) {
-      _cacheWriter.closeNode();
+      if (_cachingLevel == 0) {
+         // automatically close the cache if nothing was written
+         saveCache();
+         _writer.closeNode();
+      }
+      else {
+         _cachingLevel--;
+         _cacheWriter.closeNode();
+
+      }
    }
    else _writer.closeNode();
 }
@@ -206,9 +217,10 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
    else closeNode();
 }
 
-void DerivationWriter::newNode(LexicalType type)
+void DerivationWriter :: newNode(LexicalType type)
 {
    if (_cachingMode) {
+      _cachingLevel++;
       _cacheWriter.newNode(type);
    }
    else _writer.newNode(type);
@@ -217,9 +229,25 @@ void DerivationWriter::newNode(LexicalType type)
 void DerivationWriter :: newNode(LexicalType type, ident_t value)
 {
    if (_cachingMode) {
+      _cachingLevel++;
       _cacheWriter.newNode(type, value);
    }
    else _writer.newNode(type, value);
+}
+
+void DerivationWriter :: newNode(LexicalType type, int argument)
+{
+   if (_cachingMode) {
+      _cachingLevel++;
+      _cacheWriter.newNode(type, argument);
+   }
+   else _writer.newNode(type, argument);
+}
+
+void DerivationWriter :: appendNode(LexicalType type, int argument)
+{
+   newNode(type, argument);
+   closeNode();
 }
 
 void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
@@ -246,8 +274,8 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 //   }
    /*else*/ newNode(type, terminal.value);
 
-   _writer.appendNode(lxCol, terminal.col);
-   _writer.appendNode(lxRow, terminal.row);
+   appendNode(lxCol, terminal.col);
+   appendNode(lxRow, terminal.row);
 //   _writer.appendNode(lxLength, terminal.length);
 //   //   _writer->writeDWord(terminal.disp);
 

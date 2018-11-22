@@ -218,47 +218,47 @@ using namespace _ELENA_;
 //   }
 //}
 
-inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, bool privateOne)
-{
-   ident_t prefix = privateOne ? PRIVATE_PREFIX_NS : "'";
-
-   IdentifierString name(prefix, identifier);
-
-   return module->mapReference(name);
-}
-
-ref_t CompilerScope :: mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne)
-{
-   if (!emptystr(ns)) {
-      ReferenceNs nameWithNs(ns, identifier);
-
-      return ::mapNewIdentifier(module, nameWithNs.c_str(), privateOne);
-
-   }
-   else return ::mapNewIdentifier(module, identifier, privateOne);
-}
-
-ref_t CompilerScope :: mapFullReference(ident_t referenceName, bool existing)
-{
-   if (emptystr(referenceName))
-      return 0;
-
-   ref_t reference = 0;
-   if (existing && !isTemplateWeakReference(referenceName)) {
-      // check if the reference does exist
-      ref_t moduleRef = 0;
-      _Module* argModule = project->resolveModule(referenceName, moduleRef);
-      if (argModule != NULL && moduleRef != 0) {
-         if (argModule != module) {
-            reference = module->mapReference(referenceName);
-         }
-         else reference = moduleRef;
-      }
-   }
-   else reference = module->mapReference(referenceName, existing);
-
-   return reference;
-}
+//inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, bool privateOne)
+//{
+//   ident_t prefix = privateOne ? PRIVATE_PREFIX_NS : "'";
+//
+//   IdentifierString name(prefix, identifier);
+//
+//   return module->mapReference(name);
+//}
+//
+//ref_t CompilerScope :: mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne)
+//{
+//   if (!emptystr(ns)) {
+//      ReferenceNs nameWithNs(ns, identifier);
+//
+//      return ::mapNewIdentifier(module, nameWithNs.c_str(), privateOne);
+//
+//   }
+//   else return ::mapNewIdentifier(module, identifier, privateOne);
+//}
+//
+//ref_t CompilerScope :: mapFullReference(ident_t referenceName, bool existing)
+//{
+//   if (emptystr(referenceName))
+//      return 0;
+//
+//   ref_t reference = 0;
+//   if (existing && !isTemplateWeakReference(referenceName)) {
+//      // check if the reference does exist
+//      ref_t moduleRef = 0;
+//      _Module* argModule = project->resolveModule(referenceName, moduleRef);
+//      if (argModule != NULL && moduleRef != 0) {
+//         if (argModule != module) {
+//            reference = module->mapReference(referenceName);
+//         }
+//         else reference = moduleRef;
+//      }
+//   }
+//   else reference = module->mapReference(referenceName, existing);
+//
+//   return reference;
+//}
 
 //void CompilerScope :: saveAttribute(ident_t name, ref_t attr)
 //{
@@ -316,104 +316,104 @@ ref_t CompilerScope :: mapFullReference(ident_t referenceName, bool existing)
 //   return module->mapReference(forwardName);
 //}
 
-ident_t CompilerScope:: resolveWeakTemplateReference(ident_t referenceName)
-{
-   ident_t resolvedName = project->resolveForward(referenceName);
-   if (emptystr(resolvedName)) {
-      // COMPILER MAGIC : try to find a template implementation
-      ref_t resolvedRef = 0;
-      _Module* refModule = project->resolveWeakModule(referenceName, resolvedRef, true);
-      if (refModule != nullptr) {
-         resolvedName = refModule->resolveReference(resolvedRef);
-         if (isWeakReference(resolvedName)) {
-            IdentifierString fullName(refModule->Name(), resolvedName);
+//ident_t CompilerScope:: resolveWeakTemplateReference(ident_t referenceName)
+//{
+//   ident_t resolvedName = project->resolveForward(referenceName);
+//   if (emptystr(resolvedName)) {
+//      // COMPILER MAGIC : try to find a template implementation
+//      ref_t resolvedRef = 0;
+//      _Module* refModule = project->resolveWeakModule(referenceName, resolvedRef, true);
+//      if (refModule != nullptr) {
+//         resolvedName = refModule->resolveReference(resolvedRef);
+//         if (isWeakReference(resolvedName)) {
+//            IdentifierString fullName(refModule->Name(), resolvedName);
+//
+//            project->addForward(referenceName, fullName.c_str());
+//
+//            resolvedName = project->resolveForward(referenceName);
+//         }
+//         else project->addForward(referenceName, resolvedName);
+//      }
+//   }
+//
+//   return resolvedName;
+//}
+//
+//inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _Module* module, _ProjectManager* project, IdentifierList* importedNs)
+//{
+//   ref_t reference = 0;
+//   if (!referenceOne) {
+//      // check private ones
+//      IdentifierString privateOne(PRIVATE_PREFIX_NS, identifier);
+//
+//      reference = module->mapReference(privateOne.c_str(), true);
+//      if (reference) {
+//         return reference;
+//      }
+//
+//      // check imported references if available
+//      if (importedNs) {
+//         List<ident_t>::Iterator it = importedNs->start();
+//         while (!it.Eof()) {
+//            ReferenceNs fullName(*it, identifier);
+//
+//            reference = 0;
+//            _Module* ext_module = project->resolveModule(fullName, reference, true);
+//            if (ext_module && reference) {
+//               if (ext_module != module) {
+//                  return module->mapReference(fullName.c_str(), false);
+//               }
+//               else return reference;
+//            }
+//
+//            it++;
+//         }
+//      }
+//      return 0;
+//   }
+//   else {
+//      IdentifierString relativeName("'", identifier);
+//
+//      return module->mapReference(relativeName.c_str(), true);
+//   }
+//}
+//
+//ref_t CompilerScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs)
+//{
+//   ref_t reference = 0;
+//   if (isWeakReference(identifier)) {
+//      return module->mapReference(identifier, true);
+//   }
+//   else if (!emptystr(ns)) {
+//      // try to resovle an identifier in all nested namespaces
+//      ReferenceNs nameWithNs(ns, identifier);
+//      bool emptyNs = false;
+//      while (true) {
+//         reference = ::resolveImplicitIdentifier(referenceOne, nameWithNs.c_str(), module, project, importedNs);
+//         if (reference) {
+//            return reference;
+//         }
+//         if (!emptyNs) {
+//            nameWithNs.truncate(getlength(nameWithNs) - getlength(identifier) - 1);
+//            nameWithNs.trimProperName();
+//            if (emptystr(nameWithNs)) {
+//               nameWithNs.copy(identifier);
+//               emptyNs = true;
+//            }
+//            else nameWithNs.combine(identifier);
+//         }
+//         else break;
+//      }
+//
+//      return 0;
+//   }
+//   else {
+//      // try to resovle an identifier in the current namespace
+//      return ::resolveImplicitIdentifier(referenceOne, identifier, module, project, importedNs);
+//   }   
+//}
 
-            project->addForward(referenceName, fullName.c_str());
-
-            resolvedName = project->resolveForward(referenceName);
-         }
-         else project->addForward(referenceName, resolvedName);
-      }
-   }
-
-   return resolvedName;
-}
-
-inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _Module* module, _ProjectManager* project, IdentifierList* importedNs)
-{
-   ref_t reference = 0;
-   if (!referenceOne) {
-      // check private ones
-      IdentifierString privateOne(PRIVATE_PREFIX_NS, identifier);
-
-      reference = module->mapReference(privateOne.c_str(), true);
-      if (reference) {
-         return reference;
-      }
-
-      // check imported references if available
-      if (importedNs) {
-         List<ident_t>::Iterator it = importedNs->start();
-         while (!it.Eof()) {
-            ReferenceNs fullName(*it, identifier);
-
-            reference = 0;
-            _Module* ext_module = project->resolveModule(fullName, reference, true);
-            if (ext_module && reference) {
-               if (ext_module != module) {
-                  return module->mapReference(fullName.c_str(), false);
-               }
-               else return reference;
-            }
-
-            it++;
-         }
-      }
-      return 0;
-   }
-   else {
-      IdentifierString relativeName("'", identifier);
-
-      return module->mapReference(relativeName.c_str(), true);
-   }
-}
-
-ref_t CompilerScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs)
-{
-   ref_t reference = 0;
-   if (isWeakReference(identifier)) {
-      return module->mapReference(identifier, true);
-   }
-   else if (!emptystr(ns)) {
-      // try to resovle an identifier in all nested namespaces
-      ReferenceNs nameWithNs(ns, identifier);
-      bool emptyNs = false;
-      while (true) {
-         reference = ::resolveImplicitIdentifier(referenceOne, nameWithNs.c_str(), module, project, importedNs);
-         if (reference) {
-            return reference;
-         }
-         if (!emptyNs) {
-            nameWithNs.truncate(getlength(nameWithNs) - getlength(identifier) - 1);
-            nameWithNs.trimProperName();
-            if (emptystr(nameWithNs)) {
-               nameWithNs.copy(identifier);
-               emptyNs = true;
-            }
-            else nameWithNs.combine(identifier);
-         }
-         else break;
-      }
-
-      return 0;
-   }
-   else {
-      // try to resovle an identifier in the current namespace
-      return ::resolveImplicitIdentifier(referenceOne, identifier, module, project, importedNs);
-   }   
-}
-
-void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files/*, ExtensionMap* extensions*/)
+void ModuleScope :: compile(_Compiler& compiler, SyntaxTree& derivationTree/*, ExtensionMap* extensions*/)
 {
    // declare classes / symbols based on the derivation tree
    bool repeatMode = true;
@@ -421,23 +421,14 @@ void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files/*, Exte
    bool nothingToCompile = true;
    while (repeatMode && !idle) {
       repeatMode = false;
-      idle = true;
-      for (auto it = files.start(); !it.Eof(); it++) {
-         SourceFileInfo* info = *it;
-
-         idle &= !compiler.declareModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs, repeatMode/*, extensions*/);
-      }
+      idle = !compiler.declareModule(derivationTree, *this, /*info->path.c_str(), info->ns.c_str(), &info->importedNs, */repeatMode/*, extensions*/);
 
       nothingToCompile &= idle;
    }
    
    if (!nothingToCompile) {
       // compile classes / symbols if not idle 
-      for (auto it = files.start(); !it.Eof(); it++) {
-         SourceFileInfo* info = *it;
-
-         compiler.compileModule(*info->tree, *this, info->path.c_str(), info->ns.c_str(), &info->importedNs);
-      }
+      compiler.compileModule(derivationTree, *this/*, info->path.c_str(), info->ns.c_str(), &info->importedNs*/);
    }
 }
 
@@ -527,26 +518,26 @@ void CompilerScope :: compile(_Compiler& compiler, SourceFileList& files/*, Exte
 //   }
 //}
 
-void CompilerScope :: saveListMember(ident_t name, ident_t memberName)
-{
-   // HOTFIX : do not include itself
-   IdentifierString sectionName("'", name);
-
-   _Memory* section = module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false);
-
-   // check if the module alread included
-   MemoryReader metaReader(section);
-   while (!metaReader.Eof()) {
-      ident_t s = metaReader.getLiteral(DEFAULT_STR);
-      if (s.compare(memberName))
-         return;
-   }
-
-   // otherwise add it to the list
-   MemoryWriter metaWriter(section);
-
-   metaWriter.writeLiteral(memberName.c_str());
-}
+//void ModuleScope :: saveListMember(ident_t name, ident_t memberName)
+//{
+//   // HOTFIX : do not include itself
+//   IdentifierString sectionName("'", name);
+//
+//   _Memory* section = module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false);
+//
+//   // check if the module alread included
+//   MemoryReader metaReader(section);
+//   while (!metaReader.Eof()) {
+//      ident_t s = metaReader.getLiteral(DEFAULT_STR);
+//      if (s.compare(memberName))
+//         return;
+//   }
+//
+//   // otherwise add it to the list
+//   MemoryWriter metaWriter(section);
+//
+//   metaWriter.writeLiteral(memberName.c_str());
+//}
 
 //void CompilerScope:: loadAutogeneratedExtension(_Module* extModule)
 //{
@@ -583,23 +574,23 @@ void CompilerScope :: saveListMember(ident_t name, ident_t memberName)
 //   saveListMember(IMPORTS_SECTION, extModule->Name());
 //}
 
-void CompilerScope :: declareNamespace(ident_t ns)
-{
-   IdentifierString virtualRef("'");
-   if (!emptystr(ns)) {
-      virtualRef.append(ns);
-      virtualRef.append("'");
-   }
-   virtualRef.append(NAMESPACE_REF);
-
-   module->mapReference(virtualRef.c_str(), false);
-   if (debugModule)
-      // HOTFIX : save the namespace in the debug module as well
-      debugModule->mapReference(virtualRef.c_str(), false);
-
-   if (!emptystr(ns))
-      saveListMember(NAMESPACES_SECTION, ns);
-}
+//void CompilerScope :: declareNamespace(ident_t ns)
+//{
+//   IdentifierString virtualRef("'");
+//   if (!emptystr(ns)) {
+//      virtualRef.append(ns);
+//      virtualRef.append("'");
+//   }
+//   virtualRef.append(NAMESPACE_REF);
+//
+//   module->mapReference(virtualRef.c_str(), false);
+//   if (debugModule)
+//      // HOTFIX : save the namespace in the debug module as well
+//      debugModule->mapReference(virtualRef.c_str(), false);
+//
+//   if (!emptystr(ns))
+//      saveListMember(NAMESPACES_SECTION, ns);
+//}
 
 //bool CompilerScope :: includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)
 //{

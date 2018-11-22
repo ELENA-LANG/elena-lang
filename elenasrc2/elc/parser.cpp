@@ -167,7 +167,6 @@ void Parser :: parse(TextReader* reader, _DerivationWriter& writer, int tabSize)
    TerminalInfo terminal;
 
    stack.push(nsStart);
-   writer.writeSymbol(nsStart);
    do {
       terminal = getTerminalInfo(_table, source.read(_buffer, IDENTIFIER_LEN));
 
@@ -179,6 +178,4 @@ void Parser :: parse(TextReader* reader, _DerivationWriter& writer, int tabSize)
          writer.writeTerminal(terminal);
 
    } while (terminal != tsEof);
-
-   writer.writeSymbol(nsNone);
 }
