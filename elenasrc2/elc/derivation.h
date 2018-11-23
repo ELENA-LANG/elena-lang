@@ -24,12 +24,16 @@ namespace _ELENA_
 
 class DerivationWriter : public _DerivationWriter
 {
-   bool         _cachingMode;
-   int          _cachingLevel;
-   SyntaxTree   _cache;
-   SyntaxWriter _cacheWriter;
+   bool          _cachingMode;
+   int           _cachingLevel;
+   SyntaxTree    _cache;
+   SyntaxWriter  _cacheWriter;
 
-   SyntaxWriter _writer;
+   SyntaxWriter  _writer;
+
+   _ModuleScope* _scope;
+   ident_t       _ns;
+   ident_t       _filePath;
 
    void appendNode(LexicalType type, int argument);
 
@@ -43,21 +47,24 @@ class DerivationWriter : public _DerivationWriter
    void newScope(Symbol symbol);
    void saveCache();
 
+   void recognizeScopeAttributes(SNode node/*, DerivationScope& scope*/);
+
 public:
    void begin();
    void end();
 
-   void newNamespace(ident_t ns);
+   void newNamespace(ident_t ns, ident_t filePath);
    void closeNamespace();
 
    virtual void writeSymbol(Symbol symbol);
    virtual void writeTerminal(TerminalInfo& terminal);
 
-   DerivationWriter(SyntaxTree& target)
+   DerivationWriter(SyntaxTree& target, _ModuleScope* scope)
       :  _writer(target), _cacheWriter(_cache)
    {
       _cachingMode = true; 
       _cachingLevel = 0;
+      _scope = scope;
    }
 };
 
@@ -290,7 +297,6 @@ public:
 //   void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int nested = 0);
 //   void generateTemplateScope(SNode node, DerivationScope& scope);
 //
-//   void recognizeRootAttributes(SNode node, DerivationScope& scope);
 //
 //   bool recognizeMethodScope(SNode node);
 //   bool generateSingletonScope(SyntaxWriter& writer, SNode node, DerivationScope& scope);

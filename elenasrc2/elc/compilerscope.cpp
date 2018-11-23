@@ -218,26 +218,26 @@ using namespace _ELENA_;
 //   }
 //}
 
-//inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, bool privateOne)
-//{
-//   ident_t prefix = privateOne ? PRIVATE_PREFIX_NS : "'";
-//
-//   IdentifierString name(prefix, identifier);
-//
-//   return module->mapReference(name);
-//}
-//
-//ref_t CompilerScope :: mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne)
-//{
-//   if (!emptystr(ns)) {
-//      ReferenceNs nameWithNs(ns, identifier);
-//
-//      return ::mapNewIdentifier(module, nameWithNs.c_str(), privateOne);
-//
-//   }
-//   else return ::mapNewIdentifier(module, identifier, privateOne);
-//}
-//
+inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, bool privateOne)
+{
+   ident_t prefix = privateOne ? PRIVATE_PREFIX_NS : "'";
+
+   IdentifierString name(prefix, identifier);
+
+   return module->mapReference(name);
+}
+
+ref_t ModuleScope :: mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne)
+{
+   if (!emptystr(ns)) {
+      ReferenceNs nameWithNs(ns, identifier);
+
+      return ::mapNewIdentifier(module, nameWithNs.c_str(), privateOne);
+
+   }
+   else return ::mapNewIdentifier(module, identifier, privateOne);
+}
+
 //ref_t CompilerScope :: mapFullReference(ident_t referenceName, bool existing)
 //{
 //   if (emptystr(referenceName))
@@ -316,29 +316,29 @@ using namespace _ELENA_;
 //   return module->mapReference(forwardName);
 //}
 
-//ident_t CompilerScope:: resolveWeakTemplateReference(ident_t referenceName)
-//{
-//   ident_t resolvedName = project->resolveForward(referenceName);
-//   if (emptystr(resolvedName)) {
-//      // COMPILER MAGIC : try to find a template implementation
-//      ref_t resolvedRef = 0;
-//      _Module* refModule = project->resolveWeakModule(referenceName, resolvedRef, true);
-//      if (refModule != nullptr) {
-//         resolvedName = refModule->resolveReference(resolvedRef);
-//         if (isWeakReference(resolvedName)) {
-//            IdentifierString fullName(refModule->Name(), resolvedName);
-//
-//            project->addForward(referenceName, fullName.c_str());
-//
-//            resolvedName = project->resolveForward(referenceName);
-//         }
-//         else project->addForward(referenceName, resolvedName);
-//      }
-//   }
-//
-//   return resolvedName;
-//}
-//
+ident_t ModuleScope:: resolveWeakTemplateReference(ident_t referenceName)
+{
+   ident_t resolvedName = project->resolveForward(referenceName);
+   if (emptystr(resolvedName)) {
+      // COMPILER MAGIC : try to find a template implementation
+      ref_t resolvedRef = 0;
+      _Module* refModule = project->resolveWeakModule(referenceName, resolvedRef, true);
+      if (refModule != nullptr) {
+         resolvedName = refModule->resolveReference(resolvedRef);
+         if (isWeakReference(resolvedName)) {
+            IdentifierString fullName(refModule->Name(), resolvedName);
+
+            project->addForward(referenceName, fullName.c_str());
+
+            resolvedName = project->resolveForward(referenceName);
+         }
+         else project->addForward(referenceName, resolvedName);
+      }
+   }
+
+   return resolvedName;
+}
+
 //inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _Module* module, _ProjectManager* project, IdentifierList* importedNs)
 //{
 //   ref_t reference = 0;

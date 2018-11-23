@@ -147,8 +147,8 @@ public:
 //   virtual ident_t getManinfestName() = 0;
 //   virtual ident_t getManinfestVersion() = 0;
 //   virtual ident_t getManinfestAuthor() = 0;
-//
-//   virtual void printInfo(const char* msg, ident_t value) = 0;
+
+   virtual void printInfo(const char* msg, ident_t value) = 0;
 
    virtual void raiseError(ident_t msg) = 0;
    virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
@@ -220,10 +220,10 @@ struct _ModuleScope
 //
 //   // cached bool values
 //   BranchingInfo     branchingInfo;
-//
-//   // cached paths
-//   SymbolMap         savedPaths;
-//
+
+   // cached paths
+   SymbolMap         savedPaths;
+
 //   MessageMap        attributes;
 //
 ////   virtual ref_t mapAttribute(SNode terminal) = 0;
@@ -240,32 +240,32 @@ struct _ModuleScope
 //   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
 //   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
 
-//   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
+   virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 //
 //   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode) = 0;
 //
 //   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensionsToExport) = 0;
 
-   //virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
+   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
    //virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
 
   // virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
 //   virtual ident_t resolveFullName(ref_t reference) = 0;
 //   virtual ident_t resolveFullName(ident_t referenceName) = 0;
 
-   //void raiseError(const char* message, ident_t sourcePath, SNode node)
-   //{
-   //   SNode terminal = SyntaxTree::findTerminalInfo(node);
+   void raiseError(const char* message, ident_t sourcePath, SNode node)
+   {
+      SNode terminal = SyntaxTree::findTerminalInfo(node);
 
-   //   int col = terminal.findChild(lxCol).argument;
-   //   int row = terminal.findChild(lxRow).argument;
-   //   ident_t identifier = terminal.identifier();
-   //   if (emptystr(identifier))
-   //      identifier = terminal.identifier();
+      int col = terminal.findChild(lxCol).argument;
+      int row = terminal.findChild(lxRow).argument;
+      ident_t identifier = terminal.identifier();
+      if (emptystr(identifier))
+         identifier = terminal.identifier();
 
-   //   project->raiseError(message, sourcePath, row, col, identifier);
-   //}
+      project->raiseError(message, sourcePath, row, col, identifier);
+   }
 
 //   void raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
 //   {
@@ -293,7 +293,7 @@ struct _ModuleScope
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
    _ModuleScope()
-//      : attributes(0), savedPaths(-1)
+      : /*attributes(0), */savedPaths(-1)
    {
       project = NULL;
       debugModule = module = NULL;

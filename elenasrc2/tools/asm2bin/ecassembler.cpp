@@ -15,14 +15,14 @@ using namespace _ELENA_;
 
 // --- ECodesAssembler ---
 
-int ECodesAssembler::mapVerb(ident_t literal)
-{
-   if (verbs.Count() == 0) {
-      ByteCodeCompiler::loadVerbs(verbs);
-   }
-
-   return verbs.get(literal);
-}
+//int ECodesAssembler::mapVerb(ident_t literal)
+//{
+//   if (verbs.Count() == 0) {
+//      ByteCodeCompiler::loadVerbs(verbs);
+//   }
+//
+//   return verbs.get(literal);
+//}
 
 void ECodesAssembler :: fixJump(ident_t label, MemoryWriter& writer, LabelInfo& info)
 {
@@ -115,26 +115,26 @@ void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& messa
    message[0] = message[0] + paramCount;
 }
 
-ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
-{
-   IdentifierString message;
-   compileMessage(token, message);
+//ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
+//{
+//   IdentifierString message;
+//   compileMessage(token, message);
+//
+//   return binary->mapReference(message) | mskMessage;
+//}
 
-   return binary->mapReference(message) | mskMessage;
-}
-
-ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
-{
-   QuoteTemplate<IdentifierString> quote(token.terminal.line);
-
-   IdentifierString subject;
-   int paramCount = 0;
-   ref_t signRef = 0;
-
-   readMessage(quote.ident(), subject, signRef, paramCount);
-
-   return encodeMessage(binary->mapAction(subject, signRef, false), paramCount);
-}
+//ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
+//{
+//   QuoteTemplate<IdentifierString> quote(token.terminal.line);
+//
+//   IdentifierString subject;
+//   int paramCount = 0;
+//   ref_t signRef = 0;
+//
+//   readMessage(quote.ident(), subject, signRef, paramCount);
+//
+//   return encodeMessage(binary->mapAction(subject, signRef, false), paramCount);
+//}
 
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 {
@@ -146,17 +146,17 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
    else if (word.compare("0")) {
       return 0;
    }
-   else if (word.compare("const")) {
-      token.read(":", "Invalid operand (%d)");
-      token.read();
+   //else if (word.compare("const")) {
+   //   token.read(":", "Invalid operand (%d)");
+   //   token.read();
 
-      if (word.compare("%")) {
-         token.read();
+   //   if (word.compare("%")) {
+   //      token.read();
 
-         return compileRMessageArg(token, binary);
-      }
-      else return binary->mapReference(token.value) | mskConstantRef;
-   }
+   //      return compileRMessageArg(token, binary);
+   //   }
+   //   else return binary->mapReference(token.value) | mskConstantRef;
+   //}
    else if (word.compare("rdata")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
@@ -211,16 +211,16 @@ void ECodesAssembler :: compileRRCommand(ByteCode code, TokenInfo& token, Memory
    writeCommand(ByteCommand(code, reference1, reference2), writer);
 }
 
-void ECodesAssembler::compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
-{
-   size_t reference1 = compileRArg(token, binary);
-
-   token.read("%", "Invalid operand (%d)");
-   token.read();
-   size_t reference2 = compileMessageArg(token, binary);
-
-   writeCommand(ByteCommand(code, reference1 & ~mskAnyRef, reference2), writer);
-}
+//void ECodesAssembler::compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+//{
+//   size_t reference1 = compileRArg(token, binary);
+//
+//   token.read("%", "Invalid operand (%d)");
+//   token.read();
+//   size_t reference2 = compileMessageArg(token, binary);
+//
+//   writeCommand(ByteCommand(code, reference1 & ~mskAnyRef, reference2), writer);
+//}
 
 void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
 {
@@ -525,10 +525,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcSelectR:
             compileRRCommand(opcode, token, writer, binary);
             break;
-         case bcXIndexRM:
-         case bcXCallRM:
-            compileRMCommand(opcode, token, writer, binary);
-            break;
+         //case bcXIndexRM:
+         //case bcXCallRM:
+         //   compileRMCommand(opcode, token, writer, binary);
+         //   break;
          default:
             writeCommand(ByteCommand(opcode), writer);
             break;
@@ -607,13 +607,13 @@ void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
 
    Module       binary(name);
 
-   // load predefine messages
-   if (verbs.Count() == 0) {
-      ByteCodeCompiler::loadVerbs(verbs);
-   }
-   for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
-      binary.mapPredefinedAction(it.key(), *it);
-   }
+   //// load predefine messages
+   //if (verbs.Count() == 0) {
+   //   ByteCodeCompiler::loadVerbs(verbs);
+   //}
+   //for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
+   //   binary.mapPredefinedAction(it.key(), *it);
+   //}
 
    SourceReader reader(4, source);
 

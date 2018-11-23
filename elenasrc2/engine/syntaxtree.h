@@ -114,7 +114,7 @@ enum LexicalType
 //   lxExtMessageConstant = 0x0A114, // arg -reference
 //   lxSignatureConstant  = 0x0A115, // arg - reference
 //   lxStaticConstField   = 0x08116, // arg - reference
-//   lxNil                = 0x0A117,
+   lxNil                = 0x0A117,
 //   lxCurrent            = 0x0A118, // arg -offset
 //   lxResult             = 0x0A119, // arg -offset
 //   lxResultField        = 0x0A11A, // arg -offset
@@ -206,14 +206,14 @@ enum LexicalType
 //   lxInlineClosure   = 0x1003F,
 //
    // attributes
+   lxSourcePath      = 0x20001,
    lxCol             = 0x20003,
    lxRow             = 0x20004,
+   lxLength          = 0x02005,
+   lxBreakpoint      = 0x20006,
    lxNameAttr        = 0x20029,
 //   lxAttribute       = 0x20000,
-//   lxSourcePath      = 0x20001,
 // //  lxTerminal        = 0x20002,
-//   lxLength          = 0x02005,
-//   lxBreakpoint      = 0x20006,
 ////   lxImport          = 0x20007,
 //   lxReserved        = 0x20008,
 //   lxAllocated       = 0x20009,

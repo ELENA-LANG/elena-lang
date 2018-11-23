@@ -69,20 +69,20 @@ struct ModuleScope : _ModuleScope
    //virtual ref_t mapFullReference(ident_t referenceName, bool existing = false);
 //   ///*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
-   //virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne);
+   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne);
 
-   //virtual _Memory* mapSection(ref_t reference, bool existing)
-   //{
-   //   ref_t mask = reference & mskAnyRef;
-   //
-   //   ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
-   //   if (isTemplateWeakReference(referenceName)) {
-   //      return module->mapSection(module->mapReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN)) | mask, existing);
-   //   }
-   //   else return module->mapSection(reference, existing);
-   //}
-   //
-   //ident_t resolveWeakTemplateReference(ident_t referenceName);
+   virtual _Memory* mapSection(ref_t reference, bool existing)
+   {
+      ref_t mask = reference & mskAnyRef;
+   
+      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+      if (isTemplateWeakReference(referenceName)) {
+         return module->mapSection(module->mapReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN)) | mask, existing);
+      }
+      else return module->mapSection(reference, existing);
+   }
+   
+   ident_t resolveWeakTemplateReference(ident_t referenceName);
 
 //   void saveIncludedModule(_Module* extModule);
    //void saveListMember(ident_t sectionName, ident_t memberName);

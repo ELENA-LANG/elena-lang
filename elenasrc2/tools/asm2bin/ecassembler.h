@@ -21,7 +21,7 @@ namespace _ELENA_
 class ECodesAssembler : public Assembler
 {
    Map<ident_t, size_t> constants;
-   MessageMap           verbs;
+   //MessageMap           verbs;
 
    struct LabelInfo
    {
@@ -56,7 +56,7 @@ class ECodesAssembler : public Assembler
 	  }
    };
 
-   int mapVerb(ident_t literal);
+   //int mapVerb(ident_t literal);
 
    void fixJump(ident_t label, MemoryWriter& writer, LabelInfo& info);
 
@@ -65,8 +65,8 @@ class ECodesAssembler : public Assembler
    void compileMessage(TokenInfo& token, IdentifierString& message);
 
    ref_t compileRArg(TokenInfo& token, _Module* binary);
-   ref_t compileRMessageArg(TokenInfo& token, _Module* binary);
-   ref_t compileMessageArg(TokenInfo& token, _Module* binary);
+   //ref_t compileRMessageArg(TokenInfo& token, _Module* binary);
+   //ref_t compileMessageArg(TokenInfo& token, _Module* binary);
 
    void writeCommand(ByteCommand command, MemoryWriter& writer);
 
@@ -76,7 +76,7 @@ class ECodesAssembler : public Assembler
    void compileICommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
    void compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileRRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
-   void compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   //void compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileCreateCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
 
@@ -94,7 +94,7 @@ public:
 
 	ECodesAssembler()
 	{
-      ByteCodeCompiler::loadVerbs(verbs);
+//      ByteCodeCompiler::loadVerbs(verbs);
 	}
 	virtual ~ECodesAssembler() {}
 };

@@ -682,71 +682,71 @@ inline void addVerb(MessageMap& map, const char* verb, int id)
    map.add(verb, id);
 }
 
-void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
-{
-   // load verbs
-   addVerb(verbs, DISPATCH_MESSAGE,   DISPATCH_MESSAGE_ID); // NOTE : dispatch verb should not be used explicitly
-   addVerb(verbs, NEWOBJECT_MESSAGE,  NEWOBJECT_MESSAGE_ID);
-   addVerb(verbs, INVOKE_MESSAGE,     INVOKE_MESSAGE_ID);
-   addVerb(verbs, CAST_MESSAGE,       CAST_MESSAGE_ID);
-   addVerb(verbs, DEFAULT_MESSAGE,    DEFAULT_MESSAGE_ID);
-   addVerb(verbs, INIT_MESSAGE,       INIT_MESSAGE_ID);
-   addVerb(verbs, NEW_MESSAGE,        NEW_MESSAGE_ID);
-   addVerb(verbs, GET_MESSAGE,        GET_MESSAGE_ID);
-   addVerb(verbs, EVAL_MESSAGE,       EVAL_MESSAGE_ID);
-   addVerb(verbs, EVALUATE_MESSAGE,   EVAL_MESSAGE_ID);
-   addVerb(verbs, EQUAL_MESSAGE,      EQUAL_MESSAGE_ID);
-   addVerb(verbs, NOTEQUAL_MESSAGE,   NOTEQUAL_MESSAGE_ID);
-   addVerb(verbs, GREATER_MESSAGE,    GREATER_MESSAGE_ID);
-   addVerb(verbs, NOTLESS_MESSAGE,    NOTLESS_MESSAGE_ID);
-   addVerb(verbs, NOTGREATER_MESSAGE, NOTGREATER_MESSAGE_ID);
-   addVerb(verbs, LESS_MESSAGE,       LESS_MESSAGE_ID);
-   addVerb(verbs, AND_MESSAGE,        AND_MESSAGE_ID);
-   addVerb(verbs, OR_MESSAGE,         OR_MESSAGE_ID);
-   addVerb(verbs, XOR_MESSAGE,        XOR_MESSAGE_ID);
-   addVerb(verbs, ADD_MESSAGE,        ADD_MESSAGE_ID);
-   addVerb(verbs, SUB_MESSAGE,        SUB_MESSAGE_ID);
-   addVerb(verbs, MUL_MESSAGE,        MUL_MESSAGE_ID);
-   addVerb(verbs, DIV_MESSAGE,        DIV_MESSAGE_ID);
-   addVerb(verbs, REFER_MESSAGE,      REFER_MESSAGE_ID);
-   addVerb(verbs, APPEND_MESSAGE,     APPEND_MESSAGE_ID);
-   addVerb(verbs, REDUCE_MESSAGE,     REDUCE_MESSAGE_ID);
-   addVerb(verbs, SET_REFER_MESSAGE,  SET_REFER_MESSAGE_ID);
-   addVerb(verbs, SET_MESSAGE,        SET_MESSAGE_ID);
-   addVerb(verbs, READ_MESSAGE,       READ_MESSAGE_ID);
-   addVerb(verbs, WRITE_MESSAGE,      WRITE_MESSAGE_ID);
-   addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
-   addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
-   addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
-   addVerb(verbs, IF_ELSE_MESSAGE,    IF_ELSE_MESSAGE_ID);
-   addVerb(verbs, ISNIL_MESSAGE, ISNIL_MESSAGE_ID);
-}
+//void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
+//{
+//   // load verbs
+//   addVerb(verbs, DISPATCH_MESSAGE,   DISPATCH_MESSAGE_ID); // NOTE : dispatch verb should not be used explicitly
+//   addVerb(verbs, NEWOBJECT_MESSAGE,  NEWOBJECT_MESSAGE_ID);
+//   addVerb(verbs, INVOKE_MESSAGE,     INVOKE_MESSAGE_ID);
+//   addVerb(verbs, CAST_MESSAGE,       CAST_MESSAGE_ID);
+//   addVerb(verbs, DEFAULT_MESSAGE,    DEFAULT_MESSAGE_ID);
+//   addVerb(verbs, INIT_MESSAGE,       INIT_MESSAGE_ID);
+//   addVerb(verbs, NEW_MESSAGE,        NEW_MESSAGE_ID);
+//   addVerb(verbs, GET_MESSAGE,        GET_MESSAGE_ID);
+//   addVerb(verbs, EVAL_MESSAGE,       EVAL_MESSAGE_ID);
+//   addVerb(verbs, EVALUATE_MESSAGE,   EVAL_MESSAGE_ID);
+//   addVerb(verbs, EQUAL_MESSAGE,      EQUAL_MESSAGE_ID);
+//   addVerb(verbs, NOTEQUAL_MESSAGE,   NOTEQUAL_MESSAGE_ID);
+//   addVerb(verbs, GREATER_MESSAGE,    GREATER_MESSAGE_ID);
+//   addVerb(verbs, NOTLESS_MESSAGE,    NOTLESS_MESSAGE_ID);
+//   addVerb(verbs, NOTGREATER_MESSAGE, NOTGREATER_MESSAGE_ID);
+//   addVerb(verbs, LESS_MESSAGE,       LESS_MESSAGE_ID);
+//   addVerb(verbs, AND_MESSAGE,        AND_MESSAGE_ID);
+//   addVerb(verbs, OR_MESSAGE,         OR_MESSAGE_ID);
+//   addVerb(verbs, XOR_MESSAGE,        XOR_MESSAGE_ID);
+//   addVerb(verbs, ADD_MESSAGE,        ADD_MESSAGE_ID);
+//   addVerb(verbs, SUB_MESSAGE,        SUB_MESSAGE_ID);
+//   addVerb(verbs, MUL_MESSAGE,        MUL_MESSAGE_ID);
+//   addVerb(verbs, DIV_MESSAGE,        DIV_MESSAGE_ID);
+//   addVerb(verbs, REFER_MESSAGE,      REFER_MESSAGE_ID);
+//   addVerb(verbs, APPEND_MESSAGE,     APPEND_MESSAGE_ID);
+//   addVerb(verbs, REDUCE_MESSAGE,     REDUCE_MESSAGE_ID);
+//   addVerb(verbs, SET_REFER_MESSAGE,  SET_REFER_MESSAGE_ID);
+//   addVerb(verbs, SET_MESSAGE,        SET_MESSAGE_ID);
+//   addVerb(verbs, READ_MESSAGE,       READ_MESSAGE_ID);
+//   addVerb(verbs, WRITE_MESSAGE,      WRITE_MESSAGE_ID);
+//   addVerb(verbs, IF_MESSAGE,         IF_MESSAGE_ID);
+//   addVerb(verbs, IFNOT_MESSAGE,      IFNOT_MESSAGE_ID);
+//   addVerb(verbs, SHIFT_MESSAGE,      SHIFT_MESSAGE_ID);
+//   addVerb(verbs, IF_ELSE_MESSAGE,    IF_ELSE_MESSAGE_ID);
+//   addVerb(verbs, ISNIL_MESSAGE, ISNIL_MESSAGE_ID);
+//}
 
-void ByteCodeCompiler :: loadOperators(MessageMap& operators)
-{
-   //addVerb(operators, ADD_OPERATOR, ADD_MESSAGE_ID);
-   //addVerb(operators, SUB_OPERATOR, SUB_MESSAGE_ID);
-   //addVerb(operators, MUL_OPERATOR, MUL_MESSAGE_ID);
-   //addVerb(operators, DIV_OPERATOR, DIV_MESSAGE_ID);
-   //addVerb(operators, IF_OPERATOR, IF_MESSAGE_ID);
-   //addVerb(operators, IFNOT_OPERATOR, IFNOT_MESSAGE_ID);
-   //addVerb(operators, EQUAL_OPERATOR, EQUAL_MESSAGE_ID);
-   //addVerb(operators, NOTEQUAL_OPERATOR, NOTEQUAL_MESSAGE_ID);
-   //addVerb(operators, LESS_OPERATOR, LESS_MESSAGE_ID);
-   //addVerb(operators, GREATER_OPERATOR, GREATER_MESSAGE_ID);
-   //addVerb(operators, NOTLESS_OPERATOR, NOTLESS_MESSAGE_ID);
-   //addVerb(operators, NOTGREATER_OPERATOR, NOTGREATER_MESSAGE_ID);
-   //addVerb(operators, AND_OPERATOR, AND_MESSAGE_ID);
-   //addVerb(operators, OR_OPERATOR, OR_MESSAGE_ID);
-   //addVerb(operators, XOR_OPERATOR, XOR_MESSAGE_ID);
-   //addVerb(operators, REFER_OPERATOR, REFER_MESSAGE_ID);
-   //addVerb(operators, APPEND_OPERATOR, APPEND_MESSAGE_ID);
-   //addVerb(operators, REDUCE_OPERATOR, REDUCE_MESSAGE_ID);
-   //addVerb(operators, WRITE_OPERATOR, WRITE_MESSAGE_ID);
-   //addVerb(operators, READ_OPERATOR, READ_MESSAGE_ID);
-   //addVerb(operators, ISNIL_OPERATOR, ISNIL_MESSAGE_ID);
-}
-
+//void ByteCodeCompiler :: loadOperators(MessageMap& operators)
+//{
+//   //addVerb(operators, ADD_OPERATOR, ADD_MESSAGE_ID);
+//   //addVerb(operators, SUB_OPERATOR, SUB_MESSAGE_ID);
+//   //addVerb(operators, MUL_OPERATOR, MUL_MESSAGE_ID);
+//   //addVerb(operators, DIV_OPERATOR, DIV_MESSAGE_ID);
+//   //addVerb(operators, IF_OPERATOR, IF_MESSAGE_ID);
+//   //addVerb(operators, IFNOT_OPERATOR, IFNOT_MESSAGE_ID);
+//   //addVerb(operators, EQUAL_OPERATOR, EQUAL_MESSAGE_ID);
+//   //addVerb(operators, NOTEQUAL_OPERATOR, NOTEQUAL_MESSAGE_ID);
+//   //addVerb(operators, LESS_OPERATOR, LESS_MESSAGE_ID);
+//   //addVerb(operators, GREATER_OPERATOR, GREATER_MESSAGE_ID);
+//   //addVerb(operators, NOTLESS_OPERATOR, NOTLESS_MESSAGE_ID);
+//   //addVerb(operators, NOTGREATER_OPERATOR, NOTGREATER_MESSAGE_ID);
+//   //addVerb(operators, AND_OPERATOR, AND_MESSAGE_ID);
+//   //addVerb(operators, OR_OPERATOR, OR_MESSAGE_ID);
+//   //addVerb(operators, XOR_OPERATOR, XOR_MESSAGE_ID);
+//   //addVerb(operators, REFER_OPERATOR, REFER_MESSAGE_ID);
+//   //addVerb(operators, APPEND_OPERATOR, APPEND_MESSAGE_ID);
+//   //addVerb(operators, REDUCE_OPERATOR, REDUCE_MESSAGE_ID);
+//   //addVerb(operators, WRITE_OPERATOR, WRITE_MESSAGE_ID);
+//   //addVerb(operators, READ_OPERATOR, READ_MESSAGE_ID);
+//   //addVerb(operators, ISNIL_OPERATOR, ISNIL_MESSAGE_ID);
+//}
+//
 ByteCode ByteCodeCompiler :: code(ident_t s)
 {
    for(int i = 0 ; i < 255 ; i++) {

@@ -10,31 +10,31 @@
 #define bcwriterH 1
 
 #include "bytecode.h"
-//#include "compilercommon.h"
-//#include "syntaxtree.h"
+#include "compilercommon.h"
+#include "syntaxtree.h"
 
 namespace _ELENA_
 {
 
-//// --- ByteCodeWriter class ---
-//class ByteCodeWriter
-//{
-//   struct Scope
-//   {
+// --- ByteCodeWriter class ---
+class ByteCodeWriter
+{
+   struct Scope
+   {
 //      MemoryWriter* vmt;
-//      MemoryWriter* code;
-//      MemoryWriter* debug;
-//      MemoryWriter* debugStrings;
-//      bool          appendMode;
-//
-//      Scope()
-//      {
-//         vmt = code = NULL;
-//         debug = debugStrings = NULL;
-//         appendMode = false;
-//      }
-//   };
-//
+      MemoryWriter* code;
+      MemoryWriter* debug;
+      MemoryWriter* debugStrings;
+      bool          appendMode;
+
+      Scope()
+      {
+         /*vmt = */code = NULL;
+         debug = debugStrings = NULL;
+         appendMode = false;
+      }
+   };
+
 //   struct ExternalScope
 //   {
 //      struct ParamInfo
@@ -79,44 +79,44 @@ namespace _ELENA_
 //
 //   List<ImportScope> imports;
 //   MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
-//
-//   ByteCode peekNext(ByteCodeIterator it)
-//   {
-//      it++;
-//
-//      return (*it).code;
-//   }
-//
-//   ByteCode peekPrevious(ByteCodeIterator it)
-//   {
-//      it--;
-//
-//      return (*it).code;
-//   }
-//
-//   void writeNewStatement(MemoryWriter* debug);
-//   void writeNewBlock(MemoryWriter* debug);
+
+   ByteCode peekNext(ByteCodeIterator it)
+   {
+      it++;
+
+      return (*it).code;
+   }
+
+   ByteCode peekPrevious(ByteCodeIterator it)
+   {
+      it--;
+
+      return (*it).code;
+   }
+
+   void writeNewStatement(MemoryWriter* debug);
+   void writeNewBlock(MemoryWriter* debug);
 //   void writeSelf(Scope& scope, int level, int frameLevel);
 //   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
 //   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
 //   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
 //   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
-//   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
-//
+   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
+
 //   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
 //   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
-//   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
-//   void writeProcedureDebugInfo(Scope& scope, ref_t sourceRef);
-//   void writeDebugInfoStopper(MemoryWriter* debug);
-//
-//   void writeProcedure(ByteCodeIterator& it, Scope& scope);
+   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
+   void writeProcedureDebugInfo(Scope& scope, ref_t sourceRef);
+   void writeDebugInfoStopper(MemoryWriter* debug);
+
+   void writeProcedure(ByteCodeIterator& it, Scope& scope);
 //   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-//   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode);
+   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode);
 //   void writeClass(ref_t reference, ByteCodeIterator& it, _CompilerScope& scope);
 //
 //   void declareInitializer(CommandTape& tape, ref_t reference);
 //   void declareClass(CommandTape& tape, ref_t reference);
-//   void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
+   void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
 //   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
 //   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame = true);
@@ -147,9 +147,9 @@ namespace _ELENA_
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareSelfInfo(CommandTape& tape, int level);
 //   void declareMessageInfo(CommandTape& tape, ident_t message);
-//   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
-//   void declareBlock(CommandTape& tape);
-//
+   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
+   void declareBlock(CommandTape& tape);
+
 //   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
 //   void newStructure(CommandTape& tape, int size, ref_t reference);
 //   void newDynamicStructure(CommandTape& tape, int itemSize);
@@ -228,7 +228,7 @@ namespace _ELENA_
 //   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
 //   void endIdleMethod(CommandTape& tape);
 //   void endClass(CommandTape& tape);
-//   void endSymbol(CommandTape& tape);
+   void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
 //   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
@@ -266,9 +266,9 @@ namespace _ELENA_
 //   void doByteArrayOperation(CommandTape& tape, int operator_id);
 //   void doShortArrayOperation(CommandTape& tape, int operator_id);
 //   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
-//
-//   bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
-//
+
+   bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
+
 //   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
 //   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 //
@@ -276,9 +276,9 @@ namespace _ELENA_
 //   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 //
 //   void pushObject(CommandTape& tape, SyntaxTree::Node node);
-//   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-//   void loadObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
-//
+   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void loadObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+
 //   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 //
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
@@ -311,10 +311,10 @@ namespace _ELENA_
 //   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 //   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateObjectExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
-//   void generateExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 //   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
-//   void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
+   void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
 //   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 //
 //   void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
@@ -323,9 +323,9 @@ namespace _ELENA_
 //   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
 //
 ////   void generateTemplateMethods(CommandTape& tape, SNode root);
-//
-//public:
-//   pos_t writeSourcePath(_Module* debugModule, ident_t path);
+
+public:
+   pos_t writeSourcePath(_Module* debugModule, ident_t path);
 //   int writeString(ident_t path);
 //
 //   void generateClass(CommandTape& tape, SNode root, pos_t sourcePathBookmark);
@@ -333,12 +333,12 @@ namespace _ELENA_
 ////   void generateSymbolWithInitialization(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument, ref_t implicitConstructor);
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
-//   void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);
+   void generateSymbol(CommandTape& tape, SNode root/*, bool isStatic*/, pos_t sourcePathBookmark);
 //   void generateConstantList(SNode node, _Module* module, ref_t reference);
 //   void generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument);
-//
-//   void save(CommandTape& tape, _CompilerScope& scope);
-//
+
+   void saveTape(CommandTape& tape, _ModuleScope& scope);
+
 //   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
 //   {
 //      imports.add(ImportScope(section, sour, dest));
@@ -350,8 +350,8 @@ namespace _ELENA_
 //      _strings.clear();
 //      imports.clear();
 //   }
-//};
-//
+};
+
 //bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
 
 } // _ELENA_

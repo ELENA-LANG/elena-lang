@@ -463,7 +463,7 @@ namespace _ELENA_
    #define FORWARD_PREFIX_NS        "$forwards'"
    #define FORWARD_PREFIX_NS_LEN    10
 
-//   #define CLASSCLASS_POSTFIX       "#class"
+   #define CLASSCLASS_POSTFIX       "#class"
 //   #define GENERIC_PREFIX           "#generic"
 ////   #define EMBEDDED_PREFIX          "#embedded"
 ////   #define TARGET_POSTFIX           "##"
@@ -476,8 +476,8 @@ namespace _ELENA_
 ////   #define STANDARD_MODULE_LEN      6
 //   #define INTERNAL_MASK_LEN        12
 //   #define COREAPI_MASK_LEN         5 
-//
-//   #define CORE_MODULE              "coreapi"
+
+   #define CORE_MODULE              "coreapi"
 //   #define STANDARD_MODULE          "system"                         // the standard module name
    #define FORWARD_MODULE           "forwards"
    #define EXTERNAL_MODULE          "system'external"                  // external pseudo symbol
@@ -487,8 +487,8 @@ namespace _ELENA_
 
    #define NATIVE_MODULE            "$native"
 
-   #define MESSAGE_TABLE_MODULE     "$messages"
-   #define MESSAGE_TABLE            "$messages'$table"
+   //#define MESSAGE_TABLE_MODULE     "$messages"
+   //#define MESSAGE_TABLE            "$messages'$table"
 
   // VM temporal code
 //   #define TAPE_SYMBOL              "$tape"
@@ -515,9 +515,9 @@ namespace _ELENA_
 //   #define REFTEMPLATE_FORWARD      "$reference"
 //   #define CLOSURETEMPLATE_FORWARD  "$closure"
 //   #define ARRAYTEMPLATE_FORWARD    "$parray"
-//
-//   #define PROGRAM_ENTRY            "$program"                     // the program entry
-//   #define SYSTEM_ENTRY             "$system_entry"                // the system entry
+
+   #define PROGRAM_ENTRY            "$program"                     // the program entry
+   #define SYSTEM_ENTRY             "$system_entry"                // the system entry
    
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)

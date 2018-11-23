@@ -317,7 +317,7 @@ public:
       _debugInfoSize = 0;
       _autoStepInto = false;
 
-      ByteCodeCompiler::loadVerbs(_verbs);
+      //ByteCodeCompiler::loadVerbs(_verbs);
    }
 
    virtual ~DebugController() {}

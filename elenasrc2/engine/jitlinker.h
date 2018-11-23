@@ -162,7 +162,7 @@ class JITLinker : _JITLoaderListener
 ////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
 public:
-   void prepareCompiler(MessageMap& verbs);
+   void prepareCompiler(/*MessageMap& verbs*/);
 
    void* resolve(ReferenceInfo referenceInfo, int mask, bool silentMode);
    void* resolve(ident_t reference, int mask, bool silentMode);

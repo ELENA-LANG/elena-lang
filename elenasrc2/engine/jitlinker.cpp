@@ -159,60 +159,62 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 ref_t JITLinker :: resolveAction(ident_t action, _Module* module, ref_t* signatures, int paramCount)
 {
-//   size_t overloadIndex = signature.find('$');
-   if (signatures) {
-      SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
+////   size_t overloadIndex = signature.find('$');
+//   if (signatures) {
+//      SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
+//
+//      // resolve the message
+//      IdentifierString signatureName(action);
+//      for (int i = 0; i < paramCount; i++) {
+//         signatureName.append('$');
+//         ident_t referenceName = module->resolveReference(signatures[i]);
+//         if (isWeakReference(referenceName)) {
+//            if (isTemplateWeakReference(referenceName)) {
+//               ReferenceInfo refInfo = _loader->retrieveReference(module, signatures[i], mskVMTRef);
+//
+//               signatureName.append(refInfo.referenceName);
+//            }
+//            else {
+//               signatureName.append(module->Name());
+//               signatureName.append(referenceName);
+//            }
+//         }
+//         else signatureName.append(referenceName);
+//      }
+//
+//      ref_t tableOffs = info.module->mapAction(signatureName.c_str(), 0, true);
+//      if (tableOffs == 0) {
+//         MemoryWriter writer(info.section);
+//
+//         tableOffs = writer.Position();
+//         writer.writeDWord((ref_t)_loader->resolveReference(action, 0));
+//
+//         IdentifierString typeName;
+//         for (int i = 0; i < paramCount; i++) {
+//            ident_t referenceName = module->resolveReference(signatures[i]);
+//            if (isWeakReference(referenceName)) {
+//               if (isTemplateWeakReference(referenceName)) {
+//                  typeName.copy(referenceName);
+//               }
+//               else {
+//                  typeName.copy(module->Name());
+//                  typeName.append(referenceName);
+//               }
+//            }
+//            else typeName.copy(referenceName);
+//
+//            ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
+//            writer.writeRef(typeClassRef | mskVMTRef, 0);
+//         }
+//
+//         info.module->mapPredefinedAction(signatureName.c_str(), tableOffs);
+//      }
+//
+//      return tableOffs | SIGNATURE_FLAG;
+//   }
+//   else return (ref_t)_loader->resolveReference(action, 0);
 
-      // resolve the message
-      IdentifierString signatureName(action);
-      for (int i = 0; i < paramCount; i++) {
-         signatureName.append('$');
-         ident_t referenceName = module->resolveReference(signatures[i]);
-         if (isWeakReference(referenceName)) {
-            if (isTemplateWeakReference(referenceName)) {
-               ReferenceInfo refInfo = _loader->retrieveReference(module, signatures[i], mskVMTRef);
-
-               signatureName.append(refInfo.referenceName);
-            }
-            else {
-               signatureName.append(module->Name());
-               signatureName.append(referenceName);
-            }
-         }
-         else signatureName.append(referenceName);
-      }
-
-      ref_t tableOffs = info.module->mapAction(signatureName.c_str(), 0, true);
-      if (tableOffs == 0) {
-         MemoryWriter writer(info.section);
-
-         tableOffs = writer.Position();
-         writer.writeDWord((ref_t)_loader->resolveReference(action, 0));
-
-         IdentifierString typeName;
-         for (int i = 0; i < paramCount; i++) {
-            ident_t referenceName = module->resolveReference(signatures[i]);
-            if (isWeakReference(referenceName)) {
-               if (isTemplateWeakReference(referenceName)) {
-                  typeName.copy(referenceName);
-               }
-               else {
-                  typeName.copy(module->Name());
-                  typeName.append(referenceName);
-               }
-            }
-            else typeName.copy(referenceName);
-
-            ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
-            writer.writeRef(typeClassRef | mskVMTRef, 0);
-         }
-
-         info.module->mapPredefinedAction(signatureName.c_str(), tableOffs);
-      }
-
-      return tableOffs | SIGNATURE_FLAG;
-   }
-   else return (ref_t)_loader->resolveReference(action, 0);
+   return 0;
 }
 
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
@@ -1203,15 +1205,15 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
    return resolve(ReferenceInfo(reference), mask, silentMode);
 }
 
-void JITLinker :: prepareCompiler(MessageMap& verbs)
+void JITLinker :: prepareCompiler(/*MessageMap& verbs*/)
 {
    References      references(RefInfo(0, NULL));
    ReferenceHelper helper(this, NULL, &references);
 
-   // load predefine messages
-   for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
-      _loader->mapPredefinedAction(it.key(), *it);
-   }
+   //// load predefine messages
+   //for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
+   //   _loader->mapPredefinedAction(it.key(), *it);
+   //}
 
    _compiler->prepareCore(helper, _loader);
 

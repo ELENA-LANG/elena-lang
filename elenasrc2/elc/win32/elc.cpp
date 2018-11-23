@@ -61,69 +61,69 @@ void print(const char* str, ...)
    fflush(stdout);
 }
 
-//// --- ImageHelper ---
-//
-//class ImageHelper : public _ELENA_::ExecutableImage::_Helper
-//{
-//   _ELENA_::Linker* _linker;
-//   bool             _consoleMode;
-//
-//public:
-//   _ELENA_::ref_t tls_directory;
-//
-//   virtual void beforeLoad(_ELENA_::_JITCompiler* compiler, _ELENA_::ExecutableImage& image)
-//   {
-//      _ELENA_::Project* project = image.getProject();
-//      _ELENA_::_JITLoader* loader = dynamic_cast<_ELENA_::_JITLoader*>(&image);
-//
-//      // compile TLS section if it is a multi-threading app
-//      if (project->IntSetting(_ELENA_::opThreadMax) > 1) {
-//         _linker->prepareTLS(image, compiler->allocateTLSVariable(loader), tls_directory);
-//
-//      }
-//      else compiler->allocateTLSVariable(loader);
-//
-//      // load GC thread table, should be allocated before static roots
-//      // thread table contains TLS reference
-//      compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
-//
-//      if (_vmMode) {
-//         _ELENA_::MemoryDump tape;
-//         createTape(tape, project, _consoleMode);
-//
-//         compiler->allocateVMTape(loader, tape.get(0), tape.Length());
-//      }
-//   }
-//
-//   virtual void afterLoad(_ELENA_::ExecutableImage& image)
-//   {
-//      _ELENA_::Project* project = image.getProject();
-//
-//      _ELENA_::Section* debug = image.getDebugSection();
-//
-//      // fix up debug section if required
-//      if (debug->Length() > 8) {
-//         debug->writeDWord(0, debug->Length());
-//         debug->addReference(image.getDebugEntryPoint(), 4);
-//
-//         // save subject info if enabled
-//         _ELENA_::MemoryWriter debugWriter(debug);
-//         if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
-//            image.saveActionNames(&debugWriter);
-//         }
-//         else debugWriter.writeDWord(0);
-//      }
-//      else debug->clear();
-//   }
-//
-//   ImageHelper(_ELENA_::Linker* linker, bool consoleMode, bool vmMode = false)
-//   {
-//      this->_linker = linker;
-//      this->tls_directory = 0;
-//      this->_vmMode = vmMode;
-//      this->_consoleMode = consoleMode;
-//   }
-//};
+// --- ImageHelper ---
+
+class ImageHelper : public _ELENA_::ExecutableImage::_Helper
+{
+   _ELENA_::Linker* _linker;
+   bool             _consoleMode;
+
+public:
+   _ELENA_::ref_t tls_directory;
+
+   virtual void beforeLoad(_ELENA_::_JITCompiler* compiler, _ELENA_::ExecutableImage& image)
+   {
+      _ELENA_::Project* project = image.getProject();
+      _ELENA_::_JITLoader* loader = dynamic_cast<_ELENA_::_JITLoader*>(&image);
+
+      // compile TLS section if it is a multi-threading app
+      if (project->IntSetting(_ELENA_::opThreadMax) > 1) {
+         _linker->prepareTLS(image, compiler->allocateTLSVariable(loader), tls_directory);
+
+      }
+      else compiler->allocateTLSVariable(loader);
+
+      // load GC thread table, should be allocated before static roots
+      // thread table contains TLS reference
+      compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
+
+      //if (_vmMode) {
+      //   _ELENA_::MemoryDump tape;
+      //   createTape(tape, project, _consoleMode);
+
+      //   compiler->allocateVMTape(loader, tape.get(0), tape.Length());
+      //}
+   }
+
+   virtual void afterLoad(_ELENA_::ExecutableImage& image)
+   {
+      _ELENA_::Project* project = image.getProject();
+
+      _ELENA_::Section* debug = image.getDebugSection();
+
+      // fix up debug section if required
+      if (debug->Length() > 8) {
+         debug->writeDWord(0, debug->Length());
+         debug->addReference(image.getDebugEntryPoint(), 4);
+
+         // save subject info if enabled
+         _ELENA_::MemoryWriter debugWriter(debug);
+         if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
+            image.saveActionNames(&debugWriter);
+         }
+         else debugWriter.writeDWord(0);
+      }
+      else debug->clear();
+   }
+
+   ImageHelper(_ELENA_::Linker* linker, bool consoleMode, bool vmMode = false)
+   {
+      this->_linker = linker;
+      this->tls_directory = 0;
+      this->_vmMode = vmMode;
+      this->_consoleMode = consoleMode;
+   }
+};
 
 // --- Project ---
 
@@ -174,15 +174,15 @@ void _ELC_::Project :: raiseError(_ELENA_::ident_t msg)
    throw _ELENA_::_Exception();
 }
 
-//void _ELC_::Project::printInfo(const char* msg, _ELENA_::ReferenceInfo referenceInfo)
-//{
-//   if (referenceInfo.isRelative()) {
-//      _ELENA_::IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);
-//
-//      printInfo(msg, fullName.c_str());
-//   }
-//   else printInfo(msg, referenceInfo.referenceName);
-//}
+void _ELC_::Project::printInfo(const char* msg, _ELENA_::ReferenceInfo referenceInfo)
+{
+   if (referenceInfo.isRelative()) {
+      _ELENA_::IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);
+
+      printInfo(msg, fullName.c_str());
+   }
+   else printInfo(msg, referenceInfo.referenceName);
+}
 
 void _ELC_::Project :: printInfo(const char* msg, _ELENA_::ident_t value)
 {
@@ -217,20 +217,20 @@ void _ELC_::Project::raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _EL
 //
 //   print(wMsg, (const wchar_t*)wPath, row, column, (const wchar_t*)wTerminal);
 //}
-//
-//void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path)
-//{
-//   if (!_ELENA_::test(_warningMasks, level))
-//      return;
-//
-//   if (!indicateWarning())
-//      return;
-//
-//   _ELENA_::WideString wMsg(msg);
-//   _ELENA_::WideString wPath(path);
-//
-//   print(wMsg, (const wchar_t*)wPath);
-//}
+
+void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path)
+{
+   if (!_ELENA_::test(_warningMasks, level))
+      return;
+
+   if (!indicateWarning())
+      return;
+
+   _ELENA_::WideString wMsg(msg);
+   _ELENA_::WideString wPath(path);
+
+   print(wMsg, (const wchar_t*)wPath);
+}
 
 bool _ELC_::Project :: readCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting, _ELENA_::_ConfigFile::Nodes& list)
 {
@@ -539,11 +539,11 @@ void _ELC_::Project :: setOption(_ELENA_::path_t value)
    }
 }
 
-//_ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
-//{
-//   return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
-//}
-//
+_ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
+{
+   return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
+}
+
 //_ELENA_::_JITCompiler* _ELC_::Project::createJITCompiler64()
 //{
 //   return new _ELENA_::AMD64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
@@ -648,7 +648,7 @@ inline void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _E
 
 void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)
 {
-   _ELENA_::DerivationWriter writer(derivationTree);
+   _ELENA_::DerivationWriter writer(derivationTree, &scope);
    writer.begin();
 
    _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
@@ -669,7 +669,7 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
          if (!sourceFile.isOpened())
             raiseError(errInvalidFile, filePath);
                
-         writer.newNamespace(ns);
+         writer.newNamespace(ns, filePath);
          parser.parse(&sourceFile, writer, getTabSize());      
          writer.closeNamespace();
 
@@ -772,11 +772,11 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
 //
 //         scope.compile(compiler, files, NULL);
 //      }
-//
-//      saveModule(scope.module, "nl");
-//
-//      if (scope.debugModule)
-//         saveModule(scope.debugModule, "dnl");
+
+      saveModule(scope.module, "nl");
+
+      if (scope.debugModule)
+         saveModule(scope.debugModule, "dnl");
    }
 
 //   // validate the unresolved forward refereces if unresolved reference warning is enabled
@@ -785,26 +785,26 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
    return !HasWarnings();
 }
 
-////bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler)
-////{
-////   return compiler.run(*this, BoolSetting(_ELENA_::opDebugMode));
-////}
-//
-//void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
+//bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler)
 //{
-//   if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
-//      _ELENA_::Path rulesPath(project.StrSetting(_ELENA_::opAppPath), RULES_FILE);
-//
-//      _ELENA_::FileReader rulesFile(rulesPath.c_str(), _ELENA_::feRaw, false);
-//      if (!rulesFile.isOpened()) {
-//         project.raiseWarning(0, errInvalidFile, RULES_FILE);
-//      }
-//      else compiler.loadRules(&rulesFile);
-//   }
-//   if (project.IntSetting(_ELENA_::opL1, -1) != 0) {
-//      compiler.turnOnOptimiation(1);
-//   }
+//   return compiler.run(*this, BoolSetting(_ELENA_::opDebugMode));
 //}
+
+void setCompilerOptions(_ELC_::Project& project, _ELENA_::Compiler& compiler)
+{
+   if (project.IntSetting(_ELENA_::opL0, -1) != 0) {
+      _ELENA_::Path rulesPath(project.StrSetting(_ELENA_::opAppPath), RULES_FILE);
+
+      _ELENA_::FileReader rulesFile(rulesPath.c_str(), _ELENA_::feRaw, false);
+      if (!rulesFile.isOpened()) {
+         project.raiseWarning(0, errInvalidFile, RULES_FILE);
+      }
+      else compiler.loadRules(&rulesFile);
+   }
+   if (project.IntSetting(_ELENA_::opL1, -1) != 0) {
+      compiler.turnOnOptimiation(1);
+   }
+}
 
 // --- Main function ---
 
@@ -894,7 +894,7 @@ int main()
       _ELENA_::CompilerLogic elenaLogic;
       _ELENA_::Compiler compiler(&elenaLogic);
       _ELENA_::Parser parser(&syntaxFile);
-//      setCompilerOptions(project, compiler);
+      setCompilerOptions(project, compiler);
 
       result = project.compileSources(compiler, parser);
 
@@ -905,17 +905,17 @@ int main()
          print(ELC_WARNING_COMPILATION);
       }
 
-//      // Linking..
-//      if (platform == _ELENA_::ptWin32Console) {
-//         print(ELC_LINKING);
-//
-//         _ELENA_::Linker linker;
-//         ImageHelper helper(&linker, true);
-//         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
-//         linker.run(project, image, (_ELENA_::ref_t) - 1);
-//
-//         print(ELC_SUCCESSFUL_LINKING);
-//      }
+      // Linking..
+      if (platform == _ELENA_::ptWin32Console) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker;
+         ImageHelper helper(&linker, true);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
 //      else if (platform == _ELENA_::ptWin64Console) {
 //         print(ELC_LINKING);
 //
@@ -982,7 +982,7 @@ int main()
 //
 //      //   print(ELC_SUCCESSFUL_LINKING);
 //      //}
-      /*else */if (platform == _ELENA_::ptLibrary) {
+      else if (platform == _ELENA_::ptLibrary) {
          // no linking for the library
       }
       else print(ELC_UNKNOWN_PLATFORM);
@@ -993,22 +993,22 @@ int main()
 
       project.cleanUp();
    }
-//   catch(_ELENA_::JITUnresolvedException& ex)
-//   {
-//      project.printInfo(errUnresovableLink, ex.referenceInfo);
-//      print(ELC_UNSUCCESSFUL);
-//      exitCode = -2;
-//
-//      project.cleanUp();
-//   }
-//   catch(_ELENA_::JITConstantExpectedException& ex)
-//   {
-//      project.printInfo(errConstantExpectedLink, ex.referenceInfo);
-//      print(ELC_UNSUCCESSFUL);
-//      exitCode = -2;
-//
-//      project.cleanUp();
-//   }
+   catch(_ELENA_::JITUnresolvedException& ex)
+   {
+      project.printInfo(errUnresovableLink, ex.referenceInfo);
+      print(ELC_UNSUCCESSFUL);
+      exitCode = -2;
+
+      project.cleanUp();
+   }
+   catch(_ELENA_::JITConstantExpectedException& ex)
+   {
+      project.printInfo(errConstantExpectedLink, ex.referenceInfo);
+      print(ELC_UNSUCCESSFUL);
+      exitCode = -2;
+
+      project.cleanUp();
+   }
    catch(_ELENA_::_Exception&) {
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;

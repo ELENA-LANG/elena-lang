@@ -10,26 +10,26 @@
 #define elcH 1
 
 #include "config.h"
-//#include "jitcompiler.h"
+#include "jitcompiler.h"
 #include "parser.h"
 #include "project.h"
 #include "compiler.h"
 #include "compilerscope.h"
 
-//// --- ELC common constants ---
-#define ELC_REVISION_NUMBER             0x0003
-//// --- ELC default file names ---
-//#ifdef _WIN32
+// --- ELC common constants ---
+#define ELC_REVISION_NUMBER         0x0004
+// --- ELC default file names ---
+#ifdef _WIN32
 
 #define SYNTAX_FILE                 "syntax.dat"
-//#define RULES_FILE                  "rules.dat"
-//
-//#else
-//
-//#define SYNTAX_FILE                 "/usr/share/elena/syntax.dat"
-//#define RULES_FILE                  "/usr/share/elena/rules.dat"
-//
-//#endif
+#define RULES_FILE                  "rules.dat"
+
+#else
+
+#define SYNTAX_FILE                 "/usr/share/elena/syntax.dat"
+#define RULES_FILE                  "/usr/share/elena/rules.dat"
+
+#endif
 
 // --- ELC command-line parameters ---
 //#define ELC_PRM_CONFIG              'c'
@@ -101,11 +101,11 @@
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
 #define ELC_STARTING                "Project : %s, Platform: %s"
 #define ELC_COMPILING               "Compiling..."
-//#define ELC_LINKING                 "Linking..."
+#define ELC_LINKING                 "Linking..."
 #define ELC_SUCCESSFUL_COMPILATION  "\nSuccessfully compiled\n"
 #define ELC_WARNING_COMPILATION     "Compiled with warnings\n"
 #define ELC_UNSUCCESSFUL            "Compiled with errors\n"
-//#define ELC_SUCCESSFUL_LINKING      "Successfully linked\n"
+#define ELC_SUCCESSFUL_LINKING      "Successfully linked\n"
 #define ELC_UNKNOWN_PLATFORM        "Unsupported platform\n"
 #define ELC_HELP_INFO               "elc {-key} <project file>\n\nkeys: -d<path>   - generates the debug info file\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -s<symbol> - resolves the entry forward symbol\n      -wun       - turns on unresolved reference warnings\n      -wX        - turns on warnings with level X=1,2,4\n      -wX-       - turns off warnings with level X=1,2,4\n      -wo-       - turns off optimization\n"
 
@@ -150,10 +150,10 @@ public:
    _ELENA_::Path appPath;
    _ELENA_::IdentifierString projectName;
 
-//   _ELENA_::_JITCompiler* createJITCompiler();
+   _ELENA_::_JITCompiler* createJITCompiler();
 //   _ELENA_::_JITCompiler* createJITCompiler64();
-//
-//   virtual void printInfo(const char* msg, _ELENA_::ReferenceInfo param);
+
+   virtual void printInfo(const char* msg, _ELENA_::ReferenceInfo param);
    virtual void printInfo(const char* msg, _ELENA_::ident_t param);
 
    virtual void raiseError(_ELENA_::ident_t msg);
@@ -162,8 +162,8 @@ public:
    virtual void raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _ELENA_::ident_t identifier);
 
 //   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
-//   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
-//
+   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
+
    virtual void addSource(_ELENA_::path_t path);
    bool loadProject(_ELENA_::path_t path);
 
