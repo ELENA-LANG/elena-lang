@@ -20,56 +20,54 @@ namespace _ELENA_
    #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
 
   // --- ELENA Standart message constants ---
-   #define ACTION_MASK             0x01FFFFFFu
-   #define SIGNATURE_FLAG          0x08000000u
+   constexpr int ACTION_ORDER       = 8;
 
-   #define MESSAGE_FLAG_MASK       0xE0000000u
-   #define SEALED_MESSAGE          0x40000000u
-//   #define SPECIAL_MESSAGE         0x60000000u
-//   #define PROPSET_MESSAGE         0x20000000u
-   #define PARAM_MASK              0x0000000Fu
-   #define OPEN_ARG_COUNT          0x0C
-   #define MAX_ARG_COUNT           0x0E
+   constexpr auto MESSAGE_FLAG_MASK = 0xE0u;
+//   #define SEALED_MESSAGE          0x40000000u
+////   #define SPECIAL_MESSAGE         0x60000000u
+////   #define PROPSET_MESSAGE         0x20000000u
+   constexpr auto PARAM_MASK        = 0x1Fu;
+   constexpr auto ARG_COUNT         = 0x20u;
 
-   #define PARAMX_MASK             0x000000000000FFFFu
+//   #define PARAMX_MASK             0x000000000000FFFFu
 
-   #define INVALID_REF             (ref_t)-1
+   #define INVALID_REF              (ref_t)-1
 
-   #define DISPATCH_MESSAGE_ID     0x0001
-   #define NEWOBJECT_MESSAGE_ID    0x0002
-   #define NEW_MESSAGE_ID          0x0003
-   #define EQUAL_MESSAGE_ID        0x0004
-   #define EVAL_MESSAGE_ID         0x0005
-   #define GET_MESSAGE_ID          0x0006
-   #define SET_MESSAGE_ID          0x0007
-   #define LESS_MESSAGE_ID         0x0008
-   #define IF_MESSAGE_ID           0x0009
-   #define AND_MESSAGE_ID          0x000A
-   #define OR_MESSAGE_ID           0x000B
-   #define XOR_MESSAGE_ID          0x000C
-   #define IFNOT_MESSAGE_ID        0x000D
-   #define NOTEQUAL_MESSAGE_ID     0x000E
-   #define NOTLESS_MESSAGE_ID      0x000F
-   #define NOTGREATER_MESSAGE_ID   0x0010
-   #define GREATER_MESSAGE_ID      0x0011
-   #define ADD_MESSAGE_ID          0x0012
-   #define SUB_MESSAGE_ID          0x0013
-   #define MUL_MESSAGE_ID          0x0014
-   #define DIV_MESSAGE_ID          0x0015
-   #define REFER_MESSAGE_ID        0x0016
-   #define APPEND_MESSAGE_ID       0x0017
-   #define REDUCE_MESSAGE_ID       0x0018
-   #define SET_REFER_MESSAGE_ID    0x0019
-   #define READ_MESSAGE_ID         0x001A
-   #define WRITE_MESSAGE_ID        0x001B
-   #define SHIFT_MESSAGE_ID        0x001C
-   #define CAST_MESSAGE_ID         0x001D             // virtual method used for casting
-   #define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
-   #define DEFAULT_MESSAGE_ID      0x001F             // virtual method used for the implicit constructor
-   #define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
-   #define IF_ELSE_MESSAGE_ID      0x0021
-   #define ISNIL_MESSAGE_ID        0x0022
-   #define PREDEFINED_MESSAGE_ID   0x0022
+   //#define DISPATCH_MESSAGE_ID     0x0001
+   //#define NEWOBJECT_MESSAGE_ID    0x0002
+   //#define NEW_MESSAGE_ID          0x0003
+   //#define EQUAL_MESSAGE_ID        0x0004
+   //#define EVAL_MESSAGE_ID         0x0005
+   //#define GET_MESSAGE_ID          0x0006
+   //#define SET_MESSAGE_ID          0x0007
+   //#define LESS_MESSAGE_ID         0x0008
+   //#define IF_MESSAGE_ID           0x0009
+   //#define AND_MESSAGE_ID          0x000A
+   //#define OR_MESSAGE_ID           0x000B
+   //#define XOR_MESSAGE_ID          0x000C
+   //#define IFNOT_MESSAGE_ID        0x000D
+   //#define NOTEQUAL_MESSAGE_ID     0x000E
+   //#define NOTLESS_MESSAGE_ID      0x000F
+   //#define NOTGREATER_MESSAGE_ID   0x0010
+   //#define GREATER_MESSAGE_ID      0x0011
+   //#define ADD_MESSAGE_ID          0x0012
+   //#define SUB_MESSAGE_ID          0x0013
+   //#define MUL_MESSAGE_ID          0x0014
+   //#define DIV_MESSAGE_ID          0x0015
+   //#define REFER_MESSAGE_ID        0x0016
+   //#define APPEND_MESSAGE_ID       0x0017
+   //#define REDUCE_MESSAGE_ID       0x0018
+   //#define SET_REFER_MESSAGE_ID    0x0019
+   //#define READ_MESSAGE_ID         0x001A
+   //#define WRITE_MESSAGE_ID        0x001B
+   //#define SHIFT_MESSAGE_ID        0x001C
+   //#define CAST_MESSAGE_ID         0x001D             // virtual method used for casting
+   //#define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
+   //#define DEFAULT_MESSAGE_ID      0x001F             // virtual method used for the implicit constructor
+   //#define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
+   //#define IF_ELSE_MESSAGE_ID      0x0021
+   //#define ISNIL_MESSAGE_ID        0x0022
+   //#define PREDEFINED_MESSAGE_ID   0x0022
 
 //   // virtual operator
 //   #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -152,8 +150,8 @@ namespace _ELENA_
       mskMetaRDataRef        = 0x44000000u,   // meta data
       mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
       mskSyntaxTreeRef       = 0x46000000u,   // template, declared in subject namespace
-      mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
-      mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
+      //mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
+      //mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
 
 //      mskConstantRef         = 0x01000000u,   // reference to constant
 //      mskLiteralRef          = 0x02000000u,   // reference to constant literal
@@ -358,42 +356,42 @@ namespace _ELENA_
   // --- ELENA core module names ---
    #define CORE_ALIAS                "core"          // Core functionality
   
-  // --- ELENA verb messages ---
-   #define DISPATCH_MESSAGE         "#dispatch"
-   #define NEWOBJECT_MESSAGE        "#new"
-   #define NEW_MESSAGE              "new"
-   #define GET_MESSAGE              "get"
-   #define EVAL_MESSAGE             "eval"
-   #define EVALUATE_MESSAGE         "evaluate"
-   #define EQUAL_MESSAGE            "equal"
-   #define NOTEQUAL_MESSAGE         "notequal"
-   #define LESS_MESSAGE             "less"
-   #define AND_MESSAGE              "and"
-   #define OR_MESSAGE               "or"
-   #define XOR_MESSAGE              "xor"
-   #define GREATER_MESSAGE          "greater"
-   #define NOTLESS_MESSAGE          "notless"
-   #define NOTGREATER_MESSAGE       "notgreater"
-   #define ADD_MESSAGE              "add"
-   #define SUB_MESSAGE              "subtract"
-   #define MUL_MESSAGE              "multiply"
-   #define DIV_MESSAGE              "divide"
-   #define REFER_MESSAGE            "getAt"
-   #define APPEND_MESSAGE           "append"
-   #define REDUCE_MESSAGE           "reduce"
-   #define SET_REFER_MESSAGE        "setAt"
-   #define SET_MESSAGE              "set"
-   #define READ_MESSAGE             "read"
-   #define WRITE_MESSAGE            "write"
-   #define IF_MESSAGE               "if"
-   #define IFNOT_MESSAGE            "ifnot"
-   #define SHIFT_MESSAGE            "shift"
-   #define IF_ELSE_MESSAGE          "if:else"
-   #define INVOKE_MESSAGE           "#invoke"
-   #define CAST_MESSAGE             "#cast"
-   #define DEFAULT_MESSAGE          "#default"
-   #define INIT_MESSAGE             "#init"
-   #define ISNIL_MESSAGE            "#isnil"
+  //// --- ELENA verb messages ---
+  // #define DISPATCH_MESSAGE         "#dispatch"
+  // #define NEWOBJECT_MESSAGE        "#new"
+  // #define NEW_MESSAGE              "new"
+  // #define GET_MESSAGE              "get"
+  // #define EVAL_MESSAGE             "eval"
+  // #define EVALUATE_MESSAGE         "evaluate"
+  // #define EQUAL_MESSAGE            "equal"
+  // #define NOTEQUAL_MESSAGE         "notequal"
+  // #define LESS_MESSAGE             "less"
+  // #define AND_MESSAGE              "and"
+  // #define OR_MESSAGE               "or"
+  // #define XOR_MESSAGE              "xor"
+  // #define GREATER_MESSAGE          "greater"
+  // #define NOTLESS_MESSAGE          "notless"
+  // #define NOTGREATER_MESSAGE       "notgreater"
+  // #define ADD_MESSAGE              "add"
+  // #define SUB_MESSAGE              "subtract"
+  // #define MUL_MESSAGE              "multiply"
+  // #define DIV_MESSAGE              "divide"
+  // #define REFER_MESSAGE            "getAt"
+  // #define APPEND_MESSAGE           "append"
+  // #define REDUCE_MESSAGE           "reduce"
+  // #define SET_REFER_MESSAGE        "setAt"
+  // #define SET_MESSAGE              "set"
+  // #define READ_MESSAGE             "read"
+  // #define WRITE_MESSAGE            "write"
+  // #define IF_MESSAGE               "if"
+  // #define IFNOT_MESSAGE            "ifnot"
+  // #define SHIFT_MESSAGE            "shift"
+  // #define IF_ELSE_MESSAGE          "if:else"
+  // #define INVOKE_MESSAGE           "#invoke"
+  // #define CAST_MESSAGE             "#cast"
+  // #define DEFAULT_MESSAGE          "#default"
+  // #define INIT_MESSAGE             "#init"
+  // #define ISNIL_MESSAGE            "#isnil"
 
 //   // ELENA verb operators
 //   #define EQUAL_OPERATOR		      "=="
@@ -444,7 +442,7 @@ namespace _ELENA_
 //   #define INLINE_CLASSNAME         "$inline"         // nested class generic name
 
   // --- ELENA special sections ---
-//   #define ATTRIBUTE_SECTION        "#attributes"
+   #define ATTRIBUTE_SECTION        "#attributes"
 //   #define EXTENSION_SECTION        "#extensions"
 ////   #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
@@ -473,14 +471,14 @@ namespace _ELENA_
    #define DLL_NAMESPACE            "$dlls"
    #define RTDLL_FORWARD            "$rt"
 
-////   #define STANDARD_MODULE_LEN      6
+//   #define STANDARD_MODULE_LEN      6
 //   #define INTERNAL_MASK_LEN        12
 //   #define COREAPI_MASK_LEN         5 
 
    #define CORE_MODULE              "coreapi"
-//   #define STANDARD_MODULE          "system"                         // the standard module name
+   #define STANDARD_MODULE          "system"                         // the standard module name
    #define FORWARD_MODULE           "forwards"
-   #define EXTERNAL_MODULE          "system'external"                  // external pseudo symbol
+//   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
 //                                                                     // will be treated like internal core api one
 //   #define INTERNAL_MASK            "system'core_"                   // primitive module mask

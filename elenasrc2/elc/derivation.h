@@ -33,7 +33,7 @@ class DerivationWriter : public _DerivationWriter
 
    _ModuleScope* _scope;
    ident_t       _ns;
-   //ident_t       _filePath;
+   ident_t       _filePath;
 
    //void appendNode(LexicalType type, int argument);
 
@@ -46,11 +46,18 @@ class DerivationWriter : public _DerivationWriter
 
    void saveScope();
 
+   ref_t mapAttribute(SNode terminal/*, bool& templateParam*/);
+   void declareAttribute(SNode node);
+
    void recognizeScope();
-   void recognizeScopeAttributes(SNode node/*, DerivationScope& scope*/);
+   void recognizeScopeAttributes(SNode node, int mode/*, DerivationScope& scope*/);
+   void recognizeClassMebers(SNode node/*, DerivationScope& scope*/);
 
    void generateScope(SNode node);
    void generateSymbolTree(SNode node);
+   void generateClassTree(SNode node/*, DerivationScope& scope, int nested = 0*/);
+   void generateMethodTree(SNode node/*, DerivationScope& scope, bool templateMode, bool closureMode*/);
+   void generateCodeTree(SNode node/*, DerivationScope& scope, bool withBookmark = false*/);
    void generateAttributes(SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
    void generateExpressionTree(SNode node/*, DerivationScope& scope, int mode = 0*/);
 
@@ -289,9 +296,7 @@ public:
 ////   void generateArrayVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //     void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void generateCodeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool withBookmark = false);
 //   bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode = false);
-//   void generateMethodTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode, bool closureMode);
 //   bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode/* = false*/); // returns true if in-place init found
 //   void generateCodeExpression(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
@@ -300,7 +305,6 @@ public:
 //   void generateSubTemplate(SNode& node, DerivationScope& scope, bool templateMode);
 //   void generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope, bool templateMode);
 //   void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
-//   void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int nested = 0);
 //   void generateTemplateScope(SNode node, DerivationScope& scope);
 //
 //
@@ -314,7 +318,6 @@ public:
 ////      MessageMap* attributes, IdentidierList* imports, ident_t sourcePath);
 ////   void generateScope(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, SNode attributes*/, int mode);
 //
-//   void declareAttribute(SNode node, DerivationScope& scope);
 //   void declareType(/*SyntaxWriter& writer, */SNode node, DerivationScope& scope);
 //   void includeModule(SNode ns, DerivationScope& scope);
 //

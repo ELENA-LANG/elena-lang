@@ -473,11 +473,11 @@ struct VMTXEntry
 
 struct ClassHeader
 {
-   ref_t  staticSize;      // static table size
-   ref_t  classRef;        // class class reference
+   //ref_t  staticSize;      // static table size
+   //ref_t  classRef;        // class class reference
    size_t count;
    size_t flags;
-   ref_t  parentRef;
+   //ref_t  parentRef;
 };
 
 // --- ClassInfo ---
@@ -505,7 +505,7 @@ struct ClassInfo
 {
 //   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
 //   typedef Pair<ref_t, int>                    Attribute;
-//   typedef MemoryMap<ref_t, bool, false>       MethodMap;
+   typedef MemoryMap<ref_t, bool, false>       MethodMap;
 //   typedef MemoryMap<ident_t, int, true>       FieldMap;
 //   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
 //   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
@@ -514,54 +514,54 @@ struct ClassInfo
 
    ClassHeader    header;
 //   int            size;           // Object size
-//   MethodMap      methods;        // list of methods, true means the method was declared in this instance
+   MethodMap      methods;        // list of methods, true means the method was declared in this instance
 //   FieldMap       fields;
 //   StaticFieldMap statics;
 //   StaticInfoMap  staticValues;
 //
 //   FieldTypeMap   fieldTypes;
 //   MethodInfoMap  methodHints;
-//
-//   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
-//   {
-//      writer->write((void*)this, sizeof(ClassHeader));
+
+   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+   {
+      writer->write((void*)this, sizeof(ClassHeader));
 //      writer->writeDWord(size);
-//      if (!headerAndSizeOnly) {
+      if (!headerAndSizeOnly) {
 //         staticValues.write(writer);
-//         methods.write(writer);
+         methods.write(writer);
 //         fields.write(writer);
 //         fieldTypes.write(writer);
 //         methodHints.write(writer);
 //         statics.write(writer);
-//      }
-//   }
-//
-//   void load(StreamReader* reader, bool headerOnly = false)
-//   {
-//      reader->read((void*)&header, sizeof(ClassHeader));
+      }
+   }
+
+   void load(StreamReader* reader, bool headerOnly = false)
+   {
+      reader->read((void*)&header, sizeof(ClassHeader));
 //      size = reader->getDWord();
-//      if (!headerOnly) {
+      if (!headerOnly) {
 //         staticValues.read(reader);
-//         methods.read(reader);
+         methods.read(reader);
 //         fields.read(reader);
 //         fieldTypes.read(reader);
 //         methodHints.read(reader);
 //         statics.read(reader);
-//      }
-//   }
+      }
+   }
 
    ClassInfo()
-//      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+      : /*fields(-1), */methods(0)//, methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
-      header.classRef = 0;
+//      header.classRef = 0;
    }
 };
 
-//// --- SymbolExpressionInfo ---
-//
-//struct SymbolExpressionInfo
-//{
+// --- SymbolExpressionInfo ---
+
+struct SymbolExpressionInfo
+{
 //   ref_t expressionClassRef;
 //   ref_t listRef;
 //   bool  constant;
@@ -579,14 +579,14 @@ struct ClassInfo
 //      constant = (reader->getDWord() != 0);
 //      expressionClassRef = reader->getDWord();
 //   }
-//
-//   SymbolExpressionInfo()
-//   {
+
+   SymbolExpressionInfo()
+   {
 //      expressionClassRef = 0;
 //      listRef = 0;
 //      constant = false;
-//   }
-//};
+   }
+};
 
 // --- DebugLineInfo ---
 
@@ -728,31 +728,33 @@ inline bool isForwardReference(ident_t referenceName)
    return referenceName.startsWith(FORWARD_PREFIX_NS);
 }
 
-inline ref_t encodeMessage(ref_t actionRef, int paramCount)
+inline ref_t encodeMessage(ref_t actionRef, int paramCount, ref_t flags)
 {
-   return (actionRef << 4) + paramCount;
+   return flags | ((actionRef << ACTION_ORDER) + paramCount);
 }
 
-inline ref64_t encodeMessage64(ref_t actionRef, int paramCount)
+inline ref64_t encodeMessage64(ref_t actionRef, int paramCount, ref_t flags)
 {
    ref64_t message = actionRef;
-   message <<= 16;
+   message <<= ACTION_ORDER;
 
    message += paramCount;
 
-   return message;
+   return message | flags;
 }
 
 inline ref_t encodeAction(ref_t actionId)
 {
-   return encodeMessage(actionId, 0);
+   return encodeMessage(actionId, 0, 0);
 }
 
-inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
+inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount, ref_t& flags)
 {
-   actionRef = (message >> 4) & ACTION_MASK;
+   actionRef = (message >> ACTION_ORDER);
 
    paramCount = message & PARAM_MASK;
+
+   flags = message & MESSAGE_FLAG_MASK;
 }
 
 //inline ref_t overwriteParamCount(ref_t message, int paramCount)
@@ -771,32 +773,29 @@ inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount)
 //   return message;
 //}
 
-inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
-{
-   actionRef = (ref_t)(message >> 16);
+//inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
+//{
+//   actionRef = (ref_t)(message >> 16);
+//
+//   actionRef &= ACTION_MASK;
+//
+//   paramCount = message & PARAMX_MASK;
+//}
 
-   actionRef &= ACTION_MASK;
-
-   paramCount = message & PARAMX_MASK;
-}
-
-inline int getAbsoluteParamCount(ref_t message)
-{
-   int   paramCount;
-   ref_t action;
-   decodeMessage(message, action, paramCount);
-
-   return paramCount;
-}
+//inline int getAbsoluteParamCount(ref_t message)
+//{
+//   int   paramCount;
+//   ref_t action;
+//   decodeMessage(message, action, paramCount);
+//
+//   return paramCount;
+//}
 
 inline int getParamCount(ref_t message)
 {
    int   paramCount;
-   ref_t action;
-   decodeMessage(message, action, paramCount);
-
-   if (paramCount >= OPEN_ARG_COUNT)
-      return paramCount - OPEN_ARG_COUNT;
+   ref_t action, flags;
+   decodeMessage(message, action, paramCount, flags);
 
    return paramCount;
 }
@@ -804,29 +803,29 @@ inline int getParamCount(ref_t message)
 inline ref_t getAction(ref_t message)
 {
    int   paramCount;
-   ref_t action;
-   decodeMessage(message, action, paramCount);
+   ref_t action, flags;
+   decodeMessage(message, action, paramCount, flags);
 
    return action;
 }
 
-inline ref64_t toMessage64(ref_t message)
-{
-   int   paramCount;
-   ref_t actionRef;
-   decodeMessage(message, actionRef, paramCount);
-
-   return encodeMessage64(actionRef, paramCount);
-}
-
-inline ref_t fromMessage64(ref64_t message)
-{
-   int   paramCount;
-   ref_t actionRef;
-   decodeMessage64(message, actionRef, paramCount);
-
-   return encodeMessage(actionRef, paramCount);
-}
+//inline ref64_t toMessage64(ref_t message)
+//{
+//   int   paramCount;
+//   ref_t actionRef;
+//   decodeMessage(message, actionRef, paramCount);
+//
+//   return encodeMessage64(actionRef, paramCount);
+//}
+//
+//inline ref_t fromMessage64(ref64_t message)
+//{
+//   int   paramCount;
+//   ref_t actionRef;
+//   decodeMessage64(message, actionRef, paramCount);
+//
+//   return encodeMessage(actionRef, paramCount);
+//}
 
 //inline bool IsExprOperator(int operator_id)
 //{
@@ -900,7 +899,7 @@ inline ref_t importSignature(_Module* exporter, ref_t exportRef, _Module* import
    if (!exportRef)
       return 0;
 
-   ref_t dump[OPEN_ARG_COUNT];
+   ref_t dump[ARG_COUNT];
    size_t len = exporter->resolveSignature(exportRef, dump);
    for (size_t i = 0; i < len; i++) {
       dump[i] = importReference(exporter, dump[i], importer);
@@ -911,16 +910,14 @@ inline ref_t importSignature(_Module* exporter, ref_t exportRef, _Module* import
 
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
-   ref_t actionRef = 0;
-   ref_t flags = exportRef & MESSAGE_FLAG_MASK;
    int paramCount = 0;
+   ref_t actionRef, flags;
+   decodeMessage(exportRef, actionRef, paramCount, flags);
 
-   decodeMessage(exportRef, actionRef, paramCount);
-
-   // if it is generic message
-   if (actionRef <= PREDEFINED_MESSAGE_ID) {
-      return exportRef;
-   }
+   //// if it is generic message
+   //if (actionRef <= PREDEFINED_MESSAGE_ID) {
+   //   return exportRef;
+   //}
 
    // otherwise signature and custom verb should be imported
    ref_t signature = 0;
@@ -928,7 +925,7 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
 
    actionRef = importer->mapAction(actionName, importSignature(exporter, signature, importer), false);
 
-   return encodeMessage(actionRef, paramCount) | flags;
+   return encodeMessage(actionRef, paramCount, flags);
 }
 
 } // _ELENA_

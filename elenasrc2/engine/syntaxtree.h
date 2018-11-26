@@ -39,19 +39,18 @@ enum LexicalType
    lxSymbol          = 0x00011,
    lxExpression      = 0x0C012,
    lxScope           = 0x00013,
-   
+   lxClass           = 0x00014,
+   lxClassMethod     = 0x00016,
+   lxCode            = 0x0001A,
+
 //   lxObject          = 0x00003,
-//   lxAttributeDecl   = 0x00004,
 ////   lxAngleOperator   = 0x00005,
 //   lxNamespace       = 0x00006,
-//   lxClass           = 0x0000E,
 //   lxTemplate        = 0x0000F,
 //   lxClassField      = 0x00013,
 //   lxFieldTemplate   = 0x00014,
 //   lxAttributeValue  = 0x00015,
-//   lxClassMethod     = 0x00016,
 //   lxNestedClass     = 0x00018,
-//   lxCode            = 0x0001A,
 //   lxDispatchCode    = 0x00020,
 ////   lxStatic          = 0x00022,
 //   lxConstructor     = 0x00024,
@@ -69,6 +68,7 @@ enum LexicalType
 //   lxLessSwitchOption = 0x0003F,
 //   lxLazyExpression  = 0x08040,
 //   lxFieldInit       = 0x00041,
+   lxAttributeDecl   = 0x0004E,
 //
 ////   //lxDefaultGeneric  = 0x00046,
 ////   lxSubject         = 0x00047,
@@ -76,9 +76,9 @@ enum LexicalType
 //   lxScope           = 0x0004D,
 //   lxMessageParameter= 0x0C04E,
 //   lxReferenceExpr   = 0x0C060,
-//
-//   // parameters
-//   lxEOF             = 0x18003, // indicating closing code bracket
+
+   // parameters
+   lxEOF             = 0x18003, // indicating closing code bracket
 //   lxLiteral         = 0x18004,
    lxIdentifier      = 0x18005,
 //   lxPrivate         = 0x18006,
@@ -90,7 +90,7 @@ enum LexicalType
 //   lxLong            = 0x1800C,
 //   lxWide            = 0x1800D,
 //   lxExplicitConst   = 0x1800E,
-//   lxExplicitAttr    = 0x1800F,
+   lxExplicitAttr    = 0x1800F,
 //   lxMemberIdentifier= 0x18010,
 //   lxGlobalReference = 0x18011,
 //
@@ -111,7 +111,7 @@ enum LexicalType
 //   lxConstantInt     = 0x1A10F, // arg - reference
 //   lxConstantLong    = 0x1A110, // arg - reference
 //   lxConstantReal    = 0x1A111, // arg - reference
-//   lxConstantClass   = 0x0A112, // arg - reference
+   lxClassSymbol        = 0x0A112, // arg - reference
 //   lxMessageConstant = 0x0A113, // arg - rererence
 //   lxExtMessageConstant = 0x0A114, // arg -reference
 //   lxSignatureConstant  = 0x0A115, // arg - reference
@@ -160,7 +160,7 @@ enum LexicalType
 //   lxOption          = 0x0C021,
 //   lxFieldExpression = 0x0C022,
 //   lxExternFrame     = 0x04023,
-//   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
+   lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
 //   lxCreatingClass   = 0x0C025,   // arg - count
 //   lxCreatingStruct  = 0x0C026,   // arg - size
 //   lxReturning       = 0x0C027,
@@ -207,18 +207,18 @@ enum LexicalType
 //   lxInlineClosure   = 0x1003F,
 //
    // attributes
+   lxAttribute       = 0x20000,
    lxSourcePath      = 0x20001,
    lxCol             = 0x20003,
    lxRow             = 0x20004,
    lxLength          = 0x02005,
    lxBreakpoint      = 0x20006,
    lxNameAttr        = 0x20029,
-//   lxAttribute       = 0x20000,
 // //  lxTerminal        = 0x20002,
 ////   lxImport          = 0x20007,
-//   lxReserved        = 0x20008,
-//   lxAllocated       = 0x20009,
-//   lxParamCount      = 0x2000A,
+   lxReserved        = 0x20008,
+   lxAllocated       = 0x20009,
+   lxParamCount      = 0x2000A,
 //   lxClassFlag       = 0x2000B, // class fields
 //   lxTarget          = 0x2000C, // arg - reference
 //   lxMessageVariable = 0x2000D, // debug info only

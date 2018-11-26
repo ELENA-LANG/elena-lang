@@ -29,8 +29,8 @@ public:
    virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp) = 0;
    virtual void writeMTReference(MemoryWriter& writer) = 0;
 
-   // used for 64bit programming, currently only for mskVMTXMethodAddress and mskVMTXEntryOffset
-   virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module = NULL) = 0;
+   //// used for 64bit programming, currently only for mskVMTXMethodAddress and mskVMTXEntryOffset
+   //virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module = NULL) = 0;
 
    virtual void addBreakpoint(size_t position) = 0;
 };
@@ -140,45 +140,45 @@ public:
    virtual void generateProgramEnd(MemoryDump& tape);
 };
 
-// --- JITCompiler64 class ---
-class JITCompiler64 : public _JITCompiler
-{
-public:
-   virtual void compileInt32(MemoryWriter* writer, int integer);
-   virtual void compileInt64(MemoryWriter* writer, long long integer);
-   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset);
-   virtual void compileInt64(MemoryWriter* writer, int low, int high);
-   virtual void compileReal64(MemoryWriter* writer, double number);
-   virtual void compileLiteral(MemoryWriter* writer, const char* value);
-   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
-   virtual void compileChar32(MemoryWriter* writer, const char* value);
-   virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
-   virtual void compileCollection(MemoryWriter* writer, _Memory* binary);
-
-   virtual void allocateVariable(MemoryWriter& writer);
-   virtual void allocateArray(MemoryWriter& writer, size_t count);
-
-   // return VMT field position
-   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
-
-   virtual size_t findFlags(void* refVMT);
-   virtual size_t findLength(void* refVMT);
-   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
-   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
-
-   virtual ref64_t findMethodAddressX(void* refVMT, ref64_t messageID, size_t vmtLength);
-   virtual int findMethodIndexX(void* refVMT, ref64_t messageID, size_t vmtLength);
-
-   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
-   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
-   virtual int copyParentVMTX(void* parentVMT, VMTXEntry* entries);
-   virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
-   virtual void addVMTXEntry(ref64_t message, size_t codePosition, VMTXEntry* entries, size_t& entryCount);
-   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode);
-
-   virtual void generateProgramStart(MemoryDump& tape);
-   virtual void generateProgramEnd(MemoryDump& tape);
-};
+//// --- JITCompiler64 class ---
+//class JITCompiler64 : public _JITCompiler
+//{
+//public:
+//   virtual void compileInt32(MemoryWriter* writer, int integer);
+//   virtual void compileInt64(MemoryWriter* writer, long long integer);
+//   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset);
+//   virtual void compileInt64(MemoryWriter* writer, int low, int high);
+//   virtual void compileReal64(MemoryWriter* writer, double number);
+//   virtual void compileLiteral(MemoryWriter* writer, const char* value);
+//   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
+//   virtual void compileChar32(MemoryWriter* writer, const char* value);
+//   virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
+//   virtual void compileCollection(MemoryWriter* writer, _Memory* binary);
+//
+//   virtual void allocateVariable(MemoryWriter& writer);
+//   virtual void allocateArray(MemoryWriter& writer, size_t count);
+//
+//   // return VMT field position
+//   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
+//
+//   virtual size_t findFlags(void* refVMT);
+//   virtual size_t findLength(void* refVMT);
+//   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
+//   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
+//
+//   virtual ref64_t findMethodAddressX(void* refVMT, ref64_t messageID, size_t vmtLength);
+//   virtual int findMethodIndexX(void* refVMT, ref64_t messageID, size_t vmtLength);
+//
+//   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
+//   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
+//   virtual int copyParentVMTX(void* parentVMT, VMTXEntry* entries);
+//   virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
+//   virtual void addVMTXEntry(ref64_t message, size_t codePosition, VMTXEntry* entries, size_t& entryCount);
+//   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode);
+//
+//   virtual void generateProgramStart(MemoryDump& tape);
+//   virtual void generateProgramEnd(MemoryDump& tape);
+//};
 
 } // _ELENA_
 

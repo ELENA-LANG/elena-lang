@@ -100,7 +100,7 @@ class JITLinker : _JITLoaderListener
          }
       }
 
-      virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
+      //virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
 
       ReferenceHelper(JITLinker* owner, _Module* module, References* references)
       {

@@ -55,14 +55,14 @@ struct ModuleScope : _ModuleScope
 //   {
 //      return loadReferenceModule(module->resolveReference(reference), moduleReference);
 //   }
-//
-//   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode);
-//   
-//   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
-//   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
-//   {
-//      return loadClassInfo(info, module->resolveReference(reference), headerOnly);
-//   }
+
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode);
+   
+   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
+   {
+      return loadClassInfo(info, module->resolveReference(reference), headerOnly);
+   }
 //   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName);
 
 //   //   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
@@ -108,8 +108,8 @@ struct ModuleScope : _ModuleScope
 //   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensionsToExport);
 //
 //   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensionsToExport);
-//
-//   virtual void saveAttribute(ident_t typeName, ref_t classReference);
+
+   virtual void saveAttribute(ident_t typeName, ref_t classReference);
 
    //virtual void declareNamespace(ident_t name);
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);

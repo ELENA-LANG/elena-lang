@@ -17,7 +17,7 @@
 #include "compilerscope.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0005
+#define ELC_REVISION_NUMBER         0x0006
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -161,7 +161,7 @@ public:
    virtual void raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t value);
    virtual void raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _ELENA_::ident_t identifier);
 
-//   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
+   virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
    virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
 
    virtual void addSource(_ELENA_::path_t path);

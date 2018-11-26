@@ -66,9 +66,9 @@
 //#define V_SINGLETON      (ref_t)-8208
 ////#define V_TAPEGROUP      (ref_t)-8209
 //#define V_ABSTRACT       (ref_t)-8210
-//#define V_PUBLIC         (ref_t)-8211
+#define V_PUBLIC         (ref_t)-8211
 //#define V_PRIVATE        (ref_t)-8212
-//#define V_INTERNAL       (ref_t)-8213
+#define V_INTERNAL       (ref_t)-8213
 //#define V_CLOSED         (ref_t)-8214
 //#define V_PREDEFINED     (ref_t)-8215
 //#define V_DISPATCHER     (ref_t)-8216
@@ -155,14 +155,14 @@ public:
    virtual void raiseError(ident_t msg, ident_t value) = 0;
 
 //   virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
-//
-//   virtual void raiseWarning(int level, ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+
+   virtual void raiseWarning(int level, ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
 //   virtual void raiseWarning(int level, ident_t msg, ident_t path) = 0;
 
    virtual _Module* createModule(ident_t name) = 0;
    virtual _Module* createDebugModule(ident_t name) = 0;
 
-//   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
+   virtual _Module* loadModule(ident_t package, bool silentMode) = 0;
 //   //   virtual void saveModule(_Module* module, ident_t extension) = 0; // !! obsolete
 
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false) = 0;
@@ -224,17 +224,17 @@ struct _ModuleScope
    // cached paths
    SymbolMap         savedPaths;
 
-//   MessageMap        attributes;
-//
+   MessageMap        attributes;
+
 ////   virtual ref_t mapAttribute(SNode terminal) = 0;
 ////   virtual ref_t mapTerminal(SNode terminal, bool existing = false) = 0;
 //
 //   virtual SubjectList* getAutogerenatedExtensions(ref_t attr) = 0;
-//   virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
+   virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
 //   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
-//
-//   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-//   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
+
+   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
 //   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
 //
 //   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
@@ -242,9 +242,9 @@ struct _ModuleScope
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
-//
-//   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode) = 0;
-//
+
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode) = 0;
+
 //   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensionsToExport) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
@@ -267,17 +267,17 @@ struct _ModuleScope
       project->raiseError(message, sourcePath, row, col, identifier);
    }
 
-//   void raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
-//   {
-//      SNode terminal = SyntaxTree::findTerminalInfo(node);
-//
-//      int col = terminal.findChild(lxCol).argument;
-//      int row = terminal.findChild(lxRow).argument;
-//      ident_t identifier = terminal.identifier();
-//
-//      project->raiseWarning(level, message, sourcePath, row, col, identifier);
-//   }
-//
+   void raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
+   {
+      SNode terminal = SyntaxTree::findTerminalInfo(node);
+
+      int col = terminal.findChild(lxCol).argument;
+      int row = terminal.findChild(lxRow).argument;
+      ident_t identifier = terminal.identifier();
+
+      project->raiseWarning(level, message, sourcePath, row, col, identifier);
+   }
+
 //   void raiseWarning(int level, const char* message, ident_t sourcePath, ident_t identifier)
 //   {
 //      project->raiseWarning(level, message, sourcePath, 0, 0, identifier);
@@ -293,7 +293,7 @@ struct _ModuleScope
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
    _ModuleScope()
-      : /*attributes(0), */savedPaths(-1)
+      : attributes(0), savedPaths(-1)
    {
       project = NULL;
       debugModule = module = NULL;

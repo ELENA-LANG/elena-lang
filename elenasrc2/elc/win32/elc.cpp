@@ -203,20 +203,20 @@ void _ELC_::Project::raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _EL
       throw _ELENA_::_Exception();
 }
 
-//void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
-//{
-//   if (!_ELENA_::test(_warningMasks, level))
-//      return;
-//
-//   if (!indicateWarning())
-//      return;
-//
-//   _ELENA_::WideString wMsg(msg);
-//   _ELENA_::WideString wPath(path);
-//   _ELENA_::WideString wTerminal(terminal);
-//
-//   print(wMsg, (const wchar_t*)wPath, row, column, (const wchar_t*)wTerminal);
-//}
+void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal)
+{
+   if (!_ELENA_::test(_warningMasks, level))
+      return;
+
+   if (!indicateWarning())
+      return;
+
+   _ELENA_::WideString wMsg(msg);
+   _ELENA_::WideString wPath(path);
+   _ELENA_::WideString wTerminal(terminal);
+
+   print(wMsg, (const wchar_t*)wPath, row, column, (const wchar_t*)wTerminal);
+}
 
 void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path)
 {

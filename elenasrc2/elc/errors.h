@@ -32,7 +32,7 @@ namespace _ELENA_
 
   // --- Compiler error messages ---
    #define errDuplicatedSymbol	   "%s(%d:%d): error 102: Class '%s' already exists\n"
-//   #define errDuplicatedMethod      "%s(%d:%d): error 103: Method '%s' already exists in the class\n"
+   #define errDuplicatedMethod      "%s(%d:%d): error 103: Method '%s' already exists in the class\n"
 //   #define errUnknownClass          "%s(%d:%d): error 104: Class '%s' doesn't exists\n"
 //   #define errDuplicatedLocal       "%s(%d:%d): error 105: Variable '%s' already exists\n"
    #define errUnknownObject         "%s(%d:%d): error 106: Unknown object '%s'\n"
@@ -42,7 +42,7 @@ namespace _ELENA_
 //   #define errIllegalField          "%s(%d:%d): error 111: Illegal field declaration '%s'\n"
 //   #define errTooManyParameters     "%s(%d:%d): error 113: Too many parameters for '%s' message\n"
 ////   #define errUnknownRole           "%s(%d:%d): error 117: Unknown role '%s'\n"
-//   #define errDuplicatedDefinition  "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n"
+   #define errDuplicatedDefinition  "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n"
 ////   #define errInvalidProperty       "%s(%d:%d): error 121: Invalid or none-existing property '%s'\n"
 ////   #define errInvalidRedirectMessage "%s(%d:%d): error 127: It is not possible to use redirect message in this case\n"
 //   #define errInvalidIntNumber      "%s(%d:%d): error 130: Invalid integer value %s\n"
@@ -61,15 +61,15 @@ namespace _ELENA_
 //   #define errClosedParent          "%s(%d:%d): error 141: new method cannot be declared\n"
 ////   #define errInvalidSymbolExpr     "%s(%d:%d): error 142: %s cannot be used inside a symbol\n"
 ////   #define errInvalidRoleDeclr      "%s(%d:%d): error 143: %s cannot be used with a role\n"
-////   #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
+//   #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
 //   #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
 ////   #define errNotSupportedType      "%s(%d:%d): error 146: Class '%s' is not compatible with its type\n"
-//   #define errInvalidHint           "%s(%d:%d): error 147: Invalid attribute '%s'\n"
+   #define errInvalidHint           "%s(%d:%d): error 147: Invalid attribute '%s'\n"
 //   #define errStrongTypeNotAllowed  "%s(%d:%d): error 148: strong type '%s' cannot be used as a custom verb\n"
 //   #define errIllegalConstructor    "%s(%d:%d): error 149: Constructor cannot be declared\n"
 //   #define errClosedMethod          "%s(%d:%d): error 150: sealed method cannot be overridden\n"
 //   #define errNoConstructorDefined  "%s(%d:%d): error 151: Class '%s' has no implicit or explicit constructors\n"
-//   #define errIllegalMethod         "%s(%d:%d): error 152: Illegal method declaration\n"
+   #define errIllegalMethod         "%s(%d:%d): error 152: Illegal method declaration\n"
 //   #define errIllegalOperation      "%s(%d:%d): error 153: Illegal operation\n"
 //   #define errInvalidConstant       "%s(%d:%d): error 154: Invalid constant '%s'\n"
 //   #define errInvalidMultimethod    "%s(%d:%d): error 155: Invalid multimethod declararion in the class '%s'\n"
@@ -111,10 +111,10 @@ namespace _ELENA_
 //
 //  // --- Compiler internal error messages ---
 ////   #define errReferenceOverflow     "error 301: The section reference overflow\n"
-//
-//  // --- Compiler warnings ---
+
+  // --- Compiler warnings ---
 //   #define wrnUnresovableLink       "%s(%d:%d): warning 401: Link %s is unresolvable\n"
-//   #define wrnUnknownHint           "%s(%d:%d): warning 404: Unknown attribute '%s'\n"
+   #define wrnUnknownHint           "%s(%d:%d): warning 404: Unknown attribute '%s'\n"
 //////   #define wrnUnknownHintValue      "%s(%d:%d): warning 405: Unknown class hint value '%s'\n"
 //   #define wrnInvalidHint           "%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n"
 //   #define wrnUnknownMessage        "%s(%d:%d): warning 407: Message '%s' does not belong to the object\n"

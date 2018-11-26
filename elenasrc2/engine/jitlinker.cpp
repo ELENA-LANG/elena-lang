@@ -119,24 +119,24 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
    else _references->add(position, RefInfo(reference, module));
 }
 
-void JITLinker::ReferenceHelper :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
-{
-   ref_t mask = reference & mskAnyRef;
-
-   if (!module)
-      module = _module;
-
-   ref_t position = writer.Position();
-   writer.writeQWord(disp);
-
-   // vmt entry offset / address should be resolved later
-   if (mask == mskVMTXMethodAddress || mask == mskVMTXEntryOffset) {
-      _references->add(position, RefInfo(reference, module));
-      return;
-   }
-   // currently only mskVMTXMethodAddress and mskVMTXEntryOffset supported
-   else throw InternalError("64bit references are not supported");
-}
+//void JITLinker::ReferenceHelper :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
+//{
+//   ref_t mask = reference & mskAnyRef;
+//
+//   if (!module)
+//      module = _module;
+//
+//   ref_t position = writer.Position();
+//   writer.writeQWord(disp);
+//
+//   // vmt entry offset / address should be resolved later
+//   if (mask == mskVMTXMethodAddress || mask == mskVMTXEntryOffset) {
+//      _references->add(position, RefInfo(reference, module));
+//      return;
+//   }
+//   // currently only mskVMTXMethodAddress and mskVMTXEntryOffset supported
+//   else throw InternalError("64bit references are not supported");
+//}
 
 void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp)
 {
@@ -219,29 +219,31 @@ ref_t JITLinker :: resolveAction(ident_t action, _Module* module, ref_t* signatu
 
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
 {
-   ref_t actionRef = 0;
-   ref_t flags = message & MESSAGE_FLAG_MASK;
-   int paramCount = 0;
-   decodeMessage(message, actionRef, paramCount);
+   //ref_t actionRef = 0;
+   //ref_t flags = message & MESSAGE_FLAG_MASK;
+   //int paramCount = 0;
+   //decodeMessage(message, actionRef, paramCount);
 
-   // if it is a predefined message
-   if (actionRef <= PREDEFINED_MESSAGE_ID) {
-      return message;
-   }
+   //// if it is a predefined message
+   //if (actionRef <= PREDEFINED_MESSAGE_ID) {
+   //   return message;
+   //}
 
-   // otherwise signature and custom verb should be imported
-   ref_t signature = 0;
-   ident_t actionName = module->resolveAction(actionRef, signature);
-   if (signature) {
-      // if the message signature is provided
-      ref_t signatures[OPEN_ARG_COUNT];
-      size_t signLen = module->resolveSignature(signature, signatures);
+   //// otherwise signature and custom verb should be imported
+   //ref_t signature = 0;
+   //ident_t actionName = module->resolveAction(actionRef, signature);
+   //if (signature) {
+   //   // if the message signature is provided
+   //   ref_t signatures[OPEN_ARG_COUNT];
+   //   size_t signLen = module->resolveSignature(signature, signatures);
 
-      actionRef = resolveAction(actionName, module, signatures, signLen);
-   }
-   else actionRef = (ref_t)_loader->resolveReference(actionName, 0);
+   //   actionRef = resolveAction(actionName, module, signatures, signLen);
+   //}
+   //else actionRef = (ref_t)_loader->resolveReference(actionName, 0);
 
-   return encodeMessage(actionRef, paramCount) | flags;
+   //return encodeMessage(actionRef, paramCount) | flags;
+
+   return 0; // !! temporal
 }
 
 void* JITLinker :: calculateVAddress(MemoryWriter* writer, int mask)
@@ -309,21 +311,21 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
          (*image)[offset] = getVMTMethodIndex(refVAddress, messageID);
       }
       // if it is a vmtx method address
-      else if (currentMask == mskVMTXMethodAddress) {
-         resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
+      //else if (currentMask == mskVMTXMethodAddress) {
+      //   resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
 
-         // message id should be replaced with an appropriate method address
-         size_t offset = it.key();
-         ref64_t messageID = (*image)[offset + 4];
-         messageID <<= 32;
-         messageID |= (*image)[offset];
+      //   // message id should be replaced with an appropriate method address
+      //   size_t offset = it.key();
+      //   ref64_t messageID = (*image)[offset + 4];
+      //   messageID <<= 32;
+      //   messageID |= (*image)[offset];
 
-         (*image)[offset] = resolveVMTMethodAddress(current.module, currentRef, fromMessage64(messageID));
-         if (_virtualMode) {
-            image->addReference(mskRelCodeRef, offset);
-         }
-         else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
-      }
+      //   (*image)[offset] = resolveVMTMethodAddress(current.module, currentRef, fromMessage64(messageID));
+      //   if (_virtualMode) {
+      //      image->addReference(mskRelCodeRef, offset);
+      //   }
+      //   else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
+      //}
       // otherwise
       else {   
          void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, currentMask), currentMask, false);
@@ -560,7 +562,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
    MemoryWriter vmtWriter(vmtImage);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count, header.staticSize);
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count, /*header.staticSize*/0);
 
    void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
@@ -570,9 +572,9 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
    if (test(header.flags, elStandartVMT)) {
       size_t position = vmtWriter.Position();
 
-      // load parent class
-      void* parentVMT = getVMTReference(sectionInfo.module, header.parentRef, references);
-      size_t count = _compiler->copyParentVMT(parentVMT, (VMTEntry*)vmtImage->get(position));
+      //// load parent class
+      //void* parentVMT = getVMTReference(sectionInfo.module, header.parentRef, references);
+      size_t count = /*_compiler->copyParentVMT(parentVMT, (VMTEntry*)vmtImage->get(position))*/0;
 
       // create native debug info header if debug info enabled
       size_t sizePtr = (size_t)-1;
@@ -586,35 +588,35 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       size_t          methodPosition;
       VMTEntry        entry;
 
-      size -= sizeof(ClassHeader);
-      while (size > 0) {
-         vmtReader.read((void*)&entry, sizeof(VMTEntry));
+      //size -= sizeof(ClassHeader);
+      //while (size > 0) {
+      //   vmtReader.read((void*)&entry, sizeof(VMTEntry));
    
-         codeReader.seek(entry.address);
-         methodPosition = loadMethod(refHelper, codeReader, codeWriter);
-         
-         // NOTE : private message is not added to VMT
-         if (test(entry.message, SEALED_MESSAGE)) {
-            _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
-         }
-         else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
+      //   codeReader.seek(entry.address);
+      //   methodPosition = loadMethod(refHelper, codeReader, codeWriter);
+      //   
+      //   // NOTE : private message is not added to VMT
+      //   if (test(entry.message, SEALED_MESSAGE)) {
+      //      _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
+      //   }
+      //   else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
 
-         size -= sizeof(VMTEntry);
-      }
+      //   size -= sizeof(VMTEntry);
+      //}
       if (_withDebugInfo)
          endNativeDebugInfo(sizePtr);
 
       if (count != header.count)
          throw InternalError("VMT structure is corrupt");
 
-      // load class class  
-      void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
-      void* parentVAddress = NULL;
-      if (header.parentRef != 0)
-         parentVAddress = resolve(ReferenceInfo(sectionInfo.module, sectionInfo.module->resolveReference(header.parentRef)), mskVMTRef, true);
+      //// load class class  
+      //void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
+      //void* parentVAddress = NULL;
+      //if (header.parentRef != 0)
+      //   parentVAddress = resolve(ReferenceInfo(sectionInfo.module, sectionInfo.module->resolveReference(header.parentRef)), mskVMTRef, true);
 
-      // fix VMT
-      _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
+      //// fix VMT
+      //_compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
 
       //// fix VMT Static table
       //ClassInfo::StaticInfoMap staticValues;
@@ -879,15 +881,17 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
 
 ref_t JITLinker :: parseMessage(ident_t reference, bool actionMode)
 {
-   if (actionMode) {
-      return resolveAction(reference, NULL, NULL, 0);
-   }
-   else {
-      int count = reference[0] - '0';
-      ref_t actionRef = resolveAction(reference + 1, NULL, NULL, count);
+   //if (actionMode) {
+   //   return resolveAction(reference, NULL, NULL, 0);
+   //}
+   //else {
+   //   int count = reference[0] - '0';
+   //   ref_t actionRef = resolveAction(reference + 1, NULL, NULL, count);
 
-      return encodeMessage(actionRef, count);
-   }
+   //   return encodeMessage(actionRef, count);
+   //}
+
+   throw InternalError("unsupported");
 }
 
 //void* JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt)

@@ -1372,7 +1372,7 @@ void _ELENA_::compileGreaterN(int op, x86JITScope& scope)
 
 void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
 {
-   ref_t message = scope.tape->getDWord();
+   /*ref_t message = scope.tape->getDWord();
 
    if (getAction(message) == INVOKE_MESSAGE_ID) {
       scope.extra_arg = 0;
@@ -1395,10 +1395,10 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
       case OPEN_ARG_COUNT + 2:
          loadMTOpX(op, scope, 0xE00);
          break;
-      default:
+      default:*/
          loadMTOp(op, scope);
-         break;
-   }
+         //break;
+   //}
 }
 
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)

@@ -35,29 +35,29 @@ using namespace _ELENA_;
 
 // --- CompilerScope ---
 
-//void CompilerScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode)
-//{
-//   target.header = copy.header;
+void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode)
+{
+   target.header = copy.header;
 //   target.size = copy.size;
-//
-//   if (!headerOnly) {
-//      // import method references and mark them as inherited as required
-//      ClassInfo::MethodMap::Iterator it = copy.methods.start();
-//      if (inheritMode) {
-//         while (!it.Eof()) {
-//            target.methods.add(importMessage(exporter, it.key(), module), false);
-//
-//            it++;
-//         }
-//      }
-//      else {
-//         while (!it.Eof()) {
-//            target.methods.add(importMessage(exporter, it.key(), module), *it);
-//
-//            it++;
-//         }
-//      }
-//
+
+   if (!headerOnly) {
+      // import method references and mark them as inherited as required
+      auto it = copy.methods.start();
+      if (inheritMode) {
+         while (!it.Eof()) {
+            target.methods.add(importMessage(exporter, it.key(), module), false);
+
+            it++;
+         }
+      }
+      else {
+         while (!it.Eof()) {
+            target.methods.add(importMessage(exporter, it.key(), module), *it);
+
+            it++;
+         }
+      }
+
 //      target.fields.add(copy.fields);
 //
 //      // import field types
@@ -117,15 +117,15 @@ using namespace _ELENA_;
 //
 //         staticValue_it++;
 //      }
-//   }
+   }
 //   // import class class reference
 //   if (target.header.classRef != 0)
 //      target.header.classRef = importReference(exporter, target.header.classRef, module);
 //
 //   // import parent reference
 //   target.header.parentRef = importReference(exporter, target.header.parentRef, module);
-//}
-//
+}
+
 //ref_t CompilerScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
 //{
 //   _Module* argModule = NULL;
@@ -160,63 +160,63 @@ using namespace _ELENA_;
 //   }
 //   return moduleRef;
 //}
-//
-//ref_t CompilerScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
-//{
-//   _Module* argModule = NULL;
-//
-//   if (emptystr(vmtName))
-//      return 0;
-//
-//   if (isTemplateWeakReference(vmtName)) {
-//      // COMPILER MAGIC : try to find a template
-//      ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
-//      if (ref != 0 && info.header.classRef != 0) {
-//         if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
-//            // HOTFIX : class class ref should be template weak reference as well
-//            IdentifierString classClassName(vmtName, CLASSCLASS_POSTFIX);
-//
-//            info.header.classRef = module->mapReference(classClassName);
-//         }
-//      }
-//
-//      return ref;
-//   }
-//   else {
-//      // load class meta data
-//      ref_t moduleRef = 0;
-//      if (isWeakReference(vmtName)) {
-//         // if it is a weak reference - do not need to resolve the module
-//         argModule = module;
-//         moduleRef = module->mapReference(vmtName);
-//      }
-//      else argModule = project->resolveModule(vmtName, moduleRef, true);
-//
-//      if (argModule == NULL || moduleRef == 0)
-//         return 0;
-//
-//      // load argument VMT meta data
-//      _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
-//      if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
-//         return 0;
-//
-//      MemoryReader reader(metaData);
-//
-//      if (argModule != module) {
-//         ClassInfo copy;
-//         copy.load(&reader, headerOnly);
-//
-//         importClassInfo(copy, info, argModule, headerOnly, false);
-//      }
-//      else info.load(&reader, headerOnly);
-//
-//      if (argModule != module) {
-//         // import reference
-//         importReference(argModule, moduleRef, module);
-//      }
-//      return moduleRef;
-//   }
-//}
+
+ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
+{
+   _Module* argModule = NULL;
+
+   if (emptystr(vmtName))
+      return 0;
+
+   if (isTemplateWeakReference(vmtName)) {
+      // COMPILER MAGIC : try to find a template
+      ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
+      //if (ref != 0 && info.header.classRef != 0) {
+      //   if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
+      //      // HOTFIX : class class ref should be template weak reference as well
+      //      IdentifierString classClassName(vmtName, CLASSCLASS_POSTFIX);
+
+      //      info.header.classRef = module->mapReference(classClassName);
+      //   }
+      //}
+
+      return ref;
+   }
+   else {
+      // load class meta data
+      ref_t moduleRef = 0;
+      if (isWeakReference(vmtName)) {
+         // if it is a weak reference - do not need to resolve the module
+         argModule = module;
+         moduleRef = module->mapReference(vmtName);
+      }
+      else argModule = project->resolveModule(vmtName, moduleRef, true);
+
+      if (argModule == NULL || moduleRef == 0)
+         return 0;
+
+      // load argument VMT meta data
+      _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
+      if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
+         return 0;
+
+      MemoryReader reader(metaData);
+
+      if (argModule != module) {
+         ClassInfo copy;
+         copy.load(&reader, headerOnly);
+
+         importClassInfo(copy, info, argModule, headerOnly, false);
+      }
+      else info.load(&reader, headerOnly);
+
+      if (argModule != module) {
+         // import reference
+         importReference(argModule, moduleRef, module);
+      }
+      return moduleRef;
+   }
+}
 
 inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, bool privateOne)
 {
@@ -260,17 +260,17 @@ ref_t ModuleScope :: mapNewIdentifier(ident_t ns, ident_t identifier, bool priva
 //   return reference;
 //}
 
-//void CompilerScope :: saveAttribute(ident_t name, ref_t attr)
-//{
-//   if (attr) {
-//      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
-//      MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//      metaWriter.writeDWord(attr);
-//      metaWriter.writeLiteral(name);
-//   }
-//}
-//
+void ModuleScope :: saveAttribute(ident_t name, ref_t attr)
+{
+   if (attr) {
+      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
+      MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+      metaWriter.writeDWord(attr);
+      metaWriter.writeLiteral(name);
+   }
+}
+
 //_Module* CompilerScope :: loadReferenceModule(ident_t referenceName, ref_t& reference)
 //{
 //   if (isTemplateWeakReference(referenceName)) {
