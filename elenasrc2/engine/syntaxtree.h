@@ -37,6 +37,8 @@ enum LexicalType
    lxNamespace       = 0x00003,
    lxToken           = 0x00010,
    lxSymbol          = 0x00011,
+   lxExpression      = 0x0C012,
+   lxScope           = 0x00013,
    
 //   lxObject          = 0x00003,
 //   lxAttributeDecl   = 0x00004,
@@ -141,7 +143,6 @@ enum LexicalType
 //   lxBranching       = 0x0C00F,   // branch expression      
 //   lxSwitching       = 0x0C010,
 //   lxLooping         = 0x0C011,
-   lxExpression      = 0x0C012,
 ////   lxThrowing        = 0x0C013,
 //   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
 //   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference

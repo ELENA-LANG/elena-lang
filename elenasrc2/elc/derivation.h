@@ -24,7 +24,7 @@ namespace _ELENA_
 
 class DerivationWriter : public _DerivationWriter
 {
-   bool          _cachingMode;
+   int           _level;
    int           _cachingLevel;
    SyntaxTree    _cache;
    SyntaxWriter  _cacheWriter;
@@ -33,21 +33,26 @@ class DerivationWriter : public _DerivationWriter
 
    _ModuleScope* _scope;
    ident_t       _ns;
-   ident_t       _filePath;
+   //ident_t       _filePath;
 
-   void appendNode(LexicalType type, int argument);
+   //void appendNode(LexicalType type, int argument);
 
-   void newNode(LexicalType type, int argument);
-   void newNode(LexicalType type, ident_t value);
-   void newNode(LexicalType type);
+   //void newNode(LexicalType type, int argument);
+   //void newNode(LexicalType type, ident_t value);
+   //void newNode(LexicalType type);
 
    void newNode(Symbol symbol);
    void closeNode();
 
-   void newScope(Symbol symbol);
-   void saveCache();
+   void saveScope();
 
+   void recognizeScope();
    void recognizeScopeAttributes(SNode node/*, DerivationScope& scope*/);
+
+   void generateScope(SNode node);
+   void generateSymbolTree(SNode node);
+   void generateAttributes(SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
+   void generateExpressionTree(SNode node/*, DerivationScope& scope, int mode = 0*/);
 
 public:
    void begin();
@@ -62,9 +67,12 @@ public:
    DerivationWriter(SyntaxTree& target, _ModuleScope* scope)
       :  _writer(target), _cacheWriter(_cache)
    {
-      _cachingMode = true; 
-      _cachingLevel = 0;
+      _cachingLevel = _level = 0;
+
+   //   _cachingMode = true; 
       _scope = scope;
+
+      _cacheWriter.newNode(lxRoot);
    }
 };
 
@@ -287,12 +295,10 @@ public:
 //   bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode/* = false*/); // returns true if in-place init found
 //   void generateCodeExpression(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
-//   void generateExpressionTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
 //   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateTemplateParameters(SNode& node, DerivationScope& scope, bool templateMode);
 //   void generateSubTemplate(SNode& node, DerivationScope& scope, bool templateMode);
 //   void generateNewTemplate(SyntaxWriter& writer, SNode& node, DerivationScope& scope, bool templateMode);
-//   void generateAttributes(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode);
 //   void generateSymbolTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateClassTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int nested = 0);
 //   void generateTemplateScope(SNode node, DerivationScope& scope);

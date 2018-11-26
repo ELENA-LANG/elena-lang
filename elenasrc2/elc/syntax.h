@@ -43,13 +43,13 @@ enum Symbol
 //   tsMember                     = 0x03010,
 //   tsGlobal                     = 0x03011,
 
-   nsToken                      = 0x01010,
-   nsSymbol                     = 0x01011,               // non-terminals
+   nsToken                      = 0x01010,               // non-terminals
 ////   nsClass                      = 0x0100E,               
 ////   nsTemplate                   = 0x0100F,
 //   nsSubjectArg                 = 0x01010,
    nsExpression                 = 0x01012,
-////   nsField                      = 0x01013,
+   nsScope                      = 0x01013,
+   ////   nsField                      = 0x01013,
 //////   nsHint                       = 0x01014,
 //   nsTokenParam                 = 0x01015,
 ////   nsMethodOpenParameter        = 0x01016,
@@ -92,7 +92,6 @@ enum Symbol
 ////   nsSubject                    = 0x01047,
 ////   nsInlineClosure              = 0x01048,
 //////   nsImplicitConstructor        = 0x0104B,
-//   nsScope                      = 0x0104D,
 //   nsAttribute                  = 0x0104E,
 ////   nsRootMessage                = 0x0104F,
 //   nsLazyExpression             = 0x01050,
