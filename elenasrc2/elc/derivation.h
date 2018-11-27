@@ -12,11 +12,6 @@
 #include "syntax.h"
 #include "compilercommon.h"
 
-//#define EXPRESSION_IMPLICIT_MODE   1
-////#define EXPRESSION_MESSAGE_MODE    2
-//#define EXPRESSION_OPERATOR_MODE   4
-//#define EXPRESSION_OBJECT_REQUIRED 8
-
 namespace _ELENA_
 {
 
@@ -59,7 +54,7 @@ class DerivationWriter : public _DerivationWriter
    void generateMethodTree(SNode node/*, DerivationScope& scope, bool templateMode, bool closureMode*/);
    void generateCodeTree(SNode node/*, DerivationScope& scope, bool withBookmark = false*/);
    void generateAttributes(SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
-   void generateExpressionTree(SNode node/*, DerivationScope& scope, int mode = 0*/);
+   void generateExpressionTree(SNode node/*, DerivationScope& scope*/, int mode = 0);
 
 public:
    void begin();

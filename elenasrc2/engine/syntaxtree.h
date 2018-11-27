@@ -51,10 +51,11 @@ enum LexicalType
 //   lxFieldTemplate   = 0x00014,
 //   lxAttributeValue  = 0x00015,
 //   lxNestedClass     = 0x00018,
-//   lxDispatchCode    = 0x00020,
+   lxMessage         = 0x0001B, // arg - message
+   lxDispatchCode    = 0x00020,
 ////   lxStatic          = 0x00022,
-//   lxConstructor     = 0x00024,
-//   lxStaticMethod    = 0x00025,
+   lxConstructor     = 0x00024,
+   lxStaticMethod    = 0x00025,
 //   lxExtension       = 0x0002B,
 //   lxAltOperation    = 0x0002C,
 //   lxCatchOperation  = 0x0002F,
@@ -93,11 +94,11 @@ enum LexicalType
    lxExplicitAttr    = 0x1800F,
 //   lxMemberIdentifier= 0x18010,
 //   lxGlobalReference = 0x18011,
-//
-//   lxImporting       = 0x08101,
+
+   lxImporting       = 0x08101,
 //   lxNested          = 0x08102, // arg - count
 //   lxStruct          = 0x08103, // arg - count
-//   lxConstantSymbol  = 0x0A104, // arg - reference
+   lxConstantSymbol  = 0x0A104, // arg - reference
 //   lxField           = 0x08105, // arg - offset
 //   lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
    lxSymbolReference = 0x08107,
@@ -117,8 +118,8 @@ enum LexicalType
 //   lxSignatureConstant  = 0x0A115, // arg - reference
 //   lxStaticConstField   = 0x08116, // arg - reference
    lxNil                = 0x0A117,
-//   lxCurrent            = 0x0A118, // arg -offset
-//   lxResult             = 0x0A119, // arg -offset
+   lxCurrent            = 0x0A118, // arg -offset
+   lxResult             = 0x0A119, // arg -offset
 //   lxResultField        = 0x0A11A, // arg -offset
 //   lxCurrentMessage     = 0x0A11B,
 //   lxSelfLocal          = 0x0A11C,
@@ -132,7 +133,7 @@ enum LexicalType
 //   lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
 //   lxArgUnboxing     = 0x0C006,
-//   lxCalling         = 0x0C007,   // sending a message, arg - message
+   lxCalling         = 0x0C007,   // sending a message, arg - message
 //   lxDirectCalling   = 0x0C008,   // calling a method, arg - message
 //   lxSDirctCalling   = 0x0C009,   // calling a virtual method, arg - message
 //   lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
@@ -223,7 +224,6 @@ enum LexicalType
 //   lxTarget          = 0x2000C, // arg - reference
 //   lxMessageVariable = 0x2000D, // debug info only
 //   lxSelfVariable    = 0x2000E, // debug info only
-//   lxMessage         = 0x2000F, // arg - message
 //   lxAssign          = 0x20010,
 //   lxLevel           = 0x20011,
 //   lxType            = 0x20012, // arg - subject

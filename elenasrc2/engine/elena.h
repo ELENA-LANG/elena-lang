@@ -914,12 +914,7 @@ inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer
    ref_t actionRef, flags;
    decodeMessage(exportRef, actionRef, paramCount, flags);
 
-   //// if it is generic message
-   //if (actionRef <= PREDEFINED_MESSAGE_ID) {
-   //   return exportRef;
-   //}
-
-   // otherwise signature and custom verb should be imported
+   // signature and custom verb should be imported
    ref_t signature = 0;
    ident_t actionName = exporter->resolveAction(actionRef, signature);
 

@@ -94,7 +94,7 @@ public:
       irNone = 0,
       irSuccessfull,
       irUnsuccessfull,
-      //irSealed,
+      irSealed,
       //irInvalid,
 //      irObsolete
    };
@@ -105,7 +105,7 @@ public:
 
 //      okObject,                       // param - class reference
       okSymbol,                       // param - reference, extraparam - returning result
-//      okConstantSymbol,               // param - reference, extraparam - class reference
+      okConstantSymbol,               // param - reference, extraparam - class reference
       okClass,                        // param - reference, extraparam - class reference
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
@@ -152,13 +152,16 @@ public:
 //      okPrimitiveConv
    };
 
-//   enum ClassType
-//   {
-//      ctNone = 0,
-//      ctNormalClass,
-//      ctEmbeddableClass
-//   };
-//
+   enum ClassType
+   {
+      ctClass                = 0x00,
+      ctClassClass           = 0x01,
+      ctEmbeddable           = 0x02,
+
+      ctEmbeddableClass      = 0x02,
+      ctEmbeddableClassClass = 0x03,
+   };
+
    struct ObjectInfo
    {
       ObjectKind kind;
@@ -320,9 +323,9 @@ private:
 //      IdentifierList importedNs;
       ForwardMap     forwards;       // forward declarations
 
-////      // symbol hints
-////      Map<ref_t, ref_t> constantHints;
-////
+      // symbol hints
+      Map<ref_t, ref_t> constantHints;
+
 ////      // extensions
 ////      ExtensionMap      extensions;
 ////
@@ -539,7 +542,7 @@ private:
 //      int          scopeMode;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-//      int          hints;
+      int          hints;
 //      bool         withOpenArg;
 //      bool         classEmbeddable;
 //      bool         generic;
@@ -790,9 +793,9 @@ private:
 //   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
 //   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
-//
-//   void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
-//
+
+   void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
+
 //   int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/);
@@ -814,9 +817,9 @@ private:
 //   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
    void declareVMT(SNode member, ClassScope& scope);
 //////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
-//
-//   void declareMethodAttributes(SNode member, MethodScope& scope);
-//
+
+   void declareMethodAttributes(SNode member, MethodScope& scope);
+
 //   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 //
 //   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
@@ -826,8 +829,8 @@ private:
 //      int dummy;
 //      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
 //   }
-//   ref_t mapMessage(SNode node, CodeScope& scope);
-//
+   ref_t mapMessage(SNode node, CodeScope& scope);
+
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //
@@ -856,9 +859,9 @@ private:
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
 //
 //   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);
-//
-//   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, ObjectInfo target, int mode);
-//   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
+
+   /*ObjectInfo*/void compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t exptectedRef, ObjectInfo target, int mode*/);
+   /*ObjectInfo*/void compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ObjectInfo target, */int messageRef/*, int mode, int stackSafeAttr*/);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
@@ -873,9 +876,9 @@ private:
 //
 //   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
 //   void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
-//
-//   ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, ref_t expectedRef, int mode);
-//
+
+   /*ObjectInfo */void compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope/*, ObjectInfo objectInfo, ref_t expectedRef, int mode*/);
+
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -904,8 +907,8 @@ private:
 //
 //   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-//   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
-//
+   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false, bool withOpenArgGenerics = false*/);
+
 //   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //   void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
@@ -929,21 +932,21 @@ private:
 //
 //   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField);
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
-//
-//   void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
+
+   void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
 //   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
    void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool embeddableClass*/);
    void generateMethodDeclarations(SNode node, ClassScope& scope, /*bool closed, */LexicalType methodType/*, bool embeddableClass*/);
 //   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
-   void generateClassDeclaration(SNode node, ClassScope& scope/*, ClassType classClassType, bool nestedDeclarationMode = false*/);
+   void generateClassDeclaration(SNode node, ClassScope& scope, ClassType classType/*, bool nestedDeclarationMode = false*/);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
 
    void compileClassDeclaration(SNode node, ClassScope& scope);
    void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
-//   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node/*, SymbolScope& scope*/);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);

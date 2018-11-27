@@ -56,28 +56,28 @@ class ByteCodeWriter
 //         frameSize = 0;
 //      }
 //   };
-//
-//   struct ImportScope
-//   {
-//      _Memory*    section; 
-//      _Module*    sour;
-//      _Module*    dest;
-//
-//      ImportScope()
-//      {
-//         section = NULL;
-//         sour = NULL;
-//         dest = NULL;
-//      }
-//      ImportScope(_Memory* section, _Module* sour, _Module* dest)
-//      {
-//         this->section = section;
-//         this->sour = sour;
-//         this->dest = dest;
-//      }
-//   };
-//
-//   List<ImportScope> imports;
+
+   struct ImportScope
+   {
+      _Memory*    section; 
+      _Module*    sour;
+      _Module*    dest;
+
+      ImportScope()
+      {
+         section = NULL;
+         sour = NULL;
+         dest = NULL;
+      }
+      ImportScope(_Memory* section, _Module* sour, _Module* dest)
+      {
+         this->section = section;
+         this->sour = sour;
+         this->dest = dest;
+      }
+   };
+
+   List<ImportScope> imports;
 //   MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
 
    ByteCode peekNext(ByteCodeIterator it)
@@ -118,7 +118,7 @@ class ByteCodeWriter
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
-//   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
+   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
    void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
@@ -269,9 +269,9 @@ class ByteCodeWriter
 
    bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 
-//   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-//   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
-//
+   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
+
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 //
@@ -294,8 +294,8 @@ class ByteCodeWriter
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
-//   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
-//
+   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
+
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
 //   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
@@ -305,7 +305,7 @@ class ByteCodeWriter
 //   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 //   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 ////   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
 //   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
 //   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
@@ -320,8 +320,8 @@ class ByteCodeWriter
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
 
-//   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
-//
+   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
+
 ////   void generateTemplateMethods(CommandTape& tape, SNode root);
 
 public:
@@ -339,12 +339,12 @@ public:
 
    void saveTape(CommandTape& tape, _ModuleScope& scope);
 
-//   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
-//   {
-//      imports.add(ImportScope(section, sour, dest));
-//
-//      return imports.Count();
-//   }
+   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
+   {
+      imports.add(ImportScope(section, sour, dest));
+
+      return imports.Count();
+   }
 //   void clear()
 //   {
 //      _strings.clear();

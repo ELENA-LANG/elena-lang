@@ -609,7 +609,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
 
       // load parent class
       void* parentVMT = getVMTReference(sectionInfo.module, header.parentRef, references);
-      size_t count = /*_compiler->copyParentVMT(parentVMT, (VMTEntry*)vmtImage->get(position))*/0;
+      size_t count = _compiler->copyParentVMT(parentVMT, (VMTEntry*)vmtImage->get(position));
 
       // create native debug info header if debug info enabled
       size_t sizePtr = (size_t)-1;
@@ -650,8 +650,8 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       if (header.parentRef != 0)
          parentVAddress = resolve(ReferenceInfo(sectionInfo.module, sectionInfo.module->resolveReference(header.parentRef)), mskVMTRef, true);
 
-      //// fix VMT
-      //_compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
+      // fix VMT
+      _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
 
       //// fix VMT Static table
       //ClassInfo::StaticInfoMap staticValues;
@@ -747,113 +747,113 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
    }
 }
 
-//void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
-//{
-//   bool constantValue = true;
-//   ident_t value = NULL;
-//   ReferenceInfo vmtReferenceInfo = referenceInfo;
-//   if (mask == mskLiteralRef) {
-//      value = vmtReferenceInfo.referenceName;
-//      vmtReferenceInfo.referenceName = _loader->getLiteralClass();
-//   }
-//   else if (mask == mskWideLiteralRef) {
-//      value = vmtReferenceInfo.referenceName;
-//      vmtReferenceInfo.referenceName = _loader->getWideLiteralClass();
-//   }
-//   else if (mask == mskCharRef) {
-//      value = vmtReferenceInfo.referenceName;
-//      vmtReferenceInfo.referenceName = _loader->getCharacterClass();
-//   }
-//   else if (mask == mskInt32Ref) {
-//      value = vmtReferenceInfo.referenceName;
-//      vmtReferenceInfo.referenceName = _loader->getIntegerClass();
-//   }
-//   else if (mask == mskInt64Ref) {
-//      value = vmtReferenceInfo.referenceName;
-//      vmtReferenceInfo.referenceName = _loader->getLongClass();
-//   }
-//   else if (mask == mskRealRef) {
-//      value = vmtReferenceInfo.referenceName;
-//      vmtReferenceInfo.referenceName = _loader->getRealClass();
-//   }
-//   else constantValue = false;
-//
-//   // get constant VMT reference
-//   void* vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
-//
-//   // HOTFIX: if the constant is referred by iself it could be already resolved
-//   void* vaddress = _loader->resolveReference(referenceInfo, mask);
-//   if (vaddress != LOADER_NOTLOADED)
-//      return vaddress;
-//
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskRDataRef);
-//   MemoryWriter writer(image);
-//
-//   // allocate object header
-//   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
-//
-//   vaddress = calculateVAddress(&writer, mskRDataRef);
-//
-//   _loader->mapReference(referenceInfo, vaddress, mask);
-//
-//   size_t position = writer.Position();
-//   if (mask == mskLiteralRef) {
-//      _compiler->compileLiteral(&writer, value);
-//   }
-//   else if (mask == mskWideLiteralRef) {
-//      WideString wideValue(value);
-//
-//      _compiler->compileWideLiteral(&writer, wideValue);
-//   }
-//   else if (mask == mskCharRef) {
-//      _compiler->compileChar32(&writer, value);
-//   }
-//   else if (mask == mskInt32Ref) {
-//      _compiler->compileInt32(&writer, value.toULong(16));
-//   }
-//   else if (mask == mskInt64Ref) {
-//      // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
-//      _compiler->compileInt64(&writer, value.toULongLong(10, 1));
-//   }
-//   else if (mask == mskRealRef) {
-//      _compiler->compileReal64(&writer, value.toDouble());
-//   }
-//   else if (mask == mskConstArray) {
-//      // resolve constant value
-//      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
-//      _compiler->compileCollection(&writer, sectionInfo.section);
-//
-//      vmtVAddress = NULL; // !! to support dump array
-//      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
-//      constantValue = true;
-//   }
-//   else if (vmtVAddress == LOADER_NOTLOADED) {
-//      // resolve constant value
-//      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
-//      _compiler->compileBinary(&writer, sectionInfo.section);
-//
-//      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
-//      constantValue = true;
-//   }
-//
-//   if (vmtVAddress == LOADER_NOTLOADED)
-//      throw JITUnresolvedException(referenceInfo);
-//
-//   // check if the class could be constant one
-//   if (!constantValue) {
-//      // read VMT flags
-//      size_t flags = getVMTFlags(vmtVAddress);
-//
-//      if (!test(flags, elStateless))
-//         throw JITConstantExpectedException(referenceInfo);
-//   }
-//
-//   // fix object VMT reference
-//   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
-//
-//   return vaddress;
-//}
+void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
+{
+   bool constantValue = true;
+   ident_t value = NULL;
+   ReferenceInfo vmtReferenceInfo = referenceInfo;
+   //if (mask == mskLiteralRef) {
+   //   value = vmtReferenceInfo.referenceName;
+   //   vmtReferenceInfo.referenceName = _loader->getLiteralClass();
+   //}
+   //else if (mask == mskWideLiteralRef) {
+   //   value = vmtReferenceInfo.referenceName;
+   //   vmtReferenceInfo.referenceName = _loader->getWideLiteralClass();
+   //}
+   //else if (mask == mskCharRef) {
+   //   value = vmtReferenceInfo.referenceName;
+   //   vmtReferenceInfo.referenceName = _loader->getCharacterClass();
+   //}
+   //else if (mask == mskInt32Ref) {
+   //   value = vmtReferenceInfo.referenceName;
+   //   vmtReferenceInfo.referenceName = _loader->getIntegerClass();
+   //}
+   //else if (mask == mskInt64Ref) {
+   //   value = vmtReferenceInfo.referenceName;
+   //   vmtReferenceInfo.referenceName = _loader->getLongClass();
+   //}
+   //else if (mask == mskRealRef) {
+   //   value = vmtReferenceInfo.referenceName;
+   //   vmtReferenceInfo.referenceName = _loader->getRealClass();
+   //}
+   /*else */constantValue = false;
+
+   // get constant VMT reference
+   void* vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
+
+   // HOTFIX: if the constant is referred by iself it could be already resolved
+   void* vaddress = _loader->resolveReference(referenceInfo, mask);
+   if (vaddress != LOADER_NOTLOADED)
+      return vaddress;
+
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   // allocate object header
+   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
+
+   vaddress = calculateVAddress(&writer, mskRDataRef);
+
+   _loader->mapReference(referenceInfo, vaddress, mask);
+
+   size_t position = writer.Position();
+   //if (mask == mskLiteralRef) {
+   //   _compiler->compileLiteral(&writer, value);
+   //}
+   //else if (mask == mskWideLiteralRef) {
+   //   WideString wideValue(value);
+
+   //   _compiler->compileWideLiteral(&writer, wideValue);
+   //}
+   //else if (mask == mskCharRef) {
+   //   _compiler->compileChar32(&writer, value);
+   //}
+   //else if (mask == mskInt32Ref) {
+   //   _compiler->compileInt32(&writer, value.toULong(16));
+   //}
+   //else if (mask == mskInt64Ref) {
+   //   // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
+   //   _compiler->compileInt64(&writer, value.toULongLong(10, 1));
+   //}
+   //else if (mask == mskRealRef) {
+   //   _compiler->compileReal64(&writer, value.toDouble());
+   //}
+   //else if (mask == mskConstArray) {
+   //   // resolve constant value
+   //   SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+   //   _compiler->compileCollection(&writer, sectionInfo.section);
+
+   //   vmtVAddress = NULL; // !! to support dump array
+   //   fixSectionReferences(sectionInfo, image, position, vmtVAddress);
+   //   constantValue = true;
+   //}
+   /*else */if (vmtVAddress == LOADER_NOTLOADED) {
+      // resolve constant value
+      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+      _compiler->compileBinary(&writer, sectionInfo.section);
+
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
+      constantValue = true;
+   }
+
+   if (vmtVAddress == LOADER_NOTLOADED)
+      throw JITUnresolvedException(referenceInfo);
+
+   // check if the class could be constant one
+   if (!constantValue) {
+      // read VMT flags
+      size_t flags = getVMTFlags(vmtVAddress);
+
+      if (!test(flags, elStateless))
+         throw JITConstantExpectedException(referenceInfo);
+   }
+
+   // fix object VMT reference
+   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
+
+   return vaddress;
+}
 
 void* JITLinker :: resolveAnonymousStaticVariable()
 {
@@ -1214,15 +1214,15 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskNativeRelCodeRef:
             vaddress = resolveNativeSection(referenceInfo, mskNativeCodeRef, _loader->getSectionInfo(referenceInfo, mskNativeCodeRef, silentMode));
             break;
-         //case mskConstantRef:
+         case mskConstantRef:
          //case mskLiteralRef:
          //case mskWideLiteralRef:
          //case mskCharRef:
          //case mskInt32Ref:
          //case mskRealRef:
          //case mskInt64Ref:
-         //   vaddress = resolveConstant(referenceInfo, mask);
-         //   break;
+            vaddress = resolveConstant(referenceInfo, mask);
+            break;
          //case mskConstArray:
          //   vaddress = resolveConstant(referenceInfo, mask);
          //   break;
@@ -1267,15 +1267,15 @@ void* JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
    return resolve(ReferenceInfo(reference), mask, silentMode);
 }
 
-void JITLinker :: prepareCompiler(/*MessageMap& verbs*/)
+void JITLinker :: prepareCompiler()
 {
    References      references(RefInfo(0, NULL));
    ReferenceHelper helper(this, NULL, &references);
 
-   //// load predefine messages
-   //for (MessageMap::Iterator it = verbs.start(); !it.Eof(); it++) {
-   //   _loader->mapPredefinedAction(it.key(), *it);
-   //}
+   // load predefine messages
+   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
+   // dispatch message should be the first
+   resolveWeakAction(messageTable, DISPATCH_MESSAGE);
 
    _compiler->prepareCore(helper, _loader);
 

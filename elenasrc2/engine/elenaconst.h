@@ -152,7 +152,7 @@ namespace _ELENA_
       //mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
       //mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
 
-//      mskConstantRef         = 0x01000000u,   // reference to constant
+      mskConstantRef         = 0x01000000u,   // reference to constant
 //      mskLiteralRef          = 0x02000000u,   // reference to constant literal
 //      mskInt32Ref            = 0x03000000u,   // reference to constant integer number
 //      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
@@ -276,22 +276,22 @@ namespace _ELENA_
 
   // --- ELENA VMT flags ---
    const int elStandartVMT         = 0x00000001;
-//   const int elNestedClass         = 0x00000002;
+   const int elNestedClass         = 0x00000002;
 //   const int elDynamicRole         = 0x00000004;
 //   const int elStructureRole       = 0x00000008;
 //   const int elAbstract            = 0x00000010;
 //   const int elClosed              = 0x00000020;
 //   const int elWrapper             = 0x00000040;
 //   const int elStructureWrapper    = 0x00000048;
-//   const int elStateless           = 0x00000080;
-//   const int elFinal               = 0x00000100;
-//   const int elSealed              = 0x00000120;
+   const int elStateless           = 0x00000080;
+   const int elFinal               = 0x00000100;
+   const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
 //   const int elReadOnlyRole        = 0x00000800;
 //   const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
-//   const int elRole                = 0x00004080;
+   const int elRole                = 0x00004080;
 //   const int elExtension           = 0x00004980;
 //   const int elMessage             = 0x00008000;
 //   const int elSymbol              = 0x00100000;
@@ -300,7 +300,7 @@ namespace _ELENA_
 //   const int elWithCustomDispatcher= 0x00800000;
 //   const int elWithArgGenerics     = 0x01000000;
 ////   const int elTapeGroup           = 0x02000200;
-//   const int elClassClass          = 0x04000000;
+   const int elClassClass          = 0x04000000;
 //   const int elWithMuti            = 0x08000000;
 //   const int elVirtualVMT          = 0x10000000;
 //   const int elNoCustomDispatcher  = 0x20000000;
@@ -356,8 +356,8 @@ namespace _ELENA_
   // --- ELENA core module names ---
    #define CORE_ALIAS                "core"          // Core functionality
   
-  //// --- ELENA verb messages ---
-  // #define DISPATCH_MESSAGE         "#dispatch"
+  // --- ELENA verb messages ---
+   #define DISPATCH_MESSAGE         "#dispatch"
   // #define NEWOBJECT_MESSAGE        "#new"
   // #define NEW_MESSAGE              "new"
   // #define GET_MESSAGE              "get"
@@ -472,7 +472,7 @@ namespace _ELENA_
    #define RTDLL_FORWARD            "$rt"
 
 //   #define STANDARD_MODULE_LEN      6
-//   #define INTERNAL_MASK_LEN        12
+   #define INTERNAL_MASK_LEN        12
 //   #define COREAPI_MASK_LEN         5 
 
    #define CORE_MODULE              "coreapi"
@@ -480,8 +480,8 @@ namespace _ELENA_
    #define FORWARD_MODULE           "forwards"
 //   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
-//                                                                     // will be treated like internal core api one
-//   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
+                                                                     // will be treated like internal core api one
+   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
 
    #define NATIVE_MODULE            "$native"
 

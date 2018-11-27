@@ -63,7 +63,7 @@
 //#define V_ACTION         (ref_t)-8205     // a closure attribute
 //#define V_GROUP          (ref_t)-8206
 //#define V_PRELOADED      (ref_t)-8207
-//#define V_SINGLETON      (ref_t)-8208
+#define V_SINGLETON      (ref_t)-8208
 ////#define V_TAPEGROUP      (ref_t)-8209
 //#define V_ABSTRACT       (ref_t)-8210
 #define V_PUBLIC         (ref_t)-8211
@@ -71,8 +71,8 @@
 #define V_INTERNAL       (ref_t)-8213
 //#define V_CLOSED         (ref_t)-8214
 //#define V_PREDEFINED     (ref_t)-8215
-//#define V_DISPATCHER     (ref_t)-8216
-//
+#define V_DISPATCHER     (ref_t)-8216
+
 //#define V_CONSTRUCTOR    (ref_t)-16384
 //#define V_VARIABLE       (ref_t)-16385
 #define V_CLASS          (ref_t)-16386
@@ -82,7 +82,7 @@
 //#define V_TYPETEMPL      (ref_t)-16390
 //#define V_TEMPLATE       (ref_t)-16391
 //#define V_FIELD          (ref_t)-16392
-//#define V_METHOD         (ref_t)-16393
+#define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
 //#define V_EXTERN         (ref_t)-16396
@@ -101,15 +101,15 @@ namespace _ELENA_
 
 typedef Map<ident_t, ref_t>      ForwardMap;
 
-//enum MethodHint
-//{
-//   tpMask        = 0x00000F,
-//
+enum MethodHint
+{
+   tpMask        = 0x00000F,
+
 //   tpUnknown     = 0x000000,
 //   tpSealed      = 0x000001,
 //   tpClosed      = 0x000002,
 //   tpNormal      = 0x000003,
-//   tpDispatcher  = 0x000004,
+   tpDispatcher  = 0x000004,
 //   tpPrivate     = 0x000005,
 //   tpStackSafe   = 0x000010,
 //   tpEmbeddable  = 0x000020,
@@ -128,8 +128,8 @@ typedef Map<ident_t, ref_t>      ForwardMap;
 //   tpInternal    = 0x040000,
 //   tpPredefined  = 0x080000, // virtual class declaration
 //   tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
-//   tpInitializer = 0x200000
-//};
+//   tpInitializer = 0x200000,
+};
 
 // --- _Project ---
 
@@ -218,6 +218,9 @@ struct _ModuleScope
 //   ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
 //
+   // cached messages
+   ref_t             dispatch_message;
+
 //   // cached bool values
 //   BranchingInfo     branchingInfo;
 
@@ -251,8 +254,8 @@ struct _ModuleScope
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne/*, IdentifierList* importedNs*/) = 0;
-//   virtual ident_t resolveFullName(ref_t reference) = 0;
-//   virtual ident_t resolveFullName(ident_t referenceName) = 0;
+   virtual ident_t resolveFullName(ref_t reference) = 0;
+   virtual ident_t resolveFullName(ident_t referenceName) = 0;
 
    void raiseError(const char* message, ident_t sourcePath, SNode node)
    {
@@ -304,6 +307,8 @@ struct _ModuleScope
 //      closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
 //      arrayTemplateReference = 0;
+
+      dispatch_message = 0;
    }
 };
 
@@ -418,9 +423,9 @@ public:
 //   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
-//
-//   // class is considered to be a role if it cannot be initiated
-//   virtual bool isRole(ClassInfo& info) = 0;          
+
+   // class is considered to be a role if it cannot be initiated
+   virtual bool isRole(ClassInfo& info) = 0;          
 //   virtual bool isAbstract(ClassInfo& info) = 0;
 //
 //   virtual bool isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node) = 0;
@@ -442,22 +447,22 @@ public:
 //////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
 ////   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef) = 0;
 //   virtual void injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
-//
-//   // auto generate class flags
-//   virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
+
+   // auto generate class flags
+   virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 //
 //   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
-//   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
-//   virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
+   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
+   virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant) = 0;
 //   virtual bool validateLocalAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
-//   virtual bool validateMessage(ref_t message, bool isClassClass) = 0;
-//
+   virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
+
 //   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 //
 //   // optimization

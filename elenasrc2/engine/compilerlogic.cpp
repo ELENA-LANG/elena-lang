@@ -563,12 +563,12 @@ CompilerLogic :: CompilerLogic()
 //{
 //   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
 //}
-//
-//bool CompilerLogic :: isRole(ClassInfo& info)
-//{
-//   return test(info.header.flags, elRole);
-//}
-//
+
+bool CompilerLogic :: isRole(ClassInfo& info)
+{
+   return test(info.header.flags, elRole);
+}
+
 //bool CompilerLogic :: isAbstract(ClassInfo& info)
 //{
 //   return test(info.header.flags, elAbstract);
@@ -1355,29 +1355,29 @@ CompilerLogic :: CompilerLogic()
 //
 //   return 0;
 //}
-//
-//void CompilerLogic :: tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
-//{
-//   if (classClassMode) {
-//      // class class is always stateless and final
-//      info.header.flags |= elStateless;
-//      info.header.flags |= elFinal;
-//   }
-//
-//   if (test(info.header.flags, elNestedClass)) {
-//      // stateless inline class
-//      if (info.fields.Count() == 0/* && !test(info.header.flags, elStructureRole)*/) {
-//         info.header.flags |= elStateless;
-//
-//         // stateless inline class is its own class class
-//         info.header.classRef = classRef;
-//      }
-//      else info.header.flags &= ~elStateless;
-//
-//      // nested class is sealed
-//      info.header.flags |= elSealed;
-//   }
-//
+
+void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
+{
+   if (classClassMode) {
+      // class class is always stateless and final
+      info.header.flags |= elStateless;
+      info.header.flags |= elFinal;
+   }
+
+   if (test(info.header.flags, elNestedClass)) {
+      // stateless inline class
+      //if (info.fields.Count() == 0/* && !test(info.header.flags, elStructureRole)*/) {
+         info.header.flags |= elStateless;
+
+         // stateless inline class is its own class class
+         info.header.classRef = classRef;
+      //}
+      //else info.header.flags &= ~elStateless;
+
+      // nested class is sealed
+      info.header.flags |= elSealed;
+   }
+
 //   if (test(info.header.flags, elExtension)) {
 //      info.header.flags |= elSealed;
 //   }
@@ -1452,7 +1452,7 @@ CompilerLogic :: CompilerLogic()
 //   if (test(info.header.flags, elWithMuti)) {
 //      injectOverloadList(scope, info, compiler, classRef);
 //   }
-//}
+}
 
 bool CompilerLogic :: validateClassAttribute(int& attrValue)
 {
@@ -1502,34 +1502,34 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_INTERNAL:
          attrValue = 0;
          return true;
-//      case V_SINGLETON:
-//         attrValue = elRole | elNestedClass;
-//         return true;
+      case V_SINGLETON:
+         attrValue = elRole | elNestedClass;
+         return true;
       default:
          return false;
    }
 }
 
-//bool CompilerLogic::validateImplicitMethodAttribute(int& attrValue)
-//{
-//   bool dummy = false;
-//   switch ((size_t)attrValue)
-//   {
-//      case V_METHOD:
+bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue)
+{
+   bool dummy = false;
+   switch ((size_t)attrValue)
+   {
+      case V_METHOD:
 //      case V_CONSTRUCTOR:
-//      case V_DISPATCHER:
-//      case V_GENERIC:
-//      case V_ACTION:
-//         return validateMethodAttribute(attrValue, dummy);
-//      default:
-//         return false;
-//   }
-//}
-//
-//bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
-//{
-//   switch ((size_t)attrValue)
-//   {
+      case V_DISPATCHER:
+      //case V_GENERIC:
+      //case V_ACTION:
+         return validateMethodAttribute(attrValue, dummy);
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_IFBRANCH:
 //         attrValue = tpIfBranch;
 //         return true;
@@ -1572,10 +1572,10 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //      //   // obsolete
 //      //   attrValue = /*tpMultimethod*/0;
 //      //   return true;
-//      case V_METHOD:
-//         attrValue = 0;
-//         explicitMode = true;
-//         return true;
+      case V_METHOD:
+         attrValue = 0;
+         explicitMode = true;
+         return true;
 //      case V_STATIC:
 //         attrValue = (tpStatic | tpSealed);
 //         return true;
@@ -1588,18 +1588,18 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //      case V_PREDEFINED:
 //         attrValue = tpPredefined;
 //         return true;
-//      case V_DISPATCHER:
-//         attrValue = tpDispatcher;
-//         explicitMode = true;
-//         return true;
+      case V_DISPATCHER:
+         attrValue = tpDispatcher;
+         explicitMode = true;
+         return true;
 //      case V_STACKUNSAFE:
 //         attrValue = tpDynamic;
 //         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant)
 //{
 //   switch ((size_t)attrValue)
@@ -2389,16 +2389,16 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //
 //   return 0;
 //}
-//
-//bool CompilerLogic :: validateMessage(ref_t message, bool isClassClass)
-//{
-//   bool dispatchOne = getAction(message) == DISPATCH_MESSAGE_ID;
-//
-//   if (isClassClass && dispatchOne) {
-//      return false;
-//   }
-//   else if (!isClassClass && dispatchOne && getParamCount(message) != 0) {
-//      return false;
-//   }
-//   else return true;
-//}
+
+bool CompilerLogic :: validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass)
+{
+   bool dispatchOne = message == scope.dispatch_message;
+
+   if (isClassClass && dispatchOne) {
+      return false;
+   }
+   //else if (!isClassClass && dispatchOne && getParamCount(message) != 0) {
+   //   return false;
+   //}
+   else return true;
+}

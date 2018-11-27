@@ -48,9 +48,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
    helper.beforeLoad(compiler, *this);
 
   // initialize compiler inline code
-   //MessageMap verbs;
-   //ByteCodeCompiler::loadVerbs(verbs);
-   linker.prepareCompiler(/*verbs*/);
+   linker.prepareCompiler();
 
   // create the image
    ident_t entryName = project->resolveForward(SYSTEM_ENTRY);

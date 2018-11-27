@@ -89,22 +89,22 @@ struct ModuleScope : _ModuleScope
 
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne/*, IdentifierList* importedNs*/);
 
-//   virtual ident_t resolveFullName(ref_t reference)
-//   {
-//      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
-//      if (isTemplateWeakReference(referenceName)) {
-//         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
-//      }
-//      else return referenceName;
-//   }   
-//   virtual ident_t resolveFullName(ident_t referenceName)
-//   {
-//      if (isTemplateWeakReference(referenceName)) {
-//         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
-//      }
-//      else return referenceName;
-//   }
-//
+   virtual ident_t resolveFullName(ref_t reference)
+   {
+      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+      if (isTemplateWeakReference(referenceName)) {
+         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      }
+      else return referenceName;
+   }   
+   virtual ident_t resolveFullName(ident_t referenceName)
+   {
+      if (isTemplateWeakReference(referenceName)) {
+         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      }
+      else return referenceName;
+   }
+
 //   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensionsToExport);
 //
 //   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensionsToExport);

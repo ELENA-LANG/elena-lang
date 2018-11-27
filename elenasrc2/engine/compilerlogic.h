@@ -116,7 +116,7 @@ public:
 //
 //      return isEmbeddable(info);
 //   }
-//   virtual bool isRole(ClassInfo& info);
+   virtual bool isRole(ClassInfo& info);
 //   virtual bool isAbstract(ClassInfo& info);
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
@@ -150,19 +150,19 @@ public:
 //   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
 //
 //   virtual void injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
-//
-//   virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
+
+   virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 //
    virtual bool validateClassAttribute(int& attrValue);
-//   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
-//   virtual bool validateImplicitMethodAttribute(int& attrValue);
+   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
+   virtual bool validateImplicitMethodAttribute(int& attrValue);
 //   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant);
 //   virtual bool validateLocalAttribute(int& attrValue);
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 //////   virtual bool validateWarningAttribute(int& attrValue);
-//   virtual bool validateMessage(ref_t message, bool isClassClass);
-////
+   virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);
+
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag);
 //   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);
 //

@@ -1,6 +1,27 @@
 //        ELENA Language 4.0
 //      inline system library
 
+procedure __object."#dispatch[1]"
+
+  bsredirect  
+/*
+  open    4
+  reserve 2
+  esavesi 3
+  bcopys  -3
+  pushb
+  pusha
+  acopyr class : system'Message
+  pushr class : system'MethodNotFoundException
+  asavesi 5
+  aloadsi 0
+  pushr const : %"new[2]"
+*/
+  throw
+
+end
+
+
 symbol sta_start
 
   pushr entry : "$forwards'$program"

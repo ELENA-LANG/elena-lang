@@ -14,14 +14,14 @@
 //extension       = #8203.
 //
 //const           = #8201.
-//singleton       = #8208.
+#8208  = singleton;
 //generic         = #8202.
 //static          = #8194.
 //var             = #16385.
 //auto            = #50.
 //interface       = #8196.
 //field           = #16392.
-//method          = #16393.
+#16393 = method;
 //__loop          = #16394.
 ////nonstructural   = #8204.
 //import          = #16395.
@@ -41,8 +41,8 @@
 #8213  = internal;
 //closed          = #8214.
 //predefined      = #8215.
-//dispatch        = #8216.
-//
+#8216  = dispatch;
+
 //__args          = #32. 
 //
 //__string        = #8200.

@@ -87,8 +87,7 @@ bool CommandTape :: importReference(ByteCommand& command, _Module* sour, _Module
       command.additional = importRef(sour, (ref_t)command.additional, dest);
    }
    if (ByteCodeCompiler::IsM2Code(command.code)) {
-      throw InternalError("unsupported");
-      //command.additional = importMessage(sour, (ref_t)command.additional, dest);
+      command.additional = importMessage(sour, (ref_t)command.additional, dest);
    }
    if (ByteCodeCompiler::IsRCode(command.code)) {
       command.argument = importRef(sour, (ref_t)command.argument, dest);

@@ -5,11 +5,14 @@ __define TOKEN			4112
 __define EXPRESSION             4114
 __define DECLARATION            4115
 __define BLOCK		        4122
+__define MESSAGE		4123
 __define BLOCK_END		4125
+__define DISPATCH               4128
 __define ATTRIBUTE_DECLARATION  4174
 
 __define eof            	12291
 __define identifier		12293
+__define reference		12295
 __define attribute		12303
 
 START ->
@@ -38,7 +41,11 @@ SYMBOL_DECLARATION ->
 	= EXPRESSION
 
 METHOD_DECLARATION ->
-	( ) BLOCK
+	( ) METHOD_BODY
+
+METHOD_BODY ->
+	BLOCK
+	| => DISPATCH DECLARATION_END
 
 BLOCK ->
 	OPENING_CURLY_BRACKET STATEMENTS
@@ -46,12 +53,26 @@ BLOCK ->
 STATEMENTS ->
 	BLOCK_END
 
+DISPATCH ->
+	EXPRESSION
+
 EXPRESSION ->
-	identifier
+	identifier OPERATIONS
+	| reference OPERATIONS
+
+OPERATIONS ->
+	. MESSAGE MESSAGE_BODY OPERATIONS
+	| eps
 
 TOKENS ->
 	TOKEN TOKENS
 	| eps
+
+MESSAGE ->
+	identifier
+
+MESSAGE_BODY ->
+	( )
 
 TOKEN ->
 	identifier

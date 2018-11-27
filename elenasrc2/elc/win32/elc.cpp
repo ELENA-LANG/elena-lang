@@ -97,7 +97,7 @@ public:
 
    virtual void afterLoad(_ELENA_::ExecutableImage& image)
    {
-      _ELENA_::Project* project = image.getProject();
+      //_ELENA_::Project* project = image.getProject();
 
       _ELENA_::Section* debug = image.getDebugSection();
 
