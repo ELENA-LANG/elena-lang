@@ -154,7 +154,7 @@ public:
 //   virtual void tweakClassFlags(_CompilerScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 //
-//   virtual bool validateClassAttribute(int& attrValue);
+   virtual bool validateClassAttribute(int& attrValue);
 //   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
 //   virtual bool validateImplicitMethodAttribute(int& attrValue);
 //   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant);

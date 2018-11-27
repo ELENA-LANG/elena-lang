@@ -3701,9 +3701,9 @@ bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
 void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument)
 {
    switch (type) {
-//      case lxSymbolReference:
-//         tape.write(bcCallR, argument | mskSymbolRef);
-//         break;
+      case lxSymbolReference:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         break;
 //      case lxConstantString:
 //      case lxConstantWideStr:
       case lxClassSymbol:

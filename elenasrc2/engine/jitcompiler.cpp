@@ -241,8 +241,8 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
 
 void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize)
 {
-   //// create VMT static table
-   //vmtWriter.writeBytes(0, staticSize << 2);
+   // create VMT static table
+   vmtWriter.writeBytes(0, staticSize << 2);
 
    alignCode(&vmtWriter, VA_ALIGNMENT, false);
 

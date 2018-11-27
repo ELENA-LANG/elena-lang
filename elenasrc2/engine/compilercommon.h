@@ -75,7 +75,7 @@
 //
 //#define V_CONSTRUCTOR    (ref_t)-16384
 //#define V_VARIABLE       (ref_t)-16385
-//#define V_CLASS          (ref_t)-16386
+#define V_CLASS          (ref_t)-16386
 //#define V_CONVERSION     (ref_t)-16387
 //#define V_INITIALIZER    (ref_t)-16388
 //#define V_SYMBOLEXPR     (ref_t)-16389
@@ -200,8 +200,8 @@ struct _ModuleScope
    _Module*          module;
    _Module*          debugModule;
 
-//   // cached references
-//   ref_t             superReference;
+   // cached references
+   ref_t             superReference;
 //   ref_t             intReference;
 //   ref_t             longReference;
 //   ref_t             realReference;
@@ -236,9 +236,9 @@ struct _ModuleScope
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
    virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
 //   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
-//
-//   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
-//   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
+
+   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
+   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
@@ -248,9 +248,9 @@ struct _ModuleScope
 //   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensionsToExport) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
-   //virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
+   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
 
-  // virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
+   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne/*, IdentifierList* importedNs*/) = 0;
 //   virtual ident_t resolveFullName(ref_t reference) = 0;
 //   virtual ident_t resolveFullName(ident_t referenceName) = 0;
 
@@ -297,7 +297,7 @@ struct _ModuleScope
    {
       project = NULL;
       debugModule = module = NULL;
-//      intReference = boolReference = superReference = 0;
+      /*intReference = boolReference = */superReference = 0;
 //      signatureReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      arrayReference = charReference = realReference = 0;
@@ -448,9 +448,9 @@ public:
 //   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 //
 //   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure) = 0;
-//
-//   // attribute validations
-//   virtual bool validateClassAttribute(int& attrValue) = 0;
+
+   // attribute validations
+   virtual bool validateClassAttribute(int& attrValue) = 0;
 //   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
 //   virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant) = 0;

@@ -1110,10 +1110,10 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    int row = 0;
 
    if (fullInfo) {
-      //if (header.parentRef) {
-      //   printLine("@parent ", module->resolveReference(header.parentRef));
-      //   row++;
-      //}         
+      if (header.parentRef) {
+         printLine("@parent ", module->resolveReference(header.parentRef));
+         row++;
+      }         
 
       listFlags(header.flags, row, pageSize);
 //      listFields(module, className, row, pageSize);

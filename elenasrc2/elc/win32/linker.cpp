@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Win32 / Win64 (limited)
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -83,12 +83,14 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
             return ((ImageBaseMap*)map)->import + address + disp;
          }
       }
-      case mskDebugRef:
+      case mskMetaRef:
          // HOTFIX : mskDebugRef is used for the message table reference
-         if (key == mskMessageTableRef) {
-            return ((ImageBaseMap*)map)->mdata + ((ImageBaseMap*)map)->base;
-         }
-         else return ((ImageBaseMap*)map)->debug + base + disp;
+         switch (key) {
+            case mskMessageTableRef:
+               return ((ImageBaseMap*)map)->mdata + ((ImageBaseMap*)map)->base;
+            default:
+               return ((ImageBaseMap*)map)->debug + base + disp;
+         }         
       default:
          return disp;
    }
@@ -275,7 +277,7 @@ void Linker :: fixImage(ImageInfo& info)
   // fix up rdata section
    rdata->fixupReferences(&info.map, reallocate);
 
-   // fix up mdata section
+  // fix up mdata section
    mdata->fixupReferences(&info.map, reallocate);
 
   // fix up bss section
@@ -618,7 +620,7 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    if (rdataSize > 0)
       writeSection(file, info.image->getRDataSection(), alignment);
 
-   // rdata section
+   // mdata section
    if (mdataSize > 0)
       writeSection(file, info.image->getMDataSection(), alignment);
 

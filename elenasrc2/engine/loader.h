@@ -26,8 +26,8 @@ protected:
    ReferenceMap _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
    ReferenceMap  _bssReferences;
 
-   // actions
-   ReferenceMap  _actions;         // actions
+   //// actions
+   //ReferenceMap  _actions;         // actions
 
    void mapReference(ident_t reference, void* vaddress, size_t mask);
    void* resolveReference(ident_t reference, size_t mask);
@@ -38,7 +38,7 @@ public:
    virtual ref_t resolveExternal(ident_t external);
 
    virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, size_t mask);
-   virtual void mapPredefinedAction(ident_t name, ref_t reference);
+   //virtual void mapPredefinedAction(ident_t name, ref_t reference);
 
    void clearReferences()
    {
@@ -53,14 +53,14 @@ public:
       _characterReferences.clear();
       _wideReferences.clear();
       _bssReferences.clear();
-      _actions.clear();
+//      _actions.clear();
    }
 
    _ImageLoader()
       : _codeReferences(INVALID_REF), _dataReferences(INVALID_REF), _symbolReferences(INVALID_REF),
         _statReferences(INVALID_REF), _constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
-        _literalReferences((size_t)-1), _bssReferences(INVALID_REF), _exportReferences(INVALID_REF), _wideReferences((size_t)-1),
-        _actions(0)
+        _literalReferences((size_t)-1), _bssReferences(INVALID_REF), _exportReferences(INVALID_REF), _wideReferences((size_t)-1)/*,
+        _actions(0)*/
    {
    }
 };
@@ -80,6 +80,7 @@ public:
    virtual Section* getImportSection() { return &_import; }
    virtual Section* getDebugSection()  { return &_debug; }
    virtual Section* getTLSSection()    { return &_tls; }
+   // returns the message table
    virtual Section* getMDataSection()  { return &_mdata; }
 
    virtual ReferenceMap::Iterator getExternalIt() = 0;

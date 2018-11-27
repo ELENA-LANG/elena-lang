@@ -144,13 +144,13 @@ void Module :: mapPredefinedReference(ident_t name, ref_t reference)
    _references.add(name, reference);
 }
 
-void Module :: mapPredefinedAction(ident_t name, ref_t reference)
+void Module :: mapPredefinedAction(ident_t name, ref_t reference, ref_t signature)
 {
    _resolvedActions.clear();
    _resolvedActionNames.clear();
 
    _actionNames.add(name, reference);
-   _actions.add(encodeActionX(reference, 0u), reference);
+   _actions.add(encodeActionX(reference, signature), reference);
 }
 
 ref_t Module :: mapReference(ident_t reference)

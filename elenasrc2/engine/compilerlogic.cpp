@@ -1453,11 +1453,11 @@ CompilerLogic :: CompilerLogic()
 //      injectOverloadList(scope, info, compiler, classRef);
 //   }
 //}
-//
-//bool CompilerLogic :: validateClassAttribute(int& attrValue)
-//{
-//   switch ((size_t)attrValue)
-//   {
+
+bool CompilerLogic :: validateClassAttribute(int& attrValue)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_SEALED:
 //         attrValue = elSealed;
 //         return true;
@@ -1497,19 +1497,19 @@ CompilerLogic :: CompilerLogic()
 ////      case V_TAPEGROUP:
 ////         attrValue = elTapeGroup;
 ////         return true;
-//      case V_CLASS:
-//      case V_PUBLIC:
-//      case V_INTERNAL:
-//         attrValue = 0;
-//         return true;
+      case V_CLASS:
+      case V_PUBLIC:
+      case V_INTERNAL:
+         attrValue = 0;
+         return true;
 //      case V_SINGLETON:
 //         attrValue = elRole | elNestedClass;
 //         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic::validateImplicitMethodAttribute(int& attrValue)
 //{
 //   bool dummy = false;

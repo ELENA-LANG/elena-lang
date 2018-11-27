@@ -87,24 +87,24 @@ public:
 //         this->size = size;
 //      }
 //   };
-//
-//   // InheritResult
-//   enum InheritResult
-//   {
-//      irNone = 0,
-//      irSuccessfull,
-//      irUnsuccessfull,
-//      irSealed,
-//      irInvalid,
+
+   // InheritResult
+   enum InheritResult
+   {
+      irNone = 0,
+      irSuccessfull,
+      irUnsuccessfull,
+      //irSealed,
+      //irInvalid,
 //      irObsolete
-//   };
+   };
 
    enum ObjectKind
    {
       okUnknown = 0,
 
 //      okObject,                       // param - class reference
-      okSymbol,                       // param - reference
+      okSymbol,                       // param - reference, extraparam - returning result
 //      okConstantSymbol,               // param - reference, extraparam - class reference
       okClass,                        // param - reference, extraparam - class reference
 //      okLiteralConstant,              // param - reference
@@ -245,18 +245,18 @@ private:
          _Module*      module;
          Scope*        parent;
 
-//         virtual void raiseError(const char* message)
-//         {
-//            moduleScope->project->raiseError(message);
-//         }
+         virtual void raiseError(const char* message)
+         {
+            moduleScope->project->raiseError(message);
+         }
          virtual void raiseError(const char* message, SNode terminal)
          {
             parent->raiseError(message, terminal);
          }
-//         virtual void raiseWarning(int level, const char* message, SNode terminal)
-//         {
-//            parent->raiseWarning(level, message, terminal);
-//         }
+         virtual void raiseWarning(int level, const char* message, SNode terminal)
+         {
+            parent->raiseWarning(level, message, terminal);
+         }
 //         virtual void raiseWarning(int level, const char* message, ident_t identifier)
 //         {
 //            parent->raiseWarning(level, message, identifier);
@@ -318,8 +318,8 @@ private:
    {
 //      // imported namespaces
 //      IdentifierList importedNs;
-//      ForwardMap     forwards;       // forward declarations
-//
+      ForwardMap     forwards;       // forward declarations
+
 ////      // symbol hints
 ////      Map<ref_t, ref_t> constantHints;
 ////
@@ -346,19 +346,19 @@ private:
 ////      {
 ////         constantHints.add(reference, classReference);
 ////      }
-////
-////      virtual void raiseError(const char* message)
-////      {
-////         Scope::raiseError(message);
-////      }
+
+      virtual void raiseError(const char* message)
+      {
+         Scope::raiseError(message);
+      }
       virtual void raiseError(const char* message, SNode terminal)
       {
          moduleScope->raiseError(message, sourcePath, terminal);
       }
-////      virtual void raiseWarning(int level, const char* message, SNode terminal)
-////      {
-////         moduleScope->raiseWarning(level, message, sourcePath, terminal);
-////      }
+      virtual void raiseWarning(int level, const char* message, SNode terminal)
+      {
+         moduleScope->raiseWarning(level, message, sourcePath, terminal);
+      }
 ////      virtual void raiseWarning(int level, const char* message)
 ////      {
 ////         moduleScope->raiseWarning(level, message, sourcePath);
@@ -374,18 +374,18 @@ private:
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
-//      ObjectInfo mapGlobal(ident_t identifier);
+      ObjectInfo mapGlobal(ident_t identifier);
 
       virtual pos_t saveSourcePath(ByteCodeWriter& writer);
       virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
 
 ////      ref_t resolveFullReference(ident_t name);
-//      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
+      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
 
       ref_t mapNewTerminal(SNode terminal);
 
-//      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
-//
+      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
+
 ////      void loadExtensions(ident_t ns);
 ////      void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
 ////      {
@@ -794,8 +794,8 @@ private:
 //   void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
 //
 //   int defineFieldSize(CodeScope& scope, int offset);
-//
-//   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreSealed);
+
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/);
 //   void inheritClassConstantList(_CompilerScope& scope, ref_t sourceRef, ref_t targetRef);
 //
 //   // NOTE : the method is used to set template pseudo variable
@@ -803,13 +803,13 @@ private:
 //
 //   ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
 //   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
-//
-//   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreSealed = false);
-//   void compileParentDeclaration(SNode node, ClassScope& scope);
+
+   void compileParentDeclaration(/*SNode baseNode, */ClassScope& scope, ref_t parentRef/*, bool ignoreSealed = false*/);
+   void compileParentDeclaration(/*SNode node, */ClassScope& scope);
 //   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 //
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
-//   void declareClassAttributes(SNode node, ClassScope& scope);
+   void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
 //   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
    void declareVMT(SNode member, ClassScope& scope);

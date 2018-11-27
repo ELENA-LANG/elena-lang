@@ -1,10 +1,8 @@
-//public T<int> x = 2.
-//
-//// --- super object ---
-//
-///// a common ancestor
-//
-//public class Object
+// --- super object ---
+
+/// a common ancestor
+
+public class Object;
 //{
 //    /// Creates the object
 //    constructor new []

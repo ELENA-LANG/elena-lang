@@ -36,7 +36,7 @@ public:
    virtual ref_t mapConstant(ident_t reference) = 0;
 
    virtual void mapPredefinedReference(ident_t name, ref_t reference) = 0;
-   virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
+   virtual void mapPredefinedAction(ident_t name, ref_t reference, ref_t signature) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 
@@ -155,7 +155,7 @@ public:
 
    virtual void* resolveReference(ReferenceInfo referenceInfo, ref_t mask) = 0;
 
-   virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
+   //virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
 
    virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask) = 0;
 
@@ -473,11 +473,11 @@ struct VMTXEntry
 
 struct ClassHeader
 {
-   //ref_t  staticSize;      // static table size
-   //ref_t  classRef;        // class class reference
+   ref_t  staticSize;      // static table size
+   ref_t  classRef;        // class class reference
    size_t count;
    size_t flags;
-   //ref_t  parentRef;
+   ref_t  parentRef;
 };
 
 // --- ClassInfo ---
@@ -554,7 +554,7 @@ struct ClassInfo
       : /*fields(-1), */methods(0)//, methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
-//      header.classRef = 0;
+      header.classRef = 0;
    }
 };
 

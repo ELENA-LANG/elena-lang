@@ -21,9 +21,10 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
    _project = project;
    _objectHeaderSize = compiler->getObjectHeaderSize();
 
-  //// create message table module
-  // _Module* messages = _project->createModule(MESSAGE_TABLE_MODULE);
-  // messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
+  // create message module
+   _Module* messages = _project->createModule(MESSAGE_TABLE_MODULE);
+   messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 12); // write dummy place holder
+   messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
 
   //// load default forwards
   // _literal = project->resolveForward(STR_FORWARD);
@@ -60,8 +61,8 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
 
-  //// resolve message table
-  // linker.resolve(MESSAGE_TABLE, mskMessageTableRef, true);
+  // resolve message & action tables
+   linker.resolve(MESSAGE_TABLE, mskMessageTableRef, true);
 
    helper.afterLoad(*this);
 }
@@ -91,11 +92,13 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
          return &_bss;
       case mskTLSRef:
          return &_tls;
-      case mskDebugRef:
-         if (mask == mskMessageTableRef) {
-            return &_mdata;
+      case mskMetaRef:
+         switch (mask) {
+            case mskMessageTableRef:
+               return &_mdata;
+            default:
+               return &_debug;
          }
-         else return &_debug;
       default:
          return NULL;
    }

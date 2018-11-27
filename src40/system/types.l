@@ -1,9 +1,9 @@
-///// Attributes
+/// Attributes
 //T               = #16390.
 //V               = #30.
 //
 //type            = #16390.
-//class           = #16386.
+#16386 = class;
 //struct          = #8197.
 //symbol          = #16389.
 //constructor     = #16384.
@@ -36,9 +36,9 @@
 //set             = #16402.  
 //
 //abstract        = #8210. 
-#8211 = public;
+#8211  = public;
 //private         = #8212.
-#8213 = internal;
+#8213  = internal;
 //closed          = #8214.
 //predefined      = #8215.
 //dispatch        = #8216.

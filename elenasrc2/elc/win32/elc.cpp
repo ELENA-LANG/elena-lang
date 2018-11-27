@@ -108,10 +108,10 @@ public:
 
          // save subject info if enabled
          _ELENA_::MemoryWriter debugWriter(debug);
-         if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
-            image.saveActionNames(&debugWriter);
-         }
-         else debugWriter.writeDWord(0);
+         //if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
+         //   image.saveActionNames(&debugWriter);
+         //}
+         /*else */debugWriter.writeDWord(0);
       }
       else debug->clear();
    }

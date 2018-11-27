@@ -147,10 +147,10 @@ void* _ImageLoader :: resolveReference(ReferenceInfo referenceInfo, size_t mask)
    else return resolveReference(referenceInfo.referenceName, mask);
 }
 
-void _ImageLoader :: mapPredefinedAction(ident_t name, ref_t reference)
-{
-   _actions.add(name, reference);
-}
+//void _ImageLoader :: mapPredefinedAction(ident_t name, ref_t reference)
+//{
+//   _actions.add(name, reference);
+//}
 
 // --- Image ---
 

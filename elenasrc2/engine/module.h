@@ -58,7 +58,7 @@ public:
    ReferenceMap::Iterator References() { return _references.start(); }
 
    virtual void mapPredefinedReference(ident_t name, ref_t reference);
-   virtual void mapPredefinedAction(ident_t name, ref_t reference);
+   virtual void mapPredefinedAction(ident_t name, ref_t reference, ref_t signature);
 
    virtual ref_t mapReference(ident_t reference);
    virtual ref_t mapReference(ident_t reference, bool existing);
@@ -195,7 +195,7 @@ public:
       throw InternalError("Read-only Module");
    }
 
-   virtual void mapPredefinedAction(ident_t, ref_t)
+   virtual void mapPredefinedAction(ident_t, ref_t, ref_t)
    {
       throw InternalError("Read-only Module");
    }

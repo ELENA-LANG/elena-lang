@@ -67,7 +67,6 @@ namespace _ELENA_
    //#define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
    //#define IF_ELSE_MESSAGE_ID      0x0021
    //#define ISNIL_MESSAGE_ID        0x0022
-   //#define PREDEFINED_MESSAGE_ID   0x0022
 
 //   // virtual operator
 //   #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -106,7 +105,7 @@ namespace _ELENA_
    #define VA_ALIGNMENT_POWER 0x03
 
   // --- ELENA Reference masks ---
-   enum ReferenceType
+   enum ReferenceType : unsigned int
    {
       // masks
       mskAnyRef              = 0xFF000000u,
@@ -116,7 +115,7 @@ namespace _ELENA_
       mskCodeRef             = 0x00000000u,
       mskRelCodeRef          = 0x20000000u,
       mskRDataRef            = 0x40000000u,
-      mskDebugRef            = 0x60000000u,
+      mskMetaRef             = 0x60000000u,
       mskStatRef             = 0x80000000u,
       mskDataRef             = 0xA0000000u,
       mskTLSRef              = 0xC0000000u,
@@ -166,7 +165,8 @@ namespace _ELENA_
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
 //      mskConstArray          = 0x0D000000u,   // constant array
 
-      mskMessageTableRef     = 0x60FFFFFFu    // message table reference, a special case of debug reference
+      mskDebugRef            = 0x60000000u,
+      mskMessageTableRef     = 0x62000000u,
    };
 
    // --- ELENA Debug symbol constants ---
@@ -485,8 +485,9 @@ namespace _ELENA_
 
    #define NATIVE_MODULE            "$native"
 
-   //#define MESSAGE_TABLE_MODULE     "$messages"
-   //#define MESSAGE_TABLE            "$messages'$table"
+   #define MESSAGE_TABLE_MODULE     "$messages"
+   #define MESSAGE_TABLE            "$messages'$table"
+   #define MESSAGEBODY_TABLE        "$messages'$body"
 
   // VM temporal code
 //   #define TAPE_SYMBOL              "$tape"
@@ -496,8 +497,8 @@ namespace _ELENA_
    #define TAPE_KEY                 "$elena'@tapekey"                // VM Tape key
    #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
 
-//   // predefined system forwards
-//   #define SUPER_FORWARD            "$super"                         // the common class predecessor
+   // predefined system forwards
+   #define SUPER_FORWARD            "$super"                         // the common class predecessor
 //   #define LAZYEXPR_FORWARD         "$lazyexpression"                // the base lazy expression class
 //   #define INT_FORWARD              "$int"
 //   #define LONG_FORWARD             "$long"

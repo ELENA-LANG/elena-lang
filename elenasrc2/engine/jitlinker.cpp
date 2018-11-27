@@ -157,93 +157,128 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 // --- JITLinker ---
 
-ref_t JITLinker :: resolveAction(ident_t action, _Module* module, ref_t* signatures, int paramCount)
-{
-////   size_t overloadIndex = signature.find('$');
-//   if (signatures) {
-//      SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
-//
-//      // resolve the message
-//      IdentifierString signatureName(action);
-//      for (int i = 0; i < paramCount; i++) {
-//         signatureName.append('$');
-//         ident_t referenceName = module->resolveReference(signatures[i]);
-//         if (isWeakReference(referenceName)) {
-//            if (isTemplateWeakReference(referenceName)) {
-//               ReferenceInfo refInfo = _loader->retrieveReference(module, signatures[i], mskVMTRef);
-//
-//               signatureName.append(refInfo.referenceName);
-//            }
-//            else {
-//               signatureName.append(module->Name());
-//               signatureName.append(referenceName);
-//            }
-//         }
-//         else signatureName.append(referenceName);
-//      }
-//
-//      ref_t tableOffs = info.module->mapAction(signatureName.c_str(), 0, true);
-//      if (tableOffs == 0) {
-//         MemoryWriter writer(info.section);
-//
-//         tableOffs = writer.Position();
-//         writer.writeDWord((ref_t)_loader->resolveReference(action, 0));
-//
-//         IdentifierString typeName;
-//         for (int i = 0; i < paramCount; i++) {
-//            ident_t referenceName = module->resolveReference(signatures[i]);
-//            if (isWeakReference(referenceName)) {
-//               if (isTemplateWeakReference(referenceName)) {
-//                  typeName.copy(referenceName);
-//               }
-//               else {
-//                  typeName.copy(module->Name());
-//                  typeName.append(referenceName);
-//               }
-//            }
-//            else typeName.copy(referenceName);
-//
-//            ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
-//            writer.writeRef(typeClassRef | mskVMTRef, 0);
-//         }
-//
-//         info.module->mapPredefinedAction(signatureName.c_str(), tableOffs);
-//      }
-//
-//      return tableOffs | SIGNATURE_FLAG;
-//   }
-//   else return (ref_t)_loader->resolveReference(action, 0);
+ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_t weakActionRef, ref_t signature)
+{   
+   if (signature == 0u && weakActionRef != 0u)
+      return weakActionRef;
 
-   return 0;
+   MemoryWriter mdataWriter(messageTable.section);
+
+   ref_t actionRef = mdataWriter.Position() / 12;
+   // weak action ref for strong one or the same ref
+   if (weakActionRef) {
+      mdataWriter.writeDWord(weakActionRef);
+   }
+   else mdataWriter.writeDWord(actionRef);
+
+   // signature
+   if (signature) {
+      mdataWriter.writeRef(mskMessageTableRef | signature, 0);
+   }
+   else mdataWriter.writeDWord(0);
+
+   // action name for weak message or zero for strong one
+   if (signature == 0u) {
+      MemoryWriter bodyWriter(_loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true).section);
+
+      mdataWriter.writeRef(mskMessageTableRef | bodyWriter.Position(), 0);
+
+      bodyWriter.writeLiteral(actionName, getlength(actionName) + 1);
+   }
+   else mdataWriter.writeDWord(0);
+
+   messageTable.module->mapPredefinedAction(actionName, signature, actionRef);
+
+   return actionRef;
+}
+
+ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, int paramCount)
+{
+   if (!signature)
+      return 0;
+
+   ref_t signatures[ARG_COUNT];
+   module->resolveSignature(signature, signatures);
+
+   // resolve the message
+   IdentifierString signatureName;
+   for (int i = 0; i < paramCount; i++) {
+      signatureName.append('$');
+      ident_t referenceName = module->resolveReference(signatures[i]);
+      if (isWeakReference(referenceName)) {
+         if (isTemplateWeakReference(referenceName)) {
+            ReferenceInfo refInfo = _loader->retrieveReference(module, signatures[i], mskVMTRef);
+   
+            signatureName.append(refInfo.referenceName);
+         }
+         else {
+            signatureName.append(module->Name());
+            signatureName.append(referenceName);
+         }
+      }
+      else signatureName.append(referenceName);
+   }
+
+   ref_t resolvedSignature = module->mapAction(signatureName.c_str(), 0u, true);
+   if (resolvedSignature == 0) {
+      MemoryWriter writer(_loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true).section);
+      resolvedSignature = writer.Position();
+
+      IdentifierString typeName;
+      for (int i = 0; i < paramCount; i++) {
+         ident_t referenceName = module->resolveReference(signatures[i]);
+         if (isWeakReference(referenceName)) {
+            if (isTemplateWeakReference(referenceName)) {
+               typeName.copy(referenceName);
+            }
+            else {
+               typeName.copy(module->Name());
+               typeName.append(referenceName);
+            }
+         }
+         else typeName.copy(referenceName);
+
+         ref_t typeClassRef = module->mapReference(typeName.c_str(), false);
+         writer.writeRef(typeClassRef | mskVMTRef, 0);
+      }
+
+      module->mapPredefinedAction(signatureName.c_str(), 0u, resolvedSignature);
+   }
+
+   return resolvedSignature;
+}
+
+ref_t JITLinker :: resolveWeakAction(SectionInfo& messageTable, ident_t actionName)
+{
+   ref_t resolvedAction = messageTable.module->mapAction(actionName, 0u, true);
+   if (!resolvedAction) {
+      resolvedAction = mapAction(messageTable, actionName, 0u, 0u);
+
+      messageTable.module->mapPredefinedAction(actionName, 0u, resolvedAction);
+   }
+
+   return resolvedAction;
 }
 
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
 {
-   //ref_t actionRef = 0;
-   //ref_t flags = message & MESSAGE_FLAG_MASK;
-   //int paramCount = 0;
-   //decodeMessage(message, actionRef, paramCount);
+   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
 
-   //// if it is a predefined message
-   //if (actionRef <= PREDEFINED_MESSAGE_ID) {
-   //   return message;
-   //}
+   ref_t actionRef, flags;
+   int paramCount = 0;
+   decodeMessage(message, actionRef, paramCount, flags);
 
-   //// otherwise signature and custom verb should be imported
-   //ref_t signature = 0;
-   //ident_t actionName = module->resolveAction(actionRef, signature);
-   //if (signature) {
-   //   // if the message signature is provided
-   //   ref_t signatures[OPEN_ARG_COUNT];
-   //   size_t signLen = module->resolveSignature(signature, signatures);
+   // signature and custom verb should be imported
+   ref_t signature;
+   ident_t actionName = module->resolveAction(actionRef, signature);
 
-   //   actionRef = resolveAction(actionName, module, signatures, signLen);
-   //}
-   //else actionRef = (ref_t)_loader->resolveReference(actionName, 0);
+   ref_t resolvedSignature = resolveSignature(module, signature, paramCount);
+   ref_t resolvedAction = messageTable.module->mapAction(actionName, resolvedSignature, true);
+   if (!resolvedAction) {
+      resolvedAction = mapAction(messageTable, actionName, resolveWeakAction(messageTable, actionName), resolvedSignature);
+   }
 
-   //return encodeMessage(actionRef, paramCount) | flags;
-
-   return 0; // !! temporal
+   return encodeMessage(resolvedAction, paramCount, flags);
 }
 
 void* JITLinker :: calculateVAddress(MemoryWriter* writer, int mask)
@@ -562,7 +597,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
    MemoryWriter vmtWriter(vmtImage);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count, /*header.staticSize*/0);
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count, header.staticSize);
 
    void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
@@ -572,8 +607,8 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
    if (test(header.flags, elStandartVMT)) {
       size_t position = vmtWriter.Position();
 
-      //// load parent class
-      //void* parentVMT = getVMTReference(sectionInfo.module, header.parentRef, references);
+      // load parent class
+      void* parentVMT = getVMTReference(sectionInfo.module, header.parentRef, references);
       size_t count = /*_compiler->copyParentVMT(parentVMT, (VMTEntry*)vmtImage->get(position))*/0;
 
       // create native debug info header if debug info enabled
@@ -588,32 +623,32 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       size_t          methodPosition;
       VMTEntry        entry;
 
-      //size -= sizeof(ClassHeader);
-      //while (size > 0) {
-      //   vmtReader.read((void*)&entry, sizeof(VMTEntry));
+      size -= sizeof(ClassHeader);
+      while (size > 0) {
+         vmtReader.read((void*)&entry, sizeof(VMTEntry));
    
-      //   codeReader.seek(entry.address);
-      //   methodPosition = loadMethod(refHelper, codeReader, codeWriter);
-      //   
-      //   // NOTE : private message is not added to VMT
-      //   if (test(entry.message, SEALED_MESSAGE)) {
-      //      _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
-      //   }
-      //   else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
+         codeReader.seek(entry.address);
+         methodPosition = loadMethod(refHelper, codeReader, codeWriter);
+         
+         //// NOTE : private message is not added to VMT
+         //if (test(entry.message, SEALED_MESSAGE)) {
+         //   _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
+         //}
+         /*else */_compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
 
-      //   size -= sizeof(VMTEntry);
-      //}
+         size -= sizeof(VMTEntry);
+      }
       if (_withDebugInfo)
          endNativeDebugInfo(sizePtr);
 
       if (count != header.count)
          throw InternalError("VMT structure is corrupt");
 
-      //// load class class  
-      //void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
-      //void* parentVAddress = NULL;
-      //if (header.parentRef != 0)
-      //   parentVAddress = resolve(ReferenceInfo(sectionInfo.module, sectionInfo.module->resolveReference(header.parentRef)), mskVMTRef, true);
+      // load class class  
+      void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
+      void* parentVAddress = NULL;
+      if (header.parentRef != 0)
+         parentVAddress = resolve(ReferenceInfo(sectionInfo.module, sectionInfo.module->resolveReference(header.parentRef)), mskVMTRef, true);
 
       //// fix VMT
       //_compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
@@ -860,17 +895,40 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
    pos_t position = writer.Position();
 
    SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+   SectionInfo bodyInfo = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, false);
 
-   // load section into target image
+   // load table into target image
    MemoryReader reader(sectionInfo.section);
    writer.read(&reader, sectionInfo.section->Length());
+   
+   ref_t bodyPtr = writer.Position();
+
+   // load table content into target image
+   MemoryReader bodyReader(bodyInfo.section);
+   writer.read(&reader, bodyInfo.section->Length());
 
    // resolve section references
    _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
    while (!it.Eof()) {
-      references.add(position + *it, RefInfo(it.key(), sectionInfo.module));
+      ref_t key = it.key();
+
+      if ((key & mskAnyRef) == mskMessageTableRef) {
+         // fix the reference to the message body buffer
+         writer.seek(position + *it);
+         writer.writeDWord(bodyPtr + (key & ~mskAnyRef));
+      }
+      else references.add(position + *it, RefInfo(key, sectionInfo.module));
 
       it++;
+   }
+   writer.seekEOF();
+
+   // resolve signature references
+   _ELENA_::RelocationMap::Iterator body_it(bodyInfo.section->getReferences());
+   while (!body_it.Eof()) {
+      references.add(bodyPtr + *body_it, RefInfo(body_it.key(), bodyInfo.module));
+
+      body_it++;
    }
 
    // fix not loaded references
