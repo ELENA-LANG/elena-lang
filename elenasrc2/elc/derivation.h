@@ -52,6 +52,7 @@ class DerivationWriter : public _DerivationWriter
    void generateSymbolTree(SNode node);
    void generateClassTree(SNode node/*, DerivationScope& scope, int nested = 0*/);
    void generateMethodTree(SNode node/*, DerivationScope& scope, bool templateMode, bool closureMode*/);
+   /*bool*/void generateFieldTree(SNode node/*, DerivationScope& scope, SyntaxTree& buffer, bool templateMode*//* = false*/); // returns true if in-place init found
    void generateCodeTree(SNode node/*, DerivationScope& scope, bool withBookmark = false*/);
    void generateAttributes(SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
    void generateExpressionAttribute(SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
@@ -293,7 +294,6 @@ public:
 //     void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode = false);
-//   bool generateFieldTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode/* = false*/); // returns true if in-place init found
 //   void generateCodeExpression(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
 //   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);

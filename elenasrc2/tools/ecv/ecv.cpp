@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   3
+#define REVISION_VERSION   4
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -934,26 +934,26 @@ bool loadClassInfo(_Module* module, ident_t reference, ClassInfo& info)
    return true;
 }
 
-//void listFields(_Module* module, ident_t className, int& row, int pageSize)
-//{
-//   ClassInfo info;
-//   if (!loadClassInfo(module, className, info)) {
-//      return;
-//   }
-//   
-//   ClassInfo::FieldMap::Iterator it = info.fields.start();
-//   while (!it.Eof()) {
-//      ref_t type = info.fieldTypes.get(*it).value1;
-//      if (type != 0) {
-//         ident_t typeName = module->resolveReference(type);
-//
-//         printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
-//      }
-//      else printLine("Field ", (const char*)it.key(), row, pageSize);
-//   
-//      it++;
-//   }
-//}
+void listFields(_Module* module, ident_t className, int& row, int pageSize)
+{
+   ClassInfo info;
+   if (!loadClassInfo(module, className, info)) {
+      return;
+   }
+   
+   ClassInfo::FieldMap::Iterator it = info.fields.start();
+   while (!it.Eof()) {
+      //ref_t type = info.fieldTypes.get(*it).value1;
+      //if (type != 0) {
+      //   ident_t typeName = module->resolveReference(type);
+
+      //   printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
+      //}
+      /*else */printLine("Field ", (const char*)it.key(), row, pageSize);
+   
+      it++;
+   }
+}
 
 void listFlags(int flags, int& row, int pageSize)
 {
@@ -1001,8 +1001,8 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elReadOnlyRole))
    //   printLine("@flag ", "elReadOnlyRole", row, pageSize);
 
-   //if (test(flags, elNonStructureRole))
-   //   printLine("@flag ", "elNonStructureRole", row, pageSize);
+   if (test(flags, elNonStructureRole))
+      printLine("@flag ", "elNonStructureRole", row, pageSize);
 
    //if (test(flags, elSignature))
    //   printLine("@flag ", "elSignature", row, pageSize);
@@ -1116,7 +1116,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       }         
 
       listFlags(header.flags, row, pageSize);
-//      listFields(module, className, row, pageSize);
+      listFields(module, className, row, pageSize);
    }
 
    //if (header.classRef != 0 && withConstructors) {

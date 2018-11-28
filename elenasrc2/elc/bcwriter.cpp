@@ -25,9 +25,9 @@ bool isSimpleObject(SNode node, bool ignoreFields = false)
          if (!isSimpleObjectExpression(node, ignoreFields))
             return false;
       }
-      //else if (ignoreFields && (node.type == lxField || node.type == lxFieldAddress)) {
-      //   // ignore fields if required
-      //}
+      else if (ignoreFields && (node.type == lxField/* || node.type == lxFieldAddress*/)) {
+         // ignore fields if required
+      }
       else if (!test(node.type, lxSimpleMask))
          return false;
    }
@@ -261,19 +261,19 @@ void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, in
 //{
 //   tape.write(bdParamsLocal, writeString(localName), level);
 //}
-//
-//void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
-//{
-//   tape.write(bdSelf, 0, level);
-//}
-//
-//void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ident_t message)
-//{
-//   MemoryWriter writer(&_strings);
-//
-//   tape.write(bdMessage, 0, writer.Position());
-//   writer.writeLiteral(message);
-//}
+
+void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
+{
+   tape.write(bdSelf, 0, level);
+}
+
+void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ident_t message)
+{
+   MemoryWriter writer(&_strings);
+
+   tape.write(bdMessage, 0, writer.Position());
+   writer.writeLiteral(message);
+}
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
 {
@@ -1452,27 +1452,27 @@ void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, in
 //   scope.debugStrings->writeLiteral(className);
 //   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 //}
-//
-//void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
-//{
-//   if (!scope.debug)
-//      return;
-//
-//   DebugLineInfo info;
-//   info.symbol = dsLocal;
-//   info.addresses.local.nameRef = scope.debugStrings->Position();
-//
-//   if (level < 0) {
-//      scope.debugStrings->writeLiteral(GROUP_VAR);
-//
-//      level -= frameLevel;
-//   }
-//   else scope.debugStrings->writeLiteral(SELF_VAR);
-//
-//   info.addresses.local.level = level;
-//
-//   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
-//}
+
+void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
+{
+   if (!scope.debug)
+      return;
+
+   DebugLineInfo info;
+   info.symbol = dsLocal;
+   info.addresses.local.nameRef = scope.debugStrings->Position();
+
+   //if (level < 0) {
+   //   scope.debugStrings->writeLiteral(GROUP_VAR);
+
+   //   level -= frameLevel;
+   //}
+   /*else */scope.debugStrings->writeLiteral(SELF_VAR);
+
+   info.addresses.local.level = level;
+
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+}
 
 void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel)
 {
@@ -1492,20 +1492,20 @@ void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, De
    scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
-//void ByteCodeWriter :: writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message)
-//{
-//   if (!scope.debug)
-//      return;
-//
-//   ref_t nameRef = scope.debugStrings->Position();
-//   scope.debugStrings->writeLiteral(message);
-//
-//   DebugLineInfo info;
-//   info.symbol = symbol;
-//   info.addresses.local.nameRef = nameRef;
-//
-//   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
-//}
+void ByteCodeWriter :: writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message)
+{
+   if (!scope.debug)
+      return;
+
+   ref_t nameRef = scope.debugStrings->Position();
+   scope.debugStrings->writeLiteral(message);
+
+   DebugLineInfo info;
+   info.symbol = symbol;
+   info.addresses.local.nameRef = nameRef;
+
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+}
 
 void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug)
 {
@@ -1532,35 +1532,35 @@ void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug
 //
 //   return it.Eof() ? -1 : *it;
 //}
-//
-//void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
-//{
-//   bool structure = test(info.header.flags, elStructureRole);
-//   int remainingSize = info.size;
-//
-//   ClassInfo::FieldMap::Iterator it = info.fields.start();
-//   while (!it.Eof()) {
-//      if (!emptystr(it.key())) {
-//         DebugLineInfo symbolInfo(dsField, 0, 0, 0);
-//
-//         symbolInfo.addresses.field.nameRef = debugStrings->Position();
-//         if (structure) {
-//            int nextOffset = getNextOffset(it);
-//            if (nextOffset == -1) {
-//               symbolInfo.addresses.field.size = remainingSize;
-//            }
-//            else symbolInfo.addresses.field.size = nextOffset - *it;
-//
-//            remainingSize -= symbolInfo.addresses.field.size;
-//         }
-//
-//         debugStrings->writeLiteral(it.key());
-//
-//         writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
-//      }
-//      it++;
-//   }
-//}
+
+void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
+{
+   //bool structure = test(info.header.flags, elStructureRole);
+   //int remainingSize = info.size;
+
+   ClassInfo::FieldMap::Iterator it = info.fields.start();
+   while (!it.Eof()) {
+      if (!emptystr(it.key())) {
+         DebugLineInfo symbolInfo(dsField, 0, 0, 0);
+
+         symbolInfo.addresses.field.nameRef = debugStrings->Position();
+         //if (structure) {
+         //   int nextOffset = getNextOffset(it);
+         //   if (nextOffset == -1) {
+         //      symbolInfo.addresses.field.size = remainingSize;
+         //   }
+         //   else symbolInfo.addresses.field.size = nextOffset - *it;
+
+         //   remainingSize -= symbolInfo.addresses.field.size;
+         //}
+
+         debugStrings->writeLiteral(it.key());
+
+         writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+      }
+      it++;
+   }
+}
 
 void ByteCodeWriter :: writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings,
                                            ident_t className, int flags)
@@ -1708,7 +1708,7 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
 
      // save class debug info
       writeClassDebugInfo(compilerScope.debugModule, &debugWriter, &debugStringWriter, compilerScope.module->resolveReference(reference & ~mskAnyRef), info.header.flags);
-      //writeFieldDebugInfo(info, &debugWriter, &debugStringWriter);
+      writeFieldDebugInfo(info, &debugWriter, &debugStringWriter);
 
       writeVMT(classPosition, it, scope);
 
@@ -1837,9 +1837,9 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
                   writeBreakpoint(++it, scope.debug);
             }
             break;
-         //case bdSelf:
-         //   writeSelf(scope, (*it).additional, frameLevel);
-         //   break;
+         case bdSelf:
+            writeSelf(scope, (*it).additional, frameLevel);
+            break;
          case bdLocal:
             writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, frameLevel);
             break;
@@ -1894,9 +1894,9 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //case bdParamsLocal:
          //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsParamsLocal, frameLevel);
          //   break;
-         //case bdMessage:
-         //   writeMessageInfo(scope, dsMessage, (const char*)_strings.get((*it).additional));
-         //   break;
+         case bdMessage:
+            writeMessageInfo(scope, dsMessage, (const char*)_strings.get((*it).additional));
+            break;
          //case bdStruct:
          //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
          //   it++;
@@ -3634,15 +3634,15 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushsi index
          tape.write(bcPushSI, argument);
          break;
-      //case lxField:
-      //   // aloadfi 1
-      //   // pushai offset / pusha
-      //   tape.write(bcALoadFI, 1, bpFrame);
-      //   if ((int)argument < 0) {
-      //      tape.write(bcPushA);
-      //   }
-      //   else tape.write(bcPushAI, argument);
-      //   break;
+      case lxField:
+         // aloadfi 1
+         // pushai offset / pusha
+         tape.write(bcALoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcPushA);
+         }
+         else tape.write(bcPushAI, argument);
+         break;
       //case lxStaticConstField:
       //   if ((int)argument > 0) {
       //      // aloadr r
@@ -3739,15 +3739,15 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // acopyr 0
          tape.write(bcACopyR, argument);
          break;
-//      case lxField:
-//         // bloadfi 1
-//         // aloadbi / acopyb
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         if ((int)argument < 0) {
-//            tape.write(bcACopyB);
-//         }
-//         else tape.write(bcALoadBI, argument);
-//         break;
+      case lxField:
+         // bloadfi 1
+         // aloadbi / acopyb
+         tape.write(bcBLoadFI, 1, bpFrame);
+         if ((int)argument < 0) {
+            tape.write(bcACopyB);
+         }
+         else tape.write(bcALoadBI, argument);
+         break;
 //      case lxStaticConstField:
 //         if ((int)argument > 0) {
 //            // aloadr r
@@ -3822,12 +3822,12 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          // asavesi index
          tape.write(bcASaveSI, argument);
          break;
-      //case lxField:
-      //   // bloadfi 1
-      //   // asavebi index
-      //   tape.write(bcBLoadFI, 1, bpFrame);
-      //   tape.write(bcASaveBI, argument);
-      //   break;
+      case lxField:
+         // bloadfi 1
+         // asavebi index
+         tape.write(bcBLoadFI, 1, bpFrame);
+         tape.write(bcASaveBI, argument);
+         break;
       //case lxStaticField:
       //   if ((int)argument > 0) {
       //      // asaver arg
@@ -5554,9 +5554,9 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
 //            current.findChild(lxIdentifier, lxPrivate).identifier(),
 //            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
 //         break;
-//      case lxMessageVariable:
-//         declareMessageInfo(tape, current.identifier());
-//         break;
+      case lxMessageVariable:
+         declareMessageInfo(tape, current.identifier());
+         break;
 //      case lxParamsVariable:
 //         declareLocalParamsInfo(tape,
 //            current.findChild(lxIdentifier, lxPrivate).identifier(),
@@ -5778,17 +5778,17 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
    SyntaxTree::Node current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-//         case lxMessageVariable:
-//            declareMessageInfo(tape, current.identifier());
-//            break;
-//         case lxVariable:
-//            declareLocalInfo(tape,
-//               current.firstChild(lxTerminalMask).identifier(),
-//               current.findChild(lxLevel).argument);
-//            break;
-//         case lxSelfVariable:
-//            declareSelfInfo(tape, current.argument);
-//            break;
+         case lxMessageVariable:
+            declareMessageInfo(tape, current.identifier());
+            break;
+         case lxVariable:
+            declareLocalInfo(tape,
+               current.firstChild(lxTerminalMask).identifier(),
+               current.findChild(lxLevel).argument);
+            break;
+         case lxSelfVariable:
+            declareSelfInfo(tape, current.argument);
+            break;
 //         case lxIntVariable:
 //            declareLocalIntInfo(tape,
 //               current.firstChild(lxTerminalMask).identifier(),
@@ -5824,7 +5824,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
 
    bool withNewFrame = false;
    bool open = false;
-//   bool exit = false;
+   bool exit = false;
    bool exitLabel = true;
    SyntaxTree::Node current = node.firstChild();
    while (current != lxNone) {

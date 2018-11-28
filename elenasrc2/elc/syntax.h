@@ -65,7 +65,7 @@ enum Symbol
    nsDispatchExpression         = 0x01020,
    nsAssignOperator             = 0x01021,
 //////   nsStatic                     = 0x01022,
-//   nsBaseClass                  = 0x01023,
+   nsBase                       = 0x01023,
 //   nsL1Operation                = 0x01025,
 //   nsL5Operation                = 0x01026,
 //   nsRetStatement               = 0x01027,

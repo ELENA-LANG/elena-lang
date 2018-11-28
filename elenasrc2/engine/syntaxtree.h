@@ -41,23 +41,25 @@ enum LexicalType
    lxScope           = 0x00013,
    lxClass           = 0x00014,
    lxClassMethod     = 0x00016,
+   lxParameter       = 0x00017,
    lxCode            = 0x0001A,
+   lxMessage         = 0x0001B, // arg - message
+   lxDispatchCode    = 0x00020,
+   lxAssign          = 0x00021,
+   ////   lxStatic          = 0x00022,
+   lxParent          = 0x00023,
+   lxConstructor     = 0x00024,
+   lxStaticMethod    = 0x00025,
+   lxAttributeDecl   = 0x0004E,
+   lxClassField      = 0x0004F,
 
 //   lxObject          = 0x00003,
 ////   lxAngleOperator   = 0x00005,
 //   lxNamespace       = 0x00006,
 //   lxTemplate        = 0x0000F,
-//   lxClassField      = 0x00013,
 //   lxFieldTemplate   = 0x00014,
 //   lxAttributeValue  = 0x00015,
-   lxParameter       = 0x00017,
 //   lxNestedClass     = 0x00018,
-   lxMessage         = 0x0001B, // arg - message
-   lxDispatchCode    = 0x00020,
-   lxAssign          = 0x00021,
-   ////   lxStatic          = 0x00022,
-   lxConstructor     = 0x00024,
-   lxStaticMethod    = 0x00025,
 //   lxExtension       = 0x0002B,
 //   lxAltOperation    = 0x0002C,
 //   lxCatchOperation  = 0x0002F,
@@ -71,8 +73,7 @@ enum LexicalType
 //   lxLessSwitchOption = 0x0003F,
 //   lxLazyExpression  = 0x08040,
 //   lxFieldInit       = 0x00041,
-   lxAttributeDecl   = 0x0004E,
-//
+   //
 ////   //lxDefaultGeneric  = 0x00046,
 ////   lxSubject         = 0x00047,
 //////   lxImplicitConstructor = 0x0004B,
@@ -101,7 +102,7 @@ enum LexicalType
 //   lxNested          = 0x08102, // arg - count
 //   lxStruct          = 0x08103, // arg - count
    lxConstantSymbol  = 0x0A104, // arg - reference
-//   lxField           = 0x08105, // arg - offset
+   lxField           = 0x08105, // arg - offset
 //   lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
    lxSymbolReference = 0x08107,
 //   lxLocalAddress    = 0x0A108, // arg - offset
@@ -191,7 +192,6 @@ enum LexicalType
 //   lxSealedMultiDispatching = 0x0C03C,
 //   lxOverridden      = 0x04047,
 //
-//   lxBaseParent      = 0x10023,
 //   lxAssignOperator  = 0x10024,
 //   lxOperator        = 0x10025,
 //   lxArrOperator     = 0x10026,
@@ -224,8 +224,8 @@ enum LexicalType
    lxParamCount      = 0x2000A,
    lxClassFlag       = 0x2000B, // class fields
    lxTarget          = 0x2000C, // arg - reference
-//   lxMessageVariable = 0x2000D, // debug info only
-//   lxSelfVariable    = 0x2000E, // debug info only
+   lxMessageVariable = 0x2000D, // debug info only
+   lxSelfVariable    = 0x2000E, // debug info only
    lxLevel           = 0x20011,
 //   lxType            = 0x20012, // arg - subject
 //   lxCallTarget      = 0x20013, // arg - reference

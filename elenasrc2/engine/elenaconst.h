@@ -181,7 +181,7 @@ namespace _ELENA_
 
       dsSymbol                  = 0x0001,
       dsClass                   = 0x0002,
-//      dsField                   = 0x0004,
+      dsField                   = 0x0004,
       dsLocal                   = 0x0005,
       dsMessage                 = 0x0006,
       dsProcedure               = 0x0007,
@@ -287,7 +287,7 @@ namespace _ELENA_
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
 //   const int elReadOnlyRole        = 0x00000800;
-//   const int elNonStructureRole    = 0x00001000;
+   const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
 //   const int elExtension           = 0x00004980;
@@ -419,8 +419,8 @@ namespace _ELENA_
   // --- ELENA explicit variables ---
 //   #define OLD_GROUP_VAR           "target"           // obsolete : the current method target / closure owner method target
 //   #define GROUP_VAR               "__target"         // the current method target / closure owner method target
-//   #define SELF_VAR                "self"             // the current method class reference / closure owner class reference
-//
+   #define SELF_VAR                "self"             // the current method class reference / closure owner class reference
+
 //   #define SUPER_VAR               "super"            // the predecessor class
 //   #define OLD_SUBJECT_VAR         "received"         // obsolete : the current message
 //   #define SUBJECT_VAR             "__received"       // the current message

@@ -96,14 +96,14 @@ class ByteCodeWriter
 
    void writeNewStatement(MemoryWriter* debug);
    void writeNewBlock(MemoryWriter* debug);
-//   void writeSelf(Scope& scope, int level, int frameLevel);
+   void writeSelf(Scope& scope, int level, int frameLevel);
    void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
    void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
-//   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
+   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
 //   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
-//   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
+   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
    void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
    void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
    void writeProcedureDebugInfo(Scope& scope, ref_t sourceRef);
@@ -145,8 +145,8 @@ class ByteCodeWriter
 //   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareSelfInfo(CommandTape& tape, int level);
-//   void declareMessageInfo(CommandTape& tape, ident_t message);
+   void declareSelfInfo(CommandTape& tape, int level);
+   void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 

@@ -50,7 +50,7 @@
 //
 //#define V_EMBEDDABLE     (ref_t)-8193
 //#define V_STATIC         (ref_t)-8194
-//#define V_SEALED         (ref_t)-8195
+#define V_SEALED         (ref_t)-8195
 //#define V_LIMITED        (ref_t)-8196
 //#define V_STRUCT         (ref_t)-8197
 //#define V_ENUMLIST       (ref_t)-8198
@@ -459,7 +459,7 @@ public:
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
-//   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant) = 0;
+   virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/) = 0;
    virtual bool validateExpressionAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;

@@ -58,8 +58,8 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
          }
       }
 
-//      target.fields.add(copy.fields);
-//
+      target.fields.add(copy.fields);
+
 //      // import field types
 //      ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
 //      while (!type_it.Eof()) {
@@ -347,6 +347,13 @@ inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _M
       IdentifierString privateOne(PRIVATE_PREFIX_NS, identifier);
 
       reference = module->mapReference(privateOne.c_str(), true);
+      if (reference) {
+         return reference;
+      }
+
+      // check public
+      IdentifierString publicOne("'", identifier);
+      reference = module->mapReference(publicOne.c_str(), true);
       if (reference) {
          return reference;
       }

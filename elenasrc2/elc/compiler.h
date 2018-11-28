@@ -118,7 +118,7 @@ public:
 //      okExtMessageConstant,           // param - reference
 //      okSignatureConstant,            // param - reference
 //      okArrayConst,
-//      okField,                        // param - reference, param - field offset, extraparam - class reference
+      okField,                        // param - reference, param - field offset, extraparam - class reference
 //      okReadOnlyField,                // param - reference, param - field offset, extraparam - class reference
 //      okStaticField,                  // param - reference
 //      okStaticConstantField,          // param - reference
@@ -451,10 +451,10 @@ private:
 //      bool        withImplicitConstructor;
 //
 //      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
-//
-//      ObjectInfo mapField(ident_t identifier, int scopeMode);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+
+      ObjectInfo mapField(ident_t identifier, int scopeMode);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -768,8 +768,8 @@ private:
 
 //   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
-//
-//   void writeMessageInfo(SyntaxWriter& writer, _CompilerScope& scope, ref_t messageRef);
+
+   void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref_t messageRef);
 //   void initialize(ClassScope& scope, MethodScope& methodScope);
 //
 //   int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message)
@@ -789,9 +789,9 @@ private:
 //   ref_t resolveObjectReference(_CompilerScope& scope, ObjectInfo object);
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
-//   ref_t resolveImplicitIdentifier(Scope& scope, SNode terminal);
-//   ref_t resolveImplicitIdentifier(Scope& scope, ident_t identifier, bool referenceOne, bool gloabalOne = false);
-//
+   ref_t resolveImplicitIdentifier(Scope& scope, SNode terminal);
+   ref_t resolveImplicitIdentifier(Scope& scope, ident_t identifier, bool referenceOne, bool gloabalOne = false);
+
 //   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
 //   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
@@ -802,21 +802,21 @@ private:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/);
 //   void inheritClassConstantList(_CompilerScope& scope, ref_t sourceRef, ref_t targetRef);
-//
-//   // NOTE : the method is used to set template pseudo variable
-//   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
-//
-//   ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
+
+   // NOTE : the method is used to set template pseudo variable
+   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
+
+   ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
 //   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
 
-   void compileParentDeclaration(/*SNode baseNode, */ClassScope& scope, ref_t parentRef/*, bool ignoreSealed = false*/);
-   void compileParentDeclaration(/*SNode node, */ClassScope& scope);
-//   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
-//
+   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreSealed = false*/);
+   void compileParentDeclaration(SNode node, ClassScope& scope);
+   void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
+
 //   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-//   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant);
+   void declareFieldAttributes(SNode member, ClassScope& scope/*, ref_t& fieldRef, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/);
    void declareVMT(SNode member, ClassScope& scope);
 //////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
@@ -934,7 +934,7 @@ private:
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
-//   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField);
+   void generateClassField(ClassScope& scope, SNode node/*, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField*/);
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);

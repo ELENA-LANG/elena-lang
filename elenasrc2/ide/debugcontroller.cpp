@@ -520,7 +520,7 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
             }
             else level--;
          }
-         else if (/*info.symbol == dsField || */(info.symbol & ~dsTypeMask) == dsLocal)
+         else if (info.symbol == dsField || (info.symbol & ~dsTypeMask) == dsLocal)
          {
             // replace field name reference with the name
             stringReader.seek(info.addresses.symbol.nameRef);
@@ -926,52 +926,52 @@ void DebugController :: readCallStack(_DebuggerCallStack* watch)
 
 void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, size_t address)
 {
-   //int index = 1;
-   //while (info[index].symbol == dsField) {
-   //   ident_t fieldName = (const char*)unmapDebugPTR32(info[index].addresses.field.nameRef);
-   //   int size = info[index].addresses.field.size;
-   //   // if it is a data field
-   //   if (size != 0) {
-   //      if (size == 4) {
-   //         watch->write(this, 0, fieldName, (int)_debugger.Context()->readDWord(address));
-   //      }
-   //      else if (size == 2) {
-   //         watch->write(this, 0, fieldName, (int)_debugger.Context()->readWord(address));
-   //      }
-   //      else if (size == 1) {
-   //         watch->write(this, 0, fieldName, (int)_debugger.Context()->readByte(address));
-   //      }
+   int index = 1;
+   while (info[index].symbol == dsField) {
+      ident_t fieldName = (const char*)unmapDebugPTR32(info[index].addresses.field.nameRef);
+      //int size = info[index].addresses.field.size;
+      //// if it is a data field
+      //if (size != 0) {
+      //   if (size == 4) {
+      //      watch->write(this, 0, fieldName, (int)_debugger.Context()->readDWord(address));
+      //   }
+      //   else if (size == 2) {
+      //      watch->write(this, 0, fieldName, (int)_debugger.Context()->readWord(address));
+      //   }
+      //   else if (size == 1) {
+      //      watch->write(this, 0, fieldName, (int)_debugger.Context()->readByte(address));
+      //   }
 
-   //      address += size;
-   //   }
-   //   else {
-   //      size_t fieldPtr = _debugger.Context()->ObjectPtr(address);
-   //      if (fieldPtr==0) {
-   //         watch->write(this, fieldPtr, fieldName, "<nil>");
-   //      }
-   //      else {
-   //         size_t flags = 0;
-   //         IdentifierString className;
-   //         DebugLineInfo* field = seekClassInfo(fieldPtr, className, flags);
-   //         if (field) {
-   //            watch->write(this, fieldPtr, fieldName, className.c_str());
-   //         }
-   //         //// if unknown check if it is a dynamic subject
-   //         //else if (test(flags, elDynamicSubjectRole)) {
-   //         //   watch->write(this, fieldPtr, fieldName, _T("<subject>"));
-   //         //}
-   //         // if unknown check if it is a group object
-   //         //else if (test(flags, elGroup)) {
-   //         //   watch->write(this, fieldPtr, fieldName, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
-   //         //}
-   //         else watch->write(this, fieldPtr, fieldName, "<unknown>");
-   //      }
+      //   address += size;
+      //}
+      //else {
+         size_t fieldPtr = _debugger.Context()->ObjectPtr(address);
+         if (fieldPtr==0) {
+            watch->write(this, fieldPtr, fieldName, "<nil>");
+         }
+         else {
+            size_t flags = 0;
+            IdentifierString className;
+            DebugLineInfo* field = seekClassInfo(fieldPtr, className, flags);
+            if (field) {
+               watch->write(this, fieldPtr, fieldName, className.c_str());
+            }
+            //// if unknown check if it is a dynamic subject
+            //else if (test(flags, elDynamicSubjectRole)) {
+            //   watch->write(this, fieldPtr, fieldName, _T("<subject>"));
+            //}
+            // if unknown check if it is a group object
+            //else if (test(flags, elGroup)) {
+            //   watch->write(this, fieldPtr, fieldName, test(flags, elCastGroup) ? _T("<broadcast group>") : _T("<group>"));
+            //}
+            else watch->write(this, fieldPtr, fieldName, "<unknown>");
+         }
 
-   //      address += 4;
-   //   }
+         address += 4;
+      //}
 
-   //   index++;
-   //}
+      index++;
+   }
 }
 
 void DebugController :: readList(_DebuggerWatch* watch, int* list, int length)

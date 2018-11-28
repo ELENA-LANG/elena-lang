@@ -1463,9 +1463,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 {
    switch ((size_t)attrValue)
    {
-//      case V_SEALED:
-//         attrValue = elSealed;
-//         return true;
+      case V_SEALED:
+         attrValue = elSealed;
+         return true;
 //      case V_ABSTRACT:
 //         attrValue = elAbstract;
 //         return true;
@@ -1605,59 +1605,59 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
    }
 }
 
-//bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant)
-//{
-//   switch ((size_t)attrValue)
-//   {
-//      case V_STATIC:
-//         attrValue = lxStaticAttr;
-//         return true;
-//      case V_SEALED:
-//         if (!isSealed) {
-//            attrValue = -1;
-//            isSealed = true;
-//            return true;
-//         }
-//         else return false;
-//      case V_CONST:
-//         if (!isConstant) {
-//            attrValue = -1;
-//            isConstant = true;
-//            return true;
-//         }
-//         else return false;
-//      case V_INT8:
-//         attrValue = 0;
-//         return true;
-//      //case V_INT64:
-//      //   attrValue = 0;
-//      //   return true;
-//      case V_REAL64:
-//      case V_PTR:
-//      case V_DWORD:
-//         attrValue = 0;
-//         return true;
-//      case V_SIGNATURE:
-//         attrValue = 0;
-//         return true;
-//      case V_SYMBOL:
-//         attrValue = 0;
-//         return true;
-//      case V_MESSAGE:
-//         attrValue = 0;
-//         return true;
-//      case V_EXTMESSAGE:
-//         attrValue = 0;
-//         return true;
-//      //case V_OBJARRAY:
-//      //   return true;
-//      case V_FIELD:
-//         attrValue = -1;
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/)
+{
+   switch ((size_t)attrValue)
+   {
+      //case V_STATIC:
+      //   attrValue = lxStaticAttr;
+      //   return true;
+      //case V_SEALED:
+      //   if (!isSealed) {
+      //      attrValue = -1;
+      //      isSealed = true;
+      //      return true;
+      //   }
+      //   else return false;
+      //case V_CONST:
+      //   if (!isConstant) {
+      //      attrValue = -1;
+      //      isConstant = true;
+      //      return true;
+      //   }
+      //   else return false;
+      //case V_INT8:
+      //   attrValue = 0;
+      //   return true;
+      ////case V_INT64:
+      ////   attrValue = 0;
+      ////   return true;
+      //case V_REAL64:
+      //case V_PTR:
+      //case V_DWORD:
+      //   attrValue = 0;
+      //   return true;
+      //case V_SIGNATURE:
+      //   attrValue = 0;
+      //   return true;
+      //case V_SYMBOL:
+      //   attrValue = 0;
+      //   return true;
+      //case V_MESSAGE:
+      //   attrValue = 0;
+      //   return true;
+      //case V_EXTMESSAGE:
+      //   attrValue = 0;
+      //   return true;
+      ////case V_OBJARRAY:
+      ////   return true;
+      //case V_FIELD:
+      //   attrValue = -1;
+      //   return true;
+      default:
+         return false;
+   }
+}
 
 bool CompilerLogic :: validateExpressionAttribute(int& attrValue)
 {
