@@ -73,8 +73,8 @@
 //#define V_PREDEFINED     (ref_t)-8215
 #define V_DISPATCHER     (ref_t)-8216
 
-//#define V_CONSTRUCTOR    (ref_t)-16384
-//#define V_VARIABLE       (ref_t)-16385
+#define V_CONSTRUCTOR    (ref_t)-16384
+#define V_VARIABLE       (ref_t)-16385
 #define V_CLASS          (ref_t)-16386
 //#define V_CONVERSION     (ref_t)-16387
 //#define V_INITIALIZER    (ref_t)-16388
@@ -117,7 +117,7 @@ enum MethodHint
 //   tpAction      = 0x000080,
 //   tpIfBranch    = 0x000100,
 //   tpIfNotBranch = 0x000200,
-//   tpConstructor = 0x200400,
+   tpConstructor = 0x200400,
 //   tpConversion  = 0x200800,
 //   tpMultimethod = 0x001000,
 //   tpArgDispatcher=0x003000,
@@ -220,6 +220,7 @@ struct _ModuleScope
 //
    // cached messages
    ref_t             dispatch_message;
+   ref_t             newobject_message;
 
 //   // cached bool values
 //   BranchingInfo     branchingInfo;
@@ -253,7 +254,7 @@ struct _ModuleScope
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
 
-   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne/*, IdentifierList* importedNs*/) = 0;
+   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
    virtual ident_t resolveFullName(ref_t reference) = 0;
    virtual ident_t resolveFullName(ident_t referenceName) = 0;
 
@@ -298,8 +299,8 @@ struct _ModuleScope
    _ModuleScope()
       : attributes(0), savedPaths(-1)
    {
-      project = NULL;
-      debugModule = module = NULL;
+      project = nullptr;
+      debugModule = module = nullptr;
       /*intReference = boolReference = */superReference = 0;
 //      signatureReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
@@ -308,7 +309,7 @@ struct _ModuleScope
 //      lazyExprReference = extMessageReference = 0;
 //      arrayTemplateReference = 0;
 
-      dispatch_message = 0;
+      newobject_message = dispatch_message = 0;
    }
 };
 
@@ -459,12 +460,13 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant) = 0;
-//   virtual bool validateLocalAttribute(int& attrValue) = 0;
+   virtual bool validateExpressionAttribute(int& attrValue) = 0;
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
+   virtual bool validateArgumentAttribute(int attrValue) = 0;
 
-//   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
-//
+   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
+
 //   // optimization
 //   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired) = 0;
 //   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;

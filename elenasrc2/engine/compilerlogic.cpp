@@ -1454,6 +1454,11 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 //   }
 }
 
+bool CompilerLogic :: validateArgumentAttribute(int attrValue)
+{
+   return false;
+}
+
 bool CompilerLogic :: validateClassAttribute(int& attrValue)
 {
    switch ((size_t)attrValue)
@@ -1516,7 +1521,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue)
    switch ((size_t)attrValue)
    {
       case V_METHOD:
-//      case V_CONSTRUCTOR:
+      case V_CONSTRUCTOR:
       case V_DISPATCHER:
       //case V_GENERIC:
       //case V_ACTION:
@@ -1558,10 +1563,10 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //         attrValue = tpAction;
 //         explicitMode = true;
 //         return true;
-//      case V_CONSTRUCTOR:
-//         attrValue = tpConstructor;
-//         explicitMode = true;
-//         return true;
+      case V_CONSTRUCTOR:
+         attrValue = tpConstructor;
+         explicitMode = true;
+         return true;
 //      case V_CONVERSION:
 //         attrValue = (tpConversion | tpSealed);
 //         return true;
@@ -1653,26 +1658,26 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: validateLocalAttribute(int& attrValue)
-//{
+
+bool CompilerLogic :: validateExpressionAttribute(int& attrValue)
+{
 //   if (attrValue == (int)V_INT8) {
 //      return true;
 //   }
 //   //else if (attrValue == (int)V_OBJARRAY) {
 //   //   return true;
 //   //}
-//   else if (attrValue == (int)V_VARIABLE) {
-//      attrValue = 0;
-//
-//      return true;
-//   }
+   /*else */if (attrValue == (int)V_VARIABLE) {
+      attrValue = 0;
+
+      return true;
+   }
 //   else if (attrValue == (int)V_AUTO) {
 //      return true;
 //   }
-//   else return false;
-//}
-//
+   else return false;
+}
+
 //bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne)
 //{
 //   if (attrValue == (int)V_CONST) {

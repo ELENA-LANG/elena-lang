@@ -54,6 +54,7 @@ class DerivationWriter : public _DerivationWriter
    void generateMethodTree(SNode node/*, DerivationScope& scope, bool templateMode, bool closureMode*/);
    void generateCodeTree(SNode node/*, DerivationScope& scope, bool withBookmark = false*/);
    void generateAttributes(SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
+   void generateExpressionAttribute(SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
    void generateExpressionTree(SNode node/*, DerivationScope& scope*/, int mode = 0);
 
 public:

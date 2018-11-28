@@ -6,7 +6,7 @@
 #16386 = class;
 //struct          = #8197.
 //symbol          = #16389.
-//constructor     = #16384.
+#16384 = constructor;
 //enum            = #8198.
 //sealed          = #8195.
 //embeddable      = #8193.
@@ -17,7 +17,7 @@
 #8208  = singleton;
 //generic         = #8202.
 //static          = #8194.
-//var             = #16385.
+#16385 = var;
 //auto            = #50.
 //interface       = #8196.
 //field           = #16392.

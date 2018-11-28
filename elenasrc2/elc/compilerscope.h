@@ -87,7 +87,7 @@ struct ModuleScope : _ModuleScope
 //   void saveIncludedModule(_Module* extModule);
    //void saveListMember(ident_t sectionName, ident_t memberName);
 
-   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne/*, IdentifierList* importedNs*/);
+   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs);
 
    virtual ident_t resolveFullName(ref_t reference)
    {

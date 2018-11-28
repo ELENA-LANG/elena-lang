@@ -520,13 +520,13 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
             }
             else level--;
          }
-         //else if (info.symbol == dsField || (info.symbol & ~dsTypeMask) == dsLocal)
-         //{
-         //   // replace field name reference with the name
-         //   stringReader.seek(info.addresses.symbol.nameRef);
+         else if (/*info.symbol == dsField || */(info.symbol & ~dsTypeMask) == dsLocal)
+         {
+            // replace field name reference with the name
+            stringReader.seek(info.addresses.symbol.nameRef);
 
-         //   ((DebugLineInfo*)current)->addresses.symbol.nameRef = mapDebugPTR32(stringReader.Address());
-         //}
+            ((DebugLineInfo*)current)->addresses.symbol.nameRef = mapDebugPTR32(stringReader.Address());
+         }
          else if ((info.symbol & dsDebugMask) == dsStep) {
             ref_t stepAddress = addressReader.getDWord();
 
@@ -1210,11 +1210,11 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 
       int index = 0;
       while (lineInfo[index].symbol != dsProcedure) {
-         //if (lineInfo[index].symbol == dsLocal) {
-         //   // write local variable
-         //   size_t localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
-         //   readObject(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
-         //}
+         if (lineInfo[index].symbol == dsLocal) {
+            // write local variable
+            size_t localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
+            readObject(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
+         }
          //else if (lineInfo[index].symbol == dsIntLocal) {
          //   // write stack allocated local variable
          //   size_t localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);

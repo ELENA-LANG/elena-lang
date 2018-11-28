@@ -187,7 +187,7 @@ ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_
    }
    else mdataWriter.writeDWord(0);
 
-   messageTable.module->mapPredefinedAction(actionName, signature, actionRef);
+   messageTable.module->mapPredefinedAction(actionName, actionRef, signature);
 
    return actionRef;
 }
@@ -242,7 +242,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, int paramC
          writer.writeRef(typeClassRef | mskVMTRef, 0);
       }
 
-      module->mapPredefinedAction(signatureName.c_str(), 0u, resolvedSignature);
+      module->mapPredefinedAction(signatureName.c_str(), resolvedSignature, 0u);
    }
 
    return resolvedSignature;
@@ -254,7 +254,7 @@ ref_t JITLinker :: resolveWeakAction(SectionInfo& messageTable, ident_t actionNa
    if (!resolvedAction) {
       resolvedAction = mapAction(messageTable, actionName, 0u, 0u);
 
-      messageTable.module->mapPredefinedAction(actionName, 0u, resolvedAction);
+      messageTable.module->mapPredefinedAction(actionName, resolvedAction, 0u);
    }
 
    return resolvedAction;
@@ -1276,6 +1276,7 @@ void JITLinker :: prepareCompiler()
    SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
    // dispatch message should be the first
    resolveWeakAction(messageTable, DISPATCH_MESSAGE);
+   resolveWeakAction(messageTable, NEWOBJECT_MESSAGE);
 
    _compiler->prepareCore(helper, _loader);
 

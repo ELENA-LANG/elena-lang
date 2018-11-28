@@ -18,8 +18,8 @@ namespace _ELENA_
 
 enum LexicalType
 {
-//   lxSimpleMask      = 0x02000,
-//   lxCodeScopeMask   = 0x04000,
+   lxSimpleMask      = 0x02000,
+   lxCodeScopeMask   = 0x04000,
    lxObjectMask      = 0x08000,
 //   lxExprMask        = 0x0C000,
    lxTerminalMask    = 0x10000,
@@ -50,10 +50,12 @@ enum LexicalType
 //   lxClassField      = 0x00013,
 //   lxFieldTemplate   = 0x00014,
 //   lxAttributeValue  = 0x00015,
+   lxParameter       = 0x00017,
 //   lxNestedClass     = 0x00018,
    lxMessage         = 0x0001B, // arg - message
    lxDispatchCode    = 0x00020,
-////   lxStatic          = 0x00022,
+   lxAssign          = 0x00021,
+   ////   lxStatic          = 0x00022,
    lxConstructor     = 0x00024,
    lxStaticMethod    = 0x00025,
 //   lxExtension       = 0x0002B,
@@ -104,7 +106,7 @@ enum LexicalType
    lxSymbolReference = 0x08107,
 //   lxLocalAddress    = 0x0A108, // arg - offset
 //   lxFieldAddress    = 0x08109, // arg - offset
-//   lxLocal           = 0x0A10A, // arg - offset
+   lxLocal           = 0x0A10A, // arg - offset
 //   lxBlockLocal      = 0x0A10B, // arg - offset
 //   lxConstantString  = 0x0A10C, // arg - reference
 //   lxConstantWideStr = 0x0A10D, // arg - reference
@@ -122,7 +124,7 @@ enum LexicalType
    lxResult             = 0x0A119, // arg -offset
 //   lxResultField        = 0x0A11A, // arg -offset
 //   lxCurrentMessage     = 0x0A11B,
-//   lxSelfLocal          = 0x0A11C,
+   lxSelfLocal          = 0x0A11C,
 //   lxConstantList       = 0x0A11E,   // arg - reference
 //   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
 //   lxClassRefField      = 0x08120,  // arg - self instance offset
@@ -148,7 +150,7 @@ enum LexicalType
 //   lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
 //   lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
 //   lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
-//   lxMethodParameter = 0x0C017,
+   lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
 //   lxIfNot           = 0x0C019,   // optional arg - reference
 //   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
@@ -162,9 +164,9 @@ enum LexicalType
 //   lxFieldExpression = 0x0C022,
 //   lxExternFrame     = 0x04023,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
-//   lxCreatingClass   = 0x0C025,   // arg - count
+   lxCreatingClass   = 0x0C025,   // arg - count
 //   lxCreatingStruct  = 0x0C026,   // arg - size
-//   lxReturning       = 0x0C027,
+   lxReturning       = 0x0C027,
 //   lxNewOp           = 0x0C028,
 //   lxArrOp           = 0x8C029,   // arg - operation id
 //   lxBinArrOp        = 0x8C02A,   // arg - operation id
@@ -181,7 +183,7 @@ enum LexicalType
 //   lxShortArrOp      = 0x8C033, // arg - operation id
 //////   lxReleasing       = 0x0C034,
 //   lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
-//   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
+   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
 //   lxIntOp           = 0x8C038,   // arg - operation id
 //   lxLongOp          = 0x8C039,   // arg - operation id
 //   lxRealOp          = 0x8C03A,   // arg - operation id
@@ -197,7 +199,7 @@ enum LexicalType
 //   lxLongVariable    = 0x10029,
 //   lxReal64Variable  = 0x1002A,
 //   lxForward         = 0x1002E,
-//   lxVariable        = 0x10037,
+   lxVariable        = 0x10037,
 //   lxBinaryVariable  = 0x10038,
 //   lxMember          = 0x10039,  // a collection member, arg - offset
 //   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
@@ -221,11 +223,10 @@ enum LexicalType
    lxAllocated       = 0x20009,
    lxParamCount      = 0x2000A,
    lxClassFlag       = 0x2000B, // class fields
-//   lxTarget          = 0x2000C, // arg - reference
+   lxTarget          = 0x2000C, // arg - reference
 //   lxMessageVariable = 0x2000D, // debug info only
 //   lxSelfVariable    = 0x2000E, // debug info only
-//   lxAssign          = 0x20010,
-//   lxLevel           = 0x20011,
+   lxLevel           = 0x20011,
 //   lxType            = 0x20012, // arg - subject
 //   lxCallTarget      = 0x20013, // arg - reference
 //   lxClassName       = 0x20014, // arg - identifier
@@ -561,29 +562,29 @@ public:
          return current;
       }
 
-      //Node findSubNodeMask(LexicalType mask)
-      //{
-      //   Node child = firstChild(mask);
-      //   if (child == lxExpression) {
-      //      return child.findSubNodeMask(mask);
-      //   }
-      //   else return child;
-      //}
+      Node findSubNodeMask(LexicalType mask)
+      {
+         Node child = firstChild(mask);
+         if (child == lxExpression) {
+            return child.findSubNodeMask(mask);
+         }
+         else return child;
+      }
 
-      //Node findSubNode(LexicalType type)
-      //{
-      //   Node current = firstChild();
-      //   while (current != lxNone && current.type != type) {
-      //      if (current == lxExpression) {
-      //         Node subNode = current.findSubNode(type);
-      //         if (subNode != lxNone)
-      //            return subNode;
-      //      }
-      //      current = current.nextNode();
-      //   }
+      Node findSubNode(LexicalType type)
+      {
+         Node current = firstChild();
+         while (current != lxNone && current.type != type) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            current = current.nextNode();
+         }
 
-      //   return current;
-      //}
+         return current;
+      }
       //Node findSubNode(LexicalType type1, LexicalType type2)
       //{
       //   Node child = firstChild();

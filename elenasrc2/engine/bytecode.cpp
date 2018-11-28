@@ -685,8 +685,6 @@ inline void addVerb(MessageMap& map, const char* verb, int id)
 //void ByteCodeCompiler :: loadVerbs(MessageMap& verbs)
 //{
 //   // load verbs
-//   addVerb(verbs, DISPATCH_MESSAGE,   DISPATCH_MESSAGE_ID); // NOTE : dispatch verb should not be used explicitly
-//   addVerb(verbs, NEWOBJECT_MESSAGE,  NEWOBJECT_MESSAGE_ID);
 //   addVerb(verbs, INVOKE_MESSAGE,     INVOKE_MESSAGE_ID);
 //   addVerb(verbs, CAST_MESSAGE,       CAST_MESSAGE_ID);
 //   addVerb(verbs, DEFAULT_MESSAGE,    DEFAULT_MESSAGE_ID);

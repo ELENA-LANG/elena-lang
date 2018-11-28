@@ -7,6 +7,7 @@ In development:
                  * uncomment ELENARTMachine::loadMessage
                  * review / redesign message structure (number of parameters, number of parameters with variadic argument)
                  * review predefined message constants
+                 * abstract class cannot have constructors / default constructor
  
               dev - tests          
                  * test : interpreter

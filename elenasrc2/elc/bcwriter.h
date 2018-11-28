@@ -78,7 +78,7 @@ class ByteCodeWriter
    };
 
    List<ImportScope> imports;
-//   MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
+   MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
 
    ByteCode peekNext(ByteCodeIterator it)
    {
@@ -97,8 +97,8 @@ class ByteCodeWriter
    void writeNewStatement(MemoryWriter* debug);
    void writeNewBlock(MemoryWriter* debug);
 //   void writeSelf(Scope& scope, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
 //   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
 //   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
@@ -124,7 +124,7 @@ class ByteCodeWriter
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
-//   void declareArgumentList(CommandTape& tape, int count);
+   void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
 //   void declareThenBlock(CommandTape& tape);
 //   void declareThenElseBlock(CommandTape& tape);
@@ -134,8 +134,8 @@ class ByteCodeWriter
 //   void declareTry(CommandTape& tape);
 //   void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
-//
-//   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
+
+   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -155,8 +155,8 @@ class ByteCodeWriter
 //   void newDynamicStructure(CommandTape& tape, int itemSize);
 //   void newDynamicWStructure(CommandTape& tape);
 //   void newDynamicNStructure(CommandTape& tape);
-//
-//   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
+
+   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
 //   void newDynamicObject(CommandTape& tape);
 //   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
@@ -166,8 +166,8 @@ class ByteCodeWriter
 //   void copyBase(CommandTape& tape, int size);
 //   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
-//   void initBase(CommandTape& tape, int fieldCount);
-//   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
+   void initBase(CommandTape& tape, int fieldCount);
+   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
@@ -183,8 +183,8 @@ class ByteCodeWriter
 //   void releaseArgList(CommandTape& tape);
 //
 //   void setSubject(CommandTape& tape, ref_t subject);
-//
-//   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
+
+   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
 //   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
 //   void callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
 //   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
@@ -210,9 +210,9 @@ class ByteCodeWriter
 //
 //   void tryLock(CommandTape& tape);
 //   void freeLock(CommandTape& tape);
-//
-//   void gotoEnd(CommandTape& tape, PseudoArg label);
-//
+
+   void gotoEnd(CommandTape& tape, PseudoArg label);
+
 //   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 //
@@ -302,8 +302,8 @@ class ByteCodeWriter
 //   void generateLooping(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
-//   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
-//   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 ////   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
@@ -313,9 +313,9 @@ class ByteCodeWriter
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
-//   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
+   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node);
-//   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
+   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
@@ -326,7 +326,7 @@ class ByteCodeWriter
 
 public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
-//   int writeString(ident_t path);
+   int writeString(ident_t path);
 
    void generateClass(CommandTape& tape, SNode root, pos_t sourcePathBookmark);
 //   void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
@@ -352,7 +352,7 @@ public:
 //   }
 };
 
-//bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
+bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);
 
 } // _ELENA_
 

@@ -158,19 +158,20 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool validateImplicitMethodAttribute(int& attrValue);
 //   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant);
-//   virtual bool validateLocalAttribute(int& attrValue);
+   virtual bool validateExpressionAttribute(int& attrValue);
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 //////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);
+   virtual bool validateArgumentAttribute(int attrValue);
 
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag);
 //   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);
-//
-//   virtual bool isDefaultConstructorEnabled(ClassInfo& info)
-//   {
-//      return (info.header.flags & elDebugMask) != elEnumList;
-//   }
-//
+
+   virtual bool isDefaultConstructorEnabled(ClassInfo& info)
+   {
+      return /*(info.header.flags & elDebugMask) != elEnumList*/true;
+   }
+
 //   bool recognizeEmbeddableOp(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject);
 //   bool recognizeEmbeddableOp2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject);
 //

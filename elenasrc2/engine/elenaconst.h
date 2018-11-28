@@ -33,8 +33,6 @@ namespace _ELENA_
 
    #define INVALID_REF              (ref_t)-1
 
-   //#define DISPATCH_MESSAGE_ID     0x0001
-   //#define NEWOBJECT_MESSAGE_ID    0x0002
    //#define NEW_MESSAGE_ID          0x0003
    //#define EQUAL_MESSAGE_ID        0x0004
    //#define EVAL_MESSAGE_ID         0x0005
@@ -184,7 +182,7 @@ namespace _ELENA_
       dsSymbol                  = 0x0001,
       dsClass                   = 0x0002,
 //      dsField                   = 0x0004,
-//      dsLocal                   = 0x0005,
+      dsLocal                   = 0x0005,
       dsMessage                 = 0x0006,
       dsProcedure               = 0x0007,
 //      dsConstructor             = 0x0008,
@@ -212,7 +210,7 @@ namespace _ELENA_
 //      dsLocalPtr                = 0x1005,
 
       dsDebugMask               = 0x00F0,
-//      dsTypeMask                = 0x1F00,
+      dsTypeMask                = 0x1F00,
 //      dsDebugTypeMask           = 0x1FFF,
    };
 
@@ -358,7 +356,7 @@ namespace _ELENA_
   
   // --- ELENA verb messages ---
    #define DISPATCH_MESSAGE         "#dispatch"
-  // #define NEWOBJECT_MESSAGE        "#new"
+   #define NEWOBJECT_MESSAGE        "#new"
   // #define NEW_MESSAGE              "new"
   // #define GET_MESSAGE              "get"
   // #define EVAL_MESSAGE             "eval"

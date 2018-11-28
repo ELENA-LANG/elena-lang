@@ -339,7 +339,7 @@ ident_t ModuleScope:: resolveWeakTemplateReference(ident_t referenceName)
    return resolvedName;
 }
 
-inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _Module* module, _ProjectManager* project/*, IdentifierList* importedNs*/)
+inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _Module* module, _ProjectManager* project, IdentifierList* importedNs)
 {
    ref_t reference = 0;
    if (!referenceOne) {
@@ -351,24 +351,24 @@ inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _M
          return reference;
       }
 
-      //// check imported references if available
-      //if (importedNs) {
-      //   List<ident_t>::Iterator it = importedNs->start();
-      //   while (!it.Eof()) {
-      //      ReferenceNs fullName(*it, identifier);
+      // check imported references if available
+      if (importedNs) {
+         List<ident_t>::Iterator it = importedNs->start();
+         while (!it.Eof()) {
+            ReferenceNs fullName(*it, identifier);
 
-      //      reference = 0;
-      //      _Module* ext_module = project->resolveModule(fullName, reference, true);
-      //      if (ext_module && reference) {
-      //         if (ext_module != module) {
-      //            return module->mapReference(fullName.c_str(), false);
-      //         }
-      //         else return reference;
-      //      }
+            reference = 0;
+            _Module* ext_module = project->resolveModule(fullName, reference, true);
+            if (ext_module && reference) {
+               if (ext_module != module) {
+                  return module->mapReference(fullName.c_str(), false);
+               }
+               else return reference;
+            }
 
-      //      it++;
-      //   }
-      //}
+            it++;
+         }
+      }
       return 0;
    }
    else {
@@ -378,7 +378,7 @@ inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _M
    }
 }
 
-ref_t ModuleScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne/*, IdentifierList* importedNs*/)
+ref_t ModuleScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs)
 {
    ref_t reference = 0;
    if (isWeakReference(identifier)) {
@@ -389,7 +389,7 @@ ref_t ModuleScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, b
       ReferenceNs nameWithNs(ns, identifier);
       bool emptyNs = false;
       while (true) {
-         reference = ::resolveImplicitIdentifier(referenceOne, nameWithNs.c_str(), module, project/*, importedNs*/);
+         reference = ::resolveImplicitIdentifier(referenceOne, nameWithNs.c_str(), module, project, importedNs);
          if (reference) {
             return reference;
          }
@@ -409,7 +409,7 @@ ref_t ModuleScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, b
    }
    else {
       // try to resovle an identifier in the current namespace
-      return ::resolveImplicitIdentifier(referenceOne, identifier, module, project/*, importedNs*/);
+      return ::resolveImplicitIdentifier(referenceOne, identifier, module, project, importedNs);
    }   
 }
 
