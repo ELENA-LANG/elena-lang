@@ -773,7 +773,9 @@ void DerivationWriter :: generateMethodTree(SNode node/*, DerivationScope& scope
             _writer.newNode(lxMethodParameter, current.argument);
 
             SNode paramNode = current.lastChild();
-            paramNode = lxNameAttr;
+            recognizeScopeAttributes(paramNode, 0);
+            paramNode.refresh();
+
             generateAttributes(paramNode);
             //            copyIdentifier(writer, current.firstChild(lxTerminalMask));
             //            if (attribute != lxNone) {
@@ -945,6 +947,7 @@ void DerivationWriter :: generateExpressionTree(SNode node/*, DerivationScope& s
    while (current != lxNone) {
       switch (current.type) {
          case lxMessage:
+         case lxImplicitMessage:
             if (!first) {
                _writer.insert(lxExpression);
                _writer.closeNode();
@@ -952,7 +955,9 @@ void DerivationWriter :: generateExpressionTree(SNode node/*, DerivationScope& s
             else first = false;
 
             _writer.newNode(lxMessage);
-            copyIdentifier(_writer, current.firstChild(lxTerminalMask));
+            if (current == lxMessage) {
+               copyIdentifier(_writer, current.firstChild(lxTerminalMask));
+            }               
             _writer.closeNode();
             break;
          case lxExpression:

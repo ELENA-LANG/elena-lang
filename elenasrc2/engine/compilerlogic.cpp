@@ -13,8 +13,8 @@
 
 using namespace _ELENA_;
 
-//typedef ClassInfo::Attribute Attribute;
-//
+typedef ClassInfo::Attribute Attribute;
+
 //inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
 //{
 //   return ref1 ? ref1 : ref2;
@@ -82,20 +82,20 @@ using namespace _ELENA_;
 //         return false;
 //   }
 //}
-//
-//inline ident_t findSourceRef(SNode node)
-//{
-//   while (node != lxNone && node != lxNamespace) {
-//      if (node.compare(lxConstructor, lxStaticMethod, lxClassMethod) && node.existChild(lxSourcePath)) {
-//         return node.findChild(lxSourcePath).identifier();
-//      }
-//
-//      node = node.parentNode();
-//   }
-//
-//   return node.findChild(lxSourcePath).identifier();
-//}
-//
+
+inline ident_t findSourceRef(SNode node)
+{
+   while (node != lxNone && node != lxNamespace) {
+      if (node.compare(lxConstructor, lxStaticMethod, lxClassMethod) && node.existChild(lxSourcePath)) {
+         return node.findChild(lxSourcePath).identifier();
+      }
+
+      node = node.parentNode();
+   }
+
+   return node.findChild(lxSourcePath).identifier();
+}
+
 //// --- CompilerLogic Optimization Ops ---
 //struct EmbeddableOp
 //{
@@ -233,98 +233,98 @@ CompilerLogic :: CompilerLogic()
 //   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
 }
 
-//int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
-//{
-//   bool methodFound = info.methods.exist(message);
-//
-//   if (methodFound) {
-//      int hint = info.methodHints.get(Attribute(message, maHint));
-//      result.outputReference = info.methodHints.get(Attribute(message, maReference));
-//
+int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
+{
+   bool methodFound = info.methods.exist(message);
+
+   if (methodFound) {
+      int hint = info.methodHints.get(Attribute(message, maHint));
+      result.outputReference = info.methodHints.get(Attribute(message, maReference));
+
 //      result.embeddable = test(hint, tpEmbeddable);
 //      result.closure = test(hint, tpAction);
 //      result.dynamicRequired = test(hint, tpDynamic);
+
+      if ((hint & tpMask) == tpSealed) {
+         return hint;
+      }
+      else if (test(info.header.flags, elFinal)) {
+         return tpSealed | hint;
+      }
+      else if (test(info.header.flags, elClosed)) {
+         return tpClosed | hint;
+      }
+      else return tpNormal | hint;
+   }
+   else {
+      //HOTFIX : to recognize the predefined messages
+      result.outputReference = info.methodHints.get(Attribute(message, maReference));
+
+      //HOTFIX : to recognize the sealed private method call
+      //         hint search should be done even if the method is not declared
+      return info.methodHints.get(Attribute(message, maHint));
+   }
+}
+
+int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
+{
+   ClassInfo info;
+   result.found = defineClassInfo(scope, info, reference);
+
+   if (result.found) {
+      if (test(info.header.flags, elClosed))
+         result.directResolved = true;
+
+//      //if (!test(info.header.flags, elClosed))
+//      //   result.closed = false;
 //
-//      if ((hint & tpMask) == tpSealed) {
-//         return hint;
-//      }
-//      else if (test(info.header.flags, elFinal)) {
-//         return tpSealed | hint;
-//      }
-//      else if (test(info.header.flags, elClosed)) {
-//         return tpClosed | hint;
-//      }
-//      else return tpNormal | hint;
+      //if (test(info.header.flags, elWithCustomDispatcher))
+      //   result.withCustomDispatcher = true;
+
+      int hint = checkMethod(info, message, result);
+      //if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
+      //   hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
+      //   if (hint != tpUnknown) {
+      //      result.withOpenArgDispatcher = true;
+      //   }
+      //   else {
+      //      hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 1), result);
+      //      if (hint != tpUnknown) {
+      //         result.withOpenArg1Dispatcher = true;
+      //      }
+      //      else {
+      //         hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 2), result);
+      //         if (hint != tpUnknown) {
+      //            result.withOpenArg2Dispatcher = true;
+      //         }
+      //      }
+      //   }
+      //}
+
+      return hint;
+   }
+   else return tpUnknown;
+}
+
+int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
+{
+//   if (isPrimitiveRef(classReference)) {
+//      classReference = resolvePrimitiveReference(scope, classReference);
 //   }
-//   else {
-//      //HOTFIX : to recognize the predefined messages
-//      result.outputReference = info.methodHints.get(Attribute(message, maReference));
-//
-//      //HOTFIX : to recognize the sealed private method call
-//      //         hint search should be done even if the method is not declared
-//      return info.methodHints.get(Attribute(message, maHint));
-//   }
-//}
-//
-//int CompilerLogic :: checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
-//{
-//   ClassInfo info;
-//   result.found = defineClassInfo(scope, info, reference);
-//
-//   if (result.found) {
-//      if (test(info.header.flags, elClosed))
-//         result.directResolved = true;
-//
-////      //if (!test(info.header.flags, elClosed))
-////      //   result.closed = false;
-////
-//      if (test(info.header.flags, elWithCustomDispatcher))
-//         result.withCustomDispatcher = true;
-//
-//      int hint = checkMethod(info, message, result);
-//      if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
-//         hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
-//         if (hint != tpUnknown) {
-//            result.withOpenArgDispatcher = true;
-//         }
-//         else {
-//            hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 1), result);
-//            if (hint != tpUnknown) {
-//               result.withOpenArg1Dispatcher = true;
-//            }
-//            else {
-//               hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 2), result);
-//               if (hint != tpUnknown) {
-//                  result.withOpenArg2Dispatcher = true;
-//               }
-//            }
-//         }
-//      }
-//
-//      return hint;
-//   }
-//   else return tpUnknown;
-//}
-//
-//int CompilerLogic :: resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
-//{
-////   if (isPrimitiveRef(classReference)) {
-////      classReference = resolvePrimitiveReference(scope, classReference);
-////   }
-//
-//   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
-//   int callType = methodHint & tpMask;
-//
+
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
+   int callType = methodHint & tpMask;
+
 //   result.stackSafe = test(methodHint, tpStackSafe);
-//
-//   if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
-//      // HOTFIX : calling closure
-//      result.closure = true;
-//   }
-//
-//   return callType;
-//}
-//
+
+   //if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
+   //   // HOTFIX : calling closure
+   //   result.closure = true;
+   //}
+
+   return callType;
+}
+
 //int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 //{
 //   if ((loperand == 0 && roperand != V_NIL) || (roperand == 0 && loperand != V_NIL))
@@ -595,12 +595,12 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
 //}
-//
-//bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
-//}
-//
+
+bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
+}
+
 //bool CompilerLogic :: isClosure(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpAction);
@@ -711,32 +711,32 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 //   }
 }
 
-//void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
-//{
-//   // generate implicit mutli methods
-//   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-//      if (info.methods.exist(*it)) {
-//         compiler.injectVirtualMultimethod(scope, node, *it, methodType, info.header.parentRef);
-//      }
-//      else compiler.injectVirtualMultimethod(scope, node, *it, methodType);
-//
-//      if (isOpenArg(*it)) {
-//         // generate explicit argument list dispatcher
-//         compiler.injectVirtualArgDispatcher(scope, node, *it, methodType);
-//
-//         ref_t resendMessage = encodeMessage(getAction(*it), getParamCount(*it) + 1);
-//
-//         // generate argument list dispatcher multi-method
-//         if (info.methods.exist(resendMessage)) {
-//            compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType, info.header.parentRef);
-//         }
-//         else compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType);
-//      }
-//
-//      info.header.flags |= elWithMuti;
-//   }
-//}
-//
+void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
+{
+   // generate implicit mutli methods
+   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
+      if (info.methods.exist(*it)) {
+         compiler.injectVirtualMultimethod(scope, node, *it, methodType, info.header.parentRef);
+      }
+      else compiler.injectVirtualMultimethod(scope, node, *it, methodType);
+
+      //if (isOpenArg(*it)) {
+      //   // generate explicit argument list dispatcher
+      //   compiler.injectVirtualArgDispatcher(scope, node, *it, methodType);
+
+      //   ref_t resendMessage = encodeMessage(getAction(*it), getParamCount(*it) + 1);
+
+      //   // generate argument list dispatcher multi-method
+      //   if (info.methods.exist(resendMessage)) {
+      //      compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType, info.header.parentRef);
+      //   }
+      //   else compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType);
+      //}
+
+      info.header.flags |= elWithMuti;
+   }
+}
+
 //bool isEmbeddableDispatcher(_CompilerScope& scope, SNode current)
 //{
 //   SNode attr = current.firstChild();
@@ -814,46 +814,46 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 //
 //   dispatchMethodNode = lxIdle;
 //}
-//
-//void CompilerLogic :: verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods)
-//{
-//   // HOTFIX : Make sure the multi-method methods have the same output type as generic one
-//   bool needVerification = false;
-//   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-//      ref_t message = *it;
-//
-//      ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
-//      if (outputRef != 0) {
-//         // Bad luck we have to verify all overloaded methods
-//         needVerification = true;
-//         break;
-//      }
-//   }
-//
-//   if (!needVerification)
-//      return;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod) {
-//         SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
-//         if (multiMethAttr != lxNone) {
-//            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethAttr.argument, maReference));
-//            if (outputRefMulti != 0) {
-//               ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
-//               if (outputRef == 0) {
-//                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxIdentifier, lxPrivate));
-//               }
-//               else if (!isCompatible(scope, outputRefMulti, outputRef)) {
-//                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxIdentifier, lxPrivate));
-//               }
-//            }            
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
+
+void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods)
+{
+   // HOTFIX : Make sure the multi-method methods have the same output type as generic one
+   bool needVerification = false;
+   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
+      ref_t message = *it;
+
+      ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
+      if (outputRef != 0) {
+         // Bad luck we have to verify all overloaded methods
+         needVerification = true;
+         break;
+      }
+   }
+
+   if (!needVerification)
+      return;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
+         if (multiMethAttr != lxNone) {
+            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethAttr.argument, maReference));
+            if (outputRefMulti != 0) {
+               ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
+               if (outputRef == 0) {
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.firstChild(lxTerminalMask));
+               }
+               else if (!isCompatible(scope, outputRefMulti, outputRef)) {
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.firstChild(lxTerminalMask));
+               }
+            }            
+         }
+      }
+      current = current.nextNode();
+   }
+}
+
 //bool CompilerLogic :: isBoolean(_CompilerScope& scope, ref_t reference)
 //{
 //   if (!scope.branchingInfo.reference) {
@@ -1363,13 +1363,13 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 
    if (test(info.header.flags, elNestedClass)) {
       // stateless inline class
-      //if (info.fields.Count() == 0/* && !test(info.header.flags, elStructureRole)*/) {
+      if (info.fields.Count() == 0/* && !test(info.header.flags, elStructureRole)*/) {
          info.header.flags |= elStateless;
 
          // stateless inline class is its own class class
          info.header.classRef = classRef;
-      //}
-      //else info.header.flags &= ~elStateless;
+      }
+      else info.header.flags &= ~elStateless;
 
       // nested class is sealed
       info.header.flags |= elSealed;
@@ -1571,10 +1571,6 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_INITIALIZER:
 //         attrValue = (tpSpecial | tpSealed | tpInitializer);
 //         return true;
-//         //case V_MULTI:
-//      //   // obsolete
-//      //   attrValue = /*tpMultimethod*/0;
-//      //   return true;
       case V_METHOD:
          attrValue = 0;
          explicitMode = true;
@@ -1657,27 +1653,31 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
    }
 }
 
-bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr)
+bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr, bool& castAttr)
 {
+   switch (attrValue) {
+      case (int)V_VARIABLE:
+         attrValue = 0;
+         return true;
+      case (int)V_TYPE:
+         typeAttr = true;
+         return true;
+      case (int)V_CONVERSION:
+         castAttr = true;
+         return true;
+      default:
+         return false;
+   }
+
 //   if (attrValue == (int)V_INT8) {
 //      return true;
 //   }
 //   //else if (attrValue == (int)V_OBJARRAY) {
 //   //   return true;
 //   //}
-   /*else */if (attrValue == (int)V_VARIABLE) {
-      attrValue = 0;
-
-      return true;
-   }
 //   else if (attrValue == (int)V_AUTO) {
 //      return true;
 //   }
-   else if (attrValue == V_TYPE) {
-      typeAttr = true;
-      return true;
-   }
-   else return false;
 }
 
 //bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne)

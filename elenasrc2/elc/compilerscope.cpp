@@ -60,17 +60,17 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
 
       target.fields.add(copy.fields);
 
-//      // import field types
-//      ClassInfo::FieldTypeMap::Iterator type_it = copy.fieldTypes.start();
-//      while (!type_it.Eof()) {
-//         ClassInfo::FieldInfo info = *type_it;
-//         info.value1 = importReference(exporter, info.value1, module);
-//         info.value2 = importReference(exporter, info.value2, module);
-//
-//         target.fieldTypes.add(type_it.key(), info);
-//
-//         type_it++;
-//      }
+      // import field types
+      auto type_it = copy.fieldTypes.start();
+      while (!type_it.Eof()) {
+         ClassInfo::FieldInfo info = *type_it;
+         info.value1 = importReference(exporter, info.value1, module);
+         info.value2 = importReference(exporter, info.value2, module);
+
+         target.fieldTypes.add(type_it.key(), info);
+
+         type_it++;
+      }
 
       // import method attributes
       ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();

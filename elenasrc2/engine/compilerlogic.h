@@ -75,8 +75,8 @@ class CompilerLogic : public _CompilerLogic
 //   bool isBoolean(_CompilerScope& scope, ref_t reference);
 
 public:
-//   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
-//   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
+   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
+   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
 
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
@@ -89,8 +89,8 @@ public:
 //   virtual int defineStructSize(ClassInfo& info, bool& variableS);
 //
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
-//
-//   virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
+
+   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
@@ -123,7 +123,7 @@ public:
 //   virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
 //   virtual bool isMethodInternal(ClassInfo& info, ref_t message);
 //   virtual bool isMethodPrivate(ClassInfo& info, ref_t message);
-//   virtual bool isMultiMethod(ClassInfo& info, ref_t message);
+   virtual bool isMultiMethod(ClassInfo& info, ref_t message);
 //   virtual bool isClosure(ClassInfo& info, ref_t message);
 //   virtual bool isDispatcher(ClassInfo& info, ref_t message);
 //   virtual bool isReadonly(ClassInfo& info);
@@ -138,7 +138,7 @@ public:
 
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler/*, bool closed*/);
 //   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
-//   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
+   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef);
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/);
 //   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef);
@@ -158,7 +158,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool validateImplicitMethodAttribute(int& attrValue);
    virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/);
-   virtual bool validateExpressionAttribute(int& attrValue, bool& typeAttr);
+   virtual bool validateExpressionAttribute(int& attrValue, bool& typeAttr, bool& castAttr);
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 //////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);
@@ -193,7 +193,7 @@ public:
 //////   virtual void optimizeDuplicateBoxing(SNode node);
 //
 //   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr);
-//   virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
+   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
 
    CompilerLogic();
 };

@@ -117,7 +117,8 @@ enum Symbol
 //   nsL4Operator                 = 0x01064,
 //   nsClosingOperator            = 0x01065,
    nsRetExpression              = 0x01066,
-//
+   nsImplicitMessage            = 0x01067,
+
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               
 //   nsErrClosingSBracketExpected     = 0x04002,               // closing square bracket expected

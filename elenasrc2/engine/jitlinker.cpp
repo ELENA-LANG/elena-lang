@@ -820,16 +820,16 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    //else if (mask == mskRealRef) {
    //   _compiler->compileReal64(&writer, value.toDouble());
    //}
-   //else if (mask == mskConstArray) {
-   //   // resolve constant value
-   //   SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
-   //   _compiler->compileCollection(&writer, sectionInfo.section);
+   /*else */if (mask == mskConstArray) {
+      // resolve constant value
+      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+      _compiler->compileCollection(&writer, sectionInfo.section);
 
-   //   vmtVAddress = NULL; // !! to support dump array
-   //   fixSectionReferences(sectionInfo, image, position, vmtVAddress);
-   //   constantValue = true;
-   //}
-   /*else */if (vmtVAddress == LOADER_NOTLOADED) {
+      vmtVAddress = NULL; // !! to support dump array
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
+      constantValue = true;
+   }
+   else if (vmtVAddress == LOADER_NOTLOADED) {
       // resolve constant value
       SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
       _compiler->compileBinary(&writer, sectionInfo.section);
@@ -1224,9 +1224,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          //case mskInt64Ref:
             vaddress = resolveConstant(referenceInfo, mask);
             break;
-         //case mskConstArray:
-         //   vaddress = resolveConstant(referenceInfo, mask);
-         //   break;
+         case mskConstArray:
+            vaddress = resolveConstant(referenceInfo, mask);
+            break;
          case mskStatSymbolRef:
             vaddress = resolveStaticVariable(referenceInfo, mskStatRef);
             break;

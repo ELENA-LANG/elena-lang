@@ -108,8 +108,8 @@ enum MethodHint
 
    tpUnknown     = 0x000000,
    tpSealed      = 0x000001,
-//   tpClosed      = 0x000002,
-//   tpNormal      = 0x000003,
+   tpClosed      = 0x000002,
+   tpNormal      = 0x000003,
    tpDispatcher  = 0x000004,
 //   tpPrivate     = 0x000005,
 //   tpStackSafe   = 0x000010,
@@ -120,7 +120,7 @@ enum MethodHint
 //   tpIfNotBranch = 0x000200,
    tpConstructor = 0x200400,
    tpConversion  = 0x200800,
-//   tpMultimethod = 0x001000,
+   tpMultimethod = 0x001000,
 //   tpArgDispatcher=0x003000,
 //   tpStatic      = 0x004000,
 //   tpAccessor    = 0x008000,
@@ -327,7 +327,7 @@ public:
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef, ref_t genericMessage) = 0;
-//   virtual void injectVirtualMultimethod(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0) = 0;
+   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef = 0) = 0;
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef) = 0;
 //   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
@@ -354,10 +354,10 @@ public:
 class _CompilerLogic
 {
 public:
-//   struct ChechMethodInfo
-//   {
-//      bool  found;
-//      bool  directResolved;
+   struct ChechMethodInfo
+   {
+      bool  found;
+      bool  directResolved;
 //      bool  withCustomDispatcher;
 ////      //bool  closed;
 //      bool  stackSafe;
@@ -367,13 +367,13 @@ public:
 //      bool  withOpenArg2Dispatcher;
 //      bool  closure;
 //      bool  dynamicRequired;
-//      ref_t outputReference;
-//
-//      ChechMethodInfo()
-//      {
-//         directResolved = false;
-//         embeddable = /*closed = */found = false;
-//         outputReference = 0;
+      ref_t outputReference;
+
+      ChechMethodInfo()
+      {
+         directResolved = false;
+         /*embeddable = *//*closed = */found = false;
+         outputReference = 0;
 //         withCustomDispatcher = false;
 //         stackSafe = false;
 //         withOpenArgDispatcher = false;
@@ -381,9 +381,9 @@ public:
 //         withOpenArg2Dispatcher = false;
 //         closure = false;
 //         dynamicRequired = false;
-//      }
-//   };
-//
+      }
+   };
+
 //   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
 //   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result) = 0;
 
@@ -395,10 +395,10 @@ public:
 //   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
 //
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
-//
-//   // retrieve the call type
-//   virtual int resolveCallType(_CompilerScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
-//
+
+   // retrieve the call type
+   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
+
 //   // retrieve the operation type
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
@@ -422,7 +422,7 @@ public:
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
 
@@ -438,8 +438,8 @@ public:
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler/*, bool closed*/) = 0;
 //   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
-//   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
-//   virtual void verifyMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
+   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
+   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/) = 0;
 //   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef) = 0;
@@ -461,7 +461,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/) = 0;
-   virtual bool validateExpressionAttribute(int& attrValue, bool& typeAttr) = 0;
+   virtual bool validateExpressionAttribute(int& attrValue, bool& typeAttr, bool& castAttr) = 0;
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
    virtual bool validateArgumentAttribute(int attrValue) = 0;

@@ -161,7 +161,7 @@ namespace _ELENA_
 //      mskSignature           = 0x09000000u,   // message signature constant
 //      mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
-//      mskConstArray          = 0x0D000000u,   // constant array
+      mskConstArray          = 0x0D000000u,   // constant array
 
       mskDebugRef            = 0x60000000u,
       mskMessageTableRef     = 0x62000000u,
@@ -278,7 +278,7 @@ namespace _ELENA_
 //   const int elDynamicRole         = 0x00000004;
 //   const int elStructureRole       = 0x00000008;
 //   const int elAbstract            = 0x00000010;
-//   const int elClosed              = 0x00000020;
+   const int elClosed              = 0x00000020;
 //   const int elWrapper             = 0x00000040;
 //   const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
@@ -299,7 +299,7 @@ namespace _ELENA_
 //   const int elWithArgGenerics     = 0x01000000;
 ////   const int elTapeGroup           = 0x02000200;
    const int elClassClass          = 0x04000000;
-//   const int elWithMuti            = 0x08000000;
+   const int elWithMuti            = 0x08000000;
 //   const int elVirtualVMT          = 0x10000000;
 //   const int elNoCustomDispatcher  = 0x20000000;
 
@@ -358,6 +358,7 @@ namespace _ELENA_
    #define DISPATCH_MESSAGE         "#dispatch"
    #define NEWOBJECT_MESSAGE        "#new"
    #define CAST_MESSAGE             "#cast"
+   #define CONSTRUCTOR_MESSAGE      "#constructor"
   // #define NEW_MESSAGE              "new"
   // #define GET_MESSAGE              "get"
   // #define EVAL_MESSAGE             "eval"
@@ -387,7 +388,6 @@ namespace _ELENA_
   // #define SHIFT_MESSAGE            "shift"
   // #define IF_ELSE_MESSAGE          "if:else"
   // #define INVOKE_MESSAGE           "#invoke"
-  // #define DEFAULT_MESSAGE          "#default"
   // #define INIT_MESSAGE             "#init"
   // #define ISNIL_MESSAGE            "#isnil"
 
@@ -436,8 +436,8 @@ namespace _ELENA_
 //   #define TEMPLATE_FIELD          "field"
 //
 //   #define ENUM_VAR                 "values"          // is auto generated for enum classes and contains the list of all possible enum values
-//
-//   #define INLINE_CLASSNAME         "$inline"         // nested class generic name
+
+   #define INLINE_CLASSNAME         "$inline"         // nested class generic name
 
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"

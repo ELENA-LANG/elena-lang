@@ -1372,33 +1372,33 @@ void _ELENA_::compileGreaterN(int op, x86JITScope& scope)
 
 void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
 {
-   /*ref_t message = scope.tape->getDWord();
+   ref_t message = scope.tape->getDWord();
 
-   if (getAction(message) == INVOKE_MESSAGE_ID) {
+   /*if (getAction(message) == INVOKE_MESSAGE_ID) {
       scope.extra_arg = 0;
    }
-   else scope.extra_arg = 4;
+   else */scope.extra_arg = 4;
 
-   switch (getAbsoluteParamCount(message)) {
+   switch (getParamCount(message)) {
       case 1:
          loadMTOpX(op, scope, 0x100);
          break;
       case 2:
          loadMTOpX(op, scope, 0x200);
          break;
-      case OPEN_ARG_COUNT:
-         loadMTOpX(op, scope, 0xC00);
-         break;
-      case OPEN_ARG_COUNT + 1:
-         loadMTOpX(op, scope, 0xD00);
-         break;
-      case OPEN_ARG_COUNT + 2:
-         loadMTOpX(op, scope, 0xE00);
-         break;
-      default:*/
+      //case OPEN_ARG_COUNT:
+      //   loadMTOpX(op, scope, 0xC00);
+      //   break;
+      //case OPEN_ARG_COUNT + 1:
+      //   loadMTOpX(op, scope, 0xD00);
+      //   break;
+      //case OPEN_ARG_COUNT + 2:
+      //   loadMTOpX(op, scope, 0xE00);
+      //   break;
+      default:
          loadMTOp(op, scope);
-         //break;
-   //}
+         break;
+   }
 }
 
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)

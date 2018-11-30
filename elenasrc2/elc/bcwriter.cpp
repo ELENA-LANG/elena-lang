@@ -1097,33 +1097,33 @@ void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCou
    tape.write(bcFreeStack, 1 + paramCount);
 }
 
-//void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
-//{
-//   // xjumprm r, m
-//
-//   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
-//}
-//
-//void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion)
-//{
-//   // validate
-//   // xcallrm r, m
-//
-//   int freeArg;
-//   if (invokeMode) {
-//      tape.write(bcPop);
-//      freeArg = getParamCount(message);
-//   }
-//   else freeArg = getParamCount(message) + 1;
-//
-//   if(withValidattion)
-//      tape.write(bcValidate);
-//
-//   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
-//
-//   tape.write(bcFreeStack, freeArg);
-//}
-//
+void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // xjumprm r, m
+
+   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
+}
+
+void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion)
+{
+   // validate
+   // xcallrm r, m
+
+   int freeArg;
+   if (invokeMode) {
+      tape.write(bcPop);
+      freeArg = getParamCount(message);
+   }
+   else freeArg = getParamCount(message) + 1;
+
+   if(withValidattion)
+      tape.write(bcValidate);
+
+   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
+
+   tape.write(bcFreeStack, freeArg);
+}
+
 //void ByteCodeWriter :: callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
 //{
 //   // validate
@@ -1136,25 +1136,25 @@ void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCou
 //
 //   tape.write(bcFreeStack, getParamCount(message));
 //}
-//
-//void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode)
-//{
-//   int freeArg;
-//   if (invokeMode) {
-//      tape.write(bcPop);
-//      freeArg = getParamCount(message);
-//   }
-//   else freeArg = getParamCount(message) + 1;
-//
-//   // xindexrm r, m
-//   // acallvd
-//
-//   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
-//   tape.write(bcACallVD);
-//
-//   tape.write(bcFreeStack, freeArg);
-//}
-//
+
+void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode)
+{
+   int freeArg;
+   if (invokeMode) {
+      tape.write(bcPop);
+      freeArg = getParamCount(message);
+   }
+   else freeArg = getParamCount(message) + 1;
+
+   // xindexrm r, m
+   // acallvd
+
+   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
+   tape.write(bcACallVD);
+
+   tape.write(bcFreeStack, freeArg);
+}
+
 //void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
 //{
 //   // bsredirect
@@ -1202,13 +1202,13 @@ void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCou
 //   tape.write(bcElseN, baCurrentLabel, 0);
 //   tape.releaseLabel();
 //}
-//
-//void ByteCodeWriter :: resend(CommandTape& tape)
-//{
-//   // ajumpvi 0
-//   tape.write(bcAJumpVI);
-//}
-//
+
+void ByteCodeWriter :: resend(CommandTape& tape)
+{
+   // ajumpvi 0
+   tape.write(bcAJumpVI);
+}
+
 //void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
 //{
 //   // callextr ref
@@ -4481,15 +4481,15 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    tape.write(bcCopyM, message);
 
-//   bool invokeMode = callNode.existChild(lxClosureAttr);
-//
-//   SNode target = callNode.findChild(lxCallTarget);
-//   if (callNode == lxDirectCalling) {
-//      callResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
-//   }
-//   else if (callNode == lxSDirctCalling) {
-//      callVMTResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
-//   }
+   bool invokeMode = /*callNode.existChild(lxClosureAttr)*/false;
+
+   SNode target = callNode.findChild(lxCallTarget);
+   if (callNode == lxDirectCalling) {
+      callResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
+   }
+   else if (callNode == lxSDirctCalling) {
+      callVMTResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
+   }
 //   else if (invokeMode) {
 //      // pop
 //      // acallvi offs
@@ -4497,11 +4497,11 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 //      tape.write(bcACallVI, 0);
 //      tape.write(bcFreeStack, getParamCount(callNode.argument));
 //   }
-//   else {
+   else {
       // acallvi offs
       tape.write(bcACallVI, 0);
       tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
-//   }
+   }
 
    if (bpNode != lxNone)
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
@@ -5399,8 +5399,8 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
 //         break;
 //////      case lxTypecasting:
       case lxCalling:
-//      case lxDirectCalling:
-//      case lxSDirctCalling:
+      case lxDirectCalling:
+      case lxSDirctCalling:
          generateCallExpression(tape, node);
          break;
 //      case lxImplicitCall:
@@ -5676,51 +5676,51 @@ void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool wi
    }
 }
 
-//void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
-//{
-//   tape.write(bcMTRedirect, operationList | mskConstArray, message);
-//}
-//
-//void ByteCodeWriter::doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
-//{
-//   tape.write(bcXMTRedirect, operationList | mskConstArray, message);
-//}
-//
-//void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message)
-//{
-//   if (node.type == lxSealedMultiDispatching) {
-//      doSealedMultiDispatch(tape, node.argument, message);
-//   }
-//   else doMultiDispatch(tape, node.argument, message);
-//
-//   SNode current = node.findChild(lxDispatching, lxResending);
-//   switch (current.type) {
-//      case lxDispatching:
-//         generateResending(tape, current);
-//         break;
-//      case lxResending:
-//         // if there is an ambiguity with open argument list handler
-//         tape.write(bcCopyM, current.findChild(lxOvreriddenMessage).argument);
-//         generateResendingExpression(tape, current);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: generateResending(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   if (node.argument != 0) {
-//      tape.write(bcCopyM, node.argument);
-//
-//      SNode target = node.findChild(lxTarget);
-//      if (target == lxTarget) {
-//         resendResolvedMethod(tape, target.argument, node.argument);
-//      }
-//      else resend(tape);
-//   }
-//}
-//
+void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
+{
+   tape.write(bcMTRedirect, operationList | mskConstArray, message);
+}
+
+void ByteCodeWriter::doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
+{
+   tape.write(bcXMTRedirect, operationList | mskConstArray, message);
+}
+
+void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message)
+{
+   if (node.type == lxSealedMultiDispatching) {
+      doSealedMultiDispatch(tape, node.argument, message);
+   }
+   else doMultiDispatch(tape, node.argument, message);
+
+   SNode current = node.findChild(lxDispatching, lxResending);
+   switch (current.type) {
+      case lxDispatching:
+         generateResending(tape, current);
+         break;
+      //case lxResending:
+      //   // if there is an ambiguity with open argument list handler
+      //   tape.write(bcCopyM, current.findChild(lxOvreriddenMessage).argument);
+      //   generateResendingExpression(tape, current);
+      //   break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: generateResending(CommandTape& tape, SyntaxTree::Node node)
+{
+   if (node.argument != 0) {
+      tape.write(bcCopyM, node.argument);
+
+      SNode target = node.findChild(lxTarget);
+      if (target == lxTarget) {
+         resendResolvedMethod(tape, target.argument, node.argument);
+      }
+      else resend(tape);
+   }
+}
+
 //void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   if (node.argument != 0) {
@@ -5883,16 +5883,16 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
 //            }
 //            generateDispatching(tape, current);
 //            break;
-//         case lxMultiDispatching:
-//         case lxSealedMultiDispatching:
-//            if (!open) {
-//               declareIdleMethod(tape, node.argument, sourcePathRef);
-//               exitLabel = false;
-//               open = true;
-//            }               
-//
-//            generateMultiDispatching(tape, current, node.argument);
-//            break;
+         case lxMultiDispatching:
+         case lxSealedMultiDispatching:
+            if (!open) {
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+               exitLabel = false;
+               open = true;
+            }               
+
+            generateMultiDispatching(tape, current, node.argument);
+            break;
 //         case lxNil:
 //            // idle body;
 //            declareIdleMethod(tape, node.argument, sourcePathRef);

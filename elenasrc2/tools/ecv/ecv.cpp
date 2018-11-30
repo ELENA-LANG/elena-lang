@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   4
+#define REVISION_VERSION   5
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -693,16 +693,16 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append(", ");
          command.appendInt(argument2);
          break;
-      //case bcXCallRM:
-      //case bcXJumpRM:
-      //case bcXIndexRM:
-      //case bcXMTRedirect:
-      //   command.append(opcode);
-      //   command.append(' ');
-      //   printReference(command, module, argument);
-      //   command.append(", ");
-      //   printMessage(command, module, argument2);
-      //   break;
+      case bcXCallRM:
+      case bcXJumpRM:
+      case bcXIndexRM:
+      case bcXMTRedirect:
+         command.append(opcode);
+         command.append(' ');
+         printReference(command, module, argument);
+         command.append(", ");
+         printMessage(command, module, argument2);
+         break;
       case bcCopyM:
          command.append(opcode);
          command.append(' ');
@@ -943,13 +943,13 @@ void listFields(_Module* module, ident_t className, int& row, int pageSize)
    
    ClassInfo::FieldMap::Iterator it = info.fields.start();
    while (!it.Eof()) {
-      //ref_t type = info.fieldTypes.get(*it).value1;
-      //if (type != 0) {
-      //   ident_t typeName = module->resolveReference(type);
+      ref_t type = info.fieldTypes.get(*it).value1;
+      if (type != 0) {
+         ident_t typeName = module->resolveReference(type);
 
-      //   printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
-      //}
-      /*else */printLine("Field ", (const char*)it.key(), row, pageSize);
+         printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
+      }
+      else printLine("Field ", (const char*)it.key(), row, pageSize);
    
       it++;
    }
@@ -975,9 +975,9 @@ void listFlags(int flags, int& row, int pageSize)
    else if (test(flags, elFinal)) {
       printLine("@flag ", "elFinal", row, pageSize);
    }      
-   //else if (test(flags, elClosed)) {
-   //   printLine("@flag ", "elClosed", row, pageSize);
-   //}      
+   else if (test(flags, elClosed)) {
+      printLine("@flag ", "elClosed", row, pageSize);
+   }      
 
    //if (test(flags, elWrapper)) {
    //   printLine("@flag ", "elWrapper", row, pageSize);
@@ -1025,8 +1025,8 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elSymbol))
    //   printLine("@flag ", "elSymbol", row, pageSize);
 
-   //if (test(flags, elWithMuti))
-   //   printLine("@flag ", "elWithMuti", row, pageSize);
+   if (test(flags, elWithMuti))
+      printLine("@flag ", "elWithMuti", row, pageSize);
 
    if (test(flags, elClassClass))
       printLine("@flag ", "elClassClass", row, pageSize);

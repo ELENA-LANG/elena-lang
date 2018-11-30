@@ -185,17 +185,17 @@ class ByteCodeWriter
 //   void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-//   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
+   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
 //   void callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-//   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
-//
-//   void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
-//   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
+
+   void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
+   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
 //   void doGenericHandler(CommandTape& tape);
 //   void unboxMessage(CommandTape& tape);
 //   void changeMessageCounter(CommandTape& tape, int paramCount);
-//   void resend(CommandTape& tape);
-//   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void resend(CommandTape& tape);
+   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
 //   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
 //   void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 //
@@ -289,8 +289,8 @@ class ByteCodeWriter
 //
 //   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
-//   void generateResending(CommandTape& tape, SyntaxTree::Node node);
-//   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
+   void generateResending(CommandTape& tape, SyntaxTree::Node node);
+   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
