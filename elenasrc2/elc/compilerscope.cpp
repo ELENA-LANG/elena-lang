@@ -13,13 +13,13 @@
 
 using namespace _ELENA_;
 
-//typedef ClassInfo::Attribute Attribute;
-//
-//inline ref_t importAction(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   return getAction(importMessage(exporter, encodeAction(exportRef), importer));
-//}
-//
+typedef ClassInfo::Attribute Attribute;
+
+inline ref_t importAction(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   return getAction(importMessage(exporter, encodeAction(exportRef), importer));
+}
+
 //inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
 //{
 //   //if (isPrimitiveRef(exportRef)) {
@@ -71,28 +71,28 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
 //
 //         type_it++;
 //      }
-//
-//      // import method attributes
-//      ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
-//      while (!mtype_it.Eof()) {
-//         Attribute key = mtype_it.key();
-//         ref_t value = *mtype_it;
-//         if (test(key.value2, maActionMask)) {
-//            value = importAction(exporter, value, module);
-//         }
-//         else if (test(key.value2, maRefefernceMask)) {
-//            value = importReference(exporter, value, module);
-//         }
-//         else if (test(key.value2, maMessageMask))
-//            value = importMessage(exporter, value, module);
-//
-//         target.methodHints.add(
-//            Attribute(importMessage(exporter, key.value1, module), key.value2),
-//            value);
-//
-//         mtype_it++;
-//      }
-//
+
+      // import method attributes
+      ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
+      while (!mtype_it.Eof()) {
+         Attribute key = mtype_it.key();
+         ref_t value = *mtype_it;
+         if (test(key.value2, maActionMask)) {
+            value = importAction(exporter, value, module);
+         }
+         else if (test(key.value2, maRefefernceMask)) {
+            value = importReference(exporter, value, module);
+         }
+         else if (test(key.value2, maMessageMask))
+            value = importMessage(exporter, value, module);
+
+         target.methodHints.add(
+            Attribute(importMessage(exporter, key.value1, module), key.value2),
+            value);
+
+         mtype_it++;
+      }
+
 //      // import static fields
 //      ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
 //      while (!static_it.Eof()) {

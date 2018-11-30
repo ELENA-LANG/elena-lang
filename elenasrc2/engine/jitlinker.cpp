@@ -192,17 +192,17 @@ ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_
    return actionRef;
 }
 
-ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, int paramCount)
+ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature)
 {
    if (!signature)
       return 0;
 
    ref_t signatures[ARG_COUNT];
-   module->resolveSignature(signature, signatures);
+   size_t count = module->resolveSignature(signature, signatures);
 
    // resolve the message
    IdentifierString signatureName;
-   for (int i = 0; i < paramCount; i++) {
+   for (int i = 0; i < count; i++) {
       signatureName.append('$');
       ident_t referenceName = module->resolveReference(signatures[i]);
       if (isWeakReference(referenceName)) {
@@ -221,11 +221,12 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, int paramC
 
    ref_t resolvedSignature = module->mapAction(signatureName.c_str(), 0u, true);
    if (resolvedSignature == 0) {
-      MemoryWriter writer(_loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true).section);
+      SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true);
+      MemoryWriter writer(info.section);
       resolvedSignature = writer.Position();
 
       IdentifierString typeName;
-      for (int i = 0; i < paramCount; i++) {
+      for (int i = 0; i < count; i++) {
          ident_t referenceName = module->resolveReference(signatures[i]);
          if (isWeakReference(referenceName)) {
             if (isTemplateWeakReference(referenceName)) {
@@ -238,7 +239,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, int paramC
          }
          else typeName.copy(referenceName);
 
-         ref_t typeClassRef = module->mapReference(typeName.c_str(), false);
+         ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
          writer.writeRef(typeClassRef | mskVMTRef, 0);
       }
 
@@ -272,7 +273,7 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    ref_t signature;
    ident_t actionName = module->resolveAction(actionRef, signature);
 
-   ref_t resolvedSignature = resolveSignature(module, signature, paramCount);
+   ref_t resolvedSignature = resolveSignature(module, signature);
    ref_t resolvedAction = messageTable.module->mapAction(actionName, resolvedSignature, true);
    if (!resolvedAction) {
       resolvedAction = mapAction(messageTable, actionName, resolveWeakAction(messageTable, actionName), resolvedSignature);

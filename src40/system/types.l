@@ -32,7 +32,7 @@
 //__block         = #16400.
 //__nested        = #16401.
 //preloaded       = #8207.
-//cast            = #16387.
+#16387 = cast;
 //set             = #16402.  
 //
 //abstract        = #8210. 

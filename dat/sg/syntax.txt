@@ -12,6 +12,7 @@ __define DISPATCH               4128
 __define ASSIGN_OPERATOR	4129
 __define BASE                   4131
 __define ATTRIBUTE_DECLARATION  4174
+__define RET_EXPRESSION         4198
 
 __define eof            	12291
 __define identifier		12293
@@ -61,6 +62,10 @@ PARAMETER ->
 METHOD_BODY ->
 	BLOCK
 	| => DISPATCH DECLARATION_END
+	| = RET_EXPRESSION DECLARATION_END
+
+RET_EXPRESSION ->
+	EXPRESSION
 
 BLOCK ->
 	OPENING_CURLY_BRACKET STATEMENTS

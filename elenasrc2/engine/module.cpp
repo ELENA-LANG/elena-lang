@@ -144,13 +144,18 @@ void Module :: mapPredefinedReference(ident_t name, ref_t reference)
    _references.add(name, reference);
 }
 
-void Module :: mapPredefinedAction(ident_t name, ref_t reference, ref_t signature)
+void Module :: mapPredefinedAction(ident_t actionName, ref_t reference, ref_t signature)
 {
    _resolvedActions.clear();
-   _resolvedActionNames.clear();
 
-   _actionNames.add(name, reference);
-   _actions.add(encodeActionX(reference, signature), reference);
+   ref_t nextNameId = _actionNames.Count() + 1;
+   ref_t nameId = mapKey(_actionNames, actionName, nextNameId);
+
+   // if we added new message, clear resolved message cache (due to possible string relocation)
+   if (nameId == nextNameId)
+      _resolvedActionNames.clear();
+
+   _actions.add(encodeActionX(nameId, signature), reference);
 }
 
 ref_t Module :: mapReference(ident_t reference)

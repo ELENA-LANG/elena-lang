@@ -500,46 +500,43 @@ CompilerLogic :: CompilerLogic()
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef)
-//{
-//   if (!targetRef && !isPrimitiveRef(sourceRef))
-//      return true;
-//
-//   if (sourceRef == V_NIL)
-//      return true;
-//
+
+bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef)
+{
+   if ((!targetRef || targetRef == scope.superReference)/* && !isPrimitiveRef(sourceRef)*/)
+      return true;
+
+   if (sourceRef == V_NIL)
+      return true;
+
 //   if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
 //      return true;
-//
-//   if (targetRef == scope.superReference && !isPrimitiveRef(sourceRef))
-//      return true;
-//
-//   while (sourceRef != 0) {
-//      if (targetRef != sourceRef) {
-//         ClassInfo info;
-//         if (!defineClassInfo(scope, info, sourceRef))
-//            return false;
-//
-//         // if it is a structure wrapper
-//         if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
-//            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-//            if (isCompatible(scope, targetRef, inner.value1))
-//               return true;
-//         }
-//
-//         if (test(info.header.flags, elClassClass)) {
-//            // class class can be compatible only with itself and the super class
-//            sourceRef = scope.superReference;
-//         }
-//         else sourceRef = info.header.parentRef;
-//      }
-//      else return true;
-//   }
-//
-//   return false;
-//}
-//
+
+   while (sourceRef != 0) {
+      if (targetRef != sourceRef) {
+         ClassInfo info;
+         if (!defineClassInfo(scope, info, sourceRef))
+            return false;
+
+         //// if it is a structure wrapper
+         //if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
+         //   ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+         //   if (isCompatible(scope, targetRef, inner.value1))
+         //      return true;
+         //}
+
+         if (test(info.header.flags, elClassClass)) {
+            // class class can be compatible only with itself and the super class
+            sourceRef = scope.superReference;
+         }
+         else sourceRef = info.header.parentRef;
+      }
+      else return true;
+   }
+
+   return false;
+}
+
 //bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 //{
 //   return test(info.header.flags, elDynamicRole | elStructureRole);
@@ -655,24 +652,24 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //      compiler.injectVirtualStaticConstField(scope, node, ENUM_VAR, classRef);
 //   }
 //}
-//
-//void CompilerLogic :: injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
-//{
+
+void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler/*, bool closed*/)
+{
 //   // generate enumeration list
 //   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
 //      ClassInfo::FieldInfo valuesField = info.statics.get(ENUM_VAR);
 //
 //      compiler.generateListMember(scope, valuesField.value1, classRef);
 //   }
-//
-//   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed && !test(info.header.flags, elExtension)) {
-//      // auto generate get&type message for explicitly declared classes
-//      ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
-//      ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
-//
-//      compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR);
-//   }
-//
+
+   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference/* && !closed && !test(info.header.flags, elExtension)*/) {
+      // auto generate cast$<type> message for explicitly declared classes
+      ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
+      ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
+
+      compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR, classRef);
+   }
+
 //   // generate structure embeddable constructor
 //   if (test(info.header.flags, elSealed | elStructureRole)) {
 //      List<Attribute> generatedConstructors;
@@ -712,8 +709,8 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //         }
 //      }
 //   }
-//}
-//
+}
+
 //void CompilerLogic :: injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
 //{
 //   // generate implicit mutli methods
@@ -1087,9 +1084,9 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //
 //   return injectImplicitConstructor(writer, scope, compiler, info, targetRef, 0, signature, paramCount);
 //}
-//
-//bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
-//{
+
+bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/)
+{
 //   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
 //      if (isPrimitiveArrayRef(sourceRef)) {
 //         // HOTFIX : replace generic object with a generic array
@@ -1201,10 +1198,10 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //      sourceRef = resolvePrimitiveReference(scope, sourceRef);
 //
 //   // otherwise we have to go through the list
-//
-//   return injectImplicitConstructor(writer, scope, compiler, info, targetRef, elementRef, &sourceRef, 1);
-//}
-//
+
+   return /*injectImplicitConstructor(writer, scope, compiler, info, targetRef, elementRef, &sourceRef, 1)*/false;
+}
+
 //void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef)
 //{
 //   int size = defineStructSize(scope, targetRef, elementRef);
@@ -1214,15 +1211,15 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //   writer.insert((LexicalType)operation, targetRef);
 //   writer.closeNode();
 //}
-//
-//bool CompilerLogic :: defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
-//{
+
+bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
+{
 //   if (isPrimitiveRef(reference) && !headerOnly) {
 //      scope.loadClassInfo(info, scope.superReference);
 //   }
-//
-//   switch (reference)
-//   {
+
+   switch (reference)
+   {
 //      case V_INT32:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugDWORD | elStructureRole;
@@ -1295,22 +1292,22 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //         break;
 //      case V_AUTO:
 //         break;
-//      default:
-//         if (reference != 0) {
-//            if (!scope.loadClassInfo(info, reference, headerOnly))
-//               return false;
-//         }
-//         else {
-//            info.header.parentRef = 0;
-//            info.header.flags = 0;
-//            info.size = 0;
-//         }
-//         break;
-//   }
-//
-//   return true;
-//}
-//
+      default:
+         if (reference != 0) {
+            if (!scope.loadClassInfo(info, reference, headerOnly))
+               return false;
+         }
+         else {
+            info.header.parentRef = 0;
+            info.header.flags = 0;
+            //info.size = 0;
+         }
+         break;
+   }
+
+   return true;
+}
+
 //int CompilerLogic :: defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable)
 //{
 //   if (reference == V_BINARYARRAY && elementRef != 0) {
@@ -1523,6 +1520,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue)
       case V_METHOD:
       case V_CONSTRUCTOR:
       case V_DISPATCHER:
+      case V_CONVERSION:
       //case V_GENERIC:
       //case V_ACTION:
          return validateMethodAttribute(attrValue, dummy);
@@ -1556,9 +1554,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_INTERNAL:
 //         attrValue = tpInternal;
 //         return true;
-//      case V_SEALED:
-//         attrValue = tpSealed;
-//         return true;
+      case V_SEALED:
+         attrValue = tpSealed;
+         return true;
 //      case V_ACTION:
 //         attrValue = tpAction;
 //         explicitMode = true;
@@ -1567,9 +1565,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          attrValue = tpConstructor;
          explicitMode = true;
          return true;
-//      case V_CONVERSION:
-//         attrValue = (tpConversion | tpSealed);
-//         return true;
+      case V_CONVERSION:
+         attrValue = (tpConversion | tpSealed);
+         return true;
 //      case V_INITIALIZER:
 //         attrValue = (tpSpecial | tpSealed | tpInitializer);
 //         return true;
@@ -1659,7 +1657,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
    }
 }
 
-bool CompilerLogic :: validateExpressionAttribute(int& attrValue)
+bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr)
 {
 //   if (attrValue == (int)V_INT8) {
 //      return true;
@@ -1675,6 +1673,10 @@ bool CompilerLogic :: validateExpressionAttribute(int& attrValue)
 //   else if (attrValue == (int)V_AUTO) {
 //      return true;
 //   }
+   else if (attrValue == V_TYPE) {
+      typeAttr = true;
+      return true;
+   }
    else return false;
 }
 

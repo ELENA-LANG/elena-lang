@@ -116,6 +116,7 @@ enum Symbol
 //   nsL3Operator                 = 0x01063,
 //   nsL4Operator                 = 0x01064,
 //   nsClosingOperator            = 0x01065,
+   nsRetExpression              = 0x01066,
 //
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

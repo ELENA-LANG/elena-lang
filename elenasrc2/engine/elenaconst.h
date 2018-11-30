@@ -357,6 +357,7 @@ namespace _ELENA_
   // --- ELENA verb messages ---
    #define DISPATCH_MESSAGE         "#dispatch"
    #define NEWOBJECT_MESSAGE        "#new"
+   #define CAST_MESSAGE             "#cast"
   // #define NEW_MESSAGE              "new"
   // #define GET_MESSAGE              "get"
   // #define EVAL_MESSAGE             "eval"
@@ -386,7 +387,6 @@ namespace _ELENA_
   // #define SHIFT_MESSAGE            "shift"
   // #define IF_ELSE_MESSAGE          "if:else"
   // #define INVOKE_MESSAGE           "#invoke"
-  // #define CAST_MESSAGE             "#cast"
   // #define DEFAULT_MESSAGE          "#default"
   // #define INIT_MESSAGE             "#init"
   // #define ISNIL_MESSAGE            "#isnil"

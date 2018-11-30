@@ -143,6 +143,9 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsCodeEnd:
          _cacheWriter.newNode(lxEOF);
          break;
+      case nsRetExpression:
+         _cacheWriter.newNode(lxReturning);
+         break;
 ////      case nsMethodParameter:
 ////         _writer.newNode(lxMethodParameter);
 ////         break;
@@ -416,6 +419,9 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
             else _scope->raiseError(errInvalidHint, _filePath, current);
          }
       }
+      else if (current.nextNode() == lxNameAttr) {
+         current.set(lxAttribute, V_TYPE);
+      }
       else _scope->raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, _filePath, current);
    //
    //         if (templateParam) {
@@ -446,7 +452,7 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
       if (current == lxScope) {
          recognizeScopeAttributes(current.prevNode(), 0);
 
-         SNode bodyNode = current.findChild(lxCode, lxDispatchCode);
+         SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning);
          if (bodyNode != lxNone) {
             // if it is a method
             current = lxClassMethod;
@@ -797,8 +803,8 @@ void DerivationWriter :: generateMethodTree(SNode node/*, DerivationScope& scope
 //   if (templateMode)
 //      scope.reference = INVALID_REF;
 
-   SNode bodyNode = node.findChild(lxCode, lxDispatchCode/*, lxReturning, lxResendExpression*/);
-   if (bodyNode/*.compare(lxReturning, */ == lxDispatchCode/*)*/) {
+   SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning/*, lxResendExpression*/);
+   if (bodyNode.compare(lxReturning, lxDispatchCode)) {
       _writer.newNode(bodyNode.type);
       generateExpressionTree(bodyNode.firstChild()/*, scope*/, EXPRESSION_IMPLICIT_MODE);
       _writer.closeNode();
@@ -892,6 +898,11 @@ void DerivationWriter :: generateCodeTree(SNode node/*, DerivationScope& scope, 
    _writer.closeNode();
 }
 
+inline bool isTypeExpressionAttribute(SNode current)
+{
+   return current.nextNode() == lxToken && current.nextNode().nextNode() != lxToken;
+}
+
 void DerivationWriter :: generateExpressionAttribute(SNode current)
 {
    ref_t attrRef = 0;
@@ -900,6 +911,11 @@ void DerivationWriter :: generateExpressionAttribute(SNode current)
       attrRef = mapAttribute(current.firstChild(lxTerminalMask));
    }
    else attrRef = mapAttribute(current);
+
+   if (attrRef == 0 && isTypeExpressionAttribute(current)) {
+      // if it is a type attribute
+      attrRef = V_TYPE;
+   }
 
    if (attrRef != 0) {
       _writer.insert(0, lxEnding, 0);

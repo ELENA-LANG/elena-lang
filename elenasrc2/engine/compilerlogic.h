@@ -77,9 +77,9 @@ class CompilerLogic : public _CompilerLogic
 public:
 //   virtual int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
 //   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
-//
-//   virtual bool defineClassInfo(_CompilerScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
-//
+
+   virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
+
 //   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef)
 //   {
 //      bool dummy = false;
@@ -97,8 +97,8 @@ public:
 //   virtual bool resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference);
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
 //   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
-//
-//   virtual bool isCompatible(_CompilerScope& scope, ref_t targetRef, ref_t sourceRef);
+
+   virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
 ////   virtual bool isPrimitiveArray(ref_t reference);
 //   virtual bool isPrimitiveRef(ref_t reference)
 //   {
@@ -135,12 +135,12 @@ public:
 //      return isReadonly(info);
 //   }
 //   virtual bool isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node);
-//
-//   virtual void injectVirtualCode(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
+
+   virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler/*, bool closed*/);
 //   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
 //   virtual void injectVirtualMultimethods(_CompilerScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef);
-//   virtual bool injectImplicitConversion(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
+   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/);
 //   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef);
 //
 //   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef);
@@ -158,7 +158,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool validateImplicitMethodAttribute(int& attrValue);
    virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/);
-   virtual bool validateExpressionAttribute(int& attrValue);
+   virtual bool validateExpressionAttribute(int& attrValue, bool& typeAttr);
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 //////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);
