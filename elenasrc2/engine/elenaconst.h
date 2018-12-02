@@ -299,7 +299,7 @@ namespace _ELENA_
 //   const int elWithArgGenerics     = 0x01000000;
 ////   const int elTapeGroup           = 0x02000200;
    const int elClassClass          = 0x04000000;
-   const int elWithMuti            = 0x08000000;
+//   const int elWithMuti            = 0x08000000;
 //   const int elVirtualVMT          = 0x10000000;
 //   const int elNoCustomDispatcher  = 0x20000000;
 

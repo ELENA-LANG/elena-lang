@@ -33,7 +33,30 @@ inline ref_t importAction(_Module* exporter, ref_t exportRef, _Module* importer)
 //   else return 0;
 //}
 
+inline void findUninqueName(_Module* module, IdentifierString& name)
+{
+   size_t pos = getlength(name);
+   int   index = 0;
+   ref_t ref = 0;
+   do {
+      name[pos] = 0;
+      name.appendHex(index++);
+
+      ref = module->mapReference(name.c_str(), true);
+   } while (ref != 0);
+}
+
 // --- CompilerScope ---
+
+ref_t ModuleScope :: mapAnonymous(ident_t prefix)
+{
+   // auto generate the name
+   IdentifierString name("'", prefix, INLINE_CLASSNAME);
+
+   findUninqueName(module, name);
+
+   return module->mapReference(name);
+}
 
 void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode)
 {
@@ -118,12 +141,12 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
 //         staticValue_it++;
 //      }
    }
-//   // import class class reference
-//   if (target.header.classRef != 0)
-//      target.header.classRef = importReference(exporter, target.header.classRef, module);
-//
-//   // import parent reference
-//   target.header.parentRef = importReference(exporter, target.header.parentRef, module);
+   // import class class reference
+   if (target.header.classRef != 0)
+      target.header.classRef = importReference(exporter, target.header.classRef, module);
+
+   // import parent reference
+   target.header.parentRef = importReference(exporter, target.header.parentRef, module);
 }
 
 //ref_t CompilerScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)

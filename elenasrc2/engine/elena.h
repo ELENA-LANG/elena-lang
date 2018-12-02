@@ -499,6 +499,7 @@ enum MethodAttribute
 //   maEmbeddableEval2    = 0x108,
 //   maEmbeddableNew      = 0x409,
    maOverloadlist       = 0x20A,
+   maMultimethod        = 0x40B,
 };
 
 struct ClassInfo

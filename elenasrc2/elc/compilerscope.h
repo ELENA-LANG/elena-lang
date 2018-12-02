@@ -48,6 +48,8 @@ struct ModuleScope : _ModuleScope
 {
 //   AutoExtensionMap  autoExtensions;
 
+   virtual ref_t mapAnonymous(ident_t prefix);
+
    // warning mapping
 //      bool warnOnWeakUnresolved;
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference);

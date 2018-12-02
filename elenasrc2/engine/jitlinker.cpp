@@ -164,28 +164,25 @@ ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_
 
    MemoryWriter mdataWriter(messageTable.section);
 
-   ref_t actionRef = mdataWriter.Position() / 12;
+   ref_t actionRef = mdataWriter.Position() / 8;
    // weak action ref for strong one or the same ref
    if (weakActionRef) {
       mdataWriter.writeDWord(weakActionRef);
    }
-   else mdataWriter.writeDWord(actionRef);
+   else mdataWriter.writeDWord(0);
 
-   // signature
+   // signature or action name for weak message
    if (signature) {
       mdataWriter.writeRef(mskMessageTableRef | signature, 0);
    }
-   else mdataWriter.writeDWord(0);
-
-   // action name for weak message or zero for strong one
-   if (signature == 0u) {
+   else {
       MemoryWriter bodyWriter(_loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true).section);
 
       mdataWriter.writeRef(mskMessageTableRef | bodyWriter.Position(), 0);
 
       bodyWriter.writeLiteral(actionName, getlength(actionName) + 1);
+      bodyWriter.align(4, 0);
    }
-   else mdataWriter.writeDWord(0);
 
    messageTable.module->mapPredefinedAction(actionName, actionRef, signature);
 
@@ -906,7 +903,7 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
 
    // load table content into target image
    MemoryReader bodyReader(bodyInfo.section);
-   writer.read(&reader, bodyInfo.section->Length());
+   writer.read(&bodyReader, bodyInfo.section->Length());
 
    // resolve section references
    _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());

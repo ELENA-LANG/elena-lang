@@ -23,7 +23,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
 
   // create message module
    _Module* messages = _project->createModule(MESSAGE_TABLE_MODULE);
-   messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 12); // write dummy place holder
+   messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 8); // write dummy place holder
    messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
 
   //// load default forwards

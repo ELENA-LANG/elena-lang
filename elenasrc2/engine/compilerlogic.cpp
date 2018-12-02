@@ -610,41 +610,41 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
 //{
 //   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpDispatcher;
 //}
-//
-//void CompilerLogic :: injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
-//{
-//   for (auto it = info.methods.start(); !it.Eof(); it++) {
-//      // if the method included
-//      if (*it) {
-//         ref_t message = it.key();
-//         if (getAbsoluteParamCount(message) > 0 && getAction(message) != 0 && !test(message, SPECIAL_MESSAGE)) {
-//            ref_t signatureRef = 0;
-//            ident_t actionName = scope.module->resolveAction(getAction(message), signatureRef);
-//
-//            if (signatureRef) {
-//               ref_t actionRef = scope.module->mapAction(actionName, 0, true);
-//               ref_t flags = message & MESSAGE_FLAG_MASK;
-//               if (actionRef == SET_MESSAGE_ID) {
-//                  // HOTFIX : correctly recognize set method
-//                  flags |= PROPSET_MESSAGE;
-//               }
-//
-//               ref_t listRef = info.methodHints.get(Attribute(encodeMessage(actionRef, getAbsoluteParamCount(message) | flags), maOverloadlist));
-//               if (listRef != 0) {
-//                  if (test(info.header.flags, elSealed) || test(message, SEALED_MESSAGE)) {
-//                     compiler.generateSealedOverloadListMember(scope, listRef, message, classRef);
-//                  }
-//                  else if (test(info.header.flags, elClosed)) {
-//                     compiler.generateClosedOverloadListMember(scope, listRef, message, classRef);
-//                  }
-//                  else compiler.generateOverloadListMember(scope, listRef, message);
-//               }
-//            }
-//         }         
-//      }
-//   }
-//}
-//
+
+inline ident_t resolveActionName(_Module* module, ref_t message)
+{
+   ref_t signRef = 0;
+   return module->resolveAction(getAction(message), signRef);
+}
+
+void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
+{
+   for (auto it = info.methods.start(); !it.Eof(); it++) {
+      if (*it && isMultiMethod(info, it.key())) {
+         ref_t message = it.key();
+
+         // create a new overload list
+         ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
+
+         info.methodHints.exclude(Attribute(message, maOverloadlist));
+         info.methodHints.add(Attribute(message, maOverloadlist), listRef);
+
+         // fill the overloadlist
+         for (auto h_it = info.methodHints.start(); !h_it.Eof(); h_it++) {
+            if (h_it.key().value2 == maMultimethod && *h_it == message) {
+               if (test(info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+                  compiler.generateSealedOverloadListMember(scope, listRef, h_it.key().value1, classRef);
+               }
+               else if (test(info.header.flags, elClosed)) {
+                  compiler.generateClosedOverloadListMember(scope, listRef, h_it.key().value1, classRef);
+               }
+               else compiler.generateOverloadListMember(scope, listRef, h_it.key().value1);
+            }
+         }
+      }
+   }
+}
+
 //void CompilerLogic :: injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
 //{
 //   // generate enumeration list static field
@@ -715,10 +715,7 @@ void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node,
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-      if (info.methods.exist(*it)) {
-         compiler.injectVirtualMultimethod(scope, node, *it, methodType, info.header.parentRef);
-      }
-      else compiler.injectVirtualMultimethod(scope, node, *it, methodType);
+      compiler.injectVirtualMultimethod(scope, node, *it, methodType);
 
       //if (isOpenArg(*it)) {
       //   // generate explicit argument list dispatcher
@@ -732,8 +729,6 @@ void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node,
       //   }
       //   else compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType);
       //}
-
-      info.header.flags |= elWithMuti;
    }
 }
 
@@ -836,9 +831,9 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
-         SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
-         if (multiMethAttr != lxNone) {
-            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethAttr.argument, maReference));
+         ref_t multiMethod = info.methodHints.get(Attribute(current.argument, maMultimethod));
+         if (multiMethod != lxNone) {
+            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethod, maReference));
             if (outputRefMulti != 0) {
                ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
                if (outputRef == 0) {
@@ -1444,11 +1439,9 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 //   if (info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
 //      info.header.flags |= elWithCustomDispatcher;
 //   }
-//
-//   // generation operation list if required
-//   if (test(info.header.flags, elWithMuti)) {
-//      injectOverloadList(scope, info, compiler, classRef);
-//   }
+
+   // generate operation list if required
+   injectOverloadList(scope, info, compiler, classRef);
 }
 
 bool CompilerLogic :: validateArgumentAttribute(int attrValue)

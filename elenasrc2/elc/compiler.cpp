@@ -74,19 +74,6 @@ typedef ClassInfo::Attribute Attribute;
 //   }
 //}
 
-inline void findUninqueName(_Module* module, IdentifierString& name)
-{
-   size_t pos = getlength(name);
-   int   index = 0;
-   ref_t ref = 0;
-   do {
-      name[pos] = 0;
-      name.appendHex(index++);
-
-      ref = module->mapReference(name.c_str(), true);
-   } while (ref != 0);
-}
-
 inline SNode findParent(SNode node, LexicalType type)
 {
    while (node.type != type && node != lxNone) {
@@ -333,16 +320,6 @@ ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
 ////   }
 //   else return moduleScope->mapNewIdentifier(ns, terminal.identifier(), false);
    else throw InternalError("Cannot map new terminal"); // !! temporal
-}
-
-ref_t Compiler::NamespaceScope :: mapAnonymous(ident_t prefix)
-{
-   // auto generate the name
-   IdentifierString name("'", prefix, INLINE_CLASSNAME);
-
-   findUninqueName(moduleScope->module, name);
-
-   return moduleScope->module->mapReference(name);
 }
 
 //////bool Compiler::ModuleScope :: doesReferenceExist(ident_t referenceName)
@@ -658,7 +635,7 @@ ObjectInfo Compiler::MethodScope :: mapSelf(/*bool forced*/)
    //else if (classEmbeddable) {
    //   return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
    //}
-   /*else */return ObjectInfo(okSelfParam, 1/*, ((ClassScope*)getScope(slClass))->reference*/);
+   /*else */return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
 }
 
 ////ObjectInfo Compiler::MethodScope :: mapGroup()
@@ -4602,7 +4579,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       if (current == lxMethodParameter) {
          int index = 1 + scope.parameters.Count();
 //         int size = 0;
-         ref_t classRef = 0;
+         ref_t classRef = scope.moduleScope->superReference;
 //         ref_t elementRef = 0;
 //
          ident_t terminal = current.findChild(lxNameAttr).firstChild(lxTerminalMask)/*findTerminal(current.findChild(lxNameAttr))*/.identifier();
@@ -4611,8 +4588,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
          declareArgumentAttributes(current, scope, classRef);
 
-//         SNode attribute = current.findChild(lxTypeAttr);
-//         if (attribute != lxNone || current.argument != 0) {
 //            if (current.argument != 0) {
 //               // HOTFIX : to recognize conversion arguments
 //               classRef = current.argument;
@@ -4644,12 +4619,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //               size = _logic->defineStructSize(*scope.moduleScope, classRef, elementRef);
 
 //            }
-//         }
-//         else {
-            paramCount++;
-            if (paramCount >= ARG_COUNT)
-               scope.raiseError(errTooManyParameters, current);
-//         }
 
          scope.parameters.add(terminal, Parameter(index, classRef/*, elementRef, size*/));
 //
@@ -4792,19 +4761,18 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
       else scope.raiseError(errIllegalMethod, node);
 
+      scope.message = encodeMessage(actionRef, paramCount, flags);
+
       //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method7
       if (paramCount > 0 && (signatureLen > 0/* || paramCount >= OPEN_ARG_COUNT*/)/* && flags != SPECIAL_MESSAGE*/) {
          ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
          ref_t genericMessage = encodeMessage(genericActionRef, paramCount, flags);
-         //if (genericActionRef == SET_MESSAGE_ID && paramCount == 1) {
-         //   // HOTFIX : properly recognize generic set method
-         //   genericMessage |= PROPSET_MESSAGE;
-         //}
 
-         node.appendNode(lxMultiMethodAttr, genericMessage);
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+         Attribute attr(scope.message, maMultimethod);
+         classScope->info.methodHints.exclude(attr);
+         classScope->info.methodHints.add(attr, genericMessage);
       }
-
-      scope.message = encodeMessage(actionRef, paramCount, flags);
 
 //      // if it is an explicit constant conversion
 //      if (constantConversion) {
@@ -6229,12 +6197,6 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 //   }
 //}
 
-inline ident_t resolveActionName(_Module* module, ref_t message)
-{
-   ref_t signRef = 0;
-   return module->resolveAction(getAction(message), signRef);
-}
-
 //void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope)
 //{
 //   SNode body = node.findChild(lxCode);
@@ -6348,21 +6310,21 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 //         // private / internal methods cannot be declared in the extension
 //         scope.raiseError(errIllegalPrivate, current);
 
-      // create overloadlist if required
-      if (test(methodHints, tpMultimethod)) {
-         NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+      //// create overloadlist if required
+      //if (test(methodHints, tpMultimethod)) {
+      //   NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-         scope.info.methodHints.exclude(Attribute(message, maOverloadlist));
-         scope.info.methodHints.add(Attribute(message, maOverloadlist), namespaceScope->mapAnonymous(resolveActionName(scope.module, message)));
+      //   scope.info.methodHints.exclude(Attribute(message, maOverloadlist));
+      //   scope.info.methodHints.add(Attribute(message, maOverloadlist), namespaceScope->mapAnonymous(resolveActionName(scope.module, message)));
 
-         scope.info.header.flags |= elWithMuti;
+      //   scope.info.header.flags |= elWithMuti;
 
-         //// save extensions if required ; private method should be ignored
-         //if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
-         //   // NOTE : only general message should be saved
-         //   saveExtension(scope, message, scope.internalOne);
-         //}
-      }
+      //   //// save extensions if required ; private method should be ignored
+      //   //if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
+      //   //   // NOTE : only general message should be saved
+      //   //   saveExtension(scope, message, scope.internalOne);
+      //   //}
+      //}
 //      else if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate) && isGeneralMessage(scope.module, message)) {
 //         // save the extension message without parameters as well
 //         saveExtension(scope, message, scope.internalOne);
@@ -6381,14 +6343,14 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, /*boo
    while (current != lxNone) {
       if (current == methodType/* && !test(current.argument, SEALED_MESSAGE)*/) {
          ////HOTFIX : ignore private methods
-         SNode multiMethAttr = current.findChild(lxMultiMethodAttr);
-         if (multiMethAttr != lxNone) {
-            if (retrieveIndex(implicitMultimethods.start(), multiMethAttr.argument) == -1) {
-               implicitMultimethods.add(multiMethAttr.argument);
+         ref_t multiMethod = scope.info.methodHints.get(Attribute(current.argument, maMultimethod));
+         if (multiMethod) {
+            if (retrieveIndex(implicitMultimethods.start(), multiMethod) == -1) {
+               implicitMultimethods.add(multiMethod);
                templateMethods = true;
 
                // HOTFIX : mark the generic message as a multi-method
-               scope.addHint(multiMethAttr.argument, tpMultimethod);
+               scope.addHint(multiMethod, tpMultimethod);
             }
          }
       }
@@ -6483,6 +6445,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
 //   // do not set flags for closure declaration - they will be set later
 //   if (!nestedDeclarationMode) {
       _logic->tweakClassFlags(*scope.moduleScope, *this, scope.reference, scope.info, isClassClass(classType));
+
 //   }
    ///*else */if (test(scope.info.header.flags, elNestedClass)) {
    //   // HOTFIX : nested class should be marked as sealed to generate multi-method properly
@@ -7985,54 +7948,54 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 ////
 ////   _writer.generateConstantMember(writer, type, argument);
 ////}
-//
-//void Compiler :: generateOverloadListMember(_CompilerScope& scope, ref_t listRef, ref_t messageRef)
-//{
-//   MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
-//   if (metaWriter.Position() == 0) {
-//      metaWriter.writeRef(0, messageRef);
-//      metaWriter.writeDWord(0);
-//      metaWriter.writeDWord(0);
-//   }
-//   else {
-//      metaWriter.insertDWord(0, 0);
-//      metaWriter.insertDWord(0, messageRef);
-//      metaWriter.Memory()->addReference(0, 0);
-//   }
-//}
-//
-//void Compiler :: generateClosedOverloadListMember(_CompilerScope& scope, ref_t listRef, ref_t messageRef, ref_t classRef)
-//{
-//   MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
-//   if (metaWriter.Position() == 0) {
-//      metaWriter.writeRef(0, messageRef);
-//      metaWriter.writeRef(classRef | mskVMTEntryOffset, messageRef);
-//      metaWriter.writeDWord(0);
-//   }
-//   else {
-//      metaWriter.insertDWord(0, messageRef);
-//      metaWriter.insertDWord(0, messageRef);
-//      metaWriter.Memory()->addReference(0, 0);
-//      metaWriter.Memory()->addReference(classRef | mskVMTEntryOffset, 4);
-//   }
-//}
-//
-//void Compiler :: generateSealedOverloadListMember(_CompilerScope& scope, ref_t listRef, ref_t messageRef, ref_t classRef)
-//{
-//   MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
-//   if (metaWriter.Position() == 0) {
-//      metaWriter.writeRef(0, messageRef);
-//      metaWriter.writeRef(classRef | mskVMTMethodAddress, messageRef);
-//      metaWriter.writeDWord(0);
-//   }
-//   else {
-//      metaWriter.insertDWord(0, messageRef);
-//      metaWriter.insertDWord(0, messageRef);
-//      metaWriter.Memory()->addReference(0, 0);
-//      metaWriter.Memory()->addReference(classRef | mskVMTMethodAddress, 4);
-//   }
-//}
-//
+
+void Compiler :: generateOverloadListMember(_ModuleScope& scope, ref_t listRef, ref_t messageRef)
+{
+   MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
+   if (metaWriter.Position() == 0) {
+      metaWriter.writeRef(0, messageRef);
+      metaWriter.writeDWord(0);
+      metaWriter.writeDWord(0);
+   }
+   else {
+      metaWriter.insertDWord(0, 0);
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.Memory()->addReference(0, 0);
+   }
+}
+
+void Compiler :: generateClosedOverloadListMember(_ModuleScope& scope, ref_t listRef, ref_t messageRef, ref_t classRef)
+{
+   MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
+   if (metaWriter.Position() == 0) {
+      metaWriter.writeRef(0, messageRef);
+      metaWriter.writeRef(classRef | mskVMTEntryOffset, messageRef);
+      metaWriter.writeDWord(0);
+   }
+   else {
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.Memory()->addReference(0, 0);
+      metaWriter.Memory()->addReference(classRef | mskVMTEntryOffset, 4);
+   }
+}
+
+void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t listRef, ref_t messageRef, ref_t classRef)
+{
+   MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
+   if (metaWriter.Position() == 0) {
+      metaWriter.writeRef(0, messageRef);
+      metaWriter.writeRef(classRef | mskVMTMethodAddress, messageRef);
+      metaWriter.writeDWord(0);
+   }
+   else {
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.insertDWord(0, messageRef);
+      metaWriter.Memory()->addReference(0, 0);
+      metaWriter.Memory()->addReference(classRef | mskVMTMethodAddress, 4);
+   }
+}
+
 ////ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader)
 ////{
 ////   ref_t memberRef = reader.getDWord() & ~mskAnyRef;
@@ -8163,36 +8126,34 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   SNode codeNode = methNode.appendNode(lxDispatchCode, -1);
 //}
 
-void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t parentRef)
+void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType)
 {
    ref_t resendMessage = message;
    ref_t actionRef, flags;
    int paramCount;
    decodeMessage(message, actionRef, paramCount, flags);
 
-   if (!parentRef) {
-      ref_t dummy = 0;
-      ident_t actionName = scope.module->resolveAction(actionRef, dummy);
+   ref_t dummy = 0;
+   ident_t actionName = scope.module->resolveAction(actionRef, dummy);
 
-      ref_t signatureLen = 0;
-      ref_t signatures[ARG_COUNT];
+   ref_t signatureLen = 0;
+   ref_t signatures[ARG_COUNT];
 
-      //if (paramCount >= OPEN_ARG_COUNT) {
-      //   for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
-      //      signatures[signatureLen++] = scope.superReference;
-      //   }
-      //   signatures[signatureLen++] = scope.superReference;
-      //}
-      //else {
-         for (int i = 0; i < paramCount; i++) {
-            signatureLen++;
-            signatures[i] = scope.superReference;
-         }
-      //}
-      ref_t signRef = scope.module->mapAction(actionName, scope.module->mapSignature(signatures, signatureLen, false), false);
+   //if (paramCount >= OPEN_ARG_COUNT) {
+   //   for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
+   //      signatures[signatureLen++] = scope.superReference;
+   //   }
+   //   signatures[signatureLen++] = scope.superReference;
+   //}
+   //else {
+      for (int i = 0; i < paramCount; i++) {
+         signatureLen++;
+         signatures[i] = scope.superReference;
+      }
+   //}
+   ref_t signRef = scope.module->mapAction(actionName, scope.module->mapSignature(signatures, signatureLen, false), false);
 
-      resendMessage = encodeMessage(signRef, paramCount, flags);
-   }
+   resendMessage = encodeMessage(signRef, paramCount, flags);
 
    SNode methNode = classNode.appendNode(methodType, message);
    methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
@@ -8203,9 +8164,7 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
    //if (actionRef == INVOKE_MESSAGE_ID)
    //   methNode.appendNode(lxAttribute, tpAction);
 
-   SNode codeNode = methNode.appendNode(lxResendExpression, resendMessage);
-   if (parentRef)
-      codeNode.appendNode(lxTarget, parentRef);
+   methNode.appendNode(lxResendExpression, resendMessage);
 }
 
 //void Compiler :: injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType)
