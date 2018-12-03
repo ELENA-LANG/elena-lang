@@ -70,7 +70,7 @@
 #define V_PUBLIC         (ref_t)-8211
 //#define V_PRIVATE        (ref_t)-8212
 #define V_INTERNAL       (ref_t)-8213
-//#define V_CLOSED         (ref_t)-8214
+#define V_CLOSED         (ref_t)-8214
 //#define V_PREDEFINED     (ref_t)-8215
 #define V_DISPATCHER     (ref_t)-8216
 
@@ -484,8 +484,8 @@ public:
 //   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
 //   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
 //   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
-//
-//   virtual ref_t resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& resolveMultimethod) = 0;
+
+   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef/*, int& stackSafeAttr*/) = 0;
 };
 
 }  // _ELENA_

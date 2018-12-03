@@ -19,7 +19,7 @@
 //static          = #8194.
 #16385 = var;
 //auto            = #50.
-//interface       = #8196.
+//#8196  = interface;
 //field           = #16392.
 #16393 = method;
 //__loop          = #16394.
@@ -39,7 +39,7 @@
 #8211  = public;
 //private         = #8212.
 #8213  = internal;
-//closed          = #8214.
+#8214  = closed;
 //predefined      = #8215.
 #8216  = dispatch;
 

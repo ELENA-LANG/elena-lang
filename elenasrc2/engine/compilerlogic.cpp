@@ -629,18 +629,46 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
          info.methodHints.exclude(Attribute(message, maOverloadlist));
          info.methodHints.add(Attribute(message, maOverloadlist), listRef);
 
-         // fill the overloadlist
+         // sort the overloadlist
+         int defaultOne[0x20];
+         int* list = defaultOne;
+         size_t capcity = 0x20;
+         size_t len = 0;
          for (auto h_it = info.methodHints.start(); !h_it.Eof(); h_it++) {
             if (h_it.key().value2 == maMultimethod && *h_it == message) {
-               if (test(info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
-                  compiler.generateSealedOverloadListMember(scope, listRef, h_it.key().value1, classRef);
+               if (len == capcity) {
+                  int* new_list = new int[capcity + 0x10];
+                  memmove(new_list, list, capcity * 4);
+                  list = new_list;
+                  capcity += 0x10;
                }
-               else if (test(info.header.flags, elClosed)) {
-                  compiler.generateClosedOverloadListMember(scope, listRef, h_it.key().value1, classRef);
+
+               ref_t omsg = h_it.key().value1;
+               list[len] = omsg;
+               for (size_t i = 0; i < len; i++) {
+                  if (isSignatureCompatible(scope, omsg, list[i])) {
+                     memmove(list + (i + 1) * 4, list + i * 4, (len - i) * 4);
+                     list[i] = omsg;
+                     break;
+                  }
                }
-               else compiler.generateOverloadListMember(scope, listRef, h_it.key().value1);
+               len++;
             }
          }
+
+         // fill the overloadlist
+         for (size_t i = 0; i < len; i++) {
+            if (test(info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+               compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
+            }
+            else if (test(info.header.flags, elClosed)) {
+               compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
+            }
+            else compiler.generateOverloadListMember(scope, listRef, list[i]);
+         }
+
+         if (capcity > 0x20)
+            delete[] list;
       }
    }
 }
@@ -957,36 +985,56 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
 //      return true;
 //   }
 //}
-//
-//bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, ref_t targetSignature, ref_t* sourceSignatures)
-//{
-//   ref_t targetSignatures[OPEN_ARG_COUNT];
-//   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
-//   if (len < 0)
-//      return false;
-//
-//   for (size_t i = 0; i < len; i++) {
-//      if (!isCompatible(scope, targetSignatures[i], sourceSignatures[i]))
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
-//bool CompilerLogic :: isSignatureCompatible(_CompilerScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures)
-//{
-//   ref_t targetSignatures[OPEN_ARG_COUNT];
-//   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
-//
-//   for (size_t i = 0; i < len; i++) {
-//      if (!isCompatible(scope, importReference(targetModule, targetSignatures[i], scope.module), sourceSignatures[i]))
-//         return false;
-//   }
-//
-//   return true;
-//
-//}
-//
+
+inline ref_t getSignature(_ModuleScope& scope, ref_t message)
+{
+   ref_t actionRef, dummy;
+   int paramCount;
+   decodeMessage(message, actionRef, paramCount, dummy);
+
+   ref_t signRef = 0;
+   scope.module->resolveAction(actionRef, signRef);
+
+   return signRef;
+}
+
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage)
+{
+   ref_t sourceSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
+
+   return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures);
+}
+
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (len < 0)
+      return false;
+
+   for (size_t i = 0; i < len; i++) {
+      if (!isCompatible(scope, targetSignatures[i], sourceSignatures[i]))
+         return false;
+   }
+
+   return true;
+}
+
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+
+   for (size_t i = 0; i < len; i++) {
+      if (!isCompatible(scope, importReference(targetModule, targetSignatures[i], scope.module), sourceSignatures[i]))
+         return false;
+   }
+
+   return true;
+
+}
+
 //void CompilerLogic :: setSignatureStacksafe(_CompilerScope& scope, ref_t targetSignature, int& stackSafeAttr)
 //{
 //   ref_t targetSignatures[OPEN_ARG_COUNT];
@@ -1462,9 +1510,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //      case V_LIMITED:
 //         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
 //         return true;
-//      case V_CLOSED:
-//         attrValue = elClosed;
-//         return true;
+      case V_CLOSED:
+         attrValue = elClosed;
+         return true;
 //      case V_STRUCT:
 //         attrValue = elStructureRole;
 //         return true;
@@ -2309,86 +2357,86 @@ bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr
 ////   end = signature.find(start, '$', getlength(signature));
 ////   temp.copy(signature.c_str() + start, end - start);
 ////}
-//
-//ref_t CompilerLogic :: resolveMultimethod(_CompilerScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr)
-//{
-//   if (!targetRef)
-//      return 0;
-//
-//   //compatible = isSignatureCompatible(scope, signatureRef, signatures);
-//
-////   bool openArg = getAbsoluteParamCount(multiMessage) == OPEN_ARG_COUNT;
-////   ident_t sour_sign = scope.module->resolveSubject(implicitSignatureRef);
-//
-//   ClassInfo info;
-//   if (defineClassInfo(scope, info, targetRef)) {
-//      if (isMethodInternal(info, multiMessage)) {
-//         // recognize the internal message
-//         ref_t signRef = 0;
-//         IdentifierString internalName(scope.module->Name(), "$$");
-//         internalName.append(scope.module->resolveAction(getAction(multiMessage), signRef));
-//
-//         ref_t internalRef = scope.module->mapAction(internalName.c_str(), signRef, false);
-//
-//         multiMessage = overwriteAction(multiMessage, internalRef);
-//         if (!implicitSignatureRef)
-//            // if no signature provided - return the general internal message
-//            return multiMessage;
-//      }
-//
-//      if (!implicitSignatureRef)
-//         return 0;
-//
-//      ref_t signatures[OPEN_ARG_COUNT];
-//      /*size_t signatureLen = */scope.module->resolveSignature(implicitSignatureRef, signatures);
-//
-//      ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
-//      if (listRef == 0 && isMethodPrivate(info, multiMessage))
-//         listRef = info.methodHints.get(Attribute(multiMessage | SEALED_MESSAGE, maOverloadlist));
-//
-//      if (listRef) {
-//         _Module* argModule = scope.loadReferenceModule(listRef, listRef);
-//
-//         _Memory* section = argModule->mapSection(listRef | mskRDataRef, true);
-//         if (!section || section->Length() < 4)
-//            return 0;
-//
-//         MemoryReader reader(section);
-//         pos_t position = section->Length() - 4;
-//         while (position != 0) {
-//            reader.seek(position - 8);
-//            ref_t argMessage = reader.getDWord();
-//            ref_t argSign = 0;
-//            argModule->resolveAction(getAction(argMessage), argSign);
-//
-//            if (argModule == scope.module) {
-//               if (isSignatureCompatible(scope, argSign, signatures)) {
-//                  if (isEmbeddable(info))
-//                     stackSafeAttr |= 1;
-//
-//                  setSignatureStacksafe(scope, argSign, stackSafeAttr);
-//
-//                  return argMessage;
-//               }                  
-//            }
-//            else {
-//               if (isSignatureCompatible(scope, argModule, argSign, signatures)) {
-//                  if (isEmbeddable(info))
-//                     stackSafeAttr |= 1;
-//
-//                  setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
-//
-//                  return importMessage(argModule, argMessage, scope.module);
-//               }                  
-//            }
-//
-//            position -= 8;
-//         }
-//      }
-//   }
-//
-//   return 0;
-//}
+
+ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef/*, int& stackSafeAttr*/)
+{
+   if (!targetRef)
+      return 0;
+
+   //compatible = isSignatureCompatible(scope, signatureRef, signatures);
+
+//   bool openArg = getAbsoluteParamCount(multiMessage) == OPEN_ARG_COUNT;
+//   ident_t sour_sign = scope.module->resolveSubject(implicitSignatureRef);
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, targetRef)) {
+      //if (isMethodInternal(info, multiMessage)) {
+      //   // recognize the internal message
+      //   ref_t signRef = 0;
+      //   IdentifierString internalName(scope.module->Name(), "$$");
+      //   internalName.append(scope.module->resolveAction(getAction(multiMessage), signRef));
+
+      //   ref_t internalRef = scope.module->mapAction(internalName.c_str(), signRef, false);
+
+      //   multiMessage = overwriteAction(multiMessage, internalRef);
+      //   if (!implicitSignatureRef)
+      //      // if no signature provided - return the general internal message
+      //      return multiMessage;
+      //}
+
+      if (!implicitSignatureRef)
+         return 0;
+
+      ref_t signatures[ARG_COUNT];
+      /*size_t signatureLen = */scope.module->resolveSignature(implicitSignatureRef, signatures);
+
+      ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
+      //if (listRef == 0 && isMethodPrivate(info, multiMessage))
+      //   listRef = info.methodHints.get(Attribute(multiMessage | SEALED_MESSAGE, maOverloadlist));
+
+      if (listRef) {
+         _Module* argModule = scope.loadReferenceModule(listRef, listRef);
+
+         _Memory* section = argModule->mapSection(listRef | mskRDataRef, true);
+         if (!section || section->Length() < 4)
+            return 0;
+
+         MemoryReader reader(section);
+         pos_t position = section->Length() - 4;
+         while (position != 0) {
+            reader.seek(position - 8);
+            ref_t argMessage = reader.getDWord();
+            ref_t argSign = 0;
+            argModule->resolveAction(getAction(argMessage), argSign);
+
+            if (argModule == scope.module) {
+               if (isSignatureCompatible(scope, argSign, signatures)) {
+                  //if (isEmbeddable(info))
+                  //   stackSafeAttr |= 1;
+
+                  //setSignatureStacksafe(scope, argSign, stackSafeAttr);
+
+                  return argMessage;
+               }                  
+            }
+            else {
+               if (isSignatureCompatible(scope, argModule, argSign, signatures)) {
+                  //if (isEmbeddable(info))
+                  //   stackSafeAttr |= 1;
+
+                  //setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
+
+                  return importMessage(argModule, argMessage, scope.module);
+               }                  
+            }
+
+            position -= 8;
+         }
+      }
+   }
+
+   return 0;
+}
 
 bool CompilerLogic :: validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass)
 {

@@ -3018,41 +3018,41 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
    return 0;
 }
 
-//ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef, 
-//   bool withExtension, int& stackSafeAttr)
-//{
-//   ref_t resolvedMessageRef = 0;
-//   ref_t targetRef = resolveObjectReference(scope, target);
-//
-//   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, stackSafeAttr);
-//
-//   if (resolvedMessageRef != 0) {
-//      // if the object handles the compile-time resolved message - use it
-//      return resolvedMessageRef;
-//   }
-//
-//   // check the existing extensions if allowed
-//   if (withExtension) {
-//      if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
-//         // could be stacksafe
-//         stackSafeAttr |= 1;
-//
-//         // if the object handles the message - do not use extensions
-//         return generalMessageRef;
-//      }
-//
-//      ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, stackSafeAttr);
-//      if (extensionRef != 0) {
-//         // if there is an extension to handle the compile-time resolved message - use it
-//         target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
-//
-//         return generalMessageRef;
-//      }
-//   }
-//
-//   // otherwise - use the general message
-//   return generalMessageRef;
-//}
+ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*, 
+   bool withExtension, int& stackSafeAttr*/)
+{
+   ref_t resolvedMessageRef = 0;
+   ref_t targetRef = resolveObjectReference(scope, target);
+
+   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef/*, stackSafeAttr*/);
+
+   if (resolvedMessageRef != 0) {
+      // if the object handles the compile-time resolved message - use it
+      return resolvedMessageRef;
+   }
+
+   //// check the existing extensions if allowed
+   //if (withExtension) {
+   //   if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
+   //      // could be stacksafe
+   //      stackSafeAttr |= 1;
+
+   //      // if the object handles the message - do not use extensions
+   //      return generalMessageRef;
+   //   }
+
+   //   ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, stackSafeAttr);
+   //   if (extensionRef != 0) {
+   //      // if there is an extension to handle the compile-time resolved message - use it
+   //      target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
+
+   //      return generalMessageRef;
+   //   }
+   //}
+
+   // otherwise - use the general message
+   return generalMessageRef;
+}
 
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t exptectedRef*/, ObjectInfo target, int mode)
 {
@@ -3064,7 +3064,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 ////   ref_t implicitSignatureRef = 0;
 ////   size_t paramCount = 0;
    ObjectInfo retVal;
-   /*ref_t implicitSignatureRef = */compileMessageParameters(writer, node, scope, paramsMode/* & (HINT_RESENDEXPR | HINT_PARAMETERSONLY)*/);
+   ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode/* & (HINT_RESENDEXPR | HINT_PARAMETERSONLY)*/);
 
 //   //   bool externalMode = false;
 //   if (target.kind == okExternal) {
@@ -3080,8 +3080,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //      }
 //      else {
 //         int stackSafeAttr = 0;
-//         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, stackSafeAttr);
-//
+         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef/*, true, stackSafeAttr*/);
+
 //         if (!test(stackSafeAttr, 1)) {
 //            mode |= HINT_DYNAMIC_OBJECT;
 //         }
@@ -5205,11 +5205,11 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 //      compileDispatchExpression(writer, body, codeScope);
 //   }
    else {
-      //if (scope.multiMethod) {
-      //   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+      if (scope.multiMethod) {
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
 
-      //   compileMultidispatch(writer, node.parentNode(), codeScope, *classScope);
-      //}
+         compileMultidispatch(writer, node.parentNode(), codeScope, *classScope);
+      }
 
       writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
 
@@ -5749,17 +5749,17 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
 
    generateClassDeclaration(node, classClassScope, /*_logic->isEmbeddable(classScope.info) ? ClassType::ctEmbeddableClass : */ClassType::ctClassClass);
 
-   //// generate constructor attributes
-   //ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
-   //while (!it.Eof()) {
-   //   int hints = classClassScope.info.methodHints.get(Attribute(it.key(), maHint));
-   //   if (test(hints, tpConstructor)) {
-   //      classClassScope.info.methodHints.exclude(Attribute(it.key(), maReference));
-   //      classClassScope.info.methodHints.add(Attribute(it.key(), maReference), classScope.reference);
-   //   }
+   // generate constructor attributes
+   ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
+   while (!it.Eof()) {
+      int hints = classClassScope.info.methodHints.get(Attribute(it.key(), maHint));
+      if (test(hints, tpConstructor)) {
+         classClassScope.info.methodHints.exclude(Attribute(it.key(), maReference));
+         classClassScope.info.methodHints.add(Attribute(it.key(), maReference), classScope.reference);
+      }
 
-   //   it++;
-   //}
+      it++;
+   }
 
    classClassScope.save();
 }
