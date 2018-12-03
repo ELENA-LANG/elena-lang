@@ -4,11 +4,8 @@
 
 public class Object
 {
-//    constructor()
-//        <= new();
-    
     /// Creates the object
-    constructor new() {}
+    constructor() {}
     
 //    /// Returns true if the specified object is equal to the current object; otherwise, false.
 //    ///
