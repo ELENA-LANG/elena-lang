@@ -26,7 +26,7 @@ using namespace _ELENA_;
 // --- Hint constants ---
 //#define HINT_CLOSURE_MASK     0xC0008800
 
-#define HINT_ROOT             0x80000000
+constexpr auto HINT_ROOT        = 0x80000000;
 //#define HINT_ROOTSYMBOL       0xC0000000
 //#define HINT_NOBOXING         0x20000000
 //#define HINT_NOUNBOXING       0x10000000
@@ -40,15 +40,16 @@ using namespace _ELENA_;
 //#define HINT_SINGLETON        0x00100000
 ////#define HINT_EXT_RESENDEXPR   0x00080400
 //#define HINT_ASSIGNING_EXPR   0x00040000
-#define HINT_NODEBUGINFO      0x00020000
+constexpr auto HINT_NODEBUGINFO = 0x00020000;
 ////#define HINT_PARAMETERSONLY   0x00010000
 //#define HINT_SUBCODE_CLOSURE  0x00008800
+constexpr auto HINT_VIRTUALEXPR = 0x00004000;
 ////#define HINT_RESENDEXPR       0x00000400
 //#define HINT_LAZY_EXPR        0x00000200
 //#define HINT_DYNAMIC_OBJECT   0x00000100  // indicates that the structure MUST be boxed
 //#define HINT_UNBOXINGEXPECTED 0x00000080
 //#define HINT_PROP_MODE        0x00000040
-#define HINT_SILENT           0x00000020
+constexpr auto HINT_SILENT      = 0x00000020;
 //#define HINT_INT64EXPECTED    0x00000004
 //#define HINT_REAL64EXPECTED   0x00000002
 //#define HINT_NOPRIMITIVES     0x00000001
@@ -2268,8 +2269,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //      object = ObjectInfo(okObject, constInfo.value2);
 //
 //      writer.removeBookmark();
-//   }
-   /*else */writeTerminal(writer, terminal, scope, object, mode);
+//   }            
+   /*else */if (!test(mode, HINT_VIRTUALEXPR))
+      writeTerminal(writer, terminal, scope, object, mode);
 
    return object;
 }
@@ -3914,17 +3916,27 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
    }
    else scope.raiseError(errInvalidSyntax, node.parentNode());
 
-   writer.newBookmark(); // !! an extra breakpoint?
-
    ObjectInfo retVal = ObjectInfo(okObject, 0, targetRef);
 
-   //int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
-   int paramsMode = 0;
-   ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode/* & (HINT_RESENDEXPR | HINT_PARAMETERSONLY)*/);
-   if (typecast(writer, scope, targetRef, implicitSignatureRef)) {
-      
+   int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
+   if (paramCount == 1 && node.argument == V_CONVERSION) {
+      // if it is a cast expression
+      ObjectInfo object = compileExpression(writer, node.nextNode(), scope, /*targetRef*/0, mode);
+      if (!convertObject(writer, scope, targetRef, object))
+         scope.raiseError(errIllegalOperation, node);
    }
-   else scope.raiseError(errInvalidOperation, node);
+   else if (node.argument == V_NEWOP) {
+      // if it is a implicit constructor
+      int paramsMode = 0;
+      ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode/* & (HINT_RESENDEXPR | HINT_PARAMETERSONLY)*/);
+      ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, targetRef, implicitSignatureRef);
+      if (messageRef) {
+         // call the constructor
+         compileMessage(writer, node, scope, target, messageRef, HINT_SILENT | HINT_NODEBUGINFO);
+      }
+      else scope.raiseError(errInvalidHint, node.parentNode());
+   }
+   else scope.raiseError(errInvalidHint, node.parentNode());
 
 //   SNode objectNode = node.findChild(lxExpression);
 //   if (objectNode != lxNone) {
@@ -3967,8 +3979,6 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 //   else if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
 //      scope.raiseError(errIllegalOperation, node);
 
-   writer.removeBookmark();
-
    return retVal;
 }
 
@@ -4007,7 +4017,7 @@ ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
    return ref;
 }
 
-void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int mode)
+void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int& mode)
 {
    bool invalidExpr = false;
    bool newVariable = false;
@@ -4026,7 +4036,9 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
          else if (castExpr) {
             SNode msgNode = goToNode(current, lxMessage);
             if (msgNode != lxNone && msgNode.firstChild() == lxNone) {
-               msgNode = lxTypecast;
+               msgNode.set(lxTypecast, value);
+               if (value == V_CONVERSION)
+                  mode |= HINT_VIRTUALEXPR;
             }
             else invalidExpr = true;
          }
@@ -4070,7 +4082,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    SNode object = node.firstChild();
    // COMPILER MAGIC : compile the expression attributes
    if (object == lxAttribute)
-      compileExpressionAttributes(writer, object, scope, mode);
+      compileExpressionAttributes(writer, object, scope, targetMode);
 
    SNode operationNode = object.nextNode();
 //
@@ -8015,22 +8027,22 @@ void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t lis
 //   writer.insert(boxingType, argument);
 //   writer.closeNode();
 //}
-//
-//void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, ref_t targetRef, int stackSafeAttr)
-//{
-//   writer.insertChildren(0, createOp, createArg, lxTarget, targetClassRef);
-//
-//   if (convertOp != lxNone) {
-//      writer.appendNode(lxCallTarget, targetRef);
-//      writer.appendNode(lxBoxableAttr);
-//      if (stackSafeAttr)
-//         writer.appendNode(lxStacksafeAttr, stackSafeAttr);
-//      
-//      writer.insert(convertOp, convertArg);
-//      writer.closeNode();
-//   }
-//}
-//
+
+void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*, ref_t targetRef, int stackSafeAttr*/)
+{
+   writer.insertChild(0, targetOp, targetArg/*, lxTarget, targetClassRef*/);
+
+   if (convertOp != lxNone) {
+      writer.appendNode(lxCallTarget, targetClassRef);
+      //writer.appendNode(lxBoxableAttr);
+      //if (stackSafeAttr)
+      //   writer.appendNode(lxStacksafeAttr, stackSafeAttr);
+      
+      writer.insert(convertOp, convertArg);
+      writer.closeNode();
+   }
+}
+
 //void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject)
 //{
 //   // removing assinging operation

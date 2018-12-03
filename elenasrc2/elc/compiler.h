@@ -874,7 +874,7 @@ private:
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode/*, int stackSafeAttr*/);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
-   void compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode);
+   void compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int& mode);
 
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
@@ -1030,8 +1030,8 @@ public:
    //virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
 //   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
 //   virtual void injectLocalBoxing(SNode node, int size);
-//   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, 
-//      ref_t targetRef, int stacksafeAttr);
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
+      ref_t targetRef, int stacksafeAttr*/);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 //////   virtual void injectFieldExpression(SyntaxWriter& writer);

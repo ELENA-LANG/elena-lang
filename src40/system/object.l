@@ -4,6 +4,9 @@
 
 public class Object
 {
+//    constructor()
+//        <= new();
+    
     /// Creates the object
     constructor new() {}
     

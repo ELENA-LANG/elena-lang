@@ -93,7 +93,8 @@
 //#define V_NESTEDBLOCK    (ref_t)-16401
 //#define V_SET            (ref_t)-16402
 //#define V_STACKUNSAFE    (ref_t)-16403
-////
+#define V_NEWOP          (ref_t)-16404
+
 ////// obsolete
 ////#define V_MULTI          (ref_t)-16397
 
@@ -322,8 +323,8 @@ class _Compiler
 {
 public:
 //   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
-//   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType createOp, int createArg, ref_t targetClassRef, 
-//      ref_t targetRef, int stacksafeAttr) = 0;
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
+      ref_t targetRef, int stacksafeAttr*/) = 0;
 ////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 //
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
@@ -444,7 +445,8 @@ public:
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/) = 0;
-//   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef) = 0;
+   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef) = 0;
+//   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef) = 0;
 //   virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef) = 0;
 //   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef) = 0;
 //   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;

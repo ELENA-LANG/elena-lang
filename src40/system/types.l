@@ -33,6 +33,7 @@
 //__nested        = #16401.
 //preloaded       = #8207.
 #16387 = cast;
+#16404 = new;
 //set             = #16402.  
 //
 //abstract        = #8210. 
