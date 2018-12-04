@@ -83,7 +83,8 @@ class DerivationWriter : public _DerivationWriter
 
    bool isMetaScope(SNode node);
 
-   void generateScope(SyntaxWriter& writer, SNode node);
+   void generateTemplate(SNode node, SNode nameNode);
+   void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node);
    void generateClassTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, int nested = 0*/);
    void generateMethodTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool templateMode, bool closureMode*/);

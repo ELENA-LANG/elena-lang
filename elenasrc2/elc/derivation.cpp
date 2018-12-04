@@ -137,6 +137,7 @@ void DerivationWriter :: newNode(Symbol symbol)
 ////         _writer.newNode(lxAttribute);
 ////         break;
       case nsExpression:
+      case nsRootExpression:
 //      case nsNestedRootExpression:
          _cacheWriter.newNode(lxExpression);
          break;
@@ -339,7 +340,8 @@ void DerivationWriter :: saveScope(SyntaxWriter& writer)
 {
    recognizeScope();
 
-   generateScope(writer, _cache.readRoot());
+   Scope outputScope;
+   generateScope(writer, _cache.readRoot(), outputScope);
 
    _cache.clear();
    _cacheWriter.clear();
@@ -347,31 +349,96 @@ void DerivationWriter :: saveScope(SyntaxWriter& writer)
 
 void DerivationWriter :: loadTemplateParameters(Scope& scope, SNode node)
 {
-   SNode current = node;
-   while (current == lxTokenParam) {
-      //         if (current.existChild(lxAttributeValue))
-      //            raiseError(errInvalidSyntax, node);
-      //
+   SNode current = node.findChild(lxToken);
+   while (current == lxToken) {
+      if (current.existChild(lxToken))
+         _scope->raiseError(errInvalidSyntax, _filePath, current);
+      
       ident_t name = current.firstChild(lxTerminalMask).identifier();
       
-      scope.parameters.add(name, scope.parameters.Count() + 1);
+      if(!scope.parameters.add(name, scope.parameters.Count() + 1, true))
+         _scope->raiseError(errDuplicatedDefinition, _filePath, current);
 
       current = current.nextNode();
    }
+}
+
+void DerivationWriter :: generateTemplate(SNode node, SNode nameNode)
+{
+   node = lxTemplate;
+   Scope templateScope;
+   templateScope.templateMode = true;
+
+   loadTemplateParameters(templateScope, nameNode);
+
+   //      int count = SyntaxTree::countChild(nameNode, lxAttributeValue);
+   //      int mode = MODE_ROOT;
+   //
+   //      IdentifierString templateName(nameNode.findChild(lxIdentifier).identifier());
+   //      if (test(declType, daField)) {
+   //         templateName.append("#1");
+   //
+   //         if (count != 1 && count != 2)
+   //            scope.raiseError(errInvalidSyntax, node);
+   //      }
+   //      else if (test(declType, daAccessor)) {
+   //         if (test(declType, daDblAccessor)) {
+   //            templateName.append("#2");
+   //         }
+   //         else {
+   //            templateName.append("#1");
+   //         }
+   //      }
+   //      else if (test(declType, daCode)) {
+   //         mode |= MODE_CODETEMPLATE;
+   //
+   //         templateName.append("#");
+   //
+   //         if (test(declType, daDblBlock)) {
+   //            templateName.append("#2");
+   //         }
+   //         else if (test(declType, daBlock)) {
+   //            templateName.append("#1");
+   //         }
+   //         else templateName.append("#0");
+   //
+   //         if (test(declType, daNestedBlock)) {
+   //            templateName.append("#1");
+   //         }
+   //         else templateName.append("#0");
+   //
+   //         if (test(declType, daLoop)) {
+   //            node.findChild(lxCode).injectNode(lxLoop);
+   //         }
+   //         else if (test(declType, daExtern)) {
+   //            node.findChild(lxCode).injectNode(lxExtern);
+   //         }
+   //      }
+   //      else if (declType == (DeclarationAttr)(daExtension | daTemplate)) {
+   //         templateName.append("~");
+   //      }
+   //
+   //      templateName.append('#');
+   //      templateName.appendInt(count);
+   //
+   //      node.set(lxTemplate, scope.mapNewIdentifier(templateName.c_str(), privateOne));
+   //
+   //      recognizeScopeMembers(node, scope, mode);
+
+   SyntaxTree templateTree;
+   SyntaxWriter templateWriter(templateTree);
+
+   generateScope(templateWriter, _cache.readRoot(), templateScope);
 }
 
 bool DerivationWriter :: isMetaScope(SNode node)
 {
    // recognize the declaration type
    DeclarationAttr declType = daNone;
-   SNode paramNode;
+   SNode nameNode;
    SNode current = node.prevNode();
-   while (current == lxTokenParam) {
-      paramNode = current;
-      current = current.prevNode();
-   }
-
    if (current == lxNameAttr) {
+      nameNode = current;
       current = current.prevNode();
    }      
    
@@ -452,7 +519,7 @@ bool DerivationWriter :: isMetaScope(SNode node)
    //      current = current.prevNode();
    //   }
    //
-   if (paramNode != lxNone) {
+   if (nameNode.existChild(lxToken)) {
       declType = (DeclarationAttr)(declType | daTemplate);
    }
 
@@ -486,66 +553,8 @@ bool DerivationWriter :: isMetaScope(SNode node)
    //      if (testany(declType, daImport | daType))
    //         scope.raiseError(errInvalidSyntax, node);
    
-      node = lxTemplate;
-      Scope templateScope;
-      templateScope.templateMode = true;
-   
-//      loadTemplateParameters(scope, paramNode);
+      generateTemplate(node, nameNode);
 
-   //      int count = SyntaxTree::countChild(nameNode, lxAttributeValue);
-   //      int mode = MODE_ROOT;
-   //
-   //      IdentifierString templateName(nameNode.findChild(lxIdentifier).identifier());
-   //      if (test(declType, daField)) {
-   //         templateName.append("#1");
-   //
-   //         if (count != 1 && count != 2)
-   //            scope.raiseError(errInvalidSyntax, node);
-   //      }
-   //      else if (test(declType, daAccessor)) {
-   //         if (test(declType, daDblAccessor)) {
-   //            templateName.append("#2");
-   //         }
-   //         else {
-   //            templateName.append("#1");
-   //         }
-   //      }
-   //      else if (test(declType, daCode)) {
-   //         mode |= MODE_CODETEMPLATE;
-   //
-   //         templateName.append("#");
-   //
-   //         if (test(declType, daDblBlock)) {
-   //            templateName.append("#2");
-   //         }
-   //         else if (test(declType, daBlock)) {
-   //            templateName.append("#1");
-   //         }
-   //         else templateName.append("#0");
-   //
-   //         if (test(declType, daNestedBlock)) {
-   //            templateName.append("#1");
-   //         }
-   //         else templateName.append("#0");
-   //
-   //         if (test(declType, daLoop)) {
-   //            node.findChild(lxCode).injectNode(lxLoop);
-   //         }
-   //         else if (test(declType, daExtern)) {
-   //            node.findChild(lxCode).injectNode(lxExtern);
-   //         }
-   //      }
-   //      else if (declType == (DeclarationAttr)(daExtension | daTemplate)) {
-   //         templateName.append("~");
-   //      }
-   //
-   //      templateName.append('#');
-   //      templateName.appendInt(count);
-   //
-   //      node.set(lxTemplate, scope.mapNewIdentifier(templateName.c_str(), privateOne));
-   //
-   //      recognizeScopeMembers(node, scope, mode);
-   //
       return true;
    }
    //   else if (test(declType, daClass)) {
@@ -610,12 +619,6 @@ void DerivationWriter :: declareAttribute(SNode node)
 void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, DerivationScope& scope*/)
 {
    // set name
-   int paramCounter = 0;
-   while (current == lxTokenParam) {
-      paramCounter++;
-
-      current = current.prevNode();
-   }
    SNode nameNode = current;
    nameNode = lxNameAttr;
 
@@ -655,7 +658,9 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
    //      scope.raiseError(errInvalidSyntax, nameNode);
    
    IdentifierString name(nameTerminal.identifier().c_str());
-   if (paramCounter > 0) {
+   if (nameNode.existChild(lxToken)) {
+      // if it is a template identifier
+      int paramCounter = SyntaxTree::countChild(nameNode, lxToken);
       name.append('#');
       name.appendInt(paramCounter);
    }
@@ -726,7 +731,7 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
    }
 }
 
-void DerivationWriter :: generateScope(SyntaxWriter& writer, SNode node)
+void DerivationWriter :: generateScope(SyntaxWriter& writer, SNode node, Scope& scope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -1192,6 +1197,16 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             break;
          case lxAssign:
             writer.appendNode(lxAssign);
+            break;
+         case lxToken:
+            if (current.nextNode() == lxToken) {
+               do {
+                  generateExpressionAttribute(writer, current);
+                  current = current.nextNode();
+
+               } while (current.nextNode() == lxToken);
+            }
+            copyIdentifier(writer, current.firstChild(lxTerminalMask));
             break;
          default:
             if (isTerminal(current.type)) {

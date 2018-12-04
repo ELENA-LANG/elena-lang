@@ -41,7 +41,6 @@ enum LexicalType
    lxExpression      = 0x0C012,
    lxScope           = 0x00013,
    lxClass           = 0x00014,
-   lxTokenParam      = 0x00015,
    lxClassMethod     = 0x00016,
    lxParameter       = 0x00017,
    lxCode            = 0x0001A,
