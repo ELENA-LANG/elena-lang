@@ -649,8 +649,8 @@ inline ref_t defineConstantMask(LexicalType type)
 //         return mskInt64Ref;
 //      case lxConstantReal:
 //         return mskRealRef;
-//      case lxMessageConstant:
-//         return mskMessage;
+      //case lxMessageConstant:
+      //   return mskMessage;
 //      case lxExtMessageConstant:
 //         return mskExtMessage;
 //      case lxSignatureConstant:

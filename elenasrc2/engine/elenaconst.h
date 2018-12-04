@@ -155,7 +155,7 @@ namespace _ELENA_
 //      mskInt32Ref            = 0x03000000u,   // reference to constant integer number
 //      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
 //      mskRealRef             = 0x05000000u,   // reference to constant real number
-//      mskMessage             = 0x06000000u,   // message constant
+      mskMessage             = 0x06000000u,   // message constant
 //      mskCharRef             = 0x07000000u,   // reference to character constant
 //      mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
 //      mskSignature           = 0x09000000u,   // message signature constant
@@ -504,7 +504,7 @@ namespace _ELENA_
 //   #define STR_FORWARD              "$literal"
 //   #define WIDESTR_FORWARD          "$wideliteral"
 //   #define CHAR_FORWARD             "$char"
-//   #define MESSAGE_FORWARD          "$message"
+   #define MESSAGE_FORWARD          "$message"
 //   #define EXT_MESSAGE_FORWARD      "$ext_message"
 //   #define SIGNATURE_FORWARD        "$signature"
 //   #define ARRAY_FORWARD            "$array"

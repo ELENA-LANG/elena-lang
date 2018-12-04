@@ -33,7 +33,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
   // _int = project->resolveForward(INT_FORWARD);
   // _long = project->resolveForward(LONG_FORWARD);
   // _real = project->resolveForward(REAL_FORWARD);
-  // _message = project->resolveForward(MESSAGE_FORWARD);
+   _message = project->resolveForward(MESSAGE_FORWARD);
   // _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
   // _signature = project->resolveForward(SIGNATURE_FORWARD);
 
@@ -219,12 +219,12 @@ size_t ExecutableImage :: getLinkerConstant(int id)
 //{
 //   return _real;
 //}
-//
-//ident_t ExecutableImage::getMessageClass()
-//{
-//   return _message;
-//}
-//
+
+ident_t ExecutableImage::getMessageClass()
+{
+   return _message;
+}
+
 //ident_t ExecutableImage::getExtMessageClass()
 //{
 //   return _ext_message;

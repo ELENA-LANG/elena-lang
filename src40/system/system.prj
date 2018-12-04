@@ -16,6 +16,8 @@
        <include>types.l</include>
        <include>object.l</include>
        <include>basic.l</include>
+       <include>dynamic.l</include>
+       <include>exceptions.l</include>
      </module>
   </files>
 </configuration>

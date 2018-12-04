@@ -115,13 +115,13 @@ void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& messa
    message[0] = message[0] + paramCount;
 }
 
-//ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
-//{
-//   IdentifierString message;
-//   compileMessage(token, message);
-//
-//   return binary->mapReference(message) | mskMessage;
-//}
+ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
+{
+   IdentifierString message;
+   compileMessage(token, message);
+
+   return binary->mapReference(message) | mskMessage;
+}
 
 //ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
 //{
@@ -146,17 +146,17 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
    else if (word.compare("0")) {
       return 0;
    }
-   //else if (word.compare("const")) {
-   //   token.read(":", "Invalid operand (%d)");
-   //   token.read();
+   else if (word.compare("const")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
 
-   //   if (word.compare("%")) {
-   //      token.read();
+      if (word.compare("%")) {
+         token.read();
 
-   //      return compileRMessageArg(token, binary);
-   //   }
-   //   else return binary->mapReference(token.value) | mskConstantRef;
-   //}
+         return compileRMessageArg(token, binary);
+      }
+      else return binary->mapReference(token.value) | mskConstantRef;
+   }
    else if (word.compare("rdata")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
@@ -271,7 +271,7 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
 
       ref_t subj = binary->mapAction(subject, 0, false);
 
-      writeCommand(ByteCommand(code, encodeMessage(subj, paramCount)), writer);
+      writeCommand(ByteCommand(code, encodeMessage(subj, paramCount, 0)), writer);
    }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
