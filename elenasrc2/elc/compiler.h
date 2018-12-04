@@ -828,6 +828,7 @@ private:
 //////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
    ref_t mapTypeAttribute(SNode member, Scope& scope);
+   ref_t mapTemplateAttribute(SNode node, Scope& scope);
    void declareMethodAttributes(SNode member, MethodScope& scope);
 
 //   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
@@ -874,6 +875,7 @@ private:
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode/*, int stackSafeAttr*/);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
+   void compileTemplateAttributes(SNode current, List<ref_t>& parameters, CodeScope& scope);
    void compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int& mode);
 
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);

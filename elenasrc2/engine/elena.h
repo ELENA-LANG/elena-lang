@@ -696,7 +696,7 @@ typedef List<ident_t>          IdentifierList;
 ////typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
 //typedef Memory32HashTable<ref_t, ref_t, __mapKey, 64>           AddressMap;
-//typedef Map<ref_t, ref_t>                                       SubjectMap;
+typedef Map<ref_t, ref_t>                                       SubjectMap;
 //typedef List<ref_t>                                             SubjectList;
 typedef Memory32HashTable<ref64_t, ref_t, __map64Key, 64>       ActionMap;
 

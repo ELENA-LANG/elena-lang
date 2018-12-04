@@ -4008,6 +4008,26 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
    return objectInfo;
 }
 
+ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
+{
+   IdentifierString templateName(node.firstChild(lxTerminalMask).identifier());
+   int paramCounter = 0;
+   SNode current = node.findChild(lxAttribute);
+   while (current != lxNone) {
+      if (current == lxAttribute && current.argument == V_TYPE) {
+         paramCounter++;
+      }
+      else scope.raiseError(errInvalidOperation, node);
+
+      current = current.nextNode();
+   }
+
+   templateName.append('#');
+   templateName.appendInt(paramCounter);
+
+   return resolveImplicitIdentifier(scope, templateName.c_str(), false, false);
+}
+
 ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
 {
    ref_t ref = resolveImplicitIdentifier(scope, member.firstChild(lxTerminalMask));
@@ -4017,16 +4037,48 @@ ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
    return ref;
 }
 
+void Compiler :: compileTemplateAttributes(SNode current, List<ref_t>& parameters, CodeScope& scope)
+{
+   bool invalidExpr = false;
+   bool newVariable = false;
+   bool castExpr = false;
+   bool templateAttr = false;
+   ref_t typeRef = 0;
+   while (current == lxAttribute) {
+      int value = current.argument;
+      bool typeAttr = false;
+      if (_logic->validateExpressionAttribute(value, typeAttr, castExpr, templateAttr)) {
+         if (typeAttr) {
+            parameters.add(mapTypeAttribute(current, scope));
+         }
+         else if (templateAttr) {
+            // generate an reference class
+            List<ref_t> parameters;
+            compileTemplateAttributes(current.findChild(lxAttribute), parameters, scope);
+
+            ref_t templateRef = mapTemplateAttribute(current, scope);
+
+            parameters.add(scope.moduleScope->generateTemplate(/**this, */templateRef, parameters/*, &nsScope->extensions*/));
+         }
+         else scope.raiseError(errInvalidHint, current);
+      }
+      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int& mode)
 {
    bool invalidExpr = false;
    bool newVariable = false;
    bool castExpr = false;
-   ref_t typeRef = scope.moduleScope->superReference;
+   bool templateAttr = false;
+   ref_t typeRef = 0;
    while (current == lxAttribute) {
       int value = current.argument;
       bool typeAttr = false;
-      if (_logic->validateExpressionAttribute(value, typeAttr, castExpr)) {
+      if (_logic->validateExpressionAttribute(value, typeAttr, castExpr, templateAttr)) {
          if ((value == 0 || typeAttr) && test(mode, HINT_ROOT) && !castExpr) {
             // if it is a variable declaration
             newVariable = true;
@@ -4041,6 +4093,17 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
                   mode |= HINT_VIRTUALEXPR;
             }
             else invalidExpr = true;
+         }
+         else if (templateAttr && test(mode, HINT_ROOT) && typeRef == 0) {
+            // generate an reference class
+            List<ref_t> parameters;
+            compileTemplateAttributes(current.findChild(lxAttribute), parameters, scope);
+
+            newVariable = true;
+
+            ref_t templateRef = mapTemplateAttribute(current, scope);
+
+            typeRef = scope.moduleScope->generateTemplate(/**this, */templateRef, parameters/*, &nsScope->extensions*/);
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 
@@ -4064,6 +4127,9 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
    }
 
    if (newVariable) {
+      if (!typeRef)
+         typeRef = scope.moduleScope->superReference;
+
       compileVariable(writer, current, scope, typeRef);
    }
 }

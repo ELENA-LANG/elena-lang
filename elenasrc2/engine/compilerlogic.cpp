@@ -1784,7 +1784,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
    }
 }
 
-bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr, bool& castAttr)
+bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr, bool& castAttr, bool& templateAttr)
 {
    switch (attrValue) {
       case (int)V_VARIABLE:
@@ -1802,6 +1802,13 @@ bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr
       case (int)V_NEWOP:
          if (!castAttr) {
             castAttr = true;
+            return true;
+         }
+         else return false;
+      case (int)V_TEMPLATE:
+         if (!templateAttr) {
+            templateAttr = true;
+
             return true;
          }
          else return false;

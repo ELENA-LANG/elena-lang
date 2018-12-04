@@ -313,31 +313,31 @@ _Module* ModuleScope :: loadReferenceModule(ident_t referenceName, ref_t& refere
    }
 }
 
-//ref_t CompilerScope :: mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared)
-//{
-//   ReferenceNs forwardName;
-//   // NOTE : the nested namespace is not included into the weak name
-//   forwardName.append(TEMPLATE_PREFIX_NS);
-//
-//   forwardName.append(templateName);
-//
-//   if (emptystr(project->resolveForward(templateName))) {
-//      ReferenceNs fullName(module->Name());
-//      if (!emptystr(ns))
-//         fullName.combine(ns);
-//
-//      fullName.combine(templateName);
-//
-//      project->addForward(templateName, fullName);
-//
-//      mapNewIdentifier(ns, templateName, false);
-//
-//      alreadyDeclared = false;
-//   }
-//   else alreadyDeclared = true;
-//
-//   return module->mapReference(forwardName);
-//}
+ref_t ModuleScope :: mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared)
+{
+   ReferenceNs forwardName;
+   // NOTE : the nested namespace is not included into the weak name
+   forwardName.append(TEMPLATE_PREFIX_NS);
+
+   forwardName.append(templateName);
+
+   if (emptystr(project->resolveForward(templateName))) {
+      ReferenceNs fullName(module->Name());
+      if (!emptystr(ns))
+         fullName.combine(ns);
+
+      fullName.combine(templateName);
+
+      project->addForward(templateName, fullName);
+
+      mapNewIdentifier(ns, templateName, false);
+
+      alreadyDeclared = false;
+   }
+   else alreadyDeclared = true;
+
+   return module->mapReference(forwardName);
+}
 
 ident_t ModuleScope:: resolveWeakTemplateReference(ident_t referenceName)
 {
@@ -462,16 +462,16 @@ void ModuleScope :: compile(_Compiler& compiler, SyntaxTree& derivationTree/*, E
    }
 }
 
-//ref_t CompilerScope :: generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensions)
-//{
-//   SyntaxTree templateTree;
-//
-//   DerivationTransformer transformer(templateTree);
-//   SyntaxWriter writer(templateTree);
-//   writer.newNode(lxRoot);
-//   ref_t generatedReference = transformer.generateTemplate(writer, *this, reference, parameters);
-//   writer.closeNode();
-//
+ref_t ModuleScope :: generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensions*/)
+{
+   SyntaxTree templateTree;
+
+   TemplateGenerator transformer(templateTree);
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   ref_t generatedReference = transformer.generateTemplate(writer, *this, reference, parameters);
+   writer.closeNode();
+
 //   SourceFileInfo fileInfo;
 //   fileInfo.tree = &templateTree;
 //   fileInfo.path.copy("compiling ");
@@ -498,8 +498,10 @@ void ModuleScope :: compile(_Compiler& compiler, SyntaxTree& derivationTree/*, E
 //   fileInfo.tree = NULL;
 //
 //   return generatedReference;
-//}
-//
+
+   return 0;
+}
+
 //ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensions)
 //{
 //   ref_t signRef = 0;

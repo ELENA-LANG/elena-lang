@@ -70,7 +70,7 @@ struct ModuleScope : _ModuleScope
 //   //   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false);
 //   ///*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
-//   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
+   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne);
 
    virtual _Memory* mapSection(ref_t reference, bool existing)
@@ -108,8 +108,8 @@ struct ModuleScope : _ModuleScope
    }
 
 //   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensionsToExport);
-//
-//   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensionsToExport);
+
+   virtual ref_t generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensionsToExport*/);
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference);
 

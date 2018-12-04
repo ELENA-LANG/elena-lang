@@ -81,7 +81,7 @@
 //#define V_INITIALIZER    (ref_t)-16388
 //#define V_SYMBOLEXPR     (ref_t)-16389
 //#define V_TYPETEMPL      (ref_t)-16390
-//#define V_TEMPLATE       (ref_t)-16391
+#define V_TEMPLATE       (ref_t)-16391
 //#define V_FIELD          (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
@@ -249,7 +249,7 @@ struct _ModuleScope
    virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
-//   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
+   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode) = 0;
 
@@ -295,9 +295,9 @@ struct _ModuleScope
 //   {
 //      project->raiseWarning(level, message, sourcePath);
 //   }
-//
-//   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<ref_t>& parameters, ExtensionMap* extensionsToExport) = 0;
-//
+
+   virtual ref_t generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensionsToExport*/) = 0;
+
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
    _ModuleScope()
@@ -465,7 +465,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/) = 0;
-   virtual bool validateExpressionAttribute(int& attrValue, bool& typeAttr, bool& castAttr) = 0;
+   virtual bool validateExpressionAttribute(int& attrValue, bool& typeAttr, bool& castAttr, bool& templateAttr) = 0;
 //   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
    virtual bool validateArgumentAttribute(int attrValue) = 0;
