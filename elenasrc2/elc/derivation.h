@@ -19,16 +19,49 @@ namespace _ELENA_
 
 class DerivationWriter : public _DerivationWriter
 {
+   enum DeclarationAttr
+   {
+      daNone        = 0x0000,
+   //      daType        = 0x0001,
+   //      daClass       = 0x0002,
+      daTemplate    = 0x0004,
+   //      daField       = 0x0008,
+   //      daLoop        = 0x0020,
+   //      daImport      = 0x0040,
+   //      daExtern      = 0x0080,
+   //      daAccessor    = 0x0100,
+   //      daDblAccessor = 0x0300,
+   //      daCodeMask    = 0xF800,
+   //      daCode        = 0x0800,
+   //      daBlock       = 0x1800,
+   //      daDblBlock    = 0x3800,
+   //      daNestedBlock = 0x4800,
+   //      daExtension   = 0x8000
+   };
+
+   struct Scope
+   {
+      bool         templateMode;
+      ForwardMap   parameters;
+
+      Scope()
+      {
+         templateMode = false;
+      }
+   };
+
    int           _level;
    int           _cachingLevel;
    SyntaxTree    _cache;
    SyntaxWriter  _cacheWriter;
 
-   SyntaxWriter  _writer;
+   SyntaxWriter  _output;
 
    _ModuleScope* _scope;
    ident_t       _ns;
    ident_t       _filePath;
+
+   void loadTemplateParameters(Scope& scope, SNode node);
 
    //void appendNode(LexicalType type, int argument);
 
@@ -39,7 +72,7 @@ class DerivationWriter : public _DerivationWriter
    void newNode(Symbol symbol);
    void closeNode();
 
-   void saveScope();
+   void saveScope(SyntaxWriter& writer);
 
    ref_t mapAttribute(SNode terminal/*, bool& templateParam*/);
    void declareAttribute(SNode node);
@@ -48,15 +81,17 @@ class DerivationWriter : public _DerivationWriter
    void recognizeScopeAttributes(SNode node, int mode/*, DerivationScope& scope*/);
    void recognizeClassMebers(SNode node/*, DerivationScope& scope*/);
 
-   void generateScope(SNode node);
-   void generateSymbolTree(SNode node);
-   void generateClassTree(SNode node/*, DerivationScope& scope, int nested = 0*/);
-   void generateMethodTree(SNode node/*, DerivationScope& scope, bool templateMode, bool closureMode*/);
-   /*bool*/void generateFieldTree(SNode node/*, DerivationScope& scope, SyntaxTree& buffer, bool templateMode*//* = false*/); // returns true if in-place init found
-   void generateCodeTree(SNode node/*, DerivationScope& scope, bool withBookmark = false*/);
-   void generateAttributes(SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
-   void generateExpressionAttribute(SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
-   void generateExpressionTree(SNode node/*, DerivationScope& scope*/, int mode = 0);
+   bool isMetaScope(SNode node);
+
+   void generateScope(SyntaxWriter& writer, SNode node);
+   void generateSymbolTree(SyntaxWriter& writer, SNode node);
+   void generateClassTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, int nested = 0*/);
+   void generateMethodTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool templateMode, bool closureMode*/);
+   /*bool*/void generateFieldTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, SyntaxTree& buffer, bool templateMode*//* = false*/); // returns true if in-place init found
+   void generateCodeTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool withBookmark = false*/);
+   void generateAttributes(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
+   void generateExpressionAttribute(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
+   void generateExpressionTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/, int mode = 0);
 
 public:
    void begin();
@@ -69,7 +104,7 @@ public:
    virtual void writeTerminal(TerminalInfo& terminal);
 
    DerivationWriter(SyntaxTree& target, _ModuleScope* scope)
-      :  _writer(target), _cacheWriter(_cache)
+      :  _output(target), _cacheWriter(_cache)
    {
       _cachingLevel = _level = 0;
 
@@ -218,25 +253,6 @@ public:
 //      }
 //   };
 //
-//   enum DeclarationAttr
-//   {
-//      daNone        = 0x0000,
-//      daType        = 0x0001,
-//      daClass       = 0x0002,
-//      daTemplate    = 0x0004,
-//      daField       = 0x0008,
-//      daLoop        = 0x0020,
-//      daImport      = 0x0040,
-//      daExtern      = 0x0080,
-//      daAccessor    = 0x0100,
-//      daDblAccessor = 0x0300,
-//      daCodeMask    = 0xF800,
-//      daCode        = 0x0800,
-//      daBlock       = 0x1800,
-//      daDblBlock    = 0x3800,
-//      daNestedBlock = 0x4800,
-//      daExtension   = 0x8000
-//   };
 //
 //   SNode       _root;
 ////   MessageMap  _verbs;                            // list of verbs

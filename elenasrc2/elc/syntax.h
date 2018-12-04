@@ -51,7 +51,7 @@ enum Symbol
    nsScope                      = 0x01013,
    ////   nsField                      = 0x01013,
 //////   nsHint                       = 0x01014,
-//   nsTokenParam                 = 0x01015,
+   nsTokenParam                 = 0x01015,
 ////   nsMethodOpenParameter        = 0x01016,
    nsMethodParameter            = 0x01017,
 //   nsNestedClass                = 0x01018,
