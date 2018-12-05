@@ -1834,7 +1834,7 @@ bool CompilerLogic :: validateExpressionAttribute(int& attrValue, ExpressionAttr
 //   }
 }
 
-bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant, bool& staticOne, bool& preloadedOne*/)
+bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant*/, bool& staticOne/*, bool& preloadedOne*/)
 {
 //   if (attrValue == (int)V_CONST) {
 //      constant = true;
@@ -1844,11 +1844,11 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant, b
    /*else */if (attrValue == (int)V_SYMBOLEXPR) {
       return true;
    }
-//   else if (attrValue == (int)V_STATIC) {
-//      staticOne = true;
-//
-//      return true;
-//   }
+   else if (attrValue == (int)V_STATIC) {
+      staticOne = true;
+
+      return true;
+   }
 //   else if (attrValue == (int)V_PRELOADED) {
 //      preloadedOne = true;
 //

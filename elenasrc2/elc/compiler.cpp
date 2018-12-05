@@ -484,7 +484,7 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference)
 {
 //   outputRef = 0;
 //   constant = false;
-//   staticOne = false;
+   staticOne = false;
 //   preloaded = false;
 }
 
@@ -1590,7 +1590,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value/*, scope.constant, scope.staticOne, scope.preloaded*/)) {
+         if (!_logic->validateSymbolAttribute(value/*, scope.constant*/, scope.staticOne/*, scope.preloaded*/)) {
             current = lxIdle; // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
@@ -5783,7 +5783,7 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    }
    else*/ generateClassSymbol(writer, scope);
 
-   _writer.generateSymbol(tape, tree.readRoot(), /*false, */INVALID_REF);
+   _writer.generateSymbol(tape, tree.readRoot(), false, INVALID_REF);
 
    // create byte code sections
    _writer.saveTape(tape, *scope.moduleScope);
@@ -6839,9 +6839,9 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 
    SyntaxWriter writer(expressionTree);
 
-//   declareSymbolAttributes(node, scope);
-//
-//   bool isStatic = scope.staticOne;
+   declareSymbolAttributes(node, scope);
+
+   bool isStatic = scope.staticOne;
 
    SNode expression = node.findChild(lxExpression);
 
@@ -6886,7 +6886,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
 
    CommandTape tape;
-   _writer.generateSymbol(tape, expressionTree.readRoot()/*, isStatic*/, sourcePathRef);
+   _writer.generateSymbol(tape, expressionTree.readRoot(), isStatic, sourcePathRef);
 
    // optimize
    optimizeTape(tape);

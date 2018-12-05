@@ -117,7 +117,7 @@ class ByteCodeWriter
 //   void declareInitializer(CommandTape& tape, ref_t reference);
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
-//   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
+   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
    void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
    void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
@@ -131,8 +131,8 @@ class ByteCodeWriter
 //   void declareElseBlock(CommandTape& tape);
 //   void declareSwitchBlock(CommandTape& tape);
 //   void declareSwitchOption(CommandTape& tape);
-//   void declareTry(CommandTape& tape);
-//   void declareCatch(CommandTape& tape);
+   void declareTry(CommandTape& tape);
+   void declareCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
@@ -204,12 +204,12 @@ class ByteCodeWriter
 //   void jumpIfGreater(CommandTape& tape, ref_t ref);
 //   void jumpIfNotGreater(CommandTape& tape, ref_t ref);
 //   void jumpIfEqual(CommandTape& tape, ref_t ref, bool referenceMode);
-//   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode, bool jumpToEnd = false);
-//
+   void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode, bool jumpToEnd = false);
+
 ////   void throwCurrent(CommandTape& tape);
-//
-//   void tryLock(CommandTape& tape);
-//   void freeLock(CommandTape& tape);
+
+   void tryLock(CommandTape& tape);
+   void freeLock(CommandTape& tape);
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
@@ -217,8 +217,8 @@ class ByteCodeWriter
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 //
 //   void freeVirtualStack(CommandTape& tape, int count);
-//
-//   void endCatch(CommandTape& tape);
+
+   void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
 //   void endThenBlock(CommandTape& tape);
 //   void endLoop(CommandTape& tape);
@@ -230,7 +230,7 @@ class ByteCodeWriter
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
-//   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
+   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
 //   void closeFrame(CommandTape& tape);
@@ -333,7 +333,7 @@ public:
 ////   void generateSymbolWithInitialization(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument, ref_t implicitConstructor);
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
-   void generateSymbol(CommandTape& tape, SNode root/*, bool isStatic*/, pos_t sourcePathBookmark);
+   void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);
 //   void generateConstantList(SNode node, _Module* module, ref_t reference);
 //   void generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument);
 

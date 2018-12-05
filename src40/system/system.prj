@@ -18,6 +18,7 @@
        <include>basic.l</include>
        <include>dynamic.l</include>
        <include>exceptions.l</include>
+       <include>console.l</include>
        <include>win32_app.l</include>
      </module>
   </files>

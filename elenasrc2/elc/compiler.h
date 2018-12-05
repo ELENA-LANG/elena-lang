@@ -517,7 +517,7 @@ private:
    struct SymbolScope : public SourceScope
    {
 //      bool  constant;
-//      bool  staticOne;
+      bool  staticOne;
 //      bool  preloaded;
 //      ref_t outputRef;
 //

@@ -166,7 +166,7 @@ public:
    virtual bool validateImplicitMethodAttribute(int& attrValue);
    virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/);
    virtual bool validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes);
-   virtual bool validateSymbolAttribute(int attrValue/*, bool& constant, bool& staticOne, bool& preloadedOne*/);
+   virtual bool validateSymbolAttribute(int attrValue/*, bool& constant*/, bool& staticOne/*, bool& preloadedOne*/);
 //////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);
    virtual bool validateArgumentAttribute(int attrValue);

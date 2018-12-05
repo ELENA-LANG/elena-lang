@@ -50,7 +50,7 @@
 ////#define V_WARNING3    (ref_t)-4101
 //
 //#define V_EMBEDDABLE     (ref_t)-8193
-//#define V_STATIC         (ref_t)-8194
+#define V_STATIC         (ref_t)-8194
 #define V_SEALED         (ref_t)-8195
 //#define V_LIMITED        (ref_t)-8196
 //#define V_STRUCT         (ref_t)-8197
@@ -480,7 +480,7 @@ public:
    virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/) = 0;
    virtual bool validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes) = 0;
-   virtual bool validateSymbolAttribute(int attrValue/*, bool& constant, bool& staticOne, bool& preloadedOne*/) = 0;
+   virtual bool validateSymbolAttribute(int attrValue/*, bool& constant*/, bool& staticOne/*, bool& preloadedOne*/) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
    virtual bool validateArgumentAttribute(int attrValue) = 0;
 

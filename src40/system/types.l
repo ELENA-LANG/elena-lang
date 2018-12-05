@@ -16,7 +16,7 @@
 //const           = #8201.
 #8208  = singleton;
 //generic         = #8202.
-//static          = #8194.
+#8194  = static;
 #16385 = var;
 //auto            = #50.
 //#8196  = interface;

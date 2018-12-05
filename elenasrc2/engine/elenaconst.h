@@ -293,7 +293,7 @@ namespace _ELENA_
 //   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
 //   const int elExtension           = 0x00004980;
-//   const int elMessage             = 0x00008000;
+   const int elMessage             = 0x00008000;
 //   const int elSymbol              = 0x00100000;
 //   const int elExtMessage          = 0x00208000;
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
