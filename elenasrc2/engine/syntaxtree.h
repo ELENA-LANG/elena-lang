@@ -588,42 +588,42 @@ public:
 
          return current;
       }
-      //Node findSubNode(LexicalType type1, LexicalType type2)
-      //{
-      //   Node child = firstChild();
-      //   while (child != lxNone && child.type != type1) {
-      //      if (child == lxExpression) {
-      //         Node subNode = child.findSubNode(type1, type2);
-      //         if (subNode != lxNone)
-      //            return subNode;
-      //      }
-      //      else if (child == type2)
-      //         break;
+      Node findSubNode(LexicalType type1, LexicalType type2)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
 
-      //      child = child.nextNode();
-      //   }
+            child = child.nextNode();
+         }
 
-      //   return child;
-      //}
-      //Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
-      //{
-      //   Node child = firstChild();
-      //   while (child != lxNone && child.type != type1) {   
-      //      if (child == lxExpression) {
-      //         Node subNode = child.findSubNode(type1, type2, type3);
-      //         if (subNode != lxNone)
-      //            return subNode;
-      //      }
-      //      else if (child == type2)
-      //         break;
-      //      else if (child == type3)
-      //         break;
+         return child;
+      }
+      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {   
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2, type3);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
+            else if (child == type3)
+               break;
 
-      //      child = child.nextNode();
-      //   }
+            child = child.nextNode();
+         }
 
-      //   return child;
-      //}
+         return child;
+      }
 
       Node lastChild() const
       {
@@ -1148,10 +1148,10 @@ public:
    }
 };
 
-//inline bool isSingleStatement(SyntaxTree::Node expr)
-//{
-//   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
-//}
+inline bool isSingleStatement(SyntaxTree::Node expr)
+{
+   return expr.findSubNode(lxMessage, lxAssign/*, lxOperator*/) == lxNone;
+}
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;

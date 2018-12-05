@@ -28,13 +28,13 @@
 //
 //public static startUpEvents = StartUpEvents new.
 
-//public symbol startUp =
-//    {
-//        start(StartUpEvents events)
-//        [
+public symbol startUp =
+    {
+        start(/*StartUpEvents events*/)
+        {
 //            system'core_routines'__exception register.
 //            
-//            try(forwards'program())
+            /*try(*/forward program()/*)*/
 //                {
 //                    on(Exception e) [ console writeLine(e literal) ]
 //                    
@@ -42,6 +42,6 @@
 //                }.
 //    
 //            events stopping:nil
-//        ]        
-//    }
-//    start:startUpEvents.
+        }        
+    }
+    .start()/*:startUpEvents*/;

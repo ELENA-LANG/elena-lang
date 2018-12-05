@@ -1784,30 +1784,37 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
    }
 }
 
-bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr, bool& castAttr, bool& templateAttr)
+bool CompilerLogic :: validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes)
 {
    switch (attrValue) {
       case (int)V_VARIABLE:
          attrValue = 0;
          return true;
       case (int)V_TYPE:
-         typeAttr = true;
+         attributes.typeAttr = true;
          return true;
       case (int)V_CONVERSION:
-         if (!castAttr) {
-            castAttr = true;
+         if (!attributes.castAttr) {
+            attributes.castAttr = true;
             return true;
          }
          else return false;
       case (int)V_NEWOP:
-         if (!castAttr) {
-            castAttr = true;
+         if (!attributes.castAttr) {
+            attributes.castAttr = true;
             return true;
          }
          else return false;
       case (int)V_TEMPLATE:
-         if (!templateAttr) {
-            templateAttr = true;
+         if (!attributes.templateAttr) {
+            attributes.templateAttr = true;
+
+            return true;
+         }
+         else return false;
+      case (int)V_FORWARD:
+         if (!attributes.forwardAttr) {
+            attributes.forwardAttr = true;
 
             return true;
          }
@@ -1827,16 +1834,16 @@ bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr
 //   }
 }
 
-//bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne)
-//{
+bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant, bool& staticOne, bool& preloadedOne*/)
+{
 //   if (attrValue == (int)V_CONST) {
 //      constant = true;
 //
 //      return true;
 //   }
-//   else if (attrValue == (int)V_SYMBOLEXPR) {
-//      return true;
-//   }
+   /*else */if (attrValue == (int)V_SYMBOLEXPR) {
+      return true;
+   }
 //   else if (attrValue == (int)V_STATIC) {
 //      staticOne = true;
 //
@@ -1847,12 +1854,12 @@ bool CompilerLogic :: validateExpressionAttribute(int& attrValue, bool& typeAttr
 //
 //      return true;
 //   }
-//   else if (attrValue == (int)V_PUBLIC || attrValue == (int)V_INTERNAL) {
-//      return true;
-//   }
-//   else return false;
-//}
-//
+   else if (attrValue == (int)V_PUBLIC || attrValue == (int)V_INTERNAL) {
+      return true;
+   }
+   else return false;
+}
+
 //////bool CompilerLogic :: validateWarningAttribute(int& attrValue)
 //////{
 //////   switch ((size_t)attrValue)

@@ -707,10 +707,10 @@ private:
 //         consructionMode = withFrame = false;
 //      }
 //   };
-//
-//   // - InlineClassScope -
-//   struct InlineClassScope : public ClassScope
-//   {
+
+   // - InlineClassScope -
+   struct InlineClassScope : public ClassScope
+   {
 //      struct Outer
 //      {
 //         ref_t      reference;
@@ -741,19 +741,19 @@ private:
 //      ObjectInfo allocateRetVar();
 //
 //      bool markAsPresaved(ObjectInfo object);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+
+      InlineClassScope(CodeScope* owner, ref_t reference);
+   };
 
    _CompilerLogic*  _logic;
 
@@ -820,7 +820,7 @@ private:
    void compileParentDeclaration(SNode node, ClassScope& scope);
    void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
 
-//   void declareSymbolAttributes(SNode node, SymbolScope& scope);
+   void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/);
@@ -845,8 +845,8 @@ private:
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t typeRef);
 
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t vmtReference);
 //
@@ -939,7 +939,7 @@ private:
    void compileSymbolCode(ClassScope& scope);
 
 //   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
-//   void compileNestedVMT(SNode node, InlineClassScope& scope);
+   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
@@ -953,7 +953,7 @@ private:
    void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates/*, bool closed*/, bool allowTypeAttribute/*, bool embeddableClass*/);
    void generateMethodDeclarations(SNode node, ClassScope& scope, /*bool closed, */LexicalType methodType, bool allowTypeAttribute/*, bool embeddableClass*/);
 //   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
-   void generateClassDeclaration(SNode node, ClassScope& scope, ClassType classType/*, bool nestedDeclarationMode = false*/);
+   void generateClassDeclaration(SNode node, ClassScope& scope, ClassType classType, bool nestedDeclarationMode = false);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
 
@@ -961,7 +961,7 @@ private:
    void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
    void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
-   void compileSymbolDeclaration(SNode node/*, SymbolScope& scope*/);
+   void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
 //////   void compileIncludeModule(SNode node, ModuleScope& scope);

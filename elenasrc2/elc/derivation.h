@@ -87,7 +87,7 @@ class DerivationWriter : public _DerivationWriter
    void generateTemplate(SNode node, SNode nameNode);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node);
-   void generateClassTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, int nested = 0*/);
+   void generateClassTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/, bool nested = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool templateMode*/, bool closureMode);
    /*bool*/void generateFieldTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, SyntaxTree& buffer, bool templateMode*//* = false*/); // returns true if in-place init found
    void generateCodeTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool withBookmark = false*/);

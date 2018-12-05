@@ -5,7 +5,7 @@
 //type            = #16390.
 #16386 = class;
 //struct          = #8197.
-//symbol          = #16389.
+#16389 = symbol;
 #16384 = constructor;
 //enum            = #8198.
 #8195  = sealed;
@@ -43,6 +43,7 @@
 #8214  = closed;
 //predefined      = #8215.
 #8216  = dispatch;
+#16405 = forward;
 
 //__args          = #32. 
 //

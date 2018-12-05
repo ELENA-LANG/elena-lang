@@ -850,12 +850,12 @@ void DerivationWriter :: generateSymbolTree(SyntaxWriter& writer, SNode node/*, 
    writer.closeNode();
 }
 
-void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, int nested*/)
+void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/, bool nested)
 {
 //   SyntaxTree buffer((pos_t)0);
 
    bool closureMode = false;
-//   if (!nested) {
+   if (!nested) {
       writer.newNode(lxClass);
 //      //writer.appendNode(lxSourcePath, scope.sourcePath);
 //
@@ -866,8 +866,8 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node/*, D
 
          closureMode = true;
       }
-//   }
-//
+   }
+
    SNode current = node.firstChild();
    if (closureMode) {
       generateMethodTree(writer, node/*, scope, scope.reference == INVALID_REF*/, true);
@@ -920,9 +920,9 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node/*, D
 //      writer.closeNode();
 //      writer.closeNode();
 //   }
-//
-//   if (nested == -1)
-//      writer.insert(lxNestedClass);
+
+   if (nested)
+      writer.insert(lxNestedClass);
 
    writer.closeNode();
 }
@@ -1301,6 +1301,19 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
                } while (current.nextNode() == lxToken);
             }
             copyIdentifier(writer, current.firstChild(lxTerminalMask));
+            break;
+         case lxNestedClass:
+            //         if (scope.type == DerivationScope::ttCodeTemplate && test(scope.mode, daNestedBlock)) {
+            //            writer.insert(lxTemplateParam, 2);
+            //            writer.closeNode();
+            //         }
+            //         else {
+            recognizeClassMebers(current);
+            
+            generateClassTree(writer, current/*, scope*/, true);
+            //         }
+            //         writer.insert(lxExpression);
+            //         writer.closeNode();
             break;
          default:
             if (isTerminal(current.type)) {

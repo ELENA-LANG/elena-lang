@@ -477,7 +477,7 @@ namespace _ELENA_
 
    #define CORE_MODULE              "coreapi"
    #define STANDARD_MODULE          "system"                         // the standard module name
-   #define FORWARD_MODULE           "forwards"
+   #define FORWARD_MODULE           "$forwards"
 //   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
                                                                      // will be treated like internal core api one
