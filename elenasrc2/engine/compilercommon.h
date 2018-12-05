@@ -61,7 +61,7 @@
 //#define V_GENERIC        (ref_t)-8202
 //#define V_EXTENSION      (ref_t)-8203
 ////#define V_NOSTRUCT       (ref_t)-8204
-//#define V_ACTION         (ref_t)-8205     // a closure attribute
+#define V_ACTION         (ref_t)-8205     // a closure attribute
 //#define V_GROUP          (ref_t)-8206
 //#define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
@@ -116,7 +116,7 @@ enum MethodHint
 //   tpStackSafe   = 0x000010,
 //   tpEmbeddable  = 0x000020,
 //   tpGeneric     = 0x000040,
-//   tpAction      = 0x000080,
+   tpAction      = 0x000080,
 //   tpIfBranch    = 0x000100,
 //   tpIfNotBranch = 0x000200,
    tpConstructor = 0x200400,
@@ -368,7 +368,7 @@ public:
 //      bool  withOpenArgDispatcher;
 //      bool  withOpenArg1Dispatcher;
 //      bool  withOpenArg2Dispatcher;
-//      bool  closure;
+      bool  closure;
 //      bool  dynamicRequired;
       ref_t outputReference;
 
@@ -382,7 +382,7 @@ public:
 //         withOpenArgDispatcher = false;
 //         withOpenArg1Dispatcher = false;
 //         withOpenArg2Dispatcher = false;
-//         closure = false;
+         closure = false;
 //         dynamicRequired = false;
       }
    };
@@ -426,7 +426,7 @@ public:
 //   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
+   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated

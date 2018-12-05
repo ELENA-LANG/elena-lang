@@ -242,7 +242,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
 
 //      result.embeddable = test(hint, tpEmbeddable);
-//      result.closure = test(hint, tpAction);
+      result.closure = test(hint, tpAction);
 //      result.dynamicRequired = test(hint, tpDynamic);
 
       if ((hint & tpMask) == tpSealed) {
@@ -317,10 +317,10 @@ int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference,
 
 //   result.stackSafe = test(methodHint, tpStackSafe);
 
-   //if (getAction(messageRef) == INVOKE_MESSAGE_ID) {
-   //   // HOTFIX : calling closure
-   //   result.closure = true;
-   //}
+   if (test(messageRef, SPECIAL_MESSAGE)) {
+      // HOTFIX : calling closure
+      result.closure = true;
+   }
 
    return callType;
 }
@@ -601,11 +601,11 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
 }
 
-//bool CompilerLogic :: isClosure(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpAction);
-//}
-//
+bool CompilerLogic :: isClosure(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpAction);
+}
+
 //bool CompilerLogic :: isDispatcher(ClassInfo& info, ref_t message)
 //{
 //   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpDispatcher;
@@ -1653,7 +1653,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue)
       case V_DISPATCHER:
       case V_CONVERSION:
       //case V_GENERIC:
-      //case V_ACTION:
+      case V_ACTION:
          return validateMethodAttribute(attrValue, dummy);
       default:
          return false;
@@ -1688,10 +1688,10 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_SEALED:
          attrValue = tpSealed;
          return true;
-//      case V_ACTION:
-//         attrValue = tpAction;
-//         explicitMode = true;
-//         return true;
+      case V_ACTION:
+         attrValue = tpAction;
+         explicitMode = true;
+         return true;
       case V_CONSTRUCTOR:
          attrValue = tpConstructor;
          explicitMode = true;

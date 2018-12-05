@@ -1374,10 +1374,10 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
 {
    ref_t message = scope.tape->getDWord();
 
-   /*if (getAction(message) == INVOKE_MESSAGE_ID) {
+   if (test(message, SPECIAL_MESSAGE)) {
       scope.extra_arg = 0;
    }
-   else */scope.extra_arg = 4;
+   else scope.extra_arg = 4;
 
    switch (getParamCount(message)) {
       case 1:

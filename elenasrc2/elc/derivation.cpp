@@ -635,7 +635,16 @@ bool DerivationWriter :: isMetaScope(SNode node)
 void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 {
    SNode bodyNode = scopeNode.firstChild();
-   if (bodyNode == lxExpression) {
+   if (bodyNode == lxCode) {
+      // HOTFIX : recognize returning expression
+      //         SNode body = node.findChild(lxCode, lxExpression, lxDispatchCode/*, lxReturning*/, lxResendExpression);
+      //         if (body == lxExpression)
+      //            body = lxReturning;
+      //
+      // mark one method class declaration
+      scopeNode.set(lxClass, (ref_t)-2);
+   }
+   else if (bodyNode == lxExpression) {
       scopeNode = lxSymbol;
    }
    else {
@@ -844,49 +853,54 @@ void DerivationWriter :: generateSymbolTree(SyntaxWriter& writer, SNode node/*, 
 void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, int nested*/)
 {
 //   SyntaxTree buffer((pos_t)0);
-//
-//   bool closureMode = false;
+
+   bool closureMode = false;
 //   if (!nested) {
       writer.newNode(lxClass);
 //      //writer.appendNode(lxSourcePath, scope.sourcePath);
 //
       generateAttributes(writer, node.prevNode()/*, scope, true, false, false*/);
-//      if (node.argument == -2) {
-//         // if it is a single method singleton
-//         writer.appendNode(lxAttribute, V_SINGLETON);
-//
-//         closureMode = true;
-//      }
+      if (node.argument == -2) {
+         // if it is a single method singleton
+         writer.appendNode(lxAttribute, V_SINGLETON);
+
+         closureMode = true;
+      }
 //   }
 //
    SNode current = node.firstChild();
-//   bool withInPlaceInit = false;
-//   bool firstParent = true;
-   while (current != lxNone) {
-      if (current == lxParent) {
-         writer.newNode(lxParent);
-         copyIdentifier(writer, current.findChild(lxNameAttr).firstChild(lxTerminalMask));
-         writer.closeNode();
-      }
-//      if (current == lxAttribute || current == lxNameAttr) {
-//      }
-//
-//         firstParent = false;
-//      }
-      else if (current == lxClassMethod) {
-         generateMethodTree(writer, current/*, scope, scope.reference == INVALID_REF, closureMode*/);
-      }
-      else if (current == lxClassField/* || current == lxFieldInit*/) {
-         /*withInPlaceInit |= */generateFieldTree(writer, current/*, scope, buffer, false*/);
-      }
-//      else if (current == lxFieldTemplate) {
-//         withInPlaceInit |= generateFieldTemplateTree(writer, current, scope, buffer);
-//      }
-////      else if (current == lxMessage) {
-////      }
-//      else scope.raiseError(errInvalidSyntax, node);
+   if (closureMode) {
+      generateMethodTree(writer, node/*, scope, scope.reference == INVALID_REF*/, true);
+   }
+   else {
+      //   bool withInPlaceInit = false;
+      //   bool firstParent = true;
+      while (current != lxNone) {
+         if (current == lxParent) {
+            writer.newNode(lxParent);
+            copyIdentifier(writer, current.findChild(lxNameAttr).firstChild(lxTerminalMask));
+            writer.closeNode();
+         }
+         //      if (current == lxAttribute || current == lxNameAttr) {
+         //      }
+         //
+         //         firstParent = false;
+         //      }
+         else if (current == lxClassMethod) {
+            generateMethodTree(writer, current/*, scope, scope.reference == INVALID_REF*/, false);
+         }
+         else if (current == lxClassField/* || current == lxFieldInit*/) {
+            /*withInPlaceInit |= */generateFieldTree(writer, current/*, scope, buffer, false*/);
+         }
+         //      else if (current == lxFieldTemplate) {
+         //         withInPlaceInit |= generateFieldTemplateTree(writer, current, scope, buffer);
+         //      }
+         ////      else if (current == lxMessage) {
+         ////      }
+         //      else scope.raiseError(errInvalidSyntax, node);
 
-      current = current.nextNode();
+         current = current.nextNode();
+      }
    }
 
 //   if (withInPlaceInit) {
@@ -1044,18 +1058,18 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node/*, 
 //   else return false;
 }
 
-void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool templateMode, bool closureMode*/)
+void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool templateMode*/, bool closureMode)
 {
    writer.newNode(lxClassMethod);
 //   if (templateMode) {
 //      writer.appendNode(lxSourcePath, scope.sourcePath);
 //      writer.appendNode(lxTemplate, scope.templateRef);
 //   }
-//
-//   if (closureMode)
-//      writer.appendNode(lxAttribute, V_ACTION);
 
-   generateAttributes(writer, node.prevNode()/*, scope, false, templateMode, false*/);
+   if (closureMode) {
+      writer.appendNode(lxAttribute, V_ACTION);
+   }
+   else generateAttributes(writer, node.prevNode()/*, scope, false, templateMode, false*/);
 
    // copy method arguments
    SNode current = node.firstChild();

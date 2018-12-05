@@ -4481,7 +4481,7 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    tape.write(bcCopyM, message);
 
-   bool invokeMode = /*callNode.existChild(lxClosureAttr)*/false;
+   bool invokeMode = test(message, SPECIAL_MESSAGE);
 
    SNode target = callNode.findChild(lxCallTarget);
    if (callNode == lxDirectCalling) {
@@ -4490,13 +4490,13 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
    else if (callNode == lxSDirctCalling) {
       callVMTResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
    }
-//   else if (invokeMode) {
-//      // pop
-//      // acallvi offs
-//      tape.write(bcPop);
-//      tape.write(bcACallVI, 0);
-//      tape.write(bcFreeStack, getParamCount(callNode.argument));
-//   }
+   else if (invokeMode) {
+      // pop
+      // acallvi offs
+      tape.write(bcPop);
+      tape.write(bcACallVI, 0);
+      tape.write(bcFreeStack, getParamCount(callNode.argument));
+   }
    else {
       // acallvi offs
       tape.write(bcACallVI, 0);

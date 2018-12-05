@@ -130,7 +130,7 @@ public:
 //   virtual bool isMethodInternal(ClassInfo& info, ref_t message);
 //   virtual bool isMethodPrivate(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
-//   virtual bool isClosure(ClassInfo& info, ref_t message);
+   virtual bool isClosure(ClassInfo& info, ref_t message);
 //   virtual bool isDispatcher(ClassInfo& info, ref_t message);
 //   virtual bool isReadonly(ClassInfo& info);
 //   virtual bool isReadonly(_CompilerScope& scope, ref_t reference)

@@ -26,6 +26,8 @@ namespace _ELENA_
 //   #define SEALED_MESSAGE          0x40000000u
 ////   #define SPECIAL_MESSAGE         0x60000000u
 ////   #define PROPSET_MESSAGE         0x20000000u
+   // indicates it is an invoke message
+   constexpr auto SPECIAL_MESSAGE   = 0x20u;
    constexpr auto PARAM_MASK        = 0x1Fu;
    constexpr auto ARG_COUNT         = 0x20u;
 
@@ -359,7 +361,8 @@ namespace _ELENA_
    #define NEWOBJECT_MESSAGE        "#new"
    #define CAST_MESSAGE             "#cast"
    #define CONSTRUCTOR_MESSAGE      "#constructor"
-  // #define NEW_MESSAGE              "new"
+   #define INVOKE_MESSAGE           "#invoke"
+   // #define NEW_MESSAGE              "new"
   // #define GET_MESSAGE              "get"
   // #define EVAL_MESSAGE             "eval"
   // #define EVALUATE_MESSAGE         "evaluate"
@@ -387,7 +390,6 @@ namespace _ELENA_
   // #define IFNOT_MESSAGE            "ifnot"
   // #define SHIFT_MESSAGE            "shift"
   // #define IF_ELSE_MESSAGE          "if:else"
-  // #define INVOKE_MESSAGE           "#invoke"
   // #define INIT_MESSAGE             "#init"
   // #define ISNIL_MESSAGE            "#isnil"
 
