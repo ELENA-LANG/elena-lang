@@ -762,10 +762,10 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    //   value = vmtReferenceInfo.referenceName;
    //   vmtReferenceInfo.referenceName = _loader->getCharacterClass();
    //}
-   //else if (mask == mskInt32Ref) {
-   //   value = vmtReferenceInfo.referenceName;
-   //   vmtReferenceInfo.referenceName = _loader->getIntegerClass();
-   //}
+   /*else */if (mask == mskInt32Ref) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getIntegerClass();
+   }
    //else if (mask == mskInt64Ref) {
    //   value = vmtReferenceInfo.referenceName;
    //   vmtReferenceInfo.referenceName = _loader->getLongClass();
@@ -774,7 +774,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    //   value = vmtReferenceInfo.referenceName;
    //   vmtReferenceInfo.referenceName = _loader->getRealClass();
    //}
-   /*else */constantValue = false;
+   else constantValue = false;
 
    // get constant VMT reference
    void* vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
@@ -807,9 +807,9 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    //else if (mask == mskCharRef) {
    //   _compiler->compileChar32(&writer, value);
    //}
-   //else if (mask == mskInt32Ref) {
-   //   _compiler->compileInt32(&writer, value.toULong(16));
-   //}
+   /*else */if (mask == mskInt32Ref) {
+      _compiler->compileInt32(&writer, value.toULong(16));
+   }
    //else if (mask == mskInt64Ref) {
    //   // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
    //   _compiler->compileInt64(&writer, value.toULongLong(10, 1));
@@ -817,7 +817,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    //else if (mask == mskRealRef) {
    //   _compiler->compileReal64(&writer, value.toDouble());
    //}
-   /*else */if (mask == mskConstArray) {
+   else if (mask == mskConstArray) {
       // resolve constant value
       SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
       _compiler->compileCollection(&writer, sectionInfo.section);
@@ -1225,7 +1225,7 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          //case mskLiteralRef:
          //case mskWideLiteralRef:
          //case mskCharRef:
-         //case mskInt32Ref:
+         case mskInt32Ref:
          //case mskRealRef:
          //case mskInt64Ref:
             vaddress = resolveConstant(referenceInfo, mask);

@@ -4,16 +4,16 @@
 //
 //type            = #16390.
 #16386 = class;
-//struct          = #8197.
+#8197  = struct;
 #16389 = symbol;
 #16384 = constructor;
 //enum            = #8198.
 #8195  = sealed;
-//embeddable      = #8193.
+#8193  = embeddable;
 //template        = #16391.
 //extension       = #8203.
 //
-//const           = #8201.
+#8201  = const;
 #8208  = singleton;
 //generic         = #8202.
 #8194  = static;
@@ -48,7 +48,7 @@
 //__args          = #32. 
 //
 //__string        = #8200.
-//__int           = #11.
+#11    = __raw;
 //__ptr           = #12.
 //__real          = #15.
 //__dword         = #16.

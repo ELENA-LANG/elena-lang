@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   6
+#define REVISION_VERSION   7
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -383,14 +383,14 @@ void parseMessageConstant(IdentifierString& message, ident_t reference)
 
 void printReference(IdentifierString& command, _Module* module, size_t reference)
 {
-   //bool literalConstant = false;
+   bool literalConstant = false;
    //bool charConstant = false;
    ident_t referenceName = NULL;
    int mask = reference & mskAnyRef;
-   //if (mask == mskInt32Ref) {
-   //   referenceName = _integer;
-   //   literalConstant = true;
-   //}
+   if (mask == mskInt32Ref) {
+      referenceName = _integer;
+      literalConstant = true;
+   }
    //else if (mask == mskInt64Ref) {
    //   referenceName = _long;
    //   literalConstant = true;
@@ -411,7 +411,7 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    //   referenceName = _char;
    //   charConstant = true;
    //}
-   /*else */if (reference == 0) {
+   else if (reference == 0) {
       referenceName = "nil";
    }
    else if (reference == -1) {
@@ -424,11 +424,11 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
    }
    else {
       command.append(referenceName);
-      //if (literalConstant) {
-      //   command.append("(");
-      //   command.append(module->resolveConstant(reference & ~mskAnyRef));
-      //   command.append(")");
-      //}
+      if (literalConstant) {
+         command.append("(");
+         command.append(module->resolveConstant(reference & ~mskAnyRef));
+         command.append(")");
+      }
       //else if (charConstant) {
       //   const char* ch = module->resolveConstant(reference & ~mskAnyRef);
 
@@ -965,9 +965,9 @@ void listFlags(int flags, int& row, int pageSize)
    //   printLine("@flag ", "elDynamicRole", row, pageSize);
    //}
    //   
-   //if (test(flags, elStructureRole)) {
-   //   printLine("@flag ", "elStructureRole", row, pageSize);
-   //}      
+   if (test(flags, elStructureRole)) {
+      printLine("@flag ", "elStructureRole", row, pageSize);
+   }      
 
    if (test(flags, elSealed)) {
       printLine("@flag ", "elSealed", row, pageSize);
@@ -979,10 +979,10 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elClosed", row, pageSize);
    }      
 
-   //if (test(flags, elWrapper)) {
-   //   printLine("@flag ", "elWrapper", row, pageSize);
-   //}
-   //   
+   if (test(flags, elWrapper)) {
+      printLine("@flag ", "elWrapper", row, pageSize);
+   }
+      
    if (test(flags, elStateless)) {
       printLine("@flag ", "elStateless", row, pageSize);
    }      
@@ -998,8 +998,8 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elWithArgGenerics))
    //   printLine("@flag ", "elWithArgGenerics", row, pageSize);
 
-   //if (test(flags, elReadOnlyRole))
-   //   printLine("@flag ", "elReadOnlyRole", row, pageSize);
+   if (test(flags, elReadOnlyRole))
+      printLine("@flag ", "elReadOnlyRole", row, pageSize);
 
    if (test(flags, elNonStructureRole))
       printLine("@flag ", "elNonStructureRole", row, pageSize);
@@ -1032,10 +1032,10 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elNoCustomDispatcher))
    //   printLine("@flag ", "elNoCustomDispatcher", row, pageSize);
 
-   //switch (flags & elDebugMask) {
-   //   case elDebugDWORD:
-   //      printLine("@flag ", "elDebugDWORD", row, pageSize);
-   //      break;
+   switch (flags & elDebugMask) {
+      case elDebugDWORD:
+         printLine("@flag ", "elDebugDWORD", row, pageSize);
+         break;
    //   case elDebugReal64:
    //      printLine("@flag ", "elDebugReal64", row, pageSize);
    //      break;
@@ -1081,7 +1081,7 @@ void listFlags(int flags, int& row, int pageSize)
    //   case elEnumList:
    //      printLine("@flag ", "elEnumList", row, pageSize);
    //      break;
-   //}
+   }
 }
 
 void listClassMethods(_Module* module, ident_t className, int pageSize, bool fullInfo, bool withConstructors)

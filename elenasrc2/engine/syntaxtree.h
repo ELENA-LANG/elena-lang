@@ -55,6 +55,7 @@ enum LexicalType
    lxAttributeDecl   = 0x0004E,
    lxClassField      = 0x0004F,
    lxImplicitMessage = 0x00067,
+   lxSizeDecl        = 0x00068,
 
    lxTypecast        = 0x00100,
 
@@ -91,7 +92,7 @@ enum LexicalType
    lxIdentifier      = 0x18005,
 //   lxPrivate         = 0x18006,
    lxReference       = 0x18007,
-//   lxInteger         = 0x18008,
+   lxInteger         = 0x18008,
 //   lxHexInteger      = 0x18009,
 //   lxReal            = 0x1800A,
 //   lxCharacter       = 0x1800B,
@@ -116,7 +117,7 @@ enum LexicalType
 //   lxConstantString  = 0x0A10C, // arg - reference
 //   lxConstantWideStr = 0x0A10D, // arg - reference
 //   lxConstantChar    = 0x0A10E, // arg - reference
-//   lxConstantInt     = 0x1A10F, // arg - reference
+   lxConstantInt     = 0x1A10F, // arg - reference
 //   lxConstantLong    = 0x1A110, // arg - reference
 //   lxConstantReal    = 0x1A111, // arg - reference
    lxClassSymbol        = 0x0A112, // arg - reference
@@ -170,7 +171,7 @@ enum LexicalType
 //   lxExternFrame     = 0x04023,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025,   // arg - count
-//   lxCreatingStruct  = 0x0C026,   // arg - size
+   lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
 //   lxNewOp           = 0x0C028,
 //   lxArrOp           = 0x8C029,   // arg - operation id
@@ -234,11 +235,11 @@ enum LexicalType
 //   lxType            = 0x20012, // arg - subject
    lxCallTarget      = 0x20013, // arg - reference
 //   lxClassName       = 0x20014, // arg - identifier
-//   lxIntValue        = 0x20015, // arg - integer value
+   lxIntValue        = 0x20015, // arg - integer value
 //   lxTempLocal       = 0x20016,
 //   lxIfValue         = 0x20017, // arg - reference
 //   lxElseValue       = 0x20018, // arg - reference
-//   lxSize            = 0x20019,
+   lxSize            = 0x20019,
 //   lxTemplateParam   = 0x2001A,
 //   lxEmbeddable      = 0x2001B,
 //   lxIntExtArgument  = 0x2001C,

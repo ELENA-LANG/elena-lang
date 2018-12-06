@@ -450,45 +450,33 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, 
 //   // close
 //   tape.write(bcClose);
 //}
-//
-//void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
-//{
-//   if (itemSize == 4) {
-//      // ncreate
-//      tape.write(bcNCreate);
-//   }
-//   else if (itemSize == 2) {
-//      // wcreate
-//      tape.write(bcWCreate);
-//   }
-//   else {
-//      if (itemSize != 1) {
-//         // muln itemSize
-//         tape.write(bcMulN, itemSize);
-//      }
-//      // bcreate
-//      tape.write(bcBCreate);
-//   }
-//}
-//
-//void ByteCodeWriter :: newDynamicWStructure(CommandTape& tape)
-//{
-//   // wcreate
-//   tape.write(bcWCreate);
-//}
-//
-//void ByteCodeWriter :: newDynamicNStructure(CommandTape& tape)
-//{
-//   // ncreate
-//   tape.write(bcNCreate);
-//}
-//
-//void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
-//{
-//   // newn size, vmt
-//
-//   tape.write(bcNewN, reference | mskVMTRef, size);
-//}
+
+void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
+{
+   if (itemSize == 4) {
+      // ncreate
+      tape.write(bcNCreate);
+   }
+   else if (itemSize == 2) {
+      // wcreate
+      tape.write(bcWCreate);
+   }
+   else {
+      if (itemSize != 1) {
+         // muln itemSize
+         tape.write(bcMulN, itemSize);
+      }
+      // bcreate
+      tape.write(bcBCreate);
+   }
+}
+
+void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
+{
+   // newn size, vmt
+
+   tape.write(bcNewN, reference | mskVMTRef, size);
+}
 
 void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t reference)
 {
@@ -643,8 +631,8 @@ inline ref_t defineConstantMask(LexicalType type)
 //         return mskWideLiteralRef;
 //      case lxConstantChar:
 //         return mskCharRef;
-//      case lxConstantInt:
-//         return mskInt32Ref;
+      case lxConstantInt:
+         return mskInt32Ref;
 //      case lxConstantLong:
 //         return mskInt64Ref;
 //      case lxConstantReal:
@@ -1526,17 +1514,17 @@ void ByteCodeWriter :: writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug
    debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
-//inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
-//{
-//   it++;
-//
-//   return it.Eof() ? -1 : *it;
-//}
+inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
+{
+   it++;
+
+   return it.Eof() ? -1 : *it;
+}
 
 void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
 {
-   //bool structure = test(info.header.flags, elStructureRole);
-   //int remainingSize = info.size;
+   bool structure = test(info.header.flags, elStructureRole);
+   int remainingSize = info.size;
 
    ClassInfo::FieldMap::Iterator it = info.fields.start();
    while (!it.Eof()) {
@@ -1544,15 +1532,15 @@ void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer
          DebugLineInfo symbolInfo(dsField, 0, 0, 0);
 
          symbolInfo.addresses.field.nameRef = debugStrings->Position();
-         //if (structure) {
-         //   int nextOffset = getNextOffset(it);
-         //   if (nextOffset == -1) {
-         //      symbolInfo.addresses.field.size = remainingSize;
-         //   }
-         //   else symbolInfo.addresses.field.size = nextOffset - *it;
+         if (structure) {
+            int nextOffset = getNextOffset(it);
+            if (nextOffset == -1) {
+               symbolInfo.addresses.field.size = remainingSize;
+            }
+            else symbolInfo.addresses.field.size = nextOffset - *it;
 
-         //   remainingSize -= symbolInfo.addresses.field.size;
-         //}
+            remainingSize -= symbolInfo.addresses.field.size;
+         }
 
          debugStrings->writeLiteral(it.key());
 
@@ -3606,7 +3594,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxClass:
       case lxConstantSymbol:
       //case lxConstantChar:
-      //case lxConstantInt:
+      case lxConstantInt:
       //case lxConstantLong:
       //case lxConstantReal:
       //case lxMessageConstant:
@@ -3709,7 +3697,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxClassSymbol:
       case lxConstantSymbol:
 //      case lxConstantChar:
-//      case lxConstantInt:
+      case lxConstantInt:
 //      case lxConstantLong:
 //      case lxConstantReal:
 //      case lxMessageConstant:
@@ -5751,26 +5739,13 @@ void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node
          initObject(tape, size, lxNil);
       //}
    }
-   //else if (node == lxCreatingStruct) {
-   //   if (size < 0) {
-   //      loadObject(tape, lxConstantClass, target.argument);
-   //      switch (size) {
-   //         case -1:
-   //            newDynamicStructure(tape, 1);
-   //            break;
-   //         case -2:
-   //            newDynamicWStructure(tape);
-   //            break;
-   //         case -4:
-   //            newDynamicNStructure(tape);
-   //            break;
-   //         default:
-   //            newDynamicStructure(tape, -size);
-   //            break;
-   //      }
-   //   }
-   //   else newStructure(tape, size, target.argument);
-   //}
+   else if (node == lxCreatingStruct) {
+      if (size < 0) {
+         loadObject(tape, lxClassSymbol, target.argument);
+         newDynamicStructure(tape, -size);
+      }
+      else newStructure(tape, size, target.argument);
+   }
 }
 
 void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node)
@@ -5850,7 +5825,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
             break;
          case lxImporting:
          case lxCreatingClass:
-//         case lxCreatingStruct:
+         case lxCreatingStruct:
             if (!open) {
                open = true;
 

@@ -647,6 +647,9 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
    else if (bodyNode == lxExpression) {
       scopeNode = lxSymbol;
    }
+   else if (bodyNode == lxSizeDecl) {
+      _scope->raiseError(errInvalidSyntax, _filePath, bodyNode);
+   }
    else {
       scopeNode = lxClass;
 
@@ -669,13 +672,28 @@ void DerivationWriter :: recognizeScope()
    }
 }
 
-ref_t DerivationWriter :: mapAttribute(SNode terminal/*, bool& templateParam*/)
+ref_t DerivationWriter :: mapAttribute(SNode node/*, bool& templateParam*/)
 {
-   ident_t token = terminal.identifier();
-   //      //      if (emptystr(token))
-   //      //         token = terminal.findChild(lxTerminal).identifier();
-   
-   return _scope->attributes.get(token);
+   if (node == lxIdentifier) {
+      ident_t token = node.identifier();
+
+      return _scope->attributes.get(token);
+   }
+   else if (node.existChild(lxToken)) {
+      return V_TEMPLATE;
+   }
+   //else if (node.existChild(lxToken)) {
+   //   return V_ARRAY;
+   //}
+   else {
+      SNode terminal = node.firstChild(lxTerminalMask);
+
+      ident_t token = terminal.identifier();
+      //      //      if (emptystr(token))
+      //      //         token = terminal.findChild(lxTerminal).identifier();
+
+      return _scope->attributes.get(token);
+   }
 }
 
 void DerivationWriter :: declareAttribute(SNode node)
@@ -710,7 +728,7 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
    while (current == lxToken/*, lxRefAttribute*/) {
    //      if (current == lxAttribute) {
    //         bool templateParam = false;
-      ref_t attrRef = mapAttribute(current.firstChild(lxTerminalMask)/*, templateParam*/);
+      ref_t attrRef = mapAttribute(current/*, templateParam*/);
       if (attrRef) {
          current.set(lxAttribute, attrRef);
          if (test(mode, MODE_ROOT) && (attrRef == V_PUBLIC || attrRef == V_INTERNAL)) {
@@ -766,7 +784,7 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
             // if it is a method
             current = lxClassMethod;
          }
-         else if (current.firstChild() == lxNone) {
+         else if (current.firstChild().compare(lxSizeDecl, lxNone)) {
             // if it is a field
             current = lxClassField;
          }
@@ -1016,6 +1034,12 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node/*, 
 {
 //   if (node == lxClassField) {
       writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
+      SNode sizeNode = node.findChild(lxSizeDecl);
+      if (sizeNode != lxNone) {
+         writer.newNode(lxSize);
+         copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask));
+         writer.closeNode();
+      }
 
 //      SNode name = node.prevNode().firstChild(lxTerminalMask);
 //
@@ -1221,15 +1245,7 @@ inline bool isTypeExpressionAttribute(SNode current)
 
 void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, bool templateArgMode)
 {
-   ref_t attrRef = 0;
-
-   if (current == lxToken) {
-      if (current.existChild(lxToken)) {
-         attrRef = V_TEMPLATE;
-      }
-      else attrRef = mapAttribute(current.firstChild(lxTerminalMask));
-   }
-   else attrRef = mapAttribute(current);
+   ref_t attrRef = mapAttribute(current);
 
    if (attrRef == 0 && (templateArgMode || isTypeExpressionAttribute(current))) {
       // if it is a type attribute

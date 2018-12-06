@@ -45,7 +45,7 @@ namespace _ELENA_
    #define errDuplicatedDefinition  "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n"
 ////   #define errInvalidProperty       "%s(%d:%d): error 121: Invalid or none-existing property '%s'\n"
 ////   #define errInvalidRedirectMessage "%s(%d:%d): error 127: It is not possible to use redirect message in this case\n"
-//   #define errInvalidIntNumber      "%s(%d:%d): error 130: Invalid integer value %s\n"
+   #define errInvalidIntNumber      "%s(%d:%d): error 130: Invalid integer value %s\n"
 //   #define errUnknownMessage        "%s(%d:%d): error 131: Unknown message %s\n"
 //   #define errUnknownSubject        "%s(%d:%d): error 132: Unknown attribute %s\n"
 //   #define errInvalidSubject        "%s(%d:%d): error 132: Invalid attribute %s\n"
@@ -86,7 +86,7 @@ namespace _ELENA_
 //   #define errIllegalPrivate        "%s(%d:%d): error 166: An attribute '%s' cannot be applied for an extension\n"
 //   #define errDupPublicMethod       "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n"
 //   #define errOneDefaultConstructor "%s(%d:%d): error 168: a class '%s' should have only one default constructor\n"
-//   #define errEmptyStructure        "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n"
+   #define errEmptyStructure        "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n"
 //   #define errReadOnlyField         "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"

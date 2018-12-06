@@ -104,13 +104,13 @@ public:
       okUnknown = 0,
 
       okObject,                       // param - class reference
-      okSymbol,                       // param - reference, extraparam - returning result
-      okConstantSymbol,               // param - reference, extraparam - class reference
-      okClass,                        // param - reference, extraparam - class reference
+      okSymbol,                       // param - reference
+      okConstantSymbol,               // param - reference
+      okClass,                        // param - reference
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
-//      okIntConstant,                  // param - reference, extraparam - imm argument
+      okIntConstant,                  // param - reference, extraparam - imm argument
 //      okUIntConstant,                 // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference
 //      okRealConstant,                 // param - reference
@@ -119,7 +119,7 @@ public:
 //      okSignatureConstant,            // param - reference
 //      okArrayConst,
       okField,                        // param - reference, param - field offset, extraparam - class reference
-//      okReadOnlyField,                // param - reference, param - field offset, extraparam - class reference
+      okReadOnlyField,                // param - reference, param - field offset, extraparam - class reference
 //      okStaticField,                  // param - reference
 //      okStaticConstantField,          // param - reference
 //      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
@@ -168,32 +168,32 @@ public:
       ref_t      param;
       // target class reference
       ref_t      reference;
-//      ref_t      extraparam;
-//      ref_t      element;
+      ref_t      element;
+      ref_t      extraparam;
 
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
          this->reference = 0;
-//         this->extraparam = 0;
-//         this->element = 0;
+         this->element = 0;
+         this->extraparam = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
          this->reference = 0;
-         //         this->extraparam = 0;
-//         this->element = 0;
+         this->extraparam = 0;
+         this->element = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param)
       {
          this->kind = kind;
          this->param = param;
          this->reference = 0;
-         //         this->extraparam = 0;
-//         this->element = 0;
+         this->element = 0;
+         this->extraparam = 0;
       }
 //      ObjectInfo(ObjectKind kind, int param)
 //      {
@@ -207,7 +207,8 @@ public:
          this->kind = kind;
          this->param = param;
          this->reference = reference;
-         //this->element = 0;
+         this->element = 0;
+         this->extraparam = 0;
       }
 //      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
 //      {
@@ -216,13 +217,14 @@ public:
 //         this->extraparam = (ref_t)extraparam;
 //         this->element = 0;
 //      }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t extraparam, ref_t element)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = extraparam;
-//         this->element = element;
-//      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference, ref_t element, ref_t extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->reference = reference;
+         this->element = element;
+         this->extraparam = extraparam;         
+      }
 //      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t element)
 //      {
 //         this->kind = kind;
@@ -541,7 +543,7 @@ private:
    {
       ref_t        message;
       LocalMap     parameters;
-//      int          scopeMode;
+      int          scopeMode;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
@@ -813,17 +815,18 @@ private:
    // NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
 
+   int resolveSize(SNode node, Scope& scope);
    ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
 //   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreSealed = false*/);
    void compileParentDeclaration(SNode node, ClassScope& scope);
-   void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
+   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef, int& size, bool& isStaticField, bool& isSealed, bool& isConstant*/);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef*/, int& size/*, bool& isStaticField, bool& isSealed, bool& isConstant*/, bool& isEmbeddable);
    void declareVMT(SNode member, ClassScope& scope);
 //////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
@@ -944,7 +947,7 @@ private:
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
-   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, ref_t elementRef, int sizeHint, bool singleField*/);
+   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, ref_t elementRef*/, int sizeHint, bool singleField, bool embeddable);
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);

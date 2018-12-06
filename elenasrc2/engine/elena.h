@@ -143,7 +143,7 @@ public:
 //   virtual ident_t getLiteralClass() = 0;
 //   virtual ident_t getWideLiteralClass() = 0;
 //   virtual ident_t getCharacterClass() = 0;
-//   virtual ident_t getIntegerClass() = 0;
+   virtual ident_t getIntegerClass() = 0;
 //   virtual ident_t getRealClass() = 0;
 //   virtual ident_t getLongClass() = 0;
    virtual ident_t getMessageClass() = 0;
@@ -514,7 +514,7 @@ struct ClassInfo
 //   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader    header;
-//   int            size;           // Object size
+   int            size;           // Object size
    MethodMap      methods;        // list of methods, true means the method was declared in this instance
    FieldMap       fields;
 //   StaticFieldMap statics;
@@ -526,7 +526,7 @@ struct ClassInfo
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
       writer->write((void*)this, sizeof(ClassHeader));
-//      writer->writeDWord(size);
+      writer->writeDWord(size);
       if (!headerAndSizeOnly) {
 //         staticValues.write(writer);
          methods.write(writer);
@@ -540,7 +540,7 @@ struct ClassInfo
    void load(StreamReader* reader, bool headerOnly = false)
    {
       reader->read((void*)&header, sizeof(ClassHeader));
-//      size = reader->getDWord();
+      size = reader->getDWord();
       if (!headerOnly) {
 //         staticValues.read(reader);
          methods.read(reader);

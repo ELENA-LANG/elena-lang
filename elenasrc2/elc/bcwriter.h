@@ -151,9 +151,8 @@ class ByteCodeWriter
    void declareBlock(CommandTape& tape);
 
    void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
-//   void newStructure(CommandTape& tape, int size, ref_t reference);
-//   void newDynamicStructure(CommandTape& tape, int itemSize);
-//   void newDynamicWStructure(CommandTape& tape);
+   void newStructure(CommandTape& tape, int size, ref_t reference);
+   void newDynamicStructure(CommandTape& tape, int itemSize);
 //   void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);

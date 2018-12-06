@@ -932,10 +932,10 @@ public class IntBaseNumber : BaseNumber
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-public sealed /*struct*/ IntNumber  : IntBaseNumber
+public sealed const struct IntNumber : IntBaseNumber
 {
-//    type<__int, 4> theValue.
-//
+    embeddable __raw theValue[4];
+    
 //    constructor(byte n)
 //    [
 //        theValue := n.

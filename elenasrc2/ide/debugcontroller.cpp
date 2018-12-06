@@ -1354,12 +1354,12 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
          //   value[length] = 0;
          //   watch->write(this, value);
          //}
-         //else if (type == elDebugDWORD/* || type == elDebugSubject*/) {
-         //   char value[4];
-         //   getValue(selfPtr, value, 4);
+         /*else */if (type == elDebugDWORD/* || type == elDebugSubject*/) {
+            char value[4];
+            getValue(selfPtr, value, 4);
 
-         //   watch->write(this, *(int*)value);
-         //}
+            watch->write(this, *(int*)value);
+         }
          //else if (type == elDebugMessage) {
          //   char value[4];
          //   getValue(selfPtr, value, 4);
@@ -1404,7 +1404,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
          //else if (type == elDebugIntegers) {
          //   readIntArray(watch, selfPtr, NULL);
          //}
-         /*else */if (className.compare("system'nil")) {
+         else if (className.compare("system'nil")) {
             watch->write(this, "<nil>");
          }
          else readFields(watch, info, selfPtr);

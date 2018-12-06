@@ -90,9 +90,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
     //     }
     //     else terminal.symbol = tsPrivate;
     //     break;
-    //  case dfaInteger:
-    //     terminal.symbol = tsInteger;
-    //     break;
+      case dfaInteger:
+         terminal.symbol = tsInteger;
+         break;
       case dfaAttribute:
          terminal.symbol = tsAttribute;
          break;

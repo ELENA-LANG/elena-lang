@@ -1496,7 +1496,7 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 
    if (test(info.header.flags, elNestedClass)) {
       // stateless inline class
-      if (info.fields.Count() == 0/* && !test(info.header.flags, elStructureRole)*/) {
+      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
          info.header.flags |= elStateless;
 
          // stateless inline class is its own class class
@@ -1603,9 +1603,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_CLOSED:
          attrValue = elClosed;
          return true;
-//      case V_STRUCT:
-//         attrValue = elStructureRole;
-//         return true;
+      case V_STRUCT:
+         attrValue = elStructureRole;
+         return true;
 //      case V_ENUMLIST:
 //         attrValue = elAbstract | elEnumList | elClosed;
 //         return true;
@@ -1615,9 +1615,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //      case V_STRING:
 //         attrValue = elDebugLiteral;
 //         return true;
-//      case V_CONST:
-//         attrValue = elReadOnlyRole;
-//         return true;
+      case V_CONST:
+         attrValue = elReadOnlyRole;
+         return true;
 //      case V_EXTENSION:
 //         attrValue = elExtension;
 //         return true;
@@ -1730,10 +1730,17 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
    }
 }
 
-bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/)
+bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/, bool& isEmbeddable)
 {
    switch ((size_t)attrValue)
    {
+      case V_EMBEDDABLE:
+         if (!isEmbeddable) {
+            isEmbeddable = true;
+            attrValue = -1;
+            return true;
+         }
+         else return false;
       //case V_STATIC:
       //   attrValue = lxStaticAttr;
       //   return true;
@@ -1751,9 +1758,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
       //      return true;
       //   }
       //   else return false;
-      //case V_INT8:
-      //   attrValue = 0;
-      //   return true;
+      case V_BINARY:
+         attrValue = 0;
+         return true;
       ////case V_INT64:
       ////   attrValue = 0;
       ////   return true;
@@ -1865,6 +1872,7 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant*/,
 //////   switch ((size_t)attrValue)
 //////   {
 //////      case V_WARNING1:
+
 //////         attrValue = WARNING_MASK_0;
 //////         return true;
 //////      case V_WARNING2:
@@ -1877,16 +1885,19 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant*/,
 //////         return false;
 //////   }
 //////}
-//
-//bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
-//{
-//   // if it is a primitive field
-//   if (info.fields.Count() == 1) {
-//      switch (classRef) {
-//         case V_INT32:
-//            info.header.flags |= (elDebugDWORD | elReadOnlyRole | elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
-//            return true;
+
+bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
+{
+   // if it is a primitive field
+   if (info.fields.Count() == 1) {
+      switch (classRef) {
+         case V_INT32:
+            if (test(info.header.flags, elReadOnlyRole | elStructureRole)) {
+               info.header.flags |= (elDebugDWORD/* | elReadOnlyRole*/ | elWrapper);
+               info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
+               return true;
+            }
+            else return false;
 //         case V_INT64:
 //            info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
@@ -1919,14 +1930,14 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant*/,
 //            info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
 //            return info.size == 4;
-//         default:
-//            break;
-//      }
-//   }
-//
-//   return false;
-//}
-//
+         default:
+            break;
+      }
+   }
+
+   return false;
+}
+
 //ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
 //{
 //   switch (reference) {
@@ -1989,26 +2000,26 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant*/,
 //////
 //////   return true;
 //////}
-//
-//void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure)
-//{
-//   if (!isAbstract(info)) {
-//      for (auto it = info.methodHints.start(); !it.Eof(); it++) {
-//         auto key = it.key();
-//         if (key.value2 == maHint && test(*it, tpAbstract))
-//            withAbstractMethods = true;
-//      }
-//   }
-//
-//   // interface class cannot have a custom dispatcher method
-//   if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true))
-//      disptacherNotAllowed = true;
-//
-//   // a structure class should contain fields
-//   if (test(info.header.flags, elStructureRole) && info.size == 0)
-//      emptyStructure = true;
-//}
-//
+
+void CompilerLogic :: validateClassDeclaration(ClassInfo& info/*, bool& withAbstractMethods, bool& disptacherNotAllowed*/, bool& emptyStructure)
+{
+   //if (!isAbstract(info)) {
+   //   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+   //      auto key = it.key();
+   //      if (key.value2 == maHint && test(*it, tpAbstract))
+   //         withAbstractMethods = true;
+   //   }
+   //}
+
+   //// interface class cannot have a custom dispatcher method
+   //if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true))
+   //   disptacherNotAllowed = true;
+
+   // a structure class should contain fields
+   if (test(info.header.flags, elStructureRole) && info.size == 0)
+      emptyStructure = true;
+}
+
 //bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject)
 //{
 //   if (returningRef != 0 && defineStructSize(scope, returningRef, 0) > 0) {

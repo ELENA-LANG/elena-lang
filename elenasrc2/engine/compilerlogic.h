@@ -159,12 +159,12 @@ public:
 //   virtual void injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
 
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
-//   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
-//
+   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
+
    virtual bool validateClassAttribute(int& attrValue);
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool validateImplicitMethodAttribute(int& attrValue);
-   virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/);
+   virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/, bool& isEmbeddable);
    virtual bool validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes);
    virtual bool validateSymbolAttribute(int attrValue/*, bool& constant*/, bool& staticOne/*, bool& preloadedOne*/);
 //////   virtual bool validateWarningAttribute(int& attrValue);
@@ -172,7 +172,7 @@ public:
    virtual bool validateArgumentAttribute(int attrValue);
 
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag);
-//   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);
+   virtual void validateClassDeclaration(ClassInfo& info/*, bool& withAbstractMethods, bool& disptacherNotAllowed*/, bool& emptyStructure);
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info)
    {

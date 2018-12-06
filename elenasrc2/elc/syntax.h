@@ -32,7 +32,7 @@ enum Symbol
    tsIdentifier                 = 0x03005,
 //   tsPrivate                    = 0x03006,
    tsReference                  = 0x03007,
-//   tsInteger                    = 0x03008,
+   tsInteger                    = 0x03008,
 //   tsHexInteger                 = 0x03009,
 //   tsReal                       = 0x0300A,
 //   tsCharacter                  = 0x0300B,
@@ -119,6 +119,7 @@ enum Symbol
 //   nsClosingOperator            = 0x01065,
    nsRetExpression              = 0x01066,
    nsImplicitMessage            = 0x01067,
+   nsSize                       = 0x01068,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

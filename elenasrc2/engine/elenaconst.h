@@ -154,7 +154,7 @@ namespace _ELENA_
 
       mskConstantRef         = 0x01000000u,   // reference to constant
 //      mskLiteralRef          = 0x02000000u,   // reference to constant literal
-//      mskInt32Ref            = 0x03000000u,   // reference to constant integer number
+      mskInt32Ref            = 0x03000000u,   // reference to constant integer number
 //      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
 //      mskRealRef             = 0x05000000u,   // reference to constant real number
       mskMessage             = 0x06000000u,   // message constant
@@ -278,17 +278,17 @@ namespace _ELENA_
    const int elStandartVMT         = 0x00000001;
    const int elNestedClass         = 0x00000002;
 //   const int elDynamicRole         = 0x00000004;
-//   const int elStructureRole       = 0x00000008;
+   const int elStructureRole       = 0x00000008;
 //   const int elAbstract            = 0x00000010;
    const int elClosed              = 0x00000020;
-//   const int elWrapper             = 0x00000040;
+   const int elWrapper             = 0x00000040;
 //   const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elFinal               = 0x00000100;
    const int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
-//   const int elReadOnlyRole        = 0x00000800;
+   const int elReadOnlyRole        = 0x00000800;
    const int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
    const int elRole                = 0x00004080;
@@ -308,7 +308,7 @@ namespace _ELENA_
    const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
    const int elDebugMask           = 0x001F0000;
-//   const int elDebugDWORD          = 0x00010000;
+   const int elDebugDWORD          = 0x00010000;
 //   const int elDebugReal64         = 0x00020000;
 //   const int elDebugLiteral        = 0x00030000;
 //   const int elDebugIntegers       = 0x00040000;
@@ -500,7 +500,7 @@ namespace _ELENA_
    // predefined system forwards
    #define SUPER_FORWARD            "$super"                         // the common class predecessor
 //   #define LAZYEXPR_FORWARD         "$lazyexpression"                // the base lazy expression class
-//   #define INT_FORWARD              "$int"
+   #define INT_FORWARD              "$int"
 //   #define LONG_FORWARD             "$long"
 //   #define REAL_FORWARD             "$real"
 //   #define STR_FORWARD              "$literal"
