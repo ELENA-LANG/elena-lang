@@ -1510,7 +1510,13 @@ ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, ident_t identifier, bo
    if (gloabalOne) {
       return ns->moduleScope->mapFullReference(identifier, true);
    }
-   else return ns->resolveImplicitIdentifier(identifier, referenceOne);
+   else {
+      ref_t reference = ns->resolveImplicitIdentifier(identifier, referenceOne);
+      if (!reference && referenceOne)
+         reference = scope.moduleScope->mapFullReference(identifier, true);
+
+      return reference;
+   }
 }
 
 ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, SNode terminal)
@@ -4096,13 +4102,14 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
    ref_t typeRef = 0;
    while (current == lxAttribute) {
       int value = current.argument;
-      bool typeAttr = false;
       if (_logic->validateExpressionAttribute(value, attributes)) {
-         if ((value == 0 || attributes.typeAttr) && test(mode, HINT_ROOT) && !attributes.castAttr) {
+         if (attributes.typeAttr && test(mode, HINT_ROOT) && !attributes.castAttr) {
             // if it is a variable declaration
             newVariable = true;
-            if (typeAttr)
+            if (value == V_TYPE) {
                typeRef = mapTypeAttribute(current, scope);
+            }
+            else typeRef = value;
          }
          else if (attributes.castAttr) {
             SNode msgNode = goToNode(current, lxMessage);
@@ -7678,8 +7685,24 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 //   if (!scope.defineForward(shortcut, reference))
 //      scope.raiseError(errDuplicatedDefinition, ns);
 //}
-//
-////bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
+
+void Compiler :: compileForward(SNode ns, NamespaceScope& scope)
+{
+   ident_t shortcut = ns.firstChild(lxTerminalMask).identifier();
+   SNode referenceNode = ns.findChild(lxAttribute);
+
+   if (scope.moduleScope->attributes.exist(shortcut))
+      scope.raiseError(errDuplicatedDefinition, ns);
+
+   ref_t classRef = resolveImplicitIdentifier(scope, referenceNode.firstChild(lxTerminalMask));
+   if (!classRef)
+      scope.raiseError(errInvalidHint, referenceNode);
+
+   scope.moduleScope->attributes.add(shortcut, classRef);
+   scope.moduleScope->saveAttribute(shortcut, classRef);
+}
+
+//////bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
 ////{
 ////   int   mask = reference & mskAnyRef;
 ////   ref_t extReference = 0;
@@ -7835,6 +7858,9 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
                declared = true;
                break;
             }
+            case lxForward:
+               compileForward(current, scope);
+               break;
          }
       }
       current = current.nextNode();

@@ -1,8 +1,7 @@
 /// Attributes
-//T               = #16390.
 //V               = #30.
 //
-//type            = #16390.
+#16390 = type;
 #16386 = class;
 #8197  = struct;
 #16389 = symbol;
@@ -63,17 +62,17 @@
 //__ifoperator    = #4097.
 //__ifnotoperator = #4098.
 //
-///// Provides classes that describe the basic functionality
-//
-//type object     = system'Object.
-//
+/// Provides classes that describe the basic functionality
+
+type object     = system'Object;
+
 //// === basic logical types ===
 //type bool       = system'BoolValue.
-//
-//// === basic type aliases ===
+
+// === basic type aliases ===
 //type byte       = system'ByteNumber.
 //type short      = system'ShortNumber.
-//type int        = system'IntNumber.
+type int        = system'IntNumber;
 //type uint       = system'UIntNumber.
 //type long       = system'LongNumber.
 //type real       = system'RealNumber.

@@ -1791,15 +1791,25 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
    }
 }
 
-bool CompilerLogic :: validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes)
+bool CompilerLogic::validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes)
 {
+   if (!isPrimitiveRef(attrValue)) {
+      attributes.typeAttr = true;
+
+      return true;
+   }
+
    switch (attrValue) {
       case (int)V_VARIABLE:
-         attrValue = 0;
-         return true;
       case (int)V_TYPE:
-         attributes.typeAttr = true;
-         return true;
+         if (!attributes.typeAttr) {
+            attributes.typeAttr = true;
+            if (attrValue == V_VARIABLE)
+               attrValue = 0;
+
+            return true;
+         }
+         else return false;
       case (int)V_CONVERSION:
          if (!attributes.castAttr) {
             attributes.castAttr = true;

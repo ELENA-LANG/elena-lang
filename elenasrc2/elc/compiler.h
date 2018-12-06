@@ -968,8 +968,8 @@ private:
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
 //////   void compileIncludeModule(SNode node, ModuleScope& scope);
-//   void compileForward(SNode node, NamespaceScope& scope);
-//
+   void compileForward(SNode node, NamespaceScope& scope);
+
 ////   bool validate(_ProjectManager& project, _Module* module, int reference);
 //
 //   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);

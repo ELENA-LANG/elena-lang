@@ -80,7 +80,7 @@
 #define V_CONVERSION     (ref_t)-16387
 //#define V_INITIALIZER    (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
-//#define V_TYPETEMPL      (ref_t)-16390
+#define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
 //#define V_FIELD          (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
