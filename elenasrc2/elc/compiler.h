@@ -48,29 +48,29 @@ public:
    {
       int    offset;
       ref_t  class_ref;
-//      ref_t  element_ref;
-//      int    size;
+      ref_t  element_ref;
+      int    size;
 
       Parameter()
       {
          offset = -1;
          class_ref = 0;
-//         element_ref = 0;
-//         size = 0;
+         element_ref = 0;
+         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->class_ref = 0;
-//         this->element_ref = 0;
-//         this->size = 0;
+         this->element_ref = 0;
+         this->size = 0;
       }
       Parameter(int offset, ref_t class_ref)
       {
          this->offset = offset;
          this->class_ref = class_ref;
-//         this->element_ref = 0;
-//         this->size = 0;
+         this->element_ref = 0;
+         this->size = 0;
       }
 //      Parameter(int offset, ref_t class_ref, int size)
 //      {
@@ -79,13 +79,13 @@ public:
 //         this->element_ref = 0;
 //         this->size = size;
 //      }
-//      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
-//      {
-//         this->offset = offset;
-//         this->class_ref = class_ref;
-//         this->element_ref = element_ref;
-//         this->size = size;
-//      }
+      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->element_ref = element_ref;
+         this->size = size;
+      }
    };
 
    // InheritResult
@@ -117,20 +117,20 @@ public:
 //      okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
 //      okSignatureConstant,            // param - reference
-//      okArrayConst,
+      okArrayConst,
       okField,                        // param - reference, param - field offset, extraparam - class reference
       okReadOnlyField,                // param - reference, param - field offset, extraparam - class reference
-//      okStaticField,                  // param - reference
-//      okStaticConstantField,          // param - reference
-//      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
-//      okFieldAddress,                 // param - field offset, extraparam - class reference
-//      okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
-//      okOuter,                        // param - field offset, extraparam - class reference
+      okStaticField,                  // param - reference
+      okStaticConstantField,          // param - reference
+      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
+      okFieldAddress,                 // param - field offset
+      okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
+      okOuter,                        // param - field offset
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
 //      okOuterReadOnlyField,           // param - field offset, extraparam - outer field offset
 //      okOuterSelf,                    // param - field offset, extraparam - outer field offset
 //      okOuterStaticField,             // param - field offset, extraparam - outer field offset
-//      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
+      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
 //////      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
@@ -139,10 +139,10 @@ public:
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
 //      okSuper,
-//      okLocalAddress,                 // param - local offset, extraparam - class reference
+      okLocalAddress,                 // param - local offset
 //      okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
-//      okConstantRole,                 // param - role reference
+      okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
 //      okExtension,
 //      okClassSelf,                    // param - class reference; used in class resending expression
@@ -284,13 +284,13 @@ private:
             return parent->saveSourcePath(writer, path);
          }
 
-//         virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
-//         {
-//            if (parent) {
-//               return parent->resolveAutoType(info, reference, element);
-//            }
-//            else return false;
-//         }
+         virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+         {
+            if (parent) {
+               return parent->resolveAutoType(info, reference, element);
+            }
+            else return false;
+         }
    
          virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode)
          {
@@ -351,10 +351,10 @@ private:
          else return Scope::getScope(level);
       }
 
-////      void defineConstantSymbol(ref_t reference, ref_t classReference)
-////      {
-////         constantHints.add(reference, classReference);
-////      }
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       virtual void raiseError(const char* message)
       {
@@ -450,7 +450,7 @@ private:
       ClassInfo   info;
 //      ref_t       extensionClassRef;
 //      bool        embeddable;
-//      bool        classClassMode;
+      bool        classClassMode;
 //      bool        abstractMode;
 //      bool        abstractBaseMode;
 //      bool        withImplicitConstructor;
@@ -518,11 +518,11 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//      bool  constant;
+      bool  constant;
       bool  staticOne;
-//      bool  preloaded;
-//      ref_t outputRef;
-//
+      bool  preloaded;
+      ref_t outputRef;
+
 ////      virtual ObjectInfo mapTerminal(ident_t identifier);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -533,7 +533,7 @@ private:
          else return Scope::getScope(level);
       }
 
-//      void save();
+      void save();
 
       SymbolScope(NamespaceScope* parent, ref_t reference);
    };
@@ -607,10 +607,10 @@ private:
       LocalMap     locals;
       int          level;
 //      bool         genericMethod;
-//
-//      // scope stack allocation
-//      int          reserved;  // allocated for the current statement
-//      int          saved;     // permanently allocated
+
+      // scope stack allocation
+      int          reserved;  // allocated for the current statement
+      int          saved;     // permanently allocated
 
       // scope bookmarks
       int rootBookmark;
@@ -630,15 +630,15 @@ private:
       {
          locals.add(local, Parameter(level, class_ref/*, size*/));
       }
-//      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
+      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
+      {
+         locals.add(local, Parameter(level, class_ref, element_ref, size));
+      }
+
+//      void freeSpace()
 //      {
-//         locals.add(local, Parameter(level, class_ref, element_ref, size));
+//         reserved = saved;
 //      }
-//
-////      void freeSpace()
-////      {
-////         reserved = saved;
-////      }
 
       ObjectInfo mapMember(ident_t identifier);
 
@@ -647,7 +647,7 @@ private:
       ObjectInfo mapLocal(ident_t identifier);
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
-//      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
+      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -713,35 +713,35 @@ private:
    // - InlineClassScope -
    struct InlineClassScope : public ClassScope
    {
-//      struct Outer
-//      {
-//         ref_t      reference;
-//         bool       preserved;
-//         ObjectInfo outerObject;
-//
-//         Outer()
-//         {
-//            reference = INVALID_REF;
-//            preserved = false;
-//         }
-//         Outer(int reference, ObjectInfo outerObject)
-//         {
-//            this->reference = reference;
-//            this->outerObject = outerObject;
-//            this->preserved = false;
-//         }
-//      };
-//
-//      bool                    returningMode;
-//      Map<ident_t, Outer>     outers;
-//      ClassInfo::FieldTypeMap outerFieldTypes;
-//
+      struct Outer
+      {
+         ref_t      reference;
+         bool       preserved;
+         ObjectInfo outerObject;
+
+         Outer()
+         {
+            reference = INVALID_REF;
+            preserved = false;
+         }
+         Outer(int reference, ObjectInfo outerObject)
+         {
+            this->reference = reference;
+            this->outerObject = outerObject;
+            this->preserved = false;
+         }
+      };
+
+      bool                    returningMode;
+      Map<ident_t, Outer>     outers;
+      ClassInfo::FieldTypeMap outerFieldTypes;
+
 //      Outer mapSelf();
 //      Outer mapOwner();
 //      Outer mapParent();
-//
-//      ObjectInfo allocateRetVar();
-//
+
+      ObjectInfo allocateRetVar();
+
 //      bool markAsPresaved(ObjectInfo object);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -807,7 +807,7 @@ private:
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
 
-//   int defineFieldSize(CodeScope& scope, int offset);
+   int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/);
 //   void inheritClassConstantList(_CompilerScope& scope, ref_t sourceRef, ref_t targetRef);
@@ -826,7 +826,8 @@ private:
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef*/, int& size/*, bool& isStaticField, bool& isSealed, bool& isConstant*/, bool& isEmbeddable);
+   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef*/, int& size, bool& isStaticField, 
+      bool& isSealed, bool& isConstant, bool& isEmbeddable);
    void declareVMT(SNode member, ClassScope& scope);
 //////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
@@ -834,10 +835,10 @@ private:
    ref_t mapTemplateAttribute(SNode node, Scope& scope);
    void declareMethodAttributes(SNode member, MethodScope& scope);
 
-//   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
+   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*,
-                                     bool withExtension, int& stackSafeAttr*/);
+                                     bool withExtension*/, int& stackSafeAttr);
 //   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
 //   {
 //      int dummy;
@@ -875,7 +876,7 @@ private:
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t exptectedRef*/, ObjectInfo target, int mode);
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode/*, int stackSafeAttr*/);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
    void compileTemplateAttributes(SNode current, List<ref_t>& parameters, CodeScope& scope);
@@ -899,11 +900,11 @@ private:
 //   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-//   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
-//   int allocateStructure(SNode node, int& size);
-//   bool allocateStructure(CodeScope& scope, int size, bool bytearray, ObjectInfo& exprOperand);
-//
+
+   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+   int allocateStructure(SNode node, int& size);
+   bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
+
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, int mode);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 //
@@ -937,7 +938,7 @@ private:
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 //   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 //
-//   void compilePreloadedCode(SymbolScope& scope);
+   void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedCode(_CompilerScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
@@ -948,13 +949,13 @@ private:
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
    void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, ref_t elementRef*/, int sizeHint, bool singleField, bool embeddable);
-//   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst);
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, /*ref_t elementRef, */bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
-   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates/*, bool closed*/, bool allowTypeAttribute/*, bool embeddableClass*/);
-   void generateMethodDeclarations(SNode node, ClassScope& scope, /*bool closed, */LexicalType methodType, bool allowTypeAttribute/*, bool embeddableClass*/);
+   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool embeddableClass);
+   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, bool allowTypeAttribute, bool embeddableClass);
 //   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
    void generateClassDeclaration(SNode node, ClassScope& scope, ClassType classType, bool nestedDeclarationMode = false);
 
@@ -966,7 +967,7 @@ private:
    void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
-//   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode = false);
+   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal/*, bool accumulatorMode = false*/);
 //////   void compileIncludeModule(SNode node, ModuleScope& scope);
    void compileForward(SNode node, NamespaceScope& scope);
 
@@ -981,23 +982,23 @@ private:
 //   void compileExternalArguments(SNode node, NamespaceScope& scope);
 //
 //   ref_t analizeOp(SNode current, NamespaceScope& scope);
-//   ref_t analizeSymbol(SNode& node, NamespaceScope& scope);
-//   ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);
-//   ref_t analizeBoxing(SNode node, NamespaceScope& scope, int mode);
+   ref_t analizeSymbol(SNode& node, NamespaceScope& scope);
+   ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);
+   ref_t analizeBoxing(SNode node, NamespaceScope& scope, int mode);
 //   ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, int mode);
 //   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
-//   ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
-//   ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
+   ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
+   ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
 //   ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope);
 //   ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope);
 //   ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
-//   void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
+   void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
 //   void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
-//   void analizeCode(SNode node, NamespaceScope& scope);
-//   void analizeMethod(SNode node, NamespaceScope& scope);
-//   void analizeClassTree(SNode node, ClassScope& scope);
-//   void analizeSymbolTree(SNode node, Scope& scope);
-//
+   void analizeCode(SNode node, NamespaceScope& scope);
+   void analizeMethod(SNode node, NamespaceScope& scope);
+   void analizeClassTree(SNode node, ClassScope& scope);
+   void analizeSymbolTree(SNode node, Scope& scope);
+
 //   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 //
 //   void createPackageInfo(_Module* module, _ProjectManager& project);
@@ -1034,9 +1035,9 @@ public:
    // _Compiler interface implementation
    //virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
 //   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
-//   virtual void injectLocalBoxing(SNode node, int size);
+   virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
-      ref_t targetRef, int stacksafeAttr*/);
+      ref_t targetRef*/, int stacksafeAttr);
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
 //   virtual void injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 //////   virtual void injectFieldExpression(SyntaxWriter& writer);

@@ -58,7 +58,7 @@ namespace _ELENA_
    #define errInvalidParent         "%s(%d:%d): error 139: Invalid parent class %s\n"
 //////   #define errInvalidSync           "%s(%d:%d): error 140: The method %s cannot have a sync hint\n"
    #define errSealedParent          "%s(%d:%d): error 141: parent class %s cannot be inherited\n"
-//   #define errClosedParent          "%s(%d:%d): error 141: new method cannot be declared\n"
+   #define errClosedParent          "%s(%d:%d): error 141: new method cannot be declared\n"
 ////   #define errInvalidSymbolExpr     "%s(%d:%d): error 142: %s cannot be used inside a symbol\n"
 ////   #define errInvalidRoleDeclr      "%s(%d:%d): error 143: %s cannot be used with a role\n"
 //   #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
@@ -87,7 +87,7 @@ namespace _ELENA_
 //   #define errDupPublicMethod       "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n"
 //   #define errOneDefaultConstructor "%s(%d:%d): error 168: a class '%s' should have only one default constructor\n"
    #define errEmptyStructure        "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n"
-//   #define errReadOnlyField         "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n"
+   #define errReadOnlyField         "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n"
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"

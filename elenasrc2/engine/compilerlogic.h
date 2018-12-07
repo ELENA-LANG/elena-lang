@@ -67,14 +67,14 @@ class CompilerLogic : public _CompilerLogic
    bool isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures);
    bool isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures);
 
-//   void setSignatureStacksafe(_CompilerScope& scope, ref_t targetSignature, int& stackSafeAttr);
-//   void setSignatureStacksafe(_CompilerScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
-//
+   void setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr);
+   void setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
+
 //   bool loadBranchingInfo(_CompilerScope& scope, ref_t reference);
    bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount);
 
-   ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t* signatures, int paramCount);
-   ref_t resolveImplicitConstructor(_ModuleScope& scope, ClassInfo& info, ref_t* signatures, int signatureLen);
+   ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t* signatures, int paramCount, int& stackSafeAttr);
+   ref_t resolveImplicitConstructor(_ModuleScope& scope, ClassInfo& info, ref_t* signatures, int signatureLen, int& stackSafeAttr);
 
    ref_t getClassClassRef(_ModuleScope& scope, ref_t reference);
 
@@ -86,14 +86,14 @@ public:
 
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
-//   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef)
-//   {
-//      bool dummy = false;
-//      return defineStructSizeVariable(scope, reference, elementRef, dummy);
-//   }
-//   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable);
-//   virtual int defineStructSize(ClassInfo& info, bool& variableS);
-//
+   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef)
+   {
+      bool dummy = false;
+      return defineStructSizeVariable(scope, reference, elementRef, dummy);
+   }
+   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable);
+   virtual int defineStructSize(ClassInfo& info, bool& variable);
+
 //   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
@@ -110,21 +110,26 @@ public:
 //   {
 //      return (int)reference < 0;
 //   }
+   virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element);
+   virtual bool isWrapper(ClassInfo& info)
+   {
+      return test(info.header.flags, elWrapper);
+   }
 //   virtual bool isEmbeddableArray(ClassInfo& info);
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
 //   virtual bool isVariable(ClassInfo& info);
-//   virtual bool isEmbeddable(ClassInfo& info);
-//   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference)
-//   {
-//      ClassInfo info;
-//      if(!defineClassInfo(scope, info, reference, true))
-//         return false;
-//
-//      return isEmbeddable(info);
-//   }
+   virtual bool isEmbeddable(ClassInfo& info);
+   virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      if(!defineClassInfo(scope, info, reference, true))
+         return false;
+
+      return isEmbeddable(info);
+   }
    virtual bool isRole(ClassInfo& info);
 //   virtual bool isAbstract(ClassInfo& info);
-//   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
+   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
 //   virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
 //   virtual bool isMethodInternal(ClassInfo& info, ref_t message);
@@ -148,7 +153,7 @@ public:
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef);
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/);
    //virtual bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef);
-   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef);
+   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int& stackSafeAttr);
 
 //   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef);
 //   virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef);
@@ -164,9 +169,9 @@ public:
    virtual bool validateClassAttribute(int& attrValue);
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool validateImplicitMethodAttribute(int& attrValue);
-   virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/, bool& isEmbeddable);
+   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant, bool& isEmbeddable);
    virtual bool validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes);
-   virtual bool validateSymbolAttribute(int attrValue/*, bool& constant*/, bool& staticOne/*, bool& preloadedOne*/);
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 //////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);
    virtual bool validateArgumentAttribute(int attrValue);
@@ -194,12 +199,12 @@ public:
 //   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
 //   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node);
 //   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node);
-//
-//   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired);
-//
-//////   virtual void optimizeDuplicateBoxing(SNode node);
 
-   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef/*, int& stackSafeAttr*/);
+   virtual bool validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired);
+
+////   virtual void optimizeDuplicateBoxing(SNode node);
+
+   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr);
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
 
    CompilerLogic();

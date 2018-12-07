@@ -243,7 +243,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
 
 //      result.embeddable = test(hint, tpEmbeddable);
       result.closure = test(hint, tpAction);
-//      result.dynamicRequired = test(hint, tpDynamic);
+      result.dynamicRequired = test(hint, tpDynamic);
 
       if ((hint & tpMask) == tpSealed) {
          return hint;
@@ -315,7 +315,7 @@ int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference,
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
 
-//   result.stackSafe = test(methodHint, tpStackSafe);
+   result.stackSafe = test(methodHint, tpStackSafe);
 
    if (test(messageRef, SPECIAL_MESSAGE)) {
       // HOTFIX : calling closure
@@ -537,6 +537,14 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
    return false;
 }
 
+ref_t CompilerLogic :: resolvePrimitive(ClassInfo& info, ref_t& element)
+{
+   ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+   element = inner.value2;
+
+   return inner.value1;
+}
+
 //bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 //{
 //   return test(info.header.flags, elDynamicRole | elStructureRole);
@@ -555,11 +563,11 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
 //{
 //   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
 //}
-//
-//bool CompilerLogic :: isEmbeddable(ClassInfo& info)
-//{
-//   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
-//}
+
+bool CompilerLogic :: isEmbeddable(ClassInfo& info)
+{
+   return test(info.header.flags, elStructureRole)/* && !test(info.header.flags, elDynamicRole)*/;
+}
 
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
@@ -570,12 +578,12 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //{
 //   return test(info.header.flags, elAbstract);
 //}
-//
-//bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
-//}
-//
+
+bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
+}
+
 //bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
@@ -1035,43 +1043,44 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* target
 
 }
 
-//void CompilerLogic :: setSignatureStacksafe(_CompilerScope& scope, ref_t targetSignature, int& stackSafeAttr)
-//{
-//   ref_t targetSignatures[OPEN_ARG_COUNT];
-//   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
-//   if (len <= 0)
-//      return;
-//
-//   int flag = 1;
-//   for (size_t i = 0; i < len; i++) {
-//      flag <<= 1;
-//
-//      if (isEmbeddable(scope, targetSignatures[i]))
-//         stackSafeAttr |= flag;
-//   }
-//}
-//
-//void CompilerLogic :: setSignatureStacksafe(_CompilerScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr)
-//{
-//   ref_t targetSignatures[OPEN_ARG_COUNT];
-//   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
-//   if (len <= 0)
-//      return;
-//
-//   int flag = 1;
-//   for (size_t i = 0; i < len; i++) {
-//      flag <<= 1;
-//
-//      if (isEmbeddable(scope, importReference(targetModule, targetSignatures[i], scope.module)))
-//         stackSafeAttr |= flag;
-//   }
-//}
+void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (isEmbeddable(scope, targetSignatures[i]))
+         stackSafeAttr |= flag;
+   }
+}
+
+void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (isEmbeddable(scope, importReference(targetModule, targetSignatures[i], scope.module)))
+         stackSafeAttr |= flag;
+   }
+}
 
 bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount)
 {
-   ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signatures, paramCount);
+   int stackSafeAttr = 0;
+   ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signatures, paramCount, stackSafeAttr);
    if (messageRef) {
-      compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef) /*, stackSafeAttr*/);
+      compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef), stackSafeAttr);
 
       return true;
 
@@ -1134,16 +1143,16 @@ ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
    return info.header.classRef;
 }
 
-ref_t CompilerLogic::resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t* signatures, int paramCount)
+ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t* signatures, int paramCount, int& stackSafeAttr)
 {
    ClassInfo classClassinfo;
    if (!defineClassInfo(scope, classClassinfo, getClassClassRef(scope, targetRef)))
       return 0;
 
-   return resolveImplicitConstructor(scope, classClassinfo, signatures, paramCount);
+   return resolveImplicitConstructor(scope, classClassinfo, signatures, paramCount, stackSafeAttr);
 }
 
-ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ClassInfo& info, ref_t* signatures, int paramCount)
+ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ClassInfo& info, ref_t* signatures, int paramCount, int& stackSafeAttr)
 {
    ClassInfo::MethodMap::Iterator it = info.methods.start();
    while (!it.Eof()) {
@@ -1168,9 +1177,9 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ClassInfo
             /*else */compatible = isSignatureCompatible(scope, signatureRef, signatures);
    
             if (compatible) {
-               //// recognize stacksafe attributes
-               //int stackSafeAttr = isMethodStacksafe(info, implicitMessage) ? 1 : 0;
-               //setSignatureStacksafe(scope, signatureRef, stackSafeAttr);
+               // recognize stacksafe attributes
+               stackSafeAttr = isMethodStacksafe(info, implicitMessage) ? 1 : 0;
+               setSignatureStacksafe(scope, signatureRef, stackSafeAttr);
    
                //if (test(info.header.flags, elStructureRole)) {
                ////   compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
@@ -1194,12 +1203,12 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ClassInfo
    return 0;
 }
 
-ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef)
+ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int& stackSafeAttr)
 {
    ref_t signature[ARG_COUNT];
    size_t paramCount = scope.module->resolveSignature(signRef, signature);
    
-   return resolveImplicitConstructor(scope, targetRef, signature, paramCount);
+   return resolveImplicitConstructor(scope, targetRef, signature, paramCount, stackSafeAttr);
 }
 
 //bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef)
@@ -1423,8 +1432,8 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //         info.header.flags = elDynamicRole | elStructureRole;
 //         info.size = -1;
 //         break;
-//      case V_AUTO:
-//         break;
+      case V_AUTO:
+         break;
       default:
          if (reference != 0) {
             if (!scope.loadClassInfo(info, reference, headerOnly))
@@ -1441,8 +1450,8 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
    return true;
 }
 
-//int CompilerLogic :: defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable)
-//{
+int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable)
+{
 //   if (reference == V_BINARYARRAY && elementRef != 0) {
 //      variable = true;
 //
@@ -1467,24 +1476,24 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //      return -1;
 //   }
 //   else {
-//      ClassInfo classInfo;
-//      if (defineClassInfo(scope, classInfo, reference)) {
-//         return defineStructSize(classInfo, variable);
-//      }
-//      else return 0;      
+      ClassInfo classInfo;
+      if (defineClassInfo(scope, classInfo, reference)) {
+         return defineStructSize(classInfo, variable);
+      }
+      else return 0;      
 //   }
-//}
-//
-//int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
-//{
-//   variable = !test(info.header.flags, elReadOnlyRole);
-//   
-//   if (isEmbeddable(info)) {
-//      return info.size;
-//   }
-//
-//   return 0;
-//}
+}
+
+int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
+{
+   variable = !test(info.header.flags, elReadOnlyRole);
+   
+   if (isEmbeddable(info)) {
+      return info.size;
+   }
+
+   return 0;
+}
 
 void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
 {
@@ -1730,7 +1739,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
    }
 }
 
-bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/, bool& isEmbeddable)
+bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant, bool& isEmbeddable)
 {
    switch ((size_t)attrValue)
    {
@@ -1741,23 +1750,23 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
             return true;
          }
          else return false;
-      //case V_STATIC:
-      //   attrValue = lxStaticAttr;
-      //   return true;
-      //case V_SEALED:
-      //   if (!isSealed) {
-      //      attrValue = -1;
-      //      isSealed = true;
-      //      return true;
-      //   }
-      //   else return false;
-      //case V_CONST:
-      //   if (!isConstant) {
-      //      attrValue = -1;
-      //      isConstant = true;
-      //      return true;
-      //   }
-      //   else return false;
+      case V_STATIC:
+         attrValue = lxStaticAttr;
+         return true;
+      case V_SEALED:
+         if (!isSealed) {
+            attrValue = -1;
+            isSealed = true;
+            return true;
+         }
+         else return false;
+      case V_CONST:
+         if (!isConstant) {
+            attrValue = -1;
+            isConstant = true;
+            return true;
+         }
+         else return false;
       case V_BINARY:
          attrValue = 0;
          return true;
@@ -1783,9 +1792,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue/*, bool& isSealed, b
       //   return true;
       ////case V_OBJARRAY:
       ////   return true;
-      //case V_FIELD:
-      //   attrValue = -1;
-      //   return true;
+      case V_FIELD:
+         attrValue = -1;
+         return true;
       default:
          return false;
    }
@@ -1802,6 +1811,7 @@ bool CompilerLogic::validateExpressionAttribute(int& attrValue, ExpressionAttrib
    switch (attrValue) {
       case (int)V_VARIABLE:
       case (int)V_TYPE:
+      case (int)V_AUTO:
          if (!attributes.typeAttr) {
             attributes.typeAttr = true;
             if (attrValue == V_VARIABLE)
@@ -1846,19 +1856,16 @@ bool CompilerLogic::validateExpressionAttribute(int& attrValue, ExpressionAttrib
 //   //else if (attrValue == (int)V_OBJARRAY) {
 //   //   return true;
 //   //}
-//   else if (attrValue == (int)V_AUTO) {
-//      return true;
-//   }
 }
 
-bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant*/, bool& staticOne/*, bool& preloadedOne*/)
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne)
 {
-//   if (attrValue == (int)V_CONST) {
-//      constant = true;
-//
-//      return true;
-//   }
-   /*else */if (attrValue == (int)V_SYMBOLEXPR) {
+   if (attrValue == (int)V_CONST) {
+      constant = true;
+
+      return true;
+   }
+   else if (attrValue == (int)V_SYMBOLEXPR) {
       return true;
    }
    else if (attrValue == (int)V_STATIC) {
@@ -1866,11 +1873,11 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue/*, bool& constant*/,
 
       return true;
    }
-//   else if (attrValue == (int)V_PRELOADED) {
-//      preloadedOne = true;
-//
-//      return true;
-//   }
+   else if (attrValue == (int)V_PRELOADED) {
+      preloadedOne = true;
+
+      return true;
+   }
    else if (attrValue == (int)V_PUBLIC || attrValue == (int)V_INTERNAL) {
       return true;
    }
@@ -2335,52 +2342,52 @@ void CompilerLogic :: validateClassDeclaration(ClassInfo& info/*, bool& withAbst
 //
 //   return false;
 //}
-//
-//bool CompilerLogic :: validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired)
-//{
-//   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
-//
-//   if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
-//      if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
-//      }
-//      else node = lxExpression;
-//   }
-//   else if (sourceRef == V_NIL) {
-//      // NIL reference is never boxed
-//      node = lxExpression;
-//   }
-//   else if (isPrimitiveRef(sourceRef) && (isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef)) || sourceRef == V_INT32)) {
-//      //HOTFIX : allowing numeric constant direct boxing
-//   }
-//   else if (node.existChild(lxBoxableAttr)) {
-//      // HOTFIX : if the object was explicitly boxed
-//   }
-//   else return false;
-//
-//   if (!dynamicRequired) {
-//      bool localBoxing = false;
-//      if (exprNode == lxFieldAddress && exprNode.argument > 0) {
-//         localBoxing = true;
-//      }
-//      else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
-//         localBoxing = true;
-//      }
-//      else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
-//         // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
-//         localBoxing = true;
-//      }
-//      if (localBoxing) {
-//         bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
-//
-//         compiler.injectLocalBoxing(exprNode, node.argument);
-//
-//         node = unboxingMode ? lxLocalUnboxing : lxBoxing;
-//      }
-//   }
-//
-//   return true;
-//}
-//
+
+bool CompilerLogic :: validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired)
+{
+   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
+
+   if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
+      if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
+      }
+      else node = lxExpression;
+   }
+   else if (sourceRef == V_NIL) {
+      // NIL reference is never boxed
+      node = lxExpression;
+   }
+   //else if (isPrimitiveRef(sourceRef) && (isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef)) || sourceRef == V_INT32)) {
+   //   //HOTFIX : allowing numeric constant direct boxing
+   //}
+   else if (node.existChild(lxBoxableAttr)) {
+      // HOTFIX : if the object was explicitly boxed
+   }
+   else return false;
+
+   if (!dynamicRequired) {
+      bool localBoxing = false;
+      if (exprNode == lxFieldAddress && exprNode.argument > 0) {
+         localBoxing = true;
+      }
+      else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
+         localBoxing = true;
+      }
+      //else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+      //   // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+      //   localBoxing = true;
+      //}
+      if (localBoxing) {
+         bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
+
+         compiler.injectLocalBoxing(exprNode, node.argument);
+
+         node = unboxingMode ? lxLocalUnboxing : lxBoxing;
+      }
+   }
+
+   return true;
+}
+
 ////void CompilerLogic :: injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode)
 ////{
 ////   ClassInfo info;
@@ -2492,15 +2499,10 @@ void CompilerLogic :: validateClassDeclaration(ClassInfo& info/*, bool& withAbst
 ////   temp.copy(signature.c_str() + start, end - start);
 ////}
 
-ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef/*, int& stackSafeAttr*/)
+ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr)
 {
    if (!targetRef)
       return 0;
-
-   //compatible = isSignatureCompatible(scope, signatureRef, signatures);
-
-//   bool openArg = getAbsoluteParamCount(multiMessage) == OPEN_ARG_COUNT;
-//   ident_t sour_sign = scope.module->resolveSubject(implicitSignatureRef);
 
    ClassInfo info;
    if (defineClassInfo(scope, info, targetRef)) {
@@ -2522,7 +2524,7 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
          return 0;
 
       ref_t signatures[ARG_COUNT];
-      /*size_t signatureLen = */scope.module->resolveSignature(implicitSignatureRef, signatures);
+      scope.module->resolveSignature(implicitSignatureRef, signatures);
 
       ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
       //if (listRef == 0 && isMethodPrivate(info, multiMessage))
@@ -2545,20 +2547,20 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
 
             if (argModule == scope.module) {
                if (isSignatureCompatible(scope, argSign, signatures)) {
-                  //if (isEmbeddable(info))
-                  //   stackSafeAttr |= 1;
+                  if (isEmbeddable(info))
+                     stackSafeAttr |= 1;
 
-                  //setSignatureStacksafe(scope, argSign, stackSafeAttr);
+                  setSignatureStacksafe(scope, argSign, stackSafeAttr);
 
                   return argMessage;
                }                  
             }
             else {
                if (isSignatureCompatible(scope, argModule, argSign, signatures)) {
-                  //if (isEmbeddable(info))
-                  //   stackSafeAttr |= 1;
+                  if (isEmbeddable(info))
+                     stackSafeAttr |= 1;
 
-                  //setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
+                  setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
 
                   return importMessage(argModule, argMessage, scope.module);
                }                  

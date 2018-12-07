@@ -29,7 +29,7 @@ namespace _ELENA_
    // indicates it is an invoke message
    constexpr auto SPECIAL_MESSAGE   = 0x20u;
    constexpr auto PARAM_MASK        = 0x1Fu;
-   constexpr auto ARG_COUNT         = 0x20u;
+   constexpr auto ARG_COUNT         = 0x1Fu;
 
 //   #define PARAMX_MASK             0x000000000000FFFFu
 
@@ -192,16 +192,16 @@ namespace _ELENA_
       dsStatement               = 0x000A,
       dsVirtualBlock            = 0x000B,
       dsEnd                     = 0x000F,
-//      dsIntLocal                = 0x0105,
-//      dsLongLocal               = 0x0205,
+      dsIntLocal                = 0x0105,
+      dsLongLocal               = 0x0205,
 //      dsRealLocal               = 0x0305,
 //      dsParamsLocal             = 0x0405,
 //      dsByteArrayLocal          = 0x0505,
 //      dsShortArrayLocal         = 0x0605,
 //      dsIntArrayLocal           = 0x0705,
-//
-//      // primitive variables
-//      dsIntLocalPtr             = 0x0805,
+
+      // primitive variables
+      dsIntLocalPtr             = 0x0805,
 //      dsLongLocalPtr            = 0x0905,
 //      dsRealLocalPtr            = 0x0A05,
 //      dsByteArrayLocalPtr       = 0x0B05,
@@ -427,7 +427,7 @@ namespace _ELENA_
 //   #define OLD_SUBJECT_VAR         "received"         // obsolete : the current message
 //   #define SUBJECT_VAR             "__received"       // the current message
    #define NIL_VAR                 "nil"              // the nil pseudo symbol - representing the null value
-//   #define RETVAL_VAR              "$$ret"            // the closure returning value
+   #define RETVAL_VAR              "$$ret"            // the closure returning value
 //   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
 //   #define PARENT_VAR              "$$parent"         // the closure parent
 //
@@ -465,7 +465,7 @@ namespace _ELENA_
 //   #define GENERIC_PREFIX           "#generic"
 ////   #define EMBEDDED_PREFIX          "#embedded"
 ////   #define TARGET_POSTFIX           "##"
-//   #define STATICFIELD_POSTFIX      "#static"
+   #define STATICFIELD_POSTFIX      "#static"
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"

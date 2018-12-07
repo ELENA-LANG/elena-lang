@@ -692,7 +692,7 @@ ref_t DerivationWriter :: mapAttribute(SNode node/*, bool& templateParam*/)
       return V_TEMPLATE;
    }
    //else if (node.existChild(lxToken)) {
-   //   return V_ARRAY;
+   //   return V_PRIMARRAY;
    //}
    else {
       SNode terminal = node.firstChild(lxTerminalMask);

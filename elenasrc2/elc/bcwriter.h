@@ -114,7 +114,7 @@ class ByteCodeWriter
    void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode);
    void writeClass(ref_t reference, ByteCodeIterator& it, _ModuleScope& scope);
 
-//   void declareInitializer(CommandTape& tape, ref_t reference);
+   void declareInitializer(CommandTape& tape, ref_t reference);
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
@@ -138,7 +138,7 @@ class ByteCodeWriter
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
-//   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -156,29 +156,29 @@ class ByteCodeWriter
 //   void newDynamicNStructure(CommandTape& tape);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
-//   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
+   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
 //   void newDynamicObject(CommandTape& tape);
 //   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
-//
-//   void popObject(CommandTape& tape, LexicalType sourceTypeS);
-//
-//   void copyBase(CommandTape& tape, int size);
-//   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
+
+   void popObject(CommandTape& tape, LexicalType sourceTypeS);
+
+   void copyBase(CommandTape& tape, int size);
+   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
+   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void loadInternalReference(CommandTape& tape, ref_t reference);
-//
-//   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
-//   void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
+
+   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
+   void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
 //   void boxArgList(CommandTape& tape, ref_t vmtReference);
 //   void unboxArgList(CommandTape& tape, bool arrayMode);
 //   void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
-//
-//   void releaseObject(CommandTape& tape, int count = 1);
+
+   void releaseObject(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
 //
 //   void setSubject(CommandTape& tape, ref_t subject);
@@ -228,27 +228,27 @@ class ByteCodeWriter
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
-//   void endInitializer(CommandTape& tape);
+   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
 //   void closeFrame(CommandTape& tape);
-//
-//   void assignBaseTo(CommandTape& tape, LexicalType target);
-//
-//   void assignInt(CommandTape& tape, LexicalType target, int offset);
-//   void assignLong(CommandTape& tape, LexicalType target, int offset);
-//   void assignShort(CommandTape& tape, LexicalType target, int offset);
-//   void assignByte(CommandTape& tape, LexicalType target, int offset);
-//   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
+
+   void assignBaseTo(CommandTape& tape, LexicalType target);
+
+   void assignInt(CommandTape& tape, LexicalType target, int offset);
+   void assignLong(CommandTape& tape, LexicalType target, int offset);
+   void assignShort(CommandTape& tape, LexicalType target, int offset);
+   void assignByte(CommandTape& tape, LexicalType target, int offset);
+   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
 //   void saveInt(CommandTape& tape, LexicalType target, int argument);
 //   void saveReal(CommandTape& tape, LexicalType target, int argument);
 //   void saveLong(CommandTape& tape, LexicalType target, int argument);
-//   void copyInt(CommandTape& tape, int offset);
-//   void copyShort(CommandTape& tape, int offset);
-//   void copyByte(CommandTape& tape, int offset);
-//   void copyStructure(CommandTape& tape, int offset, int size);
-//   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
+   void copyInt(CommandTape& tape, int offset);
+   void copyShort(CommandTape& tape, int offset);
+   void copyByte(CommandTape& tape, int offset);
+   void copyStructure(CommandTape& tape, int offset, int size);
+   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);
 //   void saveIntConstant(CommandTape& tape, int value);
 //////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
@@ -272,8 +272,8 @@ class ByteCodeWriter
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
-//   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
-//
+   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
+
 //   void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
@@ -305,9 +305,9 @@ class ByteCodeWriter
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
 ////   void generateThrowExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
-//   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
-//   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
+   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
+   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 //   void generateNestedExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
@@ -330,7 +330,7 @@ public:
    void generateClass(CommandTape& tape, SNode root, pos_t sourcePathBookmark);
 //   void generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 ////   void generateSymbolWithInitialization(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument, ref_t implicitConstructor);
-//   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);
 //   void generateConstantList(SNode node, _Module* module, ref_t reference);

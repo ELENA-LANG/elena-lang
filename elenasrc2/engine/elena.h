@@ -508,17 +508,17 @@ struct ClassInfo
    typedef Pair<ref_t, int>                    Attribute;
    typedef MemoryMap<ref_t, bool, false>       MethodMap;
    typedef MemoryMap<ident_t, int, true>       FieldMap;
-//   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
+   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
    typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
-//   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
+   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader    header;
    int            size;           // Object size
    MethodMap      methods;        // list of methods, true means the method was declared in this instance
    FieldMap       fields;
-//   StaticFieldMap statics;
-//   StaticInfoMap  staticValues;
+   StaticFieldMap statics;
+   StaticInfoMap  staticValues;
 
    FieldTypeMap   fieldTypes;
    MethodInfoMap  methodHints;
@@ -528,12 +528,12 @@ struct ClassInfo
       writer->write((void*)this, sizeof(ClassHeader));
       writer->writeDWord(size);
       if (!headerAndSizeOnly) {
-//         staticValues.write(writer);
+         staticValues.write(writer);
          methods.write(writer);
          fields.write(writer);
          fieldTypes.write(writer);
          methodHints.write(writer);
-//         statics.write(writer);
+         statics.write(writer);
       }
    }
 
@@ -542,17 +542,17 @@ struct ClassInfo
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
       if (!headerOnly) {
-//         staticValues.read(reader);
+         staticValues.read(reader);
          methods.read(reader);
          fields.read(reader);
          fieldTypes.read(reader);
          methodHints.read(reader);
-//         statics.read(reader);
+         statics.read(reader);
       }
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0))//, statics(FieldInfo(0, 0))
+      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
@@ -563,29 +563,29 @@ struct ClassInfo
 
 struct SymbolExpressionInfo
 {
-//   ref_t expressionClassRef;
-//   ref_t listRef;
-//   bool  constant;
-//
-//   void save(StreamWriter* writer)
-//   {
-//      writer->writeDWord(listRef);
-//      writer->writeDWord(constant ? -1: 0);
-//      writer->writeDWord(expressionClassRef);
-//   }
-//
-//   void load(StreamReader* reader)
-//   {
-//      listRef = reader->getDWord();
-//      constant = (reader->getDWord() != 0);
-//      expressionClassRef = reader->getDWord();
-//   }
+   ref_t expressionClassRef;
+   ref_t listRef;
+   bool  constant;
+
+   void save(StreamWriter* writer)
+   {
+      writer->writeDWord(listRef);
+      writer->writeDWord(constant ? -1: 0);
+      writer->writeDWord(expressionClassRef);
+   }
+
+   void load(StreamReader* reader)
+   {
+      listRef = reader->getDWord();
+      constant = (reader->getDWord() != 0);
+      expressionClassRef = reader->getDWord();
+   }
 
    SymbolExpressionInfo()
    {
-//      expressionClassRef = 0;
-//      listRef = 0;
-//      constant = false;
+      expressionClassRef = 0;
+      listRef = 0;
+      constant = false;
    }
 };
 
@@ -714,10 +714,10 @@ typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
 // --- miscellaneous routines ---
 
-//inline bool isSealedStaticField(ref_t ref)
-//{
-//   return (int)ref >= 0;
-//}
+inline bool isSealedStaticField(ref_t ref)
+{
+   return (int)ref >= 0;
+}
 
 inline bool isTemplateWeakReference(ident_t referenceName)
 {

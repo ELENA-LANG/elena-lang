@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   7
+#define REVISION_VERSION   8
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -213,6 +213,9 @@ ref_t resolveMessage(_Module* module, ident_t method)
    ref_t actionRef = 0;
    ref_t flags = 0;
 
+   if (method.startsWith("#invoke")) {
+      flags |= SPECIAL_MESSAGE;
+   }
    //if (method.startsWith("#private&")) {
    //   flags |= SEALED_MESSAGE;
 

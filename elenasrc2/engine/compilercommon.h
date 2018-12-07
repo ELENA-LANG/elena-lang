@@ -32,17 +32,17 @@
 //#define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
 //
 //#define V_OBJECT         (ref_t)-28
-//
-#define V_ARRAY          (ref_t)-29
+
+#define V_PRIMARRAY      (ref_t)-29
 //#define V_OBJARRAY      (ref_t)-30
 //#define V_INT32ARRAY    (ref_t)-31
 //#define V_ARGARRAY      (ref_t)-32
 //#define V_BINARYARRAY   (ref_t)-35
 //#define V_INT16ARRAY    (ref_t)-38
 //#define V_INT8ARRAY     (ref_t)-39
-//
-//#define V_AUTO           (ref_t)-50
-//
+
+#define V_AUTO           (ref_t)-50
+
 //#define V_IFBRANCH      (ref_t)-4097
 //#define V_IFNOTBRANCH   (ref_t)-4098
 ////#define V_WARNING1    (ref_t)-4099
@@ -63,7 +63,7 @@
 ////#define V_NOSTRUCT       (ref_t)-8204
 #define V_ACTION         (ref_t)-8205     // a closure attribute
 //#define V_GROUP          (ref_t)-8206
-//#define V_PRELOADED      (ref_t)-8207
+#define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
 ////#define V_TAPEGROUP      (ref_t)-8209
 //#define V_ABSTRACT       (ref_t)-8210
@@ -82,7 +82,7 @@
 #define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
-//#define V_FIELD          (ref_t)-16392
+#define V_FIELD          (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
@@ -114,7 +114,7 @@ enum MethodHint
    tpNormal      = 0x000003,
    tpDispatcher  = 0x000004,
 //   tpPrivate     = 0x000005,
-//   tpStackSafe   = 0x000010,
+   tpStackSafe   = 0x000010,
 //   tpEmbeddable  = 0x000020,
 //   tpGeneric     = 0x000040,
    tpAction      = 0x000080,
@@ -130,7 +130,7 @@ enum MethodHint
 //   tpAbstract    = 0x020000,
 //   tpInternal    = 0x040000,
 //   tpPredefined  = 0x080000, // virtual class declaration
-//   tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
+   tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
    tpInitializer = 0x200000,
 };
 
@@ -205,7 +205,7 @@ struct _ModuleScope
 
    // cached references
    ref_t             superReference;
-//   ref_t             intReference;
+   ref_t             intReference;
 //   ref_t             longReference;
 //   ref_t             realReference;
 //   ref_t             signatureReference;
@@ -244,7 +244,7 @@ struct _ModuleScope
 
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
    virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
-//   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
+   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
 
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
    virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
@@ -306,7 +306,7 @@ struct _ModuleScope
    {
       project = nullptr;
       debugModule = module = nullptr;
-      /*intReference = boolReference = */superReference = 0;
+      intReference = /*boolReference = */superReference = 0;
 //      signatureReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      arrayReference = charReference = realReference = 0;
@@ -325,7 +325,7 @@ class _Compiler
 public:
 //   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
-      ref_t targetRef, int stacksafeAttr*/) = 0;
+      ref_t targetRef*/, int stacksafeAttr) = 0;
 ////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 //
 //   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
@@ -337,7 +337,7 @@ public:
 //   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
 //   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
 //
-//   virtual void injectLocalBoxing(SNode node, int size) = 0;
+   virtual void injectLocalBoxing(SNode node, int size) = 0;
 ////   //virtual int injectTempLocal(SNode node) = 0;
 //
 //   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef) = 0;
@@ -377,13 +377,13 @@ public:
       bool  directResolved;
 //      bool  withCustomDispatcher;
 ////      //bool  closed;
-//      bool  stackSafe;
+      bool  stackSafe;
 //      bool  embeddable;
 //      bool  withOpenArgDispatcher;
 //      bool  withOpenArg1Dispatcher;
 //      bool  withOpenArg2Dispatcher;
       bool  closure;
-//      bool  dynamicRequired;
+      bool  dynamicRequired;
       ref_t outputReference;
 
       ChechMethodInfo()
@@ -392,12 +392,12 @@ public:
          /*embeddable = *//*closed = */found = false;
          outputReference = 0;
 //         withCustomDispatcher = false;
-//         stackSafe = false;
+         stackSafe = false;
 //         withOpenArgDispatcher = false;
 //         withOpenArg1Dispatcher = false;
 //         withOpenArg2Dispatcher = false;
          closure = false;
-//         dynamicRequired = false;
+         dynamicRequired = false;
       }
    };
 
@@ -407,10 +407,10 @@ public:
    // retrieve the class info / size
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 
-//   virtual int defineStructSizeVariable(_CompilerScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
-//   virtual int defineStructSize(_CompilerScope& scope, ref_t reference, ref_t elementRef) = 0;
-//   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
-//
+   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
+   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
+   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
+
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef) = 0;
 
    // retrieve the call type
@@ -432,10 +432,12 @@ public:
 
 //   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
 //
+   virtual bool isWrapper(ClassInfo& info) = 0;
+   virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element) = 0;
 //   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
 //   virtual bool isVariable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(_CompilerScope& scope, ref_t reference) = 0;
+   virtual bool isEmbeddable(ClassInfo& info) = 0;
+   virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
@@ -459,7 +461,7 @@ public:
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
 //   virtual void injectOperation(SyntaxWriter& writer, _CompilerScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/) = 0;
-   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef) = 0;
+   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int& stackSafeAttr) = 0;
 //   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef) = 0;
 //   virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef) = 0;
 //   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef) = 0;
@@ -478,16 +480,16 @@ public:
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
-   virtual bool validateFieldAttribute(int& attrValue/*, bool& isSealed, bool& isConstant*/, bool& isEmbeddable) = 0;
+   virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant, bool& isEmbeddable) = 0;
    virtual bool validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes) = 0;
-   virtual bool validateSymbolAttribute(int attrValue/*, bool& constant*/, bool& staticOne/*, bool& preloadedOne*/) = 0;
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
    virtual bool validateArgumentAttribute(int attrValue) = 0;
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
-//   // optimization
-//   virtual bool validateBoxing(_CompilerScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired) = 0;
+   // optimization
+   virtual bool validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired) = 0;
 //   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
@@ -501,7 +503,7 @@ public:
 //   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
 //   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
 
-   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef/*, int& stackSafeAttr*/) = 0;
+   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;
 };
 
 }  // _ELENA_
