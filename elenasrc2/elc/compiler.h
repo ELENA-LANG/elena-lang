@@ -549,7 +549,7 @@ private:
       int          hints;
       ref_t        outputRef;
 //      bool         withOpenArg;
-//      bool         classEmbeddable;
+      bool         classEmbeddable;
 //      bool         generic;
 //      bool         genericClosure;
 //      bool         extensionMode;

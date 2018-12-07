@@ -615,7 +615,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->hints = 0;
    this->outputRef = INVALID_REF; // to indicate lazy load
 //   this->withOpenArg = false;
-//   this->classEmbeddable = false;
+   this->classEmbeddable = false;
 //   this->generic = false;
 //   this->extensionMode = false;
    this->multiMethod = false;
@@ -635,10 +635,10 @@ ObjectInfo Compiler::MethodScope :: mapSelf(/*bool forced*/)
 
    //   return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, extensionScope->embeddable ? -1 : 0);
    //}
-   //else if (classEmbeddable) {
-   //   return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference, (ref_t)-1);
-   //}
-   /*else */return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
+   /*else */if (classEmbeddable) {
+      return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference, 0, (ref_t)-1);
+   }
+   else return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
 }
 
 ////ObjectInfo Compiler::MethodScope :: mapGroup()
@@ -679,7 +679,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
       //      }
       //      else return mapGroup();
       //   }
-         else if (terminal.compare(RETVAL_VAR)/* && subCodeMode*/) {
+         else if (terminal.compare(RETVAL_VAR) && closureMode) {
             ObjectInfo retVar = parent->mapTerminal(terminal, referenceOne, mode | scopeMode);
             if (retVar.kind == okUnknown) {
                InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
@@ -1301,12 +1301,12 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
 
    // declare built-in variables
    if (withSelf) {
-      //if (scope.classEmbeddable) {
-      //   IdentifierString className(scope.moduleScope->module->resolveReference(scope.getClassRef()));
+      /*if (scope.classEmbeddable) {
+         IdentifierString className(scope.moduleScope->module->resolveReference(scope.getClassRef()));
 
-      //   SNode debugNode = node.insertNode(lxBinarySelf, 1);
-      //   debugNode.appendNode(lxClassName, className.c_str());
-      //}
+         SNode debugNode = node.insertNode(lxBinarySelf, 1);
+         debugNode.appendNode(lxClassName, className.c_str());
+      }*/
       /*else */writer.appendNode(lxSelfVariable, 1);
    }
 
@@ -5882,7 +5882,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
       methodScope.scopeMode |= INITIALIZER_SCOPE;
 
 //   methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
-//   methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
+   methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
 //   methodScope.withOpenArg = isOpenArg(methodScope.message);
    methodScope.closureMode = _logic->isClosure(scope.info, methodScope.message);
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
