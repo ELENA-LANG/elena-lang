@@ -298,13 +298,13 @@ public class IntBaseNumber : BaseNumber
 //        = 0 != self and:anOperand.
 }
 
-//// --- ByteNumber ---
-//
-///// An unsigned 8 bit integer
-//public sealed struct ByteNumber :: IntBaseNumber
-//{
-//    T<__int,1> theValue.
-//
+// --- ByteNumber ---
+
+/// An unsigned 8 bit integer
+public sealed const struct ByteNumber : IntBaseNumber
+{
+    embeddable __raw theValue[2];
+
 //    constructor(int n)
 //    [
 //        theValue := n && 255.
@@ -603,15 +603,15 @@ public class IntBaseNumber : BaseNumber
 //        
 //        ^ aCode
 //    ]
-//}
-//
-//// --- ShortNumber ---
-//
-///// A signed 16 bit integer
-//public sealed struct ShortNumber :: IntBaseNumber
-//{
-//    T<__int,2> theValue.
-//
+}
+
+// --- ShortNumber ---
+
+/// A signed 16 bit integer
+public sealed const struct ShortNumber : IntBaseNumber
+{
+    embeddable __raw theValue[2];
+
 //    constructor(int n)
 //    [
 //        (n < 0)
@@ -927,7 +927,7 @@ public class IntBaseNumber : BaseNumber
 //        
 //        ^ aCode.
 //    ]        
-//}
+}
 
 // --- IntNumber ---
 

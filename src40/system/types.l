@@ -70,8 +70,8 @@ type object     = system'Object;
 //type bool       = system'BoolValue.
 
 // === basic type aliases ===
-//type byte       = system'ByteNumber.
-//type short      = system'ShortNumber.
+type byte       = system'ByteNumber;
+type short      = system'ShortNumber;
 type int        = system'IntNumber;
 //type uint       = system'UIntNumber.
 //type long       = system'LongNumber.

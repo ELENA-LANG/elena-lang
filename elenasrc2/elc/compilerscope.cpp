@@ -61,7 +61,7 @@ ref_t ModuleScope :: mapAnonymous(ident_t prefix)
 void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode)
 {
    target.header = copy.header;
-//   target.size = copy.size;
+   target.size = copy.size;
 
    if (!headerOnly) {
       // import method references and mark them as inherited as required
@@ -116,30 +116,30 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
          mtype_it++;
       }
 
-//      // import static fields
-//      ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
-//      while (!static_it.Eof()) {
-//         ClassInfo::FieldInfo info(
-//            isSealedStaticField((*static_it).value1) ? importReference(exporter, (*static_it).value1, module) : (*static_it).value1,
-//            importReference(exporter, (*static_it).value2, module));
-//
-//         target.statics.add(static_it.key(), info);
-//
-//         static_it++;
-//      }
-//
-//      // import static field values
-//      auto staticValue_it = copy.staticValues.start();
-//      while (!staticValue_it.Eof()) {
-//         ref_t val = *staticValue_it;
-//         if (val != mskStatRef) {
-//            val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);
-//         }
-//
-//         target.staticValues.add(staticValue_it.key(), val);
-//
-//         staticValue_it++;
-//      }
+      // import static fields
+      ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
+      while (!static_it.Eof()) {
+         ClassInfo::FieldInfo info(
+            isSealedStaticField((*static_it).value1) ? importReference(exporter, (*static_it).value1, module) : (*static_it).value1,
+            importReference(exporter, (*static_it).value2, module));
+
+         target.statics.add(static_it.key(), info);
+
+         static_it++;
+      }
+
+      // import static field values
+      auto staticValue_it = copy.staticValues.start();
+      while (!staticValue_it.Eof()) {
+         ref_t val = *staticValue_it;
+         if (val != mskStatRef) {
+            val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);
+         }
+
+         target.staticValues.add(staticValue_it.key(), val);
+
+         staticValue_it++;
+      }
    }
    // import class class reference
    if (target.header.classRef != 0)
@@ -194,14 +194,14 @@ ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool header
    if (isTemplateWeakReference(vmtName)) {
       // COMPILER MAGIC : try to find a template
       ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
-      //if (ref != 0 && info.header.classRef != 0) {
-      //   if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
-      //      // HOTFIX : class class ref should be template weak reference as well
-      //      IdentifierString classClassName(vmtName, CLASSCLASS_POSTFIX);
+      if (ref != 0 && info.header.classRef != 0) {
+         if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
+            // HOTFIX : class class ref should be template weak reference as well
+            IdentifierString classClassName(vmtName, CLASSCLASS_POSTFIX);
 
-      //      info.header.classRef = module->mapReference(classClassName);
-      //   }
-      //}
+            info.header.classRef = module->mapReference(classClassName);
+         }
+      }
 
       return ref;
    }

@@ -702,16 +702,16 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
 {
    this->rootBookmark = 0;
    this->level = 0;
-   //this->saved = this->reserved = 0;
+   this->saved = this->reserved = 0;
    //this->genericMethod = false;
 }
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
-   : Scope(parent)//, locals(Parameter(0))
+   : Scope(parent), locals(Parameter(0))
 {
    this->rootBookmark = 0;
    this->level = 0;
-//   this->saved = this->reserved = 0;
+   this->saved = this->reserved = 0;
 //   this->genericMethod = parent->generic;
 }
 
@@ -1667,8 +1667,8 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
    //HOTFIX : recognize raw data
    if (fieldRef == V_BINARY) {
       switch (size) {
-   //      case 1:
-   //      case 2:
+         case 1:
+         case 2:
          case 4:
             // treat it like dword
             fieldRef = V_INT32;
@@ -1953,14 +1953,14 @@ void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
    //   writer.appendNode(lxTerminal, terminal.identifier());
 }
 
-//inline void writeTarget(SyntaxWriter& writer, ref_t targetRef, ref_t elementRef)
-//{
-//   if (targetRef)
-//      writer.appendNode(lxTarget, targetRef);
-//
-//   if (isPrimitiveRef(targetRef) && elementRef)
-//      writer.appendNode(lxElement, elementRef);
-//}
+inline void writeTarget(SyntaxWriter& writer, ref_t targetRef/*, ref_t elementRef*/)
+{
+   if (targetRef)
+      writer.appendNode(lxTarget, targetRef);
+
+   //if (isPrimitiveRef(targetRef) && elementRef)
+   //   writer.appendNode(lxElement, elementRef);
+}
 
 int Compiler :: defineFieldSize(CodeScope& scope, int offset)
 {
@@ -2154,7 +2154,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
 //         return;
    }
 
-//   writeTarget(writer, resolveObjectReference(scope, object), object.element);
+   writeTarget(writer, resolveObjectReference(scope, object)/*, object.element*/);
 
    if (!test(mode, HINT_NODEBUGINFO))
       writeTerminalInfo(writer, terminal);
@@ -4162,15 +4162,14 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       compileExpressionAttributes(writer, object, scope, targetMode);
 
    SNode operationNode = object.nextNode();
-//
-//   if (operationNode == lxAssign) {
-//      // recognize the property set operation
-//      targetMode |= HINT_PROP_MODE;
-//      if (isSingleStatement(object))
-//         targetMode |= HINT_NOBOXING;
-//
-//      mode |= HINT_NOUNBOXING;
-//   }
+   if (operationNode == lxAssign) {
+      // recognize the property set operation
+      //targetMode |= HINT_PROP_MODE;
+      if (isSingleStatement(object))
+         targetMode |= HINT_NOBOXING;
+
+      mode |= HINT_NOUNBOXING;
+   }
 
    ObjectInfo objectInfo;
 //   if (object == lxMethodParameter || object == lxNone) {
@@ -5735,7 +5734,7 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
    while (current != lxNone) {
       if (current == lxClassField) {
          ref_t fieldRef = 0;
-         //ref_t elementRef = 0;
+         ref_t elementRef = 0;
          bool isStatic = false;
          bool isSealed = false;
          bool isConst = false;
@@ -5749,7 +5748,7 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
          else if (isSealed || isConst) {
             scope.raiseError(errIllegalField, current);
          }
-         else generateClassField(scope, current, fieldRef/*, elementRef*/, sizeHint, singleField, isEmbeddable);
+         else generateClassField(scope, current, fieldRef, elementRef, sizeHint, singleField, isEmbeddable);
       }
       //else if (current == lxFieldInit) {
       //   // HOTFIX : reallocate static constant
@@ -5983,7 +5982,7 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 //   }
 }
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef/*, ref_t elementRef*/, int sizeHint, bool singleField, bool embeddable)
+void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef, ref_t elementRef, int sizeHint, bool singleField, bool embeddable)
 {
    //if (singleField && sizeHint == -1) {
    //   scope.info.header.flags |= elDynamicRole;
@@ -5998,10 +5997,10 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    if (test(flags, elStateless))
       scope.raiseError(errIllegalField, current);
 
-   int size = /*(classRef != 0) ? _logic->defineStructSize(*scope.moduleScope, classRef, elementRef) : */0;
+   int size = (classRef != 0) ? _logic->defineStructSize(*scope.moduleScope, classRef, elementRef) : 0;
    //bool fieldArray = false;
    if (sizeHint != 0) {
-      if (/*isPrimitiveRef(classRef) && (size == sizeHint || (*/classRef == V_INT32/* && sizeHint <= size))*/) {
+      if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
          // for primitive types size should be specified
          size = sizeHint;
       }

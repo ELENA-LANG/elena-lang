@@ -948,7 +948,7 @@ private:
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 
-   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef/*, ref_t elementRef*/, int sizeHint, bool singleField, bool embeddable);
+   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField, bool embeddable);
    void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, /*ref_t elementRef, */bool isSealed, bool isConst);
 
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);

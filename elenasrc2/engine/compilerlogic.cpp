@@ -1356,17 +1356,17 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 
 bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
 {
-//   if (isPrimitiveRef(reference) && !headerOnly) {
-//      scope.loadClassInfo(info, scope.superReference);
-//   }
+   if (isPrimitiveRef(reference) && !headerOnly) {
+      scope.loadClassInfo(info, scope.superReference);
+   }
 
    switch (reference)
    {
-//      case V_INT32:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugDWORD | elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_INT32:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
 //      case V_INT64:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugQWORD | elStructureRole;
