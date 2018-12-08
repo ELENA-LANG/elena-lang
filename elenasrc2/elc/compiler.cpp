@@ -6589,7 +6589,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
       }
       else if (current == lxTarget) {
          // if it is a type attribute
-         scope.outputRef = resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
+         scope.outputRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
          if (!scope.outputRef)
             scope.raiseError(errUnknownClass, current);
       }

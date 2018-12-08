@@ -1335,11 +1335,9 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 //      compiler.injectBoxing(writer, scope,
 //         test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, sourceRef, true);
 //   }
-//   // HOTFIX : recognize primitive data except of a constant literal
-//   else if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
-//      sourceRef = resolvePrimitiveReference(scope, sourceRef);
-//
-//   // otherwise we have to go through the list
+   // HOTFIX : recognize primitive data except of a constant literal
+   else if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
+      sourceRef = resolvePrimitiveReference(scope, sourceRef);
 
    return injectImplicitConstructor(writer, scope, compiler, info, targetRef, /*elementRef, */&sourceRef, 1);
 }

@@ -66,21 +66,21 @@
 
 singleton ConsoleHandleFactory
 {
-//    handle new(int anAttributes)
-//    [ 
-//        handle aHandle := system'external'KERNEL32 GetStdHandle(anAttributes).
-//        
-//        ^ aHandle.
-//    ]
-//    
-//    newWriter
-//    [
-//        handle h := ConsoleHandleFactory new(0FFFFFFF5h).
-//        int    dwMode := system'external'KERNEL32 GetFileType(h).
+    handle new(int attrs)
+    {
+        handle aHandle := extern KERNEL32.GetStdHandle(attrs);
+        
+        ^ aHandle
+    }
+    
+    newWriter()
+    {
+        handle h := ConsoleHandleFactory.new(0FFFFFFF5h);
+        int    dwMode := extern KERNEL32.GetFileType(h);
 //        if (dwMode == FILE_TYPE_CHAR)
 //            [ ^ ConsoleWriter new(h) ];
 //            [  ^ FileWriter new(h) ]
-//    ]
+    }
 }
 
 //// --- ConsoleWriter ---
