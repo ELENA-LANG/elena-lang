@@ -517,8 +517,8 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference)
 //   extensionClassRef = 0;
 //   embeddable = false;
    classClassMode = false;
-//   abstractMode = false;
-//   abstractBaseMode = false;
+   abstractMode = false;
+   abstractBaseMode = false;
 //   withImplicitConstructor = false;
 }
 
@@ -620,7 +620,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->closureMode = false;
 //   this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
 //   this->subCodeMode = false;
-//   this->abstractMethod = false;
+   this->abstractMethod = false;
 //   this->genericClosure = false;
 //   this->dispatchMode = false;
 }
@@ -1466,12 +1466,12 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       scope.info.header.parentRef = parentRef;
       scope.info.header.classRef = classClassCopy;
 
-      //if (test(scope.info.header.flags, elAbstract)) {
-      //   // exclude abstract flag
-      //   scope.info.header.flags &= ~elAbstract;
+      if (test(scope.info.header.flags, elAbstract)) {
+         // exclude abstract flag
+         scope.info.header.flags &= ~elAbstract;
 
-      //   scope.abstractBaseMode = true;
-      //}
+         scope.abstractBaseMode = true;
+      }
 
       scope.info.header.flags |= flagCopy;
 
@@ -1574,8 +1574,8 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
             if (value != 0 && test(flags, value)) {
                scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateAttribute, current);
             }
-            //else if (test(value, elAbstract))
-            //   scope.abstractMode = true;
+            else if (test(value, elAbstract))
+               scope.abstractMode = true;
 
             flags |= value;
          }
@@ -5371,23 +5371,23 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    writer.closeNode();
 }
 
-//void Compiler ::compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   SNode body = node.findChild(lxCode);
-//   // abstract method should have an empty body
-//   if (body != lxNone) {
-//      if (body.firstChild() != lxEOF)
-//         scope.raiseError(errAbstractMethodCode, node);
-//   }
-//   else scope.raiseError(errAbstractMethodCode, node);
-//
-//   writer.appendNode(lxNil);
-//
-//   writer.closeNode();
-//}
-//
+void Compiler ::compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   SNode body = node.findChild(lxCode);
+   // abstract method should have an empty body
+   if (body != lxNone) {
+      if (body.firstChild() != lxEOF)
+         scope.raiseError(errAbstractMethodCode, node);
+   }
+   else scope.raiseError(errAbstractMethodCode, node);
+
+   writer.appendNode(lxNil);
+
+   writer.closeNode();
+}
+
 //void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
 //{
 //   writer.newNode(lxClassMethod, scope.message);
@@ -5637,10 +5637,10 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 //                  // if it is in-place class member initialization
 //                  compileImplicitConstructor(writer, current, methodScope);
 //               }
-//               else if (methodScope.abstractMethod) {
-//                  compileAbstractMethod(writer, current, methodScope);
-//               }
-               /*else */compileMethod(writer, current, methodScope);
+               /*else */if (methodScope.abstractMethod) {
+                  compileAbstractMethod(writer, current, methodScope);
+               }
+               else compileMethod(writer, current, methodScope);
             }
             break;
          }
@@ -5846,7 +5846,7 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
    }
    else {
       // the constructors aren't inherited for abstract or dynamic classes
-      if (/*!classScope.abstractMode && */!test(classScope.info.header.flags, elDynamicRole)) {
+      if (!classScope.abstractMode && !test(classScope.info.header.flags, elDynamicRole)) {
          IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
          classClassParentName.append(CLASSCLASS_POSTFIX);
 
@@ -5854,7 +5854,7 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
       }
       else {
          classClassScope.info.header.parentRef = classScope.moduleScope->superReference;
-         //classClassScope.abstractMode = true;
+         classClassScope.abstractMode = true;
       }
    }
 
@@ -5911,7 +5911,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 //   methodScope.withOpenArg = isOpenArg(methodScope.message);
    methodScope.closureMode = _logic->isClosure(scope.info, methodScope.message);
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
-//   methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
+   methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
 //   if (!methodScope.withOpenArg) {
 //      // HOTFIX : generic with open argument list is compiled differently
 //      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
@@ -6208,15 +6208,15 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
             else outputChanged = true;
          }
          else {
-            //if (test(current.argument, tpAbstract)) {
-            //   if (!_logic->isAbstract(scope.info))
-            //      // only abstract class may have an abstract methods
-            //      scope.raiseError(errNotAbstractClass, current);
+            if (test(current.argument, tpAbstract)) {
+               if (!_logic->isAbstract(scope.info))
+                  // only abstract class may have an abstract methods
+                  scope.raiseError(errNotAbstractClass, current);
 
-            //   if (scope.info.methods.exist(message))
-            //      // abstract method should be newly declared
-            //      scope.raiseError(errNoMethodOverload, current);
-            //}
+               if (scope.info.methods.exist(message))
+                  // abstract method should be newly declared
+                  scope.raiseError(errNoMethodOverload, current);
+            }
 
             hint |= current.argument;
 
@@ -6413,10 +6413,10 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          //}
       }
 
-//      if (!included && /*!scope.abstractMode && */test(methodHints, tpAbstract)) {
-//         scope.removeHint(message, tpAbstract);
-//      }
-//
+      if (!included && /*!scope.abstractMode && */test(methodHints, tpAbstract)) {
+         scope.removeHint(message, tpAbstract);
+      }
+
 //      if (test(methodHints, tpPredefined)) {
 //         // exclude the predefined attribute from declared method
 //         scope.removeHint(message, tpPredefined);
@@ -6519,7 +6519,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
    bool closed = test(scope.info.header.flags, elClosed);
 
    if (isClassClass(classType)) {
-      if (/*!scope.abstractMode && */_logic->isDefaultConstructorEnabled(scope.info)) {
+      if (!scope.abstractMode && _logic->isDefaultConstructorEnabled(scope.info)) {
          scope.include(scope.moduleScope->newobject_message);
       }
    }
@@ -6547,15 +6547,15 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
    }
    else generateMethodDeclarations(node, scope, closed, lxClassMethod, true, isEmbeddable(classType));
 
-//   bool withAbstractMethods = false;
-//   bool disptacherNotAllowed = false;
+   bool withAbstractMethods = false;
+   bool disptacherNotAllowed = false;
    bool emptyStructure = false;
-   _logic->validateClassDeclaration(scope.info, /*withAbstractMethods, disptacherNotAllowed, */emptyStructure);
-//   if (withAbstractMethods) {
-//      scope.raiseError(errAbstractMethods, node);
-//   }      
-//   if (disptacherNotAllowed)
-//      scope.raiseError(errDispatcherInInterface, node);
+   _logic->validateClassDeclaration(scope.info, withAbstractMethods, disptacherNotAllowed, emptyStructure);
+   if (withAbstractMethods) {
+      scope.raiseError(errAbstractMethods, node);
+   }      
+   if (disptacherNotAllowed)
+      scope.raiseError(errDispatcherInInterface, node);
    if (emptyStructure)
       scope.raiseError(errEmptyStructure, node.findChild(lxNameAttr));
 

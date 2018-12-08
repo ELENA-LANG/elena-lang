@@ -74,14 +74,14 @@
 //        self value := v.
 //    ]
 //}
-//
-//// === Boolean values ===
-//
-//// --- true ---
-//
-///// A true value symbol
-//public class true = BoolValue::
-//{
+
+// === Boolean values ===
+
+// --- true ---
+
+/// A true value symbol
+public sealed singleton true : BoolValue
+{
 //    /// Executes the action
 //    __ifoperator if : aTrueAction = aTrueAction().
 //
@@ -123,13 +123,13 @@
 //
 //    /// Returns itself.
 //    clone = self.
-//}.
-//
-//// --- false ---
-//
-///// A false value symbol
-//public class false = BoolValue::
-//{
+}
+
+// --- false ---
+
+/// A false value symbol
+public sealed singleton false : BoolValue
+{
 //    /// Always returns nil
 //    __ifnotoperator if : anAction = nil.
 //    
@@ -179,7 +179,7 @@
 //    
 //    /// Returns itself
 //    clone = self.
-//}.
+}
 
 // === basic data classes ===
 

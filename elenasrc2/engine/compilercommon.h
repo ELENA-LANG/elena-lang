@@ -53,7 +53,7 @@
 #define V_EMBEDDABLE     (ref_t)-8193
 #define V_STATIC         (ref_t)-8194
 #define V_SEALED         (ref_t)-8195
-//#define V_LIMITED        (ref_t)-8196
+#define V_LIMITED        (ref_t)-8196
 #define V_STRUCT         (ref_t)-8197
 //#define V_ENUMLIST       (ref_t)-8198
 #define V_DYNAMIC        (ref_t)-8199
@@ -128,7 +128,7 @@ enum MethodHint
 //   tpStatic      = 0x004000,
 //   tpAccessor    = 0x008000,
 //   tpSpecial     = 0x010000,
-//   tpAbstract    = 0x020000,
+   tpAbstract    = 0x020000,
 //   tpInternal    = 0x040000,
 //   tpPredefined  = 0x080000, // virtual class declaration
    tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
@@ -441,7 +441,7 @@ public:
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
    virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
@@ -449,8 +449,8 @@ public:
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          
-//   virtual bool isAbstract(ClassInfo& info) = 0;
-//
+   virtual bool isAbstract(ClassInfo& info) = 0;
+
 //   virtual bool isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node) = 0;
 //
 ////   virtual bool isPrimitiveRef(ref_t reference) = 0;
@@ -476,7 +476,7 @@ public:
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
    virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
-   virtual void validateClassDeclaration(ClassInfo& info/*, bool& withAbstractMethods, bool& disptacherNotAllowed*/, bool& emptyStructure) = 0;
+   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;

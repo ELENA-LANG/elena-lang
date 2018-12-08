@@ -574,21 +574,21 @@ bool CompilerLogic :: isRole(ClassInfo& info)
    return test(info.header.flags, elRole);
 }
 
-//bool CompilerLogic :: isAbstract(ClassInfo& info)
-//{
-//   return test(info.header.flags, elAbstract);
-//}
+bool CompilerLogic :: isAbstract(ClassInfo& info)
+{
+   return test(info.header.flags, elAbstract);
+}
 
 bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
 }
 
-//bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
-//}
-//
+bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
+}
+
 //bool CompilerLogic :: isMethodInternal(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpInternal);
@@ -1604,9 +1604,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 //      case V_ABSTRACT:
 //         attrValue = elAbstract;
 //         return true;
-//      case V_LIMITED:
-//         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
-//         return true;
+      case V_LIMITED:
+         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
+         return true;
       case V_CLOSED:
          attrValue = elClosed;
          return true;
@@ -2020,15 +2020,15 @@ ref_t CompilerLogic :: retrievePrimitiveReference(_ModuleScope&, ClassInfo& info
 //////   return true;
 //////}
 
-void CompilerLogic :: validateClassDeclaration(ClassInfo& info/*, bool& withAbstractMethods, bool& disptacherNotAllowed*/, bool& emptyStructure)
+void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure)
 {
-   //if (!isAbstract(info)) {
-   //   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
-   //      auto key = it.key();
-   //      if (key.value2 == maHint && test(*it, tpAbstract))
-   //         withAbstractMethods = true;
-   //   }
-   //}
+   if (!isAbstract(info)) {
+      for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+         auto key = it.key();
+         if (key.value2 == maHint && test(*it, tpAbstract))
+            withAbstractMethods = true;
+      }
+   }
 
    //// interface class cannot have a custom dispatcher method
    //if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true))

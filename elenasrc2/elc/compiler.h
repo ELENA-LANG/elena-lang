@@ -451,8 +451,8 @@ private:
 //      ref_t       extensionClassRef;
 //      bool        embeddable;
       bool        classClassMode;
-//      bool        abstractMode;
-//      bool        abstractBaseMode;
+      bool        abstractMode;
+      bool        abstractBaseMode;
 //      bool        withImplicitConstructor;
 //
 //      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
@@ -557,7 +557,7 @@ private:
       bool         closureMode;
 //      bool         nestedMode;
 //      bool         subCodeMode;
-//      bool         abstractMethod;
+      bool         abstractMethod;
 //      bool         dispatchMode;
       
       virtual Scope* getScope(ScopeLevel level)
@@ -929,7 +929,7 @@ private:
 
 //   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//   void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
 //   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //

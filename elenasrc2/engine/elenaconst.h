@@ -279,7 +279,7 @@ namespace _ELENA_
    const int elNestedClass         = 0x00000002;
    const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
-//   const int elAbstract            = 0x00000010;
+   const int elAbstract            = 0x00000010;
    const int elClosed              = 0x00000020;
    const int elWrapper             = 0x00000040;
 //   const int elStructureWrapper    = 0x00000048;
@@ -303,7 +303,7 @@ namespace _ELENA_
    const int elClassClass          = 0x04000000;
 //   const int elWithMuti            = 0x08000000;
 //   const int elVirtualVMT          = 0x10000000;
-//   const int elNoCustomDispatcher  = 0x20000000;
+   const int elNoCustomDispatcher  = 0x20000000;
 
    const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 

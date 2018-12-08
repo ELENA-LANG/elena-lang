@@ -18,7 +18,7 @@
 #8194  = static;
 #16385 = var;
 //auto            = #50.
-//#8196  = interface;
+#8196  = interface;
 //field           = #16392.
 #16393 = method;
 //__loop          = #16394.
@@ -67,8 +67,8 @@
 
 type object     = system'Object;
 
-//// === basic logical types ===
-//type bool       = system'BoolValue.
+// === basic logical types ===
+type bool       = system'BoolValue;
 
 // === basic type aliases ===
 type byte       = system'ByteNumber;

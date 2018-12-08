@@ -26,9 +26,9 @@ public class Object
     dispatch() => system'core_routines'__object;
 }
 
-///// A common boolean value
-//public enum class BoolValue
-//{
+/// A common boolean value
+public /*enum */interface class BoolValue
+{
 //    /// return the default value
 //    constructor
 //        = false.
@@ -52,8 +52,8 @@ public class Object
 //    abstract bool inverted []
 //
 //    abstract clone []
-//}
-//
+}
+
 //public extension commonOp
 //{
 //    /// Returns the parameter        
