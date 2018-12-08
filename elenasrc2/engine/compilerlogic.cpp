@@ -15,11 +15,11 @@ using namespace _ELENA_;
 
 typedef ClassInfo::Attribute Attribute;
 
-//inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
-//{
-//   return ref1 ? ref1 : ref2;
-//}
-//
+inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
+{
+   return ref1 ? ref1 : ref2;
+}
+
 //inline bool isWrappable(int flags)
 //{
 //   return !test(flags, elWrapper) && test(flags, elSealed);
@@ -308,9 +308,9 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
 
 int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
 {
-//   if (isPrimitiveRef(classReference)) {
-//      classReference = resolvePrimitiveReference(scope, classReference);
-//   }
+   if (isPrimitiveRef(classReference)) {
+      classReference = resolvePrimitiveReference(scope, classReference);
+   }
 
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
@@ -489,28 +489,28 @@ int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference,
 //
 //   return 0;
 //}
-//
-//inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
-//{
-//   switch (targetRef) {
+
+inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
+{
+   switch (targetRef) {
 //      case V_PTR:
-//      case V_DWORD:
-//         return sourceRef == V_INT32;
-//      default:
-//         return false;
-//   }
-//}
+      case V_DWORD:
+         return sourceRef == V_INT32;
+      default:
+         return false;
+   }
+}
 
 bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef)
 {
-   if ((!targetRef || targetRef == scope.superReference)/* && !isPrimitiveRef(sourceRef)*/)
+   if ((!targetRef || targetRef == scope.superReference) && !isPrimitiveRef(sourceRef))
       return true;
 
    if (sourceRef == V_NIL)
       return true;
 
-//   if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
-//      return true;
+   if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
+      return true;
 
    while (sourceRef != 0) {
       if (targetRef != sourceRef) {
@@ -518,12 +518,12 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
          if (!defineClassInfo(scope, info, sourceRef))
             return false;
 
-         //// if it is a structure wrapper
-         //if (isPrimitiveRef(targetRef) && test(info.header.flags, elStructureWrapper)) {
-         //   ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-         //   if (isCompatible(scope, targetRef, inner.value1))
-         //      return true;
-         //}
+         // if it is a structure wrapper
+         if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
+            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+            if (isCompatible(scope, targetRef, inner.value1))
+               return true;
+         }
 
          if (test(info.header.flags, elClassClass)) {
             // class class can be compatible only with itself and the super class
@@ -549,20 +549,20 @@ ref_t CompilerLogic :: resolvePrimitive(ClassInfo& info, ref_t& element)
 //{
 //   return test(info.header.flags, elDynamicRole | elStructureRole);
 //}
-//
-//bool CompilerLogic :: isVariable(_CompilerScope& scope, ref_t classReference)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, classReference))
-//      return false;
-//
-//   return isVariable(info);
-//}
-//
-//bool CompilerLogic :: isVariable(ClassInfo& info)
-//{
-//   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
-//}
+
+bool CompilerLogic :: isVariable(_ModuleScope& scope, ref_t classReference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference))
+      return false;
+
+   return isVariable(info);
+}
+
+bool CompilerLogic :: isVariable(ClassInfo& info)
+{
+   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
+}
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 {
@@ -1382,11 +1382,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //         info.header.flags = elDebugPTR | elStructureRole;
 //         info.size = 4;
 //         break;
-//      case V_DWORD:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_DWORD:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
 //      case V_SIGNATURE:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugSubject | elStructureRole;
@@ -1768,6 +1768,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
          }
          else return false;
       case V_BINARY:
+      case V_INTBINARY:
          attrValue = 0;
          return true;
       ////case V_INT64:
@@ -1835,6 +1836,13 @@ bool CompilerLogic::validateExpressionAttribute(int& attrValue, ExpressionAttrib
       case (int)V_FORWARD:
          if (!attributes.forwardAttr) {
             attributes.forwardAttr = true;
+
+            return true;
+         }
+         else return false;
+      case (int)V_EXTERN:
+         if (!attributes.externAttr) {
+            attributes.externAttr = true;
 
             return true;
          }
@@ -1920,10 +1928,13 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 //            info.header.flags |= (elDebugPTR | elWrapper);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));
 //            return info.size == 4;
-//         case V_DWORD:
-//            info.header.flags |= (elWrapper);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_DWORD, 0));
-//            return info.size == 4;
+         case V_DWORD:
+            if (test(info.header.flags, elReadOnlyRole | elStructureRole) && info.size == 4) {
+               info.header.flags |= (elWrapper);
+               info.fieldTypes.add(0, ClassInfo::FieldInfo(V_DWORD, 0));
+               return true;
+            }
+            else return false;
 //         case V_SIGNATURE:
 //            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
@@ -1948,37 +1959,37 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
    return false;
 }
 
-//ref_t CompilerLogic :: resolvePrimitiveReference(_CompilerScope& scope, ref_t reference)
-//{
-//   switch (reference) {
-//      case V_INT32:
-//         return firstNonZero(scope.intReference, scope.superReference);
-//      case V_INT64:
-//         return firstNonZero(scope.longReference, scope.superReference);
-//      case V_REAL64:
-//         return firstNonZero(scope.realReference, scope.superReference);
-//      case V_SIGNATURE:
-//         return firstNonZero(scope.signatureReference, scope.superReference);
-//      case V_MESSAGE:
-//         return firstNonZero(scope.messageReference, scope.superReference);
-//      case V_ARGARRAY:
-//         return firstNonZero(scope.arrayReference, scope.superReference);
-//      default:
-//         return scope.superReference;
-//   }
-//}
-//
-//ref_t CompilerLogic :: retrievePrimitiveReference(_CompilerScope&, ClassInfo& info)
-//{
-//   if (test(info.header.flags, elStructureWrapper)) {
-//      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
-//      if (isPrimitiveRef(field.value1))
-//         return field.value1;
-//   }
-//
-//   return 0;
-//}
-//
+ref_t CompilerLogic :: resolvePrimitiveReference(_ModuleScope& scope, ref_t reference)
+{
+   switch (reference) {
+      case V_INT32:
+         return firstNonZero(scope.intReference, scope.superReference);
+      //case V_INT64:
+      //   return firstNonZero(scope.longReference, scope.superReference);
+      //case V_REAL64:
+      //   return firstNonZero(scope.realReference, scope.superReference);
+      //case V_SIGNATURE:
+      //   return firstNonZero(scope.signatureReference, scope.superReference);
+      //case V_MESSAGE:
+      //   return firstNonZero(scope.messageReference, scope.superReference);
+      //case V_ARGARRAY:
+      //   return firstNonZero(scope.arrayReference, scope.superReference);
+      default:
+         return scope.superReference;
+   }
+}
+
+ref_t CompilerLogic :: retrievePrimitiveReference(_ModuleScope&, ClassInfo& info)
+{
+   if (test(info.header.flags, elWrapper)) {
+      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
+      if (isPrimitiveRef(field.value1))
+         return field.value1;
+   }
+
+   return 0;
+}
+
 //ref_t CompilerLogic :: definePrimitiveArray(_CompilerScope& scope, ref_t elementRef)
 //{
 //   ClassInfo info;
@@ -2365,10 +2376,10 @@ bool CompilerLogic :: validateBoxing(_ModuleScope& scope, _Compiler& compiler, S
       else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
          localBoxing = true;
       }
-      //else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
-      //   // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
-      //   localBoxing = true;
-      //}
+      else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+         // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+         localBoxing = true;
+      }
       if (localBoxing) {
          bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
 

@@ -96,11 +96,11 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
       case dfaAttribute:
          terminal.symbol = tsAttribute;
          break;
-    //  case dfaExplicitConst:
-    //     switch (terminal.value[getlength(terminal.value) - 1]) {
-    //        case 'h':
-    //           terminal.symbol = tsHexInteger;
-    //           break;
+      case dfaExplicitConst:
+         switch (terminal.value[getlength(terminal.value) - 1]) {
+            case 'h':
+               terminal.symbol = tsHexInteger;
+               break;
     //        case 'l':
     //           terminal.symbol = tsLong;
     //           break;
@@ -110,14 +110,14 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
     //        default:
     //           terminal.symbol = tsExplicitConst;
     //           break;
-    //     }
-    //     break;
+         }
+         break;
     //  case dfaLong:
     //     terminal.symbol = tsLong;
     //     break;
-	   //case dfaHexInteger:
-    //     terminal.symbol = tsHexInteger;
-    //     break;
+	   case dfaHexInteger:
+         terminal.symbol = tsHexInteger;
+         break;
 	   //case dfaReal:
     //     terminal.symbol = tsReal;
     //     break;

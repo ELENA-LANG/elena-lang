@@ -30,7 +30,7 @@ constexpr auto HINT_ROOT            = 0x80000000;
 constexpr auto HINT_ROOTSYMBOL      = 0xC0000000;
 constexpr auto HINT_NOBOXING        = 0x20000000;
 constexpr auto HINT_NOUNBOXING      = 0x10000000;
-//#define HINT_EXTERNALOP       0x08000000
+constexpr auto HINT_EXTERNALOP      = 0x08000000;
 constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //#define HINT_EXTENSION_MODE   0x02000000
 //#define HINT_COLLECTION_MODE  0x01000000
@@ -53,9 +53,10 @@ constexpr auto HINT_SILENT          = 0x00000020;
 constexpr auto HINT_FORWARD         = 0x00000010;
 //#define HINT_INT64EXPECTED    0x00000004
 //#define HINT_REAL64EXPECTED   0x00000002
-//#define HINT_NOPRIMITIVES     0x00000001
+constexpr auto HINT_NOPRIMITIVES    = 0x00000001;
 
-constexpr int INITIALIZER_SCOPE = 0x0000001;   // indicates the constructor or initializer method
+// scope modes
+constexpr auto INITIALIZER_SCOPE     = 0x0000001;   // indicates the constructor or initializer method
 
 typedef Compiler::ObjectInfo                 ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute                 Attribute;
@@ -242,9 +243,6 @@ ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
       // if it is a forward reference
       return defineObjectInfo(moduleScope->mapFullReference(forwardName.c_str(), false), false);
    }
-   //else if (NamespaceName::isIncluded(EXTERNAL_MODULE, identifier)) {
-   //   return ObjectInfo(okExternal);
-   //}
    //// To tell apart primitive modules, the name convention is used
    //else if (identifier.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
    //   return ObjectInfo(okInternal, module->mapReference(identifier));
@@ -1669,7 +1667,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
    }
 
    //HOTFIX : recognize raw data
-   if (fieldRef == V_BINARY) {
+   if (fieldRef == V_INTBINARY) {
       switch (size) {
          case 1:
          case 2:
@@ -1681,6 +1679,17 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
    //         // treat it like qword
    //         fieldRef = V_INT64;
    //         break;
+         default:
+            scope.raiseError(errInvalidHint, node);
+            break;
+      }
+   }
+   else if (fieldRef == V_BINARY) {
+      switch (size) {
+         case 4:
+            // treat it like dword
+            fieldRef = V_DWORD;
+            break;
          default:
             scope.raiseError(errInvalidHint, node);
             break;
@@ -1851,9 +1860,9 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode terminal, CodeScope
       if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.reference))
          scope.raiseError(errUnknownVariableType, terminal);
 
-      if (_logic->isWrapper(localInfo)) {
-         variable.reference = _logic->resolvePrimitive(localInfo, variable.element);
-      }
+      //if (_logic->isWrapper(localInfo)) {
+      //   variable.reference = _logic->resolvePrimitive(localInfo, variable.element);
+      //}
 
 //      if (variable.extraparam == V_BINARYARRAY && variable.element != 0) {
 //         localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
@@ -2020,7 +2029,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
 //         writer.newNode(lxConstantChar, object.param);
 //         break;
       case okIntConstant:
-//      case okUIntConstant:
+      case okUIntConstant:
          writer.newNode(lxConstantInt, object.param);
          writer.appendNode(lxIntValue, object.extraparam);
          break;
@@ -2151,8 +2160,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okConstantRole:
          writer.newNode(lxConstantSymbol, object.param);
          break;
-//      case okExternal:
-//         return;
+      case okExternal:
+         return;
 //      case okInternal:
 //         writer.appendNode(lxInternalRef, object.param);
 //         return;
@@ -2211,20 +2220,20 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //         object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s));
 //         break;
 //      }
-//      case lxHexInteger:
-//      {
-//         String<char, 20> s;
-//
-//         int integer = token.toULong(16);
-//         if (errno == ERANGE)
-//            scope.raiseError(errInvalidIntNumber, terminal);
-//
-//         // convert back to string as a decimal integer
-//         s.appendHex(integer);
-//
-//         object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), integer);
-//         break;
-//      }
+      case lxHexInteger:
+      {
+         String<char, 20> s;
+
+         int integer = token.toULong(16);
+         if (errno == ERANGE)
+            scope.raiseError(errInvalidIntNumber, terminal);
+
+         // convert back to string as a decimal integer
+         s.appendHex(integer);
+
+         object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT32, 0, integer);
+         break;
+      }
 //      case lxReal:
 //      {
 //         String<char, 30> s(token, getlength(token) - 1);
@@ -2272,6 +2281,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
                IdentifierString forwardName(FORWARD_MODULE, "'", token);
 
                object = scope.mapTerminal(forwardName.ident(), true, 0);
+            }
+            else if (test(mode, HINT_EXTERNALOP)) {
+               object = ObjectInfo(okExternal, 0, V_INT32);
             }
             else object = scope.mapTerminal(token, terminal == lxReference, 0);
 //         }
@@ -2949,7 +2961,7 @@ bool Compiler :: typecast(SyntaxWriter& writer, CodeScope& scope, ref_t targetRe
 
 bool Compiler :: typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
 {
-   if (targetRef != 0/* && !isPrimitiveRef(targetRef)*/) {
+   if (targetRef != 0 && !isPrimitiveRef(targetRef)) {
       if (targetRef != scope.moduleScope->superReference) {
          //HOTFIX : ignore super object
          ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
@@ -2988,26 +3000,26 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t ta
 //
 //   return scope.module->mapSignature(argRef, 2, false);
 //}
-//
-//ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef)
-//{
-//   if (isPrimitiveArrRef(argRef)) {
-//      argRef = resolvePrimitiveArray(scope, elementRef);
-//   }
-//   else argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
-//
-//   return argRef;
-//}
+
+ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef)
+{
+   //if (isPrimitiveArrRef(argRef)) {
+   //   argRef = resolvePrimitiveArray(scope, elementRef);
+   //}
+   /*else */argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+
+   return argRef;
+}
 
 ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    int paramMode = 0;
-   //bool externalMode = false;
+   bool externalMode = false;
    //bool anonymousVariadic = false;
-   //if (test(mode, HINT_EXTERNALOP)) {
-   //   externalMode = true;
-   //}
-   //else paramMode |= HINT_NOPRIMITIVES;
+   if (test(mode, HINT_EXTERNALOP)) {
+      externalMode = true;
+   }
+   else paramMode |= HINT_NOPRIMITIVES;
 
    SNode current = node;
 
@@ -3016,8 +3028,8 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
    ref_t signatureLen = 0;
    while (/*current != lxMessage && */current != lxNone) {
       if (test(current.type, lxObjectMask)) {
-         //if (externalMode)
-         //   writer.newNode(lxExtArgument);
+         if (externalMode)
+            writer.newNode(lxExtArgument);
 
          // try to recognize the message signature
          ref_t argRef = resolveObjectReference(scope, compileExpression(writer, current, scope, 0, paramMode));
@@ -3030,10 +3042,10 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
          }
          else signatures[signatureLen++] = scope.moduleScope->superReference;
 
-         //if (externalMode) {
-         //   writer.appendNode(lxExtArgumentRef, argRef);
-         //   writer.closeNode();
-         //}            
+         if (externalMode) {
+            writer.appendNode(lxExtArgumentRef, argRef);
+            writer.closeNode();
+         }            
       }
 
       current = current.nextNode();
@@ -3093,22 +3105,22 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t exptectedRef*/, ObjectInfo target, int mode)
 {
    int paramsMode = 0;
-//   if (target.kind == okExternal) {
-//      paramsMode |= HINT_EXTERNALOP;
-//   }
-//
-////   ref_t implicitSignatureRef = 0;
-////   size_t paramCount = 0;
+   if (target.kind == okExternal) {
+      paramsMode |= HINT_EXTERNALOP;
+   }
+
+//   ref_t implicitSignatureRef = 0;
+//   size_t paramCount = 0;
    ObjectInfo retVal;
    ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode/* & (HINT_RESENDEXPR | HINT_PARAMETERSONLY)*/);
 
-//   //   bool externalMode = false;
-//   if (target.kind == okExternal) {
-//      int extMode = mode & HINT_ROOT;
-//      
-//      retVal = compileExternalCall(writer, node.prevNode(), scope, exptectedRef, extMode);
-//   }
-//   else {
+   //   bool externalMode = false;
+   if (target.kind == okExternal) {
+      int extMode = mode & HINT_ROOT;
+      
+      retVal = compileExternalCall(writer, node.prevNode(), scope/*, exptectedRef*/, extMode);
+   }
+   else {
       ref_t messageRef = mapMessage(node, scope/*, paramCount*/);
 //
 //      if (target.kind == okInternal) {
@@ -3126,7 +3138,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode, stackSafeAttr);
 //      }
-//   }
+   }
 
    return retVal;
 }
@@ -3202,8 +3214,8 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScop
 {
    ref_t sourceRef = resolveObjectReference(scope, source);
 
-   //if (isPrimitiveRef(sourceRef))
-   //   sourceRef = _logic->resolvePrimitiveReference(*scope.moduleScope, sourceRef);
+   if (isPrimitiveRef(sourceRef))
+      sourceRef = _logic->resolvePrimitiveReference(*scope.moduleScope, sourceRef);
 
    return scope.resolveAutoType(target, sourceRef, source.element);
 }
@@ -4117,6 +4129,9 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
          else if (attributes.forwardAttr && !newVariable && !typeRef) {
             mode |= HINT_FORWARD;
          }
+         else if (attributes.externAttr) {
+            mode |= HINT_EXTERNALOP;
+         }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 
          //            // negative value defines the target virtual class
@@ -4160,7 +4175,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 {
    writer.newBookmark();
 
-//   bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
+   bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
 //   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
 //
 //   mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
@@ -4206,11 +4221,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //      else objectInfo = compileObject(writer, object, scope, exptectedRef, targetMode);
 //   }   
 
-   //ref_t sourceRef = resolveObjectReference(scope, objectInfo/*, exptectedRef*/);
-//   if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
-//      // resolve primitive object if required
-//      exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element);
-//   }
+   ref_t sourceRef = resolveObjectReference(scope, objectInfo/*, exptectedRef*/);
+   if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
+      // resolve primitive object if required
+      exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element);
+   }
 
    if (exptectedRef) {
 //      if (assignMode && exptectedRef == scope.moduleScope->realReference && (sourceRef == V_INT32 || sourceRef == scope.moduleScope->intReference)) {
@@ -4321,139 +4336,139 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
    return retVal;
 }
 
-//void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*, WarningScope& warningScope*/)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxExtArgument) {
-//         analizeExpressionTree(current, nsScope, /*warningScope, */HINT_NOBOXING);
-//
-//         ref_t classReference = current.findChild(lxExtArgumentRef).argument;
-//         ClassInfo classInfo;
-//         if (classReference) {
-//            ref_t primitiveRef = classReference;
-//            bool variableOne = false;
-//            if (!isPrimitiveRef(classReference)) {               
-//               _logic->defineClassInfo(*nsScope.moduleScope, classInfo, classReference);
-//
-//               variableOne = _logic->isVariable(classInfo);
-//               primitiveRef = _logic->retrievePrimitiveReference(*nsScope.moduleScope, classInfo);
-//            }
-//
-//            switch (primitiveRef) {
-//               case V_INT32:
-//               case V_PTR:
-//               case V_DWORD:
-//               //case V_SIGNATURE:
-//               //case V_MESSAGE:
-//                  current.set(variableOne ? lxExtArgument : lxIntExtArgument, 0);
-//                  break;
-//               case V_INT8ARRAY:
-//                  current.set(lxExtArgument, 0);
-//                  break;
-//               //case V_SYMBOL:
-//               //{
-//               //   current.set(lxExtInteranlRef, 0);
-//               //   // HOTFIX : ignore call operation
-//               //   SNode callNode = current.findChild(lxCalling);
-//               //   callNode.set(lxExpression, 0);
-//               //   break;
-//               //}
-//               default:
-//                  if (test(classInfo.header.flags, elStructureRole)) {
-//                     // HOTFIX : to allow pass system'Handle value directly
-//                     if (!variableOne && classInfo.size == 4) {
-//                        current.set(lxIntExtArgument, 0);
-//                     }
-//                     else current.set(lxExtArgument, 0);
-//                  }
-//                  //else if (test(classInfo.header.flags, elWrapper)) {
-//                  //   //HOTFIX : allow to pass a normal object
-//                  //   current.set(lxExtArgument, 0);
-//                  //}
-//                  else nsScope.raiseError(errInvalidOperation, current.findSubNodeMask(lxObjectMask));
-//                  break;
-//            }
-//         }
-//         else nsScope.raiseError(errInvalidOperation, current);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, int mode)
-//{
-//   ObjectInfo retVal(okExternal);
-//
-//   _CompilerScope* moduleScope = scope.moduleScope;
-//
-////   bool rootMode = test(mode, HINT_ROOT);
-//   bool stdCall = false;
-//   bool apiCall = false;
-//
-//   SNode targetNode = node;
-//   // HOTFIX : comment out dll reference
-//   //targetNode = lxIdle;
-//
-//   //SNode messageNode = node.findChild(lxMessage);
-//   writer.appendNode(lxBreakpoint, dsAtomicStep);
-//
-//   ident_t dllAlias = targetNode.identifier();
-//   ident_t functionName = node.nextNode().firstChild(lxTerminalMask).identifier();
-//
-//   ident_t dllName = NULL;
-//   if (dllAlias.compare(EXTERNAL_MODULE)) {
-//      // if run time dll is used
-//      dllName = RTDLL_FORWARD;
-//
-//      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
-//         apiCall = true;
-//   }
-//   else dllName = moduleScope->project->resolveExternalAlias(dllAlias + strlen(EXTERNAL_MODULE) + 1, stdCall);
-//
-//   // legacy : if dll is not mapped, use the name directly
-//   if (emptystr(dllName))
-//      dllName = dllAlias + strlen(EXTERNAL_MODULE) + 1;
-//
-//   ReferenceNs name;
-//   if (!apiCall) {
-//      name.copy(DLL_NAMESPACE);
-//      name.combine(dllName);
-//      name.append(".");
-//      name.append(functionName);
-//   }
-//   else {
-//      name.copy(NATIVE_MODULE);
-//      name.combine(CORE_MODULE);
-//      name.combine(functionName);
-//   }
-//
-//   ref_t reference = moduleScope->module->mapReference(name);
-//
-////   if (!rootMode)
-////      scope.writer->appendNode(lxTarget, -1);
-//
-//   // To tell apart coreapi calls, the name convention is used
-//   if (apiCall) {
-//      writer.insert(lxCoreAPICall, reference);
-//   }
-//   else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
-//   writer.closeNode();
-//
-//   if (!test(mode, HINT_ROOT)) {
-//      if (expectedRef == scope.moduleScope->realReference) {
-//         retVal = assignResult(writer, scope, V_REAL64);
-//      }
-//      //else if (expectedRef == V_REAL64 || expectedRef == V_INT64) {
-//      //   retVal = assignResult(writer, scope, expectedRef);
-//      //}
-//      else retVal = assignResult(writer, scope, V_INT32);
-//   }   
-//
-//   return retVal;
-//}
-//
+void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*, WarningScope& warningScope*/)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxExtArgument) {
+         analizeExpressionTree(current, nsScope, /*warningScope, */HINT_NOBOXING);
+
+         ref_t classReference = current.findChild(lxExtArgumentRef).argument;
+         ClassInfo classInfo;
+         if (classReference) {
+            ref_t primitiveRef = classReference;
+            bool variableOne = false;
+            if (!isPrimitiveRef(classReference)) {               
+               _logic->defineClassInfo(*nsScope.moduleScope, classInfo, classReference);
+
+               variableOne = _logic->isVariable(classInfo);
+               primitiveRef = _logic->retrievePrimitiveReference(*nsScope.moduleScope, classInfo);
+            }
+
+            switch (primitiveRef) {
+               case V_INT32:
+               //case V_PTR:
+               case V_DWORD:
+               //case V_SIGNATURE:
+               //case V_MESSAGE:
+                  current.set(variableOne ? lxExtArgument : lxIntExtArgument, 0);
+                  break;
+               //case V_INT8ARRAY:
+               //   current.set(lxExtArgument, 0);
+               //   break;
+               //case V_SYMBOL:
+               //{
+               //   current.set(lxExtInteranlRef, 0);
+               //   // HOTFIX : ignore call operation
+               //   SNode callNode = current.findChild(lxCalling);
+               //   callNode.set(lxExpression, 0);
+               //   break;
+               //}
+               default:
+                  if (test(classInfo.header.flags, elStructureRole)) {
+                     // HOTFIX : to allow pass system'Handle value directly
+                     if (!variableOne && classInfo.size == 4) {
+                        current.set(lxIntExtArgument, 0);
+                     }
+                     else current.set(lxExtArgument, 0);
+                  }
+                  //else if (test(classInfo.header.flags, elWrapper)) {
+                  //   //HOTFIX : allow to pass a normal object
+                  //   current.set(lxExtArgument, 0);
+                  //}
+                  else nsScope.raiseError(errInvalidOperation, current);
+                  break;
+            }
+         }
+         else nsScope.raiseError(errInvalidOperation, current);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t expectedRef*/, int mode)
+{
+   ObjectInfo retVal(okExternal);
+
+   _ModuleScope* moduleScope = scope.moduleScope;
+
+//   bool rootMode = test(mode, HINT_ROOT);
+   bool stdCall = false;
+   bool apiCall = false;
+
+   SNode targetNode = node;
+   // HOTFIX : comment out dll reference
+   //targetNode = lxIdle;
+
+   //SNode messageNode = node.findChild(lxMessage);
+   writer.appendNode(lxBreakpoint, dsAtomicStep);
+
+   ident_t dllAlias = targetNode.identifier();
+   ident_t functionName = node.nextNode().firstChild(lxTerminalMask).identifier();
+
+   ident_t dllName = NULL;
+   if (dllAlias.compare(RT_MODULE)) {
+      // if run time dll is used
+      dllName = RTDLL_FORWARD;
+
+      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
+         apiCall = true;
+   }
+   else dllName = moduleScope->project->resolveExternalAlias(dllAlias, stdCall);
+
+   // legacy : if dll is not mapped, use the name directly
+   if (emptystr(dllName))
+      dllName = dllAlias;
+
+   ReferenceNs name;
+   if (!apiCall) {
+      name.copy(DLL_NAMESPACE);
+      name.combine(dllName);
+      name.append(".");
+      name.append(functionName);
+   }
+   else {
+      name.copy(NATIVE_MODULE);
+      name.combine(CORE_MODULE);
+      name.combine(functionName);
+   }
+
+   ref_t reference = moduleScope->module->mapReference(name);
+
+//   if (!rootMode)
+//      scope.writer->appendNode(lxTarget, -1);
+
+   // To tell apart coreapi calls, the name convention is used
+   if (apiCall) {
+      writer.insert(lxCoreAPICall, reference);
+   }
+   else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+   writer.closeNode();
+
+   if (!test(mode, HINT_ROOT)) {
+      //if (expectedRef == scope.moduleScope->realReference) {
+      //   retVal = assignResult(writer, scope, V_REAL64);
+      //}
+      //else if (expectedRef == V_REAL64 || expectedRef == V_INT64) {
+      //   retVal = assignResult(writer, scope, expectedRef);
+      //}
+      /*else */retVal = assignResult(writer, scope, V_INT32);
+   }   
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo routine)
 //{
 //   _CompilerScope* moduleScope = scope.moduleScope;
@@ -4633,16 +4648,16 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (current.argument == V_TYPE) {
-            classRef = resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-            if (!classRef)
-               scope.raiseError(errUnknownClass, current);
-         }
-         else if (_logic->validateArgumentAttribute(node.argument)) {
+         if (_logic->validateArgumentAttribute(node.argument)) {
 
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }      
+      else if (current == lxTarget) {
+         classRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
+         if (!classRef)
+            scope.raiseError(errUnknownClass, current);
+      }
 
       current = current.nextNode();
    }
@@ -4735,9 +4750,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       // validate generic signature (except an open argument one)
       bool weakSignature = true;
       for (size_t i = 0; i < signatureLen; i++) {
-         //// primitive arguments should be replaced with wrapper classes
-         //if (isPrimitiveRef(signature[i]))
-         //   signature[i] = _logic->resolvePrimitiveReference(*scope.moduleScope, signature[i]);
+         // primitive arguments should be replaced with wrapper classes
+         if (isPrimitiveRef(signature[i]))
+            signature[i] = _logic->resolvePrimitiveReference(*scope.moduleScope, signature[i]);
 
          if (signature[i] != scope.moduleScope->superReference) {
             weakSignature = false;
@@ -6766,7 +6781,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
    //   //}
    //}
    //else {
-      if (retVal.kind == okIntConstant/* || retVal.kind == okUIntConstant*/) {
+      if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
          size_t value = module->resolveConstant(retVal.param).toULong(16);
 
          dataWriter.writeDWord(value);
@@ -6936,69 +6951,69 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 //
 //   compilePreloadedCode(*scope.moduleScope, expressionTree.readRoot());
 //}
-//
-//// NOTE : elementRef is used for binary arrays
-//ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef)
-//{
-//   ObjectInfo retVal(okObject, targetRef, 0, elementRef);
-//
-//   int size = _logic->defineStructSize(*scope.moduleScope, targetRef, elementRef);
-//   if (size != 0) {
-//      if (allocateStructure(scope, size, false, retVal)) {
-//         retVal.extraparam = targetRef;
-//
-//         writer.insertChild(0, lxLocalAddress, retVal.param);
-//         writer.appendNode(lxTempAttr);
-//         writer.insert(lxAssigning, size);
-//         writer.closeNode();
-//      }
-//      else if (size > 0) {
-//         writer.appendNode(lxTarget, targetRef);
-//         writer.insert(lxCreatingStruct, size);
-//         writer.closeNode();
-//
-//         writer.insert(lxAssigning, size);
-//         writer.closeNode();
-//      }
-//      
-//      switch (targetRef) {
-//         case V_INT32:
-//            targetRef = scope.moduleScope->intReference;
-//            break;
-//         case V_INT64:
-//            targetRef = scope.moduleScope->longReference;
-//            break;
-//         case V_REAL64:
-//            targetRef = scope.moduleScope->realReference;
-//            break;
-//         case V_SIGNATURE:
-//            targetRef = scope.moduleScope->signatureReference;
-//            break;
-//         case V_MESSAGE:
-//            targetRef = scope.moduleScope->messageReference;
-//            break;
-//      }
-//
-//      writer.appendNode(lxTarget, targetRef);
-//      writer.appendNode(lxBoxableAttr);
-//      writer.insert(lxBoxing,  size);
-//      writer.closeNode();
-//
-//      retVal.kind = okObject;
-//      retVal.param = targetRef;
-//
-//      return retVal;
-//   }
-//   else return retVal;
-//}
-//
-//ref_t Compiler :: analizeExtCall(SNode node, NamespaceScope& scope)
-//{
-//   compileExternalArguments(node, scope);
-//
-//   return V_INT32;
-//}
-//
+
+// NOTE : elementRef is used for binary arrays
+ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef)
+{
+   ObjectInfo retVal(okObject, 0, targetRef, 0, elementRef);
+
+   int size = _logic->defineStructSize(*scope.moduleScope, targetRef, elementRef);
+   if (size != 0) {
+      if (allocateStructure(scope, size, false, retVal)) {
+         retVal.extraparam = targetRef;
+
+         writer.insertChild(0, lxLocalAddress, retVal.param);
+         writer.appendNode(lxTempAttr);
+         writer.insert(lxAssigning, size);
+         writer.closeNode();
+      }
+      else if (size > 0) {
+         writer.appendNode(lxTarget, targetRef);
+         writer.insert(lxCreatingStruct, size);
+         writer.closeNode();
+
+         writer.insert(lxAssigning, size);
+         writer.closeNode();
+      }
+      
+      switch (targetRef) {
+         case V_INT32:
+            targetRef = scope.moduleScope->intReference;
+            break;
+         //case V_INT64:
+         //   targetRef = scope.moduleScope->longReference;
+         //   break;
+         //case V_REAL64:
+         //   targetRef = scope.moduleScope->realReference;
+         //   break;
+         //case V_SIGNATURE:
+         //   targetRef = scope.moduleScope->signatureReference;
+         //   break;
+         //case V_MESSAGE:
+         //   targetRef = scope.moduleScope->messageReference;
+         //   break;
+      }
+
+      writer.appendNode(lxTarget, targetRef);
+      writer.appendNode(lxBoxableAttr);
+      writer.insert(lxBoxing,  size);
+      writer.closeNode();
+
+      retVal.kind = okObject;
+      retVal.param = targetRef;
+
+      return retVal;
+   }
+   else return retVal;
+}
+
+ref_t Compiler :: analizeExtCall(SNode node, NamespaceScope& scope)
+{
+   compileExternalArguments(node, scope);
+
+   return V_INT32;
+}
+
 //ref_t Compiler :: analizeInternalCall(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/)
 //{
 //   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
@@ -7326,11 +7341,11 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, /*WarningScop
          sourceRef = analizeExpression(sourceNode, scope, subMode);
       }
 
-      //// adjust primitive target
-      //if (/*_logic->*/isPrimitiveRef(targetRef) && boxing) {
-      //   targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument);
-      //   node.findChild(lxTarget).setArgument(targetRef);
-      //}
+      // adjust primitive target
+      if (/*_logic->*/isPrimitiveRef(targetRef) && boxing) {
+         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument);
+         node.findChild(lxTarget).setArgument(targetRef);
+      }
 
       if (!_logic->validateBoxing(*scope.moduleScope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED), test(mode, HINT_DYNAMIC_OBJECT))) {
          scope.raiseError(errIllegalOperation, node);
@@ -7493,10 +7508,10 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       //   return analizeOp(current, scope);
       //case lxInternalCall:
       //   return analizeInternalCall(current, scope);
-      //case lxStdExternalCall:
-      //case lxExternalCall:
-      //case lxCoreAPICall:
-      //   return analizeExtCall(current, scope);
+      case lxStdExternalCall:
+      case lxExternalCall:
+      case lxCoreAPICall:
+         return analizeExtCall(current, scope);
       //case lxLooping:
       //case lxSwitching:
       //case lxOption:

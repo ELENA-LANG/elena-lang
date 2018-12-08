@@ -94,7 +94,7 @@ public:
    virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable);
    virtual int defineStructSize(ClassInfo& info, bool& variable);
 
-//   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info);
+   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
@@ -102,7 +102,7 @@ public:
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
 //   virtual bool resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference);
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
-//   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference);
+   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t reference);
 
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
 ////   virtual bool isPrimitiveArray(ref_t reference);
@@ -116,8 +116,8 @@ public:
       return test(info.header.flags, elWrapper);
    }
 //   virtual bool isEmbeddableArray(ClassInfo& info);
-//   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef);
-//   virtual bool isVariable(ClassInfo& info);
+   virtual bool isVariable(_ModuleScope& scope, ref_t targetRef);
+   virtual bool isVariable(ClassInfo& info);
    virtual bool isEmbeddable(ClassInfo& info);
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference)
    {

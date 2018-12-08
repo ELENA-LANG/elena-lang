@@ -17,6 +17,9 @@ namespace _ELENA_
 
 // --- DerivationWriter ---
 
+typedef Map<ident_t, char*> TypedMap;
+
+
 class DerivationWriter : public _DerivationWriter
 {
    enum DeclarationAttr
@@ -49,6 +52,8 @@ class DerivationWriter : public _DerivationWriter
          templateMode = false;
       }
    };
+
+   TypedMap      _types;
 
    int           _level;
    int           _cachingLevel;
@@ -108,7 +113,7 @@ public:
    virtual void writeTerminal(TerminalInfo& terminal);
 
    DerivationWriter(SyntaxTree& target, _ModuleScope* scope)
-      :  _output(target), _cacheWriter(_cache)
+      :  _output(target), _cacheWriter(_cache), _types(NULL, freestr)
    {
       _cachingLevel = _level = 0;
 

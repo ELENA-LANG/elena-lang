@@ -473,13 +473,13 @@ namespace _ELENA_
 
 //   #define STANDARD_MODULE_LEN      6
    #define INTERNAL_MASK_LEN        12
-//   #define COREAPI_MASK_LEN         5 
+   #define COREAPI_MASK_LEN         5 
 
    #define CORE_MODULE              "coreapi"
    #define STANDARD_MODULE          "system"                         // the standard module name
    #define FORWARD_MODULE           "$forwards"
-//   #define EXTERNAL_MODULE          "system'external"                // external pseudo symbol
-//   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
+   #define RT_MODULE                "elenart"                        // ELENART / ELENAVM dll
+   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
                                                                      // will be treated like internal core api one
    #define INTERNAL_MASK            "system'core_"                   // primitive module mask
 

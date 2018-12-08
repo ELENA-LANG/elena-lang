@@ -18,12 +18,13 @@
 #define V_NIL            (ref_t)-04
 #define V_TYPE           (ref_t)-05
 
+#define V_INTBINARY      (ref_t)-10
 #define V_BINARY         (ref_t)-11
 //#define V_PTR            (ref_t)-12
 #define V_INT32          (ref_t)-13
 //#define V_INT64          (ref_t)-14
 //#define V_REAL64         (ref_t)-15
-//#define V_DWORD          (ref_t)-16
+#define V_DWORD          (ref_t)-16
 //#define V_SIGNATURE      (ref_t)-18
 //#define V_MESSAGE        (ref_t)-19
 //#define V_EXTMESSAGE     (ref_t)-21
@@ -86,7 +87,7 @@
 #define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
-//#define V_EXTERN         (ref_t)-16396
+#define V_EXTERN         (ref_t)-16396
 //#define V_ATTRTEMPLATE   (ref_t)-16398
 //#define V_ACCESSOR       (ref_t)-16399
 //#define V_BLOCK          (ref_t)-16400
@@ -175,7 +176,7 @@ public:
 
    virtual bool addForward(ident_t forward, ident_t reference) = 0;
 
-//   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
 //// class forward declaration
@@ -364,10 +365,11 @@ public:
       bool castAttr;
       bool templateAttr;
       bool forwardAttr;
+      bool externAttr;
 
       ExpressionAttributes()
       {
-         typeAttr = castAttr = templateAttr = forwardAttr = false;
+         externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
       }
    };
 
@@ -423,19 +425,19 @@ public:
 //
 //   // retrieve the branching operation type
 //   virtual bool resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
-//
-//   virtual ref_t resolvePrimitiveReference(_CompilerScope& scope, ref_t reference) = 0;
-//   virtual ref_t retrievePrimitiveReference(_CompilerScope& scope, ClassInfo& info) = 0;
+
+   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t reference) = 0;
+   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info) = 0;
 
    // check if the classes is compatible
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 
-//   virtual bool isVariable(_CompilerScope& scope, ref_t targetRef) = 0;
-//
+   virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
+
    virtual bool isWrapper(ClassInfo& info) = 0;
    virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element) = 0;
 //   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
-//   virtual bool isVariable(ClassInfo& info) = 0;
+   virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;

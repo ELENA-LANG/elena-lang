@@ -187,11 +187,11 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
    tape.newLabel();     // declare exit point
 }
 
-//void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
-//{
-//   tape.write(blDeclare, bsBranch);
-//}
-//
+void ByteCodeWriter :: declareExternalBlock(CommandTape& tape)
+{
+   tape.write(blDeclare, bsBranch);
+}
+
 //void ByteCodeWriter :: excludeFrame(CommandTape& tape)
 //{
 //   tape.write(bcExclude);
@@ -295,12 +295,12 @@ void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
       tape.write(bcPushN, 0);
 }
 
-//void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
-//{
-//   // pushn  value
-//   tape.write(bcPushN, value);
-//}
-//
+void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
+{
+   // pushn  value
+   tape.write(bcPushN, value);
+}
+
 //int ByteCodeWriter :: declareLoop(CommandTape& tape, bool threadFriendly)
 //{
 //   // loop-begin
@@ -755,11 +755,11 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
    }
 }
 
-//void ByteCodeWriter :: loadInternalReference(CommandTape& tape, ref_t reference)
-//{
-//   // acopyr reference
-//   tape.write(bcACopyR, reference | mskInternalRef);
-//}
+void ByteCodeWriter :: loadInternalReference(CommandTape& tape, ref_t reference)
+{
+   // acopyr reference
+   tape.write(bcACopyR, reference | mskInternalRef);
+}
 
 void ByteCodeWriter :: assignBaseTo(CommandTape& tape, LexicalType target)
 {
@@ -1197,18 +1197,18 @@ void ByteCodeWriter :: resend(CommandTape& tape)
    tape.write(bcAJumpVI);
 }
 
-//void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
-//{
-//   // callextr ref
-//   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount);
-//}
-//
-//void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int paramCount)
-//{
-//   // callextr ref
-//   tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount);
-//}
-//
+void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
+{
+   // callextr ref
+   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount);
+}
+
+void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int paramCount)
+{
+   // callextr ref
+   tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount);
+}
+
 //void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode)
 //{
 //   if (!referenceMode) {
@@ -1309,14 +1309,14 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
 //   tape.setLabel();
 //   tape.releaseLabel();
 //}
-//
-//void ByteCodeWriter :: endExternalBlock(CommandTape& tape,  bool idle)
-//{
-//   if (!idle)
-//      tape.write(bcSCopyF, bsBranch);
-//
-//   tape.write(blEnd, bsBranch);
-//}
+
+void ByteCodeWriter :: endExternalBlock(CommandTape& tape,  bool idle)
+{
+   if (!idle)
+      tape.write(bcSCopyF, bsBranch);
+
+   tape.write(blEnd, bsBranch);
+}
 
 void ByteCodeWriter :: exitMethod(CommandTape& tape, int count, int reserved, bool withFrame)
 {
@@ -1984,26 +1984,26 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
       writeDebugInfoStopper(scope.debug);
 }
 
-//void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argument)
-//{
-//   if (target == lxLocalAddress) {
-//      // bcopyf param
-//      // nsave
-//      tape.write(bcBCopyF, argument);
-//      tape.write(bcNSave);
-//
-//      tape.write(bcACopyB);
-//   }
-//   else if (target == lxFieldAddress) {
-//      loadBase(tape, target, 0);
-//
-//      // nsave
-//      tape.write(bcNSave);
-//
-//      tape.write(bcACopyB);
-//   }
-//}
-//
+void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argument)
+{
+   if (target == lxLocalAddress) {
+      // bcopyf param
+      // nsave
+      tape.write(bcBCopyF, argument);
+      tape.write(bcNSave);
+
+      tape.write(bcACopyB);
+   }
+   else if (target == lxFieldAddress) {
+      loadBase(tape, target, 0);
+
+      // nsave
+      tape.write(bcNSave);
+
+      tape.write(bcACopyB);
+   }
+}
+
 //void ByteCodeWriter :: saveReal(CommandTape& tape, LexicalType target, int argument)
 //{
 //   if (target == lxLocalAddress) {
@@ -3661,10 +3661,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
             tape.write(bcPushA);
          }
          break;
-      //case lxBlockLocal:
-      //   // pushfi index
-      //   tape.write(bcPushFI, argument, bpBlock);
-      //   break;
+      case lxBlockLocal:
+         // pushfi index
+         tape.write(bcPushFI, argument, bpBlock);
+         break;
       case lxNil:
          // pushn 0
          tape.write(bcPushN, 0);
@@ -3762,10 +3762,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // aloadfi 1
          tape.write(bcALoadFI, 1, bpFrame);
          break;
-//      case lxBlockLocal:
-//         // aloadfi n
-//         tape.write(bcALoadFI, argument, bpBlock);
-//         break;
+      case lxBlockLocal:
+         // aloadfi n
+         tape.write(bcALoadFI, argument, bpBlock);
+         break;
       case lxLocalAddress:
          // acopyf n
          tape.write(bcACopyF, argument);
@@ -4320,131 +4320,131 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
 //      }
 //   }
 //}
-//
-//void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, ExternalScope& externalScope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxExtInteranlRef) {
-//      }
-//      else if (current == lxIntExtArgument || current == lxExtArgument) {
-//         SNode object = current.findSubNodeMask(lxObjectMask);
-//         if (test(object.type, lxObjectMask)) {
-//            if (!isSimpleObject(object, true)) {
-//               ExternalScope::ParamInfo param;
-//
-//               generateObjectExpression(tape, object, ACC_REQUIRED);
-//               pushObject(tape, lxResult);
-//               param.offset = ++externalScope.frameSize;
-//
-//               externalScope.operands.push(param);
-//            }
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
-//int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope)
-//{
-//   int paramCount = 0;
-//
-//   // save function parameters
-//   Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
-//   SNode current = node.lastChild();
-//   while (current != lxNone) {
-//      if (current == lxExtInteranlRef) {
-//         // HOTFIX : ignore call operation
-//         SNode ref = current.findSubNode(lxInternalRef);
-//         loadInternalReference(tape, ref.argument);
-//         pushObject(tape, lxResult);
-//
-//         paramCount++;
-//      }
-//      else if (current == lxIntExtArgument || current == lxExtArgument) {
-//         SNode object = current.findSubNodeMask(lxObjectMask);
-//         SNode value;
-//         if (object == lxConstantInt)
-//            value = object;
-//
-//         if (!isSimpleObject(object, true)) {
-//            loadObject(tape, lxBlockLocal, (*out_it).offset);
-//
-//            out_it++;
-//         }
-//         else if (current != lxIntExtArgument || value == lxNone) {
-//            generateObjectExpression(tape, object);
-//         }
-//
-//         if (current == lxIntExtArgument) {
-//            // optimization : use the numeric constant directly
-//            if (value == lxConstantInt) {
-//               declareVariable(tape, value.findChild(lxIntValue).argument);
-//            }
-//            else if (object.type == lxFieldAddress) {
-//               if (testany(object.argument, 3)) {
-//                  // dcopy index
-//                  // bread
-//                  // pushe
-//                  tape.write(bcDCopy, object.argument);
-//                  tape.write(bcBRead);
-//                  tape.write(bcPushE);
-//               }
-//               else pushObject(tape, lxResultField, object.argument >> 2);
-//            }
-//            else pushObject(tape, lxResultField);
-//         }
-//         else if (current == lxExtArgument) {
-//            pushObject(tape, lxResult);
-//         }
-//         paramCount++;
-//      }
-//
-//      current = current.prevNode();
-//   }
-//
-//   return paramCount;
-//}
-//
-//void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
-//{
-//   SNode bpNode = node.findChild(lxBreakpoint);
-//   if (bpNode != lxNone) {
-//      translateBreakpoint(tape, bpNode);
-//
-//      declareBlock(tape);
-//   }
-//
-//   bool apiCall = (node == lxCoreAPICall);
-//
-//   // compile argument list
-//   ExternalScope externalScope;
-//   declareExternalBlock(tape);
-//
-//   generateExternalArguments(tape, node, externalScope);
-//
-//   // save function parameters
-//   int paramCount = saveExternalParameters(tape, node, externalScope);
-//
-//   // call the function
-//   if (apiCall) {
-//      // if it is an API call
-//      // simply release parameters from the stack
-//      // without setting stack pointer directly - due to optimization
-//      callCore(tape, node.argument, externalScope.frameSize);
-//
-//      endExternalBlock(tape, true);
-//      releaseObject(tape, paramCount);
-//   }
-//   else {
-//      callExternal(tape, node.argument, externalScope.frameSize);
-//
-//      endExternalBlock(tape);
-//   }
-//
-//   if (bpNode != lxNone)
-//      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//}
+
+void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, ExternalScope& externalScope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxExtInteranlRef) {
+      }
+      else if (current == lxIntExtArgument || current == lxExtArgument) {
+         SNode object = current.findSubNodeMask(lxObjectMask);
+         if (test(object.type, lxObjectMask)) {
+            if (!isSimpleObject(object, true)) {
+               ExternalScope::ParamInfo param;
+
+               generateObject(tape, object, ACC_REQUIRED);
+               pushObject(tape, lxResult);
+               param.offset = ++externalScope.frameSize;
+
+               externalScope.operands.push(param);
+            }
+         }
+      }
+      current = current.nextNode();
+   }
+}
+
+int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope)
+{
+   int paramCount = 0;
+
+   // save function parameters
+   Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
+   SNode current = node.lastChild();
+   while (current != lxNone) {
+      if (current == lxExtInteranlRef) {
+         // HOTFIX : ignore call operation
+         SNode ref = current.findSubNode(lxInternalRef);
+         loadInternalReference(tape, ref.argument);
+         pushObject(tape, lxResult);
+
+         paramCount++;
+      }
+      else if (current == lxIntExtArgument || current == lxExtArgument) {
+         SNode object = current.findSubNodeMask(lxObjectMask);
+         SNode value;
+         if (object == lxConstantInt)
+            value = object;
+
+         if (!isSimpleObject(object, true)) {
+            loadObject(tape, lxBlockLocal, (*out_it).offset);
+
+            out_it++;
+         }
+         else if (current != lxIntExtArgument || value == lxNone) {
+            generateObject(tape, object);
+         }
+
+         if (current == lxIntExtArgument) {
+            // optimization : use the numeric constant directly
+            if (value == lxConstantInt) {
+               declareVariable(tape, value.findChild(lxIntValue).argument);
+            }
+            else if (object.type == lxFieldAddress) {
+               if (testany(object.argument, 3)) {
+                  // dcopy index
+                  // bread
+                  // pushe
+                  tape.write(bcDCopy, object.argument);
+                  tape.write(bcBRead);
+                  tape.write(bcPushE);
+               }
+               else pushObject(tape, lxResultField, object.argument >> 2);
+            }
+            else pushObject(tape, lxResultField);
+         }
+         else if (current == lxExtArgument) {
+            pushObject(tape, lxResult);
+         }
+         paramCount++;
+      }
+
+      current = current.prevNode();
+   }
+
+   return paramCount;
+}
+
+void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
+{
+   SNode bpNode = node.findChild(lxBreakpoint);
+   if (bpNode != lxNone) {
+      translateBreakpoint(tape, bpNode);
+
+      declareBlock(tape);
+   }
+
+   bool apiCall = (node == lxCoreAPICall);
+
+   // compile argument list
+   ExternalScope externalScope;
+   declareExternalBlock(tape);
+
+   generateExternalArguments(tape, node, externalScope);
+
+   // save function parameters
+   int paramCount = saveExternalParameters(tape, node, externalScope);
+
+   // call the function
+   if (apiCall) {
+      // if it is an API call
+      // simply release parameters from the stack
+      // without setting stack pointer directly - due to optimization
+      callCore(tape, node.argument, externalScope.frameSize);
+
+      endExternalBlock(tape, true);
+      releaseObject(tape, paramCount);
+   }
+   else {
+      callExternal(tape, node.argument, externalScope.frameSize);
+
+      endExternalBlock(tape);
+   }
+
+   if (bpNode != lxNone)
+      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+}
 
 ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 {
@@ -4912,18 +4912,18 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
    //else {
       generateObject(tape, source, ACC_REQUIRED);
 
-      //if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
-      //   if (node.argument == 4) {
-      //      saveInt(tape, target.type, target.argument);
-      //   }
-      //   else if (node.argument == 8) {
-      //      if (node.findSubNode(lxFPUTarget) == lxFPUTarget) {
-      //         saveReal(tape, target.type, target.argument);               
-      //      }
-      //      else saveLong(tape, target.type, target.argument);
-      //   }
-      //}
-      /*else */if (target == lxFieldExpression || target == lxExpression) {
+      if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
+         if (node.argument == 4) {
+            saveInt(tape, target.type, target.argument);
+         }
+         //else if (node.argument == 8) {
+         //   if (node.findSubNode(lxFPUTarget) == lxFPUTarget) {
+         //      saveReal(tape, target.type, target.argument);               
+         //   }
+         //   else saveLong(tape, target.type, target.argument);
+         //}
+      }
+      else if (target == lxFieldExpression || target == lxExpression) {
          SNode arg1, arg2;
 
          assignOpArguments(target, arg1, arg2);
@@ -5409,11 +5409,11 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
 ////      case lxThrowing:
 ////         generateThrowExpression(tape, node);
 ////         break;
-//      case lxCoreAPICall:
-//      case lxStdExternalCall:
-//      case lxExternalCall:
-//         generateExternalCall(tape, node);
-//         break;
+      case lxCoreAPICall:
+      case lxStdExternalCall:
+      case lxExternalCall:
+         generateExternalCall(tape, node);
+         break;
 //      case lxInternalCall:
 //         generateInternalCall(tape, node);
 //         break;

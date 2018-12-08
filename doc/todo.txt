@@ -4,6 +4,7 @@ In development:
 
               dev - elena 4.0
                  * test all possible syntax combintions 
+                 * support c style return statement - return x;
 
                  * test - byte var prm;
                  * test - var byte prm;

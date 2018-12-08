@@ -303,7 +303,7 @@ public class IntBaseNumber : BaseNumber
 /// An unsigned 8 bit integer
 public sealed const struct ByteNumber : IntBaseNumber
 {
-    embeddable __raw theValue[1];
+    embeddable __int theValue[1];
 
 //    constructor(int n)
 //    [
@@ -610,7 +610,7 @@ public sealed const struct ByteNumber : IntBaseNumber
 /// A signed 16 bit integer
 public sealed const struct ShortNumber : IntBaseNumber
 {
-    embeddable __raw theValue[2];
+    embeddable __int theValue[2];
 
 //    constructor(int n)
 //    [
@@ -934,7 +934,7 @@ public sealed const struct ShortNumber : IntBaseNumber
 /// A signed 32 bit integer
 public sealed const struct IntNumber : IntBaseNumber
 {
-    embeddable __raw theValue[4];
+    embeddable __int theValue[4];
     
 //    constructor(byte n)
 //    [

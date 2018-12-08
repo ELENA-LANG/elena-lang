@@ -3,14 +3,14 @@
 /// A console
 class Console
 {
-//    object               theWriter.
+    object               theWriter;
 //    T<io'IConsoleReader> theReader.
 //    literal              theNewLineConstant.
 
     /// Creates a console
-    constructor(/*object aReader, object aWriter*/)
+    constructor(/*object aReader, */object writer)
     {
-//        theWriter := aWriter.
+        theWriter := writer;
 //        theReader := aReader.
 //        theNewLineConstant := forwards'newLine.
     }
@@ -28,15 +28,15 @@ class Console
 //    [
 //        self write(anObject literal).
 //    ]
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    write(literal aLiteral)
-//    [
-//        theWriter write(aLiteral).
-//        
-//        theWriter refresh.
-//    ]
-//
+
+    /// Writes the specified literal value to the standard output stream.
+    write(literal s)
+    {
+        theWriter.write(s);
+        
+        theWriter.refresh();
+    }
+
 //    /// Writes the specified literal value to the standard output stream.
 //    write(wide aLiteral)
 //    [
@@ -89,4 +89,4 @@ class Console
 }
 
 /// A standard console
-public static console = new Console(/*io'stdConsoleReader, io'stdConsoleWriter*/);
+public static console = new Console(/*io'stdConsoleReader, */io'stdConsoleWriter);

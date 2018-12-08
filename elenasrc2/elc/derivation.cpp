@@ -709,6 +709,10 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType/*, bool& templ
       if (!isPrimitiveRef(ref) && !allowType)
          _scope->raiseError(errInvalidHint, _filePath, node);
 
+      // HOTFIX : check if the type was declared in the scope
+      if (!ref && _types.exist(token))
+         terminal.set(lxReference, _types.get(token));
+
       return ref;
    }
 }
@@ -1027,7 +1031,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node/*, 
 //      }
       else if (current == lxTarget) {
          writer.newNode(lxTarget, current.argument);
-         copyIdentifier(writer, current.findChild(lxIdentifier));
+         copyIdentifier(writer, current.firstChild(lxTerminalMask));
          writer.closeNode();
 
          if (current.existChild(lxDynamicSizeDecl)) {
@@ -1210,12 +1214,12 @@ void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node/*, De
 //            }
             /*else */generateExpressionTree(writer, current/*, scope*/);
             break;
-//         case lxReturning:
-////         case lxExtension:
-//            writer.newNode(current.type, current.argument);
-//            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
-//            writer.closeNode();
-//            break;
+         case lxReturning:
+//         case lxExtension:
+            writer.newNode(current.type, current.argument);
+            generateExpressionTree(writer, current, EXPRESSION_IMPLICIT_MODE);
+            writer.closeNode();
+            break;
          case lxEOF:
          {
             writer.newNode(lxEOF);
@@ -1628,6 +1632,9 @@ void DerivationWriter:: declareType(SyntaxWriter& writer, SNode node/*, Derivati
    copyIdentifier(writer, referenceNode);
    writer.closeNode();
    writer.closeNode();
+
+   // HOTFIX : to recognize it in declarations
+   _types.add(nameNode.identifier(), referenceNode.identifier().clone());
 
 ////   bool internalSubject = nameNode == lxPrivate;
 ////   bool invalid = true;

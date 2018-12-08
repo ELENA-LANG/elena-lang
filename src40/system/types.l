@@ -24,7 +24,7 @@
 //__loop          = #16394.
 ////nonstructural   = #8204.
 //import          = #16395.
-//__extern        = #16396.
+#16396 = extern;
 //closure         = #8205.
 //mixin           = #8206.
 //__accessor      = #16399.
@@ -47,6 +47,7 @@
 //__args          = #32. 
 //
 //__string        = #8200.
+#10    = __int;
 #11    = __raw;
 //__ptr           = #12.
 //__real          = #15.
@@ -81,6 +82,6 @@ type int        = system'IntNumber;
 ////type ext_mssg   = system'ExtensionMessage.
 type literal    = system'LiteralValue;
 //type wide       = system'WideLiteralValue.
-//type handle     = system'Handle.
+type handle     = system'Handle;
 //type rt_ptr     = system'RTPointer.
 //type dirty_ptr  = system'UnsafePointer.

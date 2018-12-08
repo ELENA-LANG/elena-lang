@@ -111,7 +111,7 @@ public:
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
-//      okUIntConstant,                 // param - reference, extraparam - imm argument
+      okUIntConstant,                 // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference
 //      okRealConstant,                 // param - reference
 //      okMessageConstant,              // param - reference
@@ -147,7 +147,7 @@ public:
 //      okExtension,
 //      okClassSelf,                    // param - class reference; used in class resending expression
 //
-//      okExternal,
+      okExternal,
 //      okInternal,
 //      okPrimitiveConv
    };
@@ -792,7 +792,7 @@ private:
 
    void loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes);
 
-//   ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef);
+   ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef);
 //   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef);
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
@@ -905,7 +905,7 @@ private:
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
-//   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, int mode);
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ref_t expectedRef, */int mode);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 //
 //   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
@@ -972,15 +972,15 @@ private:
    void compileForward(SNode node, NamespaceScope& scope);
 
 ////   bool validate(_ProjectManager& project, _Module* module, int reference);
-//
-//   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
+
+   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
 
    bool convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
    bool typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
    bool typecast(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t signature);
 
-//   void compileExternalArguments(SNode node, NamespaceScope& scope);
-//
+   void compileExternalArguments(SNode node, NamespaceScope& scope);
+
 //   ref_t analizeOp(SNode current, NamespaceScope& scope);
    ref_t analizeSymbol(SNode& node, NamespaceScope& scope);
    ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);
@@ -990,7 +990,7 @@ private:
    ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
 //   ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope);
-//   ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope);
+   ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope);
 //   ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
    void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
 //   void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
