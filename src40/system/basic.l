@@ -303,7 +303,7 @@ public class IntBaseNumber : BaseNumber
 /// An unsigned 8 bit integer
 public sealed const struct ByteNumber : IntBaseNumber
 {
-    embeddable __raw theValue[2];
+    embeddable __raw theValue[1];
 
 //    constructor(int n)
 //    [

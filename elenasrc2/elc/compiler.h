@@ -107,7 +107,7 @@ public:
       okSymbol,                       // param - reference
       okConstantSymbol,               // param - reference
       okClass,                        // param - reference
-//      okLiteralConstant,              // param - reference
+      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
@@ -578,12 +578,12 @@ private:
          return outputRef;
       }
 
-//      //ref_t getClassFlags(bool ownerClass = true)
-//      //{
-//      //   ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//      //   return scope ? scope->info.header.flags : 0;
-//      //}
+      //ref_t getClassFlags(bool ownerClass = true)
+      //{
+      //   ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+      //   return scope ? scope->info.header.flags : 0;
+      //}
 //      ref_t getClassRef(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -683,12 +683,12 @@ private:
          return scope ? scope->reference : 0;
       }
 
-//      ref_t getClassFlags(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->info.header.flags : 0;
-//      }
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
@@ -936,8 +936,8 @@ private:
 //   void compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message);
 
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
-//   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
-//
+   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
+
    void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedCode(_CompilerScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);

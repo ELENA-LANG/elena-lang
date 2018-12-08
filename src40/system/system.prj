@@ -16,6 +16,7 @@
        <include>types.l</include>
        <include>object.l</include>
        <include>basic.l</include>
+       <include>memory.l</include>
        <include>dynamic.l</include>
        <include>exceptions.l</include>
        <include>console.l</include>

@@ -3,6 +3,10 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * test all possible syntax combintions 
+
+                 * test - byte var prm;
+                 * test - var byte prm;
                  * IntNumber.#cast<'IntNumber> - why it always creates a new object?
                  * uncomment _ELC_::Project::compileSources
                  * uncomment ELENARTMachine::loadMessage

@@ -56,6 +56,7 @@ enum LexicalType
    lxClassField      = 0x0004F,
    lxImplicitMessage = 0x00067,
    lxSizeDecl        = 0x00068,
+   lxDynamicSizeDecl = 0x00069,
 
    lxTypecast        = 0x00100,
 
@@ -88,7 +89,7 @@ enum LexicalType
 
    // parameters
    lxEOF             = 0x18003, // indicating closing code bracket
-//   lxLiteral         = 0x18004,
+   lxLiteral         = 0x18004,
    lxIdentifier      = 0x18005,
 //   lxPrivate         = 0x18006,
    lxReference       = 0x18007,
@@ -114,7 +115,7 @@ enum LexicalType
    lxFieldAddress    = 0x08109, // arg - offset
    lxLocal           = 0x0A10A, // arg - offset
 //   lxBlockLocal      = 0x0A10B, // arg - offset
-//   lxConstantString  = 0x0A10C, // arg - reference
+   lxConstantString  = 0x0A10C, // arg - reference
 //   lxConstantWideStr = 0x0A10D, // arg - reference
 //   lxConstantChar    = 0x0A10E, // arg - reference
    lxConstantInt     = 0x1A10F, // arg - reference

@@ -1802,15 +1802,8 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
 
 bool CompilerLogic::validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes)
 {
-   if (!isPrimitiveRef(attrValue)) {
-      attributes.typeAttr = true;
-
-      return true;
-   }
-
    switch (attrValue) {
       case (int)V_VARIABLE:
-      case (int)V_TYPE:
       case (int)V_AUTO:
          if (!attributes.typeAttr) {
             attributes.typeAttr = true;

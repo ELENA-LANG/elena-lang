@@ -28,7 +28,7 @@ enum Symbol
    nsEps                        = 0x00002,
 
    tsEof                        = 0x03003,               // terminals
-//   tsLiteral                    = 0x03004,
+   tsLiteral                    = 0x03004,
    tsIdentifier                 = 0x03005,
 //   tsPrivate                    = 0x03006,
    tsReference                  = 0x03007,
@@ -120,6 +120,7 @@ enum Symbol
    nsRetExpression              = 0x01066,
    nsImplicitMessage            = 0x01067,
    nsSize                       = 0x01068,
+   nsDynamicSize                = 0x01069,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

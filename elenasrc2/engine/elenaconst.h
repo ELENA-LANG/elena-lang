@@ -153,7 +153,7 @@ namespace _ELENA_
       //mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
 
       mskConstantRef         = 0x01000000u,   // reference to constant
-//      mskLiteralRef          = 0x02000000u,   // reference to constant literal
+      mskLiteralRef          = 0x02000000u,   // reference to constant literal
       mskInt32Ref            = 0x03000000u,   // reference to constant integer number
 //      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
 //      mskRealRef             = 0x05000000u,   // reference to constant real number
@@ -277,7 +277,7 @@ namespace _ELENA_
   // --- ELENA VMT flags ---
    const int elStandartVMT         = 0x00000001;
    const int elNestedClass         = 0x00000002;
-//   const int elDynamicRole         = 0x00000004;
+   const int elDynamicRole         = 0x00000004;
    const int elStructureRole       = 0x00000008;
 //   const int elAbstract            = 0x00000010;
    const int elClosed              = 0x00000020;
@@ -503,7 +503,7 @@ namespace _ELENA_
    #define INT_FORWARD              "$int"
 //   #define LONG_FORWARD             "$long"
 //   #define REAL_FORWARD             "$real"
-//   #define STR_FORWARD              "$literal"
+   #define STR_FORWARD              "$literal"
 //   #define WIDESTR_FORWARD          "$wideliteral"
 //   #define CHAR_FORWARD             "$char"
    #define MESSAGE_FORWARD          "$message"

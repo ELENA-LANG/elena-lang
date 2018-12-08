@@ -313,20 +313,20 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 
    LexicalType type = (LexicalType)(terminal.symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask);
 
-//   if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
-//      // try to use local storage if the quote is not too big
-//      if (getlength(terminal.value) < 0x100) {
-//         QuoteTemplate<IdentifierString> quote(terminal.value);
-//
-//         _writer.newNode(type, quote.ident());
-//      }
-//      else {
-//         QuoteTemplate<DynamicString<char> > quote(terminal.value);
-//
-//         _writer.newNode(type, quote.ident());
-//      }
-//   }
-   /*else*/ _cacheWriter.newNode(type, terminal.value);
+   if (terminal==tsLiteral/* || terminal==tsCharacter || terminal==tsWide*/) {
+      // try to use local storage if the quote is not too big
+      if (getlength(terminal.value) < 0x100) {
+         QuoteTemplate<IdentifierString> quote(terminal.value);
+
+         _cacheWriter.newNode(type, quote.ident());
+      }
+      else {
+         QuoteTemplate<DynamicString<char> > quote(terminal.value);
+
+         _cacheWriter.newNode(type, quote.ident());
+      }
+   }
+   else _cacheWriter.newNode(type, terminal.value);
 
    _cacheWriter.appendNode(lxCol, terminal.col);
    _cacheWriter.appendNode(lxRow, terminal.row);
@@ -681,27 +681,35 @@ void DerivationWriter :: recognizeScope()
    }
 }
 
-ref_t DerivationWriter :: mapAttribute(SNode node/*, bool& templateParam*/)
+ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType/*, bool& templateParam*/)
 {
    if (node == lxIdentifier) {
       ident_t token = node.identifier();
 
-      return _scope->attributes.get(token);
+      ref_t ref = _scope->attributes.get(token);
+      if (!isPrimitiveRef(ref) && !allowType)
+         _scope->raiseError(errInvalidHint, _filePath, node);
+
+      return ref;
    }
-   else if (node.existChild(lxToken)) {
-      return V_TEMPLATE;
-   }
-   //else if (node.existChild(lxToken)) {
-   //   return V_PRIMARRAY;
-   //}
    else {
+      bool tokenNode = node.existChild(lxToken);
+      bool sizeNode = node.existChild(lxDynamicSizeDecl);
+      if (!allowType && (tokenNode || sizeNode))
+         _scope->raiseError(errInvalidHint, _filePath, node);
+
+      if (tokenNode)
+         return V_TEMPLATE;
+
       SNode terminal = node.firstChild(lxTerminalMask);
 
       ident_t token = terminal.identifier();
-      //      //      if (emptystr(token))
-      //      //         token = terminal.findChild(lxTerminal).identifier();
 
-      return _scope->attributes.get(token);
+      ref_t ref = _scope->attributes.get(token);
+      if (!isPrimitiveRef(ref) && !allowType)
+         _scope->raiseError(errInvalidHint, _filePath, node);
+
+      return ref;
    }
 }
 
@@ -734,11 +742,12 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
 
    bool privateOne = true;
    bool visibilitySet = false;
+   bool allowType = true;
    while (current == lxToken/*, lxRefAttribute*/) {
    //      if (current == lxAttribute) {
    //         bool templateParam = false;
-      ref_t attrRef = mapAttribute(current/*, templateParam*/);
-      if (attrRef) {
+      ref_t attrRef = mapAttribute(current, allowType/*, templateParam*/);
+      if (isPrimitiveRef(attrRef)) {
          current.set(lxAttribute, attrRef);
          if (test(mode, MODE_ROOT) && (attrRef == V_PUBLIC || attrRef == V_INTERNAL)) {
             // the symbol visibility should be provided only once
@@ -749,15 +758,12 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
             else _scope->raiseError(errInvalidHint, _filePath, current);
          }
       }
-      else if (current.nextNode() == lxNameAttr) {
-         current.set(lxAttribute, V_TYPE);
+      else if (attrRef != 0 || allowType) {
+         current.set(lxTarget, attrRef);
       }
       else _scope->raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, _filePath, current);
-   //
-   //         if (templateParam) {
-   //            // ignore template attributes
-   //         }
-   //      }
+
+      allowType = false;
       current = current.prevNode();
    }
    
@@ -983,7 +989,6 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node/*, 
             writer.newNode(lxAttribute, current.argument);
             copyIdentifier(writer, current.findChild(lxIdentifier));
             writer.closeNode();
-//
 //            if (templateMode) {
 //               if (current.argument == V_ACCESSOR) {
 //                  // HOTFIX : recognize virtual property template
@@ -1020,6 +1025,15 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node/*, 
 //         
 //         writer.closeNode();
 //      }
+      else if (current == lxTarget) {
+         writer.newNode(lxTarget, current.argument);
+         copyIdentifier(writer, current.findChild(lxIdentifier));
+         writer.closeNode();
+
+         if (current.existChild(lxDynamicSizeDecl)) {
+            writer.appendNode(lxSize, -1);
+         }
+      }
       else break;
 
       current = current.prevNode();
@@ -1257,27 +1271,25 @@ inline bool isTypeExpressionAttribute(SNode current)
 
 void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, bool templateArgMode)
 {
-   ref_t attrRef = mapAttribute(current);
+   bool allowType = templateArgMode || current.nextNode().nextNode() != lxToken;
+   ref_t attrRef = mapAttribute(current, allowType);
+   LexicalType attrType;
+   if (isPrimitiveRef(attrRef)) {
+      attrType = lxAttribute;
+   }
+   else attrType = lxTarget;
 
-   if (attrRef == 0 && (templateArgMode || isTypeExpressionAttribute(current))) {
-      // if it is a type attribute
-      attrRef = V_TYPE;
+   writer.insert(0, lxEnding, 0);
+   if (attrRef == V_TEMPLATE) {
+      // copy the template parameters
+      generateExpressionAttribute(writer, current.findChild(lxToken), true);
    }
 
-   if (attrRef != 0) {
-      writer.insert(0, lxEnding, 0);
-      if (attrRef == V_TEMPLATE) {
-         // copy the template parameters
-         generateExpressionAttribute(writer, current.findChild(lxToken), true);
-      }
-
-      if (current == lxToken) {
-         insertIdentifier(writer, current.firstChild(lxTerminalMask));
-      }
-      else insertIdentifier(writer, current);
-      writer.insert(0, lxAttribute, attrRef);
+   if (current == lxToken) {
+      insertIdentifier(writer, current.firstChild(lxTerminalMask));
    }
-   else _scope->raiseError(errInvalidSyntax, _filePath, current); // !! temporal
+   else insertIdentifier(writer, current);
+   writer.insert(0, attrType, attrRef);
 }
 
 void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/, int mode)

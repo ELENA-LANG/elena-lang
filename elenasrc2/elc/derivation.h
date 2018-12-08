@@ -74,7 +74,7 @@ class DerivationWriter : public _DerivationWriter
 
    void saveScope(SyntaxWriter& writer);
 
-   ref_t mapAttribute(SNode terminal/*, bool& templateParam*/);
+   ref_t mapAttribute(SNode terminal, bool allowType/*, bool& templateParam*/);
    void declareAttribute(SNode node);
 
    void recognizeScope();

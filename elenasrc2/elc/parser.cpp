@@ -61,9 +61,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
    terminal.disp = info.position;
    terminal.length = info.length;
    switch (info.state) {
-    //  case dfaQuote:
-    //     terminal.symbol = tsLiteral;
-    //     break;
+      case dfaQuote:
+         terminal.symbol = tsLiteral;
+         break;
     //  case dfaCharacter:
     //     terminal.symbol = tsCharacter;
     //     break;

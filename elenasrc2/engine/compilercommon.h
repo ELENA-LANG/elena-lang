@@ -55,7 +55,7 @@
 //#define V_LIMITED        (ref_t)-8196
 #define V_STRUCT         (ref_t)-8197
 //#define V_ENUMLIST       (ref_t)-8198
-////#define V_DYNAMIC        (ref_t)-8199
+#define V_DYNAMIC        (ref_t)-8199
 //#define V_STRING         (ref_t)-8200
 #define V_CONST          (ref_t)-8201
 //#define V_GENERIC        (ref_t)-8202
@@ -212,7 +212,7 @@ struct _ModuleScope
 //   ref_t             messageReference;
 //   ref_t             extMessageReference;
 //   ref_t             boolReference;
-//   ref_t             literalReference;
+   ref_t             literalReference;
 //   ref_t             wideReference;
 //   ref_t             charReference;
 //   ref_t             arrayReference;
@@ -308,7 +308,7 @@ struct _ModuleScope
       debugModule = module = nullptr;
       intReference = /*boolReference = */superReference = 0;
 //      signatureReference = messageReference = 0;
-//      longReference = literalReference = wideReference = 0;
+      /*longReference = */literalReference = /*wideReference = */0;
 //      arrayReference = charReference = realReference = 0;
 //      closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
