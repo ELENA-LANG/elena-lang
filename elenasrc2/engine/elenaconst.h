@@ -512,7 +512,7 @@ namespace _ELENA_
 //   #define ARRAY_FORWARD            "$array"
 //   #define BOOL_FORWARD             "$bool"
 //   #define REFTEMPLATE_FORWARD      "$reference"
-//   #define CLOSURETEMPLATE_FORWARD  "$closure"
+   #define CLOSURETEMPLATE_FORWARD  "$closure"
 //   #define ARRAYTEMPLATE_FORWARD    "$parray"
 
    #define PROGRAM_ENTRY            "$program"                     // the program entry

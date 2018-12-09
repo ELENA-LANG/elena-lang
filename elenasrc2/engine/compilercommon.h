@@ -67,7 +67,7 @@
 #define V_PRELOADED      (ref_t)-8207
 #define V_SINGLETON      (ref_t)-8208
 ////#define V_TAPEGROUP      (ref_t)-8209
-//#define V_ABSTRACT       (ref_t)-8210
+#define V_ABSTRACT       (ref_t)-8210
 #define V_PUBLIC         (ref_t)-8211
 //#define V_PRIVATE        (ref_t)-8212
 #define V_INTERNAL       (ref_t)-8213
@@ -179,8 +179,8 @@ public:
    virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
-//// class forward declaration
-//class _Compiler;
+// class forward declaration
+class _Compiler;
 
 // --- _ModuleScope ---
 
@@ -219,7 +219,7 @@ struct _ModuleScope
 //   ref_t             arrayReference;
 //   ref_t             refTemplateReference;
 //   ref_t             arrayTemplateReference;
-//   ref_t             closureTemplateReference;
+   ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
 //
    // cached messages
@@ -255,7 +255,7 @@ struct _ModuleScope
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode) = 0;
 
-//   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensionsToExport) = 0;
+   virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage/*, ref_t outputRef, ExtensionMap* extensionsToExport*/) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
@@ -311,7 +311,7 @@ struct _ModuleScope
 //      signatureReference = messageReference = 0;
       /*longReference = */literalReference = /*wideReference = */0;
 //      arrayReference = charReference = realReference = 0;
-//      closureTemplateReference = refTemplateReference = 0;
+      closureTemplateReference = /*refTemplateReference = */0;
 //      lazyExprReference = extMessageReference = 0;
 //      arrayTemplateReference = 0;
 

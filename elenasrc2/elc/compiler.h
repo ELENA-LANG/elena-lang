@@ -919,11 +919,11 @@ private:
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef);
    void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, ref_t& outputRef);
-//   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
-//
+   /*bool*/void declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
+
 ////   void declareSingletonClass(SNode node, ClassScope& scope);
-//
-//   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+
+   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false, bool withOpenArgGenerics = false*/);
 
@@ -942,7 +942,7 @@ private:
 //   void compilePreloadedCode(_CompilerScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
-//   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
+   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
    void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope);

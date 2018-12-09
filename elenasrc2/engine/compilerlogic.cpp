@@ -1719,9 +1719,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_SET:
 //         attrValue = tpAccessor;
 //         return true;
-//      case V_ABSTRACT:
-//         attrValue = tpAbstract;
-//         return true;
+      case V_ABSTRACT:
+         attrValue = tpAbstract;
+         return true;
 //      case V_PREDEFINED:
 //         attrValue = tpPredefined;
 //         return true;

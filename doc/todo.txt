@@ -3,6 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * implement a ? b, a ? b : c, a ? {}, a ? {} : {}
+
                  * test all possible syntax combintions 
                  * support c style return statement - return x;
 

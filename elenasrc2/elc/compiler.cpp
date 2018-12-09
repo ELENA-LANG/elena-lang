@@ -24,7 +24,7 @@ using namespace _ELENA_;
 //}
 
 // --- Hint constants ---
-//#define HINT_CLOSURE_MASK     0xC0008800
+constexpr auto HINT_CLOSURE_MASK    = 0xC0008800;
 
 constexpr auto HINT_ROOT            = 0x80000000;
 constexpr auto HINT_ROOTSYMBOL      = 0xC0000000;
@@ -2326,26 +2326,23 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //      result = compileCollection(writer, node.parentNode(), scope);
 //   }
 //   else {
-//      SNode member = node.findChild(lxCode, lxNestedClass/*, lxMessageReference, lxExpression, lxLazyExpression, lxBoxing*/);
+      SNode member = node.findChild(lxCode/*, lxNestedClass*/);
       switch (node.type) {
          case lxNestedClass:
-            result = compileClosure(writer, node, scope, mode/* & HINT_CLOSURE_MASK*/);
+            result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
             break;
 //            ////      case lxNestedClass:
 //         case lxLazyExpression:
 //            result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
 //            break;
-//            ////      case lxCode:
-//            ////         result = compileClosure(writer, objectNode, scope, mode & HINT_CLOSURE_MASK);
-//            ////         break;
          case lxExpression:
-//            if (member == lxCode) {
-//               result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
-//            }
+            if (member == lxCode) {
+               result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
+            }
 //            else if (member == lxNestedClass) {
 //               result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
 //            }
-            /*else */result = compileExpression(writer, node, scope, targetRef, mode/* & HINT_CLOSURE_MASK*/);
+            else result = compileExpression(writer, node, scope, targetRef, mode & HINT_CLOSURE_MASK);
             break;
 //         case lxBoxing:
 //            result = compileBoxingExpression(writer, node, scope, mode);
@@ -3423,100 +3420,101 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 //
 //   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE, 0);
 //}
-//
-//bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode)
-//{
-//   bool lazyExpression = test(mode, HINT_LAZY_EXPR);
-//
-//   methodScope.message = encodeAction(lazyExpression ? EVAL_MESSAGE_ID : INVOKE_MESSAGE_ID);
-//
-//   ref_t outputRef = 0;
-//   if (argNode != lxNone) {
-//      // define message parameter
-//      methodScope.message = declareInlineArgumentList(argNode, methodScope, outputRef);
+
+/*bool*/void Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode)
+{
+   //bool lazyExpression = test(mode, HINT_LAZY_EXPR);
+
+   ref_t invokeAction = scope.module->mapAction(INVOKE_MESSAGE, 0, false);
+   methodScope.message = encodeMessage(/*lazyExpression ? EVAL_MESSAGE_ID : */invokeAction, 0, SPECIAL_MESSAGE);
+
+   //ref_t outputRef = 0;
+   //if (argNode != lxNone) {
+   //   // define message parameter
+   //   methodScope.message = declareInlineArgumentList(argNode, methodScope, outputRef);
+   //}
+
+   ref_t parentRef = scope.info.header.parentRef;
+   //if (lazyExpression) {
+   //   parentRef = scope.moduleScope->lazyExprReference;
+   //}
+   //else {
+      NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+      ref_t closureRef = scope.moduleScope->resolveClosure(*this, methodScope.message/*, outputRef, &nsScope->extensions*/);
+//      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
+      if (closureRef) {
+         parentRef = closureRef;
+      }
+      else throw InternalError(errClosureError);
+   //}
+
+   compileParentDeclaration(SNode(), scope, parentRef);
+
+   //return lazyExpression;
+}
+
+void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int mode)
+{
+   SyntaxTree expressionTree;
+   SyntaxWriter writer(expressionTree);
+
+   writer.newNode(lxClass, scope.reference);
+
+   MethodScope methodScope(&scope);
+   /*bool lazyExpression = */declareActionScope(scope, argNode, methodScope, mode);
+
+   methodScope.closureMode = true;
+
+   scope.include(methodScope.message);
+   scope.addHint(methodScope.message, tpAction);
+
+   // exclude abstract flag if presented
+   scope.removeHint(methodScope.message, tpAbstract);
+
+   //// HOTFIX : if the closure emulates code brackets
+   //if (test(mode, HINT_SUBCODE_CLOSURE))
+   //   methodScope.subCodeMode = true;
+
+   // if it is single expression
+   //if (!lazyExpression) {
+      initialize(scope, methodScope);
+
+      compileActionMethod(writer, node, methodScope);
+   //}
+   //else compileLazyExpressionMethod(writer, node, methodScope);
+
+   //if (node.existChild(lxTypeAttr)) {
+   //   // inject a virtual invoke multi-method if required
+   //   SyntaxTree virtualTree;
+   //   virtualTree.insertNode(0, lxClass, 0);
+
+   //   List<ref_t> implicitMultimethods;
+   //   implicitMultimethods.add(encodeMessage(INVOKE_MESSAGE_ID, getAbsoluteParamCount(methodScope.message)));
+
+   //   _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), scope.info, *this, implicitMultimethods, lxClassMethod);
+
+   //   generateClassDeclaration(virtualTree.readRoot(), scope, ClassType::ctNone);
+
+   //   compileVMT(writer, virtualTree.readRoot(), scope);
+   //}
+   //else {
+      generateClassDeclaration(SNode(), scope, ClassType::ctClass);
+
+      //if (test(scope.info.header.flags, elWithMuti)) {
+      //   // HOTFIX: temporally the closure does not generate virtual multi-method
+      //   // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
+      //   scope.info.header.flags &= ~elSealed;
+      //   scope.info.header.flags |= elClosed;
+      //}
 //   }
-//
-//   ref_t parentRef = scope.info.header.parentRef;
-//   if (lazyExpression) {
-//      parentRef = scope.moduleScope->lazyExprReference;
-//   }
-//   else {
-//      NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//
-//      ref_t closureRef = scope.moduleScope->resolveClosure(*this, methodScope.message, outputRef, &nsScope->extensions);
-////      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
-//      if (closureRef) {
-//         parentRef = closureRef;
-//      }
-//      else throw InternalError(errClosureError);
-//   }
-//
-//   compileParentDeclaration(SNode(), scope, parentRef);
-//
-//   return lazyExpression;
-//}
-//
-//void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int mode)
-//{
-//   SyntaxTree expressionTree;
-//   SyntaxWriter writer(expressionTree);
-//
-//   writer.newNode(lxClass, scope.reference);
-//
-//   MethodScope methodScope(&scope);
-//   bool lazyExpression = declareActionScope(scope, argNode, methodScope, mode);
-//
-//   methodScope.closureMode = true;
-//
-//   scope.include(methodScope.message);
-//   scope.addHint(methodScope.message, tpAction);
-//
-//   // exclude abstract flag if presented
-//   scope.removeHint(methodScope.message, tpAbstract);
-//
-//   // HOTFIX : if the closure emulates code brackets
-//   if (test(mode, HINT_SUBCODE_CLOSURE))
-//      methodScope.subCodeMode = true;
-//
-//   // if it is single expression
-//   if (!lazyExpression) {
-//      initialize(scope, methodScope);
-//
-//      compileActionMethod(writer, node, methodScope);
-//   }
-//   else compileLazyExpressionMethod(writer, node, methodScope);
-//
-//   if (node.existChild(lxTypeAttr)) {
-//      // inject a virtual invoke multi-method if required
-//      SyntaxTree virtualTree;
-//      virtualTree.insertNode(0, lxClass, 0);
-//
-//      List<ref_t> implicitMultimethods;
-//      implicitMultimethods.add(encodeMessage(INVOKE_MESSAGE_ID, getAbsoluteParamCount(methodScope.message)));
-//
-//      _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), scope.info, *this, implicitMultimethods, lxClassMethod);
-//
-//      generateClassDeclaration(virtualTree.readRoot(), scope, ClassType::ctNone);
-//
-//      compileVMT(writer, virtualTree.readRoot(), scope);
-//   }
-//   else {
-//      generateClassDeclaration(SNode(), scope, ClassType::ctNone);
-//
-//      if (test(scope.info.header.flags, elWithMuti)) {
-//         // HOTFIX: temporally the closure does not generate virtual multi-method
-//         // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
-//         scope.info.header.flags &= ~elSealed;
-//         scope.info.header.flags |= elClosed;
-//      }
-//   }
-//
-//   writer.closeNode();
-//
-//   scope.save();
-//
-//   generateClassImplementation(expressionTree.readRoot(), scope);
-//}
+
+   writer.closeNode();
+
+   scope.save();
+
+   generateClassImplementation(expressionTree.readRoot(), scope);
+}
 
 void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 {
@@ -3678,7 +3676,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       if (owner) {
          nestedRef = owner->reference;
          // HOTFIX : symbol should refer to self and $self for singleton closure
-     //    singleton = node.existChild(lxCode);
+         //singleton = node.existChild(lxCode);
       }
    }
    if (!nestedRef) {
@@ -3688,14 +3686,14 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 
    InlineClassScope scope(&ownerScope, nestedRef);
 
-//   // if it is a lazy expression / multi-statement closure without parameters
-//   SNode argNode = node.firstChild();
+   // if it is a lazy expression / multi-statement closure without parameters
+   SNode argNode = node.firstChild();
 //   if (node == lxLazyExpression) {
 //      compileAction(node, scope, SNode(), HINT_LAZY_EXPR);
 //   }
-//   else if (argNode == lxCode) {
-//      compileAction(node, scope, SNode(), singleton ? mode | HINT_SINGLETON : mode);
-//   }
+   /*else */if (argNode == lxCode) {
+      compileAction(node, scope, SNode(), /*singleton ? mode | HINT_SINGLETON : */mode);
+   }
 //   else if (node.existChild(lxCode)) {
 //      SNode codeNode = node.findChild(lxCode);
 //
@@ -3710,7 +3708,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 //      codeNode = lxIdle;
 //   }
    // if it is a nested class
-   /*else */compileNestedVMT(node, scope);
+   else compileNestedVMT(node, scope);
 
    return compileClosure(writer, node, ownerScope, scope);
 }
@@ -4979,38 +4977,38 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
    writer.closeNode();
 }
 
-//void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   declareParameterDebugInfo(writer, node, scope, false/*, false*/);
-//
-//   CodeScope codeScope(&scope);
-//
-//   SNode body = node.findChild(lxCode, lxReturning);
-////   if (body == lxReturning) {
-////      // HOTFIX : if it is an returning expression, inject returning node
-////      SNode expr = body.findChild(lxExpression);
-////      expr = lxReturning;
-////   }
-//
-//   writer.newNode(lxNewFrame);
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   codeScope.level++;
-//
-//   compileCode(writer, body == lxReturning ? node : body, codeScope);
-//
-//   writer.closeNode();
-//
-//   writer.appendNode(lxParamCount, scope.parameters.Count()); // NOTE : the message target is not included into the stack for closure!!
-//   writer.appendNode(lxReserved, scope.reserved);
-//   writer.appendNode(lxAllocated, codeScope.level - 1);  // allocate the space for the local variables excluding "this" one
-//
-//   writer.closeNode();
-//}
-//
+void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   declareParameterDebugInfo(writer, node, scope, false/*, false*/);
+
+   CodeScope codeScope(&scope);
+
+   SNode body = node.findChild(lxCode, lxReturning);
+//   if (body == lxReturning) {
+//      // HOTFIX : if it is an returning expression, inject returning node
+//      SNode expr = body.findChild(lxExpression);
+//      expr = lxReturning;
+//   }
+
+   writer.newNode(lxNewFrame);
+
+   // new stack frame
+   // stack already contains previous $self value
+   codeScope.level++;
+
+   compileCode(writer, body == lxReturning ? node : body, codeScope);
+
+   writer.closeNode();
+
+   writer.appendNode(lxParamCount, scope.parameters.Count()); // NOTE : the message target is not included into the stack for closure!!
+   writer.appendNode(lxReserved, scope.reserved);
+   writer.appendNode(lxAllocated, codeScope.level - 1);  // allocate the space for the local variables excluding "this" one
+
+   writer.closeNode();
+}
+
 //void Compiler :: compileLazyExpressionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 //{
 //   writer.newNode(lxClassMethod, scope.message);
@@ -7949,17 +7947,17 @@ inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t
    else return 0;
 }
 
-//inline ref_t safeMapWeakReference(_Module* module, ident_t referenceName)
-//{
-//   if (!emptystr(referenceName)) {
-//      // HOTFIX : for the standard module the references should be mapped forcefully
-//      if (module->Name().compare(STANDARD_MODULE)) {
-//         return module->mapReference(referenceName + getlength(module->Name()), false);
-//      }
-//      else return module->mapReference(referenceName, false);
-//   }
-//   else return 0;
-//}
+inline ref_t safeMapWeakReference(_Module* module, ident_t referenceName)
+{
+   if (!emptystr(referenceName)) {
+      // HOTFIX : for the standard module the references should be mapped forcefully
+      if (module->Name().compare(STANDARD_MODULE)) {
+         return module->mapReference(referenceName + getlength(module->Name()), false);
+      }
+      else return module->mapReference(referenceName, false);
+   }
+   else return 0;
+}
 
 void Compiler :: loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes)
 {
@@ -8012,7 +8010,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.signatureReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SIGNATURE_FORWARD));
 //   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
 //   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
-//   scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
+   scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
 
    // cache the frequently used messages
    scope.dispatch_message = encodeAction(scope.module->mapAction(DISPATCH_MESSAGE, 0, false));

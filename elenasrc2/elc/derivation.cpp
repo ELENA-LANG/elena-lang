@@ -1268,6 +1268,36 @@ void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node/*, De
    writer.closeNode();
 }
 
+void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode current)
+{
+   generateCodeTree(writer, current);
+//   if (current == lxReturning) {
+//      writer.closeNode();
+//   }
+//   else if (scope.type == DerivationScope::ttCodeTemplate && checkFirstNode(current, lxEOF)) {
+//      if (test(scope.mode, daDblBlock)) {
+//         if (scope.codeNode == lxNone) {
+//            writer.insert(lxTemplateParam);
+//            writer.closeNode();
+//
+//            scope.codeNode = current;
+//         }
+//         else {
+//            writer.insert(lxTemplateParam, 3);
+//            writer.closeNode();
+//
+//            scope.codeNode = SNode();
+//         }
+//      }
+//      else if (test(scope.mode, daBlock)) {
+//         writer.insert(lxTemplateParam);
+//         writer.closeNode();
+//      }
+//   }
+   writer.insert(lxExpression);
+   writer.closeNode();
+}
+
 inline bool isTypeExpressionAttribute(SNode current)
 {
    return current.nextNode() == lxToken && current.nextNode().nextNode() != lxToken;
@@ -1358,6 +1388,10 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             //         }
             //         writer.insert(lxExpression);
             //         writer.closeNode();
+            break;
+         case lxCode:
+            first = false;
+            generateCodeExpression(writer, current);
             break;
          default:
             if (isTerminal(current.type)) {
@@ -1513,10 +1547,6 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
 //            writer.appendNode(lxAssign);
 //            generateExpressionTree(writer, current, scope);
 //            expressionExpected = true;
-//            break;
-//         case lxCode:
-//            first = false;
-//            generateCodeExpression(writer, current, scope);
 //            break;
 //         case lxExtension:
 //            writer.newNode(current.type, current.argument);

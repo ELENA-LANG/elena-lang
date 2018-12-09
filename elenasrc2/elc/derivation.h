@@ -99,6 +99,7 @@ class DerivationWriter : public _DerivationWriter
    void generateAttributes(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/);
    void generateExpressionAttribute(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/, bool templateArgMode = false);
    void generateExpressionTree(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/, int mode = 0);
+   void generateCodeExpression(SyntaxWriter& writer, SNode node);
 
    void declareType(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/);
 
@@ -316,7 +317,6 @@ class TemplateGenerator //: public _DerivationTransformer
 //     void generateMessageTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   bool generateFieldTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SyntaxTree& buffer, bool templateMode = false);
-//   void generateCodeExpression(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateObjectTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, int mode = 0);
 //   void generateAssignmentOperator(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateTemplateParameters(SNode& node, DerivationScope& scope, bool templateMode);

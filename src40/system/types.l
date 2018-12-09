@@ -25,7 +25,7 @@
 ////nonstructural   = #8204.
 //import          = #16395.
 #16396 = extern;
-//closure         = #8205.
+#8205  = closure;
 //mixin           = #8206.
 //__accessor      = #16399.
 //__block         = #16400.
@@ -34,8 +34,8 @@
 #16387 = cast;
 #16404 = new;
 //set             = #16402.  
-//
-//abstract        = #8210. 
+
+#8210  = abstract;
 #8211  = public;
 //private         = #8212.
 #8213  = internal;

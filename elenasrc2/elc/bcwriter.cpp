@@ -5868,10 +5868,10 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
 
             generateMultiDispatching(tape, current, node.argument);
             break;
-//         case lxNil:
-//            // idle body;
-//            declareIdleMethod(tape, node.argument, sourcePathRef);
-//            break;
+         case lxNil:
+            // idle body;
+            declareIdleMethod(tape, node.argument, sourcePathRef);
+            break;
 //         default:
 //            if (test(current.type, lxExprMask)) {
 //               if (!open) {

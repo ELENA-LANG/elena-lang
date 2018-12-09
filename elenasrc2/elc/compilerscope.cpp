@@ -502,53 +502,53 @@ ref_t ModuleScope :: generateTemplate(/*_Compiler& compiler, */ref_t reference, 
    return 0;
 }
 
-//ref_t CompilerScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage, ref_t outputRef, ExtensionMap* extensions)
-//{
-//   ref_t signRef = 0;
-//   module->resolveAction(getAction(closureMessage), signRef);
-//
-//   int paramCount = getParamCount(closureMessage);
-//
-//   IdentifierString closureName(module->resolveReference(closureTemplateReference));
-//   if (signRef == 0) {
-//      if (paramCount > 0) {
-//         closureName.appendInt(paramCount);
-//      }
-//
-//      if (isWeakReference(closureName)) {
-//         return module->mapReference(closureName, true);
-//      }
-//      else return mapFullReference(closureName, true);
-//   }
-//   else {   
-//      ref_t signatures[OPEN_ARG_COUNT];
-//      size_t signLen = module->resolveSignature(signRef, signatures);
-//
-//      List<ref_t> parameters;
-//      for (size_t i = 0; i < signLen; i++) {
-//         parameters.add(signatures[i]);
-//      }
-//      if (outputRef) {
-//         parameters.add(outputRef);
-//      }
-//      // if the output signature is not provided - use the super class
-//      else parameters.add(superReference);
-//
-//      closureName.append('#');
-//      closureName.appendInt(paramCount + 1);
-//
-//      ref_t templateReference = 0;
-//      if (isWeakReference(closureName)) {
-//         templateReference = module->mapReference(closureName, true);
-//      }
-//      else templateReference = mapFullReference(closureName, true);
-//
-//      if (templateReference) {
-//         return generateTemplate(compiler, templateReference, parameters, extensions);
-//      }
-//      else return superReference;
-//   }
-//}
+ref_t ModuleScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage/*, ref_t outputRef, ExtensionMap* extensions*/)
+{
+   //ref_t signRef = 0;
+   //module->resolveAction(getAction(closureMessage), signRef);
+
+   int paramCount = getParamCount(closureMessage);
+
+   IdentifierString closureName(module->resolveReference(closureTemplateReference));
+   //if (signRef == 0) {
+      if (paramCount > 0) {
+         closureName.appendInt(paramCount);
+      }
+
+      if (isWeakReference(closureName)) {
+         return module->mapReference(closureName, true);
+      }
+      else return mapFullReference(closureName, true);
+   //}
+   //else {   
+   //   ref_t signatures[OPEN_ARG_COUNT];
+   //   size_t signLen = module->resolveSignature(signRef, signatures);
+
+   //   List<ref_t> parameters;
+   //   for (size_t i = 0; i < signLen; i++) {
+   //      parameters.add(signatures[i]);
+   //   }
+   //   if (outputRef) {
+   //      parameters.add(outputRef);
+   //   }
+   //   // if the output signature is not provided - use the super class
+   //   else parameters.add(superReference);
+
+   //   closureName.append('#');
+   //   closureName.appendInt(paramCount + 1);
+
+   //   ref_t templateReference = 0;
+   //   if (isWeakReference(closureName)) {
+   //      templateReference = module->mapReference(closureName, true);
+   //   }
+   //   else templateReference = mapFullReference(closureName, true);
+
+   //   if (templateReference) {
+   //      return generateTemplate(compiler, templateReference, parameters, extensions);
+   //   }
+   //   else return superReference;
+   //}
+}
 
 //void ModuleScope :: saveListMember(ident_t name, ident_t memberName)
 //{
