@@ -469,7 +469,7 @@ bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId
    if (!loperand)
       return false;
 
-   if (loperand != scope.branchingInfo.reference) {
+   if (!isCompatible(scope, scope.branchingInfo.reference, loperand)) {
       return false;
    }
 

@@ -17,7 +17,7 @@
 //generic         = #8202.
 #8194  = static;
 #16385 = var;
-//auto            = #50.
+#50    = auto;
 #8196  = interface;
 //field           = #16392.
 #16393 = method;
