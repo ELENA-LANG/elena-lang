@@ -59,6 +59,7 @@ enum LexicalType
    lxDynamicSizeDecl = 0x00069,
 
    lxTypecast        = 0x00100,
+   lxClosureExpr     = 0x00101,
 
 //   lxObject          = 0x00003,
 ////   lxAngleOperator   = 0x00005,
@@ -150,7 +151,7 @@ enum LexicalType
 //   lxTrying          = 0x0C00C,   // try-catch expression
 //   lxAlt             = 0x0C00D,   // alt-catch expression
 //   lxImplicitJump    = 0x0C00E,
-//   lxBranching       = 0x0C00F,   // branch expression      
+   lxBranching       = 0x0C00F,   // branch expression      
 //   lxSwitching       = 0x0C010,
 //   lxLooping         = 0x0C011,
 ////   lxThrowing        = 0x0C013,
@@ -159,14 +160,14 @@ enum LexicalType
    lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
-//   lxIfNot           = 0x0C019,   // optional arg - reference
+   lxIfNot           = 0x0C019,   // optional arg - reference
 //   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
-//   lxIfN             = 0x0C01B,   // arg - value
-//   lxIfNotN          = 0x0C01C,   // arg - value
-//   lxLessN           = 0x0C01D,   // arg - value
-//   lxNotLessN        = 0x0C01E,   // arg - value
-//   lxIf              = 0x0C01F,   // optional arg - reference
-//   lxElse            = 0x0C020,   // optional arg - reference
+   lxIfN             = 0x0C01B,   // arg - value
+   lxIfNotN          = 0x0C01C,   // arg - value
+   lxLessN           = 0x0C01D,   // arg - value
+   lxNotLessN        = 0x0C01E,   // arg - value
+   lxIf              = 0x0C01F,   // optional arg - reference
+   lxElse            = 0x0C020,   // optional arg - reference
 //   lxOption          = 0x0C021,
    lxFieldExpression = 0x0C022,
 //   lxExternFrame     = 0x04023,
@@ -180,10 +181,10 @@ enum LexicalType
 //   lxArgArrOp        = 0x8C02B,   // arg - operation id
 //   lxNilOp           = 0x8C02C,   // arg - operation id
 //   lxBoolOp          = 0x0C02D,   // arg - operation id
-//
-//   lxGreaterN        = 0x0C02E,   // arg - value
-//   lxNotGreaterN     = 0x0C02F,   // arg - value
-//
+
+   lxGreaterN        = 0x0C02E,   // arg - value
+   lxNotGreaterN     = 0x0C02F,   // arg - value
+
 //   lxIntArrOp        = 0x8C030,   // arg - operation id
    lxResendExpression= 0x0C031, 
 //   lxByteArrOp       = 0x8C032, // arg - operation id
@@ -191,7 +192,7 @@ enum LexicalType
 //////   lxReleasing       = 0x0C034,
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size
-//   lxIntOp           = 0x8C038,   // arg - operation id
+   lxIntOp           = 0x8C038,   // arg - operation id
 //   lxLongOp          = 0x8C039,   // arg - operation id
 //   lxRealOp          = 0x8C03A,   // arg - operation id
    lxMultiDispatching       = 0x0C03B,
@@ -199,7 +200,7 @@ enum LexicalType
 //   lxOverridden      = 0x04047,
 //
 //   lxAssignOperator  = 0x10024,
-//   lxOperator        = 0x10025,
+   lxOperator        = 0x10025,
 //   lxArrOperator     = 0x10026,
    lxIntVariable     = 0x10028,
 //   lxLongVariable    = 0x10029,
@@ -238,8 +239,8 @@ enum LexicalType
 //   lxClassName       = 0x20014, // arg - identifier
    lxIntValue        = 0x20015, // arg - integer value
    lxTempLocal       = 0x20016,
-//   lxIfValue         = 0x20017, // arg - reference
-//   lxElseValue       = 0x20018, // arg - reference
+   lxIfValue         = 0x20017, // arg - reference
+   lxElseValue       = 0x20018, // arg - reference
    lxSize            = 0x20019,
 //   lxTemplateParam   = 0x2001A,
 //   lxEmbeddable      = 0x2001B,
@@ -439,7 +440,7 @@ public:
       }
    };
 
-//   struct NodePattern;
+   struct NodePattern;
 
    // --- Node ---
    class Node
@@ -941,32 +942,32 @@ public:
       }
    };
 
-//   struct NodePattern
-//   {
-//      LexicalType type;
-//      LexicalType alt_type1;
-//
-//      bool match(Node node)
-//      {
-//         return node.type == type || node.type == alt_type1;
-//      }
-//
-//      NodePattern()
-//      {
-//         type = lxNone;
-//         alt_type1 = lxInvalid;
-//      }
-//      NodePattern(LexicalType type)
-//      {
-//         this->type = type;
-//         this->alt_type1 = lxInvalid;
-//      }
-//      NodePattern(LexicalType type1, LexicalType type2)
-//      {
-//         this->type = type1;
-//         this->alt_type1 = type2;
-//      }
-//   };
+   struct NodePattern
+   {
+      LexicalType type;
+      LexicalType alt_type1;
+
+      bool match(Node node)
+      {
+         return node.type == type || node.type == alt_type1;
+      }
+
+      NodePattern()
+      {
+         type = lxNone;
+         alt_type1 = lxInvalid;
+      }
+      NodePattern(LexicalType type)
+      {
+         this->type = type;
+         this->alt_type1 = lxInvalid;
+      }
+      NodePattern(LexicalType type1, LexicalType type2)
+      {
+         this->type = type1;
+         this->alt_type1 = type2;
+      }
+   };
 
 private:
    Node read(StreamReader& reader);
@@ -1085,7 +1086,7 @@ public:
       return counter;
    }
 
-   //static Node findPattern(Node node, int counter, ...);
+   static Node findPattern(Node node, int counter, ...);
    //static bool matchPattern(Node node, int mask, int counter, ...);
 
    static Node findTerminalInfo(Node node);
@@ -1157,7 +1158,7 @@ inline bool isSingleStatement(SyntaxTree::Node expr)
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
-//typedef SyntaxTree::NodePattern  SNodePattern;
+typedef SyntaxTree::NodePattern  SNodePattern;
 
 } // _ELENA_
 

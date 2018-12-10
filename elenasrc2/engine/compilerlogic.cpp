@@ -463,22 +463,21 @@ int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference,
 //
 //   return false;
 //}
-//
-//bool CompilerLogic :: resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference)
-//{
-//   if (!loperand)
-//      return false;
-//
-//   if (loperand != scope.branchingInfo.reference) {
-//      if (!loadBranchingInfo(scope, loperand))
-//         return false;
-//   }
-//
-//   reference = operatorId == IF_MESSAGE_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
-//
-//   return true;
-//}
-//
+
+bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference)
+{
+   if (!loperand)
+      return false;
+
+   if (loperand != scope.branchingInfo.reference) {
+      return false;
+   }
+
+   reference = operatorId == IF_OPERATOR_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
+
+   return true;
+}
+
 //int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
 //{
 //   if (isCompatible(scope, V_INT32, roperand)) {
@@ -2426,68 +2425,68 @@ bool CompilerLogic :: validateBoxing(_ModuleScope& scope, _Compiler& compiler, S
 //
 //   return false;
 //}
-//
-//void CompilerLogic :: optimizeBranchingOp(_CompilerScope&, SNode node)
-//{
-//   // check if direct comparision with a numeric constant is possible
-//   SNode ifOp = SyntaxTree::findPattern(node, 3,
-//      SNodePattern(lxExpression),
-//      SNodePattern(lxIntOp),
-//      SNodePattern(lxConstantInt));
-//
-//   if (ifOp != lxNone) {
-//      int arg = ifOp.findChild(lxIntValue).argument;
-//
-//      SNode intOpNode = node.findSubNode(lxIntOp);
-//      SNode ifNode = node.findChild(lxIf, lxElse);
-//      if (ifNode != lxNone) {
-//         SNode trueNode = intOpNode.findChild(ifNode == lxIf ? lxIfValue : lxElseValue);
-//
-//         if (ifOp.prevNode(lxObjectMask) == lxNone) {
-//            // if the numeric constant is the first operand
-//            if (intOpNode.argument == LESS_MESSAGE_ID) {
-//               intOpNode.argument = GREATER_MESSAGE_ID;
-//            }
-//            else if (intOpNode.argument == GREATER_MESSAGE_ID) {
-//               intOpNode.argument = LESS_MESSAGE_ID;
-//            }
-//         }
-//
-//         if (intOpNode.argument == EQUAL_MESSAGE_ID) {
-//            if (trueNode.argument == ifNode.argument) {
-//               ifNode.set(lxIfN, arg);
-//            }
-//            else if (trueNode.argument != ifNode.argument) {
-//               ifNode.set(lxIfNotN, arg);
-//            }
-//            else return;
-//         }
-//         else if (intOpNode.argument == LESS_MESSAGE_ID) {
-//            if (trueNode.argument != ifNode.argument) {
-//               ifNode.set(lxLessN, arg);
-//            }
-//            else if (trueNode.argument == ifNode.argument) {
-//               ifNode.set(lxNotLessN, arg);
-//            }
-//            else return;
-//         }
-//         else if (intOpNode.argument == GREATER_MESSAGE_ID) {
-//            if (trueNode.argument != ifNode.argument) {
-//               ifNode.set(lxGreaterN, arg);
-//            }
-//            else if (trueNode.argument == ifNode.argument) {
-//               ifNode.set(lxNotGreaterN, arg);
-//            }
-//            else return;
-//         }
-//         else return;
-//
-//         ifOp = lxIdle;
-//         intOpNode = lxExpression;
-//      }
-//   }
-//}
-//
+
+void CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode node)
+{
+   // check if direct comparision with a numeric constant is possible
+   SNode ifOp = SyntaxTree::findPattern(node, 3,
+      SNodePattern(lxExpression),
+      SNodePattern(lxIntOp),
+      SNodePattern(lxConstantInt));
+
+   if (ifOp != lxNone) {
+      int arg = ifOp.findChild(lxIntValue).argument;
+
+      SNode intOpNode = node.findSubNode(lxIntOp);
+      SNode ifNode = node.findChild(lxIf, lxElse);
+      if (ifNode != lxNone) {
+         SNode trueNode = intOpNode.findChild(ifNode == lxIf ? lxIfValue : lxElseValue);
+
+         if (ifOp.prevNode(lxObjectMask) == lxNone) {
+            // if the numeric constant is the first operand
+            if (intOpNode.argument == LESS_OPERATOR_ID) {
+               intOpNode.argument = GREATER_OPERATOR_ID;
+            }
+            else if (intOpNode.argument == GREATER_OPERATOR_ID) {
+               intOpNode.argument = LESS_OPERATOR_ID;
+            }
+         }
+
+         if (intOpNode.argument == EQUAL_OPERATOR_ID) {
+            if (trueNode.argument == ifNode.argument) {
+               ifNode.set(lxIfN, arg);
+            }
+            else if (trueNode.argument != ifNode.argument) {
+               ifNode.set(lxIfNotN, arg);
+            }
+            else return;
+         }
+         else if (intOpNode.argument == LESS_OPERATOR_ID) {
+            if (trueNode.argument != ifNode.argument) {
+               ifNode.set(lxLessN, arg);
+            }
+            else if (trueNode.argument == ifNode.argument) {
+               ifNode.set(lxNotLessN, arg);
+            }
+            else return;
+         }
+         else if (intOpNode.argument == GREATER_OPERATOR_ID) {
+            if (trueNode.argument != ifNode.argument) {
+               ifNode.set(lxGreaterN, arg);
+            }
+            else if (trueNode.argument == ifNode.argument) {
+               ifNode.set(lxNotGreaterN, arg);
+            }
+            else return;
+         }
+         else return;
+
+         ifOp = lxIdle;
+         intOpNode = lxExpression;
+      }
+   }
+}
+
 ////inline void readFirstSignature(ident_t signature, size_t& start, size_t& end, IdentifierString& temp)
 ////{
 ////   start = signature.find('$') + 1;

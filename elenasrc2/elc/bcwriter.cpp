@@ -316,28 +316,28 @@ void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
 //
 //   return end;
 //}
-//
-//void ByteCodeWriter :: declareThenBlock(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare then-end label
-//}
-//
-//void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare end label
-//   tape.newLabel();                  // declare else label
-//}
-//
-//void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
-//{
-//   //   jump end
-//   // labElse
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//
-//   tape.write(bcResetStack);
-//}
-//
+
+void ByteCodeWriter :: declareThenBlock(CommandTape& tape)
+{
+   tape.newLabel();                  // declare then-end label
+}
+
+void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
+{
+   tape.newLabel();                  // declare end label
+   tape.newLabel();                  // declare else label
+}
+
+void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
+{
+   //   jump end
+   // labElse
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+
+   tape.write(bcResetStack);
+}
+
 //void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
 //{
 //   tape.newLabel();                  // declare end label
@@ -1209,42 +1209,42 @@ void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int 
    tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount);
 }
 
-//void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode)
-//{
-//   if (!referenceMode) {
-//      tape.write(bcNLoad);
-//      tape.write(bcIfN, baCurrentLabel, comparingRef);
-//   }
-//   // ifr then-end, r
-//   else if (comparingRef == 0) {
-//      tape.write(bcIfR, baCurrentLabel, 0);
-//   }
-//   else tape.write(bcIfR, baCurrentLabel, comparingRef | mskConstantRef);
-//}
-//
-//void ByteCodeWriter :: jumpIfLess(CommandTape& tape, ref_t comparingRef)
-//{
-//   tape.write(bcNLoad);
-//   tape.write(bcLessN, baCurrentLabel, comparingRef);
-//}
-//
-//void ByteCodeWriter :: jumpIfNotLess(CommandTape& tape, ref_t comparingRef)
-//{
-//   tape.write(bcNLoad);
-//   tape.write(bcNotLessN, baCurrentLabel, comparingRef);
-//}
-//
-//void ByteCodeWriter :: jumpIfGreater(CommandTape& tape, ref_t comparingRef)
-//{
-//   tape.write(bcNLoad);
-//   tape.write(bcGreaterN, baCurrentLabel, comparingRef);
-//}
-//
-//void ByteCodeWriter :: jumpIfNotGreater(CommandTape& tape, ref_t comparingRef)
-//{
-//   tape.write(bcNLoad);
-//   tape.write(bcNotGreaterN, baCurrentLabel, comparingRef);
-//}
+void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode)
+{
+   if (!referenceMode) {
+      tape.write(bcNLoad);
+      tape.write(bcIfN, baCurrentLabel, comparingRef);
+   }
+   // ifr then-end, r
+   else if (comparingRef == 0) {
+      tape.write(bcIfR, baCurrentLabel, 0);
+   }
+   else tape.write(bcIfR, baCurrentLabel, comparingRef | mskConstantRef);
+}
+
+void ByteCodeWriter :: jumpIfLess(CommandTape& tape, ref_t comparingRef)
+{
+   tape.write(bcNLoad);
+   tape.write(bcLessN, baCurrentLabel, comparingRef);
+}
+
+void ByteCodeWriter :: jumpIfNotLess(CommandTape& tape, ref_t comparingRef)
+{
+   tape.write(bcNLoad);
+   tape.write(bcNotLessN, baCurrentLabel, comparingRef);
+}
+
+void ByteCodeWriter :: jumpIfGreater(CommandTape& tape, ref_t comparingRef)
+{
+   tape.write(bcNLoad);
+   tape.write(bcGreaterN, baCurrentLabel, comparingRef);
+}
+
+void ByteCodeWriter :: jumpIfNotGreater(CommandTape& tape, ref_t comparingRef)
+{
+   tape.write(bcNLoad);
+   tape.write(bcNotGreaterN, baCurrentLabel, comparingRef);
+}
 
 void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode, bool jumpToEnd)
 {
@@ -1286,15 +1286,15 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
 //   tape.setLabel();
 //   tape.write(bcFreeStack, 3);
 //}
-//
-//void ByteCodeWriter :: endThenBlock(CommandTape& tape)
-//{
-//   // then-end:
-//   //  scopyf  branch-level
-//
-//   tape.setLabel();
-//}
-//
+
+void ByteCodeWriter :: endThenBlock(CommandTape& tape)
+{
+   // then-end:
+   //  scopyf  branch-level
+
+   tape.setLabel();
+}
+
 //void ByteCodeWriter :: endLoop(CommandTape& tape)
 //{
 //   tape.write(bcJump, baPreviousLabel);
@@ -5149,80 +5149,80 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //
 //   endSwitchBlock(tape);
 //}
-//
-//void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool switchBranching = node.argument == -1;
-//
-//   if (switchBranching) {
-//      // labels already declared in the case of switch
-//   }
-//   else if (node.existChild(lxElse)) {
-//      declareThenElseBlock(tape);
-//   }
-//   else declareThenBlock(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
-//         case lxIf:
-//         case lxIfN:
-//            jumpIfNotEqual(tape, current.argument, current == lxIf);
-//
-//            //declareBlock(tape);
-//            generateCodeBlock(tape, current.findSubNode(lxCode));
-//            break;
-//         case lxIfNot:
-//         case lxIfNotN:
-//            jumpIfEqual(tape, current.argument, current == lxIfNot);
-//
-//            //declareBlock(tape);
-//            generateCodeBlock(tape, current.findSubNode(lxCode));
-//            break;
-//         case lxLessN:
-//            jumpIfLess(tape, current.argument);
-//
-//            //declareBlock(tape);
-//            generateCodeBlock(tape, current.findSubNode(lxCode));
-//            break;
-//         case lxNotLessN:
-//            jumpIfNotLess(tape, current.argument);
-//
-//            //declareBlock(tape);
-//            generateCodeBlock(tape, current.findSubNode(lxCode));
-//            break;
-//         case lxGreaterN:
-//            jumpIfGreater(tape, current.argument);
-//
-//            //declareBlock(tape);
-//            generateCodeBlock(tape, current.findSubNode(lxCode));
-//            break;
-//         case lxNotGreaterN:
-//            jumpIfNotGreater(tape, current.argument);
-//
-//            //declareBlock(tape);
-//            generateCodeBlock(tape, current.findSubNode(lxCode));
-//            break;
-//         case lxElse:
-//            declareElseBlock(tape);
-//
-//            //declareBlock(tape);
-//            generateCodeBlock(tape, current.findSubNode(lxCode));
-//            break;
-//         default:
-//            if (test(current.type, lxObjectMask))
-//               generateObjectExpression(tape, current, ACC_REQUIRED);
-//
-//            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   if(!switchBranching)
-//      endThenBlock(tape);
-//}
-//
+
+void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool switchBranching = node.argument == -1;
+
+   if (switchBranching) {
+      // labels already declared in the case of switch
+   }
+   else if (node.existChild(lxElse)) {
+      declareThenElseBlock(tape);
+   }
+   else declareThenBlock(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxIf:
+         case lxIfN:
+            jumpIfNotEqual(tape, current.argument, current == lxIf);
+
+            //declareBlock(tape);
+            generateCodeBlock(tape, current.findSubNode(lxCode));
+            break;
+         case lxIfNot:
+         case lxIfNotN:
+            jumpIfEqual(tape, current.argument, current == lxIfNot);
+
+            //declareBlock(tape);
+            generateCodeBlock(tape, current.findSubNode(lxCode));
+            break;
+         case lxLessN:
+            jumpIfLess(tape, current.argument);
+
+            //declareBlock(tape);
+            generateCodeBlock(tape, current.findSubNode(lxCode));
+            break;
+         case lxNotLessN:
+            jumpIfNotLess(tape, current.argument);
+
+            //declareBlock(tape);
+            generateCodeBlock(tape, current.findSubNode(lxCode));
+            break;
+         case lxGreaterN:
+            jumpIfGreater(tape, current.argument);
+
+            //declareBlock(tape);
+            generateCodeBlock(tape, current.findSubNode(lxCode));
+            break;
+         case lxNotGreaterN:
+            jumpIfNotGreater(tape, current.argument);
+
+            //declareBlock(tape);
+            generateCodeBlock(tape, current.findSubNode(lxCode));
+            break;
+         case lxElse:
+            declareElseBlock(tape);
+
+            //declareBlock(tape);
+            generateCodeBlock(tape, current.findSubNode(lxCode));
+            break;
+         default:
+            if (test(current.type, lxObjectMask))
+               generateObject(tape, current, ACC_REQUIRED);
+
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   if(!switchBranching)
+      endThenBlock(tape);
+}
+
 //inline SNode goToNode(SNode current, LexicalType type)
 //{
 //   while (current != lxNone && current != type)
@@ -5426,9 +5426,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxAssigning:
          generateAssigningExpression(tape, node, mode);
          break;
-//      case lxBranching:
-//         generateBranching(tape, node);
-//         break;
+      case lxBranching:
+         generateBranching(tape, node);
+         break;
 //      case lxSwitching:
 //         generateSwitching(tape, node);
 //         break;

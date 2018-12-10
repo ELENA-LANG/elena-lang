@@ -115,7 +115,7 @@ enum Symbol
 //   nsL1Operator                 = 0x01061,
 //   nsL2Operator                 = 0x01062,
 //   nsL3Operator                 = 0x01063,
-//   nsL4Operator                 = 0x01064,
+   nsL4Operator                 = 0x01064,
 //   nsClosingOperator            = 0x01065,
    nsRetExpression              = 0x01066,
    nsImplicitMessage            = 0x01067,

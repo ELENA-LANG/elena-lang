@@ -126,9 +126,9 @@ class ByteCodeWriter
    void declareVariable(CommandTape& tape, int value);
    void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
-//   void declareThenBlock(CommandTape& tape);
-//   void declareThenElseBlock(CommandTape& tape);
-//   void declareElseBlock(CommandTape& tape);
+   void declareThenBlock(CommandTape& tape);
+   void declareThenElseBlock(CommandTape& tape);
+   void declareElseBlock(CommandTape& tape);
 //   void declareSwitchBlock(CommandTape& tape);
 //   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
@@ -198,11 +198,11 @@ class ByteCodeWriter
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
    void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
 
-//   void jumpIfLess(CommandTape& tape, ref_t ref);
-//   void jumpIfNotLess(CommandTape& tape, ref_t ref);
-//   void jumpIfGreater(CommandTape& tape, ref_t ref);
-//   void jumpIfNotGreater(CommandTape& tape, ref_t ref);
-//   void jumpIfEqual(CommandTape& tape, ref_t ref, bool referenceMode);
+   void jumpIfLess(CommandTape& tape, ref_t ref);
+   void jumpIfNotLess(CommandTape& tape, ref_t ref);
+   void jumpIfGreater(CommandTape& tape, ref_t ref);
+   void jumpIfNotGreater(CommandTape& tape, ref_t ref);
+   void jumpIfEqual(CommandTape& tape, ref_t ref, bool referenceMode);
    void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode, bool jumpToEnd = false);
 
 ////   void throwCurrent(CommandTape& tape);
@@ -219,7 +219,7 @@ class ByteCodeWriter
 
    void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
-//   void endThenBlock(CommandTape& tape);
+   void endThenBlock(CommandTape& tape);
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
    void endExternalBlock(CommandTape& tape, bool idle = false);
@@ -299,7 +299,7 @@ class ByteCodeWriter
 //   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
 //   void generateLooping(CommandTape& tape, SyntaxTree::Node node);
-//   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
+   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);

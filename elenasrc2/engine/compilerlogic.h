@@ -100,7 +100,7 @@ public:
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
-//   virtual bool resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference);
+   virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference);
 //   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
    virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t reference);
 
@@ -198,7 +198,7 @@ public:
 //   virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope);
 //   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
 //   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node);
-//   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node);
+   virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node);
 
    virtual bool validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired);
 

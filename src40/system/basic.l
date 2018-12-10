@@ -82,9 +82,9 @@
 /// A true value symbol
 public sealed singleton true : BoolValue
 {
-//    /// Executes the action
-//    __ifoperator if : aTrueAction = aTrueAction().
-//
+    /// Executes the action
+    if(trueAction) = trueAction();
+
 //    /// Executes then-action
 //    if:aTrueAction else:aFalseAction = aTrueAction().
 //
@@ -130,9 +130,9 @@ public sealed singleton true : BoolValue
 /// A false value symbol
 public sealed singleton false : BoolValue
 {
-//    /// Always returns nil
-//    __ifnotoperator if : anAction = nil.
-//    
+    /// Always returns nil
+    if(trueAction) = nil;
+    
 //    /// Executes else-action
 //    if:aTrueAction else:aFalseAction = aFalseAction().
 //

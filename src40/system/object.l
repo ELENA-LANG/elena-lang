@@ -34,9 +34,9 @@ public /*enum */interface class BoolValue
 //        = false.
 //        
 //    abstract bool equal(bool aBool) []
-//
-//    abstract if : aTrueAction []
-//
+
+    abstract if(trueAction) {}
+
 //    abstract if:aTrueAction else:aFalseAction []
 //
 //    abstract ifnot : aTrueAction []

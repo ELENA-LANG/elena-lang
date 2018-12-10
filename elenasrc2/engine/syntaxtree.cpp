@@ -551,53 +551,53 @@ SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
 //   return true;
 //}
 
-//SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
-//{
-//   va_list argptr;
-//   va_start(argptr, counter);
-//
-//   size_t level = 1;
-//   Node nodes[0x10];
-//   nodes[0] = node;
-//
-//   for (int i = 0; i < counter; i++) {
-//      // get the next pattern
-//      NodePattern pattern = va_arg(argptr, NodePattern);
-//
-//      size_t newLevel = level;
-//      for (size_t j = 0; j < level; j++) {
-//         Node member = nodes[j].firstChild();
-//
-//         if (member != lxNone) {
-//            // find the matched member
-//            while (member != lxNone) {
-//               if (pattern.match(member)) {
-//                  nodes[newLevel] = member;
-//                  newLevel++;
-//               }
-//
-//               member = member.nextNode();
-//            }
-//         }
-//      }
-//
-//      size_t oldLevel = level;
-//      level = 0;
-//      for (size_t j = oldLevel; j < newLevel; j++) {
-//         nodes[level] = nodes[j];
-//         level++;
-//      }
-//
-//      if (level == 0) {
-//         nodes[0] = Node();
-//
-//         break;
-//      }
-//         
-//   }
-//
-//   return nodes[0];
-//}
+SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
+{
+   va_list argptr;
+   va_start(argptr, counter);
+
+   size_t level = 1;
+   Node nodes[0x10];
+   nodes[0] = node;
+
+   for (int i = 0; i < counter; i++) {
+      // get the next pattern
+      NodePattern pattern = va_arg(argptr, NodePattern);
+
+      size_t newLevel = level;
+      for (size_t j = 0; j < level; j++) {
+         Node member = nodes[j].firstChild();
+
+         if (member != lxNone) {
+            // find the matched member
+            while (member != lxNone) {
+               if (pattern.match(member)) {
+                  nodes[newLevel] = member;
+                  newLevel++;
+               }
+
+               member = member.nextNode();
+            }
+         }
+      }
+
+      size_t oldLevel = level;
+      level = 0;
+      for (size_t j = oldLevel; j < newLevel; j++) {
+         nodes[level] = nodes[j];
+         level++;
+      }
+
+      if (level == 0) {
+         nodes[0] = Node();
+
+         break;
+      }
+         
+   }
+
+   return nodes[0];
+}
 
 SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
 {

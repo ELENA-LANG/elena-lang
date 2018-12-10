@@ -186,18 +186,18 @@ class _Compiler;
 
 struct _ModuleScope
 {
-//   struct BranchingInfo
-//   {
-//      ref_t reference;
-//      ref_t trueRef;
-//      ref_t falseRef;
-//
-//      BranchingInfo()
-//      {
-//         reference = 0;
-//         trueRef = falseRef = 0;
-//      }
-//   };
+   struct BranchingInfo
+   {
+      ref_t reference;
+      ref_t trueRef;
+      ref_t falseRef;
+
+      BranchingInfo()
+      {
+         reference = 0;
+         trueRef = falseRef = 0;
+      }
+   };
 
    _ProjectManager*  project;
 
@@ -221,13 +221,13 @@ struct _ModuleScope
 //   ref_t             arrayTemplateReference;
    ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
-//
+
    // cached messages
    ref_t             dispatch_message;
    ref_t             newobject_message;
 
-//   // cached bool values
-//   BranchingInfo     branchingInfo;
+   // cached bool values
+   BranchingInfo     branchingInfo;
 
    // cached paths
    SymbolMap         savedPaths;
@@ -422,9 +422,9 @@ public:
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
-//
-//   // retrieve the branching operation type
-//   virtual bool resolveBranchOperation(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
+
+   // retrieve the branching operation type
+   virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t reference) = 0;
    virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info) = 0;
@@ -503,7 +503,7 @@ public:
 //
 //   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
 //   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
-//   virtual void optimizeBranchingOp(_CompilerScope& scope, SNode node) = 0;
+   virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;
 };

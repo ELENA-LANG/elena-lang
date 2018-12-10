@@ -172,13 +172,13 @@ void DerivationWriter :: newNode(Symbol symbol)
 ////      case nsBaseClass:
 ////         _writer.newNode(lxBaseParent);
 ////         break;
-////      case nsL1Operation:
-////      case nsL2Operation:
-//////      case nsL3Operation:
-////      case nsL4Operation:
-////      case nsL5Operation:
-////         _writer.newNode(lxOperator);
-////         break;
+//      case nsL1Operation:
+//      case nsL2Operation:
+////      case nsL3Operation:
+      case nsL4Operator:
+//      case nsL5Operation:
+         _cacheWriter.newNode(lxOperator);
+         break;
 ////      case nsL8Operation:
 ////         _writer.newNode(lxAssignOperator);
 ////         break;
@@ -1268,9 +1268,19 @@ void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node/*, De
    writer.closeNode();
 }
 
-void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode current)
+void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode current, bool closureMode)
 {
-   generateCodeTree(writer, current);
+   if (closureMode) {
+      generateCodeTree(writer, current);
+      writer.insert(lxClosureExpr);
+      writer.closeNode();
+   }
+   else {
+      writer.newNode(lxExpression);
+      generateCodeTree(writer, current);
+      writer.closeNode();
+   }
+
 //   if (current == lxReturning) {
 //      writer.closeNode();
 //   }
@@ -1294,8 +1304,6 @@ void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode curr
 //         writer.closeNode();
 //      }
 //   }
-   writer.insert(lxExpression);
-   writer.closeNode();
 }
 
 inline bool isTypeExpressionAttribute(SNode current)
@@ -1363,8 +1371,16 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             //}
             /*else */generateExpressionTree(writer, current, 0/*EXPRESSION_IMPLICIT_MODE*/);
             break;
+         case lxOperator:
+            if (!first) {
+               writer.insert(lxExpression);
+               writer.closeNode();
+            }
+            else first = false;
          case lxAssign:
-            writer.appendNode(lxAssign);
+            writer.newNode(current.type);
+            copyIdentifier(writer, current.firstChild(lxTerminalMask));
+            writer.closeNode();
             break;
          case lxToken:
             if (current.nextNode() == lxToken) {
@@ -1390,8 +1406,8 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             //         writer.closeNode();
             break;
          case lxCode:
-            first = false;
-            generateCodeExpression(writer, current);
+            generateCodeExpression(writer, current, first);
+            first = false;            
             break;
          default:
             if (isTerminal(current.type)) {

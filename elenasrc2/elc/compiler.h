@@ -556,7 +556,7 @@ private:
       bool         multiMethod;
       bool         closureMode;
 //      bool         nestedMode;
-//      bool         subCodeMode;
+      bool         subCodeMode;       
       bool         abstractMethod;
 //      bool         dispatchMode;
       
@@ -692,7 +692,7 @@ private:
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
-//      CodeScope(CodeScope* parent);
+      CodeScope(CodeScope* parent);
    };
 
 //   // --- ResendScope ---
@@ -761,8 +761,7 @@ private:
 
    ByteCodeWriter   _writer;
 
-//   MessageMap       _verbs;                            // list of verbs
-//   MessageMap     _operators;                        // list of operators
+   MessageMap     _operators;                        // list of operators
 
    int            _optFlag;
 
@@ -837,6 +836,7 @@ private:
 
    bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 
+   ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*,
                                      bool withExtension*/, int& stackSafeAttr);
 //   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
@@ -864,12 +864,12 @@ private:
 //
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand);
-//   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-//   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
-//   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
-//
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
+   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
+   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
+
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
 
@@ -890,8 +890,8 @@ private:
     ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 
-//   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
-//
+   ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
+
 //   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
 //   void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 
@@ -993,7 +993,7 @@ private:
    ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope);
 //   ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
    void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
-//   void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
+   void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
    void analizeCode(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope);

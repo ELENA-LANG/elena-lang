@@ -42,7 +42,7 @@ constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 constexpr auto HINT_ASSIGNING_EXPR  = 0x00040000;
 constexpr auto HINT_NODEBUGINFO     = 0x00020000;
 ////#define HINT_PARAMETERSONLY   0x00010000
-//#define HINT_SUBCODE_CLOSURE  0x00008800
+constexpr auto HINT_SUBCODE_CLOSURE = 0x00008800;
 constexpr auto HINT_VIRTUALEXPR     = 0x00004000;
 ////#define HINT_RESENDEXPR       0x00000400
 //#define HINT_LAZY_EXPR        0x00000200
@@ -619,7 +619,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->multiMethod = false;
    this->closureMode = false;
 //   this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
-//   this->subCodeMode = false;
+   this->subCodeMode = false;
    this->abstractMethod = false;
 //   this->genericClosure = false;
 //   this->dispatchMode = false;
@@ -677,7 +677,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
       //      }
       //      else return mapGroup();
       //   }
-         else if (terminal.compare(RETVAL_VAR) && closureMode) {
+         else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
             ObjectInfo retVar = parent->mapTerminal(terminal, referenceOne, mode | scopeMode);
             if (retVar.kind == okUnknown) {
                InlineClassScope* closure = (InlineClassScope*)getScope(Scope::slClass);
@@ -713,16 +713,16 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 //   this->genericMethod = parent->generic;
 }
 
-////Compiler::CodeScope :: CodeScope(CodeScope* parent)
-////   : Scope(parent), locals(Parameter(0))
-////{
-////   this->rootBookmark = 0;
-////   this->level = parent->level;
-////   this->saved = parent->saved;
-////   this->reserved = parent->reserved;
-////   this->genericMethod = parent->genericMethod;
-////}
-////
+Compiler::CodeScope :: CodeScope(CodeScope* parent)
+   : Scope(parent), locals(Parameter(0))
+{
+   this->rootBookmark = 0;
+   this->level = parent->level;
+   this->saved = parent->saved;
+   this->reserved = parent->reserved;
+//   this->genericMethod = parent->genericMethod;
+}
+
 ////ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
 ////{
 ////   NamespaceScope* nsScope = (NamespaceScope*)getScope(Scope::slNamespace);
@@ -1052,7 +1052,7 @@ Compiler :: Compiler(_CompilerLogic* logic)
 
    this->_logic = logic;
 
-//   ByteCodeCompiler::loadOperators(_operators);
+   ByteCodeCompiler::loadOperators(_operators);
 }
 
 void Compiler :: writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref_t messageRef)
@@ -2326,7 +2326,6 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //      result = compileCollection(writer, node.parentNode(), scope);
 //   }
 //   else {
-      SNode member = node.findChild(lxCode/*, lxNestedClass*/);
       switch (node.type) {
          case lxNestedClass:
             result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
@@ -2335,14 +2334,14 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //         case lxLazyExpression:
 //            result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
 //            break;
+         case lxClosureExpr:
+            result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
+            break;
          case lxExpression:
-            if (member == lxCode) {
-               result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
-            }
 //            else if (member == lxNestedClass) {
 //               result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
 //            }
-            else result = compileExpression(writer, node, scope, targetRef, mode & HINT_CLOSURE_MASK);
+            result = compileExpression(writer, node, scope, targetRef, mode & HINT_CLOSURE_MASK);
             break;
 //         case lxBoxing:
 //            result = compileBoxingExpression(writer, node, scope, mode);
@@ -2603,87 +2602,98 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //
 //   return 0;
 //}
-//
-//void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
-//{
-//   if (loopMode) {
-//      writer.newNode(lxElse, ifReference);
-//
-//      compileBranching(writer, thenBody.findSubNode(lxCode), scope);
-//      writer.closeNode();
+
+void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/)
+{
+   //if (loopMode) {
+   //   writer.newNode(lxElse, ifReference);
+
+   //   compileBranching(writer, thenBody.findSubNode(lxCode), scope);
+   //   writer.closeNode();
+   //}
+   //else {
+      SNode thenCode = thenBody.findSubNode(lxCode);
+
+      writer.newNode(lxIf, ifReference);
+      compileBranching(writer, thenCode, scope);
+      writer.closeNode();
+
+      ////// HOTFIX : switch mode - ignore else
+      ////if (!switchMode) {
+      //   SNode elseCode = thenBody.firstChild().nextNode();
+      //   if (elseCode != lxNone) {
+      //      writer.newNode(lxElse, 0);
+      //      compileBranching(writer, elseCode, scope);
+      //      writer.closeNode();
+      //   }
+      ////}
 //   }
-//   else {
-//      SNode thenCode = thenBody.findSubNode(lxCode);
-//
-//      writer.newNode(lxIf, ifReference);
-//      compileBranching(writer, thenCode, scope);
-//      writer.closeNode();
-//
-//      // HOTFIX : switch mode - ignore else
-//      if (!switchMode) {
-//         SNode elseCode = thenBody.firstChild().nextNode();
-//         if (elseCode != lxNone) {
-//            writer.newNode(lxElse, 0);
-//            compileBranching(writer, elseCode, scope);
-//            writer.closeNode();
-//         }
-//      }
-//   }
-//}
-//
-//void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal)
-//{
-//   bool loopMode = test(mode, HINT_LOOP);
-//   bool switchMode = test(mode, HINT_SWITCH);
-//
-//   // HOTFIX : in loop expression, else node is used to be similar with branching code
-//   // because of optimization rules
-//   ref_t original_id = operator_id;
-//   if (loopMode) {
-//      operator_id = operator_id == IF_MESSAGE_ID ? IFNOT_MESSAGE_ID : IF_MESSAGE_ID;
-//   }
-//
-//   ref_t ifReference = 0;
-//   ref_t resolved_operator_id = operator_id;
-//   // try to resolve the branching operator directly
-//   if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
-//      // good luck : we can implement branching directly
-//      compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
-//
-//      writer.insert(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
-//      writer.closeNode();
-//   }
-//   else {
-//      operator_id = original_id;
-//
-//      // bad luck : we have to create closure
-//      SNode roperand2Node = roperandNode.firstChild().existChild(lxCode) ? roperandNode.firstChild() : SNode();
-//      int message = encodeMessage(operator_id, 1);
-//      if (roperand2Node != lxNone) {
-//         message = encodeMessage(IF_ELSE_MESSAGE_ID, 2);
-//
-//         compileClosure(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
-//      }
-//      compileObject(writer, roperandNode, scope, 0, HINT_SUBCODE_CLOSURE);
-//
-//      retVal = compileMessage(writer, roperandNode, scope, loperand, message, 0, 0);
-//
-//      if (loopMode) {
-//         writer.insert(lxLooping);
-//         writer.closeNode();
-//      }
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, ObjectInfo loperand, int mode, int operator_id)
-//{
-//   ObjectInfo retVal(okObject);
-//
-//   compileBranchingOperand(writer, roperandNode, scope, mode, operator_id, loperand, retVal);
-//
-//   return retVal;
-//}
-//
+}
+
+ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount)
+{
+   switch (operator_id) {
+      case IF_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(IF_MESSAGE, 0, false), paramCount, 0);
+      default:
+         throw InternalError("Not supported operator");
+         break;
+   }
+}
+
+void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal)
+{
+   //bool loopMode = test(mode, HINT_LOOP);
+   //bool switchMode = test(mode, HINT_SWITCH);
+
+   // HOTFIX : in loop expression, else node is used to be similar with branching code
+   // because of optimization rules
+   ref_t original_id = operator_id;
+   //if (loopMode) {
+   //   operator_id = operator_id == IF_MESSAGE_ID ? IFNOT_MESSAGE_ID : IF_MESSAGE_ID;
+   //}
+
+   ref_t ifReference = 0;
+   ref_t resolved_operator_id = operator_id;
+   // try to resolve the branching operator directly
+   if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
+      // good luck : we can implement branching directly
+      compileBranchingNodes(writer, roperandNode, scope, ifReference/*, loopMode, switchMode*/);
+
+      writer.insert(/*loopMode ? lxLooping : */lxBranching, /*switchMode ? -1 : */0);
+      writer.closeNode();
+   }
+   else {
+      operator_id = original_id;
+
+      // bad luck : we have to create closure
+      //SNode roperand2Node = roperandNode.firstChild().existChild(lxCode) ? roperandNode.firstChild() : SNode();
+      int message = resolveOperatorMessage(scope, operator_id, 1);
+      //if (roperand2Node != lxNone) {
+      //   message = encodeMessage(IF_ELSE_MESSAGE_ID, 2);
+
+      //   compileClosure(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
+      //}
+      compileClosure(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
+
+      retVal = compileMessage(writer, roperandNode, scope, loperand, message, 0, 0);
+
+      //if (loopMode) {
+      //   writer.insert(lxLooping);
+      //   writer.closeNode();
+      //}
+   }
+}
+
+ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, ObjectInfo loperand, int mode, int operator_id)
+{
+   ObjectInfo retVal(okObject);
+
+   compileBranchingOperand(writer, roperandNode, scope, mode, operator_id, loperand, retVal);
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand)
 //{
 //   ref_t loperandRef = resolveObjectReference(scope, loperand);
@@ -2806,26 +2816,28 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //
 //   return retVal;
 //}
-//
-//ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode)
-//{
-//   SNode operatorNode = node;
-//   int operator_id = operatorNode.argument != 0 ? operatorNode.argument : _operators.get(operatorNode.identifier());
-//
-//   SNode roperand = node.nextNode();
+
+ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode)
+{
+   SNode current = node;
+   int operator_id = current.argument != 0 ? current.argument : _operators.get(current.firstChild(lxTerminalMask).identifier());
+
+   SNode roperand = node.nextNode();
 //   if (operatorNode.prevNode() == lxNone)
 //      roperand = roperand.nextNode(lxObjectMask);
 //
 //   if (test(mode, HINT_PROP_MODE) && operator_id == REFER_MESSAGE_ID) {
 //      operator_id = SET_REFER_MESSAGE_ID;
 //   }
-//
-//   // if it is branching operators
-//   if (operator_id == IF_MESSAGE_ID || operator_id == IFNOT_MESSAGE_ID) {
-//      return compileBranchingOperator(writer, roperand, scope, target, mode, operator_id);
-//   }
+
+   // if it is branching operators
+   if (operator_id == IF_OPERATOR_ID/* || operator_id == IFNOT_MESSAGE_ID*/) {
+      return compileBranchingOperator(writer, roperand, scope, target, mode, operator_id);
+   }
+   else throw new InternalError("not supported yet"); // !! temporal
+
 //   else return compileOperator(writer, roperand, scope, target, mode, operator_id);
-//}
+}
 
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr)
 {
@@ -3472,9 +3484,9 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    // exclude abstract flag if presented
    scope.removeHint(methodScope.message, tpAbstract);
 
-   //// HOTFIX : if the closure emulates code brackets
-   //if (test(mode, HINT_SUBCODE_CLOSURE))
-   //   methodScope.subCodeMode = true;
+   // HOTFIX : if the closure emulates code brackets
+   if (test(mode, HINT_SUBCODE_CLOSURE))
+      methodScope.subCodeMode = true;
 
    // if it is single expression
    //if (!lazyExpression) {
@@ -4023,9 +4035,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
       case lxAssign:
          objectInfo = compileAssigning(writer, current, scope, objectInfo);
          break;
-//      case lxOperator:
-//         objectInfo = compileOperator(writer, current, scope, objectInfo, mode);
-//         break;
+      case lxOperator:
+         objectInfo = compileOperator(writer, current, scope, objectInfo, mode);
+         break;
 //      case lxExtension:
 //         objectInfo = compileExtension(writer, current, scope, objectInfo);
 //         break;
@@ -4180,16 +4192,16 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
    int targetMode = mode/* & ~HINT_PROP_MODE*/;
 
-   SNode object = node.firstChild();
+   SNode current = node.firstChild();
    // COMPILER MAGIC : compile the expression attributes
-   if (object.compare(lxAttribute, lxTarget))
-      compileExpressionAttributes(writer, object, scope, targetMode);
+   if (current.compare(lxAttribute, lxTarget))
+      compileExpressionAttributes(writer, current, scope, targetMode);
 
-   SNode operationNode = object.nextNode();
+   SNode operationNode = current.nextNode();
    if (operationNode == lxAssign) {
       // recognize the property set operation
       //targetMode |= HINT_PROP_MODE;
-      if (isSingleStatement(object))
+      if (isSingleStatement(current))
          targetMode |= HINT_NOBOXING;
 
       mode |= HINT_NOUNBOXING;
@@ -4206,7 +4218,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //
 //      if (operationNode != lxNone) {
 //         // if the object is not single, do not pass the target reference
-         objectInfo = compileObject(writer, object, scope, 0, targetMode);
+         objectInfo = compileObject(writer, current, scope, 0, targetMode);
          if (operationNode != lxNone)
             objectInfo = compileOperation(writer, operationNode, scope, objectInfo/*, exptectedRef*/, mode);
 //
@@ -4240,22 +4252,22 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    return objectInfo;
 }
 
-//ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
-//{
-//   CodeScope subScope(&scope);
-//
-//   writer.newNode(lxCode);
-//
-//   compileCode(writer, thenCode, subScope);
-//
-//   // preserve the allocated space
-//   scope.level = subScope.level;
-//
-//   writer.closeNode();
-//
-//   return ObjectInfo(okObject);
-//}
-//
+ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
+{
+   CodeScope subScope(&scope);
+
+   writer.newNode(lxCode);
+
+   compileCode(writer, thenCode, subScope);
+
+   // preserve the allocated space
+   scope.level = subScope.level;
+
+   writer.closeNode();
+
+   return ObjectInfo(okObject);
+}
+
 //void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
 //{
 //   // find inner expression
@@ -7476,10 +7488,10 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       case lxReturning:
          return analizeExpression(current.firstChild(lxObjectMask), scope, mode);
       //case lxAltExpression:
-      //case lxBranching:
+      case lxBranching:
       //case lxTrying:
-      //   analizeExpressionTree(current, scope);
-      //   return 0;
+         analizeExpressionTree(current, scope);
+         return 0;
       case lxBoxing:
       case lxCondBoxing:
       case lxUnboxing:
@@ -7523,12 +7535,12 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
    }
 }
 
-//void Compiler :: analizeBranching(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode)
-//{
-//   analizeExpressionTree(node, scope, /*warningScope, */mode);
-//
-//   _logic->optimizeBranchingOp(*scope.moduleScope, node);
-//}
+void Compiler :: analizeBranching(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode)
+{
+   analizeExpressionTree(node, scope, /*warningScope, */mode);
+
+   _logic->optimizeBranchingOp(*scope.moduleScope, node);
+}
 
 void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mode)
 {
@@ -7541,10 +7553,10 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
          //case lxExternFrame:
             analizeExpressionTree(current, scope);
             break;
-         //case lxBranching:
+         case lxBranching:
          //case lxLooping:
-         //   analizeBranching(current, scope/*, warningScope*/);
-         //   break;
+            analizeBranching(current, scope/*, warningScope*/);
+            break;
          default:
             if (test(current.type, lxObjectMask)) {
                analizeExpression(current, scope, mode);
@@ -8011,6 +8023,10 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
 //   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
+
+   scope.branchingInfo.reference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
+   scope.branchingInfo.trueRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(TRUE_FORWARD));
+   scope.branchingInfo.falseRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(FALSE_FORWARD));
 
    // cache the frequently used messages
    scope.dispatch_message = encodeAction(scope.module->mapAction(DISPATCH_MESSAGE, 0, false));

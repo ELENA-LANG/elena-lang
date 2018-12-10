@@ -33,15 +33,15 @@ namespace _ELENA_
 
 //   #define PARAMX_MASK             0x000000000000FFFFu
 
-   #define INVALID_REF              (ref_t)-1
+   constexpr ref_t INVALID_REF        = -1;
 
    //#define NEW_MESSAGE_ID          0x0003
-   //#define EQUAL_MESSAGE_ID        0x0004
+   constexpr auto EQUAL_OPERATOR_ID   = 0x0004;
    //#define EVAL_MESSAGE_ID         0x0005
    //#define GET_MESSAGE_ID          0x0006
    //#define SET_MESSAGE_ID          0x0007
-   //#define LESS_MESSAGE_ID         0x0008
-   //#define IF_MESSAGE_ID           0x0009
+   constexpr auto LESS_OPERATOR_ID    = 0x0008;
+   constexpr auto IF_OPERATOR_ID      = 0x0009;
    //#define AND_MESSAGE_ID          0x000A
    //#define OR_MESSAGE_ID           0x000B
    //#define XOR_MESSAGE_ID          0x000C
@@ -49,7 +49,7 @@ namespace _ELENA_
    //#define NOTEQUAL_MESSAGE_ID     0x000E
    //#define NOTLESS_MESSAGE_ID      0x000F
    //#define NOTGREATER_MESSAGE_ID   0x0010
-   //#define GREATER_MESSAGE_ID      0x0011
+   constexpr auto GREATER_OPERATOR_ID = 0x0011;
    //#define ADD_MESSAGE_ID          0x0012
    //#define SUB_MESSAGE_ID          0x0013
    //#define MUL_MESSAGE_ID          0x0014
@@ -347,11 +347,11 @@ namespace _ELENA_
    const int WARNING_MASK_3 = 7;
 
    // --- ELENA Module structure constants ---
-   #define ELENA_SIGNITURE          "ELENA.11."      // the stand alone image
-   #define ELENACLIENT_SIGNITURE    "VM.ELENA.11."   // the ELENAVM client
+   constexpr auto ELENA_SIGNITURE         = "ELENA.11.";      // the stand alone image
+   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.11.";   // the ELENAVM client
 
-   #define MODULE_SIGNATURE         "ELENA.11.0"     // the module version
-   #define DEBUG_MODULE_SIGNATURE   "ED!2"
+   constexpr auto MODULE_SIGNATURE        = "ELENA.11.0";     // the module version
+   constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!2";
 
   // --- ELENA core module names ---
    #define CORE_ALIAS                "core"          // Core functionality
@@ -386,7 +386,7 @@ namespace _ELENA_
   // #define SET_MESSAGE              "set"
   // #define READ_MESSAGE             "read"
   // #define WRITE_MESSAGE            "write"
-  // #define IF_MESSAGE               "if"
+   constexpr auto IF_MESSAGE              = "if";
   // #define IFNOT_MESSAGE            "ifnot"
   // #define SHIFT_MESSAGE            "shift"
   // #define IF_ELSE_MESSAGE          "if:else"
@@ -400,7 +400,7 @@ namespace _ELENA_
 //   #define NOTGREATER_OPERATOR      "<="
 //   #define GREATER_OPERATOR		   ">"
 //   #define LESS_OPERATOR            "<"
-//   #define IF_OPERATOR			      "?"
+   #define IF_OPERATOR			      "?"
 //   #define IFNOT_OPERATOR		      "!"
 //   #define AND_OPERATOR             "&&"
 //   #define OR_OPERATOR              "||"
@@ -498,25 +498,27 @@ namespace _ELENA_
    #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
 
    // predefined system forwards
-   #define SUPER_FORWARD            "$super"                         // the common class predecessor
+   constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
 //   #define LAZYEXPR_FORWARD         "$lazyexpression"                // the base lazy expression class
-   #define INT_FORWARD              "$int"
+   constexpr auto INT_FORWARD             ="$int";
 //   #define LONG_FORWARD             "$long"
 //   #define REAL_FORWARD             "$real"
-   #define STR_FORWARD              "$literal"
+   constexpr auto STR_FORWARD              ="$literal";
 //   #define WIDESTR_FORWARD          "$wideliteral"
 //   #define CHAR_FORWARD             "$char"
-   #define MESSAGE_FORWARD          "$message"
+   constexpr auto MESSAGE_FORWARD         = "$message";
 //   #define EXT_MESSAGE_FORWARD      "$ext_message"
 //   #define SIGNATURE_FORWARD        "$signature"
 //   #define ARRAY_FORWARD            "$array"
-//   #define BOOL_FORWARD             "$bool"
 //   #define REFTEMPLATE_FORWARD      "$reference"
-   #define CLOSURETEMPLATE_FORWARD  "$closure"
+   constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
 //   #define ARRAYTEMPLATE_FORWARD    "$parray"
+   constexpr auto BOOL_FORWARD            = "$bool";
+   constexpr auto TRUE_FORWARD            = "$true";
+   constexpr auto FALSE_FORWARD           = "$false";
 
-   #define PROGRAM_ENTRY            "$program"                     // the program entry
-   #define SYSTEM_ENTRY             "$system_entry"                // the system entry
+   constexpr auto PROGRAM_ENTRY           = "$program";                     // the program entry
+   constexpr auto SYSTEM_ENTRY            = "$system_entry";                // the system entry
    
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)

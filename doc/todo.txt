@@ -16,7 +16,8 @@ In development:
                  * review / redesign message structure (number of parameters, number of parameters with variadic argument)
                  * review predefined message constants
                  * abstract class cannot have constructors / default constructor
-                 * uncommand validateClassDeclaration
+                 * uncomment validateClassDeclaration
+                 * uncomment compileBranchingOperand
  
               dev - tests          
                  * test : interpreter
