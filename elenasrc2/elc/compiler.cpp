@@ -259,7 +259,17 @@ ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
 
 ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
-   ref_t reference = resolveImplicitIdentifier(identifier, referenceOne);
+   ref_t reference = 0;
+   if (!referenceOne) {
+      // try resolve as type-alias
+      reference = moduleScope->attributes.get(identifier);
+      if (isPrimitiveRef(reference))
+         reference = 0;
+   }
+
+   if (!reference)
+      reference = resolveImplicitIdentifier(identifier, referenceOne);
+   
    if (reference)
       return defineObjectInfo(reference, true);
 

@@ -42,6 +42,22 @@ using namespace _ELENA_;
 
 // --- DerivationWriter ---
 
+inline SNode goToNode(SNode current, LexicalType type)
+{
+   while (current != lxNone && current != type)
+      current = current.nextNode();
+
+   return current;
+}
+
+inline SNode goToNode(SNode current, LexicalType type1, LexicalType type2)
+{
+   while (current != lxNone && !current.compare(type1, type2))
+      current = current.nextNode();
+
+   return current;
+}
+
 inline bool isTerminal(LexicalType type)
 {
    return test(int(type), lxTerminalMask);
@@ -1511,7 +1527,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
                } while (current.nextNode() == lxToken);
             }
             // COMPILER MAGIC : recognize the code template
-            if (current.findNext(lxCode) == lxCode) {
+            if (goToNode(current, lxCode, lxOperator) == lxCode) {
                generateCodeTemplateTree(writer, current, derivationScope);
             }
             else generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
@@ -1844,14 +1860,6 @@ void DerivationWriter:: declareType(SyntaxWriter& writer, SNode node/*, Derivati
 //   }
 //
 //   return false;
-//}
-//
-//inline SNode goToNode(SNode current, LexicalType type)
-//{
-//   while (current != lxNone && current != type)
-//      current = current.nextNode();
-//
-//   return current;
 //}
 //
 //inline bool isAttribute(ref_t attr)
