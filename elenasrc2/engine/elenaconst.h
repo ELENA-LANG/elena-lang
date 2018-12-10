@@ -421,15 +421,15 @@ namespace _ELENA_
   // --- ELENA explicit variables ---
 //   #define OLD_GROUP_VAR           "target"           // obsolete : the current method target / closure owner method target
 //   #define GROUP_VAR               "__target"         // the current method target / closure owner method target
-   #define SELF_VAR                "self"             // the current method class reference / closure owner class reference
+   constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference
 
 //   #define SUPER_VAR               "super"            // the predecessor class
 //   #define OLD_SUBJECT_VAR         "received"         // obsolete : the current message
 //   #define SUBJECT_VAR             "__received"       // the current message
-   #define NIL_VAR                 "nil"              // the nil pseudo symbol - representing the null value
-   #define RETVAL_VAR              "$$ret"            // the closure returning value
-//   #define OWNER_VAR               "$$owner"          // the nested class / closure owner
-//   #define PARENT_VAR              "$$parent"         // the closure parent
+   constexpr auto NIL_VAR              = "nil";              // the nil pseudo symbol - representing the null value
+   constexpr auto RETVAL_VAR           = "$$ret";            // the closure returning value
+   constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
+   constexpr auto PARENT_VAR           = "$$parent";         // the closure parent
 //
 //   // template virtual methods / fields
 //   #define TEMPLATE_GET_MESSAGE     "__get"

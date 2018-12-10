@@ -106,8 +106,8 @@ enum LexicalType
    lxGlobalReference = 0x18011,
 
    lxImporting       = 0x08101,
-//   lxNested          = 0x08102, // arg - count
-//   lxStruct          = 0x08103, // arg - count
+   lxNested          = 0x08102, // arg - count
+   lxStruct          = 0x08103, // arg - count
    lxConstantSymbol  = 0x0A104, // arg - reference
    lxField           = 0x08105, // arg - offset
    lxStaticField     = 0x08106, // arg - reference   // - lxClassStaticField
@@ -208,8 +208,8 @@ enum LexicalType
    lxForward         = 0x1002E,
    lxVariable        = 0x10037,
 //   lxBinaryVariable  = 0x10038,
-//   lxMember          = 0x10039,  // a collection member, arg - offset
-//   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
+   lxMember          = 0x10039,  // a collection member, arg - offset
+   lxOuterMember     = 0x1003A,  // a collection member, arg - offset
 //   lxIntsVariable    = 0x1003B,
 //   lxBytesVariable   = 0x1003C,
 //   lxShortsVariable  = 0x1003D,

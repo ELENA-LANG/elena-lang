@@ -840,194 +840,194 @@ Compiler::InlineClassScope :: InlineClassScope(CodeScope* owner, ref_t reference
    info.header.flags |= elNestedClass;
 }
 
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapParent()
-//{
-//   Outer parentVar = outers.get(PARENT_VAR);
-//   // if owner reference is not yet mapped, add it
-//   if (parentVar.outerObject.kind == okUnknown) {
-//      parentVar.reference = info.fields.Count();
-//      CodeScope* codeScope = (CodeScope*)parent->getScope(Scope::slCode);
-//      if (codeScope) {
-//         parentVar.outerObject = codeScope->mapMember(SELF_VAR);
-//      }
-//      else parentVar = mapOwner();
-//
-//      outers.add(PARENT_VAR, parentVar);
-//      mapKey(info.fields, PARENT_VAR, (int)parentVar.reference);
-//
-//   }
-//   return parentVar;
-//}
-//
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
-//{
-//   Outer owner = outers.get(SELF_VAR);
-//   // if owner reference is not yet mapped, add it
-//   if (owner.outerObject.kind == okUnknown) {
-//      owner.reference = info.fields.Count();
-//
-//      owner.outerObject = parent->mapTerminal(SELF_VAR, false, 0);
-//      if (owner.outerObject.kind == okUnknown) {
-//         // HOTFIX : if it is a singleton nested class
-//         owner.outerObject = ObjectInfo(okSelfParam, 1, reference);
-//      }
-//      else if (owner.outerObject.kind == okSelfParam) {
-//         owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
-//      }
-//
-//      outers.add(SELF_VAR, owner);
-//      mapKey(info.fields, SELF_VAR, (int)owner.reference);
-//   }
-//   return owner;
-//}
-//
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope::mapOwner()
-//{
-//   Outer owner = outers.get(OWNER_VAR);
-//   // if owner reference is not yet mapped, add it
-//   if (owner.outerObject.kind == okUnknown) {
-//      owner.outerObject = parent->mapTerminal(OWNER_VAR, false, 0);
-//      if (owner.outerObject.kind != okUnknown) {
-//         owner.reference = info.fields.Count();
-//
-//         if (owner.outerObject.extraparam == 0)
-//            owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
-//
-//         outers.add(OWNER_VAR, owner);
-//         mapKey(info.fields, OWNER_VAR, (int)owner.reference);
-//      }
-//      else return mapSelf();
-//   }
-//   return owner;
-//}
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapParent()
+{
+   Outer parentVar = outers.get(PARENT_VAR);
+   // if owner reference is not yet mapped, add it
+   if (parentVar.outerObject.kind == okUnknown) {
+      parentVar.reference = info.fields.Count();
+      CodeScope* codeScope = (CodeScope*)parent->getScope(Scope::slCode);
+      if (codeScope) {
+         parentVar.outerObject = codeScope->mapMember(SELF_VAR);
+      }
+      else parentVar = mapOwner();
+
+      outers.add(PARENT_VAR, parentVar);
+      mapKey(info.fields, PARENT_VAR, (int)parentVar.reference);
+
+   }
+   return parentVar;
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
+{
+   Outer owner = outers.get(SELF_VAR);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.reference = info.fields.Count();
+
+      owner.outerObject = parent->mapTerminal(SELF_VAR, false, 0);
+      if (owner.outerObject.kind == okUnknown) {
+         // HOTFIX : if it is a singleton nested class
+         owner.outerObject = ObjectInfo(okSelfParam, 1, reference);
+      }
+      else if (owner.outerObject.kind == okSelfParam) {
+         owner.outerObject.reference = ((CodeScope*)parent)->getClassRefId(false);
+      }
+
+      outers.add(SELF_VAR, owner);
+      mapKey(info.fields, SELF_VAR, (int)owner.reference);
+   }
+   return owner;
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapOwner()
+{
+   Outer owner = outers.get(OWNER_VAR);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.outerObject = parent->mapTerminal(OWNER_VAR, false, 0);
+      if (owner.outerObject.kind != okUnknown) {
+         owner.reference = info.fields.Count();
+
+         if (owner.outerObject.extraparam == 0)
+            owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
+
+         outers.add(OWNER_VAR, owner);
+         mapKey(info.fields, OWNER_VAR, (int)owner.reference);
+      }
+      else return mapSelf();
+   }
+   return owner;
+}
 
 ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
-//   //if (identifier.compare(SUPER_VAR)) {
-//   //   return ObjectInfo(okSuper, info.header.parentRef);
-//   //}
-//   /*else */if (identifier.compare(OWNER_VAR)) {
-//      Outer owner = mapOwner();
+   //if (identifier.compare(SUPER_VAR)) {
+   //   return ObjectInfo(okSuper, info.header.parentRef);
+   //}
+   /*else */if (identifier.compare(OWNER_VAR)) {
+      Outer owner = mapOwner();
+
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuterSelf, owner.reference, owner.outerObject.reference, owner.outerObject.element, owner.outerObject.extraparam);
+   }
+   //else if (identifier.compare(SELF_VAR) && !closureMode) {
+   //   return ObjectInfo(okParam, (size_t)-1);
+   //}
+   else {
+      Outer outer = outers.get(identifier);
 //
-//      // map as an outer field (reference to outer object and outer object field index)
-//      return ObjectInfo(okOuterSelf, owner.reference, owner.outerObject.extraparam/*, owner.outerObject.type*/);
-//   }
-//   //else if (identifier.compare(SELF_VAR) && !closureMode) {
-//   //   return ObjectInfo(okParam, (size_t)-1);
-//   //}
-//   else {
-//      Outer outer = outers.get(identifier);
-//
-//      // if object already mapped
-//      if (outer.reference != -1) {
-//         if (outer.outerObject.kind == okSuper) {
-//            return ObjectInfo(okSuper, outer.reference);
-//         }
-//         else return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
-//      }
-//      else {
-         /*outer.outerObject =*/return parent->mapTerminal(identifier, referenceOne, mode);
-//         switch (outer.outerObject.kind) {
-//            case okReadOnlyField:
-//            case okField:
-//            case okStaticField:
-//            {
-//               // handle outer fields in a special way: save only self
-//               Outer owner = mapParent();
-//
-//               // map as an outer field (reference to outer object and outer object field index)
-//               if (outer.outerObject.kind == okOuterField) {
-//                  return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
-//               }
-//               else if (outer.outerObject.kind == okOuterReadOnlyField) {
-//                  return ObjectInfo(okOuterField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
-//               }
-//               else if (outer.outerObject.kind == okOuterStaticField) {
-//                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.extraparam, outer.outerObject.element);
-//               }
-//               else if (outer.outerObject.kind == okStaticField) {
-//                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
-//               }
-//               else if (outer.outerObject.kind == okReadOnlyField) {
-//                  return ObjectInfo(okOuterReadOnlyField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
-//               }
-//               else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.param, outer.outerObject.extraparam);
-//            }
-//            case okParam:
-//            case okLocal:
-//            case okOuter:
-//            case okSuper:
-//            case okSelfParam:
-//            case okLocalAddress:
-//            case okFieldAddress:
-//            case okReadOnlyFieldAddress:
-//            case okOuterField:
-//            case okOuterStaticField:
-//            case okOuterSelf:
-//            case okParams:
-//            {
-//               // map if the object is outer one
-//               outer.reference = info.fields.Count();
-//
-//               outers.add(identifier, outer);
-//               mapKey(info.fields, identifier, (int)outer.reference);
-//
-//               if (outer.outerObject.kind == okOuter && identifier.compare(RETVAL_VAR)) {
-//                  // HOTFIX : quitting several clsoures
-//                  (*outers.getIt(identifier)).preserved = true;
-//               }
-//               else if (outer.outerObject.kind == okOuterSelf) {
-//                  // HOTFIX : to support self in deep nested closures
-//                  return ObjectInfo(okOuterSelf, outer.reference, outer.outerObject.extraparam);
-//               }
-//
-//               return ObjectInfo(okOuter, outer.reference, outer.outerObject.extraparam);
-//            }
-//            case okUnknown:
-//            {
-//               // check if there is inherited fields
-//               ObjectInfo fieldInfo = mapField(identifier, 0);
-//               if (fieldInfo.kind != okUnknown) {
-//                  return fieldInfo;
-//               }
-//               else return outer.outerObject;
-//            }
-//            default:               
-//               return outer.outerObject;
-//         }
-//      }
-//   }
+      // if object already mapped
+      if (outer.reference != -1) {
+         /*if (outer.outerObject.kind == okSuper) {
+            return ObjectInfo(okSuper, outer.reference);
+         }
+         else */return ObjectInfo(okOuter, outer.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+      }
+      else {
+         outer.outerObject = parent->mapTerminal(identifier, referenceOne, mode);
+         switch (outer.outerObject.kind) {
+            case okReadOnlyField:
+            case okField:
+            case okStaticField:
+            {
+               // handle outer fields in a special way: save only self
+               Outer owner = mapParent();
+
+               // map as an outer field (reference to outer object and outer object field index)
+               if (outer.outerObject.kind == okOuterField) {
+                  return ObjectInfo(okOuterField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+               else if (outer.outerObject.kind == okOuterReadOnlyField) {
+                  return ObjectInfo(okOuterReadOnlyField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+               else if (outer.outerObject.kind == okOuterStaticField) {
+                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+               else if (outer.outerObject.kind == okStaticField) {
+                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+               else if (outer.outerObject.kind == okReadOnlyField) {
+                  return ObjectInfo(okOuterReadOnlyField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+               else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+            }
+            case okParam:
+            case okLocal:
+            case okOuter:
+            //case okSuper:
+            case okSelfParam:
+            case okLocalAddress:
+            case okFieldAddress:
+            case okReadOnlyFieldAddress:
+            case okOuterField:
+            case okOuterStaticField:
+            case okOuterSelf:
+            //case okParams:
+            {
+               // map if the object is outer one
+               outer.reference = info.fields.Count();
+
+               outers.add(identifier, outer);
+               mapKey(info.fields, identifier, (int)outer.reference);
+
+               if (outer.outerObject.kind == okOuter && identifier.compare(RETVAL_VAR)) {
+                  // HOTFIX : quitting several clsoures
+                  (*outers.getIt(identifier)).preserved = true;
+               }
+               else if (outer.outerObject.kind == okOuterSelf) {
+                  // HOTFIX : to support self in deep nested closures
+                  return ObjectInfo(okOuterSelf, outer.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+
+               return ObjectInfo(okOuter, outer.reference, outer.outerObject.reference);
+            }
+            case okUnknown:
+            {
+               // check if there is inherited fields
+               ObjectInfo fieldInfo = mapField(identifier, 0);
+               if (fieldInfo.kind != okUnknown) {
+                  return fieldInfo;
+               }
+               else return outer.outerObject;
+            }
+            default:               
+               return outer.outerObject;
+         }
+      }
+   }
 }
 
-//bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
-//{
-//   if (object.kind == okOuter) {
-//      Map<ident_t, Outer>::Iterator it = outers.start();
-//      while (!it.Eof()) {
-//         if ((*it).reference == object.param) {
-//            if ((*it).outerObject.kind == okLocal || (*it).outerObject.kind == okLocalAddress) {
-//               (*it).preserved = true;
-//
-//               return true;
-//            }
-//            else if ((*it).outerObject.kind == okOuter) {
-//               InlineClassScope* closure = (InlineClassScope*)parent->getScope(Scope::slClass);
-//               if (closure->markAsPresaved((*it).outerObject)) {
-//                  (*it).preserved = true;
-//
-//                  return true;
-//               }
-//               else return false;
-//            }
-//            break;
-//         }
-//
-//         it++;
-//      }
-//   }
-//
-//   return false;
-//}
+bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
+{
+   if (object.kind == okOuter) {
+      Map<ident_t, Outer>::Iterator it = outers.start();
+      while (!it.Eof()) {
+         if ((*it).reference == object.param) {
+            if ((*it).outerObject.kind == okLocal || (*it).outerObject.kind == okLocalAddress) {
+               (*it).preserved = true;
+
+               return true;
+            }
+            else if ((*it).outerObject.kind == okOuter) {
+               InlineClassScope* closure = (InlineClassScope*)parent->getScope(Scope::slClass);
+               if (closure->markAsPresaved((*it).outerObject)) {
+                  (*it).preserved = true;
+
+                  return true;
+               }
+               else return false;
+            }
+            break;
+         }
+
+         it++;
+      }
+   }
+
+   return false;
+}
 
 ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
 {
@@ -1040,7 +1040,7 @@ ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
    outers.add(RETVAL_VAR, outer);
    mapKey(info.fields, RETVAL_VAR, (int)outer.reference);
 
-   return ObjectInfo(okOuter, outer.reference, outer.reference);
+   return ObjectInfo(okOuter, outer.reference);
 }
 
 // --- Compiler ---
@@ -2054,8 +2054,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
 //         break;
       case okReadOnlyField:
       case okField:
-//      case okOuter:
-//      case okOuterSelf:
+      case okOuter:
+      case okOuterSelf:
          writer.newNode(lxField, object.param);
          break;
       case okStaticField:
@@ -2092,20 +2092,20 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          else writer.appendNode(lxClassSymbol, object.param);
          writer.appendNode(lxStaticConstField, object.extraparam);
          break;
-//      case okOuterField:
-//      case okOuterReadOnlyField:
-//         writer.newNode(lxFieldExpression, 0);
-//         writer.appendNode(lxField, object.param);
-//         writer.appendNode(lxResultField, object.extraparam);
-//         break;
-//      case okOuterStaticField:
-//         writer.newNode(lxFieldExpression, 0);
-//         writer.newNode(lxFieldExpression, 0);
-//         writer.appendNode(lxField, object.param);
-//         writer.appendNode(lxClassRefAttr, object.param);
-//         writer.closeNode();         
-//         writer.appendNode(lxStaticField, object.extraparam);
-//         break;
+      case okOuterField:
+      case okOuterReadOnlyField:
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxField, object.param);
+         writer.appendNode(lxResultField, object.extraparam);
+         break;
+      case okOuterStaticField:
+         writer.newNode(lxFieldExpression, 0);
+         writer.newNode(lxFieldExpression, 0);
+         writer.appendNode(lxField, object.param);
+         //writer.appendNode(lxClassRefAttr, object.param);
+         writer.closeNode();         
+         writer.appendNode(lxStaticField, object.extraparam);
+         break;
 //      case okSubject:
 //         writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference, 0u));
 //         writer.appendNode(lxLocalAddress, object.param);
@@ -3260,8 +3260,8 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       case okLocal:
       case okField:
 //      case okStaticField:
-//      case okOuterField:
-//      case okOuterStaticField:
+      case okOuterField:
+      case okOuterStaticField:
          break;
       case okLocalAddress:
       case okFieldAddress:
@@ -3273,20 +3273,20 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          else scope.raiseError(errInvalidOperation, sourceNode);
          break;
       }
-//      case okOuter:
-//      case okOuterSelf:
-//      // case okParam
-//      {
-//         InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
-//            
-//         if (!closure->markAsPresaved(target))
-//            scope.raiseError(errInvalidOperation, sourceNode);
-//
-//         break;
-//      }
+      case okOuter:
+      case okOuterSelf:
+      // case okParam
+      {
+         InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+            
+         if (!closure->markAsPresaved(target))
+            scope.raiseError(errInvalidOperation, sourceNode);
+
+         break;
+      }
       case okReadOnlyField:
       case okReadOnlyFieldAddress:
-//      case okOuterReadOnlyField:
+      case okOuterReadOnlyField:
          scope.raiseError(errReadOnlyField, node.parentNode());
          break;
       default:
@@ -3608,58 +3608,58 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       // idle return
       return ObjectInfo();
    }
-   //else {
-   //   // dynamic binary symbol
-   //   if (test(scope.info.header.flags, elStructureRole)) {
-   //      writer.newNode(lxStruct, scope.info.size);
-   //      writer.appendNode(lxTarget, closureRef);
+   else {
+      // dynamic binary symbol
+      if (test(scope.info.header.flags, elStructureRole)) {
+         writer.newNode(lxStruct, scope.info.size);
+         writer.appendNode(lxTarget, closureRef);
 
-   //      if (scope.outers.Count() > 0)
-   //         scope.raiseError(errInvalidInlineClass, node);
-   //   }
-   //   else {
-   //      // dynamic normal symbol
-   //      writer.newNode(lxNested, scope.info.fields.Count());
-   //      writer.appendNode(lxTarget, closureRef);
-   //   }
+         if (scope.outers.Count() > 0)
+            scope.raiseError(errInvalidInlineClass, node);
+      }
+      else {
+         // dynamic normal symbol
+         writer.newNode(lxNested, scope.info.fields.Count());
+         writer.appendNode(lxTarget, closureRef);
+      }
 
-   //   Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
-   //   //int toFree = 0;
-   //   while(!outer_it.Eof()) {
-   //      ObjectInfo info = (*outer_it).outerObject;
+      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      //int toFree = 0;
+      while(!outer_it.Eof()) {
+         ObjectInfo info = (*outer_it).outerObject;
 
-   //      writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
-   //      writeTerminal(writer, node, ownerScope, info, 0);
-   //      writer.closeNode();
+         writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
+         writeTerminal(writer, node, ownerScope, info, 0);
+         writer.closeNode();
 
-   //      outer_it++;
-   //   }
+         outer_it++;
+      }
 
-   //   if (scope.returningMode) {
-   //      // injecting returning code if required
-   //      InlineClassScope::Outer retVal = scope.outers.get(RETVAL_VAR);
+      if (scope.returningMode) {
+         // injecting returning code if required
+         InlineClassScope::Outer retVal = scope.outers.get(RETVAL_VAR);
 
-   //      writer.newNode(lxCode);
-   //      writer.newNode(lxExpression);
-   //      writer.newNode(lxBranching);
+         writer.newNode(lxCode);
+         writer.newNode(lxExpression);
+         writer.newNode(lxBranching);
 
-   //      writer.newNode(lxExpression);
-   //      writer.appendNode(lxCurrent);
-   //      writer.appendNode(lxResultField, retVal.reference); // !! current field
-   //      writer.closeNode();
+         writer.newNode(lxExpression);
+         writer.appendNode(lxCurrent);
+         writer.appendNode(lxResultField, retVal.reference); // !! current field
+         writer.closeNode();
 
-   //      writer.newNode(lxIfNot, -1);
-   //      writer.newNode(lxCode);
-   //      writer.newNode(lxReturning);
-   //      writer.appendNode(lxResult);
-   //      writer.closeNode();
-   //      writer.closeNode();
-   //      writer.closeNode();
+         writer.newNode(lxIfNot, -1);
+         writer.newNode(lxCode);
+         writer.newNode(lxReturning);
+         writer.appendNode(lxResult);
+         writer.closeNode();
+         writer.closeNode();
+         writer.closeNode();
 
-   //      writer.closeNode();
-   //      writer.closeNode();
-   //      writer.closeNode();
-   //   }
+         writer.closeNode();
+         writer.closeNode();
+         writer.closeNode();
+      }
 
       //ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
 
@@ -3671,12 +3671,10 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       //   writer.closeNode();
       //}
 
-   //   writer.closeNode();
+      writer.closeNode();
 
-   //   return ObjectInfo(okObject, closureRef);
-   //}
-
-   throw InternalError("not yet supported");
+      return ObjectInfo(okObject, closureRef);
+   }
 }
 
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode)
@@ -7059,72 +7057,72 @@ int Compiler :: allocateStructure(SNode node, int& size)
    return offset;
 }
 
-//ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/)
-//{
-//   // check if the nested collection can be treated like constant one
-//   bool constant = true;
-//   ref_t memberCounter = 0;
-//   SNode current = node.firstChild();
-//   while (constant && current != lxNone) {
-//      if (current == lxMember) {
-//         SNode object = current.findSubNodeMask(lxObjectMask);
-//         switch (object.type) {
-//            case lxConstantChar:
-//            case lxConstantClass:
-//            case lxConstantInt:
-//            case lxConstantLong:
-//            case lxConstantList:
-//            case lxConstantReal:
-//            case lxConstantString:
-//            case lxConstantWideStr:
-//            case lxConstantSymbol:
-//               break;
-//            case lxNested:
-//               analizeNestedExpression(object, scope/*, warningScope*/);
-//               object.refresh();
-//               if (object != lxConstantList)
-//                  constant = false;
-//
-//               break;
-//            case lxUnboxing:
-//               current = lxOuterMember;
-//               analizeBoxing(object, scope, /*warningScope, */HINT_NOUNBOXING);
-//               constant = false;
-//               break;
-//            default:
-//               constant = false;
-//               analizeExpressionTree(current, scope/*, warningScope*/);
-//               break;
-//         }
-//         memberCounter++;
-//      }
-//      else if (current == lxOuterMember) {
-//         // nested class with outer member must not be constant
-//         constant = false;
-//
-//         analizeExpression(current, scope/*, warningScope*/);
-//      }
-//      else if (current == lxOvreriddenMessage) {
-//         constant = false;
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   if (node.argument != memberCounter)
-//      constant = false;
-//
-//   // replace with constant array if possible
-//   if (constant && memberCounter > 0) {
-//      ref_t reference = scope.mapAnonymous();
-//
-//      node = lxConstantList;
-//      node.setArgument(reference | mskConstArray);
-//
-//      _writer.generateConstantList(node, scope.module, reference);
-//   }
-//
-//   return node.findChild(lxTarget).argument;
-//}
+ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
+{
+   // check if the nested collection can be treated like constant one
+   bool constant = true;
+   ref_t memberCounter = 0;
+   SNode current = node.firstChild();
+   while (constant && current != lxNone) {
+      if (current == lxMember) {
+         SNode object = current.findSubNodeMask(lxObjectMask);
+         switch (object.type) {
+            //case lxConstantChar:
+            //case lxConstantClass:
+            case lxConstantInt:
+            //case lxConstantLong:
+            case lxConstantList:
+            //case lxConstantReal:
+            case lxConstantString:
+            //case lxConstantWideStr:
+            case lxConstantSymbol:
+               break;
+            case lxNested:
+               analizeNestedExpression(object, scope);
+               object.refresh();
+               if (object != lxConstantList)
+                  constant = false;
+
+               break;
+            case lxUnboxing:
+               current = lxOuterMember;
+               analizeBoxing(object, scope, HINT_NOUNBOXING);
+               constant = false;
+               break;
+            default:
+               constant = false;
+               analizeExpressionTree(current, scope);
+               break;
+         }
+         memberCounter++;
+      }
+      else if (current == lxOuterMember) {
+         // nested class with outer member must not be constant
+         constant = false;
+
+         analizeExpression(current, scope);
+      }
+      //else if (current == lxOvreriddenMessage) {
+      //   constant = false;
+      //}
+      current = current.nextNode();
+   }
+
+   if (node.argument != memberCounter)
+      constant = false;
+
+   // replace with constant array if possible
+   if (constant && memberCounter > 0) {
+      ref_t reference = scope.moduleScope->mapAnonymous();
+
+      node = lxConstantList;
+      node.setArgument(reference | mskConstArray);
+
+      _writer.generateConstantList(node, scope.module, reference);
+   }
+
+   return node.findChild(lxTarget).argument;
+}
 
 ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int mode)
 {   
@@ -7528,8 +7526,8 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       //case lxElse:
       //   analizeExpressionTree(current, scope);
       //   return 0;
-      //case lxNested:
-      //   return analizeNestedExpression(current, scope);
+      case lxNested:
+         return analizeNestedExpression(current, scope);
       default:
          return current.findChild(lxTarget).argument;
    }

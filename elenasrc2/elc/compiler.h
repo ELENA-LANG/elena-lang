@@ -126,10 +126,10 @@ public:
       okFieldAddress,                 // param - field offset
       okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
       okOuter,                        // param - field offset
-//      okOuterField,                   // param - field offset, extraparam - outer field offset
-//      okOuterReadOnlyField,           // param - field offset, extraparam - outer field offset
-//      okOuterSelf,                    // param - field offset, extraparam - outer field offset
-//      okOuterStaticField,             // param - field offset, extraparam - outer field offset
+      okOuterField,                   // param - field offset, extraparam - outer field offset
+      okOuterReadOnlyField,           // param - field offset, extraparam - outer field offset
+      okOuterSelf,                    // param - field offset, extraparam - outer field offset
+      okOuterStaticField,             // param - field offset, extraparam - outer field offset
       okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
 //////      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
@@ -736,13 +736,13 @@ private:
       Map<ident_t, Outer>     outers;
       ClassInfo::FieldTypeMap outerFieldTypes;
 
-//      Outer mapSelf();
-//      Outer mapOwner();
-//      Outer mapParent();
+      Outer mapSelf();
+      Outer mapOwner();
+      Outer mapParent();
 
       ObjectInfo allocateRetVar();
 
-//      bool markAsPresaved(ObjectInfo object);
+      bool markAsPresaved(ObjectInfo object);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -991,7 +991,7 @@ private:
    ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
 //   ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope);
    ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope);
-//   ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
+   ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
    void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
    void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
    void analizeCode(SNode node, NamespaceScope& scope);
