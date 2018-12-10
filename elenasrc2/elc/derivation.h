@@ -99,7 +99,7 @@ class DerivationWriter : public _DerivationWriter
    
    void generateTemplate(SNode node, SNode nameNode);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
-   void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node);
+   void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool templateMode*/, bool closureMode);

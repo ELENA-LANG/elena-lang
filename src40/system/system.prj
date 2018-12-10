@@ -16,6 +16,7 @@
        <include>types.l</include>
        <include>object.l</include>
        <include>basic.l</include>
+       <include>templates.l</include>
        <include>control.l</include>
        <include>memory.l</include>
        <include>win32_pointers.l</include>

@@ -138,6 +138,7 @@ void DerivationWriter :: newNode(Symbol symbol)
 ////         break;
       case nsExpression:
       case nsRootExpression:
+      case nsOperandExpression:
 //      case nsNestedRootExpression:
          _cacheWriter.newNode(lxExpression);
          break;
@@ -386,12 +387,11 @@ void DerivationWriter :: generateTemplate(SNode node, SNode nameNode)
    Scope templateScope;
    if (node.existChild(lxCode)) {
       templateScope.templateMode = ScopeType::stCodeTemplate;
+      loadTemplateExprParameters(templateScope, node);
    }
    else templateScope.templateMode = ScopeType::stClassTemplate;
 
    loadTemplateParameters(templateScope, nameNode);
-   if (templateScope.templateMode == ScopeType::stCodeTemplate)
-      loadTemplateExprParameters(templateScope, node);
    
    //      int count = SyntaxTree::countChild(nameNode, lxAttributeValue);
    //      int mode = MODE_ROOT;
@@ -664,6 +664,9 @@ bool DerivationWriter :: recognizeMetaScope(SNode node)
       recognizeDefinition(node);
 
       generateTemplate(node, nameNode);
+
+      node = lxIdle;
+
       return true;
    }
    //   else if (test(declType, daClass)) {
@@ -1344,7 +1347,7 @@ void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode curr
 //   }
 }
 
-void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& node)
+void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
 {
    int exprCounters = SyntaxTree::countNode(node, lxExpression);
    int blockCounters = SyntaxTree::countNode(node, lxCode);
@@ -1360,7 +1363,31 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
    if (!templateRef)
       _scope->raiseError(errInvalidSyntax, _filePath, node.parentNode());
 
+   // generate members
+   SyntaxTree tempTree;
+   SyntaxWriter tempWriter(tempTree);
+   SNode current = node;
+   while (current != lxNone) {
+      if (current == lxCode) {
+         generateCodeExpression(tempWriter, current, derivationScope, false);
+      }
+      else if (current == lxExpression) {
+         generateExpressionTree(tempWriter, current, derivationScope, 0);
+      }
+
+      current = current.nextNode();
+   }
+
+   // load code template parameters
    List<SNode> parameters;
+   current = tempTree.readRoot();
+   while (current != lxNone) {
+      if (current == lxExpression) {
+         parameters.add(current);
+      }
+
+      current = current.nextNode();
+   }
 
    _scope->generateTemplateCode(writer, templateRef, parameters);
 
@@ -1485,7 +1512,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             }
             // COMPILER MAGIC : recognize the code template
             if (current.findNext(lxCode) == lxCode) {
-               generateCodeTemplateTree(writer, current);
+               generateCodeTemplateTree(writer, current, derivationScope);
             }
             else generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
             break;
@@ -1533,7 +1560,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             //                  writeFullReference(writer, scope.compilerScope->module, reference);
             //               }
             //            }
-               else copyIdentifier(writer, current);
+               else generateIdentifier(writer, current, derivationScope);
             }
             //         else scope.raiseError(errInvalidSyntax, current);            
             break;
@@ -2328,13 +2355,26 @@ void TemplateGenerator :: copyExpressionTree(SyntaxWriter& writer, SNode node, T
 
 void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope& scope)
 {
-   if (test(current.type, lxTerminalMask/* | lxObjectMask*/)) {
+   if (test(current.type, lxTerminalMask | lxObjectMask)) {
       copyIdentifier(writer, current);
    }
 //   else if (current == lxTemplate) {
 //      writer.appendNode(lxTemplate, scope.templateRef);
 //   }
-//   else if (current == lxTemplateParam) {
+   else if (current == lxTemplateParam) {
+      if (scope.type == TemplateScope::ttCodeTemplate) {
+         SNode nodeToInject = scope.codeParameterValues.get(current.argument);
+         if (nodeToInject == lxCode) {
+            writer.newNode(lxExpression);
+            copyExpressionTree(writer, nodeToInject, scope);
+            writer.closeNode();
+         }
+         else if (nodeToInject == lxExpression) {
+            copyExpressionTree(writer, nodeToInject, scope);
+         }
+      }
+      else throw InternalError("Not yet supported");
+
 //      if (scope.type == DerivationScope::ttCodeTemplate) {
 //         if (current.argument == 1) {
 //            // if it is a code template parameter
@@ -2385,7 +2425,7 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
 //         //}
 //         else writeFullReference(writer, scope.compilerScope->module, attrRef, current);
 //      }
-//   }
+   }
 //   else if (current == lxTemplateField && current.argument >= 0) {
 //      ident_t fieldName = retrieveIt(scope.fields.start(), current.argument).key();
 //
@@ -3166,7 +3206,7 @@ void TemplateGenerator :: generateTemplateCode(SyntaxWriter& writer, _ModuleScop
    templateScope.type = TemplateScope::Type::ttCodeTemplate;
 
    for (auto it = parameters.start(); !it.Eof(); it++) {
-      templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
+      templateScope.codeParameterValues.add(templateScope.codeParameterValues.Count() + 1, *it);
    }
 
    generateTemplate(writer, templateScope, false);
