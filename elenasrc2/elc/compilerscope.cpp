@@ -462,6 +462,19 @@ void ModuleScope :: compile(_Compiler& compiler, SyntaxTree& derivationTree/*, E
    }
 }
 
+void ModuleScope :: generateTemplateCode(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
+{
+   SyntaxTree templateTree;
+
+   TemplateGenerator transformer(templateTree);
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   transformer.generateTemplateCode(writer, *this, reference, parameters);
+   writer.closeNode();
+
+   SyntaxTree::copyNode(output, templateTree.readRoot());
+}
+
 ref_t ModuleScope :: generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensions*/)
 {
    SyntaxTree templateTree;

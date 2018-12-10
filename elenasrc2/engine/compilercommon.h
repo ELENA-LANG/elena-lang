@@ -299,6 +299,7 @@ struct _ModuleScope
 //   }
 
    virtual ref_t generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensionsToExport*/) = 0;
+   virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
