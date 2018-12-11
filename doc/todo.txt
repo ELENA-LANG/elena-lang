@@ -4,6 +4,7 @@ In development:
 
               dev - elena 4.0
                  * implement a ? b, a ? b : c, a ? {}, a ? {} : {}
+                 * imlement if(a) b else c;
 
                  * test all possible syntax combintions 
                  * support c style return statement - return x;

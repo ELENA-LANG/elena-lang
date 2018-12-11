@@ -216,9 +216,10 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature)
       else signatureName.append(referenceName);
    }
 
-   ref_t resolvedSignature = module->mapAction(signatureName.c_str(), 0u, true);
-   if (resolvedSignature == 0) {
-      SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true);
+   SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true);
+
+   ref_t resolvedSignature = info.module->mapAction(signatureName.c_str(), 0u, true);
+   if (resolvedSignature == 0) {      
       MemoryWriter writer(info.section);
       resolvedSignature = writer.Position();
 

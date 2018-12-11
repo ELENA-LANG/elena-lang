@@ -2628,15 +2628,16 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, Cod
       compileBranching(writer, thenCode, scope);
       writer.closeNode();
 
-      ////// HOTFIX : switch mode - ignore else
-      ////if (!switchMode) {
-      //   SNode elseCode = thenBody.firstChild().nextNode();
-      //   if (elseCode != lxNone) {
-      //      writer.newNode(lxElse, 0);
-      //      compileBranching(writer, elseCode, scope);
-      //      writer.closeNode();
-      //   }
-      ////}
+      //// HOTFIX : switch mode - ignore else
+      //if (!switchMode) {
+         SNode elseNode = thenBody./*firstChild().*/nextNode();
+         SNode elseCode = elseNode.findSubNode(lxCode);
+         if (elseCode != lxNone) {
+            writer.newNode(lxElse, 0);
+            compileBranching(writer, elseCode, scope);
+            writer.closeNode();
+         }
+      //}
 //   }
 }
 
@@ -2677,13 +2678,14 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
       operator_id = original_id;
 
       // bad luck : we have to create closure
-      //SNode roperand2Node = roperandNode.firstChild().existChild(lxCode) ? roperandNode.firstChild() : SNode();
+      SNode elseNode = roperandNode.nextNode();
+      SNode elseCode = elseNode.findSubNode(lxCode);
       int message = resolveOperatorMessage(scope, operator_id, 1);
-      //if (roperand2Node != lxNone) {
-      //   message = encodeMessage(IF_ELSE_MESSAGE_ID, 2);
+      if (elseCode != lxNone) {
+         message = overwriteParamCount(message, 2);
 
-      //   compileClosure(writer, roperand2Node, scope, HINT_SUBCODE_CLOSURE);
-      //}
+         compileClosure(writer, elseCode.parentNode(), scope, HINT_SUBCODE_CLOSURE);
+      }
       compileClosure(writer, roperandNode, scope, HINT_SUBCODE_CLOSURE);
 
       retVal = compileMessage(writer, roperandNode, scope, loperand, message, 0, 0);
@@ -4702,6 +4704,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    if (identNode/*.compare(*/ == lxIdentifier/*, lxMessage)*/) {
       actionStr.copy(identNode.identifier());
+      // COMPILER MAGIC : adding complex message name
+      SNode messageNode = nameNode.nextNode();
+      while (messageNode == lxMessage) {
+         actionStr.append(':');
+         actionStr.append(messageNode.firstChild(lxTerminalMask).identifier());
+
+         messageNode = messageNode.nextNode();
+      }
    }
    else unnamedMessage = true;
       

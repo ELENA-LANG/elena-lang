@@ -696,7 +696,7 @@ bool DerivationWriter :: recognizeMetaScope(SNode node)
 void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 {
    SNode bodyNode = scopeNode.firstChild();
-   if (bodyNode.compare(lxCode, lxParameter)) {
+   if (scopeNode.existChild(lxCode)) {
       // HOTFIX : recognize returning expression
       //         SNode body = node.findChild(lxCode, lxExpression, lxDispatchCode/*, lxReturning*/, lxResendExpression);
       //         if (body == lxExpression)
@@ -829,11 +829,23 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
    
    IdentifierString name(nameTerminal.identifier().c_str());
    if (nameNode.existChild(lxToken)) {
-      // if it is a template identifier
+      // if it is a template identifier      
+      bool codeTemplate = nameNode.nextNode().findChild(lxCode) == lxCode;
+      if (codeTemplate && nameNode.nextNode().existChild(lxParent)) {
+         // COMPILER MAGIC : if it is complex code template
+         SNode subNameNode = nameNode.nextNode().findChild(lxParent);
+         while (subNameNode == lxParent) {
+            name.append(':');
+            name.append(subNameNode.findChild(lxToken).firstChild(lxTerminalMask).identifier());
+
+            subNameNode = subNameNode.nextNode();
+         }
+      }
+
       int paramCounter = SyntaxTree::countChild(nameNode, lxToken);
       name.append('#');
       name.appendInt(paramCounter);
-      if (nameNode.nextNode().findChild(lxCode) == lxCode) {
+      if (codeTemplate) {
          int subParamCounter = SyntaxTree::countChild(nameNode.nextNode(), lxParameter);
          name.append('#');
          name.appendInt(subParamCounter);
@@ -1212,16 +1224,19 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
             //            attribute = SNode();
             break;
          }
-//         case lxMessage:
-//            writer.newNode(lxMessage);
-//            copyIdentifier(writer, current.firstChild(lxTerminalMask));
-//            writer.closeNode();
-//            attribute = SNode();
-//            break;
-//         default:
-//            // otherwise break the loop
-//            current = SNode();
-//            break;
+         case lxParent:
+         {
+            // COMPILER MAGIC : if it is a complex name
+            writer.newNode(lxMessage);
+            SNode identNode = current.findChild(lxToken).firstChild(lxTerminalMask);
+            copyIdentifier(writer, identNode);
+            writer.closeNode();
+            break;
+         }
+         default:
+            // otherwise break the loop
+            current = SNode();
+            break;
       }
 
       current = current.nextNode();
@@ -1370,6 +1385,16 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
 
    IdentifierString templateName;
    templateName.copy(node.firstChild(lxTerminalMask).identifier());
+   // COMPILER MAGIC : if it is complex code template
+   SNode subNameNode = goToNode(node, lxExpression);
+   while (subNameNode != lxNone) {
+      if (subNameNode == lxToken) {
+         templateName.append(':');
+         templateName.append(subNameNode.firstChild(lxTerminalMask).identifier());
+      }
+      subNameNode = subNameNode.nextNode();
+   }
+
    templateName.append('#');
    templateName.appendInt(blockCounters);
    templateName.append('#');

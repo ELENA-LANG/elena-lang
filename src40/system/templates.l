@@ -219,17 +219,16 @@
 
 public if<if_block>(expr)
 {
-    expr ? if_block
-//    /*cast bool(expr)*/expr ? if_block
+    cast bool(expr) ? if_block
 }
 
-//public __block if<expr>
-//[
-//    T<bool>(expr) ?
-//    [
-//    ].
-//]
-//
+// --- if-else statement ---
+
+public if<if_block,else_block>:else(expr)
+{
+    cast bool(expr) ? if_block : else_block
+}
+
 //// --- ifnot statement ---
 //
 //public __block ifnot<expr>
@@ -238,18 +237,6 @@ public if<if_block>(expr)
 //    [
 //    ].
 //]
-//
-//// --- if-else statement ---
-//
-//public __block __block if<expr>
-//[
-//    T<bool>(expr) ?
-//    [
-//    ]
-//    ! [
-//    ].    
-//]
-//
 //
 //public __block __block ifnot<expr>
 //[
