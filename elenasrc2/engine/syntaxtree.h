@@ -263,7 +263,6 @@ enum LexicalType
 //   lxTemplateAttribute = 0x2002C,
 //   lxEmbeddableAttr  = 0x2002D,
    lxBoxableAttr     = 0x2002E,
-   lxOutputRefAttr   = 0x2002F,
 //   lxClosureMessage  = 0x20030,
    lxExtArgumentRef  = 0x20031,
    lxInternalRef     = 0x20032,

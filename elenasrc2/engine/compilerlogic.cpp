@@ -1196,12 +1196,23 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ClassInfo
    return 0;
 }
 
-ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int& stackSafeAttr)
+ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr)
 {
-   ref_t signature[ARG_COUNT];
-   size_t paramCount = scope.module->resolveSignature(signRef, signature);
-   
-   return resolveImplicitConstructor(scope, targetRef, signature, paramCount, stackSafeAttr);
+   if (signRef != 0) {
+      ref_t signature[ARG_COUNT];
+      scope.module->resolveSignature(signRef, signature);
+
+      return resolveImplicitConstructor(scope, targetRef, signature, paramCount, stackSafeAttr);
+   }
+   else {
+      ClassInfo classClassinfo;
+      if (!defineClassInfo(scope, classClassinfo, getClassClassRef(scope, targetRef)))
+         return 0;
+
+      ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, 0);
+      if (classClassinfo.methods.exist(messageRef))
+         return messageRef;
+   }
 }
 
 //bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef)

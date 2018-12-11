@@ -1151,10 +1151,10 @@ public sealed /*__string*/ LiteralValue : BaseValue
 //    [
 //        system'core_routines'__literal copy(self, anIndex, aSize, anArray).
 //    ]
-//    
-//    /// Converts to UTF-16 literal
-//    cast T<wide> = wideConvertor convert(self).
-//
+    
+    /// Converts to UTF-16 literal
+    wide cast() = wideConvertor.convert(self);
+
 //    cast Enumerable<char> = Enumerable<char>::{ Enumerator<char> enumerator => self. }.
 //
 //    T<literal> literal = self.
@@ -1349,14 +1349,14 @@ public sealed /*__string*/ LiteralValue : BaseValue
 //
 ///// An empty wide literal value
 //const wide emptyWideLiteral = ""w.
-//
-//// --- WideLiteralValue ---
-//
-///// A UTF-18 literal value
-//public sealed __string WideLiteralValue :: BaseValue
-//{
-//    dynamic<short> theArray.
-//
+
+// --- WideLiteralValue ---
+
+/// A UTF-18 literal value
+public sealed /*__string */WideLiteralValue : BaseValue
+{
+    short[] theArray;
+
 //    /// return the default value
 //    constructor
 //        = emptyWideLiteral.
@@ -1573,8 +1573,8 @@ public sealed /*__string*/ LiteralValue : BaseValue
 //    ]    
 //        
 //    int rvprop hash_code :: readHashCodeTo.
-//}
-//
+}
+
 //// --- Variant ---
 //
 ///// A basic type variant class
@@ -1797,9 +1797,9 @@ public sealed /*__string*/ LiteralValue : BaseValue
 //        
 //    int rvprop length :: readLengthTo.
 //}
-//
-//// === Convertors ===
-//
+
+// === Convertors ===
+
 //// --- literalConvertor ---
 //
 ///// A literal convertor
@@ -2034,12 +2034,12 @@ public sealed /*__string*/ LiteralValue : BaseValue
 //    literal convert : anObject
 //        = anObject literal.
 //}.
-//
-//// --- wideConvertor ---
-//
-///// A wide literal convertor
-//public class wideConvertor =
-//{
+
+// --- wideConvertor ---
+
+/// A wide literal convertor
+public singleton wideConvertor
+{
 //    wide convert(BaseVariable v)
 //        <= convert(v value).
 //    
@@ -2225,10 +2225,10 @@ public sealed /*__string*/ LiteralValue : BaseValue
 //    /// Converts UTF-8 literal to UTF-16e
 //    convert(literal aLiteral, ShortArray buffer, ref<int> length)
 //        => system'core_routines'__wideconvertor.
-//
-//    /// Converts UTF-8 literal to UTF-16e
-//    wide convert(literal aLiteral)
-//    [
+
+    /// Converts UTF-8 literal to UTF-16e
+    wide convert(literal aLiteral)
+    {
 //        int        i := 0.
 //        int        m := 0.
 //        int        page := 0.
@@ -2259,17 +2259,17 @@ public sealed /*__string*/ LiteralValue : BaseValue
 //        ].
 //        
 //        ^ retVal
-//    ]        
-//        
-//    /// Returns a parameter
-//    wide convert(wide aLiteral)
-//        = aLiteral.
-//
+    }
+        
+    /// Returns a parameter
+    wide convert(wide aLiteral)
+        = aLiteral;
+
 //    /// Returns the literal presentation of the parameter
-//    wide convert : anObject
-//        = T<wide>(anObject literal).
-//}.
-//
+//    wide convert(o)
+//        = cast wide(o literal);
+}
+
 //// === Enumerators / Indexers
 //
 //// --- LiteralEnumerator ---

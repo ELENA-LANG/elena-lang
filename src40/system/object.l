@@ -19,8 +19,8 @@ public class Object
 //    predefined bool greater : anObject []
 //    predefined bool notless : anObject []
 //    predefined bool notgreater : anObject []
-//                
-//    T<literal> literal = self __className.
+                
+//    literal literal = self __className;
                 
     /// Implements a message dispatching in VMT
     dispatch() => system'core_routines'__object;
