@@ -32,13 +32,13 @@ public /*enum */interface class BoolValue
 //    /// return the default value
 //    constructor
 //        = false.
-//        
-//    abstract bool equal(bool aBool) []
+        
+    abstract bool equal(bool f) {}
 
     abstract if(trueAction) {}
 
-//    abstract if:aTrueAction else:aFalseAction []
-//
+    abstract if(trueAction,falseAction) {}
+
 //    abstract ifnot : aTrueAction []
 //
 //    abstract iif(object trueVal, object falseVal) []

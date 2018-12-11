@@ -85,9 +85,9 @@ public sealed singleton true : BoolValue
     /// Executes the action
     if(trueAction) = trueAction();
 
-//    /// Executes then-action
-//    if:aTrueAction else:aFalseAction = aTrueAction().
-//
+    /// Executes then-action
+    if(trueAction,falseAction) = trueAction();
+
 //    /// Always returns nil.
 //    __ifnotoperator ifnot : aTrueAction = nil.
 //
@@ -108,13 +108,13 @@ public sealed singleton true : BoolValue
 //        
 //        ^ self
 //    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    bool equal : anExpr = anExpr.
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    bool equal(bool aBool) = aBool.
-//
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    bool equal(expr) = expr;
+
+    /// Determines whether the specified object is equal to the current object boolean value.
+    bool equal(bool b) = b;
+
 //    /// Always returns false.
 //    bool inverted = false.
 //
@@ -133,9 +133,9 @@ public sealed singleton false : BoolValue
     /// Always returns nil
     if(trueAction) = nil;
     
-//    /// Executes else-action
-//    if:aTrueAction else:aFalseAction = aFalseAction().
-//
+    /// Executes else-action
+    if(trueAction,falseAction) = falseAction();
+
 //    /// Executes the action
 //    __ifoperator ifnot:aFalseAction = aFalseAction().
 //
@@ -156,21 +156,19 @@ public sealed singleton false : BoolValue
 //        
 //        ^ self
 //    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    bool equal : anExpr
-//    [
-//        T<bool>(anExpr) ? [ ^ self ].
-//        
-//        ^ true
-//    ]
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    bool equal(bool anExpr)
-//    [
-//        ^ anExpr inverted
-//    ]
-//
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    bool equal(expr)
+    {
+        cast bool(expr) ? { ^ self } : { ^ true }
+    }
+
+    /// Determines whether the specified object is equal to the current object boolean value
+    bool equal(bool f)
+    {
+//        ^ f.inverted
+    }
+
 //    /// Always returns true
 //    bool inverted = true.
 //

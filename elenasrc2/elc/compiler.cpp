@@ -5092,46 +5092,46 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
 //
 //   writer.closeNode();
 //}
-//
-//void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   if (isImportRedirect(node)) {
-//      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
-//   }
-//   else {
-//      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//      // try to implement light-weight resend operation
-//      ObjectInfo target;
-//      if (isSingleStatement(node)) {
-//         SNode terminal = node.firstChild(lxTerminalMask);
-//
-//         target = scope.mapTerminal(terminal.identifier(), terminal == lxReference, 0);
-//      }
-//
-//      if (target.kind == okConstantSymbol || target.kind == okField || target.kind == okReadOnlyField) {
-//         writer.newNode(lxResending, methodScope->message);
-//         writer.newNode(lxExpression);
-//         if (target.kind == okField || target.kind == okReadOnlyField) {
-//            writer.appendNode(lxResultField, target.param);
-//         }
-//         else writer.appendNode(lxConstantSymbol, target.param);
-//
-//         writer.closeNode();
-//         writer.closeNode();
-//      }
-//      else {
-//         writer.newNode(lxResending, methodScope->message);
-//         writer.newNode(lxNewFrame);
-//
-//         target = compileExpression(writer, node, scope, 0, 0);
-//
-//         writer.closeNode();
-//         writer.closeNode();
-//      }
-//   }
-//}
-//
+
+void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   if (isImportRedirect(node)) {
+      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
+   }
+   else {
+      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+      // try to implement light-weight resend operation
+      ObjectInfo target;
+      if (isSingleStatement(node)) {
+         SNode terminal = node.firstChild(lxTerminalMask);
+
+         target = scope.mapTerminal(terminal.identifier(), terminal == lxReference, 0);
+      }
+
+      if (target.kind == okConstantSymbol || target.kind == okField || target.kind == okReadOnlyField) {
+         writer.newNode(lxResending, methodScope->message);
+         writer.newNode(lxExpression);
+         if (target.kind == okField || target.kind == okReadOnlyField) {
+            writer.appendNode(lxResultField, target.param);
+         }
+         else writer.appendNode(lxConstantSymbol, target.param);
+
+         writer.closeNode();
+         writer.closeNode();
+      }
+      else {
+         writer.newNode(lxResending, methodScope->message);
+         writer.newNode(lxNewFrame);
+
+         target = compileExpression(writer, node, scope, 0, 0);
+
+         writer.closeNode();
+         writer.closeNode();
+      }
+   }
+}
+
 //void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
 //{
 //   SNode expr = node.findChild(lxExpression);
@@ -5366,16 +5366,16 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
    CodeScope codeScope(&scope);
 
-   SNode body = node.findChild(lxCode, lxReturning/*, lxDispatchCode*/, lxResendExpression);
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
    // check if it is a resend
    if (body == lxResendExpression) {
       compileResendExpression(writer, body, codeScope, scope.multiMethod/*, scope.extensionMode*/);
       preallocated = 1;
    }
-//   // check if it is a dispatch
-//   else if (body == lxDispatchCode) {
-//      compileDispatchExpression(writer, body, codeScope);
-//   }
+   // check if it is a dispatch
+   else if (body == lxDispatchCode) {
+      compileDispatchExpression(writer, body, codeScope);
+   }
    else {
       if (scope.multiMethod) {
          ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
