@@ -33,7 +33,7 @@
 //preloaded       = #8207.
 #16387 = cast;
 #16404 = new;
-//set             = #16402.  
+#16406 = property;
 
 #8210  = abstract;
 #8211  = public;

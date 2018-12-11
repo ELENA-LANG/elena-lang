@@ -28,6 +28,7 @@ namespace _ELENA_
 ////   #define PROPSET_MESSAGE         0x20000000u
    // indicates it is an invoke message
    constexpr auto SPECIAL_MESSAGE      = 0x20u;
+   constexpr auto PROPERTY_MESSAGE     = 0x40u;
    constexpr auto PARAM_MASK           = 0x1Fu;
    constexpr auto ARG_COUNT            = 0x1Fu;
 

@@ -30,8 +30,8 @@ public class Object
 public /*enum */interface class BoolValue
 {
 //    /// return the default value
-//    constructor
-//        = false.
+//    constructor()
+//        = false;
         
     abstract bool equal(bool f) {}
 
@@ -42,15 +42,15 @@ public /*enum */interface class BoolValue
 //    abstract ifnot : aTrueAction []
 //
 //    abstract iif(object trueVal, object falseVal) []
-//
+
 //    abstract bool or : anExpr []
 //
 //    abstract bool and : anExpr []
 //
 //    abstract bool xor : aBool []
-//
-//    abstract bool inverted []
-//
+
+    abstract property bool inverted() {}
+
 //    abstract clone []
 }
 

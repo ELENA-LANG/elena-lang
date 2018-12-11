@@ -867,8 +867,12 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
       if (current == lxScope) {
          recognizeScopeAttributes(current.prevNode(), 0);
 
-         SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning);
-         if (bodyNode != lxNone) {
+         SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning, lxExpression);
+         if (bodyNode == lxExpression) {
+            // if it is a property, mark it as a get-property
+            current.set(lxClassMethod, -2);
+         }
+         else if (bodyNode != lxNone) {
             // if it is a method
             current = lxClassMethod;
          }
@@ -979,7 +983,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
 
    SNode current = node.firstChild();
    if (closureMode) {
-      generateMethodTree(writer, node, derivationScope/*, scope.reference == INVALID_REF*/, true);
+      generateMethodTree(writer, node, derivationScope/*, scope.reference == INVALID_REF*/, true, current.argument == -2);
    }
    else {
       //   bool withInPlaceInit = false;
@@ -996,7 +1000,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
          //         firstParent = false;
          //      }
          else if (current == lxClassMethod) {
-            generateMethodTree(writer, current, derivationScope/*, scope.reference == INVALID_REF*/, false);
+            generateMethodTree(writer, current, derivationScope/*, scope.reference == INVALID_REF*/, false, current.argument == -2);
          }
          else if (current == lxClassField/* || current == lxFieldInit*/) {
             /*withInPlaceInit |= */generateFieldTree(writer, current/*, scope, buffer, false*/);
@@ -1181,13 +1185,17 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node/*, 
 //   else return false;
 }
 
-void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool templateMode*/, bool closureMode)
+void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode)
 {
    writer.newNode(lxClassMethod);
 //   if (templateMode) {
 //      writer.appendNode(lxSourcePath, scope.sourcePath);
 //      writer.appendNode(lxTemplate, scope.templateRef);
 //   }
+
+   if (propertyMode) {
+      writer.appendNode(lxAttribute, V_PROPERTY);
+   }
 
    if (closureMode) {
       writer.appendNode(lxAttribute, V_ACTION);
@@ -1245,17 +1253,24 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //   if (templateMode)
 //      scope.reference = INVALID_REF;
 
-   SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning/*, lxResendExpression*/);
-   if (bodyNode.compare(lxReturning, lxDispatchCode)) {
-      writer.newNode(bodyNode.type);
-      generateExpressionTree(writer, bodyNode.firstChild(), derivationScope, EXPRESSION_IMPLICIT_MODE);
+   if (propertyMode) {
+      writer.newNode(lxReturning);
+      generateExpressionTree(writer, node.findChild(lxExpression), derivationScope, 0);
       writer.closeNode();
    }
-//   else if (bodyNode == lxResendExpression) {
-//      generateCodeTree(writer, bodyNode, scope, true);
-//   }
-   else if (bodyNode == lxCode) {
-      generateCodeTree(writer, bodyNode, derivationScope);
+   else {
+      SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning/*, lxResendExpression*/);
+      if (bodyNode.compare(lxReturning, lxDispatchCode)) {
+         writer.newNode(bodyNode.type);
+         generateExpressionTree(writer, bodyNode.firstChild(), derivationScope, EXPRESSION_IMPLICIT_MODE);
+         writer.closeNode();
+      }
+      //   else if (bodyNode == lxResendExpression) {
+      //      generateCodeTree(writer, bodyNode, scope, true);
+      //   }
+      else if (bodyNode == lxCode) {
+         generateCodeTree(writer, bodyNode, derivationScope);
+      }
    }
 
    writer.closeNode();
@@ -1556,6 +1571,10 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
                generateCodeTemplateTree(writer, current, derivationScope);
             }
             else generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
+            break;
+         case lxPropertyParam:
+            // to indicate the get property call
+            writer.appendNode(lxPropertyParam);
             break;
          default:
             if (isTerminal(current.type)) {

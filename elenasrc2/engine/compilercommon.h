@@ -96,6 +96,7 @@
 //#define V_STACKUNSAFE    (ref_t)-16403
 #define V_NEWOP          (ref_t)-16404
 #define V_FORWARD        (ref_t)-16405
+#define V_PROPERTY       (ref_t)-16406
 
 ////// obsolete
 ////#define V_MULTI          (ref_t)-16397
@@ -126,7 +127,7 @@ enum MethodHint
    tpMultimethod = 0x001000,
 //   tpArgDispatcher=0x003000,
 //   tpStatic      = 0x004000,
-//   tpAccessor    = 0x008000,
+   tpAccessor    = 0x008000,
 //   tpSpecial     = 0x010000,
    tpAbstract    = 0x020000,
 //   tpInternal    = 0x040000,

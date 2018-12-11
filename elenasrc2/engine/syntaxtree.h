@@ -57,6 +57,7 @@ enum LexicalType
    lxImplicitMessage = 0x00067,
    lxSizeDecl        = 0x00068,
    lxDynamicSizeDecl = 0x00069,
+   lxPropertyParam   = 0x0006B,
 
    lxTypecast        = 0x00100,
    lxClosureExpr     = 0x00101,

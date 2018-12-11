@@ -122,6 +122,7 @@ enum Symbol
    nsSize                       = 0x01068,
    nsDynamicSize                = 0x01069,
    nsOperandExpression          = 0x0106A,
+   nsEmptyParameter             = 0x0106B,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

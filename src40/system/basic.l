@@ -115,9 +115,9 @@ public sealed singleton true : BoolValue
     /// Determines whether the specified object is equal to the current object boolean value.
     bool equal(bool b) = b;
 
-//    /// Always returns false.
-//    bool inverted = false.
-//
+    /// Always returns false.
+    bool inverted = false;
+
 //    /// Returns literal representation.
 //    T<literal> literal = "true".
 //
@@ -166,12 +166,12 @@ public sealed singleton false : BoolValue
     /// Determines whether the specified object is equal to the current object boolean value
     bool equal(bool f)
     {
-//        ^ f.inverted
+        ^ f.inverted
     }
 
-//    /// Always returns true
-//    bool inverted = true.
-//
+    /// Always returns true
+    bool inverted = true;
+
 //    /// Returns literal representation
 //    T<literal> literal = "false".
 //    

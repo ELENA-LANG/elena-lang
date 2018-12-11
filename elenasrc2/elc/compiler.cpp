@@ -2496,7 +2496,11 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
    int paramCount = 0;
    // if message has generic argument list
    while (true) {
-      if (test(current.type, lxObjectMask)) {
+      if (current == lxPropertyParam) {
+         // COMPILER MAGIC : recognize the property get call
+         actionFlags = PROPERTY_MESSAGE;
+      }
+      else if (test(current.type, lxObjectMask)) {
          //if (paramCount < OPEN_ARG_COUNT)
          paramCount++;
       }
@@ -2521,10 +2525,6 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 
    // if signature is presented
    ref_t actionRef = scope.moduleScope->module->mapAction(messageStr, 0, false);
-//   if (actionRef == SET_MESSAGE_ID && paramCount == 1) {
-//      // HOTFIX : set method is a special case
-//      actionFlags = PROPSET_MESSAGE;
-//   }
 
    // create a message id
    return encodeMessage(actionRef, paramCount, actionFlags);
@@ -4886,14 +4886,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         actionStr.insert("$$", 0);
 //         actionStr.insert(scope.module->Name(), 0);
 //      }
-//
-//      if (test(scope.hints, tpAccessor)) {
+
+      if (test(scope.hints, tpAccessor)) {
 //         if (paramCount == 1) {
-//            flags |= PROPSET_MESSAGE;
+            flags |= PROPERTY_MESSAGE;
 //         }
 //         else scope.raiseError(errIllegalMethod, node);
-//      }
-//
+      }
+
 //      //if (test(scope.hints, tpSealed | tpConversion)) {
 //      else if (test(scope.hints, tpSealed | tpConversion)) {
 //         SNode typeNode = node.findChild(lxClassRefAttr);
@@ -5993,15 +5993,15 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
          else methodScope.message = current.argument;
 
          if (test(methodScope.hints, tpConstructor)) {
-//            if (_logic->isAbstract(scope.info)) {
-//               // abstract class cannot have constructors
-//               scope.raiseError(errIllegalMethod, current);
-//            }
+            if (_logic->isAbstract(scope.info)) {
+               // abstract class cannot have constructors
+               scope.raiseError(errIllegalMethod, current);
+            }
 //            else if (methodScope.message == encodeAction(DEFAULT_MESSAGE_ID) && !current.existChild(lxReturning)) {
 //               // if it is a special default constructor
 //               current.setArgument(methodScope.message | SPECIAL_MESSAGE);
 //            }
-            /*else */current = lxConstructor;
+            else current = lxConstructor;
          }
 //         else if (test(methodScope.hints, tpPredefined)) {
 //            // recognize predefined message signatures

@@ -14,9 +14,9 @@
 //    
 //    abstract bool isKeyAvailable []
 //}
-//
-//const int FILE_TYPE_CHAR = 2.
-//
+
+const int FILE_TYPE_CHAR = 2;
+
 //sealed struct CONSOLE_SCREEN_BUFFER_INFO
 //{
 //    T<COORD>      dwSize.    
@@ -77,23 +77,28 @@ singleton ConsoleHandleFactory
     {
         handle h := ConsoleHandleFactory.new(0FFFFFFF5h);
         int    dwMode := extern KERNEL32.GetFileType(h);
-//        if (dwMode == FILE_TYPE_CHAR)
-//            [ ^ ConsoleWriter new(h) ];
-//            [  ^ FileWriter new(h) ]
+        if (dwMode == FILE_TYPE_CHAR)
+        {
+            ^ new ConsoleWriter(h)
+        }
+        else
+        {
+            ^ new FileWriter(h)
+        }
     }
 }
 
-//// --- ConsoleWriter ---
-//
-//sealed struct ConsoleWriter
-//{
-//    handle theHandle.
-//
-//    constructor new(handle aHandle)
-//    [
-//        theHandle := aHandle.
-//    ]
-//
+// --- ConsoleWriter ---
+
+sealed struct ConsoleWriter
+{
+    handle theHandle;
+
+    constructor(handle aHandle)
+    {
+        theHandle := aHandle
+    }
+
 //    write(literal aLiteral)
 //    [
 //        self write(T<wide>(aLiteral)).
@@ -141,19 +146,19 @@ singleton ConsoleHandleFactory
 //    [
 //        system'external'KERNEL32 CloseHandle(theHandle).
 //    ]
-//}
-//
-//// --- FileWriter ---
-//
-//sealed class FileWriter
-//{
-//    handle theHandle.
-//
-//    constructor new(handle aHandle)
-//    [
-//        theHandle := aHandle
-//    ]
-//
+}
+
+// --- FileWriter ---
+
+sealed struct FileWriter
+{
+    handle theHandle;
+
+    constructor(handle aHandle)
+    {
+        theHandle := aHandle
+    }
+
 //    write(ByteArray buffer, int length)
 //    [
 //        int written := 0.
@@ -221,8 +226,8 @@ singleton ConsoleHandleFactory
 //    [
 //        system'external'KERNEL32 CloseHandle(theHandle).
 //    ]
-//}
-//
+}
+
 //// --- ConsoleReader ---
 //
 //sealed struct ConsoleReader :: Object, interface<IConsoleReader>
