@@ -191,7 +191,7 @@ void DerivationWriter :: newNode(Symbol symbol)
 ////         break;
 //      case nsL1Operation:
 //      case nsL2Operation:
-////      case nsL3Operation:
+      case nsL3Operator:
       case nsL4Operator:
 //      case nsL5Operation:
          _cacheWriter.newNode(lxOperator);

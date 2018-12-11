@@ -728,7 +728,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    //addVerb(operators, DIV_OPERATOR, DIV_MESSAGE_ID);
    addVerb(operators, IF_OPERATOR, IF_OPERATOR_ID);
    //addVerb(operators, IFNOT_OPERATOR, IFNOT_MESSAGE_ID);
-   //addVerb(operators, EQUAL_OPERATOR, EQUAL_MESSAGE_ID);
+   addVerb(operators, EQUAL_OPERATOR, EQUAL_OPERATOR_ID);
    //addVerb(operators, NOTEQUAL_OPERATOR, NOTEQUAL_MESSAGE_ID);
    //addVerb(operators, LESS_OPERATOR, LESS_MESSAGE_ID);
    //addVerb(operators, GREATER_OPERATOR, GREATER_MESSAGE_ID);

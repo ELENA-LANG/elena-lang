@@ -2699,260 +2699,260 @@ void ByteCodeWriter :: saveSubject(CommandTape& tape)
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg)
-//{
-//   switch (operator_id) {
-//      case ADD_MESSAGE_ID:
-//         tape.write(bcDLoadFI, indexArg);
-//         tape.write(bcAddN, immArg);
-//         tape.write(bcNSave);
-//         break;
-//      case APPEND_MESSAGE_ID:
-//         tape.write(bcAddFI, indexArg, immArg);
-//         break;
-//      case SUB_MESSAGE_ID:
-//         tape.write(bcDLoadFI, indexArg);
-//         tape.write(bcAddN, -immArg);
-//         tape.write(bcNSave);
-//         break;
-//      case REDUCE_MESSAGE_ID:
-//         tape.write(bcSubFI, indexArg, immArg);
-//         break;
-//      case MUL_MESSAGE_ID:
-//         tape.write(bcDLoadFI, indexArg);
-//         tape.write(bcMulN, immArg);
-//         tape.write(bcNSave);
-//         break;
-//      //case DIV_MESSAGE_ID:
-//      //   tape.write(bcNDiv);
-//      //   break;
-//      //case AND_MESSAGE_ID:
-//      //   tape.write(bcNAnd);
-//      //   break;
-//      //case OR_MESSAGE_ID:
-//      //   tape.write(bcNOr);
-//      //   break;
-//      //case XOR_MESSAGE_ID:
-//      //   tape.write(bcNXor);
-//      //   break;
-//      //case EQUAL_MESSAGE_ID:
-//      //   tape.write(bcNEqual);
-//      //   break;
-//      //case LESS_MESSAGE_ID:
-//      //   tape.write(bcNLess);
-//      //   break;
-//      case SET_MESSAGE_ID:
-//         tape.write(bcSaveFI, indexArg, immArg);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      // Note read / write operator is used for bitwise operations
-//      case WRITE_MESSAGE_ID:
-//         // nload
-//         // nshiftl
-//         tape.write(bcNLoad);
-//         tape.write(bcNShiftL);
-//         break;
-//      // Note read / write operator is used for bitwise operations
-//      case READ_MESSAGE_ID:
-//         // nload
-//         // nshiftr
-//         tape.write(bcNLoad);
-//         tape.write(bcNShiftR);
-//         break;
-//      case ADD_MESSAGE_ID:
-//      case APPEND_MESSAGE_ID:
-//         tape.write(bcNAdd);
-//         break;
-//      case SUB_MESSAGE_ID:
-//      case REDUCE_MESSAGE_ID:
-//         tape.write(bcNSub);
-//         break;
-//      case MUL_MESSAGE_ID:
-//         tape.write(bcNMul);
-//         break;
-//      case DIV_MESSAGE_ID:
-//         tape.write(bcNDiv);
-//         break;
-//      case AND_MESSAGE_ID:
-//         tape.write(bcNAnd);
-//         break;
-//      case OR_MESSAGE_ID:
-//         tape.write(bcNOr);
-//         break;
-//      case XOR_MESSAGE_ID:
-//         tape.write(bcNXor);
-//         break;
-//      case EQUAL_MESSAGE_ID:
-//         tape.write(bcNEqual);
-//         break;
-//      case LESS_MESSAGE_ID:
-//         tape.write(bcNLess);
-//         break;
-//      case SET_MESSAGE_ID:
-//         tape.write(bcNLoad);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int immArg)
-//{
-//   switch (operator_id) {
-//      // Note read / write operator is used for bitwise operations
-//      case WRITE_MESSAGE_ID:
-//         // nload
-//         // shiftln immArg
-//         // nsave
-//         tape.write(bcNLoad);
-//         tape.write(bcShiftLN, immArg);
-//         tape.write(bcNSave);
-//         break;
-//      // Note read / write operator is used for bitwise operations
-//      case READ_MESSAGE_ID:
-//         // nload
-//         // shiftn immArg
-//         // nsave
-//         tape.write(bcNLoad);
-//         tape.write(bcShiftRN, immArg);
-//         tape.write(bcNSave);
-//         break;
-//      case ADD_MESSAGE_ID:
-//      case APPEND_MESSAGE_ID:
-//         tape.write(bcNLoad);
-//         tape.write(bcAddN, immArg);
-//         tape.write(bcNSave);
-//         break;
-//      case SUB_MESSAGE_ID:
-//      case REDUCE_MESSAGE_ID:
-//         tape.write(bcNLoad);
-//         tape.write(bcAddN, -immArg);
-//         tape.write(bcNSave);
-//         break;
-//      case MUL_MESSAGE_ID:
-//         tape.write(bcNLoad);
-//         tape.write(bcMulN, immArg);
-//         tape.write(bcNSave);
-//         break;
-//      case AND_MESSAGE_ID:
-//         tape.write(bcNLoad);
-//         tape.write(bcAndN, immArg);
-//         tape.write(bcNSave);
-//         break;
-//      case OR_MESSAGE_ID:
-//         tape.write(bcNLoad);
-//         tape.write(bcOrN, immArg);
-//         tape.write(bcNSave);
-//         break;
-//      case SET_MESSAGE_ID:
-//         tape.write(bcDCopy, immArg);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg)
-//{
-//   switch (operator_id) {
-//         // Note read / write operator is used for bitwise operations
-//      case WRITE_MESSAGE_ID:
-//         // dcopy offset
-//         // bread
-//         // eswap
-//         // shiftn -immArg
-//         // eswap
-//         // bwrite
-//         tape.write(bcDCopy, offset);
-//         tape.write(bcBRead);
-//         tape.write(bcESwap);
-//         tape.write(bcShiftLN, immArg);
-//         tape.write(bcESwap);
-//         tape.write(bcBWrite);
-//         break;
-//         // Note read / write operator is used for bitwise operations
-//      case READ_MESSAGE_ID:
-//         // dcopy offset
-//         // bread
-//         // eswap
-//         // shiftn immArg
-//         // eswap
-//         // bwrite
-//         tape.write(bcDCopy, offset);
-//         tape.write(bcBRead);
-//         tape.write(bcESwap);
-//         tape.write(bcShiftRN, immArg);
-//         tape.write(bcESwap);
-//         tape.write(bcBWrite);
-//         break;
-//      case ADD_MESSAGE_ID:
-//      case APPEND_MESSAGE_ID:
-//         tape.write(bcDCopy, offset);
-//         tape.write(bcBRead);
-//         tape.write(bcESwap);
-//         tape.write(bcAddN, immArg);
-//         tape.write(bcESwap);
-//         tape.write(bcBWrite);
-//         break;
-//      case SUB_MESSAGE_ID:
-//      case REDUCE_MESSAGE_ID:
-//         tape.write(bcDCopy, offset);
-//         tape.write(bcBRead);
-//         tape.write(bcESwap);
-//         tape.write(bcAddN, -immArg);
-//         tape.write(bcESwap);
-//         tape.write(bcBWrite);
-//         break;
-//      case MUL_MESSAGE_ID:
-//         tape.write(bcDCopy, offset);
-//         tape.write(bcBRead);
-//         tape.write(bcESwap);
-//         tape.write(bcMulN, immArg);
-//         tape.write(bcESwap);
-//         tape.write(bcBWrite);
-//         break;
-//      case AND_MESSAGE_ID:
-//         tape.write(bcDCopy, offset);
-//         tape.write(bcBRead);
-//         tape.write(bcESwap);
-//         tape.write(bcAndN, immArg);
-//         tape.write(bcESwap);
-//         tape.write(bcBWrite);
-//         break;
-//      case OR_MESSAGE_ID:
-//         tape.write(bcDCopy, offset);
-//         tape.write(bcBRead);
-//         tape.write(bcESwap);
-//         tape.write(bcOrN, immArg);
-//         tape.write(bcESwap);
-//         tape.write(bcBWrite);
-//         break;
-//      case SET_MESSAGE_ID:
-//         if ((offset & 3) == 0) {
-//            tape.write(bcDCopy, immArg);
-//            tape.write(bcNSaveI, offset >> 2);
-//         }
-//         else {
-//            tape.write(bcECopy, immArg);
-//            tape.write(bcDCopy, offset);
-//            tape.write(bcBWrite);
-//         }
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
+
+void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg)
+{
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+         tape.write(bcDLoadFI, indexArg);
+         tape.write(bcAddN, immArg);
+         tape.write(bcNSave);
+         break;
+      case APPEND_OPERATOR_ID:
+         tape.write(bcAddFI, indexArg, immArg);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(bcDLoadFI, indexArg);
+         tape.write(bcAddN, -immArg);
+         tape.write(bcNSave);
+         break;
+      case REDUCE_OPERATOR_ID:
+         tape.write(bcSubFI, indexArg, immArg);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(bcDLoadFI, indexArg);
+         tape.write(bcMulN, immArg);
+         tape.write(bcNSave);
+         break;
+      //case DIV_MESSAGE_ID:
+      //   tape.write(bcNDiv);
+      //   break;
+      //case AND_MESSAGE_ID:
+      //   tape.write(bcNAnd);
+      //   break;
+      //case OR_MESSAGE_ID:
+      //   tape.write(bcNOr);
+      //   break;
+      //case XOR_MESSAGE_ID:
+      //   tape.write(bcNXor);
+      //   break;
+      //case EQUAL_MESSAGE_ID:
+      //   tape.write(bcNEqual);
+      //   break;
+      //case LESS_MESSAGE_ID:
+      //   tape.write(bcNLess);
+      //   break;
+      case SET_OPERATOR_ID:
+         tape.write(bcSaveFI, indexArg, immArg);
+         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      // Note read / write operator is used for bitwise operations
+      case WRITE_OPERATOR_ID:
+         // nload
+         // nshiftl
+         tape.write(bcNLoad);
+         tape.write(bcNShiftL);
+         break;
+      // Note read / write operator is used for bitwise operations
+      case READ_OPERATOR_ID:
+         // nload
+         // nshiftr
+         tape.write(bcNLoad);
+         tape.write(bcNShiftR);
+         break;
+      case ADD_OPERATOR_ID:
+      case APPEND_OPERATOR_ID:
+         tape.write(bcNAdd);
+         break;
+      case SUB_OPERATOR_ID:
+      case REDUCE_OPERATOR_ID:
+         tape.write(bcNSub);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(bcNMul);
+         break;
+      case DIV_OPERATOR_ID:
+         tape.write(bcNDiv);
+         break;
+      case AND_OPERATOR_ID:
+         tape.write(bcNAnd);
+         break;
+      case OR_OPERATOR_ID:
+         tape.write(bcNOr);
+         break;
+      case XOR_OPERATOR_ID:
+         tape.write(bcNXor);
+         break;
+      case EQUAL_OPERATOR_ID:
+         tape.write(bcNEqual);
+         break;
+      case LESS_OPERATOR_ID:
+         tape.write(bcNLess);
+         break;
+      case SET_OPERATOR_ID:
+         tape.write(bcNLoad);
+         tape.write(bcNSave);
+         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int immArg)
+{
+   switch (operator_id) {
+      // Note read / write operator is used for bitwise operations
+      case WRITE_OPERATOR_ID:
+         // nload
+         // shiftln immArg
+         // nsave
+         tape.write(bcNLoad);
+         tape.write(bcShiftLN, immArg);
+         tape.write(bcNSave);
+         break;
+      // Note read / write operator is used for bitwise operations
+      case READ_OPERATOR_ID:
+         // nload
+         // shiftn immArg
+         // nsave
+         tape.write(bcNLoad);
+         tape.write(bcShiftRN, immArg);
+         tape.write(bcNSave);
+         break;
+      case ADD_OPERATOR_ID:
+      case APPEND_OPERATOR_ID:
+         tape.write(bcNLoad);
+         tape.write(bcAddN, immArg);
+         tape.write(bcNSave);
+         break;
+      case SUB_OPERATOR_ID:
+      case REDUCE_OPERATOR_ID:
+         tape.write(bcNLoad);
+         tape.write(bcAddN, -immArg);
+         tape.write(bcNSave);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(bcNLoad);
+         tape.write(bcMulN, immArg);
+         tape.write(bcNSave);
+         break;
+      case AND_OPERATOR_ID:
+         tape.write(bcNLoad);
+         tape.write(bcAndN, immArg);
+         tape.write(bcNSave);
+         break;
+      case OR_OPERATOR_ID:
+         tape.write(bcNLoad);
+         tape.write(bcOrN, immArg);
+         tape.write(bcNSave);
+         break;
+      case SET_OPERATOR_ID:
+         tape.write(bcDCopy, immArg);
+         tape.write(bcNSave);
+         break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg)
+{
+   switch (operator_id) {
+         // Note read / write operator is used for bitwise operations
+      case WRITE_OPERATOR_ID:
+         // dcopy offset
+         // bread
+         // eswap
+         // shiftn -immArg
+         // eswap
+         // bwrite
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcShiftLN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+         // Note read / write operator is used for bitwise operations
+      case READ_OPERATOR_ID:
+         // dcopy offset
+         // bread
+         // eswap
+         // shiftn immArg
+         // eswap
+         // bwrite
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcShiftRN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case ADD_OPERATOR_ID:
+      case APPEND_OPERATOR_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcAddN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case SUB_OPERATOR_ID:
+      case REDUCE_OPERATOR_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcAddN, -immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcMulN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case AND_OPERATOR_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcAndN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case OR_OPERATOR_ID:
+         tape.write(bcDCopy, offset);
+         tape.write(bcBRead);
+         tape.write(bcESwap);
+         tape.write(bcOrN, immArg);
+         tape.write(bcESwap);
+         tape.write(bcBWrite);
+         break;
+      case SET_OPERATOR_ID:
+         if ((offset & 3) == 0) {
+            tape.write(bcDCopy, immArg);
+            tape.write(bcNSaveI, offset >> 2);
+         }
+         else {
+            tape.write(bcECopy, immArg);
+            tape.write(bcDCopy, offset);
+            tape.write(bcBWrite);
+         }
+         break;
+      default:
+         break;
+   }
+}
+
 //void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
 //{
 //   switch (operator_id) {
@@ -3482,12 +3482,12 @@ void ByteCodeWriter :: saveSubject(CommandTape& tape)
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
-//{
-//   tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
-//}
-//
+
+void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
+{
+   tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
+}
+
 //void ByteCodeWriter :: selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
 //{
 //   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
@@ -4043,200 +4043,200 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
 //      unboxLocal(tape, larg, rarg);
 //   }
 //}
-//
-//void ByteCodeWriter :: unboxLocal(CommandTape& tape, SNode larg, SNode rarg)
-//{
-//   SNode assignNode = larg.findChild(lxAssigning);
-//   assignOpArguments(assignNode, larg, rarg);
-//
-//   loadBase(tape, rarg.type, 0);
-//
-//   if (assignNode.argument == 4) {
-//      assignInt(tape, lxFieldAddress, rarg.argument);
-//   }
-//   else if (assignNode.argument == 2) {
-//      assignLong(tape, lxFieldAddress, rarg.argument);
-//   }
-//   else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
-//}
-//
-//void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
-//{
-//   int operation = node.argument;
-//   bool assignMode = false;
-//   bool selectMode = false;
-//   bool invertSelectMode = false;
-//   bool invertMode = false;
-//   bool immOp = false;
-//   bool directMode = false;
-//   bool resultExpected = mode & ACC_REQUIRED;
-//   int  level = 0;
-//
-//   switch (node.argument) {
-//      case ADD_MESSAGE_ID:
-//      case SUB_MESSAGE_ID:
-//      case MUL_MESSAGE_ID:
-//         directMode = node.type == lxIntOp && !resultExpected;
-//      case AND_MESSAGE_ID:
-//      case OR_MESSAGE_ID:
-//      case XOR_MESSAGE_ID:
-//      case READ_MESSAGE_ID:
-//      case WRITE_MESSAGE_ID:
-//         immOp = true;
-//         assignMode = true;
-//         break;
-//      case DIV_MESSAGE_ID:
-//         assignMode = true;
-//         break;
-//      case EQUAL_MESSAGE_ID:
-//         selectMode = true;
-//         break;
-//      case NOTEQUAL_MESSAGE_ID:
-//         invertSelectMode = true;
-//         break;
-//      case LESS_MESSAGE_ID:
-//         invertMode = true;
-//         selectMode = true;
-//         break;
-//      case GREATER_MESSAGE_ID:
-//         selectMode = true;
-//         operation = LESS_MESSAGE_ID;
-//         break;
-//      case SET_MESSAGE_ID:
-//      case APPEND_MESSAGE_ID:
-//      case REDUCE_MESSAGE_ID:
-//         immOp = true;
-//         directMode = node.type == lxIntOp && !resultExpected;
-//         break;
-//   }
-//
-//   SNode larg;
-//   SNode rarg;
-//   if (invertMode) {
-//      assignOpArguments(node, rarg, larg);
-//   }
-//   else assignOpArguments(node, larg, rarg);
-//
-//   if (larg == lxExpression)
-//      larg = larg.findSubNodeMask(lxObjectMask);
-//   if (rarg == lxExpression)
-//      rarg = rarg.findSubNodeMask(lxObjectMask);
-//
-//   bool largSimple = isSimpleObject(larg);
-//   bool rargSimple = isSimpleObject(rarg);
-//   bool rargConst = immOp && (rarg == lxConstantInt);
-//
-//   // direct mode is possible only with a numeric constant
-//   if (directMode && (!rargConst || larg != lxLocalAddress))
-//      directMode = false;
-//
-//   // if larg=fieldaddress, rargConst - base should not be saved
-//   if (rargConst && larg == lxFieldAddress)
-//      largSimple = true;
-//
-//   if (!directMode) {
-//      if (!largSimple) {
-//         if (assignMode) {
-//            tape.write(bcPushB);
-//            level++;
-//         }
-//
-//         generateObjectExpression(tape, larg, ACC_REQUIRED);
-//         pushObject(tape, lxResult);
-//         level++;
-//      }
-//
-//      if (!rargSimple) {
-//         if (level == 0 && assignMode) {
-//            tape.write(bcPushB);
-//            level++;
-//         }
-//
-//         generateObjectExpression(tape, rarg, ACC_REQUIRED);
-//         pushObject(tape, lxResult);
-//         level++;
-//      }
-//
-//      if (level > 0 && assignMode)
-//         loadBase(tape, lxCurrent, level - 1);
-//
-//      if (!largSimple) {
-//         loadObject(tape, lxCurrent, level - (assignMode ? 2 : 1));
-//      }
-//      else generateObjectExpression(tape, larg);
-//
-//      if (assignMode) {
-//         if (node.type == lxIntOp && !rargConst) {
-//            copyBase(tape, 4);
-//         }
-//         else if (node.type == lxLongOp || node == lxRealOp) {
-//            copyBase(tape, 8);
-//         }
-//      }
-//      else loadBase(tape, lxResult);
-//
-//      if (!rargSimple) {
-//         popObject(tape, lxResult);
-//         level--;
-//      }
-//      else if (!rargConst)
-//         generateObjectExpression(tape, rarg);
-//   }
-//
-//   if (node.type == lxIntOp) {
-//      if (rargConst) {
-//         SNode immArg = rarg.findChild(lxIntValue);
-//         if (directMode) {
-//            doIntDirectOperation(tape, operation, immArg.argument, larg.argument);
-//         }
-//         else if (larg == lxFieldAddress && larg.argument > 0) {
-//            doFieldIntOperation(tape, operation, larg.argument, immArg.argument);
-//         }
-//         else doIntOperation(tape, operation, immArg.argument);
-//      }
-//      else doIntOperation(tape, operation);
-//   }
-//   else if (node == lxLongOp) {
-//      doLongOperation(tape, operation);
-//   }
-//   else if (node == lxRealOp) {
-//      if (operation == SET_MESSAGE_ID) {
-//         if (rargConst) {
-//            SNode immArg = rarg.findChild(lxIntValue);
-//
-//            doRealOperation(tape, operation, immArg.argument);
-//         }
-//         else {
-//            if (node.existChild(lxIntConversion)) {
-//               tape.write(bcNLoad);
-//               tape.write(bcRCopy);
-//            }
-//            doRealOperation(tape, operation);
-//         }
-//      }
-//      else doRealOperation(tape, operation);
-//   }
-//
-//   if (selectMode) {
-//      selectByIndex(tape,
-//         node.findChild(lxElseValue).argument,
-//         node.findChild(lxIfValue).argument);
-//   }
-//   else if (invertSelectMode) {
-//      selectByIndex(tape,
-//         node.findChild(lxIfValue).argument,
-//         node.findChild(lxElseValue).argument);
-//   }
-//   else if (resultExpected) 
-//      assignBaseTo(tape, lxResult);
-//
-//   if (larg == lxLocalUnboxing) {
-//      unboxLocal(tape, larg, rarg);
-//   }
-//
-//   releaseObject(tape, level);
-//}
-//
+
+void ByteCodeWriter :: unboxLocal(CommandTape& tape, SNode larg, SNode rarg)
+{
+   SNode assignNode = larg.findChild(lxAssigning);
+   assignOpArguments(assignNode, larg, rarg);
+
+   loadBase(tape, rarg.type, 0);
+
+   if (assignNode.argument == 4) {
+      assignInt(tape, lxFieldAddress, rarg.argument);
+   }
+   else if (assignNode.argument == 2) {
+      assignLong(tape, lxFieldAddress, rarg.argument);
+   }
+   else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
+}
+
+void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
+{
+   int operation = node.argument;
+   bool assignMode = false;
+   bool selectMode = false;
+   bool invertSelectMode = false;
+   bool invertMode = false;
+   bool immOp = false;
+   bool directMode = false;
+   bool resultExpected = mode & ACC_REQUIRED;
+   int  level = 0;
+
+   switch (node.argument) {
+      case ADD_OPERATOR_ID:
+      case SUB_OPERATOR_ID:
+      case MUL_OPERATOR_ID:
+         directMode = node.type == lxIntOp && !resultExpected;
+      case AND_OPERATOR_ID:
+      case OR_OPERATOR_ID:
+      case XOR_OPERATOR_ID:
+      case READ_OPERATOR_ID:
+      case WRITE_OPERATOR_ID:
+         immOp = true;
+         assignMode = true;
+         break;
+      case DIV_OPERATOR_ID:
+         assignMode = true;
+         break;
+      case EQUAL_OPERATOR_ID:
+         selectMode = true;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         invertSelectMode = true;
+         break;
+      case LESS_OPERATOR_ID:
+         invertMode = true;
+         selectMode = true;
+         break;
+      case GREATER_OPERATOR_ID:
+         selectMode = true;
+         operation = LESS_OPERATOR_ID;
+         break;
+      case SET_OPERATOR_ID:
+      case APPEND_OPERATOR_ID:
+      case REDUCE_OPERATOR_ID:
+         immOp = true;
+         directMode = node.type == lxIntOp && !resultExpected;
+         break;
+   }
+
+   SNode larg;
+   SNode rarg;
+   if (invertMode) {
+      assignOpArguments(node, rarg, larg);
+   }
+   else assignOpArguments(node, larg, rarg);
+
+   if (larg == lxExpression)
+      larg = larg.findSubNodeMask(lxObjectMask);
+   if (rarg == lxExpression)
+      rarg = rarg.findSubNodeMask(lxObjectMask);
+
+   bool largSimple = isSimpleObject(larg);
+   bool rargSimple = isSimpleObject(rarg);
+   bool rargConst = immOp && (rarg == lxConstantInt);
+
+   // direct mode is possible only with a numeric constant
+   if (directMode && (!rargConst || larg != lxLocalAddress))
+      directMode = false;
+
+   // if larg=fieldaddress, rargConst - base should not be saved
+   if (rargConst && larg == lxFieldAddress)
+      largSimple = true;
+
+   if (!directMode) {
+      if (!largSimple) {
+         if (assignMode) {
+            tape.write(bcPushB);
+            level++;
+         }
+
+         generateObject(tape, larg, ACC_REQUIRED);
+         pushObject(tape, lxResult);
+         level++;
+      }
+
+      if (!rargSimple) {
+         if (level == 0 && assignMode) {
+            tape.write(bcPushB);
+            level++;
+         }
+
+         generateObject(tape, rarg, ACC_REQUIRED);
+         pushObject(tape, lxResult);
+         level++;
+      }
+
+      if (level > 0 && assignMode)
+         loadBase(tape, lxCurrent, level - 1);
+
+      if (!largSimple) {
+         loadObject(tape, lxCurrent, level - (assignMode ? 2 : 1));
+      }
+      else generateObject(tape, larg);
+
+      if (assignMode) {
+         if (node.type == lxIntOp && !rargConst) {
+            copyBase(tape, 4);
+         }
+         //else if (node.type == lxLongOp || node == lxRealOp) {
+         //   copyBase(tape, 8);
+         //}
+      }
+      else loadBase(tape, lxResult);
+
+      if (!rargSimple) {
+         popObject(tape, lxResult);
+         level--;
+      }
+      else if (!rargConst)
+         generateObject(tape, rarg);
+   }
+
+   if (node.type == lxIntOp) {
+      if (rargConst) {
+         SNode immArg = rarg.findChild(lxIntValue);
+         if (directMode) {
+            doIntDirectOperation(tape, operation, immArg.argument, larg.argument);
+         }
+         else if (larg == lxFieldAddress && larg.argument > 0) {
+            doFieldIntOperation(tape, operation, larg.argument, immArg.argument);
+         }
+         else doIntOperation(tape, operation, immArg.argument);
+      }
+      else doIntOperation(tape, operation);
+   }
+   //else if (node == lxLongOp) {
+   //   doLongOperation(tape, operation);
+   //}
+   //else if (node == lxRealOp) {
+   //   if (operation == SET_MESSAGE_ID) {
+   //      if (rargConst) {
+   //         SNode immArg = rarg.findChild(lxIntValue);
+
+   //         doRealOperation(tape, operation, immArg.argument);
+   //      }
+   //      else {
+   //         if (node.existChild(lxIntConversion)) {
+   //            tape.write(bcNLoad);
+   //            tape.write(bcRCopy);
+   //         }
+   //         doRealOperation(tape, operation);
+   //      }
+   //   }
+   //   else doRealOperation(tape, operation);
+   //}
+
+   if (selectMode) {
+      selectByIndex(tape,
+         node.findChild(lxElseValue).argument,
+         node.findChild(lxIfValue).argument);
+   }
+   else if (invertSelectMode) {
+      selectByIndex(tape,
+         node.findChild(lxIfValue).argument,
+         node.findChild(lxElseValue).argument);
+   }
+   else if (resultExpected) 
+      assignBaseTo(tape, lxResult);
+
+   if (larg == lxLocalUnboxing) {
+      unboxLocal(tape, larg, rarg);
+   }
+
+   releaseObject(tape, level);
+}
+
 //void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
 //{
 //   SNode larg;
@@ -4898,18 +4898,18 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       child = child.nextNode();
    }
 
-   //if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_MESSAGE_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||
-   //   (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp))))
-   //{
-   //   if (target == lxCreatingStruct) {
-   //      generateObjectExpression(tape, target, ACC_REQUIRED);
-   //      loadBase(tape, lxResult);
-   //   }
-   //   else loadBase(tape, target.type, target.argument);
+   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || /*(source.argument == REFER_MESSAGE_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||*/
+      (IsShiftOperator(source.argument) && (source.type == lxIntOp/* || source.type == lxLongOp*/))))
+   {
+      if (target == lxCreatingStruct) {
+         generateObject(tape, target, ACC_REQUIRED);
+         loadBase(tape, lxResult);
+      }
+      else loadBase(tape, target.type, target.argument);
 
-   //   generateObjectExpression(tape, source, mode);
-   //}
-   //else {
+      generateObject(tape, source, mode);
+   }
+   else {
       generateObject(tape, source, ACC_REQUIRED);
 
       if (source == lxExternalCall || source == lxStdExternalCall || source == lxCoreAPICall) {
@@ -4985,7 +4985,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 
          saveObject(tape, target.type, target.argument);
       }
-   //}
+   }
 }
 
 //void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node)
@@ -5447,11 +5447,11 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
 //      case lxNilOp:
 //         generateNilOperation(tape, node);
 //         break;
-//      case lxIntOp:
+      case lxIntOp:
 //      case lxLongOp:
 //      case lxRealOp:
-//         generateOperation(tape, node, mode);
-//         break;
+         generateOperation(tape, node, mode);
+         break;
 //      case lxIntArrOp:
 //      case lxByteArrOp:
 //      case lxShortArrOp:

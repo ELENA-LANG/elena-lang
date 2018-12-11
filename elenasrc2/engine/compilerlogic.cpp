@@ -61,27 +61,27 @@ inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
 //         return false;
 //   }
 //}
-//
-//inline bool IsInvertedOperator(int& operator_id)
-//{
-//   switch (operator_id)
-//   {
-//      case NOTEQUAL_MESSAGE_ID:
-//         operator_id = EQUAL_MESSAGE_ID;
-//
-//         return true;
-//      case NOTLESS_MESSAGE_ID:
-//         operator_id = LESS_MESSAGE_ID;
-//
-//         return true;
-//      case NOTGREATER_MESSAGE_ID:
-//         operator_id = GREATER_MESSAGE_ID;
-//
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+
+inline bool IsInvertedOperator(int& operator_id)
+{
+   switch (operator_id)
+   {
+      case NOTEQUAL_OPERATOR_ID:
+         operator_id = EQUAL_OPERATOR_ID;
+
+         return true;
+      case NOTLESS_OPERATOR_ID:
+         operator_id = LESS_OPERATOR_ID;
+
+         return true;
+      case NOTGREATER_OPERATOR_ID:
+         operator_id = GREATER_OPERATOR_ID;
+
+         return true;
+      default:
+         return false;
+   }
+}
 
 inline ident_t findSourceRef(SNode node)
 {
@@ -129,25 +129,25 @@ CompilerLogic :: CompilerLogic()
 //   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_NIL, 0, lxNilOp, V_FLAG));
 //   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, 0, V_NIL, lxNilOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, 0, V_NIL, lxNilOp, V_FLAG));
-//
-//   // int32 primitive operations
-//   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(MUL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(DIV_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(AND_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(OR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(XOR_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(WRITE_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(LESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTLESS_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(GREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTGREATER_MESSAGE_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//
+
+   // int32 primitive operations
+   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(SUB_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(MUL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(DIV_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(AND_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(OR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(XOR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(READ_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(WRITE_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(LESS_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTLESS_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
+
 //   // subject primitive operations
 //   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
@@ -217,20 +217,20 @@ CompilerLogic :: CompilerLogic()
 //   // boolean primitive operations
 //   operators.add(OperatorInfo(AND_MESSAGE_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
 //   operators.add(OperatorInfo(OR_MESSAGE_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
-//
-//   // pointer primitive operations
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_PTR, V_PTR, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_PTR, V_PTR, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(ADD_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
-//   operators.add(OperatorInfo(SUB_MESSAGE_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
-//
-//   // dword primitive operations
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
+
+   //// pointer primitive operations
+   //operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR, V_PTR, lxIntOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR, V_PTR, lxIntOp, V_FLAG));
+   //operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR, V_INT32, lxIntOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR, V_INT32, lxIntOp, V_FLAG));
+   //operators.add(OperatorInfo(ADD_OPERATOR_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
+   //operators.add(OperatorInfo(SUB_OPERATOR_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
+
+   // dword primitive operations
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
@@ -325,50 +325,50 @@ int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference,
    return callType;
 }
 
-//int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
-//{
-//   if ((loperand == 0 && roperand != V_NIL) || (roperand == 0 && loperand != V_NIL))
-//      return 0;
-//
-//   OperatorList::Iterator it = operators.start();
-//   while (!it.Eof()) {
-//      OperatorInfo info = *it;
-//
-//      if (info.operatorId == operatorId) {
-//         if (info.loperand == V_NIL) {
-//            if (loperand == V_NIL) {
-//               result = info.result;
-//
-//               return info.operationType;
-//            }
-//         }
-//         else if (info.roperand == V_NIL) {
-//            if (roperand == V_NIL) {
-//               result = info.result;
-//
-//               return info.operationType;
-//            }
-//         }
-//         else if (info.loperand == V_FLAG && info.roperand == V_FLAG) {
-//            if (isBoolean(scope, loperand) && isBoolean(scope, roperand)) {
-//               result = info.result;
-//
-//               return info.operationType;
-//            }
-//         }
-//         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
-//            result = info.result;
-//
-//            return info.operationType;
-//         }
-//      }
-//
-//      it++;
-//   }
-//
-//   return 0;
-//}
-//
+int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
+{
+   if ((loperand == 0 && roperand != V_NIL) || (roperand == 0 && loperand != V_NIL))
+      return 0;
+
+   OperatorList::Iterator it = operators.start();
+   while (!it.Eof()) {
+      OperatorInfo info = *it;
+
+      if (info.operatorId == operatorId) {
+         if (info.loperand == V_NIL) {
+            if (loperand == V_NIL) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (info.roperand == V_NIL) {
+            if (roperand == V_NIL) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (info.loperand == V_FLAG && info.roperand == V_FLAG) {
+            if (isBoolean(scope, loperand) && isBoolean(scope, roperand)) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
+            result = info.result;
+
+            return info.operationType;
+         }
+      }
+
+      it++;
+   }
+
+   return 0;
+}
+
 //int CompilerLogic :: resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
 //{
 //   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
@@ -884,61 +884,55 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
    }
 }
 
-//bool CompilerLogic :: isBoolean(_CompilerScope& scope, ref_t reference)
-//{
-//   if (!scope.branchingInfo.reference) {
-//      // HOTFIX : resolve boolean symbols
-//      ref_t dummy;
-//      resolveBranchOperation(scope, IF_MESSAGE_ID, scope.boolReference, dummy);
-//   }
-//
-//   return isCompatible(scope, scope.branchingInfo.reference, reference);
-//}
-//
-//void CompilerLogic :: injectOperation(SyntaxWriter& writer, _CompilerScope& scope, int operator_id, int operationType, ref_t& reference, ref_t elementRef)
-//{
-//   int size = 0;
-//   if (operationType == lxBinArrOp) {
-//      // HOTFIX : define an item size for the binary array operations
-//      size = -defineStructSize(scope, V_BINARYARRAY, elementRef);
-//   }
-//
-//   if (reference == V_BINARY && elementRef != 0) {
-//      reference = elementRef;
-//   }
-//   else if (reference == V_OBJECT && elementRef != 0) {
-//      reference = elementRef;
-//   }
-//
-//   bool inverting = IsInvertedOperator(operator_id);
-//
-//   if (reference == V_FLAG) {      
-//      if (!scope.branchingInfo.reference) {
-//         // HOTFIX : resolve boolean symbols
-//         ref_t dummy;
-//         resolveBranchOperation(scope, IF_MESSAGE_ID, scope.boolReference, dummy);
-//      }
-//
-//      reference = scope.branchingInfo.reference;
-//      if (inverting) {
-//         writer.appendNode(lxIfValue, scope.branchingInfo.falseRef);
-//         writer.appendNode(lxElseValue, scope.branchingInfo.trueRef);
-//      }
-//      else {
-//         writer.appendNode(lxIfValue, scope.branchingInfo.trueRef);
-//         writer.appendNode(lxElseValue, scope.branchingInfo.falseRef);
-//      }
-//   }
-//
-//   if (size != 0) {
-//      // HOTFIX : inject an item size for the binary array operations
-//      writer.appendNode(lxSize, size);
-//   }
-//
-//   writer.insert((LexicalType)operationType, operator_id);
-//   writer.closeNode();
-//}
-//
+bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
+{
+   return isCompatible(scope, scope.branchingInfo.reference, reference);
+}
+
+void CompilerLogic :: injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operator_id, int operationType, ref_t& reference, ref_t elementRef)
+{
+   int size = 0;
+   //if (operationType == lxBinArrOp) {
+   //   // HOTFIX : define an item size for the binary array operations
+   //   size = -defineStructSize(scope, V_BINARYARRAY, elementRef);
+   //}
+
+   if (reference == V_BINARY && elementRef != 0) {
+      reference = elementRef;
+   }
+   //else if (reference == V_OBJECT && elementRef != 0) {
+   //   reference = elementRef;
+   //}
+
+   bool inverting = IsInvertedOperator(operator_id);
+
+   if (reference == V_FLAG) {      
+      if (!scope.branchingInfo.reference) {
+         // HOTFIX : resolve boolean symbols
+         ref_t dummy;
+         resolveBranchOperation(scope, IF_OPERATOR_ID, scope.branchingInfo.reference, dummy);
+      }
+
+      reference = scope.branchingInfo.reference;
+      if (inverting) {
+         writer.appendNode(lxIfValue, scope.branchingInfo.falseRef);
+         writer.appendNode(lxElseValue, scope.branchingInfo.trueRef);
+      }
+      else {
+         writer.appendNode(lxIfValue, scope.branchingInfo.trueRef);
+         writer.appendNode(lxElseValue, scope.branchingInfo.falseRef);
+      }
+   }
+
+   if (size != 0) {
+      // HOTFIX : inject an item size for the binary array operations
+      writer.appendNode(lxSize, size);
+   }
+
+   writer.insert((LexicalType)operationType, operator_id);
+   writer.closeNode();
+}
+
 //bool CompilerLogic :: isReadonly(ClassInfo& info)
 //{
 //   return test(info.header.flags, elReadOnlyRole);

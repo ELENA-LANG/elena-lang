@@ -1129,44 +1129,44 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
-//bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVal)
-//{
-//   switch (operation_id)
-//   {
-//      case ADD_MESSAGE_ID:
-//         retVal = arg1 + arg2;
-//         break;
-//      case SUB_MESSAGE_ID:
-//         retVal = arg1 - arg2;
-//         break;
-//      case MUL_MESSAGE_ID:
-//         retVal = arg1 * arg2;
-//         break;
-//      case DIV_MESSAGE_ID:
-//         retVal = arg1 / arg2;
-//         break;
-//      case AND_MESSAGE_ID:
-//         retVal = arg1 & arg2;
-//         break;
-//      case OR_MESSAGE_ID:
-//         retVal = arg1 | arg2;
-//         break;
-//      case XOR_MESSAGE_ID:
-//         retVal = arg1 ^ arg2;
-//         break;
-//      case READ_MESSAGE_ID:
-//         retVal = arg1 >> arg2;
-//         break;
-//      case WRITE_MESSAGE_ID:
-//         retVal = arg1 << arg2;
-//         break;
-//      default:
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
+bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVal)
+{
+   switch (operation_id)
+   {
+      case ADD_OPERATOR_ID:
+         retVal = arg1 + arg2;
+         break;
+      case SUB_OPERATOR_ID:
+         retVal = arg1 - arg2;
+         break;
+      case MUL_OPERATOR_ID:
+         retVal = arg1 * arg2;
+         break;
+      case DIV_OPERATOR_ID:
+         retVal = arg1 / arg2;
+         break;
+      case AND_OPERATOR_ID:
+         retVal = arg1 & arg2;
+         break;
+      case OR_OPERATOR_ID:
+         retVal = arg1 | arg2;
+         break;
+      case XOR_OPERATOR_ID:
+         retVal = arg1 ^ arg2;
+         break;
+      case READ_OPERATOR_ID:
+         retVal = arg1 >> arg2;
+         break;
+      case WRITE_OPERATOR_ID:
+         retVal = arg1 << arg2;
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
+
 //bool Compiler :: calculateRealOp(int operation_id, double arg1, double arg2, double& retVal)
 //{
 //   switch (operation_id)
@@ -2646,6 +2646,36 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int pa
    switch (operator_id) {
       case IF_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(IF_MESSAGE, 0, false), paramCount, 0);
+      case EQUAL_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(EQUAL_MESSAGE, 0, false), paramCount, 0);
+      case NOTEQUAL_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(NOTEQUAL_MESSAGE, 0, false), paramCount, 0);
+      case LESS_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(LESS_MESSAGE, 0, false), paramCount, 0);
+      case NOTLESS_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(NOTLESS_MESSAGE, 0, false), paramCount, 0);
+      case GREATER_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(GREATER_MESSAGE, 0, false), paramCount, 0);
+      case NOTGREATER_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(NOTGREATER_MESSAGE, 0, false), paramCount, 0);
+      case ADD_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(ADD_MESSAGE, 0, false), paramCount, 0);
+      case SUB_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(SUB_MESSAGE, 0, false), paramCount, 0);
+      case MUL_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(MUL_MESSAGE, 0, false), paramCount, 0);
+      case DIV_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(DIV_MESSAGE, 0, false), paramCount, 0);
+      case AND_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(AND_MESSAGE, 0, false), paramCount, 0);
+      case OR_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(OR_MESSAGE, 0, false), paramCount, 0);
+      case XOR_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(XOR_MESSAGE, 0, false), paramCount, 0);
+      case READ_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(READ_MESSAGE, 0, false), paramCount, 0);
+      case WRITE_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(WRITE_MESSAGE, 0, false), paramCount, 0);
       default:
          throw InternalError("Not supported operator");
          break;
@@ -2718,116 +2748,117 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode rope
 //
 //   return ObjectInfo(okObject, resultRef);
 //}
-//
-//ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2)
-//{
-//   ObjectInfo retVal;
-//
-//   ref_t loperandRef = resolveObjectReference(scope, loperand);
-//   ref_t roperandRef = resolveObjectReference(scope, roperand);
-//   ref_t roperand2Ref = 0;
-//   ref_t resultClassRef = 0;
-//   int operationType = 0;
-//
-//   if (roperand2.kind != okUnknown) {
-//      roperand2Ref = resolveObjectReference(scope, roperand2);
-//      //HOTFIX : allow to work with int constants
-//      if (roperand2.kind == okIntConstant && loperandRef == V_OBJARRAY)
-//         roperand2Ref = 0;
-//
-//      operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
-//
-//      if (roperand2Ref == V_NIL && loperandRef == V_INT32ARRAY && operator_id == SET_REFER_MESSAGE_ID) {
-//         //HOTFIX : allow set operation with nil
-//         operator_id = SETNIL_REFER_MESSAGE_ID;
-//      }
-//   }
-//   else operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
-//
-//   // HOTFIX : primitive operations can be implemented only in the method
-//   // because the symbol implementations do not open a new stack frame
-//   if (operationType != 0 && resultClassRef != V_FLAG && scope.getScope(Scope::slMethod) == NULL) {
-//      operationType = 0;
-//   }
-//
-//   //bool assignMode = false;
-//   if (operationType != 0) {
-//      // if it is a primitive operation
-//      _logic->injectOperation(writer, *scope.moduleScope, operator_id, operationType, resultClassRef, loperand.element);
-//
-//      retVal = assignResult(writer, scope, resultClassRef, loperand.element);
-//   }
-//   // if not , replace with appropriate method call
-//   else {
-//      int operationMode = HINT_NODEBUGINFO;
-//      ref_t implicitSignatureRef = 0;
-//      if (roperand2.kind != okUnknown) {
-//         implicitSignatureRef = resolveStrongArgument(scope, roperand, roperand2);
-//      }
-//      else implicitSignatureRef = resolveStrongArgument(scope, roperand);
-//
-//      int stackSafeAttr = 0;
-//      int messageRef = resolveMessageAtCompileTime(loperand, scope, encodeMessage(operator_id, paramCount), implicitSignatureRef, true, stackSafeAttr);
-//
-//      if (!test(stackSafeAttr, 1)) {
-//         operationMode |= HINT_DYNAMIC_OBJECT;
-//      }
-//      else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
-//
-//      retVal = compileMessage(writer, node, scope, loperand, messageRef, operationMode, stackSafeAttr);
-//   }
-//
-//   return retVal;
-//}
-//
-//ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, int, int operator_id)
-//{
-//   ObjectInfo retVal(okObject);
-//   int paramCount = 1;
-//
-////   writer.newBookmark();
-////   writer.appendNode(lxOperatorAttr);
-//
-//   ObjectInfo roperand;
-//   ObjectInfo roperand2;
-//   if (operator_id == SET_REFER_MESSAGE_ID) {
-//      // HOTFIX : overwrite the assigning part
-//      SNode exprNode = node;
-//      SNode expr2Node = node.parentNode().nextNode();
-//      expr2Node = lxIdle;
-//      expr2Node = expr2Node.nextNode(lxObjectMask);
-//
-//      //SNode thirdNode = exprNode.nextNode(lxObjectMask);
-//      //SyntaxTree::copyNodeSafe(exprNode.nextNode(lxObjectMask), exprNode.appendNode(lxExpression), true);
-//
-//      roperand = compileObject(writer, exprNode, scope, 0, 0);
-//      roperand2 = compileExpression(writer, expr2Node, scope, 0, 0);
-//
-//      node = exprNode;
-//
-//      paramCount++;
-//   }
-//   else {
-//      SNode roperandNode = node;
-//      /*if (roperandNode == lxLocal) {
-//         // HOTFIX : to compile switch statement
-//         roperand = ObjectInfo(okLocal, roperandNode.argument);
-//      }*/
-//      /*if (test(roperandNode.type, lxTerminalMask)) {*/
-//         roperand = compileObject(writer, roperandNode, scope, 0, 0);
-//      /*}
-//      else roperand = compileExpression(writer, roperandNode, scope, 0, 0);*/
-//   }
-//
-//   if (operator_id == ISNIL_MESSAGE_ID) {
-//      retVal = compileIsNilOperator(writer, node, scope, loperand, roperand);
-//   }
-//   else retVal = compileOperator(writer, node, scope, operator_id, paramCount, loperand, roperand, roperand2);
-//
-////   writer.removeBookmark();
-//
-//   return retVal;
-//}
+
+ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand/*, ObjectInfo roperand2*/)
+{
+   ObjectInfo retVal;
+
+   ref_t loperandRef = resolveObjectReference(scope, loperand);
+   ref_t roperandRef = resolveObjectReference(scope, roperand);
+   ref_t roperand2Ref = 0;
+   ref_t resultClassRef = 0;
+   int operationType = 0;
+
+   //if (roperand2.kind != okUnknown) {
+   //   roperand2Ref = resolveObjectReference(scope, roperand2);
+   //   //HOTFIX : allow to work with int constants
+   //   if (roperand2.kind == okIntConstant && loperandRef == V_OBJARRAY)
+   //      roperand2Ref = 0;
+
+   //   operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, roperand2Ref, resultClassRef);
+
+   //   if (roperand2Ref == V_NIL && loperandRef == V_INT32ARRAY && operator_id == SET_REFER_MESSAGE_ID) {
+   //      //HOTFIX : allow set operation with nil
+   //      operator_id = SETNIL_REFER_MESSAGE_ID;
+   //   }
+   //}
+   /*else */operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, resultClassRef);
+
+   // HOTFIX : primitive operations can be implemented only in the method
+   // because the symbol implementations do not open a new stack frame
+   if (operationType != 0 && resultClassRef != V_FLAG && scope.getScope(Scope::slMethod) == NULL) {
+      operationType = 0;
+   }
+
+   //bool assignMode = false;
+   if (operationType != 0) {
+      // if it is a primitive operation
+      _logic->injectOperation(writer, *scope.moduleScope, operator_id, operationType, resultClassRef, loperand.element);
+
+      retVal = assignResult(writer, scope, resultClassRef, loperand.element);
+   }
+   // if not , replace with appropriate method call
+   else {
+      int operationMode = HINT_NODEBUGINFO;
+      ref_t implicitSignatureRef = 0;
+      //if (roperand2.kind != okUnknown) {
+      //   implicitSignatureRef = resolveStrongArgument(scope, roperand, roperand2);
+      //}
+      /*else */implicitSignatureRef = resolveStrongArgument(scope, roperand);
+
+      int stackSafeAttr = 0;
+      int messageRef = resolveMessageAtCompileTime(loperand, scope, resolveOperatorMessage(scope, operator_id, paramCount), 
+         implicitSignatureRef, /*true, */stackSafeAttr);
+
+      if (!test(stackSafeAttr, 1)) {
+         operationMode |= HINT_DYNAMIC_OBJECT;
+      }
+      else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
+
+      retVal = compileMessage(writer, node, scope, loperand, messageRef, operationMode, stackSafeAttr);
+   }
+
+   return retVal;
+}
+
+ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, int, int operator_id)
+{
+   ObjectInfo retVal(okObject);
+   int paramCount = 1;
+
+//   writer.newBookmark();
+//   writer.appendNode(lxOperatorAttr);
+
+   ObjectInfo roperand;
+   //ObjectInfo roperand2;
+   //if (operator_id == SET_REFER_MESSAGE_ID) {
+   //   // HOTFIX : overwrite the assigning part
+   //   SNode exprNode = node;
+   //   SNode expr2Node = node.parentNode().nextNode();
+   //   expr2Node = lxIdle;
+   //   expr2Node = expr2Node.nextNode(lxObjectMask);
+
+   //   //SNode thirdNode = exprNode.nextNode(lxObjectMask);
+   //   //SyntaxTree::copyNodeSafe(exprNode.nextNode(lxObjectMask), exprNode.appendNode(lxExpression), true);
+
+   //   roperand = compileObject(writer, exprNode, scope, 0, 0);
+   //   roperand2 = compileExpression(writer, expr2Node, scope, 0, 0);
+
+   //   node = exprNode;
+
+   //   paramCount++;
+   //}
+   //else {
+      SNode roperandNode = node;
+      /*if (roperandNode == lxLocal) {
+         // HOTFIX : to compile switch statement
+         roperand = ObjectInfo(okLocal, roperandNode.argument);
+      }*/
+      /*if (test(roperandNode.type, lxTerminalMask)) {*/
+         roperand = compileObject(writer, roperandNode, scope, 0, 0);
+      /*}
+      else roperand = compileExpression(writer, roperandNode, scope, 0, 0);*/
+   //}
+
+   //if (operator_id == ISNIL_MESSAGE_ID) {
+   //   retVal = compileIsNilOperator(writer, node, scope, loperand, roperand);
+   //}
+   /*else */retVal = compileOperator(writer, node, scope, operator_id, paramCount, loperand, roperand/*, roperand2*/);
+
+//   writer.removeBookmark();
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode)
 {
@@ -2846,9 +2877,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    if (operator_id == IF_OPERATOR_ID/* || operator_id == IFNOT_MESSAGE_ID*/) {
       return compileBranchingOperator(writer, roperand, scope, target, mode, operator_id);
    }
-   else throw new InternalError("not supported yet"); // !! temporal
-
-//   else return compileOperator(writer, roperand, scope, target, mode, operator_id);
+   else return compileOperator(writer, roperand, scope, target, mode, operator_id);
 }
 
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr)
@@ -2998,15 +3027,15 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t ta
    else return false;
 }
 
-//ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
-//{
-//   ref_t argRef = resolveObjectReference(scope, info);
-//   if (isPrimitiveRef(argRef))
-//      argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
-//
-//   return scope.module->mapSignature(&argRef, 1, false);
-//}
-//
+ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
+{
+   ref_t argRef = resolveObjectReference(scope, info);
+   if (isPrimitiveRef(argRef))
+      argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+
+   return scope.module->mapSignature(&argRef, 1, false);
+}
+
 //ref_t Compiler::resolveStrongArgument(CodeScope& scope, ObjectInfo info1, ObjectInfo info2)
 //{
 //   ref_t argRef[2];
@@ -7199,62 +7228,62 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int mode)
 
    if (node.argument != 0) {
       SNode intValue = node.findSubNode(lxConstantInt);
-      //if (intValue != lxNone && node.argument == 4) {
-      //   // direct operation with numeric constants
-      //   node.set(lxIntOp, SET_MESSAGE_ID);
-      //}
-      //else {
+      if (intValue != lxNone && node.argument == 4) {
+         // direct operation with numeric constants
+         node.set(lxIntOp, SET_OPERATOR_ID);
+      }
+      else {
          SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
          if (subNode == lxAssigning && targetNode != lxFieldAddress) {
             // HOTFIX : an extra assignment should be removed only for the operations with local variables
             bool tempAttr = subNode.existChild(lxTempAttr);
 
-            //// assignment operation
-            //SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
-            //if (operationNode != lxNone) {
-            //   SNode larg = operationNode.findSubNodeMask(lxObjectMask);
-            //   SNode rarg = operationNode.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-            //   SNode target = node.firstChild(lxObjectMask);
-            //   if (rarg.type == targetNode.type && rarg.argument == targetNode.argument) {
-            //      // if the target is used in the subexpression rvalue
-            //      // do nothing
-            //   }
-            //   // if it is an operation with the same target
-            //   else if (larg.type == target.type && larg.argument == target.argument) {
-            //      // remove an extra assignment
-            //      larg = subNode.findSubNodeMask(lxObjectMask);
+            // assignment operation
+            SNode operationNode = subNode.findChild(lxIntOp/*, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp*/);
+            if (operationNode != lxNone) {
+               SNode larg = operationNode.findSubNodeMask(lxObjectMask);
+               SNode rarg = operationNode.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+               SNode target = node.firstChild(lxObjectMask);
+               if (rarg.type == targetNode.type && rarg.argument == targetNode.argument) {
+                  // if the target is used in the subexpression rvalue
+                  // do nothing
+               }
+               // if it is an operation with the same target
+               else if (larg.type == target.type && larg.argument == target.argument) {
+                  // remove an extra assignment
+                  larg = subNode.findSubNodeMask(lxObjectMask);
 
-            //      larg = target.type;
-            //      larg.setArgument(target.argument);
-            //      node = lxExpression;
-            //      target = lxIdle;
+                  larg = target.type;
+                  larg.setArgument(target.argument);
+                  node = lxExpression;
+                  target = lxIdle;
 
-            //      // replace add / subtract with append / reduce and remove an assignment
-            //      switch (operationNode.argument) {
-            //         case ADD_MESSAGE_ID:
-            //            operationNode.setArgument(APPEND_MESSAGE_ID);
-            //            subNode = lxExpression;
-            //            larg = lxIdle;
-            //            break;
-            //         case SUB_MESSAGE_ID:
-            //            operationNode.setArgument(REDUCE_MESSAGE_ID);
-            //            subNode = lxExpression;
-            //            larg = lxIdle;
-            //            break;
-            //      }
-            //   }
-            //   // if it is an operation with an extra temporal variable
-            //   else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
-            //      larg = subNode.findSubNodeMask(lxObjectMask);
+                  // replace add / subtract with append / reduce and remove an assignment
+                  switch (operationNode.argument) {
+                     case ADD_OPERATOR_ID:
+                        operationNode.setArgument(APPEND_OPERATOR_ID);
+                        subNode = lxExpression;
+                        larg = lxIdle;
+                        break;
+                     case SUB_OPERATOR_ID:
+                        operationNode.setArgument(REDUCE_OPERATOR_ID);
+                        subNode = lxExpression;
+                        larg = lxIdle;
+                        break;
+                  }
+               }
+               // if it is an operation with an extra temporal variable
+               else if ((node.argument == subNode.argument/* || operationNode == lxByteArrOp || operationNode == lxShortArrOp*/) && tempAttr) {
+                  larg = subNode.findSubNodeMask(lxObjectMask);
 
-            //      if ((larg.type == targetNode.type && larg.argument == targetNode.argument) || (tempAttr && subNode.argument == node.argument && larg == lxLocalAddress)) {
-            //         // remove an extra assignment
-            //         subNode = lxExpression;
-            //         larg = lxIdle;
-            //      }
-            //   }
-            //}
-            /*else */if (tempAttr && subNode.argument == node.argument) {
+                  if ((larg.type == targetNode.type && larg.argument == targetNode.argument) || (tempAttr && subNode.argument == node.argument && larg == lxLocalAddress)) {
+                     // remove an extra assignment
+                     subNode = lxExpression;
+                     larg = lxIdle;
+                  }
+               }
+            }
+            else if (tempAttr && subNode.argument == node.argument) {
                SNode larg = subNode.firstChild(lxObjectMask);
                if (larg == lxLocalAddress) {
                   // remove an extra assignment
@@ -7284,7 +7313,7 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int mode)
                }
             }
          }
-      //}
+      }
   }
 
    return sourceRef;
@@ -7419,80 +7448,80 @@ ref_t Compiler :: analizeSymbol(SNode& node, NamespaceScope& scope)
    return resolveObjectReference(*scope.moduleScope, result);
 }
 
-//ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/)
-//{
-//   int lmask = HINT_NOBOXING;
-//   if (current.argument == REFER_MESSAGE_ID) {
-//      switch (current.type) {
-//         case lxIntArrOp:
-//         case lxByteArrOp:
-//         case lxShortArrOp:
-//         case lxBinArrOp:
-//            lmask |= HINT_NOUNBOXING;
-//            break;
-//         default:
-//            break;
-//      }
-//   }
-//
-//   SNode loperand = current.firstChild(lxObjectMask);
-//   analizeExpression(loperand, scope, /*warningScope, */lmask);
-//
-//   SNode roperand = loperand.nextNode(lxObjectMask);
-//   analizeExpression(roperand, scope, /*warningScope, */HINT_NOBOXING);
-//
-//   SNode roperand2 = roperand.nextNode(lxObjectMask);
-//   if (roperand2 != lxNone)
-//      analizeExpression(roperand2, scope, /*warningScope, */HINT_NOBOXING);
-//
-//   if (current == lxIntOp && loperand == lxConstantInt && roperand == lxConstantInt) {
-//      int val = 0;
-//      if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
-//         loperand = lxIdle;
-//         roperand = lxIdle;
-//
-//         IdentifierString str;
-//         str.appendHex(val);
-//         current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
-//         current.appendNode(lxIntValue, val);
-//
-//         return V_INT32;
-//      }
-//   }
-//   else if (current == lxRealOp && loperand == lxConstantReal && roperand == lxConstantReal) {
-//      double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
-//      double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
-//      double val = 0;
-//      if (calculateRealOp(current.argument, d1, d2, val)) {
-//         loperand = lxIdle;
-//         roperand = lxIdle;
-//
-//         IdentifierString str;
-//         str.appendDouble(val);
-//         current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
-//
-//         return V_REAL64;
-//      }
-//   }
-//
-//   switch (current) {
-//      case lxIntOp:
-//      case lxByteArrOp:
-//      case lxIntArrOp:
-//      case lxShortArrOp:
-//         return V_INT32;
-//      case lxLongOp:
-//         return V_INT64;
-//      case lxRealOp:
-//         return V_REAL64;
-//      case lxBinArrOp:
-//         return V_BINARY;
-//      case lxNewOp:
-//         return current.argument;
-//      default:
-//         return 0;
-//   }
-//}
+ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/)
+{
+   int lmask = HINT_NOBOXING;
+   //if (current.argument == REFER_MESSAGE_ID) {
+   //   switch (current.type) {
+   //      case lxIntArrOp:
+   //      case lxByteArrOp:
+   //      case lxShortArrOp:
+   //      case lxBinArrOp:
+   //         lmask |= HINT_NOUNBOXING;
+   //         break;
+   //      default:
+   //         break;
+   //   }
+   //}
+
+   SNode loperand = current.firstChild(lxObjectMask);
+   analizeExpression(loperand, scope, /*warningScope, */lmask);
+
+   SNode roperand = loperand.nextNode(lxObjectMask);
+   analizeExpression(roperand, scope, /*warningScope, */HINT_NOBOXING);
+
+   SNode roperand2 = roperand.nextNode(lxObjectMask);
+   if (roperand2 != lxNone)
+      analizeExpression(roperand2, scope, /*warningScope, */HINT_NOBOXING);
+
+   if (current == lxIntOp && loperand == lxConstantInt && roperand == lxConstantInt) {
+      int val = 0;
+      if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
+         loperand = lxIdle;
+         roperand = lxIdle;
+
+         IdentifierString str;
+         str.appendHex(val);
+         current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
+         current.appendNode(lxIntValue, val);
+
+         return V_INT32;
+      }
+   }
+   //else if (current == lxRealOp && loperand == lxConstantReal && roperand == lxConstantReal) {
+   //   double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
+   //   double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
+   //   double val = 0;
+   //   if (calculateRealOp(current.argument, d1, d2, val)) {
+   //      loperand = lxIdle;
+   //      roperand = lxIdle;
+
+   //      IdentifierString str;
+   //      str.appendDouble(val);
+   //      current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
+
+   //      return V_REAL64;
+   //   }
+   //}
+
+   switch (current) {
+      case lxIntOp:
+      //case lxByteArrOp:
+      //case lxIntArrOp:
+      //case lxShortArrOp:
+         return V_INT32;
+      //case lxLongOp:
+      //   return V_INT64;
+      //case lxRealOp:
+      //   return V_REAL64;
+      //case lxBinArrOp:
+      //   return V_BINARY;
+      //case lxNewOp:
+      //   return current.argument;
+      default:
+         return 0;
+   }
+}
 
 ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mode)
 {
@@ -7522,7 +7551,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
          return analizeAssigning(current, scope, mode);
       case lxSymbolReference:
          return analizeSymbol(current, scope/*, warningScope*/);
-      //case lxIntOp:
+      case lxIntOp:
       //case lxLongOp:
       //case lxRealOp:
       //case lxIntArrOp:
@@ -7533,7 +7562,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       //case lxNewOp:
       //case lxArgArrOp:
       //case lxBoolOp:
-      //   return analizeOp(current, scope);
+         return analizeOp(current, scope);
       //case lxInternalCall:
       //   return analizeInternalCall(current, scope);
       case lxStdExternalCall:

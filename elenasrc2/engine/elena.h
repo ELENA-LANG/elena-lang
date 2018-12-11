@@ -829,33 +829,33 @@ inline ref_t getAction(ref_t message)
 //   return encodeMessage(actionRef, paramCount);
 //}
 
-//inline bool IsExprOperator(int operator_id)
-//{
-//   switch (operator_id) {
-//      case ADD_MESSAGE_ID:
-//      case SUB_MESSAGE_ID:
-//      case MUL_MESSAGE_ID:
-//      case DIV_MESSAGE_ID:
-//      case AND_MESSAGE_ID:
-//      case OR_MESSAGE_ID:
-//      case XOR_MESSAGE_ID:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
-//inline bool IsShiftOperator(int operator_id)
-//{
-//   switch (operator_id) {
-//      case READ_MESSAGE_ID:
-//      case WRITE_MESSAGE_ID:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+inline bool IsExprOperator(int operator_id)
+{
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+      case SUB_OPERATOR_ID:
+      case MUL_OPERATOR_ID:
+      case DIV_OPERATOR_ID:
+      case AND_OPERATOR_ID:
+      case OR_OPERATOR_ID:
+      case XOR_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool IsShiftOperator(int operator_id)
+{
+   switch (operator_id) {
+      case READ_OPERATOR_ID:
+      case WRITE_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
 ////inline bool IsRealExprOperator(int operator_id)
 ////{
 ////   switch (operator_id) {

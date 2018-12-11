@@ -176,7 +176,7 @@ class ByteCodeWriter
    void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
 //   void boxArgList(CommandTape& tape, ref_t vmtReference);
 //   void unboxArgList(CommandTape& tape, bool arrayMode);
-//   void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
+   void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
 
    void releaseObject(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
@@ -212,7 +212,7 @@ class ByteCodeWriter
 
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
-//   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
+   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 //
 //   void freeVirtualStack(CommandTape& tape, int count);
@@ -252,10 +252,10 @@ class ByteCodeWriter
    void saveSubject(CommandTape& tape);
 //   void saveIntConstant(CommandTape& tape, int value);
 //////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-//   void doIntOperation(CommandTape& tape, int operator_id);
-//   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
-//   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
-//   void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
+   void doIntOperation(CommandTape& tape, int operator_id);
+   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
+   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
+   void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
 //   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
@@ -282,7 +282,7 @@ class ByteCodeWriter
 //
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
 //   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
 //

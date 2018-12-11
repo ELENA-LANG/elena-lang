@@ -25,7 +25,7 @@ enum LexicalType
    lxTerminalMask    = 0x10000,
 ////   lxTerminalObjMask = 0x18000,
 //////   lxReferenceMask   = 0x40000,
-//   lxPrimitiveOpMask = 0x80000,
+   lxPrimitiveOpMask = 0x80000,
 
    lxEnding          = -1,
    lxInvalid         = -2,
@@ -657,14 +657,14 @@ public:
          return current;
       }
 
-      //Node nextSubNodeMask(LexicalType mask)
-      //{
-      //   Node child = nextNode(mask);
-      //   if (child == lxExpression) {
-      //      return child.findSubNodeMask(mask);
-      //   }
-      //   else return child;
-      //}
+      Node nextSubNodeMask(LexicalType mask)
+      {
+         Node child = nextNode(mask);
+         if (child == lxExpression) {
+            return child.findSubNodeMask(mask);
+         }
+         else return child;
+      }
 
       Node prevNode() const
       {

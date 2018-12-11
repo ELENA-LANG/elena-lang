@@ -7,11 +7,11 @@ public class Object
     /// Creates the object
     constructor() {}
     
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    ///
-//    /// By default compares the object references.
-//    bool equal(o) => system'core_routines'__object.
-//    
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    ///
+    /// By default compares the object references.
+    bool equal(o) => system'core_routines'__object;
+    
 //    bool notequal(o) = self equal:anObject; inverted.
 //    
 //    // virtual method declarations : forcing the output type                            

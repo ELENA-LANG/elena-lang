@@ -27,39 +27,39 @@ namespace _ELENA_
 ////   #define SPECIAL_MESSAGE         0x60000000u
 ////   #define PROPSET_MESSAGE         0x20000000u
    // indicates it is an invoke message
-   constexpr auto SPECIAL_MESSAGE   = 0x20u;
-   constexpr auto PARAM_MASK        = 0x1Fu;
-   constexpr auto ARG_COUNT         = 0x1Fu;
+   constexpr auto SPECIAL_MESSAGE      = 0x20u;
+   constexpr auto PARAM_MASK           = 0x1Fu;
+   constexpr auto ARG_COUNT            = 0x1Fu;
 
 //   #define PARAMX_MASK             0x000000000000FFFFu
 
-   constexpr ref_t INVALID_REF        = -1;
+   constexpr ref_t INVALID_REF            = -1;
 
    //#define NEW_MESSAGE_ID          0x0003
-   constexpr auto EQUAL_OPERATOR_ID   = 0x0004;
+   constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
    //#define EVAL_MESSAGE_ID         0x0005
    //#define GET_MESSAGE_ID          0x0006
-   //#define SET_MESSAGE_ID          0x0007
-   constexpr auto LESS_OPERATOR_ID    = 0x0008;
-   constexpr auto IF_OPERATOR_ID      = 0x0009;
-   //#define AND_MESSAGE_ID          0x000A
-   //#define OR_MESSAGE_ID           0x000B
-   //#define XOR_MESSAGE_ID          0x000C
+   constexpr auto SET_OPERATOR_ID         = 0x0007;
+   constexpr auto LESS_OPERATOR_ID        = 0x0008;
+   constexpr auto IF_OPERATOR_ID          = 0x0009;
+   constexpr auto AND_OPERATOR_ID         = 0x000A;
+   constexpr auto OR_OPERATOR_ID          = 0x000B;
+   constexpr auto XOR_OPERATOR_ID         = 0x000C;
    //#define IFNOT_MESSAGE_ID        0x000D
-   //#define NOTEQUAL_MESSAGE_ID     0x000E
-   //#define NOTLESS_MESSAGE_ID      0x000F
-   //#define NOTGREATER_MESSAGE_ID   0x0010
-   constexpr auto GREATER_OPERATOR_ID = 0x0011;
-   //#define ADD_MESSAGE_ID          0x0012
-   //#define SUB_MESSAGE_ID          0x0013
-   //#define MUL_MESSAGE_ID          0x0014
-   //#define DIV_MESSAGE_ID          0x0015
+   constexpr auto NOTEQUAL_OPERATOR_ID    = 0x000E;
+   constexpr auto NOTLESS_OPERATOR_ID     = 0x000F;
+   constexpr auto NOTGREATER_OPERATOR_ID  = 0x0010;
+   constexpr auto GREATER_OPERATOR_ID     = 0x0011;
+   constexpr auto ADD_OPERATOR_ID         = 0x0012;
+   constexpr auto SUB_OPERATOR_ID         = 0x0013;
+   constexpr auto MUL_OPERATOR_ID         = 0x0014;
+   constexpr auto DIV_OPERATOR_ID         = 0x0015;
    //#define REFER_MESSAGE_ID        0x0016
-   //#define APPEND_MESSAGE_ID       0x0017
-   //#define REDUCE_MESSAGE_ID       0x0018
+   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
+   constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
    //#define SET_REFER_MESSAGE_ID    0x0019
-   //#define READ_MESSAGE_ID         0x001A
-   //#define WRITE_MESSAGE_ID        0x001B
+   constexpr auto READ_OPERATOR_ID        = 0x001A;
+   constexpr auto WRITE_OPERATOR_ID       = 0x001B;
    //#define SHIFT_MESSAGE_ID        0x001C
    //#define CAST_MESSAGE_ID         0x001D             // virtual method used for casting
    //#define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
@@ -366,35 +366,35 @@ namespace _ELENA_
   // #define GET_MESSAGE              "get"
   // #define EVAL_MESSAGE             "eval"
   // #define EVALUATE_MESSAGE         "evaluate"
-  // #define EQUAL_MESSAGE            "equal"
-  // #define NOTEQUAL_MESSAGE         "notequal"
-  // #define LESS_MESSAGE             "less"
-  // #define AND_MESSAGE              "and"
-  // #define OR_MESSAGE               "or"
-  // #define XOR_MESSAGE              "xor"
-  // #define GREATER_MESSAGE          "greater"
-  // #define NOTLESS_MESSAGE          "notless"
-  // #define NOTGREATER_MESSAGE       "notgreater"
-  // #define ADD_MESSAGE              "add"
-  // #define SUB_MESSAGE              "subtract"
-  // #define MUL_MESSAGE              "multiply"
-  // #define DIV_MESSAGE              "divide"
+   constexpr auto EQUAL_MESSAGE        = "equal";
+   constexpr auto NOTEQUAL_MESSAGE     = "notequal";
+   constexpr auto LESS_MESSAGE         = "less";
+   constexpr auto AND_MESSAGE          = "and";
+   constexpr auto OR_MESSAGE           = "or";
+   constexpr auto XOR_MESSAGE          = "xor";
+   constexpr auto GREATER_MESSAGE      = "greater";
+   constexpr auto NOTLESS_MESSAGE      = "notless";
+   constexpr auto NOTGREATER_MESSAGE   = "notgreater";
+   constexpr auto ADD_MESSAGE          = "add";
+   constexpr auto SUB_MESSAGE          = "subtract";
+   constexpr auto MUL_MESSAGE          = "multiply";
+   constexpr auto DIV_MESSAGE          = "divide";
   // #define REFER_MESSAGE            "getAt"
   // #define APPEND_MESSAGE           "append"
   // #define REDUCE_MESSAGE           "reduce"
   // #define SET_REFER_MESSAGE        "setAt"
   // #define SET_MESSAGE              "set"
-  // #define READ_MESSAGE             "read"
-  // #define WRITE_MESSAGE            "write"
-   constexpr auto IF_MESSAGE              = "if";
+   constexpr auto READ_MESSAGE         = "read";
+   constexpr auto WRITE_MESSAGE        = "write";
+   constexpr auto IF_MESSAGE           = "if";
   // #define IFNOT_MESSAGE            "ifnot"
   // #define SHIFT_MESSAGE            "shift"
   // #define IF_ELSE_MESSAGE          "if:else"
   // #define INIT_MESSAGE             "#init"
   // #define ISNIL_MESSAGE            "#isnil"
 
-//   // ELENA verb operators
-//   #define EQUAL_OPERATOR		      "=="
+   // ELENA verb operators
+   #define EQUAL_OPERATOR		      "=="
 //   #define NOTEQUAL_OPERATOR		   "!="
 //   #define NOTLESS_OPERATOR		   ">="
 //   #define NOTGREATER_OPERATOR      "<="
