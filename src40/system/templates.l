@@ -8,6 +8,8 @@
 
 property prop<T>
 {
+    T __property;
+    
     get T __property()
     {
         ^ __property

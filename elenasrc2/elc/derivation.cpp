@@ -986,8 +986,7 @@ void DerivationWriter :: generateSymbolTree(SyntaxWriter& writer, SNode node, Sc
    writer.newNode(lxSymbol);
    ////writer.appendNode(lxSourcePath, scope.sourcePath);
 
-   bool dummy = false;
-   generateAttributes(writer, node.prevNode(), derivationScope, dummy/*, true, false, false*/);
+   generateAttributes(writer, node.prevNode(), derivationScope/*, true, false, false*/);
 
    generateExpressionTree(writer, node.findChild(lxExpression), derivationScope);
 
@@ -1003,8 +1002,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
       writer.newNode(lxClass);
 //      //writer.appendNode(lxSourcePath, scope.sourcePath);
 //
-      bool dummy = false;
-      generateAttributes(writer, node.prevNode(), derivationScope, dummy/*, true, false, false*/);
+      generateAttributes(writer, node.prevNode(), derivationScope/*, true, false, false*/);
       if (node.argument == -2) {
          // if it is a single method singleton
          writer.appendNode(lxAttribute, V_SINGLETON);
@@ -1072,7 +1070,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
    writer.closeNode();
 }
 
-void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool& withTemplate/*, bool rootMode, bool templateMode, bool expressionMode*/)
+void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/)
 {
    SNode current = node;
 
@@ -1085,9 +1083,6 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 
    while (true) {
       if (current == lxAttribute) {
-         if (current.argument == V_PROPERTY) {
-            withTemplate = true;
-         }
 //         bool templateParam = false;
 //         ref_t attrRef = expressionMode ? V_ATTRTEMPLATE : mapAttribute(current, scope, templateParam);
 //
@@ -1097,7 +1092,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //         else if (attrRef == V_ATTRTEMPLATE) {
 //            generateAttributeTemplate(writer, current, scope, templateMode, expressionMode);
 //         }
-         else /*if (isAttribute(attrRef)) */{
+//         else /*if (isAttribute(attrRef)) */{
             writer.newNode(lxAttribute, current.argument);
             copyIdentifier(writer, current.findChild(lxIdentifier));
             writer.closeNode();
@@ -1113,7 +1108,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //                  scope.type = DerivationScope::ttMethodTemplate;
 //               }
 //            }
-         }
+  //       }
 //         else if (attrRef != 0) {
 //            writeFullReference(writer, scope.compilerScope->module, attrRef, current);
 //         }
@@ -1191,32 +1186,48 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 }
 
 /*bool*/void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, SyntaxTree& buffer, bool templateMode*/)
-{
-   bool withPropertyTemplate = false;
-
+{   
 //   if (node == lxClassField) {
-      writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
-      SNode sizeNode = node.findChild(lxSizeDecl);
-      if (sizeNode != lxNone) {
-         writer.newNode(lxSize);
-         copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask));
+      // COMPILER MAGIC : property declaration
+      bool withPropertyTemplate = false;
+      SNode current = node.prevNode();
+      while (current.compare(lxAttribute, lxNameAttr, lxTarget)) {
+         if (current == lxAttribute && current.argument == V_PROPERTY) {
+            withPropertyTemplate = true;
+         }
+
+         current = current.prevNode();
+      }
+
+      if (withPropertyTemplate) {
+         // COMPILER MAGIC : inject a property template
+         generatePropertyTemplateTree(writer, node);
+      }
+      else {
+         writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
+         SNode sizeNode = node.findChild(lxSizeDecl);
+         if (sizeNode != lxNone) {
+            writer.newNode(lxSize);
+            copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask));
+            writer.closeNode();
+         }
+
+         //      SNode name = node.prevNode().firstChild(lxTerminalMask);
+         //
+         //      if (scope.type == DerivationScope::ttFieldTemplate && name.identifier().compare(TEMPLATE_FIELD)) {
+         //         scope.fields.add(TEMPLATE_FIELD, scope.fields.Count() + 1);
+         //
+         //         writer.newNode(lxTemplateField, scope.fields.Count());
+         //         copyIdentifier(writer, name);
+         //         writer.closeNode();
+         //
+         //         generateAttributes(writer, node.prevNode().prevNode(), scope, false, templateMode, false);
+         //      }
+         /*else */generateAttributes(writer, node.prevNode(), derivationScope/*, false, templateMode, false*/);
+
          writer.closeNode();
       }
 
-//      SNode name = node.prevNode().firstChild(lxTerminalMask);
-//
-//      if (scope.type == DerivationScope::ttFieldTemplate && name.identifier().compare(TEMPLATE_FIELD)) {
-//         scope.fields.add(TEMPLATE_FIELD, scope.fields.Count() + 1);
-//
-//         writer.newNode(lxTemplateField, scope.fields.Count());
-//         copyIdentifier(writer, name);
-//         writer.closeNode();
-//
-//         generateAttributes(writer, node.prevNode().prevNode(), scope, false, templateMode, false);
-//      }
-      /*else */generateAttributes(writer, node.prevNode(), derivationScope, withPropertyTemplate/*, false, templateMode, false*/);
-
-      writer.closeNode();
 //   }
 //   else if (node == lxFieldInit && !templateMode) {
 //      SNode nameNode = node.prevNode().firstChild(lxTerminalMask);
@@ -1225,11 +1236,6 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //      ::copyIdentifier(writer, nameNode);
 //      writer.closeNode();
 //   }
-//
-      if (withPropertyTemplate) {
-         // COMPILER MAGIC : inject a property template
-         generatePropertyTemplateTree(writer, node);
-      }
 
 //   // copy inplace initialization
 //   SNode bodyNode = node.findChild(lxAssigning);
@@ -1257,8 +1263,6 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //      writer.appendNode(lxTemplate, scope.templateRef);
 //   }
 
-   bool dummy = false;
-
    if (propertyMode) {
       writer.appendNode(lxAttribute, V_GETACCESSOR);
    }
@@ -1266,7 +1270,7 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
    if (closureMode) {
       writer.appendNode(lxAttribute, V_ACTION);
    }
-   else generateAttributes(writer, node.prevNode(), derivationScope, dummy/*, false, templateMode, false*/);
+   else generateAttributes(writer, node.prevNode(), derivationScope/*, false, templateMode, false*/);
 
    // copy method arguments
    SNode current = node.firstChild();
@@ -1287,8 +1291,7 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
             recognizeScopeAttributes(paramNode, 0);
             paramNode.refresh();
 
-            bool dummy = false;
-            generateAttributes(writer, paramNode, derivationScope, dummy);
+            generateAttributes(writer, paramNode, derivationScope);
             //            copyIdentifier(writer, current.firstChild(lxTerminalMask));
             //            if (attribute != lxNone) {
             //               // if the type attribute available

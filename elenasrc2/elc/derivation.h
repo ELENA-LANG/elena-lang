@@ -122,7 +122,7 @@ class DerivationWriter : public _DerivationWriter
    void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode);
    /*bool*/void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, SyntaxTree& buffer, bool templateMode*//* = false*/); // returns true if in-place init found
    void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
-   void generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool& withTemplate/*, bool rootMode, bool templateMode, bool expressionMode*/);
+   void generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/);
    void generateExpressionAttribute(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/, bool templateArgMode = false);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
    void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
