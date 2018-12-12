@@ -55,8 +55,8 @@ namespace _ELENA_
    constexpr auto SUB_OPERATOR_ID         = 0x0013;
    constexpr auto MUL_OPERATOR_ID         = 0x0014;
    constexpr auto DIV_OPERATOR_ID         = 0x0015;
-   //#define REFER_MESSAGE_ID        0x0016
-   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
+   constexpr auto REFER_OPERATOR_ID       = 0x0016;
+  constexpr auto APPEND_OPERATOR_ID       = 0x0017;
    constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
    //#define SET_REFER_MESSAGE_ID    0x0019
    constexpr auto READ_OPERATOR_ID        = 0x001A;
@@ -197,17 +197,17 @@ namespace _ELENA_
       dsLongLocal               = 0x0205,
 //      dsRealLocal               = 0x0305,
 //      dsParamsLocal             = 0x0405,
-//      dsByteArrayLocal          = 0x0505,
-//      dsShortArrayLocal         = 0x0605,
-//      dsIntArrayLocal           = 0x0705,
+      dsByteArrayLocal          = 0x0505,
+      dsShortArrayLocal         = 0x0605,
+      dsIntArrayLocal           = 0x0705,
 
       // primitive variables
       dsIntLocalPtr             = 0x0805,
 //      dsLongLocalPtr            = 0x0905,
 //      dsRealLocalPtr            = 0x0A05,
-//      dsByteArrayLocalPtr       = 0x0B05,
-//      dsShortArrayLocalPtr      = 0x0C05,
-//      dsIntArrayLocalPtr        = 0x0D05,
+      dsByteArrayLocalPtr       = 0x0B05,
+      dsShortArrayLocalPtr      = 0x0C05,
+      dsIntArrayLocalPtr        = 0x0D05,
 //      dsStructPtr               = 0x0E05,
 //      dsStructInfo              = 0x0F05,
 //      dsLocalPtr                = 0x1005,
@@ -311,14 +311,14 @@ namespace _ELENA_
    const int elDebugMask           = 0x001F0000;
    const int elDebugDWORD          = 0x00010000;
 //   const int elDebugReal64         = 0x00020000;
-//   const int elDebugLiteral        = 0x00030000;
-//   const int elDebugIntegers       = 0x00040000;
-//   const int elDebugArray          = 0x00050000;
+   const int elDebugLiteral        = 0x00030000;
+   const int elDebugIntegers       = 0x00040000;
+   const int elDebugArray          = 0x00050000;
 //   const int elDebugQWORD          = 0x00060000;
-//   const int elDebugBytes          = 0x00070000;
-//   const int elDebugShorts         = 0x00080000;
+   const int elDebugBytes          = 0x00070000;
+   const int elDebugShorts         = 0x00080000;
 //   const int elDebugPTR            = 0x00090000;
-//   const int elDebugWideLiteral    = 0x000A0000;
+   const int elDebugWideLiteral    = 0x000A0000;
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
 //   const int elDebugSubject        = 0x000C0000;
 //////   const int elDebugReals          = 0x000D0000;

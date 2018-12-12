@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   9
+#define REVISION_VERSION   10
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1042,30 +1042,30 @@ void listFlags(int flags, int& row, int pageSize)
    //   case elDebugReal64:
    //      printLine("@flag ", "elDebugReal64", row, pageSize);
    //      break;
-   //   case elDebugLiteral:
-   //      printLine("@flag ", "elDebugLiteral", row, pageSize);
-   //      break;
-   //   case elDebugIntegers:
-   //      printLine("@flag ", "elDebugIntegers", row, pageSize);
-   //      break;
-   //   case elDebugArray:
-   //      printLine("@flag ", "elDebugArray", row, pageSize);
-   //      break;
+      case elDebugLiteral:
+         printLine("@flag ", "elDebugLiteral", row, pageSize);
+         break;
+      case elDebugIntegers:
+         printLine("@flag ", "elDebugIntegers", row, pageSize);
+         break;
+      case elDebugArray:
+         printLine("@flag ", "elDebugArray", row, pageSize);
+         break;
    //   case elDebugQWORD:
    //      printLine("@flag ", "elDebugQWORD", row, pageSize);
    //      break;
-   //   case elDebugBytes:
-   //      printLine("@flag ", "elDebugBytes", row, pageSize);
-   //      break;
-   //   case elDebugShorts:
-   //      printLine("@flag ", "elDebugShorts", row, pageSize);
-   //      break;
+      case elDebugBytes:
+         printLine("@flag ", "elDebugBytes", row, pageSize);
+         break;
+      case elDebugShorts:
+         printLine("@flag ", "elDebugShorts", row, pageSize);
+         break;
    //   case elDebugPTR:
    //      printLine("@flag ", "elDebugPTR");
    //      break;
-   //   case elDebugWideLiteral:
-   //      printLine("@flag ", "elDebugWideLiteral", row, pageSize);
-   //      break;
+      case elDebugWideLiteral:
+         printLine("@flag ", "elDebugWideLiteral", row, pageSize);
+         break;
    //   case elDebugReference:
    //      printLine("@flag ", "elDebugReference", row, pageSize);
    //      break;

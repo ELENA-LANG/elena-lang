@@ -141,9 +141,9 @@ class ByteCodeWriter
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ident_t message);
@@ -250,7 +250,7 @@ class ByteCodeWriter
    void copyStructure(CommandTape& tape, int offset, int size);
    void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
    void saveSubject(CommandTape& tape);
-//   void saveIntConstant(CommandTape& tape, int value);
+   void saveIntConstant(CommandTape& tape, int value);
 //////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id);
    void doIntOperation(CommandTape& tape, int operator_id, int immArg);
@@ -278,8 +278,8 @@ class ByteCodeWriter
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void loadObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 
-//   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
-//
+   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
+
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);

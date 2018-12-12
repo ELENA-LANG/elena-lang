@@ -211,9 +211,9 @@ enum LexicalType
 //   lxBinaryVariable  = 0x10038,
    lxMember          = 0x10039,  // a collection member, arg - offset
    lxOuterMember     = 0x1003A,  // a collection member, arg - offset
-//   lxIntsVariable    = 0x1003B,
-//   lxBytesVariable   = 0x1003C,
-//   lxShortsVariable  = 0x1003D,
+   lxIntsVariable    = 0x1003B,
+   lxBytesVariable   = 0x1003C,
+   lxShortsVariable  = 0x1003D,
 //   lxParamsVariable  = 0x1003E,
 //   lxInlineClosure   = 0x1003F,
 //

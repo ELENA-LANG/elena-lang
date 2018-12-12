@@ -1108,9 +1108,9 @@
 // --- LiteralValue ---
 
 /// A UTF-8 literal value
-public sealed /*__string*/ LiteralValue : BaseValue
+public sealed const struct LiteralValue : BaseValue
 {
-    byte[] theArray;
+    __string byte[] theArray;
 
 //    constructor new
 //        <= min.
@@ -1353,9 +1353,9 @@ public sealed /*__string*/ LiteralValue : BaseValue
 // --- WideLiteralValue ---
 
 /// A UTF-18 literal value
-public sealed /*__string */WideLiteralValue : BaseValue
+public sealed const struct WideLiteralValue : BaseValue
 {
-    short[] theArray;
+    __string short[] theArray;
 
 //    /// return the default value
 //    constructor
@@ -2233,7 +2233,7 @@ public singleton wideConvertor
 //        int        m := 0.
 //        int        page := 0.
 //        int        l := aLiteral length.
-//        T<short,256> buffer.
+        short buffer[256];            
 //        if (l < 256)
 //        [
 //            self convert(aLiteral, T<ShortArray>(buffer), &m).

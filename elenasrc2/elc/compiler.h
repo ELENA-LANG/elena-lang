@@ -846,6 +846,8 @@ private:
 //   }
    ref_t mapMessage(SNode node, CodeScope& scope);
 
+   size_t resolveArraySize(SNode node, Scope& scope);
+
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t typeRef);
 

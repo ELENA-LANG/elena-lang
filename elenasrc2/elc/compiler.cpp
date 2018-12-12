@@ -1644,8 +1644,12 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
                // ignore if constant / sealed attribute was set
             }
             else if (!value && isPrimitiveRef(current.argument)) {
+               if (current.argument == V_STRING) {
+                  // if it is a string attribute
+                  scope.info.header.flags |= elDebugLiteral;
+               }
                // if it is a primitive type
-               fieldRef = current.argument;
+               else fieldRef = current.argument;
             }
                //else if (value == V_OBJARRAY) {
                //   elementRef = fieldRef;
@@ -1847,6 +1851,18 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
 //   writer.removeBookmark();
 //}
 
+size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
+{
+   if (isSingleStatement(node)) {
+      SNode terminal = node.findSubNodeMask(lxTerminalMask);
+      if (terminal.type == lxInteger) {
+         return terminal.identifier().toInt();
+      }
+      else scope.raiseError(errInvalidSyntax, node);
+   }
+   else scope.raiseError(errInvalidSyntax, node);
+}
+
 void Compiler :: compileVariable(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ref_t typeRef)
 {
 //   //if (terminal == lxExpression)
@@ -1865,6 +1881,27 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode terminal, CodeScope
       ObjectInfo variable(okLocal);
       variable.reference = typeRef;
 
+      // COMPILER MAGIC : if it is a fixed-sized array
+      SNode sizeNode = terminal.nextNode();
+      if (sizeNode == lxOperator && sizeNode.argument == REFER_OPERATOR_ID) {
+         SNode sizeExprNode = sizeNode.nextNode();
+
+         size = resolveArraySize(sizeExprNode, scope);
+
+         // HOTFIX : remove the size attribute
+         sizeNode = lxIdle;
+         sizeExprNode = lxIdle;
+      }
+
+      if (size != 0 && variable.reference != 0) {
+         if (!isPrimitiveRef(variable.reference)) {
+            // if it is a primitive array
+            variable.element = variable.reference;
+            variable.reference = _logic->definePrimitiveArray(*scope.moduleScope, variable.element);
+         }
+         else scope.raiseError(errInvalidHint, terminal);
+      }
+
       ClassInfo localInfo;
       bool binaryArray = false;
       if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.reference))
@@ -1874,20 +1911,20 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode terminal, CodeScope
       //   variable.reference = _logic->resolvePrimitive(localInfo, variable.element);
       //}
 
-//      if (variable.extraparam == V_BINARYARRAY && variable.element != 0) {
-//         localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
-//      }
-//
-//      if (_logic->isEmbeddableArray(localInfo) && size != 0) {
-//         bytearray = true;
-//         size = size * (-((int)localInfo.size));
-//      }
-      /*else */if (_logic->isEmbeddable(localInfo)/* && size == 0*/) {
+      if (variable.extraparam == V_BINARYARRAY && variable.element != 0) {
+         localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
+      }
+
+      if (_logic->isEmbeddableArray(localInfo) && size != 0) {
+         binaryArray = true;
+         size = size * (-((int)localInfo.size));
+      }
+      else if (_logic->isEmbeddable(localInfo) && size == 0) {
          bool dummy = false;
          size = _logic->defineStructSize(localInfo, dummy);
       }
-//      else if (size != 0)
-//         scope.raiseError(errInvalidOperation, terminal);
+      else if (size != 0)
+         scope.raiseError(errInvalidOperation, terminal);
 
       if (size > 0) {
          if (!allocateStructure(scope, size, binaryArray, variable))
@@ -1906,18 +1943,18 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode terminal, CodeScope
 //            case elDebugReal64:
 //               variableType = lxReal64Variable;
 //               break;
-//            case elDebugIntegers:
-//               variableType = lxIntsVariable;
-//               variableArg = size;
-//               break;
-//            case elDebugShorts:
-//               variableType = lxShortsVariable;
-//               variableArg = size;
-//               break;
-//            case elDebugBytes:
-//               variableType = lxBytesVariable;
-//               variableArg = size;
-//               break;
+            case elDebugIntegers:
+               variableType = lxIntsVariable;
+               variableArg = size;
+               break;
+            case elDebugShorts:
+               variableType = lxShortsVariable;
+               variableArg = size;
+               break;
+            case elDebugBytes:
+               variableType = lxBytesVariable;
+               variableArg = size;
+               break;
 //            default:
 //               if (isPrimitiveRef(variable.extraparam)) {
 //                  variableType = lxBytesVariable;

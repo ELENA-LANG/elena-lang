@@ -1250,42 +1250,42 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          //   size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
          //   readParams(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), false);
          //}
-         //else if (lineInfo[index].symbol == dsByteArrayLocal) {
-         //   // write stack allocated local variable
-         //   size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+         else if (lineInfo[index].symbol == dsByteArrayLocal) {
+            // write stack allocated local variable
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
 
-         //   readByteArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
-         //}
-         //else if (lineInfo[index].symbol == dsByteArrayLocalPtr) {
-         //   // write stack allocated local variable
-         //   size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            readByteArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
+         }
+         else if (lineInfo[index].symbol == dsByteArrayLocalPtr) {
+            // write stack allocated local variable
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
 
-         //   readByteArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
-         //}
-         //else if (lineInfo[index].symbol == dsShortArrayLocal) {
-         //   // write stack allocated local variable
-         //   size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+            readByteArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
+         }
+         else if (lineInfo[index].symbol == dsShortArrayLocal) {
+            // write stack allocated local variable
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
 
-         //   readShortArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
-         //}
-         //else if (lineInfo[index].symbol == dsShortArrayLocalPtr) {
-         //   // write stack allocated local variable
-         //   size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            readShortArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
+         }
+         else if (lineInfo[index].symbol == dsShortArrayLocalPtr) {
+            // write stack allocated local variable
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
 
-         //   readShortArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
-         //}
-         //else if (lineInfo[index].symbol == dsIntArrayLocal) {
-         //   // write stack allocated local variable
-         //   size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+            readShortArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
+         }
+         else if (lineInfo[index].symbol == dsIntArrayLocal) {
+            // write stack allocated local variable
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
 
-         //   readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
-         //}
-         //else if (lineInfo[index].symbol == dsIntArrayLocalPtr) {
-         //   // write stack allocated local variable
-         //   size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
+         }
+         else if (lineInfo[index].symbol == dsIntArrayLocalPtr) {
+            // write stack allocated local variable
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
 
-         //   readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
-         //}
+            readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
+         }
          //else if (lineInfo[index].symbol == dsStructPtr) {
          //   size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
          //   ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef));
@@ -1325,36 +1325,36 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
       DebugLineInfo* info = seekClassInfo(selfPtr, className, flags, classPtr);
       if (info) {
          int type = info->addresses.symbol.flags & elDebugMask;
-         //if (type==elDebugLiteral) {
-         //   char value[DEBUG_MAX_STR_LENGTH + 1];
-         //   int length = 0;
-         //   getValue(selfPtr - 8, (char*)&length, 4);
+         if (type==elDebugLiteral) {
+            char value[DEBUG_MAX_STR_LENGTH + 1];
+            int length = 0;
+            getValue(selfPtr - 8, (char*)&length, 4);
 
-         //   length &= 0xFFFFF;
+            length &= 0xFFFFF;
 
-         //   if (length > DEBUG_MAX_STR_LENGTH) {
-         //      length = DEBUG_MAX_STR_LENGTH;
-         //   }
-         //   getValue(selfPtr, value, length);
-         //   value[length] = 0;
-         //   watch->write(this, value);
-         //}
-         //else if (type == elDebugWideLiteral) {
-         //   wide_c value[DEBUG_MAX_STR_LENGTH + 1];
-         //   int length = 0;
-         //   getValue(selfPtr - 8, (char*)&length, 4);
+            if (length > DEBUG_MAX_STR_LENGTH) {
+               length = DEBUG_MAX_STR_LENGTH;
+            }
+            getValue(selfPtr, value, length);
+            value[length] = 0;
+            watch->write(this, value);
+         }
+         else if (type == elDebugWideLiteral) {
+            wide_c value[DEBUG_MAX_STR_LENGTH + 1];
+            int length = 0;
+            getValue(selfPtr - 8, (char*)&length, 4);
 
-         //   length &= 0xFFFFF;
-         //   length >>= 1;
+            length &= 0xFFFFF;
+            length >>= 1;
 
-         //   if (length > DEBUG_MAX_STR_LENGTH) {
-         //      length = DEBUG_MAX_STR_LENGTH;
-         //   }
-         //   getValue(selfPtr, value, length);
-         //   value[length] = 0;
-         //   watch->write(this, value);
-         //}
-         /*else */if (type == elDebugDWORD/* || type == elDebugSubject*/) {
+            if (length > DEBUG_MAX_STR_LENGTH) {
+               length = DEBUG_MAX_STR_LENGTH;
+            }
+            getValue(selfPtr, value, length);
+            value[length] = 0;
+            watch->write(this, value);
+         }
+         else if (type == elDebugDWORD/* || type == elDebugSubject*/) {
             char value[4];
             getValue(selfPtr, value, 4);
 
@@ -1378,32 +1378,32 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 
          //   watch->write(this, *(long long*)value);
          //}
-         //else if (type==elDebugArray) {
-         //   int list[DEBUG_MAX_LIST_LENGTH];
-         //   int length = 0;
+         else if (type==elDebugArray) {
+            int list[DEBUG_MAX_LIST_LENGTH];
+            int length = 0;
 
-         //   // get array size
-         //   getValue(selfPtr - 8, (char*)&length, 4);
-         //   if (length == 0x800000)
-         //      length = 0;
+            // get array size
+            getValue(selfPtr - 8, (char*)&length, 4);
+            if (length == 0x800000)
+               length = 0;
 
-         //   if (length > sizeof(list))
-         //      length = sizeof(list);
+            if (length > sizeof(list))
+               length = sizeof(list);
 
-         //   getValue(selfPtr, (char*)list, length);
+            getValue(selfPtr, (char*)list, length);
 
-         //   length >>= 2;
-         //   readList(watch, list, length);
-         //}
-         //else if (type==elDebugBytes) {
-         //   readByteArray(watch, selfPtr, NULL);
-         //}
-         //else if (type==elDebugShorts) {
-         //   readShortArray(watch, selfPtr, NULL);
-         //}
-         //else if (type == elDebugIntegers) {
-         //   readIntArray(watch, selfPtr, NULL);
-         //}
+            length >>= 2;
+            readList(watch, list, length);
+         }
+         else if (type==elDebugBytes) {
+            readByteArray(watch, selfPtr, NULL);
+         }
+         else if (type==elDebugShorts) {
+            readShortArray(watch, selfPtr, NULL);
+         }
+         else if (type == elDebugIntegers) {
+            readIntArray(watch, selfPtr, NULL);
+         }
          else if (className.compare("system'nil")) {
             watch->write(this, "<nil>");
          }

@@ -199,9 +199,9 @@ void DerivationWriter :: newNode(Symbol symbol)
 ////      case nsL8Operation:
 ////         _writer.newNode(lxAssignOperator);
 ////         break;
-////      case nsArrayOperation:
-////         _writer.newNode(lxArrOperator, REFER_MESSAGE_ID);
-////         break;
+      case nsArrayOperator:
+         _cacheWriter.newNode(lxOperator, REFER_OPERATOR_ID);
+         break;
 ////      case nsXInlineClosure:
 ////         _writer.newNode(lxInlineClosure);
 ////         break;
@@ -1537,7 +1537,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             }
             else first = false;
          case lxAssign:
-            writer.newNode(current.type);
+            writer.newNode(current.type, current.argument);
             copyIdentifier(writer, current.firstChild(lxTerminalMask));
             writer.closeNode();
             break;

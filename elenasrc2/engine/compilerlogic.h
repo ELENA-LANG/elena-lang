@@ -101,7 +101,7 @@ public:
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
 //   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result);
    virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference);
-//   virtual ref_t definePrimitiveArray(_CompilerScope& scope, ref_t elementRef);
+   virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef);
    virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t reference);
 
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
@@ -115,7 +115,7 @@ public:
    {
       return test(info.header.flags, elWrapper);
    }
-//   virtual bool isEmbeddableArray(ClassInfo& info);
+   virtual bool isEmbeddableArray(ClassInfo& info);
    virtual bool isVariable(_ModuleScope& scope, ref_t targetRef);
    virtual bool isVariable(ClassInfo& info);
    virtual bool isEmbeddable(ClassInfo& info);

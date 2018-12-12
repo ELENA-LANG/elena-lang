@@ -241,22 +241,22 @@ void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName,
 //{
 //   tape.write(bdRealLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
 //}
-//
-//void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdByteArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdShortArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
+
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdByteArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdShortArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
 //void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
 //{
 //   tape.write(bdParamsLocal, writeString(localName), level);
@@ -1855,30 +1855,30 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //   // else it is a primitice variable
          //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocalPtr, 0);
          //   break;
-         //case bdByteArrayLocal:
-         //   if ((*it).predicate == bpFrame) {
-         //      // if it is a variable containing reference to the primitive value
-         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocal, frameLevel);
-         //   }
-         //   // else it is a primitive variable
-         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocalPtr, 0);
-         //   break;
-         //case bdShortArrayLocal:
-         //   if ((*it).predicate == bpFrame) {
-         //      // if it is a variable containing reference to the primitive value
-         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocal, frameLevel);
-         //   }
-         //   // else it is a primitice variable
-         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocalPtr, 0);
-         //   break;
-         //case bdIntArrayLocal:
-         //   if ((*it).predicate == bpFrame) {
-         //      // if it is a variable containing reference to the primitive value
-         //      writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocal, frameLevel);
-         //   }
-         //   // else it is a primitice variable
-         //   else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocalPtr, 0);
-         //   break;
+         case bdByteArrayLocal:
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocal, frameLevel);
+            }
+            // else it is a primitive variable
+            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocalPtr, 0);
+            break;
+         case bdShortArrayLocal:
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocalPtr, 0);
+            break;
+         case bdIntArrayLocal:
+            if ((*it).predicate == bpFrame) {
+               // if it is a variable containing reference to the primitive value
+               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocal, frameLevel);
+            }
+            // else it is a primitice variable
+            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocalPtr, 0);
+            break;
          //case bdParamsLocal:
          //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsParamsLocal, frameLevel);
          //   break;
@@ -2648,17 +2648,17 @@ void ByteCodeWriter :: copyByte(CommandTape& tape, int offset)
    tape.write(bcNSave);
 }
 
-//void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
-//{
-//   // bcopya
-//   // dcopy value
-//   // nsave
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcDCopy, value);
-//   tape.write(bcNSave);
-//}
-//
+void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
+{
+   // bcopya
+   // dcopy value
+   // nsave
+
+   tape.write(bcBCopyA);
+   tape.write(bcDCopy, value);
+   tape.write(bcNSave);
+}
+
 //////void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
 //////{
 //////   // pushr trueRef
@@ -5511,11 +5511,11 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, int mod
    }
 }
 
-//void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
-//{
-//   loadObject(tape, lxLocalAddress, offset + 2);
-//   saveIntConstant(tape, 0x800000 + node.argument);
-//}
+void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
+{
+   loadObject(tape, lxLocalAddress, offset + 2);
+   saveIntConstant(tape, 0x800000 + node.argument);
+}
 
 void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node current)
 {
@@ -5550,37 +5550,37 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
 //            current.findChild(lxIdentifier, lxPrivate).identifier(),
 //            current.findChild(lxLevel).argument);
 //         break;
-//      case lxBytesVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//         
-//         generateBinary(tape, current, level);
-//         declareLocalByteArrayInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            level, false);
-//         break;
-//      }
-//      case lxShortsVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//         
-//         generateBinary(tape, current, level);
-//         declareLocalShortArrayInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            level, false);
-//         break;
-//      }
-//      case lxIntsVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//         
-//         generateBinary(tape, current, level);
-//         
-//         declareLocalIntArrayInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            level, false);
-//         break;
-//      }
+      case lxBytesVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         declareLocalByteArrayInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            level, false);
+         break;
+      }
+      case lxShortsVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         declareLocalShortArrayInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            level, false);
+         break;
+      }
+      case lxIntsVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         
+         declareLocalIntArrayInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            level, false);
+         break;
+      }
 //      case lxBinaryVariable:
 //      {
 //         int level = current.findChild(lxLevel).argument;
@@ -5634,9 +5634,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxReal64Variable:
 ////         case lxMessageVariable:
 //         case lxParamsVariable:
-//         case lxBytesVariable:
-//         case lxShortsVariable:
-//         case lxIntsVariable:
+         case lxBytesVariable:
+         case lxShortsVariable:
+         case lxIntsVariable:
 //         case lxBinaryVariable:
             generateDebugInfo(tape, current);
             break;
