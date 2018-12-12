@@ -111,6 +111,7 @@ struct ModuleScope : _ModuleScope
 
    virtual ref_t generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensionsToExport*/);
    virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
+   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference);
 

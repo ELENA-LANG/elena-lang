@@ -1733,8 +1733,11 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_STACKUNSAFE:
 //         attrValue = tpDynamic;
 //         return true;
-      case V_PROPERTY:
-         attrValue = tpAccessor;
+      case V_GETACCESSOR:
+         attrValue = tpGetAccessor;
+         return true;
+      case V_SETACCESSOR:
+         attrValue = tpSetAccessor;
          return true;
       default:
          return false;

@@ -49,7 +49,7 @@ public /*enum */interface class BoolValue
 //
 //    abstract bool xor : aBool []
 
-    abstract property bool inverted() {}
+    abstract get bool inverted() {}
 
 //    abstract clone []
 }

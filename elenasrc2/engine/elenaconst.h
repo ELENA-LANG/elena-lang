@@ -435,9 +435,9 @@ namespace _ELENA_
 //   // template virtual methods / fields
 //   #define TEMPLATE_GET_MESSAGE     "__get"
 //   #define TEMPLATE_SET_MESSAGE     "__set"
-//
-//   #define TEMPLATE_FIELD          "field"
-//
+
+   constexpr auto PROPERTY_VAR         = "__property";   // used in property template to represent the property name
+
 //   #define ENUM_VAR                 "values"          // is auto generated for enum classes and contains the list of all possible enum values
 
    #define INLINE_CLASSNAME         "$inline"         // nested class generic name

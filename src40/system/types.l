@@ -19,7 +19,7 @@
 #16385 = var;
 #50    = auto;
 #8196  = interface;
-//field           = #16392.
+#16392 = property;
 #16393 = method;
 //__loop          = #16394.
 ////nonstructural   = #8204.
@@ -27,13 +27,15 @@
 #16396 = extern;
 #8205  = closure;
 //mixin           = #8206.
-//__accessor      = #16399.
+#16399 = get;
 //__block         = #16400.
 //__nested        = #16401.
 //preloaded       = #8207.
 #16387 = cast;
 #16404 = new;
-#16406 = property;
+#16405 = forward;
+#16406 = set;
+#16407 = field;
 
 #8210  = abstract;
 #8211  = public;
@@ -42,7 +44,6 @@
 #8214  = closed;
 //predefined      = #8215.
 #8216  = dispatch;
-#16405 = forward;
 
 //__args          = #32. 
 //

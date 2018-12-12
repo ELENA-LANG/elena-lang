@@ -48,7 +48,7 @@ constexpr auto HINT_VIRTUALEXPR     = 0x00004000;
 //#define HINT_LAZY_EXPR        0x00000200
 constexpr auto HINT_DYNAMIC_OBJECT  = 0x00000100;  // indicates that the structure MUST be boxed
 constexpr auto HINT_UNBOXINGEXPECTED= 0x00000080;
-//#define HINT_PROP_MODE        0x00000040
+constexpr auto HINT_PROP_MODE       = 0x00000040;
 constexpr auto HINT_SILENT          = 0x00000020;
 constexpr auto HINT_FORWARD         = 0x00000010;
 //#define HINT_INT64EXPECTED    0x00000004
@@ -2388,7 +2388,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //            else if (member == lxNestedClass) {
 //               result = compileClosure(writer, member, scope, mode & HINT_CLOSURE_MASK);
 //            }
-            result = compileExpression(writer, node, scope, targetRef, mode & HINT_CLOSURE_MASK);
+            result = compileExpression(writer, node, scope, targetRef, mode);
             break;
 //         case lxBoxing:
 //            result = compileBoxingExpression(writer, node, scope, mode);
@@ -2981,10 +2981,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          // do nothing in silent mode
       }
       else if (/*result.found && !result.withCustomDispatcher && */callType == tpUnknown && result.directResolved) {
-         /*if (test(mode, HINT_ASSIGNING_EXPR)) {
+         if (test(mode, HINT_ASSIGNING_EXPR)) {
             scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
          }
-         else */scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
       }         
    }
 
@@ -3403,39 +3403,42 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    return retVal;
 }
 
-//ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
-//{
-//   ObjectInfo retVal;
-//
-//   // tranfer the message into the property set one
-//   ref_t messageRef = mapMessage(node, scope);
-//   if (getParamCount(messageRef) == 0) {
-//      messageRef = encodeMessage(getAction(messageRef), 1) | PROPSET_MESSAGE;
-//   }
-//   else scope.raiseError(errInvalidOperation, node);
-//
-//   // find and compile the parameter
-//   SNode current = node.parentNode().parentNode().findChild(lxAssign);
-//   SNode sourceNode = current.nextNode(lxObjectMask);
-//
-//   ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, 0);
-//   
-//   //messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
-//   //
-//   int mode = HINT_NODEBUGINFO;
-//   int stackSafeAttr = 0;
-//   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source), true, stackSafeAttr);
-//   if (!test(stackSafeAttr, 1))
-//      mode |= HINT_DYNAMIC_OBJECT;
-//
-//   retVal = compileMessage(writer, node, scope, target, messageRef, mode, stackSafeAttr);
-//
-//   // remove the assign node to prevent the duplication
-//   current = lxIdle;
-//
-//   return retVal;
-//}
-//
+ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
+{
+   ObjectInfo retVal;
+
+   // tranfer the message into the property set one
+   ref_t messageRef = mapMessage(node, scope);
+   ref_t actionRef, flags;
+   int paramCount;
+   decodeMessage(messageRef, actionRef, paramCount, flags);
+   if (paramCount == 0 && test(flags, PROPERTY_MESSAGE)) {
+      messageRef = encodeMessage(actionRef, 1, flags);
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   // find and compile the parameter
+   SNode current = node.parentNode().parentNode().findChild(lxAssign);
+   SNode sourceNode = current.nextNode(lxObjectMask);
+
+   ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, 0);
+   
+   //messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
+   //
+   int mode = HINT_NODEBUGINFO;
+   int stackSafeAttr = 0;
+   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source), /*true, */stackSafeAttr);
+   if (!test(stackSafeAttr, 1))
+      mode |= HINT_DYNAMIC_OBJECT;
+
+   retVal = compileMessage(writer, node, scope, target, messageRef, mode, stackSafeAttr);
+
+   // remove the assign node to prevent the duplication
+   current = lxIdle;
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
 //{
 //   ref_t extensionRef = 0;
@@ -4100,10 +4103,10 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
 {
    switch (current.type) {
       case lxMessage:
-//         if (test(mode, HINT_PROP_MODE)) {
-//            objectInfo = compilePropAssigning(writer, current, scope, objectInfo);
-//         }
-         /*else */objectInfo = compileMessage(writer, current, scope/*, expectedRef*/, objectInfo, mode);
+         if (test(mode, HINT_PROP_MODE)) {
+            objectInfo = compilePropAssigning(writer, current, scope, objectInfo);
+         }
+         else objectInfo = compileMessage(writer, current, scope/*, expectedRef*/, objectInfo, mode);
          break;
       case lxTypecast:
          objectInfo = compileBoxingExpression(writer, current, scope, objectInfo, mode);
@@ -4262,11 +4265,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    writer.newBookmark();
 
    bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
-//   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
-//
-//   mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
+   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
 
-   int targetMode = mode/* & ~HINT_PROP_MODE*/;
+   mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
+
+   int targetMode = mode & ~HINT_PROP_MODE;
 
    SNode current = node.firstChild();
    // COMPILER MAGIC : compile the expression attributes
@@ -4276,7 +4279,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    SNode operationNode = current.nextNode();
    if (operationNode == lxAssign) {
       // recognize the property set operation
-      //targetMode |= HINT_PROP_MODE;
+      targetMode |= HINT_PROP_MODE;
       if (isSingleStatement(current))
          targetMode |= HINT_NOBOXING;
 
@@ -4294,9 +4297,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //
 //      if (operationNode != lxNone) {
 //         // if the object is not single, do not pass the target reference
-         objectInfo = compileObject(writer, current, scope, 0, targetMode);
-         if (operationNode != lxNone)
+         objectInfo = compileObject(writer, current, scope, 0, targetMode);         
+         if (operationNode != lxNone) {
+            operationNode.refresh(); // HOTFIX : to reflect changes after the property compilation
             objectInfo = compileOperation(writer, operationNode, scope, objectInfo/*, exptectedRef*/, mode);
+         }            
 //
 //         // HOTFIX : to compile property assigmment properly - reread them
 //         operationNode = node.findChild(lxAssign, lxMessage, lxOperator, lxExtension);
@@ -4924,11 +4929,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         actionStr.insert(scope.module->Name(), 0);
 //      }
 
-      if (test(scope.hints, tpAccessor)) {
-//         if (paramCount == 1) {
+      if (testany(scope.hints, tpGetAccessor | tpSetAccessor)) {
+         if ((paramCount == 0 && test(scope.hints, tpGetAccessor)) || (paramCount == 1 && test(scope.hints, tpSetAccessor))) {
             flags |= PROPERTY_MESSAGE;
-//         }
-//         else scope.raiseError(errIllegalMethod, node);
+         }
+         else scope.raiseError(errIllegalMethod, node);
       }
 
 //      //if (test(scope.hints, tpSealed | tpConversion)) {

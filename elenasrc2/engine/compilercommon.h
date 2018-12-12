@@ -83,20 +83,22 @@
 #define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
-#define V_FIELD          (ref_t)-16392
+#define V_PROPERTY       (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
 //#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
 #define V_EXTERN         (ref_t)-16396
 //#define V_ATTRTEMPLATE   (ref_t)-16398
-//#define V_ACCESSOR       (ref_t)-16399
+#define V_GETACCESSOR    (ref_t)-16399
 //#define V_BLOCK          (ref_t)-16400
 //#define V_NESTEDBLOCK    (ref_t)-16401
 //#define V_SET            (ref_t)-16402
 //#define V_STACKUNSAFE    (ref_t)-16403
 #define V_NEWOP          (ref_t)-16404
 #define V_FORWARD        (ref_t)-16405
-#define V_PROPERTY       (ref_t)-16406
+#define V_SETACCESSOR    (ref_t)-16406
+#define V_FIELD          (ref_t)-16407
+
 
 ////// obsolete
 ////#define V_MULTI          (ref_t)-16397
@@ -127,13 +129,14 @@ enum MethodHint
    tpMultimethod = 0x001000,
 //   tpArgDispatcher=0x003000,
 //   tpStatic      = 0x004000,
-   tpAccessor    = 0x008000,
+   tpGetAccessor = 0x008000,
 //   tpSpecial     = 0x010000,
    tpAbstract    = 0x020000,
 //   tpInternal    = 0x040000,
 //   tpPredefined  = 0x080000, // virtual class declaration
    tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
    tpInitializer = 0x200000,
+   tpSetAccessor = 0x400000,
 };
 
 // --- _Project ---
@@ -301,6 +304,7 @@ struct _ModuleScope
 
    virtual ref_t generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensionsToExport*/) = 0;
    virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
+   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 

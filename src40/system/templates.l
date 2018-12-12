@@ -5,7 +5,20 @@
 //        embeddable dispatch => self.
 //    }.
 //}
-//
+
+property prop<T>
+{
+    get T __property()
+    {
+        ^ __property
+    }    
+    
+    set __property(T value)
+    {
+        __property := value
+    }
+}
+
 //public field prop<prop_name>
 //{
 //    object field.
