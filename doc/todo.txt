@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one
                  * the following code should generate an error - wideConvertor convert(self);
                  * implement a ? b, a ? b : c, a ? {}, a ? {} : {}

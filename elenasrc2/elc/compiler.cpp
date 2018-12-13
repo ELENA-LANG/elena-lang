@@ -2365,6 +2365,20 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
    return object;
 }
 
+ObjectInfo Compiler :: compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   ObjectInfo retVal(okClass);
+   retVal.param = resolveTemplateDeclaration(node, scope);
+   
+   ClassInfo info;
+   scope.moduleScope->loadClassInfo(info, retVal.reference, true);
+   retVal.reference = info.header.classRef;
+
+   writeTerminal(writer, node, scope, retVal, mode);
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode)
 {
    ObjectInfo result;
@@ -2374,6 +2388,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //   }
 //   else {
       switch (node.type) {
+         case lxTemplate:
+            result = compileTemplateSymbol(writer, node, scope, mode);
+            break;
          case lxNestedClass:
             result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
             break;
@@ -4129,9 +4146,9 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
 {
    IdentifierString templateName(node.firstChild(lxTerminalMask).identifier());
    int paramCounter = 0;
-   SNode current = node.findChild(lxAttribute);
+   SNode current = node.findChild(lxTarget);
    while (current != lxNone) {
-      if (current == lxAttribute && current.argument == V_TYPE) {
+      if (current == lxTarget) {
          paramCounter++;
       }
       else scope.raiseError(errInvalidOperation, node);
@@ -4154,31 +4171,35 @@ ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
    return ref;
 }
 
-void Compiler :: compileTemplateAttributes(SNode current, List<ref_t>& parameters, CodeScope& scope)
+void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameters, CodeScope& scope)
 {
+   if (current == lxIdentifier)
+      current = current.nextNode();
+
    ExpressionAttributes attributes;
    ref_t typeRef = 0;
-   while (current == lxAttribute) {
-      int value = current.argument;
-      if (_logic->validateExpressionAttribute(value, attributes)) {
-         if (attributes.typeAttr) {
-            parameters.add(mapTypeAttribute(current, scope));
-         }
-         else if (attributes.templateAttr) {
-            // generate an reference class
-            List<ref_t> parameters;
-            compileTemplateAttributes(current.findChild(lxAttribute), parameters, scope);
+   while (current != lxNone) {
+      if (current == lxTarget) {
+         current.setArgument(mapTypeAttribute(current, scope));
 
-            ref_t templateRef = mapTemplateAttribute(current, scope);
-
-            parameters.add(scope.moduleScope->generateTemplate(/**this, */templateRef, parameters/*, &nsScope->extensions*/));
-         }
-         else scope.raiseError(errInvalidHint, current);
+         parameters.add(current);
       }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 
       current = current.nextNode();
    }
+}
+
+ref_t Compiler ::resolveTemplateDeclaration(SNode node, CodeScope& scope)
+{
+   // generate an reference class
+   List<SNode> parameters;
+   compileTemplateAttributes(node.firstChild(), parameters, scope);
+   
+   ref_t templateRef = mapTemplateAttribute(node, scope);
+
+   NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+   return scope.moduleScope->generateTemplate(*this, templateRef, parameters, ns->ns.c_str()/*, &nsScope->extensions*/);
 }
 
 void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int& mode)
@@ -4205,15 +4226,9 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
             else invalidExpr = true;
          }
          else if (attributes.templateAttr && test(mode, HINT_ROOT) && typeRef == 0) {
-            // generate an reference class
-            List<ref_t> parameters;
-            compileTemplateAttributes(current.findChild(lxAttribute), parameters, scope);
+            typeRef = resolveTemplateDeclaration(current, scope);
 
             newVariable = true;
-
-            ref_t templateRef = mapTemplateAttribute(current, scope);
-
-            typeRef = scope.moduleScope->generateTemplate(/**this, */templateRef, parameters/*, &nsScope->extensions*/);
          }
          else if (attributes.forwardAttr && !newVariable && !typeRef) {
             mode |= HINT_FORWARD;

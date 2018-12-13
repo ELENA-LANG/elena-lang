@@ -1635,8 +1635,26 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
 void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope)
 {
    ref_t argument = 0;
+   // COMPILER MAGIC : if it is a class template declaration
+   if (current.nextNode() == lxToken) {
+      writer.newNode(lxTemplate);
+      if (current == lxToken) {
+         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+      }
+      else copyIdentifier(writer, current);
+      
+      SNode argNode = current.nextNode();
+      while (argNode == lxToken) {
+         writer.newBookmark();
+         generateExpressionAttribute(writer, argNode, true);
+         writer.removeBookmark();
 
-   if (derivationScope.templateMode == ScopeType::stCodeTemplate) {
+         argNode = argNode.nextNode();
+      }
+      
+      writer.closeNode();
+   }
+   else if (derivationScope.templateMode == ScopeType::stCodeTemplate) {
       int paramIndex = derivationScope.parameters.get(current.identifier());
       if (paramIndex != 0) {
          writer.newNode(lxTemplateParam, paramIndex);
@@ -2312,11 +2330,11 @@ bool TemplateGenerator::TemplateScope :: generateClassName()
    }
    else name.copy(templateName);
 
-   SubjectMap::Iterator it = parameterValues.start();
+   auto it = parameterValues.start();
    while (!it.Eof()) {
       name.append('&');
 
-      ident_t param = moduleScope->module->resolveReference(*it);
+      ident_t param = moduleScope->module->resolveReference((*it).argument);
       if (NamespaceName::compare(param, rootNs)) {
          name.append(param + getlength(rootNs) + 1);
       }
@@ -2598,7 +2616,7 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
    }
    else if (current == lxTemplateParam) {
       if (scope.type == TemplateScope::ttCodeTemplate) {
-         SNode nodeToInject = scope.codeParameterValues.get(current.argument);
+         SNode nodeToInject = scope.parameterValues.get(current.argument);
          if (nodeToInject == lxCode) {
             writer.newNode(lxExpression);
             copyExpressionTree(writer, nodeToInject, scope);
@@ -2609,7 +2627,7 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
          }
       }
       else if (scope.type == TemplateScope::ttPropertyTemplate) {
-         SNode nodeToInject = scope.codeParameterValues.get(current.argument);
+         SNode nodeToInject = scope.parameterValues.get(current.argument);
          copyTreeNode(writer, nodeToInject, scope);
       }
       else throw InternalError("Not yet supported");
@@ -2667,13 +2685,13 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
    }
    else if (current == lxTemplateNameParam) {
       // name node is always the last parameter
-      SNode nodeToInject = scope.codeParameterValues.get(scope.codeParameterValues.Count());
+      SNode nodeToInject = scope.parameterValues.get(scope.parameterValues.Count());
 
       copyChildren(writer, nodeToInject, scope);
    }
    else if (current == lxTemplateMessageParam) {
       // name node is always the last parameter
-      SNode nodeToInject = scope.codeParameterValues.get(current.argument);
+      SNode nodeToInject = scope.parameterValues.get(current.argument);
 
       writer.newNode(lxMessage);
       copyChildren(writer, nodeToInject, scope);
@@ -2948,12 +2966,12 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
 //      }
       /*else */if (current == lxTemplateNameParam) {
          // name node is always the last parameter
-         SNode nodeToInject = scope.codeParameterValues.get(scope.codeParameterValues.Count());
+         SNode nodeToInject = scope.parameterValues.get(scope.parameterValues.Count());
 
          copyTreeNode(writer, nodeToInject, scope);
       }
       else if(current == lxTemplateParam) {
-         SNode nodeToInject = scope.codeParameterValues.get(current.argument);
+         SNode nodeToInject = scope.parameterValues.get(current.argument);
 
          copyTreeNode(writer, nodeToInject, scope);
       }
@@ -3036,7 +3054,7 @@ void TemplateGenerator :: copyMethodTree(SyntaxWriter& writer, SNode node, Templ
    while (current != lxNone) {
       if (current == lxTemplateNameParam) {
          // name node is always the last parameter
-         SNode nodeToInject = scope.codeParameterValues.get(scope.codeParameterValues.Count());
+         SNode nodeToInject = scope.parameterValues.get(scope.parameterValues.Count());
          copyExpressionTree(writer, nodeToInject, scope);
       }
       else copyTreeNode(writer, current, scope);
@@ -3468,7 +3486,7 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
 //   return templateScope.reference;
 //}
 
-ref_t TemplateGenerator :: generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<ref_t>& parameters)
+ref_t TemplateGenerator :: generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)
 {
 //   SyntaxTree autogeneratedTree;
 
@@ -3493,7 +3511,7 @@ void TemplateGenerator :: generateTemplateCode(SyntaxWriter& writer, _ModuleScop
    templateScope.type = TemplateScope::Type::ttCodeTemplate;
 
    for (auto it = parameters.start(); !it.Eof(); it++) {
-      templateScope.codeParameterValues.add(templateScope.codeParameterValues.Count() + 1, *it);
+      templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
    }
 
    generateTemplate(writer, templateScope, false);
@@ -3505,7 +3523,7 @@ void TemplateGenerator :: generateTemplateProperty(SyntaxWriter& writer, _Module
    templateScope.type = TemplateScope::Type::ttPropertyTemplate;
 
    for (auto it = parameters.start(); !it.Eof(); it++) {
-      templateScope.codeParameterValues.add(templateScope.codeParameterValues.Count() + 1, *it);
+      templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
    }
 
    generateTemplate(writer, templateScope, false);

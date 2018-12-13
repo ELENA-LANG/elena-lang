@@ -109,7 +109,7 @@ struct ModuleScope : _ModuleScope
 
    virtual ref_t resolveClosure(_Compiler& compiler, ref_t closureMessage/*, ref_t outputRef, ExtensionMap* extensionsToExport*/);
 
-   virtual ref_t generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensionsToExport*/);
+   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<SNode>& parameters, ident_t ns/*, ExtensionMap* extensionsToExport*/);
    virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
 

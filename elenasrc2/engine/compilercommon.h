@@ -302,7 +302,7 @@ struct _ModuleScope
 //      project->raiseWarning(level, message, sourcePath);
 //   }
 
-   virtual ref_t generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensionsToExport*/) = 0;
+   virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<SNode>& parameters, ident_t ns/*, ExtensionMap* extensionsToExport*/) = 0;
    virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 

@@ -189,8 +189,7 @@ class TemplateGenerator //: public _DerivationTransformer
       ref_t        reference;
 //      ForwardMap   parameters;
 //      ForwardMap   fields;
-      SubjectMap   parameterValues;
-      NodeMap      codeParameterValues;
+      NodeMap      parameterValues;
 
 //      SNode        exprNode;     // used for code template
 //      SNode        codeNode;
@@ -296,7 +295,7 @@ class TemplateGenerator //: public _DerivationTransformer
 //         extensionTemplateRef = 0;
 //      }
       TemplateScope(_ModuleScope* moduleScope, ref_t templateRef, ident_t sourcePath, ident_t ns/*, IdentifierList* imports*/)
-         : codeParameterValues(SNode())
+         : parameterValues(SNode())
       {
          this->sourcePath = sourcePath;
          this->ns = ns;
@@ -407,7 +406,7 @@ public:
 //
 //   void generate(SyntaxWriter& writer, _CompilerScope& scope, ident_t sourcePath, ident_t ns, IdentifierList* imports);
 
-   ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<ref_t>& parameters);
+   ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
    void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
    void generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
 

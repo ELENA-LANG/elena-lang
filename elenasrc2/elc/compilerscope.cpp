@@ -488,44 +488,44 @@ void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t referen
    SyntaxTree::copyNode(output, templateTree.readRoot());
 }
 
-ref_t ModuleScope :: generateTemplate(/*_Compiler& compiler, */ref_t reference, List<ref_t>& parameters/*, ExtensionMap* extensions*/)
+ref_t ModuleScope :: generateTemplate(_Compiler& compiler, ref_t reference, List<SNode>& parameters, ident_t ns/*, ExtensionMap* extensions*/)
 {
    SyntaxTree templateTree;
 
    TemplateGenerator transformer(templateTree);
    SyntaxWriter writer(templateTree);
    writer.newNode(lxRoot);
+   writer.newNode(lxNamespace, ns);
    ref_t generatedReference = transformer.generateTemplate(writer, *this, reference, parameters);
    writer.closeNode();
+   writer.closeNode();
 
-//   SourceFileInfo fileInfo;
-//   fileInfo.tree = &templateTree;
-//   fileInfo.path.copy("compiling ");
-//   fileInfo.path.append(resolveFullName(generatedReference));
-//   fileInfo.path.append(" template...");
-//   fileInfo.importedNs.add(ident_t(STANDARD_MODULE).clone());
-//
-//   SourceFileList files;
-//   files.add(&fileInfo);
-//
-//   try
-//   {
-//      compile(compiler, files, extensions);
-//   }
-//   catch(_Exception&)
-//   {
-//      // HOTFIX : clear tree reference because it is stack allocated 
-//      fileInfo.tree = NULL;
-//
-//      return 0;
-//   }
-//
-//   // HOTFIX : clear tree reference because it is stack allocated 
-//   fileInfo.tree = NULL;
-//
-//   return generatedReference;
+   //SourceFileInfo fileInfo;
+   //fileInfo.tree = &templateTree;
+   //fileInfo.path.copy("compiling ");
+   //fileInfo.path.append(resolveFullName(generatedReference));
+   //fileInfo.path.append(" template...");
+   //fileInfo.importedNs.add(ident_t(STANDARD_MODULE).clone());
 
-   return 0;
+   //SourceFileList files;
+   //files.add(&fileInfo);
+
+   try
+   {
+      compile(compiler, templateTree);
+   }
+   catch(_Exception&)
+   {
+      //// HOTFIX : clear tree reference because it is stack allocated 
+      //fileInfo.tree = NULL;
+
+      return 0;
+   }
+
+   //// HOTFIX : clear tree reference because it is stack allocated 
+   //fileInfo.tree = NULL;
+
+   return generatedReference;
 }
 
 ref_t ModuleScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage/*, ref_t outputRef, ExtensionMap* extensions*/)

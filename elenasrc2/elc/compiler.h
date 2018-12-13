@@ -848,6 +848,8 @@ private:
 
    size_t resolveArraySize(SNode node, Scope& scope);
 
+   ref_t resolveTemplateDeclaration(SNode node, CodeScope& scope);
+
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t typeRef);
 
@@ -861,6 +863,7 @@ private:
    void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
+   ObjectInfo compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, int mode);
 
@@ -881,7 +884,7 @@ private:
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
-   void compileTemplateAttributes(SNode current, List<ref_t>& parameters, CodeScope& scope);
+   void compileTemplateAttributes(SNode current, List<SNode>& parameters, CodeScope& scope);
    void compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int& mode);
 
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
