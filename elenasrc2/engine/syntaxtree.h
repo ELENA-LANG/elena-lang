@@ -137,6 +137,7 @@ enum LexicalType
    lxConstantList       = 0x0A11E,   // arg - reference
 //   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
    lxClassRefField      = 0x08120,  // arg - self instance offset
+   //lxLocalReference     = 0x0A121,  // arg - self instance offset
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size

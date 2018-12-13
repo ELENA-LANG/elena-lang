@@ -3,6 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * test boxing / unboxing with dynamic reference
+                 * (re)implement reference of object
+                 * implement length property optimization -> replace direct operation with byref one
                  * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one
                  * the following code should generate an error - wideConvertor convert(self);

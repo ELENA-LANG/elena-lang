@@ -154,12 +154,14 @@ public:
 
    enum ClassType
    {
-      ctClass                = 0x00,
-      ctClassClass           = 0x01,
-      ctEmbeddable           = 0x02,
+      ctUndefined            = 0x100, 
+      ctClass                = 0x000,
+      ctClassClass           = 0x001,
+      ctEmbeddable           = 0x002,
 
-      ctEmbeddableClass      = 0x02,
-      ctEmbeddableClassClass = 0x03,
+      ctUndefinedClass       = 0x100,
+      ctEmbeddableClass      = 0x002,
+      ctEmbeddableClassClass = 0x003,
    };
 
    struct ObjectInfo
@@ -887,8 +889,10 @@ private:
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, CodeScope& scope);
    void compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int& mode);
 
+   ref_t resolveReferenceTemplate(Scope& scope, ref_t operandRef);
+
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
-//   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
@@ -921,7 +925,7 @@ private:
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef);
+   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef);
    void declareArgumentList(SNode node, MethodScope& scope);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, ref_t& outputRef);
    /*bool*/void declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
@@ -1039,7 +1043,7 @@ public:
 
    // _Compiler interface implementation
    //virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
-//   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
+   virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
       ref_t targetRef*/, int stacksafeAttr);

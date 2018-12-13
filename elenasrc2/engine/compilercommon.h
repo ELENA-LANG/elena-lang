@@ -98,7 +98,7 @@
 #define V_FORWARD        (ref_t)-16405
 #define V_SETACCESSOR    (ref_t)-16406
 #define V_FIELD          (ref_t)-16407
-
+#define V_WRAPPER        (ref_t)-16408
 
 ////// obsolete
 ////#define V_MULTI          (ref_t)-16397
@@ -221,7 +221,7 @@ struct _ModuleScope
 //   ref_t             wideReference;
 //   ref_t             charReference;
 //   ref_t             arrayReference;
-//   ref_t             refTemplateReference;
+   ref_t             refTemplateReference;
 //   ref_t             arrayTemplateReference;
    ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
@@ -317,7 +317,7 @@ struct _ModuleScope
 //      signatureReference = messageReference = 0;
       /*longReference = */literalReference = /*wideReference = */0;
 //      arrayReference = charReference = realReference = 0;
-      closureTemplateReference = /*refTemplateReference = */0;
+      closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
 //      arrayTemplateReference = 0;
 
@@ -330,7 +330,7 @@ struct _ModuleScope
 class _Compiler
 {
 public:
-//   virtual void injectBoxing(SyntaxWriter& writer, _CompilerScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
+   virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
       ref_t targetRef*/, int stacksafeAttr) = 0;
 ////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
@@ -372,10 +372,11 @@ public:
       bool templateAttr;
       bool forwardAttr;
       bool externAttr;
+      bool refAttr;
 
       ExpressionAttributes()
       {
-         externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
+         refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
       }
    };
 
@@ -480,7 +481,7 @@ public:
 
    // auto generate class flags
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
-   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
+   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
    virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
@@ -492,7 +493,7 @@ public:
    virtual bool validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
-   virtual bool validateArgumentAttribute(int attrValue) = 0;
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg) = 0;
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 

@@ -283,7 +283,7 @@ namespace _ELENA_
    const int elAbstract            = 0x00000010;
    const int elClosed              = 0x00000020;
    const int elWrapper             = 0x00000040;
-//   const int elStructureWrapper    = 0x00000048;
+   const int elStructureWrapper    = 0x00000048;
    const int elStateless           = 0x00000080;
    const int elFinal               = 0x00000100;
    const int elSealed              = 0x00000120;
@@ -511,7 +511,7 @@ namespace _ELENA_
 //   #define EXT_MESSAGE_FORWARD      "$ext_message"
 //   #define SIGNATURE_FORWARD        "$signature"
 //   #define ARRAY_FORWARD            "$array"
-//   #define REFTEMPLATE_FORWARD      "$reference"
+   constexpr auto REFTEMPLATE_FORWARD     = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
 //   #define ARRAYTEMPLATE_FORWARD    "$parray"
    constexpr auto BOOL_FORWARD            = "$bool";

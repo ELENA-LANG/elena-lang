@@ -2227,7 +2227,7 @@ void ByteCodeWriter :: assignByte(CommandTape& tape, LexicalType target, int off
          tape.write(bcALoadR, offset | mskStatSymbolRef);
          tape.write(bcNCopyB);
       }
-   }
+   }   
 }
 
 void ByteCodeWriter :: assignLong(CommandTape& tape, LexicalType target, int offset)
@@ -3834,6 +3834,12 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
             tape.write(bcAXSaveBI, 0);
          }
          break;
+      //case lxLocalReference:
+      //   // bcopyf param
+      //   // axsavebi 0
+      //   tape.write(bcBCopyF, argument);
+      //   tape.write(bcAXSaveBI, 0);
+      //   break;
       default:
          break;
    }

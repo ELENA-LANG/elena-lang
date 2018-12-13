@@ -137,14 +137,14 @@ public:
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
    virtual bool isClosure(ClassInfo& info, ref_t message);
 //   virtual bool isDispatcher(ClassInfo& info, ref_t message);
-//   virtual bool isReadonly(ClassInfo& info);
-//   virtual bool isReadonly(_CompilerScope& scope, ref_t reference)
-//   {
-//      ClassInfo info;
-//      defineClassInfo(scope, info, reference, true);
-//
-//      return isReadonly(info);
-//   }
+   virtual bool isReadonly(ClassInfo& info);
+   virtual bool isReadonly(_ModuleScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      defineClassInfo(scope, info, reference, true);
+
+      return isReadonly(info);
+   }
 //   virtual bool isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node);
 
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler/*, bool closed*/);
@@ -164,7 +164,7 @@ public:
 //   virtual void injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
 
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
-   virtual bool tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
+   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
@@ -174,7 +174,7 @@ public:
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 //////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);
-   virtual bool validateArgumentAttribute(int attrValue);
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg);
 
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag);
    virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);

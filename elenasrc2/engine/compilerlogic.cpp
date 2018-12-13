@@ -565,7 +565,7 @@ bool CompilerLogic :: isVariable(ClassInfo& info)
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 {
-   return test(info.header.flags, elStructureRole)/* && !test(info.header.flags, elDynamicRole)*/;
+   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
 }
 
 bool CompilerLogic :: isRole(ClassInfo& info)
@@ -933,11 +933,11 @@ void CompilerLogic :: injectOperation(SyntaxWriter& writer, _ModuleScope& scope,
    writer.closeNode();
 }
 
-//bool CompilerLogic :: isReadonly(ClassInfo& info)
-//{
-//   return test(info.header.flags, elReadOnlyRole);
-//}
-//
+bool CompilerLogic :: isReadonly(ClassInfo& info)
+{
+   return test(info.header.flags, elReadOnlyRole);
+}
+
 //bool CompilerLogic :: injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef)
 //{
 //   ClassInfo info;
@@ -1210,8 +1210,10 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
          return 0;
 
       ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, 0);
-      if (classClassinfo.methods.exist(messageRef))
+      if (classClassinfo.methods.exist(messageRef)) {
          return messageRef;
+      }
+      else return 0;
    }
 }
 
@@ -1262,29 +1264,29 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
    if (!defineClassInfo(scope, info, targetRef))
       return false;
 
-//   // if the target class is wrapper around the source
-//   if (test(info.header.flags, elWrapper)) {
-//      ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-//
-//      bool compatible = false;
-//      if (test(info.header.flags, elStructureWrapper)) {
-//         if (isPrimitiveRef(sourceRef)) {
-//            compatible = isCompatible(scope, sourceRef, inner.value1);
-//         }
-//         // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
-//         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef, 0u);
-//      }
-//      else compatible = isCompatible(scope, inner.value1, sourceRef);
-//
-//      if (compatible) {
-//         compiler.injectBoxing(writer, scope, 
-//            isReadonly(info) ? lxBoxing : lxUnboxing,
-//            test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
-//
-//         return true;
-//      }
-//   }
-//
+   // if the target class is wrapper around the source
+   if (test(info.header.flags, elWrapper)) {
+      ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+
+      bool compatible = false;
+      if (test(info.header.flags, elStructureWrapper)) {
+         if (isPrimitiveRef(sourceRef)) {
+            compatible = isCompatible(scope, sourceRef, inner.value1);
+         }
+         // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
+         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef, 0u);
+      }
+      else compatible = isCompatible(scope, inner.value1, sourceRef);
+
+      if (compatible) {
+         compiler.injectBoxing(writer, scope, 
+            isReadonly(info) ? lxBoxing : lxUnboxing,
+            test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
+
+         return true;
+      }
+   }
+
 //   // HOTFIX : trying to typecast primitive structure array
 //   if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
 //      ClassInfo sourceInfo;      
@@ -1459,6 +1461,9 @@ int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t referen
 
       return -defineStructSizeVariable(scope, elementRef, 0, variable);
    }
+   else if (reference == V_WRAPPER && elementRef != 0) {
+      return defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
    //else if (reference == V_OBJARRAY && elementRef != 0) {
    //   return defineStructSizeVariable(scope, elementRef, 0, variable);
    //}
@@ -1593,8 +1598,15 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
    injectOverloadList(scope, info, compiler, classRef);
 }
 
-bool CompilerLogic :: validateArgumentAttribute(int attrValue)
+bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg)
 {
+   switch ((size_t)attrValue) {
+      case V_WRAPPER:
+         if (!byRefArg) {
+            byRefArg = true;
+            return true;
+         }
+   }
    return false;
 }
 
@@ -1853,6 +1865,13 @@ bool CompilerLogic::validateExpressionAttribute(int& attrValue, ExpressionAttrib
             return true;
          }
          else return false;
+      case (int)V_WRAPPER:
+         if (!attributes.refAttr) {
+            attributes.refAttr = true;
+
+            return true;
+         }
+         else return false;
       default:
          return false;
    }
@@ -1910,18 +1929,15 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
 //////   }
 //////}
 
-bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
+void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 {
    // if it is a primitive field
    if (info.fields.Count() == 1) {
       switch (classRef) {
+         case V_DWORD:
          case V_INT32:
-            if (test(info.header.flags, elReadOnlyRole | elStructureRole)) {
-               info.header.flags |= (elDebugDWORD/* | elReadOnlyRole*/ | elWrapper);
-               info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT32, 0));
-               return true;
-            }
-            else return false;
+            info.header.flags |= elDebugDWORD;
+            break;
 //         case V_INT64:
 //            info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
@@ -1934,13 +1950,6 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 //            info.header.flags |= (elDebugPTR | elWrapper);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));
 //            return info.size == 4;
-         case V_DWORD:
-            if (test(info.header.flags, elReadOnlyRole | elStructureRole) && info.size == 4) {
-               info.header.flags |= (elWrapper);
-               info.fieldTypes.add(0, ClassInfo::FieldInfo(V_DWORD, 0));
-               return true;
-            }
-            else return false;
 //         case V_SIGNATURE:
 //            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
@@ -1961,8 +1970,6 @@ bool CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
             break;
       }
    }
-
-   return false;
 }
 
 ref_t CompilerLogic :: resolvePrimitiveReference(_ModuleScope& scope, ref_t reference)

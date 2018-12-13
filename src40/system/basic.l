@@ -4,11 +4,11 @@
 //    // should be overridden
 //    abstract value []
 //}
-//
-//public sealed ref<template_subj> :: BaseVariable
-//{
-//    template_subj theValue.
-//    
+
+public sealed ref<T>// : BaseVariable
+{
+    embeddable T theValue;
+    
 //    template_subj value = theValue.
 //    
 //    constructor(template_subj val)
@@ -54,8 +54,8 @@
 //        
 //        self value := v.
 //    ]
-//}
-//
+}
+
 //public extension<ref<real>> realRefOp
 //{
 //    append(real n)

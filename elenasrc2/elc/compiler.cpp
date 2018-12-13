@@ -44,6 +44,7 @@ constexpr auto HINT_NODEBUGINFO     = 0x00020000;
 ////#define HINT_PARAMETERSONLY   0x00010000
 constexpr auto HINT_SUBCODE_CLOSURE = 0x00008800;
 constexpr auto HINT_VIRTUALEXPR     = 0x00004000;
+//constexpr auto HINT_ASSIGNTARGET    = 0x00002000;
 ////#define HINT_RESENDEXPR       0x00000400
 //#define HINT_LAZY_EXPR        0x00000200
 constexpr auto HINT_DYNAMIC_OBJECT  = 0x00000100;  // indicates that the structure MUST be boxed
@@ -51,6 +52,7 @@ constexpr auto HINT_UNBOXINGEXPECTED= 0x00000080;
 constexpr auto HINT_PROP_MODE       = 0x00000040;
 constexpr auto HINT_SILENT          = 0x00000020;
 constexpr auto HINT_FORWARD         = 0x00000010;
+constexpr auto HINT_REFOP           = 0x00000008;
 //#define HINT_INT64EXPECTED    0x00000004
 //#define HINT_REAL64EXPECTED   0x00000002
 constexpr auto HINT_NOPRIMITIVES    = 0x00000001;
@@ -662,9 +664,9 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
    //   return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
    //}
    /*else */if (param.class_ref != 0 && param.size != 0) {
-      return ObjectInfo(okParam, prefix - param.offset, param.class_ref, 0, (ref_t)-1);
+      return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
-   return ObjectInfo(okParam, prefix - param.offset, param.class_ref);
+   return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, 0);
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool referenceOne, int mode)
@@ -2089,8 +2091,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
 //      case okArrayConst:
 //         writer.newNode(lxConstantList, object.param);
 //         break;
-      case okLocal:
       case okParam:
+      case okLocal:
          writeParamTerminal(writer, scope, object, mode, lxLocal);
          break;
       case okSelfParam:
@@ -2385,10 +2387,13 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 {
    ObjectInfo result;
 
+   if (test(mode, HINT_REFOP)) {
+      result = compileReferenceExpression(writer, node, scope, mode & ~HINT_REFOP);
+   }
 //   if (test(mode, HINT_COLLECTION_MODE)) {
 //      result = compileCollection(writer, node.parentNode(), scope);
 //   }
-//   else {
+   else {
       switch (node.type) {
          case lxTemplate:
             result = compileTemplateSymbol(writer, node, scope, mode);
@@ -2412,9 +2417,6 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //         case lxBoxing:
 //            result = compileBoxingExpression(writer, node, scope, mode);
 //            break;
-//         case lxReferenceExpr:
-//            result = compileReferenceExpression(writer, node, scope, mode);
-//            break;
 //         case lxMessageReference:
 //            result = compileMessageReference(writer, node, scope, mode);
 //            break;
@@ -2436,7 +2438,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
          default:
             result = compileTerminal(writer, node, scope, mode);
       }
-//   }
+   }
 
    return result;
 }
@@ -3109,6 +3111,9 @@ ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
 
 ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef)
 {
+   if (argRef == V_WRAPPER) {
+      return resolveReferenceTemplate(scope, elementRef);
+   }
    //if (isPrimitiveArrRef(argRef)) {
    //   argRef = resolvePrimitiveArray(scope, elementRef);
    //}
@@ -3353,6 +3358,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 //   }
 
    ref_t targetRef = resolveObjectReference(scope, target);
+   bool byRefAssigning = false;
    switch (target.kind) {
       case okLocal:
       case okField:
@@ -3372,7 +3378,6 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       }
       case okOuter:
       case okOuterSelf:
-      // case okParam
       {
          InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
             
@@ -3386,6 +3391,17 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       case okOuterReadOnlyField:
          scope.raiseError(errReadOnlyField, node.parentNode());
          break;
+      case okParam:
+         if (targetRef == V_WRAPPER) {
+            byRefAssigning = true;
+            targetRef = target.element;
+            size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+            if (size != 0) {
+               operand = size;
+            }
+
+            break;
+         }
       default:
          scope.raiseError(errInvalidOperation, sourceNode);
          break;
@@ -3405,7 +3421,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    }
    else retVal = compileExpression(writer, sourceNode, scope, targetRef, assignMode);
 
-//   if (retVal.kind == okPrimitiveConv) {
+//   else if (retVal.kind == okPrimitiveConv) {
 //      if (retVal.param == V_REAL64) {
 //         if (retVal.extraparam == V_INT32) {
 //            writer.appendNode(lxIntConversion);
@@ -3417,7 +3433,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 //   else {
       writer.insert(operationType, operand);
       writer.closeNode();
-//   }
+   //}
 
    return retVal;
 }
@@ -4001,35 +4017,48 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 //
 //   writer.removeBookmark();
 //}
-//
-//ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   writer.newBookmark();
-//
-//   ObjectInfo objectInfo = compileObject(writer, node.firstChild(lxObjectMask), scope, 0, mode);
-//
-//   // generate an reference class
-//   List<ref_t> parameters;
-//   ref_t operandRef = resolveObjectReference(scope, objectInfo);
-//   if (isPrimitiveRef(operandRef)) {
-//      operandRef = _logic->resolvePrimitiveReference(*scope.moduleScope, operandRef);
-//   }
-//   else if (!operandRef)
-//      operandRef = scope.moduleScope->superReference;
-//
-//   parameters.add(operandRef);
-//
-//   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//   ref_t targetRef = scope.moduleScope->generateTemplate(*this, scope.moduleScope->refTemplateReference, parameters, &nsScope->extensions);
-//
-//   if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, objectInfo), objectInfo.element))
-//      scope.raiseError(errInvalidOperation, node);
-//
-//   writer.removeBookmark();
-//
-//   return ObjectInfo(okObject, targetRef);
-//}
-//
+
+ref_t Compiler :: resolveReferenceTemplate(Scope& scope, ref_t operandRef)
+{
+   List<SNode> parameters;
+
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
+   SyntaxWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(lxRoot);
+   dummyWriter.appendNode(lxTarget, operandRef);
+   dummyWriter.closeNode();
+
+   parameters.add(dummyTree.readRoot().firstChild());
+
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+   return scope.moduleScope->generateTemplate(*this, scope.moduleScope->refTemplateReference, parameters, nsScope->ns.c_str()/*, &nsScope->extensions*/);
+}
+
+ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   writer.newBookmark();
+
+   ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode);
+
+   // generate an reference class
+   ref_t operandRef = resolveObjectReference(scope, objectInfo);
+   if (isPrimitiveRef(operandRef)) {
+      operandRef = resolvePrimitiveReference(scope, operandRef, objectInfo.element);
+   }
+   else if (!operandRef)
+      operandRef = scope.moduleScope->superReference;
+
+   ref_t targetRef = resolveReferenceTemplate(scope, operandRef);
+
+   if (!convertObject(writer, scope, targetRef, objectInfo))
+      scope.raiseError(errInvalidOperation, node);
+
+   writer.removeBookmark();
+
+   return ObjectInfo(okObject, 0, targetRef);
+}
+
 //ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t operandRef)
 //{
 //   // generate an reference class
@@ -4238,6 +4267,9 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
          else if (attributes.externAttr) {
             mode |= HINT_EXTERNALOP;
          }
+         else if (attributes.refAttr) {
+            mode |= HINT_REFOP;
+         }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 
          //            // negative value defines the target virtual class
@@ -4298,7 +4330,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       // recognize the property set operation
       targetMode |= HINT_PROP_MODE;
       if (isSingleStatement(current))
-         targetMode |= HINT_NOBOXING;
+         targetMode |= (HINT_NOBOXING/* | HINT_ASSIGNTARGET*/);
 
       mode |= HINT_NOUNBOXING;
    }
@@ -4751,12 +4783,13 @@ inline SNode findTerminal(SNode node)
    return ident;
 }
 
-void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef)
+void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef)
 {
+   bool byRefArg = false;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (_logic->validateArgumentAttribute(node.argument)) {
+         if (_logic->validateArgumentAttribute(current.argument, byRefArg)) {
 
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
@@ -4768,6 +4801,11 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
       }
 
       current = current.nextNode();
+   }
+
+   if (byRefArg) {
+      elementRef = classRef;
+      classRef = V_WRAPPER;
    }
 }
 
@@ -4808,15 +4846,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
    while (current != lxNone) {
       if (current == lxMethodParameter) {
          int index = 1 + scope.parameters.Count();
-//         int size = 0;
+         int size = 0;
          ref_t classRef = scope.moduleScope->superReference;
-//         ref_t elementRef = 0;
-//
+         ref_t elementRef = 0;
+
          ident_t terminal = current.findChild(lxNameAttr).firstChild(lxTerminalMask)/*findTerminal(current.findChild(lxNameAttr))*/.identifier();
          if (scope.parameters.exist(terminal))
             scope.raiseError(errDuplicatedLocal, current);
 
-         declareArgumentAttributes(current, scope, classRef);
+         declareArgumentAttributes(current, scope, classRef, elementRef);
 
 //            if (current.argument != 0) {
 //               // HOTFIX : to recognize conversion arguments
@@ -4844,14 +4882,18 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
                if (paramCount >= ARG_COUNT)
                   scope.raiseError(errTooManyParameters, current);
 
-               signature[signatureLen++] = classRef;
-//
-//               size = _logic->defineStructSize(*scope.moduleScope, classRef, elementRef);
+               if (isPrimitiveRef(classRef)) {
+                  // primitive arguments should be replaced with wrapper classes
+                  signature[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef);
+               }
+               else signature[signatureLen++] = classRef;
+
+               size = _logic->defineStructSize(*scope.moduleScope, classRef, elementRef);
 
 //            }
 
-         scope.parameters.add(terminal, Parameter(index, classRef/*, elementRef, size*/));
-//
+         scope.parameters.add(terminal, Parameter(index, classRef, elementRef, size));
+
       }
       else if (current == lxMessage) {
          actionStr.append(":");
@@ -4866,10 +4908,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       // validate generic signature (except an open argument one)
       bool weakSignature = true;
       for (size_t i = 0; i < signatureLen; i++) {
-         // primitive arguments should be replaced with wrapper classes
-         if (isPrimitiveRef(signature[i]))
-            signature[i] = _logic->resolvePrimitiveReference(*scope.moduleScope, signature[i]);
-
          if (signature[i] != scope.moduleScope->superReference) {
             weakSignature = false;
          }
@@ -6168,22 +6206,21 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       // wrapper may have only one field
       scope.raiseError(errIllegalField, current);
    }
-   // if it is a primitive data wrapper
+   // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
    else if (embeddable/* && !fieldArray*/) {
-      if (!singleField || testany(flags, elNonStructureRole | elDynamicRole))
+      if (!singleField || testany(flags, elDynamicRole) || scope.info.fields.Count() > 0)
          scope.raiseError(errIllegalField, current);
 
-      if (test(flags, elStructureRole)) {
-         scope.info.fields.add(terminal, scope.info.size);
-         scope.info.size += size;
-      }
-      else scope.raiseError(errIllegalField, current);
-
-      if (!_logic->tweakPrimitiveClassFlags(classRef, scope.info))
-         scope.raiseError(errIllegalField, current);
+      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+      if (test(scope.info.header.flags, elSealed)) {
+         scope.info.header.flags |= elWrapper;
+         if (size > 0)
+            scope.info.header.flags |= elStructureRole;
+      }         
    }
+
    // a class with a dynamic length structure must have no fields
-   else if (test(scope.info.header.flags, elDynamicRole)) {
+   if (test(scope.info.header.flags, elDynamicRole)) {
       if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
          // compiler magic : turn a field declaration into an array or string one
          if (size != 0 && !test(scope.info.header.flags, elNonStructureRole)) {
@@ -6205,18 +6242,8 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          /*else */scope.raiseError(errDuplicatedField, current);
       }
 
-      //// if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-      //if (!test(scope.info.header.flags, elNonStructureRole) && singleField
-      //   && test(scope.info.header.flags, elSealed) && size > 0 && scope.info.fields.Count() == 0)
-      //{
-      //   scope.info.header.flags |= elStructureRole;
-      //   scope.info.size = size;
-
-      //   scope.info.fields.add(terminal, 0);
-      //   scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
-      //}
       // if it is a structure field
-      /*else */if (test(scope.info.header.flags, elStructureRole)) {
+      if (test(scope.info.header.flags, elStructureRole)) {
          if (size <= 0)
             scope.raiseError(errIllegalField, current);
 
@@ -6228,6 +6255,9 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 
          scope.info.fields.add(terminal, offset);
          scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*elementRef*/0));
+
+         if (isPrimitiveRef(classRef))
+            _logic->tweakPrimitiveClassFlags(classRef, scope.info);
       }
       // if it is a normal field
       else {
@@ -6651,6 +6681,9 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
 
       // generate fields
       generateClassFields(node, scope, countFields(node) == 1);
+
+      if (/*scope.extensionClassRef != 0 ? _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef) : */_logic->isEmbeddable(scope.info))
+         classType = ClassType::ctEmbeddableClass;
    }
 
    _logic->injectVirtualCode(*scope.moduleScope, node, scope.reference, scope.info, *this/*, closed*/);
@@ -6778,10 +6811,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
    declareVMT(node, scope);
 
-   ClassType type = ClassType::ctClass;
-   if (/*scope.extensionClassRef != 0 ? _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef) : */_logic->isEmbeddable(scope.info))
-      type = ClassType::ctEmbeddableClass;
-
+   ClassType type = ClassType::ctUndefinedClass;
    generateClassDeclaration(node, scope, type);
 
    if (_logic->isRole(scope.info)) {
@@ -8122,7 +8152,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
 //   scope.boolReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
 //   scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
-//   scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
+   scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
 //   scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
 //   scope.signatureReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SIGNATURE_FORWARD));
 //   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
@@ -8247,25 +8277,25 @@ void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t lis
    }
 }
 
-////ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader)
-////{
-////   ref_t memberRef = reader.getDWord() & ~mskAnyRef;
-////
-////   return importReference(extModule, memberRef, scope.module);
-////}
-//
-//void Compiler :: injectBoxing(SyntaxWriter& writer, _CompilerScope&, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode)
+//ref_t Compiler :: readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader)
 //{
-//   if (arrayMode && argument == 0) {
-//      // HOTFIX : to iundicate a primitive array boxing
-//      writer.appendNode(lxBoxableAttr, -1);
-//   }
-//   else writer.appendNode(lxBoxableAttr);
+//   ref_t memberRef = reader.getDWord() & ~mskAnyRef;
 //
-//   writer.appendNode(lxTarget, targetClassRef);
-//   writer.insert(boxingType, argument);
-//   writer.closeNode();
+//   return importReference(extModule, memberRef, scope.module);
 //}
+
+void Compiler :: injectBoxing(SyntaxWriter& writer, _ModuleScope&, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode)
+{
+   if (arrayMode && argument == 0) {
+      // HOTFIX : to iundicate a primitive array boxing
+      writer.appendNode(lxBoxableAttr, -1);
+   }
+   else writer.appendNode(lxBoxableAttr);
+
+   writer.appendNode(lxTarget, targetClassRef);
+   writer.insert(boxingType, argument);
+   writer.closeNode();
+}
 
 void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*, ref_t targetRef*/, int stackSafeAttr)
 {

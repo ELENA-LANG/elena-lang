@@ -3013,8 +3013,8 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
 //      else if (current == lxSize) {
 //         writer.appendNode(current.type, current.argument);
 //      }
-//      else if (current == lxAttribute)
-//         writer.appendNode(current.type, current.argument);
+      else if (current == lxAttribute)
+         writer.appendNode(current.type, current.argument);
 
       current = current.nextNode();
    }
@@ -3242,33 +3242,33 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
 
    SNode current = root.firstChild();
    while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         if (current.argument == V_TEMPLATE/* && scope.type != TemplateScope::ttAttrTemplate*/) {
-//            // ignore template attributes
-//         }
-//         else if (current.argument == V_FIELD/* && scope.type != TemplateScope::ttAttrTemplate*/) {
-//            // ignore template attributes
-//         }
-//         else if (current.argument == V_ACCESSOR) {
-//            if (scope.type == DerivationScope::ttFieldTemplate) {
-//               // HOTFIX : is it is a method template, consider the field name as a message subject
-//               scope.type = DerivationScope::ttMethodTemplate;
-//            }
-//         }
-//         else if (!test(mode, MODE_IMPORTING)) {
-//            // do not copy the class attributes in the import mode 
-//            writer.newNode(current.type, current.argument);
-//            SyntaxTree::copyNode(writer, current);
-//            writer.closeNode();
-//         }
-//      }
+      if (current == lxAttribute) {
+         //if (current.argument == V_TEMPLATE/* && scope.type != TemplateScope::ttAttrTemplate*/) {
+         //   // ignore template attributes
+         //}
+         //else if (current.argument == V_FIELD/* && scope.type != TemplateScope::ttAttrTemplate*/) {
+         //   // ignore template attributes
+         //}
+         //else if (current.argument == V_ACCESSOR) {
+         //   if (scope.type == DerivationScope::ttFieldTemplate) {
+         //      // HOTFIX : is it is a method template, consider the field name as a message subject
+         //      scope.type = DerivationScope::ttMethodTemplate;
+         //   }
+         //}
+         //else if (!test(mode, MODE_IMPORTING)) {
+            // do not copy the class attributes in the import mode 
+            writer.newNode(current.type, current.argument);
+            SyntaxTree::copyNode(writer, current);
+            writer.closeNode();
+         //}
+      }
 //      else if (current == lxTemplateParent && !test(mode, MODE_IMPORTING)) {
 //         // HOTFIX : class based template
 //         writer.newNode(lxBaseParent, -1);
 //         copyClassTree(writer, current.findChild(lxTypeAttr), scope);
 //         writer.closeNode();
 //      }
-      /*else */if (current == lxClassMethod) {
+      else if (current == lxClassMethod) {
          copyMethodTree(writer, current, scope);
       }
       else if (current == lxClassField) {
