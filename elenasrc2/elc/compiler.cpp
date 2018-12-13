@@ -2541,10 +2541,10 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
          //if (paramCount < OPEN_ARG_COUNT)
          paramCount++;
       }
-      //else if (current == lxMessage) {
-      //   messageStr.append(':');
-      //   messageStr.append(current.firstChild(lxTerminalMask).identifier());
-      //}
+      else if (current == lxMessage) {
+         messageStr.append(':');
+         messageStr.append(current.firstChild(lxTerminalMask).identifier());
+      }
       else break;
 
       current = current.nextNode();
@@ -4836,10 +4836,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          scope.parameters.add(terminal, Parameter(index, classRef/*, elementRef, size*/));
 //
       }
-//      else if (current == lxMessage) {
-//         actionStr.append(":");
-//         actionStr.append(current.findChild(lxIdentifier).identifier());
-//      }
+      else if (current == lxMessage) {
+         actionStr.append(":");
+         actionStr.append(current.findChild(lxIdentifier).identifier());
+      }
       else break;
 
       current = current.nextNode();

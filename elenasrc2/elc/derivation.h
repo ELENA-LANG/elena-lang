@@ -65,6 +65,19 @@ class DerivationWriter : public _DerivationWriter
          else return false;
       }
 
+      bool isMessageParameter(ident_t name, ref_t& argument)
+      {
+         if (templateMode == stPropertyTemplate) {
+            int index = parameters.get(name);
+            if (index) {
+               argument = index;
+
+               return true;
+            }
+         }
+         return false;
+      }
+
       bool withTypeParameters() const
       {
          return templateMode == stClassTemplate || templateMode == stPropertyTemplate;
@@ -116,7 +129,7 @@ class DerivationWriter : public _DerivationWriter
    void generateTemplate(SNode node, SNode nameNode, ScopeType templateType);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
-   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node/*, Scope& derivationScope*/);
+   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode);
@@ -127,6 +140,7 @@ class DerivationWriter : public _DerivationWriter
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
    void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
    void generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);
+   void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 
    void declareType(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/);
 

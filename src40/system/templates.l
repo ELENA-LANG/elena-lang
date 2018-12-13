@@ -21,36 +21,28 @@ property prop<T>
     }
 }
 
-//public field prop<prop_name>
-//{
-//    object field.
-//    
-//    set prop_name:val
-//    [
-//        field := val
-//    ]
-//    
-//    prop_name = field.
-//}
-//
-//public field prop<prop_type, prop_name>
-//{
-//    prop_type field.
-//    
-//    set prop_name (prop_type val)
-//    [
-//        field := val
-//    ]
-//    
-//    prop_type prop_name = field.
-//}
-//
-//public field rprop<prop_type, prop_name>
-//{
-//    prop_type field.
-//    
-//    prop_type prop_name = field.
-//}
+property prop<T,get_accessor,set_accessor>
+{
+    get T __property()
+    {
+        ^ self.get_accessor()
+    }
+    
+    set __property(T value)
+    {
+        self.set_accessor(value)
+    }
+}
+
+property rprop<T>
+{
+    T __property;
+    
+    get T __property()
+    {
+        ^ __property
+    }    
+}
 //
 //public field dto_prop<prop_type, prop_name>
 //{
