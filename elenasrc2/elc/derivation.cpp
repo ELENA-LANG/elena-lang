@@ -2964,7 +2964,10 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
 //      if (current == lxIdentifier || current == lxPrivate || current == lxReference) {
 //         copyIdentifier(writer, current);
 //      }
-      /*else */if (current == lxTemplateNameParam) {
+      /*else */if (current == lxNameAttr) {
+         copyTreeNode(writer, current, scope);
+      }
+      else if (current == lxTemplateNameParam) {
          // name node is always the last parameter
          SNode nodeToInject = scope.parameterValues.get(scope.parameterValues.Count());
 

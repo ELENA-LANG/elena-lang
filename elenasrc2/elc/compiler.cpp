@@ -2369,11 +2369,13 @@ ObjectInfo Compiler :: compileTemplateSymbol(SyntaxWriter& writer, SNode node, C
 {
    ObjectInfo retVal(okClass);
    retVal.param = resolveTemplateDeclaration(node, scope);
+   if (retVal.param) {
+      ClassInfo info;
+      scope.moduleScope->loadClassInfo(info, retVal.reference, true);
+      retVal.reference = info.header.classRef;
+   }
+   else retVal = ObjectInfo(okUnknown);
    
-   ClassInfo info;
-   scope.moduleScope->loadClassInfo(info, retVal.reference, true);
-   retVal.reference = info.header.classRef;
-
    writeTerminal(writer, node, scope, retVal, mode);
 
    return retVal;

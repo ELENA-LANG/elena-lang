@@ -492,19 +492,26 @@ ref_t ModuleScope :: generateTemplate(_Compiler& compiler, ref_t reference, List
 {
    SyntaxTree templateTree;
 
+
    TemplateGenerator transformer(templateTree);
    SyntaxWriter writer(templateTree);
    writer.newNode(lxRoot);
    writer.newNode(lxNamespace, ns);
+   writer.newBookmark();
+
    ref_t generatedReference = transformer.generateTemplate(writer, *this, reference, parameters);
+
+   IdentifierString path;
+   path.copy("compiling ");
+   path.append(resolveFullName(generatedReference));
+   path.append(" template...");
+   writer.insertChild(0, lxSourcePath, path.c_str());
+
    writer.closeNode();
    writer.closeNode();
 
    //SourceFileInfo fileInfo;
    //fileInfo.tree = &templateTree;
-   //fileInfo.path.copy("compiling ");
-   //fileInfo.path.append(resolveFullName(generatedReference));
-   //fileInfo.path.append(" template...");
    //fileInfo.importedNs.add(ident_t(STANDARD_MODULE).clone());
 
    //SourceFileList files;
