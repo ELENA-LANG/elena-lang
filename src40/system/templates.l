@@ -34,6 +34,18 @@ property prop<T,get_accessor,set_accessor>
     }
 }
 
+property rvprop<T,get_accessor>
+{
+    get T __property()
+    {
+        T retVal := T.defaultValue;
+        
+        self.get_accessor(ref retVal);
+        
+        ^ retVal
+    }
+}
+
 property rprop<T>
 {
     T __property;

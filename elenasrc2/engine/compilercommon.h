@@ -128,7 +128,7 @@ enum MethodHint
    tpConversion  = 0x200800,
    tpMultimethod = 0x001000,
 //   tpArgDispatcher=0x003000,
-//   tpStatic      = 0x004000,
+   tpStatic      = 0x004000,
    tpGetAccessor = 0x008000,
 //   tpSpecial     = 0x010000,
    tpAbstract    = 0x020000,

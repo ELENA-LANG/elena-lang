@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   10
+#define REVISION_VERSION   11
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -213,6 +213,11 @@ ref_t resolveMessage(_Module* module, ident_t method)
    ref_t actionRef = 0;
    ref_t flags = 0;
 
+   if (method.startsWith("prop#")) {
+      flags |= PROPERTY_MESSAGE;
+
+      method = method.c_str() + getlength("prop#");
+   }
    if (method.startsWith("#invoke")) {
       flags |= SPECIAL_MESSAGE;
    }
@@ -450,6 +455,10 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    ref_t actionRef, flags;
    int paramCount = 0;
    decodeMessage(reference, actionRef, paramCount, flags);
+
+   if (test(flags, PROPERTY_MESSAGE)) {
+      command.append("prop#");
+   }
 
    //if (actionRef == DISPATCH_MESSAGE_ID) {
    //   command.append("#dispatch");

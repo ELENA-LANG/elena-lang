@@ -943,19 +943,22 @@ public sealed const struct IntNumber : IntBaseNumber
 //    [
 //        theValue := n.
 //    ]
-//    
-//    /// return the default value
+
+    /// return the default value
+    static int defaultValue
+        = 0;
+    
+    /// Creates the object with the minimal value
+    static int minValue
+        = -2147483648;
+
+    /// Creates the object with the maximal value
+    static int maxValue
+        = 2147483647;
+
 //    constructor
 //        = 0.
-//    
-//    /// Creates the object with the minimal value
-//    constructor min
-//        = -2147483648.
-//
-//    /// Creates the object with the maximal value
-//    constructor max
-//        = 2147483647.
-//    
+    
 //    /// Creates the object with specified value
 //    constructor new(int value)
 //        = value.

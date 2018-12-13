@@ -5851,24 +5851,24 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
             compileConstructor(writer, current, methodScope, classClassScope);
             break;
          }
-//         case lxStaticMethod:
-//         {
-//            if (!staticFieldsInherited) {
-//               // HOTFIX : inherit static fields
-//               classClassScope.copyStaticFields(classScope.info.statics, classScope.info.staticValues);
-//
-//               staticFieldsInherited = true;
-//            }
-//
-//            MethodScope methodScope(&classClassScope);
-//            methodScope.message = current.argument;
-//
-//            initialize(classClassScope, methodScope);
-//            declareArgumentList(current, methodScope);
-//
-//            compileMethod(writer, current, methodScope);
-//            break;
-//         }
+         case lxStaticMethod:
+         {
+            //if (!staticFieldsInherited) {
+            //   // HOTFIX : inherit static fields
+            //   classClassScope.copyStaticFields(classScope.info.statics, classScope.info.staticValues);
+
+            //   staticFieldsInherited = true;
+            //}
+
+            MethodScope methodScope(&classClassScope);
+            methodScope.message = current.argument;
+
+            initialize(classClassScope, methodScope);
+            declareArgumentList(current, methodScope);
+
+            compileMethod(writer, current, methodScope);
+            break;
+         }
       }
 
       current = current.nextNode();
@@ -6106,8 +6106,8 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 //
 //            current = lxIdle;
 //         }
-//         else if (test(methodScope.hints, tpStatic))
-//            current = lxStaticMethod;
+         else if (test(methodScope.hints, tpStatic))
+            current = lxStaticMethod;
 
          if (!_logic->validateMessage(*methodScope.moduleScope, methodScope.message, false))
             scope.raiseError(errIllegalMethod, current);
