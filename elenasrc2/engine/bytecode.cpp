@@ -722,7 +722,7 @@ inline void addVerb(MessageMap& map, const char* verb, int id)
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)
 {
-   //addVerb(operators, ADD_OPERATOR, ADD_MESSAGE_ID);
+   addVerb(operators, ADD_OPERATOR, ADD_OPERATOR_ID);
    //addVerb(operators, SUB_OPERATOR, SUB_MESSAGE_ID);
    //addVerb(operators, MUL_OPERATOR, MUL_MESSAGE_ID);
    //addVerb(operators, DIV_OPERATOR, DIV_MESSAGE_ID);

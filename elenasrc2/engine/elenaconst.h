@@ -406,7 +406,7 @@ namespace _ELENA_
 //   #define AND_OPERATOR             "&&"
 //   #define OR_OPERATOR              "||"
 //   #define XOR_OPERATOR             "^^"
-//   #define ADD_OPERATOR             "+"
+   #define ADD_OPERATOR             "+"
 //   #define SUB_OPERATOR             "-"
 //   #define MUL_OPERATOR             "*"
 //   #define DIV_OPERATOR             "/"

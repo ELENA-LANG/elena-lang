@@ -145,8 +145,8 @@ public:
       okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
 //      okExtension,
-//      okClassSelf,                    // param - class reference; used in class resending expression
-//
+      okClassSelf,                    // param - class reference; used in class resending expression
+
       okExternal,
 //      okInternal,
 //      okPrimitiveConv
@@ -697,20 +697,20 @@ private:
       CodeScope(CodeScope* parent);
    };
 
-//   // --- ResendScope ---
-//   struct ResendScope : public CodeScope
-//   {
-//      bool withFrame;
-//      bool consructionMode;
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
-//
-//      ResendScope(CodeScope* parent)
-//         : CodeScope(parent)
-//      {
-//         consructionMode = withFrame = false;
-//      }
-//   };
+   // --- ResendScope ---
+   struct ResendScope : public CodeScope
+   {
+      bool withFrame;
+      bool consructionMode;
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+
+      ResendScope(CodeScope* parent)
+         : CodeScope(parent)
+      {
+         consructionMode = withFrame = false;
+      }
+   };
 
    // - InlineClassScope -
    struct InlineClassScope : public ClassScope
@@ -782,19 +782,20 @@ private:
    void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
-//   int checkMethod(_CompilerScope& scope, ref_t reference, ref_t message)
-//   {
-//      _CompilerLogic::ChechMethodInfo dummy;
-//
-//      return _logic->checkMethod(scope, reference, message, dummy);
-//   }
-//
+   int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      return _logic->checkMethod(scope, reference, message, dummy);
+   }
+
 //   bool verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount);
 
    void loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes);
 
    ObjectInfo mapClassSymbol(Scope& scope, int classRef);
 
+   ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);
    ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef);
    ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef);
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
@@ -918,8 +919,8 @@ private:
 
    ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ref_t expectedRef, */int mode);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
-//
-//   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+
+   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);

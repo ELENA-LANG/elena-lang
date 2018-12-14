@@ -6,6 +6,7 @@ In development:
                  * test - a[](...) - should be illegal
                  * test boxing / unboxing with dynamic reference
                  * (re)implement reference of object
+                 * (re)implement support for internal methods
                  * implement length property optimization -> replace direct operation with byref one
                  * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one
