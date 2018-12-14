@@ -163,7 +163,7 @@ enum LexicalType
    lxMethodParameter = 0x0C017,
 //   lxAltExpression   = 0x0C018,
    lxIfNot           = 0x0C019,   // optional arg - reference
-//   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
+   lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIfN             = 0x0C01B,   // arg - value
    lxIfNotN          = 0x0C01C,   // arg - value
    lxLessN           = 0x0C01D,   // arg - value

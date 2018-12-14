@@ -148,7 +148,7 @@ public:
       okClassSelf,                    // param - class reference; used in class resending expression
 
       okExternal,
-//      okInternal,
+      okInternal,
 //      okPrimitiveConv
    };
 
@@ -918,7 +918,7 @@ private:
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
    ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ref_t expectedRef, */int mode);
-//   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
+   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
@@ -1001,7 +1001,7 @@ private:
 //   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
-//   ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope);
+   ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope);
    ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope);
    ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
    void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);

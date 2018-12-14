@@ -1884,6 +1884,13 @@ bool CompilerLogic::validateExpressionAttribute(int& attrValue, ExpressionAttrib
             return true;
          }
          else return false;
+      case (int)V_INTERN:
+         if (!attributes.internAttr) {
+            attributes.internAttr = true;
+
+            return true;
+         }
+         else return false;
       default:
          return false;
    }

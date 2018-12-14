@@ -1366,11 +1366,11 @@ public sealed const struct WideLiteralValue : BaseValue
 //    /// Creates the empty literal
 //    constructor min
 //        = emptyWideLiteral.
-//        
-//    /// Creates the literal string with specified length
-//    constructor new(int size)
-//        = dynamic<short>(size + 1).
-//
+        
+    /// Creates the literal string with specified length
+    constructor(int size)
+        = new short[](size + 1);
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    constructor new(int aSize, wide aLiteral)
 //        <= new(aSize);

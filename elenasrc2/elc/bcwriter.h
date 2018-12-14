@@ -214,8 +214,8 @@ class ByteCodeWriter
 
    void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
-//
-//   void freeVirtualStack(CommandTape& tape, int count);
+
+   void freeVirtualStack(CommandTape& tape, int count);
 
    void endCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
@@ -292,7 +292,7 @@ class ByteCodeWriter
    void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
    void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
-//   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
+   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
    ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
 
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);

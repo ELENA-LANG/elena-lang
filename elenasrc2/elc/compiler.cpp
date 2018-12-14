@@ -45,6 +45,7 @@ constexpr auto HINT_NODEBUGINFO     = 0x00020000;
 constexpr auto HINT_SUBCODE_CLOSURE = 0x00008800;
 constexpr auto HINT_VIRTUALEXPR     = 0x00004000;
 //constexpr auto HINT_ASSIGNTARGET    = 0x00002000;
+constexpr auto HINT_INTERNALOP      = 0x00002000;
 ////#define HINT_RESENDEXPR       0x00000400
 //#define HINT_LAZY_EXPR        0x00000200
 constexpr auto HINT_DYNAMIC_OBJECT  = 0x00000100;  // indicates that the structure MUST be boxed
@@ -245,10 +246,6 @@ ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
       // if it is a forward reference
       return defineObjectInfo(moduleScope->mapFullReference(forwardName.c_str(), false), false);
    }
-   //// To tell apart primitive modules, the name convention is used
-   //else if (identifier.compare(INTERNAL_MASK, INTERNAL_MASK_LEN)) {
-   //   return ObjectInfo(okInternal, module->mapReference(identifier));
-   //}
    
    // if it is an existing full reference
    ref_t reference = moduleScope->mapFullReference(identifier, true);
@@ -2231,9 +2228,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          break;
       case okExternal:
          return;
-//      case okInternal:
-//         writer.appendNode(lxInternalRef, object.param);
-//         return;
+      case okInternal:
+         writer.appendNode(lxInternalRef, object.param);
+         return;
    }
 
    writeTarget(writer, resolveObjectReference(scope, object), object.element);
@@ -2353,6 +2350,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
             }
             else if (test(mode, HINT_EXTERNALOP)) {
                object = ObjectInfo(okExternal, 0, V_INT32);
+            }
+            else if (test(mode, HINT_INTERNALOP)) {
+               object = ObjectInfo(okInternal, scope.module->mapReference(token), V_INT32);
             }
             else object = scope.mapTerminal(token, terminal == lxReference, 0);
 //         }
@@ -3264,11 +3264,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
    else {
       ref_t messageRef = mapMessage(node, scope/*, paramCount*/);
-//
-//      if (target.kind == okInternal) {
-//         retVal = compileInternalCall(writer, node, scope, messageRef, implicitSignatureRef, target);
-//      }
-//      else {
+
+      if (target.kind == okInternal) {
+         retVal = compileInternalCall(writer, node, scope, messageRef, implicitSignatureRef, target);
+      }
+      else {
          int stackSafeAttr = 0;
          messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef/*, true*/, stackSafeAttr);
 
@@ -3279,7 +3279,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
             stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
          retVal = compileMessage(writer, node, scope, target, messageRef, mode, stackSafeAttr);
-//      }
+      }
    }
 
    return retVal;
@@ -4327,6 +4327,9 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
          else if (attributes.externAttr) {
             mode |= HINT_EXTERNALOP;
          }
+         else if (attributes.internAttr) {
+            mode |= HINT_INTERNALOP;
+         }
          else if (attributes.refAttr) {
             mode |= HINT_REFOP;
          }
@@ -4672,56 +4675,56 @@ ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, Cod
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo routine)
-//{
-//   _CompilerScope* moduleScope = scope.moduleScope;
-//
-//   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
-//   virtualReference.append('.');
-//
-//   int paramCount;
-//   ref_t actionRef;
-//   ref_t dummy = 0;
-//   decodeMessage(message, actionRef, paramCount);
-//
-//   size_t signIndex = virtualReference.Length();
-//   virtualReference.append('0' + (char)paramCount);
-//   virtualReference.append(moduleScope->module->resolveAction(actionRef, dummy));
-//
-//   ref_t signatures[OPEN_ARG_COUNT];
-//   size_t len = scope.module->resolveSignature(signature, signatures);
-//   for (size_t i = 0; i < len; i++) {
-//      if (isPrimitiveRef(signatures[i])) {
-//         // !!
-//         scope.raiseError(errIllegalOperation, node);
-//      }
-//      else {
-//         virtualReference.append("$");
-//         ident_t name = scope.module->resolveReference(signatures[i]);
-//         if (isTemplateWeakReference(name)) {
-//            NamespaceName ns(name);
-//
-//            virtualReference.append(name + getlength(ns));
-//         }
-//         else if (isWeakReference(name)) {
-//            virtualReference.append(scope.module->Name());
-//            virtualReference.append(name);
-//         }
-//         else virtualReference.append(name);
-//      }
-//   }
-//
-//   virtualReference.replaceAll('\'', '@', signIndex);
-//
-//   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
-//   writer.closeNode();
-//
-////   SNode targetNode = node.firstChild(lxTerminalMask);
-////   // HOTFIX : comment out dll reference
-////   targetNode = lxIdle;
-//
-//   return ObjectInfo(okObject);
-//}
+ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo routine)
+{
+   _ModuleScope* moduleScope = scope.moduleScope;
+
+   IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
+   virtualReference.append('.');
+
+   int paramCount;
+   ref_t actionRef, flags;
+   ref_t dummy = 0;
+   decodeMessage(message, actionRef, paramCount, flags);
+
+   size_t signIndex = virtualReference.Length();
+   virtualReference.append('0' + (char)paramCount);
+   virtualReference.append(moduleScope->module->resolveAction(actionRef, dummy));
+
+   ref_t signatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(signature, signatures);
+   for (size_t i = 0; i < len; i++) {
+      if (isPrimitiveRef(signatures[i])) {
+         // !!
+         scope.raiseError(errIllegalOperation, node);
+      }
+      else {
+         virtualReference.append("$");
+         ident_t name = scope.module->resolveReference(signatures[i]);
+         if (isTemplateWeakReference(name)) {
+            NamespaceName ns(name);
+
+            virtualReference.append(name + getlength(ns));
+         }
+         else if (isWeakReference(name)) {
+            virtualReference.append(scope.module->Name());
+            virtualReference.append(name);
+         }
+         else virtualReference.append(name);
+      }
+   }
+
+   virtualReference.replaceAll('\'', '@', signIndex);
+
+   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
+   writer.closeNode();
+
+//   SNode targetNode = node.firstChild(lxTerminalMask);
+//   // HOTFIX : comment out dll reference
+//   targetNode = lxIdle;
+
+   return ObjectInfo(okObject);
+}
 
 int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reserved)
 {
@@ -5296,8 +5299,14 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    _ModuleScope* moduleScope = scope.moduleScope;
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
-   // find where the target constructor is declared in the current class
-   ref_t messageRef = mapMessage(expr.findChild(lxMessage), scope);
+   ref_t messageRef = 0;
+   SNode messageNode = expr.findChild(lxMessage);
+   if (messageNode.firstChild(lxTerminalMask) == lxNone) {
+      // HOTFIX : support implicit constructors
+      messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), 
+         SyntaxTree::countNodeMask(messageNode, lxObjectMask), 0);
+   }
+   else messageRef = mapMessage(messageNode, scope);
 
    ref_t classRef = classClassScope.reference;
    bool found = false;
@@ -7245,13 +7254,13 @@ ref_t Compiler :: analizeExtCall(SNode node, NamespaceScope& scope)
    return V_INT32;
 }
 
-//ref_t Compiler :: analizeInternalCall(SNode node, NamespaceScope& scope/*, WarningScope& warningScope*/)
-//{
-//   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
-//
-//   return V_INT32;
-//}
-//
+ref_t Compiler :: analizeInternalCall(SNode node, NamespaceScope& scope)
+{
+   analizeExpressionTree(node, scope, HINT_NOBOXING);
+
+   return V_INT32;
+}
+
 //ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int)
 //{
 //   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
@@ -7727,8 +7736,8 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       //case lxArgArrOp:
       //case lxBoolOp:
          return analizeOp(current, scope);
-      //case lxInternalCall:
-      //   return analizeInternalCall(current, scope);
+      case lxInternalCall:
+         return analizeInternalCall(current, scope);
       case lxStdExternalCall:
       case lxExternalCall:
       case lxCoreAPICall:

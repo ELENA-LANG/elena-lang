@@ -1039,10 +1039,10 @@ void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
    }
 }
 
-//void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
-//{
-//   tape.write(bcFreeStack, count);
-//}
+void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
+{
+   tape.write(bcFreeStack, count);
+}
 
 void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
 {
@@ -3778,9 +3778,9 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // aloadai
          tape.write(bcALoadAI, argument);
          break;
-//      case lxInternalCall:
-//         tape.write(bcCallR, argument | mskInternalRef);
-//         break;
+      case lxInternalCall:
+         tape.write(bcCallR, argument | mskInternalRef);
+         break;
       case lxClassRefField:
          // pushb
          // bloadfi 1
@@ -4503,42 +4503,42 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
    return message;
 }
 
-//void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
-//{
-//   int paramCount = 0;
-//
-//   // analizing a sub tree
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         paramCount++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   declareArgumentList(tape, paramCount);
-//
-//   int index = 0;
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         paramCount++;
-//      }
-//
-//      if (test(current.type, lxObjectMask)) {
-//         generateObjectExpression(tape, current, ACC_REQUIRED);
-//
-//         saveObject(tape, lxCurrent, index);
-//         index++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   loadObject(tape, node);
-//   freeVirtualStack(tape, paramCount);
-//}
+void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
+{
+   int paramCount = 0;
+
+   // analizing a sub tree
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         paramCount++;
+      }
+
+      current = current.nextNode();
+   }
+
+   declareArgumentList(tape, paramCount);
+
+   int index = 0;
+   current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         paramCount++;
+      }
+
+      if (test(current.type, lxObjectMask)) {
+         generateObject(tape, current, ACC_REQUIRED);
+
+         saveObject(tape, lxCurrent, index);
+         index++;
+      }
+
+      current = current.nextNode();
+   }
+
+   loadObject(tape, node);
+   freeVirtualStack(tape, paramCount);
+}
 
 void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 {
@@ -5420,9 +5420,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxExternalCall:
          generateExternalCall(tape, node);
          break;
-//      case lxInternalCall:
-//         generateInternalCall(tape, node);
-//         break;
+      case lxInternalCall:
+         generateInternalCall(tape, node);
+         break;
       case lxBoxing:
       case lxCondBoxing:
 //      case lxArgBoxing:
