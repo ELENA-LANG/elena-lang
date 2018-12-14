@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * test - a[](...) - should be illegal
                  * test boxing / unboxing with dynamic reference
                  * (re)implement reference of object
                  * implement length property optimization -> replace direct operation with byref one

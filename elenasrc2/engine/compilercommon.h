@@ -72,7 +72,7 @@
 //#define V_PRIVATE        (ref_t)-8212
 #define V_INTERNAL       (ref_t)-8213
 #define V_CLOSED         (ref_t)-8214
-//#define V_PREDEFINED     (ref_t)-8215
+#define V_PREDEFINED     (ref_t)-8215
 #define V_DISPATCHER     (ref_t)-8216
 
 #define V_CONSTRUCTOR    (ref_t)-16384
@@ -133,7 +133,7 @@ enum MethodHint
 //   tpSpecial     = 0x010000,
    tpAbstract    = 0x020000,
 //   tpInternal    = 0x040000,
-//   tpPredefined  = 0x080000, // virtual class declaration
+   tpPredefined  = 0x080000, // virtual class declaration
    tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
    tpInitializer = 0x200000,
    tpSetAccessor = 0x400000,
@@ -222,7 +222,7 @@ struct _ModuleScope
 //   ref_t             charReference;
 //   ref_t             arrayReference;
    ref_t             refTemplateReference;
-//   ref_t             arrayTemplateReference;
+   ref_t             arrayTemplateReference;
    ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
 
@@ -319,7 +319,7 @@ struct _ModuleScope
 //      arrayReference = charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
-//      arrayTemplateReference = 0;
+      arrayTemplateReference = 0;
 
       newobject_message = dispatch_message = 0;
    }
@@ -428,7 +428,7 @@ public:
    // retrieve the operation type
    virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_CompilerScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
-//   virtual int resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand) = 0;
 
    // retrieve the branching operation type
    virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
@@ -469,12 +469,12 @@ public:
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
-   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/) = 0;
+   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef) = 0;
    virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr) = 0;
 //   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef) = 0;
 //   virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef) = 0;
 //   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef) = 0;
-//   virtual void injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
+   virtual void injectNewOperation(SyntaxWriter& writer, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
 //////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
 ////   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef) = 0;
 //   virtual void injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;

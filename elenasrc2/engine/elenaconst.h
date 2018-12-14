@@ -396,11 +396,11 @@ namespace _ELENA_
 
    // ELENA verb operators
    #define EQUAL_OPERATOR		      "=="
-//   #define NOTEQUAL_OPERATOR		   "!="
+   #define NOTEQUAL_OPERATOR		   "!="
 //   #define NOTLESS_OPERATOR		   ">="
 //   #define NOTGREATER_OPERATOR      "<="
 //   #define GREATER_OPERATOR		   ">"
-//   #define LESS_OPERATOR            "<"
+   #define LESS_OPERATOR            "<"
    #define IF_OPERATOR			      "?"
 //   #define IFNOT_OPERATOR		      "!"
 //   #define AND_OPERATOR             "&&"
@@ -513,7 +513,7 @@ namespace _ELENA_
 //   #define ARRAY_FORWARD            "$array"
    constexpr auto REFTEMPLATE_FORWARD     = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
-//   #define ARRAYTEMPLATE_FORWARD    "$parray"
+   constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
    constexpr auto BOOL_FORWARD            = "$bool";
    constexpr auto TRUE_FORWARD            = "$true";
    constexpr auto FALSE_FORWARD           = "$false";

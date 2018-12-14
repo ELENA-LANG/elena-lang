@@ -1,10 +1,10 @@
-//
-//// --- Array template ---
-//
-//public sealed Array<template_subj> :: Indexable<template_subj>
-//{
-//    dynamic<template_subj> theArray.
-//
+
+// --- Array template ---
+
+public sealed Array<T> //:: Indexable<template_subj>
+{
+    embeddable T[] theArray;
+
 ////    cast T<int>:nint
 ////        = V<template_subj>(n).
 //
@@ -87,8 +87,8 @@
 //    /// Returns the item at the specified index
 //    template_subj getAt : aParam
 //        <= getAt(T<int>(aParam)).
-//}
-//
+}
+
 //// --- matrixof ---
 //
 //public sealed Matrix<template_subj>
@@ -2223,26 +2223,26 @@ public singleton wideConvertor
 //        
 //        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
 //    ]
-//
-//    /// Converts UTF-8 literal to UTF-16e
-//    convert(literal aLiteral, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
+
+    /// Converts UTF-8 literal to UTF-16e
+    convert(literal aLiteral, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
 
     /// Converts UTF-8 literal to UTF-16e
     wide convert(literal aLiteral)
     {
-//        int        i := 0.
-//        int        m := 0.
-//        int        page := 0.
-//        int        l := aLiteral length.
+        int        i := 0;
+        int        m := 0;
+        int        page := 0;
+        int        l := aLiteral.length;
         short buffer[256];            
-//        if (l < 256)
-//        [
-//            self convert(aLiteral, T<ShortArray>(buffer), &m).
-//            
-//            ^ WideLiteralValue fromShortArray(0, m, T<ShortArray>(buffer))
-//        ].
-//        
+        if (l < 256)
+        {
+            self.convert(aLiteral, buffer, ref m);
+
+            ^ WideLiteralValue.fromShortArray(0, m, buffer)
+        };
+        
 //        wide retVal := emptyWideLiteral.
 //        while(l > 0)
 //        [

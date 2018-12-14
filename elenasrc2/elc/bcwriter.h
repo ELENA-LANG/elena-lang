@@ -157,8 +157,8 @@ class ByteCodeWriter
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
    void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
-//   void newDynamicObject(CommandTape& tape);
-//   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
+   void newDynamicObject(CommandTape& tape);
+   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
 
    void popObject(CommandTape& tape, LexicalType sourceTypeS);
 
@@ -167,9 +167,9 @@ class ByteCodeWriter
    void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadInternalReference(CommandTape& tape, ref_t reference);
 
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
@@ -284,8 +284,8 @@ class ByteCodeWriter
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateNewOperation(CommandTape& tape, SyntaxTree::Node node);
-//
+   void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node);
+
 //   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
    void generateResending(CommandTape& tape, SyntaxTree::Node node);

@@ -24,12 +24,21 @@ inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
 //{
 //   return !test(flags, elWrapper) && test(flags, elSealed);
 //}
-//
-//inline bool isPrimitiveArrayRef(ref_t classRef)
-//{
-//   return classRef == V_OBJARRAY;
-//}
-//
+
+inline bool isPrimitiveArrayRef(ref_t classRef)
+{
+   switch (classRef) {
+      case V_OBJARRAY:
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+      case V_BINARYARRAY:
+         return true;
+      default:
+         return false;
+   }
+}
+
 //inline bool isOpenArgRef(ref_t classRef)
 //{
 //   return classRef == V_ARGARRAY;
@@ -478,16 +487,17 @@ bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId
    return true;
 }
 
-//int CompilerLogic :: resolveNewOperationType(_CompilerScope& scope, ref_t loperand, ref_t roperand, ref_t& result)
-//{
-//   if (isCompatible(scope, V_INT32, roperand)) {
-//      result = definePrimitiveArray(scope, loperand);
-//      if (result != 0)
-//         return lxNewOp;
-//   }
-//
-//   return 0;
-//}
+int CompilerLogic :: resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand)
+{
+   if (isCompatible(scope, V_INT32, roperand)) {
+      ClassInfo info;
+      if (scope.loadClassInfo(info, loperand, true)) {
+         return test(info.header.flags, elDynamicRole) ? lxNewArrOp : 0;
+      }
+   }
+
+   return 0;
+}
 
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
@@ -1233,7 +1243,7 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
 //   return injectImplicitConstructor(writer, scope, compiler, classClassinfo, targetRef/*, 0*/, signature, paramCount);
 //}
 
-bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*, ref_t elementRef*/)
+bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
 {
 //   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
 //      if (isPrimitiveArrayRef(sourceRef)) {
@@ -1311,19 +1321,18 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 //         }
 //      }
 //   }
-//
-//   // HOTFIX : trying to typecast primitive array
-//   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
-//      //ClassInfo sourceInfo;
-//      //defineClassInfo(scope, sourceInfo, sourceRef, true);
-//
-//      if (isCompatible(scope, info.fieldTypes.get(-1).value1, elementRef)) {
-//         compiler.injectBoxing(writer, scope,
-//            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, targetRef, true);
-//
-//         return true;
-//      }
-//   }
+
+   // HOTFIX : trying to typecast primitive array
+   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole)) {
+      ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
+
+      if (isCompatible(scope, info.fieldTypes.get(-1).value1, elementRef)) {
+         compiler.injectBoxing(writer, scope,
+            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, boxingArg, targetRef, true);
+
+         return true;
+      }
+   }
 //   // HOTFIX : trying to typecast open argument list
 //   if (isOpenArgRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
 //      if (isCompatible(scope, info.fieldTypes.get(-1).value1, elementRef)) {
@@ -1348,15 +1357,15 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
    return injectImplicitConstructor(writer, scope, compiler, info, targetRef, /*elementRef, */&sourceRef, 1);
 }
 
-//void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _CompilerScope& scope, int operation, ref_t targetRef, ref_t elementRef)
-//{
-//   int size = defineStructSize(scope, targetRef, elementRef);
-//   if (size != 0)
-//      writer.appendNode(lxSize, size);
-//
-//   writer.insert((LexicalType)operation, targetRef);
-//   writer.closeNode();
-//}
+void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef)
+{
+   int size = defineStructSize(scope, targetRef, elementRef);
+   if (size != 0)
+      writer.appendNode(lxSize, size);
+
+   writer.insert((LexicalType)operation, targetRef);
+   writer.closeNode();
+}
 
 bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
 {
@@ -1464,9 +1473,9 @@ int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t referen
    else if (reference == V_WRAPPER && elementRef != 0) {
       return defineStructSizeVariable(scope, elementRef, 0, variable);
    }
-   //else if (reference == V_OBJARRAY && elementRef != 0) {
-   //   return defineStructSizeVariable(scope, elementRef, 0, variable);
-   //}
+   else if (reference == V_OBJARRAY && elementRef != 0) {
+      return defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
    else if (reference == V_INT32ARRAY) {
       variable = true;
 
@@ -1496,6 +1505,9 @@ int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
    variable = !test(info.header.flags, elReadOnlyRole);
    
    if (isEmbeddable(info)) {
+      return info.size;
+   }
+   else if (isEmbeddableArray(info)) {
       return info.size;
    }
 
@@ -1735,9 +1747,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_ABSTRACT:
          attrValue = tpAbstract;
          return true;
-//      case V_PREDEFINED:
-//         attrValue = tpPredefined;
-//         return true;
+      case V_PREDEFINED:
+         attrValue = tpPredefined;
+         return true;
       case V_DISPATCHER:
          attrValue = tpDispatcher;
          explicitMode = true;

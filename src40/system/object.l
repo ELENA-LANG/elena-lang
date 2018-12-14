@@ -12,13 +12,13 @@ public class Object
     /// By default compares the object references.
     bool equal(o) => system'core_routines'__object;
     
-//    bool notequal(o) = self equal:anObject; inverted.
-//    
-//    // virtual method declarations : forcing the output type                            
-//    predefined bool less : anObject []
-//    predefined bool greater : anObject []
-//    predefined bool notless : anObject []
-//    predefined bool notgreater : anObject []
+    bool notequal(o) = self.equal(o).inverted;
+    
+    // virtual method declarations : forcing the output type                            
+    predefined bool less(o) {}
+    predefined bool greater(o) {}
+    predefined bool notless(o) {}
+    predefined bool notgreater(o) {}
                 
 //    literal literal = self __className;
                 

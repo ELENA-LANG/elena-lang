@@ -495,22 +495,22 @@ void ByteCodeWriter :: initObject(CommandTape& tape, int fieldCount, LexicalType
    tape.write(bcACopyB);
 }
 
-//void ByteCodeWriter :: initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
-//{
-//   tape.write(bcBCopyA);
-//   tape.write(bcCount);
-//
-//   loadObject(tape, sourceType, sourceArgument);
-//
-//   tape.write(bcDCopy, 0);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcXSet);
-//   tape.write(bcNext, baCurrentLabel);
-//   tape.releaseLabel();
-//
-//   tape.write(bcACopyB);
-//}
+void ByteCodeWriter :: initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
+{
+   tape.write(bcBCopyA);
+   tape.write(bcCount);
+
+   loadObject(tape, sourceType, sourceArgument);
+
+   tape.write(bcDCopy, 0);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcXSet);
+   tape.write(bcNext, baCurrentLabel);
+   tape.releaseLabel();
+
+   tape.write(bcACopyB);
+}
 
 void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument)
 {
@@ -521,49 +521,49 @@ void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, LexicalTy
    tape.write(bcACopyB);
 }
 
-//void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
-//{
-//   // create
-//   tape.write(bcCreate);
-//}
-//
-//void ByteCodeWriter :: copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode)
-//{
-//   if (swapMode)
-//      tape.write(bcBSwap);
-//
-//   if (unsafeMode) {
-//      // xcopy
-//      tape.write(bcXCopy);
-//   }
-//   else {
-//      // pusha
-//      // count
-//      // dcopy 0
-//      // labCopy:
-//      // bswapsi 0
-//      // get
-//      // bswapsi 0
-//      // set
-//      // next labCopy
-//      // popa
-//      tape.write(bcPushA);
-//      tape.write(bcCount);
-//      tape.write(bcDCopy);
-//      tape.newLabel();
-//      tape.setLabel(true);
-//      tape.write(bcBSwapSI);
-//      tape.write(bcGet);
-//      tape.write(bcBSwapSI);
-//      tape.write(bcSet);
-//      tape.write(bcNext, baCurrentLabel);
-//      tape.releaseLabel();
-//      tape.write(bcPopA);
-//   }
-//
-//   if (swapMode)
-//      tape.write(bcBSwap);
-//}
+void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
+{
+   // create
+   tape.write(bcCreate);
+}
+
+void ByteCodeWriter :: copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode)
+{
+   if (swapMode)
+      tape.write(bcBSwap);
+
+   if (unsafeMode) {
+      // xcopy
+      tape.write(bcXCopy);
+   }
+   else {
+      // pusha
+      // count
+      // dcopy 0
+      // labCopy:
+      // bswapsi 0
+      // get
+      // bswapsi 0
+      // set
+      // next labCopy
+      // popa
+      tape.write(bcPushA);
+      tape.write(bcCount);
+      tape.write(bcDCopy);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcBSwapSI);
+      tape.write(bcGet);
+      tape.write(bcBSwapSI);
+      tape.write(bcSet);
+      tape.write(bcNext, baCurrentLabel);
+      tape.releaseLabel();
+      tape.write(bcPopA);
+   }
+
+   if (swapMode)
+      tape.write(bcBSwap);
+}
 
 void ByteCodeWriter :: initBase(CommandTape& tape, int fieldCount)
 {
@@ -2055,16 +2055,16 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argume
 //      tape.write(bcLSave);
 //   }
 //}
-//
-//void ByteCodeWriter :: loadIndex(CommandTape& tape, LexicalType target, ref_t sourceArgument)
-//{
-//   if (target == lxResult) {
-//      tape.write(bcNLoad);
-//   }
-//   else if (target == lxConstantInt) {
-//      tape.write(bcDCopy, sourceArgument);
-//   }
-//}
+
+void ByteCodeWriter :: loadIndex(CommandTape& tape, LexicalType target, ref_t sourceArgument)
+{
+   if (target == lxResult) {
+      tape.write(bcNLoad);
+   }
+   else if (target == lxConstantInt) {
+      tape.write(bcDCopy, sourceArgument);
+   }
+}
 
 void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offset)
 {
@@ -3894,35 +3894,35 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
    }
 }
 
-//void ByteCodeWriter :: generateNewOperation(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   generateExpression(tape, node, ACC_REQUIRED);
-//   loadIndex(tape, lxResult);
-//
-//   if (node.argument != 0) {
-//      int size = node.findSubNode(lxSize).argument;
-//
-//      if ((int)node.argument < 0) {
-//         //HOTFIX : recognize primitive object
-//         loadObject(tape, lxNil);
-//      }
-//      else loadObject(tape, lxConstantClass, node.argument);
-//
-//      if (size < 0) {
-//         newDynamicStructure(tape, -size);
-//      }
-//      else if (size == 0) {
-//         newDynamicObject(tape);
-//         initDynamicObject(tape, lxNil);
-//      }
-//   }
-//   else {
-//      loadObject(tape, lxSelfLocal, 1);
-//      // HOTFIX: -1 indicates the stack is not consumed by the constructor
-//      callMethod(tape, 1, -1);
-//   }
-//}
-//
+void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node)
+{
+   generateExpression(tape, node, ACC_REQUIRED);
+   loadIndex(tape, lxResult);
+
+   if (node.argument != 0) {
+      int size = node.findSubNode(lxSize).argument;
+
+      if ((int)node.argument < 0) {
+         //HOTFIX : recognize primitive object
+         loadObject(tape, lxNil);
+      }
+      else loadObject(tape, lxClassSymbol, node.argument);
+
+      if (size < 0) {
+         newDynamicStructure(tape, -size);
+      }
+      else if (size == 0) {
+         newDynamicObject(tape);
+         initDynamicObject(tape, lxNil);
+      }
+   }
+   //else {
+   //   loadObject(tape, lxSelfLocal, 1);
+   //   // HOTFIX: -1 indicates the stack is not consumed by the constructor
+   //   callMethod(tape, 1, -1);
+   //}
+}
+
 //void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   bool lenMode = node.argument == READ_MESSAGE_ID;
@@ -4842,15 +4842,15 @@ void ByteCodeWriter :: generateBoxing(CommandTape& tape, SNode node)
    //}
    /*else */if (node.argument == 0) {
       SNode attr = node.findChild(lxBoxableAttr);
-      //if (attr.argument == INVALID_REF) {
-      //   // HOTFIX : to recognize a primitive array boxing
-      //   tape.write(bcLen);
-      //   loadBase(tape, lxResult);
-      //   loadObject(tape, lxConstantClass, target.argument);
-      //   newDynamicObject(tape);
-      //   copyDynamicObject(tape, true, true);
-      //}
-      /*else */newVariable(tape, target.argument, lxResult);
+      if (attr.argument == INVALID_REF) {
+         // HOTFIX : to recognize a primitive array boxing
+         tape.write(bcLen);
+         loadBase(tape, lxResult);
+         loadObject(tape, lxClassSymbol, target.argument);
+         newDynamicObject(tape);
+         copyDynamicObject(tape, true, true);
+      }
+      else newVariable(tape, target.argument, lxResult);
    }
    else boxObject(tape, node.argument, target.argument, node != lxCondBoxing);
 
@@ -5466,9 +5466,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
 //      case lxArgArrOp:
 //         generateArrOperation(tape, node);
 //         break;
-//      case lxNewOp:
-//         generateNewOperation(tape, node);
-//         break;
+      case lxNewArrOp:
+         generateNewArrOperation(tape, node);
+         break;
 //      case lxResending:
 //         generateResendingExpression(tape, node);
 //         break;

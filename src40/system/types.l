@@ -43,7 +43,7 @@
 //private         = #8212.
 #8213  = internal;
 #8214  = closed;
-//predefined      = #8215.
+#8215  = predefined;
 #8216  = dispatch;
 
 //__args          = #32. 

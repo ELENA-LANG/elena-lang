@@ -1641,6 +1641,8 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
 
    if (current == lxToken) {
       insertIdentifier(writer, current.firstChild(lxTerminalMask));
+      if (current.existChild(lxDynamicSizeDecl))
+         writer.insertChild(0, lxSize, -1);
    }
    else insertIdentifier(writer, current);
    writer.insert(0, attrType, attrRef);
@@ -1783,7 +1785,12 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             if (goToNode(current, lxCode, lxOperator) == lxCode) {
                generateCodeTemplateTree(writer, current, derivationScope);
             }
-            else generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
+            else {
+               generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
+               if (current.existChild(lxDynamicSizeDecl)) {
+                  writer.appendNode(lxSize, -1);
+               }
+            }
             break;
          case lxPropertyParam:
             // to indicate the get property call
@@ -1799,6 +1806,9 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
                   } while (current.nextNode() == lxToken);
 
                   generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
+                  if (current.existChild(lxDynamicSizeDecl)) {
+                     writer.appendNode(lxSize, -1);
+                  }
                }
             //            identMode = true;
             //            if (scope.type == DerivationScope::ttFieldTemplate) {
@@ -2647,7 +2657,7 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
       }
       else if (scope.type == TemplateScope::ttPropertyTemplate) {
          SNode nodeToInject = scope.parameterValues.get(current.argument);
-         copyTreeNode(writer, nodeToInject, scope);
+         copyExpressionTree(writer, nodeToInject, scope);
       }
       else throw InternalError("Not yet supported");
 
@@ -3001,7 +3011,8 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
       else if(current == lxTemplateParam) {
          SNode nodeToInject = scope.parameterValues.get(current.argument);
 
-         copyTreeNode(writer, nodeToInject, scope);
+         // NOTE : target should not be imported / exported
+         copyExpressionTree(writer, nodeToInject, scope);
       }
       //      else if (current == lxTemplateParam && current.argument == INVALID_REF) {
 //         if (current.argument == INVALID_REF) {
@@ -3035,9 +3046,9 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
 //      else if (current == lxClassRefAttr) {
 //         writer.appendNode(current.type, current.identifier());
 //      }
-//      else if (current == lxSize) {
-//         writer.appendNode(current.type, current.argument);
-//      }
+      else if (current == lxSize) {
+         writer.appendNode(current.type, current.argument);
+      }
       else if (current == lxAttribute)
          writer.appendNode(current.type, current.argument);
 

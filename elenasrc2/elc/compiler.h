@@ -793,8 +793,10 @@ private:
 
    void loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes);
 
+   ObjectInfo mapClassSymbol(Scope& scope, int classRef);
+
    ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef);
-//   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef);
+   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef);
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
@@ -853,7 +855,7 @@ private:
    ref_t resolveTemplateDeclaration(SNode node, CodeScope& scope);
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   void compileVariable(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t typeRef);
+   void compileVariable(SyntaxWriter& writer, SNode& node, CodeScope& scope, ref_t typeRef, bool dynamicArray);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
@@ -936,7 +938,7 @@ private:
 //   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false, bool withOpenArgGenerics = false*/);
 
-//   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
+   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
@@ -945,7 +947,7 @@ private:
 //   void compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message);
 
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
-   void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
+   //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
    void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedCode(_CompilerScope& scope, SNode node);
