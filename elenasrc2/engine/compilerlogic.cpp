@@ -1474,7 +1474,7 @@ int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t referen
       return defineStructSizeVariable(scope, elementRef, 0, variable);
    }
    else if (reference == V_OBJARRAY && elementRef != 0) {
-      return defineStructSizeVariable(scope, elementRef, 0, variable);
+      return -defineStructSizeVariable(scope, elementRef, 0, variable);
    }
    else if (reference == V_INT32ARRAY) {
       variable = true;

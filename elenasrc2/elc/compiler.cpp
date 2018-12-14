@@ -2058,7 +2058,7 @@ void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, Obje
    if (object.extraparam == -1 && !test(mode, HINT_NOBOXING)) {
       ref_t targetRef = resolveObjectReference(scope, object);
       bool variable = false;
-      int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, 0u, variable);
+      int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
       writer.newNode((variable && !test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxCondBoxing, size);
       writer.appendNode(type, object.param);
       if (test(mode, HINT_DYNAMIC_OBJECT))
