@@ -1310,11 +1310,13 @@ public sealed const struct LiteralValue : BaseValue
 //    literal Substring(int anIndex, int aLength)
 //        => system'core_routines'__literal.
 //
-//    /// Reads the literal length into an output parameter
-//    readLengthTo(ref<int> aLength)
-//        => system'core_routines'__literal.
-//        
-//    int rvprop length :: readLengthTo.
+    rvprop int length
+    {
+        /// Reads the literal length into an output parameter
+        read(ref int retVal)
+            => system'core_routines'__literal;
+    }
+
 //
 //    /// Saves the literal into a UTF-32 character array
 //    save(int anIndex, CharArray anArray, ref<int> aRetVal)

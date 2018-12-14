@@ -288,7 +288,8 @@ enum LexicalType
 //   lxTypecasting     = 0x20044,
 //   lxIntConversion   = 0x20045,
    lxTemplateNameParam  = 0x20046,
-   lxTemplateMessageParam = 0x20047,
+   lxTemplateMsgParam   = 0x20047,
+   lxTemplateIdentParam = 0x20048,
 
    lxTempAttr           = 0x2010D,
 };

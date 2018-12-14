@@ -78,6 +78,32 @@ class DerivationWriter : public _DerivationWriter
          return false;
       }
 
+      bool isTypeParameter(ident_t name, ref_t& argument)
+      {
+         if (withTypeParameters()) {
+            int index = parameters.get(name);
+            if (index) {
+               argument = index;
+
+               return true;
+            }
+         }
+         return false;
+      }
+
+      bool isIdentifierParameter(ident_t name, ref_t& argument)
+      {
+         if (withTypeParameters()) {
+            int index = parameters.get(name);
+            if (index) {
+               argument = index;
+
+               return true;
+            }
+         }
+         return false;
+      }
+
       bool withTypeParameters() const
       {
          return templateMode == stClassTemplate || templateMode == stPropertyTemplate;
@@ -126,7 +152,7 @@ class DerivationWriter : public _DerivationWriter
 
    bool recognizeMetaScope(SNode node);
    
-   void generateTemplate(SNode node, SNode nameNode, ScopeType templateType);
+   void generateTemplateTree(SNode node, SNode nameNode, ScopeType templateType);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
@@ -136,7 +162,7 @@ class DerivationWriter : public _DerivationWriter
    /*bool*/void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, SyntaxTree& buffer, bool templateMode*//* = false*/); // returns true if in-place init found
    void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
    void generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/);
-   void generateExpressionAttribute(SyntaxWriter& writer, SNode node/*, DerivationScope& scope, bool rootMode, bool templateMode, bool expressionMode*/, bool templateArgMode = false);
+   void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/, bool templateArgMode = false);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
    void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
    void generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);

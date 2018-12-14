@@ -5799,9 +5799,9 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
    int reserved = node.findChild(lxReserved).argument;
    int allocated = node.findChild(lxAllocated).argument;
    int paramCount = node.findChild(lxParamCount).argument;
-//   ref_t methodSourcePathRef = node.findChild(lxSourcePath).argument;
-//   if (methodSourcePathRef)
-//      sourcePathRef = methodSourcePathRef;
+   ref_t methodSourcePathRef = node.findChild(lxSourcePath).argument;
+   if (methodSourcePathRef)
+      sourcePathRef = methodSourcePathRef;
 
    bool withNewFrame = false;
    bool open = false;

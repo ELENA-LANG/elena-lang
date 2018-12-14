@@ -1399,28 +1399,28 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, iden
    ref_t signature = 0;
    virtualReference.append(moduleScope->module->resolveAction(actionRef, signature));
 
-   //if (signature) {
-   //   ref_t signatures[ARG_COUNT];
-   //   size_t len = moduleScope->module->resolveSignature(signature, signatures);
-   //   for (size_t i = 0; i < len; i++) {
-   //      ident_t paramName = moduleScope->module->resolveReference(signatures[i]);
+   if (signature) {
+      ref_t signatures[ARG_COUNT];
+      size_t len = moduleScope->module->resolveSignature(signature, signatures);
+      for (size_t i = 0; i < len; i++) {
+         ident_t paramName = moduleScope->module->resolveReference(signatures[i]);
 
-   //      NamespaceName ns(paramName);
-   //      if (isTemplateWeakReference(paramName)) {
-   //         virtualReference.append('$');
-   //         virtualReference.append(paramName + getlength(ns));
-   //      }
-   //      else if (isWeakReference(paramName)) {
-   //         virtualReference.append('$');
-   //         virtualReference.append(scope.module->Name());
-   //         virtualReference.append(paramName);
-   //      }
-   //      else {
-   //         virtualReference.append('$');
-   //         virtualReference.append(paramName);
-   //      }
-   //   }
-   //}
+         NamespaceName ns(paramName);
+         if (isTemplateWeakReference(paramName)) {
+            virtualReference.append('$');
+            virtualReference.append(paramName + getlength(ns));
+         }
+         else if (isWeakReference(paramName)) {
+            virtualReference.append('$');
+            virtualReference.append(scope.module->Name());
+            virtualReference.append(paramName);
+         }
+         else {
+            virtualReference.append('$');
+            virtualReference.append(paramName);
+         }
+      }
+   }
 
    virtualReference.replaceAll('\'', '@', signIndex);
 
@@ -7988,7 +7988,7 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
                /*if (!isDependentOnNotDeclaredClass(findBaseParent(current), scope))*/ {
                   current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
             
-                  ClassScope classScope(&scope, current.argument/*, current.findChild(lxSourcePath).identifier()*/);
+                  ClassScope classScope(&scope, current.argument);
             
                   // NOTE : the symbol section is created even if the class symbol doesn't exist
                   scope.moduleScope->mapSection(classScope.reference | mskSymbolRef, false);

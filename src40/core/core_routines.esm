@@ -35,6 +35,17 @@ labTrue:
   
 end
 
+procedure __literal."read:length$@system@ref#1&IntNumber[2]"
+
+  aloadsi 1
+  blen
+  dec
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
 symbol sta_start
 
   pushr entry : "$forwards'$program"
