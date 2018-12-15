@@ -1707,12 +1707,14 @@ public sealed const struct WideLiteralValue : BaseValue
 ////    bool equal : aTarget
 ////        = $self $castValueTo:aTarget; equal:aTarget.
 //}
-//
-//// --- Array ---
-//
-///// An array
-//public sealed Array :: Indexable, Array<object>
-//{
+
+// --- Array ---
+
+/// An array
+public sealed Array //:: Indexable, Array<object>
+{
+    object[] theArray;
+    
 //    /// Creates an empty array
 //    constructor min
 //        = dynamic<object>(0).
@@ -1720,11 +1722,11 @@ public sealed const struct WideLiteralValue : BaseValue
 //    /// Creates the array with the specified length
 //    constructor new : aLength
 //        <= new(T<int>(aLength)).
-//    
-//    /// Creates the array with the specified length
-//    constructor new(int aLength)
-//        = dynamic<object>(aLength).
-//
+    
+    /// Creates the array with the specified length
+    constructor(int len)
+        = new object[](len);
+
 //    /// Creates a copy of the provided array
 //    constructor new(Array anArray)
 //        <= new(0, anArray length, anArray).
@@ -1790,8 +1792,8 @@ public sealed const struct WideLiteralValue : BaseValue
 //    /// Clones the array
 //    T<Array> clone 
 //        = Array new(self).
-//}
-//
+}
+
 //// --- paramsOp ---
 //
 //public extension<__args> paramsOp

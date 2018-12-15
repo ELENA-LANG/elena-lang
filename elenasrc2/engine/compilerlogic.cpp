@@ -578,6 +578,14 @@ bool CompilerLogic :: isEmbeddable(ClassInfo& info)
    return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
 }
 
+bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
+{
+   if (test(info.header.flags, elDynamicRole)) {
+      return isEmbeddableArray(info);
+   }
+   else return isEmbeddable(info);
+}
+
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
    return test(info.header.flags, elRole);
@@ -1057,7 +1065,7 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, ref_t targetSig
    for (size_t i = 0; i < len; i++) {
       flag <<= 1;
 
-      if (isEmbeddable(scope, targetSignatures[i]))
+      if (isStacksafeArg(scope, targetSignatures[i]))
          stackSafeAttr |= flag;
    }
 }
@@ -1073,7 +1081,7 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
    for (size_t i = 0; i < len; i++) {
       flag <<= 1;
 
-      if (isEmbeddable(scope, importReference(targetModule, targetSignatures[i], scope.module)))
+      if (isStacksafeArg(scope, importReference(targetModule, targetSignatures[i], scope.module)))
          stackSafeAttr |= flag;
    }
 }

@@ -127,6 +127,15 @@ public:
 
       return isEmbeddable(info);
    }
+   virtual bool isStacksafeArg(ClassInfo& info);
+   virtual bool isStacksafeArg(_ModuleScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      if (!defineClassInfo(scope, info, reference, true))
+         return false;
+
+      return isStacksafeArg(info);
+   }
    virtual bool isRole(ClassInfo& info);
    virtual bool isAbstract(ClassInfo& info);
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
