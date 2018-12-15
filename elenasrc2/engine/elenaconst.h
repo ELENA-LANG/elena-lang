@@ -56,9 +56,9 @@ namespace _ELENA_
    constexpr auto MUL_OPERATOR_ID         = 0x0014;
    constexpr auto DIV_OPERATOR_ID         = 0x0015;
    constexpr auto REFER_OPERATOR_ID       = 0x0016;
-  constexpr auto APPEND_OPERATOR_ID       = 0x0017;
+   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
    constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
-   //#define SET_REFER_MESSAGE_ID    0x0019
+   constexpr auto SET_REFER_OPERATOR_ID   = 0x0019;
    constexpr auto READ_OPERATOR_ID        = 0x001A;
    constexpr auto WRITE_OPERATOR_ID       = 0x001B;
    //#define SHIFT_MESSAGE_ID        0x001C
@@ -380,10 +380,10 @@ namespace _ELENA_
    constexpr auto SUB_MESSAGE          = "subtract";
    constexpr auto MUL_MESSAGE          = "multiply";
    constexpr auto DIV_MESSAGE          = "divide";
-  // #define REFER_MESSAGE            "getAt"
+   constexpr auto REFER_MESSAGE        = "at";
   // #define APPEND_MESSAGE           "append"
   // #define REDUCE_MESSAGE           "reduce"
-  // #define SET_REFER_MESSAGE        "setAt"
+   constexpr auto SET_REFER_MESSAGE    = "setAt";
   // #define SET_MESSAGE              "set"
    constexpr auto READ_MESSAGE         = "read";
    constexpr auto WRITE_MESSAGE        = "write";

@@ -737,7 +737,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    //addVerb(operators, AND_OPERATOR, AND_MESSAGE_ID);
    //addVerb(operators, OR_OPERATOR, OR_MESSAGE_ID);
    //addVerb(operators, XOR_OPERATOR, XOR_MESSAGE_ID);
-   //addVerb(operators, REFER_OPERATOR, REFER_MESSAGE_ID);
+//   addVerb(operators, REFER_OPERATOR, REFER_OPERATOR_ID);
    //addVerb(operators, APPEND_OPERATOR, APPEND_MESSAGE_ID);
    //addVerb(operators, REDUCE_OPERATOR, REDUCE_MESSAGE_ID);
    //addVerb(operators, WRITE_OPERATOR, WRITE_MESSAGE_ID);

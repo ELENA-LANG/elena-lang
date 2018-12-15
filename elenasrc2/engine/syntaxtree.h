@@ -187,10 +187,10 @@ enum LexicalType
    lxGreaterN        = 0x0C02E,   // arg - value
    lxNotGreaterN     = 0x0C02F,   // arg - value
 
-//   lxIntArrOp        = 0x8C030,   // arg - operation id
+   lxIntArrOp        = 0x8C030,   // arg - operation id
    lxResendExpression= 0x0C031, 
-//   lxByteArrOp       = 0x8C032, // arg - operation id
-//   lxShortArrOp      = 0x8C033, // arg - operation id
+   lxByteArrOp       = 0x8C032, // arg - operation id
+   lxShortArrOp      = 0x8C033, // arg - operation id
 //////   lxReleasing       = 0x0C034,
    lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning       = 0x0C037,   // an assigning expression, arg - size

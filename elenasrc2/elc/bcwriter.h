@@ -261,9 +261,9 @@ class ByteCodeWriter
 //   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
 //   void doArgArrayOperation(CommandTape& tape, int operator_id);
-//   void doIntArrayOperation(CommandTape& tape, int operator_id);
-//   void doByteArrayOperation(CommandTape& tape, int operator_id);
-//   void doShortArrayOperation(CommandTape& tape, int operator_id);
+   void doIntArrayOperation(CommandTape& tape, int operator_id);
+   void doByteArrayOperation(CommandTape& tape, int operator_id);
+   void doShortArrayOperation(CommandTape& tape, int operator_id);
 //   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
 
    bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
@@ -283,7 +283,7 @@ class ByteCodeWriter
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
-//   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node);
 
 //   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);

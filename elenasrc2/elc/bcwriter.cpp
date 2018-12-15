@@ -3080,71 +3080,71 @@ void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, i
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // nread
-//         // dcopye
-//         // nsave
-//         tape.write(bcNRead);
-//         tape.write(bcDCopyE);
-//         tape.write(bcNSave);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // nloade
-//         // nwrite
-//         tape.write(bcNLoadE);
-//         tape.write(bcNWrite);
-//         break;
-//      case SETNIL_REFER_MESSAGE_ID:
-//         // ecopy 0
-//         // nwrite
-//         tape.write(bcECopy, 0);
-//         tape.write(bcNWrite);
-//         break;
-//      // NOTE : read operator is used to define the array length
-//      case READ_MESSAGE_ID:
-//         // nlen
-//         // nsave
-//         tape.write(bcNLen);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // breadb
-//         // dcopye
-//         // nsave
-//         tape.write(bcBReadB);
-//         tape.write(bcDCopyE);
-//         tape.write(bcNSave);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // nloade
-//         // bwriteb
-//         tape.write(bcNLoadE);
-//         tape.write(bcBWriteB);
-//         break;
-//      // NOTE : read operator is used to define the array length
-//      case READ_MESSAGE_ID:
-//         // blen
-//         // nsave
-//         tape.write(bcBLen);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
+
+void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // nread
+         // dcopye
+         // nsave
+         tape.write(bcNRead);
+         tape.write(bcDCopyE);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         // nloade
+         // nwrite
+         tape.write(bcNLoadE);
+         tape.write(bcNWrite);
+         break;
+      //case SETNIL_REFER_MESSAGE_ID:
+      //   // ecopy 0
+      //   // nwrite
+      //   tape.write(bcECopy, 0);
+      //   tape.write(bcNWrite);
+      //   break;
+      //// NOTE : read operator is used to define the array length
+      //case READ_MESSAGE_ID:
+      //   // nlen
+      //   // nsave
+      //   tape.write(bcNLen);
+      //   tape.write(bcNSave);
+      //   break;
+      default:
+         break;
+   }
+}
+
+void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // breadb
+         // dcopye
+         // nsave
+         tape.write(bcBReadB);
+         tape.write(bcDCopyE);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         // nloade
+         // bwriteb
+         tape.write(bcNLoadE);
+         tape.write(bcBWriteB);
+         break;
+      //// NOTE : read operator is used to define the array length
+      //case READ_MESSAGE_ID:
+      //   // blen
+      //   // nsave
+      //   tape.write(bcBLen);
+      //   tape.write(bcNSave);
+      //   break;
+      default:
+         break;
+   }
+}
+
 //void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize)
 //{
 //   switch (operator_id) {
@@ -3453,35 +3453,35 @@ void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, i
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: doShortArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // wread
-//         // dcopye
-//         // nsave
-//         tape.write(bcWRead);
-//         tape.write(bcDCopyE);
-//         tape.write(bcNSave);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // nloade
-//         // wwrite
-//         tape.write(bcNLoadE);
-//         tape.write(bcWWrite);
-//         break;
-//      // NOTE : read operator is used to define the array length
-//      case READ_MESSAGE_ID:
-//         // wlen
-//         // nsave
-//         tape.write(bcWLen);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
+
+void ByteCodeWriter :: doShortArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // wread
+         // dcopye
+         // nsave
+         tape.write(bcWRead);
+         tape.write(bcDCopyE);
+         tape.write(bcNSave);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         // nloade
+         // wwrite
+         tape.write(bcNLoadE);
+         tape.write(bcWWrite);
+         break;
+      //// NOTE : read operator is used to define the array length
+      //case READ_MESSAGE_ID:
+      //   // wlen
+      //   // nsave
+      //   tape.write(bcWLen);
+      //   tape.write(bcNSave);
+      //   break;
+      default:
+         break;
+   }
+}
 
 void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
 {
@@ -3923,132 +3923,132 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
    //}
 }
 
-//void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool lenMode = node.argument == READ_MESSAGE_ID;
-//   bool setMode = (node.argument == SET_REFER_MESSAGE_ID || node.argument == SETNIL_REFER_MESSAGE_ID);
-//   bool assignMode = node != lxArrOp && node != lxArgArrOp;
-//
-//   SNode larg, rarg, rarg2;
-//   assignOpArguments(node, larg, rarg, rarg2);
-//
-//   if (rarg == lxExpression)
-//      rarg = rarg.findSubNodeMask(lxObjectMask);
-//
-//   bool largSimple = isSimpleObject(larg);
-//   bool rargSimple = isSimpleObject(rarg);
-//   bool rarg2Simple = isSimpleObject(rarg2);
-//   bool immIndex = rarg == lxConstantInt;
-//
-//   if (setMode) {
-//      generateObjectExpression(tape, larg, ACC_REQUIRED);
-//      loadBase(tape, lxResult);
-//
-//      if (!rargSimple || !rarg2Simple) {
-//         tape.write(bcPushB);
-//      }
-//
-//      if (!rarg2Simple) {
-//         generateObjectExpression(tape, rarg2, ACC_REQUIRED);
-//         pushObject(tape, lxResult);
-//      }
-//
-//      if (immIndex) {
-//         int index = rarg.findChild(lxIntValue).argument;
-//
-//         loadIndex(tape, rarg.type, index);
-//      }
-//      else {
-//         generateObjectExpression(tape, rarg);
-//         loadIndex(tape, lxResult);
-//      }
-//
-//      if (!rarg2Simple) {
-//         popObject(tape, lxResult);
-//      }
-//      else generateObjectExpression(tape, rarg2);
-//
-//      if (!rargSimple || !rarg2Simple) {
-//         tape.write(bcPopB);
-//      }
-//   }
-//   else if (lenMode) {
-//      generateObjectExpression(tape, rarg, ACC_REQUIRED);
-//      loadBase(tape, lxResult);
-//
-//      generateObjectExpression(tape, larg);
-//   }
-//   else {
-//      if (assignMode && (!largSimple || !rargSimple)) {
-//         tape.write(bcPushB);
-//      }
-//
-//      if (!largSimple) {
-//         generateObjectExpression(tape, larg, ACC_REQUIRED);
-//         pushObject(tape, lxResult);
-//      }
-//
-//      if (immIndex) {
-//         int index = rarg.findChild(lxIntValue).argument;
-//
-//         loadIndex(tape, rarg.type, index);
-//      }
-//      else {
-//         generateObjectExpression(tape, rarg, ACC_REQUIRED);
-//         loadIndex(tape, lxResult);
-//      }
-//
-//      if (!largSimple) {
-//         popObject(tape, lxResult);
-//      }
-//      else generateObjectExpression(tape, larg);
-//
-//      if (assignMode && (!largSimple || !rargSimple)) {
-//         tape.write(bcPopB);
-//      }
-//   }
-//
-//   switch (node.type)
-//   {
-//      case lxIntArrOp:
-//         doIntArrayOperation(tape, node.argument);
-//
-//         if (node.argument == REFER_MESSAGE_ID)
-//            assignBaseTo(tape, lxResult);
-//         break;
-//      case lxByteArrOp:
-//         doByteArrayOperation(tape, node.argument);
-//
-//         if (node.argument == REFER_MESSAGE_ID)
-//            assignBaseTo(tape, lxResult);
-//         break;
-//      case lxShortArrOp:
-//         doShortArrayOperation(tape, node.argument);
-//
-//         if (node.argument == REFER_MESSAGE_ID)
-//            assignBaseTo(tape, lxResult);
-//         break;
-//      case lxBinArrOp:
-//         doBinaryArrayOperation(tape, node.argument, node.findChild(lxSize).argument);
-//
-//         if (node.argument == REFER_MESSAGE_ID)
-//            assignBaseTo(tape, lxResult);
-//         break;
-//      case lxArrOp:
-//         doArrayOperation(tape, node.argument);
-//         break;
-//      case lxArgArrOp:
-//         doArgArrayOperation(tape, node.argument);
-//         break;
-//   }
-//
-//   if (larg == lxLocalUnboxing) {
-//      SNode tempLocal = larg.findChild(lxAssigning).firstChild(lxObjectMask);
-//      loadObject(tape, tempLocal);
-//
-//      unboxLocal(tape, larg, rarg);
-//   }
-//}
+void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
+{
+   //bool lenMode = node.argument == READ_MESSAGE_ID;
+   bool setMode = (node.argument == SET_REFER_OPERATOR_ID/* || node.argument == SETNIL_REFER_MESSAGE_ID*/);
+   bool assignMode = /*node != lxArrOp && node != lxArgArrOp*/true;
+
+   SNode larg, rarg, rarg2;
+   assignOpArguments(node, larg, rarg, rarg2);
+
+   if (rarg == lxExpression)
+      rarg = rarg.findSubNodeMask(lxObjectMask);
+
+   bool largSimple = isSimpleObject(larg);
+   bool rargSimple = isSimpleObject(rarg);
+   bool rarg2Simple = isSimpleObject(rarg2);
+   bool immIndex = rarg == lxConstantInt;
+
+   if (setMode) {
+      generateObject(tape, larg, ACC_REQUIRED);
+      loadBase(tape, lxResult);
+
+      if (!rargSimple || !rarg2Simple) {
+         tape.write(bcPushB);
+      }
+
+      if (!rarg2Simple) {
+         generateObject(tape, rarg2, ACC_REQUIRED);
+         pushObject(tape, lxResult);
+      }
+
+      if (immIndex) {
+         int index = rarg.findChild(lxIntValue).argument;
+
+         loadIndex(tape, rarg.type, index);
+      }
+      else {
+         generateObject(tape, rarg);
+         loadIndex(tape, lxResult);
+      }
+
+      if (!rarg2Simple) {
+         popObject(tape, lxResult);
+      }
+      else generateObject(tape, rarg2);
+
+      if (!rargSimple || !rarg2Simple) {
+         tape.write(bcPopB);
+      }
+   }
+   //else if (lenMode) {
+   //   generateObject(tape, rarg, ACC_REQUIRED);
+   //   loadBase(tape, lxResult);
+
+   //   generateObject(tape, larg);
+   //}
+   else {
+      if (assignMode && (!largSimple || !rargSimple)) {
+         tape.write(bcPushB);
+      }
+
+      if (!largSimple) {
+         generateObject(tape, larg, ACC_REQUIRED);
+         pushObject(tape, lxResult);
+      }
+
+      if (immIndex) {
+         int index = rarg.findChild(lxIntValue).argument;
+
+         loadIndex(tape, rarg.type, index);
+      }
+      else {
+         generateObject(tape, rarg, ACC_REQUIRED);
+         loadIndex(tape, lxResult);
+      }
+
+      if (!largSimple) {
+         popObject(tape, lxResult);
+      }
+      else generateObject(tape, larg);
+
+      if (assignMode && (!largSimple || !rargSimple)) {
+         tape.write(bcPopB);
+      }
+   }
+
+   switch (node.type)
+   {
+      case lxIntArrOp:
+         doIntArrayOperation(tape, node.argument);
+
+         if (node.argument == REFER_OPERATOR_ID)
+            assignBaseTo(tape, lxResult);
+         break;
+      case lxByteArrOp:
+         doByteArrayOperation(tape, node.argument);
+
+         if (node.argument == REFER_OPERATOR_ID)
+            assignBaseTo(tape, lxResult);
+         break;
+      case lxShortArrOp:
+         doShortArrayOperation(tape, node.argument);
+
+         if (node.argument == REFER_OPERATOR_ID)
+            assignBaseTo(tape, lxResult);
+         break;
+      //case lxBinArrOp:
+      //   doBinaryArrayOperation(tape, node.argument, node.findChild(lxSize).argument);
+
+      //   if (node.argument == REFER_MESSAGE_ID)
+      //      assignBaseTo(tape, lxResult);
+      //   break;
+      //case lxArrOp:
+      //   doArrayOperation(tape, node.argument);
+      //   break;
+      //case lxArgArrOp:
+      //   doArgArrayOperation(tape, node.argument);
+      //   break;
+   }
+
+   if (larg == lxLocalUnboxing) {
+      SNode tempLocal = larg.findChild(lxAssigning).firstChild(lxObjectMask);
+      loadObject(tape, tempLocal);
+
+      unboxLocal(tape, larg, rarg);
+   }
+}
 
 void ByteCodeWriter :: unboxLocal(CommandTape& tape, SNode larg, SNode rarg)
 {
@@ -5458,14 +5458,14 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
 //      case lxRealOp:
          generateOperation(tape, node, mode);
          break;
-//      case lxIntArrOp:
-//      case lxByteArrOp:
-//      case lxShortArrOp:
+      case lxIntArrOp:
+      case lxByteArrOp:
+      case lxShortArrOp:
 //      case lxArrOp:
 //      case lxBinArrOp:
 //      case lxArgArrOp:
-//         generateArrOperation(tape, node);
-//         break;
+         generateArrOperation(tape, node);
+         break;
       case lxNewArrOp:
          generateNewArrOperation(tape, node);
          break;
