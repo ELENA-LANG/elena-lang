@@ -5590,7 +5590,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
          // adding the code loading self
          writer.newNode(lxReturning);
          writer.newBookmark();
-         writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO/* | HINT_NOBOXING*/) ;
+         writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO | HINT_NOBOXING) ;
 
          ref_t resultRef = scope.getReturningRef(false);
          if (resultRef != 0) {

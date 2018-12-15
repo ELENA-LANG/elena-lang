@@ -74,123 +74,123 @@ _Parser* Session :: newParser(int id, ParserType type)
 
 void Session :: parseDirectives(MemoryDump& tape, _ScriptReader& reader)
 {
-   TapeWriter writer(&tape);
-
-   do {
-      if (reader.compare(";")) {
-         break;
-      }
-      else if(reader.compare("#start")) {
-         writer.writeCommand(START_VM_MESSAGE_ID);
-      }
-      else if (reader.compare("#config")) {
-         ScriptBookmark bm = reader.read();
-         if (bm.state == dfaIdentifier) {
-            writer.writeCommand(LOAD_VM_MESSAGE_ID, reader.lookup(bm));
-         }
-      }
-      else if (reader.compare("#map")) {
-         ScriptBookmark bm = reader.read();
-
-         IdentifierString forward;
-         if (bm.state == dfaFullIdentifier) {
-            forward.append(reader.lookup(bm));
-
-            bm = reader.read();
-            if (!reader.compare("="))
-               throw EParseError(bm.column, bm.row);
-
-            bm = reader.read();
-            if (bm.state == dfaFullIdentifier) {
-               forward.append('=');
-               forward.append(reader.lookup(bm));
-               writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
-            }
-            else throw EParseError(bm.column, bm.row);
-         }
-         else throw EParseError(bm.column, bm.row);
-      }
-      else if (reader.compare("#use")) {
-         ScriptBookmark bm = reader.read();
-
-         if (bm.state == dfaQuote) {
-            writer.writeCommand(USE_VM_MESSAGE_ID, reader.lookup(bm));
-         }
-         else {
-            IdentifierString package;
-            package.append(reader.lookup(bm));
-
-            bm = reader.read();
-            if (!reader.compare("="))
-               throw EParseError(bm.column, bm.row);
-
-            bm = reader.read();
-            if (bm.state == dfaQuote) {
-               package.append('=');
-               package.append(reader.lookup(bm));
-               writer.writeCommand(USE_VM_MESSAGE_ID, package);
-            }
-            else throw EParseError(bm.column, bm.row);
-         }
-      }
-      else return;
-
-      reader.read();
-   }
-   while(true);
+//   TapeWriter writer(&tape);
+//
+//   do {
+//      if (reader.compare(";")) {
+//         break;
+//      }
+//      else if(reader.compare("#start")) {
+//         writer.writeCommand(START_VM_MESSAGE_ID);
+//      }
+//      else if (reader.compare("#config")) {
+//         ScriptBookmark bm = reader.read();
+//         if (bm.state == dfaIdentifier) {
+//            writer.writeCommand(LOAD_VM_MESSAGE_ID, reader.lookup(bm));
+//         }
+//      }
+//      else if (reader.compare("#map")) {
+//         ScriptBookmark bm = reader.read();
+//
+//         IdentifierString forward;
+//         if (bm.state == dfaFullIdentifier) {
+//            forward.append(reader.lookup(bm));
+//
+//            bm = reader.read();
+//            if (!reader.compare("="))
+//               throw EParseError(bm.column, bm.row);
+//
+//            bm = reader.read();
+//            if (bm.state == dfaFullIdentifier) {
+//               forward.append('=');
+//               forward.append(reader.lookup(bm));
+//               writer.writeCommand(MAP_VM_MESSAGE_ID, forward);
+//            }
+//            else throw EParseError(bm.column, bm.row);
+//         }
+//         else throw EParseError(bm.column, bm.row);
+//      }
+//      else if (reader.compare("#use")) {
+//         ScriptBookmark bm = reader.read();
+//
+//         if (bm.state == dfaQuote) {
+//            writer.writeCommand(USE_VM_MESSAGE_ID, reader.lookup(bm));
+//         }
+//         else {
+//            IdentifierString package;
+//            package.append(reader.lookup(bm));
+//
+//            bm = reader.read();
+//            if (!reader.compare("="))
+//               throw EParseError(bm.column, bm.row);
+//
+//            bm = reader.read();
+//            if (bm.state == dfaQuote) {
+//               package.append('=');
+//               package.append(reader.lookup(bm));
+//               writer.writeCommand(USE_VM_MESSAGE_ID, package);
+//            }
+//            else throw EParseError(bm.column, bm.row);
+//         }
+//      }
+//      else return;
+//
+//      reader.read();
+//   }
+//   while(true);
 }
 
 void Session :: parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader)
 {
-   _Parser* parser = NULL;
-
-   reader.read();
-
-   if (reader.compare("[[")) {
-      while (!reader.compare("]]")) {
-         ScriptBookmark bm = reader.read();
-         if (reader.compare("#grammar")) {
-            reader.read();
-
-            if (reader.compare("cf")) {
-               parser = newParser(id, Session::ptCF);
-            }
-            else if (reader.compare("inline")) {
-               parser = newParser(id, Session::ptInline);
-            }
-            else if (reader.compare("transform")) {
-               parser = newParser(id, Session::ptTransform);
-            }
-            else if (reader.compare("tree")) {
-               parser = newParser(id, Session::ptTree);
-            }
-            else throw EParseError(bm.column, bm.row);
-         }
-         else {
-            if (!parser)
-               parser = getParser(id);
-
-            if (reader.compare("#define")) {
-               parser->parseGrammarRule(reader);
-            }
-            else if (reader.compare("#set")) {
-               reader.read();
-               if (reader.compare("postfix")) {
-                  bm = reader.read();
-
-                  if (!parser->setPostfix(reader.lookup(bm)))
-                     throw EParseError(bm.column, bm.row);
-               }
-               else throw EParseError(bm.column, bm.row);
-            }
-            else if (reader.compare("#mode")) {
-               parser->parseGrammarMode(reader);
-            }
-            else parseDirectives(tape, reader);
-         }
-      }
-   }
-   else reader.reset();
+//   _Parser* parser = NULL;
+//
+//   reader.read();
+//
+//   if (reader.compare("[[")) {
+//      while (!reader.compare("]]")) {
+//         ScriptBookmark bm = reader.read();
+//         if (reader.compare("#grammar")) {
+//            reader.read();
+//
+//            if (reader.compare("cf")) {
+//               parser = newParser(id, Session::ptCF);
+//            }
+//            else if (reader.compare("inline")) {
+//               parser = newParser(id, Session::ptInline);
+//            }
+//            else if (reader.compare("transform")) {
+//               parser = newParser(id, Session::ptTransform);
+//            }
+//            else if (reader.compare("tree")) {
+//               parser = newParser(id, Session::ptTree);
+//            }
+//            else throw EParseError(bm.column, bm.row);
+//         }
+//         else {
+//            if (!parser)
+//               parser = getParser(id);
+//
+//            if (reader.compare("#define")) {
+//               parser->parseGrammarRule(reader);
+//            }
+//            else if (reader.compare("#set")) {
+//               reader.read();
+//               if (reader.compare("postfix")) {
+//                  bm = reader.read();
+//
+//                  if (!parser->setPostfix(reader.lookup(bm)))
+//                     throw EParseError(bm.column, bm.row);
+//               }
+//               else throw EParseError(bm.column, bm.row);
+//            }
+//            else if (reader.compare("#mode")) {
+//               parser->parseGrammarMode(reader);
+//            }
+//            else parseDirectives(tape, reader);
+//         }
+//      }
+//   }
+//   else reader.reset();
 }
 
 void Session :: parseScript(int id, MemoryDump& tape, _ScriptReader& reader)

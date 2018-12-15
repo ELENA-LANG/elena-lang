@@ -249,7 +249,7 @@ protected:
 
    void saveActionNames(MemoryWriter* writer)
    {
-      _actions.write(writer);
+//      _actions.write(writer);
    }
 
 public:

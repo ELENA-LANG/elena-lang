@@ -14,7 +14,7 @@ rem bin\asm2binx -amd64 asm\amd64\core.asm bin\amd64
 rem bin\asm2binx -amd64 asm\amd64\core_win.asm bin\amd64
 rem bin\asm2binx -amd64 asm\amd64\coreapi.asm bin\amd64
 
-rem bin\elc src34\system\system.prj
+bin\elc src40\system\system.prj
 rem bin\elc src34\extensions\extensions.prj
 rem bin\elc src34\net\net.prj
 rem bin\elc src33\forms\forms.prj
