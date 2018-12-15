@@ -23,12 +23,12 @@ namespace _ELENA_
    constexpr int ACTION_ORDER       = 8;
 
    constexpr auto MESSAGE_FLAG_MASK = 0xE0u;
-//   #define SEALED_MESSAGE          0x40000000u
 ////   #define SPECIAL_MESSAGE         0x60000000u
 ////   #define PROPSET_MESSAGE         0x20000000u
    // indicates it is an invoke message
    constexpr auto SPECIAL_MESSAGE      = 0x20u;
    constexpr auto PROPERTY_MESSAGE     = 0x40u;
+   constexpr auto STATIC_MESSAGE       = 0x80u;
    constexpr auto PARAM_MASK           = 0x1Fu;
    constexpr auto ARG_COUNT            = 0x1Fu;
 
@@ -46,7 +46,7 @@ namespace _ELENA_
    constexpr auto AND_OPERATOR_ID         = 0x000A;
    constexpr auto OR_OPERATOR_ID          = 0x000B;
    constexpr auto XOR_OPERATOR_ID         = 0x000C;
-   //#define IFNOT_MESSAGE_ID        0x000D
+   constexpr auto IFNOT_OPERATOR_ID       = 0x000D;
    constexpr auto NOTEQUAL_OPERATOR_ID    = 0x000E;
    constexpr auto NOTLESS_OPERATOR_ID     = 0x000F;
    constexpr auto NOTGREATER_OPERATOR_ID  = 0x0010;
@@ -160,7 +160,7 @@ namespace _ELENA_
 //      mskRealRef             = 0x05000000u,   // reference to constant real number
       mskMessage             = 0x06000000u,   // message constant
 //      mskCharRef             = 0x07000000u,   // reference to character constant
-//      mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
+      mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
 //      mskSignature           = 0x09000000u,   // message signature constant
 //      mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
@@ -395,19 +395,19 @@ namespace _ELENA_
   // #define ISNIL_MESSAGE            "#isnil"
 
    // ELENA verb operators
-   #define EQUAL_OPERATOR		      "=="
-   #define NOTEQUAL_OPERATOR		   "!="
-//   #define NOTLESS_OPERATOR		   ">="
-//   #define NOTGREATER_OPERATOR      "<="
-//   #define GREATER_OPERATOR		   ">"
-   #define LESS_OPERATOR            "<"
-   #define IF_OPERATOR			      "?"
-//   #define IFNOT_OPERATOR		      "!"
-//   #define AND_OPERATOR             "&&"
-//   #define OR_OPERATOR              "||"
-//   #define XOR_OPERATOR             "^^"
-   #define ADD_OPERATOR             "+"
-//   #define SUB_OPERATOR             "-"
+   constexpr auto EQUAL_OPERATOR       = "==";
+   constexpr auto NOTEQUAL_OPERATOR		= "!=";
+      //   #define NOTLESS_OPERATOR		   ">="
+      //   #define NOTGREATER_OPERATOR      "<="
+   constexpr auto GREATER_OPERATOR     = ">";
+   constexpr auto LESS_OPERATOR        = "<";
+   constexpr auto IF_OPERATOR          = "?";
+   constexpr auto IFNOT_OPERATOR       = "!";
+      //   #define AND_OPERATOR             "&&"
+      //   #define OR_OPERATOR              "||"
+      //   #define XOR_OPERATOR             "^^"
+   constexpr auto ADD_OPERATOR         = "+";
+   constexpr auto SUB_OPERATOR         = "-";
 //   #define MUL_OPERATOR             "*"
 //   #define DIV_OPERATOR             "/"
 //   #define REFER_OPERATOR			   "@"
@@ -504,8 +504,8 @@ namespace _ELENA_
    constexpr auto INT_FORWARD             ="$int";
 //   #define LONG_FORWARD             "$long"
 //   #define REAL_FORWARD             "$real"
-   constexpr auto STR_FORWARD              ="$literal";
-//   #define WIDESTR_FORWARD          "$wideliteral"
+   constexpr auto STR_FORWARD             = "$literal";
+   constexpr auto WIDESTR_FORWARD         = "$wideliteral";
 //   #define CHAR_FORWARD             "$char"
    constexpr auto MESSAGE_FORWARD         = "$message";
 //   #define EXT_MESSAGE_FORWARD      "$ext_message"

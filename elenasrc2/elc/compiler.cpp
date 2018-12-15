@@ -34,7 +34,7 @@ constexpr auto HINT_EXTERNALOP      = 0x08000000;
 constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //#define HINT_EXTENSION_MODE   0x02000000
 //#define HINT_COLLECTION_MODE  0x01000000
-//#define HINT_LOOP             0x00800000
+constexpr auto HINT_LOOP            = 0x00800000;
 //#define HINT_SWITCH           0x00400000
 ////#define HINT_ALT_MODE         0x00200000
 //#define HINT_SINGLETON        0x00100000
@@ -167,7 +167,7 @@ inline bool isConstantArguments(SNode node)
                return false;
             break;
          case lxLiteral:
-         //case lxWide:
+         case lxWide:
          //case lxCharacter:
          case lxInteger:
          //case lxLong:
@@ -2088,9 +2088,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okLiteralConstant:
          writer.newNode(lxConstantString, object.param);
          break;
-//      case okWideLiteralConstant:
-//         writer.newNode(lxConstantWideStr, object.param);
-//         break;
+      case okWideLiteralConstant:
+         writer.newNode(lxConstantWideStr, object.param);
+         break;
 //      case okCharConstant:
 //         writer.newNode(lxConstantChar, object.param);
 //         break;
@@ -2254,9 +2254,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
       case lxLiteral:
          object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
          break;
-//      case lxWide:
-//         object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token));
-//         break;
+      case lxWide:
+         object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->wideReference);
+         break;
 //      case lxCharacter:
 //         object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token));
 //         break;
@@ -2702,15 +2702,15 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 //   return 0;
 //}
 
-void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/)
+void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode/*, bool switchMode*/)
 {
-   //if (loopMode) {
-   //   writer.newNode(lxElse, ifReference);
+   if (loopMode) {
+      writer.newNode(lxElse, ifReference);
 
-   //   compileBranching(writer, thenBody.findSubNode(lxCode), scope);
-   //   writer.closeNode();
-   //}
-   //else {
+      compileBranching(writer, thenBody.findSubNode(lxCode), scope);
+      writer.closeNode();
+   }
+   else {
       SNode thenCode = thenBody.findSubNode(lxCode);
 
       writer.newNode(lxIf, ifReference);
@@ -2727,7 +2727,7 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, Cod
             writer.closeNode();
          }
       //}
-//   }
+   }
 }
 
 ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount)
@@ -2773,24 +2773,24 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int pa
 
 void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal)
 {
-   //bool loopMode = test(mode, HINT_LOOP);
+   bool loopMode = test(mode, HINT_LOOP);
    //bool switchMode = test(mode, HINT_SWITCH);
 
    // HOTFIX : in loop expression, else node is used to be similar with branching code
    // because of optimization rules
    ref_t original_id = operator_id;
-   //if (loopMode) {
-   //   operator_id = operator_id == IF_MESSAGE_ID ? IFNOT_MESSAGE_ID : IF_MESSAGE_ID;
-   //}
+   if (loopMode) {
+      operator_id = operator_id == IF_OPERATOR_ID ? IFNOT_OPERATOR_ID : IF_OPERATOR_ID;
+   }
 
    ref_t ifReference = 0;
    ref_t resolved_operator_id = operator_id;
    // try to resolve the branching operator directly
    if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
       // good luck : we can implement branching directly
-      compileBranchingNodes(writer, roperandNode, scope, ifReference/*, loopMode, switchMode*/);
+      compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode/*, switchMode*/);
 
-      writer.insert(/*loopMode ? lxLooping : */lxBranching, /*switchMode ? -1 : */0);
+      writer.insert(loopMode ? lxLooping : lxBranching, /*switchMode ? -1 : */0);
       writer.closeNode();
    }
    else {
@@ -2809,10 +2809,10 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
 
       retVal = compileMessage(writer, roperandNode, scope, loperand, message, 0, 0);
 
-      //if (loopMode) {
-      //   writer.insert(lxLooping);
-      //   writer.closeNode();
-      //}
+      if (loopMode) {
+         writer.insert(lxLooping);
+         writer.closeNode();
+      }
    }
 }
 
@@ -4298,61 +4298,63 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
    bool newVariable = false;
    bool dynamicSize = false;
    ExpressionAttributes attributes;
-   ref_t typeRef = 0;
    while (current == lxAttribute) {
       int value = current.argument;
-      if (_logic->validateExpressionAttribute(value, attributes)) {
-         if (attributes.typeAttr && test(mode, HINT_ROOT) && !attributes.castAttr) {
-            // if it is a variable declaration
-            newVariable = true;
-            typeRef = value;
-         }
-         else if (attributes.castAttr) {
-            SNode msgNode = goToNode(current, lxMessage);
-            if (msgNode != lxNone && msgNode.firstChild() == lxNone) {
-               msgNode.set(lxTypecast, value);
-               if (value == V_CONVERSION)
-                  mode |= HINT_VIRTUALEXPR;
-            }
-            else invalidExpr = true;
-         }
-         else if (attributes.templateAttr && test(mode, HINT_ROOT) && typeRef == 0) {
-            typeRef = resolveTemplateDeclaration(current, scope);
-
-            newVariable = true;
-         }
-         else if (attributes.forwardAttr && !newVariable && !typeRef) {
-            mode |= HINT_FORWARD;
-         }
-         else if (attributes.externAttr) {
-            mode |= HINT_EXTERNALOP;
-         }
-         else if (attributes.internAttr) {
-            mode |= HINT_INTERNALOP;
-         }
-         else if (attributes.refAttr) {
-            mode |= HINT_REFOP;
-         }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-
-         //            // negative value defines the target virtual class
-         //            if (variable.extraparam == 0) {
-         //               variable.extraparam = value;
-         //            }
-         //            //else if (value == V_OBJARRAY) {
-         //            //   variable.element = variable.extraparam;
-         //            //   variable.extraparam = value;
-         //            //}
-         //            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-      }
-      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+      if (!_logic->validateExpressionAttribute(value, attributes))
+         scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 
       current = current.nextNode();
    }
 
+   if (attributes.typeAttr && test(mode, HINT_ROOT) && !attributes.castAttr) {
+      // if it is a variable declaration
+      newVariable = true;
+   }
+   if (attributes.castAttr || attributes.newOpAttr) {
+      SNode msgNode = goToNode(current, lxMessage);
+      if (msgNode != lxNone && msgNode.firstChild() == lxNone) {
+         if (attributes.castAttr) {
+            mode |= HINT_VIRTUALEXPR;
+            msgNode.set(lxTypecast, V_CONVERSION);
+         }
+         else msgNode.set(lxTypecast, V_NEWOP);
+      }
+      else invalidExpr = true;
+   }
+   if (attributes.templateAttr && test(mode, HINT_ROOT) && attributes.typeRef == 0) {
+      attributes.typeRef = resolveTemplateDeclaration(current, scope);
+
+      newVariable = true;
+   }
+   if (attributes.forwardAttr && !newVariable && !attributes.typeRef) {
+      mode |= HINT_FORWARD;
+   }
+   if (attributes.externAttr) {
+      mode |= HINT_EXTERNALOP;
+   }
+   if (attributes.internAttr) {
+      mode |= HINT_INTERNALOP;
+   }
+   if (attributes.refAttr) {
+      mode |= HINT_REFOP;
+   }
+   if (attributes.loopAttr) {
+      mode |= HINT_LOOP;
+   }
+
+   //            // negative value defines the target virtual class
+   //            if (variable.extraparam == 0) {
+   //               variable.extraparam = value;
+   //            }
+   //            //else if (value == V_OBJARRAY) {
+   //            //   variable.element = variable.extraparam;
+   //            //   variable.extraparam = value;
+   //            //}
+   //            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+
    if (current == lxTarget) {
-      if (typeRef == 0) {
-         typeRef = mapTypeAttribute(current, scope);
+      if (attributes.typeRef == 0) {
+         attributes.typeRef = mapTypeAttribute(current, scope);
          newVariable = true;
          if (current.existChild(lxSize)) {
             dynamicSize = true;
@@ -4368,10 +4370,10 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
    }
 
    if (newVariable) {
-      if (!typeRef)
-         typeRef = scope.moduleScope->superReference;
+      if (!attributes.typeRef)
+         attributes.typeRef = scope.moduleScope->superReference;
 
-      compileVariable(writer, current, scope, typeRef, dynamicSize);
+      compileVariable(writer, current, scope, attributes.typeRef, dynamicSize);
    }
 }
 
@@ -4388,8 +4390,17 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
    SNode current = node.firstChild();
    // COMPILER MAGIC : compile the expression attributes
-   if (current.compare(lxAttribute, lxTarget))
+   if (current.compare(lxAttribute, lxTarget)) {
       compileExpressionAttributes(writer, current, scope, targetMode);
+      if (test(targetMode, HINT_LOOP)) {
+         // COMPILER MAGIC : if the operation starts with the loop attribute - apply it to the whole expression
+         if (current.nextNode() != lxNone) {
+            targetMode &= ~HINT_LOOP;
+            mode |= HINT_LOOP;
+         }
+      }
+   }
+      
 
    SNode operationNode = current.nextNode();
    if (operationNode == lxAssign) {
@@ -4411,7 +4422,6 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //      }
 //
 //      if (operationNode != lxNone) {
-//         // if the object is not single, do not pass the target reference
          objectInfo = compileObject(writer, current, scope, 0, targetMode);         
          if (operationNode != lxNone) {
             operationNode.refresh(); // HOTFIX : to reflect changes after the property compilation
@@ -5014,6 +5024,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
       else if (test(scope.hints, tpConstructor) && unnamedMessage) {
          actionStr.copy(CONSTRUCTOR_MESSAGE);
+         flags |= STATIC_MESSAGE;
 //         if (paramCount > 0) {
 //            //HOTFIX : replace constructor attribute with conversion one
 //            SNode attrNode = goToNode(node.firstChild(), lxAttribute, tpConstructor);
@@ -5300,11 +5311,14 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 
    ref_t messageRef = 0;
+   bool implicitConstructor = false;
    SNode messageNode = expr.findChild(lxMessage);
    if (messageNode.firstChild(lxTerminalMask) == lxNone) {
       // HOTFIX : support implicit constructors
       messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), 
-         SyntaxTree::countNodeMask(messageNode, lxObjectMask), 0);
+         SyntaxTree::countNodeMask(messageNode, lxObjectMask), STATIC_MESSAGE);
+
+      implicitConstructor = true;
    }
    else messageRef = mapMessage(messageNode, scope);
 
@@ -5334,9 +5348,12 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
 
    ref_t implicitSignatureRef = compileMessageParameters(writer, expr.findChild(lxMessage).nextNode(), resendScope);
 
-   ObjectInfo target(okClassSelf, classRef, classRef);
+   ObjectInfo target(okClassSelf, scope.getClassRefId(), classRef);
    int stackSafeAttr = 0;
-   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, /*false, */stackSafeAttr);
+   if (implicitConstructor) {
+      messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), stackSafeAttr);
+   }
+   else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, /*false, */stackSafeAttr);
 
    // find where the target constructor is declared in the current class
    // but it is not equal to the current method
@@ -6667,8 +6684,9 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
    int paramCount = 0;
    ref_t actionRef = 0, flags = 0, signRef = 0;
    decodeMessage(messageRef, actionRef, paramCount, flags);
-   
-   if (paramCount == 0/* || flags == SPECIAL_MESSAGE*/)
+
+   // HOTFIX : do not resolve multi-methods for private methods / implicit constructors
+   if (paramCount == 0 || test(flags, STATIC_MESSAGE))
       return 0;
 
    ident_t actionStr = scope.module->resolveAction(actionRef, signRef);
@@ -6691,8 +6709,8 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    // first pass - mark all multi-methods
    SNode current = root.firstChild();
    while (current != lxNone) {
-      if (current == methodType/* && !test(current.argument, SEALED_MESSAGE)*/) {
-         ////HOTFIX : ignore private methods
+      if (current == methodType && !test(current.argument, STATIC_MESSAGE)) {
+         ////HOTFIX : ignore private methods / implicit constructors
          ref_t multiMethod = resolveMultimethod(scope, current.argument);
          if (multiMethod) {
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
@@ -7042,20 +7060,20 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
       //   parentRef = scope.moduleScope->realReference;
       //}
-      //else if (retVal.kind == okLiteralConstant) {
-      //   ident_t value = module->resolveConstant(retVal.param);
+      else if (retVal.kind == okLiteralConstant) {
+         ident_t value = module->resolveConstant(retVal.param);
 
-      //   dataWriter.writeLiteral(value, getlength(value) + 1);
+         dataWriter.writeLiteral(value, getlength(value) + 1);
 
-      //   parentRef = scope.moduleScope->literalReference;
-      //}
-      //else if (retVal.kind == okWideLiteralConstant) {
-      //   WideString wideValue(module->resolveConstant(retVal.param));
+         parentRef = scope.moduleScope->literalReference;
+      }
+      else if (retVal.kind == okWideLiteralConstant) {
+         WideString wideValue(module->resolveConstant(retVal.param));
 
-      //   dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
+         dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
 
-      //   parentRef = scope.moduleScope->wideReference;
-      //}
+         parentRef = scope.moduleScope->wideReference;
+      }
       //else if (retVal.kind == okCharConstant) {
       //   ident_t value = module->resolveConstant(retVal.param);
 
@@ -7306,7 +7324,7 @@ ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
             case lxConstantList:
             //case lxConstantReal:
             case lxConstantString:
-            //case lxConstantWideStr:
+            case lxConstantWideStr:
             case lxConstantSymbol:
                break;
             case lxNested:
@@ -7742,12 +7760,12 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       case lxExternalCall:
       case lxCoreAPICall:
          return analizeExtCall(current, scope);
-      //case lxLooping:
+      case lxLooping:
       //case lxSwitching:
       //case lxOption:
       //case lxElse:
-      //   analizeExpressionTree(current, scope);
-      //   return 0;
+         analizeExpressionTree(current, scope);
+         return 0;
       case lxNested:
          return analizeNestedExpression(current, scope);
       default:
@@ -7774,7 +7792,7 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
             analizeExpressionTree(current, scope);
             break;
          case lxBranching:
-         //case lxLooping:
+         case lxLooping:
             analizeBranching(current, scope);
             break;
          default:
@@ -8233,7 +8251,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.realReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REAL_FORWARD));
 //   scope.arrayReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAY_FORWARD));
    scope.literalReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(STR_FORWARD));
-//   scope.wideReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WIDESTR_FORWARD));
+   scope.wideReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WIDESTR_FORWARD));
 //   scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
 //   scope.boolReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
 //   scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));

@@ -108,7 +108,7 @@ public:
       okConstantSymbol,               // param - reference
       okClass,                        // param - reference
       okLiteralConstant,              // param - reference
-//      okWideLiteralConstant,          // param - reference
+      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
       okUIntConstant,                 // param - reference, extraparam - imm argument
@@ -876,7 +876,7 @@ private:
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
 //   ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand);
-   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
+   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode/*, bool switchMode*/);
    void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
    ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
 

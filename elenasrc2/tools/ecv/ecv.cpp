@@ -407,10 +407,10 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       referenceName = _literal;
       literalConstant = true;
    }
-   //else if (mask == mskWideLiteralRef) {
-   //   referenceName = _wide;
-   //   literalConstant = true;
-   //}
+   else if (mask == mskWideLiteralRef) {
+      referenceName = _wide;
+      literalConstant = true;
+   }
    //else if (mask == mskRealRef) {
    //   referenceName = _real;
    //   literalConstant = true;

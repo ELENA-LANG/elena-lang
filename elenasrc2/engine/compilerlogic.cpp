@@ -1219,7 +1219,7 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
       if (!defineClassInfo(scope, classClassinfo, getClassClassRef(scope, targetRef)))
          return 0;
 
-      ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, 0);
+      ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, STATIC_MESSAGE);
       if (classClassinfo.methods.exist(messageRef)) {
          return messageRef;
       }
@@ -1831,28 +1831,28 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
    }
 }
 
-bool CompilerLogic::validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes)
+bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttributes& attributes)
 {
    switch (attrValue) {
       case (int)V_VARIABLE:
       case (int)V_AUTO:
          if (!attributes.typeAttr) {
             attributes.typeAttr = true;
-            if (attrValue == V_VARIABLE)
-               attrValue = 0;
+            if (attrValue == V_AUTO)
+               attributes.typeRef = V_AUTO;
 
             return true;
          }
          else return false;
       case (int)V_CONVERSION:
-         if (!attributes.castAttr) {
+         if (!attributes.castAttr && !attributes.newOpAttr) {
             attributes.castAttr = true;
             return true;
          }
          else return false;
       case (int)V_NEWOP:
-         if (!attributes.castAttr) {
-            attributes.castAttr = true;
+         if (!attributes.castAttr && !attributes.newOpAttr) {
+            attributes.newOpAttr = true;
             return true;
          }
          else return false;
@@ -1887,6 +1887,13 @@ bool CompilerLogic::validateExpressionAttribute(int& attrValue, ExpressionAttrib
       case (int)V_INTERN:
          if (!attributes.internAttr) {
             attributes.internAttr = true;
+
+            return true;
+         }
+         else return false;
+      case (int)V_LOOP:
+         if (!attributes.loopAttr) {
+            attributes.loopAttr = true;
 
             return true;
          }

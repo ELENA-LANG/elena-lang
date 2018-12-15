@@ -723,15 +723,15 @@ inline void addVerb(MessageMap& map, const char* verb, int id)
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)
 {
    addVerb(operators, ADD_OPERATOR, ADD_OPERATOR_ID);
-   //addVerb(operators, SUB_OPERATOR, SUB_MESSAGE_ID);
+   addVerb(operators, SUB_OPERATOR, SUB_OPERATOR_ID);
    //addVerb(operators, MUL_OPERATOR, MUL_MESSAGE_ID);
    //addVerb(operators, DIV_OPERATOR, DIV_MESSAGE_ID);
    addVerb(operators, IF_OPERATOR, IF_OPERATOR_ID);
-   //addVerb(operators, IFNOT_OPERATOR, IFNOT_MESSAGE_ID);
+   addVerb(operators, IFNOT_OPERATOR, IFNOT_OPERATOR_ID);
    addVerb(operators, EQUAL_OPERATOR, EQUAL_OPERATOR_ID);
    addVerb(operators, NOTEQUAL_OPERATOR, NOTEQUAL_OPERATOR_ID);
    addVerb(operators, LESS_OPERATOR, LESS_OPERATOR_ID);
-   //addVerb(operators, GREATER_OPERATOR, GREATER_MESSAGE_ID);
+   addVerb(operators, GREATER_OPERATOR, GREATER_OPERATOR_ID);
    //addVerb(operators, NOTLESS_OPERATOR, NOTLESS_MESSAGE_ID);
    //addVerb(operators, NOTGREATER_OPERATOR, NOTGREATER_MESSAGE_ID);
    //addVerb(operators, AND_OPERATOR, AND_MESSAGE_ID);

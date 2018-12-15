@@ -1347,10 +1347,10 @@ public sealed const struct LiteralValue : BaseValue
 //    int rvprop hash_code :: readHashCodeTo.
 }
 
-//// --- emptyWideLiteralValue ---
-//
-///// An empty wide literal value
-//const wide emptyWideLiteral = ""w.
+// --- emptyWideLiteralValue ---
+
+/// An empty wide literal value
+const wide emptyWideLiteral = ""w;
 
 // --- WideLiteralValue ---
 
@@ -1389,13 +1389,13 @@ public sealed const struct WideLiteralValue : BaseValue
 //    /// Creates the copy of a subarray
 //    constructor new(int anIndex, int aSize, CharArray anArray)
 //        => system'core_routines'__wide.
-//
-//    internal constructor fromShortArray(int anIndex, int aSize, ShortArray anArray)
-//        <= new(aSize);
-//    [
-//        system'core_routines'__wide copy(self, anIndex, aSize, anArray).
-//    ]
-//
+
+    /*internal */constructor fromShortArray(int anIndex, int aSize, short[] anArray)
+        <= (aSize)
+    {
+        intern system'core_routines'__wide.copy(self, anIndex, aSize, anArray)
+    }
+
 //    /// Converts to UTF-8 literal
 //    cast T<literal> = literalConvertor convert(self).
 //
@@ -2243,24 +2243,24 @@ public singleton wideConvertor
             ^ WideLiteralValue.fromShortArray(0, m, buffer)
         };
         
-//        wide retVal := emptyWideLiteral.
-//        while(l > 0)
-//        [
-//            page := l.
-//            if (page > 256)
-//            [
-//                page := 256
-//            ].
-//            
-//            self convert(aLiteral Substring(i,page), T<ShortArray>(buffer), &m).
-//            
-//            retVal := retVal add(WideLiteralValue fromShortArray(0, m, T<ShortArray>(buffer))).
-//            
-//            i := i + page.
-//            l := l - page
-//        ].
-//        
-//        ^ retVal
+        wide retVal := emptyWideLiteral;
+        while(l > 0)
+        {
+            page := l;
+            if (page > 256)
+            {
+                page := 256
+            };
+            
+            self.convert(aLiteral.Substring(i,page), buffer, ref m);
+            
+            retVal := retVal.add(WideLiteralValue.fromShortArray(0, m, buffer));
+            
+            i := i + page;
+            l := l - page
+        };
+        
+        ^ retVal
     }
         
     /// Returns a parameter

@@ -121,9 +121,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
 	   //case dfaReal:
     //     terminal.symbol = tsReal;
     //     break;
-    //  case dfaWideQuote:
-    //     terminal.symbol = tsWide;
-    //     break;
+      case dfaWideQuote:
+         terminal.symbol = tsWide;
+         break;
 	   default:
          terminal.symbol = (Symbol)table.defineSymbol(terminal);
    }

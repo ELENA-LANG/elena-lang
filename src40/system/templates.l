@@ -265,7 +265,14 @@ public if<if_block,else_block>:else(expr)
 //    ! [
 //    ].
 //]
-//
+
+// --- while statement ---
+
+public while<loop_block>(expr)
+{
+    __loop cast bool(expr) ? loop_block
+}    
+
 //// -- try-catch statement ---
 //
 //public __nested try<expr>

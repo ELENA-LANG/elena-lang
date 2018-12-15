@@ -46,6 +46,25 @@ procedure __literal."read:length$@system@ref#1&IntNumber[2]"
 
 end
 
+
+
+procedure __wide."copy$system@WideLiteralValue$system@IntNumber$system@IntNumber$@system@Array#1&ShortNumber[4]"
+
+  bloadsi 1
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  
+  callextr api : wsubcopyz
+  
+  acopyb
+  quitn 4
+
+end
+
 procedure __wideconvertor."convert$system@LiteralValue$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[4]"
 
   aloadsi 2

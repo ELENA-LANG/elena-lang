@@ -85,7 +85,7 @@
 #define V_TEMPLATE       (ref_t)-16391
 #define V_PROPERTY       (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
-//#define V_LOOP           (ref_t)-16394
+#define V_LOOP           (ref_t)-16394
 //#define V_IMPORT         (ref_t)-16395
 #define V_EXTERN         (ref_t)-16396
 //#define V_ATTRTEMPLATE   (ref_t)-16398
@@ -219,7 +219,7 @@ struct _ModuleScope
 //   ref_t             extMessageReference;
 //   ref_t             boolReference;
    ref_t             literalReference;
-//   ref_t             wideReference;
+   ref_t             wideReference;
 //   ref_t             charReference;
 //   ref_t             arrayReference;
    ref_t             refTemplateReference;
@@ -368,18 +368,22 @@ class _CompilerLogic
 public:
    struct ExpressionAttributes
    {
-      bool typeAttr;
-      bool castAttr;
-      bool templateAttr;
-      bool forwardAttr;
-      bool externAttr;
-      bool refAttr;
-      bool internAttr;
+      bool  typeAttr;
+      bool  castAttr;
+      bool  newOpAttr;
+      bool  templateAttr;
+      bool  forwardAttr;
+      bool  externAttr;
+      bool  refAttr;
+      bool  internAttr;
+      bool  loopAttr;
+      ref_t typeRef;
 
       ExpressionAttributes()
       {
          refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
-         internAttr = false;
+         newOpAttr = loopAttr = internAttr = false;
+         typeRef = 0;
       }
    };
 
@@ -493,7 +497,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant, bool& isEmbeddable) = 0;
-   virtual bool validateExpressionAttribute(int& attrValue, ExpressionAttributes& attributes) = 0;
+   virtual bool validateExpressionAttribute(int attrValue, ExpressionAttributes& attributes) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg) = 0;

@@ -629,11 +629,11 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
          codeReader.seek(entry.address);
          methodPosition = loadMethod(refHelper, codeReader, codeWriter);
          
-         //// NOTE : private message is not added to VMT
-         //if (test(entry.message, SEALED_MESSAGE)) {
-         //   _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
-         //}
-         /*else */_compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
+         // NOTE : private / implicit message is not added to VMT
+         if (test(entry.message, STATIC_MESSAGE)) {
+            _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
+         }
+         else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
 
          size -= sizeof(VMTEntry);
       }
@@ -755,10 +755,10 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
       value = vmtReferenceInfo.referenceName;
       vmtReferenceInfo.referenceName = _loader->getLiteralClass();
    }
-   //else if (mask == mskWideLiteralRef) {
-   //   value = vmtReferenceInfo.referenceName;
-   //   vmtReferenceInfo.referenceName = _loader->getWideLiteralClass();
-   //}
+   else if (mask == mskWideLiteralRef) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getWideLiteralClass();
+   }
    //else if (mask == mskCharRef) {
    //   value = vmtReferenceInfo.referenceName;
    //   vmtReferenceInfo.referenceName = _loader->getCharacterClass();
@@ -800,11 +800,11 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    if (mask == mskLiteralRef) {
       _compiler->compileLiteral(&writer, value);
    }
-   //else if (mask == mskWideLiteralRef) {
-   //   WideString wideValue(value);
+   else if (mask == mskWideLiteralRef) {
+      WideString wideValue(value);
 
-   //   _compiler->compileWideLiteral(&writer, wideValue);
-   //}
+      _compiler->compileWideLiteral(&writer, wideValue);
+   }
    //else if (mask == mskCharRef) {
    //   _compiler->compileChar32(&writer, value);
    //}
@@ -1224,7 +1224,7 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
             break;
          case mskConstantRef:
          case mskLiteralRef:
-         //case mskWideLiteralRef:
+         case mskWideLiteralRef:
          //case mskCharRef:
          case mskInt32Ref:
          //case mskRealRef:

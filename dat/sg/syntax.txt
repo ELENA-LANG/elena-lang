@@ -32,6 +32,7 @@ __define identifier		12293
 __define reference		12295
 __define integer		12296
 __define hex			12297
+__define wide                   12301
 __define attribute		12303
 
 START ->
@@ -124,6 +125,7 @@ ROOT_EXPRESSION ->
 	| integer OPERATIONS ROOT_OPERATIONS
 	| hex OPERATIONS ROOT_OPERATIONS
 	| literal OPERATIONS ROOT_OPERATIONS
+	| wide OPERATIONS ROOT_OPERATIONS
 	| OPENING_BRACKET EXPRESSION CLOSING_BRACKET ROOT_OPERATIONS
 
 EXPRESSION ->
@@ -132,6 +134,7 @@ EXPRESSION ->
 	| integer OPERATIONS
 	| hex OPERATIONS
 	| literal OPERATIONS
+	| wide OPERATIONS
 	| NESTED_CLASS OPERATIONS
 
 OPERAND_EXPRESSION ->

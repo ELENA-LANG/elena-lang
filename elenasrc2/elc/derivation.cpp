@@ -335,7 +335,7 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 
    LexicalType type = (LexicalType)(terminal.symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask);
 
-   if (terminal==tsLiteral/* || terminal==tsCharacter || terminal==tsWide*/) {
+   if (terminal==tsLiteral/* || terminal==tsCharacter*/ || terminal==tsWide) {
       // try to use local storage if the quote is not too big
       if (getlength(terminal.value) < 0x100) {
          QuoteTemplate<IdentifierString> quote(terminal.value);

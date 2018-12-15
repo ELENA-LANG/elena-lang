@@ -21,7 +21,7 @@
 #8196  = interface;
 #16392 = property;
 #16393 = method;
-//__loop          = #16394.
+#16394 = __loop;
 ////nonstructural   = #8204.
 //import          = #16395.
 #16396 = extern;

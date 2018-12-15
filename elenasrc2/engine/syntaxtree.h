@@ -100,7 +100,7 @@ enum LexicalType
 //   lxReal            = 0x1800A,
 //   lxCharacter       = 0x1800B,
 //   lxLong            = 0x1800C,
-//   lxWide            = 0x1800D,
+   lxWide            = 0x1800D,
 //   lxExplicitConst   = 0x1800E,
    lxExplicitAttr    = 0x1800F,
 //   lxMemberIdentifier= 0x18010,
@@ -118,7 +118,7 @@ enum LexicalType
    lxLocal           = 0x0A10A, // arg - offset
    lxBlockLocal      = 0x0A10B, // arg - offset
    lxConstantString  = 0x0A10C, // arg - reference
-//   lxConstantWideStr = 0x0A10D, // arg - reference
+   lxConstantWideStr = 0x0A10D, // arg - reference
 //   lxConstantChar    = 0x0A10E, // arg - reference
    lxConstantInt     = 0x1A10F, // arg - reference
 //   lxConstantLong    = 0x1A110, // arg - reference
@@ -155,7 +155,7 @@ enum LexicalType
 //   lxImplicitJump    = 0x0C00E,
    lxBranching       = 0x0C00F,   // branch expression      
 //   lxSwitching       = 0x0C010,
-//   lxLooping         = 0x0C011,
+   lxLooping         = 0x0C011,
 ////   lxThrowing        = 0x0C013,
    lxStdExternalCall = 0x0C014,   // calling an external function, arg - reference
    lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
