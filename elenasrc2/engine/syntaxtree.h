@@ -178,7 +178,7 @@ enum LexicalType
    lxCreatingStruct  = 0x0C026,   // arg - size
    lxReturning       = 0x0C027,
    lxNewArrOp        = 0x0C028,
-//   lxArrOp           = 0x8C029,   // arg - operation id
+   lxArrOp           = 0x8C029,   // arg - operation id
 //   lxBinArrOp        = 0x8C02A,   // arg - operation id
 //   lxArgArrOp        = 0x8C02B,   // arg - operation id
 //   lxNilOp           = 0x8C02C,   // arg - operation id

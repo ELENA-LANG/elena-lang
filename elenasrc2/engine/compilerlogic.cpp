@@ -207,11 +207,11 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
    //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
 
-//   // array of object primitive operations
-//   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
-//   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
-//   operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
-//
+   // array of object primitive operations
+   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
+   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
+   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
+
 //   // array of structures primitive operations
 //   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
 //   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
@@ -918,9 +918,9 @@ void CompilerLogic :: injectOperation(SyntaxWriter& writer, _ModuleScope& scope,
    if (reference == V_BINARY && elementRef != 0) {
       reference = elementRef;
    }
-   //else if (reference == V_OBJECT && elementRef != 0) {
-   //   reference = elementRef;
-   //}
+   else if (reference == V_OBJECT && elementRef != 0) {
+      reference = elementRef;
+   }
 
    bool inverting = IsInvertedOperator(operator_id);
 

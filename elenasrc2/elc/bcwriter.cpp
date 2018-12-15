@@ -3037,32 +3037,32 @@ void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, i
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // bcopya
-//         // get
-//         tape.write(bcBCopyA);
-//         tape.write(bcGet);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // set
-//         tape.write(bcSet);
-//         break;
-//      // NOTE : read operator is used to define the array length
-//      case READ_MESSAGE_ID:
-//         // len
-//         // nsave
-//         tape.write(bcLen);
-//         tape.write(bcNSave);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
+
+void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // bcopya
+         // get
+         tape.write(bcBCopyA);
+         tape.write(bcGet);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         // set
+         tape.write(bcSet);
+         break;
+      //// NOTE : read operator is used to define the array length
+      //case READ_MESSAGE_ID:
+      //   // len
+      //   // nsave
+      //   tape.write(bcLen);
+      //   tape.write(bcNSave);
+      //   break;
+      default:
+         break;
+   }
+}
+
 //void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id)
 //{
 //   switch (operator_id) {
@@ -3927,7 +3927,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 {
    //bool lenMode = node.argument == READ_MESSAGE_ID;
    bool setMode = (node.argument == SET_REFER_OPERATOR_ID/* || node.argument == SETNIL_REFER_MESSAGE_ID*/);
-   bool assignMode = /*node != lxArrOp && node != lxArgArrOp*/true;
+   bool assignMode = node != lxArrOp/* && node != lxArgArrOp*/;
 
    SNode larg, rarg, rarg2;
    assignOpArguments(node, larg, rarg, rarg2);
@@ -4034,9 +4034,9 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       //   if (node.argument == REFER_MESSAGE_ID)
       //      assignBaseTo(tape, lxResult);
       //   break;
-      //case lxArrOp:
-      //   doArrayOperation(tape, node.argument);
-      //   break;
+      case lxArrOp:
+         doArrayOperation(tape, node.argument);
+         break;
       //case lxArgArrOp:
       //   doArgArrayOperation(tape, node.argument);
       //   break;
@@ -4904,7 +4904,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       child = child.nextNode();
    }
 
-   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || /*(source.argument == REFER_MESSAGE_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||*/
+   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_OPERATOR_ID && source.type != lxArrOp/* && source.type != lxArgArrOp*/) ||
       (IsShiftOperator(source.argument) && (source.type == lxIntOp/* || source.type == lxLongOp*/))))
    {
       if (target == lxCreatingStruct) {
@@ -5461,7 +5461,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxIntArrOp:
       case lxByteArrOp:
       case lxShortArrOp:
-//      case lxArrOp:
+      case lxArrOp:
 //      case lxBinArrOp:
 //      case lxArgArrOp:
          generateArrOperation(tape, node);

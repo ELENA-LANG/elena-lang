@@ -31,8 +31,8 @@
 //#define V_SYMBOL         (ref_t)-22
 //
 //#define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
-//
-//#define V_OBJECT         (ref_t)-28
+
+#define V_OBJECT         (ref_t)-28
 
 #define V_PRIMARRAY      (ref_t)-29
 #define V_OBJARRAY       (ref_t)-30

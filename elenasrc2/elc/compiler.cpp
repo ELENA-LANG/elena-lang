@@ -1930,6 +1930,9 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
          binaryArray = true;
          size = size * (-((int)localInfo.size));
       }
+      else if (variable.reference == V_OBJARRAY && size == -1) {
+         // if it is a primitive dynamic array
+      }
       else if (_logic->isEmbeddable(localInfo) && size == 0) {
          bool dummy = false;
          size = _logic->defineStructSize(localInfo, dummy);
@@ -1986,10 +1989,10 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
       }
       else {
          if (size < 0) {
-            // replace dynamic primitive array with a wrapper
+         //   // replace dynamic primitive array with a wrapper
             size = 0;
-            variable.reference = resolvePrimitiveReference(scope, variable.reference, variable.element);
-            variable.element = 0;
+         //   variable.reference = resolvePrimitiveReference(scope, variable.reference, variable.element);
+         //   variable.element = 0;
          }
 
          variable.param = scope.newLocal();
@@ -7755,7 +7758,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       case lxIntArrOp:
       case lxShortArrOp:
       case lxByteArrOp:
-      //case lxArrOp:
+      case lxArrOp:
       //case lxBinArrOp:
       case lxNewArrOp:
       //case lxArgArrOp:
