@@ -46,7 +46,16 @@ procedure __literal."read:length$@system@ref#1&IntNumber[2]"
 
 end
 
+procedure __wide."read:length$@system@ref#1&IntNumber[2]"
 
+  aloadsi 1
+  wlen
+  dec
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
 
 procedure __wide."copy$system@WideLiteralValue$system@IntNumber$system@IntNumber$@system@Array#1&ShortNumber[4]"
 

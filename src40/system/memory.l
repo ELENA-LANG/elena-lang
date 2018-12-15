@@ -1542,13 +1542,15 @@ public sealed const struct WideLiteralValue : BaseValue
 //
 //    wide Substring:aLength at:anIndex
 //        <= Substring(T<int>(anIndex), T<int>(aLength)).
-//
-//    /// Reads the literal length into an output parameter
-//    readLengthTo(ref<int> aLength)
-//        =>system'core_routines'__wide.
-//        
-//    int rvprop length :: readLengthTo.
-//
+
+    /// Reads the literal length into an output parameter
+    rvprop int length
+    {
+        /// Reads the literal length into an output parameter
+        read(ref int retVal)
+            => system'core_routines'__wide;
+    }
+
 //    /// Saves the literal into a UTF-32 character array
 //    save(int anIndex, CharArray anArray, ref<int> aLength)
 //        => system'core_routines'__wide.
@@ -2231,36 +2233,36 @@ public singleton wideConvertor
     /// Converts UTF-8 literal to UTF-16e
     wide convert(literal aLiteral)
     {
-        int        i := 0;
+  //      int        i := 0;
         int        m := 0;
-        int        page := 0;
+  //      int        page := 0;
         int        l := aLiteral.length;
         short buffer[256];            
-        if (l < 256)
-        {
+//        if (l < 256)
+//        {
             self.convert(aLiteral, buffer, ref m);
 
             ^ WideLiteralValue.fromShortArray(0, m, buffer)
-        };
-        
-        wide retVal := emptyWideLiteral;
-        while(l > 0)
-        {
-            page := l;
-            if (page > 256)
-            {
-                page := 256
-            };
-            
-            self.convert(aLiteral.Substring(i,page), buffer, ref m);
-            
-            retVal := retVal.add(WideLiteralValue.fromShortArray(0, m, buffer));
-            
-            i := i + page;
-            l := l - page
-        };
-        
-        ^ retVal
+//        };
+//        
+//        wide retVal := emptyWideLiteral;
+//        while(l > 0)
+//        {
+//            page := l;
+//            if (page > 256)
+//            {
+//                page := 256
+//            };
+//            
+//            self.convert(aLiteral.Substring(i,page), buffer, ref m);
+//            
+//            retVal := retVal.add(WideLiteralValue.fromShortArray(0, m, buffer));
+//            
+//            i := i + page;
+//            l := l - page
+//        };
+//        
+//        ^ retVal
     }
         
     /// Returns a parameter

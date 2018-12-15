@@ -556,7 +556,7 @@ ref_t CompilerLogic :: resolvePrimitive(ClassInfo& info, ref_t& element)
 
 bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
 {
-   return test(info.header.flags, elDynamicRole | elStructureRole);
+   return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
 }
 
 bool CompilerLogic :: isVariable(_ModuleScope& scope, ref_t classReference)
@@ -1422,17 +1422,17 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //         break;
       case V_INT32ARRAY:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole;
+         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elWrapper;
          info.size = -4;
          break;
       case V_INT16ARRAY:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole;
+         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elWrapper;
          info.size = -2;
          break;
       case V_INT8ARRAY:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole;
+         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
          break;
       case V_OBJARRAY:
@@ -1442,7 +1442,7 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
          break;
       case V_BINARYARRAY:
          info.header.parentRef = scope.superReference;
-         info.header.flags = elDynamicRole | elStructureRole;
+         info.header.flags = elDynamicRole | elStructureRole | elWrapper;
          info.size = -1;
          break;
       case V_AUTO:

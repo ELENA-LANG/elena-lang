@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * primitive array should be passed directly without unboxing if allowed
                  * test - a[](...) - should be illegal
                  * test boxing / unboxing with dynamic reference
                  * (re)implement reference of object

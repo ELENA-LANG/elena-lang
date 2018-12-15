@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   12
+#define REVISION_VERSION   13
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -976,10 +976,10 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elNestedClass", row, pageSize);
    }      
 
-   //if (test(flags, elDynamicRole)) {
-   //   printLine("@flag ", "elDynamicRole", row, pageSize);
-   //}
-   //   
+   if (test(flags, elDynamicRole)) {
+      printLine("@flag ", "elDynamicRole", row, pageSize);
+   }
+      
    if (test(flags, elStructureRole)) {
       printLine("@flag ", "elStructureRole", row, pageSize);
    }      

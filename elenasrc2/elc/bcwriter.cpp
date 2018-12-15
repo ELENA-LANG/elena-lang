@@ -4558,9 +4558,9 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    SNode current = node.firstChild();
    while (current != lxNone) {
       SNode member = current;
-      //if (current == lxExpression) {
-      //   member = current.firstChild(lxObjectMask);
-      //}
+      if (current == lxExpression) {
+         member = current.firstChild(lxObjectMask);
+      }
 
       //if (current == lxArgUnboxing) {
       //   argUnboxMode = true;
@@ -4634,10 +4634,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    for (size_t i = 0; i < counter; i++) {
       // get parameters in reverse order if required
       current = getChild(node, directMode ? counter - i - 1 : i);
-//      if (current == lxExpression) {
-//         current = current.firstChild(lxObjectMask);
-//      }
-//
+      if (current == lxExpression) {
+         current = current.firstChild(lxObjectMask);
+      }
+
 //      if (current == lxArgUnboxing) {
 //         // argument list is already unboxed
 //      }
@@ -5426,7 +5426,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxBoxing:
       case lxCondBoxing:
 //      case lxArgBoxing:
-//      case lxUnboxing:
+      case lxUnboxing:
          generateBoxingExpression(tape, node, mode);
          break;
       case lxAssigning:

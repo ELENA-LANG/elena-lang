@@ -661,6 +661,7 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
    //   return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
    //}
    /*else */if (param.class_ref != 0 && param.size != 0) {
+      // if the parameter may be stack-allocated
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
    return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, 0);
@@ -2056,6 +2057,7 @@ int Compiler :: defineFieldSize(CodeScope& scope, int offset)
 void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type)
 {
    if (object.extraparam == -1 && !test(mode, HINT_NOBOXING)) {
+      // if the parameter may be stack-allocated
       ref_t targetRef = resolveObjectReference(scope, object);
       bool variable = false;
       int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
@@ -6714,11 +6716,11 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
          ref_t multiMethod = resolveMultimethod(scope, current.argument);
          if (multiMethod) {
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
-            if (retrieveIndex(implicitMultimethods.start(), multiMethod) == -1) {
-               Attribute attr(current.argument, maMultimethod);
-               scope.info.methodHints.exclude(attr);
-               scope.info.methodHints.add(attr, multiMethod);
+            Attribute attr(current.argument, maMultimethod);
+            scope.info.methodHints.exclude(attr);
+            scope.info.methodHints.add(attr, multiMethod);
 
+            if (retrieveIndex(implicitMultimethods.start(), multiMethod) == -1) {
                implicitMultimethods.add(multiMethod);
                templateMethods = true;
 

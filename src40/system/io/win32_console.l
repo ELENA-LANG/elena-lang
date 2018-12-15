@@ -83,7 +83,7 @@ singleton ConsoleHandleFactory
         }
         else
         {
-            ^ new FileWriter(h)
+//            ^ new FileWriter(h)
         }
     }
 }
@@ -99,20 +99,20 @@ sealed struct ConsoleWriter
         theHandle := aHandle
     }
 
-//    write(literal aLiteral)
-//    [
-//        self write(T<wide>(aLiteral)).
-//    ]
-//
-//    write(wide s)
-//    [
-//        int len := s length.
-//
-//        system'external'KERNEL32 WriteConsoleW(theHandle,s,len,0,0).             
-//
-//        // !!check the result of the operation
-//    ]
-//    
+    write(literal s)
+    {
+        self.write(cast wide(s))
+    }
+
+    write(wide s)
+    {
+        int len := s.length;
+        
+        extern KERNEL32.WriteConsoleW(theHandle,s,len,0,0)
+
+        // !!check the result of the operation
+    }
+    
 //    clear
 //    [
 //        auto aBuffer := CONSOLE_SCREEN_BUFFER_INFO new.
@@ -137,11 +137,11 @@ sealed struct ConsoleWriter
 //                
 //        system'external'KERNEL32 SetConsoleCursorPosition(theHandle, coord)
 //    ]
-//
-//    refresh
-//    [
-//    ]
-//
+
+    refresh()
+    {
+    }    
+
 //    free
 //    [
 //        system'external'KERNEL32 CloseHandle(theHandle).
