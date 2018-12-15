@@ -221,9 +221,6 @@ ref_t resolveMessage(_Module* module, ident_t method)
    if (method.startsWith("#invoke")) {
       flags |= SPECIAL_MESSAGE;
    }
-   else if (method.startsWith("#constructor")) {
-      flags |= STATIC_MESSAGE;
-   }
    //if (method.startsWith("#private&")) {
    //   flags |= SEALED_MESSAGE;
 

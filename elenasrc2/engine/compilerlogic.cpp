@@ -1219,7 +1219,7 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
       if (!defineClassInfo(scope, classClassinfo, getClassClassRef(scope, targetRef)))
          return 0;
 
-      ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, STATIC_MESSAGE);
+      ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, 0);
       if (classClassinfo.methods.exist(messageRef)) {
          return messageRef;
       }

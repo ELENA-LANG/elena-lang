@@ -5026,7 +5026,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
       else if (test(scope.hints, tpConstructor) && unnamedMessage) {
          actionStr.copy(CONSTRUCTOR_MESSAGE);
-         flags |= STATIC_MESSAGE;
 //         if (paramCount > 0) {
 //            //HOTFIX : replace constructor attribute with conversion one
 //            SNode attrNode = goToNode(node.firstChild(), lxAttribute, tpConstructor);
@@ -6692,6 +6691,8 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
       return 0;
 
    ident_t actionStr = scope.module->resolveAction(actionRef, signRef);
+   if (actionStr[0] == '#' && actionStr.compare(CONSTRUCTOR_MESSAGE))
+      return 0;
    
    if (signRef) {
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
@@ -6712,7 +6713,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == methodType && !test(current.argument, STATIC_MESSAGE)) {
-         ////HOTFIX : ignore private methods / implicit constructors
+         //HOTFIX : ignore private methods
          ref_t multiMethod = resolveMultimethod(scope, current.argument);
          if (multiMethod) {
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
