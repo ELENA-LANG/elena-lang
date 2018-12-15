@@ -5646,9 +5646,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxBinaryVariable:
             generateDebugInfo(tape, current);
             break;
-         //default:
-         //   generateObject(tape, current);
-         //   break;
+         default:
+            generateObject(tape, current);
+            break;
       }
       current = current.nextNode();
    }
