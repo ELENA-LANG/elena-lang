@@ -30,7 +30,7 @@ class Console
 //    ]
 
     /// Writes the specified literal value to the standard output stream.
-    write(literal s)
+    write(string s)
     {
         theWriter.write(s);
         

@@ -1099,16 +1099,16 @@ public sealed Array<T> //:: Indexable<template_subj>
 //    /// Creates the object copy
 //    clone = CharArray new(self).
 //}
-//        
-//// --- emptyliteralvalue ---
-//
-///// An empty literal value
-//const literal public emptyLiteral = "".
+        
+// --- emptyString ---
 
-// --- LiteralValue ---
+/// An empty literal value
+const public string emptyString = "";
+
+// --- String ---
 
 /// A UTF-8 literal value
-public sealed const struct LiteralValue : BaseValue
+public sealed const struct String : BaseValue
 {
     __string byte[] theArray;
 
@@ -1347,15 +1347,15 @@ public sealed const struct LiteralValue : BaseValue
 //    int rvprop hash_code :: readHashCodeTo.
 }
 
-// --- emptyWideLiteralValue ---
+// --- emptyWideString ---
 
 /// An empty wide literal value
-const wide emptyWideLiteral = ""w;
+const wide emptyWideString = ""w;
 
-// --- WideLiteralValue ---
+// --- WideString ---
 
 /// A UTF-18 literal value
-public sealed const struct WideLiteralValue : BaseValue
+public sealed const struct WideString : BaseValue
 {
     __string short[] theArray;
 
@@ -2229,22 +2229,22 @@ public singleton wideConvertor
 //    ]
 
     /// Converts UTF-8 literal to UTF-16e
-    convert(literal aLiteral, short[] buffer, ref int length)
+    convert(string sl, short[] buffer, ref int length)
         => system'core_routines'__wideconvertor;
 
     /// Converts UTF-8 literal to UTF-16e
-    wide convert(literal aLiteral)
+    wide convert(string s)
     {
   //      int        i := 0;
         int        m := 0;
   //      int        page := 0;
-        int        l := aLiteral.length;
+        int        l := s.length;
         short buffer[256];            
 //        if (l < 256)
 //        {
-            self.convert(aLiteral, buffer, ref m);
+            self.convert(s, buffer, ref m);
 
-            ^ WideLiteralValue.fromShortArray(0, m, buffer)
+            ^ WideString.fromShortArray(0, m, buffer)
 //        };
 //        
 //        wide retVal := emptyWideLiteral;

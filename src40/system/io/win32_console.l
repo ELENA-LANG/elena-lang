@@ -99,7 +99,7 @@ sealed struct ConsoleWriter
         theHandle := aHandle
     }
 
-    write(literal s)
+    write(string s)
     {
         self.write(cast wide(s))
     }

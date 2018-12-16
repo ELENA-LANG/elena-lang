@@ -4898,7 +4898,7 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
    }
    if (arrayArg) {
       elementRef = classRef;
-      classRef = V_OBJARRAY;
+      classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef);
    }
 }
 

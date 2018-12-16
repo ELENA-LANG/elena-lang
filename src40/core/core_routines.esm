@@ -57,7 +57,7 @@ procedure __wide."read:length$@system@ref#1&IntNumber[2]"
 
 end
 
-procedure __wide."copy$system@WideLiteralValue$system@IntNumber$system@IntNumber$@system@Array#1&ShortNumber[4]"
+procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$@system@Array#1&ShortNumber[4]"
 
   bloadsi 1
   aloadsi 3
@@ -74,7 +74,7 @@ procedure __wide."copy$system@WideLiteralValue$system@IntNumber$system@IntNumber
 
 end
 
-procedure __wideconvertor."convert$system@LiteralValue$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[4]"
+procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[4]"
 
   aloadsi 2
   bloadsi 3
