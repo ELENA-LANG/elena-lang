@@ -413,16 +413,10 @@ private:
 
       void saveExtension(ref_t message, ref_t type, ref_t role, bool internalOne);
 
-////      void loadModuleInfo(_Module* extModule)
-////      {
-////         bool dummy1, dummy2;
-////         loadModuleInfo(extModule, dummy1, dummy2);
-////      }
-//      void loadModuleInfo(ident_t name)
-//      {
-//         loadExtensions(name);
-////         loadActions(extModule);
-//      }
+      void loadModuleInfo(ident_t name)
+      {
+         loadExtensions(name);
+      }
 
 ////      bool defineForward(ident_t forward, ident_t referenceName)
 ////      {
@@ -1024,7 +1018,7 @@ private:
    void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
 ////   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
 
-   void declareNamespace(SNode node, NamespaceScope& scope);
+   void declareNamespace(SNode node, NamespaceScope& scope, bool withFullInfo);
 
 public:
    void loadRules(StreamReader* optimization);

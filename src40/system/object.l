@@ -54,11 +54,11 @@ public /*enum */interface class BoolValue
 //    abstract clone []
 }
 
-//public extension commonOp
-//{
-//    /// Returns the parameter        
-//    back : anObject = anObject.
-// 
+public extension commonOp
+{
+    /// Returns the parameter        
+    back(o) = o;
+ 
 //    then(Func code)
 //        = code().
 //        
@@ -80,8 +80,8 @@ public /*enum */interface class BoolValue
 //        self thenClose:code
 //            | raise:[ self close ].
 //    ]        
-//}
-//
+}
+
 //public singleton __prober
 //{
 //    dispatch => system'core_routines'__prober.    

@@ -8139,7 +8139,7 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
    return declared;
 }
 
-void Compiler :: declareNamespace(SNode node, NamespaceScope& scope)
+void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFullInfo)
 {
    SNode current = node.findChild(lxSourcePath);
    if (current != lxNone)
@@ -8148,6 +8148,14 @@ void Compiler :: declareNamespace(SNode node, NamespaceScope& scope)
    // system module should be included by default
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       scope.importedNs.add(_ELENA_::ident_t(STANDARD_MODULE).clone());
+   }
+
+   if (withFullInfo) {
+      for (auto it = scope.importedNs.start(); !it.Eof(); it++) {
+         ident_t imported_ns = *it;
+
+         scope.loadModuleInfo(imported_ns);
+      }
    }
 }
 
@@ -8158,7 +8166,7 @@ bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope/*, id
    while (current != lxNone) {
       // declare classes several times to ignore the declaration order
       NamespaceScope namespaceScope(&scope, current.identifier());
-      declareNamespace(current, namespaceScope);
+      declareNamespace(current, namespaceScope, false);
 
       retVal |= compileDeclarations(current, namespaceScope, repeatMode);
       
@@ -8180,7 +8188,7 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope/*, id
    while (current != lxNone) {
       // declare classes several times to ignore the declaration order
       NamespaceScope namespaceScope(&scope, current.identifier()/*, true*/);
-      declareNamespace(current, namespaceScope);
+      declareNamespace(current, namespaceScope, true);
       
       if (!emptystr(namespaceScope.sourcePath))
          scope.project->printInfo("%s", namespaceScope.sourcePath);
