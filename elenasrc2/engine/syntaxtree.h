@@ -58,9 +58,9 @@ enum LexicalType
    lxSizeDecl        = 0x00068,
    lxDynamicSizeDecl = 0x00069,
    lxPropertyParam   = 0x0006B,
+   lxClosureExpr     = 0x0006E,
 
    lxTypecast        = 0x00100,
-   lxClosureExpr     = 0x00101,
 
 //   lxObject          = 0x00003,
 ////   lxAngleOperator   = 0x00005,

@@ -3605,11 +3605,11 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
    ref_t invokeAction = scope.module->mapAction(INVOKE_MESSAGE, 0, false);
    methodScope.message = encodeMessage(/*lazyExpression ? EVAL_MESSAGE_ID : */invokeAction, 0, SPECIAL_MESSAGE);
 
-   //ref_t outputRef = 0;
-   //if (argNode != lxNone) {
-   //   // define message parameter
-   //   methodScope.message = declareInlineArgumentList(argNode, methodScope, outputRef);
-   //}
+   ref_t outputRef = 0;
+   if (argNode != lxNone) {
+      // define message parameter
+      methodScope.message = declareInlineArgumentList(argNode, methodScope, outputRef);
+   }
 
    ref_t parentRef = scope.info.header.parentRef;
    //if (lazyExpression) {
@@ -3618,7 +3618,7 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
    //else {
       NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-      ref_t closureRef = scope.moduleScope->resolveClosure(*this, methodScope.message/*, outputRef, &nsScope->extensions*/);
+      ref_t closureRef = scope.moduleScope->resolveClosure(*this, methodScope.message/*, outputRef, &nsScope->extensions*/, nsScope->ns);
 //      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
       if (closureRef) {
          parentRef = closureRef;
@@ -3869,19 +3869,19 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    /*else */if (argNode == lxCode) {
       compileAction(node, scope, SNode(), /*singleton ? mode | HINT_SINGLETON : */mode);
    }
-//   else if (node.existChild(lxCode)) {
-//      SNode codeNode = node.findChild(lxCode);
-//
-//      // if it is a closure / lambda function with a parameter
-//      int actionMode = mode;
-//      if (singleton)
-//         actionMode |= HINT_SINGLETON;
-//
-//      compileAction(node, scope, node.findChild(lxIdentifier, /*lxPrivate, */lxMethodParameter/*, lxClosureMessage*/), actionMode);
-//
-//      // HOTFIX : hide code node because it is no longer required
-//      codeNode = lxIdle;
-//   }
+   else if (node.existChild(lxCode)) {
+      SNode codeNode = node.findChild(lxCode);
+
+      // if it is a closure / lambda function with a parameter
+      int actionMode = mode;
+      //if (singleton)
+      //   actionMode |= HINT_SINGLETON;
+
+      compileAction(node, scope, node.findChild(lxIdentifier, /*lxPrivate, */lxMethodParameter/*, lxClosureMessage*/), actionMode);
+
+      // HOTFIX : hide code node because it is no longer required
+      codeNode = lxIdle;
+   }
    // if it is a nested class
    else compileNestedVMT(node, scope);
 
@@ -4794,75 +4794,75 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool binaryArray,
    return true;
 }
 
-//ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t& outputRef)
-//{
-////   IdentifierString signature;
-//   IdentifierString messageStr;
-//
-//   ref_t actionRef = 0;
-//   ref_t signRef = 0;
-//
+ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t& outputRef)
+{
+//   IdentifierString signature;
+   IdentifierString messageStr;
+
+   ref_t actionRef = 0;
+   ref_t signRef = 0;
+
 //   SNode sign = goToNode(arg, lxTypeAttr);
-//   ref_t signatures[OPEN_ARG_COUNT];
-//   size_t signatureLen = 0;
-////   bool first = true;
-//   while (arg == lxMethodParameter/* || arg == lxIdentifier || arg == lxPrivate*/) {
-//      SNode terminalNode = arg;
-//      if (terminalNode == lxMethodParameter) {
-//         terminalNode = terminalNode.firstChild(lxTerminalMask);
-//      }
-//
-//      ident_t terminal = terminalNode.identifier();
-//      int index = 1 + scope.parameters.Count();
-//
-//      // !! check duplicates
-//      if (scope.parameters.exist(terminal))
-//         scope.raiseError(errDuplicatedLocal, arg);
-//
-//      if (sign != lxNone) {
-//         // if the closure has explicit signature
-//         ref_t elementRef = 0;
-//         ref_t class_ref = declareArgumentType(sign, scope, /*first, messageStr, signature, */elementRef);
-//
-//         int size = class_ref != 0 ? _logic->defineStructSize(*scope.moduleScope, class_ref, 0) : 0;
-//         scope.parameters.add(terminal, Parameter(index, class_ref, elementRef, size));
-//
-//         signatures[signatureLen++] = class_ref;
-//
-//         sign = sign.nextNode();
-//      }
-//      else /*if (first) */{
-//         scope.parameters.add(terminal, Parameter(index));
-//      }
-////      else scope.raiseError(errInvalidSyntax, arg);      
-//
-//      arg = arg.nextNode();
-//   }
-//   if (sign == lxTypeAttr) {
-//      // if the returning type is provided
-//      ref_t elementRef = 0;
-//      outputRef = declareArgumentType(sign, scope, /*first, messageStr, signature, */elementRef);
-//
-//      if (sign.nextNode() == lxTypeAttr)
-//         scope.raiseError(errInvalidOperation, arg);
-//   }
-//
-//   if (emptystr(messageStr)) {
-//      messageStr.copy(INVOKE_MESSAGE);
-//   }
-//   //messageStr.append(signature);
-//
-//   if (signatureLen > 0) {
-//      if (scope.parameters.Count() == signatureLen) {
-//         signRef = scope.module->mapSignature(signatures, signatureLen, false);
-//      }
-//      else scope.raiseError(errInvalidOperation, arg);
-//   }
-//
-//   actionRef = scope.moduleScope->module->mapAction(messageStr, signRef, false);
-//
-//   return encodeMessage(actionRef, scope.parameters.Count());
-//}
+   ref_t signatures[ARG_COUNT];
+   size_t signatureLen = 0;
+//   bool first = true;
+   bool weakSingature = true;
+   while (arg == lxMethodParameter/* || arg == lxIdentifier || arg == lxPrivate*/) {
+      SNode terminalNode = arg;
+      if (terminalNode == lxMethodParameter) {
+         terminalNode = terminalNode.firstChild(lxTerminalMask);
+      }
+
+      ident_t terminal = terminalNode.identifier();
+      int index = 1 + scope.parameters.Count();
+
+      // !! check duplicates
+      if (scope.parameters.exist(terminal))
+         scope.raiseError(errDuplicatedLocal, arg);
+
+      ref_t elementRef = 0;
+      ref_t classRef = 0;
+      declareArgumentAttributes(arg, scope, classRef, elementRef);
+
+      int size = classRef != 0 ? _logic->defineStructSize(*scope.moduleScope, classRef, 0) : 0;
+      scope.parameters.add(terminal, Parameter(index, classRef, elementRef, size));
+
+      if (classRef != 0)
+         weakSingature = false;
+
+      if (isPrimitiveRef(classRef)) {
+         // primitive arguments should be replaced with wrapper classes
+         signatures[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef);
+      }
+      else signatures[signatureLen++] = classRef;
+
+      arg = arg.nextNode();
+   }
+   //if (sign == lxTypeAttr) {
+   //   // if the returning type is provided
+   //   ref_t elementRef = 0;
+   //   outputRef = declareArgumentType(sign, scope, /*first, messageStr, signature, */elementRef);
+
+   //   if (sign.nextNode() == lxTypeAttr)
+   //      scope.raiseError(errInvalidOperation, arg);
+   //}
+
+   if (emptystr(messageStr)) {
+      messageStr.copy(INVOKE_MESSAGE);
+   }
+   //messageStr.append(signature);
+
+   if (signatureLen > 0 && !weakSingature) {
+      if (scope.parameters.Count() == signatureLen) {
+         signRef = scope.module->mapSignature(signatures, signatureLen, false);
+      }
+      else scope.raiseError(errInvalidOperation, arg);
+   }
+
+   actionRef = scope.moduleScope->module->mapAction(messageStr, signRef, false);
+
+   return encodeMessage(actionRef, scope.parameters.Count(), SPECIAL_MESSAGE);
+}
 
 inline SNode findTerminal(SNode node)
 {
@@ -8197,7 +8197,6 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope/*, id
 
       current = current.nextNode();
    }
-
 }
 
 inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t referenceName)

@@ -923,7 +923,7 @@ private:
 
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef);
    void declareArgumentList(SNode node, MethodScope& scope);
-//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, ref_t& outputRef);
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, ref_t& outputRef);
    /*bool*/void declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
 
 ////   void declareSingletonClass(SNode node, ClassScope& scope);

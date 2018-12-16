@@ -238,15 +238,12 @@ public interface Func
 ////    ]
 }
 
-///// A base function
-//public interface Func1
-//{
-//    /// Executes the action
-//    abstract closure:aParam []
-//    
-////    /// Executes the function
-////    eval : aParam = $self(aParam).
-//
+/// A base function
+public interface Func1
+{
+    /// Executes the action
+    abstract closure(param) {}
+    
 //    /// Executes the function for every enumeration item
 //    run(Enumerator anEnumerator)
 //    [
@@ -270,13 +267,13 @@ public interface Func
 //        
 //        ^ nil.
 //    ]
-//}
-//
-//public interface Func<type, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type param) []
-//    
+}
+
+public interface Func<T, TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T param) {}
+    
 //    run(Enumerator<type> e)
 //    [
 //        while(e next)
@@ -284,17 +281,14 @@ public interface Func
 //            self(e get)
 //        ].        
 //    ]
-//}
-//
-///// A base two variable function
-//public interface Func2
-//{
-//    /// Executes the action
-//    abstract closure(object aParam1, object aParam2) []
-//    
-////    /// Executes the function
-////    eval : aParam1 : aParam2 = $self(aParam1,aParam2).
-//    
+}
+
+/// A base two variable function
+public interface Func2
+{
+    /// Executes the action
+    abstract closure(object param1, object param2) {}
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run(object aParam, Enumerator anEnumerator)
 //    [
@@ -319,18 +313,18 @@ public interface Func
 //        
 //        ^ nil
 //    ]
-//}
-//
-//public interface Func<type1,type2, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2) []
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
+}
+
+public interface Func<T1,T2,TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T1 param1, T2 param2) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 ///// A base three variable function
 //public interface Func3
 //{
