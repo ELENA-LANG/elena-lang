@@ -144,7 +144,7 @@ public:
 ////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
-//      okExtension,
+      okExtension,
       okClassSelf,                    // param - class reference; used in class resending expression
 
       okExternal,
@@ -334,13 +334,13 @@ private:
       // symbol hints
       Map<ref_t, ref_t> constantHints;
 
-////      // extensions
-////      ExtensionMap      extensions;
-////
-//////      ref_t packageReference;
-////
-//////      // list of references to the current module which should be checked after the project is compiled
-//////      Unresolveds* forwardsUnresolved;
+      // extensions
+      ExtensionMap      extensions;
+
+////      ref_t packageReference;
+//
+////      // list of references to the current module which should be checked after the project is compiled
+////      Unresolveds* forwardsUnresolved;
 
       IdentifierString ns;
       IdentifierString sourcePath;
@@ -397,33 +397,32 @@ private:
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-////      void loadExtensions(ident_t ns);
-////      void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
+      void loadExtensions(ident_t ns);
+      void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
+      {
+         IdentifierString fullName(ns);
+         if (internalOne)
+            fullName.append(PRIVATE_PREFIX_NS, getlength(PRIVATE_PREFIX_NS) - 1); // HOTFIX : to exclude the tailing quote symbol
+
+         if (!emptystr(subns)) {
+            fullName.append("'");
+            fullName.append(subns);
+         }
+         loadExtensions(fullName.c_str());
+      }
+
+      void saveExtension(ref_t message, ref_t type, ref_t role, bool internalOne);
+
+////      void loadModuleInfo(_Module* extModule)
 ////      {
-////         IdentifierString fullName(ns);
-////         if (internalOne)
-////            fullName.append(PRIVATE_PREFIX_NS, getlength(PRIVATE_PREFIX_NS) - 1); // HOTFIX : to exclude the tailing quote symbol
-////
-////         if (!emptystr(subns)) {
-////            fullName.append("'");
-////            fullName.append(subns);
-////         }
-////         loadExtensions(fullName.c_str());
+////         bool dummy1, dummy2;
+////         loadModuleInfo(extModule, dummy1, dummy2);
 ////      }
-//////      void loadActions(_Module* module);
-////
-////      void saveExtension(ref_t message, ref_t type, ref_t role, bool internalOne);
-////
-//////      void loadModuleInfo(_Module* extModule)
-//////      {
-//////         bool dummy1, dummy2;
-//////         loadModuleInfo(extModule, dummy1, dummy2);
-//////      }
-////      void loadModuleInfo(ident_t name)
-////      {
-////         loadExtensions(name);
-//////         loadActions(extModule);
-////      }
+//      void loadModuleInfo(ident_t name)
+//      {
+//         loadExtensions(name);
+////         loadActions(extModule);
+//      }
 
 ////      bool defineForward(ident_t forward, ident_t referenceName)
 ////      {
@@ -441,7 +440,7 @@ private:
    struct SourceScope : public Scope
    {
       ref_t          reference;
-//      bool           internalOne;
+      bool           internalOne;
 
       SourceScope(Scope* parent, ref_t reference/*, ident_t sourcePath*/);
    };
@@ -450,8 +449,8 @@ private:
    struct ClassScope : public SourceScope
    {
       ClassInfo   info;
-//      ref_t       extensionClassRef;
-//      bool        embeddable;
+      ref_t       extensionClassRef;
+      bool        embeddable;
       bool        classClassMode;
       bool        abstractMode;
       bool        abstractBaseMode;
@@ -554,7 +553,7 @@ private:
       bool         classEmbeddable;
 //      bool         generic;
 //      bool         genericClosure;
-//      bool         extensionMode;
+      bool         extensionMode;
       bool         multiMethod;
       bool         closureMode;
 //      bool         nestedMode;
@@ -805,9 +804,9 @@ private:
    ref_t resolveImplicitIdentifier(Scope& scope, SNode terminal);
    ref_t resolveImplicitIdentifier(Scope& scope, ident_t identifier, bool referenceOne, bool gloabalOne = false);
 
-//   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
-//   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
-//   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
+   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
+   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
+   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
 
    void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
 
@@ -824,7 +823,7 @@ private:
 //   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreSealed = false*/);
-   void compileParentDeclaration(SNode node, ClassScope& scope);
+   void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode);
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 
    void declareSymbolAttributes(SNode node, SymbolScope& scope);
@@ -842,8 +841,8 @@ private:
    bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
-   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*,
-                                     bool withExtension*/, int& stackSafeAttr);
+   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
+                                     bool withExtension, int& stackSafeAttr);
 //   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
 //   {
 //      int dummy;

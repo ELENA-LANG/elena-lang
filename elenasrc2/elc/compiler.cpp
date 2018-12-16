@@ -189,14 +189,14 @@ inline bool isConstantArguments(SNode node)
 // --- Compiler::NamespaceScope ---
 
 Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope/*, ident_t path*/, ident_t ns/*, IdentifierList* imported*//*, bool withFullInfo*/)
-   : Scope(moduleScope), constantHints(INVALID_REF)//, extensions(Pair<ref_t, ref_t>(0, 0))
+   : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0))
 {
    this->ns.copy(ns);
 //   this->sourcePath = path;
-//
-////   // load private namespaces
-////   loadExtensions(moduleScope->module->Name(), ns, true);
-//
+
+   // load private namespaces
+   loadExtensions(moduleScope->module->Name(), ns, true);
+
 //   for (auto it = imported->start(); !it.Eof(); it++) {
 //      ident_t imported_ns = *it;
 //
@@ -206,16 +206,6 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope/*, ident_t 
 ////         loadModuleInfo(imported_ns);
 ////      }         
 //   }
-//
-////  //   this->forwardsUnresolved = forwardsUnresolved;
-////
-//////   // HOTFIX : package section should be created if at least literal class is declated
-//////   if (literalReference != 0) {
-//////      packageReference = module->mapReference(ReferenceNs(module->Name(), PACKAGE_SECTION));
-//////   }
-//////   else packageReference = 0;
-////
-//////   loadModuleInfo(module, true);
 }
 
 pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
@@ -358,12 +348,12 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
       // check if the object can be treated like a constant object
       ref_t r = moduleScope->loadClassInfo(info, reference, true);
       if (r) {
-         //// if it is an extension
-         //if (test(info.header.flags, elExtension)) {
-         //   return ObjectInfo(okExtension, reference, reference);
-         //}
+         // if it is an extension
+         if (test(info.header.flags, elExtension)) {
+            return ObjectInfo(okExtension, reference, reference);
+         }
          // if it is a stateless symbol
-         /*else */if (test(info.header.flags, elStateless)) {
+         else if (test(info.header.flags, elStateless)) {
             return ObjectInfo(okConstantSymbol, reference, reference);
          }
          // if it is a normal class
@@ -424,54 +414,54 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
 //////      }
 //////   }
 //////}
-////
-////void Compiler::NamespaceScope :: loadExtensions(ident_t ns)
-////{
-////   ReferenceNs sectionName(ns, EXTENSION_SECTION);
-////
-////   ref_t extRef = 0;
-////   _Module* extModule = moduleScope->loadReferenceModule(module->mapReference(sectionName, false), extRef);
-////   _Memory* section = extModule ? extModule->mapSection(extRef | mskMetaRDataRef, true) : NULL;
-////   if (section) {
-////      MemoryReader metaReader(section);
-////      while (!metaReader.Eof()) {
-////         ref_t type_ref = metaReader.getDWord();
-////         ref_t message = metaReader.getDWord();
-////         ref_t role_ref = metaReader.getDWord();
-////         if (extModule != module) {
-////            type_ref = importReference(extModule, type_ref, module);
-////            message = importMessage(extModule, message, module);
-////            role_ref = importReference(extModule, role_ref, module);
-////         }
-////
-////         extensions.add(message, Pair<ref_t, ref_t>(type_ref, role_ref));
-////      }
-////   }
-////}
-////
-////void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t typeRef, ref_t role, bool internalOne)
-////{
-////   if (typeRef == INVALID_REF || typeRef == moduleScope->superReference)
-////      typeRef = 0;
-////
-////   IdentifierString sectionName(internalOne ? PRIVATE_PREFIX_NS : "'");
-////   if (!emptystr(ns)) {
-////      sectionName.append(ns);
-////      sectionName.append("'");
-////   }
-////   sectionName.append(EXTENSION_SECTION);
-////
-////   MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
-////
-////   if (typeRef == moduleScope->superReference) {
-////      metaWriter.writeDWord(0);
-////   }
-////   else metaWriter.writeDWord(typeRef);
-////   metaWriter.writeDWord(message);
-////   metaWriter.writeDWord(role);
-////
-////   extensions.add(message, Pair<ref_t, ref_t>(typeRef, role));
-////}
+
+void Compiler::NamespaceScope :: loadExtensions(ident_t ns)
+{
+   ReferenceNs sectionName(ns, EXTENSION_SECTION);
+
+   ref_t extRef = 0;
+   _Module* extModule = moduleScope->loadReferenceModule(module->mapReference(sectionName, false), extRef);
+   _Memory* section = extModule ? extModule->mapSection(extRef | mskMetaRDataRef, true) : NULL;
+   if (section) {
+      MemoryReader metaReader(section);
+      while (!metaReader.Eof()) {
+         ref_t type_ref = metaReader.getDWord();
+         ref_t message = metaReader.getDWord();
+         ref_t role_ref = metaReader.getDWord();
+         if (extModule != module) {
+            type_ref = importReference(extModule, type_ref, module);
+            message = importMessage(extModule, message, module);
+            role_ref = importReference(extModule, role_ref, module);
+         }
+
+         extensions.add(message, Pair<ref_t, ref_t>(type_ref, role_ref));
+      }
+   }
+}
+
+void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t typeRef, ref_t role, bool internalOne)
+{
+   if (typeRef == INVALID_REF || typeRef == moduleScope->superReference)
+      typeRef = 0;
+
+   IdentifierString sectionName(internalOne ? PRIVATE_PREFIX_NS : "'");
+   if (!emptystr(ns)) {
+      sectionName.append(ns);
+      sectionName.append("'");
+   }
+   sectionName.append(EXTENSION_SECTION);
+
+   MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+   if (typeRef == moduleScope->superReference) {
+      metaWriter.writeDWord(0);
+   }
+   else metaWriter.writeDWord(typeRef);
+   metaWriter.writeDWord(message);
+   metaWriter.writeDWord(role);
+
+   extensions.add(message, Pair<ref_t, ref_t>(typeRef, role));
+}
 
 // --- Compiler::SourceScope ---
 
@@ -480,8 +470,8 @@ Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference)
 {
    this->reference = reference;
 
-//   ident_t name = module->resolveReference(reference);
-//   this->internalOne = name.startsWith(PRIVATE_PREFIX_NS);
+   ident_t name = module->resolveReference(reference);
+   this->internalOne = name.startsWith(PRIVATE_PREFIX_NS);
 }
 
 // --- Compiler::SymbolScope ---
@@ -523,8 +513,8 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference)
    info.header.staticSize = 0;
    info.size = 0;
 
-//   extensionClassRef = 0;
-//   embeddable = false;
+   extensionClassRef = 0;
+   embeddable = false;
    classClassMode = false;
    abstractMode = false;
    abstractBaseMode = false;
@@ -624,7 +614,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->withOpenArg = false;
    this->classEmbeddable = false;
 //   this->generic = false;
-//   this->extensionMode = false;
+   this->extensionMode = false;
    this->multiMethod = false;
    this->closureMode = false;
 //   this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
@@ -636,13 +626,13 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 
 ObjectInfo Compiler::MethodScope :: mapSelf(/*bool forced*/)
 {
-   //if (extensionMode && !forced) {
-   //   //COMPILER MAGIC : if it is an extension ; replace $self with self
-   //   ClassScope* extensionScope = (ClassScope*)getScope(slClass);
+   if (extensionMode/* && !forced*/) {
+      //COMPILER MAGIC : if it is an extension ; replace $self with self
+      ClassScope* extensionScope = (ClassScope*)getScope(slClass);
 
-   //   return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, extensionScope->embeddable ? -1 : 0);
-   //}
-   /*else */if (classEmbeddable) {
+      return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, 0, extensionScope->embeddable ? -1 : 0);
+   }
+   else if (classEmbeddable) {
       return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference, 0, (ref_t)-1);
    }
    else return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
@@ -1367,10 +1357,6 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
 
       current = current.nextNode();
    }
-
-   ////COMPILER MAGIC : if it is an extension ; replace $self with self
-   //ClassScope* ownerScope = (ClassScope*)scope.getScope(Scope::slClass);
-   //scope.extensionMode = (ownerScope != NULL && ownerScope->extensionClassRef != 0);
 }
 
 void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t function, ref_t message)
@@ -1534,7 +1520,21 @@ ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, SNode terminal)
    else return resolveImplicitIdentifier(scope, terminal.identifier(), terminal == lxReference);
 }
 
-void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
+bool isExtensionDeclaration(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current == lxAttribute) {
+      if (current.argument == V_EXTENSION) {
+         return true;
+      }
+
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode)
 {
    ref_t parentRef = 0;
    if (node == lxParent) {
@@ -1564,7 +1564,13 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope)
       parentRef = scope.info.header.parentRef;
    }
 
-   compileParentDeclaration(node, scope, parentRef);
+   if (extensionMode) {
+      // COMPLIER MAGIC : treat the parent declaration in the special way for the extension
+      scope.extensionClassRef = parentRef;
+
+      compileParentDeclaration(node, scope, scope.moduleScope->superReference);
+   }
+   else compileParentDeclaration(node, scope, parentRef);
 }
 
 void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
@@ -2085,8 +2091,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okClass:
          writer.newNode(lxClassSymbol, object.param);
          break;
-//      case okExtension:
-//         scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
+      case okExtension:
+         scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
       case okConstantSymbol:
          writer.newNode(lxConstantSymbol, object.param);
          break;
@@ -2624,88 +2630,88 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
    return encodeMessage(actionRef, paramCount, actionFlags);
 }
 
-//ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, int& stackSafeAttr)
-//{
-//   ref_t objectRef = resolveObjectReference(scope, object);
-//   if (isPrimitiveRef(objectRef)) {
-//      if (objectRef != V_ARGARRAY)
-//         objectRef = _logic->resolvePrimitiveReference(*scope.moduleScope, objectRef);
-//   }
-//   else if (objectRef == scope.moduleScope->superReference) {
-//      objectRef = 0;
-//   }
-//
-//   // general extension
-//   ref_t generalRoleRef1 = 0;
-//   ref_t roleRef1 = 0;
-//   ref_t strongMessage1 = 0;
-//
-//   // typified extension
-//   ref_t generalRoleRef2 = 0;
-//   ref_t roleRef2 = 0;
-//   ref_t strongMessage2 = 0;
-//
-//   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//   for (auto it = nsScope->extensions.getIt(messageRef); !it.Eof(); it = nsScope->extensions.nextIt(messageRef, it)) {
-//      if (_logic->isCompatible(*scope.moduleScope, (*it).value1, objectRef)) {
-//         ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, (*it).value2, implicitSignatureRef, stackSafeAttr);
-//         if (resolvedMessageRef) {
-//            if ((*it).value1) {
-//               if (!roleRef2) {
-//                  strongMessage2 = resolvedMessageRef;
-//                  roleRef2 = (*it).value2;
-//               }
-//            }
-//            else {
-//               strongMessage1 = resolvedMessageRef;
-//               roleRef1 = (*it).value2;
-//            }
-//         }
-//         else {
-//            if ((*it).value1) {
-//               if (!generalRoleRef2)
-//                  generalRoleRef2 = (*it).value2;
-//            }
-//            else {
-//               if (!generalRoleRef1)
-//                  generalRoleRef1 = (*it).value2;
-//            }
-//         }
-//      }
-//   }
-//
-//   if (roleRef2) {
-//      // if it is strong typed message and extension
-//      messageRef = strongMessage2;
-//      stackSafeAttr |= 1;
-//
-//      return roleRef2;
-//   }
-//   else if (roleRef1) {
-//      // if it is strong typed message and general extension
-//      messageRef = strongMessage1;
-//
-//      return roleRef1;
-//   }
-//   else if (generalRoleRef2) {
-//      stackSafeAttr |= 1;
-//
-//      // if it is general message and strong typed extension
-//      return generalRoleRef2;
-//   }
-//   else if (generalRoleRef1) {
-//      // if it is general message and extension
-//      return generalRoleRef1;
-//   }
-//
-//   if (objectRef == V_ARGARRAY) {
-//      // HOTFIX : variadic target - try to resolve extension for the array
-//
-//      return mapExtension(scope, messageRef, implicitSignatureRef, ObjectInfo(okObject, scope.moduleScope->arrayReference), stackSafeAttr);
-//   }
-//
-//   return 0;
-//}
+ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, int& stackSafeAttr)
+{
+   ref_t objectRef = resolveObjectReference(scope, object);
+   if (isPrimitiveRef(objectRef)) {
+      //if (objectRef != V_ARGARRAY)
+         objectRef = resolvePrimitiveReference(scope, objectRef, object.element);
+   }
+   else if (objectRef == scope.moduleScope->superReference) {
+      objectRef = 0;
+   }
+
+   // general extension
+   ref_t generalRoleRef1 = 0;
+   ref_t roleRef1 = 0;
+   ref_t strongMessage1 = 0;
+
+   // typified extension
+   ref_t generalRoleRef2 = 0;
+   ref_t roleRef2 = 0;
+   ref_t strongMessage2 = 0;
+
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+   for (auto it = nsScope->extensions.getIt(messageRef); !it.Eof(); it = nsScope->extensions.nextIt(messageRef, it)) {
+      if (_logic->isCompatible(*scope.moduleScope, (*it).value1, objectRef)) {
+         ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, (*it).value2, implicitSignatureRef, stackSafeAttr);
+         if (resolvedMessageRef) {
+            if ((*it).value1) {
+               if (!roleRef2) {
+                  strongMessage2 = resolvedMessageRef;
+                  roleRef2 = (*it).value2;
+               }
+            }
+            else {
+               strongMessage1 = resolvedMessageRef;
+               roleRef1 = (*it).value2;
+            }
+         }
+         else {
+            if ((*it).value1) {
+               if (!generalRoleRef2)
+                  generalRoleRef2 = (*it).value2;
+            }
+            else {
+               if (!generalRoleRef1)
+                  generalRoleRef1 = (*it).value2;
+            }
+         }
+      }
+   }
+
+   if (roleRef2) {
+      // if it is strong typed message and extension
+      messageRef = strongMessage2;
+      stackSafeAttr |= 1;
+
+      return roleRef2;
+   }
+   else if (roleRef1) {
+      // if it is strong typed message and general extension
+      messageRef = strongMessage1;
+
+      return roleRef1;
+   }
+   else if (generalRoleRef2) {
+      stackSafeAttr |= 1;
+
+      // if it is general message and strong typed extension
+      return generalRoleRef2;
+   }
+   else if (generalRoleRef1) {
+      // if it is general message and extension
+      return generalRoleRef1;
+   }
+
+   //if (objectRef == V_ARGARRAY) {
+   //   // HOTFIX : variadic target - try to resolve extension for the array
+
+   //   return mapExtension(scope, messageRef, implicitSignatureRef, ObjectInfo(okObject, scope.moduleScope->arrayReference), stackSafeAttr);
+   //}
+
+   return 0;
+}
 
 void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode/*, bool switchMode*/)
 {
@@ -2896,7 +2902,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
 
       int stackSafeAttr = 0;
       int messageRef = resolveMessageAtCompileTime(loperand, scope, resolveOperatorMessage(scope, operator_id, paramCount), 
-         implicitSignatureRef, /*true, */stackSafeAttr);
+         implicitSignatureRef, true, stackSafeAttr);
 
       if (!test(stackSafeAttr, 1)) {
          operationMode |= HINT_DYNAMIC_OBJECT;
@@ -3217,8 +3223,8 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
    return 0;
 }
 
-ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*, 
-   bool withExtension*/, int& stackSafeAttr)
+ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef, 
+   bool withExtension, int& stackSafeAttr)
 {
    ref_t resolvedMessageRef = 0;
    ref_t targetRef = resolveObjectReference(scope, target);
@@ -3230,24 +3236,24 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
       return resolvedMessageRef;
    }
 
-   //// check the existing extensions if allowed
-   //if (withExtension) {
-   //   if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
-   //      // could be stacksafe
-   //      stackSafeAttr |= 1;
+   // check the existing extensions if allowed
+   if (withExtension) {
+      if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
+         // could be stacksafe
+         stackSafeAttr |= 1;
 
-   //      // if the object handles the message - do not use extensions
-   //      return generalMessageRef;
-   //   }
+         // if the object handles the message - do not use extensions
+         return generalMessageRef;
+      }
 
-   //   ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, stackSafeAttr);
-   //   if (extensionRef != 0) {
-   //      // if there is an extension to handle the compile-time resolved message - use it
-   //      target = ObjectInfo(okConstantRole, extensionRef/*, 0, target.type*/);
+      ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, stackSafeAttr);
+      if (extensionRef != 0) {
+         // if there is an extension to handle the compile-time resolved message - use it
+         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
 
-   //      return generalMessageRef;
-   //   }
-   //}
+         return generalMessageRef;
+      }
+   }
 
    // otherwise - use the general message
    return generalMessageRef;
@@ -3279,7 +3285,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       }
       else {
          int stackSafeAttr = 0;
-         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef/*, true*/, stackSafeAttr);
+         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, stackSafeAttr);
 
          if (!test(stackSafeAttr, 1)) {
             mode |= HINT_DYNAMIC_OBJECT;
@@ -3505,7 +3511,7 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
    //
    int mode = HINT_NODEBUGINFO;
    int stackSafeAttr = 0;
-   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source), /*true, */stackSafeAttr);
+   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source), true, stackSafeAttr);
    if (!test(stackSafeAttr, 1))
       mode |= HINT_DYNAMIC_OBJECT;
 
@@ -3694,7 +3700,7 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 
    // check if the class was already compiled
    if (!node.argument) {
-      compileParentDeclaration(node, scope);
+      compileParentDeclaration(node, scope, false);
 
       //if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
       //   // COMPILER MAGIC : inject interface implementation
@@ -5361,7 +5367,7 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    if (implicitConstructor) {
       messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), stackSafeAttr);
    }
-   else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, /*false, */stackSafeAttr);
+   else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
 
    // find where the target constructor is declared in the current class
    // but it is not equal to the current method
@@ -5506,7 +5512,7 @@ void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScop
    //}
 }
 
-void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/)
+void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod)
 {
    if (node.argument != 0 && multiMethod) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
@@ -5531,12 +5537,10 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
 
       ObjectInfo target = scope.mapMember(SELF_VAR);
       writeTerminal(writer, node, scope, target, HINT_NODEBUGINFO);
-      compileMessage(writer, node.firstChild(lxObjectMask).findChild(lxMessage), scope, /*0, */target, /*(*//*extensionMode ? HINT_EXT_RESENDEXPR : *//*HINT_RESENDEXPR) | HINT_PARAMETERSONLY*/0);
+      compileMessage(writer, node.firstChild(lxObjectMask).findChild(lxMessage), scope, /*0, */target, 0);
 
       writer.removeBookmark();
       writer.closeNode();
-
-      //scope.freeSpace();
 
       writer.closeNode();
    }
@@ -5560,7 +5564,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
    // check if it is a resend
    if (body == lxResendExpression) {
-      compileResendExpression(writer, body, codeScope, scope.multiMethod/*, scope.extensionMode*/);
+      compileResendExpression(writer, body, codeScope, scope.multiMethod);
       preallocated = 1;
    }
    // check if it is a dispatch
@@ -6160,6 +6164,8 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.closureMode = _logic->isClosure(scope.info, methodScope.message);
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
+   methodScope.extensionMode = scope.extensionClassRef != 0;
+
 //   if (!methodScope.withOpenArg) {
 //      // HOTFIX : generic with open argument list is compiled differently
 //      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
@@ -6239,21 +6245,16 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
       current = current.nextNode();
    }
 
-//   // check if extension is qualified
-//   bool extensionMode = test(scope.info.header.flags, elExtension);
-//   if (extensionMode) {
+   // check if extension is qualified
+   bool extensionMode = test(scope.info.header.flags, elExtension);
+   if (extensionMode) {
 //      if (extensionTypeRef == 0)
 //         extensionTypeRef = scope.moduleScope->superReference;
 //   }
-//
-//   if (extensionTypeRef != 0) {
-//      if (extensionMode) {
 //         scope.extensionClassRef = extensionTypeRef;
-//
-//         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(scope.extensionClassRef, 0));
-//      }
-//      else scope.raiseError(errInvalidHint, root);
-//   }
+
+      scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(scope.extensionClassRef, 0));
+   }
 }
 
 void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef, ref_t elementRef, int sizeHint, bool singleField, bool embeddable)
@@ -6520,37 +6521,37 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       scope.raiseWarning(WARNING_LEVEL_1, wrnTypeInherited, node);
 }
 
-//void Compiler :: saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne)
-//{
-//   nsScope.saveExtension(message, extensionClassRef, reference, internalOne);
-//   if (isOpenArg(message)/* && _logic->isMethodGeneric(scope.info, message)*/) {
-//      // if it is an extension with open argument list generic handler
-//      // creates the references for all possible number of parameters
-//      for (int i = 1; i < OPEN_ARG_COUNT; i++) {
-//         nsScope.saveExtension(overwriteParamCount(message, i), extensionClassRef, reference, internalOne);
-//      }
-//   }
-//}
-//
-//void Compiler :: saveExtension(ClassScope& scope, ref_t message, bool internalOne)
-//{
-//   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//
-//   saveExtension(*nsScope, scope.reference, scope.extensionClassRef, message, internalOne);
-//}
-//
-//inline bool isGeneralMessage(_Module* module, ref_t message)
-//{
-//   if (getParamCount(message) == 0) {
-//      return true;
-//   }
-//   else {
-//      ref_t signRef = 0;
-//      module->resolveAction(getAction(message), signRef);
-//
-//      return signRef == 0;
-//   }
-//}
+void Compiler :: saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne)
+{
+   nsScope.saveExtension(message, extensionClassRef, reference, internalOne);
+   //if (isOpenArg(message)/* && _logic->isMethodGeneric(scope.info, message)*/) {
+   //   // if it is an extension with open argument list generic handler
+   //   // creates the references for all possible number of parameters
+   //   for (int i = 1; i < OPEN_ARG_COUNT; i++) {
+   //      nsScope.saveExtension(overwriteParamCount(message, i), extensionClassRef, reference, internalOne);
+   //   }
+   //}
+}
+
+void Compiler :: saveExtension(ClassScope& scope, ref_t message, bool internalOne)
+{
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+   saveExtension(*nsScope, scope.reference, scope.extensionClassRef, message, internalOne);
+}
+
+inline bool isGeneralMessage(_Module* module, ref_t message)
+{
+   if (getParamCount(message) == 0) {
+      return true;
+   }
+   else {
+      ref_t signRef = 0;
+      module->resolveAction(getAction(message), signRef);
+
+      return signRef == 0;
+   }
+}
 
 void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope)
 {
@@ -6562,9 +6563,9 @@ void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope
       // abstract or private methods cannot be predefined
       scope.raiseError(errIllegalMethod, node);
 
-   //if (scope.extensionMode)
-   //   // an extension cannot have predefined methods
-   //   scope.raiseError(errIllegalMethod, node);
+   if (scope.extensionMode)
+      // an extension cannot have predefined methods
+      scope.raiseError(errIllegalMethod, node);
 
    ref_t signRef;
    scope.module->resolveAction(scope.message, signRef);
@@ -6637,7 +6638,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 //      else  if (scope.info.methods.exist(message | SEALED_MESSAGE))
 //         scope.raiseError(errDuplicatedMethod, current);
 //
-      if (/*included && */embeddableClass && !test(methodHints, tpMultimethod)) {
+      if (embeddableClass && !test(methodHints, tpMultimethod)) {
          // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
 
          methodHints |= tpStackSafe;
@@ -6652,7 +6653,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          //}
       }
 
-      if (!included && /*!scope.abstractMode && */test(methodHints, tpAbstract)) {
+      if (!included && test(methodHints, tpAbstract)) {
          scope.removeHint(message, tpAbstract);
       }
 
@@ -6680,10 +6681,10 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       //   //   saveExtension(scope, message, scope.internalOne);
       //   //}
       //}
-//      else if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate) && isGeneralMessage(scope.module, message)) {
-//         // save the extension message without parameters as well
-//         saveExtension(scope, message, scope.internalOne);
-//      }
+      /*else */if (test(scope.info.header.flags, elExtension)/* && !test(methodHints, tpPrivate)*/ && isGeneralMessage(scope.module, message)) {
+         // NOTE : only general message should be saved
+         saveExtension(scope, message, scope.internalOne);
+      }
    }
 }
 
@@ -6805,7 +6806,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
       // generate fields
       generateClassFields(node, scope, countFields(node) == 1);
 
-      if (/*scope.extensionClassRef != 0 ? _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef) : */_logic->isEmbeddable(scope.info))
+      if (scope.extensionClassRef != 0 ? _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef) : _logic->isEmbeddable(scope.info))
          classType = ClassType::ctEmbeddableClass;
    }
 
@@ -6928,7 +6929,8 @@ ref_t Compiler :: resolveParentRef(SNode terminal, Scope& scope, bool silentMode
 
 void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 {
-   compileParentDeclaration(node.findChild(lxParent), scope);
+   bool extensionDeclaration = isExtensionDeclaration(node);   
+   compileParentDeclaration(node.findChild(lxParent), scope, extensionDeclaration);
 
    declareClassAttributes(node, scope);
 
@@ -6990,14 +6992,14 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
 
    SyntaxWriter writer(expressionTree);
 
-//   if (test(scope.info.header.flags, elExtension)) {
-//      scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
-//
-//      scope.embeddable = _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef);
-//   }
-//   else if (_logic->isEmbeddable(scope.info)) {
-//      scope.embeddable = true;
-//   }
+   if (test(scope.info.header.flags, elExtension)) {
+      scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
+
+      scope.embeddable = _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef);
+   }
+   else if (_logic->isEmbeddable(scope.info)) {
+      scope.embeddable = true;
+   }
 
    writer.newNode(lxClass, node.argument);
    compileVMT(writer, node, scope);
@@ -7641,7 +7643,7 @@ ref_t Compiler :: analizeSymbol(SNode& node, NamespaceScope& scope)
          node = lxClassSymbol;
          break;
       case okConstantSymbol:
-      //case okExtension:
+      case okExtension:
          node = lxConstantSymbol;
          break;
    }
@@ -8283,7 +8285,6 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically
       loadAttributes(scope, STANDARD_MODULE, &scope.attributes);
-      //loadModuleInfo(project->loadModule(STANDARD_MODULE, false), true);
    }
 
 //   createPackageInfo(scope.module, *scope.project);

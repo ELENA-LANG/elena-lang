@@ -1,6 +1,4 @@
 /// Attributes
-//V               = #30.
-//
 #16390 = type;
 #16386 = class;
 #8197  = struct;
@@ -10,8 +8,8 @@
 #8195  = sealed;
 #8193  = embeddable;
 //template        = #16391.
-//extension       = #8203.
-//
+#8203  = extension;
+
 #8201  = const;
 #8208  = singleton;
 //generic         = #8202.
