@@ -706,7 +706,7 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
 //   }
 //}
 
-void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler/*, bool closed*/)
+void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
 {
 //   // generate enumeration list
 //   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
@@ -715,7 +715,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 //      compiler.generateListMember(scope, valuesField.value1, classRef);
 //   }
 
-   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference/* && !closed*/ && !test(info.header.flags, elExtension)) {
+   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference && !closed && !test(info.header.flags, elExtension)) {
       // auto generate cast$<type> message for explicitly declared classes
       ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
       ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
@@ -1842,6 +1842,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
 bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttributes& attributes)
 {
    switch (attrValue) {
+      case 0:
+         // HOTFIX : recognize idle attributes
+         return true;
       case (int)V_VARIABLE:
       case (int)V_AUTO:
          if (!attributes.typeAttr) {

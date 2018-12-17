@@ -1785,10 +1785,10 @@ public sealed Array //:: Indexable, Array<object>
 // 
 //    /// Returns the array enumerator
 //    T<Enumerator> enumerator = ArrayEnumerator new(self).
-//
-//    /// Returns the array indexer
-//    T<Indexer> indexer = ArrayIndexer new(self).
-//
+
+    /// Returns the array indexer
+    Indexer indexer = new ArrayIndexer(self);
+
 //    /// Clones the array
 //    T<Array> clone 
 //        = Array new(self).
@@ -2533,26 +2533,26 @@ public singleton wideConvertor
 //        
 //    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.        
 //}
-//
-//// --- ArrayIndexer ---
-//
-///// An array indexer
-//public class ArrayIndexer :: Indexer
-//{
-//    T<Array> theArray.
+
+// --- ArrayIndexer ---
+
+/// An array indexer
+public class ArrayIndexer : Indexer
+{
+    Array theArray;
 //    ref<int> theIndex.
 //
 //    /// Returns the parameter indexer
 //    constructor new : anArray
 //        <= new(T<Array>(anArray)).
-//    
-//    /// Returns the parameter indexer
-//    constructor new(Array anArray)
-//    [
-//        theArray := anArray.
+    
+    /// Returns the parameter indexer
+    constructor(Array arr)
+    {
+//        theArray := arr.
 //        theIndex := 0.
-//    ]
-//    
+    }
+    
 //    /// Returns false if the index out of range
 //    bool available
 //    [
@@ -2593,8 +2593,8 @@ public singleton wideConvertor
 //    /// Reads the length to the output parameter    
 //    readLengthTo(ref<int> anOutput)
 //        => theArray.
-//}
-//
+}
+
 //// --- ArrayEnumerator ---
 //
 ///// An array enumerator

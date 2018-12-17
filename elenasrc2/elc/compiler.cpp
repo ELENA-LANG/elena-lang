@@ -59,7 +59,7 @@ constexpr auto HINT_REFOP           = 0x00000008;
 constexpr auto HINT_NOPRIMITIVES    = 0x00000001;
 
 // scope modes
-constexpr auto INITIALIZER_SCOPE     = 0x0000001;   // indicates the constructor or initializer method
+constexpr auto INITIALIZER_SCOPE    = 0x0000001;   // indicates the constructor or initializer method
 
 typedef Compiler::ObjectInfo                 ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute                 Attribute;
@@ -2353,24 +2353,19 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //         break;
 //      }
       default:
-//         if (!emptystr(token)) {
-            if (test(mode, HINT_FORWARD)) {
-               IdentifierString forwardName(FORWARD_MODULE, "'", token);
+         if (test(mode, HINT_FORWARD)) {
+            IdentifierString forwardName(FORWARD_MODULE, "'", token);
 
-               object = scope.mapTerminal(forwardName.ident(), true, 0);
-            }
-            else if (test(mode, HINT_EXTERNALOP)) {
-               object = ObjectInfo(okExternal, 0, V_INT32);
-            }
-            else if (test(mode, HINT_INTERNALOP)) {
-               object = ObjectInfo(okInternal, scope.module->mapReference(token), V_INT32);
-            }
-            else object = scope.mapTerminal(token, terminal == lxReference, 0);
-//         }
+            object = scope.mapTerminal(forwardName.ident(), true, 0);
+         }
+         else if (test(mode, HINT_EXTERNALOP)) {
+            object = ObjectInfo(okExternal, 0, V_INT32);
+         }
+         else if (test(mode, HINT_INTERNALOP)) {
+            object = ObjectInfo(okInternal, scope.module->mapReference(token), V_INT32);
+         }
+         else object = scope.mapTerminal(token, terminal == lxReference, 0);
          break;
-//         //   else if (terminal == lxResult) {
-//         //      object = ObjectInfo(okObject);
-//         //   }
    }
 
 //   if (object.kind == okExplicitConstant) {
@@ -2416,7 +2411,7 @@ ObjectInfo Compiler :: mapClassSymbol(Scope& scope, int classRef)
 ObjectInfo Compiler :: compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
    ObjectInfo retVal = mapClassSymbol(scope, resolveTemplateDeclaration(node, scope));
-   
+      
    writeTerminal(writer, node, scope, retVal, mode);
 
    return retVal;
@@ -4307,16 +4302,22 @@ ref_t Compiler ::resolveTemplateDeclaration(SNode node, CodeScope& scope)
    return scope.moduleScope->generateTemplate(*this, templateRef, parameters, ns->ns.c_str()/*, &nsScope->extensions*/);
 }
 
-void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int& mode)
+ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int mode)
 {
+   ref_t exprAttr = 0;
+
    bool invalidExpr = false;
    bool newVariable = false;
    bool dynamicSize = false;
    ExpressionAttributes attributes;
+   // NOTE : root attributes (i.e. loop) are handled in compileRootExpression
    while (current == lxAttribute) {
       int value = current.argument;
       if (!_logic->validateExpressionAttribute(value, attributes))
          scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+
+      if (attributes.loopAttr)
+         scope.raiseError(errIllegalOperation, current);
 
       current = current.nextNode();
    }
@@ -4329,7 +4330,7 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
       SNode msgNode = goToNode(current, lxMessage);
       if (msgNode != lxNone && msgNode.firstChild() == lxNone) {
          if (attributes.castAttr) {
-            mode |= HINT_VIRTUALEXPR;
+            exprAttr |= HINT_VIRTUALEXPR;
             msgNode.set(lxTypecast, V_CONVERSION);
          }
          else msgNode.set(lxTypecast, V_NEWOP);
@@ -4342,19 +4343,16 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
       newVariable = true;
    }
    if (attributes.forwardAttr && !newVariable && !attributes.typeRef) {
-      mode |= HINT_FORWARD;
-   }
-   if (attributes.externAttr) {
-      mode |= HINT_EXTERNALOP;
-   }
-   if (attributes.internAttr) {
-      mode |= HINT_INTERNALOP;
+      exprAttr |= HINT_FORWARD;
    }
    if (attributes.refAttr) {
-      mode |= HINT_REFOP;
+      exprAttr |= HINT_REFOP;
    }
-   if (attributes.loopAttr) {
-      mode |= HINT_LOOP;
+   if (attributes.externAttr) {
+      exprAttr |= HINT_EXTERNALOP;
+   }
+   if (attributes.internAttr) {
+      exprAttr |= HINT_INTERNALOP;
    }
 
    //            // negative value defines the target virtual class
@@ -4390,10 +4388,43 @@ void Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curren
 
       compileVariable(writer, current, scope, attributes.typeRef, dynamicSize);
    }
+
+   return exprAttr;
+}
+
+inline SNode findLeftMostNode(SNode current, LexicalType type)
+{
+   if (current == lxExpression) {
+      return findLeftMostNode(current.firstChild(), type);
+   }
+   else return current;
+}
+
+ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   int rootMode = HINT_ROOT;
+
+   // COMPILER MAGIC : recognize root attributes
+   SNode current = findLeftMostNode(node.firstChild(), lxAttribute);
+   while (current == lxAttribute) {
+      ExpressionAttributes attributes;
+      if (_logic->validateExpressionAttribute(current.argument, attributes)) {
+         if (attributes.loopAttr) {
+            rootMode |= HINT_LOOP;
+
+            current.setArgument(0);
+         }
+      }
+      current = current.nextNode();
+   }
+
+   return compileExpression(writer, node, scope, 0, rootMode);
 }
 
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, int mode)
 {
+   ObjectInfo objectInfo;
+
    writer.newBookmark();
 
    bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
@@ -4401,22 +4432,14 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
    mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
 
-   int targetMode = mode & ~HINT_PROP_MODE;
+   int targetMode = mode & ~(HINT_PROP_MODE | HINT_LOOP);
 
    SNode current = node.firstChild();
    // COMPILER MAGIC : compile the expression attributes
    if (current.compare(lxAttribute, lxTarget)) {
-      compileExpressionAttributes(writer, current, scope, targetMode);
-      if (test(targetMode, HINT_LOOP)) {
-         // COMPILER MAGIC : if the operation starts with the loop attribute - apply it to the whole expression
-         if (current.nextNode() != lxNone) {
-            targetMode &= ~HINT_LOOP;
-            mode |= HINT_LOOP;
-         }
-      }
+      targetMode |= compileExpressionAttributes(writer, current, scope, mode);
    }
       
-
    SNode operationNode = current.nextNode();
    if (operationNode == lxAssign) {
       // recognize the property set operation
@@ -4426,8 +4449,10 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
       mode |= HINT_NOUNBOXING;
    }
+   else if (operationNode == lxNone) {
+      targetMode = mode;
+   }
 
-   ObjectInfo objectInfo;
 //   if (object == lxMethodParameter || object == lxNone) {
 //      objectInfo = compileObject(writer, node, scope, 0, targetMode);
 //   }
@@ -4514,7 +4539,7 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
          case lxExpression:
             writer.newNode(lxExpression);
             writer.appendNode(lxBreakpoint, dsStep);
-            compileExpression(writer, current, scope, 0, HINT_ROOT);
+            compileRootExpression(writer, current, scope);
             writer.closeNode();
             break;
 //         case lxLoop:
@@ -6810,7 +6835,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
          classType = ClassType::ctEmbeddableClass;
    }
 
-   _logic->injectVirtualCode(*scope.moduleScope, node, scope.reference, scope.info, *this/*, closed*/);
+   _logic->injectVirtualCode(*scope.moduleScope, node, scope.reference, scope.info, *this, closed);
 
    // generate methods
    if (isClassClass(classType)) {
@@ -8144,6 +8169,9 @@ void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFu
    SNode current = node.findChild(lxSourcePath);
    if (current != lxNone)
       scope.sourcePath.copy(current.identifier());
+
+   // add the module itself
+   scope.importedNs.add(scope.module->Name().clone());
 
    // system module should be included by default
    if (!scope.module->Name().compare(STANDARD_MODULE)) {

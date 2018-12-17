@@ -48,12 +48,12 @@
 //{
 //    abstract Enumerator<type> enumerator []
 //}
-//
-//// --- Indexer ---
-//
-///// An indexer prototype
-//public interface Indexer
-//{
+
+// --- Indexer ---
+
+/// An indexer prototype
+public interface Indexer
+{
 //    /// Returns false if the index out of range
 //    abstract bool available []
 //
@@ -79,8 +79,8 @@
 //    abstract readLengthTo(ref<int> retVal) []
 //    
 //    int rvprop length :: readLengthTo.
-//}
-//
+}
+
 //public interface Indexer<type>
 //{
 //    /// Returns false if the index out of range

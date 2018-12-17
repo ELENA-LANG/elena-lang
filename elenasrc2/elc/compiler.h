@@ -197,13 +197,6 @@ public:
          this->element = 0;
          this->extraparam = 0;
       }
-//      ObjectInfo(ObjectKind kind, int param)
-//      {
-//         this->kind = kind;
-//         this->param = (ref_t)param;
-//         this->extraparam = 0;
-//         this->element = 0;
-//      }
       ObjectInfo(ObjectKind kind, ref_t param, ref_t reference)
       {
          this->kind = kind;
@@ -212,28 +205,14 @@ public:
          this->element = 0;
          this->extraparam = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, int extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = (ref_t)extraparam;
-//         this->element = 0;
-//      }
       ObjectInfo(ObjectKind kind, ref_t param, ref_t reference, ref_t element, ref_t extraparam)
       {
          this->kind = kind;
          this->param = param;
          this->reference = reference;
          this->element = element;
-         this->extraparam = extraparam;         
+         this->extraparam = extraparam;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, int extraparam, ref_t element)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->extraparam = (ref_t)extraparam;
-//         this->element = element;
-//      }
    };
 
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
@@ -883,7 +862,7 @@ private:
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, CodeScope& scope);
-   void compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int& mode);
+   ref_t compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode);
 
    ref_t resolveReferenceTemplate(Scope& scope, ref_t operandRef);
 
@@ -892,7 +871,8 @@ private:
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
-    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
+   ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 
    ObjectInfo compileBranching(SyntaxWriter& writer, SNode thenNode, CodeScope& scope/*, ObjectInfo target, int verb, int subCodinteMode*/);
