@@ -1584,7 +1584,12 @@ void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, 
       node = node.nextNode();
    }
 
-   if (node == lxClosureExpr) {
+   if (node == lxReturning) {
+      writer.newNode(lxReturning);
+      generateExpressionTree(writer, node, derivationScope);
+      writer.closeNode();
+   }
+   else if (node == lxClosureExpr) {
       generateCodeTree(writer, node.findChild(lxCode), derivationScope);
    }
 
@@ -1860,7 +1865,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
                //   }
                //}
                //else generateIdentifier(writer, current, derivationScope);
-               if (current.nextNode().compare(lxClosureExpr, lxParameter)) {
+               if (current.nextNode().compare(lxClosureExpr, lxParameter, lxReturning)) {
                   // COMPILER MAGIC : recognize the closure
                   generateClosureTree(writer, current, derivationScope);
                }

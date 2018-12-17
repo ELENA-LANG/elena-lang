@@ -3869,8 +3869,8 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    /*else */if (argNode == lxCode) {
       compileAction(node, scope, SNode(), /*singleton ? mode | HINT_SINGLETON : */mode);
    }
-   else if (node.existChild(lxCode)) {
-      SNode codeNode = node.findChild(lxCode);
+   else if (node.existChild(lxCode, lxReturning)) {
+      SNode codeNode = node.findChild(lxCode, lxReturning);
 
       // if it is a closure / lambda function with a parameter
       int actionMode = mode;
