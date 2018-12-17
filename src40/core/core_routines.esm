@@ -86,6 +86,15 @@ procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@sy
 
 end
 
+procedure __array."read:length$@system@ref#1&IntNumber[2]"
+
+  len
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
 symbol sta_start
 
   pushr entry : "$forwards'$program"

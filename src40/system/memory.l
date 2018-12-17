@@ -1771,9 +1771,12 @@ public sealed Array //:: Indexable, Array<object>
 //        ^ aRetVal
 //    ]
 //
-//    /// Reads the array length into an output parameter
-//    readLengthTo(ref<int> aLength)
-//        => system'core_routines'__array.
+    rvprop int length
+    {
+        /// Reads the array length into an output parameter
+        read(ref int retVal)
+            => system'core_routines'__array;
+    }
 //
 //    /// Sets the specified array member
 //    setAt(int anIndex, object anObject)
@@ -2539,7 +2542,7 @@ public singleton wideConvertor
 /// An array indexer
 public class ArrayIndexer : Indexer
 {
-    Array theArray;
+    Array _array;
 //    ref<int> theIndex.
 //
 //    /// Returns the parameter indexer
@@ -2549,19 +2552,18 @@ public class ArrayIndexer : Indexer
     /// Returns the parameter indexer
     constructor(Array arr)
     {
-//        theArray := arr.
+        _array := arr;
 //        theIndex := 0.
     }
     
-//    /// Returns false if the index out of range
-//    bool available
-//    [
-//        int aLength := 0.
-//        theArray readLengthTo(&aLength).
-//        
+    /// Returns false if the index out of range
+    get bool available()
+    {
+        int len := _array.length;
+
 //        ^ theIndex < aLength.
-//    ]
-//
+    }
+
 //    /// Returns the current member
 //    get
 //        = theArray getAt(theIndex).

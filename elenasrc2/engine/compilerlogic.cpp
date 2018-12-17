@@ -1807,6 +1807,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       case V_BINARY:
       case V_INTBINARY:
       case V_STRING:
+      case V_TEMPLATE:
          attrValue = 0;
          return true;
          ////case V_INT64:

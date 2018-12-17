@@ -28,6 +28,7 @@ In development:
                  * abstract class cannot have constructors / default constructor
                  * uncomment validateClassDeclaration
                  * uncomment compileBranchingOperand
+                 * correct error should be displayed : abstract get bool available {}
  
               dev - tests          
                  * test : interpreter

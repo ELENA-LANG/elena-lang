@@ -1102,6 +1102,18 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
    writer.closeNode();
 }
 
+//void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (current == lxToken) {
+//         generateExpressionAttribute(writer, current, derivationScope);
+//      }
+//
+//      current = current.nextNode();
+//   }
+//}
+
 void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/)
 {
    SNode current = node;
@@ -1128,6 +1140,9 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
             writer.newNode(lxAttribute, current.argument);
             copyIdentifier(writer, current.findChild(lxIdentifier));
             writer.closeNode();
+            if (current.argument == V_TEMPLATE) {
+               generateExpressionAttribute(writer, current, derivationScope, true);
+            }
 //            if (templateMode) {
 //               if (current.argument == V_ACCESSOR) {
 //                  // HOTFIX : recognize virtual property template

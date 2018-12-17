@@ -1654,6 +1654,9 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
                   // if it is a string attribute
                   scope.info.header.flags |= elDebugLiteral;
                }
+               else if (current.argument == V_TEMPLATE) {
+                  fieldRef = resolveTemplateDeclaration(current, scope);
+               }
                // if it is a primitive type
                else fieldRef = current.argument;
             }
@@ -4271,7 +4274,7 @@ ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
    return ref;
 }
 
-void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameters, CodeScope& scope)
+void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope)
 {
    if (current == lxIdentifier)
       current = current.nextNode();
@@ -4290,7 +4293,7 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
    }
 }
 
-ref_t Compiler ::resolveTemplateDeclaration(SNode node, CodeScope& scope)
+ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope)
 {
    // generate an reference class
    List<SNode> parameters;

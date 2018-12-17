@@ -825,7 +825,7 @@ private:
 
    size_t resolveArraySize(SNode node, Scope& scope);
 
-   ref_t resolveTemplateDeclaration(SNode node, CodeScope& scope);
+   ref_t resolveTemplateDeclaration(SNode node, Scope& scope);
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode& node, CodeScope& scope, ref_t typeRef, bool dynamicArray);
@@ -861,7 +861,7 @@ private:
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
-   void compileTemplateAttributes(SNode current, List<SNode>& parameters, CodeScope& scope);
+   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope);
    ref_t compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode);
 
    ref_t resolveReferenceTemplate(Scope& scope, ref_t operandRef);

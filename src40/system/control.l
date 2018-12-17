@@ -54,9 +54,9 @@
 /// An indexer prototype
 public interface Indexer
 {
-//    /// Returns false if the index out of range
-//    abstract bool available []
-//
+    /// Returns false if the index out of range
+    abstract get bool available() {}
+
 //    /// Returns the current member
 //    abstract get []
 //    
