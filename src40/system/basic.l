@@ -35,24 +35,24 @@ public sealed ref<T>// : BaseVariable
 //        => theValue.
 }
 
-//public extension<ref<int>> intRefOp
-//{
-//    append(int n)
-//    [
-//        int v := self.
-//        v := v + n.
-//        
-//        self value := v.
-//    ]
-//    
-//    reduce(int n)
-//    [
-//        int v := self.
-//        v := v - n.
-//        
-//        self value := v.
-//    ]
-//}
+public extension intRefOp //: ref<int>
+{
+    append(int n)
+    {
+        int v := self.Value;
+        v := v + n;
+        
+        self.Value := v
+    }
+    
+    reduce(int n)
+    {
+        int v := self.Value;
+        v := v - n;
+        
+        self.Value := v
+    }
+}
 
 //public extension<ref<real>> realRefOp
 //{

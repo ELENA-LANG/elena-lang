@@ -27,9 +27,9 @@ constexpr auto MODE_ROOT            = 0x01;
 //#define MODE_MESSAGE_BODY    0x20  // indicates that sub-expressions should be an expression themselves
 constexpr auto MODE_PROPERTYALLOWED = 0x40;
 
-constexpr auto MODE_CLOSURE        = -2;
-constexpr auto MODE_COMPLEXMESSAGE = -3;
-constexpr auto MODE_PROPERTYMETHOD = -4;
+constexpr auto MODE_CLOSURE        = -2u;
+constexpr auto MODE_COMPLEXMESSAGE = -3u;
+constexpr auto MODE_PROPERTYMETHOD = -4u;
 
 #define EXPRESSION_IMPLICIT_MODE   1
 ////#define EXPRESSION_MESSAGE_MODE    2
@@ -1585,17 +1585,20 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
    current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
-         SNode nameNode = current.prevNode();
+         SNode subNameNode = current.prevNode();
 
-         nameNode.setArgument(MODE_COMPLEXMESSAGE);
+         subNameNode.setArgument(MODE_COMPLEXMESSAGE);
 
          generateMethodTree(writer, current, derivationScope, false, current.argument == MODE_PROPERTYMETHOD);
 
-         parameters.add(nameNode);
+         parameters.add(subNameNode);
       }
 
       current = current.nextNode();
    }
+
+   SNode t = nameNode.firstChild(lxTerminalMask);
+   ident_t s = t.identifier();
 
    // name parameter is always the last parameter
    parameters.add(nameNode);
@@ -1620,7 +1623,8 @@ void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, 
       writer.newNode(lxMethodParameter);
       writer.newBookmark();
 
-      generateTokenExpression(writer, node.findChild(lxToken), derivationScope, false);
+      SNode tokenNode = node.findChild(lxToken);
+      generateTokenExpression(writer, tokenNode, derivationScope, false);
 
       writer.removeBookmark();
       writer.closeNode();;

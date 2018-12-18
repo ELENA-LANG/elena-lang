@@ -1,15 +1,15 @@
 //// --- type --
 //
 //type exception = Exception.
-//
-//// --- helper ---
-//
-//extension op
-//{
-//    throw
-//        => system'core_routines'__object.
-//}
-//
+
+// --- helper ---
+
+extension op
+{
+    throw()
+        => system'core_routines'__object;
+}
+
 //// --- CallStack ---
 //
 ///// A call stack
@@ -53,12 +53,12 @@
 //        ^ aCallStackText.
 //    ]
 //}
-//
-//// --- Exception ---
-//
-///// A basic exception
-//public class Exception
-//{
+
+// --- Exception ---
+
+/// A basic exception
+public class Exception
+{
 //    literal theMessage.
 //    object  theCallStack.
 //    
@@ -98,12 +98,12 @@
 //    [
 //        ^ aCatchblock(self).
 //    ]
-//
-//    raise
-//    [
-//        self throw.  
-//    ]
-//    
+
+    raise()
+    {
+        self.throw()
+    }
+    
 //    raise : aFinallyCode
 //    [
 //        aFinallyCode().
@@ -122,8 +122,14 @@
 //    
 //    constructor new
 //        <= new(self __className).
-//}
-//
+
+//    constructor raise()
+//        <= new()
+//    {
+//        
+//    }
+}
+
 //// --- FormatException ---
 //
 //public class FormatException :: Exception
@@ -166,11 +172,11 @@
 ////    #constructor new:aMessage
 ////        <= new &literal:(aMessage literal).
 ////}
-//
-//// --- InvalidArgumentException ---
-//
-//public class InvalidArgumentException :: Exception
-//{
+
+// --- InvalidArgumentException ---
+
+public class InvalidArgumentException : Exception
+{
 //    /// Creates the exception
 //    constructor new
 //        <= new("Invalid argument").
@@ -178,8 +184,13 @@
 //    /// Creates the exception
 //    constructor new:aMessage
 //        <= new(aMessage).
-//}
-//
+
+    static raise()
+    {
+        new InvalidArgumentException().raise()
+    }
+}
+
 //// --- InvalidOperationException ---
 //
 //public class InvalidOperationException :: Exception
@@ -195,7 +206,7 @@
 
 // --- MethodNotFound ---
 
-public sealed class MethodNotFoundException //:: Exception
+public sealed class MethodNotFoundException : Exception
 {
 //    /// Creates the exception
 //    constructor new

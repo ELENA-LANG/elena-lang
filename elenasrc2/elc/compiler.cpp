@@ -551,9 +551,11 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, int scopeMode)
       }
       else return ObjectInfo(readOnlyMode ? okReadOnlyField : okField, offset, fieldInfo.value1, fieldInfo.value2, 0);
    }
-   //else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
-   //   return ObjectInfo(okSelfParam, 1, -2, info.fieldTypes.get(-1).value1);
-   //}
+   else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
+      auto fieldInfo = info.fieldTypes.get(-1);
+
+      return ObjectInfo(okSelfParam, 1, fieldInfo.value1, fieldInfo.value2, -2);
+   }
    else {
       ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
       if (staticInfo.value1 != 0) {
@@ -1210,10 +1212,11 @@ bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVa
 ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
 {
    if (object.kind == okSelfParam) {
-//      if (object.extraparam == -2) {
-//         return _logic->definePrimitiveArray(*scope.moduleScope, object.element);
-//      }
-      /*else */return scope.getClassRefId(false);
+      if (object.extraparam == -2u) {
+         // HOTFIX : to return the primitive array
+         return object.reference;
+      }
+      else return scope.getClassRefId(false);
    }
    else return resolveObjectReference(*scope.moduleScope, object);
 }
@@ -4284,7 +4287,6 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
       current = current.nextNode();
 
    ExpressionAttributes attributes;
-   ref_t typeRef = 0;
    while (current != lxNone) {
       if (current == lxTarget) {
          current.setArgument(mapTypeAttribute(current, scope));
@@ -4304,6 +4306,8 @@ ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope)
    compileTemplateAttributes(node.firstChild(), parameters, scope);
    
    ref_t templateRef = mapTemplateAttribute(node, scope);
+   if (!templateRef)
+      scope.raiseError(errInvalidHint, node);
 
    NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::slNamespace);
    return scope.moduleScope->generateTemplate(*this, templateRef, parameters, ns->ns.c_str()/*, &nsScope->extensions*/);
@@ -4448,7 +4452,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    writer.newBookmark();
 
    bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
-   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
+//   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
 
    mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
 
@@ -6368,7 +6372,9 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
             scope.info.size = -size;
          }
 
-         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
+         ref_t arrayRef = _logic->definePrimitiveArray(*scope.moduleScope, classRef);
+
+         scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(arrayRef, classRef));
          scope.info.fields.add(terminal, -2);
       }
       else scope.raiseError(errIllegalField, current);

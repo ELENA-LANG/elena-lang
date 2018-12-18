@@ -7,6 +7,9 @@ public class Object
     /// Creates the object
     constructor() {}
     
+    constructor new()
+        <= ();
+    
     /// Returns true if the specified object is equal to the current object; otherwise, false.
     ///
     /// By default compares the object references.

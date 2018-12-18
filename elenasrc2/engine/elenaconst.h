@@ -34,7 +34,7 @@ namespace _ELENA_
 
 //   #define PARAMX_MASK             0x000000000000FFFFu
 
-   constexpr ref_t INVALID_REF            = -1;
+   constexpr auto INVALID_REF            = 0xFFFFFFFFu;
 
    //#define NEW_MESSAGE_ID          0x0003
    constexpr auto EQUAL_OPERATOR_ID       = 0x0004;

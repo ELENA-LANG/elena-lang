@@ -764,7 +764,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 //   }
 }
 
-void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
+void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo&/* info*/, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
@@ -1283,7 +1283,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
       return false;
 
    // if the target class is wrapper around the source
-   if (test(info.header.flags, elWrapper)) {
+   if (test(info.header.flags, elWrapper) && !test(info.header.flags, elDynamicRole)) {
       ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
 
       bool compatible = false;
@@ -1331,10 +1331,10 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 //   }
 
    // HOTFIX : trying to typecast primitive array
-   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole)) {
+   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elWrapper)) {
       ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
 
-      if (isCompatible(scope, info.fieldTypes.get(-1).value1, elementRef)) {
+      if (isCompatible(scope, info.fieldTypes.get(-1).value2, elementRef)) {
          compiler.injectBoxing(writer, scope,
             test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, boxingArg, targetRef, true);
 
@@ -2071,7 +2071,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRe
 //////   return true;
 //////}
 
-void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure)
+void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool&/* disptacherNotAllowed*/, bool& emptyStructure)
 {
    if (!isAbstract(info)) {
       for (auto it = info.methodHints.start(); !it.Eof(); it++) {

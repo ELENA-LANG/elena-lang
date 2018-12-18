@@ -199,7 +199,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature)
 
    // resolve the message
    IdentifierString signatureName;
-   for (int i = 0; i < count; i++) {
+   for (size_t i = 0; i != count; i++) {
       signatureName.append('$');
       ident_t referenceName = module->resolveReference(signatures[i]);
       if (isWeakReference(referenceName)) {
@@ -224,7 +224,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature)
       resolvedSignature = writer.Position();
 
       IdentifierString typeName;
-      for (int i = 0; i < count; i++) {
+      for (size_t i = 0; i != count; i++) {
          ident_t referenceName = module->resolveReference(signatures[i]);
          if (isWeakReference(referenceName)) {
             if (isTemplateWeakReference(referenceName)) {
@@ -948,7 +948,6 @@ ref_t JITLinker :: parseMessage(ident_t reference/*, bool actionMode*/)
       SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
 
       // signature and custom verb should be imported
-      ref_t signature;
       ident_t actionName = reference + 1;
 
       ref_t resolvedAction = messageTable.module->mapAction(actionName, 0, true);

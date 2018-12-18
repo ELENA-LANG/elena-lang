@@ -1441,7 +1441,7 @@ void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, in
 //   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 //}
 
-void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
+void ByteCodeWriter :: writeSelf(Scope& scope, int level, int/* frameLevel*/)
 {
    if (!scope.debug)
       return;
@@ -3972,12 +3972,12 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          tape.write(bcPopB);
       }
    }
-   //else if (lenMode) {
-   //   generateObject(tape, rarg, ACC_REQUIRED);
-   //   loadBase(tape, lxResult);
+   else if (lenMode) {
+      generateObject(tape, rarg, ACC_REQUIRED);
+      loadBase(tape, lxResult);
 
-   //   generateObject(tape, larg);
-   //}
+      generateObject(tape, larg);
+   }
    else {
       if (assignMode && (!largSimple || !rargSimple)) {
          tape.write(bcPushB);

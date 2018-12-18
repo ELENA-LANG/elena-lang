@@ -57,35 +57,40 @@ public sealed Array<T> //:: Indexable<template_subj>
 
     T at(int n)
     {
-//        if (n < 0)
-//            { system'InvalidArgumentException new; raise };
-//        
-//        int len := 0;
-//        theArray >> len;
-//
-//        if (n < len)
-//        { 
-//            ^ theArray[n] 
-//        }
-//        else
-//        {
-//            system'InvalidArgumentException new; raise
-//        }
+        if (n < 0)
+            { system'InvalidArgumentException.raise() };
+        
+        int len := 0;
+        theArray $shr len;
+
+        if (n < len)
+        { 
+            ^ theArray[n] 
+        }
+        else
+        {
+            system'InvalidArgumentException.raise()
+        }
     }
 
-//    setAt(int n, template_subj item)
-//    [
-//        if (n < 0)
-//            [ system'InvalidArgumentException new; raise ].
-//        
-//        int len := 0.
-//        theArray >> len.
-//
-//        if (n < len)
-//            [ theArray[n] := item ];
-//            [ system'InvalidArgumentException new; raise ]
-//    ]
-//               
+    setAt(int n, T item)
+    {
+        if (n < 0)
+            { system'InvalidArgumentException.raise() };
+        
+        int len := 0;
+        theArray $shr len;
+
+        if (n < len)
+        {
+            theArray[n] := item
+        }
+        else
+        {
+            system'InvalidArgumentException.raise()
+        }
+    }
+               
 //    setAt(object n, object object)
 //        <= setAt(T<int>(n), T<template_subj>(object)).
 //                  
@@ -1782,15 +1787,15 @@ public sealed Array //:: Indexable, Array<object>
         read(ref int retVal)
             => system'core_routines'__array;
     }
-//
-//    /// Sets the specified array member
-//    setAt(int anIndex, object anObject)
-//        => system'core_routines'__array.
-//
-//    /// Returns the specified array member
-//    object getAt(int anIndex)
-//        => system'core_routines'__array.
-// 
+
+    /// Sets the specified array member
+    setAt(int n, object o)
+        => system'core_routines'__array;
+
+    /// Returns the specified array member
+    object at(int n)
+        => system'core_routines'__array;
+ 
 //    /// Returns the array enumerator
 //    T<Enumerator> enumerator = ArrayEnumerator new(self).
 
@@ -2588,7 +2593,7 @@ public class ArrayIndexer : Indexer
     /// Sets the index by specified value
     writeIndex(int n)
     {
-//       _index.Value := n
+       _index.Value := n
     }
     
     /// Sets the index by specified value

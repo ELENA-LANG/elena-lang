@@ -35,6 +35,14 @@ labTrue:
   
 end
 
+procedure __object."throw[1]"
+
+  pop
+  aloadsi 0
+  throw
+  
+end
+
 procedure __literal."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1
@@ -92,6 +100,49 @@ procedure __array."read:Length$@system@ref#1&IntNumber[2]"
   bloadsi 2
   nsave
   quitn 2
+
+end
+
+procedure __array."at$system@IntNumber[2]"
+
+  bcopya
+  len
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  get
+  quitn 2
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __array."setAt$system@IntNumber$system@Object[3]"
+
+  bcopya
+  len
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  aloadsi 3
+  set
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
 
 end
 
