@@ -9,34 +9,32 @@ public sealed ref<T>// : BaseVariable
 {
     embeddable T theValue;
     
-//    template_subj value = theValue.
-//    
-//    constructor(template_subj val)
-//    [
-//        theValue := val.
-//    ]
-//    
-//    cast T<template_subj> = theValue.
-//    
-//    set value(template_subj val)
-//    [
-//        theValue := val.
-//    ]
-//
-//    readValueTo(ref<template_subj> retVal)
-//    [
-//        retVal value := theValue.
-//    ]
-//
+    constructor(T val)
+    {
+        theValue := val
+    }
+    
+    T cast() = theValue;
+    
+    T Value = theValue;
+    
+    set Value(T val)
+    {
+        theValue := val
+    }
+    
+    readValueTo(ref T retVal)
+    {
+        retVal := theValue
+    }
+
 //    bool equal : anObject
 //        => theValue.
 //
 //    T<literal> literal
 //        => theValue.
-//
-//    embeddable dispatch => theValue.
-//}
-//
+}
+
 //public extension<ref<int>> intRefOp
 //{
 //    append(int n)
@@ -54,7 +52,7 @@ public sealed ref<T>// : BaseVariable
 //        
 //        self value := v.
 //    ]
-}
+//}
 
 //public extension<ref<real>> realRefOp
 //{
@@ -116,7 +114,7 @@ public sealed singleton true : BoolValue
     bool equal(bool b) = b;
 
     /// Always returns false.
-    bool inverted = false;
+    bool Inverted = false;
 
 //    /// Returns literal representation.
 //    T<literal> literal = "true".
@@ -166,11 +164,11 @@ public sealed singleton false : BoolValue
     /// Determines whether the specified object is equal to the current object boolean value
     bool equal(bool f)
     {
-        ^ f.inverted
+        ^ f.Inverted
     }
 
     /// Always returns true
-    bool inverted = true;
+    bool Inverted = true;
 
 //    /// Returns literal representation
 //    T<literal> literal = "false".
@@ -945,15 +943,15 @@ public sealed const struct IntNumber : IntBaseNumber
 //    ]
 
     /// return the default value
-    static int defaultValue
+    static int DefaultValue
         = 0;
     
     /// Creates the object with the minimal value
-    static int minValue
+    static int MinValue
         = -2147483648;
 
     /// Creates the object with the maximal value
-    static int maxValue
+    static int MaxValue
         = 2147483647;
 
     constructor()

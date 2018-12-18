@@ -1310,7 +1310,7 @@ public sealed const struct String : BaseValue
 //    literal Substring(int anIndex, int aLength)
 //        => system'core_routines'__literal.
 //
-    rvprop int length
+    rvprop int Length
     {
         /// Reads the literal length into an output parameter
         read(ref int retVal)
@@ -1544,7 +1544,7 @@ public sealed const struct WideString : BaseValue
 //        <= Substring(T<int>(anIndex), T<int>(aLength)).
 
     /// Reads the literal length into an output parameter
-    rvprop int length
+    rvprop int Length
     {
         /// Reads the literal length into an output parameter
         read(ref int retVal)
@@ -1771,7 +1771,7 @@ public sealed Array //:: Indexable, Array<object>
 //        ^ aRetVal
 //    ]
 //
-    rvprop int length
+    rvprop int Length
     {
         /// Reads the array length into an output parameter
         read(ref int retVal)
@@ -1790,7 +1790,7 @@ public sealed Array //:: Indexable, Array<object>
 //    T<Enumerator> enumerator = ArrayEnumerator new(self).
 
     /// Returns the array indexer
-    Indexer indexer = new ArrayIndexer(self);
+    Indexer Indexer = new ArrayIndexer(self);
 
 //    /// Clones the array
 //    T<Array> clone 
@@ -2241,7 +2241,7 @@ public singleton wideConvertor
   //      int        i := 0;
         int        m := 0;
   //      int        page := 0;
-        int        l := s.length;
+        int        l := s.Length;
         short buffer[256];            
 //        if (l < 256)
 //        {
@@ -2557,9 +2557,9 @@ public class ArrayIndexer : Indexer
     }
     
     /// Returns false if the index out of range
-    get bool available()
+    get bool Available()
     {
-        int len := _array.length;
+        int len := _array.Length;
 
 //        ^ theIndex < aLength.
     }

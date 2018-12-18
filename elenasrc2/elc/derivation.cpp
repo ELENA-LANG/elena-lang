@@ -162,13 +162,11 @@ void DerivationWriter :: newNode(Symbol symbol)
    _level++;
 
    switch (symbol) {
-////      case nsToken:
-////         _writer.newNode(lxAttribute);
-////         break;
       case nsExpression:
       case nsRootExpression:
       case nsOperandExpression:
       case nsSubExpression:
+      case nsSingleExpression:
          //      case nsNestedRootExpression:
          _cacheWriter.newNode(lxExpression);
          break;
@@ -188,18 +186,12 @@ void DerivationWriter :: newNode(Symbol symbol)
 ////      case nsNestedClass:
 ////         _writer.newNode(lxNestedClass);
 ////         break;
-////      case nsAssigning:
-////         _writer.newNode(lxAssigning);
-//         break;
       case nsResendExpression:
          _cacheWriter.newNode(lxResendExpression);
          break;
 //      case nsObject:
 //         _writer.newNode(lxObject);
 //         break;
-////      case nsAngleOperator:
-////         _writer.newNode(lxAngleOperator);
-////         break;
 //      case nsBaseClass:
 //         _writer.newNode(lxBaseParent);
 //         break;
@@ -1102,17 +1094,53 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
    writer.closeNode();
 }
 
-//void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxToken) {
-//         generateExpressionAttribute(writer, current, derivationScope);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
+void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope)
+{
+   writer.newBookmark();
+   generateExpressionAttribute(writer, node.findChild(lxToken), derivationScope);
+   writer.removeBookmark();
+
+   //SNode current = node.firstChild();
+   //while (current != lxNone) {
+   //   //if (current == lxToken) {
+   //   //   generateExpressionAttribute(writer, current, derivationScope);
+   //   //}
+
+   //   current = current.nextNode();
+   //}
+
+   //SNode identNode = current;
+   //if (current == lxToken)
+   //   identNode = current.firstChild(lxTerminalMask);
+
+   //bool allowType = templateArgMode || current.nextNode().nextNode() != lxToken;
+   //bool allowProperty = false;
+   //ref_t attrRef = mapAttribute(current, allowType, allowProperty);
+   //LexicalType attrType;
+   //if (isPrimitiveRef(attrRef)) {
+   //   attrType = lxAttribute;
+   //}
+   //else {
+   //   attrType = lxTarget;
+   //   if (derivationScope.isTypeParameter(identNode.identifier(), attrRef)) {
+   //      attrType = lxTemplateParam;
+   //   }
+   //}
+
+   //writer.insert(0, lxEnding, 0);
+   //if (attrRef == V_TEMPLATE) {
+   //   // copy the template parameters
+   //   generateExpressionAttribute(writer, current.findChild(lxToken), derivationScope, true);
+   //}
+
+   //if (current == lxToken) {
+   //   insertIdentifier(writer, current.firstChild(lxTerminalMask));
+   //   if (current.existChild(lxDynamicSizeDecl))
+   //      writer.insertChild(0, lxSize, -1);
+   //}
+   //else insertIdentifier(writer, current);
+   //writer.insert(0, attrType, attrRef);
+}
 
 void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/)
 {
@@ -1139,11 +1167,11 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //         else /*if (isAttribute(attrRef)) */{
             writer.newNode(lxAttribute, current.argument);
             copyIdentifier(writer, current.findChild(lxIdentifier));
-            writer.closeNode();
             if (current.argument == V_TEMPLATE) {
-               generateExpressionAttribute(writer, current, derivationScope, true);
+               generateTemplateAttributes(writer, current, derivationScope);
             }
-//            if (templateMode) {
+            writer.closeNode();
+            //            if (templateMode) {
 //               if (current.argument == V_ACCESSOR) {
 //                  // HOTFIX : recognize virtual property template
 //                  // add virtual methods

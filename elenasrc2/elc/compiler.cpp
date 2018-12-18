@@ -4453,7 +4453,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       mode |= HINT_NOUNBOXING;
    }
    else if (operationNode == lxNone) {
-      targetMode = mode;
+      targetMode |= mode;
    }
 
 //   if (object == lxMethodParameter || object == lxNone) {

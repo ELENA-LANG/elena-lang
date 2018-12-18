@@ -106,7 +106,7 @@ sealed struct ConsoleWriter
 
     write(wide s)
     {
-        int len := s.length;
+        int len := s.Length;
         
         extern KERNEL32.WriteConsoleW(theHandle,s,len,0,0)
 

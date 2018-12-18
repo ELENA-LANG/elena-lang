@@ -12,7 +12,7 @@ public class Object
     /// By default compares the object references.
     bool equal(o) => system'core_routines'__object;
     
-    bool notequal(o) = self.equal(o).inverted;
+    bool notequal(o) = self.equal(o).Inverted;
     
     // virtual method declarations : forcing the output type                            
     predefined bool less(o) {}
@@ -49,7 +49,7 @@ public /*enum */interface class BoolValue
 //
 //    abstract bool xor : aBool []
 
-    abstract get bool inverted() {}
+    abstract get bool Inverted() {}
 
 //    abstract clone []
 }

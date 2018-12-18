@@ -35,7 +35,7 @@ labTrue:
   
 end
 
-procedure __literal."read:length$@system@ref#1&IntNumber[2]"
+procedure __literal."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1
   blen
@@ -46,7 +46,7 @@ procedure __literal."read:length$@system@ref#1&IntNumber[2]"
 
 end
 
-procedure __wide."read:length$@system@ref#1&IntNumber[2]"
+procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1
   wlen
@@ -86,7 +86,7 @@ procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@sy
 
 end
 
-procedure __array."read:length$@system@ref#1&IntNumber[2]"
+procedure __array."read:Length$@system@ref#1&IntNumber[2]"
 
   len
   bloadsi 2

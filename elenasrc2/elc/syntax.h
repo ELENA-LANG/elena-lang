@@ -126,6 +126,7 @@ enum Symbol
    nsArrayOperator              = 0x0106C,
    nsSubExpression              = 0x0106D,
    nsClosure                    = 0x0106E,
+   nsSingleExpression           = 0x0106F,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

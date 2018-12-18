@@ -38,7 +38,7 @@ property rvprop<T,get_accessor>
 {
     get T __property()
     {
-        T retVal := T.defaultValue;
+        T retVal := T.DefaultValue;
         
         self.get_accessor(ref retVal);
         
