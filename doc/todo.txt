@@ -29,6 +29,7 @@ In development:
                  * uncomment validateClassDeclaration
                  * uncomment compileBranchingOperand
                  * correct error should be displayed : abstract get bool available {}
+                 * Indexer.Index property - should support abstract get and set accessors
  
               dev - tests          
                  * test : interpreter

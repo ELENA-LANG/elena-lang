@@ -147,8 +147,8 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(AND_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(OR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
    operators.add(OperatorInfo(XOR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-   operators.add(OperatorInfo(READ_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-   operators.add(OperatorInfo(WRITE_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(SHIFTL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
@@ -195,22 +195,22 @@ CompilerLogic :: CompilerLogic()
    // array of int32 primitive operations
    operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, V_INT32));
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
-   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, 0));
+   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, 0));
 
    // array of int16 primitive operations
    operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, V_INT32));
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
-   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, 0));
+   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, 0));
 
    // array of int8 primitive operations
    operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, V_INT32));
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
-   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
+   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
 
    // array of object primitive operations
    operators.add(OperatorInfo(REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
-   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
+   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 
 //   // array of structures primitive operations
 //   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
@@ -1850,8 +1850,6 @@ bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttri
       case (int)V_AUTO:
          if (!attributes.typeAttr) {
             attributes.typeAttr = true;
-            if (attrValue == V_AUTO)
-               attributes.typeRef = V_AUTO;
 
             return true;
          }

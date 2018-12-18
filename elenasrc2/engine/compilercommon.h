@@ -377,13 +377,16 @@ public:
       bool  refAttr;
       bool  internAttr;
       bool  loopAttr;
-      ref_t typeRef;
+
+      bool isExprAttr()
+      {
+         return refAttr | internAttr | externAttr | forwardAttr;
+      } 
 
       ExpressionAttributes()
       {
          refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
          newOpAttr = loopAttr = internAttr = false;
-         typeRef = 0;
       }
    };
 

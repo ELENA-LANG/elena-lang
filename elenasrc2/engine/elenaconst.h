@@ -59,8 +59,8 @@ namespace _ELENA_
    constexpr auto APPEND_OPERATOR_ID      = 0x0017;
    constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
    constexpr auto SET_REFER_OPERATOR_ID   = 0x0019;
-   constexpr auto READ_OPERATOR_ID        = 0x001A;
-   constexpr auto WRITE_OPERATOR_ID       = 0x001B;
+   constexpr auto SHIFTR_OPERATOR_ID      = 0x001A;
+   constexpr auto SHIFTL_OPERATOR_ID      = 0x001B;
    //#define SHIFT_MESSAGE_ID        0x001C
    //#define CAST_MESSAGE_ID         0x001D             // virtual method used for casting
    //#define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
@@ -415,8 +415,8 @@ namespace _ELENA_
 //   #define REDUCE_OPERATOR			   "-="
 //   #define INCREASE_OPERATOR			"*="
 //   #define SEPARATE_OPERATOR			"/="
-//   #define WRITE_OPERATOR           "<<"
-//   #define READ_OPERATOR            ">>"
+   constexpr auto SHIFTL_OPERATOR      = "$shl";
+   constexpr auto SHIFTR_OPERATOR      = "$shr";
 //   #define ISNIL_OPERATOR           "??"
 
   // --- ELENA explicit variables ---

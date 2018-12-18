@@ -57,27 +57,36 @@ public interface Indexer
     /// Returns false if the index out of range
     abstract get bool Available() {}
 
-//    /// Returns the current member
-//    abstract get []
-//    
-//    /// Sets the current member
-//    abstract set : object []
-//    
-//    int vprop index :: readIndexTo, writeIndex.
-//
-//    /// Reads the current index into an output parameter
-//    abstract readIndexTo(ref<int> retVal) []
-//
-//    /// Sets the index by specified value
-//    ///
-//    /// Should be overidden(or set&index)
-//    abstract writeIndex(int anIndex) []
-//
-//    abstract appendIndex(int anIndex) []
-//
+    /// Returns the current member
+    abstract get() {}
+    
+    /// Sets the current member
+    abstract set(object) {}
+    
+    vprop int Index
+    {
+        read(ref int retVal)
+        {
+            self.readIndexTo(ref retVal)
+        }
+        
+        write(int retVal)
+        {
+            self.writeIndex(retVal)
+        }
+    }
+
+    /// Reads the current index into an output parameter
+    abstract readIndexTo(ref int retVal) {}
+
+    /// Sets the index by specified value
+    abstract writeIndex(int anIndex) {}
+
+    abstract appendIndex(int anIndex) {}
+
 //    /// Reads the length to the output parameter    
-//    abstract readLengthTo(ref<int> retVal) []
-//    
+//    abstract readLengthTo(ref int retVal) {}
+    
 //    int rvprop length :: readLengthTo.
 }
 

@@ -54,20 +54,25 @@ public sealed Array<T> //:: Indexable<template_subj>
 //    ]
 //    
 //    int rvprop length :: readLengthTo.
-//
-//    template_subj getAt(int n)
-//    [
+
+    T at(int n)
+    {
 //        if (n < 0)
-//            [ system'InvalidArgumentException new; raise ].
+//            { system'InvalidArgumentException new; raise };
 //        
-//        int len := 0.
-//        theArray >> len.
+//        int len := 0;
+//        theArray >> len;
 //
 //        if (n < len)
-//            [ ^ theArray[n] ];
-//            [ system'InvalidArgumentException new; raise ]
-//    ]
-//
+//        { 
+//            ^ theArray[n] 
+//        }
+//        else
+//        {
+//            system'InvalidArgumentException new; raise
+//        }
+    }
+
 //    setAt(int n, template_subj item)
 //    [
 //        if (n < 0)
@@ -1310,7 +1315,7 @@ public sealed const struct String : BaseValue
 //    literal Substring(int anIndex, int aLength)
 //        => system'core_routines'__literal.
 //
-    rvprop int Length
+    vprop int Length
     {
         /// Reads the literal length into an output parameter
         read(ref int retVal)
@@ -1544,7 +1549,7 @@ public sealed const struct WideString : BaseValue
 //        <= Substring(T<int>(anIndex), T<int>(aLength)).
 
     /// Reads the literal length into an output parameter
-    rvprop int Length
+    vprop int Length
     {
         /// Reads the literal length into an output parameter
         read(ref int retVal)
@@ -1771,7 +1776,7 @@ public sealed Array //:: Indexable, Array<object>
 //        ^ aRetVal
 //    ]
 //
-    rvprop int Length
+    vprop int Length
     {
         /// Reads the array length into an output parameter
         read(ref int retVal)
@@ -2542,9 +2547,9 @@ public singleton wideConvertor
 /// An array indexer
 public class ArrayIndexer : Indexer
 {
-    Array _array;
-//    ref<int> theIndex.
-//
+    Array    _array;
+    ref<int> _index;
+
 //    /// Returns the parameter indexer
 //    constructor new : anArray
 //        <= new(T<Array>(anArray)).
@@ -2553,7 +2558,7 @@ public class ArrayIndexer : Indexer
     constructor(Array arr)
     {
         _array := arr;
-//        theIndex := 0.
+        _index := 0
     }
     
     /// Returns false if the index out of range
@@ -2561,37 +2566,37 @@ public class ArrayIndexer : Indexer
     {
         int len := _array.Length;
 
-//        ^ theIndex < aLength.
+        ^ _index < len
     }
 
-//    /// Returns the current member
-//    get
-//        = theArray getAt(theIndex).
-//    
-//    /// Sets the current member
-//    set : anObject
-//    [
-//        theArray setAt(theIndex, anObject).
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo(ref<int> retVal)
-//    [
-//        theIndex readValueTo(retVal).
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex(int anIndex)
-//    [
-//        theIndex value := anIndex.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    appendIndex(int anIndex)
-//    [
-//        theIndex append(anIndex).
-//    ]
-//    
+    /// Returns the current member
+    get()
+        = _array.at(_index);
+    
+    /// Sets the current member
+    set(object)
+    {
+        _array.setAt(_index, object)
+    }
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref int retVal)
+    {
+        _index.readValueTo(ref retVal)
+    }
+    
+    /// Sets the index by specified value
+    writeIndex(int n)
+    {
+//       _index.Value := n
+    }
+    
+    /// Sets the index by specified value
+    appendIndex(int offs)
+    {
+        _index.append(offs)
+    }
+
 //    /// Reads the length to the output parameter    
 //    readLengthTo(ref<int> anOutput)
 //        => theArray.

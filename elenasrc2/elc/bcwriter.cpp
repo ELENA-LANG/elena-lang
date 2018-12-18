@@ -2754,14 +2754,14 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id) {
       // Note read / write operator is used for bitwise operations
-      case WRITE_OPERATOR_ID:
+      case SHIFTL_OPERATOR_ID:
          // nload
          // nshiftl
          tape.write(bcNLoad);
          tape.write(bcNShiftL);
          break;
       // Note read / write operator is used for bitwise operations
-      case READ_OPERATOR_ID:
+      case SHIFTR_OPERATOR_ID:
          // nload
          // nshiftr
          tape.write(bcNLoad);
@@ -2809,7 +2809,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
 {
    switch (operator_id) {
       // Note read / write operator is used for bitwise operations
-      case WRITE_OPERATOR_ID:
+      case SHIFTL_OPERATOR_ID:
          // nload
          // shiftln immArg
          // nsave
@@ -2818,9 +2818,9 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
          tape.write(bcNSave);
          break;
       // Note read / write operator is used for bitwise operations
-      case READ_OPERATOR_ID:
+      case SHIFTR_OPERATOR_ID:
          // nload
-         // shiftn immArg
+         // shiftrn immArg
          // nsave
          tape.write(bcNLoad);
          tape.write(bcShiftRN, immArg);
@@ -2866,11 +2866,11 @@ void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, i
 {
    switch (operator_id) {
          // Note read / write operator is used for bitwise operations
-      case WRITE_OPERATOR_ID:
+      case SHIFTL_OPERATOR_ID:
          // dcopy offset
          // bread
          // eswap
-         // shiftn -immArg
+         // shiftln immArg
          // eswap
          // bwrite
          tape.write(bcDCopy, offset);
@@ -2881,11 +2881,11 @@ void ByteCodeWriter :: doFieldIntOperation(CommandTape& tape, int operator_id, i
          tape.write(bcBWrite);
          break;
          // Note read / write operator is used for bitwise operations
-      case READ_OPERATOR_ID:
+      case SHIFTR_OPERATOR_ID:
          // dcopy offset
          // bread
          // eswap
-         // shiftn immArg
+         // shiftrn immArg
          // eswap
          // bwrite
          tape.write(bcDCopy, offset);
@@ -3051,13 +3051,13 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
          // set
          tape.write(bcSet);
          break;
-      //// NOTE : read operator is used to define the array length
-      //case READ_MESSAGE_ID:
-      //   // len
-      //   // nsave
-      //   tape.write(bcLen);
-      //   tape.write(bcNSave);
-      //   break;
+      // NOTE : read operator is used to define the array length
+      case SHIFTR_OPERATOR_ID:
+         // len
+         // nsave
+         tape.write(bcLen);
+         tape.write(bcNSave);
+         break;
       default:
          break;
    }
@@ -3105,12 +3105,12 @@ void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
       //   tape.write(bcNWrite);
       //   break;
       //// NOTE : read operator is used to define the array length
-      //case READ_MESSAGE_ID:
-      //   // nlen
-      //   // nsave
-      //   tape.write(bcNLen);
-      //   tape.write(bcNSave);
-      //   break;
+      case SHIFTR_OPERATOR_ID:
+         // nlen
+         // nsave
+         tape.write(bcNLen);
+         tape.write(bcNSave);
+         break;
       default:
          break;
    }
@@ -3133,13 +3133,13 @@ void ByteCodeWriter :: doByteArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNLoadE);
          tape.write(bcBWriteB);
          break;
-      //// NOTE : read operator is used to define the array length
-      //case READ_MESSAGE_ID:
-      //   // blen
-      //   // nsave
-      //   tape.write(bcBLen);
-      //   tape.write(bcNSave);
-      //   break;
+      // NOTE : read operator is used to define the array length
+      case SHIFTR_OPERATOR_ID:
+         // blen
+         // nsave
+         tape.write(bcBLen);
+         tape.write(bcNSave);
+         break;
       default:
          break;
    }
@@ -3471,13 +3471,13 @@ void ByteCodeWriter :: doShortArrayOperation(CommandTape& tape, int operator_id)
          tape.write(bcNLoadE);
          tape.write(bcWWrite);
          break;
-      //// NOTE : read operator is used to define the array length
-      //case READ_MESSAGE_ID:
-      //   // wlen
-      //   // nsave
-      //   tape.write(bcWLen);
-      //   tape.write(bcNSave);
-      //   break;
+      // NOTE : read operator is used to define the array length
+      case SHIFTR_OPERATOR_ID:
+         // wlen
+         // nsave
+         tape.write(bcWLen);
+         tape.write(bcNSave);
+         break;
       default:
          break;
    }
@@ -3925,7 +3925,7 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node)
 {
-   //bool lenMode = node.argument == READ_MESSAGE_ID;
+   bool lenMode = node.argument == SHIFTR_OPERATOR_ID;
    bool setMode = (node.argument == SET_REFER_OPERATOR_ID/* || node.argument == SETNIL_REFER_MESSAGE_ID*/);
    bool assignMode = node != lxArrOp/* && node != lxArgArrOp*/;
 
@@ -4086,8 +4086,8 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       case AND_OPERATOR_ID:
       case OR_OPERATOR_ID:
       case XOR_OPERATOR_ID:
-      case READ_OPERATOR_ID:
-      case WRITE_OPERATOR_ID:
+      case SHIFTR_OPERATOR_ID:
+      case SHIFTL_OPERATOR_ID:
          immOp = true;
          assignMode = true;
          break;

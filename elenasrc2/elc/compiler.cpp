@@ -1144,10 +1144,10 @@ bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVa
       case XOR_OPERATOR_ID:
          retVal = arg1 ^ arg2;
          break;
-      case READ_OPERATOR_ID:
+      case SHIFTR_OPERATOR_ID:
          retVal = arg1 >> arg2;
          break;
-      case WRITE_OPERATOR_ID:
+      case SHIFTL_OPERATOR_ID:
          retVal = arg1 << arg2;
          break;
       default:
@@ -2770,10 +2770,10 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int pa
          return encodeMessage(scope.module->mapAction(OR_MESSAGE, 0, false), paramCount, 0);
       case XOR_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(XOR_MESSAGE, 0, false), paramCount, 0);
-      case READ_OPERATOR_ID:
-         return encodeMessage(scope.module->mapAction(READ_MESSAGE, 0, false), paramCount, 0);
-      case WRITE_OPERATOR_ID:
-         return encodeMessage(scope.module->mapAction(WRITE_MESSAGE, 0, false), paramCount, 0);
+      case SHIFTR_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(SHIFTR_OPERATOR, 0, false), paramCount, 0);
+      case SHIFTL_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(SHIFTL_OPERATOR, 0, false), paramCount, 0);
       case REFER_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(REFER_MESSAGE, 0, false), paramCount, 0);
       case SET_REFER_OPERATOR_ID:
@@ -4111,8 +4111,6 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    writer.newBookmark();
 
    ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode);
-
-   // generate an reference class
    ref_t operandRef = resolveObjectReference(scope, objectInfo);
    if (isPrimitiveRef(operandRef)) {
       operandRef = resolvePrimitiveReference(scope, operandRef, objectInfo.element);
@@ -4120,13 +4118,19 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    else if (!operandRef)
       operandRef = scope.moduleScope->superReference;
 
-   ref_t targetRef = resolveReferenceTemplate(scope, operandRef);
-
-   if (!convertObject(writer, scope, targetRef, objectInfo))
-      scope.raiseError(errInvalidOperation, node);
-
+   ref_t targetRef = 0;
+   if (objectInfo.reference == V_WRAPPER) {
+      // if the reference is passed further - do nothing
+      targetRef = operandRef;
+   }
+   else {
+      // generate an reference class
+      targetRef = resolveReferenceTemplate(scope, operandRef);
+      if (!convertObject(writer, scope, targetRef, objectInfo))
+         scope.raiseError(errInvalidOperation, node);
+   }
+   
    writer.removeBookmark();
-
    return ObjectInfo(okObject, 0, targetRef);
 }
 
@@ -4309,15 +4313,61 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
 {
    ref_t exprAttr = 0;
 
-   bool invalidExpr = false;
-   bool newVariable = false;
-   bool dynamicSize = false;
-   ExpressionAttributes attributes;
+   bool  invalidExpr = false;
+   bool  newVariable = false;
+   bool  dynamicSize = false;
+   ref_t typeRef = 0;
+   
    // NOTE : root attributes (i.e. loop) are handled in compileRootExpression
    while (current == lxAttribute) {
+      ExpressionAttributes attributes;
+
       int value = current.argument;
       if (!_logic->validateExpressionAttribute(value, attributes))
          scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+
+      if (attributes.templateAttr && test(mode, HINT_ROOT)) {
+         if (typeRef == 0) {
+            typeRef = resolveTemplateDeclaration(current, scope);
+         }
+         else scope.raiseError(errIllegalOperation, current);
+
+         newVariable = true;
+      }      
+
+      if (attributes.isExprAttr() && !newVariable && !typeRef) {
+         if (attributes.forwardAttr) {
+            exprAttr |= HINT_FORWARD;
+         }
+         if (attributes.refAttr) {
+            exprAttr |= HINT_REFOP;
+         }
+         if (attributes.externAttr) {
+            exprAttr |= HINT_EXTERNALOP;
+         }
+         if (attributes.internAttr) {
+            exprAttr |= HINT_INTERNALOP;
+         }
+      }
+
+      if (attributes.typeAttr && test(mode, HINT_ROOT) && !attributes.castAttr) {
+         // if it is a variable declaration
+         newVariable = true;
+
+         if (value == V_AUTO)
+            typeRef = value;
+      }
+      if (attributes.castAttr || attributes.newOpAttr) {
+         SNode msgNode = goToNode(current, lxMessage);
+         if (msgNode != lxNone && msgNode.firstChild() == lxNone) {
+            if (attributes.castAttr) {
+               exprAttr |= HINT_VIRTUALEXPR;
+               msgNode.set(lxTypecast, V_CONVERSION);
+            }
+            else msgNode.set(lxTypecast, V_NEWOP);
+         }
+         else invalidExpr = true;
+      }
 
       if (attributes.loopAttr)
          scope.raiseError(errIllegalOperation, current);
@@ -4325,37 +4375,17 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
       current = current.nextNode();
    }
 
-   if (attributes.typeAttr && test(mode, HINT_ROOT) && !attributes.castAttr) {
-      // if it is a variable declaration
-      newVariable = true;
-   }
-   if (attributes.castAttr || attributes.newOpAttr) {
-      SNode msgNode = goToNode(current, lxMessage);
-      if (msgNode != lxNone && msgNode.firstChild() == lxNone) {
-         if (attributes.castAttr) {
-            exprAttr |= HINT_VIRTUALEXPR;
-            msgNode.set(lxTypecast, V_CONVERSION);
+   if (current == lxTarget) {
+      if (typeRef == 0) {
+         typeRef = mapTypeAttribute(current, scope);
+         newVariable = true;
+         if (current.existChild(lxSize)) {
+            dynamicSize = true;
          }
-         else msgNode.set(lxTypecast, V_NEWOP);
       }
-      else invalidExpr = true;
-   }
-   if (attributes.templateAttr && test(mode, HINT_ROOT) && attributes.typeRef == 0) {
-      attributes.typeRef = resolveTemplateDeclaration(current, scope);
+      else scope.raiseError(errIllegalOperation, current);
 
-      newVariable = true;
-   }
-   if (attributes.forwardAttr && !newVariable && !attributes.typeRef) {
-      exprAttr |= HINT_FORWARD;
-   }
-   if (attributes.refAttr) {
-      exprAttr |= HINT_REFOP;
-   }
-   if (attributes.externAttr) {
-      exprAttr |= HINT_EXTERNALOP;
-   }
-   if (attributes.internAttr) {
-      exprAttr |= HINT_INTERNALOP;
+      current = current.nextNode();
    }
 
    //            // negative value defines the target virtual class
@@ -4368,28 +4398,15 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
    //            //}
    //            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 
-   if (current == lxTarget) {
-      if (attributes.typeRef == 0) {
-         attributes.typeRef = mapTypeAttribute(current, scope);
-         newVariable = true;
-         if (current.existChild(lxSize)) {
-            dynamicSize = true;
-         }
-      }
-      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-
-      current = current.nextNode();
-   }
-
    if (invalidExpr) {
       scope.raiseError(errInvalidSyntax, current.parentNode());
    }
 
    if (newVariable) {
-      if (!attributes.typeRef)
-         attributes.typeRef = scope.moduleScope->superReference;
+      if (!typeRef)
+         typeRef = scope.moduleScope->superReference;
 
-      compileVariable(writer, current, scope, attributes.typeRef, dynamicSize);
+      compileVariable(writer, current, scope, typeRef, dynamicSize);
    }
 
    return exprAttr;

@@ -167,6 +167,7 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsOperandExpression:
       case nsSubExpression:
       case nsSingleExpression:
+      case nsSubSingleExpression:
          //      case nsNestedRootExpression:
          _cacheWriter.newNode(lxExpression);
          break;
@@ -195,7 +196,7 @@ void DerivationWriter :: newNode(Symbol symbol)
 //      case nsBaseClass:
 //         _writer.newNode(lxBaseParent);
 //         break;
-//      case nsL1Operation:
+      case nsL1Operator:
       case nsL2Operator:
       case nsL3Operator:
       case nsL4Operator:
@@ -1946,7 +1947,8 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
 //                  writer.insert(lxExpression);
 //                  writer.closeNode();
 //               }
-//               writer.removeBookmark();
+//               writer.removeBookmark();>	elc.exe!_ELENA_::DerivationWriter::generateExpressionTree(_ELENA_::SyntaxTree::Writer & writer, _ELENA_::SyntaxTree::Node node, _ELENA_::DerivationWriter::Scope & derivationScope, int mode) Line 1938	C++
+
 //               writer.newBookmark();
 //            }
 //            else first = false;
