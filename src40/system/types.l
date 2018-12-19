@@ -21,7 +21,7 @@
 #16393 = method;
 #16394 = __loop;
 ////nonstructural   = #8204.
-//import          = #16395.
+#16395 = import;
 #16396 = extern;
 #8205  = closure;
 //mixin           = #8206.

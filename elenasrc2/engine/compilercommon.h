@@ -86,7 +86,7 @@
 #define V_PROPERTY       (ref_t)-16392
 #define V_METHOD         (ref_t)-16393
 #define V_LOOP           (ref_t)-16394
-//#define V_IMPORT         (ref_t)-16395
+#define V_IMPORT         (ref_t)-16395
 #define V_EXTERN         (ref_t)-16396
 //#define V_ATTRTEMPLATE   (ref_t)-16398
 #define V_GETACCESSOR    (ref_t)-16399
@@ -307,7 +307,7 @@ struct _ModuleScope
    virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 
-//   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
+   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
    _ModuleScope()
       : attributes(0), savedPaths(-1)

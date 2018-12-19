@@ -374,11 +374,11 @@
 //    join(object list) on(Func2 filter_f) selectBy(Func2 select_f)
 //        = JoinEnumerator new(filter_f, select_f, T<Enumerator>(self enumerator), T<Enumerator>(list enumerator)).        
 //}
-//
-//// --- indexableOp ---
-//
-//public extension indexableOp
-//{
+
+// --- indexableOp ---
+
+public extension indexableOp
+{
 ////    exchange : anIndex1 : anIndex2
 ////        = self~indexableOp exchange int:anIndex1 int:anIndex2.
 //        
@@ -465,9 +465,21 @@
 //    populate(ExtensionMessage ext_mssg)
 //        = self~indexableOp populate(:n)<int>[ ^n~ext_mssg get ].
 //
-////    populate(BaseFunction1 aFunction)
-////        = self~indexableOp populate(:n)<int>[ ^aFunction(n) ].
-////
+    populate(Func1 f)
+    {
+        Indexer it := self.Indexer;
+
+        while (it.Available)
+        {
+            int i := 0;
+            it.readIndexTo(ref i);
+            
+            it.set(f(i));
+            
+            it.appendIndex:1
+        };
+    }    
+
 ////    populate : anAction
 ////        = self~indexableOp populate(:n)<int>[ ^anAction(n) ].
 //
@@ -585,8 +597,8 @@
 //        
 //        ^ self
 //    ]    
-//}
-//
+}
+
 //// --- stringListOp ---
 //
 //singleton stringController

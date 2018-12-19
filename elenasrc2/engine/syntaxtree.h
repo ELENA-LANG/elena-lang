@@ -227,7 +227,7 @@ enum LexicalType
    lxBreakpoint         = 0x20006,
    lxNameAttr           = 0x20029,
 // //  lxTerminal        = 0x20002,
-////   lxImport          = 0x20007,
+   lxImport             = 0x20007,
    lxReserved           = 0x20008,
    lxAllocated          = 0x20009,
    lxParamCount         = 0x2000A,

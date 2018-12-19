@@ -8197,16 +8197,32 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
 
 void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFullInfo)
 {
-   SNode current = node.findChild(lxSourcePath);
-   if (current != lxNone)
-      scope.sourcePath.copy(current.identifier());
-
    // add the module itself
    scope.importedNs.add(scope.module->Name().clone());
 
    // system module should be included by default
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       scope.importedNs.add(_ELENA_::ident_t(STANDARD_MODULE).clone());
+   }
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxSourcePath) {
+         scope.sourcePath.copy(current.identifier());
+      }
+      else if (current == lxImport) {
+         bool duplicateInclusion = false;
+         if (scope.moduleScope->includeNamespace(scope.importedNs, current.identifier(), duplicateInclusion)) {
+            //if (duplicateExtensions)
+            //   scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
+         }
+         else if (duplicateInclusion) {
+            scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
+         }
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current);
+      }
+
+      current = current.nextNode();
    }
 
    if (withFullInfo) {

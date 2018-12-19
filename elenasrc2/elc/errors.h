@@ -123,7 +123,7 @@ namespace _ELENA_
 ////   #define wrnProhibitedSubjectName "%s(%d:%d): warning 410: Subject name '%s' coincides with a message verb"
 ////   #define wrnUnknownSignature      "%s(%d:%d): warning 411: Unknown signature '%s'"
 ////   #define wrnObsolete              "%s(%d:%d): warning 412: Obsolete language construction near '%s'"
-//   #define wrnUnknownModule         "%s(%d:%d): warning 413: Unknown module '%s'\n"
+   #define wrnUnknownModule         "%s(%d:%d): warning 413: Unknown module '%s'\n"
 ////   #define wrnOuterAssignment       "%s(%d:%d): warning 414: Outer assignment; the change will not be seen outside the nested code\n"
 //   #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked\n"
 //   #define wrnBoxingCheck           "%s(%d:%d): warning 417: The object may be boxed\n"
@@ -134,7 +134,7 @@ namespace _ELENA_
 //   #define wrnAmbiguousMessageName  "%s(%d:%d): warning 422: Message name '%s' is ambiguous"
 //   #define wrnAmbiguousVariable     "%s(%d:%d): warning 423: Variable '%s' is ambiguous"
    #define wrnDuplicateAttribute    "%s(%d:%d): warning 424: '%s': duplicate attribute\n"
-//   #define wrnDuplicateInclude      "%s(%d:%d): warning 425: '%s': duplicate inclusion\n"
+   #define wrnDuplicateInclude      "%s(%d:%d): warning 425: '%s': duplicate inclusion\n"
    #define wrnExplicitExtension     "%s(%d:%d): warning 426: an extension '%s' should not be used directly\n"
 
 //   #define wrnDuplicateInfo         "Duplicate extension - "
