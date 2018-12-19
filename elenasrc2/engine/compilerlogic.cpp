@@ -1331,7 +1331,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 //   }
 
    // HOTFIX : trying to typecast primitive array
-   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole | elWrapper)) {
+   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole/* | elWrapper*/)) {
       ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
 
       if (isCompatible(scope, info.fieldTypes.get(-1).value2, elementRef)) {

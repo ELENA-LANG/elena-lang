@@ -35,25 +35,6 @@ public sealed ref<T>// : BaseVariable
 //        => theValue.
 }
 
-public extension intRefOp //: ref<int>
-{
-    append(int n)
-    {
-        int v := self.Value;
-        v := v + n;
-        
-        self.Value := v
-    }
-    
-    reduce(int n)
-    {
-        int v := self.Value;
-        v := v - n;
-        
-        self.Value := v
-    }
-}
-
 //public extension<ref<real>> realRefOp
 //{
 //    append(real n)
@@ -3454,3 +3435,24 @@ public sealed const struct IntNumber : IntBaseNumber
 //    reduce : n
 //        <= reduce(T<real>(n)).
 //}
+
+// === basic type extensions ===
+
+public extension intRefOp : ref<int>
+{
+    append(int n)
+    {
+        int v := self.Value;
+        v := v + n;
+        
+        self.Value := v
+    }
+    
+    reduce(int n)
+    {
+        int v := self.Value;
+        v := v - n;
+        
+        self.Value := v
+    }
+}

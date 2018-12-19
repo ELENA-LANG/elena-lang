@@ -140,11 +140,11 @@ public class Exception
 //    constructor new : message
 //        <= new(message).
 //}
-//
-//// --- OutOfRangeException ---
-//
-//public class OutOfRangeException :: Exception
-//{
+
+// --- OutOfRangeException ---
+
+public class OutOfRangeException : Exception
+{
 //    /// Creates the exception
 //    constructor new
 //        <= new("An index is out of range").
@@ -152,8 +152,8 @@ public class Exception
 //    /// Creates the exception
 //    constructor new:aMessage
 //        <= new(aMessage).
-//}
-//
+}
+
 ////// --- IndexOutOfRangeException ---
 ////
 ////#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException

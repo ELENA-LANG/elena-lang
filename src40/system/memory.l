@@ -2587,7 +2587,7 @@ public class ArrayIndexer : Indexer
     /// Reads the current index and saves it into an output parameter
     readIndexTo(ref int retVal)
     {
-        _index.readValueTo(ref retVal)
+        //_index.readValueTo(ref retVal)
     }
     
     /// Sets the index by specified value

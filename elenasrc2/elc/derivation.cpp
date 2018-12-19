@@ -1046,7 +1046,11 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
       while (current != lxNone) {
          if (current == lxParent) {
             writer.newNode(lxParent);
-            copyIdentifier(writer, current.findChild(lxNameAttr).firstChild(lxTerminalMask));
+            SNode baseNameNode = current.findChild(lxNameAttr);
+            copyIdentifier(writer, baseNameNode.firstChild(lxTerminalMask));
+            if (baseNameNode.existChild(lxToken)) {
+               generateTemplateAttributes(writer, baseNameNode, derivationScope);
+            }
             writer.closeNode();
          }
          //      if (current == lxAttribute || current == lxNameAttr) {

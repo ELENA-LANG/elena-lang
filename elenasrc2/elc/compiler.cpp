@@ -1541,7 +1541,7 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope, bool ex
 {
    ref_t parentRef = 0;
    if (node == lxParent) {
-      parentRef = resolveParentRef(node.firstChild(lxTerminalMask), scope, false);
+      parentRef = resolveParentRef(node, scope, false);
    }
 //   else if (node != lxNone) {
 //      SNode terminal = node.firstChild(lxTerminalMask);
@@ -6943,9 +6943,14 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 //   return baseNode;
 //}
 
-ref_t Compiler :: resolveParentRef(SNode terminal, Scope& scope, bool silentMode)
+ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
 {
-   ref_t parentRef = resolveImplicitIdentifier(scope, terminal);
+   ref_t parentRef = 0;
+   if (node.existChild(lxTarget)) {
+      // if it is a template based class
+      parentRef = resolveTemplateDeclaration(node, scope);
+   }
+   else parentRef = resolveImplicitIdentifier(scope, node.firstChild(lxTerminalMask));
 
    //if (isWeakReference(baseClassName) && !isTemplateWeakReference(baseClassName)) {
    //   parentRef = scope.module->mapReference(baseClassName, true);
@@ -6953,7 +6958,7 @@ ref_t Compiler :: resolveParentRef(SNode terminal, Scope& scope, bool silentMode
    //else parentRef = scope.moduleScope->mapFullReference(baseClassName, true);
 
    if (parentRef == 0 && !silentMode)
-      scope.raiseError(errUnknownClass, terminal);
+      scope.raiseError(errUnknownClass, node);
 
    return parentRef;
 }
