@@ -7831,7 +7831,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       case lxLooping:
       //case lxSwitching:
       //case lxOption:
-      //case lxElse:
+      case lxElse:
          analizeExpressionTree(current, scope);
          return 0;
       case lxNested:
@@ -7853,7 +7853,7 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-         //case lxElse:
+         case lxElse:
          case lxCode:
          //case lxIf:
          //case lxExternFrame:
