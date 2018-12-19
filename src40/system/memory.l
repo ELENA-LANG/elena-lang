@@ -2576,18 +2576,20 @@ public class ArrayIndexer : Indexer
 
     /// Returns the current member
     get()
-        = _array.at(_index);
+        = _array.at(_index.Value);
     
     /// Sets the current member
     set(object)
     {
-        _array.setAt(_index, object)
+        int n := _index.Value;
+        
+        _array.setAt(n, object)
     }
     
     /// Reads the current index and saves it into an output parameter
     readIndexTo(ref int retVal)
     {
-        //_index.readValueTo(ref retVal)
+        _index.readValueTo(ref retVal)
     }
     
     /// Sets the index by specified value

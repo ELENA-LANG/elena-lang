@@ -668,7 +668,9 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
          _ELENA_::TextFileReader sourceFile(fullPath.c_str(), getDefaultEncoding(), true);
          if (!sourceFile.isOpened())
             raiseError(errInvalidFile, filePath);
-               
+      
+         // declare a namespace
+         scope.declareNamespace(ns.c_str());
          writer.newNamespace(ns, filePath);
          parser.parse(&sourceFile, writer, getTabSize());      
          writer.closeNamespace();

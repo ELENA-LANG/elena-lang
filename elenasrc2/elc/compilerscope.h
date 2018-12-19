@@ -87,7 +87,7 @@ struct ModuleScope : _ModuleScope
    ident_t resolveWeakTemplateReference(ident_t referenceName);
 
 //   void saveIncludedModule(_Module* extModule);
-   //void saveListMember(ident_t sectionName, ident_t memberName);
+   void saveListMember(ident_t sectionName, ident_t memberName);
 
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs);
 
@@ -115,7 +115,7 @@ struct ModuleScope : _ModuleScope
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference);
 
-   //virtual void declareNamespace(ident_t name);
+   virtual void declareNamespace(ident_t name);
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);
 //
 //   virtual SubjectList* getAutogerenatedExtensions(ref_t attr)

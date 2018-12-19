@@ -1322,7 +1322,7 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
    // method parameter debug info
    while (current != lxNone) {
       if (current == lxMethodParameter/* || current == lxIdentifier*/) {
-         ident_t name = /*(current == lxIdentifier) ? current.identifier() : */current.firstChild(lxTerminalMask).identifier();
+         ident_t name = /*(current == lxIdentifier) ? current.identifier() : */current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier();
          Parameter param = scope.parameters.get(name);
          if (param.offset != -1) {
             //if (param.class_ref == V_ARGARRAY) {
@@ -8319,8 +8319,11 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 {
    scope.module = scope.project->createModule(name);
 
-   if (withDebugInfo)
+   if (withDebugInfo) {
       scope.debugModule = scope.project->createDebugModule(name);
+      // HOTFIX : save the module name in strings table
+      _writer.writeSourcePath(scope.debugModule, name);
+   }      
 
    // cache the frequently used references
    scope.superReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SUPER_FORWARD));
