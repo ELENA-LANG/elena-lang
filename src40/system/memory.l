@@ -99,6 +99,13 @@ public sealed Array<T> //:: Indexable<template_subj>
 //        <= getAt(T<int>(aParam)).
 }
 
+// --- Array template ---
+
+public nonstructural sealed VariadicArray<T> //:: Indexable<template_subj>
+{
+    embeddable T[] theArray;
+}
+
 //// --- matrixof ---
 //
 //public sealed Matrix<template_subj>

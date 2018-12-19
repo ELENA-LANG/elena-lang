@@ -62,7 +62,7 @@ namespace _ELENA_
 ////   #define errInvalidSymbolExpr     "%s(%d:%d): error 142: %s cannot be used inside a symbol\n"
 ////   #define errInvalidRoleDeclr      "%s(%d:%d): error 143: %s cannot be used with a role\n"
 //   #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
-//   #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
+   #define errNotApplicable         "%s(%d:%d): error 145: Illegal declaration '%s'\n"
 ////   #define errNotSupportedType      "%s(%d:%d): error 146: Class '%s' is not compatible with its type\n"
    #define errInvalidHint           "%s(%d:%d): error 147: Invalid attribute '%s'\n"
 //   #define errStrongTypeNotAllowed  "%s(%d:%d): error 148: strong type '%s' cannot be used as a custom verb\n"

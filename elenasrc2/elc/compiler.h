@@ -140,7 +140,7 @@ public:
       okNil,
 //      okSuper,
       okLocalAddress,                 // param - local offset
-//      okParams,                       // param - local offset
+      okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
@@ -522,7 +522,7 @@ private:
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
       ref_t        outputRef;
-//      bool         withOpenArg;
+      bool         withOpenArg;
       bool         classEmbeddable;
 //      bool         generic;
 //      bool         genericClosure;
@@ -769,7 +769,11 @@ private:
 
    ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);
    ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef);
-   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef);
+   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef, ref_t templateRef);
+   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef)
+   {
+      return resolvePrimitiveArray(scope, elementRef, scope.moduleScope->arrayTemplateReference);
+   }
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
@@ -971,7 +975,7 @@ private:
    ref_t analizeSymbol(SNode& node, NamespaceScope& scope);
    ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeBoxing(SNode node, NamespaceScope& scope, int mode);
-//   ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, int mode);
+   ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, int mode);
 //   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);

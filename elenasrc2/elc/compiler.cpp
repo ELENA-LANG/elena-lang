@@ -613,7 +613,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->rootToFree = 1;
    this->hints = 0;
    this->outputRef = INVALID_REF; // to indicate lazy load
-//   this->withOpenArg = false;
+   this->withOpenArg = false;
    this->classEmbeddable = false;
 //   this->generic = false;
    this->extensionMode = false;
@@ -649,10 +649,10 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
 {
    int prefix = closureMode ? 0 : -1;
 
-   //if (withOpenArg && param.class_ref == V_ARGARRAY) {
-   //   return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref);
-   //}
-   /*else */if (param.class_ref != 0 && param.size != 0) {
+   if (withOpenArg && param.class_ref == V_ARGARRAY) {
+      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref, 0);
+   }
+   else if (param.class_ref != 0 && param.size != 0) {
       // if the parameter may be stack-allocated
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
@@ -966,7 +966,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
             case okOuterField:
             case okOuterStaticField:
             case okOuterSelf:
-            //case okParams:
+            case okParams:
             {
                // map if the object is outer one
                outer.reference = info.fields.Count();
@@ -2230,13 +2230,13 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
 ////      case okBlockLocal:
 ////         terminal.set(lxBlockLocal, object.param);
 ////         break;
-//      case okParams:
-//         writer.newNode(lxArgBoxing, 0);
-//         writer.appendNode(lxBlockLocalAddr, object.param);
-//         writer.appendNode(lxTarget, scope.moduleScope->arrayReference);
-//         if (test(mode, HINT_DYNAMIC_OBJECT))
-//            writer.appendNode(lxBoxingRequired);
-//         break;
+      case okParams:
+         writer.newNode(lxArgBoxing, 0);
+         writer.appendNode(lxBlockLocalAddr, object.param);
+         writer.appendNode(lxTarget, resolvePrimitiveReference(scope, object.reference, object.element));
+         if (test(mode, HINT_DYNAMIC_OBJECT))
+            writer.appendNode(lxBoxingRequired);
+         break;
       case okObject:
          writer.newNode(lxResult, 0);
          break;
@@ -3165,8 +3165,11 @@ ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t el
    if (argRef == V_WRAPPER) {
       argRef = resolveReferenceTemplate(scope, elementRef);
    }
+   else if (argRef == V_ARGARRAY) {
+      argRef = resolvePrimitiveArray(scope, elementRef, scope.moduleScope->argArrayTemplateReference);
+   }
    else if (isPrimitiveArrRef(argRef)) {
-      argRef = resolvePrimitiveArray(scope, elementRef);
+      argRef = resolvePrimitiveArray(scope, elementRef, scope.moduleScope->arrayTemplateReference);
    }
    else argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
 
@@ -4092,7 +4095,7 @@ ref_t Compiler :: resolveReferenceTemplate(Scope& scope, ref_t operandRef)
    return scope.moduleScope->generateTemplate(*this, scope.moduleScope->refTemplateReference, parameters, nsScope->ns.c_str()/*, &nsScope->extensions*/);
 }
 
-ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t operandRef)
+ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t operandRef, ref_t templateRef)
 {
    if (!operandRef)
       operandRef = scope.moduleScope->superReference;
@@ -4110,7 +4113,7 @@ ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t operandRef)
    parameters.add(dummyTree.readRoot().firstChild());
 
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-   return scope.moduleScope->generateTemplate(*this, scope.moduleScope->arrayTemplateReference, parameters, nsScope->ns.c_str()/*, &nsScope->extensions*/);
+   return scope.moduleScope->generateTemplate(*this, templateRef, parameters, nsScope->ns.c_str()/*, &nsScope->extensions*/);
 }
 
 ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
@@ -4961,10 +4964,11 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
 {
    bool byRefArg = false;
    bool arrayArg = false;
+   bool paramsArg = false;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (_logic->validateArgumentAttribute(current.argument, byRefArg)) {
+         if (_logic->validateArgumentAttribute(current.argument, byRefArg, paramsArg)) {
 
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
@@ -4987,8 +4991,13 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
    }
    if (arrayArg) {
       elementRef = classRef;
-      classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef);
+      if (paramsArg) {
+         classRef = V_ARGARRAY;
+      }
+      else classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef);
    }
+   else if (paramsArg)
+      scope.raiseError(errIllegalMethod, node);
 }
 
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
@@ -5032,47 +5041,40 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          ref_t classRef = scope.moduleScope->superReference;
          ref_t elementRef = 0;
 
-         ident_t terminal = current.findChild(lxNameAttr).firstChild(lxTerminalMask)/*findTerminal(current.findChild(lxNameAttr))*/.identifier();
+         ident_t terminal = current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier();
          if (scope.parameters.exist(terminal))
             scope.raiseError(errDuplicatedLocal, current);
 
          declareArgumentAttributes(current, scope, classRef, elementRef);
 
-//            if (current.argument != 0) {
-//               // HOTFIX : to recognize conversion arguments
-//               classRef = current.argument;
-//            }
-//            else classRef = declareArgumentType(attribute, scope, /*first, messageStr, signature, */elementRef);
-//            if (classRef == V_ARGARRAY) {
+         paramCount++;
+         if (paramCount >= ARG_COUNT || test(flags, VARIADIC_MESSAGE))
+            scope.raiseError(errTooManyParameters, current);
+
+         if (classRef == V_ARGARRAY) {
+            // to indicate open argument list
+            flags |= VARIADIC_MESSAGE;
+
 //               if (!test(scope.hints, tpGeneric) && !scope.withOpenArg)
 //                  // !! temporal : only generic method may handle open argument list
 //                  scope.raiseError(errNotApplicable, node);
-//
-//               // the generic arguments should be free by the method exit
-//               scope.withOpenArg = true;
-//
-//               // to indicate open argument list
-//               paramCount += OPEN_ARG_COUNT;
-//               if (paramCount > MAX_ARG_COUNT) {
-//                  scope.raiseError(errNotApplicable, node);
-//               }
-//
-//               signature[signatureLen++] = elementRef;
-//            }
-//            else {
-               paramCount++;
-               if (paramCount >= ARG_COUNT)
-                  scope.raiseError(errTooManyParameters, current);
 
-               if (isPrimitiveRef(classRef)) {
-                  // primitive arguments should be replaced with wrapper classes
-                  signature[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef);
-               }
-               else signature[signatureLen++] = classRef;
+            // the generic arguments should be free by the method exit
+            scope.withOpenArg = true;
 
-               size = _logic->defineStructSize(*scope.moduleScope, classRef, elementRef);
+            if (paramCount > MAX_VARG_COUNT) {
+               scope.raiseError(errNotApplicable, node);
+            }
+            
+            signature[signatureLen++] = elementRef;
+         }
+         else if (isPrimitiveRef(classRef)) {
+            // primitive arguments should be replaced with wrapper classes
+            signature[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef);
+         }
+         else signature[signatureLen++] = classRef;
 
-//            }
+         size = _logic->defineStructSize(*scope.moduleScope, classRef, elementRef);
 
          scope.parameters.add(terminal, Parameter(index, classRef, elementRef, size));
 
@@ -5122,17 +5124,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       }
       else if (test(scope.hints, tpConstructor) && unnamedMessage) {
          actionStr.copy(CONSTRUCTOR_MESSAGE);
-//         if (paramCount > 0) {
-//            //HOTFIX : replace constructor attribute with conversion one
-//            SNode attrNode = goToNode(node.firstChild(), lxAttribute, tpConstructor);
-//            attrNode.setArgument(tpSealed | tpConversion);
-//            scope.hints &= ~tpConstructor;
-//            scope.hints |= tpSealed | tpConversion;
-//
-//            actionStr.copy(CAST_MESSAGE);
-//            flags |= SPECIAL_MESSAGE;
-//         }
-//         else actionStr.copy(DEFAULT_MESSAGE);
          unnamedMessage = false;
       }
 //      else if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
@@ -5205,10 +5196,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
             signatureRef = scope.moduleScope->module->mapSignature(signature, signatureLen, false);
 
          actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), signatureRef, false);
-//         // COMPILER MAGIC : recognize set property
-//         if (actionRef == SET_MESSAGE_ID && paramCount == 1) {
-//            flags |= PROPSET_MESSAGE;
-//         }
       }
       else scope.raiseError(errIllegalMethod, node);
 
@@ -6243,7 +6230,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 
 //   methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
-//   methodScope.withOpenArg = isOpenArg(methodScope.message);
+   methodScope.withOpenArg = isOpenArg(methodScope.message);
    methodScope.closureMode = _logic->isClosure(scope.info, methodScope.message);
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
@@ -7709,21 +7696,21 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, int mode)
    return targetRef;
 }
 
-//ref_t Compiler :: analizeArgBoxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int mode)
-//{
-//   bool boxing = !test(mode, HINT_NOBOXING);
-//
-//   // HOTFIX : override the stacksafe attribute if the object must be boxed
-//   if (!boxing && node.existChild(lxBoxingRequired))
-//      boxing = true;
-//
-//   if (!boxing)
-//      node = lxExpression;
-//
-//   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
-//
-//   return scope.moduleScope->arrayReference;
-//}
+ref_t Compiler :: analizeArgBoxing(SNode node, NamespaceScope& scope, int mode)
+{
+   bool boxing = !test(mode, HINT_NOBOXING);
+
+   // HOTFIX : override the stacksafe attribute if the object must be boxed
+   if (!boxing && node.existChild(lxBoxingRequired))
+      boxing = true;
+
+   if (!boxing)
+      node = lxExpression;
+
+   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
+
+   return node.findChild(lxTarget);
+}
 
 ref_t Compiler :: analizeSymbol(SNode& node, NamespaceScope& scope)
 {
@@ -7835,15 +7822,15 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       case lxBoxing:
       case lxCondBoxing:
       case lxUnboxing:
-         return analizeBoxing(current, scope, /*warningScope, */mode);
-      //case lxArgBoxing:
-      //   return analizeArgBoxing(current, scope, /*warningScope, */mode);
+         return analizeBoxing(current, scope, mode);
+      case lxArgBoxing:
+         return analizeArgBoxing(current, scope, mode);
       //case lxArgUnboxing:
       //   return analizeArgUnboxing(current, scope, /*warningScope, */mode);
       case lxAssigning:
          return analizeAssigning(current, scope, mode);
       case lxSymbolReference:
-         return analizeSymbol(current, scope/*, warningScope*/);
+         return analizeSymbol(current, scope);
       case lxIntOp:
       //case lxLongOp:
       //case lxRealOp:
@@ -8388,6 +8375,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
    scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
+   scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
 //   scope.signatureReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SIGNATURE_FORWARD));
 //   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
 //   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
@@ -8653,18 +8641,18 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
    ref_t signatureLen = 0;
    ref_t signatures[ARG_COUNT];
 
-   //if (paramCount >= OPEN_ARG_COUNT) {
+   if (test(message, VARIADIC_MESSAGE)) {
    //   for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
    //      signatures[signatureLen++] = scope.superReference;
    //   }
    //   signatures[signatureLen++] = scope.superReference;
-   //}
-   //else {
+   }
+   else {
       for (int i = 0; i < paramCount; i++) {
          signatureLen++;
          signatures[i] = scope.superReference;
       }
-   //}
+   }
    ref_t signRef = scope.module->mapAction(actionName, scope.module->mapSignature(signatures, signatureLen, false), false);
 
    resendMessage = encodeMessage(signRef, paramCount, flags);

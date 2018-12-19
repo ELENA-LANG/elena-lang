@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * (re)implement dynamic variadic argument resolving
                  * primitive array should be passed directly without unboxing if allowed
                  * test - a[](...) - should be illegal
                  * test boxing / unboxing with dynamic reference
@@ -31,6 +32,7 @@ In development:
                  * correct error should be displayed : abstract get bool available {}
                  * Indexer.Index property - should support abstract get and set accessors
                  * unboxing of boxing (in case if analizer does not resolve the issue)
+                 * cache resolved built-in tampletes
  
               dev - tests          
                  * test : interpreter

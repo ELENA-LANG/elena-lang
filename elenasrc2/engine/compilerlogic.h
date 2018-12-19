@@ -183,7 +183,7 @@ public:
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 //////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);
-   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg);
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg);
 
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag);
    virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);

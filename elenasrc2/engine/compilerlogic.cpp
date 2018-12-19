@@ -1618,12 +1618,17 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
    injectOverloadList(scope, info, compiler, classRef);
 }
 
-bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg)
+bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg)
 {
    switch ((size_t)attrValue) {
       case V_WRAPPER:
          if (!byRefArg) {
             byRefArg = true;
+            return true;
+         }
+      case V_ARGARRAY:
+         if (!paramsArg) {
+            paramsArg = true;
             return true;
          }
    }
@@ -1661,9 +1666,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_EXTENSION:
          attrValue = elExtension;
          return true;
-////      case V_NOSTRUCT:
-////         attrValue = elNonStructureRole;
-////         return true;
+      case V_NOSTRUCT:
+         attrValue = elNonStructureRole;
+         return true;
 //      case V_GROUP:
 //         attrValue = elGroup;
 //         return true;

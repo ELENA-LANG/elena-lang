@@ -20,7 +20,7 @@
 #16392 = property;
 #16393 = method;
 #16394 = __loop;
-////nonstructural   = #8204.
+#8204  = nonstructural;
 #16395 = import;
 #16396 = extern;
 #8205  = closure;
@@ -45,7 +45,7 @@
 #8215  = predefined;
 #8216  = dispatch;
 
-//__args          = #32. 
+#32    = params;
 //
 #8200  = __string;
 #10    = __int;

@@ -12,29 +12,29 @@
 namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
-   #define ENGINE_MAJOR_VERSION     4                 // ELENA Engine version
-   #define ENGINE_MINOR_VERSION     0
-   #define ENGINE_RELEASE_VERSION   0
+   #define ENGINE_MAJOR_VERSION           4                 // ELENA Engine version
+   #define ENGINE_MINOR_VERSION           0
+   #define ENGINE_RELEASE_VERSION         0
 
-   #define LINE_LEN                 0x1000            // the maximal source line length
-   #define IDENTIFIER_LEN           0x0100            // the maximal identifier length
+   #define LINE_LEN                       0x1000            // the maximal source line length
+   #define IDENTIFIER_LEN                 0x0100            // the maximal identifier length
 
   // --- ELENA Standart message constants ---
-   constexpr int ACTION_ORDER       = 8;
+   constexpr int ACTION_ORDER             = 9;
 
-   constexpr auto MESSAGE_FLAG_MASK = 0xE0u;
-////   #define SPECIAL_MESSAGE         0x60000000u
-////   #define PROPSET_MESSAGE         0x20000000u
+   constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
    // indicates it is an invoke message
-   constexpr auto SPECIAL_MESSAGE      = 0x20u;
-   constexpr auto PROPERTY_MESSAGE     = 0x40u;
-   constexpr auto STATIC_MESSAGE       = 0x80u;
-   constexpr auto PARAM_MASK           = 0x1Fu;
-   constexpr auto ARG_COUNT            = 0x1Fu;
+   constexpr auto SPECIAL_MESSAGE         = 0x020u;
+   constexpr auto PROPERTY_MESSAGE        = 0x040u;
+   constexpr auto STATIC_MESSAGE          = 0x080u;
+   constexpr auto VARIADIC_MESSAGE        = 0x100u;
+   constexpr auto PARAM_MASK              = 0x01Fu;
+   constexpr auto ARG_COUNT               = 0x01Fu;
+   constexpr auto MAX_VARG_COUNT          = 0x003u;
 
 //   #define PARAMX_MASK             0x000000000000FFFFu
 
-   constexpr auto INVALID_REF            = 0xFFFFFFFFu;
+   constexpr auto INVALID_REF             = 0xFFFFFFFFu;
 
    //#define NEW_MESSAGE_ID          0x0003
    constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
@@ -514,6 +514,7 @@ namespace _ELENA_
    constexpr auto REFTEMPLATE_FORWARD     = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
    constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
+   constexpr auto ARGARRAYTEMPLATE_FORWARD= "$varray";
    constexpr auto BOOL_FORWARD            = "$bool";
    constexpr auto TRUE_FORWARD            = "$true";
    constexpr auto FALSE_FORWARD           = "$false";

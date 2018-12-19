@@ -1379,25 +1379,31 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
    }
    else scope.extra_arg = 4;
 
-   switch (getParamCount(message)) {
-      case 1:
-         loadMTOpX(op, scope, 0x100);
-         break;
-      case 2:
-         loadMTOpX(op, scope, 0x200);
-         break;
-      //case OPEN_ARG_COUNT:
-      //   loadMTOpX(op, scope, 0xC00);
-      //   break;
-      //case OPEN_ARG_COUNT + 1:
-      //   loadMTOpX(op, scope, 0xD00);
-      //   break;
-      //case OPEN_ARG_COUNT + 2:
-      //   loadMTOpX(op, scope, 0xE00);
-      //   break;
-      default:
-         loadMTOp(op, scope);
-         break;
+   if (test(message, VARIADIC_MESSAGE)) {
+      switch (getParamCount(message)) {
+         case 1:
+            loadMTOpX(op, scope, 0xC00);
+            break;
+         case 2:
+            loadMTOpX(op, scope, 0xD00);
+            break;
+         case 3:
+            loadMTOpX(op, scope, 0xE00);
+            break;
+      }
+   }
+   else {
+      switch (getParamCount(message)) {
+         case 1:
+            loadMTOpX(op, scope, 0x100);
+            break;
+         case 2:
+            loadMTOpX(op, scope, 0x200);
+            break;
+         default:
+            loadMTOp(op, scope);
+            break;
+      }
    }
 }
 

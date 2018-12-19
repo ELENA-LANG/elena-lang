@@ -37,7 +37,7 @@
 #define V_PRIMARRAY      (ref_t)-29
 #define V_OBJARRAY       (ref_t)-30
 #define V_INT32ARRAY     (ref_t)-31
-//#define V_ARGARRAY      (ref_t)-32
+#define V_ARGARRAY       (ref_t)-32
 #define V_BINARYARRAY    (ref_t)-35
 #define V_INT16ARRAY     (ref_t)-38
 #define V_INT8ARRAY      (ref_t)-39
@@ -61,7 +61,7 @@
 #define V_CONST          (ref_t)-8201
 //#define V_GENERIC        (ref_t)-8202
 #define V_EXTENSION      (ref_t)-8203
-////#define V_NOSTRUCT       (ref_t)-8204
+#define V_NOSTRUCT       (ref_t)-8204
 #define V_ACTION         (ref_t)-8205     // a closure attribute
 //#define V_GROUP          (ref_t)-8206
 #define V_PRELOADED      (ref_t)-8207
@@ -224,6 +224,7 @@ struct _ModuleScope
 //   ref_t             arrayReference;
    ref_t             refTemplateReference;
    ref_t             arrayTemplateReference;
+   ref_t             argArrayTemplateReference;
    ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
 
@@ -321,6 +322,7 @@ struct _ModuleScope
       closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;
+      argArrayTemplateReference = 0;
 
       newobject_message = dispatch_message = 0;
    }
@@ -504,7 +506,7 @@ public:
    virtual bool validateExpressionAttribute(int attrValue, ExpressionAttributes& attributes) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
-   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg) = 0;
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 

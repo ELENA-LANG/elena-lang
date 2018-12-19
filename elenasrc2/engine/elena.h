@@ -868,11 +868,11 @@ inline bool IsShiftOperator(int operator_id)
 ////      return false;
 ////   }
 ////}
-//
-//inline bool isOpenArg(ref_t message)
-//{
-//   return (message & PARAM_MASK) >= OPEN_ARG_COUNT;
-//}
+
+inline bool isOpenArg(ref_t message)
+{
+   return test(message, VARIADIC_MESSAGE);
+}
 
 inline bool isPrimitiveRef(ref_t reference)
 {

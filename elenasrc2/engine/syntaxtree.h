@@ -135,15 +135,15 @@ enum LexicalType
 //   lxCurrentMessage     = 0x0A11B,
    lxSelfLocal          = 0x0A11C,
    lxConstantList       = 0x0A11E,   // arg - reference
-//   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
-   lxClassRefField      = 0x08120,  // arg - self instance offset
+   lxBlockLocalAddr     = 0x0A11F,   // arg - offset
+   lxClassRefField      = 0x08120,   // arg - self instance offset
    //lxLocalReference     = 0x0A121,  // arg - self instance offset
 
    lxCondBoxing      = 0x0C001,   // conditional boxing, arg - size
    lxBoxing          = 0x0C002,   // boxing of the argument, arg - size
    lxLocalUnboxing   = 0x0C003,   // arg - size
    lxUnboxing        = 0x0C004,   // boxing and unboxing of the argument, arg - size
-//   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
+   lxArgBoxing       = 0x0C005,   // argument list boxing, arg - size
 //   lxArgUnboxing     = 0x0C006,
    lxCalling         = 0x0C007,   // sending a message, arg - message
    lxDirectCalling   = 0x0C008,   // calling a method, arg - message
