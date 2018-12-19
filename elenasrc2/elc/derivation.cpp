@@ -3181,6 +3181,15 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
 //   writer.closeNode();
 //}
 
+void TemplateGenerator :: copyNodes(SyntaxWriter& writer, SNode current, TemplateScope& scope)
+{
+   while (current != lxNone) {
+      copyTreeNode(writer, current, scope);
+
+      current = current.nextNode();
+   }
+}
+
 void TemplateGenerator :: copyChildren(SyntaxWriter& writer, SNode node, TemplateScope& scope)
 {
    SNode current = node.firstChild();
@@ -3428,7 +3437,14 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
 //         copyFieldInitTree(initWriter, current, scope);
 //      }
       else if (current == lxExpression) {
-         copyExpressionTree(writer, current, scope);
+         if (current.nextNode() == lxExpression) {
+            // HOTFIX : if the code template contains several expressions
+            writer.newNode(lxCodeExpression);
+            copyNodes(writer, current, scope);
+            writer.closeNode();
+            break;
+         }
+         else copyExpressionTree(writer, current, scope);
       }
       current = current.nextNode();
    }

@@ -2435,6 +2435,10 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //   }
    else {
       switch (node.type) {
+         case lxCodeExpression:
+         case lxCode:
+            result = compileCodeExpression(writer, node, scope, mode);
+            break; 
          case lxTemplate:
             result = compileTemplateSymbol(writer, node, scope, mode);
             break;
@@ -4548,6 +4552,36 @@ ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, Co
 //
 //   compileExpression(writer, expr, scope, 0, HINT_LOOP);
 //}
+
+ObjectInfo Compiler :: compileCodeExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
+{
+   ObjectInfo retVal;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current) {
+         case lxExpression:
+            writer.newNode(lxExpression);
+            writer.appendNode(lxBreakpoint, dsStep);
+            retVal = compileRootExpression(writer, current, scope);
+            writer.closeNode();
+            break;
+         case lxReturning:
+         {
+            writer.newNode(lxReturning);
+            writer.appendNode(lxBreakpoint, dsStep);
+            retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
+            writer.closeNode();
+
+            break;
+         }
+      }
+
+      current = current.nextNode();
+   }
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {

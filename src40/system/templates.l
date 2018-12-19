@@ -290,6 +290,15 @@ public while<loop_block>(expr)
     __loop cast bool(expr) ? loop_block
 }    
 
+// --- for statement ---
+
+public for<loop_body>(init_expr, cond_expr, step_expr)
+{
+    init_expr;
+    
+    __loop cast bool(cond_expr) ? { loop_body; step_expr }
+}
+
 //// -- try-catch statement ---
 //
 //public __nested try<expr>

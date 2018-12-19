@@ -192,13 +192,14 @@ enum LexicalType
    lxByteArrOp       = 0x8C032, // arg - operation id
    lxShortArrOp      = 0x8C033, // arg - operation id
 //////   lxReleasing       = 0x0C034,
-   lxDispatching     = 0x0C036,   // dispatching a message, optional arg - message
-   lxAssigning       = 0x0C037,   // an assigning expression, arg - size
-   lxIntOp           = 0x8C038,   // arg - operation id
+   lxDispatching              = 0x0C036,   // dispatching a message, optional arg - message
+   lxAssigning                = 0x0C037,   // an assigning expression, arg - size
+   lxIntOp                    = 0x8C038,   // arg - operation id
 //   lxLongOp          = 0x8C039,   // arg - operation id
 //   lxRealOp          = 0x8C03A,   // arg - operation id
-   lxMultiDispatching       = 0x0C03B,
-   lxSealedMultiDispatching = 0x0C03C,
+   lxMultiDispatching         = 0x0C03B,
+   lxSealedMultiDispatching   = 0x0C03C,
+   lxCodeExpression           = 0x0C03D,
 //   lxOverridden      = 0x04047,
 //
 //   lxAssignOperator  = 0x10024,

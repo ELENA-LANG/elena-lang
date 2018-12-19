@@ -353,12 +353,13 @@ class TemplateGenerator //: public _DerivationTransformer
 //
 ////   void copyIdentifier(SyntaxWriter& writer, SNode terminal);   
 //   void copyParamAttribute(SyntaxWriter& writer, SNode current, DerivationScope& scope);
+   void copyNodes(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyChildren(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 //   void copyFieldInitTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);   
 //   void copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, SubjectMap* parentAttributes, int mode = 0);
 //   void copyTemplateAttributeTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void copyOperator(SyntaxWriter& writer, SNode& node);

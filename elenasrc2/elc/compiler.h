@@ -900,6 +900,7 @@ private:
    void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileCodeExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
 
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef);
    void declareArgumentList(SNode node, MethodScope& scope);
