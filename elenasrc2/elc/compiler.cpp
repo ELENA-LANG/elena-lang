@@ -1721,6 +1721,17 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
             break;
       }
    }
+   else if (fieldRef == V_PTRBINARY) {
+      switch (size) {
+         case 4:
+            // treat it like dword
+            fieldRef = V_PTR32;
+            break;
+         default:
+            scope.raiseError(errInvalidHint, node);
+            break;
+      }
+   }
 
    //if (fieldRef == V_OBJARRAY && isPrimitiveRef(elementRef)) {
    //   switch (elementRef) {
@@ -3006,11 +3017,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       retVal.reference = result.outputReference;
    }
 
-//   if ((target.kind == okSelfParam || target.kind == okOuterSelf || target.kind == okClassSelf) && callType == tpPrivate) {
-//      messageRef |= SEALED_MESSAGE;
-//
-//      callType = tpSealed;
-//   }
+   if ((target.kind == okSelfParam || target.kind == okOuterSelf || target.kind == okClassSelf) && callType == tpPrivate) {
+      messageRef |= STATIC_MESSAGE;
+
+      callType = tpSealed;
+   }
 //   else if (classReference == scope.moduleScope->signatureReference) {
 //      dispatchCall = test(mode, HINT_EXTENSION_MODE);
 //   }
@@ -3021,7 +3032,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //      // parent methods are always sealed
 //      callType = tpSealed;
 //   }
-//
+
 //   if (dispatchCall) {
 //      operation = lxDirectCalling;
 //      argument = encodeAction(DISPATCH_MESSAGE_ID);
@@ -4708,7 +4719,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
 
             switch (primitiveRef) {
                case V_INT32:
-               //case V_PTR:
+               case V_PTR32:
                case V_DWORD:
                //case V_SIGNATURE:
                //case V_MESSAGE:
@@ -5215,9 +5226,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         }
 //         else scope.raiseError(errIllegalMethod, node);
 //      }
-//      else if (test(scope.hints, tpPrivate)) {
-//         flags |= SEALED_MESSAGE;
-//      }
+      /*else */if (test(scope.hints, tpPrivate)) {
+         flags |= STATIC_MESSAGE;
+      }
 //      else if (unnamedMessage && emptystr(actionStr))
 //         actionStr.append(EVAL_MESSAGE);
 
@@ -6582,13 +6593,11 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       current = current.nextNode();
    }
 
-   //if ((message & MESSAGE_FLAG_MASK) == SEALED_MESSAGE) {
-   //   // if it is private message set private hint and save it as public one
-   //   hintChanged = true;
-   //   hint |= tpPrivate;
+   if (test(hint, tpPrivate)) {
+      // if it is private message save its hints as public one
 
-   //   scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), hint);
-   //}
+      scope.addHint(message & ~STATIC_MESSAGE, hint);
+   }
    //else if (test(message, SPECIAL_MESSAGE) && message == (encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
    //   hint |= tpSpecial;
    //   hint |= tpSealed;
@@ -6665,7 +6674,7 @@ void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope
    if (body != lxCode || body.firstChild() != lxEOF)
       scope.raiseError(errPedefineMethodCode, node);
 
-   if (testany(scope.hints, tpAbstract/* | tpPrivate*/))
+   if (testany(scope.hints, tpAbstract | tpPrivate))
       // abstract or private methods cannot be predefined
       scope.raiseError(errIllegalMethod, node);
 
@@ -6768,9 +6777,9 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.removeHint(message, tpPredefined);
       }
 
-//      if (test(scope.info.header.flags, elExtension) && (test(methodHints, tpPrivate) || test(methodHints, tpInternal)))
-//         // private / internal methods cannot be declared in the extension
-//         scope.raiseError(errIllegalPrivate, current);
+      if (test(scope.info.header.flags, elExtension) && (test(methodHints, tpPrivate)/* || test(methodHints, tpInternal)*/))
+         // private / internal methods cannot be declared in the extension
+         scope.raiseError(errIllegalPrivate, current);
 
       //// create overloadlist if required
       //if (test(methodHints, tpMultimethod)) {
@@ -6787,8 +6796,8 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       //   //   saveExtension(scope, message, scope.internalOne);
       //   //}
       //}
-      /*else */if (test(scope.info.header.flags, elExtension)/* && !test(methodHints, tpPrivate)*/ && isGeneralMessage(scope.module, message)) {
-         // NOTE : only general message should be saved
+      /*else */if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate) && isGeneralMessage(scope.module, message)) {
+         // NOTE : only general public message should be saved
          saveExtension(scope, message, scope.internalOne);
       }
    }

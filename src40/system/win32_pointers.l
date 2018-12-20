@@ -59,13 +59,13 @@ public sealed const struct Handle
 //    free
 //        => system'core_routines'__rtptr.
 //}
-//
-//// --- UnsafePointer ---
-//
+
+// --- UnsafePointer ---
+
 //public sealed const struct UnsafePointer
 //{
-//    __ptr thePointer.
-//
+//    embeddable __ptr theHandle[4];
+
 //    embeddable constructor load(int ptr)
 //    [
 //        thePointer := ptr.
@@ -144,7 +144,7 @@ public sealed const struct Handle
 //    bool isEmpty
 //        = 0 == thePointer.
 //}
-//
+
 //// --- COORD ---
 //
 //public sealed struct COORD

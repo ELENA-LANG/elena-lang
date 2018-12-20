@@ -23,7 +23,7 @@ public class Object
     predefined bool notless(o) {}
     predefined bool notgreater(o) {}
                 
-//    literal literal = self __className;
+//    string LiteralValue = self.__ClassName;
                 
     /// Implements a message dispatching in VMT
     dispatch() => system'core_routines'__object;

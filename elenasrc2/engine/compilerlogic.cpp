@@ -227,13 +227,13 @@ CompilerLogic :: CompilerLogic()
 //   operators.add(OperatorInfo(AND_MESSAGE_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
 //   operators.add(OperatorInfo(OR_MESSAGE_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
 
-   //// pointer primitive operations
-   //operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR, V_PTR, lxIntOp, V_FLAG));
-   //operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR, V_PTR, lxIntOp, V_FLAG));
-   //operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR, V_INT32, lxIntOp, V_FLAG));
-   //operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR, V_INT32, lxIntOp, V_FLAG));
-   //operators.add(OperatorInfo(ADD_OPERATOR_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
-   //operators.add(OperatorInfo(SUB_OPERATOR_ID, V_PTR, V_INT32, lxIntOp, V_PTR));
+   // pointer primitive operations
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
+   operators.add(OperatorInfo(SUB_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
 
    // dword primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
@@ -502,7 +502,7 @@ int CompilerLogic :: resolveNewOperationType(_ModuleScope& scope, ref_t loperand
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
    switch (targetRef) {
-//      case V_PTR:
+      case V_PTR32:
       case V_DWORD:
          return sourceRef == V_INT32;
       default:
@@ -610,12 +610,12 @@ bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpInternal);
 //}
-//
-//bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpPrivate);
-//}
-//
+
+bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpPrivate);
+}
+
 //bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
@@ -1398,11 +1398,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //         info.header.flags = elDebugReal64 | elStructureRole;
 //         info.size = 8;
 //         break;
-//      case V_PTR:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugPTR | elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_PTR32:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elStructureRole;
+         info.size = 4;
+         break;
       case V_DWORD:
          info.header.parentRef = scope.superReference;
          info.header.flags = elStructureRole | elReadOnlyRole;
@@ -1721,9 +1721,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_GENERIC:
 //         attrValue = (tpGeneric | tpSealed);
 //         return true;
-//      case V_PRIVATE:
-//         attrValue = (tpPrivate | tpSealed);
-//         return true;
+      case V_PRIVATE:
+         attrValue = (tpPrivate | tpSealed);
+         return true;
 //      case V_PUBLIC:
 //         attrValue = 0;
 //         return true;
@@ -1979,7 +1979,10 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
          case V_INT32:
             info.header.flags |= elDebugDWORD;
             break;
-//         case V_INT64:
+         case V_PTR32:
+            info.header.flags |= elDebugPTR;
+            break;
+            //         case V_INT64:
 //            info.header.flags |= (elDebugQWORD | elReadOnlyRole | elWrapper);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_INT64, 0));
 //            return true;
@@ -2585,8 +2588,8 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
       scope.module->resolveSignature(implicitSignatureRef, signatures);
 
       ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
-      //if (listRef == 0 && isMethodPrivate(info, multiMessage))
-      //   listRef = info.methodHints.get(Attribute(multiMessage | SEALED_MESSAGE, maOverloadlist));
+      if (listRef == 0 && isMethodPrivate(info, multiMessage))
+         listRef = info.methodHints.get(Attribute(multiMessage | STATIC_MESSAGE, maOverloadlist));
 
       if (listRef) {
          _Module* argModule = scope.loadReferenceModule(listRef, listRef);

@@ -39,7 +39,7 @@
 
 #8210  = abstract;
 #8211  = public;
-//private         = #8212.
+#8212  = private;
 #8213  = internal;
 #8214  = closed;
 #8215  = predefined;
@@ -50,7 +50,7 @@
 #8200  = __string;
 #10    = __int;
 #11    = __raw;
-//__ptr           = #12.
+#12    = __ptr;
 //__real          = #15.
 //__dword         = #16.
 //__mssg          = #19.
@@ -85,4 +85,4 @@ type string     = system'String;
 type wide       = system'WideString;
 type handle     = system'Handle;
 //type rt_ptr     = system'RTPointer.
-//type dirty_ptr  = system'UnsafePointer.
+//type dirty_ptr  = system'UnsafePointer;

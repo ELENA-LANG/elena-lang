@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   15
+#define REVISION_VERSION   16
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1077,9 +1077,9 @@ void listFlags(int flags, int& row, int pageSize)
       case elDebugShorts:
          printLine("@flag ", "elDebugShorts", row, pageSize);
          break;
-   //   case elDebugPTR:
-   //      printLine("@flag ", "elDebugPTR");
-   //      break;
+      case elDebugPTR:
+         printLine("@flag ", "elDebugPTR");
+         break;
       case elDebugWideLiteral:
          printLine("@flag ", "elDebugWideLiteral", row, pageSize);
          break;

@@ -20,11 +20,12 @@
 
 #define V_INTBINARY      (ref_t)-10
 #define V_BINARY         (ref_t)-11
-//#define V_PTR            (ref_t)-12
+#define V_PTRBINARY      (ref_t)-12
 #define V_INT32          (ref_t)-13
 //#define V_INT64          (ref_t)-14
 //#define V_REAL64         (ref_t)-15
 #define V_DWORD          (ref_t)-16
+#define V_PTR32          (ref_t)-17
 //#define V_SIGNATURE      (ref_t)-18
 //#define V_MESSAGE        (ref_t)-19
 //#define V_EXTMESSAGE     (ref_t)-21
@@ -69,7 +70,7 @@
 ////#define V_TAPEGROUP      (ref_t)-8209
 #define V_ABSTRACT       (ref_t)-8210
 #define V_PUBLIC         (ref_t)-8211
-//#define V_PRIVATE        (ref_t)-8212
+#define V_PRIVATE        (ref_t)-8212
 #define V_INTERNAL       (ref_t)-8213
 #define V_CLOSED         (ref_t)-8214
 #define V_PREDEFINED     (ref_t)-8215
@@ -118,7 +119,7 @@ enum MethodHint
    tpClosed      = 0x000002,
    tpNormal      = 0x000003,
    tpDispatcher  = 0x000004,
-//   tpPrivate     = 0x000005,
+   tpPrivate     = 0x000005,
    tpStackSafe   = 0x000010,
 //   tpEmbeddable  = 0x000020,
 //   tpGeneric     = 0x000040,

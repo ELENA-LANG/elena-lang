@@ -3,9 +3,9 @@
 /// A generic extender
 public extension objectOp
 {
-//    __class
-//        => system'core_routines'__object.
-//
+    __getClass()
+        => system'core_routines'__object;
+
 //    __parent
 //        => system'core_routines'__object.
 //
