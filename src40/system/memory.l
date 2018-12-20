@@ -1145,11 +1145,11 @@ public sealed const struct String : BaseValue
 //    /// Creates the empty literal
 //    constructor min
 //        = emptyLiteral.
-//        
-//    /// Creates the literal string with specified length        
-//    constructor new(int size)
-//        = dynamic<byte>(size + 1).
-//
+        
+    /// Creates the literal string with specified length        
+    constructor(int size)
+        = new byte[](size + 1);
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    constructor new(int aSize, literal aLiteral)
 //        <= new(aSize);
@@ -1168,20 +1168,20 @@ public sealed const struct String : BaseValue
 //    /// Creates the copy of a subarray        
 //    constructor new(int anIndex, int aSize, CharArray anArray)
 //        => system'core_routines'__literal.
-//
-//    internal constructor fromByteArray(int anIndex, int aSize, ByteArray anArray)
-//        <= new(aSize);
-//    [
-//        system'core_routines'__literal copy(self, anIndex, aSize, anArray).
-//    ]
+
+    /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
+        <= (size)
+    {
+        intern system'core_routines'__literal.copy(self, index, size, buffer)
+    }
     
     /// Converts to UTF-16 literal
     wide cast() = wideConvertor.convert(self);
 
 //    cast Enumerable<char> = Enumerable<char>::{ Enumerator<char> enumerator => self. }.
-//
-//    T<literal> literal = self.
-//
+
+    string Printable = self;
+
 //    bool equal:n
 //    [
 //        var l := T<literal>(n) ?? nil.
@@ -1822,11 +1822,11 @@ public sealed Array //:: Indexable, Array<object>
 
 // === Convertors ===
 
-//// --- literalConvertor ---
-//
-///// A literal convertor
-//public class literalConvertor =
-//{
+// --- stringConvertor ---
+
+/// A literal convertor
+public singleton stringConvertor
+{
 //    literal convert(BaseVariable v)
 //        <= convert(v value).
 //    
@@ -2051,11 +2051,11 @@ public sealed Array //:: Indexable, Array<object>
 //    /// Returns a parameter                
 //    literal convert(literal aLiteral)
 //        = aLiteral.
-//        
-//    /// Returns the literal presentation of the parameter
-//    literal convert : anObject
-//        = anObject literal.
-//}.
+        
+    /// Returns the literal presentation of the parameter
+    string convert(o)
+        = o.Printable;
+}
 
 // --- wideConvertor ---
 

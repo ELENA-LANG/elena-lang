@@ -11,20 +11,20 @@ public extension objectOp
 //
 //    bool instanceOf:type
 //        => system'core_routines'__object.        
-//
-//    literal __className
-//    [
-//        dirty_ptr c := self~objectOp __class.
-//        
-//        T<byte,256> dump.
-//        int         len := system'external LoadClassName(c, T<ByteArray>(dump), 255).
-//         
-//        if (len == 0)
-//            [ ^ "Unknown class" ].
-//        
-//        ^ LiteralValue fromByteArray(0,len,T<ByteArray>(dump)).
-//    ]    
-//    
+
+    string __getClassName()
+    {
+        dirty_ptr c := self.__getClass();
+
+        byte dump[256];
+        int         len := extern elenart.LoadClassName(c, dump, 255);
+         
+        if (len == 0)
+            { ^ "Unknown class" };
+        
+        ^ String.fromByteArray(0,len,dump)
+    }
+    
 //    /// Returns true if the specified object instances are equal; otherwise, false.
 //    bool equalReference:anObject
 //        => system'core_routines'__object.

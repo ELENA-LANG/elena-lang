@@ -63,6 +63,8 @@ define page_align_mask   000FFFF0h
 
 define SUBJ_MASK          1FFFFFFh                          
 
+define ACTION_ORDER              9
+
 // --- System Core Preloaded Routines --
 
 structure % CORE_ET_TABLE
@@ -2638,7 +2640,7 @@ inline % 0E8h
 
 labNextOverloadlist:
   mov  edi, rdata : % CORE_MESSAGE_TABLE
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  ecx, [esp]              // ; param count
   mov  ebx, [edi + ebx * 8 + 4]
   lea  ebx, [edi + ebx - 4]
@@ -2695,7 +2697,7 @@ inline % 0E9h
 
 labNextOverloadlist:
   mov  edi, rdata : % CORE_MESSAGE_TABLE
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  ecx, [esp]              // ; param count
   mov  ebx, [edi + ebx * 8 + 4]
   lea  ebx, [edi + ebx - 4]
@@ -2747,7 +2749,7 @@ inline % 1E8h
   mov  ecx, [edi - 4]
 
 labNextOverloadlist:
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  edi, rdata : % CORE_MESSAGE_TABLE
   mov  ebx, [edi + ebx * 8 + 4]
   lea  ebx, [edi + ebx]
@@ -2793,7 +2795,7 @@ inline % 1E9h
   mov  ecx, [edi - 4]
 
 labNextOverloadlist:
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  edi, rdata : % CORE_MESSAGE_TABLE
   mov  ebx, [edi + ebx * 8 + 4]
   lea  ebx, [edi + ebx]
@@ -2833,7 +2835,7 @@ inline % 2E8h
   mov  ebx, [ebx + edx * 8] // ; message from overload list
 
 labNextOverloadlist:
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  edi, rdata : % CORE_MESSAGE_TABLE
   mov  ebx, [edi + ebx * 8 + 4]
   lea  ebx, [edi + ebx]
@@ -2893,7 +2895,7 @@ inline % 2E9h
   mov  ebx, [ebx + edx * 8] // ; message from overload list
 
 labNextOverloadlist:
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  edi, rdata : % CORE_MESSAGE_TABLE
   mov  ebx, [edi + ebx * 8 + 4]
   lea  ebx, [edi + ebx]
@@ -2963,7 +2965,7 @@ labCountParam:
 
 labNextOverloadlist:
   mov  edi, rdata : % CORE_MESSAGE_TABLE
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  ecx, [esp]              // ; param count
   mov  ebx, [edi + ebx * 8 + 4]
   lea  ebx, [edi + ebx]
@@ -3025,7 +3027,7 @@ labCountParam:
 
 labNextOverloadlist:
   mov  edi, rdata : % CORE_MESSAGE_TABLE
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  ecx, [esp]              // ; param count
   mov  ebx, [edi + ebx * 8 + 4]
   lea  ebx, [edi + ebx]
@@ -3085,7 +3087,7 @@ labCountParam:
 
 labNextOverloadlist:
   mov  edi, rdata : % CORE_MESSAGE_TABLE
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  ecx, [esp]              // ; param count
   mov  ebx, [edi + ebx * 8 + 4]
   lea  eax, [eax+4]
@@ -3166,7 +3168,7 @@ labCountParam:
 
 labNextOverloadlist:
   mov  edi, rdata : % CORE_MESSAGE_TABLE
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  ecx, [esp]              // ; param count
   mov  ebx, [edi + ebx * 8 + 4]
   lea  eax, [eax+4]
@@ -3245,7 +3247,7 @@ labCountParam:
 
 labNextOverloadlist:
   mov  edi, rdata : % CORE_MESSAGE_TABLE
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   mov  ecx, [esp]              // ; param count
   mov  ebx, [edi + ebx * 8 + 4]
   lea  eax, [eax+4]
@@ -3348,7 +3350,7 @@ labCountParam:
 labNextOverloadlist:
   mov  edi, rdata : % CORE_MESSAGE_TABLE
   mov  ecx, [esp]              // ; param count
-  shr  ebx, 8
+  shr  ebx, ACTION_ORDER
   lea  eax, [eax+4]
   lea  ebx, [edi + ebx * 8]
   sub  ecx, 1

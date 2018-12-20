@@ -1,23 +1,20 @@
 //import system'routines.
 //import system'text.
-//
-//// --- outputOp ---
-//
-//public extension outputOp
-//{
-//    generic print(dynamic<object> list)
-//    [
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            self write(obj toLiteral).
-//            
-//            i := i + 1
-//        ].
-//    ]
+
+// --- outputOp ---
+
+public extension outputOp
+{
+    print(params object[] list)
+    {
+        int len := list.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            object obj := list[i];
+            
+            self.write(obj.toString())
+        }
+    }
 //    
 ////    generic printWide(object<> list)
 ////    [
@@ -54,8 +51,8 @@
 //        
 //        ^   self writeLine
 //    ]    
-//}
-//
+}
+
 //public extension outputFormatterOp
 //{
 //    generic printPaddingRight(int width, V<object> list)

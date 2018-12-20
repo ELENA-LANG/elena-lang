@@ -30,9 +30,9 @@
 //        ^ retVal.
 //    ]
 //} 
-//
-//class literalExConvertor =
-//{
+
+singleton stringExConvertor
+{
 //    literal convert(RealMatrix a)
 //        = realmatrixExConvertor toLiteral(a).
 //
@@ -80,11 +80,11 @@
 //
 //    literal convert(Indexable o)
 //        <= convert(o indexer).
-//
-//    literal convert:o
-//        = literalConvertor convert:o.
-//}.
-//
+
+    string convert(o)
+        = stringConvertor.convert(o);
+}
+
 //class wideExConvertor =
 //{
 //    wide convert(Indexer it)
@@ -358,11 +358,11 @@
 ////    convert void:val
 ////        = Array min.                        
 //}
-//
-//// --- convertorOp ---
-//
-//public extension convertorOp
-//{
+
+// --- convertorOp ---
+
+public extension convertorOp
+{
 //    T<Array> toArray
 //        = arrayConvertorEx convert:self.
 //
@@ -374,10 +374,10 @@
 //    
 //    T<IntMatrix> toIntMatrix
 //        = intmatrixExConvertor convert:self.
-//    
-//    T<literal> toLiteral
-//        = literalExConvertor convert:self.
-//    
+    
+    string toString()
+        = stringExConvertor.convert(self);
+    
 //    T<literal> toLiteral(int radix)
 //        = literalConvertor convert(self, radix).
 //        
@@ -422,8 +422,8 @@
 //
 //    convertTo : aTarget
 //        = Variant new:self; saveTo:aTarget.
-//}
-//
+}
+
 //public convertor 
 //      = { generic : n = Wrap::(n, convertorOp)~received get. }.
 //

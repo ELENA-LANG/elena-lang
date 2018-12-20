@@ -85,4 +85,4 @@ type string     = system'String;
 type wide       = system'WideString;
 type handle     = system'Handle;
 //type rt_ptr     = system'RTPointer.
-//type dirty_ptr  = system'UnsafePointer;
+type dirty_ptr  = system'UnsafePointer;

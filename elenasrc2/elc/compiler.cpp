@@ -1378,10 +1378,10 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, iden
 
    size_t signIndex = virtualReference.Length();
    virtualReference.append('0' + (char)paramCount);
-   //if (test(message, SEALED_MESSAGE)) {
-   //   virtualReference.append(scope.module->Name());
-   //   virtualReference.append("$");
-   //}
+   if (test(message, STATIC_MESSAGE)) {
+      virtualReference.append(scope.module->Name());
+      virtualReference.append("$");
+   }
 
    ref_t signature = 0;
    virtualReference.append(moduleScope->module->resolveAction(actionRef, signature));
@@ -4725,9 +4725,9 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
                //case V_MESSAGE:
                   current.set(variableOne ? lxExtArgument : lxIntExtArgument, 0);
                   break;
-               //case V_INT8ARRAY:
-               //   current.set(lxExtArgument, 0);
-               //   break;
+               case V_INT8ARRAY:
+                  current.set(lxExtArgument, 0);
+                  break;
                //case V_SYMBOL:
                //{
                //   current.set(lxExtInteranlRef, 0);

@@ -929,22 +929,22 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
    int index = 1;
    while (info[index].symbol == dsField) {
       ident_t fieldName = (const char*)unmapDebugPTR32(info[index].addresses.field.nameRef);
-      //int size = info[index].addresses.field.size;
-      //// if it is a data field
-      //if (size != 0) {
-      //   if (size == 4) {
-      //      watch->write(this, 0, fieldName, (int)_debugger.Context()->readDWord(address));
-      //   }
-      //   else if (size == 2) {
-      //      watch->write(this, 0, fieldName, (int)_debugger.Context()->readWord(address));
-      //   }
-      //   else if (size == 1) {
-      //      watch->write(this, 0, fieldName, (int)_debugger.Context()->readByte(address));
-      //   }
+      int size = info[index].addresses.field.size;
+      // if it is a data field
+      if (size != 0) {
+         if (size == 4) {
+            watch->write(this, 0, fieldName, (int)_debugger.Context()->readDWord(address));
+         }
+         else if (size == 2) {
+            watch->write(this, 0, fieldName, (int)_debugger.Context()->readWord(address));
+         }
+         else if (size == 1) {
+            watch->write(this, 0, fieldName, (int)_debugger.Context()->readByte(address));
+         }
 
-      //   address += size;
-      //}
-      //else {
+         address += size;
+      }
+      else {
          size_t fieldPtr = _debugger.Context()->ObjectPtr(address);
          if (fieldPtr==0) {
             watch->write(this, fieldPtr, fieldName, "<nil>");
@@ -968,7 +968,7 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
          }
 
          address += 4;
-      //}
+      }
 
       index++;
    }

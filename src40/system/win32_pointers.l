@@ -62,28 +62,28 @@ public sealed const struct Handle
 
 // --- UnsafePointer ---
 
-//public sealed const struct UnsafePointer
-//{
-//    embeddable __ptr theHandle[4];
+public sealed const struct UnsafePointer
+{
+    embeddable __ptr thePointer[4];
 
 //    embeddable constructor load(int ptr)
 //    [
 //        thePointer := ptr.
 //    ]
-//
-//    constructor
-//    [
-//        thePointer := 0.
-//    ]
-//
-//    constructor(object ref)
-//    [
-//        self setReference:ref.
-//    ]
-//    
-//    private setReference:anObject
-//        => system'core_routines'__dptr.
-//                                         
+
+    constructor()
+    {
+        thePointer := 0
+    }
+
+    constructor(object ref)
+    {
+        self.setReference:ref
+    }
+    
+    private setReference(o)
+        => system'core_routines'__dptr;
+                                         
 //    dirty_ptr add(int offs)
 //    [
 //        dirty_ptr ptr := self.
@@ -143,7 +143,7 @@ public sealed const struct Handle
 //    
 //    bool isEmpty
 //        = 0 == thePointer.
-//}
+}
 
 //// --- COORD ---
 //

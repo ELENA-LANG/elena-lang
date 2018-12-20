@@ -62,6 +62,23 @@ procedure __literal."read:Length$@system@ref#1&IntNumber[2]"
 
 end
 
+procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$@system@Array#1&ByteNumber[4]"
+
+  bloadsi 1
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  
+  callextr api : subcopyz
+  
+  acopyb
+  quitn 4
+
+end
+
 procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1
@@ -168,6 +185,16 @@ labErr:
   pushr class : system'OutOfRangeException
   pushr const : %new[0]
   throw
+
+end
+
+procedure __dptr."system$setReference[2]"
+
+  bcopya
+  dloadsi 2
+  nsave
+  acopyb
+  quitn 2
 
 end
 
