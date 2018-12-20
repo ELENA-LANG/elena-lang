@@ -180,7 +180,7 @@ enum LexicalType
    lxNewArrOp        = 0x0C028,
    lxArrOp           = 0x8C029,   // arg - operation id
 //   lxBinArrOp        = 0x8C02A,   // arg - operation id
-//   lxArgArrOp        = 0x8C02B,   // arg - operation id
+   lxArgArrOp        = 0x8C02B,   // arg - operation id
 //   lxNilOp           = 0x8C02C,   // arg - operation id
 //   lxBoolOp          = 0x0C02D,   // arg - operation id
 
@@ -216,9 +216,9 @@ enum LexicalType
    lxIntsVariable    = 0x1003B,
    lxBytesVariable   = 0x1003C,
    lxShortsVariable  = 0x1003D,
-//   lxParamsVariable  = 0x1003E,
+   lxParamsVariable  = 0x1003E,
 //   lxInlineClosure   = 0x1003F,
-//
+
    // attributes
    lxAttribute          = 0x20000,
    lxSourcePath         = 0x20001,

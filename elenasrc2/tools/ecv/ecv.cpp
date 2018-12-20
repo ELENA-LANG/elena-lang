@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   14
+#define REVISION_VERSION   15
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -213,6 +213,11 @@ ref_t resolveMessage(_Module* module, ident_t method)
    ref_t actionRef = 0;
    ref_t flags = 0;
 
+   if (method.startsWith("params#")) {
+      flags |= VARIADIC_MESSAGE;
+
+      method = method.c_str() + getlength("params#");
+   }
    if (method.startsWith("prop#")) {
       flags |= PROPERTY_MESSAGE;
 
@@ -456,6 +461,9 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
    int paramCount = 0;
    decodeMessage(reference, actionRef, paramCount, flags);
 
+   if (test(flags, VARIADIC_MESSAGE)) {
+      command.append("params#");
+   }
    if (test(flags, PROPERTY_MESSAGE)) {
       command.append("prop#");
    }

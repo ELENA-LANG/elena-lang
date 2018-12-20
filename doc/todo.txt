@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * no need to box variadic argument list for template opertions
                  * (re)implement dynamic variadic argument resolving
                  * primitive array should be passed directly without unboxing if allowed
                  * test - a[](...) - should be illegal

@@ -809,7 +809,6 @@ private:
    void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef*/, int& size, bool& isStaticField, 
       bool& isSealed, bool& isConstant, bool& isEmbeddable);
    void declareVMT(SNode member, ClassScope& scope);
-//////   void declareClassVMT(SNode member, ClassScope& classClassScope, ClassScope& classScope);
 
    ref_t mapTypeAttribute(SNode member, Scope& scope);
    ref_t mapTemplateAttribute(SNode node, Scope& scope);
@@ -817,6 +816,7 @@ private:
 
    bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 
+   ref_t resolveVariadicMessage(Scope& scope, ref_t message);
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
                                      bool withExtension, int& stackSafeAttr);
@@ -958,7 +958,6 @@ private:
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal/*, bool accumulatorMode = false*/);
-//////   void compileIncludeModule(SNode node, ModuleScope& scope);
    void compileForward(SNode node, NamespaceScope& scope);
 
 ////   bool validate(_ProjectManager& project, _Module* module, int reference);

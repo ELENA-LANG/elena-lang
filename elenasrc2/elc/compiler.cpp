@@ -1325,10 +1325,10 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
          ident_t name = /*(current == lxIdentifier) ? current.identifier() : */current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier();
          Parameter param = scope.parameters.get(name);
          if (param.offset != -1) {
-            //if (param.class_ref == V_ARGARRAY) {
-            //   writer.newNode(lxParamsVariable);
-            //}
-            /*else */if (param.class_ref == moduleScope->intReference) {
+            if (param.class_ref == V_ARGARRAY) {
+               writer.newNode(lxParamsVariable);
+            }
+            else if (param.class_ref == moduleScope->intReference) {
                writer.newNode(lxIntVariable);
             }
             //else if (param.class_ref == moduleScope->longReference) {
@@ -3231,26 +3231,48 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
    return 0;
 }
 
+ref_t Compiler :: resolveVariadicMessage(Scope& scope, ref_t message)
+{
+   int paramCount = 0;
+   ref_t actionRef = 0, flags = 0, dummy = 0;
+   decodeMessage(message, actionRef, paramCount, flags);
+
+   ident_t actionName = scope.module->resolveAction(actionRef, dummy);
+
+   return encodeMessage(scope.module->mapAction(actionName, 0, false), 1, flags | VARIADIC_MESSAGE);
+}
+
 ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef, 
    bool withExtension, int& stackSafeAttr)
 {
    ref_t resolvedMessageRef = 0;
    ref_t targetRef = resolveObjectReference(scope, target);
 
+   // try to resolve the message as is
    resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, stackSafeAttr);
-
    if (resolvedMessageRef != 0) {
       // if the object handles the compile-time resolved message - use it
       return resolvedMessageRef;
    }
 
-   // check the existing extensions if allowed
+   // check if the object handles the variadic message
+   if (targetRef) {
+      resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, resolveVariadicMessage(scope, generalMessageRef), 
+         targetRef, implicitSignatureRef, stackSafeAttr);
+
+      if (resolvedMessageRef != 0) {
+         // if the object handles the compile-time resolved variadic message - use it
+         return resolvedMessageRef;
+      }
+   }
+
    if (withExtension) {
+      // check the existing extensions if allowed
       if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
          // could be stacksafe
          stackSafeAttr |= 1;
 
-         // if the object handles the message - do not use extensions
+         // if the object handles the general message - do not use extensions
          return generalMessageRef;
       }
 
@@ -3261,6 +3283,8 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
 
          return generalMessageRef;
       }
+
+      // check if there is a variadic message extension
    }
 
    // otherwise - use the general message
@@ -5088,8 +5112,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
       current = current.nextNode();
    }
 
-   if (signatureLen > 0/* && !scope.withOpenArg*/) {
-      // validate generic signature (except an open argument one)
+   if (signatureLen > 0 && !scope.withOpenArg) {
+      // validate generic signature (except an variadic one)
       bool weakSignature = true;
       for (size_t i = 0; i < signatureLen; i++) {
          if (signature[i] != scope.moduleScope->superReference) {
@@ -6774,7 +6798,14 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
    if (actionStr[0] == '#' && actionStr.compare(CONSTRUCTOR_MESSAGE))
       return 0;
    
-   if (signRef) {
+   if (test(flags, VARIADIC_MESSAGE)) {
+      // COMPILER MAGIC : for variadic message - use the most general message
+      ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
+      ref_t genericMessage = encodeMessage(genericActionRef, 1, flags);
+
+      return genericMessage;
+   }
+   else if (signRef) {
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
       ref_t genericMessage = encodeMessage(genericActionRef, paramCount, flags);
 
@@ -7840,7 +7871,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       case lxArrOp:
       //case lxBinArrOp:
       case lxNewArrOp:
-      //case lxArgArrOp:
+      case lxArgArrOp:
       //case lxBoolOp:
          return analizeOp(current, scope);
       case lxInternalCall:

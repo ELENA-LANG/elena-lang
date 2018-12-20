@@ -1245,11 +1245,11 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          //   size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
          //   readLocalReal(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          //}
-         //else if (lineInfo[index].symbol == dsParamsLocal) {
-         //   // write stack allocated local variable
-         //   size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
-         //   readParams(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), false);
-         //}
+         else if (lineInfo[index].symbol == dsParamsLocal) {
+            // write stack allocated local variable
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            readParams(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), false);
+         }
          else if (lineInfo[index].symbol == dsByteArrayLocal) {
             // write stack allocated local variable
             size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));

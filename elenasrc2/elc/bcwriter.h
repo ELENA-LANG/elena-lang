@@ -144,7 +144,7 @@ class ByteCodeWriter
    void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
@@ -260,7 +260,7 @@ class ByteCodeWriter
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
    void doArrayOperation(CommandTape& tape, int operator_id);
-//   void doArgArrayOperation(CommandTape& tape, int operator_id);
+   void doArgArrayOperation(CommandTape& tape, int operator_id);
    void doIntArrayOperation(CommandTape& tape, int operator_id);
    void doByteArrayOperation(CommandTape& tape, int operator_id);
    void doShortArrayOperation(CommandTape& tape, int operator_id);

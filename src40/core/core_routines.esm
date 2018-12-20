@@ -94,6 +94,23 @@ procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@sy
 
 end
 
+procedure __args."read:Length$@system@ref#1&IntNumber[2]"
+
+  aloadsi 1
+  bcopya
+  dcopy 0
+labSearch:
+  get
+  inc
+  elser labSearch 0
+  dec
+  ecopyd
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
 procedure __array."read:Length$@system@ref#1&IntNumber[2]"
 
   len

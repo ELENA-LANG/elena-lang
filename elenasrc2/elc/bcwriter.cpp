@@ -257,10 +257,10 @@ void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t local
    tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
 }
 
-//void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
-//{
-//   tape.write(bdParamsLocal, writeString(localName), level);
-//}
+void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
+{
+   tape.write(bdParamsLocal, writeString(localName), level);
+}
 
 void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
 {
@@ -1879,9 +1879,9 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             // else it is a primitice variable
             else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocalPtr, 0);
             break;
-         //case bdParamsLocal:
-         //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsParamsLocal, frameLevel);
-         //   break;
+         case bdParamsLocal:
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsParamsLocal, frameLevel);
+            break;
          case bdMessage:
             writeMessageInfo(scope, dsMessage, (const char*)_strings.get((*it).additional));
             break;
@@ -3063,23 +3063,23 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id)
    }
 }
 
-//void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_MESSAGE_ID:
-//         // bcopya
-//         // get
-//         tape.write(bcBCopyA);
-//         tape.write(bcGet);
-//         break;
-//      case SET_REFER_MESSAGE_ID:
-//         // xset
-//         tape.write(bcXSet);
-//         break;
-//      default:
-//         break;
-//   }
-//}
+void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // bcopya
+         // get
+         tape.write(bcBCopyA);
+         tape.write(bcGet);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         // xset
+         tape.write(bcXSet);
+         break;
+      default:
+         break;
+   }
+}
 
 void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
 {
@@ -3845,7 +3845,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    }
 }
 
-void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, int mode)
+void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, int/* mode*/)
 {
    loadObject(tape, node.type, node.argument);
 
@@ -4037,9 +4037,9 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       case lxArrOp:
          doArrayOperation(tape, node.argument);
          break;
-      //case lxArgArrOp:
-      //   doArgArrayOperation(tape, node.argument);
-      //   break;
+      case lxArgArrOp:
+         doArgArrayOperation(tape, node.argument);
+         break;
    }
 
    if (larg == lxLocalUnboxing) {
@@ -4545,7 +4545,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    bool directMode = true;
 //   bool argUnboxMode = false;
    bool unboxMode = false;
-//   bool openArg = false;
+   bool openArg = false;
    bool accTarget = false;
    bool accPresaving = false; // if the message target is in acc
 
@@ -4617,13 +4617,13 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       current = current.nextNode();
    }
 
-//   if (!argUnboxMode && isOpenArg(node.argument)) {
-//      // NOTE : do not add trailing nil for result of unboxing operation
-//      pushObject(tape, lxNil);
-//      openArg = true;
-//   }      
+   if (/*!argUnboxMode && */isOpenArg(node.argument)) {
+      // NOTE : do not add trailing nil for result of unboxing operation
+      pushObject(tape, lxNil);
+      openArg = true;
+   }      
 
-   if (!directMode && (paramCount > 1/* || unboxMode*/)) {
+   if (!directMode && (paramCount > 1 || unboxMode)) {
       declareArgumentList(tape, paramCount);
    }
    // if message has no arguments - direct mode is allowed
@@ -4675,10 +4675,10 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 //      releaseArgList(tape);
 //      releaseObject(tape);
 //   }
-//   else if (openArg) {
-//      // clear open argument list, including trailing nil and subtracting normal arguments
-//      releaseObject(tape, paramCount - getParamCount(node.argument));
-//   }
+   /*else */if (openArg) {
+      // clear open argument list, including trailing nil and subtracting normal arguments
+      releaseObject(tape, paramCount - getParamCount(node.argument));
+   }
 
    // unbox the arguments
    if (unboxMode)
@@ -4904,7 +4904,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       child = child.nextNode();
    }
 
-   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_OPERATOR_ID && source.type != lxArrOp/* && source.type != lxArgArrOp*/) ||
+   if (test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_OPERATOR_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||
       (IsShiftOperator(source.argument) && (source.type == lxIntOp/* || source.type == lxLongOp*/))))
    {
       if (target == lxCreatingStruct) {
@@ -5463,7 +5463,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxShortArrOp:
       case lxArrOp:
 //      case lxBinArrOp:
-//      case lxArgArrOp:
+      case lxArgArrOp:
          generateArrOperation(tape, node);
          break;
       case lxNewArrOp:
@@ -5551,11 +5551,11 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
       case lxMessageVariable:
          declareMessageInfo(tape, current.identifier());
          break;
-//      case lxParamsVariable:
-//         declareLocalParamsInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            current.findChild(lxLevel).argument);
-//         break;
+      case lxParamsVariable:
+         declareLocalParamsInfo(tape,
+            current.firstChild(lxTerminalMask).identifier(),
+            current.findChild(lxLevel).argument);
+         break;
       case lxBytesVariable:
       {
          int level = current.findChild(lxLevel).argument;
@@ -5639,7 +5639,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxLongVariable:
 //         case lxReal64Variable:
 ////         case lxMessageVariable:
-//         case lxParamsVariable:
+         case lxParamsVariable:
          case lxBytesVariable:
          case lxShortsVariable:
          case lxIntsVariable:
@@ -5783,11 +5783,11 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
 //               current.firstChild(lxTerminalMask).identifier(),
 //               current.findChild(lxLevel).argument, true);
 //            break;
-//         case lxParamsVariable:
-//            declareLocalParamsInfo(tape,
-//               current.firstChild(lxTerminalMask).identifier(),
-//               current.findChild(lxLevel).argument);
-//            break;
+         case lxParamsVariable:
+            declareLocalParamsInfo(tape,
+               current.firstChild(lxTerminalMask).identifier(),
+               current.findChild(lxLevel).argument);
+            break;
       }
 
       current = current.nextNode();

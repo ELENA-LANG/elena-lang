@@ -104,6 +104,12 @@ public sealed Array<T> //:: Indexable<template_subj>
 public nonstructural sealed VariadicArray<T> //:: Indexable<template_subj>
 {
     embeddable T[] theArray;
+
+    vprop int Length
+    {
+        read(ref int retVal)
+            => system'core_routines'__args;
+    }
 }
 
 //// --- matrixof ---
@@ -1813,16 +1819,6 @@ public sealed Array //:: Indexable, Array<object>
 //    T<Array> clone 
 //        = Array new(self).
 }
-
-//// --- paramsOp ---
-//
-//public extension<__args> paramsOp
-//{
-//    readLengthTo(ref<int> aLength)
-//        => system'core_routines'__args.            
-//        
-//    int rvprop length :: readLengthTo.
-//}
 
 // === Convertors ===
 
