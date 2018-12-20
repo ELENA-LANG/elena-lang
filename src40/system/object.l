@@ -43,8 +43,8 @@ public /*enum */interface class BoolValue
     abstract if(trueAction,falseAction) {}
 
 //    abstract ifnot : aTrueAction []
-//
-//    abstract iif(object trueVal, object falseVal) []
+
+    abstract iif(object trueVal, object falseVal) {}
 
 //    abstract bool or : anExpr []
 //

@@ -69,9 +69,9 @@ public sealed singleton true : BoolValue
 
 //    /// Always returns nil.
 //    __ifnotoperator ifnot : aTrueAction = nil.
-//
-//    iif(object trueVal, object falseVal) = trueVal.
-//    
+
+    iif(object trueVal, object falseVal) = trueVal;
+    
 //    /// Executes logical OR operation
 //    ///
 //    /// Always return true
@@ -117,9 +117,9 @@ public sealed singleton false : BoolValue
 
 //    /// Executes the action
 //    __ifoperator ifnot:aFalseAction = aFalseAction().
-//
-//    iif(object aTrueValue, object aFalseValue) = aFalseValue.
-//
+
+    iif(object trueVal, object falseVal) = falseVal;
+
 //    /// Executes logical OR operation
 //    bool or : anExpr = anExpr.
 //
@@ -1199,10 +1199,10 @@ public sealed const struct IntNumber : IntBaseNumber
 //    /// Returns the result of bitwise XOR operation
 //    xor(long anOperand)
 //        = LongNumber new(self); xor(anOperand).
-//
-//    /// Returns the literal presentation
-//    T<literal> literal = literalConvertor convert(self).
-//
+
+    /// Returns the literal presentation
+    string Printable = stringConvertor.convert(self);
+
 ////    /// Returns the literal presentation
 ////    wide = system'wideConvertor convert int:$self.
 //

@@ -2448,7 +2448,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
       switch (node.type) {
          case lxCodeExpression:
          case lxCode:
-            result = compileCodeExpression(writer, node, scope, mode);
+            result = compileSubCode(writer, node, scope, false);
             break; 
          case lxTemplate:
             result = compileTemplateSymbol(writer, node, scope, mode);
@@ -2735,14 +2735,14 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, Cod
    if (loopMode) {
       writer.newNode(lxElse, ifReference);
 
-      compileBranching(writer, thenBody.findSubNode(lxCode), scope);
+      compileSubCode(writer, thenBody.findSubNode(lxCode), scope, true);
       writer.closeNode();
    }
    else {
       SNode thenCode = thenBody.findSubNode(lxCode);
 
       writer.newNode(lxIf, ifReference);
-      compileBranching(writer, thenCode, scope);
+      compileSubCode(writer, thenCode, scope, true);
       writer.closeNode();
 
       //// HOTFIX : switch mode - ignore else
@@ -2751,7 +2751,7 @@ void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, Cod
          SNode elseCode = elseNode.findSubNode(lxCode);
          if (elseCode != lxNone) {
             writer.newNode(lxElse, 0);
-            compileBranching(writer, elseCode, scope);
+            compileSubCode(writer, elseCode, scope, true);
             writer.closeNode();
          }
       //}
@@ -4556,18 +4556,20 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    return objectInfo;
 }
 
-ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, CodeScope& scope)
+ObjectInfo Compiler :: compileSubCode(SyntaxWriter& writer, SNode thenCode, CodeScope& scope, bool branchingMode)
 {
    CodeScope subScope(&scope);
 
-   writer.newNode(lxCode);
+   if (branchingMode)
+      writer.newNode(lxCode);
 
    compileCode(writer, thenCode, subScope);
 
    // preserve the allocated space
    scope.level = subScope.level;
 
-   writer.closeNode();
+   if (branchingMode)
+      writer.closeNode();
 
    return ObjectInfo(okObject);
 }
@@ -4582,36 +4584,6 @@ ObjectInfo Compiler :: compileBranching(SyntaxWriter& writer, SNode thenCode, Co
 //
 //   compileExpression(writer, expr, scope, 0, HINT_LOOP);
 //}
-
-ObjectInfo Compiler :: compileCodeExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-{
-   ObjectInfo retVal;
-
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      switch (current) {
-         case lxExpression:
-            writer.newNode(lxExpression);
-            writer.appendNode(lxBreakpoint, dsStep);
-            retVal = compileRootExpression(writer, current, scope);
-            writer.closeNode();
-            break;
-         case lxReturning:
-         {
-            writer.newNode(lxReturning);
-            writer.appendNode(lxBreakpoint, dsStep);
-            retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
-            writer.closeNode();
-
-            break;
-         }
-      }
-
-      current = current.nextNode();
-   }
-
-   return retVal;
-}
 
 ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {

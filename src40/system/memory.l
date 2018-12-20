@@ -1846,24 +1846,24 @@ public singleton stringConvertor
 //        
 //        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer))
 //    ]
-//    
-//    convert(int aNumber, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//    
+    
+    convert(int n, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+    
 //    convert(uint aNumber, ByteArray buffer, ref<int> length)
 //        => system'core_routines'__literalconvertor.
-//    
-//    /// Converts the parameter to the literal value
-//    literal convert(int aNumber)
-//    [
-//        T<byte,12> buffer.
-//        int        length := 0.
-//        
-//        self convert(aNumber, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer))
-//    ]
-//    
+    
+    /// Converts the parameter to the literal value
+    string convert(int n)
+    {
+        byte buffer[12];
+        int  length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+    
 //    /// Converts the parameter to the literal value
 //    literal convert(uint aNumber)
 //    [
