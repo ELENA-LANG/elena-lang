@@ -234,13 +234,12 @@ property rprop<T>
 //    ].
 //]    
 
-//// --- extern statement ---
-//
-//public __extern template extern
-//[
-//    [
-//    ].
-//]
+// --- extern statement ---
+
+public extern<extern_block>()
+{
+    extern extern_block
+}
 
 // --- if statement ---
 

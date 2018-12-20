@@ -3,7 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * variables declared in template should be declared in the sub scope
+                 * uncomment extern scope - ConsoleReader
                  * test try / catch operation : method not found, printing calling stack
                  * no need to box variadic argument list for template opertions
                  * (re)implement dynamic variadic argument resolving

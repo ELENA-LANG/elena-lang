@@ -172,7 +172,7 @@ enum LexicalType
    lxElse            = 0x0C020,   // optional arg - reference
 //   lxOption          = 0x0C021,
    lxFieldExpression = 0x0C022,
-//   lxExternFrame     = 0x04023,
+   lxExternFrame     = 0x04023,
    lxNewFrame        = 0x04024,   // if argument -1 - than with presaved message
    lxCreatingClass   = 0x0C025,   // arg - count
    lxCreatingStruct  = 0x0C026,   // arg - size

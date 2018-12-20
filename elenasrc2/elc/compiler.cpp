@@ -2448,7 +2448,12 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
       switch (node.type) {
          case lxCodeExpression:
          case lxCode:
-            result = compileSubCode(writer, node, scope, false);
+            if (test(mode, HINT_EXTERNALOP)) {
+               writer.newNode(lxExternFrame);
+               result = compileSubCode(writer, node, scope, false);
+               writer.closeNode();
+            }
+            else result = compileSubCode(writer, node, scope, false);
             break; 
          case lxTemplate:
             result = compileTemplateSymbol(writer, node, scope, mode);
@@ -2997,7 +3002,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    }
 
    // if it is branching operators
-   if (operator_id == IF_OPERATOR_ID/* || operator_id == IFNOT_MESSAGE_ID*/) {
+   if (operator_id == IF_OPERATOR_ID || operator_id == IFNOT_OPERATOR_ID) {
       return compileBranchingOperator(writer, roperand, scope, target, mode, operator_id);
    }
    else if (operator_id == CATCH_OPERATOR_ID) {
@@ -7882,8 +7887,8 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
       switch (current.type) {
          case lxElse:
          case lxCode:
-         //case lxIf:
-         //case lxExternFrame:
+         case lxIf:
+         case lxExternFrame:
             analizeExpressionTree(current, scope);
             break;
          case lxBranching:
@@ -7910,7 +7915,7 @@ void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
             analizeExpressionTree(current, scope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
             break;
          case lxExpression:
-         //case lxExternFrame:
+         case lxExternFrame:
          case lxCalling:
             analizeExpressionTree(current, scope);
             break;

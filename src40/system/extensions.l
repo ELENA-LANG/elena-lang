@@ -1651,68 +1651,86 @@ public extension objectOp
 //        ^ ch == 39
 //    ]
 //}
-//
-//// --- byteArrayHelper ---
-//
+
+// --- byteArrayHelper ---
+
+public extension byteArrayHelper : Array<byte>
+{
+    /// Reads a byte value at the specified position and saves it into an output variable
+    read(int index, ref byte retVal)
+        => system'core_routines'__bytearray;
+
+    /// Reads a short integer value at the specified position and saves it into an output variable
+    read(int index, ref short retVal)
+        => system'core_routines'__bytearray;
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int index, ref int retVal)
+        => system'core_routines'__bytearray;
+
+    /// Reads a character value at the specified position and saves it into an output variable
+    read(int index, ref char retVal)
+        => system'core_routines'__bytearray;                
+}
+
 //public singleton byteArrayHelper
 //{
-//    read(ByteArray array, int offset, ref<short> retVal)
-//    [
-//        array read(offset, retVal)
-//    ]
-//    
-//    read(ByteArray array, int offset, ref<int> retVal)
-//    [
-//        array read(offset, retVal)
-//    ]
-//    
-//    read(ByteArray array, int offset, ref<long> retVal)
-//    [
-//        array read(offset, retVal)
-//    ]
-//    
-//    read(ByteArray array, int offset, ref<real> retVal)
-//    [
-//        array read(offset, retVal)
-//    ]
-//    
-//    read(ByteArray array, int offset, ref<char> retVal)
-//    [
-//        array read(offset, retVal)
-//    ]
-//    
-//    write(ByteArray array, int offset, short retVal)
-//    [
-//        array write(offset, retVal)
-//    ]
-//    
-//    write(ByteArray array, int offset, int retVal)
-//    [
-//        array write(offset, retVal)
-//    ]
-//    
-//    write(ByteArray array, int offset, long retVal)
-//    [
-//        array write(offset, retVal).
-//    ]
-//    
-//    write(ByteArray array, int offset, real retVal)
-//    [
-//        array write(offset, retVal)
-//    ]
-//    
-//    write(ByteArray array, int offset, char retVal)
-//    [
-//        array write(offset, retVal)
-//    ]
-//    
-//    fill(ByteArray array, int offset, int length, byte val)
-//    [
-//        array fill(offset, length, val).
-//    ]
+////    read(ByteArray array, int offset, ref<short> retVal)
+////    [
+////        array read(offset, retVal)
+////    ]
+////    
+////    read(ByteArray array, int offset, ref<int> retVal)
+////    [
+////        array read(offset, retVal)
+////    ]
+////    
+////    read(ByteArray array, int offset, ref<long> retVal)
+////    [
+////        array read(offset, retVal)
+////    ]
+////    
+////    read(ByteArray array, int offset, ref<real> retVal)
+////    [
+////        array read(offset, retVal)
+////    ]
+////    
+////    read(ByteArray array, int offset, ref<char> retVal)
+////    [
+////        array read(offset, retVal)
+////    ]
+////    
+////    write(ByteArray array, int offset, short retVal)
+////    [
+////        array write(offset, retVal)
+////    ]
+////    
+////    write(ByteArray array, int offset, int retVal)
+////    [
+////        array write(offset, retVal)
+////    ]
+////    
+////    write(ByteArray array, int offset, long retVal)
+////    [
+////        array write(offset, retVal).
+////    ]
+////    
+////    write(ByteArray array, int offset, real retVal)
+////    [
+////        array write(offset, retVal)
+////    ]
+////    
+////    write(ByteArray array, int offset, char retVal)
+////    [
+////        array write(offset, retVal)
+////    ]
+////    
+////    fill(ByteArray array, int offset, int length, byte val)
+////    [
+////        array fill(offset, length, val).
+////    ]
 //}
-//
-////// --- intArrayHelper ---
+//// --- intArrayHelper ---
 ////
 ////singleton intArrayHelper
 ////{

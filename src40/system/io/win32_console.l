@@ -275,21 +275,24 @@ sealed struct ConsoleReader //:: Object, interface<IConsoleReader>
         until (found)
         {
 //            extern
-//            {
-//                extern KERNEL32.ReadConsoleInputW(theHandle, dump, 1, ref numberRead);
-//            };
+  //          {
+                extern KERNEL32.ReadConsoleInputW(theHandle, dump, 1, ref numberRead);
+    //        };
 
-//            byteArrayHelper read(T<ByteArray>(aDump), 0, &anEventType).
-//            if (anEventType == 1)
-//                [  
-//                    byteArrayHelper read(T<ByteArray>(aDump), 4, &aKeyDown).
-//                    
-//                    found := aKeyDown == 1
-//                ];
-//                [ found := false ]
+            dump.read(0, ref eventType);
+            if (eventType == 1)
+            {
+                    dump.read(4, ref keyDown);
+                    
+                    found := keyDown == 1
+            }
+            else
+            {
+                found := false 
+            };
         };
 
-//        byteArrayHelper read(T<ByteArray>(aDump), 14, aChar).
+        dump.read(14, ref retVal)
     }
 
 //    read(ref<int> aKey)
