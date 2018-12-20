@@ -4,13 +4,13 @@
 class Console
 {
     object               theWriter;
-//    T<io'IConsoleReader> theReader.
+    /*T<io'IConsoleReader>*/object theReader;
 
     /// Creates a console
-    constructor(/*object aReader, */object writer)
+    constructor(object reader, object writer)
     {
         theWriter := writer;
-//        theReader := aReader.
+        theReader := reader
     }
 
     /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
@@ -73,16 +73,16 @@ class Console
 //    /// Reads the next line of characters from the standard input stream.
 //    wide readWideLine
 //        = theReader readWide.
-//
-//    /// Reads the next character from the input stream
-//    readChar
-//    [
-//        char ch := $0.
-//        theReader read(&ch).
-//        
-//        ^  ch.
-//    ]
-//
+
+    /// Reads the next character from the input stream
+    char readChar()
+    {
+        char ch := $0;
+        theReader.read(ref ch);
+        
+        ^  ch
+    }
+
 //    bool isKeyAvailable
 //        => theReader.
 //
@@ -97,4 +97,4 @@ class Console
 }
 
 /// A standard console
-public static console = new Console(/*io'stdConsoleReader, */io'stdConsoleWriter);
+public static console = new Console(io'stdConsoleReader, io'stdConsoleWriter);

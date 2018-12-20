@@ -29,7 +29,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
   // load default forwards
    _literal = project->resolveForward(STR_FORWARD);
    _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
-  // _character = project->resolveForward(CHAR_FORWARD);
+   _character = project->resolveForward(CHAR_FORWARD);
    _int = project->resolveForward(INT_FORWARD);
   // _long = project->resolveForward(LONG_FORWARD);
   // _real = project->resolveForward(REAL_FORWARD);
@@ -200,10 +200,10 @@ ident_t ExecutableImage :: getWideLiteralClass()
    return _wideLiteral;
 }
 
-//ident_t ExecutableImage::getCharacterClass()
-//{
-//   return _character;
-//}
+ident_t ExecutableImage :: getCharacterClass()
+{
+   return _character;
+}
 
 ident_t ExecutableImage::getIntegerClass()
 {
@@ -279,7 +279,7 @@ ident_t ExecutableImage :: resolveTemplateWeakReference(ident_t referenceName)
 
 ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
-   if (mask == mskLiteralRef || mask == mskInt32Ref/* || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef*/ || mask == mskWideLiteralRef) {
+   if (mask == mskLiteralRef || mask == mskInt32Ref/* || mask == mskRealRef || mask == mskInt64Ref*/ || mask == mskCharRef || mask == mskWideLiteralRef) {
       return module->resolveConstant(reference);
    }
    // if it is a message

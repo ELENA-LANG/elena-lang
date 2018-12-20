@@ -299,6 +299,7 @@ L4_OPERATION ->
 
 L4_OPERATOR ->
 	?
+	| !
 
 L4_OPERAND ->
 	BLOCK

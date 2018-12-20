@@ -233,16 +233,7 @@ property rprop<T>
 //    [
 //    ].
 //]    
-//
-//// --- until statement ---
-//
-//public __loop until<expr>
-//[
-//    T<bool>(expr) !
-//    [
-//    ].
-//]
-//    
+
 //// --- extern statement ---
 //
 //public __extern template extern
@@ -290,6 +281,13 @@ public while<loop_block>(expr)
     __loop cast bool(expr) ? loop_block
 }    
 
+// --- until statement ---
+
+public until<loop_block>(expr)
+{
+    __loop cast bool(expr) ! loop_block
+}
+    
 // --- for statement ---
 
 public for<loop_body>(init_expr, cond_expr, step_expr)

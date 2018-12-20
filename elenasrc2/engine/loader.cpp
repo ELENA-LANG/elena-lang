@@ -27,9 +27,9 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
       //case mskRealRef:
          _numberReferences.add(reference, (size_t)vaddress);
          break;
-      //case mskCharRef:
-      //   _characterReferences.add(reference, (size_t)vaddress);
-      //   break;
+      case mskCharRef:
+         _characterReferences.add(reference, (size_t)vaddress);
+         break;
       case mskLiteralRef:
          _literalReferences.add(reference, (size_t)vaddress);
          break;
@@ -95,8 +95,8 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
          case mskInt32Ref:
          //case mskRealRef:
             return (void*)_numberReferences.get(reference);
-         //case mskCharRef:
-         //   return (void*)_characterReferences.get(reference);
+         case mskCharRef:
+            return (void*)_characterReferences.get(reference);
          case mskLiteralRef:
             return (void*)_literalReferences.get(reference);
          case mskWideLiteralRef:

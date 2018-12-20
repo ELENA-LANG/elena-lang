@@ -160,7 +160,7 @@ namespace _ELENA_
 //      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
 //      mskRealRef             = 0x05000000u,   // reference to constant real number
       mskMessage             = 0x06000000u,   // message constant
-//      mskCharRef             = 0x07000000u,   // reference to character constant
+      mskCharRef             = 0x07000000u,   // reference to character constant
       mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
 //      mskSignature           = 0x09000000u,   // message signature constant
 //      mskExtMessage          = 0x0B000000u,   // external message verb constant
@@ -389,7 +389,7 @@ namespace _ELENA_
    constexpr auto READ_MESSAGE         = "read";
    constexpr auto WRITE_MESSAGE        = "write";
    constexpr auto IF_MESSAGE           = "if";
-  // #define IFNOT_MESSAGE            "ifnot"
+   constexpr auto IFNOT_MESSAGE        = "ifnot";
   // #define SHIFT_MESSAGE            "shift"
   // #define IF_ELSE_MESSAGE          "if:else"
   // #define INIT_MESSAGE             "#init"
@@ -508,7 +508,7 @@ namespace _ELENA_
 //   #define REAL_FORWARD             "$real"
    constexpr auto STR_FORWARD             = "$literal";
    constexpr auto WIDESTR_FORWARD         = "$wideliteral";
-//   #define CHAR_FORWARD             "$char"
+   constexpr auto CHAR_FORWARD            ="$char";
    constexpr auto MESSAGE_FORWARD         = "$message";
 //   #define EXT_MESSAGE_FORWARD      "$ext_message"
 //   #define SIGNATURE_FORWARD        "$signature"

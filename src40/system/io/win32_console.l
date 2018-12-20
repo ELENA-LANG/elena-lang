@@ -253,32 +253,32 @@ sealed struct FileWriter
 //    ]
 }
 
-//// --- ConsoleReader ---
-//
-//sealed struct ConsoleReader :: Object, interface<IConsoleReader>
-//{
-//    handle theHandle.
-//    
-//    constructor new(handle aHandle)
-//    [
-//        theHandle := aHandle.
-//    ]
-//
-//    read(ref<char> aChar)
-//    [
-//        T<byte,20> aDump.
-//        int        aNumberRead := 0.
-//        short      anEventType := 0.
-//        int        aKeyDown := 0.
-//        
-//        bool found := false.
-//        until (found)
-//        [
-//            extern()
-//            [
-//                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
-//            ].
-//
+// --- ConsoleReader ---
+
+sealed struct ConsoleReader //:: Object, interface<IConsoleReader>
+{
+    handle theHandle;
+    
+    constructor(handle h)
+    {
+        theHandle := h
+    }
+
+    read(ref char retVal)
+    {
+        byte  dump[20];
+        int   numberRead := 0;
+        short eventType := 0;
+        int   keyDown := 0;
+
+        bool found := false;
+        until (found)
+        {
+//            extern
+//            {
+//                extern KERNEL32.ReadConsoleInputW(theHandle, dump, 1, ref numberRead);
+//            };
+
 //            byteArrayHelper read(T<ByteArray>(aDump), 0, &anEventType).
 //            if (anEventType == 1)
 //                [  
@@ -287,11 +287,11 @@ sealed struct FileWriter
 //                    found := aKeyDown == 1
 //                ];
 //                [ found := false ]
-//        ].
-//
+        };
+
 //        byteArrayHelper read(T<ByteArray>(aDump), 14, aChar).
-//    ]
-//
+    }
+
 //    read(ref<int> aKey)
 //    [
 //        T<byte,20> aDump.
@@ -419,10 +419,10 @@ sealed struct FileWriter
 ////        system'external'KERNEL32 CloseHandle
 ////            int:theHandle.
 ////    ]
-//}
+}
 
 // --- Console Standard Symbols
 
 public symbol stdConsoleWriter = ConsoleHandleFactory.newWriter();
 
-//public symbol stdConsoleReader = ConsoleReader new(ConsoleHandleFactory new(0FFFFFFF6h)).
+public symbol stdConsoleReader = new ConsoleReader(ConsoleHandleFactory.new(0FFFFFFF6h));

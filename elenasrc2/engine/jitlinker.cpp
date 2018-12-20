@@ -759,10 +759,10 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
       value = vmtReferenceInfo.referenceName;
       vmtReferenceInfo.referenceName = _loader->getWideLiteralClass();
    }
-   //else if (mask == mskCharRef) {
-   //   value = vmtReferenceInfo.referenceName;
-   //   vmtReferenceInfo.referenceName = _loader->getCharacterClass();
-   //}
+   else if (mask == mskCharRef) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getCharacterClass();
+   }
    else if (mask == mskInt32Ref) {
       value = vmtReferenceInfo.referenceName;
       vmtReferenceInfo.referenceName = _loader->getIntegerClass();
@@ -805,9 +805,9 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 
       _compiler->compileWideLiteral(&writer, wideValue);
    }
-   //else if (mask == mskCharRef) {
-   //   _compiler->compileChar32(&writer, value);
-   //}
+   else if (mask == mskCharRef) {
+      _compiler->compileChar32(&writer, value);
+   }
    else if (mask == mskInt32Ref) {
       _compiler->compileInt32(&writer, value.toULong(16));
    }
@@ -1224,7 +1224,7 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskConstantRef:
          case mskLiteralRef:
          case mskWideLiteralRef:
-         //case mskCharRef:
+         case mskCharRef:
          case mskInt32Ref:
          //case mskRealRef:
          //case mskInt64Ref:

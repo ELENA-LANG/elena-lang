@@ -98,7 +98,7 @@ enum LexicalType
    lxInteger         = 0x18008,
    lxHexInteger      = 0x18009,
 //   lxReal            = 0x1800A,
-//   lxCharacter       = 0x1800B,
+   lxCharacter       = 0x1800B,
 //   lxLong            = 0x1800C,
    lxWide            = 0x1800D,
 //   lxExplicitConst   = 0x1800E,
@@ -119,7 +119,7 @@ enum LexicalType
    lxBlockLocal      = 0x0A10B, // arg - offset
    lxConstantString  = 0x0A10C, // arg - reference
    lxConstantWideStr = 0x0A10D, // arg - reference
-//   lxConstantChar    = 0x0A10E, // arg - reference
+   lxConstantChar    = 0x0A10E, // arg - reference
    lxConstantInt     = 0x1A10F, // arg - reference
 //   lxConstantLong    = 0x1A110, // arg - reference
 //   lxConstantReal    = 0x1A111, // arg - reference

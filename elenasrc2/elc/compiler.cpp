@@ -168,7 +168,7 @@ inline bool isConstantArguments(SNode node)
             break;
          case lxLiteral:
          case lxWide:
-         //case lxCharacter:
+         case lxCharacter:
          case lxInteger:
          //case lxLong:
          case lxHexInteger:
@@ -2119,9 +2119,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okWideLiteralConstant:
          writer.newNode(lxConstantWideStr, object.param);
          break;
-//      case okCharConstant:
-//         writer.newNode(lxConstantChar, object.param);
-//         break;
+      case okCharConstant:
+         writer.newNode(lxConstantChar, object.param);
+         break;
       case okIntConstant:
       case okUIntConstant:
          writer.newNode(lxConstantInt, object.param);
@@ -2285,9 +2285,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
       case lxWide:
          object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->wideReference);
          break;
-//      case lxCharacter:
-//         object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token));
-//         break;
+      case lxCharacter:
+         object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->charReference);
+         break;
       case lxInteger:
       {
          String<char, 20> s;
@@ -2763,6 +2763,8 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int pa
    switch (operator_id) {
       case IF_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(IF_MESSAGE, 0, false), paramCount, 0);
+      case IFNOT_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(IFNOT_MESSAGE, 0, false), paramCount, 0);
       case EQUAL_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(EQUAL_MESSAGE, 0, false), paramCount, 0);
       case NOTEQUAL_OPERATOR_ID:
@@ -7167,13 +7169,13 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
          parentRef = scope.moduleScope->wideReference;
       }
-      //else if (retVal.kind == okCharConstant) {
-      //   ident_t value = module->resolveConstant(retVal.param);
+      else if (retVal.kind == okCharConstant) {
+         ident_t value = module->resolveConstant(retVal.param);
 
-      //   dataWriter.writeLiteral(value, getlength(value));
+         dataWriter.writeLiteral(value, getlength(value));
 
-      //   parentRef = scope.moduleScope->charReference;
-      //}
+         parentRef = scope.moduleScope->charReference;
+      }
       //else if (retVal.kind == okSignatureConstant) {
       //   dataWriter.Memory()->addReference(retVal.param | mskSignature, dataWriter.Position());
       //   dataWriter.writeDWord(0);
@@ -7410,7 +7412,7 @@ ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
       if (current == lxMember) {
          SNode object = current.findSubNodeMask(lxObjectMask);
          switch (object.type) {
-            //case lxConstantChar:
+            case lxConstantChar:
             //case lxConstantClass:
             case lxConstantInt:
             //case lxConstantLong:
@@ -8374,7 +8376,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.arrayReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAY_FORWARD));
    scope.literalReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(STR_FORWARD));
    scope.wideReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WIDESTR_FORWARD));
-//   scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
+   scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
 //   scope.boolReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
 //   scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));

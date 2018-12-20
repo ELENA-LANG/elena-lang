@@ -2223,22 +2223,25 @@ public sealed const struct IntNumber : IntBaseNumber
 //    negative
 //        = 0.0r - theValue.
 //}
-//
-//// --- CharValue ---
-//
-///// An UTF-32 character symbol
-//public sealed const struct CharValue :: BaseValue
-//{
-//    __dword theValue.
-//
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        <= new($0).
-//
-//    /// Creates the object with specified value
-//    constructor new(char value)
-//        = value.
-//
+
+// --- CharValue ---
+
+/// An UTF-32 character symbol
+public sealed const struct CharValue : BaseValue
+{
+    __raw theValue[4];
+
+    static char DefaultValue
+        = $0;
+
+    /// Creates the object with a default value (0)
+    constructor()
+        <= ($0);
+
+    /// Creates the object with specified value
+    constructor(char value)
+        = value;
+
 //    /// Creates the object with specified numeric value
 //    constructor new(int anOperand)
 //        <= new(charConvertor convert(anOperand)).
@@ -2364,8 +2367,8 @@ public sealed const struct IntNumber : IntBaseNumber
 //        
 //        ^ aCode.
 //    ]
-//}
-//
+}
+
 //// --- nil constant ---
 //
 ///// A nil value

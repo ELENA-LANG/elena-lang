@@ -221,7 +221,7 @@ struct _ModuleScope
 //   ref_t             boolReference;
    ref_t             literalReference;
    ref_t             wideReference;
-//   ref_t             charReference;
+   ref_t             charReference;
 //   ref_t             arrayReference;
    ref_t             refTemplateReference;
    ref_t             arrayTemplateReference;
@@ -319,7 +319,7 @@ struct _ModuleScope
       intReference = /*boolReference = */superReference = 0;
 //      signatureReference = messageReference = 0;
       /*longReference = */literalReference = /*wideReference = */0;
-//      arrayReference = charReference = realReference = 0;
+      /*arrayReference = */charReference /*= realReference */= 0;
       closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;
