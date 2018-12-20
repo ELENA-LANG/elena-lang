@@ -36,21 +36,20 @@ public extension outputOp
 //    [
 //        self writeLine.
 //    ]
-//            
-//    generic printLine(dynamic<object> list)
-//    [
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            self write(obj~convertorOp toLiteral).            
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^   self writeLine
-//    ]    
+            
+    printLine(params object[] list)
+    {
+        int len := list.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            object obj := list[i];
+            
+            self.write(obj.toString())
+        };
+        
+        
+        self.writeLine();
+    }    
 }
 
 //public extension outputFormatterOp

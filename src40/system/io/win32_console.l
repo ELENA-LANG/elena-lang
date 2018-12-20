@@ -90,18 +90,37 @@ singleton ConsoleHandleFactory
 
 // --- ConsoleWriter ---
 
-sealed struct ConsoleWriter
+sealed class ConsoleWriter
 {
     handle theHandle;
+    wide   theNewLineSymbol;
 
     constructor(handle aHandle)
     {
-        theHandle := aHandle
+        theHandle := aHandle;
+        theNewLineSymbol := forward newLine;
+    }
+
+    writeLine(string s)
+    {
+        self.write(cast wide(s));
+        self.write(theNewLineSymbol);
     }
 
     write(string s)
     {
         self.write(cast wide(s))
+    }
+
+    writeLine(wide s)
+    {
+        self.write(s);
+        self.write(theNewLineSymbol);
+    }
+
+    writeLine()
+    {
+        self.write(theNewLineSymbol);
     }
 
     write(wide s)
@@ -190,6 +209,12 @@ sealed struct FileWriter
 //        ].
 //    ]
 //    
+//    writeLine(wide s)
+//    {
+//        self.write(s);
+//        self.write(theNewLineSymbol);
+//    }
+    
 //    write(literal literal)
 //    [
 //        T<byte,256> buffer.

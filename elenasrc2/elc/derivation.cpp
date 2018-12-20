@@ -330,14 +330,14 @@ void DerivationWriter :: writeSymbol(Symbol symbol)
 
 void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
 {
-//   // HOT FIX : if there are several constants e.g. $10$13, it should be treated like literal terminal
-//   if (terminal == tsCharacter && terminal.value.findSubStr(1, '$', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
-//      terminal.symbol = tsLiteral;
-//   }
+   // HOT FIX : if there are several constants e.g. $10$13, it should be treated like literal terminal
+   if (terminal == tsCharacter && terminal.value.findSubStr(1, '$', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
+      terminal.symbol = tsLiteral;
+   }
 
    LexicalType type = (LexicalType)(terminal.symbol & ~mskAnySymbolMask | lxTerminalMask | lxObjectMask);
 
-   if (terminal==tsLiteral/* || terminal==tsCharacter*/ || terminal==tsWide) {
+   if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
       // try to use local storage if the quote is not too big
       if (getlength(terminal.value) < 0x100) {
          QuoteTemplate<IdentifierString> quote(terminal.value);

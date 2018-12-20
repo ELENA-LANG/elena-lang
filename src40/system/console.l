@@ -5,24 +5,22 @@ class Console
 {
     object               theWriter;
 //    T<io'IConsoleReader> theReader.
-//    literal              theNewLineConstant.
 
     /// Creates a console
     constructor(/*object aReader, */object writer)
     {
         theWriter := writer;
 //        theReader := aReader.
-//        theNewLineConstant := forwards'newLine.
     }
 
-//    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
+    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
 //    writeLine : anObject
 //    [
 //        theWriter write(anObject literal).
 //        
 //        theWriter write(theNewLineConstant)
 //    ]
-//
+
 //    /// Writes the specified literal value to the standard output stream.
 //    write : anObject
 //    [
@@ -44,13 +42,23 @@ class Console
 //        
 //        theWriter refresh.
 //    ]
-//
-//    /// the current line terminator to the standard output stream.
-//    writeLine
-//    [
-//        self write:theNewLineConstant.
-//    ]
-//
+
+    /// the current line terminator to the standard output stream.
+    writeLine(string s)
+    {
+        theWriter.writeLine(s);
+        
+        theWriter.refresh();
+    }
+    
+    /// the current line terminator to the standard output stream.
+    writeLine()
+    {
+        theWriter.writeLine();
+        
+        theWriter.refresh();
+    }
+
 //    /// Clears the console
 //    clear 
 //        => theWriter.
