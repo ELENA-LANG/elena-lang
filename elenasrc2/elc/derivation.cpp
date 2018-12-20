@@ -168,6 +168,7 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsSubExpression:
       case nsSingleExpression:
       case nsSubSingleExpression:
+      case nsL5Operand:
          //      case nsNestedRootExpression:
          _cacheWriter.newNode(lxExpression);
          break;
@@ -200,7 +201,7 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsL2Operator:
       case nsL3Operator:
       case nsL4Operator:
-//      case nsL5Operation:
+      case nsL5Operator:
          _cacheWriter.newNode(lxOperator);
          break;
 ////      case nsL8Operation:
@@ -1649,19 +1650,29 @@ void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, 
 
 void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
 {
-   int exprCounters = SyntaxTree::countNode(node, lxExpression);
-   int blockCounters = SyntaxTree::countNode(node, lxCode);
-
    IdentifierString templateName;
    templateName.copy(node.firstChild(lxTerminalMask).identifier());
-   // COMPILER MAGIC : if it is complex code template
-   SNode subNameNode = goToNode(node, lxExpression);
-   while (subNameNode != lxNone) {
-      if (subNameNode == lxToken) {
-         templateName.append(':');
-         templateName.append(subNameNode.firstChild(lxTerminalMask).identifier());
+
+   int exprCounters = 0;
+   int blockCounters = 0;
+   SNode current = node.nextNode();
+   while (current != lxNone) {
+      if (current == lxExpression) {
+         if (blockCounters == 0) {
+            exprCounters++;
+         }
+         else blockCounters++;
       }
-      subNameNode = subNameNode.nextNode();
+      else if (current == lxCode) {
+         blockCounters++;
+      }
+      else if (current == lxToken) {
+         // COMPILER MAGIC : if it is complex code template
+         templateName.append(':');
+         templateName.append(current.firstChild(lxTerminalMask).identifier());
+      }
+
+      current = current.nextNode();
    }
 
    templateName.append('#');
@@ -1676,7 +1687,7 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
    // generate members
    SyntaxTree tempTree;
    SyntaxWriter tempWriter(tempTree);
-   SNode current = node;
+   current = node;
    while (current != lxNone) {
       if (current == lxCode) {
          generateCodeExpression(tempWriter, current, derivationScope, false);
@@ -1899,174 +1910,16 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             if (isTerminal(current.type)) {
                generateTokenExpression(writer, current, derivationScope, true);
 
-               //if (current.nextNode() == lxToken) {
-               //   do {
-               //      generateExpressionAttribute(writer, current, derivationScope);
-               //      current = current.nextNode();
-
-               //   } while (current.nextNode() == lxToken);
-
-               //   generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
-               //   if (current.existChild(lxDynamicSizeDecl)) {
-               //      writer.appendNode(lxSize, -1);
-               //   }
-               //}
-               //else generateIdentifier(writer, current, derivationScope);
                if (current.nextNode().compare(lxClosureExpr, lxParameter, lxReturning)) {
                   // COMPILER MAGIC : recognize the closure
                   generateClosureTree(writer, current, derivationScope);
                }
-            //            else if (nextNode == lxNestedClass && /*scope.mapParameter(current.identifier())*/scope.reference == INVALID_REF) {
-            //               int paramIndex = scope.mapParameter(current.identifier());
-            //               if (paramIndex) {
-            //                  writer.newNode(lxTemplateParam, paramIndex);
-            //                  copyIdentifier(writer, current);
-            //                  writer.closeNode();
-            //               }
-            //               else {
-            //                  ref_t reference = scope.mapReference(current);
-            //                  if (!reference) {
-            //                     scope.raiseError(errUnknownSubject, current);
-            //                  }
-            //                  else if (isPrimitiveRef(reference))
-            //                     scope.raiseError(errInvalidHint, current);
-            //
-            //                  writeFullReference(writer, scope.compilerScope->module, reference);
-            //               }
-            //            }               
             }
-            //         else scope.raiseError(errInvalidSyntax, current);            
             break;
       }
 
       current = current.nextNode();
    }
-
-//      switch (current.type) {
-//         case lxObject:
-//            if (!first) {
-//               if (expressionExpected) {
-//                  insertBookmarks(writer, bookmarks);
-//                  writer.insert(lxExpression);
-//                  writer.closeNode();
-//               }
-//               writer.removeBookmark();>	elc.exe!_ELENA_::DerivationWriter::generateExpressionTree(_ELENA_::SyntaxTree::Writer & writer, _ELENA_::SyntaxTree::Node node, _ELENA_::DerivationWriter::Scope & derivationScope, int mode) Line 1938	C++
-
-//               writer.newBookmark();
-//            }
-//            else first = false;
-//
-//            expressionExpected = !implicitMode;
-//            if (isTemplateBracket(current.nextNode())) {
-//               generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
-//            }
-//            else generateObjectTree(writer, current.firstChild(), scope, MODE_OBJECTEXPR);
-//            break;
-//         case lxCatchOperation:
-//         case lxAltOperation:
-//            writer.newBookmark();
-//         case lxIdleMsgParameter:
-//         case lxMessageParameter:
-//         case lxMessage:
-//            //insertBookmarks(writer, bookmarks);
-//            expressionExpected = false;
-//            generateMessageTree(writer, current, scope);
-//            writer.insert(lxExpression);
-//            writer.closeNode();
-//            if (current == lxCatchOperation) {
-//               writer.removeBookmark();
-//               writer.insert(lxTrying);
-//               writer.closeNode();
-//               expressionExpected = true;
-//            }
-//            else if (current == lxAltOperation) {
-//               writer.removeBookmark();
-//               writer.insert(lxAlt);
-//               writer.closeNode();
-//               expressionExpected = true;
-//            }
-//            break;
-//         case lxArrOperator:
-//            expressionExpected = false;
-//            copyOperator(writer, current);
-//            if (isTemplateBracket(current.nextNode())) {
-//               generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
-//            }
-//            else generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | EXPRESSION_IMPLICIT_MODE | EXPRESSION_OBJECT_REQUIRED);
-//            writer.insert(lxExpression);
-//            writer.closeNode();
-//            break;
-//         case lxOperator:
-//         {
-//            expressionExpected = true;
-//
-//            // HOTFIX : arranging the operator precedence
-//            int level = defineOperatorLevel(current);
-//            int last_level = bookmarks.peek() & 7;
-//            while (last_level && last_level <= level) {
-//               bookmarks.pop();
-//               writer.removeBookmark();
-//
-//               if (bookmarks.Count() != 0) {
-//                  writer.insert(bookmarks.peek() >> 3, lxExpression, 0);
-//               }
-//               else writer.insert(lxExpression);
-//               writer.closeNode();
-//
-//               last_level = bookmarks.peek() & 7;
-//            }
-//
-//            copyOperator(writer, current);
-//            int bm = writer.newBookmark();
-//            bookmarks.push((bm << 3) + level);
-//
-//            if (isTemplateBracket(current.nextNode())) {
-//               generateNewTemplate(writer, current, scope, scope.reference == INVALID_REF);
-//            }
-//            else generateExpressionTree(writer, current, scope, EXPRESSION_OPERATOR_MODE | EXPRESSION_IMPLICIT_MODE | EXPRESSION_OBJECT_REQUIRED);
-//
-//            break;
-//         }
-//         case lxExpression:
-//            first = false;
-//            if (test(mode, MODE_MESSAGE_BODY)) {
-//               generateExpressionTree(writer, current, scope);
-//            }
-//            else generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
-//            break;
-//         case lxAssigning:
-//            insertBookmarks(writer, bookmarks);
-//            if (expressionExpected) {
-//               writer.insert(lxExpression);
-//               writer.closeNode();
-//            }
-//
-//            writer.appendNode(lxAssign);
-//            generateExpressionTree(writer, current, scope);
-//            expressionExpected = true;
-//            break;
-//         case lxExtension:
-//            writer.newNode(current.type, current.argument);
-//            generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
-//            writer.closeNode();
-//            break;
-//         case lxSwitching:
-//            generateSwitchTree(writer, current, scope);
-//            writer.insert(lxSwitching);
-//            writer.closeNode();
-//            expressionExpected = true;
-//            break;
-//         case lxIdle:
-//            break;
-//         default:
-//            scope.raiseError(errInvalidSyntax, current);
-//            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   insertBookmarks(writer, bookmarks);
 
    if (expressionExpected) {
       writer.insert(lxExpression);

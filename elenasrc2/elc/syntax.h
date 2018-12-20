@@ -128,6 +128,8 @@ enum Symbol
    nsClosure                    = 0x0106E,
    nsSingleExpression           = 0x0106F,
    nsSubSingleExpression        = 0x01070,
+   nsL5Operator                 = 0x01071,
+   nsL5Operand                  = 0x01072,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

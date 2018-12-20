@@ -886,7 +886,7 @@ private:
 
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, int mode);
 
-//   void compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope);
 //   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 

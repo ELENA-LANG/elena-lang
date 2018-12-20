@@ -1020,7 +1020,7 @@ inline ref_t getSignature(_ModuleScope& scope, ref_t message)
 bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage)
 {
    ref_t sourceSignatures[ARG_COUNT];
-   size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
+/*   size_t len = */scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
 
    return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures);
 }
@@ -1086,7 +1086,7 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
    }
 }
 
-bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount)
+bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo&/* info*/, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount)
 {
    int stackSafeAttr = 0;
    ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signatures, paramCount, stackSafeAttr);

@@ -34,13 +34,18 @@ public symbol startUp =
         {
 //            system'core_routines'__exception register.
 //            
-            /*try(*/forward program()/*)*/
-//                {
-//                    on(Exception e) [ console writeLine(e literal) ]
-//                    
-//                    on(AbortException e) []                    
-//                }.
-//    
+            try
+            {
+                forward program()
+            }
+            catch(Exception e)
+            {
+                //console writeLine(e literal)
+            }
+//            catch(AbortException e)
+//            {
+//            }
+
 //            events stopping:nil
         }        
     }

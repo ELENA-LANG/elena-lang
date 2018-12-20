@@ -299,15 +299,13 @@ public for<loop_body>(init_expr, cond_expr, step_expr)
     __loop cast bool(cond_expr) ? { loop_body; step_expr }
 }
 
-//// -- try-catch statement ---
-//
-//public __nested try<expr>
-//[
-//    expr | catch:
-//    {
-//    }.
-//]
-//
+// -- try-catch statement ---
+
+public try<try_block,catch_block>:catch()
+{
+    try_block | on(catch_block);
+}
+
 //// -- try-finally-catch statement ---
 //
 //public __block __nested try<expr>

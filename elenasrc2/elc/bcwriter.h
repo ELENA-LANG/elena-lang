@@ -296,7 +296,7 @@ class ByteCodeWriter
    ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
 
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
-//   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
+   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
    void generateLooping(CommandTape& tape, SyntaxTree::Node node);
    void generateBranching(CommandTape& tape, SyntaxTree::Node node);

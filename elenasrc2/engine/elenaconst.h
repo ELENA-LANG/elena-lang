@@ -68,6 +68,7 @@ namespace _ELENA_
    //#define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
    //#define IF_ELSE_MESSAGE_ID      0x0021
    //#define ISNIL_MESSAGE_ID        0x0022
+   constexpr auto CATCH_OPERATOR_ID       = 0x0023;
 
 //   // virtual operator
 //   #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -418,6 +419,7 @@ namespace _ELENA_
    constexpr auto SHIFTL_OPERATOR      = "$shl";
    constexpr auto SHIFTR_OPERATOR      = "$shr";
 //   #define ISNIL_OPERATOR           "??"
+   constexpr auto CATCH_OPERATOR       = "|";
 
   // --- ELENA explicit variables ---
 //   #define OLD_GROUP_VAR           "target"           // obsolete : the current method target / closure owner method target

@@ -2480,11 +2480,11 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //
 //            result = ObjectInfo(okObject);
 //            break;
-//         case lxTrying:
-//            compileTrying(writer, node, scope);
-//
-//            result = ObjectInfo(okObject);
-//            break;
+         //case lxTrying:
+         //   compileTrying(writer, node, scope);
+
+         //   result = ObjectInfo(okObject);
+            break;
 //         case lxSwitching:
 //            compileSwitch(writer, node, scope);
 //            
@@ -2997,6 +2997,9 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    // if it is branching operators
    if (operator_id == IF_OPERATOR_ID/* || operator_id == IFNOT_MESSAGE_ID*/) {
       return compileBranchingOperator(writer, roperand, scope, target, mode, operator_id);
+   }
+   else if (operator_id == CATCH_OPERATOR_ID) {
+      return compileCatchOperator(writer, roperand, scope/*, target, mode, operator_id*/);
    }
    else return compileOperator(writer, roperand, scope, target, mode, operator_id);
 }
@@ -4010,42 +4013,21 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
    return info;
 }
 
-//void Compiler :: compileTrying(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   writer.newBookmark();
-//
-//   //ObjectInfo objectInfo/*- = compileObject(writer, targetNode, scope, 0)*/;
-//
-//   bool catchNode = false;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (catchNode) {
-//            SNode operationNode = current.firstChild();
-//            writer.newBookmark();
-//            writer.appendNode(lxResult);
-//            while (operationNode != lxNone) {
-//               compileOperation(writer, operationNode, scope, /*objectInfo*/ObjectInfo(okObject), 0, 0);
-//
-//               operationNode = operationNode.nextNode();
-//            }
-//            writer.removeBookmark();
-//         }
-//         else compileExpression(writer, current, scope, 0, 0);
-//
-//         catchNode = true;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   writer.insert(lxTrying);
-//   writer.closeNode();
-//
-//   writer.removeBookmark();
-//}
-//
-//void Compiler :: compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope)
+ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   writer.newBookmark();
+   writer.appendNode(lxResult);
+   compileOperation(writer, node.firstChild(), scope, ObjectInfo(okObject), 0);
+   
+   writer.removeBookmark();
+
+   writer.insert(lxTrying);
+   writer.closeNode();
+
+   return ObjectInfo(okObject);
+}
+
+//void Compiler ::compileAltOperation(/*SyntaxWriter& writer, SNode node, CodeScope& scope*/)
 //{
 //   // extract the expression target
 //   SNode firstExpr = node.firstChild(lxObjectMask);
@@ -7866,7 +7848,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
          return analizeExpression(current.firstChild(lxObjectMask), scope, mode);
       //case lxAltExpression:
       case lxBranching:
-      //case lxTrying:
+      case lxTrying:
          analizeExpressionTree(current, scope);
          return 0;
       case lxBoxing:

@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * test try / catch operation : method not found, printing calling stack
                  * no need to box variadic argument list for template opertions
                  * (re)implement dynamic variadic argument resolving
                  * primitive array should be passed directly without unboxing if allowed
