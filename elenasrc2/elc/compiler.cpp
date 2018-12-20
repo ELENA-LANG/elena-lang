@@ -2659,6 +2659,7 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
    for (auto it = nsScope->extensions.getIt(messageRef); !it.Eof(); it = nsScope->extensions.nextIt(messageRef, it)) {
       if (_logic->isCompatible(*scope.moduleScope, (*it).value1, objectRef)) {
+         // check if the extension handles the normal message
          ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, (*it).value2, implicitSignatureRef, stackSafeAttr);
          if (resolvedMessageRef) {
             if ((*it).value1) {
@@ -3283,8 +3284,17 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
 
          return generalMessageRef;
       }
+      
+      // check if the extension handles the variadic message
+      ref_t variadicMessage = resolveVariadicMessage(scope, generalMessageRef);
 
-      // check if there is a variadic message extension
+      extensionRef = mapExtension(scope, variadicMessage, implicitSignatureRef, target, stackSafeAttr);
+      if (extensionRef != 0) {
+         // if there is an extension to handle the compile-time resolved message - use it
+         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
+
+         return variadicMessage;
+      }
    }
 
    // otherwise - use the general message
