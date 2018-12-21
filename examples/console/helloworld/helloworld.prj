@@ -4,8 +4,8 @@
         <arguments></arguments>
         <output></output>
         <options></options>
-        <namespace>helloworld</namespace>
-        <template>vm_console</template>
+        <namespace>u_helloworld</namespace>
+        <template>console</template>
         <debuginfo>-1</debuginfo>
     </project>
     <files>

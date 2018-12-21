@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * fix vm console project type
                  * uncomment extern scope - ConsoleReader
                  * test try / catch operation : method not found, printing calling stack
                  * no need to box variadic argument list for template opertions
