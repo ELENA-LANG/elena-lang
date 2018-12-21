@@ -87,12 +87,12 @@ public:
       // thread table contains TLS reference
       compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
 
-      //if (_vmMode) {
-      //   _ELENA_::MemoryDump tape;
-      //   createTape(tape, project, _consoleMode);
+      if (_vmMode) {
+         _ELENA_::MemoryDump tape;
+         createTape(tape, project, _consoleMode);
 
-      //   compiler->allocateVMTape(loader, tape.get(0), tape.Length());
-      //}
+         compiler->allocateVMTape(loader, tape.get(0), tape.Length());
+      }
    }
 
    virtual void afterLoad(_ELENA_::ExecutableImage& image)
@@ -939,20 +939,17 @@ int main()
 //
 //         print(ELC_SUCCESSFUL_LINKING);
 //      }
-//      else if (platform == _ELENA_::ptVMWin32Console) {
-//         print(ELC_LINKING);
-//
-//      //   _ELENA_::VirtualMachineClientImage image(
-//      //      &project, project.createJITCompiler());
-//
-//         _ELENA_::Linker linker;
-//         ImageHelper helper(&linker, true, true);
-//         _ELENA_::ExecutableImage image(false, &project, project.createJITCompiler(), helper);
-//
-//         linker.run(project, image, (_ELENA_::ref_t) - 1);
-//
-//         print(ELC_SUCCESSFUL_LINKING);
-//      }
+      else if (platform == _ELENA_::ptVMWin32Console) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker;
+         ImageHelper helper(&linker, true, true);
+         _ELENA_::ExecutableImage image(false, &project, project.createJITCompiler(), helper);
+
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
 //      else if (platform == _ELENA_::ptWin32GUI) {
 //         print(ELC_LINKING);
 //

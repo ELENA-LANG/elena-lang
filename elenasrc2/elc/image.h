@@ -24,7 +24,7 @@ public:
    protected:
       bool _vmMode;
 
-      //void createTape(_Memory& data, Project* project, bool withNewConsole);
+      void createTape(_Memory& data, Project* project, bool withNewConsole);
 
    public:
       virtual void beforeLoad(_JITCompiler* compiler, ExecutableImage& image) = 0;

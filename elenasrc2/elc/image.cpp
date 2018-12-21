@@ -349,38 +349,38 @@ inline void writeTapeRecord(MemoryWriter& tape, size_t command, ident_t value1, 
    else tape.writeChar((char)0);
 }
 
-//void ExecutableImage::_Helper :: createTape(_Memory& tape, Project* project, bool withNewConsole)
-//{
-//   MemoryWriter data(&tape);
-//
-//   // write tape
-//   
-//   // USE_VM_MESSAGE_ID path, package
-//   writeTapeRecord(data, USE_VM_MESSAGE_ID, project->StrSetting(opNamespace), project->StrSetting(opOutputPath));
-//   
-//   // LOAD_VM_MESSAGE_ID name
-//   writeTapeRecord(data, LOAD_VM_MESSAGE_ID, project->StrSetting(opTemplate));
-//   
-//   // { MAP_VM_MESSAGE_ID fwrd, ref }*
-//   ForwardIterator it = project->getForwardIt();
-//   while (!it.Eof()) {
-//      writeTapeRecord(data, MAP_VM_MESSAGE_ID, it.key(), *it);
-//   
-//      it++;
-//   }
-//   
-//   if (withNewConsole) {
-//      writeTapeRecord(data, OPEN_VM_CONSOLE);
-//   }
-//   
-//   // START_VM_MESSAGE_ID debugMode ??
-//   writeTapeRecord(data, START_VM_MESSAGE_ID);
-//   
-//   // CALL_TAPE_MESSAGE_ID 'program
-//   writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, PROGRAM_ENTRY, true);
-//
-//   data.writeDWord(0);
-//}
+void ExecutableImage::_Helper :: createTape(_Memory& tape, Project* project, bool withNewConsole)
+{
+   MemoryWriter data(&tape);
+
+   // write tape
+   
+   // USE_VM_MESSAGE_ID path, package
+   writeTapeRecord(data, USE_VM_MESSAGE_ID, project->StrSetting(opNamespace), project->StrSetting(opOutputPath));
+   
+   // LOAD_VM_MESSAGE_ID name
+   writeTapeRecord(data, LOAD_VM_MESSAGE_ID, project->StrSetting(opTemplate));
+   
+   // { MAP_VM_MESSAGE_ID fwrd, ref }*
+   ForwardIterator it = project->getForwardIt();
+   while (!it.Eof()) {
+      writeTapeRecord(data, MAP_VM_MESSAGE_ID, it.key(), *it);
+   
+      it++;
+   }
+   
+   if (withNewConsole) {
+      writeTapeRecord(data, OPEN_VM_CONSOLE);
+   }
+   
+   // START_VM_MESSAGE_ID debugMode ??
+   writeTapeRecord(data, START_VM_MESSAGE_ID);
+   
+   // CALL_TAPE_MESSAGE_ID 'program
+   writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, PROGRAM_ENTRY, true);
+
+   data.writeDWord(0);
+}
 
 //// --- VirtualMachineClientImage ---
 //

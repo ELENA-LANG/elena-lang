@@ -38,7 +38,7 @@ property vprop<T,get_accessor>
 {
     get T __property()
     {
-        T retVal := T.DefaultValue;
+        T retVal := T.Default;
         
         self.get_accessor(ref retVal);
         
@@ -50,7 +50,7 @@ property vprop<T,get_accessor,set_accessor>
 {
     get T __property()
     {
-        T retVal := T.DefaultValue;
+        T retVal := T.Default;
         
         self.get_accessor(ref retVal);
         

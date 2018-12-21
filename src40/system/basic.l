@@ -924,7 +924,7 @@ public sealed const struct IntNumber : IntBaseNumber
 //    ]
 
     /// return the default value
-    static int DefaultValue
+    static int Default
         = 0;
     
     /// Creates the object with the minimal value
@@ -2231,7 +2231,7 @@ public sealed const struct CharValue : BaseValue
 {
     __raw theValue[4];
 
-    static char DefaultValue
+    static char Default
         = $0;
 
     /// Creates the object with a default value (0)

@@ -1,9 +1,9 @@
 // --- Program ---
 
-public symbol program =
-[
-    console writeLine:"Hello World - Привет Мир - 你好世界!!".
+public program()
+{
+    console.writeLine("Hello World - Привет Мир - 你好世界!!");
     
     // wait for any key
-    console readChar.
-].
+    console.readChar()
+}

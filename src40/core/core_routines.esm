@@ -358,3 +358,16 @@ symbol sta_start
   quit
 
 end
+
+symbol vm_sta_start
+
+  pushr rdata : "$elena'@tapekey"
+  pushr api : seh_handler
+  pushr api : default_handler
+  system
+  pushe
+  callextr extern : InitializeVMSTA
+  popi 4
+  quit
+
+end

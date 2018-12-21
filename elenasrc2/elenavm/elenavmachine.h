@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 14;
+constexpr auto ELENAVM_REVISION = 2;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2018 by Alex Rakov";
@@ -183,7 +183,8 @@ protected:
    _JITCompiler*   _compiler;
    JITLinker*      _linker;
 
-   Section*       _messageTable;
+   _Memory*       _messageTable;
+   _Memory*       _messageBodyTable;
    size_t         _ConvertedMTSize; // used to trace the message table change
 
    IdentifierString _literalClass;
@@ -204,6 +205,8 @@ protected:
 
    // status
    IdentifierString _status;
+
+   void clearMessageTable();
 
    virtual ident_t resolveForward(ident_t forward);
 
