@@ -102,7 +102,6 @@ public:
    virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand);
    virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference);
    virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef);
-   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t reference);
 
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
 ////   virtual bool isPrimitiveArray(ref_t reference);
@@ -160,7 +159,8 @@ public:
 //   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
    virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef);
-   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef);
+   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, 
+      ref_t elementRef, ident_t ns);
    //virtual bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef);
    virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr);
 

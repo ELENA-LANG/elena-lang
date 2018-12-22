@@ -317,10 +317,6 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
 
 int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
 {
-   if (isPrimitiveRef(classReference)) {
-      classReference = resolvePrimitiveReference(scope, classReference);
-   }
-
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
 
@@ -1251,7 +1247,8 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
 //   return injectImplicitConstructor(writer, scope, compiler, classClassinfo, targetRef/*, 0*/, signature, paramCount);
 //}
 
-bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, ref_t elementRef)
+bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, 
+   ref_t elementRef, ident_t ns)
 {
 //   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
 //      if (isPrimitiveArrayRef(sourceRef)) {
@@ -1330,7 +1327,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 //      }
 //   }
 
-   // HOTFIX : trying to typecast primitive array
+   // COMPILE MAGIC : trying to typecast primitive array
    if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole/* | elWrapper*/)) {
       ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
 
@@ -1341,6 +1338,16 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
          return true;
       }
    }
+
+   // COMPILE MAGIC : trying to typecast wrapper
+   if (sourceRef == V_WRAPPER && isCompatible(scope, targetRef, elementRef)) {
+      compiler.injectBoxing(writer, scope,
+         isReadonly(info) ? lxBoxing : lxUnboxing,
+         test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
+
+      return true;
+   }
+
 //   // HOTFIX : trying to typecast open argument list
 //   if (isOpenArgRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
 //      if (isCompatible(scope, info.fieldTypes.get(-1).value1, elementRef)) {
@@ -1360,7 +1367,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 //   }
    // HOTFIX : recognize primitive data except of a constant literal
    else if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
-      sourceRef = resolvePrimitiveReference(scope, sourceRef);
+      sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, ns);
 
    return injectImplicitConstructor(writer, scope, compiler, info, targetRef, /*elementRef, */&sourceRef, 1);
 }
@@ -2014,26 +2021,6 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
          default:
             break;
       }
-   }
-}
-
-ref_t CompilerLogic :: resolvePrimitiveReference(_ModuleScope& scope, ref_t reference)
-{
-   switch (reference) {
-      case V_INT32:
-         return firstNonZero(scope.intReference, scope.superReference);
-      //case V_INT64:
-      //   return firstNonZero(scope.longReference, scope.superReference);
-      //case V_REAL64:
-      //   return firstNonZero(scope.realReference, scope.superReference);
-      //case V_SIGNATURE:
-      //   return firstNonZero(scope.signatureReference, scope.superReference);
-      //case V_MESSAGE:
-      //   return firstNonZero(scope.messageReference, scope.superReference);
-      //case V_ARGARRAY:
-      //   return firstNonZero(scope.arrayReference, scope.superReference);
-      default:
-         return scope.superReference;
    }
 }
 

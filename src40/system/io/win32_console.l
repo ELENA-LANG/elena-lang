@@ -83,7 +83,7 @@ singleton ConsoleHandleFactory
         }
         else
         {
-//            ^ new FileWriter(h)
+            ^ new FileWriter(h)
         }
     }
 }
@@ -169,13 +169,15 @@ sealed class ConsoleWriter
 
 // --- FileWriter ---
 
-sealed struct FileWriter
+sealed class FileWriter
 {
     handle theHandle;
+    wide   theNewLineSymbol;
 
-    constructor(handle aHandle)
+    constructor(handle h)
     {
-        theHandle := aHandle
+        theHandle := h;
+        theNewLineSymbol := forward newLine;
     }
 
 //    write(ByteArray buffer, int length)
@@ -208,12 +210,17 @@ sealed struct FileWriter
 //            length := length - subs_len.
 //        ].
 //    ]
-//    
-//    writeLine(wide s)
-//    {
-//        self.write(s);
-//        self.write(theNewLineSymbol);
-//    }
+    
+    writeLine(wide s)
+    {
+        self.write(s);
+        self.write(theNewLineSymbol);
+    }
+    
+    writeLine()
+    {
+        self.write(theNewLineSymbol);
+    }
     
 //    write(literal literal)
 //    [
@@ -359,69 +366,69 @@ sealed struct ConsoleReader //:: Object, interface<IConsoleReader>
 //        
 //        ^ false.                   
 //    ]
-//
-//    read(ShortArray aBuffer, ref<int> aRetVal)
-//    [
-//        int len := aRetVal value.
+
+//    read(short[] dump, ref int retVal)
+//    {
+//        int len := retVal;
 //        
-//        extern()
-//        [
-//            system'external'KERNEL32 ReadConsoleW(theHandle, aBuffer, len, aRetVal, 0).
-//        ].            
-//    ]
-//    
-//    T<wide> readWide
+//        extern
+//        {
+//            extern KERNEL32.ReadConsoleW(theHandle, dump, len, ref retVal, 0)
+//        }
+//    }
+    
+    wide readWide()
+    {
+        short dump[127];
+        int   len := 0;
+        var   output := emptyWideString;
+        
+        bool continue := true;
+        while (continue)
+        {
+            len := 127;
+            self.read(dump, ref len);
+            
+            short sh := dump[len - 1];
+            if (sh == 0Ah)
+                {
+                    len := len - 2;
+                    
+                    continue := false
+                };
+            
+            var temp := WideString.fromShortArray(0, len, dump);
+            
+            output := output + temp;
+        };
+
+        ^ output
+    }
+
+    string readString()
+        = self.readWide();
+
+//    int
 //    [
-//        T<short,127> aBuffer.
-//        int          aLength := 0.
-//        var          anOutput := emptyWideLiteral.
+//        int aRetVal := 0.
+//        $self read vint:aRetVal.
 //        
-//        bool continue := true.
-//        while (continue)
-//        [
-//            aLength := 127.
-//            self read(T<ShortArray>(aBuffer), &aLength).
+//        ^ IntNumber new int:aRetVal
+//    ]
 //            
-//            short aShort := aBuffer[aLength - 1].
-//            if (aShort == 0Ah)
-//                [
-//                    aLength := aLength - 2.
-//                    
-//                    continue := false
-//                ].
-//            
-//            var aTemp := WideLiteralValue fromShortArray(0, aLength, T<ShortArray>(aBuffer)).
-//            
-//            anOutput := anOutput + aTemp.
-//        ].
-//
-//        ^ anOutput
+//    char
+//    [
+//        char aRetVal := $0.
+//        $self read vchar:aRetVal.
+//        
+//        ^ CharValue new char:aRetVal
 //    ]
 //
-//    T<literal> readLiteral
-//        = self readWide.
-//
-////    int
-////    [
-////        int aRetVal := 0.
-////        $self read vint:aRetVal.
-////        
-////        ^ IntNumber new int:aRetVal
-////    ]
-////            
-////    char
-////    [
-////        char aRetVal := $0.
-////        $self read vchar:aRetVal.
-////        
-////        ^ CharValue new char:aRetVal
-////    ]
-////
-////    free
-////    [
-////        system'external'KERNEL32 CloseHandle
-////            int:theHandle.
-////    ]
+//    free
+//    [
+//        system'external'KERNEL32 CloseHandle
+//            int:theHandle.
+//    ]
 }
 
 // --- Console Standard Symbols

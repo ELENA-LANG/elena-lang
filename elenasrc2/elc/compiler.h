@@ -768,12 +768,16 @@ private:
    ObjectInfo mapClassSymbol(Scope& scope, int classRef);
 
    ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);
+
    ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef);
-   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef, ref_t templateRef);
-   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef)
-   {
-      return resolvePrimitiveArray(scope, elementRef, scope.moduleScope->arrayTemplateReference);
-   }
+   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns);
+
+   ref_t resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns);
+   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef);
+
+   ref_t resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t operandRef, ident_t ns);
+   ref_t resolveReferenceTemplate(Scope& scope, ref_t elementRef);
+
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object);
@@ -867,8 +871,6 @@ private:
 //
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope);
    ref_t compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode);
-
-   ref_t resolveReferenceTemplate(Scope& scope, ref_t operandRef);
 
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);

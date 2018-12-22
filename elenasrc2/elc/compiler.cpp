@@ -3020,6 +3020,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
    // try to recognize the operation
    ref_t classReference = resolveObjectReference(scope, target);
+   if (isPrimitiveRef(classReference)) {
+      classReference = resolvePrimitiveReference(scope, classReference, target.element);
+   }
+
    bool dispatchCall = false;
    _CompilerLogic::ChechMethodInfo result;
    int callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
@@ -3120,11 +3124,13 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 }
 
 bool Compiler :: convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
-{
+{  
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
    ref_t sourceRef = resolveObjectReference(scope, source);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
-      if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, sourceRef, source.element))
+      if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, sourceRef, source.element, nsScope->ns.c_str()))
          return typecastObject(writer, scope, targetRef, source);
    }
    return true;
@@ -3162,7 +3168,7 @@ ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
 {
    ref_t argRef = resolveObjectReference(scope, info);
    if (isPrimitiveRef(argRef))
-      argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+      argRef = resolvePrimitiveReference(scope, argRef, info.element);
 
    return scope.module->mapSignature(&argRef, 1, false);
 }
@@ -3175,27 +3181,43 @@ ref_t Compiler::resolveStrongArgument(CodeScope& scope, ObjectInfo info1, Object
    argRef[1] = resolveObjectReference(scope, info2);
 
    if (isPrimitiveRef(argRef[0]))
-      argRef[0] = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef[0]);
+      argRef[0] = resolvePrimitiveReference(scope, argRef[0], info1.element);
    if (isPrimitiveRef(argRef[1]))
-      argRef[1] = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef[1]);
+      argRef[1] = resolvePrimitiveReference(scope, argRef[1], info2.element);
 
    return scope.module->mapSignature(argRef, 2, false);
 }
 
 ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef)
 {
-   if (argRef == V_WRAPPER) {
-      argRef = resolveReferenceTemplate(scope, elementRef);
-   }
-   else if (argRef == V_ARGARRAY) {
-      argRef = resolvePrimitiveArray(scope, elementRef, scope.moduleScope->argArrayTemplateReference);
-   }
-   else if (isPrimitiveArrRef(argRef)) {
-      argRef = resolvePrimitiveArray(scope, elementRef, scope.moduleScope->arrayTemplateReference);
-   }
-   else argRef = _logic->resolvePrimitiveReference(*scope.moduleScope, argRef);
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-   return argRef;
+   return resolvePrimitiveReference(*scope.moduleScope, argRef, elementRef, nsScope->ns.c_str());
+}
+
+ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns)
+{
+   switch (argRef) {
+      case V_WRAPPER:
+         return resolveReferenceTemplate(scope, elementRef, ns);
+      case V_ARGARRAY:
+         return resolvePrimitiveArray(scope, scope.argArrayTemplateReference, elementRef, ns);
+      case V_INT32:
+         return scope.intReference;
+         //case V_INT64:
+         //   return firstNonZero(scope.longReference, scope.superReference);
+         //case V_REAL64:
+         //   return firstNonZero(scope.realReference, scope.superReference);
+         //case V_SIGNATURE:
+         //   return firstNonZero(scope.signatureReference, scope.superReference);
+         //case V_MESSAGE:
+         //   return firstNonZero(scope.messageReference, scope.superReference);
+      default:
+         if (isPrimitiveArrRef(argRef)) {
+            return resolvePrimitiveArray(scope, scope.arrayTemplateReference, elementRef, ns);
+         }
+         return scope.superReference;
+   }
 }
 
 ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
@@ -3435,7 +3457,7 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScop
    ref_t sourceRef = resolveObjectReference(scope, source);
 
    if (isPrimitiveRef(sourceRef))
-      sourceRef = _logic->resolvePrimitiveReference(*scope.moduleScope, sourceRef);
+      sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element);
 
    return scope.resolveAutoType(target, sourceRef, source.element);
 }
@@ -4109,10 +4131,10 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Co
 //   writer.removeBookmark();
 //}
 
-ref_t Compiler :: resolveReferenceTemplate(Scope& scope, ref_t operandRef)
+ref_t Compiler :: resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t operandRef, ident_t ns)
 {
    if (!operandRef)
-      operandRef = scope.moduleScope->superReference;
+      operandRef = moduleScope.superReference;
 
    List<SNode> parameters;
 
@@ -4125,14 +4147,27 @@ ref_t Compiler :: resolveReferenceTemplate(Scope& scope, ref_t operandRef)
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-   return scope.moduleScope->generateTemplate(*this, scope.moduleScope->refTemplateReference, parameters, nsScope->ns.c_str()/*, &nsScope->extensions*/);
+   return moduleScope.generateTemplate(*this, moduleScope.refTemplateReference, parameters, ns/*, &nsScope->extensions*/);
 }
 
-ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t operandRef, ref_t templateRef)
+ref_t Compiler :: resolveReferenceTemplate(Scope& scope, ref_t elementRef)
 {
-   if (!operandRef)
-      operandRef = scope.moduleScope->superReference;
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+   return resolveReferenceTemplate(*scope.moduleScope, elementRef, nsScope->ns.c_str());
+}
+
+ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t elementRef)
+{
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+   return resolvePrimitiveArray(*scope.moduleScope, scope.moduleScope->arrayTemplateReference, elementRef, nsScope->ns.c_str());
+}
+
+ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns)
+{
+   if (!elementRef)
+      elementRef = scope.superReference;
 
    // generate a reference class
    List<SNode> parameters;
@@ -4141,13 +4176,12 @@ ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t operandRef, ref_t te
    SyntaxTree dummyTree;
    SyntaxWriter dummyWriter(dummyTree);
    dummyWriter.newNode(lxRoot);
-   dummyWriter.appendNode(lxTarget, operandRef);
+   dummyWriter.appendNode(lxTarget, elementRef);
    dummyWriter.closeNode();
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-   return scope.moduleScope->generateTemplate(*this, templateRef, parameters, nsScope->ns.c_str()/*, &nsScope->extensions*/);
+   return scope.generateTemplate(*this, templateRef, parameters, ns/*, &nsScope->extensions*/);
 }
 
 ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)

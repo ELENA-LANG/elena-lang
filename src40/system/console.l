@@ -65,11 +65,11 @@ class Console
 //
 //    setCursorPosition(int x, int y)
 //        => theWriter.
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    literal readLine
-//        = theReader readLiteral.
-//
+
+    /// Reads the next line of characters from the standard input stream.
+    string readLine()
+        = theReader.readString();
+
 //    /// Reads the next line of characters from the standard input stream.
 //    wide readWideLine
 //        = theReader readWide.
