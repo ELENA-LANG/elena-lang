@@ -284,11 +284,8 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
       if (test(info.header.flags, elClosed))
          result.directResolved = true;
 
-//      //if (!test(info.header.flags, elClosed))
-//      //   result.closed = false;
-//
-      //if (test(info.header.flags, elWithCustomDispatcher))
-      //   result.withCustomDispatcher = true;
+      if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
 
       int hint = checkMethod(info, message, result);
       //if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
@@ -1615,11 +1612,11 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 //         else info.header.flags |= elDebugBytes;
 //      }
 //   }
-//
-//   // adjust objects with custom dispatch handler
-//   if (info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true) && classRef != scope.superReference) {
-//      info.header.flags |= elWithCustomDispatcher;
-//   }
+
+   // adjust objects with custom dispatch handler
+   if (info.methods.exist(scope.dispatch_message, true) && classRef != scope.superReference) {
+      info.header.flags |= elWithCustomDispatcher;
+   }
 
    // generate operation list if required
    injectOverloadList(scope, info, compiler, classRef);

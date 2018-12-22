@@ -399,8 +399,7 @@ public:
    {
       bool  found;
       bool  directResolved;
-//      bool  withCustomDispatcher;
-////      //bool  closed;
+      bool  withCustomDispatcher;
       bool  stackSafe;
 //      bool  embeddable;
 //      bool  withOpenArgDispatcher;
@@ -413,9 +412,9 @@ public:
       ChechMethodInfo()
       {
          directResolved = false;
-         /*embeddable = *//*closed = */found = false;
+         /*embeddable = */found = false;
          outputReference = 0;
-//         withCustomDispatcher = false;
+         withCustomDispatcher = false;
          stackSafe = false;
 //         withOpenArgDispatcher = false;
 //         withOpenArg1Dispatcher = false;

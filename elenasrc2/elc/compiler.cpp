@@ -3078,7 +3078,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       if (test(mode, HINT_SILENT)) {
          // do nothing in silent mode
       }
-      else if (/*result.found && !result.withCustomDispatcher && */callType == tpUnknown && result.directResolved) {
+      else if (result.found && !result.withCustomDispatcher && callType == tpUnknown && result.directResolved) {
          if (test(mode, HINT_ASSIGNING_EXPR)) {
             scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
          }
@@ -5281,28 +5281,28 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 {
    writer.newNode(lxClassMethod, scope.message);
 
-//   CodeScope codeScope(&scope);
+   CodeScope codeScope(&scope);
 
    if (isImportRedirect(node)) {
       importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.message);
    }
    else {
-      throw InternalError("not yet supported");
+      writer.newNode(lxDispatching);
 
-//      writer.newNode(lxDispatching);
-//
-//      // if it is generic handler with redirect statement / redirect statement
-//      if (node != lxNone && node.firstChild(lxObjectMask) != lxNone) {
-//         // !! temporally
-//         if (withOpenArgGenerics)
-//            scope.raiseError(errInvalidOperation, node);
-//
-//         if (withGenericMethods) {
-//            writer.appendNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0));
-//         }
-//
-//         compileDispatchExpression(writer, node, codeScope);
-//      }
+      // if it is generic handler with redirect statement / redirect statement
+      if (node != lxNone && node.firstChild(lxObjectMask) != lxNone) {
+         //// !! temporally
+         //if (withOpenArgGenerics)
+         //   scope.raiseError(errInvalidOperation, node);
+
+         //if (withGenericMethods) {
+         //   writer.appendNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0));
+         //}
+
+         compileDispatchExpression(writer, node, codeScope);
+      }
+      else throw InternalError("not yet supported"); // !! temporal
+
 //      // if it is generic handler without redirect statement
 //      else if (withGenericMethods) {
 //         // !! temporally
@@ -5335,8 +5335,8 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 //
 //         writer.closeNode();
 //      }
-//
-//      writer.closeNode();
+
+      writer.closeNode();
    }
 
    writer.closeNode();
@@ -6022,7 +6022,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
       current = current.nextNode();
    }
 
-//   // if the VMT conatains newly defined generic handlers, overrides default one
+   // if the VMT conatains newly defined generic handlers, overrides default one
 //   if (testany(scope.info.header.flags, elWithGenerics | elWithArgGenerics) && scope.info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), false)) {
 //      MethodScope methodScope(&scope);
 //      methodScope.message = encodeAction(DISPATCH_MESSAGE_ID);
@@ -7146,7 +7146,7 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
 
    // compile explicit symbol
    // extension cannot be used stand-alone, so the symbol should not be generated
-   if (/*scope.extensionClassRef == 0 && */scope.info.header.classRef != 0) {
+   if (scope.extensionClassRef == 0 && scope.info.header.classRef != 0) {
       compileSymbolCode(scope);
    }
 }

@@ -1021,11 +1021,11 @@ public sealed const struct IntNumber : IntBaseNumber
 //
 //    int divide(BaseVariable v)
 //        <= divide(v value).
-//        
-//    /// Returns the sum
-//    int add(int anOperand)
-//        = theValue + anOperand.
-//
+        
+    /// Returns the sum
+    int add(int n)
+        = theValue + n;
+
 //    /// Returns the sum
 //    int subtract(int anOperand)
 //        = theValue - anOperand.

@@ -180,8 +180,8 @@ class ByteCodeWriter
 
    void releaseObject(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
-//
-//   void setSubject(CommandTape& tape, ref_t subject);
+
+   void setSubject(CommandTape& tape, ref_t subject);
 
    void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
@@ -190,7 +190,7 @@ class ByteCodeWriter
 
    void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
    void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
-//   void doGenericHandler(CommandTape& tape);
+   void doGenericHandler(CommandTape& tape);
 //   void unboxMessage(CommandTape& tape);
 //   void changeMessageCounter(CommandTape& tape, int paramCount);
    void resend(CommandTape& tape);
@@ -232,7 +232,7 @@ class ByteCodeWriter
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
-//   void closeFrame(CommandTape& tape);
+   void closeFrame(CommandTape& tape);
 
    void assignBaseTo(CommandTape& tape, LexicalType target);
 
@@ -286,8 +286,8 @@ class ByteCodeWriter
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node);
 
-//   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
+   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
    void generateResending(CommandTape& tape, SyntaxTree::Node node);
    void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
    void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);

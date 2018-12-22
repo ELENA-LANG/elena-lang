@@ -299,7 +299,7 @@ namespace _ELENA_
 //   const int elSymbol              = 0x00100000;
 //   const int elExtMessage          = 0x00208000;
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
-//   const int elWithCustomDispatcher= 0x00800000;
+   const int elWithCustomDispatcher= 0x00800000;
 //   const int elWithArgGenerics     = 0x01000000;
 ////   const int elTapeGroup           = 0x02000200;
    const int elClassClass          = 0x04000000;

@@ -1347,10 +1347,10 @@ public sealed const struct String : BaseValue
 //
 //    internal saveToByteArray(int anIndex, ByteArray anArray, int aRetVal)
 //        => system'core_routines'__literal.
-//
-//    /// Returns the string enumerator
-//    Enumerator<char> enumerator = LiteralEnumerator new(self).
-//
+
+    /// Returns the string enumerator
+    Enumerator<char> enumerator() = new LiteralEnumerator(self);
+
 //    /// Returns the string indexer
 //    Indexer<char> indexer = LiteralIndexer new(self).
 //    
@@ -2292,71 +2292,71 @@ public singleton wideConvertor
 //        = cast wide(o literal);
 }
 
-//// === Enumerators / Indexers
-//
-//// --- LiteralEnumerator ---
-//
-///// A literal enumerator
-//class LiteralEnumerator :: Enumerator<char>
-//{
-//    literal  theLiteral.
-//    ref<int> theIndex.
-//    ref<int> theDiff.
-//    char     theChar.
-//    
+// === Enumerators / Indexers
+
+// --- LiteralEnumerator ---
+
+/// A literal enumerator
+class LiteralEnumerator : Enumerator<char>
+{
+    string   theLiteral;
+    ref<int> theIndex;
+    ref<int> theDiff;
+    char     theChar;
+    
 //    /// Creates an enumerator
 //    constructor new : anObject
 //        <= new(T<literal>(anObject)).
-//    
-//    /// Creates an enumerator
-//    constructor new(literal aLiteral)
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := $0.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex value := -1.
-//        theDiff value := 1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        int aLength := theLiteral length.
-//        
-//        theIndex append(T<int>(theDiff)).
-//        
-//        if (theIndex < aLength)
-//            [
-//                theChar := theLiteral getAt(T<int>(theIndex)).
-//                
-//                theChar readLengthTo(theDiff).
-//                
-//                ^ true
-//            ].
-//
-//        theDiff := 0.
-//        theChar := $0.
-//
-//        ^ false
-//    ]
-//    
+    
+    /// Creates an enumerator
+    constructor(string s)
+    {
+        theLiteral := s;
+        theIndex := -1;
+        theDiff := 1;
+        theChar := $0
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1;
+        theDiff.Value := 1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int aLength := theLiteral.Length;
+        
+        theIndex.append(cast int(theDiff));
+        
+        if (theIndex < aLength)
+            {
+                theChar := theLiteral.at(cast int(theIndex));
+                
+                theDiff := theChar.Length;
+                
+                ^ true
+            };
+
+        theDiff.Value := 0;
+        theChar := $0;
+
+        ^ false
+    }
+    
 //    cast T<Enumerator> = Enumerator::
 //    {
 //        embeddable dispatch => self.
 //    }.
-//    
-//    enumerable = theLiteral.
-//    
-//    /// Returns the current character
-//    char get = theChar.
-//}
-//
+    
+    enumerable() = theLiteral;
+    
+    /// Returns the current character
+    char get() = theChar;
+}
+
 //// --- LiteralIndexer ---
 //
 ///// A literal value indexer

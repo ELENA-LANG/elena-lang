@@ -122,19 +122,19 @@
 
 // --- enumeratorOp ---
 
-public extension<Enumerator> enumeratorOp
-{
-//    forEach(Func1 aFunction)
-//        = aFunction run(self).
-//
-//    selectBy:aSelector
-//        = Selector new(aSelector, self).
-}
-
-//// --- enumerableOp ---
-//
-//public extension enumerableOp
+//public extension enumeratorOp : Enumerator
 //{
+////    forEach(Func1 aFunction)
+////        = aFunction run(self).
+////
+////    selectBy:aSelector
+////        = Selector new(aSelector, self).
+//}
+
+// --- enumerableOp ---
+
+public extension enumerableOp
+{
 //    forEach(Func1 aFunction)
 //        = aFunction run(T<Enumerator>(self enumerator)).
 //
@@ -373,7 +373,7 @@ public extension<Enumerator> enumeratorOp
 //        
 //    join(object list) on(Func2 filter_f) selectBy(Func2 select_f)
 //        = JoinEnumerator new(filter_f, select_f, T<Enumerator>(self enumerator), T<Enumerator>(list enumerator)).        
-//}
+}
 
 // --- indexableOp ---
 
