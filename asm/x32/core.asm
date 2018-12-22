@@ -146,7 +146,7 @@ labYGCollect:
   // ; save static roots
   mov  esi, data : %CORE_STATICROOT
   mov  ecx, [data : %SYSTEM_ENV + se_statlen]
-  push esi
+	  push esi
   push ecx
 
   // ; collect frames
@@ -2968,7 +2968,7 @@ labNextOverloadlist:
   shr  ebx, ACTION_ORDER
   mov  ecx, [esp]              // ; param count
   mov  ebx, [edi + ebx * 8 + 4]
-  lea  ebx, [edi + ebx]
+  lea  ebx, [edi + ebx - 4]
 
 labNextParam:
   sub  ecx, 1
@@ -3030,7 +3030,7 @@ labNextOverloadlist:
   shr  ebx, ACTION_ORDER
   mov  ecx, [esp]              // ; param count
   mov  ebx, [edi + ebx * 8 + 4]
-  lea  ebx, [edi + ebx]
+  lea  ebx, [edi + ebx - 4]
 
 labNextParam:
   sub  ecx, 1
