@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * reimplement lazy expressions
                  * fix vm console project type
                  * uncomment extern scope - ConsoleReader
                  * test try / catch operation : method not found, printing calling stack

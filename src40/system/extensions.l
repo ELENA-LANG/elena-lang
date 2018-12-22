@@ -116,13 +116,13 @@ public extension objectOp
 ////        
 ////        ^ true.
 ////    ]
-//        
-//    bool isEmpty
-//        = self length == 0.
-//        
-//    bool isNonempty
-//        = self length != 0.
-//        
+        
+    bool isEmpty()
+        = self.Length == 0;
+        
+    bool isNonempty()
+        = self.Length != 0;
+        
 //    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
 //    bool safeEqual : o
 //        = self equal:o \ back:false.

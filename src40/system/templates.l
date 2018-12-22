@@ -296,6 +296,17 @@ public for<loop_body>(init_expr, cond_expr, step_expr)
     __loop cast bool(cond_expr) ? { loop_body; step_expr }
 }
 
+// --- doUntil statement ---
+
+public doUntil<loop_body>(init_expr, cond_expr, step_expr)
+{
+    init_expr;
+    step_expr;
+    loop_body;
+    
+    __loop cast bool(cond_expr) ! { step_expr; loop_body }
+}
+
 // -- try-catch statement ---
 
 public try<try_block,catch_block>:catch()

@@ -989,11 +989,11 @@ public sealed const struct IntNumber : IntBaseNumber
 //        
 //    bool less(BaseVariable v)
 //        <= less(v value).
-//        
-//    /// Compares the value
-//    bool equal(int anOperand)
-//        = theValue == anOperand.
-//        
+        
+    /// Compares the value
+    bool equal(int n)
+        = theValue == n;
+        
 //    /// Compares the value
 //    bool less(int anOperand)
 //        = theValue < anOperand.

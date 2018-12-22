@@ -8,13 +8,18 @@
     </project>
     <manifest>
       <name>ELENA Extension Library</name>
-      <version>4.0.0</version>
+      <version>4.0.1</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>
         <module>
             <include>convertors.l</include>
             <include>console.l</include>
+            <include>text\strings.l</include>
+            <include>text\words.l</include>
+        </module>
+        <module name="routines">
+            <include>routines\enumerating.l</include>
         </module>
     </files>
 </configuration>

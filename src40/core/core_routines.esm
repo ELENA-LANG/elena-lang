@@ -79,6 +79,34 @@ procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$@syste
 
 end
 
+procedure __literal."add$system@String[2]"
+
+  blen
+  dec
+  ecopyd
+  bcopya
+  aloadsi 2
+  blen
+  add
+  acopyr class : system'String
+  bcreate
+  bswap
+  blen
+  dec
+  ecopyd
+  dcopy 0
+  callextr api : insert
+  ecopyd
+  aloadsi 2
+  blen
+  eswap
+  callextr api : insert
+  acopyb
+
+  quitn 2
+
+end                                                
+
 procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1

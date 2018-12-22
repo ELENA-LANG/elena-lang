@@ -1242,11 +1242,11 @@ public sealed const struct String : BaseValue
 //    /// Concatinates the values
 //    literal add(BaseVariable v)
 //        <= add(v value).
-//        
-//    /// Concatinates the values
-//    literal add(literal aLiteral)
-//        => system'core_routines'__literal.
-//
+        
+    /// Concatinates the values
+    string add(string s)
+        => system'core_routines'__literal;
+
 //    /// Concatinates the values
 //    literal add(char ch)
 //    [
