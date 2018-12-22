@@ -503,13 +503,13 @@ public:
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;
-   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
+   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode, bool& templateMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant, bool& isEmbeddable) = 0;
    virtual bool validateExpressionAttribute(int attrValue, ExpressionAttributes& attributes) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
-   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg, bool& templateArg) = 0;
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 

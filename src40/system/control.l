@@ -1,44 +1,44 @@
-//// === Basic prototypes ===
-//
-//// --- Enumerator ---
-//
-///// An enumerator prototype
-//public interface Enumerator
-//{
-//    /// Returns the current object
-//    abstract get []
-//    
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    abstract bool next []
-//    
-//    /// Resets the enumerator
-//    abstract reset []
-//    
-//    /// returns the enumerator owner
-//    abstract enumerable []
-//    
-//    T<Enumerator> enumerator = self.
-//}
-//
-//// --- enumerator<> ---
-//
-//public interface Enumerator<type>
-//{
-//    abstract bool next []
-//    
-//    abstract type get []
-//    
-//    /// Resets the enumerator
-//    abstract reset []
-//    
-//    /// returns the enumerator owner
-//    abstract enumerable []
-//
-//    abstract cast T<Enumerator> []
-//    
-//    Enumerator<type> enumerator = self.
-//}
-//
+// === Basic prototypes ===
+
+// --- Enumerator ---
+
+/// An enumerator prototype
+public interface Enumerator
+{
+    /// Returns the current object
+    abstract get() {}
+    
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    abstract bool next() {}
+    
+    /// Resets the enumerator
+    abstract reset() {}
+    
+    /// returns the enumerator owner
+    abstract enumerable() {}
+    
+    Enumerator enumerator() = self;
+}
+
+// --- enumerator<> ---
+
+public interface Enumerator<T>
+{
+    abstract bool next() {}
+    
+    abstract T get() {}
+    
+    /// Resets the enumerator
+    abstract reset() {}
+    
+    /// returns the enumerator owner
+    abstract enumerable() {}
+
+    abstract Enumerator cast() {}
+    
+    Enumerator<T> enumerator() = self;
+}
+
 //public abstract Enumerable
 //{
 //    abstract T<Enumerator> enumerator []
@@ -253,15 +253,15 @@ public interface Func1
     /// Executes the action
     abstract closure(param) {}
     
-//    /// Executes the function for every enumeration item
-//    run(Enumerator anEnumerator)
-//    [
-//        while(anEnumerator next)
-//        [
-//            self(anEnumerator get)
-//        ].        
-//    ]
-//    
+    /// Executes the function for every enumeration item
+    run(Enumerator en)
+    {
+        while(en.next())
+        {
+            self(en.get())
+        }
+    }
+    
 //    /// Executes the function for every enumeration item until it returns true
 //    retrieve(Enumerator anEnumerator)
 //    [
@@ -283,13 +283,13 @@ public interface Func<T, TResult>
     /// Executes the action
     abstract TResult closure(T param) {}
     
-//    run(Enumerator<type> e)
-//    [
-//        while(e next)
-//        [
-//            self(e get)
-//        ].        
-//    ]
+    run(Enumerator<T> e)
+    {
+        while(e.next())
+        {
+            self(e.get())
+        }
+    }
 }
 
 /// A base two variable function

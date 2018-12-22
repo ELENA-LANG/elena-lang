@@ -119,18 +119,18 @@
 //        ^ aList.
 //    ]
 //}
-//
-//// --- enumeratorOp ---
-//
-//public extension<Enumerator> enumeratorOp
-//{
+
+// --- enumeratorOp ---
+
+public extension<Enumerator> enumeratorOp
+{
 //    forEach(Func1 aFunction)
 //        = aFunction run(self).
 //
 //    selectBy:aSelector
 //        = Selector new(aSelector, self).
-//}
-//
+}
+
 //// --- enumerableOp ---
 //
 //public extension enumerableOp

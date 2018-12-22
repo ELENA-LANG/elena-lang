@@ -5006,15 +5006,25 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
    bool byRefArg = false;
    bool arrayArg = false;
    bool paramsArg = false;
+   bool templateArg = false;
+   bool typeSet = false;
+
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (_logic->validateArgumentAttribute(current.argument, byRefArg, paramsArg)) {
-
+         if (_logic->validateArgumentAttribute(current.argument, byRefArg, paramsArg, templateArg)) {
+            if (templateArg) {
+               if (!typeSet) {
+                  classRef = resolveTemplateDeclaration(current, scope);
+                  typeSet = true;
+               }
+               else scope.raiseError(errIllegalOperation, current);
+            }
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }      
       else if (current == lxTarget) {
+         typeSet = true;
          classRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
          if (!classRef)
             scope.raiseError(errUnknownClass, current);
@@ -6963,10 +6973,14 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 {
    SNode current = node.firstChild();
    bool explicitMode = false;
+   bool templateMode = false;
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (_logic->validateMethodAttribute(value, explicitMode)) {
+         if (_logic->validateMethodAttribute(value, explicitMode, templateMode)) {
+            if (templateMode) {
+               scope.outputRef = resolveTemplateDeclaration(current, scope);
+            }
             scope.hints |= value;
 
             current.setArgument(value);

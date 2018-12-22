@@ -1625,7 +1625,7 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
    injectOverloadList(scope, info, compiler, classRef);
 }
 
-bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg)
+bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg, bool& templateArg)
 {
    switch ((size_t)attrValue) {
       case V_WRAPPER:
@@ -1636,6 +1636,11 @@ bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, b
       case V_ARGARRAY:
          if (!paramsArg) {
             paramsArg = true;
+            return true;
+         }
+      case V_TEMPLATE:
+         if (!templateArg) {
+            templateArg = true;
             return true;
          }
    }
@@ -1698,6 +1703,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue)
 {
    bool dummy = false;
+   bool dummy2 = false;
    switch ((size_t)attrValue)
    {
       case V_METHOD:
@@ -1706,13 +1712,13 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue)
       case V_CONVERSION:
       //case V_GENERIC:
       case V_ACTION:
-         return validateMethodAttribute(attrValue, dummy);
+         return validateMethodAttribute(attrValue, dummy, dummy2);
       default:
          return false;
    }
 }
 
-bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
+bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode, bool& templateMode)
 {
    switch ((size_t)attrValue)
    {
@@ -1782,6 +1788,10 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          return true;
       case V_SETACCESSOR:
          attrValue = tpSetAccessor;
+         return true;
+      case V_TEMPLATE:
+         attrValue = 0;
+         templateMode = true;
          return true;
       default:
          return false;
