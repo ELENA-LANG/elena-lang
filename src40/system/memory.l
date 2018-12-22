@@ -1373,7 +1373,7 @@ public sealed const struct String : BaseValue
 // --- emptyWideString ---
 
 /// An empty wide literal value
-const wide emptyWideString = ""w;
+public const wide emptyWideString = ""w;
 
 // --- WideString ---
 
@@ -1419,9 +1419,9 @@ public sealed const struct WideString : BaseValue
         intern system'core_routines'__wide.copy(self, anIndex, aSize, anArray)
     }
 
-//    /// Converts to UTF-8 literal
-//    cast T<literal> = literalConvertor convert(self).
-//
+    /// Converts to UTF-8 literal
+    string cast() = stringConvertor.convert(self);
+
 //    T<literal> literal = literalConvertor convert(self).
 //    
 //    bool equal:n
@@ -1480,11 +1480,11 @@ public sealed const struct WideString : BaseValue
 //    /// Concatinates the values
 //    wide add(BaseVariable v)
 //        <= add(v value).
-//    
-//    /// Concatinates the values
-//    wide add(wide aLiteral)
-//        => system'core_routines'__wide.
-//
+    
+    /// Concatinates the values
+    wide add(wide s)
+        => system'core_routines'__wide;
+
 //    /// Concatinates the values
 //    wide add(char aChar)
 //        = self add(wideConvertor convert(aChar)).
@@ -2009,23 +2009,23 @@ public singleton stringConvertor
 //        
 //        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer)).
 //    ]
-//
-//    /// Converts UTF-16 literal to UTF-8 one
-//    convert(wide aLiteral, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//
-//    literal convert(wide aLiteral)
-//    [
-//        int       i := 0.
-//        int       m := 0.
-//        int       page := 0.
-//        int       l := aLiteral length.
-//        T<byte, 256> buffer.
+
+    /// Converts UTF-16 literal to UTF-8 one
+    convert(wide w, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+
+    string convert(wide w)
+    {
+        int  i := 0;
+        int  m := 0;
+        int  page := 0;
+        int  l := w.Length;
+        byte buffer[256];
 //        if (l < 128)
 //        [
-//            self convert(aLiteral, T<ByteArray>(buffer), &m).
-//            
-//            ^ LiteralValue fromByteArray(0, m, T<ByteArray>(buffer))
+            self.convert(w, buffer, ref m);
+            
+            ^ String.fromByteArray(0, m, buffer)
 //        ].
 //
 //        literal retVal := emptyLiteral.
@@ -2046,11 +2046,11 @@ public singleton stringConvertor
 //        ].
 //        
 //        ^ retVal
-//    ]
-//
-//    /// Returns a parameter                
-//    literal convert(literal aLiteral)
-//        = aLiteral.
+    }
+
+    /// Returns a parameter                
+    string convert(string s)
+        = s;
         
     /// Returns the literal presentation of the parameter
     string convert(o)

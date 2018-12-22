@@ -4721,6 +4721,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
                   current.set(variableOne ? lxExtArgument : lxIntExtArgument, 0);
                   break;
                case V_INT8ARRAY:
+               case V_INT16ARRAY:
                   current.set(lxExtArgument, 0);
                   break;
                //case V_SYMBOL:

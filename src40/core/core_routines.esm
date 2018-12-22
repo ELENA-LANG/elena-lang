@@ -107,6 +107,34 @@ procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$@syst
 
 end
 
+procedure __wide."add$system@WideString[2]"
+
+  wlen
+  dec
+  ecopyd
+  bcopya
+  aloadsi 2
+  wlen
+  add
+  acopyr class : system'WideString
+  wcreate
+  bswap
+  wlen
+  dec
+  ecopyd
+  dcopy 0
+  callextr api : winsert
+  ecopyd
+  aloadsi 2
+  wlen
+  eswap
+  callextr api : winsert
+  acopyb
+
+  quitn 2
+
+end                                                
+
 procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
 
   bloadsi 3
@@ -120,6 +148,17 @@ procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&ByteNumbe
 
   quitn 4
 
+end
+
+procedure __literalconvertor."convert$system@WideString$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+
+  aloadsi 2
+  bloadsi 3
+  callextr api : wstrtostr
+  bloadsi 4
+  nwritei 0
+  quitn 4
+  
 end
 
 procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[4]"

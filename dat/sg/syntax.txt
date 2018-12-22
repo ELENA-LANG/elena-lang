@@ -156,6 +156,7 @@ OPERAND_EXPRESSION ->
 	identifier
 	| integer	
 	| hex
+	| wide
 
 SUB_EXPRESSION ->
 	identifier SUB_IDENTIFIER_OPERATIONS

@@ -367,21 +367,21 @@ sealed struct ConsoleReader //:: Object, interface<IConsoleReader>
 //        ^ false.                   
 //    ]
 
-//    read(short[] dump, ref int retVal)
-//    {
-//        int len := retVal;
-//        
-//        extern
-//        {
-//            extern KERNEL32.ReadConsoleW(theHandle, dump, len, ref retVal, 0)
-//        }
-//    }
+    read(short[] dump, ref int retVal)
+    {
+        int len := retVal;
+        
+        extern
+        {
+            extern KERNEL32.ReadConsoleW(theHandle, dump, len, ref retVal, 0)
+        }
+    }
     
     wide readWide()
     {
         short dump[127];
         int   len := 0;
-        var   output := emptyWideString;
+        wide  output := emptyWideString;
         
         bool continue := true;
         while (continue)
@@ -397,7 +397,7 @@ sealed struct ConsoleReader //:: Object, interface<IConsoleReader>
                     continue := false
                 };
             
-            var temp := WideString.fromShortArray(0, len, dump);
+            wide temp := WideString.fromShortArray(0, len, dump);
             
             output := output + temp;
         };
