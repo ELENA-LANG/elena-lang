@@ -153,7 +153,7 @@ public:
 
       return isReadonly(info);
    }
-//   virtual bool isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node);
+   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
 
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
 //   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
@@ -170,7 +170,7 @@ public:
 //////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode);
    virtual void injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
 
-//   virtual void injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
+   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
 
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
    virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
@@ -186,7 +186,7 @@ public:
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg, bool& templateArg);
 
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag);
-   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);
+   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);
 
    virtual bool isDefaultConstructorEnabled(ClassInfo& info)
    {

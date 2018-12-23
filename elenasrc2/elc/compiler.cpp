@@ -1543,24 +1543,20 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope, bool ex
    if (node == lxParent) {
       parentRef = resolveParentRef(node, scope, false);
    }
-//   else if (node != lxNone) {
-//      SNode terminal = node.firstChild(lxTerminalMask);
-//      if (terminal != lxNone) {
-//         parentRef = resolveImplicitIdentifier(scope, terminal);
-//
-//         if (!parentRef)
-//            scope.raiseError(errInvalidParent, terminal);
-//      }
-//      else {
-//         SNode classNode = node.findChild(lxClassRefAttr);
-//         if (classNode != lxNone)
-//            parentRef = scope.moduleScope->mapFullReference(classNode.identifier(), true);
-//      }
-//   }
+   else if (node != lxNone) {
+      if (node == lxAttribute) {
+         if (node.argument == V_CLASS) {
+            node = node.nextNode();
+            if (node != lxNone)
+               parentRef = resolveParentRef(node, scope, false);
+         }
+         else scope.raiseError(errInvalidSyntax, node);
+      }      
+   }
 
    if (scope.info.header.parentRef == scope.reference) {
       if (parentRef != 0) {
-         scope.raiseError(errInvalidSyntax/*, node*/);
+         scope.raiseError(errInvalidSyntax, node);
       }
    }
    else if (parentRef == 0) {
@@ -3785,12 +3781,12 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 
    // check if the class was already compiled
    if (!node.argument) {
-      compileParentDeclaration(node, scope, false);
+      compileParentDeclaration(node.firstChild(), scope, false);
 
-      //if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
-      //   // COMPILER MAGIC : inject interface implementation
-      //   _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef); 
-      //}
+      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
+         // COMPILER MAGIC : inject interface implementation
+         _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef); 
+      }
 
       declareVMT(node, scope);
 
@@ -6731,7 +6727,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       scope.raiseError(errDuplicatedMethod, current);
    }
    else {
-//      bool privateOne = test(message, SEALED_MESSAGE);
+      bool privateOne = test(message, STATIC_MESSAGE);
 //      bool specialOne = test(methodHints, tpConversion);
 //      if (test(message, SPECIAL_MESSAGE)) {
 //         // initialize method can be overridden
@@ -6747,18 +6743,18 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       }
 
       // if the method is sealed, it cannot be overridden
-      if (!included && sealedMethod/* && !specialOne*/) {
+      if (!included && sealedMethod && !test(methodHints, tpAbstract)) {
          scope.raiseError(errClosedMethod, findParent(current, lxClass/*, lxNestedClass*/));
       }
 
-//      // HOTFIX : make sure there are no duplicity between public and private ones
-//      if (privateOne) {
-//         if (scope.info.methods.exist(message & ~SEALED_MESSAGE))
-//            scope.raiseError(errDupPublicMethod, current.findChild(lxIdentifier));
-//      }
-//      else  if (scope.info.methods.exist(message | SEALED_MESSAGE))
-//         scope.raiseError(errDuplicatedMethod, current);
-//
+      // HOTFIX : make sure there are no duplicity between public and private ones
+      if (privateOne) {
+         if (scope.info.methods.exist(message & ~STATIC_MESSAGE))
+            scope.raiseError(errDupPublicMethod, current.findChild(lxIdentifier));
+      }
+      else  if (scope.info.methods.exist(message | STATIC_MESSAGE))
+         scope.raiseError(errDuplicatedMethod, current);
+
       if (embeddableClass && !test(methodHints, tpMultimethod)) {
          // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
 
@@ -6950,7 +6946,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
    bool withAbstractMethods = false;
    bool disptacherNotAllowed = false;
    bool emptyStructure = false;
-   _logic->validateClassDeclaration(scope.info, withAbstractMethods, disptacherNotAllowed, emptyStructure);
+   _logic->validateClassDeclaration(*scope.moduleScope, scope.info, withAbstractMethods, disptacherNotAllowed, emptyStructure);
    if (withAbstractMethods) {
       scope.raiseError(errAbstractMethods, node);
    }      
@@ -7027,7 +7023,10 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
 {
    ref_t parentRef = 0;
-   if (node.existChild(lxTarget)) {
+   if (test(node.type, lxTerminalMask)) {
+      parentRef = resolveImplicitIdentifier(scope, node);
+   }
+   else if (node.existChild(lxTarget)) {
       // if it is a template based class
       parentRef = resolveTemplateDeclaration(node, scope);
    }
@@ -8755,23 +8754,23 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
 //   SNode codeNode = methNode.appendNode(lxResendExpression, message);
 //   codeNode.appendNode(lxArgDispatcherAttr);
 //}
-//
-//void Compiler :: injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument)
-//{
-//   SNode methNode = classNode.appendNode(lxClassMethod, message);
-//   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
-//   methNode.appendNode(lxAttribute, V_EMBEDDABLE);
-////   methNode.appendNode(lxAttribute, V_SEALED);
-//
-//   SNode expr = methNode.appendNode(lxDispatchCode);
-//   expr.appendNode(type, argument);
-//}
+
+void Compiler :: injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument)
+{
+   SNode methNode = classNode.appendNode(lxClassMethod, message);
+   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
+   methNode.appendNode(lxAttribute, V_EMBEDDABLE);
+//   methNode.appendNode(lxAttribute, V_SEALED);
+
+   SNode expr = methNode.appendNode(lxDispatchCode);
+   expr.appendNode(type, argument);
+}
 
 void Compiler :: injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef)
 {
    SNode methNode = classNode.appendNode(lxClassMethod, message);
    methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
-   //methNode.appendNode(lxAttribute, tpEmbeddable);
+   methNode.appendNode(lxAttribute, tpEmbeddable);
    methNode.appendNode(lxAttribute, tpSealed);
 
    if (outputRef)

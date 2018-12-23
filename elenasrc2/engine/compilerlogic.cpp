@@ -250,7 +250,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       int hint = info.methodHints.get(Attribute(message, maHint));
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
 
-//      result.embeddable = test(hint, tpEmbeddable);
+      result.embeddable = test(hint, tpEmbeddable);
       result.closure = test(hint, tpAction);
       result.dynamicRequired = test(hint, tpDynamic);
 
@@ -778,83 +778,82 @@ void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node,
    }
 }
 
-//bool isEmbeddableDispatcher(_CompilerScope& scope, SNode current)
-//{
-//   SNode attr = current.firstChild();
-//   bool embeddable = false;
-//   bool implicit = true;
-//   while (attr != lxNone) {
-//      if (attr == lxAttribute) {
-//         switch (attr.argument) {
-//         case V_EMBEDDABLE:
-//         {
-//            SNode dispatch = current.findChild(lxDispatchCode);
-//
-//            embeddable = isSingleStatement(dispatch);
-//            break;
-//         }
-//         case V_METHOD:
-//         case V_CONSTRUCTOR:
-//         case V_DISPATCHER:
-//            implicit = false;
-//            break;
-//
-//         }
-//      }
-//      else if (attr == lxIdentifier && embeddable && implicit) {
-//         if (scope.attributes.get(attr.identifier()) == V_DISPATCHER) {
-//            return true;
-//         }
-//         else break;
-//      }
-//
-//      attr = attr.nextNode();
-//   }
-//
-//   return false;
-//}
-//
-//bool CompilerLogic :: isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod && current.existChild(lxDispatchCode)) {
-//         if (isEmbeddableDispatcher(scope, current)) {
-//            return true;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   return false;
-//}
-//
-//void CompilerLogic :: injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t parentRef)
-//{
-//   SNode current = node.firstChild();
-//   SNode dispatchMethodNode;
-//   SNode dispatchNode;
-//   while (current != lxNone) {
-//      if (current == lxClassMethod && current.existChild(lxDispatchCode)) {
-//         if (isEmbeddableDispatcher(scope, current)) {
-//            dispatchMethodNode = current;
-//            dispatchNode = current.findChild(lxDispatchCode).firstChild();
-//         }
-//
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   ClassInfo info;
-//   scope.loadClassInfo(info, parentRef);
-//   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
-//      if (it.key().value2 == maHint && test(*it, tpAbstract)) {
-//         compiler.injectVirtualDispatchMethod(node, it.key().value1, dispatchNode.type, dispatchNode.identifier());
-//      }
-//   }
-//
-//   dispatchMethodNode = lxIdle;
-//}
+bool isEmbeddableDispatcher(_ModuleScope& scope, SNode current)
+{
+   SNode attr = current.firstChild();
+   bool embeddable = false;
+   bool implicit = true;
+   while (attr != lxNone) {
+      if (attr == lxAttribute) {
+         switch (attr.argument) {
+            case V_EMBEDDABLE:
+            {
+               SNode dispatch = current.findChild(lxDispatchCode);
+
+               embeddable = isSingleStatement(dispatch);
+               break;
+            }
+            case V_METHOD:
+            case V_CONSTRUCTOR:
+            case V_DISPATCHER:
+               implicit = false;
+               break;
+         }
+      }
+      else if (attr == lxNameAttr && embeddable && implicit) {
+         if (scope.attributes.get(attr.firstChild(lxTerminalMask).identifier()) == V_DISPATCHER) {
+            return true;
+         }
+         else break;
+      }
+
+      attr = attr.nextNode();
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod && current.existChild(lxDispatchCode)) {
+         if (isEmbeddableDispatcher(scope, current)) {
+            return true;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+void CompilerLogic :: injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef)
+{
+   SNode current = node.firstChild();
+   SNode dispatchMethodNode;
+   SNode dispatchNode;
+   while (current != lxNone) {
+      if (current == lxClassMethod && current.existChild(lxDispatchCode)) {
+         if (isEmbeddableDispatcher(scope, current)) {
+            dispatchMethodNode = current;
+            dispatchNode = current.findChild(lxDispatchCode).firstChild();
+         }
+
+      }
+      current = current.nextNode();
+   }
+
+   ClassInfo info;
+   scope.loadClassInfo(info, parentRef);
+   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+      if (it.key().value2 == maHint && test(*it, tpAbstract)) {
+         compiler.injectVirtualDispatchMethod(node, it.key().value1, dispatchNode.type, dispatchNode.identifier());
+      }
+   }
+
+   dispatchMethodNode = lxIdle;
+}
 
 void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods)
 {
@@ -1725,9 +1724,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_IFNOTBRANCH:
 //         attrValue = tpIfNotBranch;
 //         return true;
-//      case V_EMBEDDABLE:
-//         attrValue = tpEmbeddable;
-//         return true;
+      case V_EMBEDDABLE:
+         attrValue = tpEmbeddable;
+         return true;
 //      case V_GENERIC:
 //         attrValue = (tpGeneric | tpSealed);
 //         return true;
@@ -2074,7 +2073,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRe
 //////   return true;
 //////}
 
-void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool&/* disptacherNotAllowed*/, bool& emptyStructure)
+void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure)
 {
    if (!isAbstract(info)) {
       for (auto it = info.methodHints.start(); !it.Eof(); it++) {
@@ -2084,9 +2083,9 @@ void CompilerLogic :: validateClassDeclaration(ClassInfo& info, bool& withAbstra
       }
    }
 
-   //// interface class cannot have a custom dispatcher method
-   //if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), true))
-   //   disptacherNotAllowed = true;
+   // interface class cannot have a custom dispatcher method
+   if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(scope.dispatch_message, true))
+      disptacherNotAllowed = true;
 
    // a structure class should contain fields
    if (test(info.header.flags, elStructureRole) && info.size == 0)

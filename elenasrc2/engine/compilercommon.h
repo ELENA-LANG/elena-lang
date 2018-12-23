@@ -121,7 +121,7 @@ enum MethodHint
    tpDispatcher  = 0x000004,
    tpPrivate     = 0x000005,
    tpStackSafe   = 0x000010,
-//   tpEmbeddable  = 0x000020,
+   tpEmbeddable  = 0x000020,
 //   tpGeneric     = 0x000040,
    tpAction      = 0x000080,
 //   tpIfBranch    = 0x000100,
@@ -347,7 +347,7 @@ public:
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef) = 0;
-//   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
+   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
 //   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
 //
    virtual void injectLocalBoxing(SNode node, int size) = 0;
@@ -401,7 +401,7 @@ public:
       bool  directResolved;
       bool  withCustomDispatcher;
       bool  stackSafe;
-//      bool  embeddable;
+      bool  embeddable;
 //      bool  withOpenArgDispatcher;
 //      bool  withOpenArg1Dispatcher;
 //      bool  withOpenArg2Dispatcher;
@@ -412,7 +412,7 @@ public:
       ChechMethodInfo()
       {
          directResolved = false;
-         /*embeddable = */found = false;
+         embeddable = found = false;
          outputReference = 0;
          withCustomDispatcher = false;
          stackSafe = false;
@@ -472,10 +472,7 @@ public:
    virtual bool isRole(ClassInfo& info) = 0;          
    virtual bool isAbstract(ClassInfo& info) = 0;
 
-//   virtual bool isWithEmbeddableDispatcher(_CompilerScope& scope, SNode node) = 0;
-//
-////   virtual bool isPrimitiveRef(ref_t reference) = 0;
-////   virtual bool isPrimitiveArray(ref_t reference) = 0;
+   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
@@ -492,13 +489,14 @@ public:
    virtual void injectNewOperation(SyntaxWriter& writer, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
 //////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
 ////   virtual void injectOverloadList(_CompilerScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef) = 0;
-//   virtual void injectInterfaceDisaptch(_CompilerScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
+   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
    virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
-   virtual void validateClassDeclaration(ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure) = 0;
+   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
+      bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
    virtual bool validateClassAttribute(int& attrValue) = 0;

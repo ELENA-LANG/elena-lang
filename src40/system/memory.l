@@ -1349,7 +1349,7 @@ public sealed const struct String : BaseValue
 //        => system'core_routines'__literal.
 
     /// Returns the string enumerator
-    Enumerator<char> enumerator() = new LiteralEnumerator(self);
+    Enumerator<char> enumerator() = new StringEnumerator(self);
 
 //    /// Returns the string indexer
 //    Indexer<char> indexer = LiteralIndexer new(self).
@@ -2296,8 +2296,8 @@ public singleton wideConvertor
 
 // --- LiteralEnumerator ---
 
-/// A literal enumerator
-class LiteralEnumerator : Enumerator<char>
+/// A string enumerator
+class StringEnumerator : Enumerator<char>
 {
     string   theLiteral;
     ref<int> theIndex;
@@ -2346,10 +2346,10 @@ class LiteralEnumerator : Enumerator<char>
         ^ false
     }
     
-//    cast T<Enumerator> = Enumerator::
-//    {
-//        embeddable dispatch => self.
-//    }.
+    Enumerator cast() = class Enumerator:
+    {
+        embeddable dispatch() => self;
+    };
     
     enumerable() = theLiteral;
     
