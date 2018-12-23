@@ -1226,16 +1226,16 @@ public sealed const struct String : BaseValue
 //    /// Compares the values
 //    bool less(char aChar)
 //        <= less(T<literal>(aChar)).
-//
-//    /// Returns the character at the specified index
-//    char getAt(int anIndex)
-//    [
-//        char aChar := $0.
-//        self read(anIndex, &aChar).
-//        
-//        ^ CharValue new(aChar).
-//    ]
-//
+
+    /// Returns the character at the specified index
+    char at(int n)
+    {
+        char ch := $0;
+        self.read(n, ref ch);
+        
+        ^ new CharValue(ch)
+    }
+
 //    literal add : anObject 
 //        <= add(T<literal>(anObject)).
 //
@@ -1262,11 +1262,11 @@ public sealed const struct String : BaseValue
 //        
 //        ^ retVal.
 //    ]    
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    read(int anIndex, ref<char> aChar)
-//        => system'core_routines'__literal.
-//
+
+    // Reads the character at the specified index and saves into an output parameter
+    read(int index, ref char ch)
+        => system'core_routines'__literal;
+
 //    // Reads the byte at the specified index and saves into an output parameter
 //    read(int anIndex, ref<byte> anInt)
 //        => system'core_routines'__literal.
@@ -1832,20 +1832,20 @@ public singleton stringConvertor
 //    
 //    literal convert(BaseVariable v, int radix)
 //        <= convert(v value, radix).
-//    
-//    /// Converts the parameter to the literal value
-//    convert(char aValue, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//    
-//    literal convert(char aValue)
-//    [
-//        T<byte,4> buffer.
-//        int       length := 0.
-//        
-//        self convert(aValue, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer))
-//    ]
+    
+    /// Converts the parameter to the literal value
+    convert(char ch, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+    
+    string convert(char ch)
+    {
+        byte buffer[4];
+        int  length := 0;
+        
+        self.convert(ch, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
     
     convert(int n, byte[] buffer, ref int length)
         => system'core_routines'__literalconvertor;
@@ -2294,7 +2294,7 @@ public singleton wideConvertor
 
 // === Enumerators / Indexers
 
-// --- LiteralEnumerator ---
+// --- StringEnumerator ---
 
 /// A string enumerator
 class StringEnumerator : Enumerator<char>

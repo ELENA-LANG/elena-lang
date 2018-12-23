@@ -5881,20 +5881,20 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
             // idle body;
             declareIdleMethod(tape, node.argument, sourcePathRef);
             break;
-//         default:
-//            if (test(current.type, lxExprMask)) {
-//               if (!open) {
-//                  open = true;
-//
-//                  declareMethod(tape, node.argument, sourcePathRef, 0, 0, false, false);
-//
-//                  generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
-//                  //if (messageRef != -1)
-//                  //   declareMessageInfo(tape, messageRef);
-//               }
-//
-//               generateObjectExpression(tape, current);
-//            }
+         default:
+            if (test(current.type, lxExprMask)) {
+               if (!open) {
+                  open = true;
+
+                  declareMethod(tape, node.argument, sourcePathRef, 0, 0, false, false);
+
+                  generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
+                  //if (messageRef != -1)
+                  //   declareMessageInfo(tape, messageRef);
+               }
+
+               generateObject(tape, current);
+            }
       }
 
       current = current.nextNode();

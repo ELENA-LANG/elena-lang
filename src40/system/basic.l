@@ -2312,20 +2312,16 @@ public sealed const struct CharValue : BaseValue
 //
 //    /// Clones the value
 //    clone = CharValue new(self).
-//
-//    /// Returns the literal value
-//    T<literal> literal = literalConvertor convert(self).
-//
+
+    /// Returns the literal value
+    string Printable = stringConvertor.convert(self);
+
 //    /// Returns the literal value
 //    cast T<literal> = literalConvertor convert(self).
 //    
 //    /// Returns the wide literal value
 //    cast T<wide> = wideConvertor convert(self).
 //    
-//    /// Reads the number of bytes to represent the symbol
-//    readLengthTo(ref<int> aLength)
-//        => system'core_routines'__char.
-//
 //    /// Reads the number of bytes to represent the symbol
 //    readWideLengthTo(ref<int> aRetVal)
 //    [
@@ -2337,16 +2333,21 @@ public sealed const struct CharValue : BaseValue
 //
 //        aRetVal value := aLength
 //    ]
-//        
-//    /// Retuns the number of bytes to represent the symbol        
-//    embeddable int length
-//    [
-//        int aLength := 0.
-//        self readLengthTo(&aLength).
-//        
-//        ^ aLength
-//    ]
-//    
+
+    /// Reads the number of bytes to represent the symbol
+    readLengthTo(ref int retVal)
+        => system'core_routines'__char;
+
+    /// Retuns the number of bytes to represent the symbol        
+    /*embeddable */get int Length()
+    {
+        int retVal := 0;
+        
+        self.readLengthTo(ref retVal);
+        
+        ^ retVal
+    }
+
 //    /// Retuns the number of short integers to represent the symbol
 //    embeddable int wideLength
 //    [

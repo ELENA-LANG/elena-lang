@@ -619,7 +619,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->extensionMode = false;
    this->multiMethod = false;
    this->closureMode = false;
-//   this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
+   this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
    this->subCodeMode = false;
    this->abstractMethod = false;
 //   this->genericClosure = false;
@@ -668,10 +668,10 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
       }
       else {
          if (terminal.compare(SELF_VAR)) {
-            //if (closureMode || nestedMode) {
-            //   return parent->mapTerminal(OWNER_VAR, false, mode | scopeMode);
-            //}
-            /*else */return mapSelf();
+            if (closureMode || nestedMode) {
+               return parent->mapTerminal(OWNER_VAR, false, mode | scopeMode);
+            }
+            else return mapSelf();
          }
       //   else if (!closureMode && (terminal.compare(GROUP_VAR) || terminal.compare(OLD_GROUP_VAR))) {
       //      if (extensionMode) {

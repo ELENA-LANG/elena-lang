@@ -51,6 +51,28 @@ procedure __object."__getClass[1]"
 
 end
 
+procedure __char."readLengthTo$@system@ref#1&IntNumber[2]"
+
+  bloadsi 2
+  nload
+  // ; < 80 - 1
+  ecopy 1
+  lessn labEnd 80h
+  eaddn 1
+  // ; <= 800 - 2
+  lessn labEnd 800h 
+  eaddn 1
+  lessn labEnd 10000h 
+  // ; <= 10000 - 3
+  eaddn 1
+  // ; - 4
+labEnd:
+  dcopye
+  nsave  
+  quitn 2
+
+end
+
 procedure __literal."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1
@@ -106,6 +128,32 @@ procedure __literal."add$system@String[2]"
   quitn 2
 
 end                                                
+
+procedure __literal."read$system@IntNumber$@system@ref#1&CharValue[3]"
+
+  blen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  acopyb  
+  callextr api : strtochar
+  ifr labErr 0
+  bloadsi 3
+  dcopye
+  nsave
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
 
 procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
 
@@ -187,6 +235,27 @@ procedure __literalconvertor."convert$system@WideString$@system@Array#1&ByteNumb
   nwritei 0
   quitn 4
   
+end
+
+procedure __literalconvertor."convert$system@CharValue$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+
+  aloadsi 2
+  nload
+  ifn labEmpty 0
+
+  bloadsi 3
+
+  callextr api : chartostr
+  bloadsi 4
+  nwritei 0
+  quitn 4
+  
+labEmpty:
+  ecopy 0
+  bloadsi 4
+  nwritei 0
+  quitn 4
+
 end
 
 procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[4]"
