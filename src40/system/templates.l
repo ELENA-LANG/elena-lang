@@ -255,14 +255,13 @@ public if<if_block,else_block>:else(expr)
     cast bool(expr) ? if_block : else_block
 }
 
-//// --- ifnot statement ---
-//
-//public __block ifnot<expr>
-//[
-//    T<bool>(expr) !
-//    [
-//    ].
-//]
+// --- ifnot statement ---
+
+public ifnot<if_block>(expr)
+{
+    cast bool(expr) ! if_block
+}
+
 //
 //public __block __block ifnot<expr>
 //[

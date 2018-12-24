@@ -1581,11 +1581,11 @@ public extension objectOp
 //        ^ self
 //    ]    
 //}
-//
-//// --- charOp ---
-//
-//public extension<char> charOp
-//{
+
+// --- charOp ---
+
+public extension charOp : char
+{
 //    bool isWhitespace
 //    [
 //        self =>
@@ -1650,7 +1650,7 @@ public extension objectOp
 //            
 //        ^ ch == 39
 //    ]
-//}
+}
 
 // --- byteArrayHelper ---
 

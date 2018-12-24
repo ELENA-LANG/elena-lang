@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * TokenEnumerator : class TextBuilder should not be found (system'text is not imported)
                  * reimplement lazy expressions
                  * fix vm console project type
                  * uncomment extern scope - ConsoleReader

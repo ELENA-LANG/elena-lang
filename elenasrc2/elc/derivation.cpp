@@ -240,9 +240,9 @@ void DerivationWriter :: newNode(Symbol symbol)
 //////      case nsDynamicSize:
 //////         _writer.newNode(lxSize, -1);
 //////         break;
-////      case nsSwitching:
-////         _writer.newNode(lxSwitching);
-////         break;
+      case nsSwitching:
+         _cacheWriter.newNode(lxSwitching);
+         break;
 ////      case nsSubCode:
 ////      case nsTokenParam:
 ////      case nsDispatchExpression:
@@ -1893,6 +1893,41 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& cu
    }
 }
 
+void DerivationWriter :: generateSwitchTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxSwitchOption:
+//         case lxBiggerSwitchOption:
+//         case lxLessSwitchOption:
+//            if (current.type == lxBiggerSwitchOption) {
+//               writer.newNode(lxOption, GREATER_MESSAGE_ID);
+//            }
+//            else if (current.type == lxLessSwitchOption) {
+//               writer.newNode(lxOption, LESS_MESSAGE_ID);
+//            }
+            /*else */writer.newNode(lxOption, EQUAL_OPERATOR_ID);
+            generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
+            generateCodeExpression(writer, current.firstChild(lxCode), derivationScope, false);
+            writer.closeNode();
+            break;
+//         case lxLastSwitchOption:
+//            writer.newNode(lxElse);
+//            writer.newBookmark();
+//            generateObjectTree(writer, current.firstChild(), scope);
+//            writer.removeBookmark();
+//            writer.closeNode();
+//            break;
+//         default:
+//            scope.raiseError(errInvalidSyntax, current);
+//            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode)
 {
    writer.newBookmark();
@@ -1953,6 +1988,12 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
          case lxPropertyParam:
             // to indicate the get property call
             writer.appendNode(lxPropertyParam);
+            break;
+         case lxSwitching:
+            generateSwitchTree(writer, current, derivationScope);
+            writer.insert(lxSwitching);
+            writer.closeNode();
+            expressionExpected = true;
             break;
          default:
             if (isTerminal(current.type)) {
@@ -2971,12 +3012,6 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
 //   //      generateExpressionTree(writer, current, scope, EXPRESSION_IMPLICIT_MODE);
 //   //      writer.closeNode();
 //   //      break;
-//   //   case lxSwitching:
-//   //      generateSwitchTree(writer, current, scope);
-//   //      writer.insert(lxSwitching);
-//   //      writer.closeNode();
-//   //      expressionExpected = true;
-//   //      break;
 //   //   case lxIdle:
 //   //      break;
 //      default:
@@ -3374,42 +3409,6 @@ void TemplateGenerator :: importClass(SyntaxWriter& output, SNode classNode)
    }
 }
 
-//void DerivationTransformer :: generateSwitchTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
-//         case lxSwitchOption:
-//         case lxBiggerSwitchOption:
-//         case lxLessSwitchOption:
-//            if (current.type == lxBiggerSwitchOption) {
-//               writer.newNode(lxOption, GREATER_MESSAGE_ID);
-//            }
-//            else if (current.type == lxLessSwitchOption) {
-//               writer.newNode(lxOption, LESS_MESSAGE_ID);
-//            }
-//            else writer.newNode(lxOption, EQUAL_MESSAGE_ID);
-//            writer.newBookmark();
-//            generateObjectTree(writer, current.firstChild(), scope);
-//            writer.removeBookmark();
-//            writer.closeNode();
-//            break;
-//         case lxLastSwitchOption:
-//            writer.newNode(lxElse);
-//            writer.newBookmark();
-//            generateObjectTree(writer, current.firstChild(), scope);
-//            writer.removeBookmark();
-//            writer.closeNode();
-//            break;
-//         default:
-//            scope.raiseError(errInvalidSyntax, current);
-//            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
 //void DerivationTransformer :: generateClosureTree(SyntaxWriter& writer, SNode node, DerivationScope& scope)
 //{
 //   SNode current = node.firstChild();

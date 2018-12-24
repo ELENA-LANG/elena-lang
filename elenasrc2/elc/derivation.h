@@ -169,6 +169,7 @@ class DerivationWriter : public _DerivationWriter
    void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/, bool templateArgMode = false);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
+   void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
    void generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
@@ -395,7 +396,6 @@ class TemplateGenerator //: public _DerivationTransformer
 //   void generateMessage(SyntaxWriter& writer, SNode node, DerivationScope& scope/*, bool templateMode*/);
 //   void generateTypeAttribute(SyntaxWriter& writer, SNode node, DerivationScope& scope, bool templateMode);
 //
-//   void generateSwitchTree(SyntaxWriter& writer, SNode current, DerivationScope& scope);
 //   bool generateCodeTemplate(SyntaxWriter& writer, DerivationScope& scope, SubjectMap* parentAttributes);
 //   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
 //   void generateVariableTree(SyntaxWriter& writer, SNode node, DerivationScope& scope);
