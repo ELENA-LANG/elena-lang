@@ -52,8 +52,8 @@ class DerivationWriter : public _DerivationWriter
 
    struct Scope
    {
-      ScopeType    templateMode;
-      ForwardMap   parameters;
+      ScopeType      templateMode;
+      ForwardMap     parameters;
 
       bool isNameParameter(ident_t name, ref_t& argument)
       {
@@ -127,6 +127,7 @@ class DerivationWriter : public _DerivationWriter
    _ModuleScope* _scope;
    ident_t       _ns;
    ident_t       _filePath;
+   IdentifierList _importedNs;
 
    void loadTemplateParameters(Scope& scope, SNode node);
    void loadTemplateExprParameters(Scope& scope, SNode node);
@@ -157,6 +158,7 @@ class DerivationWriter : public _DerivationWriter
    void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
+   void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode);
@@ -172,20 +174,21 @@ class DerivationWriter : public _DerivationWriter
    void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 
    void declareType(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/);
-   void includeModule(SyntaxWriter& writer, SNode ns/*, DerivationScope& scope*/);
+   void generateImport(SyntaxWriter& writer, SNode ns);
 
 public:
    void begin();
    void end();
 
    void newNamespace(ident_t ns, ident_t filePath);
+   void importModule(ident_t moduke);
    void closeNamespace();
 
    virtual void writeSymbol(Symbol symbol);
    virtual void writeTerminal(TerminalInfo& terminal);
 
    DerivationWriter(SyntaxTree& target, _ModuleScope* scope)
-      :  _output(target), _cacheWriter(_cache), _types(NULL, freestr)
+      :  _output(target), _cacheWriter(_cache), _types(NULL, freestr), _importedNs(nullptr, freestr)
    {
       _cachingLevel = _level = 0;
 
@@ -435,9 +438,11 @@ public:
 //
 //   void generate(SyntaxWriter& writer, _CompilerScope& scope, ident_t sourcePath, ident_t ns, IdentifierList* imports);
 
-   ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
+   ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters, bool importMode = false);
    void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
    void generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
+
+   void importClass(SyntaxWriter& output, SNode node);
 
    TemplateGenerator(SyntaxTree& tree);
 };

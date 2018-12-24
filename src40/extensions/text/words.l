@@ -164,69 +164,69 @@
 //    
 //    bool isWhitespace = theSpaceMode.    
 //}
-//
-//public class TokenEnumerator :: Enumerator<literal>, interface<Enumerator>
+
+//public class TokenEnumerator : Enumerator<string>
 //{
-//    literal         theLiteral.
-//    ref<int>        theIndex.
-//    T<TextBuilder>  theBuffer.    
-//    T<Statemachine> theDFA.
+//    string       theLiteral;
+//    ref<int>     theIndex;
+//    TextBuilder  theBuffer;
+//    Statemachine theDFA;
 //    
-//    constructor new(literal aLiteral, Statemachine dfa)
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := 0.
-//        theBuffer := TextBuilder new.
-//        theDFA := dfa.
-//    ]    
+//    constructor(string s, Statemachine dfa)
+//    {
+//        theLiteral := s;
+//        theIndex := 0;
+//        theBuffer := new TextBuilder();
+//        theDFA := dfa;
+//    }    
 //    
-//    constructor new(literal aLiteral)
-//        <= new(aLiteral, SimpleStatemachine new).
-//    
-//    constructor new : val
-//        <= new(val literal, SimpleStatemachine new).
-//    
-//    reset 
-//    [
-//        theIndex value := 0.
-//    ]
-//    
-//    enumerable = theLiteral.
-//    
-//    bool next
-//    [
-//        theBuffer clear.
-//
-//        int  aLength := 0.
-//        int  aCurrent := theIndex.
-//        char aChar := $0.
-//        int  aCharLen := 0.
-//        
-//        theLiteral readLengthTo(&aLength).
-//        
-//        while (aCurrent < aLength)
-//        [
-//            theLiteral read(aCurrent, &aChar).
-//            
-//            if (theDFA proceed(aChar))
-//                [
-//                    theIndex value := aCurrent.
-//                    
-//                    ^ true
-//                ];
-//                [
-//                    ifnot (theDFA isWhitespace)
-//                        [ theBuffer write(aChar) ]
-//                ].
-//                
-//            aChar readLengthTo(&aCharLen).
-//            aCurrent := aCurrent + aCharLen
-//        ].
-//
-//        theIndex value := aCurrent.
-//
-//        ^ theBuffer isNonempty
-//    ]
-//    
-//    literal get = theBuffer literal.
+////    constructor new(literal aLiteral)
+////        <= new(aLiteral, SimpleStatemachine new).
+////    
+////    constructor new : val
+////        <= new(val literal, SimpleStatemachine new).
+////    
+////    reset 
+////    [
+////        theIndex value := 0.
+////    ]
+////    
+////    enumerable = theLiteral.
+////    
+////    bool next
+////    [
+////        theBuffer clear.
+////
+////        int  aLength := 0.
+////        int  aCurrent := theIndex.
+////        char aChar := $0.
+////        int  aCharLen := 0.
+////        
+////        theLiteral readLengthTo(&aLength).
+////        
+////        while (aCurrent < aLength)
+////        [
+////            theLiteral read(aCurrent, &aChar).
+////            
+////            if (theDFA proceed(aChar))
+////                [
+////                    theIndex value := aCurrent.
+////                    
+////                    ^ true
+////                ];
+////                [
+////                    ifnot (theDFA isWhitespace)
+////                        [ theBuffer write(aChar) ]
+////                ].
+////                
+////            aChar readLengthTo(&aCharLen).
+////            aCurrent := aCurrent + aCharLen
+////        ].
+////
+////        theIndex value := aCurrent.
+////
+////        ^ theBuffer isNonempty
+////    ]
+////    
+////    literal get = theBuffer literal.
 //}

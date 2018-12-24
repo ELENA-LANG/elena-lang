@@ -1,10 +1,10 @@
-//public interface<type>
-//{
-//    cast T<type> = type::
-//    {
-//        embeddable dispatch => self.
-//    }.
-//}
+public interface<T>
+{
+    T cast() = class T:
+    {
+        embeddable dispatch() => self;
+    };
+}
 
 property prop<T>
 {

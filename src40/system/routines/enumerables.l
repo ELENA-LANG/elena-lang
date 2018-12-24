@@ -135,9 +135,9 @@
 
 public extension enumerableOp
 {
-//    forEach(Func1 aFunction)
-//        = aFunction run(T<Enumerator>(self enumerator)).
-//
+    forEach(Func1 f)
+        = f.run(cast Enumerator(self.enumerator()));
+
 //    forEach(ExtensionMessage anExtMessage)
 //        = self~enumerableOp forEach(:n)(n~anExtMessage eval).
 //        

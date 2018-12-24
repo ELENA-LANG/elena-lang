@@ -668,17 +668,10 @@ void _ELC_::Project :: buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMap
          _ELENA_::TextFileReader sourceFile(fullPath.c_str(), getDefaultEncoding(), true);
          if (!sourceFile.isOpened())
             raiseError(errInvalidFile, filePath);
-      
-         // declare a namespace
-         scope.declareNamespace(ns.c_str());
-         writer.newNamespace(ns, filePath);
-         parser.parse(&sourceFile, writer, getTabSize());      
-         writer.closeNamespace();
 
-//         _ELENA_::DerivationTransformer transformer(*info->tree);
-//         transformer.recognize(scope, info->path, info->ns, &info->importedNs);
-
-         //files.add(info);
+         scope.beginModule(ns.c_str(), filePath, writer);
+         parser.parse(&sourceFile, writer, getTabSize());
+         scope.endModule(writer);
       }
       catch (_ELENA_::LineTooLong& e)
       {

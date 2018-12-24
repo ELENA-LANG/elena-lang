@@ -690,7 +690,7 @@ inline ref_t mapReferenceKey(ident_t key)
 
 typedef Map<ident_t, _Module*> ModuleMap;
 typedef List<_Module*>         ModuleList;
-typedef List<ident_t>          IdentifierList;
+typedef List<char*>            IdentifierList;
 
 // --- Reference mapping types ---
 ////typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;

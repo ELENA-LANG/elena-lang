@@ -9,7 +9,6 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "compilerscope.h"
-#include "derivation.h"
 
 using namespace _ELENA_;
 
@@ -383,7 +382,7 @@ inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _M
 
       // check imported references if available
       if (importedNs) {
-         List<ident_t>::Iterator it = importedNs->start();
+         auto it = importedNs->start();
          while (!it.Eof()) {
             ReferenceNs fullName(*it, identifier);
 
@@ -475,6 +474,19 @@ void ModuleScope :: generateTemplateCode(SyntaxWriter& output, ref_t reference, 
    SyntaxTree::copyNode(output, templateTree.readRoot());
 }
 
+void ModuleScope :: importClassTemplate(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
+{
+   SyntaxTree templateTree;
+
+   TemplateGenerator transformer(templateTree);
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   transformer.generateTemplate(writer, *this, reference, parameters, true);
+   writer.closeNode();
+
+   transformer.importClass(output, templateTree.readRoot());
+}
+
 void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
 {
    SyntaxTree templateTree;
@@ -496,6 +508,7 @@ ref_t ModuleScope :: generateTemplate(_Compiler& compiler, ref_t reference, List
    SyntaxWriter writer(templateTree);
    writer.newNode(lxRoot);
    writer.newNode(lxNamespace, ns);
+   writer.appendNode(lxImport, STANDARD_MODULE);
    writer.newBookmark();
 
    ref_t generatedReference = transformer.generateTemplate(writer, *this, reference, parameters);
@@ -689,6 +702,28 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ident_t name, b
       else duplicateInclusion = true;
    }
    return false;
+}
+
+void ModuleScope :: beginModule(ident_t ns, ident_t filePath, DerivationWriter& writer)
+{
+   // declare a namespace
+   declareNamespace(ns);
+   writer.newNamespace(ns, filePath);
+
+   // add the module itself
+   writer.importModule(module->Name());
+
+   //importedNs.add(scope.module->Name().clone());
+
+   // system module should be included by default
+   if (!module->Name().compare(STANDARD_MODULE)) {
+      writer.importModule(STANDARD_MODULE);
+   }
+}
+
+void ModuleScope :: endModule(DerivationWriter& writer)
+{
+   writer.closeNamespace();
 }
 
 //void CompilerScope :: saveAutogerenatedExtension(ref_t attrRef, ref_t extension)

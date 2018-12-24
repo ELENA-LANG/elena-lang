@@ -11,6 +11,7 @@
 
 #include "syntaxtree.h"
 #include "compilercommon.h"
+#include "derivation.h"
 
 namespace _ELENA_
 {
@@ -21,28 +22,6 @@ inline void freeident(ident_t s)
       free((void*)s.c_str());
    }
 }
-
-//// --- SourceFileInfo ---
-//struct SourceFileInfo
-//{
-//   _ELENA_::SyntaxTree*       tree;
-//   _ELENA_::IdentifierString  path;
-//   _ELENA_::IdentifierString  ns;
-//   _ELENA_::IdentifierList    importedNs; // importedns contains the list of dynamically allocated strings
-//
-//   SourceFileInfo()
-//      : importedNs(NULL, freeident)
-//   {
-//      tree = NULL;
-//   }
-//   ~SourceFileInfo()
-//   {
-//      _ELENA_::freeobj(tree);
-//   }
-//};
-
-//typedef List<SourceFileInfo*>          SourceFileList;
-//typedef Map<ref_t, SubjectList*>       AutoExtensionMap;
 
 struct ModuleScope : _ModuleScope
 {
@@ -112,6 +91,7 @@ struct ModuleScope : _ModuleScope
    virtual ref_t generateTemplate(_Compiler& compiler, ref_t reference, List<SNode>& parameters, ident_t ns/*, ExtensionMap* extensionsToExport*/);
    virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
+   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference);
 
@@ -127,6 +107,9 @@ struct ModuleScope : _ModuleScope
 //   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension);
 
    void compile(_Compiler& compiler, SyntaxTree& derivationTree/*, ExtensionMap* extensionsToExport*/);
+
+   void beginModule(ident_t ns, ident_t filePath, DerivationWriter& writer);
+   void endModule(DerivationWriter& writer);
 
    ModuleScope(_ProjectManager* project)
 //      : autoExtensions(NULL, freeobj)

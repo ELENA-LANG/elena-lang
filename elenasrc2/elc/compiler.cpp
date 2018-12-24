@@ -189,7 +189,7 @@ inline bool isConstantArguments(SNode node)
 // --- Compiler::NamespaceScope ---
 
 Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope/*, ident_t path*/, ident_t ns/*, IdentifierList* imported*//*, bool withFullInfo*/)
-   : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0))
+   : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr)
 {
    this->ns.copy(ns);
 //   this->sourcePath = path;
@@ -8277,14 +8277,6 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
 
 void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFullInfo)
 {
-   // add the module itself
-   scope.importedNs.add(scope.module->Name().clone());
-
-   // system module should be included by default
-   if (!scope.module->Name().compare(STANDARD_MODULE)) {
-      scope.importedNs.add(_ELENA_::ident_t(STANDARD_MODULE).clone());
-   }
-
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxSourcePath) {

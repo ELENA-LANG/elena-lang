@@ -162,28 +162,28 @@ inline static size_t getlength(const char* s)
 
 template <class T> void freeobj(T obj)
 {
-   if (obj != NULL) {
+   if (obj != nullptr) {
       delete obj;
    }
 }
 
 inline void freestr(wchar_t* s)
 {
-   if (s != NULL) {
+   if (s != nullptr) {
       free(s);
    }
 }
 
 inline void freestr(char* s)
 {
-   if (s != NULL) {
+   if (s != nullptr) {
       free(s);
    }
 }
 
 inline void freestr(unsigned short* s)
 {
-   if (s != NULL) {
+   if (s != nullptr) {
       free(s);
    }
 }
