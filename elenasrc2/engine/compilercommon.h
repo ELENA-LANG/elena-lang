@@ -22,8 +22,8 @@
 #define V_BINARY         (ref_t)-11
 #define V_PTRBINARY      (ref_t)-12
 #define V_INT32          (ref_t)-13
-//#define V_INT64          (ref_t)-14
-//#define V_REAL64         (ref_t)-15
+#define V_INT64          (ref_t)-14
+#define V_REAL64         (ref_t)-15
 #define V_DWORD          (ref_t)-16
 #define V_PTR32          (ref_t)-17
 //#define V_SIGNATURE      (ref_t)-18
@@ -213,8 +213,8 @@ struct _ModuleScope
    // cached references
    ref_t             superReference;
    ref_t             intReference;
-//   ref_t             longReference;
-//   ref_t             realReference;
+   ref_t             longReference;
+   ref_t             realReference;
 //   ref_t             signatureReference;
 //   ref_t             messageReference;
 //   ref_t             extMessageReference;
@@ -319,8 +319,8 @@ struct _ModuleScope
       debugModule = module = nullptr;
       intReference = /*boolReference = */superReference = 0;
 //      signatureReference = messageReference = 0;
-      /*longReference = */literalReference = /*wideReference = */0;
-      /*arrayReference = */charReference /*= realReference */= 0;
+      longReference = literalReference = /*wideReference = */0;
+      /*arrayReference = */charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;

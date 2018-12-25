@@ -31,8 +31,8 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
    _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
    _character = project->resolveForward(CHAR_FORWARD);
    _int = project->resolveForward(INT_FORWARD);
-  // _long = project->resolveForward(LONG_FORWARD);
-  // _real = project->resolveForward(REAL_FORWARD);
+   _long = project->resolveForward(LONG_FORWARD);
+   _real = project->resolveForward(REAL_FORWARD);
    _message = project->resolveForward(MESSAGE_FORWARD);
   // _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
   // _signature = project->resolveForward(SIGNATURE_FORWARD);
@@ -210,15 +210,15 @@ ident_t ExecutableImage::getIntegerClass()
    return _int;
 }
 
-//ident_t ExecutableImage::getLongClass()
-//{
-//   return _long;
-//}
-//
-//ident_t ExecutableImage::getRealClass()
-//{
-//   return _real;
-//}
+ident_t ExecutableImage :: getLongClass()
+{
+   return _long;
+}
+
+ident_t ExecutableImage :: getRealClass()
+{
+   return _real;
+}
 
 ident_t ExecutableImage::getMessageClass()
 {
@@ -279,7 +279,7 @@ ident_t ExecutableImage :: resolveTemplateWeakReference(ident_t referenceName)
 
 ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t reference, ref_t mask)
 {
-   if (mask == mskLiteralRef || mask == mskInt32Ref/* || mask == mskRealRef || mask == mskInt64Ref*/ || mask == mskCharRef || mask == mskWideLiteralRef) {
+   if (mask == mskLiteralRef || mask == mskInt32Ref || mask == mskRealRef || mask == mskInt64Ref || mask == mskCharRef || mask == mskWideLiteralRef) {
       return module->resolveConstant(reference);
    }
    // if it is a message

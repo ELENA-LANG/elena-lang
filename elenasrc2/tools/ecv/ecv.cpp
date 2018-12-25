@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   18
+#define REVISION_VERSION   19
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -404,10 +404,10 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       referenceName = _integer;
       literalConstant = true;
    }
-   //else if (mask == mskInt64Ref) {
-   //   referenceName = _long;
-   //   literalConstant = true;
-   //}
+   else if (mask == mskInt64Ref) {
+      referenceName = _long;
+      literalConstant = true;
+   }
    else if (mask == mskLiteralRef) {
       referenceName = _literal;
       literalConstant = true;
@@ -416,10 +416,10 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       referenceName = _wide;
       literalConstant = true;
    }
-   //else if (mask == mskRealRef) {
-   //   referenceName = _real;
-   //   literalConstant = true;
-   //}
+   else if (mask == mskRealRef) {
+      referenceName = _real;
+      literalConstant = true;
+   }
    else if (mask == mskCharRef) {
       referenceName = _char;
       charConstant = true;
@@ -1053,9 +1053,9 @@ void listFlags(int flags, int& row, int pageSize)
       case elDebugDWORD:
          printLine("@flag ", "elDebugDWORD", row, pageSize);
          break;
-   //   case elDebugReal64:
-   //      printLine("@flag ", "elDebugReal64", row, pageSize);
-   //      break;
+      case elDebugReal64:
+         printLine("@flag ", "elDebugReal64", row, pageSize);
+         break;
       case elDebugLiteral:
          printLine("@flag ", "elDebugLiteral", row, pageSize);
          break;
@@ -1065,9 +1065,9 @@ void listFlags(int flags, int& row, int pageSize)
       case elDebugArray:
          printLine("@flag ", "elDebugArray", row, pageSize);
          break;
-   //   case elDebugQWORD:
-   //      printLine("@flag ", "elDebugQWORD", row, pageSize);
-   //      break;
+      case elDebugQWORD:
+         printLine("@flag ", "elDebugQWORD", row, pageSize);
+         break;
       case elDebugBytes:
          printLine("@flag ", "elDebugBytes", row, pageSize);
          break;

@@ -33,7 +33,7 @@ public class Object
 public /*enum */interface class BoolValue
 {
     /// return the default value
-    static Default
+    static bool Default
         = false;
         
     abstract bool equal(bool f) {}

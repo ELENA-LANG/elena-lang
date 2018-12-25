@@ -112,8 +112,8 @@ public:
       okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
       okUIntConstant,                 // param - reference, extraparam - imm argument
-//      okLongConstant,                 // param - reference
-//      okRealConstant,                 // param - reference
+      okLongConstant,                 // param - reference
+      okRealConstant,                 // param - reference
 //      okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
 //      okSignatureConstant,            // param - reference
@@ -749,7 +749,7 @@ private:
    void optimizeTape(CommandTape& tape);
 
    bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
-//   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
+   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
    void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);

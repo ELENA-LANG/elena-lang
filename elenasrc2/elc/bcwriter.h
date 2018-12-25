@@ -139,8 +139,8 @@ class ByteCodeWriter
 //   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -256,9 +256,9 @@ class ByteCodeWriter
    void doIntOperation(CommandTape& tape, int operator_id, int immArg);
    void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
    void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
-//   void doLongOperation(CommandTape& tape, int operator_id);
-//   void doRealOperation(CommandTape& tape, int operator_id);
-//   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
+   void doLongOperation(CommandTape& tape, int operator_id);
+   void doRealOperation(CommandTape& tape, int operator_id);
+   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
    void doArrayOperation(CommandTape& tape, int operator_id);
    void doArgArrayOperation(CommandTape& tape, int operator_id);
    void doIntArrayOperation(CommandTape& tape, int operator_id);

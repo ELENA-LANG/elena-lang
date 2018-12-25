@@ -97,9 +97,9 @@ enum LexicalType
    lxReference       = 0x18007,
    lxInteger         = 0x18008,
    lxHexInteger      = 0x18009,
-//   lxReal            = 0x1800A,
+   lxReal            = 0x1800A,
    lxCharacter       = 0x1800B,
-//   lxLong            = 0x1800C,
+   lxLong            = 0x1800C,
    lxWide            = 0x1800D,
 //   lxExplicitConst   = 0x1800E,
    lxExplicitAttr    = 0x1800F,
@@ -121,8 +121,8 @@ enum LexicalType
    lxConstantWideStr = 0x0A10D, // arg - reference
    lxConstantChar    = 0x0A10E, // arg - reference
    lxConstantInt     = 0x1A10F, // arg - reference
-//   lxConstantLong    = 0x1A110, // arg - reference
-//   lxConstantReal    = 0x1A111, // arg - reference
+   lxConstantLong    = 0x1A110, // arg - reference
+   lxConstantReal    = 0x1A111, // arg - reference
    lxClassSymbol        = 0x0A112, // arg - reference
 //   lxMessageConstant = 0x0A113, // arg - rererence
 //   lxExtMessageConstant = 0x0A114, // arg -reference
@@ -195,8 +195,8 @@ enum LexicalType
    lxDispatching              = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning                = 0x0C037,   // an assigning expression, arg - size
    lxIntOp                    = 0x8C038,   // arg - operation id
-//   lxLongOp          = 0x8C039,   // arg - operation id
-//   lxRealOp          = 0x8C03A,   // arg - operation id
+   lxLongOp          = 0x8C039,   // arg - operation id
+   lxRealOp          = 0x8C03A,   // arg - operation id
    lxMultiDispatching         = 0x0C03B,
    lxSealedMultiDispatching   = 0x0C03C,
    lxCodeExpression           = 0x0C03D,
@@ -206,8 +206,8 @@ enum LexicalType
    lxOperator        = 0x10025,
 //   lxArrOperator     = 0x10026,
    lxIntVariable     = 0x10028,
-//   lxLongVariable    = 0x10029,
-//   lxReal64Variable  = 0x1002A,
+   lxLongVariable    = 0x10029,
+   lxReal64Variable  = 0x1002A,
    lxForward         = 0x1002E,
    lxVariable        = 0x10037,
 //   lxBinaryVariable  = 0x10038,
@@ -287,7 +287,7 @@ enum LexicalType
 //   lxRefAttribute    = 0x20042,
    lxElement            = 0x20043,
 //   lxTypecasting     = 0x20044,
-//   lxIntConversion   = 0x20045,
+   lxIntConversion      = 0x20045,
    lxTemplateNameParam  = 0x20046,
    lxTemplateMsgParam   = 0x20047,
    lxTemplateIdentParam = 0x20048,

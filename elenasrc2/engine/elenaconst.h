@@ -157,8 +157,8 @@ namespace _ELENA_
       mskConstantRef         = 0x01000000u,   // reference to constant
       mskLiteralRef          = 0x02000000u,   // reference to constant literal
       mskInt32Ref            = 0x03000000u,   // reference to constant integer number
-//      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
-//      mskRealRef             = 0x05000000u,   // reference to constant real number
+      mskInt64Ref            = 0x04000000u,   // reference to constant 64bit integer number
+      mskRealRef             = 0x05000000u,   // reference to constant real number
       mskMessage             = 0x06000000u,   // message constant
       mskCharRef             = 0x07000000u,   // reference to character constant
       mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
@@ -196,7 +196,7 @@ namespace _ELENA_
       dsEnd                     = 0x000F,
       dsIntLocal                = 0x0105,
       dsLongLocal               = 0x0205,
-//      dsRealLocal               = 0x0305,
+      dsRealLocal               = 0x0305,
       dsParamsLocal             = 0x0405,
       dsByteArrayLocal          = 0x0505,
       dsShortArrayLocal         = 0x0605,
@@ -204,8 +204,8 @@ namespace _ELENA_
 
       // primitive variables
       dsIntLocalPtr             = 0x0805,
-//      dsLongLocalPtr            = 0x0905,
-//      dsRealLocalPtr            = 0x0A05,
+      dsLongLocalPtr            = 0x0905,
+      dsRealLocalPtr            = 0x0A05,
       dsByteArrayLocalPtr       = 0x0B05,
       dsShortArrayLocalPtr      = 0x0C05,
       dsIntArrayLocalPtr        = 0x0D05,
@@ -271,55 +271,55 @@ namespace _ELENA_
 ////   };
 
    // --- ELENA Parse Table constants ---
-   const int cnHashSize            = 0x0100;              // the parse table hash size
-   const int cnTablePower          = 0x0010;
-   const int cnTableKeyPower       = cnTablePower + 1;
-   const int cnSyntaxPower         = 0x0008;
+   constexpr int cnHashSize            = 0x0100;              // the parse table hash size
+   constexpr int cnTablePower          = 0x0010;
+   constexpr int cnTableKeyPower       = cnTablePower + 1;
+   constexpr int cnSyntaxPower         = 0x0008;
 
   // --- ELENA VMT flags ---
-   const int elStandartVMT         = 0x00000001;
-   const int elNestedClass         = 0x00000002;
-   const int elDynamicRole         = 0x00000004;
-   const int elStructureRole       = 0x00000008;
-   const int elAbstract            = 0x00000010;
-   const int elClosed              = 0x00000020;
-   const int elWrapper             = 0x00000040;
-   const int elStructureWrapper    = 0x00000048;
-   const int elStateless           = 0x00000080;
-   const int elFinal               = 0x00000100;
-   const int elSealed              = 0x00000120;
+   constexpr int elStandartVMT         = 0x00000001;
+   constexpr int elNestedClass         = 0x00000002;
+   constexpr int elDynamicRole         = 0x00000004;
+   constexpr int elStructureRole       = 0x00000008;
+   constexpr int elAbstract            = 0x00000010;
+   constexpr int elClosed              = 0x00000020;
+   constexpr int elWrapper             = 0x00000040;
+   constexpr int elStructureWrapper    = 0x00000048;
+   constexpr int elStateless           = 0x00000080;
+   constexpr int elFinal               = 0x00000100;
+   constexpr int elSealed              = 0x00000120;
 //   const int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
-   const int elReadOnlyRole        = 0x00000800;
-   const int elNonStructureRole    = 0x00001000;
+   constexpr int elReadOnlyRole        = 0x00000800;
+   constexpr int elNonStructureRole    = 0x00001000;
 //   const int elSignature           = 0x00002000;
-   const int elRole                = 0x00004080;
-   const int elExtension           = 0x00004980;
-   const int elMessage             = 0x00008000;
+   constexpr int elRole                = 0x00004080;
+   constexpr int elExtension           = 0x00004980;
+   constexpr int elMessage             = 0x00008000;
 //   const int elSymbol              = 0x00100000;
 //   const int elExtMessage          = 0x00208000;
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
-   const int elWithCustomDispatcher= 0x00800000;
+   constexpr int elWithCustomDispatcher= 0x00800000;
 //   const int elWithArgGenerics     = 0x01000000;
 ////   const int elTapeGroup           = 0x02000200;
-   const int elClassClass          = 0x04000000;
+   constexpr int elClassClass          = 0x04000000;
 //   const int elWithMuti            = 0x08000000;
 //   const int elVirtualVMT          = 0x10000000;
-   const int elNoCustomDispatcher  = 0x20000000;
+   constexpr int elNoCustomDispatcher  = 0x20000000;
 
-   const int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
+   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
-   const int elDebugMask           = 0x001F0000;
-   const int elDebugDWORD          = 0x00010000;
-//   const int elDebugReal64         = 0x00020000;
-   const int elDebugLiteral        = 0x00030000;
-   const int elDebugIntegers       = 0x00040000;
-   const int elDebugArray          = 0x00050000;
-//   const int elDebugQWORD          = 0x00060000;
-   const int elDebugBytes          = 0x00070000;
-   const int elDebugShorts         = 0x00080000;
-   const int elDebugPTR            = 0x00090000;
-   const int elDebugWideLiteral    = 0x000A0000;
+   constexpr int elDebugMask           = 0x001F0000;
+   constexpr int elDebugDWORD          = 0x00010000;
+   constexpr int elDebugReal64         = 0x00020000;
+   constexpr int elDebugLiteral        = 0x00030000;
+   constexpr int elDebugIntegers       = 0x00040000;
+   constexpr int elDebugArray          = 0x00050000;
+   constexpr int elDebugQWORD          = 0x00060000;
+   constexpr int elDebugBytes          = 0x00070000;
+   constexpr int elDebugShorts         = 0x00080000;
+   constexpr int elDebugPTR            = 0x00090000;
+   constexpr int elDebugWideLiteral    = 0x000A0000;
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
 //   const int elDebugSubject        = 0x000C0000;
 //////   const int elDebugReals          = 0x000D0000;
@@ -328,25 +328,25 @@ namespace _ELENA_
 //   const int elEnumList            = 0x00100000;
 
   // --- ELENA Linker / ELENA VM constants ---
-   const int lnGCMGSize            = 0x00000001;
-   const int lnGCYGSize            = 0x00000002;
-   const int lnThreadCount         = 0x00000003;
-   const int lnObjectSize          = 0x00000004;
+   constexpr int lnGCMGSize            = 0x00000001;
+   constexpr int lnGCYGSize            = 0x00000002;
+   constexpr int lnThreadCount         = 0x00000003;
+   constexpr int lnObjectSize          = 0x00000004;
 
-   const int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
+   constexpr int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
 
 //  // ELENA run-time exceptions
 //   #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- Project warning levels
-   const int WARNING_LEVEL_1 = 1;
-   const int WARNING_LEVEL_2 = 2;
-   const int WARNING_LEVEL_3 = 4;
+   constexpr int WARNING_LEVEL_1 = 1;
+   constexpr int WARNING_LEVEL_2 = 2;
+   constexpr int WARNING_LEVEL_3 = 4;
 
-   const int WARNING_MASK_0 = 0;
-   const int WARNING_MASK_1 = 1;
-   const int WARNING_MASK_2 = 3;
-   const int WARNING_MASK_3 = 7;
+   constexpr int WARNING_MASK_0 = 0;
+   constexpr int WARNING_MASK_1 = 1;
+   constexpr int WARNING_MASK_2 = 3;
+   constexpr int WARNING_MASK_3 = 7;
 
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE         = "ELENA.11.";      // the stand alone image
@@ -488,19 +488,19 @@ namespace _ELENA_
    #define MESSAGEBODY_TABLE        "$messages'$body"
 
   // VM temporal code
-   constexpr auto TAPE_SYMBOL       = "$tape";
+   constexpr auto TAPE_SYMBOL             = "$tape";
 
-   #define GC_THREADTABLE           "$elena'@gcthreadroot"           // thread table
-   #define TLS_KEY                  "$elena'@tlskey"                 // TLS key
-   #define TAPE_KEY                 "$elena'@tapekey"                // VM Tape key
-   #define NAMESPACE_KEY            "$elena'@rootnamespace"          // The project namespace
+   constexpr auto GC_THREADTABLE          = "$elena'@gcthreadroot";           // thread table
+   constexpr auto TLS_KEY                 = "$elena'@tlskey";                 // TLS key
+   constexpr auto TAPE_KEY                = "$elena'@tapekey";                // VM Tape key
+   constexpr auto NAMESPACE_KEY           = "$elena'@rootnamespace";          // The project namespace
 
    // predefined system forwards
    constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
 //   #define LAZYEXPR_FORWARD         "$lazyexpression"                // the base lazy expression class
    constexpr auto INT_FORWARD             ="$int";
-//   #define LONG_FORWARD             "$long"
-//   #define REAL_FORWARD             "$real"
+   constexpr auto LONG_FORWARD            = "$long";
+   constexpr auto REAL_FORWARD            = "$real";
    constexpr auto STR_FORWARD             = "$literal";
    constexpr auto WIDESTR_FORWARD         = "$wideliteral";
    constexpr auto CHAR_FORWARD            ="$char";

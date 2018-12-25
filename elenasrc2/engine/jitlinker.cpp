@@ -767,14 +767,14 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
       value = vmtReferenceInfo.referenceName;
       vmtReferenceInfo.referenceName = _loader->getIntegerClass();
    }
-   //else if (mask == mskInt64Ref) {
-   //   value = vmtReferenceInfo.referenceName;
-   //   vmtReferenceInfo.referenceName = _loader->getLongClass();
-   //}
-   //else if (mask == mskRealRef) {
-   //   value = vmtReferenceInfo.referenceName;
-   //   vmtReferenceInfo.referenceName = _loader->getRealClass();
-   //}
+   else if (mask == mskInt64Ref) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getLongClass();
+   }
+   else if (mask == mskRealRef) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getRealClass();
+   }
    else constantValue = false;
 
    // get constant VMT reference
@@ -811,13 +811,13 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    else if (mask == mskInt32Ref) {
       _compiler->compileInt32(&writer, value.toULong(16));
    }
-   //else if (mask == mskInt64Ref) {
-   //   // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
-   //   _compiler->compileInt64(&writer, value.toULongLong(10, 1));
-   //}
-   //else if (mask == mskRealRef) {
-   //   _compiler->compileReal64(&writer, value.toDouble());
-   //}
+   else if (mask == mskInt64Ref) {
+      // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
+      _compiler->compileInt64(&writer, value.toULongLong(10, 1));
+   }
+   else if (mask == mskRealRef) {
+      _compiler->compileReal64(&writer, value.toDouble());
+   }
    else if (mask == mskConstArray) {
       // resolve constant value
       SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
@@ -1226,8 +1226,8 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskWideLiteralRef:
          case mskCharRef:
          case mskInt32Ref:
-         //case mskRealRef:
-         //case mskInt64Ref:
+         case mskRealRef:
+         case mskInt64Ref:
             vaddress = resolveConstant(referenceInfo, mask);
             break;
          case mskConstArray:

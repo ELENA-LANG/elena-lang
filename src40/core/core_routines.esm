@@ -51,6 +51,14 @@ procedure __object."__getClass[1]"
 
 end
 
+procedure __int."readHashCodeTo$@system@ref#1&IntNumber[2]"
+
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
 procedure __char."readLengthTo$@system@ref#1&IntNumber[2]"
 
   bloadsi 2

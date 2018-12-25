@@ -287,8 +287,8 @@ enum ByteCode
    bdSourcePath     = 0x8407,
 
    bdIntLocal       = 0x8413,
-   //bdLongLocal      = 0x8423,
-   //bdRealLocal      = 0x8433,
+   bdLongLocal      = 0x8423,
+   bdRealLocal      = 0x8433,
    bdParamsLocal    = 0x8443,
    bdByteArrayLocal = 0x8453,
    bdShortArrayLocal= 0x8463,

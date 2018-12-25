@@ -22,9 +22,9 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
       //case mskConstArray:
       //   _constReferences.add(reference, (ref_t)vaddress);
       //   break;
-      //case mskInt64Ref:
+      case mskInt64Ref:
       case mskInt32Ref:
-      //case mskRealRef:
+      case mskRealRef:
          _numberReferences.add(reference, (size_t)vaddress);
          break;
       case mskCharRef:
@@ -91,9 +91,9 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
          case mskConstantRef:
          //case mskConstArray:
             return (void*)_constReferences.get(reference);
-         //case mskInt64Ref:
+         case mskInt64Ref:
          case mskInt32Ref:
-         //case mskRealRef:
+         case mskRealRef:
             return (void*)_numberReferences.get(reference);
          case mskCharRef:
             return (void*)_characterReferences.get(reference);
