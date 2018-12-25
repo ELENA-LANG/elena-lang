@@ -1161,10 +1161,10 @@ public sealed const struct String : BaseValue
 //    /// Creates the literal string copy              
 //    constructor new(literal aLiteral)
 //        <= new(aLiteral length, aLiteral).
-//        
-//    /// Creates the copy of a subarray        
-//    constructor new(int anIndex, int aSize, CharArray anArray)
-//        => system'core_routines'__literal.
+        
+    /// Creates the copy of a subarray        
+    constructor new(int index, int length, char[] array)
+        => system'core_routines'__literal;
 
     /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
         <= (size)
@@ -1199,15 +1199,15 @@ public sealed const struct String : BaseValue
 //        
 //    bool less(BaseVariable v)
 //        <= less(v value).
-//        
-//    /// Compares the values
-//    bool equal(literal aLiteral)
-//        => system'core_routines'__literal.
-//
-//    /// Compares the values
-//    bool less(literal aLiteral)
-//        => system'core_routines'__literal.
-//
+        
+    /// Compares the values
+    bool equal(string s)
+        => system'core_routines'__literal;
+
+    /// Compares the values
+    bool less(string s)
+        => system'core_routines'__literal;
+
 //    /// Compares the values
 //    bool equal(wide aLiteral)
 //        = T<wide>(self) equal(aLiteral).
@@ -1747,17 +1747,17 @@ public sealed Array //:: Indexable, Array<object>
     constructor(int len)
         = new object[](len);
 
-//    /// Creates a copy of the provided array
-//    constructor new(Array anArray)
-//        <= new(0, anArray length, anArray).
-//    
-//    /// Creates a copy of the provided sub array
-//    constructor new(int anIndex, int aLength, Array anArray)
-//        <= new(aLength);
-//    [
-//        system'core_routines'__array copy(self, anIndex, aLength, anArray).
-//    ]
-//        
+    /// Creates a copy of the provided array
+    constructor(Array array)
+        <= new(0, array.Length, array);
+    
+    /// Creates a copy of the provided sub array
+    constructor new(int index, int length, Array array)
+        <= (length)
+    {
+        intern system'core_routines'__array.copy(self, index, length, array)
+    }
+        
 //    constructor single(object singleItem)
 //        <= new(1);
 //    [
@@ -1812,9 +1812,9 @@ public sealed Array //:: Indexable, Array<object>
     /// Returns the array indexer
     Indexer Indexer = new ArrayIndexer(self);
 
-//    /// Clones the array
-//    T<Array> clone 
-//        = Array new(self).
+    /// Clones the array
+    Array clone()
+        = new Array(self);
 }
 
 // === Convertors ===

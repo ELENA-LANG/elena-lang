@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * allow to work with ref<int> directly
                  * the following code should be supported : newLength := newLength + cast int(theLength);
                  * TokenEnumerator : class TextBuilder should not be found (system'text is not imported)
                  * reimplement lazy expressions

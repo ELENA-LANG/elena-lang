@@ -120,12 +120,12 @@ public interface Indexer
 //    
 //    abstract cast T<Indexer> []
 //}
-//
-//public abstract Indexable
-//{
-//   abstract T<Indexer> indexer []
-//}
-//
+
+public abstract Indexable
+{
+   abstract Indexer indexer() {}
+}
+
 //public abstract Indexable<type>
 //{
 //   abstract Indexer<type> indexer []
@@ -262,20 +262,20 @@ public interface Func1
         }
     }
     
-//    /// Executes the function for every enumeration item until it returns true
-//    retrieve(Enumerator anEnumerator)
-//    [
-//        object anItem := nil.
-//        while (anEnumerator next)
-//        [
-//            anItem := anEnumerator get.
-//
-//            if(self(anItem))
-//                [ ^ anItem ]
-//        ].
-//        
-//        ^ nil.
-//    ]
+    /// Executes the function for every enumeration item until it returns true
+    retrieve(Enumerator en)
+    {
+        object item := nil;
+        while (en.next())
+        {
+            item := en.get();
+
+            if(self(item))
+                 { ^ item }
+        };
+        
+        ^ nil
+    }
 }
 
 public interface Func<T, TResult>

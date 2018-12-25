@@ -38,13 +38,16 @@ sealed public /*nonstructural */ class TextBuilder
     }
 
 //    cast T<CharArray> = theBuffer.
-//
-//    cast T<literal> 
-//        = LiteralValue new(0, T<int>(theLength), theBuffer).
-//
-//    T<literal> literal
-//        = LiteralValue new(0, T<int>(theLength), theBuffer).
-//
+
+    string cast()
+        = String.new(0, cast int(theLength), theBuffer);
+        
+    string Value
+        = String.new(0, cast int(theLength), theBuffer);
+
+    string Printable
+        = self.Value;
+
 //    cast T<wide>
 //        = WideLiteralValue new(0, T<int>(theLength), theBuffer).
 //

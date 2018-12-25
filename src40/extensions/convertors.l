@@ -1,9 +1,9 @@
 //import system'collections.
 //import system'routines.
 //import system'calendar.
-//import system'text.
+import system'text;
 //import system'dynamic.
-//
+
 //// --- convertors ---
 //
 //singleton charArrayExConvertor
@@ -38,25 +38,25 @@ singleton stringExConvertor
 //
 //    literal convert(IntMatrix a)
 //        = intmatrixExConvertor toLiteral(a).
-//
-//    literal convert(Indexer it)
-//    [
-//        auto anOutput := TextBuilder new.
-//        while (it available)
-//        [
-//            anOutput write(it get; toLiteral).
-//            anOutput write:",".
-//            
-//            it appendIndex:1
-//        ].
-//        
-//        int aLength := anOutput length.
-//        if (0 < aLength)
-//            [ anOutput setLength(-1 + aLength) ].
-//        
-//        ^ anOutput literal
-//    ]
-//
+
+    string convert(Indexer it)
+    {
+        auto output := new TextBuilder();
+        while (it.Available)
+        {
+            output.write(it.get().toLiteral());
+            output.write:",";
+            
+            it.appendIndex(1)
+        };
+        
+        int length := output.Length;
+        if (0 < length)
+            { output.Length := -1 + length };
+        
+        ^ output
+    }
+
 //    literal convert(Enumerator en)
 //    [
 //        auto anOutput := TextBuilder new.
@@ -77,9 +77,10 @@ singleton stringExConvertor
 //
 //    literal convert(Enumerable o)
 //        <= convert(o enumerator).
-//
-//    literal convert(Indexable o)
-//        <= convert(o indexer).
+
+    string convert(Indexable o)
+        //<= convert(o.indexer());
+        = self.convert(o.indexer());
 
     string convert(o)
         = stringConvertor.convert(o);

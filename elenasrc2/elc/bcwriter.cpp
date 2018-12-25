@@ -3488,10 +3488,10 @@ void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
    tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
 }
 
-//void ByteCodeWriter :: selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
-//{
-//   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
-//}
+void ByteCodeWriter :: selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
+{
+   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
+}
 
 void ByteCodeWriter :: tryLock(CommandTape& tape)
 {
@@ -4273,59 +4273,59 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 //   if (!test(mode, BOOL_ARG_EXPR))
 //      tape.setLabel();
 //}
-//
-//void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   if (node.argument == EQUAL_MESSAGE_ID) {
-//      SNode larg;
-//      SNode rarg;
-//      assignOpArguments(node, larg, rarg);
-//
-//      if (larg == lxNil) {
-//         generateObjectExpression(tape, rarg, ACC_REQUIRED);
-//      }
-//      else if (rarg == lxNil) {
-//         generateObjectExpression(tape, larg, ACC_REQUIRED);
-//      }
-//      else generateExpression(tape, node, ACC_REQUIRED); // ?? is this code reachable
-//
-//      SNode ifParam = node.findChild(lxIfValue);
-//      SNode elseParam = node.findChild(lxElseValue);
-//
-//      selectByAcc(tape, elseParam.argument, ifParam.argument);
-//   }
-//   else if (node.argument == ISNIL_MESSAGE_ID) {
-//      SNode larg;
-//      SNode rarg;
-//      assignOpArguments(node, larg, rarg);
-//      if (larg.compare(lxCalling, lxDirectCalling, lxSDirctCalling) && getParamCount(larg.argument) == 0 && larg.existChild(lxTypecasting)) {
-//         declareTry(tape);
-//
-//         generateObjectExpression(tape, larg, ACC_REQUIRED);
-//
-//         declareAlt(tape);
-//
-//         generateObjectExpression(tape, rarg, ACC_REQUIRED);
-//
-//         endAlt(tape);
-//      }
-//      else {
-//         generateObjectExpression(tape, rarg, ACC_REQUIRED);
-//         if (isSimpleObject(larg)) {
-//            loadBase(tape, lxResult);
-//            generateObjectExpression(tape, larg, ACC_REQUIRED);
-//         }
-//         else {
-//            pushObject(tape, lxResult);
-//            generateObjectExpression(tape, larg, ACC_REQUIRED);
-//            tape.write(bcPopB);
-//         }
-//
-//         tape.write(bcEqualR, 0);
-//         tape.write(bcSelect);
-//      }
-//   }
-//}
+
+void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node)
+{
+   if (node.argument == EQUAL_OPERATOR_ID) {
+      SNode larg;
+      SNode rarg;
+      assignOpArguments(node, larg, rarg);
+
+      if (larg == lxNil) {
+         generateObject(tape, rarg, ACC_REQUIRED);
+      }
+      else if (rarg == lxNil) {
+         generateObject(tape, larg, ACC_REQUIRED);
+      }
+      else generateExpression(tape, node, ACC_REQUIRED); // ?? is this code reachable
+
+      SNode ifParam = node.findChild(lxIfValue);
+      SNode elseParam = node.findChild(lxElseValue);
+
+      selectByAcc(tape, elseParam.argument, ifParam.argument);
+   }
+   //else if (node.argument == ISNIL_MESSAGE_ID) {
+   //   SNode larg;
+   //   SNode rarg;
+   //   assignOpArguments(node, larg, rarg);
+   //   if (larg.compare(lxCalling, lxDirectCalling, lxSDirctCalling) && getParamCount(larg.argument) == 0 && larg.existChild(lxTypecasting)) {
+   //      declareTry(tape);
+
+   //      generateObjectExpression(tape, larg, ACC_REQUIRED);
+
+   //      declareAlt(tape);
+
+   //      generateObjectExpression(tape, rarg, ACC_REQUIRED);
+
+   //      endAlt(tape);
+   //   }
+   //   else {
+   //      generateObjectExpression(tape, rarg, ACC_REQUIRED);
+   //      if (isSimpleObject(larg)) {
+   //         loadBase(tape, lxResult);
+   //         generateObjectExpression(tape, larg, ACC_REQUIRED);
+   //      }
+   //      else {
+   //         pushObject(tape, lxResult);
+   //         generateObjectExpression(tape, larg, ACC_REQUIRED);
+   //         tape.write(bcPopB);
+   //      }
+
+   //      tape.write(bcEqualR, 0);
+   //      tape.write(bcSelect);
+   //   }
+   //}
+}
 
 void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, ExternalScope& externalScope)
 {
@@ -5450,9 +5450,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
 //      case lxBoolOp:
 //         generateBoolOperation(tape, node, mode);
 //         break;
-//      case lxNilOp:
-//         generateNilOperation(tape, node);
-//         break;
+      case lxNilOp:
+         generateNilOperation(tape, node);
+         break;
       case lxIntOp:
 //      case lxLongOp:
 //      case lxRealOp:

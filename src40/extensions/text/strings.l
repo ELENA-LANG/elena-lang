@@ -213,11 +213,13 @@ public sealed class StringWriter //: BaseVariable
 //    [
 //        theValue := emptyLiteral.
 //    ]
-//
-//    T<literal> literal = theValue.
-//
-//    cast T<literal> = theValue.
-//    
+
+    string Printable = theValue;
+
+    string cast() = theValue;
+
+    string Value = theValue;
+
 //    cast T<wide> = theValue.
 //
 //    dispatch => theValue.

@@ -145,6 +145,11 @@ public class Exception
 
 public class OutOfRangeException : Exception
 {
+    static raise()
+    {
+        new OutOfRangeException().raise()
+    }
+    
 //    /// Creates the exception
 //    constructor new
 //        <= new("An index is out of range").

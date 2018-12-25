@@ -1,10 +1,10 @@
 //import system'collections.
-//
-//// === actions ===
-//
-//public symbol ifOrdered
-//    = (:aFormer:aLater) [ ^aFormer < aLater ].
-//
+
+// === actions ===
+
+public ifOrdered
+    = (f,l => f < l);
+
 //public symbol ifDecrescent
 //    = (:aFormer:aLater) [ ^aFormer > aLater ].
 //
@@ -185,16 +185,16 @@ public extension enumerableOp
 //
 ////    multi seekFor:param eachPair:fn
 ////        = self~enumerableOp seekFor:param eachPair(:n:m)( fn(n,m) ).
-////
-//////    safeSeek : aValue
-//////        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
 //
-//    seekFor:aValue
-//        = (:x)[ ^aValue equal:x ] retrieve(T<Enumerator>(self enumerator)).
-//
-//    bool ifExists : aValue
-//        = nil != self~enumerableOp seekFor:aValue.
-//
+////    safeSeek : aValue
+////        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
+
+    seekFor(val)
+        = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
+
+    bool ifExists(val)
+        = nil != self.seekFor(val);
+
 ////    equal enumerable:list
 ////    [
 ////        ifnot (self length == list length)
@@ -504,38 +504,41 @@ public extension indexableOp
 //        
 //        ^ true.
 //    ]
-//
-//    sort(Func2 aCompareFunc)
-//    [
-//        T<Indexer> aFormer := self indexer.
-//        T<Indexer> aLater := self indexer.
-//
-//        while (aFormer available)
-//        [
-//            int i := aFormer index.
-//            
-//            aLater writeIndex(i + 1).
-//            
-//            while (aLater available)
-//            [
-//                ifnot (aCompareFunc(aFormer get, aLater get))
-//                    [
-//                        var aTmp := aFormer get.
-//                        aFormer set(aLater get).
-//                        aLater set:aTmp.
-//                    ].
-//                    
-//                aLater appendIndex:1
-//            ].
-//            aFormer appendIndex:1
-//        ].
-//        
-//        ^ self
-//    ]
-//    
-//    ascendant
-//        = (self clone)~indexableOp sort:ifOrdered.
-//
+
+    sort(Func2 compareFunc)
+    {
+        Indexer former := self.indexer();
+        Indexer later := self.indexer();
+
+        while (former.Available)
+        {
+            int i := former.Index;
+            
+            later.writeIndex(i + 1);
+            
+            while (later.Available)
+            {
+                ifnot (compareFunc(former.get(), later.get()))
+                    {
+                        var tmp := former.get();
+                        former.set(later.get());
+                        later.set(tmp)
+                    };
+                    
+                later.appendIndex(1)
+            };
+            former.appendIndex(1)
+        }
+    }
+    
+    ascendant()
+//        = self.clone().sort(ifOrdered);
+    {
+        var copy := self.clone();
+        
+        ^ copy.sort(ifOrdered)
+    }
+
 //    isAscendant
 //        = self~indexableOp isSorted:ifOrdered.
 //

@@ -180,13 +180,13 @@ public class BaseValue
 //    [
 //        system'NotSupportedException new; raise.
 //    ]
-//
-//    /// Compares the values
-//    bool greater : anObject = anObject less:self.
-//
-//    bool notless : anObject = self less:anObject; inverted.
-//
-//    bool notgreater : anObject = self greater:anObject; inverted.
+
+    /// Compares the values
+    bool greater(o) = o.less(self);
+
+    bool notless(o) = self.less(o).Inverted;
+
+    bool notgreater(o) = self.greater(o).Inverted;
 }
 
 // --- BaseNumber ---
@@ -994,10 +994,10 @@ public sealed const struct IntNumber : IntBaseNumber
     bool equal(int n)
         = theValue == n;
         
-//    /// Compares the value
-//    bool less(int anOperand)
-//        = theValue < anOperand.
-//        
+    /// Compares the value
+    bool less(int n)
+        = theValue < n;
+        
 //    add:n
 //        <= add(T<int>(n)).
 //

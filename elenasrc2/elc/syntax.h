@@ -130,6 +130,7 @@ enum Symbol
    nsSubSingleExpression        = 0x01070,
    nsL5Operator                 = 0x01071,
    nsL5Operand                  = 0x01072,
+   nsL3Operand                  = 0x01073,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

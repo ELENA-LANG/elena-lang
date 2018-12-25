@@ -5532,23 +5532,23 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    else scope.raiseError(errUnknownMessage, node);
 }
 
-//void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   if (isImportRedirect(node)) {
-//      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
-//   }
-//   else {
-//      SNode dispatchMssg = node.parentNode().findChild(lxEmbeddableMssg);
-//
-//      if (node.argument == -1 && dispatchMssg != lxNone) {
-//         writer.appendNode(lxCalling, -1);
-//         writer.newNode(lxImplicitJump, dispatchMssg.argument);
-//         writer.appendNode(lxTarget, scope.getClassRefId());
-//         writer.closeNode();
-//      }
-//      else scope.raiseError(errInvalidOperation, node);
-//   }   
-//}
+void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   if (isImportRedirect(node)) {
+      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
+   }
+   else {
+      //SNode dispatchMssg = node.parentNode().findChild(lxEmbeddableMssg);
+
+      //if (node.argument == -1 && dispatchMssg != lxNone) {
+      //   writer.appendNode(lxCalling, -1);
+      //   writer.newNode(lxImplicitJump, dispatchMssg.argument);
+      //   writer.appendNode(lxTarget, scope.getClassRefId());
+      //   writer.closeNode();
+      //}
+      /*else */scope.raiseError(errInvalidOperation, node);
+   }   
+}
 
 void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope)
 {
@@ -5829,14 +5829,14 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    int classFlags = codeScope.getClassFlags();
    int preallocated = 0;
 
-   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning/*, lxDispatchCode*/);
-//   if (bodyNode == lxDispatchCode) {
-//      compileConstructorDispatchExpression(writer, bodyNode, codeScope);
-//
-//      writer.closeNode();
-//      return;
-//   }
-   /*else */if (bodyNode == lxResendExpression) {
+   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
+   if (bodyNode == lxDispatchCode) {
+      compileConstructorDispatchExpression(writer, bodyNode, codeScope);
+
+      writer.closeNode();
+      return;
+   }
+   else if (bodyNode == lxResendExpression) {
       if (scope.multiMethod && bodyNode.argument != 0) {
          compileMultidispatch(writer, bodyNode, codeScope, classClassScope);
 
@@ -6818,11 +6818,11 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
    ref_t actionRef = 0, flags = 0, signRef = 0;
    decodeMessage(messageRef, actionRef, paramCount, flags);
 
-   // HOTFIX : do not resolve multi-methods for private methods / implicit constructors
-   if (paramCount == 0 || test(flags, STATIC_MESSAGE))
+   if (paramCount == 0)
       return 0;
 
    ident_t actionStr = scope.module->resolveAction(actionRef, signRef);
+   // HOTFIX : do not resolve multi-methods for implicit constructors
    if (actionStr[0] == '#' && actionStr.compare(CONSTRUCTOR_MESSAGE))
       return 0;
    
@@ -6851,7 +6851,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    // first pass - mark all multi-methods
    SNode current = root.firstChild();
    while (current != lxNone) {
-      if (current == methodType && !test(current.argument, STATIC_MESSAGE)) {
+      if (current == methodType) {
          //HOTFIX : ignore private methods
          ref_t multiMethod = resolveMultimethod(scope, current.argument);
          if (multiMethod) {
@@ -7897,6 +7897,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
          return analizeAssigning(current, scope, mode);
       case lxSymbolReference:
          return analizeSymbol(current, scope);
+      case lxNilOp:
       case lxIntOp:
       //case lxLongOp:
       //case lxRealOp:

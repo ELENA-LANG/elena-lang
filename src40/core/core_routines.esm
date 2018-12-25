@@ -155,6 +155,67 @@ labErr:
 
 end
 
+procedure __literal."new$system@IntNumber$system@IntNumber$@system@Array#1&CharValue[4]"
+
+  aloadsi 3
+  nload
+  ifn labEmpty 0
+    
+  aloadsi 4
+  ecopyd
+  callextr api : slen_ch
+            
+  acopyr class : system'String
+  inc
+  bcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+
+  callextr api : s_copychars
+  
+  acopyb
+  blen
+  ecopy 0
+  dec
+  bwriteb
+  quitn 4
+  
+labEmpty:
+  dcopy 1
+  acopyr class : system'String
+  bcreate
+  bcopya
+  dcopy 0
+  nsave
+  acopyb
+  quitn 4
+
+end
+
+procedure __literal."equal$system@String[2]"
+
+  bloadsi 2
+  callextr api : sequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure __literal."less$system@String[2]"
+
+  bloadsi 2
+  callextr api : sless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
 procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1
@@ -337,6 +398,23 @@ labErr:
   pushr const : %new[0]
   throw
 
+end
+
+procedure __array."copy$system@Array$system@IntNumber$system@IntNumber$system@Array[4]"
+
+  aloadsi 1
+  bcopya
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  aloadsi 4
+  callextr api : nsubcopy
+  
+  acopyb
+  quitn 4
+  
 end
 
 procedure __dptr."system$setReference[2]"
