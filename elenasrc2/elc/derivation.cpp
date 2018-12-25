@@ -178,7 +178,7 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsSingleExpression:
       case nsSubSingleExpression:
       case nsL3Operand:
-      case nsL5Operand:
+      case nsL6Operand:
          //      case nsNestedRootExpression:
          _cacheWriter.newNode(lxExpression);
          break;
@@ -212,6 +212,7 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsL3Operator:
       case nsL4Operator:
       case nsL5Operator:
+      case nsL6Operator:
          _cacheWriter.newNode(lxOperator);
          break;
 ////      case nsL8Operation:

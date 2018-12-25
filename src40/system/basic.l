@@ -30,9 +30,10 @@ public sealed ref<T>// : BaseVariable
 
 //    bool equal : anObject
 //        => theValue.
-//
-//    T<literal> literal
-//        => theValue.
+
+    string Printable
+//        => theValue;
+        = theValue.Printable;
 }
 
 //public extension<ref<real>> realRefOp
@@ -67,26 +68,26 @@ public sealed singleton true : BoolValue
     /// Executes then-action
     if(trueAction,falseAction) = trueAction();
 
-//    /// Always returns nil.
-//    __ifnotoperator ifnot : aTrueAction = nil.
+    /// Always returns nil.
+    ifnot(trueAction) = nil;
 
     iif(object trueVal, object falseVal) = trueVal;
     
-//    /// Executes logical OR operation
-//    ///
-//    /// Always return true
-//    bool or : anExpr = self.
-//
-//    /// Executes logical AND operation
-//    bool and : anExpr = anExpr.
-//
-//    /// Executes logical XOR operation
-//    bool xor : aBool
-//    [
-//        T<bool>(aBool) ? [ ^ false ].
-//        
-//        ^ self
-//    ]
+    /// Executes logical OR operation
+    ///
+    /// Always return true
+    bool or(expr) = self;
+
+    /// Executes logical AND operation
+    bool and(expr) = expr;
+
+    /// Executes logical XOR operation
+    bool xor(expr)
+    {
+        cast bool(expr) ? { ^ false };
+        
+        ^ self
+    }
 
     /// Determines whether the specified object is equal to the current object boolean value.
     bool equal(expr) = expr;
@@ -97,9 +98,9 @@ public sealed singleton true : BoolValue
     /// Always returns false.
     bool Inverted = false;
 
-//    /// Returns literal representation.
-//    T<literal> literal = "true".
-//
+    /// Returns literal representation.
+    string Printable = "true";
+
 //    /// Returns itself.
 //    clone = self.
 }
@@ -115,26 +116,26 @@ public sealed singleton false : BoolValue
     /// Executes else-action
     if(trueAction,falseAction) = falseAction();
 
-//    /// Executes the action
-//    __ifoperator ifnot:aFalseAction = aFalseAction().
+    /// Executes the action
+    ifnot(action) = action();
 
     iif(object trueVal, object falseVal) = falseVal;
 
-//    /// Executes logical OR operation
-//    bool or : anExpr = anExpr.
-//
-//    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    bool and : anExpr = self.
-//
-//    /// Executes logical XOR operation
-//    bool xor : anExpr 
-//    [
-//        T<bool>(anExpr) ? [ ^ true ].
-//        
-//        ^ self
-//    ]
+    /// Executes logical OR operation
+    bool or(expr) = expr;
+
+    /// Executes logical AND operation
+    ///
+    /// Always return false
+    bool and(expr) = self;
+
+    /// Executes logical XOR operation
+    bool xor(expr)
+    {
+        cast bool(expr) ? { ^ true };
+        
+        ^ self
+    }
 
     /// Determines whether the specified object is equal to the current object boolean value
     bool equal(expr)
@@ -151,9 +152,9 @@ public sealed singleton false : BoolValue
     /// Always returns true
     bool Inverted = true;
 
-//    /// Returns literal representation
-//    T<literal> literal = "false".
-//    
+    /// Returns literal representation
+    string Printable = "false";
+    
 //    /// Returns itself
 //    clone = self.
 }
@@ -282,11 +283,11 @@ public sealed const struct ByteNumber : IntBaseNumber
 {
     embeddable __int theValue[1];
 
-//    constructor(int n)
-//    [
-//        theValue := n && 255.
-//    ]
-//
+    constructor(int n)
+    {
+        theValue := n && 255
+    }
+
 //    /// Creates the object with a default value (0)
 //    constructor new
 //        = 0.
@@ -306,7 +307,7 @@ public sealed const struct ByteNumber : IntBaseNumber
 //    /// Creates the object with a specified value
 //    constructor new(byte value)
 //        = value.
-//
+//{[
 //    /// Creates the object with a specified value
 //    constructor new : val
 //        <= new(T<byte>(val)).

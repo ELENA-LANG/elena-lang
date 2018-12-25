@@ -356,18 +356,14 @@ namespace _ELENA_
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!2";
 
   // --- ELENA core module names ---
-   #define CORE_ALIAS                "core"          // Core functionality
+   constexpr auto CORE_ALIAS           = "core";          // Core functionality
   
   // --- ELENA verb messages ---
-   #define DISPATCH_MESSAGE         "#dispatch"
-   #define NEWOBJECT_MESSAGE        "#new"
-   #define CAST_MESSAGE             "#cast"
-   #define CONSTRUCTOR_MESSAGE      "#constructor"
-   #define INVOKE_MESSAGE           "#invoke"
-   // #define NEW_MESSAGE              "new"
-  // #define GET_MESSAGE              "get"
-  // #define EVAL_MESSAGE             "eval"
-  // #define EVALUATE_MESSAGE         "evaluate"
+   constexpr auto DISPATCH_MESSAGE     = "#dispatch";
+   constexpr auto NEWOBJECT_MESSAGE    = "#new";
+   constexpr auto CAST_MESSAGE         = "#cast";
+   constexpr auto CONSTRUCTOR_MESSAGE  = "#constructor";
+   constexpr auto INVOKE_MESSAGE       = "#invoke";
    constexpr auto EQUAL_MESSAGE        = "equal";
    constexpr auto NOTEQUAL_MESSAGE     = "notequal";
    constexpr auto LESS_MESSAGE         = "less";
@@ -404,14 +400,13 @@ namespace _ELENA_
    constexpr auto LESS_OPERATOR        = "<";
    constexpr auto IF_OPERATOR          = "?";
    constexpr auto IFNOT_OPERATOR       = "!";
-      //   #define AND_OPERATOR             "&&"
-      //   #define OR_OPERATOR              "||"
-      //   #define XOR_OPERATOR             "^^"
+   constexpr auto AND_OPERATOR         ="&&";
+   constexpr auto OR_OPERATOR          = "||";
+   constexpr auto XOR_OPERATOR         = "^^";
    constexpr auto ADD_OPERATOR         = "+";
    constexpr auto SUB_OPERATOR         = "-";
    constexpr auto MUL_OPERATOR         = "*";
    constexpr auto DIV_OPERATOR         = "/";
-//   #define REFER_OPERATOR			   "@"
 //   #define APPEND_OPERATOR			   "+="
 //   #define REDUCE_OPERATOR			   "-="
 //   #define INCREASE_OPERATOR			"*="

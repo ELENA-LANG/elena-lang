@@ -115,7 +115,7 @@ enum Symbol
    nsL1Operator                 = 0x01061,
    nsL2Operator                 = 0x01062,
    nsL3Operator                 = 0x01063,
-   nsL4Operator                 = 0x01064,
+   nsL5Operator                 = 0x01064,
 //   nsClosingOperator            = 0x01065,
    nsRetExpression              = 0x01066,
    nsImplicitMessage            = 0x01067,
@@ -128,9 +128,10 @@ enum Symbol
    nsClosure                    = 0x0106E,
    nsSingleExpression           = 0x0106F,
    nsSubSingleExpression        = 0x01070,
-   nsL5Operator                 = 0x01071,
-   nsL5Operand                  = 0x01072,
+   nsL6Operator                 = 0x01071,
+   nsL6Operand                  = 0x01072,
    nsL3Operand                  = 0x01073,
+   nsL4Operator                 = 0x01074,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

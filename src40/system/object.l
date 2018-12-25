@@ -32,9 +32,9 @@ public class Object
 /// A common boolean value
 public /*enum */interface class BoolValue
 {
-//    /// return the default value
-//    constructor()
-//        = false;
+    /// return the default value
+    static Default
+        = false;
         
     abstract bool equal(bool f) {}
 
@@ -42,15 +42,15 @@ public /*enum */interface class BoolValue
 
     abstract if(trueAction,falseAction) {}
 
-//    abstract ifnot : aTrueAction []
+    abstract ifnot(action) {}
 
     abstract iif(object trueVal, object falseVal) {}
 
-//    abstract bool or : anExpr []
-//
-//    abstract bool and : anExpr []
-//
-//    abstract bool xor : aBool []
+    abstract bool or(expr) {}
+
+    abstract bool and(expr) {}
+
+    abstract bool xor(expr) {}
 
     abstract get bool Inverted() {}
 
@@ -62,9 +62,9 @@ public extension commonOp
     /// Returns the parameter        
     back(o) = o;
  
-//    then(Func code)
-//        = code().
-//        
+    then(Func code)
+        = code();
+        
 //    thenClose(Func code)
 //    [
 //        code().
