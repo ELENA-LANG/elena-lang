@@ -45,15 +45,16 @@ public sealed Array<T> //:: Indexable<template_subj>
 //        ]
 //    }.    
 //
-//    readLengthTo(ref<int> retVal)
-//    [
-//        int len := 0.
-//        theArray >> len.
-//        
-//        retVal value := len
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
+    vprop int Length
+    {
+        read(ref int retVal)
+        {
+            int len := 0;
+            theArray $shr len;
+            
+            retVal := len
+        }
+    }
 
     T at(int n)
     {
@@ -1093,10 +1094,6 @@ public nonstructural sealed VariadicArray<T> //:: Indexable<template_subj>
 //
 //    /// Copies a sub array to the provided one at the specified position
 //    read(int anIndex, int aLength, CharArray anArray)
-//        => system'core_routines'__chararray.
-//
-//    /// Copies the array at the specified position
-//    write(int anIndex, int aLength, CharArray anArray)
 //        => system'core_routines'__chararray.
 //
 //    /// Writes a character value at the specified position

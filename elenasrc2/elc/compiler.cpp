@@ -4214,7 +4214,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
    if (target.kind == okClass) {
       targetRef = target.param;
    }
-   else scope.raiseError(errInvalidSyntax, node.parentNode());
+   else scope.raiseError(errNotApplicable, node.parentNode());
 
    ObjectInfo retVal = ObjectInfo(okObject, 0, targetRef);
 
@@ -4250,7 +4250,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
             // call the constructor if it can be resolved directly
             compileMessage(writer, node, scope, target, messageRef, HINT_SILENT | HINT_NODEBUGINFO, stackSafeAttr);
          }
-         else scope.raiseError(errInvalidHint, node.parentNode());
+         else scope.raiseError(errDefaultConstructorNotFound, node.parentNode());
       }
    }
    else scope.raiseError(errInvalidHint, node.parentNode());
@@ -6376,8 +6376,15 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 
 void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef, ref_t elementRef, int sizeHint, bool singleField, bool embeddable)
 {
-   if (singleField && sizeHint == -1) {
-      scope.info.header.flags |= elDynamicRole;
+   if (sizeHint == -1) {
+      if (singleField) {
+         scope.info.header.flags |= elDynamicRole;
+      }
+      else if (!test(scope.info.header.flags, elStructureRole)) {
+         classRef = resolvePrimitiveArray(scope, classRef);
+      }
+      else scope.raiseError(errIllegalField, current);
+
       sizeHint = 0;
    }
 
@@ -6395,7 +6402,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
          // for primitive types size should be specified
          size = sizeHint;
-      }
+      }      
    //   else if (sizeHint == 8 && classRef == V_INT32) {
    //      // HOTFIX : turn int32 flag into int64
    //      classRef = V_INT64;
@@ -7795,7 +7802,7 @@ ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope
          case lxIntArrOp:
          case lxByteArrOp:
          case lxShortArrOp:
-         //case lxBinArrOp:
+         case lxBinArrOp:
             lmask |= HINT_NOUNBOXING;
             break;
          default:
@@ -7853,8 +7860,8 @@ ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope
       //   return V_INT64;
       //case lxRealOp:
       //   return V_REAL64;
-      //case lxBinArrOp:
-      //   return V_BINARY;
+      case lxBinArrOp:
+         return V_BINARY;
       case lxNewArrOp:
          return current.argument;
       default:
@@ -7897,7 +7904,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       case lxShortArrOp:
       case lxByteArrOp:
       case lxArrOp:
-      //case lxBinArrOp:
+      case lxBinArrOp:
       case lxNewArrOp:
       case lxArgArrOp:
       //case lxBoolOp:

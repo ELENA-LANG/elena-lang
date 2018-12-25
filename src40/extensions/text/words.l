@@ -162,7 +162,7 @@ public class SimpleStatemachine : Statemachine
 //    bool isWhitespace = theSpaceMode.    
 //}
 
-public class TokenEnumerator //: Enumerator<string>
+public class TokenEnumerator : Enumerator<string>, interface<Enumerator>
 {
     string       theLiteral;
     ref<int>     theIndex;
@@ -180,8 +180,8 @@ public class TokenEnumerator //: Enumerator<string>
     constructor(string s)
         <= (s, new SimpleStatemachine());
     
-//    constructor new : val
-//        <= new(val literal, SimpleStatemachine new).
+    constructor new(o)
+        <= (cast String(o), new SimpleStatemachine());
     
     reset()
     {
@@ -190,40 +190,39 @@ public class TokenEnumerator //: Enumerator<string>
     
     enumerable() = theLiteral;
     
-//    bool next
-//    [
-//        theBuffer clear.
-//
-//        int  aLength := 0.
-//        int  aCurrent := theIndex.
-//        char aChar := $0.
-//        int  aCharLen := 0.
-//        
-//        theLiteral readLengthTo(&aLength).
-//        
-//        while (aCurrent < aLength)
-//        [
-//            theLiteral read(aCurrent, &aChar).
-//            
-//            if (theDFA proceed(aChar))
-//                [
-//                    theIndex value := aCurrent.
-//                    
-//                    ^ true
-//                ];
-//                [
-//                    ifnot (theDFA isWhitespace)
-//                        [ theBuffer write(aChar) ]
-//                ].
-//                
-//            aChar readLengthTo(&aCharLen).
-//            aCurrent := aCurrent + aCharLen
-//        ].
-//
-//        theIndex value := aCurrent.
-//
-//        ^ theBuffer isNonempty
-//    ]
-//    
-//    literal get = theBuffer literal.
+    bool next()
+    {
+        theBuffer.clear();
+
+        int  len := theLiteral.Length;
+        int  current := theIndex;
+        char ch := $0;
+        int  chLen := 0;
+        
+        while (current < len)
+        {
+            theLiteral.read(current, ref ch);
+            
+            if (theDFA.proceed(ch))
+            {
+                theIndex.Value := current;
+                
+                ^ true
+            }
+            else
+            {
+                ifnot (theDFA.isWhitespace())
+                    { theBuffer.write(ch) }
+            };
+                
+            ch.readLengthTo(ref chLen);
+            current := current + chLen
+        };
+
+        theIndex.Value := current;
+
+        ^ theBuffer.isNonempty()
+    }
+    
+    string get() = theBuffer.Value;
 }

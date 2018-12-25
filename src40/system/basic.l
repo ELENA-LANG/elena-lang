@@ -2229,7 +2229,7 @@ public sealed const struct IntNumber : IntBaseNumber
 /// An UTF-32 character symbol
 public sealed const struct CharValue : BaseValue
 {
-    __raw theValue[4];
+    embeddable __raw theValue[4];
 
     static char Default
         = $0;
@@ -2290,10 +2290,10 @@ public sealed const struct CharValue : BaseValue
 //
 //    bool equal(wide val)
 //        = val == T<wide>(self).
-//
-//    bool equal(char val)
-//        = val == theValue.
-//
+
+    bool equal(char val)
+        = val == theValue;
+
 //    bool less(char val)
 //    [
 //        int c := theValue.

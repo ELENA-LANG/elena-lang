@@ -1,16 +1,16 @@
-//const int TextPageSize = 128.
+const int TextPageSize = 128;
 
 // --- TextBuffer ---
 
 sealed public /*nonstructural */ class TextBuilder
 {
-//    T<CharArray> theBuffer.
-//    ref<int>     theLength.
+    char[]    theBuffer;
+    ref<int>  theLength;
 
     constructor()
     {
-//        theBuffer := CharArray new(TextPageSize).
-//        theLength := 0.
+        theBuffer := new char[](TextPageSize);
+        theLength := 0;
     }
 
 //    constructor new : value
@@ -19,26 +19,24 @@ sealed public /*nonstructural */ class TextBuilder
 //        self write(value).
 //    ] 
 //
-//    int rvprop length :: readLengthTo.
-//
-//    clear
-//    [
-//        theLength value := 0.
-//    ]
-//
-//    readLengthTo(ref<int> aRetVal)
-//    [
-//        theLength readValueTo(aRetVal).
-//    ]
-//
-//    setLength(int aLength)
-//    [
-//        theLength value := aLength.
-//    ]
-//
-//    set length:aLength
-//        <= setLength(T<int>(aLength)).
-//
+    vprop int Length
+    {
+        read(ref int retVal)
+        {
+            theLength.readValueTo(ref retVal)
+        }
+            
+        setLength(int len)
+        {
+            theLength.Value := len
+        }
+    }
+
+    clear()
+    {
+        theLength.Value := 0
+    }
+
 //    cast T<CharArray> = theBuffer.
 //
 //    cast T<literal> 
@@ -59,30 +57,30 @@ sealed public /*nonstructural */ class TextBuilder
 //    [
 //        self write:aLine.
 //    ]
-//                                    
-//    reserve(int aLength)
-//    [
-//        int aNewLength := aLength.
-//        
-//        aNewLength := aNewLength + T<int>(theLength).
-//        
-//        int aBufferLength := theBuffer length.
-//        
-//        if (aNewLength >= aBufferLength)
-//        [
-//            //aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
-//            aNewLength := aNewLength / TextPageSize.
-//            aNewLength := aNewLength + 1.
-//            aNewLength := aNewLength * TextPageSize.            
-//            
-//            T<CharArray> aNewBuffer := CharArray new(aNewLength).
-//            
-//            aNewBuffer write(0, aBufferLength, theBuffer).
-//            
-//            theBuffer := aNewBuffer.
-//        ].
-//    ]
-//
+                                    
+    private reserve(int len)
+    {
+        int newLength := len;
+        
+        newLength := newLength + (cast int(theLength));
+        
+        int bufferLength := theBuffer.Length;
+        
+        if (newLength >= bufferLength)
+        {
+            //aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
+            newLength := newLength / TextPageSize;
+            newLength := newLength + 1;
+            newLength := newLength * TextPageSize;
+            
+            char[] newBuffer := new char[](newLength);
+            
+            newBuffer.write(0, bufferLength, theBuffer).
+            
+            theBuffer := newBuffer
+        }
+    }
+
 //    write(literal aLiteral)
 //    [
 //        int aLength := aLiteral length.
@@ -110,16 +108,16 @@ sealed public /*nonstructural */ class TextBuilder
 //            theLength append(aLength).
 //        ].
 //    ]
-//
-//    write(char aChar)
-//    [
-//        self reserve(1).
-//        
-//        theBuffer write(T<int>(theLength), aChar).
-//        
-//        theLength append(1).
-//    ]
-//
+
+    write(char ch)
+    {
+        self.reserve(1);
+        
+        theBuffer[cast int(theLength)] := ch;
+        
+        theLength.append(1)
+    }
+
 //    write(int n)
 //    [
 //        T<byte,16> tmp.

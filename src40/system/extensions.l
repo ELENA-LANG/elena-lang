@@ -1584,20 +1584,20 @@ public extension objectOp
 
 // --- charOp ---
 
-public extension charOp : char
+public extension charOp : CharValue
 {
-//    bool isWhitespace
-//    [
-//        self =>
-//            $9  [ ^ true ];
-//            $32 [ ^ true ];
-//            $10 [ ^ true ];
-//            $13 [ ^ true ];
-//            $12 [ ^ true ].
-//            
-//        ^ false
-//    ]
-//    
+    bool isWhitespace()
+    {
+        self =>
+            $9  { ^ true }
+            $32 { ^ true }
+            $10 { ^ true }
+            $13 { ^ true }
+            $12 { ^ true };
+            
+        ^ false
+    }
+    
 //    bool isDigit
 //    [
 //        int ch := 0.
@@ -1671,6 +1671,15 @@ public extension byteArrayHelper : Array<byte>
     /// Reads a character value at the specified position and saves it into an output variable
     read(int index, ref char retVal)
         => system'core_routines'__bytearray;                
+}
+
+// --- charArrayHelper ---
+
+public extension charArrayHelper : Array<char>
+{
+    /// Copies the array at the specified position
+    write(int index, int length, char[] array)
+        => system'core_routines'__chararray;
 }
 
 //public singleton byteArrayHelper

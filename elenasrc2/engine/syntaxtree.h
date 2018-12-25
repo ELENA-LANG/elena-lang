@@ -179,7 +179,7 @@ enum LexicalType
    lxReturning       = 0x0C027,
    lxNewArrOp        = 0x0C028,
    lxArrOp           = 0x8C029,   // arg - operation id
-//   lxBinArrOp        = 0x8C02A,   // arg - operation id
+   lxBinArrOp        = 0x8C02A,   // arg - operation id
    lxArgArrOp        = 0x8C02B,   // arg - operation id
 //   lxNilOp           = 0x8C02C,   // arg - operation id
 //   lxBoolOp          = 0x0C02D,   // arg - operation id

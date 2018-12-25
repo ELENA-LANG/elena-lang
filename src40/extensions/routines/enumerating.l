@@ -1,8 +1,8 @@
 //import system'io.
 //import system'text.
 //import extensions.
-//import extensions'text.
-//
+import extensions'text;
+
 //// --- ReaderEnumerator ---
 //
 //public class ReaderEnumerator :: Enumerator
@@ -77,9 +77,9 @@
 
 public extension stringExOp
 {
-//    forEachWord(Func1 f)
-//        = aFunction run(T<Enumerator>(TokenEnumerator new(self))).
-//        
+    forEachWord(Func1 f)
+        = f.run(cast Enumerator(TokenEnumerator.new(self)));
+        
 ////    run token_dfa:aStatemachine each:aFunction
 ////        = aFunction run enumerator:(TokenEnumerator new literal:self token_dfa:aStatemachine).
 }

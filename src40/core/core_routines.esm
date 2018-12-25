@@ -482,6 +482,36 @@ labErr:
 
 end
 
+procedure __chararray."write$system@IntNumber$system@IntNumber$@system@Array#1&CharValue[4]"
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  pushd
+  add
+  ecopyd
+  acopyb
+  nlen
+  less labErr
+  pope
+  aloadsi 2
+  nload
+  aloadsi 4
+  callextr api : ninsert
+  quitn 4
+
+labErr:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
 symbol sta_start
 
   pushr entry : "$forwards'$program"

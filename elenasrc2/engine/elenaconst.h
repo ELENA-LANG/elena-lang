@@ -398,8 +398,8 @@ namespace _ELENA_
    // ELENA verb operators
    constexpr auto EQUAL_OPERATOR       = "==";
    constexpr auto NOTEQUAL_OPERATOR		= "!=";
-      //   #define NOTLESS_OPERATOR		   ">="
-      //   #define NOTGREATER_OPERATOR      "<="
+   constexpr auto NOTLESS_OPERATOR     = ">=";
+   constexpr auto NOTGREATER_OPERATOR  = "<=";
    constexpr auto GREATER_OPERATOR     = ">";
    constexpr auto LESS_OPERATOR        = "<";
    constexpr auto IF_OPERATOR          = "?";
@@ -409,8 +409,8 @@ namespace _ELENA_
       //   #define XOR_OPERATOR             "^^"
    constexpr auto ADD_OPERATOR         = "+";
    constexpr auto SUB_OPERATOR         = "-";
-//   #define MUL_OPERATOR             "*"
-//   #define DIV_OPERATOR             "/"
+   constexpr auto MUL_OPERATOR         = "*";
+   constexpr auto DIV_OPERATOR         = "/";
 //   #define REFER_OPERATOR			   "@"
 //   #define APPEND_OPERATOR			   "+="
 //   #define REDUCE_OPERATOR			   "-="

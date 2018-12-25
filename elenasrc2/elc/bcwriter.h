@@ -264,7 +264,7 @@ class ByteCodeWriter
    void doIntArrayOperation(CommandTape& tape, int operator_id);
    void doByteArrayOperation(CommandTape& tape, int operator_id);
    void doShortArrayOperation(CommandTape& tape, int operator_id);
-//   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
+   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
 
    bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
 

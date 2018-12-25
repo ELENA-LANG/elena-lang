@@ -212,11 +212,11 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
    operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 
-//   // array of structures primitive operations
-//   operators.add(OperatorInfo(REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
-//   operators.add(OperatorInfo(SET_REFER_MESSAGE_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
-//   operators.add(OperatorInfo(READ_MESSAGE_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
-//
+   // array of structures primitive operations
+   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
+   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
+   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
+
    // array of arg list
    operators.add(OperatorInfo(REFER_OPERATOR_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
@@ -902,10 +902,10 @@ bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
 void CompilerLogic :: injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operator_id, int operationType, ref_t& reference, ref_t elementRef)
 {
    int size = 0;
-   //if (operationType == lxBinArrOp) {
-   //   // HOTFIX : define an item size for the binary array operations
-   //   size = -defineStructSize(scope, V_BINARYARRAY, elementRef);
-   //}
+   if (operationType == lxBinArrOp) {
+      // HOTFIX : define an item size for the binary array operations
+      size = -defineStructSize(scope, V_BINARYARRAY, elementRef);
+   }
 
    if (reference == V_BINARY && elementRef != 0) {
       reference = elementRef;
