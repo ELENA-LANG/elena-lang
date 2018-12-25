@@ -1,46 +1,36 @@
-//import system'routines.
-//import system'collections.
-//import extensions.
-//import extensions'routines.
+import system'routines;
+import system'collections;
+import extensions;
+import extensions'routines;
 import extensions'text;
 
 // --- WordList ---
 
 class WordList
 {
-//    ref<int>     theTotal.
-//    T<ArrayList> theList.
-//
-//    constructor new
-//    [
-//        theList := ArrayList new.
-//        theTotal := 0.
-//    ]
-//
-//    append : aWord
-//    [
-//        theTotal append:1.
-//
-//        ifnot (theList ifExists:aWord)
-//            [ theList append:aWord ]
-//    ]
-//
-//    total_words = theTotal.
-//
-//    unique_words = theList length.
-//        
-//    dispatch => theList.
-}
+    int       theTotal;
+    ArrayList theList;
 
-//extension helpOp
-//{
-//    saveLineTo:target
-//    [
-//        target write:self; write:forwards'newLine.
-//        
-//        ^ self.
-//    ]
-//}
+    constructor()
+    {
+        theList := new ArrayList();
+        theTotal := 0;
+    }
+
+    append(word)
+    {
+        theTotal := theTotal + 1;
+
+        ifnot(theList.ifExists(word))
+            { theList.append(word) }
+    }
+
+    total_words = theTotal;
+
+    unique_words = theList.Length;
+        
+    dispatch() => theList;
+}
 
 // --- Program ---
 
@@ -54,14 +44,14 @@ public program()
     {
         text.writeLine(line)
     };
-        
+                
     var list := new WordList();
 
-//    aText forEachWord(:anItem)[ aList append:anItem ].
-//
-//    console printLine("There are ",aList unique_words," unique words out of ",aList total_words).
-//    if (aList total_words > 0)
-//        [ console printLine("the list of unique words:",aList ascendant) ].
-//
-//    console readChar // wait for any key
+    text.forEachWord:(word){ list.append:word };
+
+    console.printLine("There are ",list.unique_words," unique words out of ",list.total_words);
+    if (list.total_words > 0)
+        { console.printLine("the list of unique words:",list.ascendant()) };
+
+    console.readChar() // wait for any key
 }

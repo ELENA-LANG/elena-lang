@@ -44,7 +44,7 @@ singleton stringExConvertor
         auto output := new TextBuilder();
         while (it.Available)
         {
-            output.write(it.get().toLiteral());
+            output.write(it.get().toString());
             output.write:",";
             
             it.appendIndex(1)

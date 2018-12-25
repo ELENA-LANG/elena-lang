@@ -216,6 +216,26 @@ procedure __literal."less$system@String[2]"
   
 end
 
+procedure __literal."save$system@IntNumber$@system@Array#1&CharValue$@system@ref#1&IntNumber[4]"
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+  callextr api : strtochararray
+  bloadsi 5
+  dcopye
+  nsave
+  popa
+
+  quitn 4
+
+end
+
 procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1

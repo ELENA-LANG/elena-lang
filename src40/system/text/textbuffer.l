@@ -84,20 +84,20 @@ sealed public /*nonstructural */ class TextBuilder
         }
     }
 
-//    write(literal aLiteral)
-//    [
-//        int aLength := aLiteral length.
-//        
-//        ifnot (0 == aLength)
-//        [
-//            self reserve(aLength).
-//            
-//            aLiteral save(T<int>(theLength), theBuffer, &aLength).
-//            
-//            theLength append(aLength).
-//        ].
-//    ]
-//
+    write(string s)
+    {
+        int length := s.Length;
+        
+        ifnot (0 == length)
+        {
+            self.reserve(length);
+            
+            s.save(cast int(theLength), theBuffer, ref length);
+            
+            theLength.append(length)
+        }
+    }
+
 //    write(wide aLiteral)
 //    [
 //        int aLength := aLiteral length.
