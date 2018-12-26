@@ -15,6 +15,6 @@
     </files>
     <forwards>
         <forward key="prompt">sum'IntSamplePrompt</forward>
-        <forward key="number">system'Integer</forward>
+        <forward key="number">extensions'Integer</forward>
     </forwards>
 </configuration>

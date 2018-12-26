@@ -420,9 +420,9 @@ public extension convertorOp
 //
 //    toReal
 //        = realConvertor convert:self.
-//
-//    convertTo : aTarget
-//        = Variant new:self; saveTo:aTarget.
+
+    convertTo(target)
+        = new Variant(self).saveTo(target);
 }
 
 //public convertor 

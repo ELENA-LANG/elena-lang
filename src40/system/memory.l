@@ -1599,18 +1599,18 @@ public sealed const struct WideString : BaseValue
 //    int rvprop hash_code :: readHashCodeTo.
 }
 
-//// --- Variant ---
-//
-///// A basic type variant class
-//public sealed class Variant
-//{
-//    object theValue.
-//    
-//    constructor new : object
-//    [
-//        theValue := object.
-//    ]
-//    
+// --- Variant ---
+
+/// A basic type variant class
+public sealed class Variant
+{
+    object theValue;
+    
+    constructor(object)
+    {
+        theValue := object
+    }
+    
 //    /// Tries to convert the value to a byte number
 //    cast T<byte>
 //        = byteConvertor convert:theValue.
@@ -1623,10 +1623,10 @@ public sealed const struct WideString : BaseValue
 //    cast T<char>
 //        = charConvertor convert:theValue.
 //
-//    /// Tries to convert the literal value to the integer number
-//    cast T<int>
-//        = intConvertor convert:theValue.
-//
+    /// Tries to convert the literal value to the integer number
+    int cast()
+        = intConvertor.convert(theValue);
+
 //    /// Tries to convert the literal value to the long integer number
 //    cast T<long>
 //        = longConvertor convert:theValue.
@@ -1674,44 +1674,16 @@ public sealed const struct WideString : BaseValue
 //    [
 //        theValue := aValue.
 //    ]    
-//
-//    private castValueTo:aTarget
-//        = {
-//            eval:o
-//                = o literal.
-//            
-//            eval(BaseVariable v)
-//                <= eval(v value).
-//            
-//            eval(int aValue)
-//                = T<int>(self).
-//                
-//            eval(byte aValue)
-//                = T<byte>(self).
-//                
-//            eval(short aValue)
-//                = T<short>(self).
-//                
-//            eval(long aValue)
-//                = T<long>(self).
-//                
-//            eval(real aValue)
-//                = T<real>(self).
-//                
-//            eval(literal aValue)
-//                = T<literal>(self).
-//                
-//            eval(wide aValue)
-//                = T<wide>(self).
-//        } eval:aTarget.
-//
-//    saveTo : aTarget
-//    [
-//        aTarget value := self castValueTo:aTarget.
+
+//    saveTo(target)
+//    {
+//        var caster := self.__getClass().Caster;
 //        
-//        ^ aTarget
-//    ]
-//
+//        target.Value := caster(self);
+//        
+//        ^ target
+//    }
+
 ////    add : aTarget
 ////        = aTarget add($self $castValueTo:aTarget).
 ////
@@ -1726,7 +1698,7 @@ public sealed const struct WideString : BaseValue
 ////
 ////    bool equal : aTarget
 ////        = $self $castValueTo:aTarget; equal:aTarget.
-//}
+}
 
 // --- Array ---
 

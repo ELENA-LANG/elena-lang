@@ -1,33 +1,33 @@
-import extensions.
+import extensions;
 
 // --- Prompt ---
 
-public const IntSamplePrompt = "Enter the two integer numbers:".
+public const IntSamplePrompt = "Enter the two integer numbers:";
 
-public const RealSamplePrompt = "Enter the two real numbers:".
+public const RealSamplePrompt = "Enter the two real numbers:";
 
 // --- EReader ---
 
 extension EReader
 {
-    loadFrom : aStream
-        = aStream readLine; convertTo:self
-            | if(:e)
-                [
-                    console writeLine(e message); readChar.
+    loadFrom(output)
+        = output.readLine().convertTo(self)
+            | on:(Exception e)
+                {
+                    console.writeLine(e.Message).readChar();
                     
-                    AbortException new; raise.
-                ].
+                    AbortException.raise()
+                };
 }
 
-enteredNumber = forwards'number new; loadFrom:console.
+enteredNumber = forward number.new().loadFrom(console);
 
 // --- Program ---
 
-public program =
-[
+public program()
+{
     console
-        printLine:forwards'prompt;
-        printLine("The sum is ",enteredNumber + enteredNumber);
-        readChar
-].
+        .printLine(forward prompt)
+        .printLine("The sum is ",enteredNumber + enteredNumber)
+        .readChar
+}

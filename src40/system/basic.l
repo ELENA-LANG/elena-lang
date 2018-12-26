@@ -1,9 +1,9 @@
-//// base variable mixin
-//public abstract class BaseVariable
-//{
+// base variable mixin
+public abstract class BaseVariable
+{
 //    // should be overridden
 //    abstract value []
-//}
+}
 
 public sealed ref<T>// : BaseVariable
 {
@@ -2849,10 +2849,10 @@ public singleton shortConvertor
 //    char convert : anObject
 //        = T<char>(anObject).
 //}.
-//
-///// An integer convertor
-//public class intConvertor =
-//{
+
+/// An integer convertor
+public singleton intConvertor
+{
 //    /// Converts a literal string into an integer and saves the result into an output parameter
 //    convert(literal aValue, ref<int> aRetVal)
 //        => system'core_routines'__intconvertor.
@@ -2995,8 +2995,8 @@ public singleton shortConvertor
 //                        
 //    int convert : anObject
 //        = T<int>(anObject).
-//}.
-//
+}
+
 ///// A unsigned integer convertor
 //public class uintConvertor =
 //{
@@ -3332,47 +3332,6 @@ public singleton realConvertor
 //real public pi_value = realOpController pi.
 //
 //real public e_value = realOpController e.
-//
-//// --- variables ---
-//
-//public sealed class Integer :: BaseVariable, ref<int>
-//{
-//    constructor new
-//    [
-//        theValue := 0.
-//    ]
-//    
-//    constructor new(int n) 
-//    [
-//        theValue := n.
-//    ]
-//    
-//    constructor new : n
-//        <= new(T<int>(n)).
-//        
-//    append : n
-//        <= append(T<int>(n)).
-//
-//    reduce : n
-//        <= reduce(T<int>(n)).
-//        
-//    append(int n)
-//    [
-//        int v := theValue.
-//        v := v + n.
-//        
-//        theValue := v.
-//    ]
-//    
-//    reduce(int n)
-//    [
-//        int v := theValue.
-//        v := v - n.
-//        
-//        theValue := v.
-//    ]
-//}
-//
 //public sealed class LongInteger :: BaseVariable, ref<long>
 //{
 //    constructor new

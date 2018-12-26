@@ -225,7 +225,7 @@ public sealed class MethodNotFoundException : Exception
 //        
 //    constructor new(object object, mssg missingMessage)
 //        <= new(object   __className + " : Method " + missingMessage literal + " not found").
-    constructor new(o1,o2)
+    constructor new(object object, mssg missingMessage)
     {
     }
 }
@@ -242,17 +242,22 @@ public sealed class MethodNotFoundException : Exception
 //    constructor new :aMessage
 //        <= new(aMessage).
 //}
-//
-//// --- AbortException ---
-//
-///// An abort exception 
-//public class AbortException :: Exception
-//{
+
+// --- AbortException ---
+
+/// An abort exception 
+public class AbortException : Exception
+{
+    static raise()
+    {
+        new AbortException().raise()
+    }
+    
 //    /// Creates the exception
 //    constructor new
 //        <= new("The process terminated").
-//}
-//
+}
+
 //// --- CriticalException ---
 //
 //public class CriticalException :: Exception
