@@ -99,6 +99,9 @@ public class Exception
 //        ^ aCatchblock(self).
 //    ]
 
+    on(handler)
+        => system'core_routines'__exception;
+
     raise()
     {
         self.throw()
@@ -222,6 +225,9 @@ public sealed class MethodNotFoundException : Exception
 //        
 //    constructor new(object object, mssg missingMessage)
 //        <= new(object   __className + " : Method " + missingMessage literal + " not found").
+    constructor new(o1,o2)
+    {
+    }
 }
 
 //// --- MethodNotSupported ---

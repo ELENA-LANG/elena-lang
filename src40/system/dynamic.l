@@ -18,10 +18,10 @@
 // --- Message ---
 
 /// A message constant
-public sealed /*struct*/ Message
+public sealed struct Message
 {
-//    __mssg theValue.
-//
+    embeddable __mssg theValue[4];
+
 //    constructor new(literal name)
 //    [
 //        system'core_routines'__message load(self, name)

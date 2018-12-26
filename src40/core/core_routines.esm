@@ -51,6 +51,21 @@ procedure __object."__getClass[1]"
 
 end
 
+procedure __exception."on[2]"
+
+  popd
+  popa // exception
+  popb // block
+  pusha
+  pushd
+  acopyb
+  copym message : "#invoke[1]"
+  bsredirect
+  aloadsi 3
+  throw
+
+end
+
 procedure __int."readHashCodeTo$@system@ref#1&IntNumber[2]"
 
   bloadsi 2

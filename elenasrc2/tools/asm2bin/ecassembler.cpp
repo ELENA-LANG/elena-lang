@@ -239,39 +239,26 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
       }
       else token.raiseErr("Invalid number (%d)\n");
    }
-   else if (word.compare("subject")) {
+   else if (word.compare("message")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
 
-      int paramCount = 0;
-      //int verbId = mapVerb(token.value);
-      //if (verbId == 0) {
-      //   verbId = EVAL_MESSAGE_ID;
-      //}
+      IdentifierString message;
+      compileMessage(token, message);
+
+      int paramCount = message[0] - '0';
+      int flags = 0;
 
       IdentifierString subject(token.value);
-      token.read();
-      bool first = true;
-      //while(token.value[0] == '&') {
-      //   if (first) {
-      //      first = false;
-      //   }
-      //   else subject.append(token.value);
+      subject.copy(message.c_str() + 1);
 
-      //   token.read();
-      //   subject.append(token.value);
-      //   token.read();
-      //}
-      if (token.value[0] == '[') {
-         paramCount = token.readInteger(constants);
+      if (subject.compare(INVOKE_MESSAGE)) {
+         flags |= SPECIAL_MESSAGE;
       }
-      else token.raiseErr("Invalid operand (%d)");
-
-      token.read("]", "Invalid operand (%d)");
 
       ref_t subj = binary->mapAction(subject, 0, false);
 
-      writeCommand(ByteCommand(code, encodeMessage(subj, paramCount, 0)), writer);
+      writeCommand(ByteCommand(code, encodeMessage(subj, paramCount, flags)), writer);
    }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }

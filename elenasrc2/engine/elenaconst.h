@@ -323,7 +323,7 @@ namespace _ELENA_
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
 //   const int elDebugSubject        = 0x000C0000;
 //////   const int elDebugReals          = 0x000D0000;
-//   const int elDebugMessage        = 0x000E0000;
+   constexpr int elDebugMessage        = 0x000E0000;
 //////   const int elDebugDPTR           = 0x000F0000;
 //   const int elEnumList            = 0x00100000;
 

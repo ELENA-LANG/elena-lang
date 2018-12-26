@@ -1728,6 +1728,11 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
             break;
       }
    }
+   else if (fieldRef == V_MESSAGE) {
+      if (size != 4) {
+         scope.raiseError(errInvalidHint, node);
+      }
+   }
 
    //if (fieldRef == V_OBJARRAY && isPrimitiveRef(elementRef)) {
    //   switch (elementRef) {
@@ -3742,21 +3747,22 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    //}
    //else compileLazyExpressionMethod(writer, node, methodScope);
 
-   //if (node.existChild(lxTypeAttr)) {
-   //   // inject a virtual invoke multi-method if required
-   //   SyntaxTree virtualTree;
-   //   virtualTree.insertNode(0, lxClass, 0);
+   ref_t multiMethod = resolveMultimethod(scope, methodScope.message);
+   if (multiMethod) {
+      // inject a virtual invoke multi-method if required
+      SyntaxTree virtualTree;
+      virtualTree.insertNode(0, lxClass, 0);
 
-   //   List<ref_t> implicitMultimethods;
-   //   implicitMultimethods.add(encodeMessage(INVOKE_MESSAGE_ID, getAbsoluteParamCount(methodScope.message)));
+      List<ref_t> implicitMultimethods;
+      implicitMultimethods.add(multiMethod);
 
-   //   _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), scope.info, *this, implicitMultimethods, lxClassMethod);
+      _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), scope.info, *this, implicitMultimethods, lxClassMethod);
 
-   //   generateClassDeclaration(virtualTree.readRoot(), scope, ClassType::ctNone);
+      generateClassDeclaration(virtualTree.readRoot(), scope, ClassType::ctClass);
 
-   //   compileVMT(writer, virtualTree.readRoot(), scope);
-   //}
-   //else {
+      compileVMT(writer, virtualTree.readRoot(), scope);
+   }
+   else {
       generateClassDeclaration(SNode(), scope, ClassType::ctClass);
 
       //if (test(scope.info.header.flags, elWithMuti)) {
@@ -3765,7 +3771,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
       //   scope.info.header.flags &= ~elSealed;
       //   scope.info.header.flags |= elClosed;
       //}
-//   }
+   }
 
    writer.closeNode();
 
@@ -4713,7 +4719,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
                case V_PTR32:
                case V_DWORD:
                //case V_SIGNATURE:
-               //case V_MESSAGE:
+               case V_MESSAGE:
                   current.set(variableOne ? lxExtArgument : lxIntExtArgument, 0);
                   break;
                case V_INT8ARRAY:

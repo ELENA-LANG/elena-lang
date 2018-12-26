@@ -53,7 +53,7 @@
 #12    = __ptr;
 //__real          = #15.
 //__dword         = #16.
-//__mssg          = #19.
+#19    = __mssg;
 //__subj          = #18.
 //__extmssg       = #21.
 ////__tape_mixin    = #8209.

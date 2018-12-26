@@ -1420,11 +1420,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //         info.header.flags = elDebugSubject | elStructureRole;
 //         info.size = 4;
 //         break;
-//      case V_MESSAGE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugMessage | elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_MESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
 //      case V_EXTMESSAGE:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugMessage | elStructureRole;
@@ -1831,6 +1831,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       case V_PTRBINARY:
       case V_STRING:
       case V_TEMPLATE:
+      case V_MESSAGE:
          attrValue = 0;
          return true;
          ////case V_INT64:
@@ -1845,9 +1846,6 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       //   attrValue = 0;
       //   return true;
       //case V_SYMBOL:
-      //   attrValue = 0;
-      //   return true;
-      //case V_MESSAGE:
       //   attrValue = 0;
       //   return true;
       //case V_EXTMESSAGE:
@@ -2014,10 +2012,9 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 //            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
 //            return info.size == 4;
-//         case V_MESSAGE:
-//            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elMessage);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_MESSAGE, 0));
-//            return info.size == 4;
+         case V_MESSAGE:
+            info.header.flags |= (elDebugMessage | elMessage);
+            break;
 //         case V_EXTMESSAGE:
 //            info.header.flags |= (elDebugMessage | elReadOnlyRole | elWrapper | elExtMessage);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_EXTMESSAGE, 0));

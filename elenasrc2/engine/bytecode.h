@@ -476,6 +476,16 @@ public:
       }
    }
 
+   static bool IsMCode(ByteCode code)
+   {
+      switch (code) {
+         case bcCopyM:
+            return true;
+         default:
+            return false;
+      }
+   }
+
    static bool IsPush(ByteCode code)
    {
       switch(code) {

@@ -1089,9 +1089,9 @@ void listFlags(int flags, int& row, int pageSize)
    ////   //case elDebugReals:
    ////   //   printLine("@flag ", "elDebugReals");
    ////   //   break;
-   //   case elDebugMessage:
-   //      printLine("@flag ", "elDebugMessage", row, pageSize);
-   //      break;
+      case elDebugMessage:
+         printLine("@flag ", "elDebugMessage", row, pageSize);
+         break;
    ////   //case elDebugDPTR:
    ////   //   printLine("@flag ", "elDebugDPTR");
    ////   //   break;

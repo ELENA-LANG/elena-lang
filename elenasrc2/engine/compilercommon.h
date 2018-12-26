@@ -27,7 +27,7 @@
 #define V_DWORD          (ref_t)-16
 #define V_PTR32          (ref_t)-17
 //#define V_SIGNATURE      (ref_t)-18
-//#define V_MESSAGE        (ref_t)-19
+#define V_MESSAGE        (ref_t)-19
 //#define V_EXTMESSAGE     (ref_t)-21
 //#define V_SYMBOL         (ref_t)-22
 //
