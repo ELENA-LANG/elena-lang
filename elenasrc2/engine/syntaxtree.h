@@ -200,6 +200,7 @@ enum LexicalType
    lxMultiDispatching         = 0x0C03B,
    lxSealedMultiDispatching   = 0x0C03C,
    lxCodeExpression           = 0x0C03D,
+   lxCollection               = 0x0C03E,
 //   lxOverridden      = 0x04047,
 //
 //   lxAssignOperator  = 0x10024,

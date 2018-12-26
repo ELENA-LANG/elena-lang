@@ -215,63 +215,16 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsL6Operator:
          _cacheWriter.newNode(lxOperator);
          break;
-////      case nsL8Operation:
-////         _writer.newNode(lxAssignOperator);
-////         break;
       case nsArrayOperator:
          _cacheWriter.newNode(lxOperator, REFER_OPERATOR_ID);
          break;
-////      case nsXInlineClosure:
-////         _writer.newNode(lxInlineClosure);
-////         break;
-////      case nsMessageOperation:
-////         _writer.newNode(lxMessage);
-////         break;
-////      case nsSubjectArg:
-////         _writer.newNode(lxMessage/*, -1*/);
-////         break;
-////      case nsLazyExpression:
-////         _writer.newNode(lxLazyExpression);
-////         break;
-////      case nsRetStatement:
-////         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask | lxExprMask));
-////         break;
-////      case nsMessageReference:
-////         _writer.newNode(lxMessageReference);
-////         break;
-//////      case nsDynamicSize:
-//////         _writer.newNode(lxSize, -1);
-//////         break;
+
       case nsSwitching:
          _cacheWriter.newNode(lxSwitching);
          break;
-////      case nsSubCode:
-////      case nsTokenParam:
-////      case nsDispatchExpression:
-////      case nsExtension:
-////      case nsCatchMessageOperation:
-////      case nsAltMessageOperation:
-////      case nsSwitchOption:
-////      case nsLastSwitchOption:
-//////      case nsBiggerSwitchOption:
-//////      case nsLessSwitchOption:
-////         _writer.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
-////         break;
-////      case nsAttribute:
-////         _writer.newNode(lxAttributeDecl);
-////         break;
-////      case nsNestedSubCode:
-////         _writer.newNode(lxCode);
-////         break;
-////      case nsIdleMessageParameter:
-////         _writer.newNode(lxIdleMsgParameter);
-////         break;
-////      case nsReferenceExpression:
-////         _writer.newNode(lxReferenceExpr);
-////         break;
-////      case nsClosingOperator:
-////         _writer.newNode((LexicalType)nsL3Operator);
-////         break;
+      case nsCollection:
+         _cacheWriter.newNode(lxCollection);
+         break;
       case nsScope:
       case nsAttribute:
          // whole root scope should be cached
@@ -1930,6 +1883,21 @@ void DerivationWriter :: generateSwitchTree(SyntaxWriter& writer, SNode node, Sc
    }
 }
 
+void DerivationWriter :: generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
+{
+   writer.newNode(lxCollection);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxExpression) {
+         generateExpressionTree(writer, current, derivationScope);
+      }
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
 void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode)
 {
    writer.newBookmark();
@@ -1996,6 +1964,9 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             writer.insert(lxSwitching);
             writer.closeNode();
             expressionExpected = true;
+            break;
+         case lxCollection:
+            generateCollectionTree(writer, current, derivationScope);
             break;
          default:
             if (isTerminal(current.type)) {

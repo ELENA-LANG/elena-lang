@@ -169,6 +169,7 @@ class DerivationWriter : public _DerivationWriter
    void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/, bool templateArgMode = false);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
+   void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
    void generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);

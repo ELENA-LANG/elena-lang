@@ -130,6 +130,14 @@ inline SNode goToNode(SNode current, LexicalType type)
    return current;
 }
 
+inline SNode goToNode(SNode current, LexicalType type1, LexicalType type2)
+{
+   while (current != lxNone && !current.compare(type1, type2))
+      current = current.nextNode();
+
+   return current;
+}
+
 //inline SNode goToNode(SNode current, LexicalType type, ref_t argument)
 //{
 //   while (current != lxNone && current != type && current.argument != argument)
@@ -2442,9 +2450,6 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
    if (test(mode, HINT_REFOP)) {
       result = compileReferenceExpression(writer, node, scope, mode & ~HINT_REFOP);
    }
-//   if (test(mode, HINT_COLLECTION_MODE)) {
-//      result = compileCollection(writer, node.parentNode(), scope);
-//   }
    else {
       switch (node.type) {
          case lxCodeExpression:
@@ -3975,47 +3980,36 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
    return compileClosure(writer, node, ownerScope, scope);
 }
 
-//ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   ref_t parentRef = scope.moduleScope->arrayReference;
-//   SNode parentNode = node.firstChild(lxTerminalMask);
-//   if (parentNode.compare(lxIdentifier, lxReference, lxGlobalReference)) {
-//      parentRef = resolveImplicitIdentifier(scope, parentNode);
-//      if (parentRef == 0)
-//         scope.raiseError(errUnknownBaseClass, node);
-//   }
-//
-//   return compileCollection(writer, node, scope, parentRef);
-//}
-//
-//ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t vmtReference)
-//{
+ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
+{
+   target.reference = resolvePrimitiveArray(scope, target.element);
+
 //   if (vmtReference == 0)
 //      vmtReference = scope.moduleScope->superReference;
-//
-//   int counter = 0;
-//
+
+   int counter = 0;
+
 //   writer.newBookmark();
-//
-//   // all collection memebers should be created before the collection itself
-//   SNode current = node.findChild(lxExpression);
-//   while (current != lxNone) {
-//      writer.newNode(lxMember, counter);
-//      compileExpression(writer, current, scope, 0, 0);
-//      writer.closeNode();
-//
-//      current = current.nextNode();
-//      counter++;
-//   }
-//
-//   writer.appendNode(lxTarget, vmtReference);
-//   writer.insert(lxNested, counter);
-//   writer.closeNode();
-//
+
+   // all collection memebers should be created before the collection itself
+   SNode current = node.findChild(lxExpression);
+   while (current != lxNone) {
+      writer.newNode(lxMember, counter);
+      compileExpression(writer, current, scope, 0, 0);
+      writer.closeNode();
+
+      current = current.nextNode();
+      counter++;
+   }
+
+   writer.appendNode(lxTarget, target.reference);
+   writer.insert(lxNested, counter);
+   writer.closeNode();
+
 //   writer.removeBookmark();
-//
-//   return ObjectInfo(okObject, vmtReference);
-//}
+
+   return target;
+}
 
 ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
@@ -4259,6 +4253,9 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
          else scope.raiseError(errDefaultConstructorNotFound, node.parentNode());
       }
    }
+   else if (node.argument == V_OBJARRAY) {
+      compileCollection(writer, node, scope, target);
+   }
    else scope.raiseError(errInvalidHint, node.parentNode());
 
 //   SNode objectNode = node.findChild(lxExpression);
@@ -4439,8 +4436,12 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
             typeRef = value;
       }
       if (attributes.castAttr || attributes.newOpAttr) {
-         SNode msgNode = goToNode(current, lxMessage);
-         if (msgNode != lxNone && msgNode.firstChild() == lxNone) {
+         SNode msgNode = goToNode(current, lxMessage, lxCollection);
+         if (msgNode == lxCollection && !attributes.castAttr && goToNode(current, lxSize) == lxSize) {
+            msgNode.set(lxTypecast, V_OBJARRAY);
+            exprAttr |= HINT_VIRTUALEXPR;
+         }
+         else if (msgNode == lxMessage && msgNode.firstChild() == lxNone) {
             if (attributes.castAttr) {
                exprAttr |= HINT_VIRTUALEXPR;
                msgNode.set(lxTypecast, V_CONVERSION);

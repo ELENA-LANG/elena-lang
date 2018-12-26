@@ -132,6 +132,7 @@ enum Symbol
    nsL6Operand                  = 0x01072,
    nsL3Operand                  = 0x01073,
    nsL4Operator                 = 0x01074,
+   nsCollection                 = 0x01075,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               
