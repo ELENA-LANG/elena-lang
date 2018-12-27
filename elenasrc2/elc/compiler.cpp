@@ -1557,7 +1557,7 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope, bool ex
          // HOTFIX : skip attributes
          node = node.nextNode();
 
-      if (test(node.type, lxTerminalMask))
+      if (node == lxTemplate || test(node.type, lxTerminalMask))
          parentRef = resolveParentRef(node, scope, false);
    }
 
@@ -6765,7 +6765,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       bool sealedMethod = (methodHints & tpMask) == tpSealed;
       // if the class is closed, no new methods can be declared
       // except private sealed ones (which are declared outside the class VMT)
-      if (included && closed/* && !privateOne*/) {
+      if (included && closed && !privateOne) {
          scope.raiseError(errClosedParent, findParent(current, lxClass/*, lxNestedClass*/));
       }
 
@@ -8466,7 +8466,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    // cache the frequently used messages
    scope.dispatch_message = encodeAction(scope.module->mapAction(DISPATCH_MESSAGE, 0, false));
    scope.newobject_message = encodeAction(scope.module->mapAction(NEWOBJECT_MESSAGE, 0, false));
-   scope.init_message = encodeMessage(scope.module->mapAction(INIT_MESSAGE, 0, false), 0, SPECIAL_MESSAGE);
+   scope.init_message = encodeMessage(scope.module->mapAction(INIT_MESSAGE, 0, false), 0, SPECIAL_MESSAGE | STATIC_MESSAGE);
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically

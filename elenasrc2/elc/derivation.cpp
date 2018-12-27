@@ -3065,14 +3065,12 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
 //      else if (current == lxTemplateAttribute) {
 //         copyParamAttribute(writer, current, scope);
 //      }
-//      else if (current == lxClassRefAttr) {
-//         writer.appendNode(current.type, current.identifier());
-//      }
       else if (current == lxSize) {
          writer.appendNode(current.type, current.argument);
       }
-      else if (current == lxAttribute)
-         writer.appendNode(current.type, current.argument);
+      else if (current == lxAttribute) {
+         copyTreeNode(writer, current, scope);
+      }
 
       current = current.nextNode();
    }

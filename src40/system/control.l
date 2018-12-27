@@ -1006,7 +1006,7 @@ public abstract class BaseEnumerator<T> : Enumerator<T>
         ^ (cast int(theIndex)) < theLength
     }
     
-    Enumerator cast() = class Enumerator:{ embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
 }
 
 //// --- BaseIndexer ---

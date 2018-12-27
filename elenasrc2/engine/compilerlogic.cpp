@@ -1758,7 +1758,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          attrValue = (tpConversion | tpSealed);
          return true;
       case V_INITIALIZER:
-         attrValue = (tpSpecial/* | tpSealed*/ | tpInitializer);
+         attrValue = (tpSpecial | tpPrivate | tpInitializer);
          return true;
       case V_METHOD:
          attrValue = 0;

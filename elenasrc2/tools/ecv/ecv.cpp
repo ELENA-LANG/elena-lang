@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   19
+#define REVISION_VERSION   20
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -231,11 +231,9 @@ ref_t resolveMessage(_Module* module, ident_t method)
 
       method = method.c_str() + getlength("#private&");
    }
-   //else if (method.startsWith("#conversion&")) {
-   //   flags |= SPECIAL_MESSAGE;
-
-   //   method = method.c_str() + getlength("#conversion&");
-   //}
+   if (method.compare("#init")) {
+      flags |= SPECIAL_MESSAGE;
+   }
 
    IdentifierString actionName;
    int paramIndex = method.find('[', -1);
