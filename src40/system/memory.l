@@ -1,29 +1,29 @@
 
 // --- Array template ---
 
-public sealed Array<T> //:: Indexable<template_subj>
+public sealed Array<T> //: Indexable<T>
 {
     embeddable T[] theArray;
 
 ////    cast T<int>:nint
 ////        = V<template_subj>(n).
-//
-//    Enumerator<template_subj> enumerator = BaseEnumerator<template_subj>::
+
+//    Enumerator<T> enumerator() = class BaseEnumerator<T>:
 //    {
-//        @theIndex := -1.
+//        this theIndex := -1;
 //        
-//        @theLength := self length.
+//        this theLength := self.Length;
 //        
-//        template_subj get = self getAt(@theIndex value).
+//        T get() = self.at(this theIndex.Value);
 //        
-//        enumerable = self.
+//        enumerable() = self;
 //        
-//        reset
-//        [
-//            @theIndex := -1
-//        ]
+//        reset()
+//        {
+//            this theIndex := -1
+//        }
 //    }.
-//
+
 //    cast T<Indexable> = Indexable::{ /*embeddable dispatch => self.*/T<Indexer> indexer => self. }.
 //    
 //    cast Enumerable<template_subj> = Enumerable<template_subj>::{ /*embeddable dispatch => self.*/Enumerator<template_subj> enumerator => self. }.

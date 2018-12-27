@@ -991,24 +991,24 @@ public interface Func<T1,T2,TResult>
 //////    /// Clones the object
 //////    #method clone = Boolean new:$value.
 //////}
-//
-//// --- BaseEnumerator<type> ---
-//
-//public abstract class BaseEnumerator<type> :: Enumerator<type>
-//{
-//    ref<int> theIndex.
-//    int theLength.
-//    
-//    bool next
-//    [
-//        theIndex append(1).
-//        
-//      ^ theIndex < theLength
-//    ]    
-//    
-//    cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
-//}
-//
+
+// --- BaseEnumerator<type> ---
+
+public abstract class BaseEnumerator<T> : Enumerator<T>
+{
+    ref<int> theIndex;
+    int      theLength;
+    
+    bool next()
+    {
+        theIndex.append(1);
+        
+        ^ (cast int(theIndex)) < theLength
+    }
+    
+    Enumerator cast() = class Enumerator:{ embeddable dispatch() => self; };
+}
+
 //// --- BaseIndexer ---
 //
 //public abstract class BaseIndexer :: Indexer

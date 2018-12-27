@@ -101,6 +101,7 @@
 #define V_FIELD          (ref_t)-16407
 #define V_WRAPPER        (ref_t)-16408
 #define V_INTERN         (ref_t)-16409
+#define V_MEMBER         (ref_t)-16410
 
 ////// obsolete
 ////#define V_MULTI          (ref_t)-16397
@@ -383,16 +384,18 @@ public:
       bool  refAttr;
       bool  internAttr;
       bool  loopAttr;
+      bool  memberAttr;
 
       bool isExprAttr()
       {
-         return refAttr | internAttr | externAttr | forwardAttr;
+         return refAttr | internAttr | externAttr | forwardAttr | memberAttr;
       } 
 
       ExpressionAttributes()
       {
          refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
          newOpAttr = loopAttr = internAttr = false;
+         memberAttr = false;
       }
    };
 

@@ -177,6 +177,7 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsSubExpression:
       case nsSingleExpression:
       case nsSubSingleExpression:
+      case nsL2Operand:
       case nsL3Operand:
       case nsL6Operand:
          //      case nsNestedRootExpression:
@@ -3334,6 +3335,12 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
 //         copyClassTree(writer, current.findChild(lxTypeAttr), scope);
 //         writer.closeNode();
 //      }
+      else if (current == lxParent && declaringClass) {
+         // generate a parent node only for the template based class; it should be ignored for the template class import
+         writer.newNode(lxParent, -1);
+         copyChildren(writer, current, scope);
+         writer.closeNode();
+      }
       else if (current == lxClassMethod) {
          copyMethodTree(writer, current, scope);
       }

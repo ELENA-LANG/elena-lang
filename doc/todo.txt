@@ -5,6 +5,7 @@ In development:
               dev - elena 4.0
                  * syntax : template / size should be the last token in expression and one before the last for declaration
                  * support - new [] { 1,2,3 } - expression
+                 * array of integers : new int[] { 1, 2, 3 }
                  * support 2.2 syntax (without r postfix)
                  * allow to work with ref<int> directly
                  * the following code should be supported : newLength := newLength + cast int(theLength);
@@ -45,6 +46,8 @@ In development:
                  * unboxing of boxing (in case if analizer does not resolve the issue)
                  * cache resolved built-in tampletes
                  * test all possible syntax combination
+                 * simplify DerivationWriter :: newNode - use a common mask for all expression nonterminals
+                 * warn if the declaration name is similar to the atribute
  
               dev - tests          
                  * test : interpreter

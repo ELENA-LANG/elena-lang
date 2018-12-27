@@ -1,8 +1,8 @@
-//import system'routines.
+import system'routines;
 //import system'collections.
 //import system'dynamic.
-//import extensions.
-//
+import extensions;
+
 //// --- Expression ---
 //
 //class ExpressionTree
@@ -96,38 +96,40 @@ class TwentyFourGame
         self.newPuzzle();
     }
     
-    newPuzzle
+    newPuzzle()
     {
-//        theNumbers := (
-//            1 + randomGenerator eval:9, 
-//            1 + randomGenerator eval:9, 
-//            1 + randomGenerator eval:9, 
-//            1 + randomGenerator eval:9).
+        theNumbers := new object[]
+            {
+                1 + randomGenerator.eval:9, 
+                1 + randomGenerator.eval:9, 
+                1 + randomGenerator.eval:9, 
+                1 + randomGenerator.eval:9
+            }
     }
     
-//    help
-//    [
-//        console 
-//            printLine:"------------------------------- Instructions ------------------------------";
-//            printLine:"Four digits will be displayed.";
-//            printLine:"Enter an equation using all of those four digits that evaluates to 24";
-//            printLine:"Only * / + - operators and () are allowed";
-//            printLine:"Digits can only be used once, but in any order you need.";
-//            printLine:"Digits cannot be combined - i.e.: 12 + 12 when given 1,2,2,1 is not allowed";
-//            printLine:"Submit a blank line to skip the current puzzle.";
-//            printLine:"Type 'q' to quit";
-//            writeLine;
-//            printLine:"Example: given 2 3 8 2, answer should resemble 8*3-(2-2)";
-//            printLine:"------------------------------- --------------------------------------------".
-//    ]
-//    
-//    prompt
-//    [
-//        theNumbers forEach(:n) [ console print(n," ") ].
-//        
-//        console print:": "
-//    ]
-//    
+    help()
+    {
+        console 
+            .printLine:"------------------------------- Instructions ------------------------------"
+            .printLine:"Four digits will be displayed."
+            .printLine:"Enter an equation using all of those four digits that evaluates to 24"
+            .printLine:"Only * / + - operators and () are allowed"
+            .printLine:"Digits can only be used once, but in any order you need."
+            .printLine:"Digits cannot be combined - i.e.: 12 + 12 when given 1,2,2,1 is not allowed"
+            .printLine:"Submit a blank line to skip the current puzzle."
+            .printLine:"Type 'q' to quit"
+            .writeLine()
+            .printLine:"Example: given 2 3 8 2, answer should resemble 8*3-(2-2)"
+            .printLine:"------------------------------- --------------------------------------------"
+    }
+    
+    prompt()
+    {
+        theNumbers.forEach:(n){ console.print(n," ") };
+        
+        console.print:": "
+    }
+    
 //    resolve : aLine
 //    [
 //        var exp := ExpressionTree new:aLine.
@@ -176,7 +178,7 @@ class TwentyFourGame
 
 public program()
 {
-    var aGame := new TwentyFourGame().help();
+    var game := new TwentyFourGame().help();
 
-//    while (aGame prompt; playRound(console readLine)) [].
+    while (game.prompt().playRound(console.readLine())) {}
 }

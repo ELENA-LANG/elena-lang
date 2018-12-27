@@ -1929,6 +1929,13 @@ bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttri
             return true;
          }
          else return false;
+      case (int)V_MEMBER:
+         if (!attributes.memberAttr) {
+            attributes.memberAttr = true;
+
+            return true;
+         }
+         else return false;
       default:
          return false;
    }

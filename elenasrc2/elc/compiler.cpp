@@ -46,6 +46,7 @@ constexpr auto HINT_SUBCODE_CLOSURE = 0x00008800;
 constexpr auto HINT_VIRTUALEXPR     = 0x00004000;
 //constexpr auto HINT_ASSIGNTARGET    = 0x00002000;
 constexpr auto HINT_INTERNALOP      = 0x00002000;
+constexpr auto HINT_MEMBER          = 0x00000800;
 ////#define HINT_RESENDEXPR       0x00000400
 //#define HINT_LAZY_EXPR        0x00000200
 constexpr auto HINT_DYNAMIC_OBJECT  = 0x00000100;  // indicates that the structure MUST be boxed
@@ -2379,16 +2380,21 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //         break;
 //      }
       default:
-         if (test(mode, HINT_FORWARD)) {
-            IdentifierString forwardName(FORWARD_MODULE, "'", token);
+         if (testany(mode, HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER)) {
+            if (test(mode, HINT_FORWARD)) {
+               IdentifierString forwardName(FORWARD_MODULE, "'", token);
 
-            object = scope.mapTerminal(forwardName.ident(), true, 0);
-         }
-         else if (test(mode, HINT_EXTERNALOP)) {
-            object = ObjectInfo(okExternal, 0, V_INT32);
-         }
-         else if (test(mode, HINT_INTERNALOP)) {
-            object = ObjectInfo(okInternal, scope.module->mapReference(token), V_INT32);
+               object = scope.mapTerminal(forwardName.ident(), true, 0);
+            }
+            else if (test(mode, HINT_EXTERNALOP)) {
+               object = ObjectInfo(okExternal, 0, V_INT32);
+            }
+            else if (test(mode, HINT_INTERNALOP)) {
+               object = ObjectInfo(okInternal, scope.module->mapReference(token), V_INT32);
+            }
+            else if (test(mode, HINT_MEMBER)) {
+               object = scope.mapMember(token);
+            }
          }
          else object = scope.mapTerminal(token, terminal == lxReference, 0);
          break;
@@ -3995,7 +4001,7 @@ ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeS
    SNode current = node.findChild(lxExpression);
    while (current != lxNone) {
       writer.newNode(lxMember, counter);
-      compileExpression(writer, current, scope, 0, 0);
+      compileExpression(writer, current, scope, target.element, 0);
       writer.closeNode();
 
       current = current.nextNode();
@@ -4425,6 +4431,9 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          }
          if (attributes.internAttr) {
             exprAttr |= HINT_INTERNALOP;
+         }
+         if (attributes.memberAttr) {
+            exprAttr |= HINT_MEMBER;
          }
       }
 
