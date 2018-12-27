@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 2;
+constexpr auto ELENAVM_REVISION = 3;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2018 by Alex Rakov";
@@ -195,7 +195,7 @@ protected:
    IdentifierString _realClass;
    IdentifierString _msgClass;
    IdentifierString _extMsgClass;
-   IdentifierString _signClass;
+   IdentifierString _subjClass;
 
    LibraryManager  _loader;
    ELENAVMMachine* _machine;
@@ -325,9 +325,9 @@ public:
       return _realClass;
    }
 
-   virtual ident_t getSignatureClass()
+   virtual ident_t getMessageNameClass()
    {
-      return _signClass;
+      return _subjClass;
    }
 
    virtual ident_t getMessageClass()

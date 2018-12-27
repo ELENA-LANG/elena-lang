@@ -1638,25 +1638,25 @@ public sealed struct LongNumber : IntBaseNumber
 {
     embeddable __int theValue[8];
 //    
-//    /// return the default value
-//    static long Default
-//        = 0l;
-//    
-//    /// Returns the minimal value
-//    static long MinValue
-//        = -9223372036854775808l;
-//
-//    /// Returns the maximal value
-//    static long MaxValue
-//        = 9223372036854775807l;
+    /// return the default value
+    static long Default
+        = 0l;
+    
+    /// Returns the minimal value
+    static long MinValue
+        = -9223372036854775808l;
 
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        <= new:0l.
-//
-//    /// Creates the object with specified value
-//    constructor new(long value)
-//        = value.
+    /// Returns the maximal value
+    static long MaxValue
+        = 9223372036854775807l;
+
+    /// Creates the object with a default value (0)
+    constructor()
+        = 0l;
+
+    /// Creates the object with specified value
+    constructor(long value)
+        = value;
 
     /// Creates the object with specified value
     constructor(int value)
@@ -1677,22 +1677,22 @@ public sealed struct LongNumber : IntBaseNumber
 //    /// Creates the object with specified value
 //    constructor new : anObject
 //        <= new(T<long>(anObject)).
-//
-//    /// Returns an integer value
-//    cast T<int> = intConvertor convert(self).
-//
-//    /// Returns an integer value
-//    cast T<uint> = uintConvertor convert(self).
-//
-//    /// Returns the value as a short integer    
-//    cast T<short> = shortConvertor convert(self).
-//    
-//    /// Returns the byte value
-//    cast T<byte> = byteConvertor convert(self).
-//
-//    /// Returns a real value
-//    cast T<real> = RealNumber new(self).
-//    
+
+    /// Returns an integer value
+    int cast() = intConvertor.convert(self);
+
+    /// Returns an integer value
+    uint cast() = uintConvertor.convert(self);
+
+    /// Returns the value as a short integer    
+    short cast() = shortConvertor.convert(self);
+    
+    /// Returns the byte value
+    byte cast() = byteConvertor.convert(self);
+
+    /// Returns a real value
+    real cast() = RealNumber new(self);
+    
 //    bool equal:o
 //    [
 //        var n := T<long>(o) ?? nil.
@@ -1709,15 +1709,15 @@ public sealed struct LongNumber : IntBaseNumber
 //        
 //    bool less(BaseVariable v)
 //        <= less(v value).
-//        
-//    /// Compares the value
-//    bool equal(long n)
-//        = theValue == n.
-//        
-//    /// Compares the value
-//    bool less(long n)
-//        = theValue < n.
-//        
+        
+    /// Compares the value
+    bool equal(long n)
+        = theValue == n;
+        
+    /// Compares the value
+    bool less(long n)
+        = theValue < n;
+        
 //    add:n
 //        <= add(T<long>(n)).
 //
@@ -1741,23 +1741,23 @@ public sealed struct LongNumber : IntBaseNumber
 //
 //    long divide(BaseVariable v)
 //        <= divide(v value).
-//        
-//    /// Returns the sum
-//    long add(long n)
-//        = theValue + n.
-//
-//    /// Returns the sum
-//    long subtract(long n)
-//        = theValue - n.
-//
-//    /// Returns the product
-//    long multiply(long n)
-//        = theValue * n.
-//
-//    /// Returns the result of integer division
-//    long divide(long n)
-//        = theValue / n.
-//
+        
+    /// Returns the sum
+    long add(long n)
+        = theValue + n;
+
+    /// Returns the sum
+    long subtract(long n)
+        = theValue - n;
+
+    /// Returns the product
+    long multiply(long n)
+        = theValue * n;
+
+    /// Returns the result of integer division
+    long divide(long n)
+        = theValue / n;
+
 //    and:n
 //        <= and(T<long>(n)).
 //        
@@ -1775,160 +1775,160 @@ public sealed struct LongNumber : IntBaseNumber
 //        
 //    long xor(BaseVariable v)
 //        <= xor(v value).
-//        
-//    /// Returns the result of bitwise AND operation
-//    long and(long n)
-//        = theValue && n.
-//
-//    /// Returns the result of bitwise OR operation
-//    long or(long n)
-//        = theValue || n.
-//
-//    /// Returns the result of bitwise XOR operation
-//    long xor(long n)
-//        = theValue ^^ n.    
-//
-//    /// Compares the integer value
-//    bool equal(int n) 
-//        = self equal(LongNumber new(n)).
-//
-//    /// Compares the integer value
-//    bool equal(short n)
-//        = self equal(LongNumber new(n)).
-//
-//    /// Compares the integer value
-//    bool equal(byte n)
-//        = self equal(LongNumber new(n)).
-//
-//    /// Compares the integer value
-//    bool equal(real n)
-//        = RealNumber new(self); equal(n).
-//
-//    /// Compares the integer value
-//    bool less(int n)
-//        = self less(LongNumber new(n)).
-//
-//    /// Compares the integer value
-//    bool less(short n)
-//        = self less(LongNumber new(n)).
-//
-//    /// Compares the integer value
-//    bool less(byte n)
-//        = self less(LongNumber new(n)).
-//
-//    /// Compares the integer value
-//    bool less(real n)
-//        = RealNumber new(self); less(n).
-//
-//    /// Returns the sum of integers
-//    add(int n)
-//        = self add(LongNumber new(n)).
-//
-//    /// Returns the sum of integers
-//    add(short n)
-//        = self add(LongNumber new(n)).
-//
-//    /// Returns the sum of integers
-//    add(byte n)
-//        = self add(LongNumber new(n)).
-//
-//    /// Returns the sum of integers
-//    add(real n)
-//        = RealNumber new(self); add(n).
-//
-//    /// Returns the difference of integers
-//    subtract(int n)
-//        = self subtract(LongNumber new(n)).
-//
-//    /// Returns the difference of integers
-//    subtract(short n)
-//        = self subtract(LongNumber new(n)).
-//
-//    /// Returns the difference of integers
-//    subtract(byte n)
-//        = self subtract(LongNumber new(n)).
-//
-//    /// Returns the difference of integers
-//    subtract(real n)
-//        = RealNumber new(self); subtract(n).
-//
-//    /// Returns the product of integers
-//    multiply(real n)
-//        = RealNumber new(self); multiply(n).
-//
-//    /// Returns the product of integers
-//    multiply(int n)
-//        = self multiply(LongNumber new(n)).
-//
-//    /// Returns the product of integers
-//    multiply(byte n)
-//        = self multiply(LongNumber new(n)).
-//
-//    /// Returns the product of integers
-//    multiply(short n)
-//        = self multiply(LongNumber new(n)).
-//
-//    /// Returns the result of integer division
-//    divide(int n)
-//        = self divide(LongNumber new(n)).
-//
-//    /// Returns the result of integer division
-//    divide(short n)
-//        = self divide(LongNumber new(n)).
-//
-//    /// Returns the result of integer division
-//    divide(byte n)
-//        = self divide(LongNumber new(n)).
-//
-//    /// Returns the result of integer division
-//    divide(real n)
-//        = RealNumber new(self); divide(n).
-//        
-//    /// Returns the result of bitwise AND operation
-//    and(int n)
-//        = self and(LongNumber new(n)).
-//
-//    /// Returns the result of bitwise AND operation
-//    and(short n)
-//        = self and(LongNumber new(n)).
-//
-//    /// Returns the result of bitwise AND operation
-//    and(byte n)
-//        = self and(LongNumber new(n)).
-//
-//    /// Returns the result of bitwise OR operation
-//    or(int n)
-//        = self or(LongNumber new(n)).
-//
-//    /// Returns the result of bitwise OR operation
-//    or(short n)
-//        = self or(LongNumber new(n)).
-//
-//    /// Returns the result of bitwise OR operation
-//    or(byte n)
-//        = self or(LongNumber new(n)).  
-//
-//    /// Returns the result of bitwise XOR operation
-//    xor(int n)
-//        = self xor(LongNumber new(n)).
-//
-//    /// Returns the result of bitwise XOR operation
-//    xor(short n)
-//        = self xor(LongNumber new(n)).
-//
-//    /// Returns the result of bitwise XOR operation
-//    xor(byte n)
-//        = self xor(LongNumber new(n)).
-//
+        
+    /// Returns the result of bitwise AND operation
+    long and(long n)
+        = theValue && n;
+
+    /// Returns the result of bitwise OR operation
+    long or(long n)
+        = theValue || n;
+
+    /// Returns the result of bitwise XOR operation
+    long xor(long n)
+        = theValue ^^ n;
+
+    /// Compares the integer value
+    bool equal(int n) 
+        = self.equal(new LongNumber(n));
+
+    /// Compares the integer value
+    bool equal(short n)
+        = self.equal(new LongNumber(n));
+
+    /// Compares the integer value
+    bool equal(byte n)
+        = self.equal(new LongNumber(n));
+
+    /// Compares the integer value
+    bool equal(real n)
+        = new RealNumber(self).equal(n);
+
+    /// Compares the integer value
+    bool less(int n)
+        = self.less(new LongNumber(n));
+
+    /// Compares the integer value
+    bool less(short n)
+        = self.less(new LongNumber(n));
+
+    /// Compares the integer value
+    bool less(byte n)
+        = self.less(new LongNumber(n));
+
+    /// Compares the integer value
+    bool less(real n)
+        = new RealNumber(self).less(n);
+
+    /// Returns the sum of integers
+    add(int n)
+        = self.add(new LongNumber(n));
+
+    /// Returns the sum of integers
+    add(short n)
+        = self.add(new LongNumber(n));
+
+    /// Returns the sum of integers
+    add(byte n)
+        = self.add(new LongNumber(n));
+
+    /// Returns the sum of integers
+    add(real n)
+        = new RealNumber(self).add(n);
+
+    /// Returns the difference of integers
+    subtract(int n)
+        = self.subtract(new LongNumber(n));
+
+    /// Returns the difference of integers
+    subtract(short n)
+        = self.subtract(new LongNumber(n));
+
+    /// Returns the difference of integers
+    subtract(byte n)
+        = self.subtract(new LongNumber(n));
+
+    /// Returns the difference of integers
+    subtract(real n)
+        = new RealNumber(self).subtract(n);
+
+    /// Returns the product of integers
+    multiply(real n)
+        = new RealNumber(self).multiply(n);
+
+    /// Returns the product of integers
+    multiply(int n)
+        = self.multiply(new LongNumber(n));
+
+    /// Returns the product of integers
+    multiply(byte n)
+        = self.multiply(new LongNumber(n));
+
+    /// Returns the product of integers
+    multiply(short n)
+        = self.multiply(new LongNumber(n));
+
+    /// Returns the result of integer division
+    divide(int n)
+        = self.divide(new LongNumber(n));
+
+    /// Returns the result of integer division
+    divide(short n)
+        = self.divide(new LongNumber(n));
+
+    /// Returns the result of integer division
+    divide(byte n)
+        = self.divide(new LongNumber(n));
+
+    /// Returns the result of integer division
+    divide(real n)
+        = new RealNumber(self).divide(n);
+        
+    /// Returns the result of bitwise AND operation
+    and(int n)
+        = self.and(new LongNumber(n));
+
+    /// Returns the result of bitwise AND operation
+    and(short n)
+        = self.and(new LongNumber(n));
+
+    /// Returns the result of bitwise AND operation
+    and(byte n)
+        = self.and(new LongNumber(n));
+
+    /// Returns the result of bitwise OR operation
+    or(int n)
+        = self.or(new LongNumber(n));
+
+    /// Returns the result of bitwise OR operation
+    or(short n)
+        = self.or(new LongNumber(n));
+
+    /// Returns the result of bitwise OR operation
+    or(byte n)
+        = self.or(new LongNumber(n));  
+
+    /// Returns the result of bitwise XOR operation
+    xor(int n)
+        = self.xor(new LongNumber(n));
+
+    /// Returns the result of bitwise XOR operation
+    xor(short n)
+        = self.xor(new LongNumber(n));
+
+    /// Returns the result of bitwise XOR operation
+    xor(byte n)
+        = self.xor(new LongNumber(n));
+
+    /// Returns the literal presentation
+    string Printable = stringConvertor.convert(self);
+
 //    /// Returns the literal presentation
-//    T<literal> literal = literalConvertor convert(self).
-//
-////    /// Returns the literal presentation
-////    wide = system'wideConvertor convert long:$self.
-//
-//    /// Clones the value
-//    clone = LongNumber new(self).
-//    
+//    wide = system'wideConvertor convert long:$self.
+
+    /// Clones the value
+    long clone() = new LongNumber(self);
+    
 //    // Reads the object hash code into the output parameter
 //    readHashCodeTo(ref<int> aCode)
 //        => system'core_routines'__int.
@@ -2029,11 +2029,11 @@ public sealed /*struct*/ RealNumber : BaseNumber
 //    /// Creates the object with specified value
 //    constructor new(byte value)
 //        = realConvertor convert(value).
-//
-//    /// Creates the object with specified value
-//    constructor new(long value)
-//        = realConvertor convert(value).
-//        
+
+    /// Creates the object with specified value
+    constructor(long value)
+        = realConvertor.convert(value);
+        
 //    /// Creates the object with specified value
 //    constructor new : anObject
 //        <= new(T<real>(anObject)).
@@ -2997,9 +2997,9 @@ public singleton intConvertor
 //        = T<int>(anObject).
 }
 
-///// A unsigned integer convertor
-//public class uintConvertor =
-//{
+/// A unsigned integer convertor
+public singleton uintConvertor
+{
 //    uint convert : object
 //        = T<uint>(object).
 //    
@@ -3018,7 +3018,7 @@ public singleton intConvertor
 //        
 //        ^ UIntNumber new(aRetVal)
 //    ]        
-//}.
+}
 
 /// A long integer convertor
 public singleton longConvertor

@@ -24,7 +24,7 @@
 #16395 = import;
 #16396 = extern;
 #8205  = closure;
-//mixin           = #8206.
+#8206  = mixin;
 #16399 = get;
 //__block         = #16400.
 //__nested        = #16401.

@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   20
+#define REVISION_VERSION   21
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1002,9 +1002,9 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elStateless", row, pageSize);
    }      
 
-   //if (test(flags, elGroup)) {
-   //   printLine("@flag ", "elGroup", row, pageSize);
-   //}      
+   if (test(flags, elGroup)) {
+      printLine("@flag ", "elGroup", row, pageSize);
+   }      
 
    //if (test(flags, elWithGenerics)) {
    //   printLine("@flag ", "elWithGenerics", row, pageSize);

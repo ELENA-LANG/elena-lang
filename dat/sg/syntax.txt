@@ -155,6 +155,7 @@ EXPRESSION ->
 	| reference
 	| integer OPERATIONS
 	| hex
+	| long
 	| literal
 	| wide
 	| character OPERATIONS

@@ -1,28 +1,24 @@
 //import system'collections.
-//
-//// --- Struct ---
-//
-//public mixin Struct
-//{
-//    V<object> items.
-//    
-//    internal constructor new(int n)
-//        = V<object>(n).
-//    
-//    constructor new(Array list)
-//        <= new(list length);
-//    [
-//        int i := 0.
-//        int n := list length.
-//        
-//        while(i < n)
-//        [
-//            self setField(i, list getAt(i)).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//    
+
+// --- Struct ---
+
+public mixin Struct
+{
+    object[] items;
+    
+    internal constructor allocate(int n)
+        = new object[](n);
+    
+    constructor(object[] list)
+        <= allocate(list.Length)
+    {
+        int len := list.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            items[i] := list[i]
+        }
+    }
+
 //    constructor new(ArrayList list, int index, int length)
 //        <= new(length);
 //    [
@@ -34,10 +30,10 @@
 //            i := i + 1
 //        ]
 //    ]
-//    
-//    dispatch => system'core_routines'__struct.
-//}
-//
+    
+    dispatch() => system'core_routines'__struct;
+}
+
 //// --- DynamicStruct ---
 //
 //public class DynamicStruct

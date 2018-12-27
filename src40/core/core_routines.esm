@@ -1,6 +1,8 @@
 //        ELENA Language 4.0
 //      inline system library
 
+define elSubject            000002000h
+
 procedure __object."#dispatch[1]"
 
   bsredirect  
@@ -630,6 +632,59 @@ labErr:
   pushr class : system'InvalidArgumentException
   pushr const : %new[0]
   throw  
+
+end
+
+procedure __struct."#dispatch[1]"
+
+  bsredirect
+
+  pushe
+  dcopycount
+  elsen labEnd 0
+  dcopyverb
+  pushd
+  bcopya
+  pushn 0
+
+labNext:
+  count
+  dloadsi 0
+  if labEnd
+  get
+  inc
+  dsavesi 0
+
+  flag
+  andn elSubject
+  ifn  labNext 0
+
+  nload
+  ecopyd
+  dloadsi 1
+  else labNext
+
+labCall:
+  dloadsi 0
+  get
+  popi 3
+  quitn 1
+  
+labEnd:
+  popi 2
+  pope
+  open    4
+  reserve 2
+  esavesi 3
+  bcopys  -3
+  pushb
+  pusha
+  acopyr class : system'Message
+  pushr class : system'MethodNotFoundException
+  asavesi 5
+  aloadsi 0
+  pushr const : %"new[2]"
+  throw
 
 end
 

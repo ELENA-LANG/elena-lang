@@ -732,7 +732,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             //pusha
 
             ecodes.writeByte(bcCopyM);
-            ecodes.writeDWord(_linker->parseMessage(arg/*, false*/));
+            ecodes.writeDWord(_linker->parseMessage(arg, false));
             ecodes.writeByte(bcALoadSI);
             ecodes.writeDWord(0);
             ecodes.writeByte(bcACallVI);

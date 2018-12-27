@@ -1681,12 +1681,12 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       case V_NOSTRUCT:
          attrValue = elNonStructureRole;
          return true;
-//      case V_GROUP:
-//         attrValue = elGroup;
-//         return true;
-////      case V_TAPEGROUP:
-////         attrValue = elTapeGroup;
-////         return true;
+      case V_GROUP:
+         attrValue = elGroup;
+         return true;
+      //case V_TAPEGROUP:
+      //   attrValue = elTapeGroup;
+         return true;
       case V_CLASS:
       case V_PUBLIC:
       case V_INTERNAL:

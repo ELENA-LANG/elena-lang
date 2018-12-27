@@ -288,7 +288,7 @@ namespace _ELENA_
    constexpr int elStateless           = 0x00000080;
    constexpr int elFinal               = 0x00000100;
    constexpr int elSealed              = 0x00000120;
-//   const int elGroup               = 0x00000200;
+   constexpr int elGroup               = 0x00000200;
 //   const int elWithGenerics        = 0x00000400;
    constexpr int elReadOnlyRole        = 0x00000800;
    constexpr int elNonStructureRole    = 0x00001000;
