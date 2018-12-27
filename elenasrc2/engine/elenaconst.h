@@ -23,7 +23,7 @@ namespace _ELENA_
    constexpr int ACTION_ORDER             = 9;
 
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
-   // indicates it is an invoke message
+   // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto SPECIAL_MESSAGE         = 0x020u;
    constexpr auto PROPERTY_MESSAGE        = 0x040u;
    constexpr auto STATIC_MESSAGE          = 0x080u;

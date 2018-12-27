@@ -2315,7 +2315,7 @@ class StringEnumerator : Enumerator<char>
         ^ false
     }
     
-    Enumerator cast() = class Enumerator:
+    Enumerator cast() = new Enumerator:
     {
         embeddable dispatch() => self;
     };

@@ -32,7 +32,7 @@ MemoryDump :: MemoryDump(pos_t capacity)
    _total = capacity;
 
    //_buffer = (capacity > 0) ? (char*)malloc(capacity) : NULL;
-   _buffer = (capacity > 0) ? (char*)realloc(NULL, capacity) : NULL;
+   _buffer = (capacity > 0) ? (char*)realloc(NULL, capacity) : nullptr;
 }
 
 MemoryDump :: MemoryDump(MemoryDump& copy)

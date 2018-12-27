@@ -1553,14 +1553,12 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope, bool ex
       parentRef = resolveParentRef(node, scope, false);
    }
    else if (node != lxNone) {
-      if (node == lxAttribute) {
-         if (node.argument == V_CLASS) {
-            node = node.nextNode();
-            if (node != lxNone)
-               parentRef = resolveParentRef(node, scope, false);
-         }
-         else scope.raiseError(errInvalidSyntax, node);
-      }      
+      while (node == lxAttribute)
+         // HOTFIX : skip attributes
+         node = node.nextNode();
+
+      if (test(node.type, lxTerminalMask))
+         parentRef = resolveParentRef(node, scope, false);
    }
 
    if (scope.info.header.parentRef == scope.reference) {
@@ -3807,10 +3805,18 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 
       declareVMT(node, scope);
 
-      //// check if it is a virtual vmt (only for the class initialization)
-      //SNode current = node.firstChild();
+      // check if it is a virtual vmt (only for the class initialization)
+      SNode current = node.firstChild();
       //bool virtualClass = true;
-      //while (current != lxNone) {
+      while (current != lxNone) {
+         if (current == lxAttribute) {
+            ExpressionAttributes attributes;
+            if (_logic->validateExpressionAttribute(current.argument, attributes) && attributes.newOpAttr) {
+               // only V_NEWOP attribute is allowed
+               current = lxIdle;
+            }
+            else scope.raiseError(errInvalidHint, current);
+         }
       //   if (current == lxClassField) {
       //      virtualClass = false;
       //   }
@@ -3820,11 +3826,13 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
       //         break;
       //      }
       //   }
-      //   current = current.nextNode();
-      //}
+         current = current.nextNode();
+      }
 
       //if (virtualClass)
       //   scope.info.header.flags |= elVirtualVMT;
+
+
 
       generateClassDeclaration(node, scope, ClassType::ctClass, true);
 

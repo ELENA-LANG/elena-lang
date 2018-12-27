@@ -52,6 +52,7 @@ enum LexicalType
    lxParent          = 0x00023,
    lxConstructor     = 0x00024,
    lxStaticMethod    = 0x00025,
+   lxSwitchOption    = 0x0003C,
    lxAttributeDecl   = 0x0004E,
    lxClassField      = 0x0004F,
    lxImplicitMessage = 0x00067,
@@ -59,6 +60,7 @@ enum LexicalType
    lxDynamicSizeDecl = 0x00069,
    lxPropertyParam   = 0x0006B,
    lxClosureExpr     = 0x0006E,
+   lxFieldInit       = 0x00077,
 
    lxTypecast        = 0x00100,
 
@@ -75,13 +77,11 @@ enum LexicalType
 ////   lxInlineExpression= 0x00032,
 //   lxMessageReference= 0x08033,
 //   lxExtern          = 0x00039,
-   lxSwitchOption    = 0x0003C,
 //   lxLastSwitchOption = 0x0003D,
 //   lxBiggerSwitchOption = 0x0003E,
 //   lxLessSwitchOption = 0x0003F,
 //   lxLazyExpression  = 0x08040,
-//   lxFieldInit       = 0x00041,
-   //
+   
 ////   //lxDefaultGeneric  = 0x00046,
 ////   lxSubject         = 0x00047,
 //////   lxImplicitConstructor = 0x0004B,
