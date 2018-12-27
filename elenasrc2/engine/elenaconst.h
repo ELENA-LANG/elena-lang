@@ -388,7 +388,7 @@ namespace _ELENA_
    constexpr auto IFNOT_MESSAGE        = "ifnot";
   // #define SHIFT_MESSAGE            "shift"
   // #define IF_ELSE_MESSAGE          "if:else"
-  // #define INIT_MESSAGE             "#init"
+   constexpr auto INIT_MESSAGE         = "#init";
   // #define ISNIL_MESSAGE            "#isnil"
 
    // ELENA verb operators

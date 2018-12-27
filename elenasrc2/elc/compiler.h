@@ -921,9 +921,9 @@ private:
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
-//   void compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//
-//   void compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message);
+   void compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope);
+
+   void compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message);
 
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);

@@ -1112,18 +1112,18 @@ void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, re
    tape.write(bcFreeStack, freeArg);
 }
 
-//void ByteCodeWriter :: callImplicitConstructorMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
-//{
-//   // validate
-//   // xcallrm r, m
-//
-//   if (withValidattion)
-//      tape.write(bcValidate);
-//
-//   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
-//
-//   tape.write(bcFreeStack, getParamCount(message));
-//}
+void ByteCodeWriter :: callInitMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion)
+{
+   // validate
+   // xcallrm r, m
+
+   if (withValidattion)
+      tape.write(bcValidate);
+
+   tape.write(bcXCallRM, reference | mskVMTMethodAddress, message);
+
+   tape.write(bcFreeStack, getParamCount(message));
+}
 
 void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode)
 {
@@ -3852,7 +3852,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, int/* mode*/)
 //   if (node.type == lxLocalAddress && test(mode, EMBEDDABLE_EXPR)) {
 //      SNode implicitNode = node.findChild(lxImplicitCall);
 //      if (implicitNode != lxNone)
-//         callImplicitConstructorMethod(tape, implicitNode.findChild(lxTarget).argument, implicitNode.argument, false);
+//         callInitMethod(tape, implicitNode.findChild(lxTarget).argument, implicitNode.argument, false);
 //   }
 }
 
@@ -4469,9 +4469,9 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 
    // copym message
    ref_t message = callNode.argument;
-//   SNode msg = callNode.findChild(lxOvreriddenMessage);
-//   if (msg != lxNone)
-//      message = msg.argument;
+   SNode msg = callNode.findChild(lxOvreriddenMessage);
+   if (msg != lxNone)
+      message = msg.argument;
 
    tape.write(bcCopyM, message);
 
@@ -5229,13 +5229,13 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
       endThenBlock(tape);
 }
 
-//inline SNode goToNode(SNode current, LexicalType type)
-//{
-//   while (current != lxNone && current != type)
-//      current = current.nextNode();
-//
-//   return current;
-//}
+inline SNode goToNode(SNode current, LexicalType type)
+{
+   while (current != lxNone && current != type)
+      current = current.nextNode();
+
+   return current;
+}
 
 void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
 {
@@ -5274,17 +5274,17 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
 
    assignBaseTo(tape, lxResult);
    
-   //SNode callNode = node.findChild(lxOvreriddenMessage);
-   //while (callNode != lxNone) {
-   //   ref_t messageTarget = callNode.findChild(lxTarget).argument;
-   //   if (!messageTarget)
-   //      messageTarget = target.argument;
+   SNode callNode = node.findChild(lxOvreriddenMessage);
+   while (callNode != lxNone) {
+      ref_t messageTarget = callNode.findChild(lxTarget).argument;
+      if (!messageTarget)
+         messageTarget = target.argument;
 
-   //   // call implicit constructor
-   //   callImplicitConstructorMethod(tape, messageTarget, callNode.argument, false);
+      // call implicit constructor
+      callInitMethod(tape, messageTarget, callNode.argument, false);
 
-   //   callNode = goToNode(callNode.nextNode(), lxOvreriddenMessage);
-   //}   
+      callNode = goToNode(callNode.nextNode(), lxOvreriddenMessage);
+   }   
 }
 
 void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
@@ -5293,17 +5293,17 @@ void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::N
 
    newStructure(tape, node.argument, target.argument);
 
-   //SNode callNode = node.findChild(lxOvreriddenMessage);
-   //while (callNode != lxNone) {
-   //   ref_t messageTarget = callNode.findChild(lxTarget).argument;
-   //   if (!messageTarget)
-   //      messageTarget = target.argument;
+   SNode callNode = node.findChild(lxOvreriddenMessage);
+   while (callNode != lxNone) {
+      ref_t messageTarget = callNode.findChild(lxTarget).argument;
+      if (!messageTarget)
+         messageTarget = target.argument;
 
-   //   // call implicit constructor
-   //   callImplicitConstructorMethod(tape, messageTarget, callNode.argument, false);
+      // call implicit constructor
+      callInitMethod(tape, messageTarget, callNode.argument, false);
 
-   //   callNode = goToNode(callNode.nextNode(), lxOvreriddenMessage);
-   //}
+      callNode = goToNode(callNode.nextNode(), lxOvreriddenMessage);
+   }
 }
 
 void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
@@ -5398,7 +5398,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
          generateCallExpression(tape, node);
          break;
 //      case lxImplicitCall:
-//         callImplicitConstructorMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
+//         callInitMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
 //         break;
 //      case lxImplicitJump:
 //         resendResolvedMethod(tape, node.findChild(lxTarget).argument, node.argument);
@@ -5823,14 +5823,14 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
                // HOTFIX: -1 indicates the stack is not consumed by the constructor
                callMethod(tape, 1, -1);
             }
-//            else if (test(current.argument, SPECIAL_MESSAGE) && getAbsoluteParamCount(current.argument) == 0) {
-//               // HOTFIX: call implicit constructor without putting the target to the stack
-//               callImplicitConstructorMethod(tape, current.findChild(lxTarget).argument, current.argument, false);
-//            }               
-//            else {
-//               pushObject(tape, lxCurrent); // push the target
-//               callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument, false, false);
-//            }
+            else if (test(current.argument, SPECIAL_MESSAGE)/* && getParamCount(current.argument) == 0*/) {
+               // HOTFIX: call implicit constructor without putting the target to the stack
+               callInitMethod(tape, current.findChild(lxTarget).argument, current.argument, false);
+            }               
+            else {
+               pushObject(tape, lxCurrent); // push the target
+               callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument, false, false);
+            }
             break;
          case lxImporting:
          case lxCreatingClass:
@@ -5948,7 +5948,7 @@ void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root, pos_t source
 ////{
 ////   declareSymbol(tape, reference, (size_t)-1);
 ////   loadObject(tape, type, argument);
-////   callImplicitConstructorMethod(tape, reference, implicitConstructor, false);
+////   callInitMethod(tape, reference, implicitConstructor, false);
 ////   endSymbol(tape);
 ////}
 

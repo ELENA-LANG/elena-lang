@@ -1045,7 +1045,9 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
          current = goToNode(buffer.readRoot(), lxFieldInit);
          writer.newNode(lxClassMethod);
          writer.appendNode(lxAttribute, V_INITIALIZER);
+         writer.newNode(lxNameAttr);
          writer.appendNode(lxIdentifier, INIT_MESSAGE);
+         writer.closeNode();
          writer.newNode(lxCode);
          while (current != lxNone) {
             if (current == lxFieldInit) {

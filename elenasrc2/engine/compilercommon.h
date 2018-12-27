@@ -80,7 +80,7 @@
 #define V_VARIABLE       (ref_t)-16385
 #define V_CLASS          (ref_t)-16386
 #define V_CONVERSION     (ref_t)-16387
-//#define V_INITIALIZER    (ref_t)-16388
+#define V_INITIALIZER    (ref_t)-16388
 #define V_SYMBOLEXPR     (ref_t)-16389
 #define V_TYPETEMPL      (ref_t)-16390
 #define V_TEMPLATE       (ref_t)-16391
@@ -133,7 +133,7 @@ enum MethodHint
 //   tpArgDispatcher=0x003000,
    tpStatic      = 0x004000,
    tpGetAccessor = 0x008000,
-//   tpSpecial     = 0x010000,
+   tpSpecial     = 0x010000,
    tpAbstract    = 0x020000,
 //   tpInternal    = 0x040000,
    tpPredefined  = 0x080000, // virtual class declaration
@@ -233,6 +233,7 @@ struct _ModuleScope
    // cached messages
    ref_t             dispatch_message;
    ref_t             newobject_message;
+   ref_t             init_message;
 
    // cached bool values
    BranchingInfo     branchingInfo;
@@ -327,7 +328,7 @@ struct _ModuleScope
       arrayTemplateReference = 0;
       argArrayTemplateReference = 0;
 
-      newobject_message = dispatch_message = 0;
+      init_message = newobject_message = dispatch_message = 0;
    }
 };
 

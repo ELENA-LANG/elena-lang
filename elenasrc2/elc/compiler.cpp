@@ -3932,15 +3932,13 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
          writer.closeNode();
       }
 
-      //ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
-
-      //if (scope.info.methods.exist(initConstructor)) {
-      //   // if implicit constructor is declared - it should be automatically called
-      //   writer.newNode(lxOvreriddenMessage, initConstructor);
-      //   if (scope.reference != closureRef)
-      //      writer.appendNode(lxTarget, scope.reference);
-      //   writer.closeNode();
-      //}
+      if (scope.info.methods.exist(scope.moduleScope->init_message)) {
+         // if implicit constructor is declared - it should be automatically called
+         writer.newNode(lxOvreriddenMessage, scope.moduleScope->init_message);
+         if (scope.reference != closureRef)
+            writer.appendNode(lxTarget, scope.reference);
+         writer.closeNode();
+      }
 
       writer.closeNode();
 
@@ -5174,9 +5172,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {
-//      if (test(scope.hints, tpSealed | tpSpecial))
-//         flags |= SPECIAL_MESSAGE;
-//
+      if (test(scope.hints, tpSpecial))
+         flags |= SPECIAL_MESSAGE;
+
       if ((scope.hints & tpMask) == tpDispatcher) {
          if (paramCount == 0 && unnamedMessage) {
             actionRef = getAction(scope.moduleScope->dispatch_message);
@@ -5781,59 +5779,59 @@ void Compiler ::compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodSc
    writer.closeNode();
 }
 
-//void Compiler :: compileImplicitConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   declareParameterDebugInfo(writer, node, scope, true/*, test(scope.getClassFlags(), elRole)*/);
-//
-//   int preallocated = 0;
-//
-//   CodeScope codeScope(&scope);
-//
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//   if (checkMethod(*scope.moduleScope, classScope->info.header.parentRef, scope.message) != tpUnknown) {
-//      // check if the parent has implicit constructor - call it
-//      writer.newNode(lxCalling, scope.message);
-//      writer.appendNode(lxTarget, classScope->info.header.parentRef);
-//      writer.closeNode();
-//   }
-//
-//   writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
-//
-//   // new stack frame
-//   // stack already contains current $self reference
-//   // the original message should be restored if it is a generic method
-//   codeScope.level++;
-//
-//   preallocated = codeScope.level;
-//
-//   SNode body = node.findChild(lxCode);
-//   ObjectInfo retVal = compileCode(writer, body, codeScope);
-//
-//   // if the method returns itself
-//   if (retVal.kind == okUnknown) {
-//      // adding the code loading $self
-//      writer.newNode(lxExpression);
-//      writer.appendNode(lxLocal, 1);
-//
-//      ref_t resultRef = scope.getReturningRef(false);
-//      if (resultRef != 0) {
-//         scope.raiseError(errInvalidOperation, node);
-//      }
-//
-//      writer.closeNode();
-//   }
-//   else scope.raiseError(errIllegalMethod, node);
-//
-//   writer.closeNode();
-//
-//   writer.appendNode(lxParamCount, getParamCount(scope.message));
-//   writer.appendNode(lxReserved, scope.reserved);
-//   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
-//
-//   writer.closeNode();
-//}
+void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.newNode(lxClassMethod, scope.message);
+
+   declareParameterDebugInfo(writer, node, scope, true/*, test(scope.getClassFlags(), elRole)*/);
+
+   int preallocated = 0;
+
+   CodeScope codeScope(&scope);
+
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   if (checkMethod(*scope.moduleScope, classScope->info.header.parentRef, scope.message) != tpUnknown) {
+      // check if the parent has implicit constructor - call it
+      writer.newNode(lxCalling, scope.message);
+      writer.appendNode(lxTarget, classScope->info.header.parentRef);
+      writer.closeNode();
+   }
+
+   writer.newNode(lxNewFrame, /*scope.generic ? -1 : */0);
+
+   // new stack frame
+   // stack already contains current $self reference
+   // the original message should be restored if it is a generic method
+   codeScope.level++;
+
+   preallocated = codeScope.level;
+
+   SNode body = node.findChild(lxCode);
+   ObjectInfo retVal = compileCode(writer, body, codeScope);
+
+   // if the method returns itself
+   if (retVal.kind == okUnknown) {
+      // adding the code loading $self
+      writer.newNode(lxExpression);
+      writer.appendNode(lxLocal, 1);
+
+      ref_t resultRef = scope.getReturningRef(false);
+      if (resultRef != 0) {
+         scope.raiseError(errInvalidOperation, node);
+      }
+
+      writer.closeNode();
+   }
+   else scope.raiseError(errIllegalMethod, node);
+
+   writer.closeNode();
+
+   writer.appendNode(lxParamCount, getParamCount(scope.message));
+   writer.appendNode(lxReserved, scope.reserved);
+   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
+
+   writer.closeNode();
+}
 
 void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope)
 {
@@ -5921,35 +5919,35 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
    writer.closeNode();
 }
 
-//void Compiler :: compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message)
-//{
-//   if (classScope.info.methods.exist(message)) {
-//      if (classScope.info.methods.exist(message, true)) {
-//         // call the field in-place initialization
-//         writer.newNode(lxCalling, message);
-//         writer.appendNode(lxTarget, classScope.reference);
-//         writer.closeNode();
-//      }
-//      else {
-//         ref_t parentRef = classScope.info.header.parentRef;
-//         while (parentRef != 0) {
-//            // call the parent field in-place initialization
-//            ClassInfo parentInfo;
-//            _logic->defineClassInfo(*classScope.moduleScope, parentInfo, parentRef);
-//
-//            if (parentInfo.methods.exist(message, true)) {
-//               writer.newNode(lxCalling, message);
-//               writer.appendNode(lxTarget, parentRef);
-//               writer.closeNode();
-//
-//               break;
-//            }
-//
-//            parentRef = parentInfo.header.parentRef;
-//         }
-//      }
-//   }
-//}
+void Compiler :: compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message)
+{
+   if (classScope.info.methods.exist(message)) {
+      if (classScope.info.methods.exist(message, true)) {
+         // call the field in-place initialization
+         writer.newNode(lxCalling, message);
+         writer.appendNode(lxTarget, classScope.reference);
+         writer.closeNode();
+      }
+      else {
+         ref_t parentRef = classScope.info.header.parentRef;
+         while (parentRef != 0) {
+            // call the parent field in-place initialization
+            ClassInfo parentInfo;
+            _logic->defineClassInfo(*classScope.moduleScope, parentInfo, parentRef);
+
+            if (parentInfo.methods.exist(message, true)) {
+               writer.newNode(lxCalling, message);
+               writer.appendNode(lxTarget, parentRef);
+               writer.closeNode();
+
+               break;
+            }
+
+            parentRef = parentInfo.header.parentRef;
+         }
+      }
+   }
+}
 
 void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope)
 {
@@ -5970,8 +5968,8 @@ void Compiler :: compileDefaultConstructor(SyntaxWriter& writer, MethodScope& sc
       writer.closeNode();
    }
 
-   //// call field initilizers if available
-   //compileSpecialMethodCall(writer, *classScope, encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE);
+   // call field initilizers if available
+   compileSpecialMethodCall(writer, *classScope, scope.moduleScope->init_message);
 
    writer.closeNode();
 }
@@ -6025,12 +6023,12 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
             // if it is a normal method
             else {
                declareArgumentList(current, methodScope);
-//
-//               if (methodScope.message == (encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
-//                  // if it is in-place class member initialization
-//                  compileImplicitConstructor(writer, current, methodScope);
-//               }
-               /*else */if (methodScope.abstractMethod) {
+
+               if (methodScope.message == scope.moduleScope->init_message) {
+                  // if it is in-place class member initialization
+                  compileInitializer(writer, current, methodScope);
+               }
+               else if (methodScope.abstractMethod) {
                   compileAbstractMethod(writer, current, methodScope);
                }
                else compileMethod(writer, current, methodScope);
@@ -6628,7 +6626,6 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
    if (test(hint, tpPrivate)) {
       // if it is private message save its hints as public one
-
       scope.addHint(message & ~STATIC_MESSAGE, hint);
    }
    //else if (test(message, SPECIAL_MESSAGE) && message == (encodeAction(DEFAULT_MESSAGE_ID) | SPECIAL_MESSAGE)) {
@@ -7531,9 +7528,9 @@ ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
 
          analizeExpression(current, scope);
       }
-      //else if (current == lxOvreriddenMessage) {
-      //   constant = false;
-      //}
+      else if (current == lxOvreriddenMessage) {
+         constant = false;
+      }
       current = current.nextNode();
    }
 
@@ -8470,6 +8467,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    // cache the frequently used messages
    scope.dispatch_message = encodeAction(scope.module->mapAction(DISPATCH_MESSAGE, 0, false));
    scope.newobject_message = encodeAction(scope.module->mapAction(NEWOBJECT_MESSAGE, 0, false));
+   scope.init_message = encodeMessage(scope.module->mapAction(INIT_MESSAGE, 0, false), 0, SPECIAL_MESSAGE);
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically
