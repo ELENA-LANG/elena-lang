@@ -1245,55 +1245,56 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 
 bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
 {   
-//   if (node == lxClassField) {
-      // COMPILER MAGIC : property declaration
-      bool withPropertyTemplate = false;
-      SNode current = node.prevNode();
-      while (current.compare(lxAttribute, lxNameAttr, lxTarget)) {
-         if (current == lxAttribute && current.argument == V_PROPERTY) {
-            withPropertyTemplate = true;
-         }
-
-         current = current.prevNode();
+   // COMPILER MAGIC : property declaration
+   bool withPropertyTemplate = false;
+   bool withInitializer = false;
+   SNode current = node.prevNode();
+   while (current.compare(lxAttribute, lxNameAttr, lxTarget)) {
+      if (current == lxAttribute && current.argument == V_PROPERTY) {
+         withPropertyTemplate = true;
+      }
+      else if (current == lxAttribute && current.argument == V_MEMBER) {
+         withInitializer = true;
       }
 
-      if (withPropertyTemplate) {
-         // COMPILER MAGIC : inject a property template
-         generatePropertyTemplateTree(writer, node, derivationScope);
-      }
-      else {
-         writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
-         SNode sizeNode = node.findChild(lxSizeDecl);
-         if (sizeNode != lxNone) {
-            writer.newNode(lxSize);
-            copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask));
-            writer.closeNode();
-         }
+      current = current.prevNode();
+   }
 
-         //      SNode name = node.prevNode().firstChild(lxTerminalMask);
-         //
-         //      if (scope.type == DerivationScope::ttFieldTemplate && name.identifier().compare(TEMPLATE_FIELD)) {
-         //         scope.fields.add(TEMPLATE_FIELD, scope.fields.Count() + 1);
-         //
-         //         writer.newNode(lxTemplateField, scope.fields.Count());
-         //         copyIdentifier(writer, name);
-         //         writer.closeNode();
-         //
-         //         generateAttributes(writer, node.prevNode().prevNode(), scope, false, templateMode, false);
-         //      }
-         /*else */generateAttributes(writer, node.prevNode(), derivationScope/*, false, templateMode, false*/);
+   if (withPropertyTemplate) {
+      // COMPILER MAGIC : inject a property template
+      generatePropertyTemplateTree(writer, node, derivationScope);
+   }
+   else if (withInitializer) {
+      SNode nameNode = node.prevNode().firstChild(lxTerminalMask);
 
+      writer.newNode(lxFieldInit);
+      ::copyIdentifier(writer, nameNode);
+      writer.closeNode();
+   }
+   else {
+      writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
+      SNode sizeNode = node.findChild(lxSizeDecl);
+      if (sizeNode != lxNone) {
+         writer.newNode(lxSize);
+         copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask));
          writer.closeNode();
       }
 
-//   }
-//   else if (node == lxFieldInit && !templateMode) {
-//      SNode nameNode = node.prevNode().firstChild(lxTerminalMask);
-//
-//      writer.newNode(lxFieldInit);
-//      ::copyIdentifier(writer, nameNode);
-//      writer.closeNode();
-//   }
+      //      SNode name = node.prevNode().firstChild(lxTerminalMask);
+      //
+      //      if (scope.type == DerivationScope::ttFieldTemplate && name.identifier().compare(TEMPLATE_FIELD)) {
+      //         scope.fields.add(TEMPLATE_FIELD, scope.fields.Count() + 1);
+      //
+      //         writer.newNode(lxTemplateField, scope.fields.Count());
+      //         copyIdentifier(writer, name);
+      //         writer.closeNode();
+      //
+      //         generateAttributes(writer, node.prevNode().prevNode(), scope, false, templateMode, false);
+      //      }
+      /*else */generateAttributes(writer, node.prevNode(), derivationScope/*, false, templateMode, false*/);
+
+      writer.closeNode();
+   }
 
    // copy inplace initialization
    SNode bodyNode = node.findChild(lxFieldInit);

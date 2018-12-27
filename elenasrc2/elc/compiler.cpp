@@ -110,18 +110,18 @@ inline bool isImportRedirect(SNode node)
    return false;
 }
 
-////inline bool existChildWithArg(SNode node, LexicalType type, ref_t arg)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current.type == type && current.argument == arg)
-////         return true;
-////
-////      current = current.nextNode();
-////   }
-////
-////   return false;
-////}
+inline bool existChildWithArg(SNode node, LexicalType type, ref_t arg)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.type == type && current.argument == arg)
+         return true;
+
+      current = current.nextNode();
+   }
+
+   return false;
+}
 
 inline SNode goToNode(SNode current, LexicalType type)
 {
@@ -3805,9 +3805,9 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 
       declareVMT(node, scope);
 
-      // check if it is a virtual vmt (only for the class initialization)
+      // COMPILER MAGIC : check if it is a virtual vmt (only for the class initialization)
       SNode current = node.firstChild();
-      //bool virtualClass = true;
+      bool virtualClass = true;
       while (current != lxNone) {
          if (current == lxAttribute) {
             ExpressionAttributes attributes;
@@ -3817,22 +3817,21 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
             }
             else scope.raiseError(errInvalidHint, current);
          }
-      //   if (current == lxClassField) {
-      //      virtualClass = false;
-      //   }
-      //   else if (current == lxClassMethod) {
-      //      if (!test(current.argument, SEALED_MESSAGE)) {
-      //         virtualClass = false;
-      //         break;
-      //      }
-      //   }
+         if (current == lxClassField) {
+            virtualClass = false;
+         }
+         else if (current == lxClassMethod) {
+            if (!current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier().compare(INIT_MESSAGE)) {
+               // HOTFIX : ignore initializer auto-generated method
+               virtualClass = false;
+               break;
+            }
+         }
          current = current.nextNode();
       }
 
-      //if (virtualClass)
-      //   scope.info.header.flags |= elVirtualVMT;
-
-
+      if (virtualClass)
+         scope.info.header.flags |= elVirtualVMT;
 
       generateClassDeclaration(node, scope, ClassType::ctClass, true);
 
@@ -3857,8 +3856,8 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope)
 {
    ref_t closureRef = scope.reference;
-   //if (test(scope.info.header.flags, elVirtualVMT))
-   //   closureRef = scope.info.header.parentRef;
+   if (test(scope.info.header.flags, elVirtualVMT))
+      closureRef = scope.info.header.parentRef;
 
    if (test(scope.info.header.flags, elStateless)) {
       //ref_t implicitConstructor = encodeMessage(DEFAULT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
