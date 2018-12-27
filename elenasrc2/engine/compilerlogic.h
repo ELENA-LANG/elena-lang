@@ -138,7 +138,7 @@ public:
    virtual bool isRole(ClassInfo& info);
    virtual bool isAbstract(ClassInfo& info);
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
-//   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
+   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
    virtual bool isMethodInternal(ClassInfo& info, ref_t message);
    virtual bool isMethodPrivate(ClassInfo& info, ref_t message);

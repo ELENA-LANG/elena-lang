@@ -61,8 +61,6 @@ define elPackageOffset       0010h
 
 define page_align_mask   000FFFF0h
 
-define SUBJ_MASK          1FFFFFFh                          
-
 define ACTION_ORDER              9
 
 // --- System Core Preloaded Routines --
@@ -898,9 +896,8 @@ end
 inline % 6
 
   mov   ebx, ecx
-  shr   ebx, 4
+  shr   ebx, ACTION_ORDER
   mov   edx, rdata : % CORE_MESSAGE_TABLE
-  and   ebx, SUBJ_MASK
   test  ecx, ecx
   cmovs ebx, [edx + ebx]
 

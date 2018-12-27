@@ -1006,9 +1006,9 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elGroup", row, pageSize);
    }      
 
-   //if (test(flags, elWithGenerics)) {
-   //   printLine("@flag ", "elWithGenerics", row, pageSize);
-   //}      
+   if (test(flags, elWithGenerics)) {
+      printLine("@flag ", "elWithGenerics", row, pageSize);
+   }      
 
    //if (test(flags, elWithArgGenerics))
    //   printLine("@flag ", "elWithArgGenerics", row, pageSize);

@@ -12,7 +12,7 @@
 
 #8201  = const;
 #8208  = singleton;
-//generic         = #8202.
+#8202  = generic;
 #8194  = static;
 #16385 = var;
 #50    = auto;

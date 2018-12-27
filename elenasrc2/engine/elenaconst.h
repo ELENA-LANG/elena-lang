@@ -289,7 +289,7 @@ namespace _ELENA_
    constexpr int elFinal               = 0x00000100;
    constexpr int elSealed              = 0x00000120;
    constexpr int elGroup               = 0x00000200;
-//   const int elWithGenerics        = 0x00000400;
+   constexpr int elWithGenerics        = 0x00000400;
    constexpr int elReadOnlyRole        = 0x00000800;
    constexpr int elNonStructureRole    = 0x00001000;
    constexpr int elSubject             = 0x00002000;
@@ -417,13 +417,11 @@ namespace _ELENA_
    constexpr auto CATCH_OPERATOR       = "|";
 
   // --- ELENA explicit variables ---
-//   #define OLD_GROUP_VAR           "target"           // obsolete : the current method target / closure owner method target
 //   #define GROUP_VAR               "__target"         // the current method target / closure owner method target
    constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference
 
 //   #define SUPER_VAR               "super"            // the predecessor class
-//   #define OLD_SUBJECT_VAR         "received"         // obsolete : the current message
-//   #define SUBJECT_VAR             "__received"       // the current message
+   constexpr auto SUBJECT_VAR          = "__received";       // the current message
    constexpr auto NIL_VAR              = "nil";              // the nil pseudo symbol - representing the null value
    constexpr auto RETVAL_VAR           = "$$ret";            // the closure returning value
    constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
@@ -460,7 +458,7 @@ namespace _ELENA_
    #define FORWARD_PREFIX_NS_LEN    10
 
    #define CLASSCLASS_POSTFIX       "#class"
-//   #define GENERIC_PREFIX           "#generic"
+   #define GENERIC_PREFIX           "#generic"
 ////   #define EMBEDDED_PREFIX          "#embedded"
 ////   #define TARGET_POSTFIX           "##"
    #define STATICFIELD_POSTFIX      "#static"

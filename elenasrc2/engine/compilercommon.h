@@ -60,7 +60,7 @@
 #define V_DYNAMIC        (ref_t)-8199
 #define V_STRING         (ref_t)-8200
 #define V_CONST          (ref_t)-8201
-//#define V_GENERIC        (ref_t)-8202
+#define V_GENERIC        (ref_t)-8202
 #define V_EXTENSION      (ref_t)-8203
 #define V_NOSTRUCT       (ref_t)-8204
 #define V_ACTION         (ref_t)-8205     // a closure attribute
@@ -123,7 +123,7 @@ enum MethodHint
    tpPrivate     = 0x000005,
    tpStackSafe   = 0x000010,
    tpEmbeddable  = 0x000020,
-//   tpGeneric     = 0x000040,
+   tpGeneric     = 0x000040,
    tpAction      = 0x000080,
 //   tpIfBranch    = 0x000100,
 //   tpIfNotBranch = 0x000200,
@@ -469,7 +469,7 @@ public:
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
    virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;

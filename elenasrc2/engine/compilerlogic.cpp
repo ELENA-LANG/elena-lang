@@ -609,10 +609,10 @@ bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpPrivate);
 }
 
-//bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
-//}
+bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
+}
 
 bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
 {
@@ -1710,7 +1710,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue)
       case V_CONSTRUCTOR:
       case V_DISPATCHER:
       case V_CONVERSION:
-      //case V_GENERIC:
+      case V_GENERIC:
       case V_ACTION:
          return validateMethodAttribute(attrValue, dummy, dummy2);
       default:
@@ -1731,9 +1731,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_EMBEDDABLE:
          attrValue = tpEmbeddable;
          return true;
-//      case V_GENERIC:
-//         attrValue = (tpGeneric | tpSealed);
-//         return true;
+      case V_GENERIC:
+         attrValue = (tpGeneric | tpSealed);
+         return true;
       case V_PRIVATE:
          attrValue = (tpPrivate | tpSealed);
          return true;

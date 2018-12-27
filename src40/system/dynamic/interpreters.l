@@ -34,17 +34,17 @@ public mixin Struct
     dispatch() => system'core_routines'__struct;
 }
 
-//// --- DynamicStruct ---
-//
-//public class DynamicStruct
-//{
-//    T<Struct> theStruct.
-//    
-//    constructor new
-//    [
-//        theStruct := Struct new(0).
-//    ]
-//    
+// --- DynamicStruct ---
+
+public class DynamicStruct
+{
+    Struct theStruct;
+    
+    constructor()
+    {
+        theStruct := Struct.allocate(0)
+    }
+    
 //    constructor new : aStruct
 //    [
 //        theStruct := T<Struct>(aStruct).
@@ -101,4 +101,4 @@ public mixin Struct
 //    ]
 //    
 //    dispatch => theStruct.
-//}
+}

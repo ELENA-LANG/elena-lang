@@ -625,7 +625,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->outputRef = INVALID_REF; // to indicate lazy load
    this->withOpenArg = false;
    this->classEmbeddable = false;
-//   this->generic = false;
+   this->generic = false;
    this->extensionMode = false;
    this->multiMethod = false;
    this->closureMode = false;
@@ -713,7 +713,7 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
    this->rootBookmark = 0;
    this->level = 0;
    this->saved = this->reserved = 0;
-   //this->genericMethod = false;
+   this->genericMethod = false;
 }
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
@@ -722,7 +722,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
    this->rootBookmark = 0;
    this->level = 0;
    this->saved = this->reserved = 0;
-//   this->genericMethod = parent->generic;
+   this->genericMethod = parent->generic;
 }
 
 Compiler::CodeScope :: CodeScope(CodeScope* parent)
@@ -732,7 +732,7 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->level = parent->level;
    this->saved = parent->saved;
    this->reserved = parent->reserved;
-//   this->genericMethod = parent->genericMethod;
+   this->genericMethod = parent->genericMethod;
 }
 
 ////ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
@@ -746,18 +746,14 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      /*if (genericMethod && identifier.compare(SUBJECT_VAR)) {
-         return ObjectInfo(okSubject, local.offset);
+      if (genericMethod && identifier.compare(SUBJECT_VAR)) {
+         return ObjectInfo(okSubject, local.offset, V_SUBJECT);
       }
-      /*else */if (local.size != 0) {
+      else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.element_ref, 0);
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.element_ref, 0);
    }
-   //else if (genericMethod && identifier.compare(OLD_SUBJECT_VAR)) {
-   //   // NOTE : temporally to support old built-in variable
-   //   return ObjectInfo(okSubject, local.offset);
-   //}
    else return ObjectInfo();
 }
 
@@ -2209,11 +2205,11 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          writer.closeNode();         
          writer.appendNode(lxStaticField, object.extraparam);
          break;
-//      case okSubject:
-//         writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->signatureReference, 0u));
-//         writer.appendNode(lxLocalAddress, object.param);
-//         writer.appendNode(lxTarget, scope.moduleScope->signatureReference);
-//         break;
+      case okSubject:
+         writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->messageNameReference, 0u));
+         writer.appendNode(lxLocalAddress, object.param);
+         writer.appendNode(lxTarget, scope.moduleScope->messageNameReference);
+         break;
       case okLocalAddress:
       case okFieldAddress:
       case okReadOnlyFieldAddress:
@@ -3118,14 +3114,14 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       writer.closeNode();
    }
 
-//   // define the message target if required
-//   if (target.kind == okConstantRole || target.kind == okSubject) {
-//      writer.newNode(lxOverridden);
-//      writer.newNode(lxExpression);
-//      writeTerminal(writer, node, scope, target, 0);
-//      writer.closeNode();
-//      writer.closeNode();
-//   }
+   // define the message target if required
+   if (target.kind == okConstantRole || target.kind == okSubject) {
+      writer.newNode(lxOverridden);
+      writer.newNode(lxExpression);
+      writeTerminal(writer, node, scope, target, 0);
+      writer.closeNode();
+      writer.closeNode();
+   }
 
    // inserting calling expression
    writer.insert(operation, argument);
@@ -5198,13 +5194,13 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
          actionStr.copy(CONSTRUCTOR_MESSAGE);
          unnamedMessage = false;
       }
-//      else if (test(scope.hints, tpSealed | tpGeneric) && paramCount < OPEN_ARG_COUNT) {
-//         if (signatureLen > 0 || !unnamedMessage)
-//            scope.raiseError(errInvalidHint, action);
-//
-//         unnamedMessage = false;
-//         actionStr.copy(GENERIC_PREFIX);
-//      }
+      else if (test(scope.hints, tpSealed | tpGeneric)/* && paramCount < OPEN_ARG_COUNT*/) {
+         if (signatureLen > 0 || !unnamedMessage)
+            scope.raiseError(errInvalidHint, nameNode);
+
+         actionStr.copy(GENERIC_PREFIX);
+         unnamedMessage = false;
+      }
       else if (test(scope.hints, tpAction)) {
          if (!unnamedMessage)
             scope.raiseError(errInvalidHint, node);
@@ -5298,7 +5294,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //   return false;
 //}
 
-void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods, bool withOpenArgGenerics*/)
+void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods/*, bool withOpenArgGenerics*/)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -5316,30 +5312,30 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
          //if (withOpenArgGenerics)
          //   scope.raiseError(errInvalidOperation, node);
 
-         //if (withGenericMethods) {
-         //   writer.appendNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0));
-         //}
+         if (withGenericMethods) {
+            writer.appendNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
+         }
 
          compileDispatchExpression(writer, node, codeScope);
       }
+      // if it is generic handler without redirect statement
+      else if (withGenericMethods) {
+         //// !! temporally
+         //if (withOpenArgGenerics)
+         //   scope.raiseError(errInvalidOperation, node);
+
+         writer.newNode(lxResending);
+
+         writer.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
+
+         writer.newNode(lxTarget, scope.moduleScope->superReference);
+         writer.appendNode(lxMessage, codeScope.moduleScope->dispatch_message);
+         writer.closeNode();
+
+         writer.closeNode();
+      }
       else throw InternalError("not yet supported"); // !! temporal
 
-//      // if it is generic handler without redirect statement
-//      else if (withGenericMethods) {
-//         // !! temporally
-//         if (withOpenArgGenerics)
-//            scope.raiseError(errInvalidOperation, node);
-//
-//         writer.newNode(lxResending);
-//
-//         writer.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0));
-//
-//         writer.newNode(lxTarget, scope.moduleScope->superReference);
-//         writer.appendNode(lxMessage, encodeAction(DISPATCH_MESSAGE_ID));
-//         writer.closeNode();
-//
-//         writer.closeNode();
-//      }
 //      // if it is open arg generic without redirect statement
 //      else if (withOpenArgGenerics) {
 //         writer.newNode(lxResending);
@@ -5720,17 +5716,17 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
          compileMultidispatch(writer, node.parentNode(), codeScope, *classScope);
       }
 
-      writer.newNode(lxNewFrame/*, scope.generic ? -1 : 0*/);
+      writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
 
       // new stack frame
       // stack already contains current self reference
       // the original message should be restored if it is a generic method
       codeScope.level++;
-      //// declare the current subject for a generic method
-      //if (scope.generic) {
-      //   codeScope.level++;
-      //   codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0);
-      //}
+      // declare the current subject for a generic method
+      if (scope.generic) {
+         codeScope.level++;
+         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0, 0);
+      }
 
       preallocated = codeScope.level;
 
@@ -5800,7 +5796,7 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
       writer.closeNode();
    }
 
-   writer.newNode(lxNewFrame, /*scope.generic ? -1 : */0);
+   writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
 
    // new stack frame
    // stack already contains current $self reference
@@ -6019,8 +6015,8 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
                //if (test(scope.info.header.flags, elRole))
                //   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
 
-               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope/*,
-                  test(scope.info.header.flags, elWithGenerics),
+               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope,
+                  test(scope.info.header.flags, elWithGenerics)/*,
                   test(scope.info.header.flags, elWithArgGenerics)*/);
             }
             // if it is a normal method
@@ -6044,21 +6040,23 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
    }
 
    // if the VMT conatains newly defined generic handlers, overrides default one
-//   if (testany(scope.info.header.flags, elWithGenerics | elWithArgGenerics) && scope.info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), false)) {
-//      MethodScope methodScope(&scope);
-//      methodScope.message = encodeAction(DISPATCH_MESSAGE_ID);
-//
-//      scope.include(methodScope.message);
-//
-//      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
-//
-//      compileDispatcher(writer, SNode(), methodScope,
-//         test(scope.info.header.flags, elWithGenerics),
-//         test(scope.info.header.flags, elWithArgGenerics));
-//
-//      // overwrite the class info
-//      scope.save();
-//   }
+   if (testany(scope.info.header.flags, elWithGenerics/* | elWithArgGenerics*/) 
+      && scope.info.methods.exist(scope.moduleScope->dispatch_message, false)) 
+   {
+      MethodScope methodScope(&scope);
+      methodScope.message = scope.moduleScope->dispatch_message;
+
+      scope.include(methodScope.message);
+
+      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
+
+      compileDispatcher(writer, SNode(), methodScope,
+         test(scope.info.header.flags, elWithGenerics)/*,
+         test(scope.info.header.flags, elWithArgGenerics)*/);
+
+      // overwrite the class info
+      scope.save();
+   }
 }
 
 void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
@@ -6114,22 +6112,24 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
       current = current.nextNode();
    }
 
-//   // if the VMT conatains newly defined generic handlers, overrides default one
-//   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithArgGenerics) && classClassScope.info.methods.exist(encodeAction(DISPATCH_MESSAGE_ID), false)) {
-//      MethodScope methodScope(&classClassScope);
-//      methodScope.message = encodeAction(DISPATCH_MESSAGE_ID);
-//
-//      classClassScope.include(methodScope.message);
-//
-//      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
-//
-//      compileDispatcher(writer, SNode(), methodScope,
-//         test(classClassScope.info.header.flags, elWithGenerics),
-//         test(classClassScope.info.header.flags, elWithArgGenerics));
-//
-//      // overwrite the class info
-//      classClassScope.save();
-//   }
+   // if the VMT conatains newly defined generic handlers, overrides default one
+   if (testany(classClassScope.info.header.flags, elWithGenerics/* | elWithArgGenerics*/) 
+      && classClassScope.info.methods.exist(classClassScope.moduleScope->dispatch_message, false)) 
+   {
+      MethodScope methodScope(&classClassScope);
+      methodScope.message = classClassScope.moduleScope->dispatch_message;
+
+      classClassScope.include(methodScope.message);
+
+      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
+
+      compileDispatcher(writer, SNode(), methodScope,
+         test(classClassScope.info.header.flags, elWithGenerics)/*,
+         test(classClassScope.info.header.flags, elWithArgGenerics)*/);
+
+      // overwrite the class info
+      classClassScope.save();
+   }
 }
 
 inline int countFields(SNode node)
@@ -6310,10 +6310,10 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 
 //   if (!methodScope.withOpenArg) {
 //      // HOTFIX : generic with open argument list is compiled differently
-//      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
+      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
 //   }
-//   else if (_logic->isMethodGeneric(scope.info, methodScope.message) && methodScope.closureMode)
-//      methodScope.genericClosure = true;
+   //else if (_logic->isMethodGeneric(scope.info, methodScope.message) && methodScope.closureMode)
+   //   methodScope.genericClosure = true;
 }
 
 void Compiler :: declareVMT(SNode node, ClassScope& scope)
@@ -6749,9 +6749,9 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 //         scope.info.header.flags |= elWithArgGenerics;
 //      }
 //   }
-//   else if (_logic->isMethodGeneric(scope.info, message)) {
-//      scope.info.header.flags |= elWithGenerics;
-//   }
+   /*else */if (_logic->isMethodGeneric(scope.info, message)) {
+      scope.info.header.flags |= elWithGenerics;
+   }
 
    // check if there is no duplicate method
    if (scope.info.methods.exist(message, true)) {

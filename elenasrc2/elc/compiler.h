@@ -135,7 +135,7 @@ public:
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
 //////      okParamField,
-//      okSubject,                      // param - parameter offset
+      okSubject,                      // param - parameter offset
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
 //      okSuper,
@@ -524,7 +524,7 @@ private:
       ref_t        outputRef;
       bool         withOpenArg;
       bool         classEmbeddable;
-//      bool         generic;
+      bool         generic;
 //      bool         genericClosure;
       bool         extensionMode;
       bool         multiMethod;
@@ -580,7 +580,7 @@ private:
       // scope local variables
       LocalMap     locals;
       int          level;
-//      bool         genericMethod;
+      bool         genericMethod;
 
       // scope stack allocation
       int          reserved;  // allocated for the current statement
@@ -915,7 +915,7 @@ private:
 
    void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope/*, bool withGenericMethods = false, bool withOpenArgGenerics = false*/);
+   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false/*, bool withOpenArgGenerics = false*/);
 
    void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);

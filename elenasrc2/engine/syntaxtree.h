@@ -188,24 +188,24 @@ enum LexicalType
    lxGreaterN        = 0x0C02E,   // arg - value
    lxNotGreaterN     = 0x0C02F,   // arg - value
 
-   lxIntArrOp        = 0x8C030,   // arg - operation id
-   lxResendExpression= 0x0C031, 
-   lxByteArrOp       = 0x8C032, // arg - operation id
-   lxShortArrOp      = 0x8C033, // arg - operation id
+   lxIntArrOp                 = 0x8C030,   // arg - operation id
+   lxResendExpression         = 0x0C031, 
+   lxByteArrOp                = 0x8C032, // arg - operation id
+   lxShortArrOp               = 0x8C033, // arg - operation id
 //////   lxReleasing       = 0x0C034,
    lxDispatching              = 0x0C036,   // dispatching a message, optional arg - message
    lxAssigning                = 0x0C037,   // an assigning expression, arg - size
    lxIntOp                    = 0x8C038,   // arg - operation id
-   lxLongOp          = 0x8C039,   // arg - operation id
-   lxRealOp          = 0x8C03A,   // arg - operation id
+   lxLongOp                   = 0x8C039,   // arg - operation id
+   lxRealOp                   = 0x8C03A,   // arg - operation id
    lxMultiDispatching         = 0x0C03B,
    lxSealedMultiDispatching   = 0x0C03C,
    lxCodeExpression           = 0x0C03D,
    lxCollection               = 0x0C03E,
-//   lxOverridden      = 0x04047,
-//
+   lxOverridden               = 0x04047,
+
 //   lxAssignOperator  = 0x10024,
-   lxOperator        = 0x10025,
+   lxOperator                 = 0x10025,
 //   lxArrOperator     = 0x10026,
    lxIntVariable     = 0x10028,
    lxLongVariable    = 0x10029,
