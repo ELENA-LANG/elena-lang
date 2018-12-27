@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>4.0.11</version>
+     <version>4.0.12</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -33,6 +33,9 @@
      <module name="routines">
        <include>routines\enumerables.l</include>
        <include>routines\patterns.l</include>
+     </module>
+     <module name="dynamic">
+       <include>dynamic\interpreters.l</include>
      </module>
   </files>
 </configuration>

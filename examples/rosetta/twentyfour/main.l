@@ -24,9 +24,9 @@ class ExpressionTree
                 $47 { node.Level := level + 2; node.Operation := __subj divide }     // /
                 $40 { level.append(10); ^ self }                               // (
                 $41 { level.reduce(10); ^ self }                               // )
-                ! {
+                : {
                     node.Leaf := ch.toString().toReal();
-                    node.Level := level + 3;
+                    node.Level := level + 3
                 };
                     
             if (nil == theTree)
@@ -46,7 +46,7 @@ class ExpressionTree
                 {
                         var top := theTree;
                         while ((nilValue != top.Right)&&(top.Right.Level < node.Level))
-                            { top := top.Right }
+                            { top := top.Right };
                         
                         node.Left := top.Right;
                         node.Right := nilValue;

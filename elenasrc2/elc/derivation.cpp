@@ -179,6 +179,7 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsSubSingleExpression:
       case nsL2Operand:
       case nsL3Operand:
+      case nsL4Operand:
       case nsL6Operand:
          //      case nsNestedRootExpression:
          _cacheWriter.newNode(lxExpression);
@@ -1871,13 +1872,13 @@ void DerivationWriter :: generateSwitchTree(SyntaxWriter& writer, SNode node, Sc
             generateCodeExpression(writer, current.firstChild(lxCode), derivationScope, false);
             writer.closeNode();
             break;
-//         case lxLastSwitchOption:
-//            writer.newNode(lxElse);
-//            writer.newBookmark();
-//            generateObjectTree(writer, current.firstChild(), scope);
-//            writer.removeBookmark();
-//            writer.closeNode();
-//            break;
+         case lxLastSwitchOption:
+            writer.newNode(lxElse);
+            writer.newBookmark();
+            generateCodeExpression(writer, current.firstChild(lxCode), derivationScope, false);
+            writer.removeBookmark();
+            writer.closeNode();
+            break;
 //         default:
 //            scope.raiseError(errInvalidSyntax, current);
 //            break;

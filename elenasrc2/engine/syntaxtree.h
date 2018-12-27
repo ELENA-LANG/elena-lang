@@ -53,6 +53,7 @@ enum LexicalType
    lxConstructor     = 0x00024,
    lxStaticMethod    = 0x00025,
    lxSwitchOption    = 0x0003C,
+   lxLastSwitchOption = 0x0003D,
    lxAttributeDecl   = 0x0004E,
    lxClassField      = 0x0004F,
    lxImplicitMessage = 0x00067,

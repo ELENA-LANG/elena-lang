@@ -84,7 +84,7 @@ enum Symbol
 //////   nsNewOperator                = 0x0103A,
    nsSwitching                  = 0x0103B,
    nsSwitchOption               = 0x0103C,
-//   nsLastSwitchOption           = 0x0103D,
+   nsLastSwitchOption           = 0x0103D,
 ////   nsBiggerSwitchOption         = 0x0103E,
 ////   nsLessSwitchOption           = 0x0103F,
 //   nsL4Operation                = 0x01041,
@@ -135,6 +135,7 @@ enum Symbol
    nsCollection                 = 0x01075,
    nsL2Operand                  = 0x01076,
    nsFieldInit                  = 0x01077,
+   nsL4Operand                  = 0x01078,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               
