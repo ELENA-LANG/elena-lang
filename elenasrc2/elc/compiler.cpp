@@ -46,6 +46,7 @@ constexpr auto HINT_SUBCODE_CLOSURE = 0x00008800;
 constexpr auto HINT_VIRTUALEXPR     = 0x00004000;
 //constexpr auto HINT_ASSIGNTARGET    = 0x00002000;
 constexpr auto HINT_INTERNALOP      = 0x00002000;
+constexpr auto HINT_SUBJECTREF      = 0x00001000;
 constexpr auto HINT_MEMBER          = 0x00000800;
 ////#define HINT_RESENDEXPR       0x00000400
 //#define HINT_LAZY_EXPR        0x00000200
@@ -1735,7 +1736,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
             break;
       }
    }
-   else if (fieldRef == V_MESSAGE) {
+   else if (fieldRef == V_MESSAGE || fieldRef == V_SUBJECT) {
       if (size != 4) {
          scope.raiseError(errInvalidHint, node);
       }
@@ -2243,9 +2244,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
 //      case okExtMessageConstant:
 //         writer.newNode(lxExtMessageConstant, object.param);
 //         break;
-//      case okSignatureConstant:
-//         writer.newNode(lxSignatureConstant, object.param);
-//         break;
+      case okMessageNameConstant:
+         writer.newNode(lxSubjectConstant, object.param);
+         break;
 ////      case okBlockLocal:
 ////         terminal.set(lxBlockLocal, object.param);
 ////         break;
@@ -2378,7 +2379,7 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //         break;
 //      }
       default:
-         if (testany(mode, HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER)) {
+         if (testany(mode, HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER | HINT_SUBJECTREF)) {
             if (test(mode, HINT_FORWARD)) {
                IdentifierString forwardName(FORWARD_MODULE, "'", token);
 
@@ -2392,6 +2393,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
             }
             else if (test(mode, HINT_MEMBER)) {
                object = scope.mapMember(token);
+            }
+            else if (test(mode, HINT_SUBJECTREF)) {
+               object = compileSubjectReference(writer, terminal, scope, mode & ~HINT_SUBJECTREF);
             }
          }
          else object = scope.mapTerminal(token, terminal == lxReference, 0);
@@ -2487,9 +2491,6 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 //         case lxBoxing:
 //            result = compileBoxingExpression(writer, node, scope, mode);
 //            break;
-//         case lxMessageReference:
-//            result = compileMessageReference(writer, node, scope, mode);
-//            break;
 //         case lxAlt:
 //            compileAltOperation(writer, node, scope);
 //
@@ -2516,90 +2517,90 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
    return result;
 }
 
-//ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
-//{
-//   SNode terminal = node.findChild(lxIdentifier, lxLiteral);
-//   IdentifierString signature;
-//   int paramCount = 0;
-//   ref_t extensionRef = 0;
-//   if (terminal == lxIdentifier || terminal == lxPrivate) {
-//      ident_t name = terminal.identifier();
-//      signature.copy(name);
-//
-//      paramCount = -1;
-//   }
-//   else {
-//      ident_t message = terminal.identifier();
-//
-//      int subject = message.find('.',0);
-//      if (subject != 0) {
-//         signature.copy(message, subject);
-//         bool referenceOne = signature.ident().find('\'') != NOTFOUND_POS;
-//         extensionRef = resolveImplicitIdentifier(scope, signature.c_str(), referenceOne);
-//         if (extensionRef == 0)
-//            scope.raiseError(errUnknownClass, terminal);
-//
-//         subject++;
-//      }
-//
-//      int param = 0;
-//      for (size_t i = subject; i < getlength(message); i++) {
-//         if (message[i] == ':') {
-//         }
-//         else if (message[i] == '[') {
-//            int len = getlength(message);
-//            if (message[i+1] == ']') {
-//               paramCount = OPEN_ARG_COUNT;
-//            }
-//            else if (message[len - 1] == ']') {
-//               signature.copy(message + i + 1, len - i - 2);
-//               paramCount = signature.ident().toInt();
-//               if (paramCount > MAX_ARG_COUNT)
-//                  scope.raiseError(errInvalidSubject, terminal);
-//            }
-//            else scope.raiseError(errInvalidSubject, terminal);
-//
-//            param = i;
-//            break;
-//         }
-//         else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-//         }
-//         else scope.raiseError(errInvalidConstant, terminal);
-//      }
-//
-//      if (param != 0) {
-//         signature.copy(message + subject, param - subject);
-//      }
-//      else signature.copy(message + subject);
-//   }
-//
-//   ObjectInfo retVal;
-//   IdentifierString message;
-//   if (extensionRef != 0) {
-//      message.append(scope.moduleScope->module->resolveReference(extensionRef));
-//      message.append('.');
-//   }
-//
-//   if (paramCount != -1) {
-//      message.append('0' + (char)paramCount);
-//      message.append(signature);
-//   }
-//   else message.copy(signature);
-//
-//   if (extensionRef != 0) {
-//      retVal.kind = okExtMessageConstant;
-//   }
-//   else if (paramCount == -1) {
-//      retVal.kind = okSignatureConstant;
-//   }
-//   else retVal.kind = okMessageConstant;
-//
-//   retVal.param = scope.moduleScope->module->mapReference(message);
-//
-//   writeTerminal(writer, node, scope, retVal, mode);
-//
-//   return retVal;
-//}
+ObjectInfo Compiler :: compileSubjectReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
+{
+   ObjectInfo retVal;
+   IdentifierString messageName;
+   //int paramCount = 0;
+   ref_t extensionRef = 0;
+   if (terminal == lxIdentifier) {
+      ident_t name = terminal.identifier();
+      messageName.copy(name);
+
+      //paramCount = -1;
+   }
+   //else {
+   //   ident_t message = terminal.identifier();
+
+   //   int subject = message.find('.',0);
+   //   if (subject != 0) {
+   //      signature.copy(message, subject);
+   //      bool referenceOne = signature.ident().find('\'') != NOTFOUND_POS;
+   //      extensionRef = resolveImplicitIdentifier(scope, signature.c_str(), referenceOne);
+   //      if (extensionRef == 0)
+   //         scope.raiseError(errUnknownClass, terminal);
+
+   //      subject++;
+   //   }
+
+   //   int param = 0;
+   //   for (size_t i = subject; i < getlength(message); i++) {
+   //      if (message[i] == ':') {
+   //      }
+   //      else if (message[i] == '[') {
+   //         int len = getlength(message);
+   //         if (message[i+1] == ']') {
+   //            paramCount = OPEN_ARG_COUNT;
+   //         }
+   //         else if (message[len - 1] == ']') {
+   //            signature.copy(message + i + 1, len - i - 2);
+   //            paramCount = signature.ident().toInt();
+   //            if (paramCount > MAX_ARG_COUNT)
+   //               scope.raiseError(errInvalidSubject, terminal);
+   //         }
+   //         else scope.raiseError(errInvalidSubject, terminal);
+
+   //         param = i;
+   //         break;
+   //      }
+   //      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+   //      }
+   //      else scope.raiseError(errInvalidConstant, terminal);
+   //   }
+
+   //   if (param != 0) {
+   //      signature.copy(message + subject, param - subject);
+   //   }
+   //   else signature.copy(message + subject);
+   //}
+
+   //IdentifierString message;
+   //if (extensionRef != 0) {
+   //   message.append(scope.moduleScope->module->resolveReference(extensionRef));
+   //   message.append('.');
+   //}
+
+   //if (paramCount != -1) {
+   //   message.append('0' + (char)paramCount);
+   //   message.append(signature);
+   //}
+   ///*else */message.copy(messageName);
+
+   //if (extensionRef != 0) {
+   //   retVal.kind = okExtMessageConstant;
+   //}
+   //else if (paramCount == -1) {
+      retVal.kind = okMessageNameConstant;
+   //}
+   //else retVal.kind = okMessageConstant;
+
+   retVal.param = scope.moduleScope->module->mapReference(messageName);
+   retVal.reference = V_SUBJECT;
+
+   writeTerminal(writer, terminal, scope, retVal, mode);
+
+   return retVal;
+}
 
 ref_t Compiler :: mapMessage(SNode node, CodeScope& scope)
 {
@@ -3218,8 +3219,8 @@ ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, r
          return scope.longReference;
       case V_REAL64:
          return scope.realReference;
-         //case V_SIGNATURE:
-         //   return firstNonZero(scope.signatureReference, scope.superReference);
+      case V_SUBJECT:
+         return scope.messageNameReference;
          //case V_MESSAGE:
          //   return firstNonZero(scope.messageReference, scope.superReference);
       default:
@@ -4440,6 +4441,9 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          if (attributes.memberAttr) {
             exprAttr |= HINT_MEMBER;
          }
+         if (attributes.subjAttr) {
+            exprAttr |= HINT_SUBJECTREF;
+         }
       }
 
       if (attributes.typeAttr && test(mode, HINT_ROOT) && !attributes.castAttr) {
@@ -4733,7 +4737,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
                case V_INT32:
                case V_PTR32:
                case V_DWORD:
-               //case V_SIGNATURE:
+               case V_SUBJECT:
                case V_MESSAGE:
                   current.set(variableOne ? lxExtArgument : lxIntExtArgument, 0);
                   break;
@@ -7256,12 +7260,12 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
          parentRef = scope.moduleScope->charReference;
       }
-      //else if (retVal.kind == okSignatureConstant) {
-      //   dataWriter.Memory()->addReference(retVal.param | mskSignature, dataWriter.Position());
-      //   dataWriter.writeDWord(0);
+      else if (retVal.kind == okMessageNameConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
+         dataWriter.writeDWord(0);
 
-      //   parentRef = scope.moduleScope->signatureReference;
-      //}
+         parentRef = scope.moduleScope->messageNameReference;
+      }
       else if (retVal.kind == okObject) {
          SNode root = node.findSubNodeMask(lxObjectMask);
 
@@ -7738,9 +7742,9 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, int mode)
       //else if (sourceNode == lxMessageConstant && targetRef == scope.moduleScope->messageReference) {
       //   boxing = false;
       //}
-      //else if (sourceNode == lxSignatureConstant && targetRef == scope.moduleScope->signatureReference) {
-      //   boxing = false;
-      //}
+      else if (sourceNode == lxSubjectConstant && targetRef == scope.moduleScope->messageNameReference) {
+         boxing = false;
+      }
       else if (node == lxUnboxing && !boxing) {
          //HOTFIX : to unbox structure field correctly
          sourceRef = analizeExpression(sourceNode, scope, /*warningScope, */HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
@@ -8454,7 +8458,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
    scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
    scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
-//   scope.signatureReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SIGNATURE_FORWARD));
+   scope.messageNameReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGENAME_FORWARD));
 //   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
 //   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));

@@ -3,56 +3,60 @@ import system'routines;
 //import system'dynamic.
 import extensions;
 
-//// --- Expression ---
-//
-//class ExpressionTree
-//{
-//    object theTree.
-//    
-//    constructor new : aLiteral
-//    [
-//        auto aLevel := Integer new:0.
-//        
-//        aLiteral forEach(:ch)
-//        [
-//            var node := DynamicStruct new.
-//            
-//            ch =>
-//                $43 [ node level := aLevel + 1. node operation := %add ];       // +
-//                $45 [ node level := aLevel + 1. node operation := %subtract ];  // -
-//                $42 [ node level := aLevel + 2. node operation := %multiply ];  // *
-//                $47 [ node level := aLevel + 2. node operation := %divide ];    // /
-//                $40 [ aLevel append(10). ^ self ]; // (
-//                $41 [ aLevel reduce(10). ^ self ]; // )
-//                ! [
-//                    node leaf := ch literal; toReal.
-//                    node level := aLevel + 3.
-//                ].
-//                    
-//            if (nil == theTree)
-//                [ theTree := node ];
-//                [
-//                    if (theTree level >= node level)
-//                        [
-//                            node left := theTree.
-//                            node right := nilValue.
-//                            
-//                            theTree := node
-//                        ];
-//                        [
-//                            var aTop := theTree.
-//                            while ((nilValue != aTop right)&&(aTop right; level < node level))
-//                                [ aTop := aTop right ].
-//                            
-//                            node left := aTop right.
-//                            node right := nilValue.
-//                            
-//                            aTop right := node
-//                        ]
-//                ]
-//        ]
-//    ]
-//    
+// --- Expression ---
+
+class ExpressionTree
+{
+    object theTree;
+    
+    constructor(s)
+    {
+        auto level := new Integer(0);
+        
+        s.forEach:(ch)
+        {
+            var node := new DynamicStruct();
+            
+            ch =>
+                $43 { node.Level := level + 1; node.Operation := __subj add }        // +
+                $45 { node.Level := level + 1; node.Operation := __subj subtract }   // -
+                $42 { node.Level := level + 2; node.Operation := __subj multiply }   // *
+                $47 { node.Level := level + 2; node.Operation := __subj divide }     // /
+                $40 { level.append(10); ^ self }                               // (
+                $41 { level.reduce(10); ^ self }                               // )
+                ! {
+                    node.Leaf := ch.toString().toReal();
+                    node.Level := level + 3;
+                };
+                    
+            if (nil == theTree)
+            { 
+                theTree := node 
+            }
+            else
+            {
+                if (theTree.Level >= node.Level)
+                {
+                    node.Left := theTree;
+                    node.Right := nilValue;
+                    
+                    theTree := node
+                }
+                else
+                {
+                        var top := theTree;
+                        while ((nilValue != top.Right)&&(top.Right.Level < node.Level))
+                            { top := top.Right }
+                        
+                        node.Left := top.Right;
+                        node.Right := nilValue;
+                        
+                        top.Right := node
+                }
+            }
+        }
+    }
+    
 //    eval : aNode
 //    [
 //        if (aNode containsProperty:%leaf)
@@ -83,7 +87,7 @@ import extensions;
 //    
 //    readLeaves : aList
 //        <= readLeaves:aList at:theTree.
-//}
+}
 
 // --- Game ---
 
@@ -130,49 +134,60 @@ class TwentyFourGame
         console.print:": "
     }
     
-//    resolve : aLine
-//    [
-//        var exp := ExpressionTree new:aLine.
-//        
-//        var Leaves := ArrayList new.
-//        exp readLeaves:Leaves.
-//        
-//        ifnot (Leaves ascendant; sequenceEqual(theNumbers ascendant))
-//            [ console printLine:"Invalid input. Enter an equation using all of those four digits. Try again.". ^ self ].
-//            
-//        var aResult := exp value.
-//        if (aResult == 24)
-//            [
-//                console printLine("Good work. ",aLine,"=",aResult).
-//                
-//                self newPuzzle.
-//            ];
-//            [ console printLine("Incorrect. ",aLine,"=",aResult) ]
-//    ]    
+    resolve(expr)
+    {
+        var tree := new ExpressionTree(expr);
+        
+        var leaves := new ArrayList();
+        tree.readLeaves:leaves;
+        
+        ifnot (leaves.ascendant().sequenceEqual(theNumbers.ascendant()))
+            { console.printLine:"Invalid input. Enter an equation using all of those four digits. Try again."; ^ self };
+            
+        var result := tree.Value;
+        if (result == 24)
+        {
+            console.printLine("Good work. ",expr,"=",result);
+            
+            self.newPuzzle()
+        }
+        else
+        {
+            console.printLine("Incorrect. ",expr,"=",result)
+        }
+    }    
 }
 
-//extension gameOp
-//{
-//    playRound : aLine
-//    [
-//        if (aLine == "q")
-//            [ ^ false ];
-//            [
-//                if (aLine == "")
-//                    [ console printLine:"Skipping this puzzle". self newPuzzle. ];
-//                    [
-//                        try(self resolve:aLine)
-//                        {
-//                            on(Exception e) [
-//                                   console writeLine:"An error occurred.  Check your input and try again."
-//                                ]
-//                        }
-//                    ].
-//                    
-//                ^ true
-//            ].
-//    ]
-//}
+extension gameOp
+{
+    playRound(expr)
+    {
+        if (expr == "q")
+        {
+            ^ false
+        }
+        else
+        {
+            if (expr == "")
+            {
+                console.printLine:"Skipping this puzzle"; self.newPuzzle()
+            }
+            else
+            {
+                try
+                {
+                    self.resolve(expr)
+                }
+                catch(Exception e)
+                {
+                    console.printLine:"An error occurred.  Check your input and try again."
+                }
+            };
+                
+            ^ true
+        }
+    }
+}
 
 // --- program ---
 

@@ -157,9 +157,9 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
 
-//   // subject primitive operations
-//   operators.add(OperatorInfo(EQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_MESSAGE_ID, V_SIGNATURE, V_SIGNATURE, lxIntOp, V_FLAG));
+   // subject primitive operations
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntOp, V_FLAG));
 
    // int64 primitive operations
    operators.add(OperatorInfo(ADD_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
@@ -1415,11 +1415,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
          info.header.flags = elStructureRole | elReadOnlyRole;
          info.size = 4;
          break;
-//      case V_SIGNATURE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugSubject | elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_SUBJECT:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugSubject | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
       case V_MESSAGE:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
@@ -1832,6 +1832,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       case V_STRING:
       case V_TEMPLATE:
       case V_MESSAGE:
+      case V_SUBJECT:
          attrValue = 0;
          return true;
          ////case V_INT64:
@@ -1840,9 +1841,6 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       //case V_REAL64:
       //case V_PTR:
       //case V_DWORD:
-      //   attrValue = 0;
-      //   return true;
-      //case V_SIGNATURE:
       //   attrValue = 0;
       //   return true;
       //case V_SYMBOL:
@@ -1936,6 +1934,13 @@ bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttri
             return true;
          }
          else return false;
+      case (int)V_SUBJECT:
+         if (!attributes.subjAttr) {
+            attributes.subjAttr = true;
+
+            return true;
+         }
+         else return false;
       default:
          return false;
    }
@@ -2015,10 +2020,9 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 //            info.header.flags |= (elDebugPTR | elWrapper);
 //            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));
 //            return info.size == 4;
-//         case V_SIGNATURE:
-//            info.header.flags |= (elDebugSubject | elReadOnlyRole | elWrapper | elSignature);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SIGNATURE, 0));
-//            return info.size == 4;
+         case V_SUBJECT:
+            info.header.flags |= elDebugSubject | elSubject;
+            break;
          case V_MESSAGE:
             info.header.flags |= (elDebugMessage | elMessage);
             break;

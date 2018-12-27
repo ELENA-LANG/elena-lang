@@ -35,7 +35,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
    _real = project->resolveForward(REAL_FORWARD);
    _message = project->resolveForward(MESSAGE_FORWARD);
   // _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
-  // _signature = project->resolveForward(SIGNATURE_FORWARD);
+   _messageName = project->resolveForward(MESSAGENAME_FORWARD);
 
    //resolveExternal()
 
@@ -220,7 +220,7 @@ ident_t ExecutableImage :: getRealClass()
    return _real;
 }
 
-ident_t ExecutableImage::getMessageClass()
+ident_t ExecutableImage :: getMessageClass()
 {
    return _message;
 }
@@ -229,11 +229,11 @@ ident_t ExecutableImage::getMessageClass()
 //{
 //   return _ext_message;
 //}
-//
-//ident_t ExecutableImage::getSignatureClass()
-//{
-//   return _signature;
-//}
+
+ident_t ExecutableImage :: getMessageNameClass()
+{
+   return _messageName;
+}
 
 ident_t ExecutableImage :: getNamespace()
 {

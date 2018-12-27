@@ -50,7 +50,7 @@ private:
    ident_t _real;
    ident_t _message;
    ident_t _ext_message;
-   ident_t _signature;
+   ident_t _messageName;
 
 public:
    virtual ref_t getEntryPoint()
@@ -86,7 +86,7 @@ public:
    virtual ident_t getLongClass();
    virtual ident_t getMessageClass();
    //virtual ident_t getExtMessageClass();
-   //virtual ident_t getSignatureClass();
+   virtual ident_t getMessageNameClass();
    virtual ident_t getNamespace();
 
    ident_t resolveTemplateWeakReference(ident_t referenceName);

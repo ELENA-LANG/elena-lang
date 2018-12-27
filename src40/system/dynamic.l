@@ -71,14 +71,14 @@ public sealed struct Message
 //    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
 //    dispatch => system'core_routines'__extmessage.
 //}
-//
-//// --- Signature ---
-//
-///// A dynamic signature extender
-//public sealed struct Signature
-//{
-//    __subj theValue.
-//    
+
+// --- MessageName ---
+
+/// A dynamic message extender
+public sealed struct MessageName
+{
+    embeddable __subj theValue[4];
+    
 //    /// Creates a dynamic signature
 //    constructor new(mssg message)
 //    [
@@ -113,4 +113,4 @@ public sealed struct Message
 //
 //    /// Qualifies incoming messages and redirects to the target
 //    dispatch => system'core_routines'__signature.
-//}
+}

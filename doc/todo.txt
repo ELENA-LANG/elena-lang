@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * should it be possible to compile the following code: class; public program() { class class := nil; }
                  * syntax : template / size should be the last token in expression and one before the last for declaration
                  * support - new [] { 1,2,3 } - expression
                  * array of integers : new int[] { 1, 2, 3 }

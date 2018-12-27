@@ -55,7 +55,7 @@
 //__real          = #15.
 //__dword         = #16.
 #19    = __mssg;
-//__subj          = #18.
+#18    = __subj;
 //__extmssg       = #21.
 ////__tape_mixin    = #8209.
 //__symbol        = #22.

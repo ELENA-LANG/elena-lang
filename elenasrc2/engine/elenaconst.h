@@ -162,7 +162,7 @@ namespace _ELENA_
       mskMessage             = 0x06000000u,   // message constant
       mskCharRef             = 0x07000000u,   // reference to character constant
       mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
-//      mskSignature           = 0x09000000u,   // message signature constant
+      mskMessageName         = 0x09000000u,   // message action constant
 //      mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
       mskConstArray          = 0x0D000000u,   // constant array
@@ -292,7 +292,7 @@ namespace _ELENA_
 //   const int elWithGenerics        = 0x00000400;
    constexpr int elReadOnlyRole        = 0x00000800;
    constexpr int elNonStructureRole    = 0x00001000;
-//   const int elSignature           = 0x00002000;
+   constexpr int elSubject             = 0x00002000;
    constexpr int elRole                = 0x00004080;
    constexpr int elExtension           = 0x00004980;
    constexpr int elMessage             = 0x00008000;
@@ -321,7 +321,7 @@ namespace _ELENA_
    constexpr int elDebugPTR            = 0x00090000;
    constexpr int elDebugWideLiteral    = 0x000A0000;
 //   const int elDebugReference      = 0x000B0000;   // symbol reference
-//   const int elDebugSubject        = 0x000C0000;
+   const int elDebugSubject        = 0x000C0000;
 //////   const int elDebugReals          = 0x000D0000;
    constexpr int elDebugMessage        = 0x000E0000;
 //////   const int elDebugDPTR           = 0x000F0000;
@@ -506,7 +506,7 @@ namespace _ELENA_
    constexpr auto CHAR_FORWARD            ="$char";
    constexpr auto MESSAGE_FORWARD         = "$message";
 //   #define EXT_MESSAGE_FORWARD      "$ext_message"
-//   #define SIGNATURE_FORWARD        "$signature"
+   constexpr auto MESSAGENAME_FORWARD       = "$messagename";
 //   #define ARRAY_FORWARD            "$array"
    constexpr auto REFTEMPLATE_FORWARD     = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";

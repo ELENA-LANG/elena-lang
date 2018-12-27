@@ -26,7 +26,7 @@
 #define V_REAL64         (ref_t)-15
 #define V_DWORD          (ref_t)-16
 #define V_PTR32          (ref_t)-17
-//#define V_SIGNATURE      (ref_t)-18
+#define V_SUBJECT        (ref_t)-18
 #define V_MESSAGE        (ref_t)-19
 //#define V_EXTMESSAGE     (ref_t)-21
 //#define V_SYMBOL         (ref_t)-22
@@ -216,7 +216,7 @@ struct _ModuleScope
    ref_t             intReference;
    ref_t             longReference;
    ref_t             realReference;
-//   ref_t             signatureReference;
+   ref_t             messageNameReference;
 //   ref_t             messageReference;
 //   ref_t             extMessageReference;
 //   ref_t             boolReference;
@@ -320,7 +320,7 @@ struct _ModuleScope
       project = nullptr;
       debugModule = module = nullptr;
       intReference = /*boolReference = */superReference = 0;
-//      signatureReference = messageReference = 0;
+      messageNameReference = /*messageReference = */0;
       longReference = literalReference = /*wideReference = */0;
       /*arrayReference = */charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
@@ -386,17 +386,18 @@ public:
       bool  internAttr;
       bool  loopAttr;
       bool  memberAttr;
+      bool  subjAttr;
 
       bool isExprAttr()
       {
-         return refAttr | internAttr | externAttr | forwardAttr | memberAttr;
+         return refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr;
       } 
 
       ExpressionAttributes()
       {
          refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
          newOpAttr = loopAttr = internAttr = false;
-         memberAttr = false;
+         subjAttr = memberAttr = false;
       }
    };
 
