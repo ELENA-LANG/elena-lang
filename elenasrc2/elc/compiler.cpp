@@ -5224,10 +5224,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope)
 //         }
       }
 
-//      if (test(scope.hints, tpInternal)) {
-//         actionStr.insert("$$", 0);
-//         actionStr.insert(scope.module->Name(), 0);
-//      }
+      if (test(scope.hints, tpInternal)) {
+         actionStr.insert("$$", 0);
+         actionStr.insert(scope.module->Name(), 0);
+      }
 
       if (testany(scope.hints, tpGetAccessor | tpSetAccessor)) {
          if ((paramCount == 0 && test(scope.hints, tpGetAccessor)) || (paramCount == 1 && test(scope.hints, tpSetAccessor))) {
@@ -6635,22 +6635,22 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    //   hint |= tpSpecial;
    //   hint |= tpSealed;
    //}
-   //else if (test(hint, tpInternal)) {
-   //   // if it is an internal message save internal hint as a public general one
-   //   // so it could be later recognized
-   //   ref_t signRef = 0;
-   //   ident_t name = scope.module->resolveAction(getAction(message), signRef);
-   //   int index = name.find("$$");
-   //   ref_t publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
-   //   if (scope.info.methods.exist(publicMessage)) {
-   //      // there should be no public method with the same name
-   //      scope.raiseError(errDupPublicMethod, node.findChild(lxIdentifier));
-   //   }
-   //   else {
-   //      scope.info.methodHints.exclude(Attribute(publicMessage, maHint));
-   //      scope.info.methodHints.add(Attribute(publicMessage, maHint), tpInternal);
-   //   }
-   //}
+   else if (test(hint, tpInternal)) {
+      // if it is an internal message save internal hint as a public general one
+      // so it could be later recognized
+      ref_t signRef = 0;
+      ident_t name = scope.module->resolveAction(getAction(message), signRef);
+      int index = name.find("$$");
+      ref_t publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
+      if (scope.info.methods.exist(publicMessage)) {
+         // there should be no public method with the same name
+         scope.raiseError(errDupPublicMethod, node.findChild(lxIdentifier));
+      }
+      else {
+         scope.info.methodHints.exclude(Attribute(publicMessage, maHint));
+         scope.info.methodHints.add(Attribute(publicMessage, maHint), tpInternal);
+      }
+   }
 
    if (hintChanged) {
       //if (test(hint, tpSealed | tpGeneric | tpAction)) {
@@ -6810,7 +6810,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.removeHint(message, tpPredefined);
       }
 
-      if (test(scope.info.header.flags, elExtension) && (test(methodHints, tpPrivate)/* || test(methodHints, tpInternal)*/))
+      if (test(scope.info.header.flags, elExtension) && (test(methodHints, tpPrivate) || test(methodHints, tpInternal)))
          // private / internal methods cannot be declared in the extension
          scope.raiseError(errIllegalPrivate, current);
 

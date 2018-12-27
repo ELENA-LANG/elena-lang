@@ -135,7 +135,7 @@ enum MethodHint
    tpGetAccessor = 0x008000,
    tpSpecial     = 0x010000,
    tpAbstract    = 0x020000,
-//   tpInternal    = 0x040000,
+   tpInternal    = 0x040000,
    tpPredefined  = 0x080000, // virtual class declaration
    tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
    tpInitializer = 0x200000,

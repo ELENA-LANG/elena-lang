@@ -767,13 +767,14 @@ inline ref_t overwriteParamCount(ref_t message, int paramCount)
    return encodeMessage(actionRef, paramCount, flags);
 }
 
-//inline ref_t overwriteAction(ref_t message, ref_t action)
-//{
-//   message &= PARAM_MASK;
-//   message |= (action << 4);
-//
-//   return message;
-//}
+inline ref_t overwriteAction(ref_t message, ref_t newAction)
+{
+   int paramCount;
+   ref_t actionRef, flags;
+   decodeMessage(message, actionRef, paramCount, flags);
+
+   return encodeMessage(newAction, paramCount, flags);
+}
 
 //inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
 //{
