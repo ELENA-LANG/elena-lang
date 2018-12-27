@@ -6050,6 +6050,8 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope)
 
       SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
 
+      scope.info.header.flags |= elWithCustomDispatcher;
+
       compileDispatcher(writer, SNode(), methodScope,
          test(scope.info.header.flags, elWithGenerics)/*,
          test(scope.info.header.flags, elWithArgGenerics)*/);
