@@ -47,12 +47,13 @@
 #8216  = dispatch;
 
 #32    = params;
-//
+
 #8200  = __string;
+
+#09    = __float;
 #10    = __int;
 #11    = __raw;
 #12    = __ptr;
-//__real          = #15.
 //__dword         = #16.
 #19    = __mssg;
 #18    = __subj;

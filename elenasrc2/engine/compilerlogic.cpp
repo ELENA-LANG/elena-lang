@@ -1826,6 +1826,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
             return true;
          }
          else return false;
+      case V_FLOAT:
       case V_BINARY:
       case V_INTBINARY:
       case V_PTRBINARY:

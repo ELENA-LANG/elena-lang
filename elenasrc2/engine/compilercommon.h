@@ -18,6 +18,7 @@
 #define V_NIL            (ref_t)-04
 #define V_TYPE           (ref_t)-05
 
+#define V_FLOAT          (ref_t)-9
 #define V_INTBINARY      (ref_t)-10
 #define V_BINARY         (ref_t)-11
 #define V_PTRBINARY      (ref_t)-12

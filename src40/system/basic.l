@@ -1259,7 +1259,7 @@ public sealed const struct IntNumber : IntBaseNumber
 
 /// A unsigned 32 bit integer
 
-public sealed struct UIntNumber : IntBaseNumber
+public sealed const struct UIntNumber : IntBaseNumber
 {
     embeddable __int theValue[4];
 
@@ -1634,7 +1634,7 @@ public sealed struct UIntNumber : IntBaseNumber
 // --- LongNumber ---
 
 /// A signed 64 bit integer value
-public sealed struct LongNumber : IntBaseNumber
+public sealed const struct LongNumber : IntBaseNumber
 {
     embeddable __int theValue[8];
 //    
@@ -1963,72 +1963,60 @@ public sealed struct LongNumber : IntBaseNumber
 // --- realNumber ---
 
 /// A 64bit float numeric value
-public sealed /*struct*/ RealNumber : BaseNumber
+public sealed const struct RealNumber : BaseNumber
 {
-//    T<__real,8> theValue.
+    embeddable __float theValue[8];
 
     constructor(int n)
     {
-//        realConvertor convert(n,&self).
+        realConvertor.convert(n,ref self)
     }
             
     constructor(byte n)
     {
-//        realConvertor convert(n,&self).
+        realConvertor.convert(n,ref self)
     }
             
     constructor(short n)
     {
-//        realConvertor convert(n,&self).
+        realConvertor.convert(n,ref self)
     }
             
-//    /// return the default value
-//    constructor
-//        = 0.0r.
-//            
-//    /// Returns the minimal value
-//    constructor min
-//        = -1.7976931348623157e+308r.
-//    
-//    /// Returns the maximal value
-//    constructor max
-//        = 1.7976931348623157e+308r.
-//        
-//    /// Returns the negative infinity
-//    embeddable constructor negativeInfinity 
-//        = -1.0r / 0.0r. 
-//        
-//    /// Returns the positive infinity 
-//    embeddable constructor positiveInfinity 
-//        = 1.0r / 0.0r.
-//        
-//    /// returns the NaN
-//    embeddable constructor NaN
-//        = 0.0r / 0.0r.
-//
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        <= new(0.0r).
-//
-//    /// Creates the object with specified value
-//    constructor new(real value)
-//        = value.
-//  
-//    /// Creates the object with specified value
-//    constructor new(int value)
-//        = realConvertor convert(value).
+    /// return the default value
+    static real Default
+        = 0.0r;
+            
+    /// Returns the minimal value
+    static real MinValue
+        = -1.7976931348623157e+308r;
+    
+    /// Returns the maximal value
+    static real MaxValue
+        = 1.7976931348623157e+308r;
+        
+    /// Returns the negative infinity
+    static real NegativeInfinity 
+        = -1.0r / 0.0r;
+        
+    /// Returns the positive infinity 
+    static real PositiveInfinity 
+        = 1.0r / 0.0r;
+        
+    /// returns the NaN
+    static real NaN
+        = 0.0r / 0.0r;
+
+    /// Creates the object with a default value (0)
+    constructor()
+        = 0.0r;
+
+    /// Creates the object with specified value
+    constructor(real value)
+        = value;
   
     /// Creates the object with specified value
     constructor(uint value)
         = realConvertor.convert(value);
-
-//    /// Creates the object with specified value
-//    constructor new(short value)
-//        = realConvertor convert(value).
-//
-//    /// Creates the object with specified value
-//    constructor new(byte value)
-//        = realConvertor convert(value).
 
     /// Creates the object with specified value
     constructor(long value)
@@ -2054,15 +2042,15 @@ public sealed /*struct*/ RealNumber : BaseNumber
 //        
 //    bool less(BaseVariable v)
 //        <= less(v value).
-//        
-//    /// Compares the value
-//    bool equal(real n)
-//        = theValue == n.
-//        
-//    /// Compares the value
-//    bool less(real n)
-//        = theValue < n.
-//        
+        
+    /// Compares the value
+    bool equal(real n)
+        = theValue == n;
+        
+    /// Compares the value
+    bool less(real n)
+        = theValue < n;
+        
 //    add:n
 //        <= add(T<real>(n)).
 //
@@ -2086,136 +2074,136 @@ public sealed /*struct*/ RealNumber : BaseNumber
 //
 //    real divide(BaseVariable v)
 //        <= divide(v value).
-//        
-//    /// Returns the sum
-//    real add(real n)
-//        = theValue + n.
-//
-//    /// Returns the sum
-//    real subtract(real n)
-//        = theValue - n.
-//
-//    /// Returns the product
-//    real multiply(real n)
-//        = theValue * n.
-//
-//    /// Returns the result of integer division
-//    real divide(real n)
-//        = theValue / n.
-//        
-//    /// Compares the numeric values
-//    bool equal(int n)
-//        = self equal(RealNumber new(n)).
-//
-//    /// Compares the numeric values
-//    bool equal(byte n)
-//        = self equal(RealNumber new(n)).
-//
-//    /// Compares the numeric values
-//    bool equal(short n)
-//        = self equal(RealNumber new(n)).
-//
-//    /// Compares the numeric values
-//    bool equal(long n)
-//        = self equal(RealNumber new(n)).
-//
-//    /// Compares the numeric values
-//    bool less(int n)
-//        = self less(RealNumber new(n)).
-//
-//    /// Compares the numeric values
-//    bool less(byte n)
-//        = self less(RealNumber new(n)).
-//
-//    /// Compares the numeric values
-//    bool less(short n)
-//        = self less(RealNumber new(n)).
-//
-//    /// Compares the numeric values
-//    bool less(long n)
-//        = self less(RealNumber new(n)).
-//
-//    /// Returns the sum of numbers
-//    real add(int n)
-//        = self add(RealNumber new(n)).
-//
-//    /// Returns the sum of numbers
-//    real add(byte n)
-//        = self add(RealNumber new(n)).
-//
-//    /// Returns the sum of numbers
-//    real add(short n)
-//        = self add(RealNumber new(n)).
-//
-//    /// Returns the sum of numbers
-//    real add(long n)
-//        = self add(RealNumber new(n)).
-//
-//    /// Returns the difference of numbers
-//    real subtract(int n)
-//        = self subtract(RealNumber new(n)).
-//
-//    /// Returns the difference of numbers
-//    real subtract(byte n)
-//        = self subtract(RealNumber new(n)).
-//
-//    /// Returns the difference of numbers
-//    real subtract(short n)
-//        = self subtract(RealNumber new(n)).
-//
-//    /// Returns the difference of numbers
-//    real subtract(long n)
-//        = self subtract(RealNumber new(n)).
-//
-//    /// Returns the product of numbers
-//    real multiply(int n)
-//    [
-//        real n := n.
-//        
-//        ^ self multiply(n).
-//    ]
-//
-//    /// Returns the product of numbers
-//    real multiply(byte n)
-//        = self multiply(RealNumber new(n)).
-//
-//    /// Returns the product of numbers
-//    real multiply(short n)
-//        = self multiply(RealNumber new(n)).
-//
-//    /// Returns the product of numbers
-//    real multiply(long n)
-//        = self multiply(RealNumber new(n)).
-//
-//    /// Returns the result of the division
-//    real divide(int n)
-//    [
-//        real n := n.
-//        
-//        ^ self divide(n)
-//    ]
-//
-//    /// Returns the result of the division
-//    real divide(byte n)
-//        = self divide(RealNumber new(n)).
-//        
-//    /// Returns the result of the division
-//    real divide(short n)
-//        = self divide(RealNumber new(n)).
-//
-//    /// Returns the result of the division
-//    real divide(long n)
-//        = self divide(RealNumber new(n)).
-//
+        
+    /// Returns the sum
+    real add(real n)
+        = theValue + n;
+
+    /// Returns the sum
+    real subtract(real n)
+        = theValue - n;
+
+    /// Returns the product
+    real multiply(real n)
+        = theValue * n;
+
+    /// Returns the result of integer division
+    real divide(real n)
+        = theValue / n;
+        
+    /// Compares the numeric values
+    bool equal(int n)
+        = self.equal(new RealNumber(n));
+
+    /// Compares the numeric values
+    bool equal(byte n)
+        = self.equal(new RealNumber(n));
+
+    /// Compares the numeric values
+    bool equal(short n)
+        = self.equal(new RealNumber(n));
+
+    /// Compares the numeric values
+    bool equal(long n)
+        = self.equal(new RealNumber(n));
+
+    /// Compares the numeric values
+    bool less(int n)
+        = self.less(new RealNumber(n));
+
+    /// Compares the numeric values
+    bool less(byte n)
+        = self.less(new RealNumber(n));
+
+    /// Compares the numeric values
+    bool less(short n)
+        = self.less(new RealNumber(n));
+
+    /// Compares the numeric values
+    bool less(long n)
+        = self.less(new RealNumber(n));
+
+    /// Returns the sum of numbers
+    real add(int n)
+        = self.add(new RealNumber(n));
+
+    /// Returns the sum of numbers
+    real add(byte n)
+        = self.add(new RealNumber(n));
+
+    /// Returns the sum of numbers
+    real add(short n)
+        = self.add(new RealNumber(n));
+
+    /// Returns the sum of numbers
+    real add(long n)
+        = self.add(new RealNumber(n));
+
+    /// Returns the difference of numbers
+    real subtract(int n)
+        = self.subtract(new RealNumber(n));
+
+    /// Returns the difference of numbers
+    real subtract(byte n)
+        = self.subtract(new RealNumber(n));
+
+    /// Returns the difference of numbers
+    real subtract(short n)
+        = self.subtract(new RealNumber(n));
+
+    /// Returns the difference of numbers
+    real subtract(long n)
+        = self.subtract(new RealNumber(n));
+
+    /// Returns the product of numbers
+    real multiply(int n)
+    {
+        real n := n;
+        
+        ^ self.multiply(n)
+    }
+
+    /// Returns the product of numbers
+    real multiply(byte n)
+        = self.multiply(new RealNumber(n));
+
+    /// Returns the product of numbers
+    real multiply(short n)
+        = self.multiply(new RealNumber(n));
+
+    /// Returns the product of numbers
+    real multiply(long n)
+        = self.multiply(new RealNumber(n));
+
+    /// Returns the result of the division
+    real divide(int n)
+    {
+        real n := n;
+        
+        ^ self.divide(n)
+    }
+
+    /// Returns the result of the division
+    real divide(byte n)
+        = self.divide(new RealNumber(n));
+        
+    /// Returns the result of the division
+    real divide(short n)
+        = self.divide(new RealNumber(n));
+
+    /// Returns the result of the division
+    real divide(long n)
+        = self.divide(new RealNumber(n));
+
+    /// Returns the literal presentation
+    string Printable = stringConvertor.convert(self);
+
 //    /// Returns the literal presentation
-//    T<literal> literal = literalConvertor convert(self).
-//
-////    /// Returns the literal presentation
-////    wide = system'wideConvertor convert real:$self.
-//
-//    /// Clones the value    
-//    clone = RealNumber new(self).
-//    
+//    wide = system'wideConvertor convert real:$self.
+
+    /// Clones the value    
+    real clone = new RealNumber(self);
+    
 //    // Reads the object hash code into the output parameter
 //    readHashCodeTo(ref<int> aCode)
 //        => system'core_routines'__int.

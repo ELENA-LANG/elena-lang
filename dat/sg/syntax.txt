@@ -156,6 +156,7 @@ EXPRESSION ->
 	| integer OPERATIONS
 	| hex
 	| long
+	| real OPERATIONS
 	| literal
 	| wide
 	| character OPERATIONS
@@ -173,6 +174,7 @@ SUB_SINGLE_EXPRESSION ->
 OPERAND_EXPRESSION ->
 	identifier
 	| integer	
+	| real
 	| hex
 	| wide
 	| OPENING_BRACKET SUB_EXPRESSION
