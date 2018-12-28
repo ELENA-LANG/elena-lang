@@ -262,6 +262,72 @@ procedure __literal."save$system@IntNumber$@system@Array#1&CharValue$@system@ref
 
 end
 
+procedure __literal."indexOf$system@IntNumber$system@String$@system@ref#1&IntNumber[4]"
+
+  bcopya
+  aloadsi 2                 // ; load index
+  nload
+  aloadsi 3                 // ; load searching str
+  callextr api : sseek
+  acopyb
+  bloadsi 4                 // ; load target
+  nsave                    // ; save index
+  quitn 4
+
+end
+
+procedure __literal."indexOf$system@IntNumber$system@CharValue$@system@ref#1&IntNumber[4]"
+
+  pusha
+  aloadsi 4
+  pushn 0
+  pushn 0
+  bcopys 0
+  pushn 0
+  callextr api : chartostr
+  eaddn 1
+  pushe
+
+  aloadsi 7                 // ; load index
+  nload
+  acopys 2
+  bloadsi 4
+  callextr api : sseek
+  bloadsi 9                // ; load target
+  nsave                    // ; save index
+  popi 4
+  popa
+  quitn 4
+
+end
+
+procedure __literal."Substring$system@IntNumber$system@IntNumber[3]"
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  inc
+
+  // ; create a new string  
+  acopyr class : system'String
+  bcreate
+  bcopya
+
+  aloadsi 3
+  nload
+  ecopyd
+  
+  aloadsi 2
+  nload
+
+  aloadsi 1
+  callextr api : subcopyz
+  acopyb
+
+  quitn 3
+
+end
+
 procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1
@@ -532,6 +598,7 @@ end
 
 procedure __bytearray."read$system@IntNumber$system@IntNumber$system@ByteArray[4]"
 
+  aloadsi 1
   bcopya
   blen
   ecopyd  
@@ -561,6 +628,7 @@ end
 
 procedure __bytearray."read$system@IntNumber$@system@ref#1&ByteNumber[3]"
 
+  aloadsi 1
   bcopya
   blen
   ecopyd  
@@ -587,6 +655,7 @@ end
 
 procedure __bytearray."read$system@IntNumber$@system@ref#1&ShortNumber[3]"
 
+  aloadsi 1
   bcopya
   blen
   ecopyd  
@@ -613,6 +682,7 @@ end
 
 procedure __bytearray."read$system@IntNumber$@system@ref#1&CharValue[3]"
 
+  aloadsi 1
   bcopya
   blen
   ecopyd  
@@ -639,6 +709,7 @@ end
 
 procedure __bytearray."read$system@IntNumber$@system@ref#1&IntNumber[3]"
 
+  aloadsi 1
   bcopya
   blen
   ecopyd  
@@ -665,6 +736,7 @@ end
 
 procedure __chararray."write$system@IntNumber$system@IntNumber$@system@Array#1&CharValue[4]"
 
+  aloadsi 1
   bcopya
   aloadsi 2
   nload
@@ -752,6 +824,24 @@ procedure __realconvertor."convert$system@String$@system@ref#1&RealNumber[3]"
   dcopy    10
   aloadsi  2
   callextr api : strtoreal
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."convert$system@String$@system@ref#1&IntNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : strtoint
+  nsave
   ifr      labErr 0
   quitn    3
 

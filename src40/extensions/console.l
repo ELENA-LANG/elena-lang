@@ -214,11 +214,11 @@ public extension outputOp
 //        self writeLine.
 //    ]
 //}
-//
-//// --- inputOp ---
-//
-//public extension inputOp
-//{
+
+// --- inputOp ---
+
+public extension inputOp
+{
 //    readLineTo:var
 //    [
 //        var aLine := self readLine.
@@ -227,23 +227,17 @@ public extension outputOp
 //        
 //        ^var.
 //    ]
-//    
-//    generic readLine(V<object> args)
-//    [
-//        literal aLine := self readLine.
-//        
-//        T<Array> aParams := aLine split($32).
-//        
-//        int aLength := args length.
-//        
-//        int anIndex := 0.
-//        while (anIndex < aLength)
-//        [
-//            (aParams getAt(anIndex))~convertorOp convertTo(args[anIndex]).
-//            
-//            anIndex := anIndex + 1
-//        ].
-//            
-//        ^ self
-//    ]
-//}
+    
+    readLine(params object[] args)
+    {
+        string line := self.readLine();
+        
+        Array params := line.split($32);
+        
+        int len := args.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            params[i].convertTo(args[i]);
+        }
+    }
+}

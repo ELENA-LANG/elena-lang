@@ -943,6 +943,10 @@ public sealed const struct IntNumber : IntBaseNumber
     constructor(int value)
         = value;
 
+    /// Creates the object with specified value
+    constructor(uint value)
+        = value;
+
 //    /// Creates the object with specified value
 //    constructor new(short value)
 //        = intConvertor convert(value).
@@ -2841,10 +2845,10 @@ public singleton shortConvertor
 /// An integer convertor
 public singleton intConvertor
 {
-//    /// Converts a literal string into an integer and saves the result into an output parameter
-//    convert(literal aValue, ref<int> aRetVal)
-//        => system'core_routines'__intconvertor.
-//
+    /// Converts a literal string into an integer and saves the result into an output parameter
+    convert(string s, ref int retVal)
+        => system'core_routines'__intconvertor;
+
 //    /// Converts a literal string into an integer and saves the result into an output parameter
 //    convertUnsigned(literal aValue, ref<int> aRetVal)
 //        => system'core_routines'__intconvertor.
@@ -2883,16 +2887,16 @@ public singleton intConvertor
 //
 //    int convert(BaseVariable v)
 //        <= convert(v value).
-//        
-//    /// Converts a literal string into an integer
-//    int convert(literal aLiteral)
-//    [
-//        int aRetVal := 0.
-//        self convert(aLiteral, &aRetVal).
-//        
-//        ^ IntNumber new(aRetVal)
-//    ]
-//        
+        
+    /// Converts a literal string into an integer
+    int convert(string s)
+    {
+        int retVal := 0;
+        self.convert(s, ref retVal);
+        
+        ^ new IntNumber(retVal)
+    }
+        
 //    /// Converts a literal string into an integer
 //    int convertUnsigned(literal aLiteral)
 //    [
@@ -2973,16 +2977,16 @@ public singleton intConvertor
 //        
 //        ^ IntNumber new(aRetVal)
 //    ]
-//
-//    /// Returns a parameter                                    
-//    int convert(int anInt)
-//        = IntNumber new(anInt).
-//
-//    int convert(uint anInt)
-//        = IntNumber new(anInt).
-//                        
-//    int convert : anObject
-//        = T<int>(anObject).
+
+    /// Returns a parameter                                    
+    int convert(int n)
+        = new IntNumber(n);
+
+    int convert(uint n)
+        = new IntNumber(n);
+                        
+    int convert(o)
+        = cast int(o);
 }
 
 /// A unsigned integer convertor

@@ -282,9 +282,9 @@ sealed struct ConsoleReader //:: Object, interface<IConsoleReader>
         until (found)
         {
 //            extern
-  //          {
+//            {
                 extern KERNEL32.ReadConsoleInputW(theHandle, dump, 1, ref numberRead);
-    //        };
+//            };
 
             dump.read(0, ref eventType);
             if (eventType == 1)

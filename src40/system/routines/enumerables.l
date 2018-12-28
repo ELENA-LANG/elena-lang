@@ -1,4 +1,4 @@
-//import system'collections.
+import system'collections;
 
 // === actions ===
 
@@ -7,37 +7,38 @@ public ifOrdered
 
 //public symbol ifDecrescent
 //    = (:aFormer:aLater) [ ^aFormer > aLater ].
-//
-//// --- literalSplitOp ---
-//
-//public extension<literal> literalListOp
-//{
-//    T<Array> split
-//        = self~literalListOp split($32).
-//    
-//    T<Array> split(char aChar)
-//    [
-//        T<ArrayList> aList := ArrayList new.
-//        int          aStart := 0.
-//        int          anIndex := 0.
-//        int          aCharLen := aChar length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self indexOf(aStart, aChar, &anIndex).
-//            if (-1 != anIndex)
-//            [
-//                aList append(self Substring(aStart,anIndex - aStart)).
-//                aStart := anIndex + aCharLen.
-//            ];
-//            [
-//                aList append(self Substring(aStart))
-//            ]
-//        ].
-//        
-//        ^ aList
-//    ]
-//    
+
+// --- literalSplitOp ---
+
+public extension stringListOp : String
+{
+    Array split()
+        = self.split($32);
+    
+    Array split(char ch)
+    {
+        ArrayList list := new ArrayList();
+        int       start := 0;
+        int       index := 0;
+        int       chLen := ch.Length;
+        
+        while (index >= 0)
+        {
+            self.indexOf(start, ch, ref index);
+            if (-1 != index)
+            {
+                list.append(self.Substring(start,index - start));
+                start := index + chLen
+            }
+            else
+            {
+                list.append(self.Substring(start))
+            }
+        };
+        
+        ^ list
+    }
+    
 //    T<Array> split(literal aValue)
 //    [
 //        T<ArrayList> aList := ArrayList new.
@@ -61,8 +62,8 @@ public ifOrdered
 //        
 //        ^ aList
 //    ]
-//}
-//
+}
+
 //// --- wideListOp ---
 //
 //public extension<wide> wideListOp

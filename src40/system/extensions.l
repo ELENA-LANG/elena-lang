@@ -1045,11 +1045,11 @@ public extension objectOp
 //        ^ self
 //    ]
 //}
-//
-//// --- literalOp ---
-//
-//public extension<literal> literalOp
-//{
+
+// --- literalOp ---
+
+public extension stringOp : String
+{
 //    indexOf : anObject
 //        = self indexOf:anObject at:0.
 //
@@ -1061,21 +1061,22 @@ public extension objectOp
 //        
 //    literal Substring : anIndex
 //        = self~literalOp Substring(T<int>(anIndex)).
-//        
-//    literal Substring(int anIndex)
-//    [
-//        int aLength := self length.
-//        if (aLength > anIndex)
-//        [
-//            aLength := aLength - anIndex.
-//            
-//            ^ self Substring(anIndex, aLength)
-//        ];
-//        [
-//            ^ emptyLiteral
-//        ]        
-//    ]        
-//    
+        
+    string Substring(int index)
+    {
+        int len := self.Length;
+        if (len > index)
+        {
+            len := len - index;
+            
+            ^ self.Substring(index, len)
+        }
+        else
+        {
+            ^ emptyString
+        }        
+    }        
+    
 //    literal trimLeft(char aChar)
 //    [
 //        int  anIndex := 0.
@@ -1233,8 +1234,8 @@ public extension objectOp
 //        
 //        ^ aLength == 0
 //    ]    
-//}
-//
+}
+
 //// --- wideOp ---
 //
 //public extension<wide> wideOp

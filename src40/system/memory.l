@@ -1267,19 +1267,19 @@ public sealed const struct String : BaseValue
 //    // Reads the byte at the specified index and saves into an output parameter
 //    read(int anIndex, ref<byte> anInt)
 //        => system'core_routines'__literal.
-//
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int anIndex, literal aLiteral, ref<int> aRetVal)
-//        => system'core_routines'__literal.
-//
-//    /// Saves the index of the first occurence of the specified symbol into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int anIndex, char aChar, ref<int> aRetVal)
-//        => system'core_routines'__literal.
-//
+
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, string literal, ref int retVal)
+        => system'core_routines'__literal;
+
+    /// Saves the index of the first occurence of the specified symbol into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, char ch, ref int retVal)
+        => system'core_routines'__literal;
+
 //    /// Returns the index of the first occurence of the specified symbol.
 //    /// 
 //    /// If the substring is not found. returns -1
@@ -1325,11 +1325,11 @@ public sealed const struct String : BaseValue
 //    /// Returns the substring
 //    Substring : aLength at:anIndex
 //        = self Substring(T<int>(anIndex), T<int>(aLength)).
-//
-//    /// Returns the substring
-//    literal Substring(int anIndex, int aLength)
-//        => system'core_routines'__literal.
-//
+
+    /// Returns the substring
+    string Substring(int index, int length)
+        => system'core_routines'__literal;
+
     vprop int Length
     {
         /// Reads the literal length into an output parameter
@@ -1675,14 +1675,42 @@ public sealed class Variant
 //        theValue := aValue.
 //    ]    
 
-//    saveTo(target)
-//    {
-//        var caster := self.__getClass().Caster;
-//        
-//        target.Value := caster(self);
-//        
-//        ^ target
-//    }
+    private castValueTo(target)
+        = {
+            eval(o)
+                = o.Printable;
+            
+//            eval(BaseVariable v)
+//                <= eval(v value).
+//            
+            eval(int val)
+                = cast int(self);
+                
+            eval(byte val)
+                = cast byte(self);
+                
+            eval(short val)
+                = cast short(self);
+                
+            eval(long val)
+                = cast long(self);
+                
+            eval(real val)
+                = cast real(self);
+                
+            eval(string val)
+                = cast string(self);
+                
+            eval(wide val)
+                = cast wide(self);
+        }.eval(target);
+
+    saveTo(target)
+    {
+        target.Value := self.castValueTo(target.Value);
+        
+        ^ target
+    }
 
 ////    add : aTarget
 ////        = aTarget add($self $castValueTo:aTarget).
@@ -1721,10 +1749,10 @@ public sealed Array //:: Indexable, Array<object>
 
     /// Creates a copy of the provided array
     constructor(Array array)
-        <= new(0, array.Length, array);
+        <= (0, array.Length, array);
     
     /// Creates a copy of the provided sub array
-    constructor new(int index, int length, Array array)
+    constructor(int index, int length, Array array)
         <= (length)
     {
         intern system'core_routines'__array.copy(self, index, length, array)

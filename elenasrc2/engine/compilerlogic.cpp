@@ -1686,7 +1686,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
          return true;
       //case V_TAPEGROUP:
       //   attrValue = elTapeGroup;
-         return true;
+//         return true;
       case V_CLASS:
       case V_PUBLIC:
       case V_INTERNAL:

@@ -790,9 +790,9 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
     ArrayList clone()
         = ArrayList.fromArray(theArray, cast int(theLength));
         
-//    cast T<Array>
-//        = Array new(0, T<int>(theLength), theArray).
-//
+    Array cast()
+        = new Array(0, cast int(theLength), theArray);
+
 //    value 
 //        = Array new(0, T<int>(theLength), theArray).
 }

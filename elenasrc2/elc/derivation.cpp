@@ -1950,8 +1950,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
          case lxNestedClass:
             recognizeClassMebers(current);            
             generateClassTree(writer, current, derivationScope, true);
-            //         writer.insert(lxExpression);
-            //         writer.closeNode();
+            first = false;
             break;
          case lxCode:
             generateCodeExpression(writer, current, derivationScope, first);
