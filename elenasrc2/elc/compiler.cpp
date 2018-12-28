@@ -598,10 +598,10 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, int scopeMode)
 
 ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
-   //if (!referenceOne && identifier.compare(SUPER_VAR)) {
-   //   return ObjectInfo(okSuper, info.header.parentRef);
-   //}
-   //else {
+   if (!referenceOne && identifier.compare(SUPER_VAR)) {
+      return ObjectInfo(okSuper, 0, info.header.parentRef);
+   }
+   else {
       if (!referenceOne) {
          ObjectInfo fieldInfo = mapField(identifier, mode);
          if (fieldInfo.kind != okUnknown) {
@@ -609,7 +609,7 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenc
          }
       }
       return Scope::mapTerminal(identifier, referenceOne, mode);
-   //}
+   }
 }
 
 // --- Compiler::MetodScope ---
@@ -911,10 +911,10 @@ Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapOwner()
 
 ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
-   //if (identifier.compare(SUPER_VAR)) {
-   //   return ObjectInfo(okSuper, info.header.parentRef);
-   //}
-   /*else */if (identifier.compare(OWNER_VAR)) {
+   if (identifier.compare(SUPER_VAR)) {
+      return ObjectInfo(okSuper, 0, info.header.parentRef);
+   }
+   else if (identifier.compare(OWNER_VAR)) {
       Outer owner = mapOwner();
 
       // map as an outer field (reference to outer object and outer object field index)
@@ -928,10 +928,10 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
 //
       // if object already mapped
       if (outer.reference != -1) {
-         /*if (outer.outerObject.kind == okSuper) {
-            return ObjectInfo(okSuper, outer.reference);
+         if (outer.outerObject.kind == okSuper) {
+            return ObjectInfo(okSuper, 0, outer.reference);
          }
-         else */return ObjectInfo(okOuter, outer.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+         else return ObjectInfo(okOuter, outer.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
       }
       else {
          outer.outerObject = parent->mapTerminal(identifier, referenceOne, mode);
@@ -964,7 +964,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
             case okParam:
             case okLocal:
             case okOuter:
-            //case okSuper:
+            case okSuper:
             case okSelfParam:
             case okLocalAddress:
             case okFieldAddress:
@@ -1232,72 +1232,9 @@ ref_t Compiler :: resolveObjectReference(_ModuleScope& scope, ObjectInfo object)
    // if static message is sent to a class class
    switch (object.kind)
    {
-//      case okConstantClass:
-//         return object.extraparam;
-//      case okConstantRole:
-//         // if external role is provided
-//         return object.param;
-//      case okConstantSymbol:
-//      case okExtension:
-//         if (object.extraparam != 0) {
-//            return object.extraparam;
-//         }
-//         else return object.param;
-//      case okLocalAddress:
-//         return object.extraparam;
-//      case okIntConstant:
-//      case okUIntConstant:
-//         return V_INT32;
-      //case okLongConstant:
-      //   return V_INT64;
-//      case okRealConstant:
-//         return V_REAL64;
-//      case okCharConstant:
-//         return scope.charReference;
-//      case okLiteralConstant:
-//         return scope.literalReference;
-//      case okWideLiteralConstant:
-//         return scope.wideReference;
-//      case okSubject:
-//      case okSignatureConstant:
-//         return V_SIGNATURE;
-//      case okExtMessageConstant:
-//         return scope.extMessageReference;
-//      case okSuper:
-//         return object.param;
-//      case okParams:
-//         return V_ARGARRAY;
-//      case okExternal:
-//         return V_INT32;
-//      case okMessageConstant:
-//         return V_MESSAGE;
       case okNil:
          return V_NIL;
-//      case okField:
-//      case okReadOnlyField:
-//      case okLocal:
-//      case okFieldAddress:
-//      case okReadOnlyFieldAddress:
-//      case okOuter:
-//      case okOuterSelf:
-//      case okParam:
-//      case okSymbol:
-//      case okStaticField:
-//      case okStaticConstantField:
-//         return object.extraparam;
-//      case okClassStaticConstantField:
-//      case okOuterField:
-//      case okOuterReadOnlyField:
-//      case okOuterStaticField:
-//      case okClassStaticField:
-//         return object.element;
-//      case okClassSelf:
-//         return object.param;
       default:
-//         if (object.kind == okObject) {
-//            return object.param;
-//         }
-//         else return 0;
          return object.reference;
    }
 }
@@ -2144,9 +2081,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okSelfParam:
          writeParamTerminal(writer, scope, object, mode, lxSelfLocal);
          break;
-//      case okSuper:
-//         writer.newNode(lxLocal, 1);
-//         break;
+      case okSuper:
+         writer.newNode(lxLocal, 1);
+         break;
       case okReadOnlyField:
       case okField:
       case okOuter:
@@ -3045,10 +2982,10 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 //   else if (classReference == scope.moduleScope->messageReference) {
 //      dispatchCall = test(mode, HINT_EXTENSION_MODE);
 //   }
-//   else if (target.kind == okSuper) {
-//      // parent methods are always sealed
-//      callType = tpSealed;
-//   }
+   else if (target.kind == okSuper) {
+      // parent methods are always sealed
+      callType = tpSealed;
+   }
 
 //   if (dispatchCall) {
 //      operation = lxDirectCalling;

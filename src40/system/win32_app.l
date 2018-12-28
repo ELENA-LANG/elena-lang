@@ -40,7 +40,7 @@ public symbol startUp =
             }
             catch(Exception e)
             {
-                //console writeLine(e literal)
+                console.writeLine(e.Printable);
             }
 //            catch(AbortException e)
 //            {

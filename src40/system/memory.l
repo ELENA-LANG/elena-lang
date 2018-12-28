@@ -1166,7 +1166,7 @@ public sealed const struct String : BaseValue
     constructor new(int index, int length, char[] array)
         => system'core_routines'__literal;
 
-    /*internal */constructor fromByteArray(int index, int size, byte[] buffer)
+    internal constructor fromByteArray(int index, int size, byte[] buffer)
         <= (size)
     {
         intern system'core_routines'__literal.copy(self, index, size, buffer)

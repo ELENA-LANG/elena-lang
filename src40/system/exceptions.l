@@ -59,17 +59,17 @@ extension op
 /// A basic exception
 public class Exception
 {
-//    literal theMessage.
+    string theMessage;
 //    object  theCallStack.
-//    
-//    /// Returns the message and the call stack
-//    T<literal> literal
-//    [
-//        literal retVal := theMessage add($10"Call stack:"$10).
-//        
-//        ^ retVal add(theCallStack literal)
-//    ]
-//    
+
+    /// Returns the message and the call stack
+    get string Printable()
+    {
+        string retVal := theMessage.add($10"Call stack:"$10);
+        
+        ^ retVal/* add(theCallStack literal)*/
+    }
+    
 //    /// Returns the message
 //    T<literal> message = theMessage.
 //    
@@ -115,16 +115,16 @@ public class Exception
 //    ]
 //    
 ////    subject = $self.
-//        
-//    /// Creates the exception with the provided message and error type
-//    constructor new(literal aMessage)
-//    [
-//        theMessage := aMessage.
+        
+    /// Creates the exception with the provided message and error type
+    constructor(string message)
+    {
+        theMessage := message;
 //        theCallStack := CallStack new.
-//    ]    
-//    
-//    constructor new
-//        <= new(self __className).
+    }    
+    
+    constructor()
+        <= (self.__getClassName());
 
 //    constructor raise()
 //        <= new()
@@ -133,16 +133,16 @@ public class Exception
 //    }
 }
 
-//// --- FormatException ---
-//
-//public class FormatException :: Exception
-//{
-//    constructor new
-//        <= new("A number is not in the correct format").
-//        
-//    constructor new : message
-//        <= new(message).
-//}
+// --- FormatException ---
+
+public class FormatException : Exception
+{
+    constructor()
+        <= ("A number is not in the correct format");
+        
+    constructor(string message)
+        <= (message);
+}
 
 // --- OutOfRangeException ---
 
@@ -216,18 +216,15 @@ public class InvalidArgumentException : Exception
 
 public sealed class MethodNotFoundException : Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new("Method not found").
-//
-//    constructor new(mssg missingMessage)
-//        <= new("Method " add(missingMessage); add(" not found")).
-//        
-//    constructor new(object object, mssg missingMessage)
-//        <= new(object   __className + " : Method " + missingMessage literal + " not found").
+    /// Creates the exception
+    constructor()
+        <= ("Method not found");
+
+    constructor new(mssg missingMessage)
+        <= ("Method " + missingMessage.Printable + " not found");
+        
     constructor new(object object, mssg missingMessage)
-    {
-    }
+        <= (object.__getClassName() + " : Method " + missingMessage.Printable + " not found");
 }
 
 //// --- MethodNotSupported ---

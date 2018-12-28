@@ -38,15 +38,15 @@ public sealed struct Message
 //
 //    T<Signature> signature
 //        => system'core_routines'__message.
-//
-//    T<literal> literal
-//    [
-//        T<byte,256> aBuffer.
-//        int         aLength := system'external LoadMessageName(self, T<ByteArray>(aBuffer), 255).
-//        
-//        ^ LiteralValue fromByteArray(0, aLength, T<ByteArray>(aBuffer))
-//    ]
-//
+
+    get string Printable()
+    {
+        byte buffer[256];
+        int  len := extern elenart.LoadMessageName(self, buffer, 255);
+        
+        ^ String.fromByteArray(0, len, buffer)
+    }
+
 //    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
 //    dispatch => system'core_routines'__message.
 }

@@ -138,7 +138,7 @@ public:
       okSubject,                      // param - parameter offset
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
-//      okSuper,
+      okSuper,
       okLocalAddress,                 // param - local offset
       okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset

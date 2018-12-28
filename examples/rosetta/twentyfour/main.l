@@ -1,6 +1,6 @@
 import system'routines;
-//import system'collections.
-//import system'dynamic.
+import system'collections;
+import system'dynamic;
 import extensions;
 
 // --- Expression ---

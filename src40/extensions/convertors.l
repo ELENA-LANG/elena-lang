@@ -417,9 +417,9 @@ public extension convertorOp
 //    
 //    T<char> toChar
 //        = charConvertor convert:self.
-//
-//    toReal
-//        = realConvertor convert:self.
+
+    toReal()
+        = realConvertor.convert:self;
 
     convertTo(target)
         = new Variant(self).saveTo(target);

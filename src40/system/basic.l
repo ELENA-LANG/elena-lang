@@ -2367,29 +2367,29 @@ public sealed const struct CharValue : BaseValue
 //    ]
 }
 
-//// --- nil constant ---
-//
-///// A nil value
-//public singleton nilValue
-//{
-//    /// Returns true if the specified object is nil.
-//    bool equal : anObject 
-//    [
-//        (nil == anObject)
-//            ? [ ^ true. ].
-//        
-//        (super equal:anObject)
-//            ? [ ^ true. ].
-//
-//        ^ false.
-//    ]
-//    
-//    /// Returns nil
-//    ///
-//    /// Any typecasting message will be handled and nil value returned
-//    generic = nil.
-//}
-//
+// --- nil constant ---
+
+/// A nil value
+public singleton nilValue
+{
+    /// Returns true if the specified object is nil.
+    bool equal(object)
+    {
+        (nil == object)
+            ? { ^ true };
+        
+        (super.equal:object)
+            ? { ^ true };
+
+        ^ false
+    }
+    
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    generic() = nil;
+}
+
 //// === Basic Factory symbols ==
 //
 //public class BaseExtender
@@ -3183,27 +3183,27 @@ public singleton realConvertor
 //    /// Converts an integer into a real number and saves the result into an output parameter
 //    convert(short aValue, ref<real> aRetVal)
 //        => system'core_routines'__realconvertor.
-//
-//    /// Converts a literal string into a real number and saves the result into an output parameter
-//    convert(literal aValue, ref<real> aRetVal)
-//        => system'core_routines'__realconvertor.
-//
+
+    /// Converts a literal string into a real number and saves the result into an output parameter
+    convert(string s, ref real retVal)
+        => system'core_routines'__realconvertor;
+
 //    /// Converts a wide literal string into a real number and saves the result into an output parameter
 //    convert(wide aValue, ref<real> aRetVal)
 //        => system'core_routines'__realconvertor.
 //        
 //    real convert(BaseVariable v)
 //        <= convert(v value).
-//        
-//    /// Converts a literal string into a real number
-//    real convert(literal aLiteral)
-//    [
-//        real aRetVal := 0.0r.
-//        self convert(aLiteral, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//        
+        
+    /// Converts a literal string into a real number
+    real convert(string s)
+    {
+        real retVal := 0.0r;
+        self.convert(s, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+        
 //    /// Converts a wide literal string into a real number
 //    real convert(wide aLiteral)
 //    [
@@ -3261,9 +3261,9 @@ public singleton realConvertor
 //        
 //        ^ RealNumber new(aRetVal)
 //    ]
-//        
-//    real convert : o
-//        = T<real>(o).
+        
+    real convert(o)
+        = cast real(o);
 }
 
 //// --- realOpController ---
