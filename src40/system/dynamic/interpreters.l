@@ -19,6 +19,25 @@ public mixin Struct
         }
     }
 
+    internal vprop int Length
+    {
+        read(ref int retVal)
+        {
+            int len := 0;
+            items $shr len;
+            
+            retVal := len
+        }
+    }
+
+    internal at(int index)
+        = items[index];
+
+    internal setAt(int index, object o)
+    {
+        items[index] := o
+    }
+
 //    constructor new(ArrayList list, int index, int length)
 //        <= new(length);
 //    [
@@ -49,38 +68,37 @@ public class DynamicStruct
 //    [
 //        theStruct := T<Struct>(aStruct).
 //    ]
-//
-//    cast T<Struct> = theStruct.
-//    
-//    generic:anObject
-//    [
-//        // looking for the current subject
-//        int  anIndex := 0.
-//        int  aLength := 0.
-//        bool aNotFound := true.
-//        
-//        theStruct readFieldCountTo(&aLength).
-//        while ((anIndex < aLength) && aNotFound)
-//        [
-//            var aCurrent := theStruct~classROp getField(anIndex).
-//            
-//            if(T<Signature>(aCurrent) equal(__received))
-//                [ aNotFound := false ];
-//                [ anIndex := anIndex + 2 ]
-//        ].
-//                
-//        // if not found extend the structure
-//        if(anIndex == aLength)
-//        [                                    
-//            theStruct := theStruct reallocate(aLength + 2).
-//
-//            theStruct~classROp setField(anIndex, Signature new(received)).
-//        ].
-//
-//        // set the content for the appropriate field
-//        theStruct~classROp setField(anIndex + 1, anObject).
-//    ]
-//    
+
+    set generic(o)
+    {
+        bool notFound := true;
+        int len := theStruct.Length;
+        int i := 0;
+        while ((i < len) && notFound)
+        {
+            var item := theStruct.at(i);
+            if (cast MessageName(item) == __received)
+            {
+                notFound := false
+            }
+            else
+            {
+                i := i + 2
+            }
+        };
+                
+        // if not found extend the structure
+        if(i == len)
+        {                                 
+            theStruct := theStruct.reallocate(len + 2);
+
+            theStruct.setAt(i, __received)
+       };
+
+        // set the content for the appropriate field
+        theStruct.setAt(i + 1, o);
+    }
+    
 //    containsProperty(Signature subj)
 //    [
 //        int anIndex := 0.
@@ -99,6 +117,6 @@ public class DynamicStruct
 //        
 //        ^ false
 //    ]
-//    
-//    dispatch => theStruct.
+    
+    dispatch() => theStruct;
 }

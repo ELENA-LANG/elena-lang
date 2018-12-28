@@ -129,10 +129,10 @@ public extension objectOp
 //
 //    doWith:action
 //        = action(self).
-//        
-//    reallocate(int aNewLength)
-//        => system'core_routines'__array.
-//        
+        
+    reallocate(int newLength)
+        => system'core_routines'__array;
+        
 //    shift(int n)
 //    [
 //        if (n < 0)

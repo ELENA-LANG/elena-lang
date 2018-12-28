@@ -1,6 +1,7 @@
 //        ELENA Language 4.0
 //      inline system library
 
+define elStructure          000000008h
 define elSubject            000002000h
 
 procedure __object."#dispatch[1]"
@@ -460,6 +461,63 @@ procedure __array."copy$system@Array$system@IntNumber$system@IntNumber$system@Ar
   acopyb
   quitn 4
   
+end
+
+procedure __array."reallocate$system@IntNumber[2]"
+
+  aloadsi 1
+  flag
+  andn elStructure
+  elsen labErr 0
+  bcopya
+  aloadsi 2
+  nload
+  class
+  create
+  bloadsi 1
+  count
+  dcopye        // ; index - old length
+  bcopya
+  count         // ; ext - new length
+  less labExpand
+
+  aloadsi 1
+
+  pusha
+  count
+  dcopy 0
+labCopy:
+  get
+  bswapsi 0
+  xset
+  bswapsi 0
+  next labCopy
+  pop
+
+  acopyb
+  quitn 2
+
+labExpand:
+  ecopyd
+  dcopy 0
+  pushb
+labNext:
+  bloadsi 2
+  get
+  bloadsi 0
+  xset
+  inc
+  less labNext
+
+  count
+  acopyr 0
+labNext2:
+  xset
+  inc
+  less labNext2
+  popa
+  quitn 2
+
 end
 
 procedure __dptr."system$setReference[2]"
