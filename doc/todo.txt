@@ -3,7 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * system'Variant.castValueTo - should be made private and tested
+                 * identifier - message message
+                 * support explicit mixin creation - mixin Invoker(x) - should be boxed into the Wrap class;
+
                  * migrate twentyfour, 99 Bottles of Beer
                  * should it be possible to compile the following code: class; public program() { class class := nil; }
                  * syntax : template / size should be the last token in expression and one before the last for declaration

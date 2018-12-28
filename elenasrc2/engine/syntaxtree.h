@@ -71,7 +71,7 @@ enum LexicalType
 //   lxFieldTemplate   = 0x00014,
 //   lxAttributeValue  = 0x00015,
 //   lxNestedClass     = 0x00018,
-//   lxExtension       = 0x0002B,
+   lxWrapping        = 0x0002B,
 //   lxAltOperation    = 0x0002C,
 //   lxCatchOperation  = 0x0002F,
 //   lxLoop            = 0x00030,

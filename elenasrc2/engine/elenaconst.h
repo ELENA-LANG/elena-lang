@@ -417,7 +417,7 @@ namespace _ELENA_
    constexpr auto CATCH_OPERATOR       = "|";
 
   // --- ELENA explicit variables ---
-//   #define GROUP_VAR               "__target"         // the current method target / closure owner method target
+   constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target
    constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference
 
    constexpr auto SUPER_VAR            = "super";            // the predecessor class

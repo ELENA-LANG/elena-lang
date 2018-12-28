@@ -2,7 +2,7 @@ rem ..\..\bin\elc accumulator\accumulator.prj
 rem ..\..\bin\elc ackermann\ackerman.prj
 rem ..\..\bin\elc addfield\addfield.prj
 rem ..\..\bin\elc anonymrec\anonymrec.prj
-rem ..\..\bin\elc aplusb\aplusb.prj
+..\..\bin\elc aplusb\aplusb.prj
 rem ..\..\bin\elc applycallback\arraycallback.prj
 rem ..\..\bin\elc arithmeticint\arithmeticint.prj
 rem ..\..\bin\elc arithmmean\arithmmean.prj

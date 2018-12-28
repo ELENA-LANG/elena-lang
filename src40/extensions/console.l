@@ -1,4 +1,4 @@
-//import system'routines.
+import system'routines;
 //import system'text.
 
 // --- outputOp ---
@@ -228,7 +228,7 @@ public extension inputOp
 //        ^var.
 //    ]
     
-    readLine(params object[] args)
+    loadLine(params object[] args)
     {
         string line := self.readLine();
         
@@ -238,6 +238,8 @@ public extension inputOp
         for(int i := 0, i < len, i := i + 1)
         {
             params[i].convertTo(args[i]);
-        }
+        };
+        
+        ^ self
     }
 }

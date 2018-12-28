@@ -1,8 +1,9 @@
 // base variable mixin
 public abstract class BaseVariable
 {
-//    // should be overridden
-//    abstract value []
+    // should be overridden
+    abstract get Value() {}
+    abstract set Value(o) {}
 }
 
 public sealed ref<T>// : BaseVariable
@@ -1003,18 +1004,18 @@ public sealed const struct IntNumber : IntBaseNumber
     bool less(int n)
         = theValue < n;
         
-//    add:n
-//        <= add(T<int>(n)).
-//
-//    subtract:n
-//        <= subtract(T<int>(n)).
-//
-//    multiply:n
-//        <= multiply(T<int>(n)).
-//
-//    divide:n
-//        <= divide(T<int>(n)).
-//        
+    add(n)
+        <= add(cast int(n));
+
+    subtract(n)
+        <= subtract(cast int(n));
+
+    multiply(n)
+        <= multiply(cast int(n));
+
+    divide(n)
+        <= divide(cast int(n));
+        
 //    int add(BaseVariable v)
 //        <= add(v value).
 //

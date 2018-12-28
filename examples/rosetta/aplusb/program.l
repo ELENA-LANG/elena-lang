@@ -17,15 +17,15 @@ Given 2 integer numbers, A and B. One needs to find their sum.
 import system'routines.
 import extensions.
 
-public program
-[
+public program()
+{
     console writeLine(console readLine;split;selectBy(%"convertorOp.toInt[0]");summarize).
-]
+}
 
-public program_alt
-[
-    var A := Integer new.
-    var B := Integer new.
-    
-    console readLine(A,B); writeLine(A + B).
-]
+public program_alt()
+{
+    var A := new Integer();
+    var B := new Integer();
+ 
+    console.loadLine(A,B).printLine(A + B)
+}

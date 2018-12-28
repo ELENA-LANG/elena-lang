@@ -40,5 +40,7 @@ public sealed class Integer : BaseVariable, ref<int>
         
         theValue := v
     }
+    
+    dispatch() => theValue;
 }
 

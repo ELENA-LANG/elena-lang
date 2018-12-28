@@ -31,7 +31,6 @@
 #define V_MESSAGE        (ref_t)-19
 //#define V_EXTMESSAGE     (ref_t)-21
 //#define V_SYMBOL         (ref_t)-22
-//
 //#define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
 
 #define V_OBJECT         (ref_t)-28
@@ -388,17 +387,18 @@ public:
       bool  loopAttr;
       bool  memberAttr;
       bool  subjAttr;
+      bool  wrapAttr;
 
       bool isExprAttr()
       {
-         return refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr;
+         return refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr;
       } 
 
       ExpressionAttributes()
       {
          refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
          newOpAttr = loopAttr = internAttr = false;
-         subjAttr = memberAttr = false;
+         wrapAttr = subjAttr = memberAttr = false;
       }
    };
 

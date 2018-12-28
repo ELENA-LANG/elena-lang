@@ -32,7 +32,7 @@ constexpr auto HINT_NOBOXING        = 0x20000000;
 constexpr auto HINT_NOUNBOXING      = 0x10000000;
 constexpr auto HINT_EXTERNALOP      = 0x08000000;
 constexpr auto HINT_NOCONDBOXING    = 0x04000000;
-//#define HINT_EXTENSION_MODE   0x02000000
+//constexpr auto HINT_EXTENSION_MODE  = 0x02000000;
 //#define HINT_COLLECTION_MODE  0x01000000
 constexpr auto HINT_LOOP            = 0x00800000;
 constexpr auto HINT_SWITCH          = 0x00400000;
@@ -650,10 +650,10 @@ ObjectInfo Compiler::MethodScope :: mapSelf(/*bool forced*/)
    else return ObjectInfo(okSelfParam, 1, ((ClassScope*)getScope(slClass))->reference);
 }
 
-////ObjectInfo Compiler::MethodScope :: mapGroup()
-////{
-////   return ObjectInfo(okParam, (size_t)-1);
-////}
+ObjectInfo Compiler::MethodScope :: mapGroup()
+{
+   return ObjectInfo(okParam, (size_t)-1);
+}
 
 ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
 {
@@ -683,12 +683,12 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
             }
             else return mapSelf();
          }
-      //   else if (!closureMode && (terminal.compare(GROUP_VAR) || terminal.compare(OLD_GROUP_VAR))) {
-      //      if (extensionMode) {
-      //         return mapSelf();
-      //      }
-      //      else return mapGroup();
-      //   }
+         else if (!closureMode && (terminal.compare(GROUP_VAR))) {
+            if (extensionMode) {
+               return mapSelf();
+            }
+            else return mapGroup();
+         }
          else if (terminal.compare(RETVAL_VAR) && subCodeMode) {
             ObjectInfo retVar = parent->mapTerminal(terminal, referenceOne, mode | scopeMode);
             if (retVar.kind == okUnknown) {
@@ -765,11 +765,11 @@ ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
          return methodScope->mapSelf();
       }
    }
-//   else if (identifier.compare(GROUP_VAR) || identifier.compare(OLD_GROUP_VAR)) {
-//      if (methodScope != NULL) {
-//         return methodScope->mapGroup();
-//      }
-//   }
+   else if (identifier.compare(GROUP_VAR)) {
+      if (methodScope != NULL) {
+         return methodScope->mapGroup();
+      }
+   }
    else {
       ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
       if (classScope != nullptr) {
@@ -826,7 +826,7 @@ inline bool isField(Compiler::ObjectKind kind)
 
 ObjectInfo Compiler::ResendScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
-   if (!withFrame && (identifier.compare(SELF_VAR)/* || identifier.compare(GROUP_VAR) || identifier.compare(OLD_GROUP_VAR)*/))
+   if (!withFrame && (identifier.compare(SELF_VAR) || identifier.compare(GROUP_VAR)))
    {
       return ObjectInfo();
    }
@@ -2987,13 +2987,13 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       callType = tpSealed;
    }
 
-//   if (dispatchCall) {
-//      operation = lxDirectCalling;
-//      argument = encodeAction(DISPATCH_MESSAGE_ID);
-//
-//      writer.appendNode(lxOvreriddenMessage, messageRef);
-//   }
-   /*else */if (callType == tpClosed || callType == tpSealed) {
+   if (dispatchCall) {
+      operation = lxDirectCalling;
+      argument = scope.moduleScope->dispatch_message;
+
+      writer.appendNode(lxOvreriddenMessage, messageRef);
+   }
+   else if (callType == tpClosed || callType == tpSealed) {
       operation = callType == tpClosed ? lxSDirctCalling : lxDirectCalling;
       argument = messageRef;
       //if (result.withOpenArgDispatcher) {
@@ -3548,56 +3548,45 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
-//{
-//   ref_t extensionRef = 0;
-//
-//   ObjectInfo   role;
-//
-//   SNode roleNode = node;
-//   // check if the extension can be used as a static role (it is constant)
-//   SNode roleTerminal = roleNode.firstChild(lxTerminalMask);
-//   if (roleTerminal != lxNone) {
-//      int flags = 0;
-//
-//      role = scope.mapTerminal(roleTerminal.identifier(), roleTerminal == lxReference, 0);
-//      if (role.kind == okSymbol || role.kind == okConstantSymbol || role.kind == okExtension) {
-//         ref_t classRef = role.kind != okSymbol ? role.extraparam : role.param;
-//
-//         // if the symbol is used inside itself
-//         if (classRef == scope.getClassRefId()) {
-//            flags = scope.getClassFlags();
-//         }
-//         // otherwise
-//         else {
-//            ClassInfo roleClass;
-//            scope.moduleScope->loadClassInfo(roleClass, classRef);
-//
-//            flags = roleClass.header.flags;
-//            //HOTFIX : typecast the extension target if required
-//            if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
-//               extensionRef = roleClass.fieldTypes.get(-1).value1;
-//            }
-//         }
-//      }
-//      // if the symbol VMT can be used as an external role
-//      if (test(flags, elStateless)) {
-//         role = ObjectInfo(okConstantRole, role.param);
-//      }
-//   }
-//
-//   // if it is a generic role
-//   if (role.kind != okConstantRole && role.kind != okSubject) {
-//      writer.newNode(lxOverridden);
-//      role = compileExpression(writer, roleNode, scope, 0, 0);
-//      writer.closeNode();
-//   }
-//
-//   ObjectInfo retVal = compileExtensionMessage(writer, node.nextNode(), scope, target, role, extensionRef);
-//
-//   return retVal;
-//}
-//
+ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role)
+{
+   ref_t expectedClassRef = 0;
+   ref_t classRef = resolveObjectReference(scope, role);
+   
+   if (role.kind == okSymbol || role.kind == okConstantSymbol || role.kind == okExtension) {
+      int flags = 0;
+      
+      // if the symbol is used inside itself
+      if (classRef == scope.getClassRefId()) {
+         flags = scope.getClassFlags();
+      }
+      // otherwise
+      else {
+         ClassInfo roleClass;
+         scope.moduleScope->loadClassInfo(roleClass, classRef);
+
+         flags = roleClass.header.flags;
+         //HOTFIX : typecast the extension target if required
+         if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
+            expectedClassRef = roleClass.fieldTypes.get(-1).value1;
+         }
+      }
+      if (!test(flags, elStateless)) {
+         // only a stateless class can be used as a wrapper one
+         scope.raiseError(errNotApplicable, node);
+      }
+   }
+   else scope.raiseError(errNotApplicable, node);
+
+   int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
+   if (paramCount == 1) {
+      compileExpression(writer, node.nextNode(lxObjectMask), scope, expectedClassRef, 0);
+   }
+   else scope.raiseError(errNotApplicable, node);
+
+   return ObjectInfo(okConstantRole, classRef, classRef);
+}
+
 //// NOTE : targetRef refers to the type for the typified extension method
 //ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, ref_t targetRef)
 //{
@@ -4263,9 +4252,9 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
       case lxOperator:
          objectInfo = compileOperator(writer, current, scope, objectInfo, mode);
          break;
-//      case lxExtension:
-//         objectInfo = compileExtension(writer, current, scope, objectInfo);
-//         break;
+      case lxWrapping:
+         objectInfo = compileWrapping(writer, current, scope, objectInfo);
+         break;
    }
 
    return objectInfo;
@@ -4376,6 +4365,11 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          }
          if (attributes.subjAttr) {
             exprAttr |= HINT_SUBJECTREF;
+         }
+         if (attributes.wrapAttr) {
+            SNode msgNode = goToNode(current, lxMessage/*, lxCollection*/);
+            msgNode = lxWrapping;
+            exprAttr |=  HINT_VIRTUALEXPR;
          }
       }
 
@@ -5612,9 +5606,11 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
       writer.newNode(lxExpression);
       writer.newBookmark();
 
+      SNode messageNode = node.findChild(lxMessage);
+
       ObjectInfo target = scope.mapMember(SELF_VAR);
       writeTerminal(writer, node, scope, target, HINT_NODEBUGINFO);
-      compileMessage(writer, node.firstChild(lxObjectMask).findChild(lxMessage), scope, /*0, */target, 0);
+      compileMessage(writer, messageNode, scope, /*0, */target, 0);
 
       writer.removeBookmark();
       writer.closeNode();

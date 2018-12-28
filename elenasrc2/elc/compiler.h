@@ -568,7 +568,7 @@ private:
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
       ObjectInfo mapSelf(/*bool forced = false*/);
-//      ObjectInfo mapGroup();
+      ObjectInfo mapGroup();
       ObjectInfo mapParameter(Parameter param);
 
       MethodScope(ClassScope* parent);
@@ -875,7 +875,7 @@ private:
    ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
-//   ObjectInfo compileExtension(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
+   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
    ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
