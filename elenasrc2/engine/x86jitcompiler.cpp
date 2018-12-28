@@ -1409,10 +1409,10 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
 
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)
 {
-   // and ecx, PARAM_MASK
+   // and ecx, PARAM_MASK | MESSAGE_FLAG_MASK
    // or  ecx, m
    scope.code->writeWord(0xE181);
-   scope.code->writeDWord(PARAM_MASK);
+   scope.code->writeDWord(PARAM_MASK | MESSAGE_FLAG_MASK);
    scope.code->writeWord(0xC981);
    scope.code->writeDWord(scope.resolveMessage(encodeAction(scope.argument)));
 }
