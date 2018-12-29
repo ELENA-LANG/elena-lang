@@ -602,12 +602,12 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
 //        theLength := 0.
 //        theArray := Array new(aCapacity).
 //    ]
-//    
-//    constructor new(Array a)
-//        <= fromArray(a, a length).
+    
+    constructor new(Array a)
+        <= fromArray(a, a.Length);
     
     /// Creates the list
-    /*internal */constructor fromArray(Array array, int length)
+    internal constructor fromArray(Array array, int length)
     {
         int capacity := array.Length;
         

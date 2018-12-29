@@ -281,7 +281,8 @@ enum LexicalType
    lxStaticAttr         = 0x2003B,
 //   lxTemplateParent  = 0x2003C,
 //   lxTemplateBoxing  = 0x2003D,
-////   lxParentLists     = 0x2003E,
+////   lxParentLists     = 0x2003E
+   lxAutoMultimethod    = 0x2003F,
 //   lxArgDispatcherAttr = 0x20040,
 //   lxFPUTarget       = 0x20041,
 ////   lxFalseAttribute   = 0x20042,

@@ -87,11 +87,11 @@ public extension stringExOp
 //// --- printingLn ---
 //
 //public symbol printingLn = (:aLine)[ forwards'program'output printLine:aLine ].
-//
-//// --- func1Op ---
-//
-//public extension<Func1> func1Op
-//{
-//    asComparator
-//        = { bool equal : object = self(object). }.
-//}
+
+// --- func1Op ---
+
+public extension func1Op : Func1
+{
+    asComparator()
+        = { bool equal(o) = self(object); };
+}

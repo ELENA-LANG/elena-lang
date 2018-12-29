@@ -1045,6 +1045,17 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
       if (withInPlaceInit) {
          current = goToNode(buffer.readRoot(), lxFieldInit);
          writer.newNode(lxClassMethod);
+
+         if (derivationScope.templateMode != stNormal) {
+            // HOTFIX : save the template source path
+            IdentifierString fullPath(_scope->module->Name());
+            fullPath.append('\'');
+            fullPath.append(_filePath);
+
+            writer.appendNode(lxSourcePath, fullPath.c_str());
+            //writer.appendNode(lxTemplate, scope.templateRef);
+         }
+
          writer.appendNode(lxAttribute, V_INITIALIZER);
          writer.newNode(lxNameAttr);
          writer.appendNode(lxIdentifier, INIT_MESSAGE);
