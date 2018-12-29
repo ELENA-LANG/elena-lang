@@ -1,6 +1,6 @@
 bin\elc examples\console\helloworld\helloworld.prj
 rem bin\elc examples\console\helloworld\vm_helloworld.prj
-rem bin\elc examples\console\sum\intsum.prj
+bin\elc examples\console\sum\intsum.prj
 rem bin\elc examples\console\sum\realsum.prj
 bin\elc examples\console\words\words.prj
 rem bin\elc examples\console\pi\pi.prj

@@ -15,6 +15,6 @@
     </files>
     <forwards>
         <forward key="prompt">sum'RealSamplePrompt</forward>
-        <forward key="number">system'Real</forward>
+        <forward key="number">extensions'Real</forward>
     </forwards>
 </configuration>

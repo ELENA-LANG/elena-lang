@@ -29,5 +29,5 @@ public program()
     console
         .printLine(forward prompt)
         .printLine("The sum is ",enteredNumber + enteredNumber)
-        .readChar
+        .readChar()
 }

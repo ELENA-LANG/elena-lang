@@ -44,3 +44,42 @@ public sealed class Integer : BaseVariable, ref<int>
     dispatch() => theValue;
 }
 
+public sealed class Real : BaseVariable, ref<real>
+{
+    constructor()
+    {
+        theValue := 0.0r
+    }
+    
+    constructor(real n) 
+    {
+        theValue := n
+    }
+    
+//    constructor new : n
+//        <= new(T<real>(n)).
+        
+    append(real n)
+    {
+        real v := theValue;
+        v := v + n;
+        
+        theValue := v
+    }
+    
+//    append : n
+//        <= append(T<real>(n)).
+    
+    reduce(real n)
+    {
+        real v := theValue;
+        v := v - n;
+        
+        theValue := v
+    }
+    
+//    reduce : n
+//        <= reduce(T<real>(n)).
+        
+    dispatch() => theValue;
+}
