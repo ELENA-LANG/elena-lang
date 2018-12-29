@@ -1,9 +1,9 @@
 //import system'collections.
 //
 //symbol idleFunc1 = (:x) [].
-//
-//// === pattern enumerators ==
-//
+
+// === pattern enumerators ==
+
 //// --- Toping ---
 //
 //public class TopFilter :: Enumerator
@@ -440,38 +440,38 @@
 //    
 //    enumerable => theEnumerator.
 //}
-//
-//// --- Selecting ---
-//
-//class Selector :: Enumerator
-//{
-//    T<Func1>      theSelector.
-//    T<Enumerator> theEnumerator.
-//
-//    constructor new(Func1 aSelector, Enumerator anEnumerator)
-//    [
-//        theSelector := aSelector.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    constructor new(ExtensionMessage anExtension, Enumerator anEnumerator)
-//    [
-//        theSelector := (:x)[ ^ x~anExtension eval ].
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theSelector(theEnumerator get).
-//    
-//    bool next = theEnumerator next.
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//    
-//    enumerable => theEnumerator.
-//}
-//
+
+// --- Selecting ---
+
+class Selector : Enumerator
+{
+    Func1      theSelector;
+    Enumerator theEnumerator;
+
+    constructor new(Func1 selector, Enumerator enumerator)
+    {
+        theSelector := selector;
+        theEnumerator := enumerator
+    }
+    
+    constructor new(ExtensionMessage extension, Enumerator enumerator)
+    {
+        theSelector := (x){ ^ mixin extension(x).eval() };
+        theEnumerator := enumerator
+    }
+    
+    get() = theSelector(theEnumerator.get());
+    
+    bool next() = theEnumerator.next();
+    
+    reset()
+    {
+        theEnumerator.reset()
+    }    
+    
+    enumerable() => theEnumerator;
+}
+
 //// --- Repeater ---
 //
 //public class Repeater :: Enumerator
@@ -752,35 +752,35 @@
 //    enumerable
 //        => theEnumerator.
 //}
-//
-//// === patterns ===
-//
-//// --- BasePattern ---
-//
-//public abstract class BasePattern :: Func1
-//{
-//    object theResult.
-//    
-//    run(Enumerator anEnumerator)
-//    [
-//        super run(anEnumerator).
-//        
-//        ^ theResult
-//    ]
-//}
-//
-//// --- Summing ---
-//
-//public class Summing :: BasePattern
-//{
-//    constructor new : aVariable
-//    [
-//        theResult := aVariable.
-//    ]
-//
-//    closure : aParam [ theResult append:aParam. ]
-//}
-//
+
+// === patterns ===
+
+// --- BasePattern ---
+
+public abstract class BasePattern : Func1
+{
+    object theResult;
+    
+    run(Enumerator en)
+    {
+        super.run(en);
+        
+        ^ theResult
+    }
+}
+
+// --- Summing ---
+
+public class Summing : BasePattern
+{
+    constructor(variable)
+    {
+        theResult := variable
+    }
+
+    closure(param) { theResult.append(param) }
+}
+
 //// --- Accumulating ---
 //
 //class Accumulating :: BasePattern

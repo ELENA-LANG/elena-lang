@@ -14,12 +14,15 @@ Given 2 integer numbers, A and B. One needs to find their sum.
     The required output is one integer: the sum of A and B. 
 */
 
-import system'routines.
-import extensions.
+import system'routines;
+import extensions;
 
 public program()
 {
-    console writeLine(console readLine;split;selectBy(%"convertorOp.toInt[0]");summarize).
+    console.printLine(console.readLine()
+                              .split()
+                              .selectBy(__mssg toInt<convertorOp>[0])
+                              .summarize())
 }
 
 public program_alt()

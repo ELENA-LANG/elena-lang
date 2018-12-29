@@ -2410,58 +2410,58 @@ public singleton nilValue
 //                  
 //    dispatch => theObject.
 //}
-//
-///// A generic variable. 
-/////
-///// Extends an assigned value
-//sealed public class Variable :: BaseVariable, ref<object>
-//{
-//    /// Creates the empty variable
-//    constructor new
+
+/// A generic variable. 
+///
+/// Extends an assigned value
+sealed public class Variable : BaseVariable, ref<object>
+{
+    /// Creates the empty variable
+    constructor()
+    {
+    }        
+        
+    /// Creates the variable
+    constructor(value)
+    {
+        theValue := value
+    }
+    
+//    set : value
 //    [
-//    ]        
-//        
-//    /// Creates the variable
-//    constructor new : value
-//    [
-//        theValue := value.
+//        $value := value.
 //    ]
-//    
-////    set : value
-////    [
-////        $value := value.
-////    ]
-//    
-//    append : val
+    
+    append(val)
+    {
+        (nil == theValue)
+            ? { theValue := val }
+            : { theValue := theValue + val }
+    }
+    
+    reduce(val)
+    {
+        (nil == theValue)
+            ? { system'InvalidOperationException.raise() }
+            : { theValue := theValue - val }
+    }
+    
+//    multiplyBy : val
 //    [
-//        (nil == theValue)
-//            ? [ theValue := val ]
-//            ! [ theValue := theValue + val ]
-//    ]
-//    
-//    reduce : val
-//    [
-//        (nil == theValue)
+//        ($nil == $value)
 //            ? [ system'InvalidOperationException new; raise ]
-//            ! [ theValue := theValue - val ]
+//            ! [ $value := $value * val ]
 //    ]
 //    
-////    multiplyBy : val
-////    [
-////        ($nil == $value)
-////            ? [ system'InvalidOperationException new; raise ]
-////            ! [ $value := $value * val ]
-////    ]
-////    
-////    /// Divides into the value
-////    divideInto : val
-////    [
-////        ($nil == $value)
-////            ? [ system'InvalidOperationException new; raise ]
-////            ! [ $value := $value / val ]
-////    ]    
-//}
-//
+//    /// Divides into the value
+//    divideInto : val
+//    [
+//        ($nil == $value)
+//            ? [ system'InvalidOperationException new; raise ]
+//            ! [ $value := $value / val ]
+//    ]    
+}
+
 //// --- KeyValue ---
 //
 ///// A key - object pair

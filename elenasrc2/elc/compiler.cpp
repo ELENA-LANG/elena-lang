@@ -3868,7 +3868,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 
       writer.closeNode();
 
-      return ObjectInfo(okObject, closureRef);
+      return ObjectInfo(okObject, 0, closureRef);
    }
 }
 

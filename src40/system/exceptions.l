@@ -199,18 +199,23 @@ public class InvalidArgumentException : Exception
     }
 }
 
-//// --- InvalidOperationException ---
-//
-//public class InvalidOperationException :: Exception
-//{
-//    /// Creates the exception
-//    constructor new
-//        <= new("Invalid operation").
-//
-//    /// Creates the exception
-//    constructor new:aMessage
-//        <= new(aMessage).
-//}
+// --- InvalidOperationException ---
+
+public class InvalidOperationException : Exception
+{
+    /// Creates the exception
+    constructor()
+        <=("Invalid operation");
+
+    /// Creates the exception
+    constructor(string message)
+        <= (message);
+
+    static raise()
+    {
+        new InvalidOperationException().raise()
+    }
+}
 
 // --- MethodNotFound ---
 

@@ -144,10 +144,10 @@ public extension enumerableOp
 //        
 //    forEach:fn
 //        = self~enumerableOp forEach(:n)[ fn(n) ].
-//
-//    selectBy:aSelector
-//        = Selector new(aSelector, T<Enumerator>(self enumerator)).
-//
+
+    selectBy(selector)
+        = Selector.new(selector, cast Enumerator(self.enumerator()));
+
 ////    forEachPair(object object, ext_mssg anExtMessage)
 ////        = self~enumerableOp forEachPair(object, (:o:n)(o~anExtMessage eval:n)).
 //    
@@ -306,17 +306,17 @@ public extension enumerableOp
 //    
 //    allMatchedBy(ExtensionMessage extMessage)
 //        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
-//
-//    summarize : aVariable
-//    [
-//        Summing new:aVariable; run(T<Enumerator>(self enumerator)).
-//        
-//        ^ aVariable value.
-//    ]
-//    
-//    summarize
-//        = self~enumerableOp summarize:(Variable new).
-//        
+
+    summarize(var)
+    {
+        new Summing(var).run(cast Enumerator(self.enumerator()));
+        
+        ^ var.Value
+    }
+    
+    summarize()
+        = self.summarize(new Variable());
+        
 //    filterBy(Func1 aSelector)
 //        = Filter new(aSelector, T<Enumerator>(self enumerator)).
 //        
@@ -468,7 +468,7 @@ public extension indexableOp
 //
     populate(Func1 f)
     {
-        Indexer it := self.Indexer;
+        Indexer it := self.indexer();
 
         while (it.Available)
         {

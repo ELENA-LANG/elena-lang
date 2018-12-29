@@ -1806,11 +1806,11 @@ public sealed Array //:: Indexable, Array<object>
     object at(int n)
         => system'core_routines'__array;
  
-//    /// Returns the array enumerator
-//    T<Enumerator> enumerator = ArrayEnumerator new(self).
+    /// Returns the array enumerator
+    Enumerator enumerator() = new ArrayEnumerator(self);
 
     /// Returns the array indexer
-    Indexer Indexer = new ArrayIndexer(self);
+    Indexer indexer() = new ArrayIndexer(self);
 
     /// Clones the array
     Array clone()
@@ -2609,48 +2609,44 @@ public class ArrayIndexer : Indexer
 //        => theArray.
 }
 
-//// --- ArrayEnumerator ---
-//
-///// An array enumerator
-//class ArrayEnumerator :: Enumerator
-//{
-//    T<Array> theArray.
-//    ref<int> theIndex.
-//    
-//    /// Creates an array enumerator
-//    constructor new : anArray
-//        <= new(T<Array>(anArray)).
-//    
-//    /// Creates an array enumerator
-//    constructor new(Array anArray)
-//    [
-//        theArray := anArray.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex value := -1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        int aLength := theArray length.
-//        
-//        theIndex append(1).
-//
-//        ^ T<int>(theIndex) < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    get
-//        = theArray getAt(T<int>(theIndex)).
-//        
-//    enumerable = theArray.
-//}
-//
+// --- ArrayEnumerator ---
+
+/// An array enumerator
+class ArrayEnumerator : Enumerator
+{
+    Array    theArray;
+    ref<int> theIndex;
+    
+    /// Creates an array enumerator
+    constructor(Array array)
+    {
+        theArray := array;
+        theIndex := -1
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int length := theArray.Length;
+        
+        theIndex.append(1);
+
+        ^ cast int(theIndex) < length
+    }
+    
+    /// Returns the current object
+    get()
+        = theArray.at(cast int(theIndex));
+        
+    enumerable() = theArray;
+}
+
 //// --- BitArrayIndexer ---
 //
 ///// An array indexer
