@@ -1630,11 +1630,11 @@ public sealed class Variant
 //    /// Tries to convert the literal value to the long integer number
 //    cast T<long>
 //        = longConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the real number
-//    cast T<real>
-//        = realConvertor convert:theValue.
-//
+
+    /// Tries to convert the literal value to the real number
+    real cast()
+        = realConvertor.convert(theValue);
+
 //    /// Returns a literal value
 //    cast T<literal>
 //        = literalConvertor convert:theValue.
@@ -1991,21 +1991,21 @@ public singleton stringConvertor
 //        
 //        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer)).
 //    ]
-//
-//    /// Converts the parameter to the literal value
-//    convert(real aNumber, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    literal convert(real aNumber)
-//    [
-//        T<byte,32> buffer.
-//        int        length := 0.
-//        
-//        self convert(aNumber, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer)).
-//    ]
+
+    /// Converts the parameter to the literal value
+    convert(real n, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+
+    /// Converts the parameter to the literal value
+    string convert(real n)
+    {
+        byte buffer[32];
+        int  length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
 
     /// Converts UTF-16 literal to UTF-8 one
     convert(wide w, byte[] buffer, ref int length)

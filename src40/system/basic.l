@@ -2056,18 +2056,18 @@ public sealed const struct RealNumber : BaseNumber
     bool less(real n)
         = theValue < n;
         
-//    add:n
-//        <= add(T<real>(n)).
-//
-//    subtract:n
-//        <= subtract(T<real>(n)).
-//
-//    multiply:n
-//        <= multiply(T<real>(n)).
-//
-//    divide:n
-//        <= divide(T<real>(n)).
-//        
+    add(n)
+        <= add(cast real(n));
+
+    subtract(n)
+        <= subtract(cast real(n));
+
+    multiply(n)
+        <= multiply(cast real(n));
+
+    divide(n)
+        <= divide(cast real(n));
+        
 //    real add(BaseVariable v)
 //        <= add(v value).
 //
@@ -3217,11 +3217,11 @@ public singleton realConvertor
 //        
 //        ^ RealNumber new(aRetVal)
 //    ]
-//
-//    /// Returns a parameter
-//    real convert(real aReal)
-//        = RealNumber new(aReal).
-//        
+
+    /// Returns a parameter
+    real convert(real r)
+        = new RealNumber(r);
+        
 //    /// Converts an integer into a real number
 //    real convert(int anInt)
 //    [

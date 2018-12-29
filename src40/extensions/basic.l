@@ -56,6 +56,9 @@ public sealed class Real : BaseVariable, ref<real>
         theValue := n
     }
     
+    constructor new()
+        <= ();
+        
 //    constructor new : n
 //        <= new(T<real>(n)).
         

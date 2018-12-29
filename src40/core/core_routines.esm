@@ -431,6 +431,20 @@ labEmpty:
 
 end
 
+procedure __literalconvertor."convert$system@RealNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 24
+  
+  callextr api : realtostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+end
+
 procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[4]"
 
   aloadsi 2
