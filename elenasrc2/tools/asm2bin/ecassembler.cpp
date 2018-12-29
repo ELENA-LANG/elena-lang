@@ -115,6 +115,20 @@ void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& messa
    message[0] = message[0] + paramCount;
 }
 
+void ECodesAssembler :: compileMessageName(TokenInfo& token, IdentifierString& messageName)
+{
+   IdentifierString action;
+
+   ref_t signRef = 0;
+
+   if (token.terminal.state == dfaQuote) {
+      QuoteTemplate<IdentifierString> quote(token.terminal.line);
+
+      messageName.copy(quote.ident());
+   }
+   else token.raiseErr("Invalid operand (%d)");
+}
+
 ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
 {
    IdentifierString message;
@@ -259,6 +273,16 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
       ref_t subj = binary->mapAction(subject, 0, false);
 
       writeCommand(ByteCommand(code, encodeMessage(subj, paramCount, flags)), writer);
+   }
+   else if (word.compare("messagename")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
+
+      IdentifierString subject;
+      compileMessageName(token, subject);
+      ref_t subj = binary->mapAction(subject, 0, false);
+
+      writeCommand(ByteCommand(code, subj), writer);
    }
    else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
 }
@@ -469,12 +493,12 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcPopI:
          case bcDCopy:
          case bcECopy:
-         case bcSetVerb:
          case bcAndN:
          case bcOrN:
          case bcPushN:
             compileNCommand(opcode, token, writer);
             break;
+         case bcSetVerb:
          case bcCopyM:
             compileMCommand(opcode, token, writer, binary);
             break;

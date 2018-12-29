@@ -1942,6 +1942,13 @@ bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttri
             return true;
          }
          else return false;
+      case (int)V_MESSAGE:
+         if (!attributes.mssgAttr) {
+            attributes.mssgAttr = true;
+
+            return true;
+         }
+         else return false;
       case (int)V_GROUP:
          if (!attributes.wrapAttr) {
             attributes.wrapAttr = true;

@@ -63,6 +63,7 @@ class ECodesAssembler : public Assembler
    bool readMessage(ident_t quote, IdentifierString& subject, ref_t& signRef, int& paramCount);
    void readMessage(TokenInfo& token, IdentifierString& subject, ref_t& signRef, int& paramCount);
    void compileMessage(TokenInfo& token, IdentifierString& message);
+   void compileMessageName(TokenInfo& token, IdentifierString& message);
 
    ref_t compileRArg(TokenInfo& token, _Module* binary);
    ref_t compileRMessageArg(TokenInfo& token, _Module* binary);

@@ -95,6 +95,9 @@ bool CommandTape :: importReference(ByteCommand& command, _Module* sour, _Module
    if (ByteCodeCompiler::IsMCode(command.code)) {
       command.argument = importMessage(sour, (ref_t)command.argument, dest);
    }
+   if (ByteCodeCompiler::IsMNCode(command.code)) {
+      command.argument = getAction(importMessage(sour, encodeAction((ref_t)command.argument), dest));
+   }
    return true;
 }
 

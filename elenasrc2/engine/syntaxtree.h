@@ -125,7 +125,7 @@ enum LexicalType
    lxConstantLong    = 0x1A110, // arg - reference
    lxConstantReal    = 0x1A111, // arg - reference
    lxClassSymbol        = 0x0A112, // arg - reference
-//   lxMessageConstant = 0x0A113, // arg - rererence
+   lxMessageConstant = 0x0A113, // arg - rererence
 //   lxExtMessageConstant = 0x0A114, // arg -reference
    lxSubjectConstant    = 0x0A115, // arg - reference
    lxStaticConstField   = 0x08116, // arg - reference

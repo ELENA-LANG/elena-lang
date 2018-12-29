@@ -217,9 +217,8 @@ struct _ModuleScope
    ref_t             longReference;
    ref_t             realReference;
    ref_t             messageNameReference;
-//   ref_t             messageReference;
+   ref_t             messageReference;
 //   ref_t             extMessageReference;
-//   ref_t             boolReference;
    ref_t             literalReference;
    ref_t             wideReference;
    ref_t             charReference;
@@ -319,8 +318,8 @@ struct _ModuleScope
    {
       project = nullptr;
       debugModule = module = nullptr;
-      intReference = /*boolReference = */superReference = 0;
-      messageNameReference = /*messageReference = */0;
+      intReference = superReference = 0;
+      messageNameReference = messageReference = 0;
       longReference = literalReference = /*wideReference = */0;
       /*arrayReference = */charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
@@ -387,18 +386,19 @@ public:
       bool  loopAttr;
       bool  memberAttr;
       bool  subjAttr;
+      bool  mssgAttr;
       bool  wrapAttr;
 
       bool isExprAttr()
       {
-         return refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr;
+         return refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr;
       } 
 
       ExpressionAttributes()
       {
          refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
          newOpAttr = loopAttr = internAttr = false;
-         wrapAttr = subjAttr = memberAttr = false;
+         mssgAttr = wrapAttr = subjAttr = memberAttr = false;
       }
    };
 

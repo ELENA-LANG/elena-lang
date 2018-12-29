@@ -33,7 +33,7 @@ constexpr auto HINT_NOUNBOXING      = 0x10000000;
 constexpr auto HINT_EXTERNALOP      = 0x08000000;
 constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_EXTENSION_MODE  = 0x02000000;
-//#define HINT_COLLECTION_MODE  0x01000000
+constexpr auto HINT_MESSAGEREF      = 0x01000000;
 constexpr auto HINT_LOOP            = 0x00800000;
 constexpr auto HINT_SWITCH          = 0x00400000;
 ////#define HINT_ALT_MODE         0x00200000
@@ -2167,9 +2167,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okNil:
          writer.newNode(lxNil/*, object.param*/);
          break;
-//      case okMessageConstant:
-//         writer.newNode(lxMessageConstant, object.param);
-//         break;
+      case okMessageConstant:
+         writer.newNode(lxMessageConstant, object.param);
+         break;
 //      case okExtMessageConstant:
 //         writer.newNode(lxExtMessageConstant, object.param);
 //         break;
@@ -2308,7 +2308,7 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //         break;
 //      }
       default:
-         if (testany(mode, HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER | HINT_SUBJECTREF)) {
+         if (testany(mode, HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER | HINT_SUBJECTREF | HINT_MESSAGEREF)) {
             if (test(mode, HINT_FORWARD)) {
                IdentifierString forwardName(FORWARD_MODULE, "'", token);
 
@@ -2325,6 +2325,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
             }
             else if (test(mode, HINT_SUBJECTREF)) {
                object = compileSubjectReference(writer, terminal, scope, mode & ~HINT_SUBJECTREF);
+            }
+            else if (test(mode, HINT_MESSAGEREF)) {
+               object = compileMessageReference(writer, terminal, scope, mode & ~HINT_MESSAGEREF);
             }
          }
          else object = scope.mapTerminal(token, terminal == lxReference, 0);
@@ -2446,83 +2449,57 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
    return result;
 }
 
+ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
+{
+   ObjectInfo retVal;
+   IdentifierString message;
+   int paramCount = 0;
+
+   SNode paramNode = terminal.nextNode();
+   bool invalid = true;
+   if (paramNode == lxOperator && paramNode.argument == REFER_OPERATOR_ID) {
+      if (isSingleStatement(paramNode.nextNode())) {
+         ObjectInfo sizeInfo = compileTerminal(writer, paramNode.nextNode().firstChild(lxObjectMask), scope, HINT_VIRTUALEXPR);
+         if (sizeInfo.kind == okIntConstant) {
+            paramCount = sizeInfo.extraparam;
+            invalid = false;
+         }
+      }
+   }
+
+   if (invalid)
+      scope.raiseError(errNotApplicable, terminal);
+
+   // HOTFIX : prevent further compilation of the expression
+   paramNode = lxIdle;
+
+   message.append('0' + (char)paramCount);
+
+   ref_t extensionRef = 0;
+   if (terminal == lxIdentifier) {
+      message.append(terminal.identifier());
+   }
+
+   retVal.kind = okMessageConstant;
+   retVal.param = scope.moduleScope->module->mapReference(message);
+   retVal.reference = V_MESSAGE;
+
+   writeTerminal(writer, terminal, scope, retVal, mode);
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileSubjectReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
 {
    ObjectInfo retVal;
    IdentifierString messageName;
-   //int paramCount = 0;
    ref_t extensionRef = 0;
    if (terminal == lxIdentifier) {
       ident_t name = terminal.identifier();
       messageName.copy(name);
-
-      //paramCount = -1;
    }
-   //else {
-   //   ident_t message = terminal.identifier();
 
-   //   int subject = message.find('.',0);
-   //   if (subject != 0) {
-   //      signature.copy(message, subject);
-   //      bool referenceOne = signature.ident().find('\'') != NOTFOUND_POS;
-   //      extensionRef = resolveImplicitIdentifier(scope, signature.c_str(), referenceOne);
-   //      if (extensionRef == 0)
-   //         scope.raiseError(errUnknownClass, terminal);
-
-   //      subject++;
-   //   }
-
-   //   int param = 0;
-   //   for (size_t i = subject; i < getlength(message); i++) {
-   //      if (message[i] == ':') {
-   //      }
-   //      else if (message[i] == '[') {
-   //         int len = getlength(message);
-   //         if (message[i+1] == ']') {
-   //            paramCount = OPEN_ARG_COUNT;
-   //         }
-   //         else if (message[len - 1] == ']') {
-   //            signature.copy(message + i + 1, len - i - 2);
-   //            paramCount = signature.ident().toInt();
-   //            if (paramCount > MAX_ARG_COUNT)
-   //               scope.raiseError(errInvalidSubject, terminal);
-   //         }
-   //         else scope.raiseError(errInvalidSubject, terminal);
-
-   //         param = i;
-   //         break;
-   //      }
-   //      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-   //      }
-   //      else scope.raiseError(errInvalidConstant, terminal);
-   //   }
-
-   //   if (param != 0) {
-   //      signature.copy(message + subject, param - subject);
-   //   }
-   //   else signature.copy(message + subject);
-   //}
-
-   //IdentifierString message;
-   //if (extensionRef != 0) {
-   //   message.append(scope.moduleScope->module->resolveReference(extensionRef));
-   //   message.append('.');
-   //}
-
-   //if (paramCount != -1) {
-   //   message.append('0' + (char)paramCount);
-   //   message.append(signature);
-   //}
-   ///*else */message.copy(messageName);
-
-   //if (extensionRef != 0) {
-   //   retVal.kind = okExtMessageConstant;
-   //}
-   //else if (paramCount == -1) {
-      retVal.kind = okMessageNameConstant;
-   //}
-   //else retVal.kind = okMessageConstant;
-
+   retVal.kind = okMessageNameConstant;
    retVal.param = scope.moduleScope->module->mapReference(messageName);
    retVal.reference = V_SUBJECT;
 
@@ -4372,6 +4349,9 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          }
          if (attributes.subjAttr) {
             exprAttr |= HINT_SUBJECTREF;
+         }
+         if (attributes.mssgAttr) {
+            exprAttr |= HINT_MESSAGEREF;
          }
          if (attributes.wrapAttr) {
             SNode msgNode = goToNode(current, lxMessage/*, lxCollection*/);
@@ -7692,9 +7672,9 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, int mode)
       else if (sourceNode == lxConstantSymbol && targetRef == scope.moduleScope->intReference) {
          boxing = false;
       }
-      //else if (sourceNode == lxMessageConstant && targetRef == scope.moduleScope->messageReference) {
-      //   boxing = false;
-      //}
+      else if (sourceNode == lxMessageConstant && targetRef == scope.moduleScope->messageReference) {
+         boxing = false;
+      }
       else if (sourceNode == lxSubjectConstant && targetRef == scope.moduleScope->messageNameReference) {
          boxing = false;
       }
@@ -8406,8 +8386,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.literalReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(STR_FORWARD));
    scope.wideReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WIDESTR_FORWARD));
    scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
-//   scope.boolReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
-//   scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
+   scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
    scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
    scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));

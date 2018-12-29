@@ -486,6 +486,16 @@ public:
       }
    }
 
+   static bool IsMNCode(ByteCode code)
+   {
+      switch (code) {
+         case bcSetVerb:
+            return true;
+         default:
+            return false;
+      }
+   }
+
    static bool IsPush(ByteCode code)
    {
       switch(code) {
