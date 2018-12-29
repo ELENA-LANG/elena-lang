@@ -3553,38 +3553,45 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
    ref_t expectedClassRef = 0;
    ref_t classRef = resolveObjectReference(scope, role);
    
-   if (role.kind == okSymbol || role.kind == okConstantSymbol || role.kind == okExtension) {
-      int flags = 0;
-      
+   int flags = 0;
+   if (classRef == scope.getClassRefId()) {
       // if the symbol is used inside itself
-      if (classRef == scope.getClassRefId()) {
-         flags = scope.getClassFlags();
-      }
+      flags = scope.getClassFlags();
+   }
+   else if (classRef != 0) {
       // otherwise
-      else {
-         ClassInfo roleClass;
-         scope.moduleScope->loadClassInfo(roleClass, classRef);
+      ClassInfo roleClass;
+      scope.moduleScope->loadClassInfo(roleClass, classRef);
 
-         flags = roleClass.header.flags;
-         //HOTFIX : typecast the extension target if required
-         if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
-            expectedClassRef = roleClass.fieldTypes.get(-1).value1;
-         }
-      }
-      if (!test(flags, elStateless)) {
-         // only a stateless class can be used as a wrapper one
-         scope.raiseError(errNotApplicable, node);
+      flags = roleClass.header.flags;
+      //HOTFIX : typecast the extension target if required
+      if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
+         expectedClassRef = roleClass.fieldTypes.get(-1).value1;
       }
    }
-   else scope.raiseError(errNotApplicable, node);
+
+   if (test(flags, elStateless)) {
+      // only a stateless class can be used as a wrapper one
+      role = ObjectInfo(okConstantRole, classRef, classRef);
+
+      scope.raiseError(errNotApplicable, node);
+   }
 
    int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
    if (paramCount == 1) {
       compileExpression(writer, node.nextNode(lxObjectMask), scope, expectedClassRef, 0);
    }
-   else scope.raiseError(errNotApplicable, node);
+   else scope.raiseError(errNotApplicable, node.parentNode());
 
-   return ObjectInfo(okConstantRole, classRef, classRef);
+   // if it is a generic role
+   if (role.kind != okConstantRole && role.kind != okSubject) {
+      writer.newNode(lxOverridden);
+      writeTerminal(writer, node, scope, role, 0);
+      writer.closeNode();
+   }
+
+
+   return role;
 }
 
 //// NOTE : targetRef refers to the type for the typified extension method
