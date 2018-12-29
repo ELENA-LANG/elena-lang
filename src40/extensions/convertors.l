@@ -399,10 +399,10 @@ public extension convertorOp
 //
 //    T<uint> toUInt
 //        = uintConvertor convert:self.
-//        
-//    T<int> toInt
-//        = intConvertor convert:self.
-//        
+        
+    int toInt()
+        = intConvertor.convert(self);
+        
 //    T<int> toInt(IntNumber radix)
 //        = intConvertor convert(self, radix).
 //        

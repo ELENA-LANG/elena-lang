@@ -890,6 +890,42 @@ labDefault:
   
 end
 
+procedure __extmessage."#dispatch[1]"
+
+  bloadsi 1
+  ifb labDefault
+
+  nload
+  eswap
+  setverb messagename : "eval"
+  else labEnd
+  nload
+  ecopyd
+  ajumpi 1
+
+labEnd:
+  open    4
+  reserve 1
+  dsavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[1]
+  throw
+
+labDefault:
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[1]
+  throw
+  
+end
+
 symbol sta_start
 
   pushr entry : "$forwards'$program"

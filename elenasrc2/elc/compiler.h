@@ -115,7 +115,7 @@ public:
       okLongConstant,                 // param - reference
       okRealConstant,                 // param - reference
       okMessageConstant,              // param - reference
-//      okExtMessageConstant,           // param - reference
+      okExtMessageConstant,           // param - reference
       okMessageNameConstant,          // param - reference
       okArrayConst,
       okField,                        // param - reference, param - field offset, extraparam - class reference

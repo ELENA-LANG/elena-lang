@@ -1034,8 +1034,8 @@ void listFlags(int flags, int& row, int pageSize)
    if (test(flags, elMessage))
       printLine("@flag ", "elMessage", row, pageSize);
 
-   //if (test(flags, elExtMessage))
-   //   printLine("@flag ", "elExtMessage", row, pageSize);
+   if (test(flags, elExtMessage))
+      printLine("@flag ", "elExtMessage", row, pageSize);
 
    //if (test(flags, elSymbol))
    //   printLine("@flag ", "elSymbol", row, pageSize);

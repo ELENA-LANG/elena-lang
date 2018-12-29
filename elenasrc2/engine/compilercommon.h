@@ -29,7 +29,7 @@
 #define V_PTR32          (ref_t)-17
 #define V_SUBJECT        (ref_t)-18
 #define V_MESSAGE        (ref_t)-19
-//#define V_EXTMESSAGE     (ref_t)-21
+#define V_EXTMESSAGE     (ref_t)-21
 //#define V_SYMBOL         (ref_t)-22
 //#define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
 
@@ -218,7 +218,7 @@ struct _ModuleScope
    ref_t             realReference;
    ref_t             messageNameReference;
    ref_t             messageReference;
-//   ref_t             extMessageReference;
+   ref_t             extMessageReference;
    ref_t             literalReference;
    ref_t             wideReference;
    ref_t             charReference;
@@ -323,7 +323,7 @@ struct _ModuleScope
       longReference = literalReference = /*wideReference = */0;
       /*arrayReference = */charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
-//      lazyExprReference = extMessageReference = 0;
+/*      lazyExprReference = */extMessageReference = 0;
       arrayTemplateReference = 0;
       argArrayTemplateReference = 0;
 

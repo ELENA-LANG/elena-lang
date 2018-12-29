@@ -1670,7 +1670,10 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
       }
    }
    else if (fieldRef == V_MESSAGE || fieldRef == V_SUBJECT) {
-      if (size != 4) {
+      if (size == 8 && fieldRef == V_MESSAGE) {
+         fieldRef = V_EXTMESSAGE;
+      }
+      else if (size != 4) {
          scope.raiseError(errInvalidHint, node);
       }
    }
@@ -2170,9 +2173,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okMessageConstant:
          writer.newNode(lxMessageConstant, object.param);
          break;
-//      case okExtMessageConstant:
-//         writer.newNode(lxExtMessageConstant, object.param);
-//         break;
+      case okExtMessageConstant:
+         writer.newNode(lxExtMessageConstant, object.param);
+         break;
       case okMessageNameConstant:
          writer.newNode(lxSubjectConstant, object.param);
          break;
@@ -2402,7 +2405,11 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
             else result = compileSubCode(writer, node, scope, false);
             break; 
          case lxTemplate:
-            result = compileTemplateSymbol(writer, node, scope, mode);
+            if (test(mode, HINT_MESSAGEREF)) {
+               // HOTFIX : if it is an extension message
+               result = compileMessageReference(writer, node, scope, mode & ~HINT_MESSAGEREF);
+            }
+            else result = compileTemplateSymbol(writer, node, scope, mode);
             break;
          case lxNestedClass:
             result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
@@ -2473,16 +2480,29 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode termi
    // HOTFIX : prevent further compilation of the expression
    paramNode = lxIdle;
 
-   message.append('0' + (char)paramCount);
-
    ref_t extensionRef = 0;
    if (terminal == lxIdentifier) {
+      message.append('0' + (char)paramCount);
       message.append(terminal.identifier());
+
+      retVal.kind = okMessageConstant;
+      
+      retVal.reference = V_MESSAGE;
+   }
+   else if (terminal == lxTemplate) {
+      SNode current = terminal.findChild(lxTarget);
+      ref_t extensionRef = mapTypeAttribute(current, scope);
+      message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+      message.append('0' + (char)paramCount);
+      message.append(terminal.firstChild(lxTerminalMask).identifier());
+
+      retVal.kind = okExtMessageConstant;
+      retVal.param = scope.moduleScope->module->mapReference(message);
+      retVal.reference = V_EXTMESSAGE;
    }
 
-   retVal.kind = okMessageConstant;
    retVal.param = scope.moduleScope->module->mapReference(message);
-   retVal.reference = V_MESSAGE;
 
    writeTerminal(writer, terminal, scope, retVal, mode);
 
@@ -8391,7 +8411,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
    scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
    scope.messageNameReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGENAME_FORWARD));
-//   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
+   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
 //   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
 

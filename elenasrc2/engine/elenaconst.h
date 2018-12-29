@@ -163,7 +163,7 @@ namespace _ELENA_
       mskCharRef             = 0x07000000u,   // reference to character constant
       mskWideLiteralRef      = 0x08000000u,   // reference to constant wide literal
       mskMessageName         = 0x09000000u,   // message action constant
-//      mskExtMessage          = 0x0B000000u,   // external message verb constant
+      mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
       mskConstArray          = 0x0D000000u,   // constant array
 
@@ -297,7 +297,7 @@ namespace _ELENA_
    constexpr int elExtension           = 0x00004980;
    constexpr int elMessage             = 0x00008000;
 //   const int elSymbol              = 0x00100000;
-//   const int elExtMessage          = 0x00208000;
+   constexpr int elExtMessage          = 0x00208000;
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
    constexpr int elWithCustomDispatcher= 0x00800000;
 //   const int elWithArgGenerics     = 0x01000000;
@@ -503,8 +503,8 @@ namespace _ELENA_
    constexpr auto WIDESTR_FORWARD         = "$wideliteral";
    constexpr auto CHAR_FORWARD            ="$char";
    constexpr auto MESSAGE_FORWARD         = "$message";
-//   #define EXT_MESSAGE_FORWARD      "$ext_message"
-   constexpr auto MESSAGENAME_FORWARD       = "$messagename";
+   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
+   constexpr auto MESSAGENAME_FORWARD     = "$messagename";
 //   #define ARRAY_FORWARD            "$array"
    constexpr auto REFTEMPLATE_FORWARD     = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";

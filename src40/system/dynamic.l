@@ -51,13 +51,13 @@ public sealed struct Message
     dispatch() => system'core_routines'__message;
 }
 
-//// --- ExtensionMessage ---
-//
-///// An extended message constant
-//public sealed struct ExtensionMessage
-//{
-//    __extmssg theValue.
-//    
+// --- ExtensionMessage ---
+
+/// An extended message constant
+public sealed struct ExtensionMessage
+{
+    embeddable __mssg theValue[8];
+    
 //    /// Loads a message
 //    constructor new(ExtensionMessage message)
 //        = message.
@@ -67,10 +67,10 @@ public sealed struct Message
 //
 //    bool equal(ExtensionMessage aSubject)
 //        => system'core_routines'__extmessage.
-//
-//    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
-//    dispatch => system'core_routines'__extmessage.
-//}
+
+    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    dispatch() => system'core_routines'__extmessage;
+}
 
 // --- MessageName ---
 
