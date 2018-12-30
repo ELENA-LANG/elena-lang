@@ -78,7 +78,7 @@ sealed public /*nonstructural */ class TextBuilder
             
             char[] newBuffer := new char[](newLength);
             
-            newBuffer.write(0, bufferLength, theBuffer).
+            newBuffer.write(0, bufferLength, theBuffer);
             
             theBuffer := newBuffer
         }

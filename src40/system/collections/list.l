@@ -603,8 +603,18 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
 //        theArray := Array new(aCapacity).
 //    ]
     
-    constructor new(Array a)
+    constructor load(Array a)
         <= fromArray(a, a.Length);
+    
+    constructor load(o)
+        <= ()
+    {
+        Enumerator e := o.enumerator();
+        while (e.next())
+        {
+            self.append(e.get())
+        }
+    }
     
     /// Creates the list
     internal constructor fromArray(Array array, int length)
