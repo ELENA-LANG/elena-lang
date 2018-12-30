@@ -165,10 +165,10 @@ public extension enumerableOp
 ////
 ////    multi runFor:aParam eachPair:aFunction
 ////        = self~enumerableOp runFor:aParam eachPair(:n:m)(aFunction(n,m)).
-//
-//    seekEach(Func1 f)
-//        = f retrieve(T<Enumerator>(self enumerator)).
-//
+
+    seekEach(Func1 f)
+        = f.retrieve(cast Enumerator(self.enumerator()));
+
 ////    seekEach(ExtensionMessage anExtMessage)
 ////        = self~enumerableOp seekEach(:n)(n~anExtMessage eval).
 ////        
@@ -414,22 +414,22 @@ public extension indexableOp
 //    
 //    forEvery(Func1 fn)
 //        = self~indexableOp forEvery(:n)<int>(fn(n)).
-//    
-//    indexOfElement : anObject
-//    [
-//        T<Indexer> anIndexer := self indexer.
-//        
-//        while (anIndexer available)
-//        [
-//            if (anObject == anIndexer get)
-//                [ ^ anIndexer index ].
-//            
-//            anIndexer appendIndex:1.
-//        ].
-//        
-//        ^ -1
-//    ]
-//    
+    
+    indexOfElement(element)
+    {
+        Indexer it := self.indexer();
+        
+        while (it.Available)
+        {
+            if (element == it.get())
+                { ^ it.Index };
+            
+            it.appendIndex:1;
+        };
+        
+        ^ -1
+    }
+    
 ////    #method deepClone
 ////    [
 ////        #var aCopy := self clone.

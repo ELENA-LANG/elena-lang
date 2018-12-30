@@ -1280,17 +1280,17 @@ public sealed const struct String : BaseValue
     indexOf(int index, char ch, ref int retVal)
         => system'core_routines'__literal;
 
-//    /// Returns the index of the first occurence of the specified symbol.
-//    /// 
-//    /// If the substring is not found. returns -1
-//    indexOf(char aChar) at(int anIndex)
-//    [
-//        int aRetVal := 0.
-//        self indexOf(anIndex, aChar, &aRetVal).
-//        
-//        ^ IntNumber new(aRetVal).
-//    ]
-//
+    /// Returns the index of the first occurence of the specified symbol.
+    /// 
+    /// If the substring is not found. returns -1
+    indexOf(int index, char ch)
+    {
+        int retVal := 0;
+        self.indexOf(index, ch, ref retVal);
+        
+        ^ new IntNumber(retVal)
+    }
+
 //    /// Returns the index of the first occurence of the specified substring.
 //    ///
 //    /// If the substring is not found. returns -1

@@ -739,28 +739,28 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
 //
 //    insert : anObject at:anIndex
 //        <= insert(T<int>(anIndex), anObject).
-//        
-//    /// Removes an object at the specified position
-//    remove(int anIndex)
-//    [
-//        if (anIndex >= theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theLength reduce(1).
-//        
-//        int i := anIndex.
-//        while (i < theLength)
-//        [
-//            theArray setAt(i, theArray getAt(i + 1)).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//        
-//    removeAt:anIndex
-//        <= remove(T<int>(anIndex)).
-//    
-//    readCapacityTo(ref<int> aCapacity)
+        
+    /// Removes an object at the specified position
+    remove(int index)
+    {
+        if (index >= (cast int(theLength)))
+            { OutOfRangeException.raise() };
+        
+        theLength.reduce(1);
+        
+        int i := index;
+        while (i < (cast int(theLength)))
+        {
+            theArray.setAt(i, theArray.at(i + 1));
+            
+            i := i + 1
+        }
+    }
+        
+    removeAt(n)
+        <= remove(cast int(n));
+    
+//    readCapacityTo(ref<int>{ aCapacity)
 //    [
 //        aCapacity value := theCapacity.
 //    ]

@@ -3,6 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * attribute cannot be used as a class constant - s the code - 
+                       = { bool equal(o) = self(object); }; - is not allowed
+
                  * identifier - message message
                  * support explicit mixin creation - mixin Invoker(x) - should be boxed into the Wrap class;
 

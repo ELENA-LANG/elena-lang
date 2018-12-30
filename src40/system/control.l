@@ -39,11 +39,11 @@ public interface Enumerator<T>
     Enumerator<T> enumerator() = self;
 }
 
-//public abstract Enumerable
-//{
-//    abstract T<Enumerator> enumerator []
-//}
-//
+public abstract Enumerable
+{
+    abstract Enumerator enumerator() {}
+}
+
 //public abstract Enumerable<type>
 //{
 //    abstract Enumerator<type> enumerator []

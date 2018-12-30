@@ -93,5 +93,5 @@ public extension stringExOp
 public extension func1Op : Func1
 {
     asComparator()
-        = { bool equal(o) = self(object); };
+        = { bool equal(o) = self(o); };
 }
