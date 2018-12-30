@@ -328,6 +328,44 @@ procedure __literal."Substring$system@IntNumber$system@IntNumber[3]"
 
 end
 
+procedure __literal."copy$system@String$system@String[2]"
+
+  aloadsi 2
+  bcopya
+  aloadsi 1
+  copy
+  acopyb
+  quitn 2
+
+end
+
+procedure __literal."insert$system@String$system@IntNumber$system@CharValue[3]"
+  
+  pusha
+
+  aloadsi 4
+  nload
+  pushd
+  acopys 0
+  pushn 0
+  pushn 0
+  bcopys 0
+  
+  callextr api : chartostr
+
+  aloadsi 6
+  nload
+  bloadsi 5
+  acopys 0
+
+  callextr api : insert
+
+  acopyb
+  popi 4
+  quitn 3
+  
+end
+
 procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
 
   aloadsi 1
@@ -454,6 +492,63 @@ procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@sy
   nwritei 0
 
   quitn 4
+
+end
+
+procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[5]"
+
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  bloadsi 4
+  callextr api : chartoshorts
+  dcopye
+  bloadsi 5
+  nsave
+  
+  quitn 5
+
+end
+
+procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[5]"
+
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  bloadsi 4
+  callextr api : chartobytes
+  dcopye
+  bloadsi 5
+  nsave
+  
+  quitn 5
+
+end
+
+procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&ShortNumber$@system@ref#1&CharValue[4]"
+  
+  aloadsi 2
+  nload
+  aloadsi 3
+
+  callextr api : wstrtochar
+  ifr   labErr 0
+
+  dcopye
+  bloadsi 4
+  nsave
+  acopyb
+  quitn 4
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
 
 end
 

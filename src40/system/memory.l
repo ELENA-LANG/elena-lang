@@ -1244,21 +1244,21 @@ public sealed const struct String : BaseValue
     string add(string s)
         => system'core_routines'__literal;
 
-//    /// Concatinates the values
-//    literal add(char ch)
-//    [
-//        int len := self length. 
-//        int ch_len := ch length.
-//        
-//        int new_len := len + ch_len.        
-//        auto retVal := LiteralValue new(new_len).
-//        
-//        system'core_routines'__literal copy(self, retVal).
-//        system'core_routines'__literal insert(retVal, len, ch).
-//        system'core_routines'__literal insert(retVal, new_len, $0).
-//        
-//        ^ retVal.
-//    ]    
+    /// Concatinates the values
+    string add(char ch)
+    {
+        int len := self.Length;
+        int ch_len := ch.Length;
+        
+        int new_len := len + ch_len;
+        auto retVal := new String(new_len);
+        
+        intern system'core_routines'__literal.copy(self, retVal);
+        intern system'core_routines'__literal.insert(retVal, len, ch);
+        intern system'core_routines'__literal.insert(retVal, new_len, $0);
+        
+        ^ retVal
+    }
 
     // Reads the character at the specified index and saves into an output parameter
     read(int index, ref char ch)
@@ -2287,6 +2287,109 @@ public singleton wideConvertor
 //    /// Returns the literal presentation of the parameter
 //    wide convert(o)
 //        = cast wide(o literal);
+}
+
+/// An Unicode character convertor
+public singleton charConvertor
+{
+//    /// Converts a byte value into a character and saves the result into an output parameter
+//    convert(byte aValue, ref<char> aRetVal)
+//        => system'core_routines'__charconvertor.
+//
+//    /// Converts a short integer into a character and saves the result into an output parameter
+//    convert(short aValue, ref<char> aRetVal)
+//        => system'core_routines'__charconvertor.
+//
+//    /// Converts an integer into a character and saves the result into an output parameter
+//    convert(int aValue, ref<char> aRetVal)
+//        => system'core_routines'__charconvertor.
+//        
+//    char convert(BaseVariable v)
+//        <= convert(v value).
+        
+    /// Returns a parameter        
+    char convert(char ch)
+        = new CharValue(ch);
+  
+//    internal convert(int anIndex, literal aLiteral, ref<char> char)
+//        => system'core_routines'__charconvertor.
+//        
+//    internal convert(int anIndex, ByteArray aLiteral, ref<char> char)
+//        => system'core_routines'__charconvertor.
+//  
+//    internal convert(int anIndex, wide aLiteral, ref<char> char)
+//        => system'core_routines'__charconvertor.
+
+    internal convert(int index, short[] buffer, ref char char)
+        => system'core_routines'__charconvertor;
+
+    internal save(char ch, int index, short[] charArray, ref int length)
+        => system'core_routines'__charconvertor;
+    
+    internal save(char ch, int index, byte[] charArray, ref int length)
+        => system'core_routines'__charconvertor;
+
+//    /// Converts a literal string into a character
+//    char convert(literal aValue)
+//    [
+//        char aRetVal := $0.
+//        self convert(0, aValue, &aRetVal).
+//        
+//        int l1 := 0.
+//        int l2 := aValue length.
+//        aRetVal readLengthTo(&l1).
+//        
+//        (l1 != l2)
+//            ? [ system'InvalidArgumentException new; raise ].
+//        
+//        ^ CharValue new(aRetVal)
+//    ]        
+//        
+//    /// Converts a wide literal string into a character                
+//    char convert(wide aValue)
+//    [
+//        char aRetVal := $0.
+//        self convert(0, aValue, &aRetVal).
+//
+//        int l1 := 0.
+//        int l2 := aValue length.
+//        aRetVal readWideLengthTo(&l1).
+//                
+//        (l1 != l2)
+//            ? [ system'InvalidArgumentException new; raise ].
+//        
+//        ^ CharValue new(aRetVal)
+//    ]        
+//        
+//    /// Converts a byte value into a character
+//    char convert(byte aValue)
+//    [
+//        char aRetVal := $0.
+//        self convert(aValue, &aRetVal).
+//        
+//        ^ CharValue new(aRetVal)
+//    ]        
+//        
+//    /// Converts a short integer into a character
+//    char convert(short aValue)
+//    [
+//        char aRetVal := $0.
+//        self convert(aValue, &aRetVal).
+//        
+//        ^ CharValue new(aRetVal)
+//    ]        
+//        
+//    /// Converts an integer into a character
+//    char convert(int aValue)
+//    [
+//        char aRetVal := $0.
+//        self convert(aValue, &aRetVal).
+//        
+//        ^ CharValue new(aRetVal)
+//    ]
+        
+    char convert(o)
+        = cast char(o);
 }
 
 // === Enumerators / Indexers
