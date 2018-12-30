@@ -157,9 +157,9 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
    return _Instance->loadSubject((const char*)subjectName);
 }
 
-EXTERN_DLL_EXPORT int LoadMessageName(void* subject, char* lineInfo, int length)
+EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* lineInfo, int length)
 {
-   return _Instance->loadMessageName((size_t)subject, lineInfo, length);
+   return _Instance->loadMessageName((ref_t)message, lineInfo, length);
 }
 
 EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)

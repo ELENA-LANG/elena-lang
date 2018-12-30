@@ -17,7 +17,7 @@
 #include "compilerscope.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0075
+#define ELC_REVISION_NUMBER         0x0076
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -34,7 +34,6 @@
 // --- ELC command-line parameters ---
 //#define ELC_PRM_CONFIG              'c'
 #define ELC_PRM_DEBUGINFO           'd'
-////#define ELC_PRM_SUBJECTINFO         'ds'
 #define ELC_PRM_OUTPUT_PATH         'o'
 #define ELC_PRM_LIB_PATH            'p'
 //#define ELC_PRM_TARGET              't'
@@ -63,7 +62,6 @@
 
 // --- ELC config settings ---
 #define ELC_DEBUGINFO               "configuration/project/debuginfo"
-#define ELC_SUBJECTINFO             "configuration/project/subjectinfo"
 #define ELC_CLASSSYMBOLLOAD         "project/classsymbolload"
 #define ELC_TARGET                  "configuration/project/executable"
 #define ELC_MG_SIZE                 "configuration/linker/mgsize"

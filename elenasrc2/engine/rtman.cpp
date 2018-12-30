@@ -269,22 +269,22 @@ size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _Lib
    else return 0;
 }
 
-size_t RTManager :: readSubjectName(StreamReader& reader, size_t subjectRef, char* buffer, size_t maxLength)
-{
-   ReferenceMap subjects(0);
-   subjects.read(&reader);
-
-   ident_t name = retrieveKey(subjects.start(), subjectRef, DEFAULT_STR);
-   if (!emptystr(name)) {
-      size_t len = getlength(name);
-      if (len < maxLength) {
-         Convertor::copy(buffer, name, len, len);
-
-         return len;
-      }
-   }
-   return 0;
-}
+//size_t RTManager :: readSubjectName(StreamReader& reader, size_t subjectRef, char* buffer, size_t maxLength)
+//{
+//   ReferenceMap subjects(0);
+//   subjects.read(&reader);
+//
+//   ident_t name = retrieveKey(subjects.start(), subjectRef, DEFAULT_STR);
+//   if (!emptystr(name)) {
+//      size_t len = getlength(name);
+//      if (len < maxLength) {
+//         Convertor::copy(buffer, name, len, len);
+//
+//         return len;
+//      }
+//   }
+//   return 0;
+//}
 
 void* RTManager :: loadSubject(StreamReader& reader, ident_t name)
 {

@@ -42,7 +42,6 @@ enum ProjectSetting
    opDebugMode             = 0x000A,
    opTemplate              = 0x000C,
    opThreadMax             = 0x0013,
-   opDebugSubjectInfo      = 0x0014,
    opClassSymbolAutoLoad   = 0x0015,
    //opTapeEntry             = 0x0016,
 

@@ -220,7 +220,6 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadBoolOption(config, opWarnOnWeakUnresolved);
    //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
-   loadBoolOption(config, opDebugSubjectInfo);
    loadBoolOption(config, opClassSymbolAutoLoad);
    loadOption(config, opTemplate);
 

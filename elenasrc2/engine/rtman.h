@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of the base class implementing
 //      ELENA RT manager.
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2018, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef rtmanH
@@ -27,7 +27,7 @@ public:
    size_t readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, char* buffer, size_t maxLength);
 
    size_t readClassName(StreamReader& debug, size_t vmtAddress, char* buffer, size_t maxLength);
-   size_t readSubjectName(StreamReader& debug, size_t subjectRef, char* buffer, size_t maxLength);
+   //size_t readSubjectName(StreamReader& debug, size_t subjectRef, char* buffer, size_t maxLength);
 
    void* loadSymbol(StreamReader& debug, ident_t name);
    void* loadSubject(StreamReader& debug, ident_t name);

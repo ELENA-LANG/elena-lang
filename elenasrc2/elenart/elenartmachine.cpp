@@ -163,60 +163,48 @@ bool ELENARTMachine :: initSubjectSection(ImageSection& subjectSection)
    else return false;
 }
 
-int ELENARTMachine :: loadSubjectName(size_t subject, char* buffer, size_t length)
+int ELENARTMachine :: loadSubjectName(size_t subjectRef, char* buffer, size_t length)
 {
-   RTManager manager;
+   ImageSection messageSection;
+   messageSection.init(_messageSection, 0x10000); // !! dummy size
 
-   // initialize image section ;
-   // it directly follows debug section
-   ImageSection subjectSection;
-   if (initSubjectSection(subjectSection)) {
-      MemoryReader reader(&subjectSection);
+   ref_t actionPtr = messageSection[subjectRef * 8];
+   if (actionPtr == 0) {
+      size_t used = length;
+      pos_t namePtr = messageSection[subjectRef * 8 + 4];
 
-      return manager.readSubjectName(reader, subject, buffer, length);
+      MemoryReader reader(&messageSection);
+      reader.seek(namePtr);
+
+      IdentifierString messageName;
+      reader.readString(messageName);
+
+      Convertor::copy(buffer, messageName.c_str(), messageName.Length(), used);
+
+      return used;
    }
-   else return 0;
+   else return loadSubjectName(actionPtr, buffer, length);
 }
 
-int ELENARTMachine :: loadMessageName(size_t subjectRef, char* buffer, size_t length)
+int ELENARTMachine :: loadMessageName(size_t messageRef, char* buffer, size_t length)
 {
-   //RTManager manager;
+   int paramCount = 0;
+   ref_t actionRef, flags;
+   decodeMessage(messageRef, actionRef, paramCount, flags);
 
-   //// initialize image section ;
-   //// it directly follows debug section
-   //ImageSection subjectSection;
-   //if (initSubjectSection(subjectSection)) {
-   //   MemoryReader reader(&subjectSection);
+   int used = loadSubjectName(actionRef, buffer, length);
+   if (used > 0) {
+      size_t dummy = 10;
+      String<char, 10>temp;
+      temp.appendInt(paramCount);
 
-   //   ref_t action;
-   //   int count;
-   //   decodeMessage(subjectRef, action, count);
+      buffer[used++] = '[';
+      Convertor::copy(buffer + used, temp, getlength(temp), dummy);
+      used += dummy;
+      buffer[used++] = ']';
+   }
 
-   //   size_t used = 0;
-   //   if (test(subjectRef, encodeAction(SIGNATURE_FLAG))) {
-   //      ImageSection messageSection;
-   //      messageSection.init(_messageSection, 0x10000); // !! dummy size
-
-   //      ref_t verb = messageSection[action];
-   //      used += manager.readSubjectName(reader, verb, buffer + used, length - used);
-   //   }
-   //   else used += manager.readSubjectName(reader, action, buffer + used, length - used);
-
-   //   if (count > 0) {
-   //      size_t dummy = 10;
-   //      String<char, 10>temp;
-   //      temp.appendInt(count);
-
-   //      buffer[used++] = '[';
-   //      Convertor::copy(buffer + used, temp, getlength(temp), dummy);
-   //      used += dummy;
-   //      buffer[used++] = ']';
-   //   }
-   //   buffer[used] = 0;
-
-   //   return used;
-   //}
-   /*else */return 0;
+   return used;
 }
 
 void* ELENARTMachine :: loadSymbol(ident_t name)
