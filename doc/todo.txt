@@ -3,16 +3,17 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * implement if else if - ..
-
+                 * should it be possible to compile the following code: class; public program() { class class := nil; }
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
+
+                 * reddit post - Switch statement
+                 * implement if else if - ..
 
                  * identifier - message message
                  * support explicit mixin creation - mixin Invoker(x) - should be boxed into the Wrap class;
 
                  * migrate twentyfour, 99 Bottles of Beer
-                 * should it be possible to compile the following code: class; public program() { class class := nil; }
                  * syntax : template / size should be the last token in expression and one before the last for declaration
                  * support - new [] { 1,2,3 } - expression
                  * array of integers : new int[] { 1, 2, 3 }

@@ -25,6 +25,7 @@ using namespace _ELENA_;
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008800;
+constexpr auto HINT_SCOPE_MASK      = 0x00100000;
 
 constexpr auto HINT_ROOT            = 0x80000000;
 constexpr auto HINT_ROOTSYMBOL      = 0xC0000000;
@@ -37,7 +38,7 @@ constexpr auto HINT_MESSAGEREF      = 0x01000000;
 constexpr auto HINT_LOOP            = 0x00800000;
 constexpr auto HINT_SWITCH          = 0x00400000;
 ////#define HINT_ALT_MODE         0x00200000
-//#define HINT_SINGLETON        0x00100000
+constexpr auto HINT_MODULESCOPE     = 0x00100000;
 ////#define HINT_EXT_RESENDEXPR   0x00080400
 constexpr auto HINT_ASSIGNING_EXPR  = 0x00040000;
 constexpr auto HINT_NODEBUGINFO     = 0x00020000;
@@ -671,7 +672,7 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool referenceOne, int mode)
 {
-   if (!referenceOne) {
+   if (!referenceOne && !test(mode, HINT_MODULESCOPE)) {
       Parameter param = parameters.get(terminal);
       if (param.offset >= 0) {
          return mapParameter(param);
@@ -802,7 +803,7 @@ bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, r
 
 ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool referenceOne, int mode)
 {
-   if (!referenceOne) {
+   if (!referenceOne && !test(mode, HINT_MODULESCOPE)) {
       ObjectInfo info = mapLocal(identifier);
       if (info.kind != okUnknown)
          return info;
@@ -2333,7 +2334,7 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
                object = compileMessageReference(writer, terminal, scope, mode & ~HINT_MESSAGEREF);
             }
          }
-         else object = scope.mapTerminal(token, terminal == lxReference, 0);
+         else object = scope.mapTerminal(token, terminal == lxReference, mode & HINT_SCOPE_MASK);
          break;
    }
 
@@ -4417,6 +4418,7 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
             exprAttr |= HINT_VIRTUALEXPR;
          }
          else if (msgNode == lxMessage && msgNode.firstChild() == lxNone) {
+            exprAttr |= HINT_MODULESCOPE;
             if (attributes.castAttr) {
                exprAttr |= HINT_VIRTUALEXPR;
                msgNode.set(lxTypecast, V_CONVERSION);

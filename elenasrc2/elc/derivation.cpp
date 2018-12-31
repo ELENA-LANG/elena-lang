@@ -1752,7 +1752,17 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
 
    bool allowType = templateArgMode || current.nextNode().nextNode() != lxToken;
    bool allowProperty = false;
-   ref_t attrRef = mapAttribute(current, allowType, allowProperty);
+
+   // NOTE : declared class name has a priority over attribute
+   ref_t attrRef = 0;
+   if (identNode == lxIdentifier && allowType) {
+      attrRef = _scope->resolveImplicitIdentifier(_ns, identNode.identifier(), false, &_importedNs);
+   }
+
+   if (!attrRef) {
+      attrRef = mapAttribute(current, allowType, allowProperty);
+   }
+
    LexicalType attrType;
    if (isPrimitiveRef(attrRef)) {
       attrType = lxAttribute;
