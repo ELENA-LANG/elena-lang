@@ -921,7 +921,6 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    // get
    // inc
    // elser labSearch
-   // dec               ; to skip trailing nil
    // acopyr vmt
    // create
 
@@ -945,7 +944,6 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    tape.write(bcElseR, baCurrentLabel, 0);
    tape.releaseLabel();
 
-   tape.write(bcDec);
    tape.write(bcACopyR, vmtReference | mskVMTRef);
    tape.write(bcCreate);
 

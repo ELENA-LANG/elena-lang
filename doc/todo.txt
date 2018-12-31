@@ -3,6 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * implement if else if - ..
+
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
 
