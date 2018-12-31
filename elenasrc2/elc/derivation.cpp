@@ -217,6 +217,10 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsL6Operator:
          _cacheWriter.newNode(lxOperator);
          break;
+      case nsAssignmentOperand:
+         // HOTFIX : to indicate an assignment operation
+         _cacheWriter.newNode(lxOperator, -1);
+         break;
       case nsArrayOperator:
          _cacheWriter.newNode(lxOperator, REFER_OPERATOR_ID);
          break;

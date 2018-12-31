@@ -2928,7 +2928,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
 ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode)
 {
    SNode current = node;
-   int operator_id = current.argument != 0 ? current.argument : _operators.get(current.firstChild(lxTerminalMask).identifier());
+   int operator_id = (int)current.argument > 0 ? current.argument : _operators.get(current.firstChild(lxTerminalMask).identifier());
 
    SNode roperand = node.nextNode();
 //   if (operatorNode.prevNode() == lxNone)
@@ -2938,14 +2938,28 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       operator_id = SET_REFER_OPERATOR_ID;
    }
 
-   // if it is branching operators
-   if (operator_id == IF_OPERATOR_ID || operator_id == IFNOT_OPERATOR_ID) {
-      return compileBranchingOperator(writer, roperand, scope, target, mode, operator_id);
+   switch (operator_id) {
+      case IF_OPERATOR_ID:
+      case IFNOT_OPERATOR_ID:
+         // if it is branching operators
+         return compileBranchingOperator(writer, roperand, scope, target, mode, operator_id);
+      case CATCH_OPERATOR_ID:
+         return compileCatchOperator(writer, roperand, scope/*, target, mode, operator_id*/);
+      case APPEND_OPERATOR_ID:
+         node.setArgument(ADD_OPERATOR_ID);
+         return compileAssigning(writer, node, scope, target);
+      case REDUCE_OPERATOR_ID:
+         node.setArgument(SUB_OPERATOR_ID);
+         return compileAssigning(writer, node, scope, target);
+      case INCREASE_OPERATOR_ID:
+         node.setArgument(MUL_OPERATOR_ID);
+         return compileAssigning(writer, node, scope, target);
+      case SEPARATE_OPERATOR_ID:
+         node.setArgument(DIV_OPERATOR_ID);
+         return compileAssigning(writer, node, scope, target);
+      default:
+         return compileOperator(writer, roperand, scope, target, mode, operator_id);
    }
-   else if (operator_id == CATCH_OPERATOR_ID) {
-      return compileCatchOperator(writer, roperand, scope/*, target, mode, operator_id*/);
-   }
-   else return compileOperator(writer, roperand, scope, target, mode, operator_id);
 }
 
 ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr)
@@ -3482,7 +3496,16 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    //if (isPrimitiveRef(targetRef))
    //   targetRef = resolvePrimitiveReference(scope, targetRef, target.element);
 
-   if (targetRef == V_AUTO) {
+   if (node == lxOperator) {
+      // COMPILER MAGIC : implementing assignment operators
+      //writer.newNode(lxExpression);
+      writer.newBookmark();
+      writeTerminal(writer, node, scope, target, assignMode);
+      compileOperator(writer, node, scope, target, assignMode);
+      writer.removeBookmark();
+      //writer.closeNode();
+   }
+   else if (targetRef == V_AUTO) {
       // support auto attribute
       retVal = compileExpression(writer, sourceNode, scope, 0, assignMode);
       if (resolveAutoType(retVal, target, scope)) {
@@ -4475,6 +4498,11 @@ ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, C
    return compileExpression(writer, node, scope, 0, rootMode);
 }
 
+inline bool isAssigmentOp(SNode node)
+{
+   return node == lxAssign || (node == lxOperator && node.argument == -1);
+}
+
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, int mode)
 {
    ObjectInfo objectInfo;
@@ -4495,7 +4523,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    }
       
    SNode operationNode = current.nextNode();
-   if (operationNode == lxAssign) {
+   if (isAssigmentOp(operationNode)) {
       // recognize the property set operation
       targetMode |= HINT_PROP_MODE;
       if (isSingleStatement(current))
@@ -7539,8 +7567,8 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int mode)
 {
    //ref_t targetRef = node.findChild(lxTarget).argument;
    SNode targetNode = node.firstChild(lxObjectMask);
-   SNode sourceNode = targetNode.nextNode(lxObjectMask);
 
+   SNode sourceNode = targetNode.nextNode(lxObjectMask);
    ref_t sourceRef = analizeExpression(sourceNode, scope, (node.argument != 0 ? HINT_NOBOXING | HINT_NOUNBOXING : HINT_NOUNBOXING));
    //switch (sourceNode) {
    //   case lxStdExternalCall:
