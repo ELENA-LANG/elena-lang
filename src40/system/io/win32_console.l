@@ -1,9 +1,9 @@
 //import system'text.
-//
-//// --- IConsoleReader ---
-//
-//public interface IConsoleReader
-//{
+
+// --- IConsoleReader ---
+
+public interface IConsoleReader
+{
 //    abstract T<literal> readLiteral []
 //    
 //    abstract T<wide> readWide []
@@ -13,7 +13,7 @@
 //    abstract read(ref<char> retVal) []
 //    
 //    abstract bool isKeyAvailable []
-//}
+}
 
 const int FILE_TYPE_CHAR = 2;
 
@@ -262,7 +262,7 @@ sealed class FileWriter
 
 // --- ConsoleReader ---
 
-sealed struct ConsoleReader //:: Object, interface<IConsoleReader>
+sealed struct ConsoleReader : Object//, interface<IConsoleReader>
 {
     handle theHandle;
     

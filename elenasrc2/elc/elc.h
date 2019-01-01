@@ -3,7 +3,7 @@
 //
 //      This file contains the common constants of the command-line
 //      compiler and a ELC project class
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elcH
@@ -17,7 +17,7 @@
 #include "compilerscope.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0079
+#define ELC_REVISION_NUMBER         0x007A
 // --- ELC default file names ---
 #ifdef _WIN32
 

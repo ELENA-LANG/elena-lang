@@ -3,8 +3,8 @@
 /// A console
 class Console
 {
-    object               theWriter;
-    /*T<io'IConsoleReader>*/object theReader;
+    object            theWriter;
+    /*io'IConsoleReader*/ theReader;
 
     /// Creates a console
     constructor(object reader, object writer)

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Derivation Tree class implementation
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1746,33 +1746,30 @@ inline bool isTypeExpressionAttribute(SNode current)
 
 void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, bool templateArgMode)
 {
-   SNode identNode = current;
-   if (current == lxToken)
-      identNode = current.firstChild(lxTerminalMask);
-
    bool allowType = templateArgMode || current.nextNode().nextNode() != lxToken;
    bool allowProperty = false;
+   
 
-   // NOTE : declared class name has a priority over attribute
-   ref_t attrRef = 0;
-   if (identNode == lxIdentifier && allowType) {
-      attrRef = _scope->resolveImplicitIdentifier(_ns, identNode.identifier(), false, &_importedNs);
+   SNode identNode = current;
+   if (current == lxToken) {
+      identNode = current.firstChild(lxTerminalMask);
    }
-
-   if (!attrRef) {
-      attrRef = mapAttribute(current, allowType, allowProperty);
-   }
-
-   LexicalType attrType;
-   if (isPrimitiveRef(attrRef)) {
-      attrType = lxAttribute;
-   }
-   else {
-      attrType = lxTarget;
-      if (derivationScope.isTypeParameter(identNode.identifier(), attrRef)) {
+      
+   LexicalType attrType = lxNone;
+   ref_t attrRef = mapAttribute(current, allowType, allowProperty);
+   if (allowType) {
+      if (attrRef == V_TEMPLATE) {
+         // NOTE : template type declaration has a highest priority
+         attrType = lxTarget;
+      }
+      else if (derivationScope.isTypeParameter(identNode.identifier(), attrRef)) {
+         // NOTE : check if it is a template parameter
          attrType = lxTemplateParam;
       }
+      else attrType = isPrimitiveRef(attrRef) ? lxAttribute : lxTarget;
    }
+   else if (isPrimitiveRef(attrRef))
+      attrType = lxAttribute;
 
    writer.insert(0, lxEnding, 0);
    if (attrRef == V_TEMPLATE) {
