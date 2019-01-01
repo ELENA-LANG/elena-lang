@@ -1,4 +1,4 @@
-//import system'text.
+import system'text;
 
 // --- IConsoleReader ---
 
@@ -180,20 +180,20 @@ sealed class FileWriter
         theNewLineSymbol := forward newLine;
     }
 
-//    write(ByteArray buffer, int length)
-//    [
-//        int written := 0.
-//        system'external'KERNEL32 WriteFile
-//            (theHandle, buffer, length, &written, 0).
-//    ]
-//
+    write(byte[] buffer, int length)
+    {
+        int written := 0;
+        extern KERNEL32.WriteFile
+            (theHandle, buffer, length, ref written, 0)
+    }
+
 //    write(wide literal)
-//    [
-//        T<byte,256> buffer.
-//        int         length := literal length.
-//        int         index := 0.
-//        int         buf_len := 256.
-//        int         subs_len := 256.
+//    {
+//        byte[] buffer[256];
+//        int    length := literal.Length;
+//        int    index := 0.
+//        int    buf_len := 256.
+//        int    subs_len := 256.
 //        while (length > 0)
 //        [
 //            buf_len := 256.
@@ -209,43 +209,48 @@ sealed class FileWriter
 //            index := index + subs_len.
 //            length := length - subs_len.
 //        ].
-//    ]
+//    }
     
-    writeLine(wide s)
-    {
-        self.write(s);
-        self.write(theNewLineSymbol);
-    }
+//    writeLine(wide s)
+//    {
+//        self.write(s);
+//        self.write(theNewLineSymbol);
+//    }
     
     writeLine()
     {
         self.write(theNewLineSymbol);
     }
     
-//    write(literal literal)
-//    [
-//        T<byte,256> buffer.
-//        int         length := literal length.
-//        int         index := 0.
-//        int         buf_len := 256.
-//        int         subs_len := 256.
-//        while (length > 0)
-//        [
-//            buf_len := 256.
-//            
-//            if (length < 128)
-//                [ subs_len := length ];
-//                [ subs_len := 128 ].
-//            
-//            OEMEncoder convert(index, &subs_len, literal, T<ByteArray>(buffer), &buf_len).
-//            
-//            self write(T<ByteArray>(buffer), buf_len).
-//            
-//            index := index + subs_len.
-//            length := length - subs_len
-//        ].
-//    ]
-//    
+    write(string literal)
+    {
+        byte buffer[256];
+        int length := literal.Length;
+        int index := 0;
+        int buf_len := 256;
+        int subs_len := 256;
+        while (length > 0)
+        {
+            buf_len := 256;
+            
+            if (length < 128)
+            {
+                subs_len := length
+            }
+            else
+            {
+                subs_len := 128
+            };
+            
+            OEMEncoder.convert(index, ref subs_len, literal, buffer, ref buf_len);
+            
+            self.write(buffer, buf_len);
+            
+            index += subs_len;
+            length -= subs_len
+        }
+    }
+    
 //    clear
 //    [
 //    ]

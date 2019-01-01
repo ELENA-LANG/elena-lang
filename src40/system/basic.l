@@ -29,12 +29,14 @@ public sealed ref<T>// : BaseVariable
         retVal := theValue
     }
 
-//    bool equal : anObject
-//        => theValue.
+    bool equal(o)
+        => theValue;
 
     string Printable
 //        => theValue;
         = theValue.Printable;
+        
+    dispatch() => theValue;
 }
 
 //public extension<ref<real>> realRefOp

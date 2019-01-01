@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -2815,12 +2815,21 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode rope
 //   return ObjectInfo(okObject, resultRef);
 //}
 
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, bool unboxWrapper)
+{
+   ref_t reference = resolveObjectReference(scope, object);
+   if (unboxWrapper && reference == V_WRAPPER) {
+      return object.element;
+   }
+   else return reference;
+}
+
 ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2)
 {
    ObjectInfo retVal;
 
-   ref_t loperandRef = resolveObjectReference(scope, loperand);
-   ref_t roperandRef = resolveObjectReference(scope, roperand);
+   ref_t loperandRef = resolveObjectReference(scope, loperand, true);
+   ref_t roperandRef = resolveObjectReference(scope, roperand, true);
    ref_t roperand2Ref = 0;
    ref_t resultClassRef = 0;
    int operationType = 0;
@@ -7708,6 +7717,12 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, int mode)
       boxing = false;
    }
    else {
+      // adjust primitive target
+      if (isPrimitiveRef(targetRef) && boxing) {
+         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument);
+         node.findChild(lxTarget).setArgument(targetRef);
+      }
+
       // for boxing stack allocated / embeddable variables - source is the same as target
       if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxSelfLocal) && node.argument != 0) {
          sourceRef = targetRef;
@@ -7749,12 +7764,6 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, int mode)
          //}
 
          sourceRef = analizeExpression(sourceNode, scope, subMode);
-      }
-
-      // adjust primitive target
-      if (/*_logic->*/isPrimitiveRef(targetRef) && boxing) {
-         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument);
-         node.findChild(lxTarget).setArgument(targetRef);
       }
 
       if (!_logic->validateBoxing(*scope.moduleScope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED), test(mode, HINT_DYNAMIC_OBJECT))) {
