@@ -979,6 +979,7 @@ private:
    ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, int mode);
 //   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
+   ref_t analizeSubExpression(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
    ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope);
    ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope);

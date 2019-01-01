@@ -8,6 +8,18 @@ public sealed Array<T> //: Indexable<T>
 ////    cast T<int>:nint
 ////        = V<template_subj>(n).
 
+//    constructor allocate(int length)
+//        = new T[](length);
+        
+//    constructor(T[] array, int length)
+//        <= allocate(length)
+//    {
+//        for(int i := 0 , i < length, i += 1)
+//        {
+//            theArray[i] := array[i]
+//        }
+//    }
+
     Enumerator<T> enumerator() = new BaseEnumerator<T>:
     {
         this theIndex := -1;
@@ -1144,7 +1156,7 @@ public sealed const struct String : BaseValue
 //        = emptyLiteral.
         
     /// Creates the literal string with specified length        
-    constructor(int size)
+    constructor allocate(int size)
         = new byte[](size + 1);
 
 //    /// Creates the literal string with specified length and copies the parameter value
@@ -1167,7 +1179,7 @@ public sealed const struct String : BaseValue
         => system'core_routines'__literal;
 
     internal constructor fromByteArray(int index, int size, byte[] buffer)
-        <= (size)
+        <= allocate(size)
     {
         intern system'core_routines'__literal.copy(self, index, size, buffer)
     }
@@ -1251,7 +1263,7 @@ public sealed const struct String : BaseValue
         int ch_len := ch.Length;
         
         int new_len := len + ch_len;
-        auto retVal := new String(new_len);
+        auto retVal := String.allocate(new_len);
         
         intern system'core_routines'__literal.copy(self, retVal);
         intern system'core_routines'__literal.insert(retVal, len, ch);
@@ -1388,7 +1400,7 @@ public sealed const struct WideString : BaseValue
 //        = emptyWideLiteral.
         
     /// Creates the literal string with specified length
-    constructor(int size)
+    constructor allocate(int size)
         = new short[](size + 1);
 
 //    /// Creates the literal string with specified length and copies the parameter value
@@ -1411,7 +1423,7 @@ public sealed const struct WideString : BaseValue
 //        => system'core_routines'__wide.
 
     /*internal */constructor fromShortArray(int anIndex, int aSize, short[] anArray)
-        <= (aSize)
+        <= allocate(aSize)
     {
         intern system'core_routines'__wide.copy(self, anIndex, aSize, anArray)
     }
@@ -1744,7 +1756,7 @@ public sealed Array //:: Indexable, Array<object>
 //        <= new(T<int>(aLength)).
     
     /// Creates the array with the specified length
-    constructor(int len)
+    constructor allocate(int len)
         = new object[](len);
 
     /// Creates a copy of the provided array
@@ -1753,7 +1765,7 @@ public sealed Array //:: Indexable, Array<object>
     
     /// Creates a copy of the provided sub array
     constructor(int index, int length, Array array)
-        <= (length)
+        <= allocate(length)
     {
         intern system'core_routines'__array.copy(self, index, length, array)
     }
@@ -2248,36 +2260,36 @@ public singleton wideConvertor
     /// Converts UTF-8 literal to UTF-16e
     wide convert(string s)
     {
-  //      int        i := 0;
+        int        i := 0;
         int        m := 0;
-  //      int        page := 0;
+        int        page := 0;
         int        l := s.Length;
         short buffer[256];            
-//        if (l < 256)
-//        {
+        if (l < 256)
+        {
             self.convert(s, buffer, ref m);
 
             ^ WideString.fromShortArray(0, m, buffer)
-//        };
-//        
-//        wide retVal := emptyWideLiteral;
-//        while(l > 0)
-//        {
-//            page := l;
-//            if (page > 256)
-//            {
-//                page := 256
-//            };
-//            
-//            self.convert(aLiteral.Substring(i,page), buffer, ref m);
-//            
-//            retVal := retVal.add(WideLiteralValue.fromShortArray(0, m, buffer));
-//            
-//            i := i + page;
-//            l := l - page
-//        };
-//        
-//        ^ retVal
+        };
+
+        wide retVal := emptyWideString;
+        while(l > 0)
+        {
+            page := l;
+            if (page > 256)
+            {
+                page := 256
+            };
+            
+            self.convert(s.Substring(i,page), buffer, ref m);
+            
+            retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
+            
+            i := i + page;
+            l := l - page
+        };
+        
+        ^ retVal
     }
         
     /// Returns a parameter

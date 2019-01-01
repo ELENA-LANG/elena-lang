@@ -10,69 +10,73 @@ extension op
         => system'core_routines'__object;
 }
 
-//// --- CallStack ---
-//
-///// A call stack
-//public sealed /*nonstructural */class CallStack
-//{
-//    T<IntArray> theStack.
-//    
-//    /// Creates a current call stack
-//    constructor new
-//    [
-//        T<int,64> aStack.
-//        int       aLength := 0.
-//        
-//        aLength := system'external core_callstack_load(T<IntArray>(aStack), 64).
-//            
-//        theStack := IntArray new(0, aLength, T<IntArray>(aStack))
-//    ]
-//    
-//    /// Generates the call stack literal representation
-//    T<literal> literal
-//    [
-//        int     anIndex := 0.
-//        int     aLength := theStack length.
-//        int     aBufferLength := 0.
-//        int     address := 0.
-//
-//        T<byte,512> aBuffer.
-//        literal     aCallStackText := emptyLiteral.
-//        while (anIndex < aLength)
-//        [
-//            theStack read(anIndex, &address).
-//            
-//            aBufferLength := system'external LoadAddressInfo(address, T<ByteArray>(aBuffer), 512).
-//            
-//            if (aBufferLength > 0)
-//                [ aCallStackText := aCallStackText add(LiteralValue fromByteArray(0, aBufferLength, T<ByteArray>(aBuffer))); add(forwards'newLine) ].
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//        
-//        ^ aCallStackText.
-//    ]
-//}
+// --- CallStack ---
+
+/// A call stack
+public sealed class CallStack
+{
+    Array<int> theStack;
+    
+    /// Creates a current call stack
+    constructor()
+    {
+        int stack[64];
+        int length := 0;
+        
+        length := extern elenart.core_callstack_load(stack, 64);
+          
+        //theStack := new Array<int>(stack, length);        
+        theStack := new int[](length);
+        //for(int i := 0, i < length, i += 1)
+        for(IntNumber i := 0, i < length, i += 1)
+        {
+            theStack[i] := stack[i]
+        }
+    }
+    
+    /// Generates the call stack literal representation
+    get string Printable()
+    {
+        int    length := theStack.Length;
+        int    bufferLength := 0;
+        int    address := 0;
+
+        byte   buffer[512];
+        string callStackText := emptyString;
+        for (IntNumber i := 0, i < length, i += 1)
+        {
+            address := theStack[i];
+            
+            bufferLength := extern elenart.LoadAddressInfo(address, buffer, 512);
+            if (bufferLength > 0)
+            {
+                callStackText += String.fromByteArray(0, bufferLength, buffer).add(forward newLine)
+            }
+        };
+        
+        ^ callStackText
+    }
+}
 
 // --- Exception ---
 
 /// A basic exception
 public class Exception
 {
-    string theMessage;
-//    object  theCallStack.
+    string    theMessage;
+    CallStack theCallstack;
 
     /// Returns the message and the call stack
     get string Printable()
     {
-        string retVal := theMessage.add($10"Call stack:"$10);
+        string retVal := theMessage.add($10"Call stack:"$10).add(theCallstack.Printable);
         
-        ^ retVal/* add(theCallStack literal)*/
+        ^ retVal
     }
     
-//    /// Returns the message
-//    T<literal> message = theMessage.
-//    
+    /// Returns the message
+    string Message = theMessage;
+    
 //    /// Executes the exception handler for the current exception if available.
 //    ///
 //    /// Otherwise goes to the next exception handler
@@ -113,18 +117,16 @@ public class Exception
 //        
 //        self throw.
 //    ]
-//    
-////    subject = $self.
         
     /// Creates the exception with the provided message and error type
-    constructor(string message)
+    constructor new(string message)
     {
         theMessage := message;
-//        theCallStack := CallStack new.
+        theCallstack := new CallStack()
     }    
     
     constructor()
-        <= (self.__getClassName());
+        <= new(self.__getClassName());
 
 //    constructor raise()
 //        <= new()
@@ -138,10 +140,10 @@ public class Exception
 public class FormatException : Exception
 {
     constructor()
-        <= ("A number is not in the correct format");
+        <= new("A number is not in the correct format");
         
-    constructor(string message)
-        <= (message);
+    constructor new(string message)
+        <= new(message);
 }
 
 // --- OutOfRangeException ---
@@ -205,11 +207,11 @@ public class InvalidOperationException : Exception
 {
     /// Creates the exception
     constructor()
-        <=("Invalid operation");
+        <= new("Invalid operation");
 
     /// Creates the exception
-    constructor(string message)
-        <= (message);
+    constructor new(string message)
+        <= new(message);
 
     static raise()
     {
@@ -223,15 +225,15 @@ public sealed class MethodNotFoundException : Exception
 {
     /// Creates the exception
     constructor()
-        <= ("Method not found");
+        <= new("Method not found");
 
     constructor new(mssg missingMessage)
 //        <= ("Method " + missingMessage.Printable + " not found");
-        <= (cast string("Method " + missingMessage.Printable + " not found"));
+        <= new(cast string("Method " + missingMessage.Printable + " not found"));
         
     constructor new(object object, mssg missingMessage)
 //        <= (object.__getClassName() + " : Method " + missingMessage.Printable + " not found");
-        <= (cast string(object.__getClassName() + " : Method " + missingMessage.Printable + " not found"));
+        <= new(cast string(object.__getClassName() + " : Method " + missingMessage.Printable + " not found"));
 }
 
 //// --- MethodNotSupported ---

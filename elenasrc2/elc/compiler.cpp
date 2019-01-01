@@ -4710,6 +4710,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
                   break;
                case V_INT8ARRAY:
                case V_INT16ARRAY:
+               case V_INT32ARRAY:
                   current.set(lxExtArgument, 0);
                   break;
                //case V_SYMBOL:
@@ -7878,6 +7879,20 @@ ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope
    }
 }
 
+ref_t Compiler :: analizeSubExpression(SNode node, NamespaceScope& scope, int mode)
+{
+   ref_t result = 0;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         result = analizeExpression(current, scope, mode);
+      }
+      current = current.nextNode();
+   }
+
+   return result;
+}
+
 ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mode)
 {
    switch (current.type) {
@@ -7888,7 +7903,8 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
          return analizeMessageCall(current, scope, mode);
       case lxExpression:
       case lxReturning:
-         return analizeExpression(current.firstChild(lxObjectMask), scope, mode);
+         return analizeSubExpression(current, scope, mode);
+         //return analizeExpression(current.firstChild(lxObjectMask), scope, mode);
       //case lxAltExpression:
       case lxBranching:
       case lxTrying:

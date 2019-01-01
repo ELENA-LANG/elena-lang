@@ -14,18 +14,16 @@ class Console
     }
 
     /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
-//    writeLine : anObject
-//    [
-//        theWriter write(anObject literal).
-//        
-//        theWriter write(theNewLineConstant)
-//    ]
+    writeLine(o)
+    {
+        self.writeLine(o.Printable)
+    }
 
-//    /// Writes the specified literal value to the standard output stream.
-//    write : anObject
-//    [
-//        self write(anObject literal).
-//    ]
+    /// Writes the specified literal value to the standard output stream.
+    write(o)
+    {
+        self.write(o.Printable)
+    }
 
     /// Writes the specified literal value to the standard output stream.
     write(string s)

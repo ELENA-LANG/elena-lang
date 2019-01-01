@@ -593,7 +593,7 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
     {
         theCapacity := 32;
         theLength := 0;
-        theArray := new Array(32);
+        theArray := Array.allocate(32);
     }
 
 //    constructor new(int aCapacity)
@@ -662,7 +662,7 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
         {
             theCapacity.append(32);
             
-            Array newArray := new Array(cast int(theCapacity));
+            Array newArray := Array.allocate(cast int(theCapacity));
             for(IntNumber i := 0, i < theLength, i := i + 1)
             {
                 newArray[i] := theArray[i];
