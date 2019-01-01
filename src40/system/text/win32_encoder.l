@@ -41,28 +41,28 @@ public struct WinEncoder : Encoder
 //        //aConverted *= 2.
 //        UTF16Encoding convert(0, aConverted, T<ShortArray>(temp_buf), anOutput, &anOutputLength).
 //    ]
-//
-//    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int> anOutputLength)
-//    [
-//        T<short,127> temp_buf.
-//        int          temp_len := 127.
-//        int          chLen := aLength value.
-//
-//        UTF16Encoding convert(anIndex, chLen, aByteArray, T<ShortArray>(temp_buf), &temp_len).
-//        
-//        int retVal := system'external'KERNEL32 WideCharToMultiByte(
-//            theCodePage, 0,
-//            T<ShortArray>(temp_buf),
-//            temp_len, 0, 0, 0, 0).
-//
-//        if (retVal > chLen)
-//            [ InvalidArgumentException new; raise ].
-//                
-//        retVal := system'external'KERNEL32 WideCharToMultiByte(
-//            theCodePage, 0, T<ShortArray>(temp_buf), temp_len, anOutput, chLen, 0, 0).
-//        
-//        anOutputLength value := retVal
-//    ]    
+
+    convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
+    {
+        short temp_buf[127];
+        int   temp_len := 127;
+        int   chLen := length;
+
+        UTF16Encoding.convert(index, chLen, array, temp_buf, ref temp_len);
+        
+        int retVal := extern KERNEL32.WideCharToMultiByte(
+            theCodePage, 0,
+            temp_buf,
+            temp_len, 0, 0, 0, 0);
+
+        if (retVal > chLen)
+            { InvalidArgumentException.raise() };
+                
+        retVal := extern KERNEL32.WideCharToMultiByte(
+            theCodePage, 0, temp_buf, temp_len, output, chLen, 0, 0);
+        
+        outputLength := retVal
+    }
 }
 
 //// --- Win1252Encoder ---

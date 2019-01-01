@@ -5,26 +5,26 @@
 public interface Encoder
 {
 //    abstract convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength) {} 
-//
-//    abstract convert(int index, ref int length, char[] charArray, byte[] output, ref int outputLength) {}
+
+    abstract convert(int index, ref int length, char[] charArray, byte[] output, ref int outputLength) {}
     
-//    convert(int index, ref int length, string s, byte[] output, ref int outputLength)
-//    {
-//        char temp[64];
-//        int  temp_len := 64;
-//        if (temp_len > length)
-//        {
-//            temp_len := length
-//        }
-//        else
-//        {
-//            length := temp_len
-//        };
-//        
-//        s.Substring(index, length).save(0, temp, ref temp_len);
-//        
-//        self.convert(0, ref temp_len, temp, output, ref outputLength)
-//    }
+    convert(int index, ref int length, string s, byte[] output, ref int outputLength)
+    {
+        char temp[64];
+        int  temp_len := 64;
+        if (temp_len > length)
+        {
+            temp_len := length
+        }
+        else
+        {
+            length := temp_len
+        };
+        
+        s.Substring(index, length).save(0, temp, ref temp_len);
+        
+        self.convert(0, ref temp_len, temp, output, ref outputLength)
+    }
     
 //    convert(int ondex, ref int length, wide s, byte[] output, ref int outputLength)
 //    [
@@ -209,11 +209,11 @@ public interface Encoder
 //    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int>anOutputLength)
 //        => system'core_routines'__utf16encoder.
 //}
-//
-//// --- UTF16Encoding ---
-//
-//public singleton UTF16Encoding
-//{
+
+// --- UTF16Encoding ---
+
+public singleton UTF16Encoding
+{
 //    T<Encoder> encoder = UTF16Encoder.
 //    
 //    charCount(wide aLiteral, ref<int> aRetVal)
@@ -226,10 +226,10 @@ public interface Encoder
 //
 //    convert(int anIndex, int aSize, ShortArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
 //        => system'core_routines'__utf16encoder.
-//        
-//    convert(int anIndex, int aSize, CharArray aByteArray, ShortArray anOutput, ref<int> anOutputLength)
-//        => system'core_routines'__utf16encoder.
-//        
+        
+    convert(int index, int size, char[] array, short[] output, ref int outputLength)
+        => system'core_routines'__utf16encoder;
+        
 //    convert(int anIndex, ref<int> aSize, literal aLiteral, ShortArray anOutput, ref<int> anOutputLength)
 //    [
 //        V<char,64> temp.
@@ -251,4 +251,4 @@ public interface Encoder
 //        
 //        ^ LiteralValue new(0, temp_len, T<CharArray>(temp))
 //    ]
-//}
+}

@@ -45,7 +45,6 @@ constexpr auto HINT_NODEBUGINFO     = 0x00020000;
 ////#define HINT_PARAMETERSONLY   0x00010000
 constexpr auto HINT_SUBCODE_CLOSURE = 0x00008800;
 constexpr auto HINT_VIRTUALEXPR     = 0x00004000;
-//constexpr auto HINT_ASSIGNTARGET    = 0x00002000;
 constexpr auto HINT_INTERNALOP      = 0x00002000;
 constexpr auto HINT_SUBJECTREF      = 0x00001000;
 constexpr auto HINT_MEMBER          = 0x00000800;
@@ -62,7 +61,7 @@ constexpr auto HINT_REFOP           = 0x00000008;
 constexpr auto HINT_NOPRIMITIVES    = 0x00000001;
 
 // scope modes
-constexpr auto INITIALIZER_SCOPE    = 0x0000001;   // indicates the constructor or initializer method
+constexpr auto INITIALIZER_SCOPE    = 0x00000001;   // indicates the constructor or initializer method
 
 typedef Compiler::ObjectInfo                 ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute                 Attribute;
@@ -1216,7 +1215,7 @@ bool Compiler :: calculateRealOp(int operation_id, double arg1, double arg2, dou
 //   /*else */return resolveObjectReference(scope, object);
 //}
 
-ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, bool unboxWapper)
 {
    if (object.kind == okSelfParam) {
       if (object.extraparam == -2u) {
@@ -1224,6 +1223,9 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object)
          return object.reference;
       }
       else return scope.getClassRefId(false);
+   }
+   else if (unboxWapper && object.reference == V_WRAPPER) {
+      return object.element;
    }
    else return resolveObjectReference(*scope.moduleScope, object);
 }
@@ -2815,21 +2817,12 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode rope
 //   return ObjectInfo(okObject, resultRef);
 //}
 
-ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, bool unboxWrapper)
-{
-   ref_t reference = resolveObjectReference(scope, object);
-   if (unboxWrapper && reference == V_WRAPPER) {
-      return object.element;
-   }
-   else return reference;
-}
-
 ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2)
 {
    ObjectInfo retVal;
 
-   ref_t loperandRef = resolveObjectReference(scope, loperand, true);
-   ref_t roperandRef = resolveObjectReference(scope, roperand, true);
+   ref_t loperandRef = resolveObjectReference(scope, loperand);
+   ref_t roperandRef = resolveObjectReference(scope, roperand);
    ref_t roperand2Ref = 0;
    ref_t resultClassRef = 0;
    int operationType = 0;
@@ -3449,7 +3442,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 //      }
 //   }
 
-   ref_t targetRef = resolveObjectReference(scope, target);
+   ref_t targetRef = resolveObjectReference(scope, target, false);
    bool byRefAssigning = false;
    switch (target.kind) {
       case okLocal:
@@ -4156,7 +4149,7 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    writer.newBookmark();
 
    ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode);
-   ref_t operandRef = resolveObjectReference(scope, objectInfo);
+   ref_t operandRef = resolveObjectReference(scope, objectInfo, false);
    if (isPrimitiveRef(operandRef)) {
       operandRef = resolvePrimitiveReference(scope, operandRef, objectInfo.element);
    }

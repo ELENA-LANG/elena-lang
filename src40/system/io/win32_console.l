@@ -172,7 +172,7 @@ sealed class ConsoleWriter
 sealed class FileWriter
 {
     handle theHandle;
-    wide   theNewLineSymbol;
+    string theNewLineSymbol;
 
     constructor(handle h)
     {
@@ -222,6 +222,12 @@ sealed class FileWriter
         self.write(theNewLineSymbol);
     }
     
+    writeLine(string s)
+    {
+        self.write(s);
+        self.write(theNewLineSymbol);
+    }
+    
     write(string literal)
     {
         byte buffer[256];
@@ -254,11 +260,11 @@ sealed class FileWriter
 //    clear
 //    [
 //    ]
-//
-//    refresh
-//    [
-//    ]
-//
+
+    refresh()
+    {
+    }
+
 //    free
 //    [
 //        system'external'KERNEL32 CloseHandle(theHandle).
