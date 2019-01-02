@@ -313,6 +313,11 @@ public try<try_block,catch_block>:catch()
     try_block | on(catch_block);
 }
 
+public try<try_block,catch_block1,catch_block2>:catch,catch()
+{
+    try_block | on(catch_block1,catch_block2);
+}
+
 //// -- try-finally-catch statement ---
 //
 //public __block __nested try<expr>

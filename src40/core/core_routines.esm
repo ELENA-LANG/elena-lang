@@ -69,6 +69,72 @@ procedure __exception."on[2]"
 
 end
 
+procedure __exception."on[3]"
+
+  open 1
+  pusha
+  aloadfi -3
+  pusha
+  aloadfi -4
+  pusha
+
+  hook labNotFound
+
+  aloadsi 6
+  pusha
+  aloadsi 6
+labCall:  
+  copym message : "#invoke[1]"
+  acallvi 0
+  
+labReturn:
+
+  unhook
+
+  close
+  quitn 3
+
+labNotFound:
+
+  dloadsi 9
+  address labReturn
+  else labContinueError
+
+  restore 1
+  close
+  close
+  popi 1
+
+  aloadsi 5
+  ifr labContinueError 0 
+  bcopya
+  acopyr 0 
+  asavesi 5
+  acopyb
+  jump    labCall
+
+  unhook
+
+  close
+  quitn 3
+
+labContinueError:
+  popa
+  unhook
+  pusha
+  throw
+
+end
+
+procedure __exception.register[0]
+
+  acopyr intern : system'core_routines'critical_exception_handler
+  callextr api : register_critical_exception_handler
+
+  quit
+
+end
+
 procedure __int."readHashCodeTo$@system@ref#1&IntNumber[2]"
 
   bloadsi 2
@@ -1205,6 +1271,15 @@ symbol sta_start
   callextr extern : InitializeSTA
   popi 4
   quit
+
+end
+
+procedure critical_exception_handler
+
+  open 1
+  pushr class : system'CriticalException
+  pushr const : %"new[0]"
+  throw
 
 end
 

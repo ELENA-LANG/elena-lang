@@ -106,6 +106,9 @@ public class Exception
     on(handler)
         => system'core_routines'__exception;
 
+    on(handler1,handler2)
+        => system'core_routines'__exception;
+
     raise()
     {
         self.throw()

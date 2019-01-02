@@ -32,8 +32,8 @@ public symbol startUp =
     {
         start(/*StartUpEvents events*/)
         {
-//            system'core_routines'__exception register.
-//            
+            intern system'core_routines'__exception.register();
+            
             try
             {
                 forward program()
@@ -42,9 +42,9 @@ public symbol startUp =
             {
                 console.writeLine(e.Printable);
             }
-//            catch(AbortException e)
-//            {
-//            }
+            catch(AbortException e)
+            {
+            };
 
 //            events stopping:nil
         }        

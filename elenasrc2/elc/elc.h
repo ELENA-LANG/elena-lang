@@ -95,7 +95,7 @@
 #define ELC_MANIFEST_AUTHOR         "configuration/manifest/author"
 
 // --- ELC information messages ---
-#define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2018 by Alex Rakov\n"
+#define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2019 by Alex Rakov\n"
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
 #define ELC_STARTING                "Project : %s, Platform: %s"
 #define ELC_COMPILING               "Compiling..."
