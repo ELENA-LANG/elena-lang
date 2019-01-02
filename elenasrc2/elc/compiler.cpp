@@ -5265,7 +5265,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 //   return false;
 //}
 
-void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods/*, bool withOpenArgGenerics*/)
+void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -5279,9 +5279,9 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 
       // if it is generic handler with redirect statement / redirect statement
       if (node != lxNone && node.firstChild(lxObjectMask) != lxNone) {
-         //// !! temporally
-         //if (withOpenArgGenerics)
-         //   scope.raiseError(errInvalidOperation, node);
+         // !! temporally
+         if (withOpenArgGenerics)
+            scope.raiseError(errInvalidOperation, node);
 
          if (withGenericMethods) {
             writer.appendNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
@@ -5291,9 +5291,9 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
       }
       // if it is generic handler without redirect statement
       else if (withGenericMethods) {
-         //// !! temporally
-         //if (withOpenArgGenerics)
-         //   scope.raiseError(errInvalidOperation, node);
+         // !! temporally
+         if (withOpenArgGenerics)
+            scope.raiseError(errInvalidOperation, node);
 
          writer.newNode(lxResending);
 
@@ -5305,24 +5305,22 @@ void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope
 
          writer.closeNode();
       }
-      else throw InternalError("not yet supported"); // !! temporal
+      // if it is open arg generic without redirect statement
+      else if (withOpenArgGenerics) {
+         writer.newNode(lxResending);
 
-//      // if it is open arg generic without redirect statement
-//      else if (withOpenArgGenerics) {
-//         writer.newNode(lxResending);
-//
 //         for (int paramCount = MAX_ARG_COUNT; paramCount >= OPEN_ARG_COUNT; paramCount--) {
 //            if (verifyGenericArgParamCount(*(ClassScope*)scope.parent, paramCount)) {
-//               writer.appendNode(lxMessage, encodeMessage(DISPATCH_MESSAGE_ID, paramCount));
+               writer.appendNode(lxMessage, encodeMessage(getAction(codeScope.moduleScope->dispatch_message), 1, VARIADIC_MESSAGE));
 //            }
 //         }
-//
-//         writer.newNode(lxTarget, scope.moduleScope->superReference);
-//         writer.appendNode(lxMessage, encodeAction(DISPATCH_MESSAGE_ID));
-//         writer.closeNode();
-//
-//         writer.closeNode();
-//      }
+
+         writer.newNode(lxTarget, scope.moduleScope->superReference);
+         writer.appendNode(lxMessage, codeScope.moduleScope->dispatch_message);
+         writer.closeNode();
+
+         writer.closeNode();
+      }
 
       writer.closeNode();
    }
@@ -5994,8 +5992,8 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
                //   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
 
                compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope,
-                  test(scope.info.header.flags, elWithGenerics)/*,
-                  test(scope.info.header.flags, elWithArgGenerics)*/);
+                  test(scope.info.header.flags, elWithGenerics),
+                  test(scope.info.header.flags, elWithVariadics));
             }
             // if it is a normal method
             else {
@@ -6022,7 +6020,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
    }
 
    // if the VMT conatains newly defined generic handlers, overrides default one
-   if (testany(scope.info.header.flags, elWithGenerics/* | elWithArgGenerics*/) 
+   if (testany(scope.info.header.flags, elWithGenerics | elWithVariadics) 
       && scope.info.methods.exist(scope.moduleScope->dispatch_message, false)) 
    {
       MethodScope methodScope(&scope);
@@ -6035,8 +6033,8 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
       scope.info.header.flags |= elWithCustomDispatcher;
 
       compileDispatcher(writer, SNode(), methodScope,
-         test(scope.info.header.flags, elWithGenerics)/*,
-         test(scope.info.header.flags, elWithArgGenerics)*/);
+         test(scope.info.header.flags, elWithGenerics),
+         test(scope.info.header.flags, elWithVariadics));
 
       // overwrite the class info
       scope.save();
@@ -6097,7 +6095,7 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
    }
 
    // if the VMT conatains newly defined generic handlers, overrides default one
-   if (testany(classClassScope.info.header.flags, elWithGenerics/* | elWithArgGenerics*/) 
+   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
       && classClassScope.info.methods.exist(classClassScope.moduleScope->dispatch_message, false)) 
    {
       MethodScope methodScope(&classClassScope);
@@ -6108,8 +6106,8 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
       SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
 
       compileDispatcher(writer, SNode(), methodScope,
-         test(classClassScope.info.header.flags, elWithGenerics)/*,
-         test(classClassScope.info.header.flags, elWithArgGenerics)*/);
+         test(classClassScope.info.header.flags, elWithGenerics),
+         test(classClassScope.info.header.flags, elWithVariadics));
 
       // overwrite the class info
       classClassScope.save();
@@ -6723,17 +6721,17 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    generateMethodAttributes(scope, current, message, allowTypeAttribute);
 
    int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
-//   if (isOpenArg(message)) {
+   if (isOpenArg(message)) {
 //      if (_logic->isMethodGeneric(scope.info, message)) {
 //         // HOTFIX : verify that only generics with similar argument signature available
 //         //int extraParamCount = retrieveGenericArgParamCount(scope);
 //         //if (extraParamCount != -1 && getParamCount(message) != extraParamCount)
 //         //   scope.raiseError(errIllegalMethod, current);
 //
-//         scope.info.header.flags |= elWithArgGenerics;
+         scope.info.header.flags |= elWithVariadics;
 //      }
-//   }
-   /*else */if (_logic->isMethodGeneric(scope.info, message)) {
+   }
+   else if (_logic->isMethodGeneric(scope.info, message)) {
       scope.info.header.flags |= elWithGenerics;
    }
 
@@ -7442,9 +7440,9 @@ ref_t Compiler :: analizeInternalCall(SNode node, NamespaceScope& scope)
    return V_INT32;
 }
 
-//ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, /*WarningScope& warningScope, */int)
+//ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, int)
 //{
-//   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
+//   analizeExpressionTree(node, scope, HINT_NOBOXING);
 //
 //   return 0;
 //}
@@ -8746,8 +8744,11 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
    if (methodType == lxConstructor)
       methNode.appendNode(lxAttribute, tpConstructor);
 
-   //if (actionRef == INVOKE_MESSAGE_ID)
-   //   methNode.appendNode(lxAttribute, tpAction);
+   if (test(message, SPECIAL_MESSAGE))
+      methNode.appendNode(lxAttribute, tpAction);
+
+   //if (test(message, VARIADIC_MESSAGE))
+   //   methNode.appendNode(lxAttribute, lxArgDispatcherAttr);
 
    methNode.appendNode(lxResendExpression, resendMessage);
 }

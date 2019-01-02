@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -189,7 +189,7 @@ ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_
    return actionRef;
 }
 
-ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature)
+ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool variadicOne)
 {
    if (!signature)
       return 0;
@@ -216,6 +216,11 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature)
       else signatureName.append(referenceName);
    }
 
+   if (count != 0 && variadicOne) {
+      // HOTFIX : to tell apart vardiatic signature from normal ones (see further)
+      signatureName.append("#params");
+   }
+
    SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true);
 
    ref_t resolvedSignature = info.module->mapAction(signatureName.c_str(), 0u, true);
@@ -239,6 +244,11 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature)
 
          ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
          writer.writeRef(typeClassRef | mskVMTRef, 0);
+      }
+
+      if (variadicOne) {
+         // HOTFIX : vardiatic signature should end with zero for correct multi-dispatching operation
+         writer.writeDWord(0);
       }
 
       info.module->mapPredefinedAction(signatureName.c_str(), resolvedSignature, 0u);
@@ -271,7 +281,7 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    ref_t signature;
    ident_t actionName = module->resolveAction(actionRef, signature);
 
-   ref_t resolvedSignature = resolveSignature(module, signature);
+   ref_t resolvedSignature = resolveSignature(module, signature, test(message, VARIADIC_MESSAGE));
    ref_t resolvedAction = messageTable.module->mapAction(actionName, resolvedSignature, true);
    if (!resolvedAction) {
       resolvedAction = mapAction(messageTable, actionName, resolveWeakAction(messageTable, actionName), resolvedSignature);

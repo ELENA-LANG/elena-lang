@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -91,14 +91,12 @@ const int gcCommands[gcCommandNumber] =
    bcSelect, bcEqualR
 };
 
-const int gcCommandExNumber = 10;
+const int gcCommandExNumber = 6;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
    bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
-   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
-   bcMTRedirect + 0xD00, bcXMTRedirect + 0xD00,
-   bcMTRedirect + 0xE00, bcXMTRedirect + 0xE00,
+   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00
 };
 
 // command table
@@ -1380,17 +1378,7 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
    else scope.extra_arg = 4;
 
    if (test(message, VARIADIC_MESSAGE)) {
-      switch (getParamCount(message)) {
-         case 1:
-            loadMTOpX(op, scope, 0xC00);
-            break;
-         case 2:
-            loadMTOpX(op, scope, 0xD00);
-            break;
-         case 3:
-            loadMTOpX(op, scope, 0xE00);
-            break;
-      }
+      loadMTOpX(op, scope, 0xC00);
    }
    else {
       switch (getParamCount(message)) {

@@ -303,7 +303,7 @@ namespace _ELENA_
    constexpr int elExtMessage          = 0x00208000;
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
    constexpr int elWithCustomDispatcher= 0x00800000;
-//   const int elWithArgGenerics     = 0x01000000;
+   constexpr int elWithVariadics       = 0x01000000;
 ////   const int elTapeGroup           = 0x02000200;
    constexpr int elClassClass          = 0x04000000;
 //   const int elWithMuti            = 0x08000000;

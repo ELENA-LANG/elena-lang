@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jitlinkerH
@@ -147,7 +147,7 @@ class JITLinker : _JITLoaderListener
    ref_t mapAction(SectionInfo& messageTable, ident_t action, ref_t weakActionRef, ref_t signature);
    ref_t resolveWeakAction(SectionInfo& messageTable, ident_t action);
    ref_t resolveMessage(_Module* module, ref_t reference);
-   ref_t resolveSignature(_Module* module, ref_t signature);
+   ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne);
 
    void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveConstVariable(ident_t  reference, int mask);

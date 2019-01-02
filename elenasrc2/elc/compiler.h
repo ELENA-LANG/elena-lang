@@ -917,7 +917,7 @@ private:
 
    void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false/*, bool withOpenArgGenerics = false*/);
+   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);

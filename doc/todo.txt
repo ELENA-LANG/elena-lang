@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * long constant should not be boxed like int constants
                  * it should be possible to declare something like this - var Array<object> o := nil;
 
                  * support Array<type> constructors

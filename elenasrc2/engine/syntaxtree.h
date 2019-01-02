@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Syntax Tree classes
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxTreeH
@@ -283,7 +283,7 @@ enum LexicalType
 //   lxTemplateBoxing  = 0x2003D,
 ////   lxParentLists     = 0x2003E
    lxAutoMultimethod    = 0x2003F,
-//   lxArgDispatcherAttr = 0x20040,
+   //lxArgDispatcherAttr  = 0x20040,
 //   lxFPUTarget       = 0x20041,
 ////   lxFalseAttribute   = 0x20042,
 ////   lxTemplateParamAttr = 0x20043,

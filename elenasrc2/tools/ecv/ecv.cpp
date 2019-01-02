@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2012-2018, by Alexei Rakov
+//                                              (C)2012-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   23
+#define REVISION_VERSION   24
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -1010,8 +1010,8 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elWithGenerics", row, pageSize);
    }      
 
-   //if (test(flags, elWithArgGenerics))
-   //   printLine("@flag ", "elWithArgGenerics", row, pageSize);
+   if (test(flags, elWithVariadics))
+      printLine("@flag ", "elWithVariadics", row, pageSize);
 
    if (test(flags, elReadOnlyRole))
       printLine("@flag ", "elReadOnlyRole", row, pageSize);
@@ -1301,7 +1301,7 @@ void printManifest(_Module* module)
 // === Main Program ===
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2018 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
+   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2019 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
 
    if (argc<2) {
       printf("ecv <module name> | ecv -p<module path>");
