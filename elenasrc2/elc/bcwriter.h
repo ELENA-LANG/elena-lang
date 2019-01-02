@@ -133,7 +133,7 @@ class ByteCodeWriter
    void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
-//   void declareAlt(CommandTape& tape);
+   void declareAlt(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
@@ -169,7 +169,7 @@ class ByteCodeWriter
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
-   void saveStructBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument, int size);
+   void saveStructBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int size);
    void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadInternalReference(CommandTape& tape, ref_t reference);
 
@@ -219,7 +219,7 @@ class ByteCodeWriter
    void freeVirtualStack(CommandTape& tape, int count);
 
    void endCatch(CommandTape& tape);
-//   void endAlt(CommandTape& tape);
+   void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);

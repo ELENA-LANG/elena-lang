@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser Symbol constants
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxH
@@ -94,24 +94,6 @@ enum Symbol
 ////   nsInlineClosure              = 0x01048,
 //////   nsImplicitConstructor        = 0x0104B,
    nsAttribute                  = 0x0104E,
-////   nsRootMessage                = 0x0104F,
-//   nsLazyExpression             = 0x01050,
-//   nsAngleOperator              = 0x01051,
-////   nsAngleObject                = 0x01052,
-//   nsArrayOperation             = 0x01053,
-////   nsRootAngleOperator          = 0x01054,
-////   nsRootAngleObject            = 0x01055,
-////   nsRootL6Operation            = 0x01056,
-//   nsXInlineClosure             = 0x01057, 
-////   nsSizeExpression             = 0x01058,
-////   nsArrayIdentifier            = 0x01059,
-//   nsNestedSubCode              = 0x0105A,
-//   nsNestedRootExpression       = 0x0105B,
-//   nsL8Operation                = 0x0105C,
-//   nsIdleMessageParameter       = 0x0105D,
-//   nsExprMessageParameter       = 0x0105E,
-//   nsReferenceExpression        = 0x0105F,
-//   nsL0Operator                 = 0x01060,
    nsL1Operator                 = 0x01061,
    nsL2Operator                 = 0x01062,
    nsL3Operator                 = 0x01063,
@@ -137,6 +119,7 @@ enum Symbol
    nsFieldInit                  = 0x01077,
    nsL4Operand                  = 0x01078,
    nsAssignmentOperand          = 0x01079,
+   nsL0Operator                 = 0x0107A,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

@@ -289,7 +289,7 @@ enum LexicalType
 ////   lxTemplateParamAttr = 0x20043,
 //   lxRefAttribute    = 0x20042,
    lxElement            = 0x20043,
-//   lxTypecasting     = 0x20044,
+   lxTypecasting        = 0x20044,
    lxIntConversion      = 0x20045,
    lxTemplateNameParam  = 0x20046,
    lxTemplateMsgParam   = 0x20047,

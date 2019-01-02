@@ -711,7 +711,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    addVerb(operators, SEPARATE_OPERATOR, SEPARATE_OPERATOR_ID);
    addVerb(operators, SHIFTR_OPERATOR, SHIFTR_OPERATOR_ID);
    addVerb(operators, SHIFTL_OPERATOR, SHIFTL_OPERATOR_ID);
-   //addVerb(operators, ISNIL_OPERATOR, ISNIL_MESSAGE_ID);
+   addVerb(operators, ISNIL_OPERATOR, ISNIL_OPERATOR_ID);
    addVerb(operators, CATCH_OPERATOR, CATCH_OPERATOR_ID);
 }
 

@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Engine constants
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaconstH
@@ -70,7 +70,7 @@ namespace _ELENA_
    //#define DEFAULT_MESSAGE_ID      0x001F             // virtual method used for the implicit constructor
    //#define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
    //#define IF_ELSE_MESSAGE_ID      0x0021
-   //#define ISNIL_MESSAGE_ID        0x0022
+   constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
    constexpr auto CATCH_OPERATOR_ID       = 0x0023;
 
 //   // virtual operator
@@ -416,7 +416,7 @@ namespace _ELENA_
    constexpr auto SEPARATE_OPERATOR    = "/=";
    constexpr auto SHIFTL_OPERATOR      = "$shl";
    constexpr auto SHIFTR_OPERATOR      = "$shr";
-//   #define ISNIL_OPERATOR           "??"
+   constexpr auto ISNIL_OPERATOR       = "??";
    constexpr auto CATCH_OPERATOR       = "|";
 
   // --- ELENA explicit variables ---

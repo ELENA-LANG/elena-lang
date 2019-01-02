@@ -408,20 +408,20 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-//void ByteCodeWriter :: declareAlt(CommandTape& tape)
-//{
-//   //   unhook
-//   //   jump labEnd
-//   // labErr:
-//   //   unhook
-//
-//   tape.write(bcUnhook);
-//   tape.write(bcJump, baPreviousLabel);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
+void ByteCodeWriter :: declareAlt(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   unhook
+
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
 
 void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage)
 {
@@ -814,7 +814,7 @@ void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
    }
 }
 
-void ByteCodeWriter :: saveStructBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument, int size)
+void ByteCodeWriter :: saveStructBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int size)
 {
    switch (sourceType) {
       case lxResult:
@@ -1286,13 +1286,13 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
    tape.write(bcFreeStack, 3);
 }
 
-//void ByteCodeWriter :: endAlt(CommandTape& tape)
-//{
-//   // labEnd
-//
-//   tape.setLabel();
-//   tape.write(bcFreeStack, 3);
-//}
+void ByteCodeWriter :: endAlt(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+   tape.write(bcFreeStack, 3);
+}
 
 void ByteCodeWriter :: endThenBlock(CommandTape& tape)
 {
@@ -4301,37 +4301,37 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
 
       selectByAcc(tape, elseParam.argument, ifParam.argument);
    }
-   //else if (node.argument == ISNIL_MESSAGE_ID) {
-   //   SNode larg;
-   //   SNode rarg;
-   //   assignOpArguments(node, larg, rarg);
-   //   if (larg.compare(lxCalling, lxDirectCalling, lxSDirctCalling) && getParamCount(larg.argument) == 0 && larg.existChild(lxTypecasting)) {
-   //      declareTry(tape);
+   else if (node.argument == ISNIL_OPERATOR_ID) {
+      SNode larg;
+      SNode rarg;
+      assignOpArguments(node, larg, rarg);
+      if (larg.compare(lxCalling, lxDirectCalling, lxSDirctCalling) && getParamCount(larg.argument) == 0 && larg.existChild(lxTypecasting)) {
+         declareTry(tape);
 
-   //      generateObjectExpression(tape, larg, ACC_REQUIRED);
+         generateObject(tape, larg, ACC_REQUIRED);
 
-   //      declareAlt(tape);
+         declareAlt(tape);
 
-   //      generateObjectExpression(tape, rarg, ACC_REQUIRED);
+         generateObject(tape, rarg, ACC_REQUIRED);
 
-   //      endAlt(tape);
-   //   }
-   //   else {
-   //      generateObjectExpression(tape, rarg, ACC_REQUIRED);
-   //      if (isSimpleObject(larg)) {
-   //         loadBase(tape, lxResult);
-   //         generateObjectExpression(tape, larg, ACC_REQUIRED);
-   //      }
-   //      else {
-   //         pushObject(tape, lxResult);
-   //         generateObjectExpression(tape, larg, ACC_REQUIRED);
-   //         tape.write(bcPopB);
-   //      }
+         endAlt(tape);
+      }
+      else {
+         generateObject(tape, rarg, ACC_REQUIRED);
+         if (isSimpleObject(larg)) {
+            loadBase(tape, lxResult);
+            generateObject(tape, larg, ACC_REQUIRED);
+         }
+         else {
+            pushObject(tape, lxResult);
+            generateObject(tape, larg, ACC_REQUIRED);
+            tape.write(bcPopB);
+         }
 
-   //      tape.write(bcEqualR, 0);
-   //      tape.write(bcSelect);
-   //   }
-   //}
+         tape.write(bcEqualR, 0);
+         tape.write(bcSelect);
+      }
+   }
 }
 
 void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, ExternalScope& externalScope)
@@ -5327,7 +5327,7 @@ void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::N
             }
             else generateExpression(tape, current, ACC_REQUIRED);
 
-            saveStructBase(tape, true, lxResult, current.argument, itemSize);
+            saveStructBase(tape, lxResult, current.argument, itemSize);
          }
 
          current = current.nextNode();

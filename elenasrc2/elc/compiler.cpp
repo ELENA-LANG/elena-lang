@@ -2802,18 +2802,18 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode rope
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand)
-//{
-//   ref_t loperandRef = resolveObjectReference(scope, loperand);
-//   ref_t roperandRef = resolveObjectReference(scope, roperand);
-//   
-//   ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef) ? loperandRef : 0;
-//
-//   writer.insert(lxNilOp, ISNIL_MESSAGE_ID);
-//   writer.closeNode();
-//
-//   return ObjectInfo(okObject, resultRef);
-//}
+ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand)
+{
+   ref_t loperandRef = resolveObjectReference(scope, loperand);
+   ref_t roperandRef = resolveObjectReference(scope, roperand);
+   
+   ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef) ? loperandRef : 0;
+
+   writer.insert(lxNilOp, ISNIL_OPERATOR_ID);
+   writer.closeNode();
+
+   return ObjectInfo(okObject, resultRef);
+}
 
 ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2)
 {
@@ -2916,10 +2916,10 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       else roperand = compileExpression(writer, roperandNode, scope, 0, 0);*/
    }
 
-   //if (operator_id == ISNIL_MESSAGE_ID) {
-   //   retVal = compileIsNilOperator(writer, node, scope, loperand, roperand);
-   //}
-   /*else */retVal = compileOperator(writer, node, scope, operator_id, paramCount, loperand, roperand, roperand2);
+   if (operator_id == ISNIL_OPERATOR_ID) {
+      retVal = compileIsNilOperator(writer, node, scope, loperand, roperand);
+   }
+   else retVal = compileOperator(writer, node, scope, operator_id, paramCount, loperand, roperand, roperand2);
 
 //   writer.removeBookmark();
 
@@ -3106,7 +3106,7 @@ bool Compiler :: typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t ta
          ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
          ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
 
-         //writer.appendNode(lxTypecasting);
+         writer.appendNode(lxTypecasting);
 
          compileMessage(writer, SNode(), scope, source, encodeAction(actionRef), HINT_NODEBUGINFO | HINT_SILENT, 0);
       }
