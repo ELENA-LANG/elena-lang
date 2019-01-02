@@ -538,7 +538,7 @@ bool DerivationWriter :: recognizeMetaScope(SNode node)
 void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 {
    SNode bodyNode = scopeNode.firstChild();
-   if (scopeNode.existChild(lxCode)) {
+   if (scopeNode.existChild(lxCode, lxReturning)) {
       // HOTFIX : recognize returning expression
       //         SNode body = node.findChild(lxCode, lxExpression, lxDispatchCode/*, lxReturning*/, lxResendExpression);
       //         if (body == lxExpression)

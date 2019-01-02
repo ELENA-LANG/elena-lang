@@ -522,7 +522,7 @@ procedure __wide."Substring$system@IntNumber$system@IntNumber[3]"
   inc
 
   // ; create a new string  
-  acopyr class : system'WideLiteralValue
+  acopyr class : system'WideString
   wcreate
   bcopya
 
