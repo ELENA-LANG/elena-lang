@@ -3,6 +3,7 @@ public abstract class BaseVariable
 {
     // should be overridden
     abstract get Value() {}
+    
     abstract set Value(o) {}
 }
 
@@ -2512,11 +2513,11 @@ public singleton byteConvertor
 //    /// Converts a character into a byte value and saves the result into an output parameter
 //    convert(char aValue, ref<byte> aRetVal)
 //        => system'core_routines'__byteconvertor.
-//        
-//    /// Converts a short integer into a byte value and saves the result into an output parameter
-//    byte convert(short aValue, ref<byte> aRetVal)
-//        => system'core_routines'__byteconvertor.
-//        
+        
+    /// Converts a short integer into a byte value and saves the result into an output parameter
+    byte convert(short n, ref byte retVal)
+        => system'core_routines'__byteconvertor;
+        
 //    /// Converts an integer into a byte value and saves the result into an output parameter
 //    byte convert(int aValue, ref<byte> aRetVal)
 //        => system'core_routines'__byteconvertor.
@@ -2543,11 +2544,11 @@ public singleton byteConvertor
 //        
 //    byte convert(BaseVariable v)
 //        <= convert(v value).
-//                        
-//    /// Returns the parameter        
-//    byte convert(byte anInt)
-//        = ByteNumber new(anInt).
-//        
+                        
+    /// Returns the parameter        
+    byte convert(byte n)
+        = new ByteNumber(n);
+        
 //    /// Converts a character into a byte value
 //    byte convert(char aValue)
 //    [
@@ -2556,16 +2557,16 @@ public singleton byteConvertor
 //        
 //        ^ ByteNumber new(aRetVal)
 //    ]
-//
-//    /// Converts a short integer into a byte value
-//    byte convert(short aValue)
-//    [
-//        byte aRetVal := 0.
-//        self convert(aValue, &aRetVal).
-//        
-//        ^ ByteNumber new(aRetVal)
-//    ]
-//        
+
+    /// Converts a short integer into a byte value
+    byte convert(short n)
+    {
+        byte retVal := 0;
+        self.convert(n, ref retVal);
+        
+        ^ new ByteNumber(retVal)
+    }
+        
 //    /// Converts an integer into a byte value
 //    byte convert(int aValue)
 //    [
@@ -2619,9 +2620,9 @@ public singleton byteConvertor
 //        
 //        ^ ByteNumber new(aValue)
 //    ]
-//
-//    byte convert : anObject
-//        = T<byte>(anObject).
+
+    byte convert(o)
+        = cast byte(o);
 }
 
 /// A 16bit integer convertor
@@ -2630,11 +2631,11 @@ public singleton shortConvertor
 //    /// Converts a character into a short integer value and saves the result into an output parameter
 //    convert(char aValue, ref<short> aRetVal)
 //        => system'core_routines'__shortconvertor.
-//        
-//    /// Converts a byte value into a short integer value and saves the result into an output parameter
-//    convert(byte aValue, ref<short> aRetVal)
-//        => system'core_routines'__shortconvertor.
-//        
+        
+    /// Converts a byte value into a short integer value and saves the result into an output parameter
+    convert(byte n, ref short retVal)
+        => system'core_routines'__shortconvertor;
+        
 //    /// Converts an integer into a short integer value and saves the result into an output parameter
 //    convert(int aValue, ref<short> aRetVal)
 //        => system'core_routines'__shortconvertor.
@@ -2661,20 +2662,20 @@ public singleton shortConvertor
 //        
 //    short convert(BaseVariable v)
 //        <= convert(v value).
-//                        
-//    /// Returns a short integer value        
-//    short convert(short anInt)
-//        = ShortNumber new(anInt).
-//        
-//    /// Converts a byte value into a short integer value
-//    short convert(byte aValue)
-//    [
-//        short aRetVal := 0.
-//        self convert(aValue, &aRetVal).
-//        
-//        ^ ShortNumber new(aRetVal)
-//    ]
-//
+                        
+    /// Returns a short integer value        
+    short convert(short n)
+        = new ShortNumber(n);
+        
+    /// Converts a byte value into a short integer value
+    short convert(byte n)
+    {
+        short retVal := 0;
+        self.convert(n, ref retVal);
+        
+        ^ new ShortNumber(retVal)
+    }
+
 //    /// Converts an integer into a short integer value
 //    short convert(int aValue)
 //    [
@@ -2737,9 +2738,9 @@ public singleton shortConvertor
 //        
 //        ^ ShortNumber new(aRetVal)
 //    ]
-//        
-//    short convert : anObject
-//        = T<short>(anObject).
+        
+    short convert(o)
+        = cast short(o);
 }
 
 /// An integer convertor
@@ -2897,19 +2898,19 @@ public singleton uintConvertor
 //    
 //    uint convert(int val)
 //        = UIntNumber new(val).
-//        
-//    /// Converts a long integer into an integer and saves the result into an output parameter
-//    convert(long aValue, ref<int> aRetVal)
-//        => system'core_routines'__uintconvertor.
-//        
-//    /// Converts a long integer value into an integer and saves the result into an output parameter
-//    uint convert(long aValue)
-//    [
-//        int aRetVal := 0.
-//        self convert(aValue, &aRetVal).
-//        
-//        ^ UIntNumber new(aRetVal)
-//    ]        
+        
+    /// Converts a long integer into an integer and saves the result into an output parameter
+    convert(long n, ref int retVal)
+        => system'core_routines'__uintconvertor;
+        
+    /// Converts a long integer value into an integer and saves the result into an output parameter
+    uint convert(long n)
+    {
+        int retVal := 0;
+        self.convert(n, ref retVal);
+        
+        ^ new UIntNumber(retVal)
+    }        
 }
 
 /// A long integer convertor
@@ -2930,10 +2931,10 @@ public singleton longConvertor
 //    /// Converts a wide literal string into a long integer and saves the result into an output parameter
 //    convert(wide value, int base, ref<long> retVal)
 //        => system'core_routines'__longconvertor.
-//
-//    convert(int aValue, ref<long> aRetVal)
-//        => system'core_routines'__longconvertor.
-//        
+
+    convert(int n, ref long retVal)
+        => system'core_routines'__longconvertor;
+        
 //    convert(uint aValue, ref<long> aRetVal)
 //        => system'core_routines'__longconvertor.
 //        
@@ -2949,16 +2950,16 @@ public singleton longConvertor
 //
 //    long convert(BaseVariable v)
 //        <= convert(v value).
-//        
-//    /// Converts an integer value into a long integer
-//    long convert(int aValue)
-//    [
-//        long n := 0l.
-//        self convert(aValue, &n).
-//        
-//        ^ LongNumber new(n)
-//    ]
-//
+        
+    /// Converts an integer value into a long integer
+    long convert(int n)
+    {
+        long retVal := 0l;
+        self.convert(n, ref retVal);
+        
+        ^ new LongNumber(retVal)
+    }
+
 //    /// Converts an integer value into a long integer
 //    long convert(uint aValue)
 //    [
@@ -3039,13 +3040,13 @@ public singleton longConvertor
 ////        
 ////        ^ LongNumber new long:retVal
 ////    ]
-//    
-//    /// Returns a parameter
-//    long convert(long aLong)
-//        = LongNumber new(aLong).
-//        
-//    long convert : anObject
-//        = T<long>(anObject).
+    
+    /// Returns a parameter
+    long convert(long n)
+        = new LongNumber(n);
+        
+    long convert(n)
+        = cast long(n);
 }
 
 /// A real number convertor

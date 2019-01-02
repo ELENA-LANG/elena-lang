@@ -1422,7 +1422,7 @@ public sealed const struct WideString : BaseValue
 //    constructor new(int anIndex, int aSize, CharArray anArray)
 //        => system'core_routines'__wide.
 
-    /*internal */constructor fromShortArray(int anIndex, int aSize, short[] anArray)
+    internal constructor fromShortArray(int anIndex, int aSize, short[] anArray)
         <= allocate(aSize)
     {
         intern system'core_routines'__wide.copy(self, anIndex, aSize, anArray)
@@ -1567,11 +1567,11 @@ public sealed const struct WideString : BaseValue
 //    /// Deletes the substring from the object and returns the new one            
 //    wide delete(int anIndex, int aLength)
 //        => system'core_routines'__wide.
-//
-//    /// Returns the substring
-//    wide Substring(int anIndex, int aLength)
-//        => system'core_routines'__wide.
-//
+
+    /// Returns the substring
+    wide Substring(int n, int length)
+        => system'core_routines'__wide;
+
 //    wide Substring:aLength at:anIndex
 //        <= Substring(T<int>(anIndex), T<int>(aLength)).
 

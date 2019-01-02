@@ -1,4 +1,4 @@
-rem ..\..\bin\elc accumulator\accumulator.prj
+..\..\bin\elc accumulator\accumulator.prj
 rem ..\..\bin\elc ackermann\ackerman.prj
 rem ..\..\bin\elc addfield\addfield.prj
 rem ..\..\bin\elc anonymrec\anonymrec.prj
