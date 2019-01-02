@@ -3,6 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * it should be possible to declare something like this - var Array<object> o := nil;
+
                  * support Array<type> constructors
                  * array operation with Array<type> should be resolved directly (an array is embeddable)
 

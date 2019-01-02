@@ -2483,7 +2483,6 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode termi
    // HOTFIX : prevent further compilation of the expression
    paramNode = lxIdle;
 
-   ref_t extensionRef = 0;
    if (terminal == lxIdentifier) {
       message.append('0' + (char)paramCount);
       message.append(terminal.identifier());
@@ -2516,7 +2515,6 @@ ObjectInfo Compiler :: compileSubjectReference(SyntaxWriter& writer, SNode termi
 {
    ObjectInfo retVal;
    IdentifierString messageName;
-   ref_t extensionRef = 0;
    if (terminal == lxIdentifier) {
       ident_t name = terminal.identifier();
       messageName.copy(name);
@@ -3948,10 +3946,8 @@ ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeS
 {
    target.reference = resolvePrimitiveArray(scope, target.element);
 
-//   if (vmtReference == 0)
-//      vmtReference = scope.moduleScope->superReference;
-
    int counter = 0;
+   int size = _logic->defineStructSize(*scope.moduleScope, target.reference, 0);
 
 //   writer.newBookmark();
 
@@ -3967,7 +3963,11 @@ ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeS
    }
 
    writer.appendNode(lxTarget, target.reference);
-   writer.insert(lxNested, counter);
+   if (size < 0) {
+      writer.appendNode(lxSize, -size);
+      writer.insert(lxStruct, counter * (-size));
+   }
+   else writer.insert(lxNested, counter);
    writer.closeNode();
 
 //   writer.removeBookmark();
@@ -4371,6 +4371,8 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
       if (attributes.templateAttr && test(mode, HINT_ROOT)) {
          if (typeRef == 0) {
             typeRef = resolveTemplateDeclaration(current, scope);
+            if (!typeRef)
+               scope.raiseError(errInvalidHint, current);
          }
          else scope.raiseError(errIllegalOperation, current);
 
@@ -4910,7 +4912,7 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool binaryArray,
    return true;
 }
 
-ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t& outputRef)
+ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t&/* outputRef*/)
 {
 //   IdentifierString signature;
    IdentifierString messageStr;
@@ -6981,9 +6983,9 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
 void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 {
    SNode current = node.firstChild();
-   bool explicitMode = false;
-   bool templateMode = false;
    while (current != lxNone) {
+      bool templateMode = false;
+      bool explicitMode = false;
       if (current == lxAttribute) {
          int value = current.argument;
          if (_logic->validateMethodAttribute(value, explicitMode, templateMode)) {
@@ -7474,7 +7476,7 @@ ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
    bool constant = true;
    ref_t memberCounter = 0;
    SNode current = node.firstChild();
-   while (constant && current != lxNone) {
+   while (current != lxNone) {
       if (current == lxMember) {
          SNode object = current.findSubNodeMask(lxObjectMask);
          switch (object.type) {
@@ -7944,6 +7946,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
          analizeExpressionTree(current, scope);
          return 0;
       case lxNested:
+      case lxStruct:
          return analizeNestedExpression(current, scope);
       default:
          return current.findChild(lxTarget).argument;

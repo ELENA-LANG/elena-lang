@@ -57,30 +57,31 @@ singleton stringExConvertor
         ^ output
     }
 
-//    literal convert(Enumerator en)
-//    [
-//        auto anOutput := TextBuilder new.
-//
-//        en forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toLiteral); write:"," ]).
+    string convert(Enumerator en)
+    {
+        auto output := new TextBuilder();
+        while(en.next())
+        {
+            output.write(en.get().toString());
+            output.write:",";
+        };
+
+        int length := output.Length;
+        if (0 < length)
+            { output.Length := -1 + length };
+        
+        ^ output
+    }
+
+//    literal convert datetime:aValue = aValue literal.
 //        
-//        int aLength := anOutput length.
-//
-//        if (0 < aLength)
-//            [ anOutput setLength(-1 + aLength) ].
-//        
-//        ^ anOutput literal
-//    ]
-//
-////    literal convert datetime:aValue = aValue literal.
-////        
-////    literal convert timestamp:aValue = aValue literal.
-//
-//    literal convert(Enumerable o)
-//        <= convert(o enumerator).
+//    literal convert timestamp:aValue = aValue literal.
+
+    string convert(Enumerable o)
+        <= convert(o.enumerator());
 
     string convert(Indexable o)
-        //<= convert(o.indexer());
-        = self.convert(o.indexer());
+        <= convert(o.indexer());
 
     string convert(o)
         = stringConvertor.convert(o);
@@ -433,3 +434,22 @@ public extension convertorOp
 //    toShortTimeLiteral
 //        = T<TimeStruct>(self) toShortTime; literal.
 //}
+
+// --- enumerableConvertor ---
+
+singleton enumerableConvertor
+{
+    Enumerable convert(Enumerable o)
+        = o;
+    
+    Enumerable convert(o)
+        = new Enumerable:{ Enumerator enumerator() = o.enumerator(); };
+}
+
+// --- enumerableExOp ---
+
+public extension enumerableExOp
+{
+    Enumerable asEnumerable()
+        = enumerableConvertor.convert(self);
+}

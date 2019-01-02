@@ -1,7 +1,7 @@
 
 // --- Array template ---
 
-public sealed Array<T> //: Indexable<T>
+public sealed Array<T> : Indexable<T>
 {
     embeddable T[] theArray;
 

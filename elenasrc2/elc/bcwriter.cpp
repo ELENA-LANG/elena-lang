@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -810,6 +810,15 @@ void ByteCodeWriter :: copyBase(CommandTape& tape, int size)
          tape.write(bcNext, baCurrentLabel);
          tape.releaseLabel();
          tape.write(bcPop);
+         break;
+   }
+}
+
+void ByteCodeWriter :: saveStructBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument, int size)
+{
+   switch (sourceType) {
+      case lxResult:
+         copyStructureField(tape, 0, sourceArgument * size, size);
          break;
    }
 }
@@ -5288,8 +5297,44 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
 void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
 {
    SNode target = node.findChild(lxTarget);
+   int itemSize = node.findChild(lxSize).argument;
+
+   // presave all the members which could create new objects
+   SNode current = node.lastChild();
+   bool withMembers = false;
+   while (current != lxNone) {
+      if (current.type == lxMember || current.type == lxOuterMember) {
+         withMembers = true;
+         if (!isSimpleObjectExpression(current)) {
+            generateExpression(tape, current, ACC_REQUIRED);
+            pushObject(tape, lxResult);
+         }
+      }
+
+      current = current.prevNode();
+   }
 
    newStructure(tape, node.argument, target.argument);
+
+   if (withMembers) {
+      loadBase(tape, lxResult);
+
+      current = node.firstChild();
+      while (current != lxNone) {
+         if (current.type == lxMember/* || current.type == lxOuterMember*/) {
+            if (!isSimpleObjectExpression(current)) {
+               popObject(tape, lxResult);
+            }
+            else generateExpression(tape, current, ACC_REQUIRED);
+
+            saveStructBase(tape, true, lxResult, current.argument, itemSize);
+         }
+
+         current = current.nextNode();
+      }
+
+      assignBaseTo(tape, lxResult);
+   }
 
    SNode callNode = node.findChild(lxOvreriddenMessage);
    while (callNode != lxNone) {

@@ -135,9 +135,9 @@ public abstract Indexable
    abstract Indexer indexer() {}
 }
 
-public abstract Indexable<type>
+public abstract Indexable<T>
 {
-   abstract Indexer<type> indexer() {}
+   abstract Indexer<T> indexer() {}
 }
 
 //// --- MatrixIndexer ---

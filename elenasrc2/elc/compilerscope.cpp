@@ -535,14 +535,8 @@ ref_t ModuleScope :: generateTemplate(_Compiler& compiler, ref_t reference, List
    }
    catch(_Exception&)
    {
-      //// HOTFIX : clear tree reference because it is stack allocated 
-      //fileInfo.tree = NULL;
-
       return 0;
    }
-
-   //// HOTFIX : clear tree reference because it is stack allocated 
-   //fileInfo.tree = NULL;
 
    return generatedReference;
 }

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef bcwriterH
@@ -169,6 +169,7 @@ class ByteCodeWriter
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
+   void saveStructBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument, int size);
    void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
    void loadInternalReference(CommandTape& tape, ref_t reference);
 
