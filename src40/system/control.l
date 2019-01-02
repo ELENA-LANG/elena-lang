@@ -90,47 +90,56 @@ public interface Indexer
 //    int rvprop length :: readLengthTo.
 }
 
-//public interface Indexer<type>
-//{
-//    /// Returns false if the index out of range
-//    abstract bool available []
-//
-//    /// Returns the current member
-//    abstract type get []
-//    
-//    /// Sets the current member
-//    abstract set(type object) []
-//    
-//    int vprop index :: readIndexTo, writeIndex.
-//
-//    /// Reads the current index into an output parameter
-//    abstract readIndexTo(ref<int> retVal) []
-//
-//    /// Sets the index by specified value
-//    ///
-//    /// Should be overidden(or set&index)
-//    abstract writeIndex(int anIndex) []
-//
-//    abstract appendIndex(int anIndex) []
-//
+public interface Indexer<T>
+{
+    /// Returns false if the index out of range
+    abstract get bool Available() {}
+
+    /// Returns the current member
+    abstract T get() {}
+    
+    /// Sets the current member
+    abstract set(T object) {}
+
+    vprop int Index
+    {
+        read(ref int retVal)
+        {
+            self.readIndexTo(ref retVal)
+        }
+        
+        write(int retVal)
+        {
+            self.writeIndex(retVal)
+        }
+    }
+
+    /// Reads the current index into an output parameter
+    abstract readIndexTo(ref int retVal) {}
+
+    /// Sets the index by specified value
+    abstract writeIndex(int anIndex) {}
+
+    abstract appendIndex(int anIndex) {}
+                                
 //    /// Reads the length to the output parameter    
 //    abstract readLengthTo(ref<int> retVal) []
 //    
 //    int rvprop length :: readLengthTo.
-//    
-//    abstract cast T<Indexer> []
-//}
+    
+    abstract Indexer cast() {}
+}
 
 public abstract Indexable
 {
    abstract Indexer indexer() {}
 }
 
-//public abstract Indexable<type>
-//{
-//   abstract Indexer<type> indexer []
-//}
-//
+public abstract Indexable<type>
+{
+   abstract Indexer<type> indexer() {}
+}
+
 //// --- MatrixIndexer ---
 //
 ///// An indexer prototype
@@ -296,7 +305,7 @@ public interface Func<T, TResult>
 public interface Func2
 {
     /// Executes the action
-    abstract closure(object param1, object param2) {}
+    abstract closure(param1, param2) {}
     
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run(object aParam, Enumerator anEnumerator)
@@ -1041,40 +1050,40 @@ public abstract class BaseEnumerator<T> : Enumerator<T>
 //        retVal value := theLength.
 //    ]    
 //}
-//
-//public abstract BaseIndexer<type> :: Indexer<type>
-//{
-//    int theIndex.
-//    int theLength.
-//    
-//    /// Returns false if the index out of range
-//    bool available = (theIndex < theLength).
-//    
-//    /// Reads the current i-index into an output parameter
-//    readIndexTo(ref<int> retVal)
-//    [
-//        retVal value := theIndex
-//    ]    
-//    
-//    /// Sets the i-index by specified value
-//    writeIndex(int anIndex)
-//    [ 
-//        theIndex := anIndex
-//    ] 
-//    
-//    appendIndex(int anIndex)
-//    [ 
-//        theIndex := theIndex + anIndex.
-//    ]     
-//    
+
+public abstract BaseIndexer<T> : Indexer<T>
+{
+    int theIndex;
+    int theLength;
+    
+    /// Returns false if the index out of range
+    bool Available = (theIndex < theLength);
+    
+    /// Reads the current i-index into an output parameter
+    readIndexTo(ref int retVal)
+    {
+        retVal := theIndex
+    }    
+    
+    /// Sets the i-index by specified value
+    writeIndex(int anIndex)
+    {
+        theIndex := anIndex
+    } 
+    
+    appendIndex(int anIndex)
+    { 
+        theIndex := theIndex + anIndex
+    }     
+    
 //    readLengthTo(ref<int> retVal)
 //    [
 //        retVal value := theLength.
 //    ]
-//    
-//    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.
-//}
-//
+    
+    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
+}
+
 //// --- BaseMatrixIndexer ---
 //
 //public abstract BaseMatrixIndexer :: Indexer2D

@@ -217,16 +217,21 @@ public extension enumerableOp
 //             
 ////    sequenceEqual:list
 ////        = self~enumerableOp equal enumerable:list.
-//                                                  
-//    firstMember
-//    [
-//        auto anEnumerator := T<Enumerator>(self enumerator).
-//        
-//        if (anEnumerator next) 
-//            [ ^ anEnumerator get ];
-//            [ ^ nil ]
-//    ]
-//
+                                                  
+    get FirstMember()
+    {
+        auto en := cast Enumerator(self.enumerator());
+        
+        if (en.next()) 
+        {
+            ^ en.get()
+        }
+        else
+        {
+            ^ nil
+        }
+    }
+
 //    maximalMember
 //    [
 //        auto en := T<Enumerator>(self enumerator).
@@ -266,18 +271,18 @@ public extension enumerableOp
 //        
 //        ^ maximal   
 //    ]
-//    
-//    lastMember
-//    [
-//        auto   anEnumerator := T<Enumerator>(self enumerator).
-//        object aLastItem := nil.
-//        
-//        while (anEnumerator next)
-//            [ aLastItem := anEnumerator get ].
-//            
-//        ^ aLastItem
-//    ]
-//    
+    
+    get LastMember()
+    {
+        auto   en := cast Enumerator(self.enumerator());
+        object lastItem := nil;
+        
+        while (en.next())
+            { lastItem := en.get() };
+            
+        ^ lastItem
+    }
+    
 //    int countMembers
 //    [
 //        auto   en := T<Enumerator>(self enumerator).

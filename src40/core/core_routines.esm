@@ -422,6 +422,32 @@ procedure __wide."add$system@WideString[2]"
 
 end                                                
 
+procedure __wide."read$system@IntNumber$@system@ref#1&CharValue[3]"
+
+  wlen
+  bcopya
+  ecopyd
+  aloadsi 2
+  nload  
+  notless labErr
+  lessn   labErr 0
+
+  acopyb  
+  callextr api : wstrtochar
+  ifr labErr 0
+  bloadsi 3
+  dcopye
+  nsave
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw
+
+end
+
 procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
 
   bloadsi 3
@@ -434,6 +460,67 @@ procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&ByteNumbe
   nwritei 0
 
   quitn 4
+
+end
+
+procedure __literalconvertor."convert$system@UIntNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : uinttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor."convert$system@ShortNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor."convert$system@ByteNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : inttostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __literalconvertor."convert$system@LongNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  dcopy 10
+  
+  callextr api : longtostr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
 
 end
 
@@ -941,6 +1028,52 @@ labErr:
   pushr class : system'FormatException
   pushr const : %new[0]
   throw
+
+end
+
+procedure __realconvertor."convert$system@IntNumber$@system@ref#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@ByteNumber$@system@ref#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@ShortNumber$@system@ref#1&RealNumber[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  rcopy
+  rsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __realconvertor."convert$system@LongNumber$@system@ref#1&RealNumber[3]"
+  
+  bcopya
+  aloadsi 2
+  callextr api : longtoreal
+  acopyb
+  quitn 3
 
 end
 

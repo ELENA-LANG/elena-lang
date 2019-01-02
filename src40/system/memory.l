@@ -41,22 +41,22 @@ public sealed Array<T> //: Indexable<T>
 //    cast Enumerable<template_subj> = Enumerable<template_subj>::{ /*embeddable dispatch => self.*/Enumerator<template_subj> enumerator => self. }.
 //
 //    cast T<Enumerable> = Enumerable::{ /*embeddable dispatch => self.*/T<Enumerator> enumerator => self. }.
-//
-//    Indexer<template_subj> indexer = BaseIndexer<template_subj>::
-//    {
-//        @theIndex := 0.
-//        
-//        @theLength := self length.
-//        
-//        template_subj get
-//            = self getAt(theIndex).
-//            
-//        set(template_subj o)
-//        [
-//            self setAt(theIndex, o).
-//        ]
-//    }.    
-//
+
+    Indexer<T> indexer() = new BaseIndexer<T>:
+    {
+        this theIndex := 0;
+        
+        this theLength := self.Length;
+        
+        T get()
+            = self.at(theIndex);
+            
+        set(T o)
+        {
+            self.setAt(theIndex, o)
+        }
+    };
+
     vprop int Length
     {
         read(ref int retVal)
@@ -1473,16 +1473,16 @@ public sealed const struct WideString : BaseValue
 //    /// Returns the character at the specified index
 //    getAt : aParam
 //        <= getAt(T<int>(aParam)).
-//
-//    /// Returns the character at the specified index
-//    char getAt(int anIndex)
-//    [
-//        char aChar := $0.
-//        self read(anIndex, &aChar).
-//        
-//        ^ CharValue new(aChar)
-//    ]
-//
+
+    /// Returns the character at the specified index
+    char at(int n)
+    {
+        char ch := $0;
+        self.read(n, ref ch);
+        
+        ^ new CharValue(ch)
+    }
+
 //    wide add : anObject 
 //        <= add(T<literal>(anObject)).
 //
@@ -1501,11 +1501,11 @@ public sealed const struct WideString : BaseValue
 //    /// Concatinates the values
 //    wide add(literal aLiteral)
 //        = self add(T<wide>(aLiteral)).
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    read(int anIndex, ref<char> aChar)
-//        => system'core_routines'__wide.
-//
+
+    // Reads the character at the specified index and saves into an output parameter
+    read(int n, ref char ch)
+        => system'core_routines'__wide;
+
 //    // Reads the short integer at the specified index and saves into an output parameter
 //    read(int anIndex, ref<short>aValue)
 //        => system'core_routines'__wide.
@@ -1859,8 +1859,8 @@ public singleton stringConvertor
     convert(int n, byte[] buffer, ref int length)
         => system'core_routines'__literalconvertor;
     
-//    convert(uint aNumber, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
+    convert(uint n, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
     
     /// Converts the parameter to the literal value
     string convert(int n)
@@ -1873,62 +1873,62 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
     
-//    /// Converts the parameter to the literal value
-//    literal convert(uint aNumber)
-//    [
-//        T<byte,12> buffer.
-//        int        length := 0.
-//        
-//        self convert(aNumber, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    convert(short aNumber, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//    
-//    /// Converts the parameter to the literal value
-//    literal convert(short aNumber)
-//    [
-//        T<byte,12> buffer.
-//        int        length := 0.
-//        
-//        self convert(aNumber, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    convert(byte aNumber, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//    
-//    /// Converts the parameter to the literal value
-//    literal convert(byte aNumber)
-//    [
-//        T<byte,4> buffer.
-//        int       length := 0.
-//        
-//        self convert(aNumber, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    convert(long aNumber, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    literal convert(long aNumber)
-//    [
-//        T<byte, 64> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer)).
-//    ]
-//
+    /// Converts the parameter to the literal value
+    string convert(uint n)
+    {
+        byte buffer[12];
+        int  length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    convert(short n, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+    
+    /// Converts the parameter to the literal value
+    string convert(short n)
+    {
+        byte buffer[12];
+        int  length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    convert(byte n, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+    
+    /// Converts the parameter to the literal value
+    string convert(byte n)
+    {
+        byte buffer[4];
+        int  length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    convert(long n, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+
+    /// Converts the parameter to the literal value
+    string convert(long n)
+    {
+        byte buffer[64];
+        int  length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
 //    /// Converts the parameter to the literal value with the provided radix
 //    convert(int aNumber, int aRadix, ByteArray buffer, ref<int> length)
 //        => system'core_routines'__literalconvertor.
@@ -2030,31 +2030,31 @@ public singleton stringConvertor
         int  page := 0;
         int  l := w.Length;
         byte buffer[256];
-//        if (l < 128)
-//        [
+        if (l < 128)
+        {
             self.convert(w, buffer, ref m);
             
             ^ String.fromByteArray(0, m, buffer)
-//        ].
-//
-//        literal retVal := emptyLiteral.
-//        while(l > 0)
-//        [
-//            page := l.
-//            if (page > 127)
-//            [
-//               page := 127.
-//            ].
-//            
-//            self convert(aLiteral Substring(i, page), T<ByteArray>(buffer), &m).
-//            
-//            retVal := retVal add(LiteralValue fromByteArray(0, m, T<ByteArray>(buffer))).
-//            
-//            i := i + page.
-//            l := l - page.
-//        ].
-//        
-//        ^ retVal
+        };
+
+        string retVal := emptyString;
+        while(l > 0)
+        {
+            page := l;
+            if (page > 127)
+            {
+               page := 127
+            };
+            
+            self.convert(w.Substring(i, page), buffer, ref m);
+            
+            retVal := retVal.add(String.fromByteArray(0, m, buffer));
+            
+            i := i + page;
+            l := l - page
+        };
+        
+        ^ retVal
     }
 
     /// Returns a parameter                

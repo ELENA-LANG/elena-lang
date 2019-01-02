@@ -125,7 +125,7 @@ public class Exception
         theCallstack := new CallStack()
     }    
     
-    constructor()
+    constructor new()
         <= new(self.__getClassName());
 
 //    constructor raise()
@@ -139,7 +139,7 @@ public class Exception
 
 public class FormatException : Exception
 {
-    constructor()
+    constructor new()
         <= new("A number is not in the correct format");
         
     constructor new(string message)
@@ -155,13 +155,13 @@ public class OutOfRangeException : Exception
         new OutOfRangeException().raise()
     }
     
-//    /// Creates the exception
-//    constructor new
-//        <= new("An index is out of range").
-//
-//    /// Creates the exception
-//    constructor new:aMessage
-//        <= new(aMessage).
+    /// Creates the exception
+    constructor new()
+        <= new("An index is out of range");
+
+    /// Creates the exception
+    constructor new(string message)
+        <= new(message);
 }
 
 ////// --- IndexOutOfRangeException ---
@@ -187,13 +187,13 @@ public class OutOfRangeException : Exception
 
 public class InvalidArgumentException : Exception
 {
-//    /// Creates the exception
-//    constructor new
-//        <= new("Invalid argument").
-//        
-//    /// Creates the exception
-//    constructor new:aMessage
-//        <= new(aMessage).
+    /// Creates the exception
+    constructor new()
+        <= new("Invalid argument");
+        
+    /// Creates the exception
+    constructor new(string message)
+        <= new(message);
 
     static raise()
     {
@@ -206,7 +206,7 @@ public class InvalidArgumentException : Exception
 public class InvalidOperationException : Exception
 {
     /// Creates the exception
-    constructor()
+    constructor new()
         <= new("Invalid operation");
 
     /// Creates the exception
@@ -224,7 +224,7 @@ public class InvalidOperationException : Exception
 public sealed class MethodNotFoundException : Exception
 {
     /// Creates the exception
-    constructor()
+    constructor new()
         <= new("Method not found");
 
     constructor new(mssg missingMessage)
@@ -259,16 +259,16 @@ public class AbortException : Exception
         new AbortException().raise()
     }
     
-//    /// Creates the exception
-//    constructor new
-//        <= new("The process terminated").
+    /// Creates the exception
+    constructor new()
+        <= new("The process terminated");
 }
 
-//// --- CriticalException ---
-//
-//public class CriticalException :: Exception
-//{
-//    /// Creates the exception
-//    constructor new
-//        <= new("Critical exception").
-//}
+// --- CriticalException ---
+
+public class CriticalException : Exception
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception");
+}

@@ -380,6 +380,7 @@ L1_OPERATOR ->
 	*
 	| /
 	| $shr
+	| $shl
 
 L2_OPERATIONS ->
 	L2_OPERATION L2_OPERATIONS

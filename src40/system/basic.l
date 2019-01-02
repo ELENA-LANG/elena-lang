@@ -3051,42 +3051,42 @@ public singleton longConvertor
 /// A real number convertor
 public singleton realConvertor
 {
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    convert(int aValue, ref<real> aRetVal)
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    convert(uint aValue, ref<real> aRetVal)
-//    [
-//        (aValue < 0)?
-//        [
-//            // If the number is bigger than 2^31
-//            // than we are unlucky
-//            int odd := aValue && 1.            
-//            int halfed := aValue >> 1.
-//            
-//            real r := 0.
-//            self convert(halfed, &r).
-//            r := r * 2.0r.
-//            r := r + odd.
-//            
-//            aRetVal value := r.
-//        ]
-//        ! [ self convert(aValue, &aRetVal). ]
-//    ]        
-//    //    => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    convert(long aValue, ref<real> aRetVal)
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    convert(byte aValue, ref<real> aRetVal)
-//        => system'core_routines'__realconvertor.
-//
-//    /// Converts an integer into a real number and saves the result into an output parameter
-//    convert(short aValue, ref<real> aRetVal)
-//        => system'core_routines'__realconvertor.
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(int v, ref real retVal)
+        => system'core_routines'__realconvertor;
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(uint n, ref real retVal)
+    {
+        (n < 0)?
+        {
+            // If the number is bigger than 2^31
+            // than we are unlucky
+            int odd := n && 1;
+            int halfed := n $shl 1;
+            
+            real r := 0;
+            self.convert(halfed, ref r);
+            r := r * 2.0r;
+            r := r + odd;
+            
+            retVal := r
+        }
+        : { self.convert(n, ref retVal) }
+    }        
+    //    => system'core_routines'__realconvertor.
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(long n, ref real retVal)
+        => system'core_routines'__realconvertor;
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(byte n, ref real retVal)
+        => system'core_routines'__realconvertor;
+
+    /// Converts an integer into a real number and saves the result into an output parameter
+    convert(short n, ref real retVal)
+        => system'core_routines'__realconvertor;
 
     /// Converts a literal string into a real number and saves the result into an output parameter
     convert(string s, ref real retVal)
@@ -3121,50 +3121,50 @@ public singleton realConvertor
     real convert(real r)
         = new RealNumber(r);
         
-//    /// Converts an integer into a real number
-//    real convert(int anInt)
-//    [
-//        real aRetVal := 0.0r.
-//        self convert(anInt, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//        
-//    /// Converts an integer into a real number
-//    real convert(uint anInt)
-//    [
-//        real aRetVal := 0.0r.
-//        self convert(anInt, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//
-//    /// Converts a long integer into a real number
-//    real convert(long aLong)
-//    [
-//        real aRetVal := 0.0r.
-//        self convert(aLong, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//
-//    /// Converts a byte into a real number
-//    real convert(byte aValue)
-//    [
-//        real aRetVal := 0.0r.
-//        self convert(aValue, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//
-//    /// Converts a short integer into a real number
-//    real convert(short aValue)
-//    [
-//        real aRetVal := 0.0r.
-//        self convert(aValue, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
+    /// Converts an integer into a real number
+    real convert(int n)
+    {
+        real retVal := 0.0r;
+        self.convert(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+        
+    /// Converts an integer into a real number
+    real convert(uint n)
+    {
+        real retVal := 0.0r;
+        self.convert(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+
+    /// Converts a long integer into a real number
+    real convert(long n)
+    {
+        real retVal := 0.0r;
+        self.convert(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+
+    /// Converts a byte into a real number
+    real convert(byte n)
+    {
+        real retVal := 0.0r;
+        self.convert(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+
+    /// Converts a short integer into a real number
+    real convert(short n)
+    {
+        real retVal := 0.0r;
+        self.convert(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
         
     real convert(o)
         = cast real(o);

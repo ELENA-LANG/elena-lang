@@ -5072,13 +5072,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
    }
    else unnamedMessage = true;
       
+   bool weakSignature = true;
    int paramCount = 0;
    // if method has an argument list
    while (current != lxNone) {
       if (current == lxMethodParameter) {
          int index = 1 + scope.parameters.Count();
          int size = 0;
-         ref_t classRef = scope.moduleScope->superReference;
+         // NOTE : for the nested classes there should be no weak methods (see compileNestedVMT)
+         ref_t classRef = withoutWeakMessages ? scope.moduleScope->superReference : 0;
          ref_t elementRef = 0;
 
          ident_t terminal = current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier();
@@ -5086,6 +5088,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
             scope.raiseError(errDuplicatedLocal, current);
 
          declareArgumentAttributes(current, scope, classRef, elementRef);
+         if (!classRef) {
+            classRef = scope.moduleScope->superReference;
+         }
+         else weakSignature = false;
 
          paramCount++;
          if (paramCount >= ARG_COUNT || test(flags, VARIADIC_MESSAGE))
@@ -5128,19 +5134,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       current = current.nextNode();
    }
 
-   if (signatureLen > 0 && !scope.withOpenArg && !withoutWeakMessages) {
-      // validate generic signature (except an variadic one or nested methods)
-      // NOTE : nested methods should always be strong typed to deal with multi-method issues (see compileNestedVMT)
-      bool weakSignature = true;
-      for (size_t i = 0; i < signatureLen; i++) {
-         if (signature[i] != scope.moduleScope->superReference) {
-            weakSignature = false;
-         }
-      }
-      // if the signature consists only of generic parameters - ignore it
-      if (weakSignature)
-         signatureLen = 0;
-   }
+   // if the signature consists only of generic parameters - ignore it
+   if (weakSignature)
+      signatureLen = 0;
 
    // HOTFIX : do not overrwrite the message on the second pass
    if (scope.message == 0) {

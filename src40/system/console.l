@@ -7,7 +7,7 @@ class Console
     /*io'IConsoleReader*/ theReader;
 
     /// Creates a console
-    constructor(object reader, object writer)
+    constructor(reader, writer)
     {
         theWriter := writer;
         theReader := reader

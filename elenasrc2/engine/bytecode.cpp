@@ -3,7 +3,7 @@
 //
 //		This file contains implementation of ELENA byte code routines.
 //
-//                                                 (C)2009-2018, by Alexei Rakov
+//                                                 (C)2009-2019, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #include "elena.h"
@@ -709,8 +709,8 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    addVerb(operators, REDUCE_OPERATOR, REDUCE_OPERATOR_ID);
    addVerb(operators, INCREASE_OPERATOR, INCREASE_OPERATOR_ID);
    addVerb(operators, SEPARATE_OPERATOR, SEPARATE_OPERATOR_ID);
-   //addVerb(operators, WRITE_OPERATOR, WRITE_MESSAGE_ID);
    addVerb(operators, SHIFTR_OPERATOR, SHIFTR_OPERATOR_ID);
+   addVerb(operators, SHIFTL_OPERATOR, SHIFTL_OPERATOR_ID);
    //addVerb(operators, ISNIL_OPERATOR, ISNIL_MESSAGE_ID);
    addVerb(operators, CATCH_OPERATOR, CATCH_OPERATOR_ID);
 }
