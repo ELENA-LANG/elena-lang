@@ -1,5 +1,5 @@
-//import system'collections.
-//
+import system'collections;
+
 //symbol idleFunc1 = (:x) [].
 
 // === pattern enumerators ==
@@ -511,40 +511,40 @@ class Selector : Enumerator
 //    
 //    enumerable = Range from:theMin to:theMax.
 //}
-//
-//// --- ZipEnumerator ---
-//
-//public class ZipEnumerator :: Enumerator
-//{
-//    T<Enumerator> theEnumerator1.
-//    T<Enumerator> theEnumerator2.
-//    
-//    T<Func2>      theZipper.
-//    
-//    constructor new(Func2 fn, Enumerator enum1, Enumerator enum2)
-//    [
-//        theZipper := fn.
-//        
-//        theEnumerator1 := enum1.
-//        theEnumerator2 := enum2.
-//    ]
-//    
+
+// --- ZipEnumerator ---
+
+public class ZipEnumerator : Enumerator
+{
+    Enumerator theEnumerator1;
+    Enumerator theEnumerator2;
+    
+    Func2      theZipper;
+    
+    constructor new(Func2 fn, Enumerator enum1, Enumerator enum2)
+    {
+        theZipper := fn;
+        
+        theEnumerator1 := enum1;
+        theEnumerator2 := enum2;
+    }
+    
 //    constructor new(ExtensionMessage ext, Enumerator enum1, Enumerator enum2)
 //        <= new((:n:m)(n~ext eval:m), enum1, enum2).
-//    
-//    get = theZipper(theEnumerator1 get, theEnumerator2 get).
-//    
-//    bool next = theEnumerator1 next && theEnumerator2 next.
-//    
-//    reset
-//    [
-//        theEnumerator1 reset.
-//        theEnumerator2 reset.
-//    ]
-//    
-//    enumerable => theEnumerator1.
-//}
-//
+    
+    get() = theZipper(theEnumerator1.get(), theEnumerator2.get());
+    
+    bool next() = theEnumerator1.next() && theEnumerator2.next();
+    
+    reset()
+    {
+        theEnumerator1.reset();
+        theEnumerator2.reset();
+    }
+    
+    enumerable() => theEnumerator1;
+}
+
 //// --- RangeEnumerator ---
 //
 //public class RangeEnumerator :: Enumerator
@@ -650,76 +650,76 @@ class Selector : Enumerator
 //    
 //    enumerable = theVariable.
 //}
-//
-//// --- GroupingEnumerator ---
-//
-//public class GroupingEnumerator :: Enumerator
-//{
-//    T<Dictionary> theDictionary.
-//    T<Enumerator> theEnumerator.
-//    T<Func1>      theGroupFunc.    
-//    T<Enumerator> theGroupEnumerator.
-//    
-//    constructor new(Func1 grouper, Enumerator enumerator)
-//    [
-//        theGroupFunc := grouper.
-//        theDictionary := Dictionary new.
-//        theEnumerator := enumerator.
-//        
-//        self reset.
-//    ]
-//    
+
+// --- GroupingEnumerator ---
+
+public class GroupingEnumerator : Enumerator
+{
+    Dictionary theDictionary;
+    Enumerator theEnumerator;
+    Func1      theGroupFunc;   
+    Enumerator theGroupEnumerator;
+    
+    constructor new(Func1 grouper, Enumerator enumerator)
+    {
+        theGroupFunc := grouper;
+        theDictionary := new Dictionary();
+        theEnumerator := enumerator;
+        
+        self.reset()
+    }
+    
 //    constructor new(ExtensionMessage fn, Enumerator enumerator)
 //        <= new((:x)(x~fn eval), enumerator).
-//    
-//    reset
-//    [
-//        theEnumerator reset.
-//        
-//        while (theEnumerator next)
-//        [
-//            var item := theEnumerator get.
-//            var key := theGroupFunc(item).
-//            
-//            var groupItem := theDictionary[key].
-//            if (nil == groupItem)
-//            [
-//                groupItem := ArrayList new.
-//                
-//                theDictionary[key] := groupItem.
-//            ].
-//            
-//            groupItem append:item.
-//        ].
-//        
-//        theGroupEnumerator := theDictionary enumerator.
-//    ]
-//    
-//    get = theGroupEnumerator get.
-//    
-//    bool next
-//        = theGroupEnumerator next.
-//        
-//    enumerable
-//        => theEnumerator.
-//}
-//
-//// --- OrderingEnumerator ---
-//
-//public class OrderingEnumerator :: Enumerator
-//{
-//    T<Enumerator> theEnumerator.
-//    T<Func2>      theOrderFunc.    
-//    T<Enumerator> theListEnumerator.
-//    
-//    constructor new(Func2 orderFunc, Enumerator enumerator)
-//    [
-//        theOrderFunc := orderFunc.
-//        theEnumerator := enumerator.
-//        
-//        self reset.
-//    ]
-//    
+    
+    reset()
+    {
+        theEnumerator.reset();
+        
+        while (theEnumerator.next())
+        {
+            var item := theEnumerator.get();
+            var key := theGroupFunc(item);
+            
+            var groupItem := theDictionary[key];
+            if (nil == groupItem)
+            {
+                groupItem := new ArrayList();
+                
+                theDictionary[key] := groupItem
+            };
+            
+            groupItem.append:item
+        };
+        
+        theGroupEnumerator := theDictionary.enumerator();
+    }
+    
+    get() = theGroupEnumerator.get();
+    
+    bool next()
+        = theGroupEnumerator.next();
+        
+    enumerable()
+        => theEnumerator;
+}
+
+// --- OrderingEnumerator ---
+
+public class OrderingEnumerator : Enumerator
+{
+    Enumerator theEnumerator;
+    Func2      theOrderFunc;   
+    Enumerator theListEnumerator;
+    
+    constructor new(Func2 orderFunc, Enumerator enumerator)
+    {
+        theOrderFunc := orderFunc;
+        theEnumerator := enumerator;
+        
+        self.reset();
+    }
+    
 //    constructor new(Func1 orderVal, Enumerator enumerator)
 //    [
 //        theOrderFunc := (:p:n)(orderVal(p) < orderVal(n) ).
@@ -730,25 +730,25 @@ class Selector : Enumerator
 //    
 //    constructor new(ExtensionMessage fn, Enumerator enumerator)
 //        <= new((:x:y)(x~fn eval:y), enumerator).
-//    
-//    reset
-//    [
-//        theEnumerator reset.
-//        
-//        T<Array> list := Summing new:(ArrayList new); run(theEnumerator).
-//        list sort:theOrderFunc.
-//        
-//        theListEnumerator := list enumerator.
-//    ]
-//    
-//    get = theListEnumerator get.
-//    
-//    bool next
-//        = theListEnumerator next.
-//        
-//    enumerable
-//        => theEnumerator.
-//}
+    
+    reset()
+    {
+        theEnumerator.reset();
+        
+        Array list := new Summing(new ArrayList()).run(theEnumerator);
+        list.sort(theOrderFunc);
+        
+        theListEnumerator := list.enumerator();
+    }
+    
+    get() = theListEnumerator.get();
+    
+    bool next()
+        = theListEnumerator.next();
+        
+    enumerable()
+        => theEnumerator;
+}
 
 // === patterns ===
 

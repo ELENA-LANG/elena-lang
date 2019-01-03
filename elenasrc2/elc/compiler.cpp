@@ -3495,10 +3495,10 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       
    int assignMode = HINT_NOUNBOXING | HINT_ASSIGNING_EXPR;
    if (targetRef == 0 || targetRef == V_AUTO)
-      assignMode |= HINT_DYNAMIC_OBJECT;
+      assignMode |= (HINT_DYNAMIC_OBJECT | HINT_NOPRIMITIVES);
 
-   //if (isPrimitiveRef(targetRef))
-   //   targetRef = resolvePrimitiveReference(scope, targetRef, target.element);
+   if (isPrimitiveArrRef(targetRef))
+      targetRef = resolvePrimitiveReference(scope, targetRef, target.element);
 
    if (node == lxOperator) {
       // COMPILER MAGIC : implementing assignment operators

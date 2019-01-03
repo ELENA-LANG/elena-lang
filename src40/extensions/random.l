@@ -39,10 +39,10 @@ sealed struct RandomGenerator
 //        
 //        ^ IntNumber new(aNextValue).
 //    ]
-//
-//    nextInt : aValue
-//        = self eval:aValue.
-//        
+
+    nextInt(val)
+        = self.eval(cast int(val));
+        
 //    real nextReal
 //    [
 //        int next := 0.

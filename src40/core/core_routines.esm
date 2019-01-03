@@ -135,7 +135,7 @@ procedure __exception.register[0]
 
 end
 
-procedure __int."readHashCodeTo$@system@ref#1&IntNumber[2]"
+procedure __int."read:HashCode$@system@ref#1&IntNumber[2]"
 
   bloadsi 2
   ncopy

@@ -147,6 +147,13 @@ public extension objectOp
 
 public extension byteOp : ByteNumber
 {
+    vprop int HashCode
+    {
+        // Reads the object hash code into the output parameter
+        read(ref int retVal)
+            => system'core_routines'__int;        
+    }
+
 //    byte absolute
 //    [
 //        byte n := self.
@@ -211,6 +218,13 @@ public extension byteOp : ByteNumber
 
 public extension shortOp : ShortNumber
 {
+    vprop int HashCode
+    {
+        // Reads the object hash code into the output parameter
+        read(ref int retVal)
+            => system'core_routines'__int;        
+    }
+    
 //    short absolute
 //    [
 //        short n := self.
@@ -293,6 +307,13 @@ public extension shortOp : ShortNumber
 
 public extension intOp : IntNumber
 {
+    vprop int HashCode
+    {
+        // Reads the object hash code into the output parameter
+        read(ref int retVal)
+            => system'core_routines'__int;        
+    }
+    
 //    int rvprop absolute :: absolute.
 //    
 //    int rvprop sqr      :: sqr.
@@ -421,10 +442,27 @@ public extension intOp : IntNumber
 //    ]            
 }
 
-//// --- longOp ---
-//
-//public extension<long> longOp
-//{
+public extension uintOp : UIntNumber
+{
+    vprop int HashCode
+    {
+        // Reads the object hash code into the output parameter
+        read(ref int retVal)
+            => system'core_routines'__int;        
+    }
+}
+    
+// --- longOp ---
+
+public extension longOp : LongNumber
+{
+    vprop int HashCode
+    {
+        // Reads the object hash code into the output parameter
+        read(ref int retVal)
+            => system'core_routines'__int;        
+    }
+    
 //    long absolute
 //    [
 //        long n := self.
@@ -525,12 +563,19 @@ public extension intOp : IntNumber
 //        
 //        ^ intConvertor convert(aWord)
 //    ]
-//}
+}
 
 // --- realOp ---
 
 public extension realOp : RealNumber
 {        
+    vprop int HashCode
+    {
+        // Reads the object hash code into the output parameter
+        read(ref int retVal)
+            => system'core_routines'__int;        
+    }
+    
 //    real absolute
 //    [
 //        real n := self.        
@@ -1044,6 +1089,19 @@ public extension realOp : RealNumber
 
 public extension stringOp : String
 {
+    vprop int HashCode
+    {
+        /// Reads the object hash code into the output parameter
+        readHashCodeTo(ref int retVal)
+        {
+            int len := self.Length;
+            
+            int h := extern elenart.core_utf8hashcode(self, len);
+            
+            retVal := h
+        }    
+    }
+
 //    indexOf : anObject
 //        = self indexOf:anObject at:0.
 //

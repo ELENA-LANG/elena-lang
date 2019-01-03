@@ -1365,18 +1365,6 @@ public sealed const struct String : BaseValue
 //    
 //    /// Clones the value
 //    clone = LiteralValue new(self).
-//
-//    /// Reads the object hash code into the output parameter
-//    readHashCodeTo(ref<int> retVal)
-//    [
-//        int len := self length.
-//        
-//        int h := system'external core_utf8hashcode(self, len).
-//        
-//        retVal value := h.
-//    ]    
-//        
-//    int rvprop hash_code :: readHashCodeTo.
 }
 
 // --- emptyWideString ---

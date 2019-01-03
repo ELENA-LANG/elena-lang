@@ -364,19 +364,19 @@ public extension enumerableOp
 //    
 //    accumulateWith:operation 
 //        = self~enumerableOp accumulate(Variable new) with:operation.        
-//        
-//    zip:anEnumerable by:aZipper
-//        = ZipEnumerator new(aZipper, T<Enumerator>(self enumerator), T<Enumerator>(anEnumerable enumerator)).
-//
+        
+    zipBy(enumerable, zipper)
+        = ZipEnumerator.new(zipper, cast Enumerator(self.enumerator()), cast Enumerator(enumerable.enumerator()));
+
 //    zip:anEnumerable forEach:func2
 //        = self~enumerableOp zip:anEnumerable by:func2; forEach:idleFunc1.
-//        
-//    orderBy:orderFunc
-//        = OrderingEnumerator new(orderFunc, T<Enumerator>(self enumerator)).
-//        
-//    groupBy:groupFunc
-//        = GroupingEnumerator new(groupFunc, T<Enumerator>(self enumerator)).                                       
-//        
+        
+    orderBy(orderFunc)
+        = OrderingEnumerator.new(orderFunc, cast Enumerator(self.enumerator()));
+        
+    groupBy(groupFunc)
+        = GroupingEnumerator.new(groupFunc, cast Enumerator(self.enumerator()));
+        
 //    join(object list) on(Func2 filter_f) selectBy(Func2 select_f)
 //        = JoinEnumerator new(filter_f, select_f, T<Enumerator>(self enumerator), T<Enumerator>(list enumerator)).        
 }

@@ -573,18 +573,6 @@ public sealed const struct ByteNumber : IntBaseNumber
         
     /// Clones the value
     byte clone() = new ByteNumber(self);
-
-//    // Reads the object hash code into the output parameter
-//    readHashCodeTo(ref int retVal)
-//        => system'core_routines'__int;
-    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        self readHashCodeTo(&aCode).
-//        
-//        ^ aCode
-//    ]
 }
 
 // --- ShortNumber ---
@@ -897,18 +885,6 @@ public sealed const struct ShortNumber : IntBaseNumber
 
     /// Clones the value
     short clone = new ShortNumber(self);
-
-//    // Reads the object hash code into the output parameter
-//    readHashCodeTo(ref<int> aCode)
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        self readHashCodeTo(&aCode).
-//        
-//        ^ aCode.
-//    ]        
 }
 
 // --- IntNumber ---
@@ -1218,18 +1194,6 @@ public sealed const struct IntNumber : IntBaseNumber
     /// Clones the value
     int clone = new IntNumber(self);
 
-    // Reads the object hash code into the output parameter
-//    readHashCodeTo(ref<int> aCode)
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        self readHashCodeTo(&aCode).
-//        
-//        ^ aCode.
-//    ]        
-//
 //    int shiftLeft(BaseVariable v)
 //        <= shiftLeft(v value).
 //
@@ -1612,18 +1576,6 @@ public sealed const struct UIntNumber : IntBaseNumber
     /// Clones the value
     uint clone = new UIntNumber(self);
 
-//    // Reads the object hash code into the output parameter
-//    readHashCodeTo(ref<int> aCode)
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        self readHashCodeTo(&aCode).
-//        
-//        ^ aCode.
-//    ]        
-//
 //    uint shiftLeft(int val)
 //    [
 //        ^ theValue << val
@@ -1937,18 +1889,6 @@ public sealed const struct LongNumber : IntBaseNumber
     /// Clones the value
     long clone() = new LongNumber(self);
     
-//    // Reads the object hash code into the output parameter
-//    readHashCodeTo(ref<int> aCode)
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        self readHashCodeTo(&aCode).
-//        
-//        ^ aCode.
-//    ]
-//
 //    long shiftLeft(int val)
 //    [
 //        ^ theValue << val
@@ -2212,18 +2152,6 @@ public sealed const struct RealNumber : BaseNumber
     /// Clones the value    
     real clone = new RealNumber(self);
     
-//    // Reads the object hash code into the output parameter
-//    readHashCodeTo(ref<int> aCode)
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        self readHashCodeTo(&aCode).
-//        
-//        ^ aCode
-//    ]
-//        
 //    /// Negates the value
 //    negative
 //        = 0.0r - theValue.
