@@ -36,7 +36,7 @@ property prop<T,get_accessor,set_accessor>
 
 property vprop<T,get_accessor>
 {
-    get T __property()
+    /*embeddable */get T __property()
     {
         T retVal := T.Default;
         
@@ -188,19 +188,21 @@ property rprop<T>
 //        ^ val.
 //    ]
 //}
-//
-//// --- fnprop ---
-//
-//public __accessor fnprop<type,template_fn>
-//{
-//    embeddable type template_fn(type n)
-//    [
-//        type retVal := T<type>().
-//        self __get(n, &retVal).
-//        ^ retVal.            
-//    ]
-//}
-//
+
+// --- fnprop ---
+
+property fnprop<T, get_accessor>
+{
+    /*embeddable*/T __property(T n)
+    {
+        T retVal := T.Default;
+        
+        self.get_accessor(n, ref retVal);
+        
+        ^ retVal
+    }    
+}
+
 //// --- fn2prop ---
 //
 //public __accessor fn2prop<type,template_fn>

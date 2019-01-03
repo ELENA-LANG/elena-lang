@@ -683,7 +683,7 @@ public sealed const struct ShortNumber : IntBaseNumber
     
     /// Compares the value
     bool equal(byte n)
-        = self.equal(ShortNumber new(n));
+        = self.equal(new ShortNumber(n));
         
     /// Compares the value
     bool less (byte n)
@@ -1341,10 +1341,10 @@ public sealed const struct UIntNumber : IntBaseNumber
     int cast() = self;
 
     /// Returns the long integer
-    long cast() = LongNumber new(self);
+    long cast() = new LongNumber(self);
 
     /// Returns the real number
-    real cast() = RealNumber new(self);
+    real cast() = new RealNumber(self);
 
 //    bool equal:o
 //    [
@@ -1699,7 +1699,7 @@ public sealed const struct LongNumber : IntBaseNumber
     byte cast() = byteConvertor.convert(self);
 
     /// Returns a real value
-    real cast() = RealNumber new(self);
+    real cast() = new RealNumber(self);
     
 //    bool equal:o
 //    [
@@ -3171,10 +3171,10 @@ public singleton realConvertor
         = cast real(o);
 }
 
-//// --- realOpController ---
-//
-//public class realOpController =
-//{
+// --- realOpController ---
+
+public singleton realOpController
+{
 //    exp(real aReal, ref<real> aRetVal)
 //        => system'core_routines'__real.
 //        
@@ -3220,8 +3220,8 @@ public singleton realConvertor
 //        
 //        ^ aRetVal
 //    ]        
-//}.
-//
+}
+
 //real public pi_value = realOpController pi.
 //
 //real public e_value = realOpController e.

@@ -322,9 +322,9 @@ public extension enumerableOp
     summarize()
         = self.summarize(new Variable());
         
-//    filterBy(Func1 aSelector)
-//        = Filter new(aSelector, T<Enumerator>(self enumerator)).
-//        
+    filterBy(Func1 selector)
+        = new Filter(selector, cast Enumerator(self.enumerator()));
+        
 //    filterBy(Func2 aSelector)
 //        = PatternFilter2 new(aSelector, T<Enumerator>(self enumerator)).
 //        

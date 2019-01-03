@@ -602,10 +602,6 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPr
       ident_t token = terminal.identifier();
       ref_t ref = _scope->attributes.get(token);      
       if (allowType) {
-         // HOTFIX : check if the type was declared in the scope
-         if (!ref && _types.exist(token))
-            terminal.set(lxReference, _types.get(token));
-
          if (!isPrimitiveRef(ref))
             attrRef = ref;
 
@@ -672,17 +668,24 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
    bool visibilitySet = false;
    bool allowType = true;
    bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
+   bool withoutMapping = false;
    while (current == lxToken/*, lxRefAttribute*/) {
       ref_t attrRef = mapAttribute(current, allowType, allowPropertyTemplate);
       if (isPrimitiveRef(attrRef)) {
          current.set(lxAttribute, attrRef);
-         if (test(mode, MODE_ROOT) && (attrRef == V_PUBLIC || attrRef == V_INTERNAL)) {
-            // the symbol visibility should be provided only once
-            if (!visibilitySet) {
-               privateOne = attrRef == V_INTERNAL;
-               visibilitySet = true;
+         if (test(mode, MODE_ROOT)) {
+            if ((attrRef == V_PUBLIC || attrRef == V_INTERNAL)) {
+               // the symbol visibility should be provided only once
+               if (!visibilitySet) {
+                  privateOne = attrRef == V_INTERNAL;
+                  visibilitySet = true;
+               }
+               else _scope->raiseError(errInvalidHint, _filePath, current);
             }
-            else _scope->raiseError(errInvalidHint, _filePath, current);
+            else if (attrRef == V_TYPETEMPL) {
+               // NOTE : the type alias should not be mapped in the module
+               withoutMapping = true;
+            }
          }
       }
       else if (attrRef != 0 || allowType) {
@@ -727,7 +730,7 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
    //   if (scope.compilerScope->attributes.exist(name))
    //      scope.raiseWarning(WARNING_LEVEL_2, wrnAmbiguousIdentifier, nameNode);
    
-   if (test(mode, MODE_ROOT))
+   if (test(mode, MODE_ROOT) && !withoutMapping)
       nameNode.setArgument(_scope->mapNewIdentifier(_ns.c_str(), name.ident(), privateOne));
 }
 
@@ -1678,6 +1681,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             break;
          case lxCollection:
             generateCollectionTree(writer, current, derivationScope);
+            first = false;
             break;
          default:
             if (isTerminal(current.type)) {
@@ -1708,28 +1712,28 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
 void DerivationWriter:: declareType(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/)
 {
    SNode nameNode = node.prevNode().firstChild(lxTerminalMask);
-   SNode referenceNode;
+   SNode typeNameNode;
 
    SNode current = node.firstChild();
    bool invalid = true;
    if (nameNode == lxIdentifier && isSingleStatement(current)) {
-      referenceNode = current.firstChild(lxTerminalMask);
+      typeNameNode = current.firstChild(lxTerminalMask);
 
-      invalid = !referenceNode.compare(lxIdentifier, lxReference, lxGlobalReference);
+      invalid = typeNameNode != lxIdentifier;
    }
 
    if (invalid)
       _scope->raiseError(errInvalidSyntax, _filePath, current);
 
-   writer.newNode(lxForward);
-   copyIdentifier(writer, nameNode);
-   writer.newNode(lxAttribute, V_TYPE);
-   copyIdentifier(writer, referenceNode);
-   writer.closeNode();
-   writer.closeNode();
+   ident_t shortcut = nameNode.identifier();
 
-   // HOTFIX : to recognize it in declarations
-   _types.add(nameNode.identifier(), referenceNode.identifier().clone());
+   if (_scope->attributes.exist(shortcut))
+      _scope->raiseError(errDuplicatedDefinition, _ns, nameNode);
+
+   ref_t classRef = _scope->mapNewIdentifier(_ns, typeNameNode.identifier(), false);
+
+   _scope->attributes.add(shortcut, classRef);
+   _scope->saveAttribute(shortcut, classRef);
 }
 
 void DerivationWriter :: generateImport(SyntaxWriter& writer, SNode ns)

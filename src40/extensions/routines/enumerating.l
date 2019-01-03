@@ -1,6 +1,6 @@
 //import system'io.
 //import system'text.
-//import extensions.
+import extensions;
 import extensions'text;
 
 //// --- ReaderEnumerator ---
@@ -84,9 +84,9 @@ public extension stringExOp
 ////        = aFunction run enumerator:(TokenEnumerator new literal:self token_dfa:aStatemachine).
 }
 
-//// --- printingLn ---
-//
-//public symbol printingLn = (:aLine)[ forwards'program'output printLine:aLine ].
+// --- printingLn ---
+
+public symbol printingLn = (aLine){ forward program'output.printLine:aLine };
 
 // --- func1Op ---
 

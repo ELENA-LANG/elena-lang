@@ -3034,6 +3034,9 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          if (test(mode, HINT_ASSIGNING_EXPR)) {
             scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
          }
+         else if (node.firstChild(lxTerminalMask) == lxNone) {
+            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.parentNode());
+         }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
       }         
    }
@@ -3594,8 +3597,6 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
    if (test(flags, elStateless)) {
       // only a stateless class can be used as a wrapper one
       role = ObjectInfo(okConstantRole, classRef, classRef);
-
-      scope.raiseError(errNotApplicable, node);
    }
 
    int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
@@ -3610,7 +3611,6 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
       writeTerminal(writer, node, scope, role, 0);
       writer.closeNode();
    }
-
 
    return role;
 }
@@ -8122,22 +8122,6 @@ void Compiler :: analizeSymbolTree(SNode node, Scope& scope)
 //      scope.raiseError(errDuplicatedDefinition, ns);
 //}
 
-void Compiler :: compileForward(SNode ns, NamespaceScope& scope)
-{
-   ident_t shortcut = ns.firstChild(lxTerminalMask).identifier();
-   SNode referenceNode = ns.findChild(lxAttribute);
-
-   if (scope.moduleScope->attributes.exist(shortcut))
-      scope.raiseError(errDuplicatedDefinition, ns);
-
-   ref_t classRef = resolveImplicitIdentifier(scope, referenceNode.firstChild(lxTerminalMask));
-   if (!classRef)
-      scope.raiseError(errInvalidHint, referenceNode);
-
-   scope.moduleScope->attributes.add(shortcut, classRef);
-   scope.moduleScope->saveAttribute(shortcut, classRef);
-}
-
 //////bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
 ////{
 ////   int   mask = reference & mskAnyRef;
@@ -8294,9 +8278,6 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
                declared = true;
                break;
             }
-            case lxForward:
-               compileForward(current, scope);
-               break;
          }
       }
       current = current.nextNode();

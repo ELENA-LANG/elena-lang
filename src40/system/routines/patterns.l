@@ -100,47 +100,44 @@
 //    
 //    enumerable => theEnumerator.
 //}
-//
-//// --- Filtering ---
-//
-//public class Filter :: Enumerator
-//{
-//    T<Func1>      theFilter.
-//    T<Enumerator> theEnumerator.
-//
-//    constructor new(Func1 aSelector, Enumerator anEnumerator)
-//    [
-//        theFilter := aSelector.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
+
+// --- Filtering ---
+
+public class Filter : Enumerator
+{
+    Func1      theFilter;
+    Enumerator theEnumerator;
+
+    constructor(Func1 selector, Enumerator enumerator)
+    {
+        theFilter := selector;
+        theEnumerator := enumerator
+    }
+    
 //    constructor new(ExtensionMessage anExtension, Enumerator anEnumerator)
 //    [
 //        theFilter := (:x)[ ^ x~anExtension eval ].
 //        theEnumerator := anEnumerator.
 //    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(theEnumerator get))
-//                [ ^ true ]
-//        ].
-//        
-//        ^ false
-//    ]
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//    
-//    enumerable => theEnumerator.
-//}
-//
+    
+    get() = theEnumerator.get();
+    
+    bool next()
+    {
+        while (theEnumerator.next())
+        {
+            if (theFilter(theEnumerator.get()))
+                { ^ true }
+        };
+        
+        ^ false
+    }
+    
+    reset () => theEnumerator;
+    
+    enumerable() => theEnumerator;
+}
+
 //// --- PatternFilter2 ---
 //
 //public class PatternFilter2 :: Enumerator

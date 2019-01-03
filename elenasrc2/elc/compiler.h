@@ -960,7 +960,6 @@ private:
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal/*, bool accumulatorMode = false*/);
-   void compileForward(SNode node, NamespaceScope& scope);
 
 ////   bool validate(_ProjectManager& project, _Module* module, int reference);
 

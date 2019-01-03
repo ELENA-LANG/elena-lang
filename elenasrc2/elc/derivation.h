@@ -115,8 +115,6 @@ class DerivationWriter : public _DerivationWriter
       }
    };
 
-   TypedMap      _types;
-
    int           _level;
    int           _cachingLevel;
    SyntaxTree    _cache;
@@ -191,7 +189,7 @@ public:
    virtual void writeTerminal(TerminalInfo& terminal);
 
    DerivationWriter(SyntaxTree& target, _ModuleScope* scope)
-      :  _output(target), _cacheWriter(_cache), _types(NULL, freestr), _importedNs(nullptr, freestr)
+      :  _output(target), _cacheWriter(_cache), _importedNs(nullptr, freestr)
    {
       _cachingLevel = _level = 0;
 

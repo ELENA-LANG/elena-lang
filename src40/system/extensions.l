@@ -141,12 +141,12 @@ public extension objectOp
 //    ]
 }
 
-//// --- Operations ---
-//
-//// --- byteOp ---
-//
-//public extension<byte> byteOp
-//{
+// --- Operations ---
+
+// --- byteOp ---
+
+public extension byteOp : ByteNumber
+{
 //    byte absolute
 //    [
 //        byte n := self.
@@ -162,23 +162,20 @@ public extension objectOp
 //        
 //        ^ byteConvertor convert(retVal)
 //    ]    
-//    
-//    byte power(int y)
-//    [
-//        byte x := self.
-//        byte r := 1.
-//        
-//        int i := 0.
-//        while (i < y)
-//        [
-//            r := r * x.
-//            
-//            i += 1
-//        ].
-//        
-//        ^ ByteNumber new(r)
-//    ]
-//    
+    
+    byte power(int y)
+    {
+        byte x := self;
+        byte r := 1;
+        
+        for (int i := 0, i < y, i += 1)
+        {
+            r := r * x
+        };
+        
+        ^ new ByteNumber(r)
+    }
+    
 //    byte sqr
 //    [
 //        byte aRetVal := 0.
@@ -208,12 +205,12 @@ public extension objectOp
 //        
 //    bool isNonnegative
 //        = self <= 0.
-//}
-//
-//// --- shortOp ---
-//
-//public extension<short> shortOp
-//{
+}
+
+// --- shortOp ---
+
+public extension shortOp : ShortNumber
+{
 //    short absolute
 //    [
 //        short n := self.
@@ -229,23 +226,20 @@ public extension objectOp
 //        
 //        ^ shortConvertor convert(retVal)
 //    ]
-//    
-//    short power(int y)
-//    [
-//        short x := self.
-//        short r := 1.
-//        
-//        int i := 0.
-//        while (i < y)
-//        [
-//            r := r * x.
-//            
-//            i += 1.
-//        ].
-//        
-//        ^ ShortNumber new(r)
-//    ]
-//    
+    
+    short power(int y)
+    {
+        short x := self;
+        short r := 1;
+        
+        for (/*int*/IntNumber i := 0, i < y, i += 1)
+        {
+            r := r * x
+        };
+        
+        ^ new ShortNumber(r)
+    }
+    
 //    short sqr
 //    [
 //        short n := self.
@@ -293,15 +287,13 @@ public extension objectOp
 //        
 //        ^ byteConvertor convert(aWord)
 //    ]
-//}
-//
-//// --- intOp ---
-//
-//public extension<int> intOp
-//{
+}
+
+// --- intOp ---
+
+public extension intOp : IntNumber
+{
 //    int rvprop absolute :: absolute.
-//    
-//    int fnprop  mod      :: mod.
 //    
 //    int fnprop  power    :: power.
 //    
@@ -319,16 +311,19 @@ public extension objectOp
 //        retVal value := n
 //    ]
 //    
-//    mod(int y, ref<int> retVal)
-//    [
-//        int x := self.
-//        
-//        int z := x / y.
-//        z := z * y.
-//        
-//        retVal value := (x - z)
-//    ]
-//    
+    fnprop int mod
+    {
+        read(int y, ref int retVal)
+        {
+            int x := self;
+            
+            int z := x / y;
+            z := z * y;
+            
+            retVal := (x - z)
+        }
+    }
+
 //    int mod : anOperand
 //    [
 //        int retVal := self mod(T<int>(anOperand)).
@@ -381,10 +376,10 @@ public extension objectOp
 //        
 //        retVal value := n
 //    ]
-//
-//    power : aPower
-//        = self~intOp power(T<int>(aPower)).
-//                
+
+    power(n)
+        = self.power(cast int(n));
+                
 //    bool isOdd
 //        = self and(1) != 0.
 //        
@@ -409,7 +404,7 @@ public extension objectOp
 //        aWord := aWord && 0FFFF0000h.
 //        aWord := aWord >> 16.
 //        
-//        ^ shortConvertor convert(aWord)
+//        ^ shortnConvertor convert(aWord)
 //    ]
 //
 //    low
@@ -426,8 +421,8 @@ public extension objectOp
 //            [ ^ self shiftLeft(T<int>(n) negative) ];
 //            [ ^ self shiftRight(T<int>(n)) ].
 //    ]            
-//}
-//
+}
+
 //// --- longOp ---
 //
 //public extension<long> longOp
@@ -533,11 +528,11 @@ public extension objectOp
 //        ^ intConvertor convert(aWord)
 //    ]
 //}
-//
-//// --- realOp ---
-//
-//public extension<real> realOp
-//{        
+
+// --- realOp ---
+
+public extension realOp : RealNumber
+{        
 //    real absolute
 //    [
 //        real n := self.        
@@ -577,61 +572,62 @@ public extension objectOp
 //        
 //        ^ RealNumber new(aRetVal)
 //    ]
-//
-//    real power(real y)
-//    [
-//        real x := self.
-//        
-//        (x == 0.0r)
-//            ? [ ^ 0.0r ].
-//                        
-//        (y == 0.0r)
-//            ? [ ^ 1.0r ].
-//            
-//        realOpController ln(x, &x).
-//        
-//        x := x multiply(y).
-//        
-//        realOpController exp(x, &x).
-//            
-//        ^ RealNumber new(x)
-//            
-//    ]
-//
-//    real power(int y)
-//    [
-//        real x := self.
-//
-//        (x == 0.0r)
-//            ? [ ^ 0.0r ].
-//                        
-//        (y == 0)
-//            ? [ ^ 1.0r ].
-//                        
-//        if (x < 0.0r)
-//            [
-//                x := x * -1.0r.
-//                
-//                realOpController ln(x, &x).
-//                
-//                x := x multiply(y).
-//                
-//                realOpController exp(x, &x).
-//                
-//                (y~intOp isOdd)
-//                    ? [ x := x * -1.0r ].
-//            ];
-//            [
-//                realOpController ln(x, &x).
-//                
-//                x := x multiply(y).
-//                
-//                realOpController exp(x, &x)
-//            ].
-//        
-//        ^ RealNumber new(x)
-//    ]
-//
+
+    real power(real y)
+    {
+        real x := self;
+        
+        (x == 0.0r)
+            ? { ^ 0.0r };
+                        
+        (y == 0.0r)
+            ? { ^ 1.0r };
+            
+        realOpController.ln(x, ref x);
+        
+        x := x * y;
+        
+        realOpController.exp(x, ref x);
+            
+        ^ new RealNumber(x)
+            
+    }
+
+    real power(int y)
+    {
+        real x := self;
+
+        (x == 0.0r)
+            ? { ^ 0.0r };
+                        
+        (y == 0)
+            ? { ^ 1.0r };
+                        
+        if (x < 0.0r)
+        {
+            x := x * -1.0r;
+            
+            realOpController.ln(x, ref x);
+            
+            x := x * y;
+            
+            realOpController.exp(x, ref x);
+            
+            (y.isOdd())
+                ? { x := x * -1.0r }
+        }
+        else
+        {
+            realOpController.ln(x, ref x);
+            
+            x := x * y;
+            
+            realOpController.exp(x, ref x)
+        };
+        
+        ^ new RealNumber(x)
+    }
+
 //    power : aPower
 //        = self~realOp power(T<int>(aPower)).
 //
@@ -823,8 +819,8 @@ public extension objectOp
 //        
 //    bool isNonnegative
 //        = self <= 0.0r.
-//}
-//
+}
+
 //// --- intArrayOp ---
 //
 //public extension<T<IntArray>> intArrayOp
