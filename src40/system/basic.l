@@ -3175,15 +3175,15 @@ public singleton realConvertor
 
 public singleton realOpController
 {
-//    exp(real aReal, ref<real> aRetVal)
-//        => system'core_routines'__real.
-//        
+    exp(real n, ref real retVal)
+        => system'core_routines'__real;
+        
 //    abs(real aReal, ref<real> aRetVal)
 //        => system'core_routines'__real.
-//        
-//    ln(real aReal, ref<real> aRetVal)
-//        => system'core_routines'__real.
-//        
+        
+    ln(real n, ref real retVal)
+        => system'core_routines'__real;
+        
 //    round(real aReal, ref<real> aRetVal)
 //        => system'core_routines'__real.
 //        

@@ -345,10 +345,10 @@ public extension enumerableOp
 //
 //    repeatTo:n
 //        = RangeEnumerator from:self to:n by:1.
-//
-//    top:aCounter
-//        = TopFilter new(aCounter, T<Enumerator>(self enumerator)).
-//        
+
+    top(counter)
+        = new TopFilter(cast int(counter), cast Enumerator(self.enumerator()));
+        
 //    till:max repeat:aRepeater
 //        = Repeater new(self, max, aRepeater).
 //        

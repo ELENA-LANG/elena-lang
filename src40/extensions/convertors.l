@@ -1,5 +1,5 @@
-//import system'collections.
-//import system'routines.
+import system'collections;
+import system'routines;
 //import system'calendar.
 import system'text;
 //import system'dynamic.
@@ -163,7 +163,7 @@ singleton stringExConvertor
 //    T<ByteArray> convert(wide s)
 //        = UTF16Encoder toByteArray(0, s length, s).
 //}
-//
+
 //public singleton intarrayConvertorEx
 //{
 //    T<IntArray> convert(Enumerator<int> e)
@@ -294,50 +294,47 @@ singleton stringExConvertor
 //        ^ anOutput literal
 //    ]
 //}
-//
-//// --- arrayConvertorEx ---
-//
-//public singleton arrayConvertorEx
-//{
-//    T<Array> convert : o
-//    [
-//        T<Array> arr := T<Array>(o) ?? nil.
-//        if (arr == nil)
-//        [
-//            var it := o indexer.
-//            int len := it length.
-//            arr := Array new(len).
-//            int i := 0.
-//            while (i < len)
-//            [
-//                arr[i] := it get.
-//                it appendIndex(1).
-//                
-//                i += 1.
-//            ]
-//        ].
-//        
-//        ^ arr.
-//    ]
-//    
-//    T<Array> convert(Array anArray)
-//        = anArray.
-//
+
+// --- arrayConvertorEx ---
+
+public singleton arrayConvertorEx
+{
+    Array convert(o)
+    {
+        var arr := cast Array(o) ?? nil;
+        if (arr == nil)
+        {
+            var it := o.indexer();
+            int len := it.Length();
+            arr := Array.allocate(len);
+            for (int i := 0, i < len, i += 1)
+            {
+                arr[i] := it.get();
+                it.appendIndex(1)
+            }
+        };
+        
+        ^ arr
+    }
+    
+    Array convert(Array arr)
+        = arr;
+
 //    T<Array> convert(literal l)
 //        <= convert(T<Enumerator>(l enumerator)).
 //
 //    T<Array> convert(wide l)
 //        <= convert(T<Enumerator>(l enumerator)).
-//
-//    T<Array> convert(Enumerator anEnumerator)
-//    [
-//        T<ArrayList> aRetVal := ArrayList new.
-//
-//        anEnumerator forEach(:anItem)[ aRetVal append:anItem ].
-//
-//        ^ T<Array>(aRetVal)
-//    ]
-//
+
+    Array convert(Enumerator en)
+    {
+        ArrayList retVal := new ArrayList();
+
+        en.forEach:(x){ retVal.append:x };
+
+        ^ retVal
+    }
+
 //    T<Array> convert(Indexer it)
 //    [
 //        T<ArrayList> aRetVal := ArrayList new.
@@ -356,18 +353,18 @@ singleton stringExConvertor
 //        
 //    T<Array> convert(Indexable v)
 //        <= convert(v indexer).
-//        
-////    convert void:val
-////        = Array min.                        
-//}
+        
+//    convert void:val
+//        = Array min.                        
+}
 
 // --- convertorOp ---
 
 public extension convertorOp
 {
-//    T<Array> toArray
-//        = arrayConvertorEx convert:self.
-//
+    Array toArray()
+        = arrayConvertorEx.convert(self);
+
 //    T<IntArray> toIntArray
 //        = intarrayConvertorEx convert:self.
 //    

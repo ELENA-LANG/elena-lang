@@ -4,56 +4,56 @@
 
 // === pattern enumerators ==
 
-//// --- Toping ---
-//
-//public class TopFilter :: Enumerator
-//{
-//    ref<int>      theOffset.    
-//    ref<int>      theCounter.    
-//    T<Enumerator> theEnumerator.
-//    
-//    constructor new(int aCounter, Enumerator anEnumerator)
-//    [
-//        theCounter := aCounter.
-//        theOffset := 0.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    constructor new(int counter, int offset, Enumerator enumerator)
-//    [
-//        theCounter := counter.
-//        theOffset := offset.
-//        
-//        theEnumerator := enumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        if (theCounter != 0)
-//        [
-//            while (theEnumerator next)
-//            [
-//                if (theOffset == 0)
-//                    [  
-//                        theCounter reduce(1). ^ true
-//                    ];
-//                    [ theOffset reduce(1) ]
-//            ].
-//        ].
-//        
-//        ^ false
-//    ]
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//    ]    
-//    
-//    enumerable => theEnumerator.
-//}
-//
+// --- Toping ---
+
+public class TopFilter : Enumerator
+{
+    ref<int>   theOffset;
+    ref<int>   theCounter;
+    Enumerator theEnumerator;
+    
+    constructor(int counter, Enumerator enumerator)
+    {
+        theCounter := counter;
+        theOffset := 0;
+        theEnumerator := enumerator;
+    }
+    
+    constructor new(int counter, int offset, Enumerator enumerator)
+    {
+        theCounter := counter;
+        theOffset := offset;
+        
+        theEnumerator := enumerator;
+    }
+    
+    get() = theEnumerator.get();
+    
+    bool next()
+    {
+        if (theCounter != 0)
+        {
+            while (theEnumerator.next())
+            {
+                if (theOffset == 0)
+                {
+                    theCounter.reduce(1); ^ true
+                }
+                else
+                {
+                    theOffset.reduce(1)
+                }
+            }
+        };
+        
+        ^ false
+    }
+    
+    reset() => theEnumerator;
+    
+    enumerable() => theEnumerator;
+}
+
 //// --- SkipFilter ---
 //
 //public class SkipFilter :: Enumerator

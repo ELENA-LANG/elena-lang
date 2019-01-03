@@ -3,6 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
+                   work
                  * the folowing code should raise an error - real cast() = RealNumber new(self);
                  * long constant should not be boxed like int constants
                  * it should be possible to declare something like this - var Array<object> o := nil;

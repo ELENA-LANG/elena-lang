@@ -1743,7 +1743,7 @@ public sealed class Variant
 // --- Array ---
 
 /// An array
-public sealed Array //:: Indexable, Array<object>
+public sealed Array : Indexable//, Array<object>
 {
     object[] theArray;
     

@@ -1359,6 +1359,26 @@ labNegative:
 
 end
 
+procedure __real."ln$system@RealNumber$@system@ref#1&RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  rln
+
+  quitn 3
+
+end
+
+procedure __real."exp$system@RealNumber$@system@ref#1&RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rexp
+
+  quitn 3
+
+end
+
 symbol sta_start
 
   pushr entry : "$forwards'$program"

@@ -295,8 +295,6 @@ public extension intOp : IntNumber
 {
 //    int rvprop absolute :: absolute.
 //    
-//    int fnprop  power    :: power.
-//    
 //    int rvprop sqr      :: sqr.
 //    
 //    int rvprop sqrt     :: sqrt.
@@ -311,6 +309,24 @@ public extension intOp : IntNumber
 //        retVal value := n
 //    ]
 //    
+    fnprop int power
+    {
+        read(int y, ref int retVal)
+        {
+            int x := self;
+            int r := 1;
+            if (x == 0)
+                { r := 0 };
+            
+            for(int i := 0, i < y, i += 1)
+            {
+                r := r * x
+            };
+            
+            retVal := r
+        }
+    }
+  
     fnprop int mod
     {
         read(int y, ref int retVal)
@@ -333,25 +349,7 @@ public extension intOp : IntNumber
 //    
 //    real realDiv : anOperand
 //        = RealNumber new(T<int>(self)); divide:anOperand.
-//    
-//    power(int y, ref<int> retVal)
-//    [
-//        int x := self.
-//        int r := 1.
-//        if (x == 0)
-//            [ r := 0 ].
-//        
-//        int i := 0.
-//        while(i < y)
-//        [
-//            r := r * x.
-//            
-//            i := i + 1
-//        ].
-//        
-//        retVal value := r
-//    ]
-//    
+//   
 //    sqr(ref<int> retVal)
 //    [
 //        int n := self.        
@@ -380,9 +378,9 @@ public extension intOp : IntNumber
     power(n)
         = self.power(cast int(n));
                 
-//    bool isOdd
-//        = self and(1) != 0.
-//        
+    bool isOdd()
+        = (self && 1) != 0;
+        
 //    bool isEven
 //        = self and(1) == 0.
 //        
@@ -552,17 +550,17 @@ public extension realOp : RealNumber
 //        
 //        ^ RealNumber new(aRetVal).
 //    ]
-//    
-//    real ln
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController ln(n, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//    
+    
+    real ln()
+    {
+        real n := self;
+        real retVal := 0.0r;
+        
+        realOpController.ln(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+    
 //    real sqrt
 //    [
 //        real n := self.      
