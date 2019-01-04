@@ -1586,17 +1586,6 @@ public sealed const struct WideString : BaseValue
 //    
 //    /// Clones the value
 //    clone = WideLiteralValue new(self).
-//
-//    readHashCodeTo(ref<int> retVal)
-//    [
-//        int len := self length.
-//        
-//        int h := system'external core_utf16hashcode(self, len).
-//        
-//        retVal value := h.
-//    ]    
-//        
-//    int rvprop hash_code :: readHashCodeTo.
 }
 
 // --- Variant ---

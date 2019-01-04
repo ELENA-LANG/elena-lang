@@ -890,7 +890,7 @@ private:
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, int mode);
 
    ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope);
-//   void compileAltOperation(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
@@ -971,6 +971,7 @@ private:
 
    void compileExternalArguments(SNode node, NamespaceScope& scope);
 
+   ref_t analizeAltExpression(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeOp(SNode current, NamespaceScope& scope);
    ref_t analizeSymbol(SNode& node, NamespaceScope& scope);
    ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);

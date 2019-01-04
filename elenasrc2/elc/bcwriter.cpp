@@ -5035,28 +5035,28 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
    endCatch(tape);
 }
 
-//void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   declareTry(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExprMask)) {
-//         generateObjectExpression(tape, current);
-//
-//         if (first) {
-//            declareAlt(tape);
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endAlt(tape);
-//}
+void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         generateObject(tape, current);
+
+         if (first) {
+            declareAlt(tape);
+
+            first = false;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   endAlt(tape);
+}
 
 void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
@@ -5431,10 +5431,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxExpression:
       case lxLocalUnboxing:
       case lxFieldExpression:
-//      case lxAltExpression:
+      case lxAltExpression:
          generateExpression(tape, node, mode);
          break;
-//////      case lxTypecasting:
       case lxCalling:
       case lxDirectCalling:
       case lxSDirctCalling:
@@ -5449,15 +5448,15 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxTrying:
          generateTrying(tape, node);
          break;
-//      case lxAlt:
-//         generateAlt(tape, node);
+      case lxAlt:
+         generateAlt(tape, node);
+         break;
+//      case lxReturning:
+//         generateReturnExpression(tape, node);
 //         break;
-////      case lxReturning:
-////         generateReturnExpression(tape, node);
-////         break;
-////      case lxThrowing:
-////         generateThrowExpression(tape, node);
-////         break;
+//      case lxThrowing:
+//         generateThrowExpression(tape, node);
+//         break;
       case lxCoreAPICall:
       case lxStdExternalCall:
       case lxExternalCall:

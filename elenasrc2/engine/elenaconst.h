@@ -72,6 +72,7 @@ namespace _ELENA_
    //#define IF_ELSE_MESSAGE_ID      0x0021
    constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
    constexpr auto CATCH_OPERATOR_ID       = 0x0023;
+   constexpr auto ALT_OPERATOR_ID       = 0x0024;
 
 //   // virtual operator
 //   #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -403,7 +404,7 @@ namespace _ELENA_
    constexpr auto LESS_OPERATOR        = "<";
    constexpr auto IF_OPERATOR          = "?";
    constexpr auto IFNOT_OPERATOR       = "!";
-   constexpr auto AND_OPERATOR         ="&&";
+   constexpr auto AND_OPERATOR         = "&&";
    constexpr auto OR_OPERATOR          = "||";
    constexpr auto XOR_OPERATOR         = "^^";
    constexpr auto ADD_OPERATOR         = "+";
@@ -418,6 +419,7 @@ namespace _ELENA_
    constexpr auto SHIFTR_OPERATOR      = "$shr";
    constexpr auto ISNIL_OPERATOR       = "??";
    constexpr auto CATCH_OPERATOR       = "|";
+   constexpr auto ALT_OPERATOR         = "\\";
 
   // --- ELENA explicit variables ---
    constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target

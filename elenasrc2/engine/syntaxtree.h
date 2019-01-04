@@ -152,7 +152,7 @@ enum LexicalType
    lxResending       = 0x0C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
 //   lxImplicitCall    = 0x0C00B,
    lxTrying          = 0x0C00C,   // try-catch expression
-//   lxAlt             = 0x0C00D,   // alt-catch expression
+   lxAlt             = 0x0C00D,   // alt-catch expression
 //   lxImplicitJump    = 0x0C00E,
    lxBranching       = 0x0C00F,   // branch expression      
    lxSwitching       = 0x0C010,
@@ -162,7 +162,7 @@ enum LexicalType
    lxExternalCall    = 0x0C015,   // calling an external function, arg - reference
    lxCoreAPICall     = 0x0C016,   // calling an external function, arg - reference
    lxMethodParameter = 0x0C017,
-//   lxAltExpression   = 0x0C018,
+   lxAltExpression   = 0x0C018,
    lxIfNot           = 0x0C019,   // optional arg - reference
    lxInternalCall    = 0x0C01A,   // calling an internal function, arg - reference
    lxIfN             = 0x0C01B,   // arg - value
@@ -994,7 +994,7 @@ public:
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);
    static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
-   static void saveNode(Node node, _Memory* dump, bool inclusingNode = false);
+   static void saveNode(Node node, _Memory* dump, bool includingNode = false);
    static void loadNode(Node node, _Memory* dump);
 
    static int countNodeMask(Node current, LexicalType mask)

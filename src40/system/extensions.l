@@ -864,10 +864,14 @@ public extension realOp : RealNumber
 //        = self <= 0.0r.
 }
 
-//// --- intArrayOp ---
-//
-//public extension<T<IntArray>> intArrayOp
-//{
+// --- intArrayOp ---
+
+public extension intArrayOp : Array<int>
+{
+    /// Copies the short array at the specified position
+    write(int index, int length, int[] array)
+        => system'core_routines'__intarray;
+
 //    exchange(int anIndex1, int anIndex2)
 //    [
 //        int n1 := 0.
@@ -897,8 +901,8 @@ public extension realOp : RealNumber
 //    
 //    populate(Func1 f)
 //        = self~intArrayOp populate(:n)<int,int>[ ^f(n) ].    
-//}
-//
+}
+
 //// --- arrayOp ---
 //
 //public extension<Array> arrayOp
@@ -1288,10 +1292,22 @@ public extension stringOp : String
 //    ]    
 }
 
-//// --- wideOp ---
-//
-//public extension<wide> wideOp
-//{
+// --- wideOp ---
+
+public extension wideOp : WideString
+{
+    vprop int HashCode
+    {
+        read(ref int retVal)
+        {
+            int len := self.Length;
+        
+            int h := extern elenart.core_utf16hashcode(self, len);
+        
+            retVal := h
+        }
+    }
+    
 //    indexOf : anObject
 //        = self indexOf:anObject at:0.
 //        
@@ -1459,8 +1475,8 @@ public extension stringOp : String
 //        
 //        ^ aLength == 0
 //    ]
-//}
-//
+}
+
 //// --- stringOp ---
 //
 //singleton stringOpDispatcher
@@ -1639,6 +1655,13 @@ public extension stringOp : String
 
 public extension charOp : CharValue
 {
+    vprop int HashCode
+    {
+        // Reads the object hash code into the output parameter
+        read(ref int retVal)
+            => system'core_routines'__int;        
+    }
+    
     bool isWhitespace()
     {
         self =>

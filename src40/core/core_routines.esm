@@ -1054,6 +1054,36 @@ labErr:
 
 end
 
+procedure __intarray."write$system@IntNumber$system@IntNumber$@system@Array#1&IntNumber[4]"
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  pushd
+  add
+  ecopyd
+  acopyb
+  nlen
+  less labErr
+  pope
+  aloadsi 2
+  nload
+  aloadsi 4
+  callextr api : ninsert
+  quitn 4
+
+labErr:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
 procedure __struct."#dispatch[1]"
 
   bsredirect
