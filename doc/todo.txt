@@ -3,7 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * Multimethods : nil #355
+                 * test unboxing with variadic arg list
 
                  * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
                    work

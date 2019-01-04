@@ -283,18 +283,18 @@ public extension enumerableOp
         ^ lastItem
     }
     
-//    int countMembers
-//    [
-//        auto   en := T<Enumerator>(self enumerator).
-//        int    counter := 0.
-//        while (en next)
-//        [
-//            counter := counter + 1
-//        ].
-//        
-//        ^ counter
-//    ]
-//    
+    int countMembers()
+    {
+        auto   en := cast Enumerator(self.enumerator());
+        int    counter := 0;
+        while (en.next())
+        {
+            counter += 1
+        };
+        
+        ^ counter
+    }
+    
 //    allMatchedBy(Func1 f)
 //    [
 //        auto   en := T<Enumerator>(self enumerator).

@@ -1056,7 +1056,7 @@ end
 
 procedure __intarray."write$system@IntNumber$system@IntNumber$@system@Array#1&IntNumber[4]"
 
-  bcopya
+  bloadsi 1
   aloadsi 2
   nload
   ecopyd

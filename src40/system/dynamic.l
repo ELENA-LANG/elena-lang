@@ -18,7 +18,7 @@
 // --- Message ---
 
 /// A message constant
-public sealed struct Message
+public sealed const struct Message
 {
     embeddable __mssg theValue[4];
 
@@ -54,7 +54,7 @@ public sealed struct Message
 // --- ExtensionMessage ---
 
 /// An extended message constant
-public sealed struct ExtensionMessage
+public sealed const struct ExtensionMessage
 {
     embeddable __mssg theValue[8];
     
@@ -75,7 +75,7 @@ public sealed struct ExtensionMessage
 // --- MessageName ---
 
 /// A dynamic message extender
-public sealed struct MessageName
+public sealed const struct MessageName
 {
     embeddable __subj theValue[4];
     
@@ -102,15 +102,15 @@ public sealed struct MessageName
 //    /// Compares the values
 //    bool equal(Signature subject)
 //        = theValue == subject.
-//
-//    T<literal> literal
-//    [
-//        T<byte,256> aBuffer.
-//        int         aLength := system'external LoadSubjectName(self, T<ByteArray>(aBuffer), 255).
-//        
-//        ^ LiteralValue fromByteArray(0, aLength, T<ByteArray>(aBuffer))
-//    ]
-//
+
+    get string Printable()
+    {
+        byte buffer[256];
+        int  length := extern elenart.LoadSubjectName(self, buffer, 255);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
 //    /// Qualifies incoming messages and redirects to the target
 //    dispatch => system'core_routines'__signature.
 }
