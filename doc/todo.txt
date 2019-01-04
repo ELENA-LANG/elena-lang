@@ -3,6 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * Multimethods : nil #355
+
                  * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
                    work
                  * the folowing code should raise an error - real cast() = RealNumber new(self);

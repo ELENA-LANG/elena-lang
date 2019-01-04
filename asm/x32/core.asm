@@ -18,6 +18,8 @@ define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
 define CORE_ET_TABLE        2000Bh
 define SYSTEM_ENV           2000Ch
+define VOID           	    2000Dh
+define VOIDPTR              2000Eh
 
 // GC TABLE OFFSETS
 define gc_header             0000h
@@ -103,6 +105,23 @@ rstructure %SYSTEM_ENV
   dd data : %CORE_GC_TABLE
   dd data : %CORE_TLS_INDEX
   dd data : %THREAD_TABLE
+
+end
+
+rstructure %VOID
+
+  dd 0
+  dd 0
+  dd 0
+  dd 0
+  dd 0
+
+end
+
+rstructure %VOIDPTR
+
+  dd rdata : %VOID
+  dd 0
 
 end
 
@@ -2656,6 +2675,12 @@ labNextParam:
 
 labMatching:
   mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
   mov  edi, [edi - 4]
   mov  esi, [ebx + ecx * 4]
 
@@ -2711,6 +2736,12 @@ labNextParam:
 
 labMatching:
   mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
   mov  edi, [edi - 4]
   mov  esi, [ebx + ecx * 4]
 
@@ -2743,6 +2774,12 @@ inline % 1E8h
   mov  ebx, [ebx + edx * 8] // ; message from overload list
 // ;  test edi, edi
 // ;  jz   short labEnd
+
+  //; check nil
+  mov   ecx, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, ecx
+
   mov  ecx, [edi - 4]
 
 labNextOverloadlist:
@@ -2789,6 +2826,12 @@ inline % 1E9h
   mov  ebx, __arg1
   mov  edi, [edi + 4]
   mov  ebx, [ebx + edx * 8] // ; message from overload list
+
+  //; check nil
+  mov   ecx, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, ecx
+
   mov  ecx, [edi - 4]
 
 labNextOverloadlist:
@@ -2839,6 +2882,12 @@ labNextOverloadlist:
 
 labMatching:
   mov  edi, [ecx+4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
   mov  edi, [edi-4]
   mov  esi, [ebx]
 
@@ -2847,6 +2896,12 @@ labNextBaseClass:
   jnz  labContinue
 
   mov  edi, [ecx+8]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
   mov  edi, [edi-4]
   mov  esi, [ebx + 4]
 
@@ -2899,6 +2954,12 @@ labNextOverloadlist:
 
 labMatching:
   mov  edi, [ecx+4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
   mov  edi, [edi-4]
   mov  esi, [ebx]
 
@@ -2907,6 +2968,12 @@ labNextBaseClass:
   jnz  labContinue
 
   mov  edi, [ecx+8]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
   mov  edi, [edi-4]
   mov  esi, [ebx + 4]
 
@@ -2986,6 +3053,12 @@ labNextParam:
 
 labMatching:
   mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
   mov  edi, [edi - 4]
   mov  esi, [ebx]
 
@@ -3051,6 +3124,12 @@ labNextParam:
 
 labMatching:
   mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
   mov  edi, [edi - 4]
   mov  esi, [ebx]
 

@@ -14,34 +14,42 @@
 using namespace _ELENA_;
 
 // --- ELENA Object constants ---
-const int gcPageSize       = 0x0010;           // a heap page size constant
-const int elObjectOffset   = 0x0008;           // object header / offset constant
+constexpr int gcPageSize         = 0x0010;           // a heap page size constant
+constexpr int elObjectOffset     = 0x0008;           // object header / offset constant
 
 // --- ELENA CORE built-in routines
-#define GC_ALLOC             0x10001
-#define HOOK                 0x10010
-#define INIT_RND             0x10012
-#define ENDFRAME             0x10016
-#define CALC_SIZE            0x1001F
-#define GET_COUNT            0x10020
-#define THREAD_WAIT          0x10021
-#define BREAK                0x10026
-#define EXPAND_HEAP          0x10028
+constexpr int GC_ALLOC           = 0x10001;
+constexpr int HOOK               = 0x10010;
+constexpr int INIT_RND           = 0x10012;
+constexpr int ENDFRAME           = 0x10016;
+constexpr int CALC_SIZE          = 0x1001F;
+constexpr int GET_COUNT          = 0x10020;
+constexpr int THREAD_WAIT        = 0x10021;
+constexpr int BREAK              = 0x10026;
+constexpr int EXPAND_HEAP        = 0x10028;
 
-#define CORE_GC_TABLE        0x20002
-#define CORE_STATICROOT      0x20005
-#define CORE_TLS_INDEX       0x20007
-#define CORE_THREADTABLE     0x20008
-#define CORE_OS_TABLE        0x20009
-#define CORE_MESSAGE_TABLE   0x2000A
-#define CORE_EH_TABLE        0x2000B
-#define SYSTEM_ENV           0x2000C
+constexpr int CORE_GC_TABLE      = 0x20002;
+constexpr int CORE_STATICROOT    = 0x20005;
+constexpr int CORE_TLS_INDEX     = 0x20007;
+constexpr int CORE_THREADTABLE   = 0x20008;
+constexpr int CORE_OS_TABLE      = 0x20009;
+constexpr int CORE_MESSAGE_TABLE = 0x2000A;
+constexpr int CORE_EH_TABLE      = 0x2000B;
+constexpr int SYSTEM_ENV         = 0x2000C;
+constexpr int VOID               = 0x2000D;
+constexpr int VOIDPTR            = 0x2000E;
 
 // preloaded gc routines
 const int coreVariableNumber = 3;
 const int coreVariables[coreVariableNumber] =
 {
    CORE_GC_TABLE, CORE_OS_TABLE, CORE_EH_TABLE
+};
+
+const int coreStaticNumber = 2;
+const int coreStatics[coreStaticNumber] =
+{
+   VOID, VOIDPTR
 };
 
 // preloaded gc routines
@@ -1592,6 +1600,7 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    MemoryWriter sdataWriter(sdata);
    MemoryWriter codeWriter(code);
 
+   // preloaded variables
     x86JITScope dataScope(NULL, &dataWriter, &helper, this);
    for (int i = 0; i < coreVariableNumber; i++) {
       if (!_preloaded.exist(coreVariables[i])) {
@@ -1620,8 +1629,23 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    // resolve reference to SYSTEM_ENV at rdata header
    rdata->addReference((ref_t)_preloaded.get(SYSTEM_ENV), 0);
 
+   // lnVMAPI_Instance
    dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance)); // ??
 
+   // preloaded core static variables
+   for (int i = 0; i < coreStaticNumber; i++) {
+      if (!_preloaded.exist(coreStatics[i])) {
+         _preloaded.add(coreStatics[i], helper.getVAddress(rdataWriter, mskRDataRef));
+
+         // due to optimization section must be ROModule::ROSection instance
+         SectionInfo info = helper.getCoreSection(coreStatics[i]);
+         rdataScope.module = info.module;
+
+         loadCoreOp(rdataScope, info.section ? (char*)info.section->get(0) : NULL);
+      }
+   }
+
+   // preloaded core functions
    x86JITScope scope(NULL, &codeWriter, &helper, this);
    for (int i = 0; i < coreFunctionNumber; i++) {
       if (!_preloaded.exist(coreFunctions[i])) {

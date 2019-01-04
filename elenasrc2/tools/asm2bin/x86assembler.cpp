@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                             (C)2005-2016, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2019, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -195,15 +195,15 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
          operand.type = x86Helper::otDD;
          operand.reference = info.binary->mapReference(structRef) | mskStatSymbolRef;
       }
-		//else if (token.check("const")) {
-  //       token.read(":", err);
-  //       token.read();
-  //       operand.type = x86Helper::otDD;
+		else if (token.check("const")) {
+         token.read(":", err);
+         token.read();
+         operand.type = x86Helper::otDD;
 
-  //       IdentifierString constRef(token.terminal.line + 1, token.terminal.length-2);
-  //       operand.reference = info.binary->mapReference(constRef) | mskConstantRef;
-  //       operand.offset = 0;
-  //    }
+         IdentifierString constRef(token.terminal.line + 1, token.terminal.length-2);
+         operand.reference = info.binary->mapReference(constRef) | mskConstantRef;
+         operand.offset = 0;
+      }
       else if (token.check("code")) {
          token.read(":", err);
          token.read();

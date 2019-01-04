@@ -3,7 +3,7 @@
 //
 //		Asm2BinX main file
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -22,7 +22,7 @@
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA Assembler Compiler %d.%d.%d (C)2011-2018 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_NUMBER);
+   printf("ELENA Assembler Compiler %d.%d.%d (C)2011-2019 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_NUMBER);
 
    if (argc<2) {
       printf("asm2binx [-amd64] <file.asm> <output path>");
