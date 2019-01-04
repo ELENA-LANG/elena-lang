@@ -3,6 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * support explicit mixin creation - mixin Invoker(x) - should be boxed into the Wrap class;
+
+
                  * test unboxing with variadic arg list
 
                  * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
@@ -22,7 +25,6 @@ In development:
                  * implement if else if - ..
 
                  * identifier - message message
-                 * support explicit mixin creation - mixin Invoker(x) - should be boxed into the Wrap class;
 
                  * migrate twentyfour, 99 Bottles of Beer
                  * syntax : template / size should be the last token in expression and one before the last for declaration
