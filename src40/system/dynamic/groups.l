@@ -25,13 +25,13 @@ public mixin Group
     internal constructor allocate(int len)
         = new object[](len);
         
-    constructor load(object[] objects)
+    constructor load(params object[] objects)
         <= allocate(objects.Length)
     {
-        self.setFields(objects)
+        self.setFields(params objects)
     }
     
-//    dispatch => system'core_routines'__group.
+    dispatch() => system'core_routines'__group;
 }
 
 ////// --- Cast ---

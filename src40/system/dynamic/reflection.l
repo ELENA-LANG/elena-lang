@@ -22,10 +22,10 @@ public extension classROp
 //    [
 //        system'core_routines'__object readLength(self, retVal)
 //    ]
-//
-//    setField(int anIndex, object anObject)
-//        => system'core_routines'__object.
-//        
+
+    setField(int index, object object)
+        => system'core_routines'__object;
+        
 //    getField(int anIndex)
 //        => system'core_routines'__object.
 //        
@@ -54,7 +54,7 @@ public extension classROp
 //        ^ array.
 //    ]
     
-    setFields(object[] objects)
+    setFields(params object[] objects)
     {
         int l := objects.Length;
         for (int i := 0, i < l, i += 1) {
