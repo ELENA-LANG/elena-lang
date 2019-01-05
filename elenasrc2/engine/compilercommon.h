@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler common interfaces.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerCommonH
@@ -42,6 +42,7 @@
 #define V_BINARYARRAY    (ref_t)-35
 #define V_INT16ARRAY     (ref_t)-38
 #define V_INT8ARRAY      (ref_t)-39
+#define V_UNBOXEDARGS	 (ref_t)-40
 
 #define V_AUTO           (ref_t)-50
 
@@ -102,9 +103,6 @@
 #define V_WRAPPER        (ref_t)-16408
 #define V_INTERN         (ref_t)-16409
 #define V_MEMBER         (ref_t)-16410
-
-////// obsolete
-////#define V_MULTI          (ref_t)-16397
 
 namespace _ELENA_
 {
@@ -382,7 +380,8 @@ public:
       bool  forwardAttr;
       bool  externAttr;
       bool  refAttr;
-      bool  internAttr;
+	  bool  paramsAttr;
+	  bool  internAttr;
       bool  loopAttr;
       bool  memberAttr;
       bool  subjAttr;
@@ -391,13 +390,13 @@ public:
 
       bool isExprAttr()
       {
-         return refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr;
+         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr;
       } 
 
       ExpressionAttributes()
       {
          refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
-         newOpAttr = loopAttr = internAttr = false;
+         paramsAttr = newOpAttr = loopAttr = internAttr = false;
          mssgAttr = wrapAttr = subjAttr = memberAttr = false;
       }
    };

@@ -829,7 +829,7 @@ private:
 //      int dummy;
 //      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
 //   }
-   ref_t mapMessage(SNode node, CodeScope& scope);
+   ref_t mapMessage(SNode node, CodeScope& scope, bool variadicOne);
 
    size_t resolveArraySize(SNode node, Scope& scope);
 
@@ -864,7 +864,7 @@ private:
    ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
    ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
 
-   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode = 0);
+   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, bool& variadicOne);
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t exptectedRef*/, ObjectInfo target, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
@@ -875,6 +875,7 @@ private:
 
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
    ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
    ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);

@@ -1911,7 +1911,14 @@ bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttri
             return true;
          }
          else return false;
-      case (int)V_INTERN:
+	  case (int)V_ARGARRAY:
+		  if (!attributes.paramsAttr) {
+			  attributes.paramsAttr = true;
+
+			  return true;
+		  }
+		  else return false;
+	  case (int)V_INTERN:
          if (!attributes.internAttr) {
             attributes.internAttr = true;
 

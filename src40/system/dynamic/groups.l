@@ -15,25 +15,25 @@
 //    
 //    dispatch => system'core_routines'__extension.
 //}
-//
-//// --- Group ---
-//
-//public mixin Group
-//{
-//    V<object> items.
-//    
-//    internal constructor newInteral(int aLength)
-//        = V<object>(aLength).
-//        
-//    generic constructor new(V<object> objects)
-//        <= newInteral(objects length);
-//    [
-//        self setFields(objects).
-//    ]
-//    
+
+// --- Group ---
+
+public mixin Group
+{
+    object[] items;
+    
+    internal constructor allocate(int len)
+        = new object[](len);
+        
+    constructor load(object[] objects)
+        <= allocate(objects.Length)
+    {
+        self.setFields(objects)
+    }
+    
 //    dispatch => system'core_routines'__group.
-//}
-//
+}
+
 ////// --- Cast ---
 ////
 ////mixin Cast
