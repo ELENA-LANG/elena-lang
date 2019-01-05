@@ -1,1 +1,1 @@
-#define REVISION_NUMBER   6
+#define REVISION_NUMBER   7

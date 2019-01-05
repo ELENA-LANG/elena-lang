@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                              (C)2009-2018, by Alexei Rakov
+//                                              (C)2009-2019, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
@@ -470,6 +470,8 @@ public:
       switch (code) {
          case bcXIndexRM:
          case bcXCallRM:
+         case bcIfM:
+         case bcElseM:
             return true;
          default:
             return false;

@@ -1329,6 +1329,9 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, iden
       virtualReference.append("$");
    }
 
+   if (test(flags, VARIADIC_MESSAGE))
+      virtualReference.append("params#");
+
    ref_t signature = 0;
    virtualReference.append(moduleScope->module->resolveAction(actionRef, signature));
 

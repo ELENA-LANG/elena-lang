@@ -1548,6 +1548,87 @@ labEnd:
         
 end
 
+procedure __closuretape."#dispatch[1]"
+
+  dcopyverb
+  elsem labDefault message : "#invoke[1]"
+
+  dcopycount
+  ecopyd  
+
+  open 5
+  reserve 2
+  pusha
+  
+  dsavefi -3
+  dcopy 0  
+  dsavefi -2
+  
+  pushn 0
+  
+  bcopyf -6
+  
+// ; copy message parameters
+  dcopye
+  ifn  labSkipCopy 0
+labNextParam:
+  dec
+  get
+  pusha
+  elsen labNextParam 0
+
+labSkipCopy:
+  bloadfi 1
+
+labNext:
+  breakpoint
+
+  count
+  dloadfi -2
+  if labEnd
+  get
+  inc
+  dsavefi -2
+
+  xindexrm system'dynamic'DynamicClosure message : "params##invoke[1]"
+  acallvd
+  pusha
+  bloadfi 1
+  jump labNext
+
+labEnd:
+  popa
+
+  dloadfi -3
+  dec
+  ecopyd
+  restore 4
+  close
+
+  equit
+
+labDefault:
+  ecopyd
+  bsredirect  
+  open    4
+  reserve 1
+  esavesi 2
+  bcopys  -2
+  pushb
+  pushr class : system'MethodNotFoundException
+  pushr const : %new[1]
+  throw
+
+end
+
+procedure __mssg_closure."params##invoke$system@Object[2]"
+
+  nloade
+  aloadsi 1
+  ajumpvi 0
+
+end
+
 symbol sta_start
 
   pushr entry : "$forwards'$program"

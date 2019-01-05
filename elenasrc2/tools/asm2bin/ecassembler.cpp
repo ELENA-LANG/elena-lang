@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -74,7 +74,7 @@ bool ECodesAssembler :: readMessage(ident_t quote, IdentifierString& subject, re
    return true;
 }
 
-void ECodesAssembler::readMessage(TokenInfo& token, IdentifierString& subject, ref_t& signRef, int& paramCount)
+void ECodesAssembler :: readMessage(TokenInfo& token, IdentifierString& subject, ref_t& signRef, int& paramCount)
 {
    while (token.value[0] != '[') {
       subject.append(token.value);
@@ -137,18 +137,53 @@ ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
    return binary->mapReference(message) | mskMessage;
 }
 
-//ref_t ECodesAssembler::compileMessageArg(TokenInfo& token, _Module* binary)
-//{
-//   QuoteTemplate<IdentifierString> quote(token.terminal.line);
-//
-//   IdentifierString subject;
-//   int paramCount = 0;
-//   ref_t signRef = 0;
-//
-//   readMessage(quote.ident(), subject, signRef, paramCount);
-//
-//   return encodeMessage(binary->mapAction(subject, signRef, false), paramCount);
-//}
+ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
+{
+   if (token.terminal.state == dfaInteger || constants.exist(token.value)) {
+      int m = 0;
+      if (token.getInteger(m, constants)) {
+         return m;
+      }
+      else token.raiseErr("Invalid number (%d)\n");
+   }
+   else if (token.check("message")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
+
+      IdentifierString message;
+      compileMessage(token, message);
+
+      int paramCount = message[0] - '0';
+      int flags = 0;
+
+      IdentifierString subject(token.value);
+      subject.copy(message.c_str() + 1);
+
+      if (subject.ident().startsWith("params#")) {
+         subject.cut(0, 7);
+         flags |= VARIADIC_MESSAGE;
+      }
+
+      if (subject.compare(INVOKE_MESSAGE)) {
+         flags |= SPECIAL_MESSAGE;
+      }
+
+      ref_t subj = binary->mapAction(subject, 0, false);
+
+      return encodeMessage(subj, paramCount, flags);
+   }
+   else if (token.check("messagename")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
+
+      IdentifierString subject;
+      compileMessageName(token, subject);
+      ref_t subj = binary->mapAction(subject, 0, false);
+
+      return subj;
+   }
+   else token.raiseErr("Invalid operand (%d)");
+}
 
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 {
@@ -225,16 +260,15 @@ void ECodesAssembler :: compileRRCommand(ByteCode code, TokenInfo& token, Memory
    writeCommand(ByteCommand(code, reference1, reference2), writer);
 }
 
-//void ECodesAssembler::compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
-//{
-//   size_t reference1 = compileRArg(token, binary);
-//
-//   token.read("%", "Invalid operand (%d)");
-//   token.read();
-//   size_t reference2 = compileMessageArg(token, binary);
-//
-//   writeCommand(ByteCommand(code, reference1 & ~mskAnyRef, reference2), writer);
-//}
+void ECodesAssembler::compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+{
+   size_t reference1 = compileRArg(token, binary);
+
+   token.read();
+   size_t reference2 = compileMessageArg(token, binary);
+
+   writeCommand(ByteCommand(code, reference1 & ~mskAnyRef, reference2), writer);
+}
 
 void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
 {
@@ -245,46 +279,11 @@ void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryW
 
 void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
-   ident_t word = token.read();
-   if (token.terminal.state == dfaInteger || constants.exist(word)) {
-      int m = 0;
-      if(token.getInteger(m, constants)) {
-         writeCommand(ByteCommand(code, m), writer);
-      }
-      else token.raiseErr("Invalid number (%d)\n");
-   }
-   else if (word.compare("message")) {
-      token.read(":", "Invalid operand (%d)");
-      token.read();
+   token.read();
 
-      IdentifierString message;
-      compileMessage(token, message);
+   int arg = compileMessageArg(token, binary);
 
-      int paramCount = message[0] - '0';
-      int flags = 0;
-
-      IdentifierString subject(token.value);
-      subject.copy(message.c_str() + 1);
-
-      if (subject.compare(INVOKE_MESSAGE)) {
-         flags |= SPECIAL_MESSAGE;
-      }
-
-      ref_t subj = binary->mapAction(subject, 0, false);
-
-      writeCommand(ByteCommand(code, encodeMessage(subj, paramCount, flags)), writer);
-   }
-   else if (word.compare("messagename")) {
-      token.read(":", "Invalid operand (%d)");
-      token.read();
-
-      IdentifierString subject;
-      compileMessageName(token, subject);
-      ref_t subj = binary->mapAction(subject, 0, false);
-
-      writeCommand(ByteCommand(code, subj), writer);
-   }
-   else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
+   writeCommand(ByteCommand(code, arg), writer);
 }
 
 void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
@@ -392,7 +391,7 @@ void ECodesAssembler :: compileRJump(ByteCode code, TokenInfo& token, MemoryWrit
    writer.writeDWord(label);
 }
 
-void ECodesAssembler :: compileMccJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info)
+void ECodesAssembler :: compileMccJump(ByteCode code, TokenInfo& token, MemoryWriter& writer, LabelInfo& info, _Module* binary)
 {
    writer.writeByte(code);
 
@@ -407,7 +406,9 @@ void ECodesAssembler :: compileMccJump(ByteCode code, TokenInfo& token, MemoryWr
       info.fwdJumps.add(token.value, 4 + writer.Position());
    }
 
-   int message = token.readInteger(constants);
+   token.read();
+
+   int message = compileMessageArg(token, binary);
 
    writer.writeDWord(message);
    writer.writeDWord(label);
@@ -516,7 +517,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             break;
          case bcIfM:
          case bcElseM:
-            compileMccJump(opcode, token, writer, info);
+            compileMccJump(opcode, token, writer, info, binary);
             break;
          case bcIfN:
          case bcElseN:
@@ -536,10 +537,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcSelectR:
             compileRRCommand(opcode, token, writer, binary);
             break;
-         //case bcXIndexRM:
-         //case bcXCallRM:
-         //   compileRMCommand(opcode, token, writer, binary);
-         //   break;
+         case bcXIndexRM:
+         case bcXCallRM:
+            compileRMCommand(opcode, token, writer, binary);
+            break;
          default:
             writeCommand(ByteCommand(opcode), writer);
             break;
