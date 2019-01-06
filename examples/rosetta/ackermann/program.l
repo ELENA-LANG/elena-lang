@@ -8,35 +8,35 @@
 // A( 2 , 4 ) =  11
 // A( 3 , 4 ) =  125
 
-import extensions.
+import extensions;
 
 // --- Ackermann function ---
 
 ackermann(m,n)
-[
-    if((n < 0)||(m < 0))
-    [
-        InvalidArgumentException new; raise
-    ].
+{
+    if(n < 0 || m < 0)
+    {
+        InvalidArgumentException.raise()
+    };
     
     m =>
-       0 [ ^n + 1 ];
-       ! [
+       0 { ^n + 1 }
+       : {
               n => 
-                0 [ ^ackermann(m - 1,1) ];
-                ! [ ^ackermann(m - 1,ackermann(m,n-1)) ]
-           ]
-]
+                0 { ^ackermann(m - 1,1) }
+                : { ^ackermann(m - 1,ackermann(m,n-1)) }
+           }
+}
 
-public program
-[
-    0 to:3 do(:i)
-    [
-        0 to:5 do(:j)
-        [
-            console printLine("A(",i,",",j,")=",ackermann(i,j))
-        ]
-    ].
+public program()
+{
+    for(int i:=0, i <= 3, i += 1)
+    {
+        for(int j := 0, j <= 5, j += 1)
+        {
+            console.printLine("A(",i,",",j,")=",ackermann(i,j))
+        }
+    };
 
-    console readChar
-]
+    console.readChar()
+}
