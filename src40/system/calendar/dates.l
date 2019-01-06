@@ -1,21 +1,24 @@
-//// --- TimeSpan --
-//
-//public sealed struct Timespan :: BaseNumber
-//{
-//    T<SystemTime> theValue.
-//
-//    constructor new
-//    [
-//        theValue := 0l.
-//    ]
-//
-////    #constructor min <= new &__time:(SystemTime $new &long:0l).
-//
-//    constructor(SystemTime aValue)
-//    [
-//        theValue := aValue.
-//    ]
-//
+// --- TimeSpan --
+
+public sealed struct Timespan : BaseNumber
+{
+    SystemTime theValue;
+
+    static SystemTime Default
+        = new Timespan();
+
+    constructor()
+    {
+        theValue := 0l
+    }
+
+//    #constructor min <= new &__time:(SystemTime $new &long:0l).
+
+    constructor(SystemTime val)
+    {
+        theValue := val
+    }
+
 //    constructor new(SystemTime aValue)
 //    [
 //        theValue := aValue.
@@ -165,7 +168,7 @@
 //
 //    T<Timespan> clone
 //        = Timespan new(theValue).
-//}
+}
 
 // --- Date ---
 
@@ -224,11 +227,14 @@ public sealed struct Date : BaseNumber
 //    cast T<SystemTime> = SystemTime new(theValue).
 //
 //    cast T<TimeStruct> = TimeStruct new(theValue).
-//
-//    readValueTo(ref<SystemTime> aRetVal)
-//    [
-//        aRetVal value := theValue.
-//    ]
+
+    vprop SystemTime SystemTime
+    {
+        read(ref SystemTime retVal)
+        {
+            retVal := theValue
+        }
+    }
 //   
 //    bool equal(Date aDate)
 //    [
@@ -245,15 +251,14 @@ public sealed struct Date : BaseNumber
 //        
 //        ^ theValue less(aValue)
 //    ]
-//  
-//    subtract(Date aDate)
-//    [
-//        T<SystemTime> aValue := 0l.
-//        aDate readValueTo(&aValue).
-//
-//        ^ Timespan new(theValue subtract(aValue))
-//    ]
-//  
+  
+    subtract(Date dt)
+    {
+        SystemTime val := dt.SystemTime;
+
+        ^ new Timespan(theValue.subtract(val))
+     }
+  
 //    subtract(Timespan aTimeSpan)
 //    [
 //        T<SystemTime> aValue := 0l.
@@ -395,8 +400,8 @@ public sealed struct Date : BaseNumber
 ////        = Date new &__time:theValue.
 }
 
-//// --- now ---
-//
-//public T<Date> now = Date now.
-//
+// --- now ---
+
+public Date now = Date.Now;
+
 //public T<Date> utcNow = Date utcNow.

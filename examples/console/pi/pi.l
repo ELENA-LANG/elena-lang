@@ -19,7 +19,7 @@ public program()
     console.printLine(pi);
 
     var diff := ended - started;
-    console.printLine("Time elapsed in msec:",aDiff.Milliseconds);
+    console.printLine("Time elapsed in msec:",diff.Milliseconds);
 
     console.readChar()
 }

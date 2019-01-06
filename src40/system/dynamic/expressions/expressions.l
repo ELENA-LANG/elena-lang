@@ -2,8 +2,8 @@
 
 public interface class Expression
 {
-    //static Expression Constant(object o)
-      //  = new ConstantExpression(o);
+    static Expression Constant(object o)
+        = new ConstantExpression(o);
         
 //    T<Expression> generic static MessageCall(mssg message, Expression t, V<Expression> arguments)
 //        = MessageCallExpression new(message,t,arguments).
@@ -26,7 +26,7 @@ public class ConstantExpression : Expression
 {
     object object;
     
-    constructor(object o)
+    constructor(o)
     {
         this object := o
     }

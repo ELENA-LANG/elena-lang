@@ -30,6 +30,9 @@ public sealed const struct SystemTime : BaseValue
 {
     __int theValue[8];
 
+    static SystemTime Default
+        = 0l;
+
     constructor(long value)
     {
         theValue := value
@@ -61,14 +64,14 @@ public sealed const struct SystemTime : BaseValue
 //    [
 //        retVal value := theValue.
 //    ]
-//
-//    T<SystemTime> subtract(SystemTime anOperand)
-//    [
-//        T<SystemTime> result := theValue - anOperand.
-//        
-//        ^ SystemTime new(result).
-//    ]
-//
+
+    SystemTime subtract(SystemTime operand)
+    {
+        SystemTime result := theValue - operand;
+        
+        ^ new SystemTime(result)
+    }
+
 //    T<SystemTime> add(SystemTime anOperand)
 //    [
 //        T<SystemTime> result := theValue + anOperand.
