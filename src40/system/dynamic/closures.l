@@ -9,10 +9,12 @@ public interface class DynamicClosure
 
 public struct MessageClosure : DynamicClosure
 {
-    embeddable __mssg theValue[4];
+    embeddable mssg theMessage;
     
     constructor(mssg message)
-        = message;
+    {
+        theMessage := message
+    }
     
     closure(params object[] args)
         => system'core_routines'__mssg_closure;

@@ -2073,8 +2073,12 @@ public sealed const struct RealNumber : BaseNumber
 
     /// Returns the sum of numbers
     real add(int n)
-        = self.add(new RealNumber(n));
-
+    {
+        real r := n;
+        
+        ^ self.add(r)
+    }
+    
     /// Returns the sum of numbers
     real add(byte n)
         = self.add(new RealNumber(n));
@@ -2106,9 +2110,9 @@ public sealed const struct RealNumber : BaseNumber
     /// Returns the product of numbers
     real multiply(int n)
     {
-        real n := n;
+        real r := n;
         
-        ^ self.multiply(n)
+        ^ self.multiply(r)
     }
 
     /// Returns the product of numbers
@@ -2126,9 +2130,9 @@ public sealed const struct RealNumber : BaseNumber
     /// Returns the result of the division
     real divide(int n)
     {
-        real n := n;
+        real r := n;
         
-        ^ self.divide(n)
+        ^ self.divide(r)
     }
 
     /// Returns the result of the division

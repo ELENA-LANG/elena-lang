@@ -1550,8 +1550,8 @@ end
 
 procedure __closuretape."#dispatch[1]"
 
-  dcopyverb
-  elsem labDefault message : "#invoke[1]"
+  //;dcopyverb
+  //;elsem labDefault message : "#invoke[1]"
 
   dcopycount
   ecopyd  

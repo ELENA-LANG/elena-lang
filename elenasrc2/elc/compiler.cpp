@@ -3156,8 +3156,8 @@ ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, r
          return scope.realReference;
       case V_SUBJECT:
          return scope.messageNameReference;
-         //case V_MESSAGE:
-         //   return firstNonZero(scope.messageReference, scope.superReference);
+      case V_MESSAGE:
+         return scope.messageReference;
       case V_UNBOXEDARGS:
          // HOTFIX : should be returned as is
          return argRef;
@@ -4172,7 +4172,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
       else {
          int paramsMode = 0;
          int stackSafeAttr = 0;
-		 bool variadicOne = false;
+		   bool variadicOne = false;
          ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne);
 
          ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, targetRef, implicitSignatureRef, paramCount, stackSafeAttr);
