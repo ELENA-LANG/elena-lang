@@ -713,6 +713,7 @@ typedef Map<ident_t, ref_t> MessageMap;
 
 // --- Extensions ---
 typedef Map<ref_t, Pair<ref_t, ref_t>> ExtensionMap;
+typedef Map<ref_t, char*>              ExtensionTmplMap;
 
 // --- ParserTable auxiliary types ---
 typedef Stack<int>                                          ParserStack;

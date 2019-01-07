@@ -74,26 +74,6 @@ inline SNode goToNode(SNode current, LexicalType type1, LexicalType type2, Lexic
 inline bool isTerminal(LexicalType type)
 {
    return test(int(type), lxTerminalMask);
-
-//   switch (type)
-//   {
-//      case lxIdentifier:
-//      case lxPrivate:
-//      case lxInteger:
-//      case lxHexInteger:
-//      case lxLong:
-//      case lxReal:
-//      case lxLiteral:
-//      case lxReference:
-//      case lxCharacter:
-//      case lxWide:
-//      case lxExplicitConst:
-//      case lxMemberIdentifier:
-//      case lxGlobalReference:
-//         return true;
-//      default:
-//         return false;
-//   }
 }
 
 inline void copyIdentifier(SyntaxWriter& writer, SNode ident)
@@ -344,7 +324,7 @@ void DerivationWriter :: loadTemplateExprParameters(Scope& scope, SNode node)
    }
 }
 
-void DerivationWriter ::generateTemplateTree(SNode node, SNode nameNode, ScopeType templateType)
+void DerivationWriter :: generateTemplateTree(SNode node, SNode nameNode, ScopeType templateType)
 {
    Scope templateScope;
    templateScope.templateMode = templateType;
@@ -381,6 +361,9 @@ void DerivationWriter ::generateTemplateTree(SNode node, SNode nameNode, ScopeTy
       _scope->attributes.add(refName.ident(), nameNode.argument);
       _scope->saveAttribute(refName.ident(), nameNode.argument);
    }
+   else if (templateScope.templateMode == ScopeType::stExtensionTemplate) {
+
+   }
 
    SyntaxTree::saveNode(root, target);
 }
@@ -408,91 +391,20 @@ bool DerivationWriter :: recognizeMetaScope(SNode node)
          case V_IMPORT:
             declType = (DeclarationAttr)(declType | daImport);
             break;
+         case V_EXTENSION:
+            declType = (DeclarationAttr)(declType | daExtension);
+            break;
          default:
             break;
       }
-
-   //      ref_t attrRef = scope.mapAttribute(current);
-   //      current.setArgument(attrRef);
-   //
-   //      DeclarationAttr attr = daNone;
-   //      switch (attrRef) {
-   //         case V_TYPETEMPL:
-   //            if (!current.existChild(lxAttributeValue))
-   //               attr = daType;
-   //            break;
-   //         case V_CLASS:
-   //         case V_STRUCT:
-   //         //case V_STRING:
-   //            attr = daClass;
-   //            break;
-   //         case V_TEMPLATE:
-   //            attr = daTemplate;
-   //            break;
-   //         case V_EXTENSION:
-   //            attr = daExtension;
-   //            if (current.existChild(lxAttributeValue) && SyntaxTree::countChild(current, lxAttributeValue) == 1) {
-   //               // HOTFIX : recognize typified extension
-   //               current = lxRefAttribute;
-   //            }
-   //            break;
-   //         case V_FIELD:
-   //            attr = daField;
-   //            break;
-   //         case V_LOOP:
-   //            attr = (DeclarationAttr)(daLoop | daTemplate | daBlock);
-   //            break;
-   //         case V_ACCESSOR:
-   //            if (test(declType, daAccessor)) {
-   //               if (test(declType, daDblAccessor)) {
-   //                  scope.raiseError(errInvalidHint, node);
-   //               }
-   //               else attr = daDblAccessor;
-   //            }
-   //            else attr = daAccessor;
-   //            break;
-   //         case V_IMPORT:
-   //            attr = daImport;
-   //            break;
-   //         case V_EXTERN:
-   //            attr = (DeclarationAttr)(daExtern | daTemplate | daBlock);
-   //            break;
-   //         case V_BLOCK:
-   //            if (test(declType, daBlock)) {
-   //               if (test(declType, daDblBlock)) {
-   //                  scope.raiseError(errInvalidHint, node);
-   //               }
-   //               else attr = daDblBlock;
-   //            }
-   //            else attr = daBlock;
-   //            break;
-   //         case V_NESTEDBLOCK:
-   //            if (test(declType, daNestedBlock)) {
-   //               scope.raiseError(errInvalidHint, node);
-   //            }
-   //            else attr = daNestedBlock;
-   //            break;
-   //         case V_PUBLIC:
-   //            privateOne = false;
-   //            break;
-   //         case V_INTERNAL:
-   //            if (!privateOne)
-   //               scope.raiseError(errInvalidHint, current);
-   //            break;
-   //         default:
-   //            break;
-   //      }
-   //      declType = (DeclarationAttr)(declType | attr);
    
-         current = current.prevNode();
+      current = current.prevNode();
    }
    
    if (nameNode.existChild(lxToken)) {
       declType = (DeclarationAttr)(declType | daTemplate);
    }
 
-   ////   attributes.refresh();
-   //
    if (declType == daType) {
       node = lxForward;
 
@@ -519,6 +431,9 @@ bool DerivationWriter :: recognizeMetaScope(SNode node)
       }
       else if (test(declType, daProperty)) {
          type = ScopeType::stPropertyTemplate;
+      }
+      else if (test(declType, daExtension)) {
+         type = ScopeType::stExtensionTemplate;
       }
 
       generateTemplateTree(node, nameNode, type);
@@ -912,9 +827,15 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
 
 void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope)
 {
-   writer.newBookmark();
-   generateExpressionAttribute(writer, node.findChild(lxToken), derivationScope);
-   writer.removeBookmark();
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxToken) {
+         writer.newBookmark();
+         generateExpressionAttribute(writer, current, derivationScope);
+         writer.removeBookmark();
+      }
+      current = current.nextNode();
+   }
 }
 
 void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/)

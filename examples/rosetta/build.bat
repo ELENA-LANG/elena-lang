@@ -1,6 +1,6 @@
 ..\..\bin\elc accumulator\accumulator.prj
 ..\..\bin\elc ackermann\ackerman.prj
-rem ..\..\bin\elc addfield\addfield.prj
+..\..\bin\elc addfield\addfield.prj
 rem ..\..\bin\elc anonymrec\anonymrec.prj
 ..\..\bin\elc aplusb\aplusb.prj
 rem ..\..\bin\elc applycallback\arraycallback.prj

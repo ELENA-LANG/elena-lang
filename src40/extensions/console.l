@@ -219,14 +219,14 @@ public extension outputOp
 
 public extension inputOp
 {
-//    readLineTo:var
-//    [
-//        var aLine := self readLine.
-//        
-//        aLine~convertorOp convertTo:var.
-//        
-//        ^var.
-//    ]
+    loadLineTo(var)
+    {
+        var line := self.readLine();
+        
+        line.convertTo:var;
+        
+        ^ var
+    }
     
     loadLine(params object[] args)
     {

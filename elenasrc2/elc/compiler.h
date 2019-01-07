@@ -315,6 +315,7 @@ private:
 
       // extensions
       ExtensionMap      extensions;
+      ExtensionTmplMap  extensionTemplates;
 
 ////      ref_t packageReference;
 //
