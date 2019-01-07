@@ -827,9 +827,15 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
 
 void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope)
 {
-   writer.newBookmark();
-   generateExpressionAttribute(writer, node.findChild(lxToken), derivationScope);
-   writer.removeBookmark();
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxToken) {
+         writer.newBookmark();
+         generateExpressionAttribute(writer, current, derivationScope);
+         writer.removeBookmark();
+      }
+      current = current.nextNode();
+   }
 }
 
 void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/)

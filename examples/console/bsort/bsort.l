@@ -9,48 +9,56 @@ prompter(int index)
      ^ console.print("Enter array[",index,"]:").loadLineTo(new Integer()).Value
 }
 
-//// --- bsortOp ---
-//
-//extension bsortOp
-//{
-//    bsortRange(int aStart, int anEnd)
-//    [
-//        int aCurrent := aStart.
-//        
-//        while(aCurrent * 2 < anEnd)
-//        [
-//            int aMaxChild := 0.
-//            int aChild := (aCurrent * 2) + 1.
-//    
-//            if ((aChild == anEnd) || (self[aChild] > self[aChild + 1]))
-//                [ aMaxChild := aChild ];
-//                [ aMaxChild := aChild + 1 ].
-//    
-//            if (self[aCurrent] < self[aMaxChild])
-//                [
-//                    self exchange(aCurrent,aMaxChild).
-//    
-//                    aCurrent := aMaxChild
-//                ];
-//                [ ^ self ]
-//        ].
-//     ]
-//     
-//     bsort
-//     [
-//        (self length / 2) to:0 do(:anIndex)
-//        [
-//            self~bsortOp bsortRange(anIndex, self length - 1).
-//        ].
-//
-//        (self length - 1) to:0 do(:anIndex)
-//        [
-//            self exchange(anIndex,0).
-//            
-//            self~bsortOp bsortRange(0, anIndex - 1).
-//        ].
-//     ]
-//}
+// --- bsortOp ---
+
+extension bsortOp
+{
+    bsortRange(int start, int end)
+    {
+        int current := start;
+        
+        while(current * 2 < end)
+        {
+            int maxChild := 0;
+            int child := current * 2 + 1;
+    
+            if (child == end || self[child] > self[child + 1])
+            {
+                maxChild := child
+            }
+            else
+            {
+                maxChild := child + 1
+            };
+    
+            if (self[current] < self[maxChild])
+            {
+                self.exchange(current,maxChild);
+    
+                current := maxChild
+            }
+            else
+            {
+                ^ self
+            }
+        }
+    }
+     
+    bsort()
+    {
+        for (int i := self.Length / 2, i >= 0, i -= 1)
+        {
+            self.bsortRange(i, self.Length - 1);
+        };
+        
+        for (int i := self.Length - 1, i >= 0, i -= 1)
+        {
+            self.exchange(i, 0);
+            
+            self.bsortRange(0, i - 1);
+        }
+    }
+}
 
 // === Program ===
 
@@ -62,9 +70,9 @@ public program()
     // 2. Initialize the array
     var array := Array.allocate(size).populate:prompter;
 
-//    // 3. Sort the array
-//    anArray bsort.
-//
+    // 3. Sort the array
+    anArray.bsort();
+
 //    // 4. Print the array
 //    console printLine("Sorted array:",anArray).
 //

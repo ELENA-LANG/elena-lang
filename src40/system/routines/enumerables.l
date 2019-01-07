@@ -451,21 +451,21 @@ public extension indexableOp
 ////        ^ aCopy.
 ////    ]
         
-//    populate(Func<int,object> f)
-//    {
-//        Indexer it := self.indexer();
-//
-//        while (it.Available)
-//        {
-//            int i := it.Index;
-//            
-//            it.set(f(i));
-//            
-//            it.appendIndex:1
-//        };
-//        
-//        ^ self
-//    }    
+    populate(Func<int,object> f)
+    {
+        Indexer it := self.indexer();
+
+        while (it.Available)
+        {
+            int i := it.Index;
+            
+            it.set(f(i));
+            
+            it.appendIndex:1
+        };
+        
+        ^ self
+    }    
 
 //    populate(ExtensionMessage ext_mssg)
 //        = self~indexableOp populate(:n)<int>[ ^n~ext_mssg get ].
@@ -485,9 +485,9 @@ public extension indexableOp
         };
     }    
 
-////    populate : anAction
-////        = self~indexableOp populate(:n)<int>[ ^anAction(n) ].
-//
+    populate(action)
+        = self.populate:(int n){ ^action(n) };
+
 //    bool isSorted(Func2 aCompareFunc)
 //    [
 //        auto it := T<Indexer>(self indexer).
