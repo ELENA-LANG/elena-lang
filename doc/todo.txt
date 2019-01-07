@@ -3,7 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * fix pi sample 
+                 * ref of the class before the class is declared itself should be postponed / prohibited
                  * optimize SystemTime
                  * the following code should not be allowed - real n := n;
                  * uncomment __closuretape."#dispatch[1]  - check the subject correctly

@@ -3,29 +3,6 @@ const int DATE_LONGDATE   = 00000002h;
 
 // --- SystemTime ---
 
-public singleton systemTimeFactory
-{
-//    readUtcNow(ref<SystemTime> retVal)
-//    [
-//        T<SystemTime> aTime := 0l.        
-//        system'external'KERNEL32 GetSystemTimeAsFileTime(aTime).
-//        
-//        retVal value := aTime.
-//    ]
-    
-    readNow(ref SystemTime retVal)
-    {
-        SystemTime time := 0l;
-        SystemTime localTime := 0l;
-        
-        extern KERNEL32.GetSystemTimeAsFileTime(time);
-
-        extern KERNEL32.FileTimeToLocalFileTime(time, localTime);
-        
-        retVal := localTime
-    }
-}
-
 public sealed const struct SystemTime : BaseValue
 {
     embeddable __int theValue[8];
@@ -258,4 +235,27 @@ public sealed struct TimeStruct
 
     wide toShortTime()
         = self.timeToWide(0);
+}
+
+public singleton systemTimeFactory
+{
+//    readUtcNow(ref<SystemTime> retVal)
+//    [
+//        T<SystemTime> aTime := 0l.        
+//        system'external'KERNEL32 GetSystemTimeAsFileTime(aTime).
+//        
+//        retVal value := aTime.
+//    ]
+    
+    readNow(ref SystemTime retVal)
+    {
+        SystemTime time := 0l;
+        SystemTime localTime := 0l;
+        
+        extern KERNEL32.GetSystemTimeAsFileTime(time);
+
+        extern KERNEL32.FileTimeToLocalFileTime(time, localTime);
+        
+        retVal := localTime
+    }
 }
