@@ -2330,21 +2330,21 @@ public singleton nilValue
     generic() = nil;
 }
 
-//// === Basic Factory symbols ==
-//
-//public class BaseExtender
-//{
-//    object theObject.
-//    
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    bool equal : anObject
-//        => theObject.
-//
-//    T<literal> literal
-//        => theObject.
-//                  
-//    dispatch => theObject.
-//}
+// === Basic Factory symbols ==
+
+public class BaseExtender
+{
+    object theObject;
+    
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    bool equal(object)
+        => theObject;
+
+    get string Printable()
+        => theObject;
+                  
+    dispatch() => theObject;
+}
 
 /// A generic variable. 
 ///

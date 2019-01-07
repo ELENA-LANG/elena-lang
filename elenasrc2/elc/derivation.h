@@ -29,17 +29,8 @@ class DerivationWriter : public _DerivationWriter
    //      daClass       = 0x0002,
       daTemplate    = 0x0004,
       daProperty    = 0x0008,
-   //      daLoop        = 0x0020,
-         daImport      = 0x0040,
-   //      daExtern      = 0x0080,
-   //      daAccessor    = 0x0100,
-   //      daDblAccessor = 0x0300,
-   //      daCodeMask    = 0xF800,
-   //      daCode        = 0x0800,
-   //      daBlock       = 0x1800,
-   //      daDblBlock    = 0x3800,
-   //      daNestedBlock = 0x4800,
-   //      daExtension   = 0x8000
+      daImport      = 0x0040,
+      daExtension   = 0x8000
    };
 
    enum ScopeType
@@ -47,7 +38,8 @@ class DerivationWriter : public _DerivationWriter
       stNormal = 0,
       stClassTemplate,
       stCodeTemplate,
-      stPropertyTemplate
+      stPropertyTemplate,
+      stExtensionTemplate
    };
 
    struct Scope

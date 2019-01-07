@@ -531,6 +531,7 @@ public:
    virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;
+   virtual ref_t resolveExtensionTemplate(ident_t pattern) = 0;
 };
 
 }  // _ELENA_

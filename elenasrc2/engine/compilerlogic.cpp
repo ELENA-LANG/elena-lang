@@ -2657,6 +2657,19 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
    return 0;
 }
 
+ref_t CompilerLogic :: resolveExtensionTemplate(ident_t pattern)
+{
+   ////system@op<{0}>.system@Func#1&{0}
+   //int patternSignatureIndex = pattern.find('.');
+   //int signatureIndex = 0;
+
+   //while (patternSignatureIndex < getlength(pattern)) {
+
+   //}
+
+   return 0; //!! temporaö
+}
+
 bool CompilerLogic :: validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass)
 {
    bool dispatchOne = message == scope.dispatch_message;

@@ -450,24 +450,23 @@ public extension indexableOp
 ////        
 ////        ^ aCopy.
 ////    ]
-//        
+        
 //    populate(Func<int,object> f)
-//    [
-//        T<Indexer> it := self indexer.
+//    {
+//        Indexer it := self.indexer();
 //
-//        while (it available)
-//        [
-//            int i := 0.
-//            it readIndexTo(&i).
+//        while (it.Available)
+//        {
+//            int i := it.Index;
 //            
-//            it set(f(i)).
+//            it.set(f(i));
 //            
-//            it appendIndex:1
-//        ].
+//            it.appendIndex:1
+//        };
 //        
 //        ^ self
-//    ]    
-//
+//    }    
+
 //    populate(ExtensionMessage ext_mssg)
 //        = self~indexableOp populate(:n)<int>[ ^n~ext_mssg get ].
 //

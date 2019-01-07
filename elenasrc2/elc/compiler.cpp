@@ -199,7 +199,7 @@ inline bool isConstantArguments(SNode node)
 // --- Compiler::NamespaceScope ---
 
 Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope/*, ident_t path*/, ident_t ns/*, IdentifierList* imported*//*, bool withFullInfo*/)
-   : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr)
+   : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr), extensionTemplates(NULL, freestr)
 {
    this->ns.copy(ns);
 //   this->sourcePath = path;
@@ -2595,6 +2595,11 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
    ref_t roleRef2 = 0;
    ref_t strongMessage2 = 0;
 
+   // typified template extension
+   ref_t generalRoleRef3 = 0;
+   ref_t roleRef3 = 0;
+   ref_t strongMessage3 = 0;
+
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
    for (auto it = nsScope->extensions.getIt(messageRef); !it.Eof(); it = nsScope->extensions.nextIt(messageRef, it)) {
       if (_logic->isCompatible(*scope.moduleScope, (*it).value1, objectRef)) {
@@ -2623,6 +2628,15 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
             }
          }
       }
+   }
+
+   // check template extensions
+   for (auto it = nsScope->extensionTemplates.getIt(messageRef); !it.Eof(); it = nsScope->extensionTemplates.nextIt(messageRef, it)) {
+      ref_t resolvedTemplateExtension = _logic->resolveExtensionTemplate(*it/*, implicitSignatureRef*/);
+      //if (resolvedTemplateExtension)
+     // if (_logic->isCompatible(*scope.moduleScope, (*it).value1, objectRef)) {
+     //    ref_t resolvedTemplateExtension = _logic->resolveTemplateExtension(*it, implicitSignatureRef);
+     // }
    }
 
    if (roleRef2) {
