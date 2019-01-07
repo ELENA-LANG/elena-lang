@@ -1248,13 +1248,13 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
 
    // declare built-in variables
    if (withSelf) {
-      /*if (scope.classEmbeddable) {
+      if (scope.classEmbeddable) {
          IdentifierString className(scope.moduleScope->module->resolveReference(scope.getClassRef()));
 
          SNode debugNode = node.insertNode(lxBinarySelf, 1);
          debugNode.appendNode(lxClassName, className.c_str());
-      }*/
-      /*else */writer.appendNode(lxSelfVariable, 1);
+      }
+      else writer.appendNode(lxSelfVariable, 1);
    }
 
 //   if (withTargetSelf)
@@ -1283,14 +1283,14 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
             else if (param.class_ref == moduleScope->realReference) {
                writer.newNode(lxReal64Variable);
             }
-            //else if (param.size != 0 && param.class_ref != 0) {
-            //   ref_t classRef = param.class_ref;
-            //   if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
-            //      writer.newNode(lxBinaryVariable);
-            //      writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
-            //   }
-            //   else writer.newNode(lxVariable);
-            //}
+            else if (param.size != 0 && param.class_ref != 0) {
+               ref_t classRef = param.class_ref;
+               if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
+                  writer.newNode(lxBinaryVariable);
+                  writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+               }
+               else writer.newNode(lxVariable);
+            }
             else writer.newNode(lxVariable);
 
             writer.appendNode(lxLevel, prefix - param.offset);
@@ -1848,7 +1848,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
       LexicalType variableType = lxVariable;
       int variableArg = 0;
       int size = dynamicArray ? -1 : 0;
-//      ident_t className = NULL;
+      ident_t className = NULL;
 
       ObjectInfo variable(okLocal);
       variable.reference = typeRef;
@@ -1887,10 +1887,6 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
       bool binaryArray = false;
       if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.reference))
          scope.raiseError(errUnknownVariableType, terminal);
-
-      //if (_logic->isWrapper(localInfo)) {
-      //   variable.reference = _logic->resolvePrimitive(localInfo, variable.element);
-      //}
 
       if (variable.reference == V_BINARYARRAY && variable.element != 0) {
          localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
@@ -1939,22 +1935,22 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
                variableType = lxBytesVariable;
                variableArg = size;
                break;
-//            default:
-//               if (isPrimitiveRef(variable.extraparam)) {
-//                  variableType = lxBytesVariable;
-//                  variableArg = size;
-//               }
-//               else {
-//                  variableType = lxBinaryVariable;
-//                  // HOTFIX : size should be provide only for dynamic variables
-//                  if (bytearray)
-//                     variableArg = size;
-//
-//                  if (variable.extraparam != 0) {
-//                     className = scope.moduleScope->module->resolveReference(variable.extraparam);
-//                  }
-//               }
-//               break;
+            default:
+               if (isPrimitiveRef(variable.extraparam)) {
+                  variableType = lxBytesVariable;
+                  variableArg = size;
+               }
+               else {
+                  variableType = lxBinaryVariable;
+                  // HOTFIX : size should be provide only for dynamic variables
+                  if (binaryArray)
+                     variableArg = size;
+
+                  if (variable.reference != 0) {
+                     className = scope.moduleScope->module->resolveReference(variable.reference);
+                  }
+               }
+               break;
          }
       }
       else {
@@ -1975,20 +1971,20 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
 
       writer.insertChild(scope.rootBookmark, lxLevel, variable.param);
       writer.insertChild(scope.rootBookmark, lxIdentifier, identifier);
-      //if (!emptystr(className)) {
-      //   if (isWeakReference(className)) {
-      //      if (isTemplateWeakReference(className)) {
-      //         // HOTFIX : save weak template-based class name directly
-      //         writer.appendNode(lxClassName, className);
-      //      }
-      //      else {
-      //         IdentifierString fullName(scope.module->Name(), className);
+      if (!emptystr(className)) {
+         if (isWeakReference(className)) {
+            if (isTemplateWeakReference(className)) {
+               // HOTFIX : save weak template-based class name directly
+               writer.insertChild(scope.rootBookmark, lxClassName, className);
+            }
+            else {
+               IdentifierString fullName(scope.module->Name(), className);
 
-      //         writer.appendNode(lxClassName, fullName);
-      //      }
-      //   }
-      //   else writer.appendNode(lxClassName, className);
-      //}
+               writer.insertChild(scope.rootBookmark, lxClassName, fullName);
+            }
+         }
+         else writer.insertChild(scope.rootBookmark, lxClassName, className);
+      }
 
       writer.insert(scope.rootBookmark, variableType, variableArg);
    }

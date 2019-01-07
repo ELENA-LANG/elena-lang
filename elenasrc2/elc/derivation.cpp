@@ -1778,7 +1778,7 @@ bool TemplateGenerator::TemplateScope :: generateClassName()
          name.append(param + getlength(rootNs) + 1);
       }
       else if (isWeakReference(param) && !isTemplateWeakReference(param)) {
-         if (!moduleScope->module->Name().compare(rootNs.c_str())) {
+         if (!moduleScope->module->Name().compare(rootNs.c_str()) || NamespaceName::isRelativeSubnamespace(param)) {
             name.append(moduleScope->module->Name());
             name.append(param);
          }

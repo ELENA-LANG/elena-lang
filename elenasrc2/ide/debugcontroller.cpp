@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //      its helpers
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1286,27 +1286,27 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
 
             readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
-         //else if (lineInfo[index].symbol == dsStructPtr) {
-         //   size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
-         //   ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef));
-         //   if (classPtr != 0) {
-         //      readObject(watch, localPtr, 
-         //         (const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef), 
-         //         (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
+         else if (lineInfo[index].symbol == dsStructPtr) {
+            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef));
+            if (classPtr != 0) {
+               readObject(watch, localPtr, 
+                  (const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef), 
+                  (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
 
-         //      watch->append(this, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), localPtr, classPtr);
-         //   }
-         //}
-         //else if (lineInfo[index].symbol == dsLocalPtr) {
-         //   size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
-         //   ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef));
+               watch->append(this, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), localPtr, classPtr);
+            }
+         }
+         else if (lineInfo[index].symbol == dsLocalPtr) {
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
+            ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef));
 
-         //   readObject(watch, localPtr, 
-         //      (const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef), 
-         //      (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
+            readObject(watch, localPtr, 
+               (const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef), 
+               (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
 
-         //   watch->append(this, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), localPtr, classPtr);
-         //}
+            watch->append(this, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef), localPtr, classPtr);
+         }
          //else if (lineInfo[index].symbol == dsStack) {
          //   // write local variable
          //   size_t localPtr = _debugger.Context()->CurrentPtr(lineInfo[index].addresses.local.level);

@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaH
@@ -308,6 +308,14 @@ public:
    bool compare(ident_t reference)
    {
       return NamespaceName::compare(reference, _string);
+   }
+
+   static bool isRelativeSubnamespace(ident_t reference)
+   {
+      if (reference[0] == '\'') {
+         return ident_t(reference + 1).find('\'') != NOTFOUND_POS;
+      }
+      else return false;
    }
 
    void trimLastSubNs()

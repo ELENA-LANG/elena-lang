@@ -205,21 +205,22 @@ void ByteCodeWriter :: includeFrame(CommandTape& tape)
    tape.write(bcFreeStack, 1);
 }
 
-//void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
-//{
-//   if (!emptystr(localName)) {
-//      tape.write(bdStruct, writeString(localName), level);
-//      tape.write(bdLocalInfo, writeString(className));
-//   }
-//}
-//
-//void ByteCodeWriter :: declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
-//{
-//   if (!emptystr(localName)) {
-//      tape.write(bdStructSelf, writeString(localName), level);
-//      tape.write(bdLocalInfo, writeString(className));
-//   }
-//}
+void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
+{
+   if (!emptystr(localName)) {
+      tape.write(bdStruct, writeString(localName), level);
+      if (!emptystr(className))
+         tape.write(bdLocalInfo, writeString(className));
+   }
+}
+
+void ByteCodeWriter :: declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
+{
+   if (!emptystr(localName)) {
+      tape.write(bdStructSelf, writeString(localName), level);
+      tape.write(bdLocalInfo, writeString(className));
+   }
+}
 
 void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
 {
@@ -1435,18 +1436,18 @@ void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, in
    writeLocal(scope, localName, level, dsLocal, frameLevel);
 }
 
-//void ByteCodeWriter :: writeInfo(Scope& scope, DebugSymbol symbol, ident_t className)
-//{
-//   if (!scope.debug)
-//      return;
-//
-//   DebugLineInfo info;
-//   info.symbol = symbol;
-//   info.addresses.source.nameRef = scope.debugStrings->Position();
-//
-//   scope.debugStrings->writeLiteral(className);
-//   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
-//}
+void ByteCodeWriter :: writeInfo(Scope& scope, DebugSymbol symbol, ident_t className)
+{
+   if (!scope.debug)
+      return;
+
+   DebugLineInfo info;
+   info.symbol = symbol;
+   info.addresses.source.nameRef = scope.debugStrings->Position();
+
+   scope.debugStrings->writeLiteral(className);
+   scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+}
 
 void ByteCodeWriter :: writeSelf(Scope& scope, int level, int/* frameLevel*/)
 {
@@ -1892,16 +1893,16 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bdMessage:
             writeMessageInfo(scope, dsMessage, (const char*)_strings.get((*it).additional));
             break;
-         //case bdStruct:
-         //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
-         //   it++;
-         //   writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
-         //   break;
-         //case bdStructSelf:
-         //   writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLocalPtr, frameLevel);
-         //   it++;
-         //   writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
-         //   break;
+         case bdStruct:
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
+            it++;
+            writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
+            break;
+         case bdStructSelf:
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLocalPtr, frameLevel);
+            it++;
+            writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
+            break;
          case bcOpen:
             frameLevel = (*it).argument;
             stackLevel = 0;
@@ -5632,19 +5633,19 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
             level, false);
          break;
       }
-//      case lxBinaryVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//
-//         // HOTFIX : only for dynamic objects
-//         if (current.argument != 0)
-//            generateBinary(tape, current, level);
-//
-//         declareStructInfo(tape,
-//            current.findChild(lxIdentifier, lxPrivate).identifier(),
-//            level, current.findChild(lxClassName).identifier());
-//         break;
-//      }
+      case lxBinaryVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+
+         // HOTFIX : only for dynamic objects
+         if (current.argument != 0)
+            generateBinary(tape, current, level);
+
+         declareStructInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            level, current.findChild(lxClassName).identifier());
+         break;
+      }
    }
 }
 
@@ -5669,13 +5670,13 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxExternFrame:
             generateExternFrame(tape, current);
             break;
-////         case lxReleasing:
-////            releaseObject(tape, current.argument);
-////            break;
-//         case lxBinarySelf:
-//            declareSelfStructInfo(tape, SELF_VAR, current.argument,
-//               current.findChild(lxClassName).identifier());
+//         case lxReleasing:
+//            releaseObject(tape, current.argument);
 //            break;
+         case lxBinarySelf:
+            declareSelfStructInfo(tape, SELF_VAR, current.argument,
+               current.findChild(lxClassName).identifier());
+            break;
          case lxBreakpoint:
             translateBreakpoint(tape, current);
             break;
@@ -5688,7 +5689,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxBytesVariable:
          case lxShortsVariable:
          case lxIntsVariable:
-//         case lxBinaryVariable:
+         case lxBinaryVariable:
             generateDebugInfo(tape, current);
             break;
          default:

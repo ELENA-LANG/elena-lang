@@ -3,7 +3,7 @@ const int DATE_LONGDATE   = 00000002h;
 
 // --- SystemTime ---
 
-singleton systemTimeFactory
+public singleton systemTimeFactory
 {
 //    readUtcNow(ref<SystemTime> retVal)
 //    [
@@ -28,7 +28,7 @@ singleton systemTimeFactory
 
 public sealed const struct SystemTime : BaseValue
 {
-    __int theValue[8];
+    embeddable __int theValue[8];
 
     static SystemTime Default
         = 0l;
@@ -49,21 +49,13 @@ public sealed const struct SystemTime : BaseValue
 
     long cast() = theValue;
 
-    //long rvprop long :: readValueTo.
-
-//    //long :: outlprop(readValueTo).
-//    stacksafe embeddable long
-//    [
-//        long val := 0.        
-//        $self readValueTo vlong:val.
-//        
-//        ^ val.
-//    ]    
-
-//    readValueTo(ref<long> retVal)
-//    [
-//        retVal value := theValue.
-//    ]
+    vprop long Value
+    {
+        read(ref long retVal)
+        {
+            retVal := theValue
+        }        
+    }
 
     SystemTime subtract(SystemTime operand)
     {
@@ -93,11 +85,11 @@ public sealed struct TimeStruct
     short theSecond;
     short theMillisecond;
 
-//    constructor(SystemTime aTime)
-//    [
-//        self write(aTime).
-//    ]
-//
+    constructor(SystemTime time)
+    {
+        self.init(time)
+    }
+
 //    embeddable constructor new
 //    [
 //        system'core_routines'__timest empty(self).
@@ -229,41 +221,41 @@ public sealed struct TimeStruct
 //        
 //        aRetVal value := value.
 //    ]    
-//    
-//    write(SystemTime aFileTime)
-//    [
-//        system'external'KERNEL32 FileTimeToSystemTime(aFileTime, self).
-//    ]
-//      
-//    private wide dateToWide(int Flags)
-//    [
-//        T<short,127> aBuffer.
-//
-//        int aLength := system'external'KERNEL32 GetDateFormatW(
-//            0, Flags,self,0,T<ShortArray>(aBuffer),255,0).
-//            
-//        if (aLength == 0)
-//            [ FormatException new:"Invalid date"; raise ].
-//
-//        ^ WideLiteralValue fromShortArray(0, aLength - 1, T<ShortArray>(aBuffer)).
-//    ]
-//    
-//    private wide timeToWide(int Flags)
-//    [
-//        T<short,127> aBuffer.
-//
-//        int aLength := system'external'KERNEL32 GetTimeFormatW(
-//            0,Flags,self,0,T<ShortArray>(aBuffer),255,0).
-//            
-//        if (aLength == 0)
-//            [ FormatException new:"Invalid time"; raise ].
-//
-//        ^ WideLiteralValue fromShortArray(0, aLength - 1, T<ShortArray>(aBuffer)).
-//    ]
-//
-//    wide toShortDate
-//        = self dateToWide(DATE_SHORTDATE).
-//
-//    wide toShortTime
-//        = self timeToWide(0).
+    
+    private init(SystemTime fileTime)
+    {
+        extern KERNEL32.FileTimeToSystemTime(fileTime, self)
+    }
+      
+    private wide dateToWide(int flags)
+    {
+        short buffer[127];
+
+        int length := extern KERNEL32.GetDateFormatW(
+            0, flags,self,0,buffer,255,0);
+            
+        if (length == 0)
+            { FormatException.new:"Invalid date".raise() };
+
+        ^ WideString.fromShortArray(0, length - 1, buffer)
+    }
+    
+    private wide timeToWide(int flags)
+    {
+        short buffer[127];
+
+        int length := extern KERNEL32.GetTimeFormatW(
+            0,flags,self,0,buffer,255,0);
+            
+        if (length == 0)
+            { FormatException.new:"Invalid time".raise() };
+
+        ^ WideString.fromShortArray(0, length - 1, buffer)
+    }
+
+    wide toShortDate()
+        = self.dateToWide(DATE_SHORTDATE);
+
+    wide toShortTime()
+        = self.timeToWide(0);
 }

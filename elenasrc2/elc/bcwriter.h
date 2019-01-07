@@ -100,7 +100,7 @@ class ByteCodeWriter
    void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
    void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
    void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
-//   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
+   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
    void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
@@ -136,8 +136,8 @@ class ByteCodeWriter
    void declareAlt(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
-//   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
+   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
+   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);

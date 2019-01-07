@@ -109,16 +109,16 @@ public sealed struct Timespan : BaseNumber
 //        
 //        ^ intConvertor convert(aRetVal).
 //    ]
-//
-//    long milliseconds
-//    [
-//        long aRetVal := theValue long.
-//        
-//        aRetVal := aRetVal / 10000l.
-//        
-//        ^ LongNumber new(aRetVal).
-//    ]
-//
+
+    get long Milliseconds()
+    {
+        long retVal := theValue.Value;
+        
+        retVal := retVal / 10000l;
+        
+        ^ new LongNumber(retVal)
+    }
+
 //    bool equal(Timespan aSpan)
 //    [
 //        T<SystemTime> aValue := 0l.
@@ -187,7 +187,11 @@ public sealed struct Date : BaseNumber
 
     constructor get Now()
     {
-        systemTimeFactory.readNow(ref theValue)
+       SystemTime v;
+       systemTimeFactory.readNow(ref v); 
+        
+       //systemTimeFactory.readNow(ref theValue)
+       theValue := v
     }
 
 //    constructor utcNow
@@ -384,20 +388,20 @@ public sealed struct Date : BaseNumber
 //
 //    addSeconds(int val)
 //        = self add(Timespan new(0, 0, 0, val)).
-//
-//    T<literal> literal
-//    [
-//        T<TimeStruct> aStruct := theValue.
-//
-//        literal aTimeValue := aStruct toShortTime.
-//        
-//        literal aDateValue := aStruct toShortDate.
-//
-//        ^ (aDateValue + " " + aTimeValue) literal.
-//    ]
-//
-////    #method clone
-////        = Date new &__time:theValue.
+
+    get string Printable()
+    {
+        TimeStruct struct := theValue;
+
+        string timeValue := struct.toShortTime();
+        
+        string dateValue := struct.toShortDate();
+
+        ^ dateValue + " " + timeValue
+    }
+
+//    #method clone
+//        = Date new &__time:theValue.
 }
 
 // --- now ---

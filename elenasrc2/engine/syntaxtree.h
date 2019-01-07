@@ -212,7 +212,7 @@ enum LexicalType
    lxReal64Variable  = 0x1002A,
    lxForward         = 0x1002E,
    lxVariable        = 0x10037,
-//   lxBinaryVariable  = 0x10038,
+   lxBinaryVariable  = 0x10038,
    lxMember          = 0x10039,  // a collection member, arg - offset
    lxOuterMember     = 0x1003A,  // a collection member, arg - offset
    lxIntsVariable    = 0x1003B,
@@ -241,7 +241,7 @@ enum LexicalType
    lxLevel              = 0x20011,
 //   lxType            = 0x20012, // arg - subject
    lxCallTarget         = 0x20013, // arg - reference
-//   lxClassName       = 0x20014, // arg - identifier
+   lxClassName       = 0x20014, // arg - identifier
    lxIntValue           = 0x20015, // arg - integer value
    lxTempLocal          = 0x20016,
    lxIfValue            = 0x20017, // arg - reference
@@ -256,7 +256,7 @@ enum LexicalType
 ////   lxWarningMask     = 0x20020,
 ////   lxOperatorAttr    = 0x20021,
 //   lxIdleMsgParameter= 0x20022,
-//   lxBinarySelf      = 0x20023, // debug info only
+   lxBinarySelf      = 0x20023, // debug info only
    lxOvreriddenMessage = 0x20024, // arg - message ; used for extension / implicit constructor call
 //////   lxClassRef        = 0x20025,
 //////   lxPreloadedAttr   = 0x20026,

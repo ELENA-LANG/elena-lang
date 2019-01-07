@@ -558,12 +558,12 @@ private:
 
       //   return scope ? scope->info.header.flags : 0;
       //}
-//      ref_t getClassRef(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
+      ref_t getClassRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope ? scope->reference : 0;
+      }
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
