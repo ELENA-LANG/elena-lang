@@ -161,7 +161,7 @@ procedure __exception.register[0]
 
 end
 
-procedure __int."read:HashCode$@system@ref#1&IntNumber[2]"
+procedure __int."read:HashCode$@system@ref#1&system@IntNumber[2]"
 
   bloadsi 2
   ncopy
@@ -169,7 +169,7 @@ procedure __int."read:HashCode$@system@ref#1&IntNumber[2]"
 
 end
 
-procedure __char."readLengthTo$@system@ref#1&IntNumber[2]"
+procedure __char."readLengthTo$@system@ref#1&system@IntNumber[2]"
 
   bloadsi 2
   nload
@@ -191,7 +191,7 @@ labEnd:
 
 end
 
-procedure __literal."read:Length$@system@ref#1&IntNumber[2]"
+procedure __literal."read:Length$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
   blen
@@ -202,7 +202,7 @@ procedure __literal."read:Length$@system@ref#1&IntNumber[2]"
 
 end
 
-procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$@system@Array#1&ByteNumber[4]"
+procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber[4]"
 
   bloadsi 1
   aloadsi 3
@@ -247,7 +247,7 @@ procedure __literal."add$system@String[2]"
 
 end                                                
 
-procedure __literal."read$system@IntNumber$@system@ref#1&CharValue[3]"
+procedure __literal."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
 
   blen
   bcopya
@@ -273,7 +273,7 @@ labErr:
 
 end
 
-procedure __literal."new$system@IntNumber$system@IntNumber$@system@Array#1&CharValue[4]"
+procedure __literal."new$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
 
   aloadsi 3
   nload
@@ -334,7 +334,7 @@ procedure __literal."less$system@String[2]"
   
 end
 
-procedure __literal."save$system@IntNumber$@system@Array#1&CharValue$@system@ref#1&IntNumber[4]"
+procedure __literal."save$system@IntNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[4]"
 
   pusha
   bloadsi 4
@@ -354,7 +354,7 @@ procedure __literal."save$system@IntNumber$@system@Array#1&CharValue$@system@ref
 
 end
 
-procedure __literal."indexOf$system@IntNumber$system@String$@system@ref#1&IntNumber[4]"
+procedure __literal."indexOf$system@IntNumber$system@String$@system@ref#1&system@IntNumber[4]"
 
   bcopya
   aloadsi 2                 // ; load index
@@ -368,7 +368,7 @@ procedure __literal."indexOf$system@IntNumber$system@String$@system@ref#1&IntNum
 
 end
 
-procedure __literal."indexOf$system@IntNumber$system@CharValue$@system@ref#1&IntNumber[4]"
+procedure __literal."indexOf$system@IntNumber$system@CharValue$@system@ref#1&system@IntNumber[4]"
 
   pusha
   aloadsi 4
@@ -458,7 +458,7 @@ procedure __literal."insert$system@String$system@IntNumber$system@CharValue[3]"
   
 end
 
-procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
+procedure __wide."read:Length$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
   wlen
@@ -469,7 +469,7 @@ procedure __wide."read:Length$@system@ref#1&IntNumber[2]"
 
 end
 
-procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$@system@Array#1&ShortNumber[4]"
+procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$@system@Array#1&system@ShortNumber[4]"
 
   bloadsi 1
   aloadsi 3
@@ -514,7 +514,7 @@ procedure __wide."add$system@WideString[2]"
 
 end                                                
 
-procedure __wide."read$system@IntNumber$@system@ref#1&CharValue[3]"
+procedure __wide."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
 
   wlen
   bcopya
@@ -567,7 +567,7 @@ procedure __wide."Substring$system@IntNumber$system@IntNumber[3]"
 
 end
 
-procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
@@ -582,7 +582,7 @@ procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&ByteNumbe
 
 end
 
-procedure __literalconvertor."convert$system@UIntNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+procedure __literalconvertor."convert$system@UIntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
@@ -597,7 +597,7 @@ procedure __literalconvertor."convert$system@UIntNumber$@system@Array#1&ByteNumb
 
 end
 
-procedure __literalconvertor."convert$system@ShortNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+procedure __literalconvertor."convert$system@ShortNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
@@ -612,7 +612,7 @@ procedure __literalconvertor."convert$system@ShortNumber$@system@Array#1&ByteNum
 
 end
 
-procedure __literalconvertor."convert$system@ByteNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+procedure __literalconvertor."convert$system@ByteNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
@@ -627,7 +627,7 @@ procedure __literalconvertor."convert$system@ByteNumber$@system@Array#1&ByteNumb
 
 end
 
-procedure __literalconvertor."convert$system@LongNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+procedure __literalconvertor."convert$system@LongNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
@@ -643,7 +643,7 @@ procedure __literalconvertor."convert$system@LongNumber$@system@Array#1&ByteNumb
 
 end
 
-procedure __literalconvertor."convert$system@WideString$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   aloadsi 2
   bloadsi 3
@@ -654,7 +654,7 @@ procedure __literalconvertor."convert$system@WideString$@system@Array#1&ByteNumb
   
 end
 
-procedure __literalconvertor."convert$system@CharValue$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+procedure __literalconvertor."convert$system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   aloadsi 2
   nload
@@ -675,7 +675,7 @@ labEmpty:
 
 end
 
-procedure __literalconvertor."convert$system@RealNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[4]"
+procedure __literalconvertor."convert$system@RealNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
@@ -689,7 +689,7 @@ procedure __literalconvertor."convert$system@RealNumber$@system@Array#1&ByteNumb
   quitn 4
 end
 
-procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[4]"
+procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
 
   aloadsi 2
   bloadsi 3
@@ -701,7 +701,7 @@ procedure __wideconvertor."convert$system@String$@system@Array#1&ShortNumber$@sy
 
 end
 
-procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[5]"
+procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[5]"
 
   aloadsi 2
   nload
@@ -718,7 +718,7 @@ procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@syste
 
 end
 
-procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&ByteNumber$@system@ref#1&IntNumber[5]"
+procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
 
   aloadsi 2
   nload
@@ -735,7 +735,7 @@ procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@syste
 
 end
 
-procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&ShortNumber$@system@ref#1&CharValue[4]"
+procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@CharValue[4]"
   
   aloadsi 2
   nload
@@ -758,7 +758,7 @@ labErr:
 
 end
 
-procedure __args."read:Length$@system@ref#1&IntNumber[2]"
+procedure __args."read:Length$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
   bcopya
@@ -775,7 +775,7 @@ labSearch:
 
 end
 
-procedure __array."read:Length$@system@ref#1&IntNumber[2]"
+procedure __array."read:Length$@system@ref#1&system@IntNumber[2]"
 
   len
   bloadsi 2
@@ -941,7 +941,7 @@ labErr:
 
 end
 
-procedure __bytearray."read$system@IntNumber$@system@ref#1&ByteNumber[3]"
+procedure __bytearray."read$system@IntNumber$@system@ref#1&system@ByteNumber[3]"
 
   aloadsi 1
   bcopya
@@ -968,7 +968,7 @@ labErr:
 
 end
 
-procedure __bytearray."read$system@IntNumber$@system@ref#1&ShortNumber[3]"
+procedure __bytearray."read$system@IntNumber$@system@ref#1&system@ShortNumber[3]"
 
   aloadsi 1
   bcopya
@@ -995,7 +995,7 @@ labErr:
 
 end
 
-procedure __bytearray."read$system@IntNumber$@system@ref#1&CharValue[3]"
+procedure __bytearray."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
 
   aloadsi 1
   bcopya
@@ -1022,7 +1022,7 @@ labErr:
 
 end
 
-procedure __bytearray."read$system@IntNumber$@system@ref#1&IntNumber[3]"
+procedure __bytearray."read$system@IntNumber$@system@ref#1&system@IntNumber[3]"
 
   aloadsi 1
   bcopya
@@ -1049,7 +1049,7 @@ labErr:
 
 end
 
-procedure __chararray."write$system@IntNumber$system@IntNumber$@system@Array#1&CharValue[4]"
+procedure __chararray."write$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
 
   aloadsi 1
   bcopya
@@ -1080,7 +1080,7 @@ labErr:
 
 end
 
-procedure __intarray."write$system@IntNumber$system@IntNumber$@system@Array#1&IntNumber[4]"
+procedure __intarray."write$system@IntNumber$system@IntNumber$@system@Array#1&system@IntNumber[4]"
 
   bloadsi 1
   aloadsi 2
@@ -1163,7 +1163,7 @@ labEnd:
 
 end
 
-procedure __realconvertor."convert$system@String$@system@ref#1&RealNumber[3]"
+procedure __realconvertor."convert$system@String$@system@ref#1&system@RealNumber[3]"
   
   bloadsi  3
   dcopy    10
@@ -1180,7 +1180,7 @@ labErr:
 
 end
 
-procedure __realconvertor."convert$system@IntNumber$@system@ref#1&RealNumber[3]"
+procedure __realconvertor."convert$system@IntNumber$@system@ref#1&system@RealNumber[3]"
   
   bloadsi 3
   aloadsi 2
@@ -1192,7 +1192,7 @@ procedure __realconvertor."convert$system@IntNumber$@system@ref#1&RealNumber[3]"
 
 end
 
-procedure __realconvertor."convert$system@ByteNumber$@system@ref#1&RealNumber[3]"
+procedure __realconvertor."convert$system@ByteNumber$@system@ref#1&system@RealNumber[3]"
   
   bloadsi 3
   aloadsi 2
@@ -1204,7 +1204,7 @@ procedure __realconvertor."convert$system@ByteNumber$@system@ref#1&RealNumber[3]
 
 end
 
-procedure __realconvertor."convert$system@ShortNumber$@system@ref#1&RealNumber[3]"
+procedure __realconvertor."convert$system@ShortNumber$@system@ref#1&system@RealNumber[3]"
   
   bloadsi 3
   aloadsi 2
@@ -1216,7 +1216,7 @@ procedure __realconvertor."convert$system@ShortNumber$@system@ref#1&RealNumber[3
 
 end
 
-procedure __realconvertor."convert$system@LongNumber$@system@ref#1&RealNumber[3]"
+procedure __realconvertor."convert$system@LongNumber$@system@ref#1&system@RealNumber[3]"
   
   bcopya
   aloadsi 2
@@ -1226,7 +1226,7 @@ procedure __realconvertor."convert$system@LongNumber$@system@ref#1&RealNumber[3]
 
 end
 
-procedure __intconvertor."convert$system@String$@system@ref#1&IntNumber[3]"
+procedure __intconvertor."convert$system@String$@system@ref#1&system@IntNumber[3]"
   
   bloadsi  3
   ecopy    10
@@ -1244,7 +1244,7 @@ labErr:
 
 end
 
-procedure __byteconvertor."convert$system@ShortNumber$@system@ref#1&ByteNumber[3]"
+procedure __byteconvertor."convert$system@ShortNumber$@system@ref#1&system@ByteNumber[3]"
 
   aloadsi 2
   nload
@@ -1337,7 +1337,7 @@ labDefault:
   
 end
 
-procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$@system@Array#1&CharValue$@system@Array#1&ShortNumber$@system@ref#1&IntNumber[6]"
+procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[6]"
 
   aloadsi 3
   nload
@@ -1364,7 +1364,7 @@ labErr:
   
 end
 
-procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&ShortNumber[3]"
+procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&system@ShortNumber[3]"
 
   aloadsi 2
   nload
@@ -1374,7 +1374,7 @@ procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&ShortNumber[
 
 end
 
-procedure __uintconvertor."convert$system@LongNumber$@system@ref#1&IntNumber[3]"
+procedure __uintconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumber[3]"
 
   aloadsi 2
   dcopy 4
@@ -1395,7 +1395,7 @@ labErr:
 
 end
 
-procedure __longconvertor."convert$system@IntNumber$@system@ref#1&LongNumber[3]"
+procedure __longconvertor."convert$system@IntNumber$@system@ref#1&system@LongNumber[3]"
   
   bloadsi 3
   aloadsi 2
@@ -1415,7 +1415,7 @@ labNegative:
 
 end
 
-procedure __real."ln$system@RealNumber$@system@ref#1&RealNumber[3]"
+procedure __real."ln$system@RealNumber$@system@ref#1&system@RealNumber[3]"
 
   aloadsi 2  
   bloadsi 3
@@ -1425,7 +1425,7 @@ procedure __real."ln$system@RealNumber$@system@ref#1&RealNumber[3]"
 
 end
 
-procedure __real."exp$system@RealNumber$@system@ref#1&RealNumber[3]"
+procedure __real."exp$system@RealNumber$@system@ref#1&system@RealNumber[3]"
 
   aloadsi 2
   bloadsi 3

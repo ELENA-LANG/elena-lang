@@ -2721,16 +2721,17 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
                      IdentifierString templateArg;
                      size_t nextArg = signType.find(argIndex, '&', getlength(signType));
                      templateArg.copy(signType + argIndex, nextArg - argIndex);
+                     templateArg.replaceAll('@', '\'', 0);
 
-                     signType = signType + nextArg;
+                     signType = signType + nextArg + 1;
 
                      int index = ident_t(tmp).toInt();
-                     parameters[index - 1] = signatures[signIndex];
+                     parameters[index - 1] = scope.mapFullReference(templateArg);
                      if (argumentLen < index)
                         argumentLen = index;
 
                      start = argIndex + 1;
-                     argIndex = argType.ident().find(argIndex, '{', getlength(argType));
+                     argIndex = argType.ident().find(start, '{', getlength(argType));
                   }
                   else matched = false;
                }

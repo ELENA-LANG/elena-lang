@@ -1687,13 +1687,10 @@ void DerivationWriter :: generateImport(SyntaxWriter& writer, SNode ns)
 bool TemplateGenerator::TemplateScope :: generateClassName()
 {
    ident_t templateName = moduleScope->module->resolveReference(templateRef);
-   NamespaceName rootNs(templateName);
    IdentifierString name;
    if (isWeakReference(templateName)) {
       name.copy(moduleScope->module->Name());
       name.append(templateName);
-
-      rootNs.copy(moduleScope->module->Name());
    }
    else name.copy(templateName);
 
@@ -1702,15 +1699,9 @@ bool TemplateGenerator::TemplateScope :: generateClassName()
       name.append('&');
 
       ident_t param = moduleScope->module->resolveReference((*it).argument);
-      if (NamespaceName::compare(param, rootNs)) {
-         name.append(param + getlength(rootNs) + 1);
-      }
-      else if (isWeakReference(param) && !isTemplateWeakReference(param)) {
-         if (!moduleScope->module->Name().compare(rootNs.c_str()) || NamespaceName::isRelativeSubnamespace(param)) {
-            name.append(moduleScope->module->Name());
-            name.append(param);
-         }
-         else name.append(param + 1);
+      if (isWeakReference(param) && !isTemplateWeakReference(param)) {
+         name.append(moduleScope->module->Name());
+         name.append(param);
       }
       else name.append(param);
 

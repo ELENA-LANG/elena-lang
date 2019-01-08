@@ -1501,10 +1501,14 @@ ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, SNode terminal)
 bool isExtensionDeclaration(SNode node)
 {
    SNode current = node.firstChild();
-   while (current == lxAttribute) {
-      if (current.argument == V_EXTENSION) {
-         return true;
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         if (current.argument == V_EXTENSION) {
+            return true;
+         }
       }
+      else if (current != lxNameAttr)
+         break;
 
       current = current.nextNode();
    }
