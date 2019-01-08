@@ -2660,11 +2660,12 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
    for (auto it = nsScope->extensionTemplates.getIt(messageRef); !it.Eof(); it = nsScope->extensionTemplates.nextIt(messageRef, it)) {
       ref_t resolvedTemplateExtension = _logic->resolveExtensionTemplate(*scope.moduleScope, *this, *it, 
          implicitSignatureRef, nsScope->ns);
-
-      ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, resolvedTemplateExtension, implicitSignatureRef, stackSafeAttr);
-      if (!roleRef3) {
-         strongMessage3 = resolvedMessageRef;
-         roleRef3 = resolvedTemplateExtension;
+      if (resolvedTemplateExtension) {
+         ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, resolvedTemplateExtension, implicitSignatureRef, stackSafeAttr);
+         if (!roleRef3) {
+            strongMessage3 = resolvedMessageRef;
+            roleRef3 = resolvedTemplateExtension;
+         }
       }
    }
 
@@ -8856,6 +8857,59 @@ void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
 ////   writer.closeNode();
 ////}
 
+void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature)
+{
+   signature.append(TEMPLATE_PREFIX_NS);
+
+   int signIndex = signature.Length();
+
+   IdentifierString templateName(node.firstChild(lxTerminalMask).identifier());
+   int paramCounter = SyntaxTree::countChild(node, lxTarget, lxTemplateParam);
+
+   templateName.append('#');
+   templateName.appendInt(paramCounter);
+
+   ref_t ref = resolveImplicitIdentifier(scope, templateName.c_str(), false, false);
+
+   ident_t refName = scope.module->resolveReference(ref);
+   if (isWeakReference(refName))
+      signature.append(scope.module->Name());
+
+   signature.append(refName);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxTemplateParam) {
+         signature.append('&');
+         signature.append('{');
+         signature.appendInt(current.argument);
+         signature.append('}');
+      }
+      else if (current == lxTarget) {
+         signature.append('&');
+
+         ref_t classRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
+         if (!classRef)
+            scope.raiseError(errUnknownClass, current);
+
+         ident_t className = scope.module->resolveReference(classRef);
+         if (isWeakReference(className))
+            signature.append(scope.module->Name());
+
+         signature.append(className);
+      }
+      else if (current == lxIdentifier) {
+         // !! ignore identifier
+      }
+      else scope.raiseError(errNotApplicable, current);
+
+      current = current.nextNode();
+   }
+
+   // '$auto'system@Func#2&CharValue&Object
+   signature.replaceAll('\'', '@', signIndex);
+}
+
 void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef)
 {
    IdentifierString messageName;
@@ -8876,12 +8930,35 @@ void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& sco
       }
       else if (current == lxMethodParameter) {
          paramCount++;
-         SNode targetNode = current.findChild(lxTemplateParam);
+         signaturePattern.append('/');
+         SNode targetNode = current.findChild(lxTemplateParam, lxTarget, lxAttribute);
          if (targetNode == lxTemplateParam) {
-            signaturePattern.append('&');
             signaturePattern.append('{');
             signaturePattern.appendInt(targetNode.argument);
             signaturePattern.append('}');
+         }
+         else if (targetNode == lxTarget) {
+            ref_t classRef = targetNode.argument ? targetNode.argument : resolveImplicitIdentifier(scope, targetNode.firstChild(lxTerminalMask));
+            if (!classRef)
+               scope.raiseError(errUnknownClass, targetNode);
+
+            ident_t className = scope.module->resolveReference(classRef);
+            if (isWeakReference(className))
+               signaturePattern.append(scope.module->Name());
+
+            signaturePattern.append(className);
+         }
+         else if (targetNode == lxAttribute) {
+            bool byRefArg = false;
+            bool paramsArg = false;
+            bool templateArg = false;
+            if (_logic->validateArgumentAttribute(targetNode.argument, byRefArg, paramsArg, templateArg)) {
+               if (templateArg) {
+                  registerTemplateSignature(targetNode, scope, signaturePattern);
+               }
+               else scope.raiseError(errNotApplicable, current);
+            }
+            else scope.raiseError(errNotApplicable, current);
          }
          else scope.raiseError(errNotApplicable, current);
       }

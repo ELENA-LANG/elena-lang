@@ -2664,51 +2664,88 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
    ref_t signatures[ARG_COUNT];
    size_t signLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
 
-   // map the signature
-   IdentifierString signatureStr;
-   for (size_t i = 0; i < signLen; i++) {
-      signatureStr.append('&');
-      ident_t refName = scope.module->resolveReference(signatures[i]);
-      if (isWeakReference(refName)) {
-         signatureStr.append(scope.module->Name());
-      }
-      signatureStr.append(refName);
-   }
-
    // matching pattern with the provided signature
-   size_t i = pattern.find('.') + 1;
+   size_t i = pattern.find('.') + 2;
 
-   IdentifierString templateName(pattern, i - 1);
+   IdentifierString templateName(pattern, i - 2);
    ref_t templateRef = scope.mapFullReference(templateName.ident(), true);
 
-   size_t j = 0;
    size_t len = getlength(pattern);
    bool matched = true;
+   size_t signIndex = 0;
    while (matched && i < len) {
       if (pattern[i] == '{') {
-         size_t signEnd = signatureStr.ident().find(j, '&', signatureStr.Length());
          size_t end = pattern.find(i, '}', 0);
-
-         IdentifierString parameterRefName;
-         parameterRefName.copy(signatureStr.c_str() + j, signEnd - j);
 
          String<char, 5> tmp;
          tmp.copy(pattern + i + 1, end - i - 1);
 
          int index = ident_t(tmp).toInt();
 
-         parameters[index - 1] = scope.module->mapReference(parameterRefName.ident(), true);
+         parameters[index - 1] = signatures[signIndex];
          if (argumentLen < index)
             argumentLen = index;
-         
-         j = signEnd + 1;
-         i = end + 1;
+
+         i = end + 2;
       }
       else {
-         matched = signatureStr[j] == pattern[i];
-         i++;
-         j++;
+         size_t end = pattern.find(i, '/', getlength(pattern));
+         IdentifierString argType;
+         argType.copy(pattern + i, end - i);
+
+         if (argType.ident().find('{') != NOTFOUND_POS) {
+            ref_t argRef = signatures[signIndex];
+            // bad luck : if it is a template based argument
+            ident_t signType;
+            while (argRef) {
+               // try to find the template based signature argument
+               signType = scope.module->resolveReference(argRef);
+               if (!isTemplateWeakReference(signType)) {
+                  ClassInfo info;
+                  defineClassInfo(scope, info, argRef, true);
+                  argRef = info.header.parentRef;
+               }
+               else break;
+            }
+
+            if (argRef) {
+               size_t start = 0;
+               size_t argIndex = argType.ident().find('{');
+               while (argIndex < getlength(argType)) {
+                  if (argType.ident().compare(signType, start, argIndex - start)) {
+                     size_t paramEnd = argType.ident().find(argIndex, '}', 0);
+
+                     String<char, 5> tmp;
+                     tmp.copy(argType.c_str() + argIndex + 1, paramEnd - argIndex - 1);
+
+                     IdentifierString templateArg;
+                     size_t nextArg = signType.find(argIndex, '&', getlength(signType));
+                     templateArg.copy(signType + argIndex, nextArg - argIndex);
+
+                     signType = signType + nextArg;
+
+                     int index = ident_t(tmp).toInt();
+                     parameters[index - 1] = signatures[signIndex];
+                     if (argumentLen < index)
+                        argumentLen = index;
+
+                     start = argIndex + 1;
+                     argIndex = argType.ident().find(argIndex, '{', getlength(argType));
+                  }
+                  else matched = false;
+               }
+            }
+            else matched = false;
+         }
+         else {
+            ref_t argRef = scope.mapFullReference(argType.ident(), true);
+            matched = isCompatible(scope, argRef, signatures[signIndex]);
+         }
+
+         i = end + 1;
       }
+
+      signIndex++;
    }
 
    if (matched) {

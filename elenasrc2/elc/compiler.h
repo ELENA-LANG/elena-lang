@@ -1012,6 +1012,7 @@ private:
 
    void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);
    void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
+   void registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature);
 
 public:
    void loadRules(StreamReader* optimization);
