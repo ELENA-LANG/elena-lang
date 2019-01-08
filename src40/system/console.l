@@ -4,7 +4,7 @@
 class Console
 {
     object            theWriter;
-    /*io'IConsoleReader*/ theReader;
+    io'IConsoleReader theReader;
 
     /// Creates a console
     constructor(reader, writer)

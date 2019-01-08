@@ -71,10 +71,10 @@ public program()
     var array := Array.allocate(size).populate:prompter;
 
     // 3. Sort the array
-    anArray.bsort();
+    array.bsort();
 
-//    // 4. Print the array
-//    console printLine("Sorted array:",anArray).
-//
-//    console readChar. // wait for any key
+    // 4. Print the array
+    console.printLine("Sorted array:",array);
+
+    console.readChar() // wait for any key
 }

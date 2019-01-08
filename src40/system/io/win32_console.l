@@ -4,14 +4,14 @@ import system'text;
 
 public interface IConsoleReader
 {
-//    abstract T<literal> readLiteral []
-//    
+    abstract string readString() {}
+    
 //    abstract T<wide> readWide []
 //    
 //    abstract read(ref<int> retVal) []
-//    
-//    abstract read(ref<char> retVal) []
-//    
+    
+    abstract read(ref char retVal) {}
+    
 //    abstract bool isKeyAvailable []
 }
 
@@ -273,7 +273,7 @@ sealed class FileWriter
 
 // --- ConsoleReader ---
 
-sealed struct ConsoleReader : Object//, interface<IConsoleReader>
+sealed struct ConsoleReader : Object, interface<IConsoleReader>
 {
     handle theHandle;
     

@@ -387,24 +387,24 @@ public extension indexableOp
 {
 ////    exchange : anIndex1 : anIndex2
 ////        = self~indexableOp exchange int:anIndex1 int:anIndex2.
-//        
-//    exchange(int anIndex1, int anIndex2)
-//    [
-//        T<Indexer> anIndexer := self indexer.
-//        
-//        anIndexer writeIndex(anIndex1).
-//        
-//        var anObject1 := anIndexer get.
-//        
-//        anIndexer writeIndex(anIndex2).
-//        var anObject2 := anIndexer get.
-//        
-//        anIndexer set:anObject1.
-//        
-//        anIndexer writeIndex(anIndex1).
-//        anIndexer set:anObject2
-//    ]
-//    
+        
+    exchange(int i1, int i2)
+    {
+        Indexer indexer := self.indexer();
+        
+        indexer.Index := i1;
+        
+        var o1 := indexer.get();
+        
+        indexer.Index := i2;
+        var o2 := indexer.get();
+        
+        indexer.set:o1;
+        
+        indexer.Index := i1;
+        indexer.set:o2
+    }
+    
 //    forEvery(Func<int,object> fn)
 //    [
 //        T<Indexer> it := self indexer.

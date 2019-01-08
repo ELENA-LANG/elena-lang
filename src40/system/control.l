@@ -343,15 +343,12 @@ public interface Func<T1,T2,TResult>
 //    ]
 }
 
-///// A base three variable function
-//public interface Func3
-//{
-//    /// Executes the function
-//    abstract closure(object aParam1, object aParam2, object aParam3) []
-//    
-////    /// Executes the function
-////    eval : aParam1 : aParam2 : aParam3 = $self(aParam1,aParam2,aParam3).
-//    
+/// A base three variable function
+public interface Func3
+{
+    /// Executes the function
+    abstract closure(param1, param2, param3) {}
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run(object aParam1, object aParam2, Enumerator anEnumerator)
 //    [
@@ -375,24 +372,24 @@ public interface Func<T1,T2,TResult>
 //        
 //        ^ nil
 //    ]
-//}
-//
-//public interface Func<type1,type2,type3, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2, type3 param3) []
+}
+
+public interface Func<T1,T2,T3,TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T1 param1, T2 param2, T3 param3) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
+/// A base three variable function
+public interface Func4
+{
+    /// Executes the function
+    abstract closure(param1, param2, param3, param4) {}
 //    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
-///// A base three variable function
-//public interface Func4
-//{
-//    /// Executes the function
-//    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4) []
-////    
 ////    /// Executes the function
 ////    eval : aParam1 : aParam2 : aParam3 : aParam4 = $self(aParam1,aParam2,aParam3,aParam4).
 //    
@@ -420,24 +417,24 @@ public interface Func<T1,T2,TResult>
 //        
 //        ^ nil
 //    ]
-//}
-//
-//public interface Func<type1,type2,type3,type4, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4) []
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
-///// A base five variable function
-//public interface Func5
-//{
-//    /// Executes the function
-//    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5) []
-//
+}
+
+public interface Func<T1,T2,T3,T4,TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
+/// A base five variable function
+public interface Func5
+{
+    /// Executes the function
+    abstract closure(param1, param2, param3, param4, param5) {}
+
 ////    /// Executes the function
 ////    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 = $self(aParam1,aParam2,aParam3,aParam4,aParam5).
 //    
@@ -464,24 +461,24 @@ public interface Func<T1,T2,TResult>
 //        
 //        ^ nil
 //    ]
-//}
-//
-//public interface Func<type1,type2,type3,type4,type5, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5) []
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
-///// A base six variable function
-//public interface Func6
-//{
-//    /// Executes the function
-//    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6) []
-//
+}
+
+public interface Func<T1,T2,T3,T4,T5,TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
+/// A base six variable function
+public interface Func6
+{
+    /// Executes the function
+    abstract closure(param1, param2, param3, param4, param5, param6) {}
+
 ////    /// Executes the function
 ////    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6).
 //    
@@ -508,18 +505,18 @@ public interface Func<T1,T2,TResult>
 //        
 //        ^ nil
 //    ]
-//}
-//
-//public interface Func<type1,type2,type3,type4,type5,type6, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6) []
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
+}
+
+public interface Func<T1,T2,T3,T4,T5,T6,TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 ///// A base seven variable function
 //public interface Func7
 //{

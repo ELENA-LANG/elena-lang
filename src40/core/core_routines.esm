@@ -1629,6 +1629,61 @@ procedure __mssg_closure."params##invoke$system@Object[2]"
 
 end
 
+procedure __byte."Inverted[1]"
+
+  newn   class : system'ByteNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure __short."Inverted[1]"
+
+  newn   class : system'ShortNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure __int."readInvertedTo$@system@ref#1&system@IntNumber[2]"
+
+  aloadsi 1
+  nload
+  not
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure __int."Inverted[1]"
+
+  newn   class : system'IntNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
+procedure __uint."Inverted[1]"
+
+  newn   class : system'UIntNumber 4
+  bcopya
+  aloadsi 1    // ; load source
+  nnot         // ; invert
+  acopyb
+  quitn 1
+  
+end
+
 symbol sta_start
 
   pushr entry : "$forwards'$program"

@@ -40,24 +40,6 @@ public sealed ref<T>// : BaseVariable
     dispatch() => theValue;
 }
 
-//public extension<ref<real>> realRefOp
-//{
-//    append(real n)
-//    [
-//        real v := self.
-//        v := v + n.
-//        
-//        self value := v.
-//    ]
-//    
-//    reduce(real n)
-//    [
-//        real v := self.
-//        v := v - n.
-//        
-//        self value := v.
-//    ]
-//}
 
 // === Boolean values ===
 
@@ -554,19 +536,19 @@ public sealed const struct ByteNumber : IntBaseNumber
     long xor(long n)
         = new LongNumber(self).xor(n);
 
-//    byte shiftLeft(int val)
-//    {
-//        ^ theValue $shl val;
-//    }
-//
-//    byte shiftRight(int val)
-//    {
-//        ^ theValue $shr val;
-//    }
+    byte shiftLeft(int val)
+    {
+        ^ theValue $shl val;
+    }
+
+    byte shiftRight(int val)
+    {
+        ^ theValue $shr val;
+    }
     
-//    /// Bitwise inversion
-//    byte inverted
-//        => system'core_routines'__byte.
+    /// Bitwise inversion
+    get byte Inverted()
+        => system'core_routines'__byte;
         
     /// Returns the literal presentation
     string Printable = stringConvertor.convert(self);
@@ -863,19 +845,19 @@ public sealed const struct ShortNumber : IntBaseNumber
     xor(long n)
         = new LongNumber(self).xor(n);
 
-//    short shiftLeft(int val)
-//    [
-//        ^ theValue << val
-//    ]
-//
-//    short shiftRight(int val)
-//    [
-//        ^ theValue >> val
-//    ]
-//    
-//    /// Bitwise inversion
-//    short inverted
-//        => system'core_routines'__short.  
+    short shiftLeft(int val)
+    {
+        ^ theValue $shl val
+    }
+
+    short shiftRight(int val)
+    {
+        ^ theValue $shr val
+    }
+    
+    /// Bitwise inversion
+    get short Inverted()
+        => system'core_routines'__short;
 
     /// Returns the literal presentation
     string Printable = stringConvertor.convert(self);
@@ -1196,35 +1178,39 @@ public sealed const struct IntNumber : IntBaseNumber
 
 //    int shiftLeft(BaseVariable v)
 //        <= shiftLeft(v value).
-//
-//    int shiftLeft(int val)
-//    [
-//        ^ theValue << val
-//    ]
-//
+
+    int shiftLeft(int val)
+    {
+        ^ theValue $shl val
+    }
+
 //    int shiftRight(BaseVariable v)
 //        <= shiftRight(v value).
-//
-//    int shiftRight(int val)
-//    [
-//        ^ theValue >> val
-//    ]
-//    
+
+    int shiftRight(int val)
+    {
+        ^ theValue $shr val
+    }
+    
 //    /// Bitwise inversion
-//    readInvertedTo(ref<int> retVal)
-//        => system'core_routines'__int.
+//    readInvertedTo(ref int retVal)
+//        => system'core_routines'__int;
 //    
-//    embeddable int inverted
-//    [
-//        int val := 0.
-//        self readInvertedTo(&val).
+//    /*embeddable*/get int Inverted()
+//    {
+//        int val := 0;
+//        self.readInvertedTo(ref val);
 //        
 //        ^ val
-//    ]
-//        
-//    /// Negates the value
-//    negative
-//        = 0 - theValue.
+//    }
+
+    /// Bitwise inversion
+    get int Inverted()
+        => system'core_routines'__int;
+        
+    /// Negates the value
+    int Negative
+        = 0 - theValue;
 }
 
 // --- UIntNumber ---
@@ -1585,10 +1571,10 @@ public sealed const struct UIntNumber : IntBaseNumber
 //    [
 //        ^ theValue >> val
 //    ]
-//    
-//    /// Bitwise inversion
-//    uint inverted
-//        => system'core_routines'__int.  
+    
+    /// Bitwise inversion
+    get uint Inverted()
+        => system'core_routines'__uint;  
 }
 
 // --- LongNumber ---
@@ -3210,6 +3196,25 @@ public extension intRefOp : ref<int>
     reduce(int n)
     {
         int v := self.Value;
+        v := v - n;
+        
+        self.Value := v
+    }
+}
+
+public extension realRefOp : ref<real>
+{
+    append(real n)
+    {
+        real v := self.Value;
+        v := v + n;
+        
+        self.Value := v
+    }
+    
+    reduce(real n)
+    {
+        real v := self.Value;
         v := v - n;
         
         self.Value := v
