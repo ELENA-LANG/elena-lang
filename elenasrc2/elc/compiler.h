@@ -1009,6 +1009,9 @@ private:
 
    void declareNamespace(SNode node, NamespaceScope& scope, bool withFullInfo);
 
+   void registerExtensionTemplateMethod(SNode node);
+   void registerExtensionTemplate(SNode node);
+
 public:
    void loadRules(StreamReader* optimization);
    void turnOnOptimiation(int level)
@@ -1017,10 +1020,8 @@ public:
    }
 
    // return true if no forward class declarations are encountered
-   bool declareModule(SyntaxTree& tree, _ModuleScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*/, bool& repeatMode/*, ExtensionMap* extensionsToExport*/);
-   void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*//*, Unresolveds& unresolveds*/);
-
-////   void compileSyntaxTree(_ProjectManager& project, ident_t file, SyntaxTree& tree, ModuleInfo& moduleInfo, Unresolveds& unresolveds);
+   bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool& repeatMode);
+   void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting);
 
    void initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo);
 
@@ -1046,6 +1047,8 @@ public:
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
+
+   virtual void registerExtensionTemplate(SyntaxTree& tree);
 
 //   //virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 

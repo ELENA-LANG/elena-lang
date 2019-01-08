@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class scope implementation.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -442,7 +442,7 @@ ref_t ModuleScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, b
    }   
 }
 
-void ModuleScope :: compile(_Compiler& compiler, SyntaxTree& derivationTree/*, ExtensionMap* extensions*/)
+void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
 {
    // declare classes / symbols based on the derivation tree
    bool repeatMode = true;
@@ -450,14 +450,14 @@ void ModuleScope :: compile(_Compiler& compiler, SyntaxTree& derivationTree/*, E
    bool nothingToCompile = true;
    while (repeatMode && !idle) {
       repeatMode = false;
-      idle = !compiler.declareModule(derivationTree, *this, /*info->path.c_str(), info->ns.c_str(), &info->importedNs, */repeatMode/*, extensions*/);
+      idle = !compiler->declareModule(derivationTree, *this, repeatMode);
 
       nothingToCompile &= idle;
    }
    
    if (!nothingToCompile) {
       // compile classes / symbols if not idle 
-      compiler.compileModule(derivationTree, *this/*, info->path.c_str(), info->ns.c_str(), &info->importedNs*/);
+      compiler->compileModule(derivationTree, *this, greeting);
    }
 }
 
@@ -481,7 +481,7 @@ void ModuleScope :: importClassTemplate(SyntaxWriter& output, ref_t reference, L
    TemplateGenerator transformer(templateTree);
    SyntaxWriter writer(templateTree);
    writer.newNode(lxRoot);
-   transformer.generateTemplate(writer, *this, reference, parameters, true);
+   transformer.generateTemplate(writer, *this, reference, parameters, false, true);
    writer.closeNode();
 
    transformer.importClass(output, templateTree.readRoot());
@@ -500,7 +500,7 @@ void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t referen
    SyntaxTree::copyNode(output, templateTree.readRoot());
 }
 
-ref_t ModuleScope :: generateTemplate(_Compiler& compiler, ref_t reference, List<SNode>& parameters, ident_t ns/*, ExtensionMap* extensions*/)
+ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns)
 {
    SyntaxTree templateTree;
 
@@ -508,30 +508,24 @@ ref_t ModuleScope :: generateTemplate(_Compiler& compiler, ref_t reference, List
    SyntaxWriter writer(templateTree);
    writer.newNode(lxRoot);
    writer.newNode(lxNamespace, ns);
-   writer.appendNode(lxImport, STANDARD_MODULE);
-   writer.newBookmark();
 
-   ref_t generatedReference = transformer.generateTemplate(writer, *this, reference, parameters);
+   //writer.appendNode(lxImport, STANDARD_MODULE);
+   //writer.newBookmark();
+
+   ref_t generatedReference = transformer.generateTemplate(writer, *this, reference, parameters, true, false);
 
    IdentifierString path;
    path.copy("compiling ");
    path.append(resolveFullName(generatedReference));
    path.append(" template...");
-   writer.insertChild(0, lxSourcePath, path.c_str());
+   //writer.insertChild(0, lxSourcePath, path.c_str());
 
    writer.closeNode();
    writer.closeNode();
-
-   //SourceFileInfo fileInfo;
-   //fileInfo.tree = &templateTree;
-   //fileInfo.importedNs.add(ident_t(STANDARD_MODULE).clone());
-
-   //SourceFileList files;
-   //files.add(&fileInfo);
 
    try
    {
-      compile(compiler, templateTree);
+      compile(templateTree, path.c_str());
    }
    catch(_Exception&)
    {
@@ -541,7 +535,12 @@ ref_t ModuleScope :: generateTemplate(_Compiler& compiler, ref_t reference, List
    return generatedReference;
 }
 
-ref_t ModuleScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage/*, ref_t outputRef, ExtensionMap* extensions*/, ident_t ns)
+void ModuleScope :: generateExtensoinTemplate(SyntaxTree& tree)
+{
+   compiler->registerExtensionTemplate(tree);
+}
+
+ref_t ModuleScope :: resolveClosure(ref_t closureMessage/*, ref_t outputRef, ExtensionMap* extensions*/, ident_t ns)
 {
    ref_t signRef = 0;
    module->resolveAction(getAction(closureMessage), signRef);
@@ -596,7 +595,7 @@ ref_t ModuleScope :: resolveClosure(_Compiler& compiler, ref_t closureMessage/*,
       else templateReference = mapFullReference(closureName, true);
 
       if (templateReference) {
-         return generateTemplate(compiler, templateReference, parameters, ns/*, extensions*/);
+         return generateTemplate(templateReference, parameters, ns/*, extensions*/);
       }
       else return superReference;
    }

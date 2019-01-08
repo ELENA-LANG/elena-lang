@@ -3666,7 +3666,7 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
    //else {
       NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-      ref_t closureRef = scope.moduleScope->resolveClosure(*this, methodScope.message/*, outputRef, &nsScope->extensions*/, nsScope->ns);
+      ref_t closureRef = scope.moduleScope->resolveClosure(methodScope.message/*, outputRef*/, nsScope->ns);
 //      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
       if (closureRef) {
          parentRef = closureRef;
@@ -4065,7 +4065,7 @@ ref_t Compiler :: resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t oper
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   return moduleScope.generateTemplate(*this, moduleScope.refTemplateReference, parameters, ns/*, &nsScope->extensions*/);
+   return moduleScope.generateTemplate(moduleScope.refTemplateReference, parameters, ns/*, &nsScope->extensions*/);
 }
 
 ref_t Compiler :: resolveReferenceTemplate(Scope& scope, ref_t elementRef)
@@ -4099,7 +4099,7 @@ ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, 
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   return scope.generateTemplate(*this, templateRef, parameters, ns/*, &nsScope->extensions*/);
+   return scope.generateTemplate(templateRef, parameters, ns);
 }
 
 ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
@@ -4324,7 +4324,7 @@ ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope)
       scope.raiseError(errInvalidHint, node);
 
    NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-   return scope.moduleScope->generateTemplate(*this, templateRef, parameters, ns->ns.c_str()/*, &nsScope->extensions*/);
+   return scope.moduleScope->generateTemplate(templateRef, parameters, ns->ns.c_str());
 }
 
 ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int mode)
@@ -8342,7 +8342,7 @@ bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope/*, id
    return retVal;
 }
 
-void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*//*, Unresolveds& unresolveds*/)
+void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting)
 {
    SNode current = syntaxTree.readRoot().firstChild();
    while (current != lxNone) {
@@ -8350,8 +8350,8 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope/*, id
       NamespaceScope namespaceScope(&scope, current.identifier()/*, true*/);
       declareNamespace(current, namespaceScope, true);
       
-      if (!emptystr(namespaceScope.sourcePath))
-         scope.project->printInfo("%s", namespaceScope.sourcePath);
+      if (!emptystr(greeting))
+         scope.project->printInfo("%s", greeting);
       
       compileImplementations(current, namespaceScope);
 
@@ -8819,3 +8819,29 @@ void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
 ////   writer.closeNode();
 ////   writer.closeNode();
 ////}
+
+void Compiler :: registerExtensionTemplateMethod(SNode node)
+{
+}
+
+void Compiler :: registerExtensionTemplate(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         registerExtensionTemplateMethod(current);
+      }
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: registerExtensionTemplate(SyntaxTree& tree)
+{
+   SNode node = tree.readRoot();
+
+   //   // declare classes several times to ignore the declaration order
+   //   NamespaceScope namespaceScope(&scope, current.identifier());
+   //   declareNamespace(current, namespaceScope, false);
+
+   registerExtensionTemplate(node.findChild(lxClass));
+}

@@ -712,7 +712,7 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
       _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ProjectSettings::VItem>* source = *it;
 
       // create module
-      _ELENA_::ModuleScope scope(this);
+      _ELENA_::ModuleScope scope(this, &compiler);
 
       _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
       compiler.initializeScope(name, scope, debugMode);
@@ -731,7 +731,7 @@ bool _ELC_::Project :: compileSources(_ELENA_::Compiler& compiler, _ELENA_::Pars
 
          printInfo("Compiling %s", name);
 
-         scope.compile(compiler, derivationTree/*, NULL*/);
+         scope.compile(derivationTree, nullptr);
       }
 //      else if (type == 2) {
 //         // if it is a script file

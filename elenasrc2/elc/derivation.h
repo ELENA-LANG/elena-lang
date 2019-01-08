@@ -166,7 +166,7 @@ class DerivationWriter : public _DerivationWriter
    void generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 
-   void declareType(SyntaxWriter& writer, SNode node/*, DerivationScope& scope*/);
+   void declareType(SNode node);
    void generateImport(SyntaxWriter& writer, SNode ns);
 
 public:
@@ -256,12 +256,15 @@ class TemplateGenerator
    void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);   
+   void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyModuleInfo(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 
-   bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool declaringClass/*, int mode = 0*/);
+   bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool declaringClass, bool importModuleInfo);
 
 public:
-   ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters, bool importMode = false);
+   ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters, 
+                           bool importModuleInfo, bool importMode);
+
    void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
    void generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
 
