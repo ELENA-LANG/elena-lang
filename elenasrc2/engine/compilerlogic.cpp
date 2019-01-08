@@ -2657,17 +2657,65 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
    return 0;
 }
 
-ref_t CompilerLogic :: resolveExtensionTemplate(ident_t pattern)
+ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t implicitSignatureRef, ident_t ns)
 {
-   ////system@op<{0}>.system@Func#1&{0}
-   //int patternSignatureIndex = pattern.find('.');
-   //int signatureIndex = 0;
+   size_t argumentLen = 0;
+   ref_t parameters[ARG_COUNT];
+   ref_t signatures[ARG_COUNT];
+   size_t signLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
 
-   //while (patternSignatureIndex < getlength(pattern)) {
+   // map the signature
+   IdentifierString signatureStr;
+   for (size_t i = 0; i < signLen; i++) {
+      signatureStr.append('&');
+      ident_t refName = scope.module->resolveReference(signatures[i]);
+      if (isWeakReference(refName)) {
+         signatureStr.append(scope.module->Name());
+      }
+      signatureStr.append(refName);
+   }
 
-   //}
+   // matching pattern with the provided signature
+   size_t i = pattern.find('.') + 1;
 
-   return 0; //!! temporaö
+   IdentifierString templateName(pattern, i - 1);
+   ref_t templateRef = scope.mapFullReference(templateName.ident(), true);
+
+   size_t j = 0;
+   size_t len = getlength(pattern);
+   bool matched = true;
+   while (matched && i < len) {
+      if (pattern[i] == '{') {
+         size_t signEnd = signatureStr.ident().find(j, '&', signatureStr.Length());
+         size_t end = pattern.find(i, '}', 0);
+
+         IdentifierString parameterRefName;
+         parameterRefName.copy(signatureStr.c_str() + j, signEnd - j);
+
+         String<char, 5> tmp;
+         tmp.copy(pattern + i + 1, end - i - 1);
+
+         int index = ident_t(tmp).toInt();
+
+         parameters[index - 1] = scope.module->mapReference(parameterRefName.ident(), true);
+         if (argumentLen < index)
+            argumentLen = index;
+         
+         j = signEnd + 1;
+         i = end + 1;
+      }
+      else {
+         matched = signatureStr[j] == pattern[i];
+         i++;
+         j++;
+      }
+   }
+
+   if (matched) {
+      return compiler.generateExtensionTemplate(scope, templateRef, argumentLen, parameters, ns);
+   }
+   
+   return 0;
 }
 
 bool CompilerLogic :: validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass)

@@ -98,7 +98,8 @@ class DerivationWriter : public _DerivationWriter
 
       bool withTypeParameters() const
       {
-         return templateMode == stClassTemplate || templateMode == stPropertyTemplate;
+         return templateMode == stClassTemplate || templateMode == stPropertyTemplate 
+            || templateMode == stExtensionTemplate;
       }
 
       Scope()

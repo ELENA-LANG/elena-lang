@@ -91,7 +91,7 @@ struct ModuleScope : _ModuleScope
    virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns/*, ExtensionMap* extensionsToExport*/);
    virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
-   virtual void generateExtensoinTemplate(SyntaxTree& tree);
+   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef);
    virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference);

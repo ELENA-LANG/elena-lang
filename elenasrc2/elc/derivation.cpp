@@ -375,7 +375,7 @@ void DerivationWriter :: generateTemplateTree(SNode node, SNode nameNode, ScopeT
       _scope->saveAttribute(refName.ident(), nameNode.argument);
    }
    else if (templateScope.templateMode == ScopeType::stExtensionTemplate) {
-      _scope->generateExtensoinTemplate(templateTree);
+      _scope->generateExtensionTemplate(templateTree, _ns, nameNode.argument);
    }
 
    SyntaxTree::saveNode(root, target);

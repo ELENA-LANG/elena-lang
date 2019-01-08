@@ -535,9 +535,9 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
    return generatedReference;
 }
 
-void ModuleScope :: generateExtensoinTemplate(SyntaxTree& tree)
+void ModuleScope :: generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef)
 {
-   compiler->registerExtensionTemplate(tree);
+   compiler->registerExtensionTemplate(tree, *this, ns, extensionRef);
 }
 
 ref_t ModuleScope :: resolveClosure(ref_t closureMessage/*, ref_t outputRef, ExtensionMap* extensions*/, ident_t ns)

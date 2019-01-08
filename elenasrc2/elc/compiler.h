@@ -392,6 +392,7 @@ private:
       }
 
       void saveExtension(ref_t message, ref_t type, ref_t role, bool internalOne);
+      void saveExtensionTemplate(ref_t message, ident_t pattern);
 
       void loadModuleInfo(ident_t name)
       {
@@ -1009,8 +1010,8 @@ private:
 
    void declareNamespace(SNode node, NamespaceScope& scope, bool withFullInfo);
 
-   void registerExtensionTemplateMethod(SNode node);
-   void registerExtensionTemplate(SNode node);
+   void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);
+   void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
 
 public:
    void loadRules(StreamReader* optimization);
@@ -1048,7 +1049,8 @@ public:
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
 
-   virtual void registerExtensionTemplate(SyntaxTree& tree);
+   virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef);
+   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, ref_t* arguments, ident_t ns);
 
 //   //virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
