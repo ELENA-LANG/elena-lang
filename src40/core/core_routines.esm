@@ -472,6 +472,45 @@ procedure __literal."insert$system@String$system@IntNumber$system@CharValue[3]"
   
 end
 
+procedure __literal."delete$system@IntNumber$system@IntNumber[3]"
+
+  bcopya
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  ecopyd
+
+  acopyb
+  blen
+  sub
+
+  acopyr class : system'String
+  bcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  callextr api : insert
+
+  // ; copy right side 
+  ecopyd          
+  aloadsi 3
+  nload
+  add
+  eswap
+  aloadsi 1
+  callextr api : sadd
+
+  acopyb
+  quitn 3
+  
+end
+
 procedure __wide."read:Length$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
@@ -579,6 +618,45 @@ procedure __wide."Substring$system@IntNumber$system@IntNumber[3]"
 
   quitn 3
 
+end
+
+procedure __wide."delete$system@IntNumber$system@IntNumber[3]"
+
+  bcopya
+
+  // ; calculate length
+  aloadsi 3
+  nload
+  ecopyd
+
+  acopyb
+  wlen
+  sub
+
+  acopyr class : system'WideString
+  wcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  callextr api : winsert                  
+
+  // ; copy right side 
+  ecopyd          
+  aloadsi 3
+  nload
+  add
+  eswap
+  aloadsi 1
+  callextr api : wadd
+
+  acopyb
+  quitn 3
+  
 end
 
 procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"

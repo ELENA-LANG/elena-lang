@@ -1329,11 +1329,11 @@ public sealed const struct String : BaseValue
 //    /// Deletes the substring from the object and returns the new one
 //    delete:aLength at:anIndex
 //        = self delete(T<int>(anIndex), T<int>(aLength)).
-//
-//    /// Deletes the substring from the object and returns the new one
-//    literal delete(int anIndex, int aLength)
-//        => system'core_routines'__literal.
-//
+
+    /// Deletes the substring from the object and returns the new one
+    string delete(int index, int length)
+        => system'core_routines'__literal;
+
 //    /// Returns the substring
 //    Substring : aLength at:anIndex
 //        = self Substring(T<int>(anIndex), T<int>(aLength)).
@@ -1551,10 +1551,10 @@ public sealed const struct WideString : BaseValue
 //    /// Deletes the substring from the object and returns the new one
 //    delete:aLength at:anIndex
 //        = self delete(T<int>(anIndex), T<int>(aLength)).
-//            
-//    /// Deletes the substring from the object and returns the new one            
-//    wide delete(int anIndex, int aLength)
-//        => system'core_routines'__wide.
+            
+    /// Deletes the substring from the object and returns the new one            
+    wide delete(int index, int length)
+        => system'core_routines'__wide;
 
     /// Returns the substring
     wide Substring(int n, int length)

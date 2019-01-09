@@ -1133,64 +1133,69 @@ public extension stringOp : String
         }        
     }        
     
-//    literal trimLeft(char aChar)
-//    [
-//        int  anIndex := 0.
-//        int  aLength := self length.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//        
-//        while(anIndex < aLength)
-//        [
-//            self read(anIndex, &aCurrent).
-//            
-//            ifnot(aCurrent == aChar)
-//                [ 
-//                    if (anIndex == 0)
-//                        [ ^ self ];
-//                        [ ^ self delete(0, anIndex) ]
-//                ].
-//            
-//            anIndex := anIndex + aCharLen
-//        ].
-//        
-//        ^ emptyLiteral
-//    ]
-//    
-//    literal trimLeft
-//        = self~literalOp trimLeft($32).
-//       
-//    literal trimRight(char aChar)
-//    [
-//        int  aLength := self length.
-//        int  anIndex := aLength - 1.
-//        int  aPrevious := aLength.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self read(anIndex, &aCurrent).
-//            
-//            ifnot (aCurrent equal(aChar))
-//                [ ^ self delete(aPrevious,aLength - aPrevious) ].
-//            
-//            aPrevious := anIndex.
-//            anIndex := anIndex - aCharLen
-//        ].
-//        
-//        ^ emptyLiteral
-//    ]
-//    
-//    literal trimRight
-//        = self~literalOp trimRight($32).
-//        
-//    literal trim(char aChar)
-//        = self~literalOp trimLeft(aChar); trimRight(aChar).
-//    
-//    literal trim
-//        = self~literalOp trimLeft($32); trimRight($32).
-//    
+    string trimLeft(char ch)
+    {
+        int  index := 0;
+        int  len := self.Length;
+        char current := $0;
+        int  chLen := ch.Length;
+        
+        while(index < len)
+        {
+            self.read(index, ref current);
+            
+            ifnot(current == ch)
+            { 
+                if (index == 0)
+                { 
+                    ^ self 
+                }
+                else
+                { 
+                    ^ self.delete(0, index) 
+                }
+            };
+            
+            index += chLen
+        };
+        
+        ^ emptyString
+    }
+    
+    string trimLeft()
+        = self.trimLeft($32);
+       
+    string trimRight(char ch)
+    {
+        int  len := self.Length;
+        int  index := len - 1;
+        int  prev := len;
+        char current := $0;
+        int  chLen := ch.Length;
+        
+        while (index >= 0)
+        {
+            self.read(index, ref current);
+            
+            ifnot (current == ch)
+                { ^ self.delete(prev,len - prev) };
+            
+            prev := index;
+            index -= chLen
+        };
+        
+        ^ emptyString
+    }
+    
+    string trimRight()
+        = self.trimRight($32);
+        
+    string trim(char ch)
+        = self.trimLeft(ch).trimRight(ch);
+    
+    string trim()
+        = self.trimLeft($32).trimRight($32);
+    
 //    padLeft(int aLength)
 //        = self padLeft($32, aLength).
 //    
@@ -1328,61 +1333,61 @@ public extension wideOp : WideString
 //        
 //        ^ self Substring(anIndex, aLength)
 //    ]
-//     
-//    wide trimLeft(char aChar)
-//    [
-//        int  anIndex := 0.
-//        int  aLength := self length.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//        
-//        while (anIndex < aLength)
-//        [
-//            self read(anIndex, &aCurrent).
-//            
-//            ifnot(aCurrent equal(aChar))
-//                [ ^ self delete(0, anIndex) ].
-//            
-//            anIndex := anIndex + aCharLen
-//        ].
-//        
-//        ^ emptyWideLiteral
-//    ]
-//    
-//    wide trimLeft
-//        = self~wideOp trimLeft($32).
-//       
-//    wide trimRight(char aChar)
-//    [
-//        int  aLength := self length.
-//        char aCurrent := $0.
-//        int  aCharLen := aChar length.
-//                
-//        int  anIndex := aLength - 1.
-//        int  aPrevious := aLength.
-//        while (anIndex >= 0)
-//        [
-//            self read(anIndex, &aCurrent).
-//            
-//            ifnot (aCurrent equal(aChar))
-//                [ ^ self delete(aPrevious, aLength - aPrevious) ].
-//            
-//            aPrevious := anIndex.
-//            anIndex := anIndex - aCharLen
-//        ].
-//        
-//        ^ emptyWideLiteral
-//    ]
-//    
-//    wide trimRight
-//        = self~wideOp trimRight($32).
-//       
-//    wide trim(char aChar)
-//        = self~wideOp trimLeft(aChar); trimRight(aChar).
-//    
-//    wide trim
-//        = self~wideOp trimLeft($32); trimRight($32).
-//    
+     
+    wide trimLeft(char ch)
+    {
+        int  index := 0;
+        int  len := self.Length;
+        char current := $0;
+        int  chLen := ch.Length;
+        
+        while (index < len)
+        {
+            self.read(index, ref current);
+            
+            ifnot(current == ch)
+                { ^ self.delete(0, index) };
+            
+            index += chLen
+        };
+        
+        ^ emptyWideString
+    }
+    
+    wide trimLeft()
+        = self.trimLeft($32);
+       
+    wide trimRight(char ch)
+    {
+        int  len := self.Length;
+        char current := $0;
+        int  chLen := ch.Length;
+                
+        int  index := len - 1;
+        int  prev := len;
+        while (index >= 0)
+        {
+            self.read(index, ref current);
+            
+            ifnot (current == ch)
+                { ^ self.delete(prev, len - prev) };
+            
+            prev := index;
+            index -= chLen
+        };
+        
+        ^ emptyWideString
+    }
+    
+    wide trimRight()
+        = self.trimRight($32);
+       
+    wide trim(char ch)
+        = self.trimLeft(ch).trimRight(ch);
+    
+    wide trim()
+        = self.trimLeft($32).trimRight($32);
+    
 //    padLeft(char aChar, int aLength)
 //    [
 //        int aCurrentLength := self length.
@@ -1477,10 +1482,10 @@ public extension wideOp : WideString
 //    ]
 }
 
-//// --- stringOp ---
-//
-//singleton stringOpDispatcher
-//{
+// --- stringOp ---
+
+singleton stringOpDispatcher
+{
 //    padRight(literal s, char ch, int len)
 //        = s~literalOp padRight(ch, len).
 //    
@@ -1510,25 +1515,25 @@ public extension wideOp : WideString
 //
 //    bool containing(wide s, wide subs)
 //        = s~wideOp containing(subs).
-//        
-//    trimLeft(literal s, char ch)
-//        =s~literalOp trimLeft(ch).        
-//        
-//    trimRight(literal s, char ch)
-//        =s~literalOp trimRight(ch).
-//        
-//    trim(literal s, char ch)
-//        =s~literalOp trim(ch).
-//        
-//    trimLeft(wide s, char ch)
-//        =s~wideOp trimLeft(ch).        
-//        
-//    trimRight(wide s, char ch)
-//        =s~wideOp trimRight(ch).        
-//        
-//    trim(wide s, char ch)
-//        =s~wideOp trim(ch).
-//        
+        
+    trimLeft(string s, char ch)
+        =s.trimLeft(ch);       
+        
+    trimRight(string s, char ch)
+        =s.trimRight(ch);
+        
+    trim(string s, char ch)
+        =s.trim(ch);
+        
+    trimLeft(wide s, char ch)
+        =s.trimLeft(ch);        
+        
+    trimRight(wide s, char ch)
+        =s.trimRight(ch);        
+        
+    trim(wide s, char ch)
+        =s.trim(ch);
+        
 //    replace(literal s, object src, object dst)
 //        = s~literalOp replace(T<literal>(src), T<literal>(dst)).
 //        
@@ -1537,34 +1542,34 @@ public extension wideOp : WideString
 //        
 //    replace(wide s, wide src, wide dst)
 //        = s~wideOp replace(src, dst).
-//}
-//
-//public extension stringOp
-//{
+}
+
+public extension stringWeakOp
+{
 //    Substring : anIndex
 //        = self Substring:(self length - anIndex) at:anIndex.
 //            
 //    Substring(object anIndex, object aLength)
 //        = self Substring:aLength at:anIndex.
-//    
-//    trimLeft :ch
-//        = stringOpDispatcher trimLeft(self, ch).
-//
-//    trimRight :ch
-//        = stringOpDispatcher trimRight(self, ch).
-//
-//    trim:ch
-//        = stringOpDispatcher trim(self, ch).
-//    
-//    trimLeft
-//        = stringOpDispatcher trimLeft(self, $32).
-//
-//    trimRight
-//        = stringOpDispatcher trimRight(self, $32).
-//
-//    trim
-//        = stringOpDispatcher trim(self, $32).
-//
+    
+    trimLeft(ch)
+        = stringOpDispatcher.trimLeft(self, ch);
+
+    trimRight(ch)
+        = stringOpDispatcher.trimRight(self, ch);
+
+    trim(ch)
+        = stringOpDispatcher.trim(self, ch);
+    
+    trimLeft()
+        = stringOpDispatcher.trimLeft(self, $32);
+
+    trimRight()
+        = stringOpDispatcher.trimRight(self, $32);
+
+    trim()
+        = stringOpDispatcher.trim(self, $32);
+
 //    padLeft(object padSymbol, object len)
 //        = stringOpDispatcher padLeft(self, padSymbol, len).
 //        
@@ -1649,7 +1654,7 @@ public extension wideOp : WideString
 //            
 //        ^ self
 //    ]    
-//}
+}
 
 // --- charOp ---
 
