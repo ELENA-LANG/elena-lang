@@ -239,18 +239,23 @@ public sealed class MethodNotFoundException : Exception
         <= new(cast string(object.__getClassName() + " : Method " + missingMessage.Printable + " not found"));
 }
 
-//// --- MethodNotSupported ---
-//
-//public class NotSupportedException :: Exception
-//{
-//    /// Creates the exception
-//    constructor new
-//        <= new("Operation is not supported").
-//        
-//    /// Creates the exception
-//    constructor new :aMessage
-//        <= new(aMessage).
-//}
+// --- NotSupportedException ---
+
+public class NotSupportedException : Exception
+{
+    static raise()
+    {
+        new NotSupportedException().raise()
+    }
+    
+    /// Creates the exception
+    constructor new()
+        <= new("Operation is not supported");
+        
+    /// Creates the exception
+    constructor new(string message)
+        <= new(message);
+}
 
 // --- AbortException ---
 

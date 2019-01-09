@@ -1753,7 +1753,10 @@ public extension byteArrayHelper : Array<byte>
 
 public extension charArrayHelper : Array<char>
 {
-    /// Copies the array at the specified position
+    move(int index, int length, int offset)
+        => system'core_routines'__chararray;
+
+    /// Copies the array at the specified position    
     write(int index, int length, char[] array)
         => system'core_routines'__chararray;
 }

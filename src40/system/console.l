@@ -66,7 +66,7 @@ class Console
 
     /// Reads the next line of characters from the standard input stream.
     string readLine()
-        = theReader.readString();
+        = theReader.readLine();
 
 //    /// Reads the next line of characters from the standard input stream.
 //    wide readWideLine

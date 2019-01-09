@@ -1094,6 +1094,28 @@ labErr:
 
 end
 
+procedure __chararray."move$system@IntNumber$system@IntNumber$system@IntNumber[4]"
+
+  pusha 
+
+  // ; insert
+  aloadsi 4
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  bloadsi  0
+  aloadsi 5
+  pushai 0
+
+  callextr api : nmove
+
+  pop  
+  popa
+  quitn 4
+  
+end
+
 procedure __intarray."write$system@IntNumber$system@IntNumber$@system@Array#1&system@IntNumber[4]"
 
   bloadsi 1

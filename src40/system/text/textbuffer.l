@@ -138,19 +138,19 @@ sealed public /*nonstructural */ class TextBuilder
 //    [
 //        self write(anObject literal).
 //    ]
-//
-//    write(CharArray anArray, int aLength)
-//    [
-//        ifnot (0 == aLength)
-//        [
-//            self reserve(aLength).
-//            
-//            theBuffer write(T<int>(theLength), aLength, anArray).
-//            
-//            theLength append(aLength).
-//        ].
-//    ]
-//
+
+    write(char[] array, int length)
+    {
+        ifnot (0 == length)
+        {
+            self.reserve(length);
+            
+            theBuffer.write(cast int(theLength), length, array);
+            
+            theLength.append(length)
+        }
+    }
+
 //    private readIndex(literal s, ref<int> i, ref<int> retVal)
 //    [
 //        char ch := $0.
@@ -309,54 +309,63 @@ sealed public /*nonstructural */ class TextBuilder
 //        
 //        aRetVal value := -1
 //    ]
-//
-//    indexOf(int aPosition, literal aLiteral, ref<int> aRetVal)
-//    [
-//        int  aLiteralLength := 0.
-//        int  anIndex := 0.
-//        int  aFirstCharLen := 0.
-//        char aCurrent := $0.
-//        char aFirstChar := $0.
-//        char aNextChar := $0.
-//        
-//        aLiteral readLengthTo(&aLiteralLength).
-//        
-//        aLiteral read(0, &aFirstChar).
-//        aFirstChar readLengthTo(&aFirstCharLen).
-//        
-//        int aMaxIndex := theLength.
-//        aMaxIndex := aMaxIndex - aLiteralLength.
-//        
-//        while (anIndex < aMaxIndex)
-//        [
-//            theBuffer read(anIndex, &aCurrent).
-//            
-//            if (aCurrent == aFirstChar)
-//            [ 
-//                int j := aFirstCharLen.
-//                int chLen := 0.
-//                while (j < aLiteralLength)
-//                [
-//                    theBuffer read(anIndex + j, &aCurrent).
-//                    aLiteral read(j, &aNextChar).
-//                    
-//                    if (aNextChar == aCurrent)
-//                        [ aNextChar readLengthTo(&chLen) ];
-//                        [ j := aLiteralLength. chLen := 1 ].
-//                    
-//                    j := j + chLen
-//                ].
-//                
-//                if (j == aLiteralLength)
-//                    [ aRetVal value := anIndex. ^ self ]
-//            ].
-//                
-//            anIndex := anIndex + 1
-//        ].
-//        
-//        aRetVal value := -1
-//    ]
-//
+
+    indexOf(int pos, string s, ref int retVal)
+    {
+        int  strLen := 0;
+        int  index := 0;
+        int  firstChLen := 0;
+        char current := $0;
+        char firstCh := $0;
+        char nextCh := $0;
+        
+        strLen := s.Length;
+        
+        s.read(0, ref firstCh);
+        firstChLen := firstCh.Length;
+        
+        int maxIndex := theLength;
+        maxIndex := maxIndex - strLen;
+        
+        while (index < maxIndex)
+        {
+            current := theBuffer[index];
+            
+            if (current == firstCh)
+            {
+                int j := firstChLen;
+                int chLen := 0;
+                while (j < strLen)
+                {
+                    current := theBuffer[index + j];
+                    s.read(j, ref nextCh);
+                    
+                    if (nextCh == current)
+                    { 
+                        chLen := nextCh.Length
+                    }
+                    else
+                    { 
+                        j := strLen; 
+                        chLen := 1 
+                    };
+                    
+                    j := j + chLen
+                };
+                
+                if (j == strLen)
+                { 
+                    retVal := index; 
+                    ^ self 
+                }
+            };
+                
+            index += 1
+        };
+        
+        retVal := -1
+    }
+
 //    indexOf(int aPosition, wide aLiteral, ref<int> aRetVal)
 //    [
 //        int  aLiteralLength := 0.
@@ -424,15 +433,15 @@ sealed public /*nonstructural */ class TextBuilder
 //        
 //        ^ IntNumber new(aRetVal)
 //    ]
-//
-//    literal Substring(int anIndex, int aLength)
-//    [
-//        if (aLength == 0)
-//            [ ^ emptyLiteral ].
-//            
-//        ^ LiteralValue new(anIndex, aLength, theBuffer)
-//    ]
-//
+
+    string Substring(int index, int length)
+    {
+        if (length == 0)
+            { ^ emptyString };
+            
+        ^ String.new(index, length, theBuffer)
+    }
+
 //    wide WideSubstring(int anIndex, int aLength)
 //    [
 //        if (aLength == 0)
@@ -440,19 +449,19 @@ sealed public /*nonstructural */ class TextBuilder
 //            
 //        ^ WideLiteralValue new(anIndex, aLength, theBuffer)
 //    ]
-//
-//    delete(int anIndex, int aLength)
-//    [
-//        int n := 0 - aLength.
-//        int l := theLength.
-//        l := l - anIndex.
-//        l := l - aLength.
-//        
-//        theBuffer move(anIndex + aLength, l, n).
-//        
-//        theLength reduce(aLength)
-//    ]
-//    
+
+    delete(int index, int length)
+    {
+        int n := 0 - length;
+        int l := theLength;
+        l := l - index;
+        l := l - length;
+        
+        theBuffer.move(index + length, l, n);
+        
+        theLength.reduce(length)
+    }
+    
 //    trim(int n)
 //    [
 //        theLength reduce(n)

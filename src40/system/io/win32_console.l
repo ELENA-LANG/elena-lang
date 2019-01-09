@@ -4,10 +4,10 @@ import system'text;
 
 public interface IConsoleReader
 {
-    abstract string readString() {}
+    abstract string readLine() {}
     
-//    abstract T<wide> readWide []
-//    
+    abstract wide readWideLine() {}
+    
 //    abstract read(ref<int> retVal) []
     
     abstract read(ref char retVal) {}
@@ -388,7 +388,7 @@ sealed struct ConsoleReader : Object, interface<IConsoleReader>
         }
     }
     
-    wide readWide()
+    wide readWideLine()
     {
         short dump[127];
         int   len := 0;
@@ -416,8 +416,8 @@ sealed struct ConsoleReader : Object, interface<IConsoleReader>
         ^ output
     }
 
-    string readString()
-        = self.readWide();
+    string readLine()
+        = self.readWideLine();
 
 //    int
 //    [

@@ -1,25 +1,25 @@
-//import system'io.
+import system'io;
 //import system'text.
 import extensions;
 import extensions'text;
 
-//// --- ReaderEnumerator ---
-//
-//public class ReaderEnumerator :: Enumerator
-//{
-//    T<TextReader> theReader.
-//    object        theLine.
-//
-//    constructor new
-//    [ 
-//    ]
-//
-//    constructor new : source
-//        <= new;
-//    [
-//        theReader := source textreader.
-//    ]
-//
+// --- ReaderEnumerator ---
+
+public class ReaderEnumerator : Enumerator
+{
+    TextReader theReader;
+    object     theLine;
+
+//    constructor()
+//    { 
+//    }
+
+    constructor new(source)
+  //      <= new
+    {
+        theReader := source.textreader();
+    }
+
 //    constructor new(Stream aStream, Encoder anEncoder)
 //        <= new;
 //    [
@@ -37,41 +37,41 @@ import extensions'text;
 //    [
 //        theReader := StreamReader new(aPath, anEncoder)
 //    ]
-//    
-//    reset 
-//    [
-//        NotSupportedException new; raise.
-//    ]
-//    
-//    bool next
-//    [
-//        if(theReader available)
-//            [
-//                theLine := theReader readLiteral.
-//                
-//                ^ true
-//            ].
-//        
-//        theReader close.
-//        
-//        ^ false
-//    ]
-//
-//    enumerable = theReader.
-//            
-//    get = theLine.
-//}
-//
-//// --- fileExOp ---
-//
-//public extension<File> fileExOp
-//{
-//    forEachLine:anAction
-//        = anAction run(ReaderEnumerator new:self).
-//        
-////    run for:anEncoder eachLine:anAction
-////        = anAction run enumerator:(ReaderEnumerator new path:self encoder:anEncoder).
-//}
+    
+    reset() 
+    {
+        NotSupportedException.raise()
+    }
+    
+    bool next()
+    {
+        if(theReader.Available)
+        {
+            theLine := theReader.readLine();
+            
+            ^ true
+        };        
+        
+        theReader.close();
+        
+        ^ false
+    }
+
+    enumerable() = theReader;
+            
+    get() = theLine;
+}
+
+// --- fileExOp ---
+
+public extension fileExOp : File
+{
+    forEachLine(f)
+        = f.run(ReaderEnumerator.new(self));
+        
+//    run for:anEncoder eachLine:anAction
+//        = anAction run enumerator:(ReaderEnumerator new path:self encoder:anEncoder).
+}
 
 // --- stringExOp ---
 
