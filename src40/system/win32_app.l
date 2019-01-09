@@ -1,18 +1,18 @@
-//// --- CommandLine ---
-//
-//singleton CommandLineFactory
-//{
-//    new
-//    [
-//        dirty_ptr aCommandLinePtr := system'external'KERNEL32 GetCommandLineW.
-//
-//        ^ aCommandLinePtr wide.
-//    ]
-//}
-//
-//public commandLine = 
-//    CommandLineFactory new.
-//
+// --- CommandLine ---
+
+singleton CommandLineFactory
+{
+    wide load()
+    {
+        dirty_ptr commandLinePtr := extern KERNEL32.GetCommandLineW();
+
+        ^ cast wide(commandLinePtr);
+    }
+}
+
+public commandLine = 
+    CommandLineFactory.load();
+
 //// --- startUp ---
 //
 //class StartUpEvents

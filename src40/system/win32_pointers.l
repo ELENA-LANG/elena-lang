@@ -120,17 +120,17 @@ public sealed const struct UnsafePointer
 //        
 //        ^ aLiteral
 //    ]        
-//
-//    // unsafe code
-//    T<wide> wide
-//    [
-//        int  aLen := system'external'KERNEL32 lstrlenW(self).
-//        wide aLiteral := WideLiteralValue new(aLen).
-//        system'external'KERNEL32 lstrcpyW(aLiteral, self).
-//        
-//        ^ aLiteral
-//    ]
-//    
+
+    // unsafe code
+    wide cast()
+    {
+        int  len := extern KERNEL32.lstrlenW(self);
+        wide s := WideString.allocate(len);
+        extern KERNEL32.lstrcpyW(s, self);
+        
+        ^ s
+    }
+    
 ////    stacksafe saveTo bytearray:target int:offs
 ////    [
 ////        target write int:offs int:thePointer.
