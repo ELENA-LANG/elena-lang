@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * reimplement if-else-if
                  * ref of the class before the class is declared itself should be postponed / prohibited
                  * optimize SystemTime
                  * the following code should not be allowed - real n := n;

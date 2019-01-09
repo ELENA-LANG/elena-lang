@@ -120,6 +120,8 @@ enum Symbol
    nsL4Operand                  = 0x01078,
    nsAssignmentOperand          = 0x01079,
    nsL0Operator                 = 0x0107A,
+   nsNestedStatements           = 0x0107B,
+   nsNestedStatement            = 0x0107C,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

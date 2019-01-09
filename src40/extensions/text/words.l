@@ -107,60 +107,61 @@ public class SimpleStatemachine : Statemachine
 //    
 //    bool isWhitespace = theSpaceMode.    
 //}
-//
-//public class TokenStatemachine :: Statemachine
-//{
-//    bool theSpaceMode.
-//    bool theQuoteMode.
-//    bool theNewToken.
-//    
-//    constructor new
-//    [
-//        theSpaceMode := true.
-//        theQuoteMode := false.
-//        theNewToken := true.
-//    ]
-//    
-//    bool proceed(char aChar)
-//    [
-//        if (theQuoteMode)
-//            [
-//                if (aChar == $22h)
-//                    [ theQuoteMode := false. theSpaceMode := false. theNewToken := false ].
-//                    
-//                ^ false
-//            ].
-//        
-//        bool whitespace := aChar isWhitespace.
-//        if (whitespace)
-//            [
-//                ifnot(theSpaceMode)
-//                    [ theSpaceMode := true. theNewToken := true. ^ true ]
-//            ];
-//            [
-//                if (aChar == $22h)
-//                    [
-//                        ifnot(theNewToken)
-//                            [ theNewToken := true. ^ true ].
-//                        
-//                        theQuoteMode := true.
-//                        theSpaceMode := false.
-//                        
-//                        ^ false
-//                    ].
-//                                      
-//                if (theNewToken)
-//                    [ 
-//                        theNewToken := false.
-//                        theSpaceMode := false. 
-//                    ].
-//            ].
-//        
-//        ^ false
-//    ]
-//    
-//    bool isWhitespace = theSpaceMode.    
-//}
+
+public class TokenStatemachine : Statemachine
+{
+    bool theSpaceMode;
+    bool theQuoteMode;
+    bool theNewToken;
+    
+    constructor()
+    {
+        theSpaceMode := true;
+        theQuoteMode := false;
+        theNewToken := true
+    }
+    
+    bool proceed(char ch)
+    {
+        if (theQuoteMode)
+        {
+            if (ch == $22h)
+               { theQuoteMode := false; theSpaceMode := false; theNewToken := false };
+                
+            ^ false
+        };
+        
+        bool whitespace := ch.isWhitespace();
+        if (whitespace)
+        {
+            ifnot(theSpaceMode)
+                { theSpaceMode := true; theNewToken := true; ^ true }
+        }
+        else
+        {
+            if (ch == $22h)
+            {
+                ifnot(theNewToken)
+                    { theNewToken := true; ^ true };
+                
+                theQuoteMode := true;
+                theSpaceMode := false;
+                
+                ^ false
+            };
+                                  
+            if (theNewToken)
+            { 
+                theNewToken := false;
+                theSpaceMode := false 
+            }
+        };
+        
+        ^ false
+    }
+    
+    bool isWhitespace() = theSpaceMode;    
+}
 
 public class TokenEnumerator : Enumerator<string>, interface<Enumerator>
 {

@@ -25,10 +25,10 @@ public extension objectOp
         ^ String.fromByteArray(0,len,dump)
     }
     
-//    /// Returns true if the specified object instances are equal; otherwise, false.
-//    bool equalReference:anObject
-//        => system'core_routines'__object.
-//        
+    /// Returns true if the specified object instances are equal; otherwise, false.
+    bool equalReference(o)
+        => system'core_routines'__object;
+        
 //    evalSelf(Func1 aFunction)
 //        = aFunction(self).
 //
@@ -367,10 +367,10 @@ public extension intOp : IntNumber
 //        
 //        ^ retVal
 //    ]
-//    
-//    real realDiv : anOperand
-//        = RealNumber new(T<int>(self)); divide:anOperand.
-//   
+    
+    real realDiv(n)
+        = new RealNumber(self).divide:n;
+   
 //    sqr(ref<int> retVal)
 //    [
 //        int n := self.        

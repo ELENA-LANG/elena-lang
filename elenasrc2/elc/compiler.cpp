@@ -2804,7 +2804,7 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
    ref_t resolved_operator_id = operator_id;
    // try to resolve the branching operator directly
    if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
-      // good luck : we can implement branching directly
+      // we are lucky : we can implement branching directly
       compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
 
       writer.insert(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
