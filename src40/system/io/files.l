@@ -18,9 +18,9 @@ public sealed /*nonstructural*/ class File
 //    T<literal> rprop path :: thePath.
 //
 //    T<literal> literal = thePath.
-//    
-//    T<TextReader> textreader = fileControl reader:thePath.
-//    
+    
+    TextReader textreader() = fileControl.newReader(thePath);
+    
 //    T<TextWriter> textwriter = fileControl writer:thePath.
 //    
 //    T<TextWriter> logger = fileControl logger:thePath.

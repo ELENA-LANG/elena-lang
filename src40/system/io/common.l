@@ -7,38 +7,51 @@ public interface Stream
 //    stream = $self.
     
 //    int vprop length :: readLengthTo,writeLength.
-//    
-//    int vprop index :: readIndexTo,writeIndex.
-//    
+    
+    vprop int Index
+    {
+        read(ref int retVal)
+        {
+            self.readIndexTo(ref retVal)
+        }
+        
+        write(int retVal)
+        {
+            self.writeIndex(retVal)
+        }
+    }
+
+    /// Reads the current index into an output parameter
+    abstract readIndexTo(ref int retVal) {}
+
+    /// Sets the index by specified value
+    abstract writeIndex(int anIndex) {}
+
 //    abstract writeLength(int aLength) [ ]
 //        
 //    abstract readLengthTo(ref<int> aLength) [ ]
-//    
-//    abstract readIndexTo(ref<int> anIndex) []
-//    
-//    abstract writeIndex(int anIndex) []
-//
-//    appendIndex(int anIndex)
-//    [
-//        int aNewIndex := self index.
-//        
-//        aNewIndex := aNewIndex + anIndex.
-//        
-//        self writeIndex(aNewIndex).
-//    ]
-//        
-//    reduceIndex(int anIndex)
-//    [
-//        int aNewIndex := self index.
-//        
-//        aNewIndex := aNewIndex - anIndex.
-//        
-//        self writeIndex(aNewIndex).
-//    ]
-//        
-//    abstract read(ByteArray aDump, ref<int> aLength) []
-//    
+
+    appendIndex(int offs)
+    {
+        int newIndex := self.Index;
+        
+        newIndex += offs;
+        
+        self.Index := newIndex
+    }
+        
+    reduceIndex(int offs)
+    {
+        int newIndex := self.Index;
+        
+        newIndex -= offs;
+        
+        self.Index := newIndex
+    }
+        
+    abstract read(byte[] dump, ref int length) {}
+    
 //    abstract write(ByteArray aDump, int aLength) []
-//    
-//    abstract close []
+    
+    abstract close() {}
 }

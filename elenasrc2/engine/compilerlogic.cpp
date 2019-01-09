@@ -1286,7 +1286,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
       bool compatible = false;
       if (test(info.header.flags, elStructureWrapper)) {
          if (isPrimitiveRef(sourceRef)) {
-            compatible = isCompatible(scope, sourceRef, inner.value1);
+            compatible = isCompatible(scope, inner.value1, sourceRef);
          }
          // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
          else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef, 0u);

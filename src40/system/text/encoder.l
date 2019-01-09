@@ -153,16 +153,16 @@ public interface Encoder
 //    ]
 }
 
-//// --- UTF8Encoder ---
-//
-//public singleton UTF8Encoder :: Encoder
-//{
+// --- UTF8Encoder ---
+
+public singleton UTF8Encoder : Encoder
+{
 //    convert(int anIndex, ref<int> aLength, ByteArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
 //        => system'core_routines'__utf8encoder.
-//    
-//    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int> anOutputLength)
-//        => system'core_routines'__utf8encoder.
-//    
+    
+    convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
+        => system'core_routines'__utf8encoder;
+    
 //    convert(int anIndex, ref<int> aLength, literal aLiteral, ByteArray anOutput, ref<int> anOutputLength)
 //    [
 //        int l := aLength value.
@@ -173,8 +173,8 @@ public interface Encoder
 //    
 //    toLiteral(int anIndex, int aLength, ByteArray anArray)
 //        = UTF8Encoding toLiteral(anIndex, aLength, anArray).
-//}
-//
+}
+
 //// --- UTF8Encoding ---
 //
 //public class UTF8Encoding =

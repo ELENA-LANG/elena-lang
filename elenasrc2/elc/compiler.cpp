@@ -3956,7 +3956,6 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       }
    }
    if (!nestedRef) {
-      NamespaceScope* namespaceScope = (NamespaceScope*)ownerScope.getScope(Scope::slNamespace);
       nestedRef = ownerScope.moduleScope->mapAnonymous();
    }      
 
