@@ -3,9 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
-
                  * embeddable constructors for structures
-                 * ref of the class before the class is declared itself should be postponed / prohibited
                  * optimize SystemTime
                  * the following code should not be allowed - real n := n;
                  * uncomment __closuretape."#dispatch[1]  - check the subject correctly
@@ -28,14 +26,12 @@ In development:
                        = { bool equal(o) = self(object); }; - is not allowed
 
                  * reddit post - Switch statement
-                 * implement if else if - ..
 
                  * identifier - message message
 
                  * migrate twentyfour, 99 Bottles of Beer
                  * syntax : template / size should be the last token in expression and one before the last for declaration
                  * support - new [] { 1,2,3 } - expression
-                 * array of integers : new int[] { 1, 2, 3 }
                  * support 2.2 syntax (without r postfix)
                  * allow to work with ref<int> directly
                  * the following code should be supported : newLength := newLength + cast int(theLength);
@@ -54,15 +50,12 @@ In development:
                  * implement length property optimization -> replace direct operation with byref one
                  * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one
-                 * the following code should generate an error - wideConvertor convert(self);
+
                  * implement a ? b, a ? b : c, a ? {}, a ? {} : {}
                  * imlement if(a) b else c;
 
-                 * test all possible syntax combintions 
                  * support c style return statement - return x;
 
-                 * test - byte var prm;
-                 * test - var byte prm;
                  * IntNumber.#cast<'IntNumber> - why it always creates a new object?
                  * uncomment _ELC_::Project::compileSources
                  * uncomment ELENARTMachine::loadMessage
@@ -71,13 +64,11 @@ In development:
                  * abstract class cannot have constructors / default constructor
                  * uncomment validateClassDeclaration
                  * uncomment compileBranchingOperand
-                 * correct error should be displayed : abstract get bool available {}
                  * Indexer.Index property - should support abstract get and set accessors
                  * unboxing of boxing (in case if analizer does not resolve the issue)
                  * cache resolved built-in tampletes
                  * test all possible syntax combination
                  * simplify DerivationWriter :: newNode - use a common mask for all expression nonterminals
-                 * warn if the declaration name is similar to the atribute
  
               dev - tests          
                  * test : interpreter

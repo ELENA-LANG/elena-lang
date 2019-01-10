@@ -1,20 +1,5 @@
 import system'text;
 
-// --- IConsoleReader ---
-
-public interface IConsoleReader
-{
-    abstract string readLine() {}
-    
-    abstract wide readWideLine() {}
-    
-//    abstract read(ref<int> retVal) []
-    
-    abstract read(ref char retVal) {}
-    
-//    abstract bool isKeyAvailable []
-}
-
 const int FILE_TYPE_CHAR = 2;
 
 //sealed struct CONSOLE_SCREEN_BUFFER_INFO

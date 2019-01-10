@@ -3,7 +3,7 @@
 //
 //		This file contains the ELENA Compiler error messages
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jeterrorsH
@@ -89,6 +89,7 @@ namespace _ELENA_
    #define errEmptyStructure        "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n"
    #define errReadOnlyField         "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n"
    constexpr auto errDefaultConstructorNotFound = "%s(%d:%d): error 171: implicit constructor is not found for '%s'\n";
+   constexpr auto errInvalidType                = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
@@ -131,7 +132,7 @@ namespace _ELENA_
 //   #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n"
 ////   #define wrnUnboxinging           "%s(%d:%d): warning 419: '%s' will be unboxed\n"
    #define wrnTypeInherited         "%s(%d:%d): warning 420: Type attribute is inherited\n"
-//   #define wrnAmbiguousIdentifier   "%s(%d:%d): warning 421: Identifier '%s' is ambiguous"
+   #define wrnAmbiguousIdentifier   "%s(%d:%d): warning 421: Identifier '%s' is ambiguous"
 //   #define wrnAmbiguousMessageName  "%s(%d:%d): warning 422: Message name '%s' is ambiguous"
 //   #define wrnAmbiguousVariable     "%s(%d:%d): warning 423: Variable '%s' is ambiguous"
    #define wrnDuplicateAttribute    "%s(%d:%d): warning 424: '%s': duplicate attribute\n"

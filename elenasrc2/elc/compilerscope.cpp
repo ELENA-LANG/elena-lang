@@ -450,7 +450,12 @@ void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
    bool nothingToCompile = true;
    while (repeatMode && !idle) {
       repeatMode = false;
-      idle = !compiler->declareModule(derivationTree, *this, repeatMode);
+      idle = !compiler->declareModule(derivationTree, *this, false, repeatMode);
+      if (idle && repeatMode) {
+         repeatMode = false;
+         // if the last declaration was not successful, force it last time 
+         idle = !compiler->declareModule(derivationTree, *this, true, repeatMode);
+      }
 
       nothingToCompile &= idle;
    }
@@ -500,7 +505,7 @@ void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t referen
    SyntaxTree::copyNode(output, templateTree.readRoot());
 }
 
-ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns)
+ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode)
 {
    SyntaxTree templateTree;
 
@@ -512,24 +517,31 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
    //writer.appendNode(lxImport, STANDARD_MODULE);
    //writer.newBookmark();
 
-   ref_t generatedReference = transformer.generateTemplate(writer, *this, reference, parameters, true, false);
+   ref_t generatedReference = 0;
 
-   IdentifierString path;
-   path.copy("compiling ");
-   path.append(resolveFullName(generatedReference));
-   path.append(" template...");
-   //writer.insertChild(0, lxSourcePath, path.c_str());
-
-   writer.closeNode();
-   writer.closeNode();
-
-   try
-   {
-      compile(templateTree, path.c_str());
+   if (declarationMode) {
+      generatedReference = transformer.declareTemplate(writer, *this, reference, parameters);
    }
-   catch(_Exception&)
-   {
-      return 0;
+   else {
+      generatedReference = transformer.generateTemplate(writer, *this, reference, parameters, true, false);
+
+      IdentifierString path;
+      path.copy("compiling ");
+      path.append(resolveFullName(generatedReference));
+      path.append(" template...");
+      //writer.insertChild(0, lxSourcePath, path.c_str());
+
+      writer.closeNode();
+      writer.closeNode();
+
+      try
+      {
+         compile(templateTree, path.c_str());
+      }
+      catch (_Exception&)
+      {
+         return 0;
+      }
    }
 
    return generatedReference;
@@ -595,7 +607,7 @@ ref_t ModuleScope :: resolveClosure(ref_t closureMessage/*, ref_t outputRef, Ext
       else templateReference = mapFullReference(closureName, true);
 
       if (templateReference) {
-         return generateTemplate(templateReference, parameters, ns/*, extensions*/);
+         return generateTemplate(templateReference, parameters, ns, false);
       }
       else return superReference;
    }

@@ -653,9 +653,9 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
       }
    }
    
-   //   // verify if there is an attribute with the same name
-   //   if (scope.compilerScope->attributes.exist(name))
-   //      scope.raiseWarning(WARNING_LEVEL_2, wrnAmbiguousIdentifier, nameNode);
+   // verify if there is an attribute with the same name
+   if (test(mode, MODE_ROOT) && _scope->attributes.exist(name))
+      _scope->raiseWarning(WARNING_LEVEL_2, wrnAmbiguousIdentifier, _filePath, nameNode);
    
    if (test(mode, MODE_ROOT) && !withoutMapping)
       nameNode.setArgument(_scope->mapNewIdentifier(_ns.c_str(), name.ident(), privateOne));
@@ -977,18 +977,7 @@ bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
          writer.closeNode();
       }
 
-      //      SNode name = node.prevNode().firstChild(lxTerminalMask);
-      //
-      //      if (scope.type == DerivationScope::ttFieldTemplate && name.identifier().compare(TEMPLATE_FIELD)) {
-      //         scope.fields.add(TEMPLATE_FIELD, scope.fields.Count() + 1);
-      //
-      //         writer.newNode(lxTemplateField, scope.fields.Count());
-      //         copyIdentifier(writer, name);
-      //         writer.closeNode();
-      //
-      //         generateAttributes(writer, node.prevNode().prevNode(), scope, false, templateMode, false);
-      //      }
-      /*else */generateAttributes(writer, node.prevNode(), derivationScope/*, false, templateMode, false*/);
+      generateAttributes(writer, node.prevNode(), derivationScope/*, false, templateMode, false*/);
 
       writer.closeNode();
    }
@@ -1368,7 +1357,6 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
    bool allowType = templateArgMode || current.nextNode().nextNode() != lxToken;
    bool allowProperty = false;
    
-
    SNode identNode = current;
    if (current == lxToken) {
       identNode = current.firstChild(lxTerminalMask);
@@ -1469,27 +1457,34 @@ void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Sco
    }
 }
 
-void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& current, Scope& derivationScope, bool rootMode)
+void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope, bool rootMode)
 {
-   if (current.nextNode() == lxToken) {
+   if (node.nextNode() == lxToken) {
+      SNode current;
+      // find the last attribute
       do {
-         generateExpressionAttribute(writer, current, derivationScope);
-         current = current.nextNode();
+         current = node;
+         node = node.nextNode();
+      } while (node.nextNode() == lxToken);
 
-      } while (current.nextNode() == lxToken);
+      while (current != lxNone) {
+         generateExpressionAttribute(writer, current, derivationScope);
+         current = current.prevNode();
+      }
    }
    if (rootMode) {
-      if (goToNode(current, lxCode/*, lxClosureExpr*/, lxOperator) == lxCode) {
+      if (goToNode(node, lxCode/*, lxClosureExpr*/, lxOperator) == lxCode) {
          // COMPILER MAGIC : recognize the code template
-         generateCodeTemplateTree(writer, current, derivationScope);
+         generateCodeTemplateTree(writer, node, derivationScope);
          return;
       }
    }
-   if (current == lxToken) {
-      generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
+   if (node == lxToken) {
+      generateIdentifier(writer, node.firstChild(lxTerminalMask), derivationScope);
    }
-   else generateIdentifier(writer, current, derivationScope);
-   if (current.existChild(lxDynamicSizeDecl)) {
+   else generateIdentifier(writer, node, derivationScope);
+
+   if (node.existChild(lxDynamicSizeDecl)) {
       writer.appendNode(lxSize, -1);
    }
 }
@@ -1548,8 +1543,6 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
 {
    writer.newBookmark();
    
-   //   Stack<int> bookmarks;
-   //
    bool first = true;
    //   bool implicitMode = test(mode, EXPRESSION_IMPLICIT_MODE);
    bool expressionExpected = !/*implicitMode*/test(mode, EXPRESSION_IMPLICIT_MODE);
@@ -1980,7 +1973,7 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
 
    if (declaringClass) {
       // HOTFIX : exiting if the class was already declared in this module
-      if (!scope.generateClassName())
+      if (!scope.generateClassName() && scope.moduleScope->isClassDeclared(scope.reference))
          return true;
 
       ident_t fullName = scope.moduleScope->resolveFullName(scope.reference);
@@ -2088,6 +2081,20 @@ void TemplateGenerator :: importClass(SyntaxWriter& output, SNode classNode)
 //
 //   SyntaxTree templateTree(body);
 //}
+
+ref_t TemplateGenerator :: declareTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)
+{
+   TemplateScope templateScope(&scope, reference, NULL, NULL);
+   templateScope.sourcePath = "compiling template...";
+
+   for (auto it = parameters.start(); !it.Eof(); it++) {
+      templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
+   }
+
+   templateScope.generateClassName();
+
+   return templateScope.reference;
+}
 
 ref_t TemplateGenerator :: generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters, bool importModuleInfo, bool importMode)
 {

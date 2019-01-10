@@ -1579,7 +1579,16 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
    }
 }
 
-void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
+void Compiler :: validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared)
+{
+   if (!typeRef)
+      scope.raiseError(errUnknownClass, current);
+
+   if (!_logic->isValidType(*scope.moduleScope, typeRef, ignoreUndeclared))
+      scope.raiseError(errInvalidType, current);
+}
+
+void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -1592,8 +1601,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope)
       }
       else if (current == lxTarget) {
          scope.outputRef = current.argument != 0 ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-         if (!scope.outputRef)
-            scope.raiseError(errUnknownClass, current);
+         validateType(scope, current, scope.outputRef, declarationMode);
       }
 
       current = current.nextNode();
@@ -1631,24 +1639,19 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
                   scope.info.header.flags |= elDebugLiteral;
                }
                else if (current.argument == V_TEMPLATE) {
-                  fieldRef = resolveTemplateDeclaration(current, scope);
+                  fieldRef = resolveTemplateDeclaration(current, scope, false);
                }
                // if it is a primitive type
                else fieldRef = current.argument;
             }
-               //else if (value == V_OBJARRAY) {
-               //   elementRef = fieldRef;
-               //   fieldRef = V_OBJARRAY;
-               //}
             else scope.raiseError(errInvalidHint, node);
          }
-         else scope.raiseError(errInvalidHint, node);
+         else scope.raiseError(errInvalidHint, current);
       }
       else if (current == lxTarget) {
          if (fieldRef == 0) {
             fieldRef = current.argument != 0 ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-            if (!fieldRef)
-               scope.raiseError(errUnknownClass, current);
+            validateType(scope, current, fieldRef, false);
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -2217,7 +2220,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okParams:
          writer.newNode(lxArgBoxing, 0);
          writer.appendNode(lxBlockLocalAddr, object.param);
-         writer.appendNode(lxTarget, resolvePrimitiveReference(scope, object.reference, object.element));
+         writer.appendNode(lxTarget, resolvePrimitiveReference(scope, object.reference, object.element, false));
          if (test(mode, HINT_DYNAMIC_OBJECT))
             writer.appendNode(lxBoxingRequired);
          break;
@@ -2411,7 +2414,7 @@ ObjectInfo Compiler :: mapClassSymbol(Scope& scope, int classRef)
 
 ObjectInfo Compiler :: compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
-   ObjectInfo retVal = mapClassSymbol(scope, resolveTemplateDeclaration(node, scope));
+   ObjectInfo retVal = mapClassSymbol(scope, resolveTemplateDeclaration(node, scope, false));
       
    writeTerminal(writer, node, scope, retVal, mode);
 
@@ -2609,7 +2612,7 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
    ref_t objectRef = resolveObjectReference(scope, object);
    if (isPrimitiveRef(objectRef)) {
       //if (objectRef != V_ARGARRAY)
-         objectRef = resolvePrimitiveReference(scope, objectRef, object.element);
+         objectRef = resolvePrimitiveReference(scope, objectRef, object.element, false);
    }
    else if (objectRef == scope.moduleScope->superReference) {
       objectRef = 0;
@@ -3015,7 +3018,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    // try to recognize the operation
    ref_t classReference = resolveObjectReference(scope, target);
    if (isPrimitiveRef(classReference)) {
-      classReference = resolvePrimitiveReference(scope, classReference, target.element);
+      classReference = resolvePrimitiveReference(scope, classReference, target.element, false);
    }
 
    bool dispatchCall = false;
@@ -3165,12 +3168,12 @@ ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
 {
    ref_t argRef = resolveObjectReference(scope, info);
    if (isPrimitiveRef(argRef))
-      argRef = resolvePrimitiveReference(scope, argRef, info.element);
+      argRef = resolvePrimitiveReference(scope, argRef, info.element, false);
 
    return scope.module->mapSignature(&argRef, 1, false);
 }
 
-ref_t Compiler::resolveStrongArgument(CodeScope& scope, ObjectInfo info1, ObjectInfo info2)
+ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info1, ObjectInfo info2)
 {
    ref_t argRef[2];
 
@@ -3178,27 +3181,27 @@ ref_t Compiler::resolveStrongArgument(CodeScope& scope, ObjectInfo info1, Object
    argRef[1] = resolveObjectReference(scope, info2);
 
    if (isPrimitiveRef(argRef[0]))
-      argRef[0] = resolvePrimitiveReference(scope, argRef[0], info1.element);
+      argRef[0] = resolvePrimitiveReference(scope, argRef[0], info1.element, false);
    if (isPrimitiveRef(argRef[1]))
-      argRef[1] = resolvePrimitiveReference(scope, argRef[1], info2.element);
+      argRef[1] = resolvePrimitiveReference(scope, argRef[1], info2.element, false);
 
    return scope.module->mapSignature(argRef, 2, false);
 }
 
-ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef)
+ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef, bool declarationMode)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-   return resolvePrimitiveReference(*scope.moduleScope, argRef, elementRef, nsScope->ns.c_str());
+   return resolvePrimitiveReference(*scope.moduleScope, argRef, elementRef, nsScope->ns.c_str(), declarationMode);
 }
 
-ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns)
+ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode)
 {
    switch (argRef) {
       case V_WRAPPER:
-         return resolveReferenceTemplate(scope, elementRef, ns);
+         return resolveReferenceTemplate(scope, elementRef, ns, declarationMode);
       case V_ARGARRAY:
-         return resolvePrimitiveArray(scope, scope.argArrayTemplateReference, elementRef, ns);
+         return resolvePrimitiveArray(scope, scope.argArrayTemplateReference, elementRef, ns, declarationMode);
       case V_INT32:
          return scope.intReference;
       case V_INT64:
@@ -3214,7 +3217,7 @@ ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, r
          return argRef;
       default:
          if (isPrimitiveArrRef(argRef)) {
-            return resolvePrimitiveArray(scope, scope.arrayTemplateReference, elementRef, ns);
+            return resolvePrimitiveArray(scope, scope.arrayTemplateReference, elementRef, ns, declarationMode);
          }
          return scope.superReference;
    }
@@ -3459,7 +3462,7 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScop
    ref_t sourceRef = resolveObjectReference(scope, source);
 
    if (isPrimitiveRef(sourceRef))
-      sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element);
+      sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
 
    return scope.resolveAutoType(target, sourceRef, source.element);
 }
@@ -3545,7 +3548,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       assignMode |= (HINT_DYNAMIC_OBJECT | HINT_NOPRIMITIVES);
 
    if (isPrimitiveArrRef(targetRef))
-      targetRef = resolvePrimitiveReference(scope, targetRef, target.element);
+      targetRef = resolvePrimitiveReference(scope, targetRef, target.element, false);
 
    if (node == lxOperator) {
       // COMPILER MAGIC : implementing assignment operators
@@ -3697,7 +3700,7 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
    ref_t outputRef = 0;
    if (argNode != lxNone) {
       // define message parameter
-      methodScope.message = declareInlineArgumentList(argNode, methodScope, outputRef);
+      methodScope.message = declareInlineArgumentList(argNode, methodScope, outputRef, false);
    }
 
    ref_t parentRef = scope.info.header.parentRef;
@@ -3990,7 +3993,7 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 
 ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
 {
-   target.reference = resolvePrimitiveArray(scope, target.element);
+   target.reference = resolvePrimitiveArray(scope, target.element, false);
 
    int counter = 0;
    int size = _logic->defineStructSize(*scope.moduleScope, target.reference, 0);
@@ -4089,7 +4092,7 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Code
    return ObjectInfo(okObject);
 }
 
-ref_t Compiler :: resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t operandRef, ident_t ns)
+ref_t Compiler :: resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t operandRef, ident_t ns, bool declarationMode)
 {
    if (!operandRef)
       operandRef = moduleScope.superReference;
@@ -4105,24 +4108,25 @@ ref_t Compiler :: resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t oper
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   return moduleScope.generateTemplate(moduleScope.refTemplateReference, parameters, ns/*, &nsScope->extensions*/);
+   return moduleScope.generateTemplate(moduleScope.refTemplateReference, parameters, ns, declarationMode);
 }
 
-ref_t Compiler :: resolveReferenceTemplate(Scope& scope, ref_t elementRef)
+ref_t Compiler :: resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-   return resolveReferenceTemplate(*scope.moduleScope, elementRef, nsScope->ns.c_str());
+   return resolveReferenceTemplate(*scope.moduleScope, elementRef, nsScope->ns.c_str(), declarationMode);
 }
 
-ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t elementRef)
+ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t elementRef, bool declarationMode)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-   return resolvePrimitiveArray(*scope.moduleScope, scope.moduleScope->arrayTemplateReference, elementRef, nsScope->ns.c_str());
+   return resolvePrimitiveArray(*scope.moduleScope, scope.moduleScope->arrayTemplateReference, elementRef, 
+      nsScope->ns.c_str(), declarationMode);
 }
 
-ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns)
+ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns, bool declarationMode)
 {
    if (!elementRef)
       elementRef = scope.superReference;
@@ -4139,7 +4143,7 @@ ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, 
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   return scope.generateTemplate(templateRef, parameters, ns);
+   return scope.generateTemplate(templateRef, parameters, ns, declarationMode);
 }
 
 ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
@@ -4149,7 +4153,7 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode);
    ref_t operandRef = resolveObjectReference(scope, objectInfo, false);
    if (isPrimitiveRef(operandRef)) {
-      operandRef = resolvePrimitiveReference(scope, operandRef, objectInfo.element);
+      operandRef = resolvePrimitiveReference(scope, operandRef, objectInfo.element, false);
    }
    else if (!operandRef)
       operandRef = scope.moduleScope->superReference;
@@ -4161,7 +4165,7 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    }
    else {
       // generate an reference class
-      targetRef = resolveReferenceTemplate(scope, operandRef);
+      targetRef = resolveReferenceTemplate(scope, operandRef, false);
       if (!convertObject(writer, scope, targetRef, objectInfo))
          scope.raiseError(errInvalidOperation, node);
    }
@@ -4276,7 +4280,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
          if (current.argument == -1 && current.nextNode() == lxTypecast && objectInfo.kind == okClass) {
             // COMPILER MAGIC : if it is a primitive array creation
             objectInfo.element = objectInfo.param;
-            objectInfo.param = resolvePrimitiveArray(scope, objectInfo.element);
+            objectInfo.param = resolvePrimitiveArray(scope, objectInfo.element, false);
             objectInfo.reference = V_OBJARRAY;
 
             objectInfo = compileOperation(writer, current.nextNode(), scope, objectInfo, mode);
@@ -4353,7 +4357,26 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
    }
 }
 
-ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope)
+bool Compiler :: isTemplateParameterDeclared(SNode node, Scope& scope)
+{
+   SNode current = node.firstChild();
+   if (current == lxIdentifier)
+      current = current.nextNode();
+
+   while (current != lxNone) {
+      if (current == lxTarget) {
+         ref_t arg = mapTypeAttribute(current, scope);
+         if (!scope.moduleScope->isClassDeclared(arg))
+            return 0;
+      }
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
+
+ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode)
 {
    // generate an reference class
    List<SNode> parameters;
@@ -4364,7 +4387,7 @@ ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope)
       scope.raiseError(errInvalidHint, node);
 
    NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-   return scope.moduleScope->generateTemplate(templateRef, parameters, ns->ns.c_str());
+   return scope.moduleScope->generateTemplate(templateRef, parameters, ns->ns.c_str(), declarationMode);
 }
 
 ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int mode)
@@ -4386,7 +4409,7 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
 
       if (attributes.templateAttr && test(mode, HINT_ROOT)) {
          if (typeRef == 0) {
-            typeRef = resolveTemplateDeclaration(current, scope);
+            typeRef = resolveTemplateDeclaration(current, scope, false);
             if (!typeRef)
                scope.raiseError(errInvalidHint, current);
          }
@@ -4460,6 +4483,8 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
    if (current == lxTarget) {
       if (typeRef == 0) {
          typeRef = mapTypeAttribute(current, scope);
+         validateType(scope, current, typeRef, false);
+
          newVariable = true;
          if (current.existChild(lxSize)) {
             dynamicSize = true;
@@ -4590,7 +4615,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       if (sourceRef != V_UNBOXEDARGS) {
          // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
          // NOTE : the primitive wrapper is set as an expected type, so later the primitive will be boxed
-         exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element);
+         exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element, false);
       }      
    }
 
@@ -4934,7 +4959,7 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool binaryArray,
    return true;
 }
 
-ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t&/* outputRef*/)
+ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t&/* outputRef*/declareInlineArgumentList, bool declarationMode)
 {
 //   IdentifierString signature;
    IdentifierString messageStr;
@@ -4962,7 +4987,7 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t
 
       ref_t elementRef = 0;
       ref_t classRef = 0;
-      declareArgumentAttributes(arg, scope, classRef, elementRef);
+      declareArgumentAttributes(arg, scope, classRef, elementRef, declarationMode);
 
       int size = classRef != 0 ? _logic->defineStructSize(*scope.moduleScope, classRef, 0) : 0;
       scope.parameters.add(terminal, Parameter(index, classRef, elementRef, size));
@@ -4972,7 +4997,7 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t
 
       if (isPrimitiveRef(classRef)) {
          // primitive arguments should be replaced with wrapper classes
-         signatures[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef);
+         signatures[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef, declarationMode);
       }
       else signatures[signatureLen++] = classRef;
 
@@ -5014,7 +5039,7 @@ inline SNode findTerminal(SNode node)
    return ident;
 }
 
-void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef)
+void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode)
 {
    bool byRefArg = false;
    bool arrayArg = false;
@@ -5028,7 +5053,7 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
          if (_logic->validateArgumentAttribute(current.argument, byRefArg, paramsArg, templateArg)) {
             if (templateArg) {
                if (!typeSet) {
-                  classRef = resolveTemplateDeclaration(current, scope);
+                  classRef = resolveTemplateDeclaration(current, scope, declarationMode);
                   typeSet = true;
                }
                else scope.raiseError(errIllegalOperation, current);
@@ -5039,8 +5064,8 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
       else if (current == lxTarget) {
          typeSet = true;
          classRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-         if (!classRef)
-            scope.raiseError(errUnknownClass, current);
+         if (!declarationMode)
+            validateType(scope, current, classRef, declarationMode);
       }
       else if (current == lxSize) {
          arrayArg = true;
@@ -5064,7 +5089,7 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
       scope.raiseError(errIllegalMethod, node);
 }
 
-void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages)
+void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode)
 {
    IdentifierString actionStr;
    ref_t actionRef = 0;
@@ -5111,7 +5136,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          if (scope.parameters.exist(terminal))
             scope.raiseError(errDuplicatedLocal, current);
 
-         declareArgumentAttributes(current, scope, classRef, elementRef);
+         declareArgumentAttributes(current, scope, classRef, elementRef, declarationMode);
          if (!classRef) {
             classRef = scope.moduleScope->superReference;
          }
@@ -5140,7 +5165,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          }
          else if (isPrimitiveRef(classRef)) {
             // primitive arguments should be replaced with wrapper classes
-            signature[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef);
+            signature[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef, declarationMode);
          }
          else signature[signatureLen++] = classRef;
 
@@ -6008,6 +6033,9 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
 //            }
 
             initialize(scope, methodScope);
+            if (methodScope.outputRef)
+               // HOTFIX : validate the output type once again in case it was declared later in the code
+               validateType(scope, current, methodScope.outputRef, false);
 
             // if it is a dispatch handler
             if (methodScope.message == scope.moduleScope->dispatch_message) {
@@ -6020,7 +6048,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
             }
             // if it is a normal method
             else {
-               declareArgumentList(current, methodScope, false);
+               declareArgumentList(current, methodScope, false, false);
 
                if (methodScope.message == scope.moduleScope->init_message) {
                   // if it is in-place class member initialization
@@ -6089,7 +6117,7 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
             methodScope.message = current.argument;
 
             initialize(classClassScope, methodScope);
-            declareArgumentList(current, methodScope, false);
+            declareArgumentList(current, methodScope, false, false);
 
             compileConstructor(writer, current, methodScope, classClassScope);
             break;
@@ -6107,7 +6135,7 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
             methodScope.message = current.argument;
 
             initialize(classClassScope, methodScope);
-            declareArgumentList(current, methodScope, false);
+            declareArgumentList(current, methodScope, false, false);
 
             compileMethod(writer, current, methodScope);
             break;
@@ -6331,7 +6359,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
          declareMethodAttributes(current, methodScope);
 
          if (current.argument == 0) {
-            declareArgumentList(current, methodScope, test(scope.info.header.flags, elNestedClass));
+            declareArgumentList(current, methodScope, test(scope.info.header.flags, elNestedClass), true);
             current.setArgument(methodScope.message);
          }
          else methodScope.message = current.argument;
@@ -6411,7 +6439,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          scope.info.header.flags |= elDynamicRole;
       }
       else if (!test(scope.info.header.flags, elStructureRole)) {
-         classRef = resolvePrimitiveArray(scope, classRef);
+         classRef = resolvePrimitiveArray(scope, classRef, false);
       }
       else scope.raiseError(errIllegalField, current);
 
@@ -7011,7 +7039,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
          int value = current.argument;
          if (_logic->validateMethodAttribute(value, explicitMode, templateMode)) {
             if (templateMode) {
-               scope.outputRef = resolveTemplateDeclaration(current, scope);
+               scope.outputRef = resolveTemplateDeclaration(current, scope, true);
             }
             scope.hints |= value;
 
@@ -7026,8 +7054,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
       else if (current == lxTarget) {
          // if it is a type attribute
          scope.outputRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-         if (!scope.outputRef)
-            scope.raiseError(errUnknownClass, current);
+         validateType(scope, current, scope.outputRef, true);
       }
       else if (current == lxNameAttr && !explicitMode) {
          // resolving implicit method attributes
@@ -7059,12 +7086,14 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
 {
    ref_t parentRef = 0;
-   if (test(node.type, lxTerminalMask)) {
+   if (node == lxNone) {
+   }
+   else if (test(node.type, lxTerminalMask)) {
       parentRef = resolveImplicitIdentifier(scope, node);
    }
    else if (node.existChild(lxTarget)) {
       // if it is a template based class
-      parentRef = resolveTemplateDeclaration(node, scope);
+      parentRef = resolveTemplateDeclaration(node, scope, silentMode);
    }
    else parentRef = resolveImplicitIdentifier(scope, node.firstChild(lxTerminalMask));
 
@@ -7078,26 +7107,6 @@ ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
 
    return parentRef;
 }
-
-//bool Compiler :: isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope)
-//{
-//   if (baseNode == lxNone)
-//      return false;
-//
-//   ref_t parentRef = resolveParentRef(baseNode, scope, false);
-//   if (parentRef == 0)
-//      return true;
-//
-//   // get module reference
-//   ref_t moduleRef = 0;
-//   _Module* module = scope.moduleScope->loadReferenceModule(scope.module->resolveReference(parentRef), moduleRef);
-//
-//   if (module == NULL || moduleRef == 0)
-//      return true;
-//
-//   // load parent meta data
-//   return module->mapSection(moduleRef | mskMetaRDataRef, true) == NULL;
-//}
 
 void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 {
@@ -7188,7 +7197,7 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
 
 void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 {
-   declareSymbolAttributes(node, scope);
+   declareSymbolAttributes(node, scope, true);
 
    if ((scope.constant || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == false) {
       scope.save();
@@ -7307,7 +7316,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 
    SyntaxWriter writer(expressionTree);
 
-   declareSymbolAttributes(node, scope);
+   declareSymbolAttributes(node, scope, false);
 
    bool isStatic = scope.staticOne;
 
@@ -7732,7 +7741,7 @@ ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, int mode)
    else {
       // adjust primitive target
       if (isPrimitiveRef(targetRef) && boxing) {
-         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument);
+         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument, false);
          node.findChild(lxTarget).setArgument(targetRef);
       }
 
@@ -8275,7 +8284,7 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
    }
 }
 
-bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& repeatMode)
+bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool forced, bool& repeatMode)
 {
    SNode current = node.firstChild();
 
@@ -8292,7 +8301,7 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
          // hotfix : ignore already declared classes and symbols
          switch (current) {
             case lxClass:
-               /*if (!isDependentOnNotDeclaredClass(findBaseParent(current), scope))*/ {
+               if (forced || !current.findChild(lxParent) || scope.moduleScope->isClassDeclared(resolveParentRef(current.findChild(lxParent), scope, true))) {
                   current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
             
                   ClassScope classScope(&scope, current.argument);
@@ -8305,7 +8314,7 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool& re
             
                   declared = true;
                }
-//               else repeatMode = true;
+               else repeatMode = true;
                break;
             case lxSymbol:
             {
@@ -8359,7 +8368,7 @@ void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFu
    }
 }
 
-bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope/*, ident_t path, ident_t ns, IdentifierList* imported*/, bool& repeatMode/*, ExtensionMap* extensions*/)
+bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope, bool forced, bool& repeatMode)
 {
    SNode current = syntaxTree.readRoot().firstChild();
    bool retVal = false;
@@ -8368,13 +8377,7 @@ bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope/*, id
       NamespaceScope namespaceScope(&scope, current.identifier());
       declareNamespace(current, namespaceScope, false);
 
-      retVal |= compileDeclarations(current, namespaceScope, repeatMode);
-      
-      //   if (extensions != NULL) {
-      //      for (auto it = namespaceScope.extensions.start(); !it.Eof(); it++) {
-      //         extensions->add(it.key(), *it);
-      //      }
-      //   }
+      retVal |= compileDeclarations(current, namespaceScope, forced, repeatMode);
 
       current = current.nextNode();
    }
@@ -9016,5 +9019,5 @@ ref_t Compiler :: generateExtensionTemplate(_ModuleScope& moduleScope, ref_t tem
       current = current.nextNode();
    }
 
-   return moduleScope.generateTemplate(templateRef, parameters, ns);
+   return moduleScope.generateTemplate(templateRef, parameters, ns, false);
 }

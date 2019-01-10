@@ -566,6 +566,20 @@ bool CompilerLogic :: isVariable(ClassInfo& info)
    return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
 }
 
+bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, bool ignoreUndeclared)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference))
+      return ignoreUndeclared;
+
+   return isValidType(info);
+}
+
+bool CompilerLogic :: isValidType(ClassInfo& info)
+{
+   return !testany(info.header.flags, elRole);
+}
+
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 {
    return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
@@ -1367,7 +1381,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 //   }
    // HOTFIX : recognize primitive data except of a constant literal
    else if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
-      sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, ns);
+      sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, ns, false);
 
    return injectImplicitConstructor(writer, scope, compiler, info, targetRef, /*elementRef, */&sourceRef, 1);
 }

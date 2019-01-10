@@ -256,6 +256,14 @@ struct _ModuleScope
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
    virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
 
+   bool isClassDeclared(ref_t reference)
+   {
+      if (!reference) {
+         return false;
+      }
+      else return mapSection(reference | mskMetaRDataRef, true) != nullptr;
+   }
+
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
    virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 
@@ -304,7 +312,7 @@ struct _ModuleScope
 //      project->raiseWarning(level, message, sourcePath);
 //   }
 
-   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns) = 0;
+   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode) = 0;
    virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
    virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef) = 0;
@@ -335,7 +343,7 @@ struct _ModuleScope
 class _Compiler
 {
 public:
-   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns) = 0;
+   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode) = 0;
 
    virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
@@ -364,7 +372,7 @@ public:
 
    virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef) = 0;
 
-   virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool& repeatMode) = 0;
+   virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forcedDeclaration, bool& repeatMode) = 0;
    virtual void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting) = 0;
 
 ////   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
@@ -463,6 +471,7 @@ public:
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 
    virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
+   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared) = 0;
 
    virtual bool isWrapper(ClassInfo& info) = 0;
    virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element) = 0;
@@ -476,7 +485,7 @@ public:
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
    virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
+//   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;   
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          

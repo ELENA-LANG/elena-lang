@@ -1,10 +1,25 @@
+// --- IConsoleReader ---
+
+public interface IConsoleReader
+{
+    abstract string readLine() {}
+    
+    abstract wide readWideLine() {}
+    
+//    abstract read(ref<int> retVal) []
+    
+    abstract read(ref char retVal) {}
+    
+//    abstract bool isKeyAvailable []
+}
+
 // --- Console ---
 
 /// A console
 class Console
 {
-    object            theWriter;
-    io'IConsoleReader theReader;
+    object         theWriter;
+    IConsoleReader theReader;
 
     /// Creates a console
     constructor(reader, writer)
