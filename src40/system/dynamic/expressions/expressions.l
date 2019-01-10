@@ -5,9 +5,9 @@ public interface class Expression
     static Expression Constant(object o)
         = new ConstantExpression(o);
         
-//    T<Expression> generic static MessageCall(mssg message, Expression t, V<Expression> arguments)
-//        = MessageCallExpression new(message,t,arguments).
-//        
+    static Expression MessageCall(mssg message, Expression t, params Expression[] arguments)
+        = MessageCallExpression.new(message,t,params arguments);
+        
 //    abstract saveTo(List<DynamicClosure> list)
 //    [
 //    ]
@@ -37,19 +37,19 @@ public class ConstantExpression : Expression
 //    ]
 }
 
-//public class MessageCallExpression :: Expression
-//{
-//    mssg              _message.
-//    T<Expression>     _target.
-//    Array<Expression> _arguments.
-//    
-//    generic constructor new(mssg message, Expression t, V<Expression> arguments)
-//    [
-//        _message := message.
-//        _target := t.
-//        _arguments := arguments.
-//    ]
-//    
+public class MessageCallExpression : Expression
+{
+    mssg         _message;
+    Expression   _target;
+    Expression[] _arguments;
+    
+    constructor new(mssg message, Expression t, params Expression[] arguments)
+    {
+        _message := message;
+        _target := t;
+        _arguments := arguments;
+    }
+    
 //    saveTo(List<DynamicClosure> list)
 //    [
 //        int len := _arguments length.
@@ -65,4 +65,4 @@ public class ConstantExpression : Expression
 //        
 //        list append(MessageClosure new:_message)
 //    ]
-//}
+}

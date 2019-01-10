@@ -30,7 +30,6 @@ namespace _ELENA_
    constexpr auto VARIADIC_MESSAGE        = 0x100u;
    constexpr auto PARAM_MASK              = 0x01Fu;
    constexpr auto ARG_COUNT               = 0x01Fu;
-   constexpr auto MAX_VARG_COUNT          = 0x003u;
 
 //   #define PARAMX_MASK             0x000000000000FFFFu
 

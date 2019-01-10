@@ -5156,10 +5156,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
             // the generic arguments should be free by the method exit
             scope.withOpenArg = true;
-
-            if (paramCount > MAX_VARG_COUNT) {
-               scope.raiseError(errNotApplicable, node);
-            }
             
             signature[signatureLen++] = elementRef;
          }

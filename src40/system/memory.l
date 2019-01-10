@@ -123,6 +123,19 @@ public nonstructural sealed VariadicArray<T> //:: Indexable<template_subj>
         read(ref int retVal)
             => system'core_routines'__args;
     }
+    
+    Array<T> cast()
+    {
+        int len := self.Length;
+        
+        T[] array := new T[](len);
+        for(int i := 0, i < len, i += 1)
+        {
+            array[i] := theArray[i]
+        };
+        
+        ^ array
+    }
 }
 
 //// --- matrixof ---
