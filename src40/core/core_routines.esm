@@ -1182,7 +1182,7 @@ procedure __chararray."move$system@IntNumber$system@IntNumber$system@IntNumber[4
   ecopyd
   aloadsi 3
   nload
-  bloadsi  0
+  bloadsi  2
   aloadsi 5
   pushai 0
 
