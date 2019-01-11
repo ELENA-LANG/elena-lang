@@ -71,8 +71,8 @@ move %1\dat\sg\syntax.dat %1\bin
 %1\bin\og %1\dat\og\rules.txt
 move %1\dat\og\rules.dat %1\bin
 
-md lib34
-%1\bin\asm2binx %1\src34\core\core_routines.esm lib34\system
+md lib40
+%1\bin\asm2binx %1\src40\core\core_routines.esm lib40\system
 
 %1\bin\asm2binx %1\asm\x32\core.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\corex.asm %1\bin\x32
@@ -464,33 +464,33 @@ copy %1\examples\script\js\*.js examples\script\js
 
 echo copying src4 files
 
-md src34
-copy %1\src34\*.l src27
+md src40
+copy %1\src40\*.l src27
 
 md asm
 md asm\x32
 copy %1\asm\x32\*.asm asm\x32
 copy %1\asm\*.esm asm
 
-md src34\system
-xcopy %1\src34\system\*.l src34\system /s
-xcopy %1\src34\system\*.prj src34\system /s
+md src40\system
+xcopy %1\src40\system\*.l src40\system /s
+xcopy %1\src40\system\*.prj src40\system /s
 
-md src34\extensions
-xcopy %1\src34\extensions\*.l src34\extensions /s
-xcopy %1\src34\extensions\*.prj src34\extensions /s
+md src40\extensions
+xcopy %1\src40\extensions\*.l src40\extensions /s
+xcopy %1\src40\extensions\*.prj src40\extensions /s
 
-md src34\net
-xcopy %1\src34\net\*.l src34\net /s
-xcopy %1\src34\net\*.prj src34\net /s
+md src40\net
+xcopy %1\src40\net\*.l src40\net /s
+xcopy %1\src40\net\*.prj src40\net /s
 
-md src34\forms
-xcopy %1\src34\forms\*.l src34\forms /s
-xcopy %1\src34\forms\*.prj src34\forms /s
+md src40\forms
+xcopy %1\src40\forms\*.l src40\forms /s
+xcopy %1\src40\forms\*.prj src40\forms /s
 
-md src34\sqlite
-xcopy %1\src34\sqlite\*.l src34\sqlite /s
-xcopy %1\src34\sqlite\*.prj src34\sqlite /s
+md src40\sqlite
+xcopy %1\src40\sqlite\*.l src40\sqlite /s
+xcopy %1\src40\sqlite\*.prj src40\sqlite /s
 
 copy %1\rebuild_lib.bat 
 copy %1\rebuild_examples.bat 
@@ -712,14 +712,14 @@ md examples\net\chat
 copy %1\examples\net\chat\*.l examples\net\chat
 copy %1\examples\net\chat\*.prj examples\net\chat
 
-bin\elc src34\system\system.prj
-bin\elc src34\extensions\extensions.prj
-rem bin\elc src34\net\net.prj
-rem bin\elc src34\forms\forms.prj
-rem bin\elc src34\sqlite\sqlite.prj
-bin\elc src34\cellular\cellular.prj
-rem bin\elc src34\graphics\graphics.prj
-rem bin\elc src34\xforms\xforms.prj
+bin\elc src40\system\system.prj
+bin\elc src40\extensions\extensions.prj
+rem bin\elc src40\net\net.prj
+rem bin\elc src40\forms\forms.prj
+rem bin\elc src40\sqlite\sqlite.prj
+bin\elc src40\cellular\cellular.prj
+rem bin\elc src40\graphics\graphics.prj
+rem bin\elc src40\xforms\xforms.prj
 
 goto:eof
 ::ERRORS
