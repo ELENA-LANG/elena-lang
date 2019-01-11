@@ -1,4 +1,4 @@
-//import system'collections.
+import system'collections;
 
 // --- ClosureTape ---
 
@@ -17,19 +17,19 @@ public mixin ClosureTape
 
 //    constructor new(int length)
 //        = V<DynamicClosure>(length).
-//        
+        
 //    constructor new (List<DynamicClosure> list)        
-//        <= new(list length);
-//    [
-//        int i := list length.
+//        <= new(list.Length)
+//    {
+//        int i := list.Length;
 //        while (i > 0)
-//        [
-//            i -= 1.
+//        {
+//            i -= 1;
 //            
-//            theList[i] := list[i].
-//        ]
-//    ]
-//        
+//            theList[i] := list[i]
+//        }
+//    }
+        
 //    constructor new (List<DynamicClosure> list, int index, int length)        
 //        <= new(length);
 //    [

@@ -1,4 +1,4 @@
-//import system'collections.
+import system'collections;
 
 public interface class Expression
 {
@@ -9,17 +9,17 @@ public interface class Expression
         = MessageCallExpression.new(message,t,params arguments);
         
 //    abstract saveTo(List<DynamicClosure> list)
-//    [
-//    ]
+//    {
+//    }
 //    
-//    T<ClosureTape> compiled
-//    [
-//        List<DynamicClosure> list := List<DynamicClosure>(8).
+//    ClosureTape compiled()
+//    {
+//        List<DynamicClosure> list := new List<DynamicClosure>(8);
 //        
-//        self saveTo(list).
+//        self.saveTo(list);
 //        
-//        ^ ClosureTape new:list.
-//    ]
+//        ^ ClosureTape.new:list
+//    }
 }
 
 public class ConstantExpression : Expression
@@ -32,9 +32,9 @@ public class ConstantExpression : Expression
     }
     
 //    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(ConstantClosure new(object)).
-//    ]
+//    {
+//        list.append(new ConstantClosure(object));
+//    }
 }
 
 public class MessageCallExpression : Expression
@@ -51,18 +51,18 @@ public class MessageCallExpression : Expression
     }
     
 //    saveTo(List<DynamicClosure> list)
-//    [
-//        int len := _arguments length.
-//        int i := len.
+//    {
+//        int len := _arguments.Length;
+//        int i := len;
 //        while(i > 0)
-//        [
-//            i -= 1.
+//        {
+//            i -= 1;
 //            
-//            _arguments[i] saveTo(list).
-//        ].
+//            _arguments[i].saveTo(list);
+//        };
 //        
-//        _target saveTo(list).
+//        _target.saveTo(list);
 //        
-//        list append(MessageClosure new:_message)
-//    ]
+//        list.append(new MessageClosure(_message))
+//    }
 }

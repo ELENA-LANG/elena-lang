@@ -1321,10 +1321,14 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
    current = node;
    while (current != lxNone) {
       if (current == lxCode) {
+         derivationScope.nestedLevel += 0x100;
          generateCodeExpression(tempWriter, current, derivationScope, false);
+         derivationScope.nestedLevel -= 0x100;
       }
       else if (current == lxExpression) {
+         derivationScope.nestedLevel += 0x100;
          generateExpressionTree(tempWriter, current, derivationScope, 0);
+         derivationScope.nestedLevel -= 0x100;
       }
 
       current = current.nextNode();
@@ -1759,15 +1763,19 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
    }
    else if (current == lxTemplateParam) {
       if (scope.type == TemplateScope::ttCodeTemplate) {
-         SNode nodeToInject = scope.parameterValues.get(current.argument);
-         if (nodeToInject == lxCode) {
-            writer.newNode(lxExpression);
-            copyExpressionTree(writer, nodeToInject, scope);
-            writer.closeNode();
+         if (current.argument < 0x100) {
+            SNode nodeToInject = scope.parameterValues.get(current.argument);
+            if (nodeToInject == lxCode) {
+               writer.newNode(lxExpression);
+               copyExpressionTree(writer, nodeToInject, scope);
+               writer.closeNode();
+            }
+            else if (nodeToInject == lxExpression) {
+               copyExpressionTree(writer, nodeToInject, scope);
+            }
          }
-         else if (nodeToInject == lxExpression) {
-            copyExpressionTree(writer, nodeToInject, scope);
-         }
+         // if it is a nested template
+         else writer.appendNode(current.type, current.argument - 0x100);
       }
       else if (scope.type == TemplateScope::ttPropertyTemplate || scope.type == TemplateScope::ttClassTemplate) {
          SNode sizeNode = current.findChild(lxSize);
@@ -1795,15 +1803,17 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
       copyChildren(writer, nodeToInject, scope);
    }
    else if (current == lxTemplateIdentParam) {
-      current.existChild(lxSize);
-
-      // name node is always the last parameter
-      SNode nodeToInject = scope.parameterValues.get(current.argument);
-      //if (nodeToInject == lxTarget && nodeToInject.argument != 0) {
-      //   // HOTFIX : if it is a type identifier
-      //   writer.appendNode(lxGlobalReference, scope.moduleScope->module->resolveReference(nodeToInject.argument));
-      //}
-      /*else*/ copyChildren(writer, nodeToInject, scope);
+      if (current.argument < 0x100) {
+         // name node is always the last parameter
+         SNode nodeToInject = scope.parameterValues.get(current.argument);
+         //if (nodeToInject == lxTarget && nodeToInject.argument != 0) {
+         //   // HOTFIX : if it is a type identifier
+         //   writer.appendNode(lxGlobalReference, scope.moduleScope->module->resolveReference(nodeToInject.argument));
+         //}
+         /*else*/ copyChildren(writer, nodeToInject, scope);
+      }
+      // if it is a nested template
+      else writer.appendNode(current.type, current.argument - 0x100);
    }
    else if (current == lxTemplateMsgParam) {
       // name node is always the last parameter

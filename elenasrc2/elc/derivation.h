@@ -46,6 +46,7 @@ class DerivationWriter : public _DerivationWriter
    {
       ScopeType      templateMode;
       ForwardMap     parameters;
+      int            nestedLevel;
 
       bool isNameParameter(ident_t name, ref_t& argument)
       {
@@ -75,7 +76,7 @@ class DerivationWriter : public _DerivationWriter
          if (withTypeParameters()) {
             int index = parameters.get(name);
             if (index) {
-               argument = index;
+               argument = index + nestedLevel;
 
                return true;
             }
@@ -88,7 +89,7 @@ class DerivationWriter : public _DerivationWriter
          if (withTypeParameters()) {
             int index = parameters.get(name);
             if (index) {
-               argument = index;
+               argument = index + nestedLevel;
 
                return true;
             }
@@ -105,6 +106,7 @@ class DerivationWriter : public _DerivationWriter
       Scope()
       {
          templateMode = ScopeType::stNormal;
+         nestedLevel = 0;
       }
    };
 

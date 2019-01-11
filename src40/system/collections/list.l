@@ -1,11 +1,11 @@
-//// --- listof ---
-//
-//public sealed List<type> :: Enumerable<type>
-//{
-//    Array<type> theArray.
-//    ref<int>    theLength.
-//    ref<int>    theCapacity.
-//
+// --- listof ---
+
+public sealed List<T> : Enumerable<T>
+{
+    T[]      theArray;
+    ref<int> theLength;
+    ref<int> theCapacity;
+
 //    constructor(Array list)
 //    [
 //        int len := list length.
@@ -76,56 +76,65 @@
 //            self append(e get)
 //        ]
 //    ]
-//    
-//    constructor(int capacity)
-//    [
-//        theCapacity := capacity.
-//        theLength := 0.
-//        theArray := V<type>(capacity).
-//    ]
-//    
-//    constructor
-//    [
-//        theCapacity := 16.
-//        theLength := 0.
-//        theArray := V<type>(16).
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//
-//    private expand
-//    [
-//        if (theCapacity <= theLength)
-//        [
-//            theCapacity append(32).
-//            
-//            Array<type> newArray := V<type>(theCapacity).
-//
-//            int i := 0.
-//            while (i < theLength)
-//            [
-//                newArray setAt(i, theArray getAt(i)).
-//                
-//                i := i + 1.
-//            ].
-//            
-//            theArray := newArray.
-//        ].
-//    ]
-//    
+    
+    constructor(int capacity)
+    {
+        theCapacity := capacity;
+        theLength := 0;
+        theArray := new T[](capacity);
+    }
+    
+    constructor()
+    {
+        theCapacity := 16;
+        theLength := 0;
+        theArray := new T[](16);
+    }
+    
+    vprop int Length
+    {
+        readTo(ref int retVal)
+        {
+            theLength.readValueTo(ref retVal);
+        }        
+    }
+    
+    private expand()
+    {
+        int cap := theCapacity.Value;
+        int len := theLength.Value;
+        
+        if (cap <= len)
+        {
+            theCapacity.append(32);
+            cap += 32;
+            
+            T[] newArray := new T[](cap);
+
+            for(int i := 0, i < len, i += 1)
+            {
+                newArray[i] := theArray[i]
+            };
+            
+            theArray := newArray
+        }
+    }
+    
 //    /// Returns the object at the specified position
 //    type getAt : anIndex
 //        = self getAt(T<int>(anIndex)).
-//
-//    /// Returns the object at the specified position
-//    type getAt(int index)
-//    [
-//        ifnot(index < theLength)
-//            [ OutOfRangeException new; raise ].
-//            
-//        ^ theArray getAt(index)
-//    ]
-//
+
+    /// Returns the object at the specified position
+    T at(int index)
+    {
+        int len := theLength.Value;
+        
+        ifnot(index < len)
+            { OutOfRangeException.raise() };
+            
+        ^ theArray[index]
+    }
+
 //    /// Returns the object at the specified position
 //    setAt(int index, type object)
 //    [
@@ -138,17 +147,18 @@
 //    /// Returns the object at the specified position
 //    setAt(object anIndex, object anObject)
 //        = self setAt(T<int>(anIndex), T<type>(anObject)).
-//
-//    /// Appends a new object to the end of the list
-//    append(type object)
-//    [
-//        self expand.
-//        
-//        theArray setAt(T<int>(theLength), object).
-//        
-//        theLength append(1).
-//    ]
-//
+
+    /// Appends a new object to the end of the list
+    append(T object)
+    {
+        self.expand();
+        
+        int index := theLength.Value;
+        theArray[index] := object;
+        
+        theLength.append(1)
+    }
+
 //    append : object
 //        <= append(T<type>(object)).
 //
@@ -185,23 +195,23 @@
 //        
 //        theLength value := pos.
 //    ]
-//    
-//    Enumerator<type> enumerator = BaseEnumerator<type>::
-//    {
-//        @theIndex := -1.
-//        
-//        @theLength := self length.
-//        
-//        type get = self getAt(@theIndex).
-//        
-//        enumerable = self.
-//        
-//        reset
-//        [
-//            @theIndex := -1
-//        ]
-//    }.
-//
+    
+    Enumerator<T> enumerator() = new BaseEnumerator<T>:
+    {
+        this theIndex := -1;
+        
+        this theLength := self.Length;
+        
+        T get() = self.at(this theIndex.Value);
+        
+        enumerable() = self;
+        
+        reset()
+        {
+            this theIndex := -1
+        }
+    };
+
 //    Indexer<type> indexer = BaseIndexer<type>::
 //    {
 //        @theIndex := 0.
@@ -248,15 +258,10 @@
 //        ^ copy.
 //    ]
 //
-//    readLengthTo(ref<int> retVal)
-//    [
-//        theLength readValueTo(retVal).
-//    ]    
-//    
 //    clone
 //        = List<type>(theArray, T<int>(theLength)).
-//}
-//
+}
+
 //// --- ListItem ---
 //
 ///// A list item

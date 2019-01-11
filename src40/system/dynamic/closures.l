@@ -20,17 +20,17 @@ public struct MessageClosure : DynamicClosure
         => system'core_routines'__mssg_closure;
 }
 
-//// --- ConstantClosure --- 
-//
-//public class ConstantClosure :: DynamicClosure
-//{
-//    object constant.
-//    
-//    constructor new(Object constant)
-//    [
-//        @constant := constant.
-//    ]
-//    
-//    generic closure(V<object> args)
-//        = constant.
-//}
+// --- ConstantClosure --- 
+
+public class ConstantClosure : DynamicClosure
+{
+    object constant;
+    
+    constructor(constant)
+    {
+        this constant := constant;
+    }
+    
+    closure(params object[] args)
+        = constant;
+}

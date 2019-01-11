@@ -5051,6 +5051,7 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
             if (templateArg) {
                if (!typeSet) {
                   classRef = resolveTemplateDeclaration(current, scope, declarationMode);
+                  validateType(scope, current, classRef, declarationMode);
                   typeSet = true;
                }
                else scope.raiseError(errIllegalOperation, current);
