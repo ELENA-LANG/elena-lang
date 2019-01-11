@@ -1770,8 +1770,21 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
          }
       }
       else if (scope.type == TemplateScope::ttPropertyTemplate || scope.type == TemplateScope::ttClassTemplate) {
+         SNode sizeNode = current.findChild(lxSize);
          SNode nodeToInject = scope.parameterValues.get(current.argument);
-         copyExpressionTree(writer, nodeToInject, scope);
+         if (sizeNode == lxSize) {
+            // HOTFIX : if it is a node with the size postfix
+            if (nodeToInject.strArgument != -1) {
+               writer.newNode(nodeToInject.type, nodeToInject.identifier());
+            }
+            else writer.newNode(nodeToInject.type, nodeToInject.argument);
+
+            copyChildren(writer, nodeToInject, scope);
+            writer.appendNode(sizeNode.type, sizeNode.argument);
+
+            writer.closeNode();
+         }
+         else copyExpressionTree(writer, nodeToInject, scope);
       }
       else throw InternalError("Not yet supported");
    }
@@ -1782,6 +1795,8 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
       copyChildren(writer, nodeToInject, scope);
    }
    else if (current == lxTemplateIdentParam) {
+      current.existChild(lxSize);
+
       // name node is always the last parameter
       SNode nodeToInject = scope.parameterValues.get(current.argument);
       //if (nodeToInject == lxTarget && nodeToInject.argument != 0) {

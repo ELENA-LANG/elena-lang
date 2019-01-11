@@ -57,6 +57,7 @@
 //__dword         = #16.
 #19    = __mssg;
 #18    = __subj;
+#19    = mssgconst;
 //__extmssg       = #21.
 ////__tape_mixin    = #8209.
 //__symbol        = #22.
