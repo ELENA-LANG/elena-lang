@@ -15,20 +15,20 @@ public mixin ClosureTape
         self.setFields(params args)
     }
 
-//    constructor new(int length)
-//        = V<DynamicClosure>(length).
+    /*internal */constructor allocate(int length)
+        = new DynamicClosure[](length);
         
-//    constructor new (List<DynamicClosure> list)        
-//        <= new(list.Length)
-//    {
-//        int i := list.Length;
-//        while (i > 0)
-//        {
-//            i -= 1;
-//            
-//            theList[i] := list[i]
-//        }
-//    }
+    constructor new (List<DynamicClosure> list)        
+        <= allocate(list.Length)
+    {
+        int i := list.Length;
+        while (i > 0)
+        {
+            i -= 1;
+            
+            theList[i] := list[i]
+        }
+    }
         
 //    constructor new (List<DynamicClosure> list, int index, int length)        
 //        <= new(length);

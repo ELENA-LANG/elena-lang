@@ -658,7 +658,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
    this->subCodeMode = false;
    this->abstractMethod = false;
-//   this->genericClosure = false;
+   this->genericClosure = false;
 //   this->dispatchMode = false;
 }
 
@@ -5289,10 +5289,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 //      }
    }
 
-//   if (scope.genericClosure && paramCount > OPEN_ARG_COUNT) {
-//      // Compiler Magic : if it is a generic closure - ignore fixed argument but it should be removed from the stack
-//      scope.rootToFree += (paramCount - OPEN_ARG_COUNT);
-//   }
+   if (scope.genericClosure) {
+      // Compiler Magic : if it is a generic closure - ignore fixed argument but it should be removed from the stack
+      scope.rootToFree -= 1;
+   }
 }
 
 //bool Compiler :: verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount)
@@ -6334,13 +6334,9 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
    methodScope.extensionMode = scope.extensionClassRef != 0;
-
-//   if (!methodScope.withOpenArg) {
-//      // HOTFIX : generic with open argument list is compiled differently
-      methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
-//   }
-   //else if (_logic->isMethodGeneric(scope.info, methodScope.message) && methodScope.closureMode)
-   //   methodScope.genericClosure = true;
+   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
+   if (methodScope.withOpenArg && methodScope.closureMode)
+      methodScope.genericClosure = true;
 }
 
 void Compiler :: declareVMT(SNode node, ClassScope& scope)

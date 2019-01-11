@@ -123,12 +123,9 @@ enum MethodHint
    tpEmbeddable  = 0x000020,
    tpGeneric     = 0x000040,
    tpAction      = 0x000080,
-//   tpIfBranch    = 0x000100,
-//   tpIfNotBranch = 0x000200,
    tpConstructor = 0x200400,
    tpConversion  = 0x200800,
    tpMultimethod = 0x001000,
-//   tpArgDispatcher=0x003000,
    tpStatic      = 0x004000,
    tpGetAccessor = 0x008000,
    tpSpecial     = 0x010000,
@@ -220,7 +217,6 @@ struct _ModuleScope
    ref_t             literalReference;
    ref_t             wideReference;
    ref_t             charReference;
-//   ref_t             arrayReference;
    ref_t             refTemplateReference;
    ref_t             arrayTemplateReference;
    ref_t             argArrayTemplateReference;
@@ -327,8 +323,8 @@ struct _ModuleScope
       debugModule = module = nullptr;
       intReference = superReference = 0;
       messageNameReference = messageReference = 0;
-      longReference = literalReference = /*wideReference = */0;
-      /*arrayReference = */charReference = realReference = 0;
+      longReference = literalReference = wideReference = 0;
+      charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
 /*      lazyExprReference = */extMessageReference = 0;
       arrayTemplateReference = 0;

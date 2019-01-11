@@ -527,7 +527,7 @@ private:
       bool         withOpenArg;
       bool         classEmbeddable;
       bool         generic;
-//      bool         genericClosure;
+      bool         genericClosure;
       bool         extensionMode;
       bool         multiMethod;
       bool         closureMode;
