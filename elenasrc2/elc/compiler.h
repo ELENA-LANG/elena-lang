@@ -618,8 +618,8 @@ private:
 
       ObjectInfo mapMember(ident_t identifier);
 
-//      ObjectInfo mapGlobal(ident_t identifier);
-//
+      ObjectInfo mapGlobal(ident_t identifier);
+
       ObjectInfo mapLocal(ident_t identifier);
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);

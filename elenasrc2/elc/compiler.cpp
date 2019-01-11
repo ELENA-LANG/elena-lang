@@ -761,12 +761,12 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->genericMethod = parent->genericMethod;
 }
 
-////ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
-////{
-////   NamespaceScope* nsScope = (NamespaceScope*)getScope(Scope::slNamespace);
-////
-////   return nsScope->mapGlobal(identifier);
-////}
+ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
+{
+   NamespaceScope* nsScope = (NamespaceScope*)getScope(Scope::slNamespace);
+
+   return nsScope->mapGlobal(identifier);
+}
 
 ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
 {
@@ -1493,7 +1493,7 @@ ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, ident_t identifier, bo
 ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, SNode terminal)
 {
    if (terminal == lxGlobalReference) {
-      return resolveImplicitIdentifier(scope, terminal.identifier() + 1, false, true);
+      return resolveImplicitIdentifier(scope, terminal.identifier(), false, true);
    }
    else return resolveImplicitIdentifier(scope, terminal.identifier(), terminal == lxReference);
 }
@@ -2218,12 +2218,18 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
 ////         terminal.set(lxBlockLocal, object.param);
 ////         break;
       case okParams:
+      {
+         ref_t r = resolvePrimitiveReference(scope, object.reference, object.element, false);
+         if (!r)
+            throw InternalError("Cannot resolve variadic argument template");
+
          writer.newNode(lxArgBoxing, 0);
          writer.appendNode(lxBlockLocalAddr, object.param);
-         writer.appendNode(lxTarget, resolvePrimitiveReference(scope, object.reference, object.element, false));
+         writer.appendNode(lxTarget, r);
          if (test(mode, HINT_DYNAMIC_OBJECT))
             writer.appendNode(lxBoxingRequired);
          break;
+      }
       case okObject:
          writer.newNode(lxResult, 0);
          break;
@@ -2322,12 +2328,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //      case lxMemberIdentifier:
 //         object = scope.mapMember(token.c_str() + 1);
 //         break;
-//      case lxGlobalReference:
-//         object = scope.mapGlobal(token.c_str() + 1);
-//         break;
-//      case lxPrivate:
-//         object = scope.mapLocal(token.c_str() + 1);
-//         break;
+      case lxGlobalReference:
+         object = scope.mapGlobal(token.c_str());
+         break;
 //      case lxLocal:
 //         // if it is a temporal variable
 //         object = ObjectInfo(okLocal, terminal.argument);
@@ -4103,7 +4106,13 @@ ref_t Compiler :: resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t oper
    SyntaxTree dummyTree;
    SyntaxWriter dummyWriter(dummyTree);
    dummyWriter.newNode(lxRoot);
-   dummyWriter.appendNode(lxTarget, operandRef);
+   dummyWriter.newNode(lxTarget, operandRef);
+   ident_t refName = moduleScope.module->resolveReference(operandRef);
+   if (isWeakReference(refName)) {
+      dummyWriter.appendNode(lxReference, refName);
+   }
+   else dummyWriter.appendNode(lxGlobalReference, refName);
+   dummyWriter.closeNode();
    dummyWriter.closeNode();
 
    parameters.add(dummyTree.readRoot().firstChild());
@@ -4138,7 +4147,13 @@ ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, 
    SyntaxTree dummyTree;
    SyntaxWriter dummyWriter(dummyTree);
    dummyWriter.newNode(lxRoot);
-   dummyWriter.appendNode(lxTarget, elementRef);
+   dummyWriter.newNode(lxTarget, elementRef);
+   ident_t refName = scope.module->resolveReference(elementRef);
+   if (isWeakReference(refName)) {
+      dummyWriter.appendNode(lxReference, refName);
+   }
+   else dummyWriter.appendNode(lxGlobalReference, refName);
+   dummyWriter.closeNode();
    dummyWriter.closeNode();
 
    parameters.add(dummyTree.readRoot().firstChild());
@@ -4585,30 +4600,12 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       targetMode |= mode;
    }
 
-//   if (object == lxMethodParameter || object == lxNone) {
-//      objectInfo = compileObject(writer, node, scope, 0, targetMode);
-//   }
-//   else {
-//      if (operationNode == lxNone && object.nextNode() == lxExpression) {
-//         targetMode |= HINT_COLLECTION_MODE;
-//      }
-//
-//      if (operationNode != lxNone) {
-         objectInfo = compileObject(writer, current, scope, 0, targetMode);         
-         // HOTFIX : reload the operation node
-         operationNode = current.nextNode();
-         if (operationNode != lxNone) {
-            objectInfo = compileOperation(writer, operationNode, scope, objectInfo/*, exptectedRef*/, mode);
-         }            
-//
-//         // HOTFIX : to compile property assigmment properly - reread them
-//         operationNode = node.findChild(lxAssign, lxMessage, lxOperator, lxExtension);
-//
-//         objectInfo = compileOperation(writer, operationNode, scope, objectInfo, exptectedRef, mode);
-//      }
-//      // if the object is single, pass the target reference
-//      else objectInfo = compileObject(writer, object, scope, exptectedRef, targetMode);
-//   }   
+   objectInfo = compileObject(writer, current, scope, 0, targetMode);         
+   // HOTFIX : reload the operation node
+   operationNode = current.nextNode();
+   if (operationNode != lxNone) {
+      objectInfo = compileOperation(writer, operationNode, scope, objectInfo/*, exptectedRef*/, mode);
+   }            
 
    ref_t sourceRef = resolveObjectReference(scope, objectInfo/*, exptectedRef*/);
    if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {      

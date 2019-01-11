@@ -1784,8 +1784,11 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
    else if (current == lxTemplateIdentParam) {
       // name node is always the last parameter
       SNode nodeToInject = scope.parameterValues.get(current.argument);
-
-      copyChildren(writer, nodeToInject, scope);
+      //if (nodeToInject == lxTarget && nodeToInject.argument != 0) {
+      //   // HOTFIX : if it is a type identifier
+      //   writer.appendNode(lxGlobalReference, scope.moduleScope->module->resolveReference(nodeToInject.argument));
+      //}
+      /*else*/ copyChildren(writer, nodeToInject, scope);
    }
    else if (current == lxTemplateMsgParam) {
       // name node is always the last parameter

@@ -3052,7 +3052,9 @@ labNextParam:
   jmp  [edx + ebx * 8 + 4]
 
 labMatching:
-  mov  edi, [eax + ecx * 4]
+  mov  esi, [esp]
+  sub  esi, ecx
+  mov  edi, [eax + esi * 4]
 
   //; check nil
   mov   esi, rdata : %VOIDPTR + 4
@@ -3123,7 +3125,9 @@ labNextParam:
   jmp  [esi + edx * 8 + 4]
 
 labMatching:
-  mov  edi, [eax + ecx * 4]
+  mov  esi, [esp]
+  sub  esi, ecx
+  mov  edi, [eax + esi * 4]
 
   //; check nil
   mov   esi, rdata : %VOIDPTR + 4
