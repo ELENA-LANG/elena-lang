@@ -4,7 +4,7 @@
 
 public interface Encoder
 {
-//    abstract convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength) {} 
+    abstract convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength) {} 
 
     abstract convert(int index, ref int length, char[] charArray, byte[] output, ref int outputLength) {}
     
@@ -157,8 +157,8 @@ public interface Encoder
 
 public singleton UTF8Encoder : Encoder
 {
-//    convert(int anIndex, ref<int> aLength, ByteArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
-//        => system'core_routines'__utf8encoder.
+    convert(int index, ref int length, byte[] array, char[] output, ref int outputLength)
+        => system'core_routines'__utf8encoder;
     
     convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
         => system'core_routines'__utf8encoder;
