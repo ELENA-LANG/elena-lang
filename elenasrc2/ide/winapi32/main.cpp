@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      WinAPI32 program entry 
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "winide.h"
@@ -131,7 +131,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int)
 
    // init paths & settings
    Paths::init(&model, appPath, defPath);
-   Settings::init(&model, _T("..\\src32"), _T("..\\lib32"));
+   Settings::init(&model, _T("..\\src40"), _T("..\\lib40"));
 
    _ELENA_::Path configPath(model.paths.appPath);
    configPath.combine(_T("ide.cfg"));

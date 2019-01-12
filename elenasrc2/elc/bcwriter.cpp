@@ -1712,8 +1712,8 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
    }
    else writeVMT(classPosition, it, scope);
 
-//   // save Static table
-//   info.staticValues.write(&vmtWriter);
+   // save Static table
+   info.staticValues.write(&vmtWriter);
 }
 
 void ByteCodeWriter :: writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope)
@@ -6009,12 +6009,12 @@ void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, L
    endInitializer(tape);
 }
 
-//void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, SNode root)
-//{
-//   declareInitializer(tape, reference);
-//   generateCodeBlock(tape, root);
-//   endInitializer(tape);
-//}
+void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, SNode root)
+{
+   declareInitializer(tape, reference);
+   generateCodeBlock(tape, root);
+   endInitializer(tape);
+}
 
 void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathRef)
 {

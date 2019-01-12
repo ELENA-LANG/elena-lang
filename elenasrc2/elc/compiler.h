@@ -430,8 +430,8 @@ private:
       bool        abstractMode;
       bool        abstractBaseMode;
 //      bool        withImplicitConstructor;
-//
-//      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
+
+      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 
       ObjectInfo mapField(ident_t identifier, int scopeMode);
 
@@ -633,10 +633,10 @@ private:
          else return parent->getScope(level);
       }
 
-      //bool isInitializer()
-      //{
-      //   return getMessageID() == (encodeAction(INIT_MESSAGE_ID) | SPECIAL_MESSAGE);
-      //}
+      bool isInitializer()
+      {
+         return getMessageID() == moduleScope->init_message;
+      }
 
       ref_t getMessageID()
       {
@@ -782,7 +782,7 @@ private:
    ref_t resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t operandRef, ident_t ns, bool declarationMode);
    ref_t resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 
-//   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
+   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, bool unboxWrapper = true);
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
@@ -798,7 +798,7 @@ private:
    int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/);
-//   void inheritClassConstantList(_CompilerScope& scope, ref_t sourceRef, ref_t targetRef);
+   void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 
    // NOTE : the method is used to set template pseudo variable
    void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
@@ -891,8 +891,8 @@ private:
 
    ObjectInfo compileSubCode(SyntaxWriter& writer, SNode thenNode, CodeScope& scope, bool branchingMode);
 
-//   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
-//   void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
+   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/);
+   void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal);
 
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, int mode);
 
@@ -938,7 +938,7 @@ private:
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
    void compilePreloadedCode(SymbolScope& scope);
-//   void compilePreloadedCode(_CompilerScope& scope, SNode node);
+   void compilePreloadedCode(_ModuleScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
    void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);

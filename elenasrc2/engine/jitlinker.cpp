@@ -662,30 +662,30 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       // fix VMT
       _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
 
-      //// fix VMT Static table
-      //ClassInfo::StaticInfoMap staticValues;
-      //staticValues.read(&vmtReader);
+      // fix VMT Static table
+      ClassInfo::StaticInfoMap staticValues;
+      staticValues.read(&vmtReader);
 
-      //ref_t currentMask = 0;
-      //ref_t currentRef = 0;
-      //for (auto it = staticValues.start(); !it.Eof(); it++) {
-      //   currentMask = *it & mskAnyRef;
-      //   currentRef = *it & ~mskAnyRef;
+      ref_t currentMask = 0;
+      ref_t currentRef = 0;
+      for (auto it = staticValues.start(); !it.Eof(); it++) {
+         currentMask = *it & mskAnyRef;
+         currentRef = *it & ~mskAnyRef;
 
-      //   void* refVAddress = NULL;
-      //   if (currentMask == mskConstantRef && currentRef == 0) {
-      //      // HOTFIX : ignore read-only sealed static field
-      //   }
-      //   else {
-      //      if (currentMask == mskStatRef && currentRef == 0) {
-      //         refVAddress = resolveAnonymousStaticVariable();
-      //      }
-      //      else if (currentRef != 0)
-      //         refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+         void* refVAddress = NULL;
+         if (currentMask == mskConstantRef && currentRef == 0) {
+            // HOTFIX : ignore read-only sealed static field
+         }
+         else {
+            if (currentMask == mskStatRef && currentRef == 0) {
+               refVAddress = resolveAnonymousStaticVariable();
+            }
+            else if (currentRef != 0)
+               refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 
-      //      resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
-      //   }
-      //}
+            resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
+         }
+      }
    }
 
    return vaddress;
