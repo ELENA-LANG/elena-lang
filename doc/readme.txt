@@ -79,7 +79,7 @@ To compile the program types : elena-lc <path to .project file>
 ****************************************************************************
 
 Visit the project web site for the latest info on the project: 
-http://elenalang.netu.cf/
+http://elenalang.sourceforge.net/
 
 The documentation is available as HTML pages, and text. 
 These are all available on http://github.com/ELENA-LANG/elena-lang/wiki
@@ -107,7 +107,7 @@ elenaprolang@gmail.com
 ****************************************************************************
                                                 
 The complete source code of ELENA Standard library could be found
-in the folder <app root>\src34.
+in the folder <app root>\src40.
 
 The source code of ELENA samples could be found
 in the folder <app root>\examples.
