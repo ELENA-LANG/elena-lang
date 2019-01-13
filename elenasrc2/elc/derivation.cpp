@@ -861,22 +861,16 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 
    while (true) {
       if (current == lxAttribute) {
-//         bool templateParam = false;
-//         ref_t attrRef = expressionMode ? V_ATTRTEMPLATE : mapAttribute(current, scope, templateParam);
-//
-//         if (templateParam) {
-//            writer.appendNode(lxTemplateAttribute, attrRef);
-//         }
-//         else if (attrRef == V_ATTRTEMPLATE) {
-//            generateAttributeTemplate(writer, current, scope, templateMode, expressionMode);
-//         }
-//         else /*if (isAttribute(attrRef)) */{
-            writer.newNode(lxAttribute, current.argument);
-            copyIdentifier(writer, current.findChild(lxIdentifier));
-            if (current.argument == V_TEMPLATE) {
-               generateTemplateAttributes(writer, current, derivationScope);
-            }
-            writer.closeNode();
+         writer.newNode(lxAttribute, current.argument);
+         copyIdentifier(writer, current.findChild(lxIdentifier));
+         if (current.argument == V_TEMPLATE) {
+            generateTemplateAttributes(writer, current, derivationScope);
+         }
+
+         if (current.existChild(lxDynamicSizeDecl))
+            _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
+
+         writer.closeNode();
       }
       else if (current == lxTarget) {
          SNode terminal = current.firstChild(lxTerminalMask);
@@ -905,6 +899,9 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
       current = current.prevNode();
    }
    if (nameNode != lxNone) {
+      if (nameNode.existChild(lxDynamicSizeDecl))
+         _scope->raiseError(errInvalidSyntax, _filePath, nameNode.findChild(lxDynamicSizeDecl));
+
       SNode terminal = nameNode.firstChild(lxTerminalMask);
 
       LexicalType nameType = lxNameAttr;
@@ -1391,8 +1388,12 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
 
    if (current == lxToken) {
       insertIdentifier(writer, current.firstChild(lxTerminalMask));
-      if (current.existChild(lxDynamicSizeDecl))
-         writer.insertChild(0, lxSize, -1);
+      if (current.existChild(lxDynamicSizeDecl)) {
+         if (attrType == lxTarget || attrType == lxTemplateParam || attrRef == V_TEMPLATE) {
+            writer.insertChild(0, lxSize, -1);
+         }
+         else _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
+      }         
    }
    else insertIdentifier(writer, current);
    writer.insert(0, attrType, attrRef);

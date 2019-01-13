@@ -3,11 +3,11 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * syntax : template should be the last token in expression and one before the last for declaration
                  * the following code - theIndexers[i] := arguments[i].indexer() - does not work correctly
                    (see SequentialEnumerator)
                  * debugger : variables inside for loop
                  * new anyToken { .. } - should raise an error?
-                 * expression : [] should be allowed only with the type
                  * reimplement AKS test for primes
 
                  * embeddable constructors for structures
@@ -39,13 +39,11 @@ In development:
                  * identifier - message message
 
                  * migrate twentyfour, 99 Bottles of Beer
-                 * syntax : template / size should be the last token in expression and one before the last for declaration
                  * support 2.2 syntax (without r postfix)
                  * allow to work with ref<int> directly
                  * the following code should be supported : newLength := newLength + cast int(theLength);
                  * TokenEnumerator : class TextBuilder should not be found (system'text is not imported)
                  * reimplement lazy expressions
-                 * fix vm console project type
                  * uncomment extern scope - ConsoleReader
                  * test try / catch operation : method not found, printing calling stack
                  * no need to box variadic argument list for template opertions
@@ -53,8 +51,6 @@ In development:
                  * primitive array should be passed directly without unboxing if allowed
                  * test - a[](...) - should be illegal
                  * test boxing / unboxing with dynamic reference
-                 * (re)implement reference of object
-                 * (re)implement support for internal methods
                  * implement length property optimization -> replace direct operation with byref one
                  * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one
@@ -67,11 +63,8 @@ In development:
                  * IntNumber.#cast<'IntNumber> - why it always creates a new object?
                  * uncomment _ELC_::Project::compileSources
                  * uncomment ELENARTMachine::loadMessage
-                 * review / redesign message structure (number of parameters, number of parameters with variadic argument)
-                 * review predefined message constants
                  * abstract class cannot have constructors / default constructor
                  * uncomment validateClassDeclaration
-                 * uncomment compileBranchingOperand
                  * Indexer.Index property - should support abstract get and set accessors
                  * unboxing of boxing (in case if analizer does not resolve the issue)
                  * cache resolved built-in tampletes
