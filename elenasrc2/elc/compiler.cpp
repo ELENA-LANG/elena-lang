@@ -147,16 +147,16 @@ inline SNode goToNode(SNode current, LexicalType type1, LexicalType type2)
 //
 //   return current;
 //}
-//
-//inline bool validateGenericClosure(ref_t* signature, size_t length)
-//{
-//   for (size_t i = 1; i < length; i++) {
-//      if (signature[i - 1] != signature[i])
-//         return false;
-//   }
-//
-//   return true;
-//}
+
+inline bool validateGenericClosure(ref_t* signature, size_t length)
+{
+   for (size_t i = 1; i < length; i++) {
+      if (signature[i - 1] != signature[i])
+         return false;
+   }
+
+   return true;
+}
 
 ////inline bool checkNode(SNode node, LexicalType type, ref_t argument)
 ////{
@@ -5153,10 +5153,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
             // to indicate open argument list
             flags |= VARIADIC_MESSAGE;
 
-//               if (!test(scope.hints, tpGeneric) && !scope.withOpenArg)
-//                  // !! temporal : only generic method may handle open argument list
-//                  scope.raiseError(errNotApplicable, node);
-
             // the generic arguments should be free by the method exit
             scope.withOpenArg = true;
             
@@ -5225,16 +5221,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          actionStr.copy(INVOKE_MESSAGE);
 
          flags |= SPECIAL_MESSAGE;
-//         // Compiler Magic : if it is a generic closure - ignore fixed argument
-//         if (test(scope.hints, tpGeneric) && paramCount > OPEN_ARG_COUNT) {
-//            if (validateGenericClosure(signature, signatureLen)) {
-//               signatureLen = 1;
-//               paramCount = OPEN_ARG_COUNT;
-//               scope.genericClosure = true;               
-//            }
-//            // generic clsoure should have a homogeneous signature (i.e. same types)
-//            else scope.raiseError(errIllegalMethod, node);
-//         }
+         // Compiler Magic : if it is a generic closure - ignore fixed argument
+         if (scope.withOpenArg) {
+            if (validateGenericClosure(signature, signatureLen)) {
+               signatureLen = 1;
+               scope.genericClosure = true;               
+            }
+            // generic clsoure should have a homogeneous signature (i.e. same types)
+            else scope.raiseError(errIllegalMethod, node);
+         }
       }
 
       if (test(scope.hints, tpInternal)) {
@@ -5296,7 +5291,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
    if (scope.genericClosure) {
       // Compiler Magic : if it is a generic closure - ignore fixed argument but it should be removed from the stack
-      scope.rootToFree -= 1;
+      scope.rootToFree += (paramCount - 2);
+
+      scope.message = overwriteParamCount(scope.message, 1);
    }
 }
 

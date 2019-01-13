@@ -8,7 +8,7 @@
     </project>
     <manifest>
       <name>ELENA Extension Library</name>
-      <version>4.0.12</version>
+      <version>4.0.13</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>
@@ -24,6 +24,10 @@
         <module name="routines">
             <include>routines\enumerating.l</include>
             <include>routines\combinations.l</include>
+        </module>
+        <module name="dynamic">
+            <include>dynamic\tape_assembly.l</include>
+            <include>dynamic\expressions\expressions.l</include>
         </module>
     </files>
 </configuration>
