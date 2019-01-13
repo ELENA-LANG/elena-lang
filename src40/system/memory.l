@@ -5,9 +5,6 @@ public sealed Array<T> : Indexable<T>
 {
     embeddable T[] theArray;
 
-////    cast T<int>:nint
-////        = V<template_subj>(n).
-
 //    constructor allocate(int length)
 //        = new T[](length);
         

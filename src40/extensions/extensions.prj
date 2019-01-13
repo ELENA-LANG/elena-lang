@@ -8,7 +8,7 @@
     </project>
     <manifest>
       <name>ELENA Extension Library</name>
-      <version>4.0.11</version>
+      <version>4.0.12</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>
@@ -23,6 +23,7 @@
         </module>
         <module name="routines">
             <include>routines\enumerating.l</include>
+            <include>routines\combinations.l</include>
         </module>
     </files>
 </configuration>

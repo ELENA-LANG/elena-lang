@@ -3,10 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * support - new { 1,2,3 } - expression
-
-
-
+                 * the following code - theIndexers[i] := arguments[i].indexer() - does not work correctly
+                   (see SequentialEnumerator)
+                 * debugger : variables inside for loop
                  * new anyToken { .. } - should raise an error?
                  * expression : [] should be allowed only with the type
                  * reimplement AKS test for primes

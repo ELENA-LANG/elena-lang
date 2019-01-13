@@ -12,7 +12,7 @@ rem ..\..\bin\elc arrays\arrays.prj
 rem ..\..\bin\elc associativearrays\associativearrays.prj
 rem ..\..\bin\elc bestshuffle\bestshuffle.prj
 rem ..\..\bin\elc binary\binary.prj
-rem ..\..\bin\elc amb\amb.prj
+..\..\bin\elc amb\amb.prj
 rem ..\..\bin\elc bitwise\bitwise.prj
 rem ..\..\bin\elc brackets\brackets.prj
 rem ..\..\bin\elc anagram\anagram.prj
