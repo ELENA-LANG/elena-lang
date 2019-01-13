@@ -135,15 +135,17 @@ public sealed List<T> : Enumerable<T>
         ^ theArray[index]
     }
 
-//    /// Returns the object at the specified position
-//    setAt(int index, type object)
-//    [
-//        ifnot(index < theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theArray setAt(index, object).
-//    ]
-//
+    /// Returns the object at the specified position
+    setAt(int index, T object)
+    {
+        int len := theLength.Value;
+        
+        ifnot(index < len)
+            { OutOfRangeException.raise() };
+        
+        theArray[index] := object
+    }
+
 //    /// Returns the object at the specified position
 //    setAt(object anIndex, object anObject)
 //        = self setAt(T<int>(anIndex), T<type>(anObject)).
@@ -181,13 +183,13 @@ public sealed List<T> : Enumerable<T>
 //        
 //    /// Returns the top object
 //    type first = theArray getAt(0).
-//    
-//    /// Clears the list
-//    clear 
-//    [
-//        theLength value := 0.        
-//    ]
-//    
+    
+    /// Clears the list
+    clear()
+    {
+        theLength.Value := 0        
+    }
+    
 //    trim(IntNumber pos)
 //    [
 //        if (pos > theLength)

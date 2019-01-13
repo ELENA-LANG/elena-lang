@@ -346,6 +346,15 @@ void DerivationWriter :: generateTemplateTree(SNode node, SNode nameNode, ScopeT
       // COMPILER MAGIC : inject imported namespaces & source path      
       templateWriter.appendNode(lxSourcePath, _filePath);
 
+      if (!emptystr(_ns)) {
+         //HOTFIX : import the sub namespace
+         IdentifierString properNs(_scope->module->Name());
+         properNs.append("'");
+         properNs.append(_ns);
+
+         templateWriter.appendNode(lxImport, properNs.ident());
+      }
+
       for (auto it = _importedNs.start(); !it.Eof(); it++) {
          templateWriter.appendNode(lxImport, *it);
       }

@@ -639,30 +639,30 @@ import system'dynamic;
 //        context[pos] := JumpIfNotClosure new(offset).        
 //    ]        
 //}
+
+public class TapeAssembly
+{
+//    Stack<Strategy>  _states;
+//    Strategy         _state;
 //
-//public class TapeAssembly
-//{
-//    Stack<Strategy>     _states.
-//    T<Strategy>         _state.
+//    ClassContext     _context;
+//    ParameterContext _parameters;
+//    
+//    constructor()
+//    {
+//        _state := StartOne;
+//        _states := Stack<Strategy>.allocate(32);
 //
-//    T<ClassContext>     _context.
-//    T<ParameterContext> _parameters.
+//        _context := new ClassContext();
+//        _parameters := new ParameterContext()
+//    }
 //    
-//    constructor new
-//    [
-//        _state := StartOne.
-//        _states := Stack<Strategy>(32).
-//
-//        _context := ClassContext new.
-//        _parameters := ParameterContext new.
-//    ]
-//    
-//    constructor new(ClosureTape tape)
-//        <= new;
-//    [
-//        tape(self).
-//    ]
-//    
+//    constructor(ClosureTape tape)
+//        <= ()
+//    {
+//        tape(self)
+//    }
+    
 //    open(Signature state)     
 //    [
 //        _states push:_state.
@@ -775,8 +775,8 @@ import system'dynamic;
 //    ]
 //    
 //    first => _context.
-//}
-//
+}
+
 //public singleton openSymbolClosure :: DynamicClosure
 //{
 //    generic closure(object t, V<object> args)
@@ -789,30 +789,30 @@ import system'dynamic;
 //        = t openSymbol.
 //}
 
-//public singleton openSingletonClosure : DynamicClosure
-//{
-//    closure(object t, params object[] args)
-//        = t.openSingleton();
-//}
+public singleton openSingletonClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.openSingleton();
+}
 
-//public singleton openMethodClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t openMethod.
-//}
-//
-//public singleton openCodeClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t openCode.
-//}
-//
-//public singleton openExpressionClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t openExpression.
-//}
-//
+public singleton openMethodClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.openMethod();
+}
+
+public singleton openCodeClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.openCode();
+}
+
+public singleton openExpressionClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.openExpression();
+}
+
 //public singleton openReturningClosure :: DynamicClosure
 //{
 //    generic closure(object t, V<object> args)
@@ -830,13 +830,13 @@ import system'dynamic;
 //    generic closure(object t, V<object> args)
 //        = t openLoop.
 //}
-//
-//public singleton closeClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t close.
-//}
-//
+
+public singleton closeClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.close();
+}
+
 //public singleton newAssignClosure :: DynamicClosure
 //{
 //    generic closure(object t, V<object> args)
@@ -874,34 +874,34 @@ import system'dynamic;
 //    generic closure(object t, V<object> args)
 //        = t include(forward,reference).
 //}
-//
-//public abstract class DynamicClosureWithParam :: DynamicClosure
-//{
-//    object param.    
-//}
-//
-//public class newReferenceClosure :: DynamicClosureWithParam
-//{    
-//    constructor new : param
-//    [
-//        @param := param
-//    ]
-//    
-//    generic closure(object t, V<object> args)
-//        = t newReference:param.    
-//}
-//
-//public class newMessageClosure :: DynamicClosureWithParam
-//{    
-//    constructor new : param
-//    [
-//        @param := param
-//    ]
-//    
-//    generic closure(object t, V<object> args)
-//        = t newMessageToken:param.    
-//}
-//
+
+public abstract class DynamicClosureWithParam : DynamicClosure
+{
+    object param;
+}
+
+public class newReferenceClosure : DynamicClosureWithParam
+{    
+    constructor(param)
+    {
+        this param := param
+    }
+    
+    closure(object t, params object[] args)
+        = t.newReference:param;
+}
+
+public class newMessageClosure : DynamicClosureWithParam
+{    
+    constructor(param)
+    {
+        this param := param
+    }
+    
+    closure(object t, params object[] args)
+        = t.newMessageToken:param;    
+}
+
 //public class newConstantClosure :: DynamicClosureWithParam
 //{    
 //    constructor new : param
@@ -934,29 +934,29 @@ import system'dynamic;
 //    generic closure(object t, V<object> args)
 //        = t newNumericToken:param.    
 //}
-//
-//public class newParamTokenClosure :: DynamicClosureWithParam
-//{    
-//    constructor new : param
-//    [
-//        @param := param
-//    ]
-//    
-//    generic closure(object t, V<object> args)
-//        = t newParamToken:param.    
-//}
-//
-//public class newIdentifierClosure :: DynamicClosureWithParam
-//{    
-//    constructor new : param
-//    [
-//        @param := param
-//    ]
-//    
-//    generic closure(object t, V<object> args)
-//        = t newIdentToken:param.    
-//}
-//
+
+public class newParamTokenClosure : DynamicClosureWithParam
+{    
+    constructor(param)
+    {
+        this param := param
+    }
+    
+    closure(object t, params object[] args)
+        = t.newParamToken:param;
+}
+
+public class newIdentifierClosure : DynamicClosureWithParam
+{    
+    constructor(param)
+    {
+        this param := param
+    }
+    
+    closure(object t, params object[] args)
+        = t.newIdentToken:param;    
+}
+
 //singleton popClosure :: DynamicClosure
 //{
 //    generic closure(object elementToRemove, object nextElement, V<object> args)

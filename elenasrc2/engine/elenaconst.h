@@ -446,7 +446,7 @@ namespace _ELENA_
    #define EXTENSION_SECTION        "#extensions"
 ////   #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
-//   #define PACKAGE_SECTION          "#package"
+   #define PACKAGE_SECTION          "#package"
    #define IMPORTS_SECTION          "#import"
    #define NAMESPACES_SECTION       "#namespaces"
 //   #define AUTOEXTENSION_SECTION    "#auto_extensions"
