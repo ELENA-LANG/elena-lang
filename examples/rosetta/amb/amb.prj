@@ -14,6 +14,6 @@
         </module>
     </files>
     <forwards>
-        <forward key="program">amb'program2</forward>
+        <forward key="program">amb'program1</forward>
     </forwards>
 </configuration>

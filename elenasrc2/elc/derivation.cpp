@@ -1356,9 +1356,10 @@ inline bool isTypeExpressionAttribute(SNode current)
    return current.nextNode() == lxToken && current.nextNode().nextNode() != lxToken;
 }
 
-void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, bool templateArgMode)
+void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
+   bool templateArgMode, bool onlyAttributes)
 {
-   bool allowType = templateArgMode || current.nextNode().nextNode() != lxToken;
+   bool allowType = !onlyAttributes && (templateArgMode || current.nextNode().nextNode() != lxToken);
    bool allowProperty = false;
    
    SNode identNode = current;
@@ -1379,7 +1380,7 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
       }
       else attrType = isPrimitiveRef(attrRef) ? lxAttribute : lxTarget;
    }
-   else if (isPrimitiveRef(attrRef))
+   else if (onlyAttributes || isPrimitiveRef(attrRef))
       attrType = lxAttribute;
 
    writer.insert(0, lxEnding, 0);
@@ -1463,33 +1464,38 @@ void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Sco
 
 void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope, bool rootMode)
 {
-   if (node.nextNode() == lxToken) {
-      SNode current;
-      // find the last attribute
-      do {
-         current = node;
-         node = node.nextNode();
-      } while (node.nextNode() == lxToken);
+   if (node.nextNode() == lxCollection) {
+      generateExpressionAttribute(writer, node, derivationScope, false, true);
+   }
+   else {
+      if (node.nextNode() == lxToken) {
+         SNode current;
+         // find the last attribute
+         do {
+            current = node;
+            node = node.nextNode();
+         } while (node.nextNode() == lxToken);
 
-      while (current != lxNone) {
-         generateExpressionAttribute(writer, current, derivationScope);
-         current = current.prevNode();
+         while (current != lxNone) {
+            generateExpressionAttribute(writer, current, derivationScope);
+            current = current.prevNode();
+         }
       }
-   }
-   if (rootMode) {
-      if (goToNode(node, lxCode/*, lxClosureExpr*/, lxOperator) == lxCode) {
-         // COMPILER MAGIC : recognize the code template
-         generateCodeTemplateTree(writer, node, derivationScope);
-         return;
+      if (rootMode) {
+         if (goToNode(node, lxCode/*, lxClosureExpr*/, lxOperator) == lxCode) {
+            // COMPILER MAGIC : recognize the code template
+            generateCodeTemplateTree(writer, node, derivationScope);
+            return;
+         }
       }
-   }
-   if (node == lxToken) {
-      generateIdentifier(writer, node.firstChild(lxTerminalMask), derivationScope);
-   }
-   else generateIdentifier(writer, node, derivationScope);
+      if (node == lxToken) {
+         generateIdentifier(writer, node.firstChild(lxTerminalMask), derivationScope);
+      }
+      else generateIdentifier(writer, node, derivationScope);
 
-   if (node.existChild(lxDynamicSizeDecl)) {
-      writer.appendNode(lxSize, -1);
+      if (node.existChild(lxDynamicSizeDecl)) {
+         writer.appendNode(lxSize, -1);
+      }
    }
 }
 

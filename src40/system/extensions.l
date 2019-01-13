@@ -472,18 +472,18 @@ public extension longOp : LongNumber
 //                
 //        ^ LongNumber new(n)
 //    ]
-//    
-//    long mod : anOperand
-//    [
-//        long x := self.
-//        long y := T<long>(anOperand).
-//        
-//        long z := x / y.
-//        z := z * y.
-//        
-//        ^ LongNumber new(x - z)
-//    ]
-//    
+    
+    long mod(n)
+    {
+        long x := self;
+        long y := cast long(n);
+        
+        long z := x / y;
+        z := z * y;
+        
+        ^ new LongNumber(x - z)
+    }
+    
 //    long power(long y)
 //    [
 //        long x := self.

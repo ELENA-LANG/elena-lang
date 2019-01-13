@@ -1,98 +1,103 @@
-import system'routines.
-import extensions.
-import extensions'routines.
+import system'routines;
+import extensions;
+import extensions'routines;
 
 // --- Joinable --
 
-joinable(former,later) = (former[former length - 1] == later[0]).
+joinable(former,later) = (former[former.Length - 1] == later[0]);
 
 dispatcher =
 {
     eval(object a, Func2 f)
-    [
-        ^ f(a[0],a[1]).
-    ]
+    {
+        ^ f(a[0],a[1])
+    }
 
     eval(object a, Func3 f)
-    [
-        ^ f(a[0], a[1],a[2]).
-    ]
+    {
+        ^ f(a[0], a[1],a[2])
+    }
     
     eval(object a, Func4 f)
-    [
-        ^ f(a[0],a[1],a[2],a[3]).
-    ]
+    {
+        ^ f(a[0],a[1],a[2],a[3])
+    }
     
     eval(object a, Func5 f)
-    [
-        ^ f(a[0],a[1],a[2],a[3],a[4]).
-    ]
-
-}.
+    {
+        ^ f(a[0],a[1],a[2],a[3],a[4])
+    }
+};
 
 // --- AmbValueCollection ---
 
 class AmbValueCollection
 {
-    object theCombinator.
+    object theCombinator;
     
-    generic constructor new(V<object> args)
-    [
-        theCombinator := SequentialEnumerator new(args).
-    ]
+    constructor new(params object[] args)
+    {
+        theCombinator := SequentialEnumerator.new(args)
+    }
 
-    seek : cond
-    [
-        theCombinator reset.
+    seek(cond)
+    {
+        theCombinator.reset();
 
-        theCombinator seekEach(:v)(dispatcher eval(v,cond))
-    ]
+        theCombinator.seekEach:(v => dispatcher.eval(v,cond))
+    }
     
-    do : aFunction
-    [
-        var aResult := theCombinator get.
-        if (nil != aResult)
-            [ dispatcher eval(aResult,aFunction) ];
-            [ InvalidArgumentException new; raise ]
-    ]
+    do(f)
+    {
+        var result := theCombinator.get();
+        if (nil != result)
+        {
+            dispatcher.eval(result,f) 
+        }
+        else
+        {
+            InvalidArgumentException.raise()
+        }
+    }
 }
 
 // --- ambOperator ---
 
-ambOperator =
+singleton ambOperator
 {
-    generic for(V<object> args)
-        = AmbValueCollection new(args).
-}.
+    for(params object[] args)
+        = AmbValueCollection.new(params args);
+}
 
 // --- Program ---
 
-public program1
-[
-    try(ambOperator for((1,2,4),(4,5,6)); seek(:a:b)(a * b == 8); do(:a:b)
-        [ console printLine(a," * ",b," = 8") ])
+public program1()
+{
+    try
     {
-        on(Exception e)
-        [
-            console printLine:"AMB is angry"
-        ]
-    }.
-        
-    console readChar
-]
-
-public program2
-[
-    try(ambOperator 
-        for(("the","that","a"),("frog", "elephant", "thing"),("walked", "treaded", "grows"),("slowly", "quickly"));
-        seek(:a:b:c:d) ( joinable(a,b) && joinable(b,c) && joinable(c,d) );
-        do(:a:b:c:d) [ console printLine(a," ",b," ",c," ",d) ])
+        ambOperator.for(new {1,2,4}, new {4,5,6}).seek:(a,b => a * b == 8).do:
+            (a,b){ console printLine(a," * ",b," = 8") }
+    }
+    catch(Exception e)
     {
-        on(Exception e)
-        [
-            console printLine:"AMB is angry"
-        ]        
-    }.
+        console.printLine:"AMB is angry"
+    };
         
-    console readChar
-]
+    console.readChar()
+}
+//
+//public program2
+//[
+//    try(ambOperator 
+//        for(("the","that","a"),("frog", "elephant", "thing"),("walked", "treaded", "grows"),("slowly", "quickly"));
+//        seek(:a:b:c:d) ( joinable(a,b) && joinable(b,c) && joinable(c,d) );
+//        do(:a:b:c:d) [ console printLine(a," ",b," ",c," ",d) ])
+//    {
+//        on(Exception e)
+//        [
+//            console printLine:"AMB is angry"
+//        ]        
+//    }.
+//        
+//    console readChar
+//]

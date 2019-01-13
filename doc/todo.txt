@@ -3,6 +3,14 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * support - new { 1,2,3 } - expression
+
+
+
+                 * new anyToken { .. } - should raise an error?
+                 * expression : [] should be allowed only with the type
+                 * reimplement AKS test for primes
+
                  * embeddable constructors for structures
                  * optimize SystemTime
                  * the following code should not be allowed - real n := n;
@@ -25,13 +33,14 @@ In development:
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
 
+                 * mixin {  }
+
                  * reddit post - Switch statement
 
                  * identifier - message message
 
                  * migrate twentyfour, 99 Bottles of Beer
                  * syntax : template / size should be the last token in expression and one before the last for declaration
-                 * support - new [] { 1,2,3 } - expression
                  * support 2.2 syntax (without r postfix)
                  * allow to work with ref<int> directly
                  * the following code should be supported : newLength := newLength + cast int(theLength);

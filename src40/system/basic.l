@@ -216,9 +216,9 @@ public class BaseNumber : BaseValue
 //    [
 //        system'NotSupportedException new; raise.
 //    ]
-//    
-//    negative
-//        = 0 - self.
+    
+    Negative
+        = 0 - self;
 }
 
 // --- IntBaseNumber ---
@@ -1888,10 +1888,10 @@ public sealed const struct LongNumber : IntBaseNumber
 //    /// Bitwise inversion
 //    long inverted
 //        => system'core_routines'__long.  
-//        
-//    /// Negates the value
-//    negative
-//        = 0l - theValue.
+        
+    /// Negates the value
+    Negative
+        = 0l - theValue;
 }
 
 // --- realNumber ---
@@ -2142,9 +2142,9 @@ public sealed const struct RealNumber : BaseNumber
     /// Clones the value    
     real clone = new RealNumber(self);
     
-//    /// Negates the value
-//    negative
-//        = 0.0r - theValue.
+    /// Negates the value
+    Negative
+        = 0.0r - theValue;
 }
 
 // --- CharValue ---

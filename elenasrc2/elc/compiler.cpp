@@ -2436,6 +2436,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
    }
    else {
       switch (node.type) {
+         case lxCollection:
+            result = compileCollection(writer, node, scope, ObjectInfo(okObject, 0, V_OBJARRAY, scope.moduleScope->superReference, 0));
+            break;
          case lxCodeExpression:
          case lxCode:
             if (test(mode, HINT_EXTERNALOP)) {
@@ -4474,9 +4477,11 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
       }
       if (attributes.castAttr || attributes.newOpAttr) {
          SNode msgNode = goToNode(current, lxMessage, lxCollection);
-         if (msgNode == lxCollection && !attributes.castAttr && goToNode(current, lxSize) == lxSize) {
-            msgNode.set(lxTypecast, V_OBJARRAY);
-            exprAttr |= HINT_VIRTUALEXPR;
+         if (msgNode == lxCollection && !attributes.castAttr) {
+            if (goToNode(current, lxSize) == lxSize) {
+               msgNode.set(lxTypecast, V_OBJARRAY);
+               exprAttr |= HINT_VIRTUALEXPR;
+            }
          }
          else if (msgNode == lxMessage && msgNode.firstChild() == lxNone) {
             exprAttr |= HINT_MODULESCOPE;
