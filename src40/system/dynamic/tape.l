@@ -43,33 +43,33 @@ public mixin ClosureTape
 //            i += 1.
 //        ]
 //    ]
-//        
-//    constructor new (List<object> list, int index, int length)        
-//        <= new(length);
-//    [
-//        int i := index.
-//        int c := 0.
-//        while (c < length)
-//        [
-//            theList[c] := list[i].
-//
-//            c += 1.
-//            i += 1.
-//        ]
-//    ]
+        
+    constructor new(List<object> list, int index, int length)        
+        <= allocate(length)
+    {
+        int i := index;
+        int c := 0;
+        while (c < length)
+        {
+            theList[c] := list[i];
+
+            c += 1;
+            i += 1
+        }
+    }
         
     dispatch() => system'core_routines'__closuretape;
 }
 
-//// --- Class ---
-//
-//public mixin ClosureClass
-//{
-//    V<object> items.
-//    
-//    internal constructor newInternal(int n)
-//        = V<object>(n).
-//    
+// --- Class ---
+
+public mixin ClosureClass
+{
+    object[] items;
+    
+    internal constructor allocate(int n)
+        = new object[](n);
+    
 //    constructor new(Array list)
 //        <= newInternal(list length);
 //    [
@@ -95,21 +95,15 @@ public mixin ClosureTape
 //            i := i + 1
 //        ]
 //    ]
-//    
-//    constructor new(List<object> list, int index, int length)
-//        <= newInternal(length);
-//    [
-//        int i := 0.
-//        while(i < length)
-//        [
-//            self setField(i, list getAt(index + i)).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//    
-//    dispatch => system'core_routines'__closureclass.
-//}
-//
-//
-//
+    
+    constructor new(List<object> list, int index, int length)
+        <= allocate(length)
+    {
+        for (int i := 0, i < length, i += 1)
+        {
+            items[i]:= list.at(i)
+        }
+    }
+    
+    dispatch() => system'core_routines'__closureclass;
+}

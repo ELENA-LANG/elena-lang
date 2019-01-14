@@ -909,6 +909,8 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
    // load table into target image
    MemoryReader reader(sectionInfo.section);
    writer.read(&reader, sectionInfo.section->Length());
+   writer.writeDWord(0);
+   writer.writeDWord(0);
    
    ref_t bodyPtr = writer.Position();
 

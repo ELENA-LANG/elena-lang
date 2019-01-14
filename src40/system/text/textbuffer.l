@@ -55,11 +55,11 @@ sealed public /*nonstructural */ class TextBuilder
 //    [
 //        self write:forwards'newLine.
 //    ]
-//
-//    append : aLine
-//    [
-//        self write:aLine.
-//    ]
+
+    append(line)
+    {
+        self.write:line
+    }
                                     
     private reserve(int len)
     {
@@ -121,19 +121,19 @@ sealed public /*nonstructural */ class TextBuilder
         theLength.append(1)
     }
 
-//    write(int n)
-//    [
-//        T<byte,16> tmp.
-//        T<char,16> ch_tmp.
-//        int        len := 16.
-//        
-//        literalConvertor convert(n, T<ByteArray>(tmp), &len).
-//        
-//        UTF8Encoding convert(0, &len, T<ByteArray>(tmp), T<CharArray>(ch_tmp), &len).
-//        
-//        self write(T<CharArray>(ch_tmp), len).
-//    ]
-//
+    write(int n)
+    {
+        byte tmp[16];
+        char ch_tmp[16];
+        int  len := 16;
+        
+        stringConvertor.convert(n, tmp, ref len);
+        
+        UTF8Encoder.convert(0, ref len, tmp, ch_tmp, ref len);
+        
+        self.write(ch_tmp, len)
+    }
+
 //    write : anObject
 //    [
 //        self write(anObject literal).
@@ -249,21 +249,21 @@ sealed public /*nonstructural */ class TextBuilder
 //        
 //        theLength append(aLength).
 //    ]
-//
-//    insert(int anIndex, literal aLiteral)
-//    [
-//        int aLength := 0.
-//        UTF8Encoding charCount(aLiteral, &aLength).
-//
-//        self reserve(aLength).
-//        
-//        theBuffer move(anIndex, T<int>(theLength), aLength).
-//        
-//        aLiteral save(anIndex, theBuffer, &aLength).
-//        
-//        theLength append(aLength).
-//    ]
-//
+
+    insert(int index, string s)
+    {
+        int length := 0;
+        UTF8Encoding.charCount(s, ref length);
+
+        self.reserve(length);
+        
+        theBuffer.move(index, cast int(theLength), length);
+        
+        s.save(index, theBuffer, ref length);
+        
+        theLength.append(length)
+    }
+
 //    insert(int anIndex, wide aLiteral)
 //    [
 //        int aLength := 0.
@@ -462,8 +462,8 @@ sealed public /*nonstructural */ class TextBuilder
         theLength.reduce(length)
     }
     
-//    trim(int n)
-//    [
-//        theLength reduce(n)
-//    ]
+    trim(int n)
+    {
+        theLength.reduce(n)
+    }
 }

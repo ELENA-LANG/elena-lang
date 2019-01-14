@@ -3,6 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * stringOpHelper should be able to call the original trim method, currently it is not possible to call trim
+                   method for the anonymous object
+                 * in the interface it was possible to declare a parameter of non-existing class
                  * support - singleton Code : BaseCode;
                  * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
                  * syntax : template should be the last token in expression and one before the last for declaration

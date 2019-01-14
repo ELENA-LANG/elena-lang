@@ -1444,11 +1444,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
          info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
          info.size = 8;
          break;
-//      case V_SYMBOL:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugReference | elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_SYMBOL:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugReference | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
       case V_INT32ARRAY:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elWrapper;
@@ -1848,21 +1848,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       case V_MESSAGE:
       case V_SUBJECT:
       case V_EXTMESSAGE:
+      case V_SYMBOL:
          attrValue = 0;
          return true;
-         ////case V_INT64:
-      ////   attrValue = 0;
-      ////   return true;
-      //case V_REAL64:
-      //case V_PTR:
-      //case V_DWORD:
-      //   attrValue = 0;
-      //   return true;
-      //case V_SYMBOL:
-      //   attrValue = 0;
-      //   return true;
-      ////case V_OBJARRAY:
-      ////   return true;
       case V_FIELD:
          attrValue = -1;
          return true;
@@ -2069,10 +2057,9 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
          case V_EXTMESSAGE:
             info.header.flags |= (elDebugMessage | elExtMessage);
             break;
-//         case V_SYMBOL:
-//            info.header.flags |= (elDebugReference | elReadOnlyRole | elWrapper | elSymbol);
-//            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_SYMBOL, 0));
-//            return info.size == 4;
+         case V_SYMBOL:
+            info.header.flags |= (elDebugReference | elSymbol);
+            break;
          default:
             break;
       }

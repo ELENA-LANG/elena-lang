@@ -111,8 +111,6 @@ private:
 
    bool loadConfig(path_t configPath);
 
-   bool initSubjectSection(ImageSection& subjectSection);
-
 public:
    // frameHeader contains initialized frame fields
    void startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry);

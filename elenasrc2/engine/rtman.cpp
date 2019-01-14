@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA RTManager.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -293,57 +293,3 @@ void* RTManager :: loadSubject(StreamReader& reader, ident_t name)
 
    return (void*)subjects.get(name);
 }
-
-//void* RTManager :: loadMessage(StreamReader& reader, ident_t message, MessageMap& verbs)
-//{
-//   ReferenceMap subjects(0);
-//   subjects.read(&reader);
-//
-//   IdentifierString signature;
-//   size_t subject = 0;
-//   size_t param = 0;
-//   int paramCount = -1;
-//   for (size_t i = 0; i < getlength(message); i++) {
-//      if (message[i] == '.') {
-//         return NULL;
-//      }
-//      else if (message[i] == '[') {
-//         if (message[i + 1] == ']') {
-//            //HOT FIX : support open argument list
-//            paramCount = OPEN_ARG_COUNT;
-//         }
-//         else if (message[getlength(message) - 1] == ']') {
-//            signature.copy(message + i + 1, getlength(message) - i - 2);
-//            paramCount = signature.ident().toInt();
-//            if (paramCount > 12)
-//               return NULL;
-//         }
-//         else return NULL;
-//
-//         param = i;
-//      }
-//      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-//      }
-//      else if (message[i] == ']' && i == (getlength(message) - 1)) {
-//      }
-//      else return NULL;
-//   }
-//
-//   int flags = 0;
-//   if (message.startsWith("set&")) {
-//      subject = 4;
-//      flags = PROPSET_MESSAGE;
-//   }
-//   else if (message.compare("set", param)) {
-//      flags = PROPSET_MESSAGE;
-//   }
-//
-//   if (param != 0) {
-//      signature.copy(message + subject, param - subject);
-//   }
-//   else signature.copy(message + subject);
-//
-//   ref_t signatureId = subjects.get(signature);
-//
-//   return (void*)(encodeMessage(signatureId, paramCount) | flags);
-//}

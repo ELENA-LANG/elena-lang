@@ -8,9 +8,9 @@ public extension objectOp
 
 //    __parent
 //        => system'core_routines'__object.
-//
-//    bool instanceOf:type
-//        => system'core_routines'__object.        
+
+    bool instanceOf(type)
+        => system'core_routines'__object;
 
     string __getClassName()
     {

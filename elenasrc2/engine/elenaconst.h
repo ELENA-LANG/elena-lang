@@ -299,7 +299,7 @@ namespace _ELENA_
    constexpr int elRole                = 0x00004080;
    constexpr int elExtension           = 0x00004980;
    constexpr int elMessage             = 0x00008000;
-//   const int elSymbol              = 0x00100000;
+   constexpr int elSymbol              = 0x00100000;
    constexpr int elExtMessage          = 0x00208000;
 //   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
    constexpr int elWithCustomDispatcher= 0x00800000;
@@ -323,8 +323,8 @@ namespace _ELENA_
    constexpr int elDebugShorts         = 0x00080000;
    constexpr int elDebugPTR            = 0x00090000;
    constexpr int elDebugWideLiteral    = 0x000A0000;
-//   const int elDebugReference      = 0x000B0000;   // symbol reference
-   const int elDebugSubject        = 0x000C0000;
+   constexpr int elDebugReference      = 0x000B0000;   // symbol reference
+   constexpr int elDebugSubject        = 0x000C0000;
 //////   const int elDebugReals          = 0x000D0000;
    constexpr int elDebugMessage        = 0x000E0000;
 //////   const int elDebugDPTR           = 0x000F0000;

@@ -205,9 +205,9 @@ public sealed List<T> : Enumerable<T>
 //            i := i + 1
 //        ]
 //    ]
-//        
-//    /// Returns the top object
-//    type first = theArray getAt(0).
+        
+    /// Returns the top object
+    T First = theArray.at(0);
     
     /// Clears the list
     clear()
@@ -215,13 +215,13 @@ public sealed List<T> : Enumerable<T>
         theLength.Value := 0        
     }
     
-//    trim(IntNumber pos)
-//    [
-//        if (pos > theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theLength value := pos.
-//    ]
+    trim(int pos)
+    {
+        if (pos > (cast int(theLength)))
+            { OutOfRangeException.raise() };
+        
+        theLength.Value := pos
+    }
     
     Enumerator<T> enumerator() = new BaseEnumerator<T>:
     {
@@ -796,21 +796,21 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
 //    [
 //        aCapacity value := theCapacity.
 //    ]
-//    
-//    /// Clears the list
-//    clear 
-//    [
-//        theLength value := 0
-//    ]
-//    
-//    trim(int pos)
-//    [
-//        if (pos > theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theLength value := pos.
-//    ]
-//    
+    
+    /// Clears the list
+    clear()
+    {
+        theLength.Value := 0
+    }
+    
+    trim(int pos)
+    {
+        if (pos > (cast int(theLength)))
+            { OutOfRangeException.raise() };
+        
+        theLength.Value := pos
+    }
+    
 //    /// Returns the top object
 //    first = theArray getAt(0).
 //

@@ -3,6 +3,7 @@
 
 define elStructure          000000008h
 define elSubject            000002000h
+define elMessage            000008000h
 
 procedure __object."#dispatch[1]"
 
@@ -92,6 +93,16 @@ labTrue:
   acopyr const : system'true
   quitn 2
   
+end
+
+procedure __object.instanceOf[2]
+
+  bloadsi 2
+  aloadsi 1
+  check
+  selectr const : system'false const : system'true
+  quitn 2
+
 end
 
 procedure __exception."on[2]"
@@ -509,6 +520,39 @@ procedure __literal."delete$system@IntNumber$system@IntNumber[3]"
   acopyb
   quitn 3
   
+end
+
+procedure __literal."system$$saveToByteArray$system@IntNumber$@system@Array#1&system@ByteNumber$system@IntNumber[4]"
+
+  pusha
+  bloadsi 4
+  aloadsi 5
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  aloadsi 0
+
+  pushe                                               
+  pushd
+  dcopy 0
+
+labNext:
+  esavesi 1
+  breadb
+  inc
+  dswapsi 0
+  bwriteb
+  inc
+  eloadsi 1
+  dswapsi 0
+  less labNext
+
+  popi 2
+  popa
+
+  quitn 4
+
 end
 
 procedure __wide."read:Length$@system@ref#1&system@IntNumber[2]"
@@ -1415,6 +1459,27 @@ labDefault:
   
 end
 
+procedure __message."load$system@Message$system@String[2]"
+
+  aloadsi 2   // ; read aName parameter
+  pusha
+  callextr extern : LoadMessage
+  pop
+  ifn labError 0
+  bloadsi 1
+  nsave
+  acopyb
+  quitn 2
+
+labError:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
+end
+
 procedure __extmessage."#dispatch[1]"
 
   bloadsi 1
@@ -1872,6 +1937,105 @@ labErr:
   pushr const : %new[0]
   throw
   
+end
+
+procedure __utf8encoder."charCount$system@String$@system@ref#1&system@IntNumber[3]"
+
+  bcopya
+  aloadsi 2
+  blen
+  dec
+  ecopyd
+  callextr api : strcharlen
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __symbol."#dispatch[1]"
+
+  pushe
+  acalli 0
+  pope
+  ajumpvi 0
+
+end
+
+procedure __symbol."load$system@Symbol$system@String[2]"
+
+  aloadsi 2   // ; read aName parameter
+  pusha
+  callextr extern : LoadSymbol
+  pop
+  ifn labError 0
+  bloadsi 1
+  nsave
+  acopyb
+  quitn 2
+
+labError:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __closureclass."#dispatch[1]"
+
+  bsredirect
+
+  pushe
+  bcopya
+  pushn 0
+
+labNext:
+  count
+  dloadsi 0
+  if labEnd
+  get
+  inc
+  dsavesi 0
+
+  flag
+  andn elMessage
+  ifn  labNext 0
+
+  nload
+  ecopyd
+  dloadsi 1
+  else labNext
+
+labCall:
+  dloadsi 0
+  get
+  pop
+  pope
+  setverb messagename : "#invoke"
+  eaddn 1
+  ajumpvi 0
+
+labQuit:
+  quitn 1
+  
+labEnd:
+  popi 2
+  pope
+  open    4
+  reserve 2
+  esavesi 3
+  bcopys  -3
+  pushb
+  pusha
+  acopyr class : system'Message
+  pushr class : system'MethodNotFoundException
+  asavesi 5
+  aloadsi 0
+  pushr const : %"new[2]"
+  throw
+
 end
 
 symbol sta_start

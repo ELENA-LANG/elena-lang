@@ -61,7 +61,7 @@
 #18    = subjconst;
 //__extmssg       = #21.
 ////__tape_mixin    = #8209.
-//__symbol        = #22.
+#22    = __symbol;
 //dynamic         = #30.
 //stackunsafe     = #16403.
 

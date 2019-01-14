@@ -175,30 +175,27 @@ public singleton UTF8Encoder : Encoder
 //        = UTF8Encoding toLiteral(anIndex, aLength, anArray).
 }
 
-//// --- UTF8Encoding ---
-//
-//public class UTF8Encoding =
-//{
-//    T<Encoder> encoder = UTF8Encoder.
-//    
-//    charCount(literal aLiteral, ref<int> aRetVal)
-//        => system'core_routines'__utf8encoder.
-//        
-//    convert(int anIndex, int aLength, literal aLiteral, ByteArray anArray)
-//    [
-//        aLiteral saveToByteArray(anIndex, anArray, aLength).
-//    ]
-//        
+// --- UTF8Encoding ---
+
+public singleton UTF8Encoding
+{
+    Encoder encoder() = UTF8Encoder;
+    
+    charCount(string s, ref int retVal)
+        => system'core_routines'__utf8encoder;
+        
+    convert(int index, int length, string s, byte[] array)
+    {
+        s.saveToByteArray(index, array, length)
+    }
+        
 //    toLiteral(int anIndex, int aLength, ByteArray anArray)
 //        = LiteralValue fromByteArray(anIndex, aLength, anArray).
-//        
-//    convert(int anIndex, ref<int> aLength, ByteArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
-//        => system'core_routines'__utf8encoder.
-//        
+        
 //    convert(int anIndex, ref<int> aLength, literal aByteArray, CharArray anOutput, ref<int> anOutputLength)
 //        => system'core_routines'__utf8encoder.
-//}.
-//
+}
+
 //// --- UTF16Encoder ---
 //
 //public singleton UTF16Encoder :: Encoder

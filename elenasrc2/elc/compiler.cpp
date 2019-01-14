@@ -1978,7 +1978,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
                   if (binaryArray)
                      variableArg = size;
 
-                  if (variable.reference != 0) {
+                  if (variable.reference != 0 && !isPrimitiveRef(variable.reference)) {
                      className = scope.moduleScope->module->resolveReference(variable.reference);
                   }
                }
@@ -4329,7 +4329,8 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
 
 ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
 {
-   IdentifierString templateName(node.firstChild(lxTerminalMask).identifier());
+   SNode terminalNode = node.firstChild(lxTerminalMask);
+   IdentifierString templateName(terminalNode.identifier());
    int paramCounter = 0;
    SNode current = node.findChild(lxTarget);
    while (current != lxNone) {
@@ -4344,7 +4345,7 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
    templateName.append('#');
    templateName.appendInt(paramCounter);
 
-   return resolveImplicitIdentifier(scope, templateName.c_str(), false, false);
+   return resolveImplicitIdentifier(scope, templateName.c_str(), terminalNode == lxReference, false);
 }
 
 ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
@@ -4358,7 +4359,7 @@ ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
 
 void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope)
 {
-   if (current == lxIdentifier)
+   if (current.compare(lxIdentifier, lxReference))
       current = current.nextNode();
 
    ExpressionAttributes attributes;

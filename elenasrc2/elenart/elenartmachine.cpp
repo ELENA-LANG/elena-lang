@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2018, by Alexei Rakov
+//                                              (C)2009-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -150,19 +150,6 @@ int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t le
    return manager.readClassName(reader, classAddress, buffer, length);
 }
 
-bool ELENARTMachine :: initSubjectSection(ImageSection& subjectSection)
-{
-   void* ptr = _debugSection.get(_debugSection.Length());
-   int size = *((int*)ptr);
-
-   if (size > 0) {
-      subjectSection.init(ptr, size + 8);
-
-      return true;
-   }
-   else return false;
-}
-
 int ELENARTMachine :: loadSubjectName(size_t subjectRef, char* buffer, size_t length)
 {
    ImageSection messageSection;
@@ -217,52 +204,64 @@ void* ELENARTMachine :: loadSymbol(ident_t name)
 
 void* ELENARTMachine :: loadSubject(ident_t name)
 {
-   if (name.find('$') != -1) {
-      //setStatus("Invalid subject");
+   ImageSection messageSection;
+   messageSection.init(_messageSection, 0x10000); // !! dummy size
+   MemoryReader reader(&messageSection);
 
-      return 0;
+   for (ref_t subjectRef = 1; true; subjectRef++) {
+      if (messageSection[subjectRef * 8] == 0) {
+         pos_t namePtr = messageSection[subjectRef * 8 + 4];
+         if (!namePtr)
+            break;
+
+         reader.seek(namePtr);
+
+         IdentifierString messageName;
+         reader.readString(messageName);
+         if (messageName.compare(name)) {
+            return (void*)subjectRef;
+         }
+      }
    }
 
-   RTManager manager;
-
-   // initialize image section ;
-   // it directly follows debug section
-   ImageSection subjectSection;
-   if (initSubjectSection(subjectSection)) {
-      void* ptr = _debugSection.get(_debugSection.Length());
-      int size = *((int*)ptr);
-
-      subjectSection.init(ptr, size + 8);
-
-      MemoryReader reader(&subjectSection);
-
-      return manager.loadSubject(reader, name);
-   }
-   else return NULL;
+   return nullptr;
 }
 
-void* ELENARTMachine :: loadMessage(ident_t name)
+void* ELENARTMachine :: loadMessage(ident_t message)
 {
-   //if (name.find('$') != -1) {
-   //   //setStatus("Invalid subject");
+   IdentifierString messageName;
+   size_t subject = 0;
+   size_t param = 0;
+   int paramCount = -1;
+   for (size_t i = 0; i < getlength(message); i++) {
+      if (message[i] == '[') {
+         if (message[getlength(message) - 1] == ']') {
+            messageName.copy(message + i + 1, getlength(message) - i - 2);
+            paramCount = messageName.ident().toInt();
+            if (paramCount > ARG_COUNT)
+               return nullptr;
+         }
+         else return nullptr;
 
-   //   return 0;
-   //}
+         param = i;
+      }
+      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+      }
+      else if (message[i] == ']' && i == (getlength(message) - 1)) {
+      }
+      else return nullptr;
+   }
 
-   //RTManager manager;
+   ref_t flags = 0;
 
-   //// initialize image section ;
-   //// it directly follows debug section
-   //ImageSection subjectSection;
-   //if (initSubjectSection(subjectSection)) {
-   //   void* ptr = _debugSection.get(_debugSection.Length());
-   //   int size = *((int*)ptr);
+   if (param != 0) {
+      messageName.copy(message + subject, param - subject);
+   }
+   else messageName.copy(message + subject);
 
-   //   subjectSection.init(ptr, size + 8);
+   ref_t actionRef = (ref_t)loadSubject(messageName.ident());
+   if (!actionRef)
+      return nullptr;
 
-   //   MemoryReader reader(&subjectSection);
-
-   //   return manager.loadMessage(reader, name, _verbs);
-   //}
-   /*else*/ return NULL;
+   return (void*)(encodeMessage(actionRef, paramCount, flags));
 }

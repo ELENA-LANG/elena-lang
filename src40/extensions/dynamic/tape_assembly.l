@@ -1,19 +1,19 @@
 import system'collections;
 import system'dynamic;
-//import system'text.
+import system'text;
 //import extensions.
 
 singleton message_token;
 singleton expr_end_token;
-//singleton subexpr_token.
+singleton subexpr_token;
 singleton expr_var_token;
-//singleton previous_token.
-//singleton assign_token.
+singleton previous_token;
+singleton assign_token;
 //singleton if_token.
 //singleton code_token.
 
 const int METHOD_PARAM = 1;
-//const int FORWARD_PARAM = 2.
+const int FORWARD_PARAM = 2;
 
 sealed class ClassContext
 {
@@ -37,25 +37,25 @@ sealed class ClassContext
         
     get int Length() => _tape;
     
-//    tape = _tape.
-//        
-//    trim : pos
-//        => _tape.        
-//    
-//    first => _tape.        
+    List<object> tape() = _tape;
+        
+    trim(pos)
+        => _tape;        
+    
+    get First() => _tape;        
     
     append(object)
     {
         _tape.append:object
     }
     
-//    getAt(IntNumber index)
-//        = _tape[index].        
-//        
-//    setAt(IntNumber index, Object object)
-//    [
-//        _tape[index] := object.
-//    ]
+    at(int index)
+        = _tape[index]; 
+        
+    setAt(int index, object object)
+    {
+        _tape[index] := object
+    }
 }
 
 sealed class ParameterContext
@@ -76,36 +76,36 @@ sealed class ParameterContext
         ^ len
     }
     
-//    trim(IntNumber level)
-//    [
-//        int index := level * 3.
-//        
-//        _buffer trim(index).
-//    ]
+    trim(int level)
+    {
+        int index := level * 3;
+        
+        _buffer.trim(index);
+    }
         
     add(String name, IntNumber type, Object value)
     {
         _buffer.append(name).append(type).append(value)
     }
     
-//    resolve(literal name, ref<int> retVal)
-//    [
-//        int len := _buffer length.
-//        int i := len - 3.
-//        while (i >= 0)
-//        [
-//            if (name == _buffer[i])
-//            [
-//                retVal value := _buffer[i+1].
-//
-//                ^ _buffer[i+2].
-//            ].
-//            
-//            i := i - 3.
-//        ].
-//        
-//        ^ nil.
-//    ]        
+    resolve(string name, ref int retVal)
+    {
+        int len := _buffer.Length;
+        int i := len - 3;
+        while (i >= 0)
+        {
+            if (name == _buffer[i])
+            {
+                retVal := _buffer[i+1];
+
+                ^ _buffer[i+2]
+            };
+            
+            i := i - 3
+        };
+        
+        ^ nil
+    }        
 }
 
 interface class Strategy
@@ -124,15 +124,15 @@ interface class Strategy
 //    T<Strategy> next_one(ClassContext context, ParameterContext parameters) []
         
     begin(ClassContext context, ParameterContext parameters) {}
-//    end(ClassContext context, ParameterContext parameters)   []    
-//    
-//    setReference(ClassContext context, LiteralValue r)       []
+    end(ClassContext context, ParameterContext parameters)   {}
+    
+    setReference(ClassContext context, String r)       {}
 //    setConstant(ClassContext context, object o)       []
     setMessageToken(ClassContext context, String m)    {}
 //    setLiteral(ClassContext context, LiteralValue l)         []
 //    setNumericToken(ClassContext context, LiteralValue l)    []
 //    setAssignToken(ClassContext context, LiteralValue t)     []
-//    setIdentToken(ClassContext context, LiteralValue m, ParameterContext parameters) []
+    setIdentToken(ClassContext context, String m, ParameterContext parameters) {}
     setParamToken(ClassContext context, String m, ParameterContext parameters) {}
 }
 
@@ -235,53 +235,53 @@ singleton Method : Strategy
         context.append(m)
     }
     
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        int level := context pop.
-//        
-//        parameters trim(level).
-//        
-//        int pos := context pop.
-//        var m := nil.
-//        int counter := -1. // self is included as well
-//        int index := pos.
-//        
-//        // define the method name
-//        var p := context getAt(index).
-//        while (p equalReference:expr_var_token)
-//        [
-//            index := index + 1.
-//            counter := counter + 1.
-//            p := context getAt(index).
-//        ].
-//
-//        if (p equalReference:message_token)
-//        [
-//            m := context getAt(index + 1).
-//            index := index + 2.
-//            p := context getAt(index).
-//        ].
-//                
-//        while (p equalReference:expr_var_token)
-//        [
-//            index := index + 1.
-//            counter := counter + 1.
-//            p := context getAt(index).
-//        ].
-//        
-//        T<TextBuilder> name := TextBuilder new.
-//        name append(m).
-//        name append:"[".
-//        name append(counter literal).
-//        name append:"]".        
-//        
-//        int len := context length - index.
-//        var tape := ClosureTape new(context tape, index, len).
-//        
-//        context trim(pos).
-//        context append(Message new(T<literal>(name))).
-//        context append(tape).
-//    ]    
+    end(ClassContext context, ParameterContext parameters)
+    {
+        int level := context.pop();
+        
+        parameters.trim(level);
+        
+        int pos := context.pop();
+        var m := nil;
+        int counter := -1; // self is included as well
+        int index := pos;
+        
+        // define the method name
+        var p := context.at(index);
+        while (p.equalReference:expr_var_token)
+        {
+            index := index + 1;
+            counter := counter + 1;
+            p := context.at(index)
+        };
+
+        if (p.equalReference:message_token)
+        {
+            m := context.at(index + 1);
+            index := index + 2;
+            p := context.at(index)
+        };
+                
+        while (p.equalReference:expr_var_token)
+        {
+            index := index + 1;
+            counter := counter + 1;
+            p := context.at(index)
+        };
+        
+        TextBuilder name := new TextBuilder();
+        name.append(m);
+        name.append:"[";
+        name.append(counter.Printable);
+        name.append:"]";
+        
+        int len := context.Length - index;
+        var tape := ClosureTape.new(context.tape(), index, len);
+        
+        context.trim(pos);
+        context.append(new Message(cast string(name)));
+        context.append(tape);
+    }    
 }
 
 class BaseClass : Strategy
@@ -293,30 +293,30 @@ class BaseClass : Strategy
         context.push(context.Length)
     }
     
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        var pos := context pop.
-//        var len := context length - pos.
-//        
-//        var class := ClosureClass new(context tape, pos, len).
-//        
-//        context trim(pos).
-//        context append(class).
-//    ]
+    end(ClassContext context, ParameterContext parameters)
+    {
+        var pos := context.pop();
+        var len := context.Length - pos;
+        
+        var class := ClosureClass.new(context.tape(), pos, len);
+        
+        context.trim(pos);
+        context.append(class)
+    }
 }
 
 singleton Singleton : BaseClass
 {
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        var pos := context pop.
-//        var len := context length - pos.
-//        
-//        var class := ClosureClass new(context tape, pos, len).
-//        
-//        context trim(pos).
-//        context append(class).
-//    ]
+    end(ClassContext context, ParameterContext parameters)
+    {
+        var pos := context.pop();
+        var len := context.Length - pos;
+        
+        var class := ClosureClass.new(context.tape(), pos, len);
+        
+        context.trim(pos);
+        context.append(class)
+    }
 }
 
 //singleton Nested :: BaseClass
@@ -341,12 +341,12 @@ class BaseExpression : Strategy
     }    
  
 //    T<Strategy> singleton_one = Nested.
-//          
-//    setReference(ClassContext context, literal r) 
-//    [
-//        context push(ConstantClosure new(Symbol new(r))).
-//    ]
-//    
+          
+    setReference(ClassContext context, string r) 
+    {
+        context.push(new ConstantClosure(new Symbol(r)))
+    }
+    
 //    setConstant(ClassContext context, object c) 
 //    [
 //        context push(ConstantClosure new(c)).
@@ -361,31 +361,32 @@ class BaseExpression : Strategy
 //    [
 //        context push(ConstantClosure new(l toInt)).
 //    ]
-//    
-//    setMessageToken(ClassContext context, LiteralValue m) 
-//    [
-//        context push:m.
-//        context push:message_token.
-//    ]
-//    
-//    setIdentToken(ClassContext context, LiteralValue m, ParameterContext parameters) 
-//    [
-//        int type := 0.
-//        object param := parameters resolve(m, &type).
-//        if (type == METHOD_PARAM)
-//        [
-//            context push:param.
-//            context push:expr_var_token.            
-//        ];
-//        if (type == FORWARD_PARAM)
-//        [
-//            context push(ConstantClosure new(param)).
-//        ];
-//        [
-//            InvalidArgumentException new("Variable cannot be resolved - " + m); raise
-//        ].
-//    ]
-//    
+    
+    setMessageToken(ClassContext context, String m) 
+    {
+        context.push:m;
+        context.push:message_token
+    }
+    
+    setIdentToken(ClassContext context, String m, ParameterContext parameters) 
+    {
+        int type := 0;
+        object param := parameters.resolve(m, ref type);
+        if (type == METHOD_PARAM)
+        {
+            context.push:param;
+            context.push:expr_var_token
+        }
+        else if (type == FORWARD_PARAM)
+        {
+            context.push(new ConstantClosure(param))
+        }
+        else
+        {
+            InvalidArgumentException.new("Variable cannot be resolved - " + m).raise()
+        }
+    }
+    
 //    setAssignToken(ClassContext context, LiteralValue t)
 //    [
 //        var token := context pop.
@@ -408,112 +409,114 @@ class BaseExpression : Strategy
 //        
 //        context push:previous_token.
 //    ]
-//    
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        object token := context pop.
-//        T<TextBuilder> buffer := TextBuilder new.
-//        int counter := -1.
-//        int prealloc := 0.
-//        bool messageExpr := false.
-//        bool popRequired := false.
-//        until(token equalReference:expr_end_token)
-//        [
-//            if (token equalReference:subexpr_token)
-//            [
-//                counter := counter + 1.
-//                context append(StackClosure new(prealloc + counter)).
-//                prealloc += 1.
-//            ];
-//            if (token equalReference:message_token)
-//            [
-//                buffer insert(0, "&").
-//                buffer insert(0, T<literal>(context pop)).
-//                messageExpr := true.
-//            ];
-//            [
-//                if (token equalReference:expr_var_token)
-//                [
-//                    var index := context pop.
-//                    
-//                    var next_token := context peek.
-//                    if(next_token equalReference:assign_token)
-//                    [
-//                        token := AssignClosure new(index).
-//                    ];
-//                    [
-//                        token := VarClosure new(index).
-//                    ]
-//                ];
-//                if (token equalReference:previous_token)
-//                [
-//                    token := StackClosure new(counter + 1).
-//                    
-//                    popRequired := true.
-//                ].
-//                context append:token.
-//                counter := counter + 1.
-//            ].
-//            
-//            token := context pop.
-//        ].
-//
-//        if (messageExpr)
-//        [
-//            buffer trim(1).
-//            buffer write("[").
-//            buffer write(counter).
-//            buffer write("]").
-//            
-//            context append(MessageClosure new(Message new(T<literal>(buffer))))
-//        ].
-//        
-//        if (popRequired)
-//        [
-//            prealloc += 1.
-//        ].
-//        while (prealloc > 0)
-//        [
-//            context append:popPrevClosure.
-//            prealloc -= 1.
-//        ]
-//    ]    
+    
+    end(ClassContext context, ParameterContext parameters)
+    {
+        object token := context.pop();
+        TextBuilder buffer := new TextBuilder();
+        int counter := -1;
+        int prealloc := 0;
+        bool messageExpr := false;
+        bool popRequired := false;
+        until(token.equalReference:expr_end_token)
+        {
+            if (token.equalReference:subexpr_token)
+            {
+                counter := counter + 1;
+                context.append(new StackClosure(prealloc + counter));
+                prealloc += 1
+            }
+            else if (token.equalReference:message_token)
+            {
+                buffer.insert(0, "&");
+                buffer.insert(0, cast string(context.pop()));
+                messageExpr := true
+            }
+            else
+            {
+                if (token.equalReference:expr_var_token)
+                {
+                    int index := context.pop();
+                    
+                    var next_token := context.peek();
+                    if(next_token.equalReference:assign_token)
+                    {
+                        token := new AssignClosure(index)
+                    }
+                    else
+                    {
+                        token := new VarClosure(index)
+                    }
+                }
+                else if (token.equalReference:previous_token)
+                {
+                    token := StackClosure new(counter + 1);
+                    
+                    popRequired := true
+                };
+                context.append:token;
+                counter := counter + 1
+            };
+            
+            token := context.pop()
+        };
+
+        if (messageExpr)
+        {
+            buffer.trim(1);
+            buffer.write("[");
+            buffer.write(counter);
+            buffer.write("]");
+            
+            context.append(new MessageClosure(new Message(cast string(buffer))))
+        };
+        
+        if (popRequired)
+        {
+            prealloc += 1
+        };
+        while (prealloc > 0)
+        {
+            context.append:popPrevClosure;
+            prealloc -= 1
+        }
+    }    
 }
 
 //singleton SymbolBody :: BaseExpression
 //{
 //    T<Strategy> expression = SubExpression.
 //}
-//
-//singleton SubExpression :: BaseExpression
-//{
-//    T<Strategy> expression = SubExpression.
-//    
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        super end(context, parameters).
-//        
-//        context push:subexpr_token.
-//    ]    
-//}
+
+singleton SubExpression : BaseExpression
+{
+    Strategy expression() = SubExpression;
+    
+    end(ClassContext context, ParameterContext parameters)
+    {
+        super.end(context, parameters);
+        
+        context.push:subexpr_token
+    }    
+}
     
 singleton RootExpresson : BaseExpression
 {
-//    T<Strategy> expression = SubExpression.
-//    
+    Strategy expression() = SubExpression;
+    
 //    T<Strategy> if_one(ClassContext context)
 //    [
 //        context push:if_token.
 //        
 //        ^ IfExpression.
 //    ]
-//    
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        super end(context, parameters).
-//        
-//        context append:popClosure.
-//    ]    
+    
+    end(ClassContext context, ParameterContext parameters)
+    {
+        super.end(context, parameters);
+        
+        context.append:popClosure
+    }    
 }
 
 //singleton Expresson :: BaseExpression
@@ -697,12 +700,12 @@ public class TapeAssembly
 //    
 //    openLoop
 //        <= open(%loop_one).
-//        
-//    newReference : r
-//    [
-//        _state setReference(_context, r literal).
-//    ]
-//        
+        
+    newReference(r)
+    {
+        _state.setReference(_context, r.Printable)
+    }
+        
 //    newConstant : r
 //    [
 //        _state setConstant(_context, r).
@@ -728,11 +731,11 @@ public class TapeAssembly
         _state.setParamToken(_context, p.Printable, _parameters)
     }            
 
-//    newIdentToken : m
-//    [
-//        _state setIdentToken(_context, m literal, _parameters).
-//    ]
-//
+    newIdentToken(m)
+    {
+        _state.setIdentToken(_context, m.Printable, _parameters)
+    }
+
 //    newAssignToken : t
 //    [
 //        _state setAssignToken(_context, t literal).
@@ -754,26 +757,27 @@ public class TapeAssembly
 //    [
 //        _state next_one(_context, _parameters).
 //    ]
-//    
-//    close
-//    [
-//        _state end(_context, _parameters).
-//        
-//        _state := _states pop.
-//    ]
-//    
-//    eval
-//    [
-//        var o := _context first.
-//        if (o instanceOf:ClosureTape)
-//        [
-//            ^ o().
-//        ];
-//        [
-//            ^ o
-//        ]        
-//    ]
-//    
+    
+    close()
+    {
+        _state.end(_context, _parameters);
+        
+        _state := _states.pop()
+    }
+    
+    eval()
+    {
+        var o := _context.First;
+        if (o.instanceOf:ClosureTape)
+        {
+            ^ o()
+        }
+        else
+        {
+            ^ o
+        }        
+    }
+    
 //    first => _context.
 }
 
@@ -957,79 +961,79 @@ public class newIdentifierClosure : DynamicClosureWithParam
         = t.newIdentToken:param;    
 }
 
-//singleton popClosure :: DynamicClosure
-//{
-//    generic closure(object elementToRemove, object nextElement, V<object> args)
-//        = nextElement.    
-//}
-//
-//singleton popPrevClosure :: DynamicClosure
-//{
-//    generic closure(object prevElement, object elementToRemove, V<object> args)
-//        = prevElement.    
-//}
-//
+singleton popClosure : DynamicClosure
+{
+    closure(object elementToRemove, object nextElement, params object[] args)
+        = nextElement;
+}
+
+singleton popPrevClosure : DynamicClosure
+{
+    closure(object prevElement, object elementToRemove, params object[] args)
+        = prevElement;
+}
+
 //singleton exitClosure :: DynamicClosure
 //{
 //    generic closure(V<object> args)
 //        => system'core_routines'__exit_closure.
 //}
-//
-//struct VarClosure :: DynamicClosure
-//{
-//    int index.
-//    
-//    constructor new(int index)
-//    [
-//        @index := index.
-//    ]
-//    
-//    generic closure(V<object> args)
-//    [
-//        int len := args length.
-//        int n := len.
-//        n := n - index.
-//       
-//        ^ args[n]
-//    ]
-//}
-//
-//struct StackClosure :: DynamicClosure
-//{
-//    int index.
-//    
-//    constructor new(int index)
-//    [
-//        @index := index.
-//    ]
-//    
-//    generic closure(V<object> args)
-//    [
-//        ^ args[index]
-//    ]
-//}
-//
-//struct AssignClosure :: DynamicClosure
-//{
-//    int index.
-//    
-//    constructor new(int index)
-//    [
-//        @index := index.
-//    ]
-//    
-//    generic closure(object target, V<object> args)
-//    [
-//        int len := args length.
-//        int n := len.
-//        n := n - index.
-//       
-//        args[n] := target.
-//       
-//        ^ target
-//    ]
-//}
-//
+
+struct VarClosure : DynamicClosure
+{
+    int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    closure(params object[] args)
+    {
+        int len := args.Length;
+        int n := len;
+        n := n - index;
+       
+        ^ args[n]
+    }
+}
+
+struct StackClosure : DynamicClosure
+{
+    int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    closure(params object[] args)
+    {
+        ^ args[index]
+    }
+}
+
+struct AssignClosure : DynamicClosure
+{
+    int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    closure(object target, params object[] args)
+    {
+        int len := args.Length;
+        int n := len;
+        n := n - index;
+       
+        args[n] := target;
+       
+        ^ target
+    }
+}
+
 //struct JumpIfClosure :: DynamicClosure
 //{
 //    int index.

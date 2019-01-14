@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of the base class implementing
 //      ELENA RT manager.
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef rtmanH
@@ -31,7 +31,6 @@ public:
 
    void* loadSymbol(StreamReader& debug, ident_t name);
    void* loadSubject(StreamReader& debug, ident_t name);
-   //void* loadMessage(StreamReader& debug, ident_t name, MessageMap& verbs);
 
    RTManager()
    {
