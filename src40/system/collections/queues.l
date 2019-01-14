@@ -82,12 +82,12 @@ public sealed Stack<T> : Enumerable<T>
         theTop := 0;
     }
     
-//    constructor(int capacity)
-//    [
-//        theArray := collections'List<type>(capacity).
-//        theTop := 0.
-//    ]
-//    
+    constructor allocate(int capacity)
+    {
+        theArray := new List<T>(capacity);
+        theTop := 0;
+    }
+    
     vprop int Length
     {
         readTo(ref retVal)

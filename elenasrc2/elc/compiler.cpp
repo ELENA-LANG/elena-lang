@@ -37,12 +37,11 @@ constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 constexpr auto HINT_MESSAGEREF      = 0x01000000;
 constexpr auto HINT_LOOP            = 0x00800000;
 constexpr auto HINT_SWITCH          = 0x00400000;
-////#define HINT_ALT_MODE         0x00200000
 constexpr auto HINT_MODULESCOPE     = 0x00100000;
-constexpr auto HINT_PARAMSOP		= 0x00080400;
+constexpr auto HINT_PARAMSOP		   = 0x00080400;
 constexpr auto HINT_ASSIGNING_EXPR  = 0x00040000;
 constexpr auto HINT_NODEBUGINFO     = 0x00020000;
-constexpr auto HINT_PARAMETER		= 0x00010000;
+constexpr auto HINT_PARAMETER		   = 0x00010000;
 constexpr auto HINT_SUBCODE_CLOSURE = 0x00008800;
 constexpr auto HINT_VIRTUALEXPR     = 0x00004000;
 constexpr auto HINT_INTERNALOP      = 0x00002000;
@@ -4457,6 +4456,9 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          }
          if (attributes.mssgAttr) {
             exprAttr |= HINT_MESSAGEREF;
+         }
+         if (attributes.classAttr) {
+            exprAttr |= HINT_MODULESCOPE;
          }
          if (attributes.wrapAttr) {
             SNode msgNode = goToNode(current, lxMessage/*, lxCollection*/);

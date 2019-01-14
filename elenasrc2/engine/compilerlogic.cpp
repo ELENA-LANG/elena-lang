@@ -1974,6 +1974,13 @@ bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttri
             return true;
          }
          else return false;
+      case (int)V_CLASS:
+         if (!attributes.classAttr) {
+            attributes.classAttr = true;
+
+            return true;
+         }
+         else return false;
       default:
          return false;
    }

@@ -395,17 +395,18 @@ public:
       bool  subjAttr;
       bool  mssgAttr;
       bool  wrapAttr;
+      bool  classAttr;
 
       bool isExprAttr()
       {
-         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr;
+         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | classAttr;
       } 
 
       ExpressionAttributes()
       {
          refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
          paramsAttr = newOpAttr = loopAttr = internAttr = false;
-         mssgAttr = wrapAttr = subjAttr = memberAttr = false;
+         classAttr = mssgAttr = wrapAttr = subjAttr = memberAttr = false;
       }
    };
 

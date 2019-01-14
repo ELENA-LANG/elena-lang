@@ -1,4 +1,4 @@
-//import system'collections.
+import system'collections;
 import system'dynamic;
 //import system'text.
 //import extensions.
@@ -107,9 +107,9 @@ import system'dynamic;
 //        ^ nil.
 //    ]        
 //}
-//
-//interface class Strategy
-//{
+
+interface class Strategy
+{
 //    T<Strategy> preloaded_one []
 //    T<Strategy> symbol_one    []
 //    T<Strategy> expression    []
@@ -134,17 +134,17 @@ import system'dynamic;
 //    setAssignToken(ClassContext context, LiteralValue t)     []
 //    setIdentToken(ClassContext context, LiteralValue m, ParameterContext parameters) []
 //    setParamToken(ClassContext context, LiteralValue m, ParameterContext parameters) []
-//}
-//
-//singleton StartOne :: Strategy
-//{
+}
+
+singleton StartOne : Strategy
+{
 //    T<Strategy> preloaded_one = PreloadedOne.
 //    
 //    T<Strategy> symbol_one = SymbolOne.
 //    
 //    T<Strategy> singleton_one = Singleton.
-//}
-//
+}
+
 //singleton SymbolOne :: Strategy
 //{
 //    T<Strategy> expression = SymbolBody.
@@ -642,21 +642,21 @@ import system'dynamic;
 
 public class TapeAssembly
 {
-//    Stack<Strategy>  _states;
-//    Strategy         _state;
-//
+    Stack<Strategy>  _states;
+    Strategy         _state;
+
 //    ClassContext     _context;
 //    ParameterContext _parameters;
-//    
-//    constructor()
-//    {
-//        _state := StartOne;
-//        _states := Stack<Strategy>.allocate(32);
-//
+    
+    constructor()
+    {
+        _state := StartOne;
+        //_states := Stack<Strategy>.allocate(32);
+
 //        _context := new ClassContext();
 //        _parameters := new ParameterContext()
-//    }
-//    
+    }
+    
 //    constructor(ClosureTape tape)
 //        <= ()
 //    {

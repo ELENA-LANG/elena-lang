@@ -1790,8 +1790,12 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
                copyExpressionTree(writer, nodeToInject, scope);
             }
          }
-         // if it is a nested template
-         else writer.appendNode(current.type, current.argument - 0x100);
+         else {
+            // if it is a nested template
+            writer.newNode(current.type, current.argument - 0x100);
+            copyChildren(writer, current, scope);
+            writer.closeNode();
+         }
       }
       else if (scope.type == TemplateScope::ttPropertyTemplate || scope.type == TemplateScope::ttClassTemplate) {
          SNode sizeNode = current.findChild(lxSize);
@@ -1828,8 +1832,12 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
          //}
          /*else*/ copyChildren(writer, nodeToInject, scope);
       }
-      // if it is a nested template
-      else writer.appendNode(current.type, current.argument - 0x100);
+      else {
+         // if it is a nested template
+         writer.newNode(current.type, current.argument - 0x100);
+         copyChildren(writer, current, scope);
+         writer.closeNode();
+      }
    }
    else if (current == lxTemplateMsgParam) {
       // name node is always the last parameter
