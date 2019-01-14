@@ -2,53 +2,53 @@ import system'collections;
 import system'dynamic;
 //import system'text.
 //import extensions.
-//
-//singleton message_token.
-//singleton expr_end_token.
+
+singleton message_token;
+singleton expr_end_token;
 //singleton subexpr_token.
-//singleton expr_var_token.
+singleton expr_var_token;
 //singleton previous_token.
 //singleton assign_token.
 //singleton if_token.
 //singleton code_token.
-//
-//const int METHOD_PARAM = 1.
+
+const int METHOD_PARAM = 1;
 //const int FORWARD_PARAM = 2.
-//
-//sealed class ClassContext
-//{
-//    Stack<object> _stack.
-//    List<object>  _tape.
-//    
-//    constructor new
-//    [
-//        _stack := Stack<object>().
-//        _tape := List<object>().
-//    ]
-//
-//    push : object
-//    [
-//        _stack push:object.
-//    ]        
-//    
-//    pop => _stack.
-//    
-//    peek => _stack.        
-//        
-//    int length => _tape.
-//    
+
+sealed class ClassContext
+{
+    Stack<object> _stack;
+    List<object>  _tape;
+    
+    constructor()
+    {
+        _stack := new Stack<object>();
+        _tape := new List<object>()
+    }
+
+    push(object)
+    {
+        _stack.push:object
+    }        
+    
+    pop() => _stack;
+    
+    peek() => _stack;        
+        
+    get int Length() => _tape;
+    
 //    tape = _tape.
 //        
 //    trim : pos
 //        => _tape.        
 //    
 //    first => _tape.        
-//    
-//    append : object
-//    [
-//        _tape append:object.
-//    ]    
-//    
+    
+    append(object)
+    {
+        _tape.append:object
+    }
+    
 //    getAt(IntNumber index)
 //        = _tape[index].        
 //        
@@ -56,38 +56,38 @@ import system'dynamic;
 //    [
 //        _tape[index] := object.
 //    ]
-//}
-//
-//sealed class ParameterContext
-//{
-//    T<ArrayList> _buffer.
-//    
-//    constructor new
-//    [
-//        _buffer := ArrayList new.
-//    ]
-//    
-//    int level
-//    [
-//        int len := _buffer length.
-//        
-//        len := len / 3.
-//        
-//        ^ len.
-//    ]
-//    
+}
+
+sealed class ParameterContext
+{
+    ArrayList _buffer;
+    
+    constructor()
+    {
+        _buffer := new ArrayList()
+    }
+    
+    get int Level()
+    {
+        int len := _buffer.Length;
+        
+        len := len / 3;
+        
+        ^ len
+    }
+    
 //    trim(IntNumber level)
 //    [
 //        int index := level * 3.
 //        
 //        _buffer trim(index).
 //    ]
-//        
-//    add(LiteralValue name, IntNumber type, Object value)
-//    [
-//        _buffer append(name); append(type); append(value)
-//    ]
-//    
+        
+    add(String name, IntNumber type, Object value)
+    {
+        _buffer.append(name).append(type).append(value)
+    }
+    
 //    resolve(literal name, ref<int> retVal)
 //    [
 //        int len := _buffer length.
@@ -106,34 +106,34 @@ import system'dynamic;
 //        
 //        ^ nil.
 //    ]        
-//}
+}
 
 interface class Strategy
 {
 //    T<Strategy> preloaded_one []
 //    T<Strategy> symbol_one    []
-//    T<Strategy> expression    []
-//    T<Strategy> singleton_one []
-//    T<Strategy> method_one    []
-//    T<Strategy> code_one      []
+    Strategy expression()    {}
+    Strategy singleton_one() {}
+    Strategy method_one()    {}
+    Strategy code_one()      {}
 //    T<Strategy> returning     []
 //    T<Strategy> variable_one  []
 //    T<Strategy> loop_one      []
 //
 //    T<Strategy> if_one(ClassContext context)   []
 //    T<Strategy> next_one(ClassContext context, ParameterContext parameters) []
-//        
-//    begin(ClassContext context, ParameterContext parameters) []
+        
+    begin(ClassContext context, ParameterContext parameters) {}
 //    end(ClassContext context, ParameterContext parameters)   []    
 //    
 //    setReference(ClassContext context, LiteralValue r)       []
 //    setConstant(ClassContext context, object o)       []
-//    setMessageToken(ClassContext context, LiteralValue m)    []
+    setMessageToken(ClassContext context, String m)    {}
 //    setLiteral(ClassContext context, LiteralValue l)         []
 //    setNumericToken(ClassContext context, LiteralValue l)    []
 //    setAssignToken(ClassContext context, LiteralValue t)     []
 //    setIdentToken(ClassContext context, LiteralValue m, ParameterContext parameters) []
-//    setParamToken(ClassContext context, LiteralValue m, ParameterContext parameters) []
+    setParamToken(ClassContext context, String m, ParameterContext parameters) {}
 }
 
 singleton StartOne : Strategy
@@ -141,8 +141,8 @@ singleton StartOne : Strategy
 //    T<Strategy> preloaded_one = PreloadedOne.
 //    
 //    T<Strategy> symbol_one = SymbolOne.
-//    
-//    T<Strategy> singleton_one = Singleton.
+    
+    Strategy singleton_one() = Singleton;
 }
 
 //singleton SymbolOne :: Strategy
@@ -189,52 +189,52 @@ singleton StartOne : Strategy
 //        tape().
 //    ]
 //}
-//
-//class BaseCode :: Strategy
-//{
-//    T<Strategy> expression   = RootExpresson.
+
+class BaseCode : Strategy
+{
+    Strategy expression()   = RootExpresson;
 //    T<Strategy> returning    = RetExpression.
 //    T<Strategy> variable_one = Variable. 
 //    T<Strategy> loop_one     = Loop.      
-//}
-//
-//singleton Code :: BaseCode.
-//
+}
+
+singleton Code : BaseCode{}
+
 //singleton SubCode :: BaseCode
 //{
 //}
-//
-//singleton Method :: Strategy
-//{
-//    T<Strategy> code_one = Code.
-//    
+
+singleton Method : Strategy
+{
+    Strategy code_one() = Code;
+    
 //    T<Strategy> returning = RetExpression.
-//    
-//    setParamToken(ClassContext context, LiteralValue value, ParameterContext parameters)
-//    [
-//        int method_level := context peek.        
-//        int level := parameters level.
-//        
-//        level := level - method_level.
-//        level := level + 1.
-//        
-//        parameters add(value, METHOD_PARAM, level).
-//        
-//        context append(expr_var_token).
-//    ]
-//    
-//    begin(ClassContext context, ParameterContext parameters)  
-//    [
-//        context push(context length).
-//        context push(parameters level).
-//    ]
-//    
-//    setMessageToken(ClassContext context, LiteralValue m) 
-//    [
-//        context append(message_token).
-//        context append(m).
-//    ]
-//    
+    
+    setParamToken(ClassContext context, String value, ParameterContext parameters)
+    {
+        int method_level := context.peek();        
+        int level := parameters.Level;
+        
+        level := level - method_level;
+        level := level + 1;
+        
+        parameters.add(value, METHOD_PARAM, level);
+        
+        context.append(expr_var_token)
+    }
+    
+    begin(ClassContext context, ParameterContext parameters)  
+    {
+        context.push(context.Length);
+        context.push(parameters.Level)
+    }
+    
+    setMessageToken(ClassContext context, String m) 
+    {
+        context.append(message_token);
+        context.append(m)
+    }
+    
 //    end(ClassContext context, ParameterContext parameters)
 //    [
 //        int level := context pop.
@@ -282,17 +282,17 @@ singleton StartOne : Strategy
 //        context append(Message new(T<literal>(name))).
 //        context append(tape).
 //    ]    
-//}
-//
-//class BaseClass :: Strategy
-//{
-//    T<Strategy> method_one = Method.
-//        
-//    begin(ClassContext context, ParameterContext parameters)  
-//    [
-//        context push(context length).
-//    ]
-//    
+}
+
+class BaseClass : Strategy
+{
+    Strategy method_one() = Method;
+        
+    begin(ClassContext context, ParameterContext parameters)  
+    {
+        context.push(context.Length)
+    }
+    
 //    end(ClassContext context, ParameterContext parameters)
 //    [
 //        var pos := context pop.
@@ -303,10 +303,10 @@ singleton StartOne : Strategy
 //        context trim(pos).
 //        context append(class).
 //    ]
-//}
-//
-//singleton Singleton :: BaseClass
-//{
+}
+
+singleton Singleton : BaseClass
+{
 //    end(ClassContext context, ParameterContext parameters)
 //    [
 //        var pos := context pop.
@@ -317,8 +317,8 @@ singleton StartOne : Strategy
 //        context trim(pos).
 //        context append(class).
 //    ]
-//}
-//
+}
+
 //singleton Nested :: BaseClass
 //{
 //    end(ClassContext context, ParameterContext parameters)
@@ -332,14 +332,14 @@ singleton StartOne : Strategy
 //        context push(ConstantClosure new(class)).
 //    ]
 //}
-//
-//class BaseExpression :: Strategy
-//{
-//    begin(ClassContext context, ParameterContext parameters)
-//    [
-//        context push:expr_end_token.
-//    ]    
-// 
+
+class BaseExpression : Strategy
+{
+    begin(ClassContext context, ParameterContext parameters)
+    {
+        context.push:expr_end_token
+    }    
+ 
 //    T<Strategy> singleton_one = Nested.
 //          
 //    setReference(ClassContext context, literal r) 
@@ -478,8 +478,8 @@ singleton StartOne : Strategy
 //            prealloc -= 1.
 //        ]
 //    ]    
-//}
-//
+}
+
 //singleton SymbolBody :: BaseExpression
 //{
 //    T<Strategy> expression = SubExpression.
@@ -496,9 +496,9 @@ singleton StartOne : Strategy
 //        context push:subexpr_token.
 //    ]    
 //}
-//    
-//singleton RootExpresson :: BaseExpression
-//{
+    
+singleton RootExpresson : BaseExpression
+{
 //    T<Strategy> expression = SubExpression.
 //    
 //    T<Strategy> if_one(ClassContext context)
@@ -514,8 +514,8 @@ singleton StartOne : Strategy
 //        
 //        context append:popClosure.
 //    ]    
-//}
-//
+}
+
 //singleton Expresson :: BaseExpression
 //{
 //    T<Strategy> expression = SubExpression.
@@ -645,50 +645,50 @@ public class TapeAssembly
     Stack<Strategy>  _states;
     Strategy         _state;
 
-//    ClassContext     _context;
-//    ParameterContext _parameters;
+    ClassContext     _context;
+    ParameterContext _parameters;
     
     constructor()
     {
         _state := StartOne;
-        //_states := Stack<Strategy>.allocate(32);
+        _states := class Stack<Strategy>.allocate(32);
 
-//        _context := new ClassContext();
-//        _parameters := new ParameterContext()
+        _context := new ClassContext();
+        _parameters := new ParameterContext()
     }
     
-//    constructor(ClosureTape tape)
-//        <= ()
-//    {
-//        tape(self)
-//    }
+    constructor load(ClosureTape tape)
+        <= ()
+    {
+        tape(self)
+    }
     
-//    open(Signature state)     
-//    [
-//        _states push:_state.
-//        _state := _state~state get.
-//        
-//        _state begin(_context, _parameters).
-//    ]
-//    
+    open(MessageName state)     
+    {
+        _states.push:_state;
+        _state := mixin state(_state).eval();
+        
+        _state.begin(_context, _parameters)
+    }
+    
 //    openPreloadedSymbol
 //        <= open(%preloaded_one).
 //            
 //    openSymbol
 //        <= open(%symbol_one).
-//    
-//    openSingleton
-//        <= open(%singleton_one).
-//    
-//    openMethod
-//        <= open(%method_one).
-//    
-//    openCode
-//        <= open(%code_one).
-//    
-//    openExpression
-//        <= open(%expression).
-//    
+    
+    openSingleton()
+        <= open(subjconst singleton_one);
+    
+    openMethod()
+        <= open(subjconst method_one);
+    
+    openCode()
+        <= open(subjconst code_one);
+    
+    openExpression()
+        <= open(subjconst expression);
+    
 //    openReturning
 //        <= open(%returning).
 //    
@@ -717,17 +717,17 @@ public class TapeAssembly
 //    [
 //        _state setNumericToken(_context, l literal).
 //    ]
-//    
-//    newMessageToken : m
-//    [
-//        _state setMessageToken(_context, m literal).
-//    ]
-//
-//    newParamToken : p
-//    [
-//        _state setParamToken(_context, p literal, _parameters).
-//    ]            
-//
+    
+    newMessageToken(m)
+    {
+        _state.setMessageToken(_context, m.Printable)
+    }
+
+    newParamToken(p)
+    {
+        _state.setParamToken(_context, p.Printable, _parameters)
+    }            
+
 //    newIdentToken : m
 //    [
 //        _state setIdentToken(_context, m literal, _parameters).

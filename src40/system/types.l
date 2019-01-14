@@ -58,15 +58,13 @@
 #19    = __mssg;
 #18    = __subj;
 #19    = mssgconst;
+#18    = subjconst;
 //__extmssg       = #21.
 ////__tape_mixin    = #8209.
 //__symbol        = #22.
 //dynamic         = #30.
 //stackunsafe     = #16403.
-//
-//__ifoperator    = #4097.
-//__ifnotoperator = #4098.
-//
+
 /// Provides classes that describe the basic functionality
 
 type object     = Object;

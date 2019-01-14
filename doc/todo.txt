@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * support - singleton Code : BaseCode;
                  * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
                  * syntax : template should be the last token in expression and one before the last for declaration
                  * the following code - theIndexers[i] := arguments[i].indexer() - does not work correctly
