@@ -555,6 +555,119 @@ labNext:
 
 end
 
+procedure __literal."fill$system@IntNumber$system@CharValue[3]"
+  
+  pusha
+
+  aloadsi 4
+  nload
+  pushd
+  acopys 0
+  pushn 0
+  pushn 0
+  bcopys 0
+  
+  callextr api : chartostr
+  dcopye
+
+  ifn lab1 1 
+  ifn lab2 2
+  ifn lab3 3
+
+  aloadsi 6
+  nload
+  shiftln 2
+  pushd
+  inc
+  aloadsi 4
+  acallvi 1
+
+  bcopya
+  popd
+  ecopyd
+  dcopy 0
+
+labNext4:
+  eswapsi 0
+  bwrite
+  eswapsi 0
+  addn 3
+  next labNext4
+  jump labEnd  
+  
+lab1:  
+  aloadsi 6
+  nload
+  pushd
+  inc
+  acopyr class : system'String
+  bcreate
+  bcopya
+
+  popd
+  ecopyd
+  dcopy 0
+
+labNext1:
+  eswapsi 0
+  bwriteb
+  eswapsi 0
+  next labNext1
+  jump labEnd  
+    
+lab2:
+  aloadsi 6
+  nload
+  shiftln 1
+  pushd
+  inc
+  acopyr class : system'String
+  bcreate
+  bcopya
+
+  popd
+  ecopyd
+  dcopy 0
+  
+labNext2:
+  eswapsi 0
+  bwritew
+  eswapsi 0
+  addn 1
+  next labNext2
+  jump labEnd  
+
+lab3:
+  aloadsi 6
+  nload
+  muln 3
+  pushd
+  inc
+  acopyr class : system'String
+  bcreate
+
+  bcopya
+  popd
+  ecopyd
+  dcopy 0
+
+labNext3:
+  eswapsi 0
+  bwrite
+  eswapsi 0
+  addn 2
+  next labNext3
+
+labEnd:
+  popi 4
+  ecopy 0
+  bwriteb
+
+  acopyb
+  quitn 3
+  
+end
+
 procedure __wide."read:Length$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
@@ -823,6 +936,86 @@ procedure __literalconvertor."convert$system@RealNumber$@system@Array#1&system@B
   nwritei 0
 
   quitn 4
+end
+
+procedure __literalconvertor."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : inttostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __literalconvertor."convert$system@UIntNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : uinttostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __literalconvertor."convert$system@ShortNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : inttostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __literalconvertor."convert$system@ByteNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : inttostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
+end
+
+procedure __literalconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+
+  bloadsi 4
+  aloadsi 3
+  nload
+  aloadsi 2
+  
+  callextr api : longtostr
+
+  bloadsi 5
+  nwritei 0
+
+  quitn 5
+
 end
 
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
@@ -1402,6 +1595,153 @@ labErr:
 
 end
 
+procedure __intconvertor."convertUnsigned$system@String$@system@ref#1&system@IntNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : strtouint
+  nsave
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@IntNumber[4]"
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callextr api : strtoint
+  nsave
+  ifr      labErr 0
+  quitn    4
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."convert$system@WideString$@system@ref#1&system@IntNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : wstrtoint
+  nsave
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@IntNumber[4]"
+  
+  bloadsi  4
+  aloadsi  3
+  nload
+  ecopyd   
+  aloadsi  2
+  callextr api : wstrtoint
+  nsave
+  ifr      labErr 0
+  quitn    4
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __intconvertor."convert$system@CharValue$@system@ref#1&system@IntNumber[3]"
+
+  aloadsi 2
+  nload
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __intconvertor."convert$system@ShortNumber$@system@ref#1&system@IntNumber[3]"
+
+  aloadsi 2
+  nload
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __intconvertor."convert$system@ByteNumber$@system@ref#1&system@IntNumber[3]"
+
+  aloadsi 2
+  nload
+  bloadsi 3
+  nsave
+  quitn 3
+
+end
+
+procedure __intconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumber[3]"
+
+  aloadsi 2
+  dcopy 4
+  bread
+  dcopye
+  lessn labNegative 0  
+  elsen labErr 0  
+
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labNegative:
+  elsen labErr 0FFFFFFFFh
+
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+end
+
+procedure __intconvertor."convert$system@RealNumber$@system@ref#1&system@IntNumber[3]"
+
+  aloadsi 2
+  bloadsi 3  
+  rload
+  dcopyr
+  nsave
+  aloadsi 1
+  quitn 3
+
+end
+
 procedure __byteconvertor."convert$system@ShortNumber$@system@ref#1&system@ByteNumber[3]"
 
   aloadsi 2
@@ -1419,6 +1759,182 @@ labCopy:
   bloadsi 3
   nsave
   quitn 3  
+
+end
+
+procedure __byteconvertor."convert$system@CharValue$@system@ref#1&system@ByteNumber[3]"
+
+  aloadsi 2
+  nload
+  
+  lessn labErr 0  
+  lessn labCopy 080h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __byteconvertor."convert$system@IntNumber$@system@ref#1&system@ByteNumber[3]"
+
+  aloadsi 2
+  nload
+  
+  lessn labErr 0  
+  lessn labCopy 100h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __byteconvertor."convert$system@UIntNumber$@system@ref#1&system@ByteNumber[3]"
+
+  aloadsi 2
+  nload  
+
+  lessn labCopy 100h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __byteconvertor."convert$system@LongNumber$@system@ref#1&system@ByteNumber[3]"
+
+  aloadsi 2
+  dcopy 4
+  bread
+  dcopye
+  elsen labErr 0  
+
+  nload
+
+  lessn labErr 0  
+  lessn labCopy 0FFh
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __byteconvertor."convert$system@RealNumber$@system@ref#1&system@ByteNumber[3]"
+
+  pushn 0
+  pushn 0
+  acopys 0
+  bcopya
+
+  aloadsi 4
+  rint
+
+  acopyb
+  rload
+  dcopyr
+
+  lessn labErr 0  
+  lessn labCopy 0FFh
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  popi 2
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __byteconvertor."convert$system@String$@system@ref#1&system@ByteNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : strtoint
+  nsave
+  ifr      labErr 0
+
+  aloadsi 3
+  nload
+  
+  lessn labErr2 0  
+  lessn labExit 0FFh
+  
+labErr2:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labExit:
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __byteconvertor."convert$system@WideString$@system@ref#1&system@ByteNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : wstrtoint
+  nsave
+  ifr      labErr 0
+
+  aloadsi 3
+  nload
+  
+  lessn labErr2 0  
+  lessn labExit 0FFh
+  
+labErr2:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labExit:
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
 
 end
 
@@ -1550,6 +2066,208 @@ procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&system@Short
   bloadsi 3
   nsave
   quitn 3  
+
+end
+
+procedure __shortconvertor."convert$system@CharValue$@system@ref#1&system@ShortNumber[3]"
+
+  aloadsi 2
+  nload
+  
+  lessn labErr 0  
+  lessn labCopy 08000h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __shortconvertor."convert$system@IntNumber$@system@ref#1&system@ShortNumber[3]"
+
+  bloadsi 3
+  aloadsi 2
+
+  nload
+  lessn labNegative 0
+
+  lessn labCopy 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  nsave
+  quitn 3
+  
+labNegative:
+  not
+
+  lessn labCopyNeg 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+  
+labCopyNeg:
+  not
+  nsave
+  quitn 3  
+
+end
+
+procedure __shortconvertor."convert$system@UIntNumber$@system@ref#1&system@ShortNumber[3]"
+
+  bloadsi 3
+  aloadsi 2
+
+  nload
+
+  lessn labCopy 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  nsave
+  quitn 3
+
+end
+
+procedure __shortconvertor."convert$system@LongNumber$@system@ref#1&system@ShortNumber[3]"
+
+  aloadsi 2
+  dcopy 4
+  bread
+  dcopye
+  lessn labNegative 0  
+  elsen labErr 0  
+
+  nload
+  lessn labCopy 8000h  
+  jump  labErr
+
+labCopy:
+  bloadsi 3
+  nsave
+  quitn 3  
+
+labNegative:
+  elsen labErr 0FFFFFFFFh
+  nload
+  not
+  lessn labCopyNegative 8000h  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopyNegative:
+  nload
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __shortconvertor."convert$system@RealNumber$@system@ref#1&system@ShortNumber[3]"
+
+  pushn 0
+  pushn 0
+  acopys 0
+  bcopya
+
+  aloadsi 4
+  rint
+
+  acopyb
+  rload
+  dcopyr
+  
+  lessn labErr 0FFFF8000h
+  lessn labCopy 08000h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labCopy:
+  popi 2
+  bloadsi 3
+  nsave
+  quitn 3  
+
+end
+
+procedure __shortconvertor."convert$system@String$@system@ref#1&system@ShortNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : strtoint
+  nsave
+  ifr      labErr 0
+  
+  aloadsi 3
+  nload
+  
+  lessn labErr2 0FFFF8000h
+  lessn labExit 08000h
+  
+labErr2:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labExit:
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
+
+end
+
+procedure __shortconvertor."convert$system@WideString$@system@ref#1&system@ShortNumber[3]"
+  
+  bloadsi  3
+  ecopy    10
+  aloadsi  2
+  callextr api : wstrtoint
+  nsave
+  ifr      labErr 0
+
+  aloadsi 3
+  nload
+  
+  lessn labErr2 0FFFF8000h
+  lessn labExit 08000h
+  
+labErr2:  
+  pushr class : system'OutOfRangeException
+  pushr const : %new[0]
+  throw    
+
+labExit:
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr const : %new[0]
+  throw
 
 end
 

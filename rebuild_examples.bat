@@ -6,7 +6,7 @@ bin\elc examples\console\words\words.prj
 bin\elc examples\console\pi\pi.prj
 bin\elc examples\console\bsort\bsort.prj
 bin\elc examples\files\textfile\textfile.prj
-rem bin\elc examples\console\binary\binary.prj
+bin\elc examples\console\binary\binary.prj
 rem bin\elc examples\console\replace\replace.prj
 rem bin\elc examples\console\goods\goods.prj
 rem bin\elc examples\console\datetime\dtcalculator.prj

@@ -1175,11 +1175,11 @@ public sealed const struct String : BaseValue
 //    [
 //        system'core_routines'__literal copy(aLiteral, self).
 //    ]
-//
-//    /// Creates the literal string with specified length fills with specified character value        
-//    constructor new(int aSize, char aChar)
-//        => system'core_routines'__literal.
-//
+
+    /// Creates the literal string with specified length fills with specified character value        
+    constructor fill(int size, char ch)
+        => system'core_routines'__literal;
+
 //    /// Creates the literal string copy              
 //    constructor new(literal aLiteral)
 //        <= new(aLiteral length, aLiteral).
@@ -1823,11 +1823,11 @@ public sealed Array : Indexable//, Array<object>
 /// A literal convertor
 public singleton stringConvertor
 {
-//    literal convert(BaseVariable v)
-//        <= convert(v value).
-//    
-//    literal convert(BaseVariable v, int radix)
-//        <= convert(v value, radix).
+    string convert(BaseVariable v)
+        <= convert(v.Value);
+    
+    string convert(BaseVariable v, int radix)
+        <= convert(v.Value, radix);
     
     /// Converts the parameter to the literal value
     convert(char ch, byte[] buffer, ref int length)
@@ -1916,80 +1916,80 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
 
-//    /// Converts the parameter to the literal value with the provided radix
-//    convert(int aNumber, int aRadix, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    convert(uint aNumber, int aRadix, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    literal convert(int aNumber, int aRadix)
-//    [
-//        T<byte, 48> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, aRadix, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    literal convert(uint aNumber, int aRadix)
-//    [
-//        T<byte,48> buffer.
-//        int        length := 0.
-//        
-//        self convert(aNumber, aRadix, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    convert(short aNumber, int aRadix, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    literal convert(short aNumber, int aRadix)
-//    [
-//        T<byte,32> buffer.
-//        int        length := 0.
-//        
-//        self convert(aNumber, aRadix, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    literal convert(byte aNumber, int aRadix, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    literal convert(byte aNumber, int aRadix)
-//    [
-//        T<byte,8> buffer.
-//        int       length := 0.
-//        
-//        self convert(aNumber, aRadix, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer)).
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    convert(long aNumber, int aRadix, ByteArray buffer, ref<int> length)
-//        => system'core_routines'__literalconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    literal convert(long aNumber, int radix)
-//    [
-//        T<byte,64> buffer.
-//        int        length := 0.
-//        
-//        self convert(aNumber, radix, T<ByteArray>(buffer), &length).
-//        
-//        ^ LiteralValue fromByteArray(0, length, T<ByteArray>(buffer)).
-//    ]
+    /// Converts the parameter to the literal value with the provided radix
+    convert(int n, int radix, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+
+    /// Converts the parameter to the literal value with the provided radix
+    convert(uint n, int radix, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(int n, int radix)
+    {
+        byte buffer[48];
+        int  length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(uint n, int radix)
+    {
+        byte buffer[48];
+        int  length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    convert(short n, int radix, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(short n, int radix)
+    {
+        byte buffer[32];
+        int  length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(byte n, int radix, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(byte n, int radix)
+    {
+        byte buffer[8];
+        int  length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    convert(long n, int radix, byte[] buffer, ref int length)
+        => system'core_routines'__literalconvertor;
+
+    /// Converts the parameter to the literal value
+    string convert(long n, int radix)
+    {
+        byte buffer[64];
+        int  length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
 
     /// Converts the parameter to the literal value
     convert(real n, byte[] buffer, ref int length)

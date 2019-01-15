@@ -1,20 +1,20 @@
-import extensions.
+import extensions;
 
 // --- Program --- 
 
-public program = 
-[ 
+public program()
+{
     // reading    
-    var aNumber := console write:"Enter the number you want to convert: "; readLineTo(Integer new).
+    var number := console.write:"Enter the number you want to convert: ".loadLineTo(new Integer());
     
     // converting
-    var aBinaryStr := aNumber toLiteral(2).
+    var binaryStr := number.toString(2);
 
     // printing
     console
-        printLine("A binary presentation of the number : ",aBinaryStr padLeft($48, (aBinaryStr length / 4 + 1) * 4));
-        printLine("Press any key to continue").
+        .printLine("A binary presentation of the number : ",binaryStr.padLeft($48, (binaryStr.Length / 4 + 1) * 4))
+        .printLine("Press any key to continue");
 
     // waiting for any key
-    console readChar.
-].
+    console.readChar()
+}

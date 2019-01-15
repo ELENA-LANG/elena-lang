@@ -1196,32 +1196,32 @@ public extension stringOp : String
     string trim()
         = self.trimLeft($32).trimRight($32);
     
-//    padLeft(int aLength)
-//        = self padLeft($32, aLength).
-//    
-//    padLeft(char aChar, int aLength)
-//    [
-//        int aCurrentLength := self length.
-//        
-//        if (aCurrentLength < aLength)
-//            [ ^ LiteralValue new(aLength - aCurrentLength, aChar); add(self) ].
-//            
-//        ^ self
-//    ]
-//    
-//    padRight(int aLength)
-//        = self padRight($32, aLength).
-//    
-//    padRight(char aChar, int aLength)
-//    [
-//        int aCurrentLength := self length.
-//
-//        if (aCurrentLength < aLength)
-//            [ ^ self add(LiteralValue new(aLength - aCurrentLength, aChar)) ].
-//            
-//        ^ self
-//    ]
-//
+    padLeft(int length)
+        = self.padLeft($32, length);
+    
+    padLeft(char ch, int length)
+    {
+        int currentLength := self.Length;
+        
+        if (currentLength < length)
+            { ^ String.fill(length - currentLength, ch).add(self) };
+            
+        ^ self
+    }
+    
+    padRight(int length)
+        = self.padRight($32, length);
+    
+    padRight(char ch, int length)
+    {
+        int currentLength := self.Length;
+
+        if (currentLength < length)
+            { ^ self.add(String.fill(length - currentLength, ch)) };
+            
+        ^ self
+    }
+
 //    bool startingWith(literal s)
 //    [
 //        int n := 0.
@@ -1486,18 +1486,18 @@ public extension wideOp : WideString
 
 singleton stringOpDispatcher
 {
-//    padRight(literal s, char ch, int len)
-//        = s~literalOp padRight(ch, len).
-//    
+    padRight(string s, char ch, int len)
+        = s.padRight(ch, len);
+    
 //    padRight(wide s, char ch, int len)
 //        = s~wideOp padRight(ch, len).
-//        
-//    padLeft(literal s, char ch, int len)
-//        = s~literalOp padLeft(ch, len).
-//    
+        
+    padLeft(string s, char ch, int len)
+        = s.padLeft(ch, len);
+    
 //    padLeft(wide s, char ch, int len)
 //        = s~wideOp padLeft(ch, len).
-//        
+        
 //    bool startingWith(literal s, literal subs)
 //        = s~literalOp startingWith(subs).
 //
@@ -1570,12 +1570,12 @@ public extension stringWeakOp
     trim()
         = stringOpDispatcher.trim(self, $32);
 
-//    padLeft(object padSymbol, object len)
-//        = stringOpDispatcher padLeft(self, padSymbol, len).
-//        
-//    padRight(object padSymbol, object len)
-//        = stringOpDispatcher padRight(self, padSymbol, len).
-//
+    padLeft(object padSymbol, object len)
+        = stringOpDispatcher.padLeft(self, padSymbol, len);
+        
+    padRight(object padSymbol, object len)
+        = stringOpDispatcher.padRight(self, padSymbol, len);
+
 //    startingWith : s
 //        = stringOpDispatcher startingWith(self, s).
 //

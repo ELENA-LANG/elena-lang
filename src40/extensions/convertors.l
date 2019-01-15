@@ -377,9 +377,9 @@ public extension convertorOp
     string toString()
         = stringExConvertor.convert(self);
     
-//    T<literal> toLiteral(int radix)
-//        = literalConvertor convert(self, radix).
-//        
+    string toString(int radix)
+        = stringConvertor.convert(self, radix);
+        
 //    T<CharArray> toCharArray
 //        = charArrayExConvertor convert:self.
 //    
