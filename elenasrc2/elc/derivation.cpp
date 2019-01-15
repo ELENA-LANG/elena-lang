@@ -1464,7 +1464,7 @@ void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Sco
    }
    else {
       writer.newNode(lxMessage);
-      if (current == lxMessage) {
+      if (current.compare(lxMessage, lxSubMessage)) {
          copyIdentifier(writer, identNode);
       }
       writer.closeNode();
@@ -1474,7 +1474,7 @@ void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Sco
 
 void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope, bool rootMode)
 {
-   if (node.nextNode() == lxCollection) {
+   if (node.nextNode().compare(lxCollection, lxNestedClass)) {
       generateExpressionAttribute(writer, node, derivationScope, false, true);
    }
    else {
@@ -1581,6 +1581,9 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             }
             else first = false;
 
+            generateMesage(writer, current, derivationScope);
+            break;
+         case lxSubMessage:
             generateMesage(writer, current, derivationScope);
             break;
          case lxExpression:

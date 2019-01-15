@@ -7983,7 +7983,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
       case lxBinArrOp:
       case lxNewArrOp:
       case lxArgArrOp:
-      //case lxBoolOp:
+      case lxBoolOp:
          return analizeOp(current, scope);
       case lxInternalCall:
          return analizeInternalCall(current, scope);

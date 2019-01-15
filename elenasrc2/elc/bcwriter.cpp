@@ -13,7 +13,7 @@
 using namespace _ELENA_;
 
 #define ACC_REQUIRED    0x0001
-//#define BOOL_ARG_EXPR   0x0002
+#define BOOL_ARG_EXPR   0x0002
 //#define EMBEDDABLE_EXPR 0x0004
 
 // check if the node contains only the simple nodes
@@ -4255,36 +4255,36 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    releaseObject(tape, level);
 }
 
-//void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
-//{
-//   SNode larg;
-//   SNode rarg;
-//   assignOpArguments(node, larg, rarg);
-//
-//   ref_t trueRef = node.findChild(lxIfValue).argument | mskConstantRef;
-//   ref_t falseRef = node.findChild(lxElseValue).argument | mskConstantRef;
-//
-//   if (!test(mode, BOOL_ARG_EXPR))
-//      tape.newLabel();
-//
-//   generateObjectExpression(tape, larg, ACC_REQUIRED | BOOL_ARG_EXPR);
-//
-//   switch (node.argument) {
-//      case AND_MESSAGE_ID:
-//         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
-//         tape.write(bcIfR, baCurrentLabel, falseRef);
-//         break;
-//      case OR_MESSAGE_ID:
-//         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
-//         tape.write(bcIfR, baCurrentLabel, trueRef);
-//         break;
-//   }
-//
-//   generateObjectExpression(tape, rarg, ACC_REQUIRED | BOOL_ARG_EXPR);
-//
-//   if (!test(mode, BOOL_ARG_EXPR))
-//      tape.setLabel();
-//}
+void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
+{
+   SNode larg;
+   SNode rarg;
+   assignOpArguments(node, larg, rarg);
+
+   ref_t trueRef = node.findChild(lxIfValue).argument | mskConstantRef;
+   ref_t falseRef = node.findChild(lxElseValue).argument | mskConstantRef;
+
+   if (!test(mode, BOOL_ARG_EXPR))
+      tape.newLabel();
+
+   generateObject(tape, larg, ACC_REQUIRED | BOOL_ARG_EXPR);
+
+   switch (node.argument) {
+      case AND_OPERATOR_ID:
+         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
+         tape.write(bcIfR, baCurrentLabel, falseRef);
+         break;
+      case OR_OPERATOR_ID:
+         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
+         tape.write(bcIfR, baCurrentLabel, trueRef);
+         break;
+   }
+
+   generateObject(tape, rarg, ACC_REQUIRED | BOOL_ARG_EXPR);
+
+   if (!test(mode, BOOL_ARG_EXPR))
+      tape.setLabel();
+}
 
 void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node)
 {
@@ -5494,9 +5494,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxNested:
          generateNestedExpression(tape, node);
          break;
-//      case lxBoolOp:
-//         generateBoolOperation(tape, node, mode);
-//         break;
+      case lxBoolOp:
+         generateBoolOperation(tape, node, mode);
+         break;
       case lxNilOp:
          generateNilOperation(tape, node);
          break;

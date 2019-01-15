@@ -1185,6 +1185,15 @@ public sealed class Range : Enumerable<int>
         theEnd := start + count
     }
     
+    constructor for(int start, int end)
+        <= (start, end - start);
+    
+    constructor new(int start, int count)
+        <= (start, count);
+    
+//    constructor from(int start) till(int end)
+//        <= (start, end);
+    
 //    constructor from(IntNumber start) till(IntNumber end)
 //    [
 //        theStart := start.

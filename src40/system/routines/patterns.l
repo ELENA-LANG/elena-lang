@@ -545,59 +545,64 @@ public class ZipEnumerator : Enumerator
     enumerable() => theEnumerator1;
 }
 
-//// --- RangeEnumerator ---
-//
-//public class RangeEnumerator :: Enumerator
-//{
-//    object theVariable.
-//    object theStart.
-//    object theEnd.
-//    object theStep.
-//    
-//    bool   theForward.
-//    
-//    constructor for:aVariable from:aStart to:anEnd by:aStep
-//    [
-//        theVariable := aVariable.
-//        theStart := aStart.
-//        theEnd := anEnd.
-//        theStep := aStep.
-//        
-//        theForward := (aStart < anEnd).
-//        
-//        self reset.
-//    ]
-//
-//    constructor from:aStart to:anEnd by:aStep
-//        <= for:(Variable new) from:aStart to:anEnd by:aStep.
-//
+// --- RangeEnumerator ---
+
+public class RangeEnumerator : Enumerator
+{
+    object theVariable;
+    object theStart;
+    object theEnd;
+    object theStep;
+    
+    bool   theForward;
+    
+    constructor(var,start,end,step)
+    {
+        theVariable := var;
+        theStart := start;
+        theEnd := end;
+        theStep := step;
+        
+        theForward := (start < end);
+        
+        self.reset()
+    }
+
+    constructor(start, end, step)
+        <= (new Variable(), start, end, step);
+
 //    constructor from:aStart to:anEnd
 //        <= for:(Variable new) from:aStart to:anEnd by:1.
-//        
-//    reset 
-//    [
-//        theVariable value := theStart.
-//
-//        if(theForward)
-//            [ theVariable reduce:theStep ];
-//            [ theVariable append:theStep ]
-//    ]    
-//    
-//    get = theVariable value.
-//    
-//    bool next
-//    [
-//        if(theForward)
-//            [ theVariable append:theStep. ^ (theVariable <= theEnd) ].
-//        
-//        theVariable reduce:theStep. 
-//        
-//        ^ (theVariable >= theEnd)
-//    ]
-//    
-//    enumerable = theVariable.
-//}
-//
+        
+    reset() 
+    {
+        theVariable.Value := theStart;
+
+        if(theForward)
+        {
+            theVariable.reduce:theStep 
+        }
+        else
+        {
+            theVariable.append:theStep
+        }
+    }    
+    
+    get() = theVariable.Value;
+    
+    bool next()
+    {
+        if(theForward)
+            { theVariable.append:theStep; ^ (theVariable <= theEnd) };
+        
+        theVariable.reduce:theStep; 
+        
+        ^ (theVariable >= theEnd)
+    }
+    
+    enumerable() = theVariable;
+}
+
 //// --- IntervalEnumerator ---
 //
 //public class IntervalEnumerator :: Enumerator

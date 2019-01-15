@@ -339,10 +339,10 @@ public extension enumerableOp
 //        
 //    filterBy(Func6 aSelector)
 //        = PatternFilter6 new(aSelector, T<Enumerator>(self enumerator)).
-//        
-//    repeatTill:n
-//        = RangeEnumerator from:self to(n - 1) by:1.
-//
+        
+    repeatTill(n)
+        = new RangeEnumerator(self, n - 1, 1);
+
 //    repeatTo:n
 //        = RangeEnumerator from:self to:n by:1.
 
