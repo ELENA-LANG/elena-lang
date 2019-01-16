@@ -5737,7 +5737,7 @@ void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::N
    }
    else doMultiDispatch(tape, node.argument, message);
 
-   SNode current = node.findChild(lxDispatching, lxResending);
+   SNode current = node.findChild(lxDispatching, /*lxResending, */lxCalling);
    switch (current.type) {
       case lxDispatching:
          generateResending(tape, current);
@@ -5747,6 +5747,10 @@ void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::N
       //   tape.write(bcCopyM, current.findChild(lxOvreriddenMessage).argument);
       //   generateResendingExpression(tape, current);
       //   break;
+      case lxCalling:
+         // if it is a multi-method conversion
+         generateCallExpression(tape, current);
+         break;
       default:
          break;
    }

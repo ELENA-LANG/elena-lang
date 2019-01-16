@@ -3767,7 +3767,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
       List<ref_t> implicitMultimethods;
       implicitMultimethods.add(multiMethod);
 
-      _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), scope.info, *this, implicitMultimethods, lxClassMethod);
+      _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), *this, implicitMultimethods, lxClassMethod);
 
       generateClassDeclaration(virtualTree.readRoot(), scope, ClassType::ctClass);
 
@@ -4258,34 +4258,6 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
       compileCollection(writer, node, scope, target);
    }
    else scope.raiseError(errInvalidHint, node.parentNode());
-
-//   SNode objectNode = node.findChild(lxExpression);
-//   if (objectNode != lxNone) {
-//      if (node.existChild(lxOperator)) {
-//      }
-//      else {
-//         if (paramCount > 1) {
-//            ref_t signRef = compileMessageParameters(writer, objectNode.firstChild(), scope);
-//            if (!_logic->injectImplicitConstructor(writer, *scope.moduleScope, *this, targetRef, signRef))
-//               scope.raiseError(errIllegalOperation, node);
-//
-//         }
-//         else if (paramCount == 0) {
-//            if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
-//               scope.raiseError(errIllegalOperation, node);
-//         }
-//         else {
-//            ObjectInfo object = compileExpression(writer, objectNode, scope, /*targetRef*/0, mode);
-//            if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, object), object.element))
-//               scope.raiseError(errIllegalOperation, node);
-//
-//            //if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, resolveObjectReference(scope, object), 0))
-//            //   scope.raiseError(errIllegalOperation, node);
-//         }
-//      }
-//   }
-//   else if (!_logic->injectImplicitCreation(writer, *scope.moduleScope, *this, targetRef))
-//      scope.raiseError(errIllegalOperation, node);
 
    return retVal;
 }
@@ -5589,81 +5561,34 @@ void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNod
 
 void Compiler :: compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope)
 {
-   //if (node != lxClass && node.existChild(lxArgDispatcherAttr)) {
-   //   // if it is a argument list unboxing routine
-   //   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-
-   //   writer.newNode(lxNewFrame);
-
-   //   // new stack frame
-   //   // stack already contains current $self reference
-   //   scope.level++;
-
-   //   writer.newNode(lxCalling, node.argument);
-   //   writeTerminal(writer, node, scope, methodScope->mapSelf(), HINT_NODEBUGINFO);
-   //   // copy the argument list
-   //   int paramCount = getParamCount(node.argument) + 1;
-   //   for (int i = 1; i <= paramCount; i++) {
-   //      if (i == paramCount)
-   //         // unbox the last argument ist
-   //         writer.newNode(lxArgUnboxing, scope.moduleScope->arrayReference);
-
-   //      writeTerminal(writer, node, scope, methodScope->mapParameter(Parameter(i)), HINT_NODEBUGINFO);
-
-   //      if (i == paramCount)
-   //         writer.closeNode();
-   //   }
-
-   //   if (methodScope->extensionMode) {
-   //      ObjectInfo target = methodScope->mapSelf(true);
-
-   //      writer.newNode(lxOverridden);
-   //      writeParamTerminal(writer, scope, target, HINT_DYNAMIC_OBJECT, lxSelfLocal);
-   //      writeTarget(writer, resolveObjectReference(scope, target), target.element);
-   //      writer.closeNode();
-   //      writer.closeNode();
-   //   }
-
-   //   writer.closeNode();
-
-   //   //scope.freeSpace();
-
-   //   writer.closeNode();
-   //}
-   //else {
-      ref_t message = scope.getMessageID();
-      ref_t overloadRef = classScope.info.methodHints.get(Attribute(message, maOverloadlist));
-      if (overloadRef) {
-         // !! hotfix : temporal do not use direct multi method resolving for the class constructors
-         if (test(classScope.info.header.flags, /*elFinal*/elSealed)/* || test(message, SEALED_MESSAGE)*/) {
-            writer.newNode(lxSealedMultiDispatching, overloadRef);
-         }
-         else writer.newNode(lxMultiDispatching, overloadRef);
+   ref_t message = scope.getMessageID();
+   ref_t overloadRef = classScope.info.methodHints.get(Attribute(message, maOverloadlist));
+   if (overloadRef) {
+      // !! hotfix : temporal do not use direct multi method resolving for the class constructors
+      if (test(classScope.info.header.flags, /*elFinal*/elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+         writer.newNode(lxSealedMultiDispatching, overloadRef);
       }
-      else scope.raiseError(errIllegalOperation, node);
+      else writer.newNode(lxMultiDispatching, overloadRef);
+   }
+   else scope.raiseError(errIllegalOperation, node);
 
-      if (node == lxResendExpression) {
-         //ref_t openArgMessage = encodeMessage(getAction(message), getParamCount(message) + OPEN_ARG_COUNT - 1) | (message & MESSAGE_FLAG_MASK);
-         //if (classScope.info.methods.exist(openArgMessage)) {
-         //   writer.newNode(lxResending);
+   if (node == lxResendExpression) {
+      if (node.existChild(lxTypecasting)) {
+         // if it is multi-method implicit conversion method
+         ref_t targetRef = scope.getClassRefId();
+         ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
 
-         //   writer.appendNode(lxMessage, encodeMessage(DISPATCH_MESSAGE_ID, getAbsoluteParamCount(openArgMessage)));
-         //   writer.appendNode(lxOvreriddenMessage, message);
-
-         //   writer.newNode(lxTarget, scope.moduleScope->superReference);
-         //   writer.appendNode(lxMessage, encodeAction(DISPATCH_MESSAGE_ID));
-         //   writer.closeNode();
-
-         //   writer.closeNode();
-         //}
-         //else {
-            writer.newNode(lxDispatching, node.argument);
-            SyntaxTree::copyNode(writer, lxTarget, node);
-            writer.closeNode();
-         //}
+         writer.newNode(lxCalling, encodeAction(scope.module->mapAction(CAST_MESSAGE, signRef, false)));
+         writer.appendNode(lxCurrent, 2);
+         writer.closeNode();
       }
-      writer.closeNode();
-   //}
+      else {
+         writer.newNode(lxDispatching, node.argument);
+         SyntaxTree::copyNode(writer, lxTarget, node);
+         writer.closeNode();
+      }
+   }
+   writer.closeNode();
 }
 
 void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod)
@@ -6877,9 +6802,6 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
       return 0;
 
    ident_t actionStr = scope.module->resolveAction(actionRef, signRef);
-   // HOTFIX : do not resolve multi-methods for implicit constructors
-   if (actionStr[0] == '#' && actionStr.compare(CONSTRUCTOR_MESSAGE))
-      return 0;
    
    if (test(flags, VARIADIC_MESSAGE)) {
       // COMPILER MAGIC : for variadic message - use the most general message
@@ -6941,7 +6863,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
 
    //COMPILER MAGIC : if strong signature is declared - the compiler should contain the virtual multi method
    if (implicitMultimethods.Count() > 0) {
-      _logic->injectVirtualMultimethods(*scope.moduleScope, root, scope.info, *this, implicitMultimethods, methodType);
+      _logic->injectVirtualMultimethods(*scope.moduleScope, root, *this, implicitMultimethods, methodType);
    }
 
    if (templateMethods) {
@@ -8492,6 +8414,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.dispatch_message = encodeAction(scope.module->mapAction(DISPATCH_MESSAGE, 0, false));
    scope.newobject_message = encodeAction(scope.module->mapAction(NEWOBJECT_MESSAGE, 0, false));
    scope.init_message = encodeMessage(scope.module->mapAction(INIT_MESSAGE, 0, false), 0, SPECIAL_MESSAGE | STATIC_MESSAGE);
+   scope.constructor_message = encodeAction(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false));
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically
@@ -8775,6 +8698,23 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
    //   methNode.appendNode(lxAttribute, lxArgDispatcherAttr);
 
    methNode.appendNode(lxResendExpression, resendMessage);
+}
+
+void Compiler :: injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType)
+{
+   SNode methNode = classNode.appendNode(methodType, message);
+   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
+   methNode.appendNode(lxAutoMultimethod); // !! HOTFIX : add a attribute for the nested class compilation (see compileNestedVMT)
+   methNode.appendNode(lxAttribute, tpMultimethod);
+   if (methodType == lxConstructor)
+      methNode.appendNode(lxAttribute, tpConstructor);
+
+   if (test(message, SPECIAL_MESSAGE))
+      methNode.appendNode(lxAttribute, tpAction);
+
+   methNode
+      .appendNode(lxResendExpression, scope.constructor_message) // NOTE : dummy message, it is overwritten by the conversion message
+      .appendNode(lxTypecasting);
 }
 
 //void Compiler :: injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType)

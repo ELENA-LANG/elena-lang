@@ -227,6 +227,7 @@ struct _ModuleScope
    ref_t             dispatch_message;
    ref_t             newobject_message;
    ref_t             init_message;
+   ref_t             constructor_message;
 
    // cached bool values
    BranchingInfo     branchingInfo;
@@ -331,6 +332,7 @@ struct _ModuleScope
       argArrayTemplateReference = 0;
 
       init_message = newobject_message = dispatch_message = 0;
+      constructor_message = 0;
    }
 };
 
@@ -350,6 +352,7 @@ public:
 //   virtual void injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef, ref_t genericMessage) = 0;
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
+   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef) = 0;
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
@@ -493,17 +496,13 @@ public:
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
 //   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
-   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
+   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, 
       ref_t elementRef, ident_t ns) = 0;
    virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr) = 0;
-//   virtual bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef) = 0;
-//   virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef) = 0;
-//   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef) = 0;
    virtual void injectNewOperation(SyntaxWriter& writer, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
-//////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode) = 0;
    virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
 
    // auto generate class flags

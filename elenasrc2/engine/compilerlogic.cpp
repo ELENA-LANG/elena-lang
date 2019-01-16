@@ -775,24 +775,19 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 //   }
 }
 
-void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo&/* info*/, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
+void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-      compiler.injectVirtualMultimethod(scope, node, *it, methodType);
+      ref_t message = *it;
 
-      //if (isOpenArg(*it)) {
-      //   // generate explicit argument list dispatcher
-      //   compiler.injectVirtualArgDispatcher(scope, node, *it, methodType);
-
-      //   ref_t resendMessage = encodeMessage(getAction(*it), getParamCount(*it) + 1);
-
-      //   // generate argument list dispatcher multi-method
-      //   if (info.methods.exist(resendMessage)) {
-      //      compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType, info.header.parentRef);
-      //   }
-      //   else compiler.injectVirtualMultimethod(scope, node, resendMessage, methodType);
-      //}
+      if (methodType == lxConstructor && getParamCount(message) == 1 
+         && getAction(message) == getAction(scope.constructor_message)) 
+      {
+         // HOTFIX : implicit multi-method should be compiled differently
+         compiler.injectVirtualMultimethodConversion(scope, node, *it, methodType);
+      }
+      else compiler.injectVirtualMultimethod(scope, node, *it, methodType);
    }
 }
 
@@ -1098,8 +1093,10 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
 
 bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo&/* info*/, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount)
 {
+   ref_t signRef = scope.module->mapSignature(signatures, paramCount, false);
+
    int stackSafeAttr = 0;
-   ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signatures, paramCount, stackSafeAttr);
+   ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, paramCount, stackSafeAttr);
    if (messageRef) {
       compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef), stackSafeAttr);
 
@@ -1107,52 +1104,6 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleSco
 
    }
    else return false;
-
-   //ClassInfo::MethodMap::Iterator it = info.methods.start();
-   //while (!it.Eof()) {
-   //   pos_t implicitMessage = it.key();
-   //   if (getParamCount(implicitMessage) == paramCount) {
-   //      ref_t signatureRef = 0;
-   //      ident_t actionName = scope.module->resolveAction(getAction(implicitMessage), signatureRef);
-   //      if (actionName.compare(CONSTRUCTOR_MESSAGE)) {
-   //         //         ref_t subj = getAction(implicitMessage);
-   //         bool compatible = false;
-   //         //if (paramCount == 1 && signatures[0] == V_STRCONSTANT && signatureRef == elementRef) {
-   //         //   // try to resolve explicit constant conversion routine
-   //         //   compatible = true;
-   //         //}
-   //         //else if (paramCount == 1) {
-   //         //   ref_t subjRef = scope.module->mapReference(scope.module->resolveSubject(subj).c_str() + 1);
-   //         //   if (subjRef != 0) {
-   //         //      compatible = isCompatible(scope, subjRef, actionRef);
-   //         //   }
-   //         //   else compatible = true;
-   //         //}
-   //         /*else */compatible = isSignatureCompatible(scope, signatureRef, signatures);
-
-   //         if (compatible) {
-   //            //// recognize stacksafe attributes
-   //            //int stackSafeAttr = isMethodStacksafe(info, implicitMessage) ? 1 : 0;
-   //            //setSignatureStacksafe(scope, signatureRef, stackSafeAttr);
-
-   //            //if (test(info.header.flags, elStructureRole)) {
-   //            ////   compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
-   //            //   compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), 
-   //            //      info.header.classRef, targetRef, stackSafeAttr);
-   //            //}
-   //            //else if (test(info.header.flags, elDynamicRole)) {
-   //            //   return false;
-   //            //}
-
-   //            return true;
-   //         }
-   //      }
-   //   }
-
-   //   it++;
-   //}
-
-   //return false;
 }
 
 ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
@@ -1164,102 +1115,26 @@ ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
    return info.header.classRef;
 }
 
-ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t* signatures, int paramCount, int& stackSafeAttr)
-{
-   ClassInfo classClassinfo;
-   if (!defineClassInfo(scope, classClassinfo, getClassClassRef(scope, targetRef)))
-      return 0;
-
-   return resolveImplicitConstructor(scope, classClassinfo, signatures, paramCount, stackSafeAttr);
-}
-
-ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ClassInfo& info, ref_t* signatures, int paramCount, int& stackSafeAttr)
-{
-   ClassInfo::MethodMap::Iterator it = info.methods.start();
-   while (!it.Eof()) {
-      pos_t implicitMessage = it.key();
-      if (getParamCount(implicitMessage) == paramCount) {
-         ref_t signatureRef = 0;
-         ident_t actionName = scope.module->resolveAction(getAction(implicitMessage), signatureRef);
-         if (actionName.compare(CONSTRUCTOR_MESSAGE)) {
-            //         ref_t subj = getAction(implicitMessage);
-            bool compatible = false;
-            //if (paramCount == 1 && signatures[0] == V_STRCONSTANT && signatureRef == elementRef) {
-            //   // try to resolve explicit constant conversion routine
-            //   compatible = true;
-            //}
-            //else if (paramCount == 1) {
-            //   ref_t subjRef = scope.module->mapReference(scope.module->resolveSubject(subj).c_str() + 1);
-            //   if (subjRef != 0) {
-            //      compatible = isCompatible(scope, subjRef, actionRef);
-            //   }
-            //   else compatible = true;
-            //}
-            /*else */compatible = isSignatureCompatible(scope, signatureRef, signatures);
-   
-            if (compatible) {
-               // recognize stacksafe attributes
-               stackSafeAttr = isMethodStacksafe(info, implicitMessage) ? 1 : 0;
-               setSignatureStacksafe(scope, signatureRef, stackSafeAttr);
-   
-               //if (test(info.header.flags, elStructureRole)) {
-               ////   compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxCreatingStruct, info.size, targetRef, stackSafe);
-               //   compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), 
-               //      info.header.classRef, targetRef, stackSafeAttr);
-               //}
-               //else if (test(info.header.flags, elDynamicRole)) {
-               //   return false;
-               //}
-               //else compiler.injectConverting(writer, lxDirectCalling, implicitMessage, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), 
-               //   info.header.classRef, targetRef, stackSafeAttr);
-   
-               return implicitMessage;
-            }
-         }
-      }
-   
-      it++;
-   }
-   
-   return 0;
-}
-
 ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr)
 {
+   ref_t classClassRef = getClassClassRef(scope, targetRef);
+   ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, 0);
    if (signRef != 0) {
-      ref_t signature[ARG_COUNT];
-      scope.module->resolveSignature(signRef, signature);
-
-      return resolveImplicitConstructor(scope, targetRef, signature, paramCount, stackSafeAttr);
+      // try to resolve implicit multi-method
+      ref_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef, stackSafeAttr);
+      if (resolvedMessage)
+         return resolvedMessage;
    }
-   else {
-      ClassInfo classClassinfo;
-      if (!defineClassInfo(scope, classClassinfo, getClassClassRef(scope, targetRef)))
-         return 0;
 
-      ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, 0);
-      if (classClassinfo.methods.exist(messageRef)) {
-         return messageRef;
-      }
-      else return 0;
+   ClassInfo classClassinfo;
+   if (!defineClassInfo(scope, classClassinfo, classClassRef))
+      return 0;
+
+   if (classClassinfo.methods.exist(messageRef)) {
+      return messageRef;
    }
+   else return 0;
 }
-
-//bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, targetRef, true))
-//      return false;
-//
-//   ClassInfo classClassinfo;
-//   if (!defineClassInfo(scope, info, info.header.classRef))
-//      return false;
-//
-//   ref_t signature[ARG_COUNT];
-//   size_t paramCount = scope.module->resolveSignature(signRef, signature);
-//
-//   return injectImplicitConstructor(writer, scope, compiler, classClassinfo, targetRef/*, 0*/, signature, paramCount);
-//}
 
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, 
    ref_t elementRef, ident_t ns)

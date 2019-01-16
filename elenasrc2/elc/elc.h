@@ -17,12 +17,12 @@
 #include "compilerscope.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x009F
+#define ELC_REVISION_NUMBER         0x00A0
 // --- ELC default file names ---
 #ifdef _WIN32
 
-#define SYNTAX_FILE                 "syntax.dat"
-#define RULES_FILE                  "rules.dat"
+constexpr auto SYNTAX_FILE          = "syntax.dat";
+constexpr auto RULES_FILE           = "rules.dat";
 
 #else
 

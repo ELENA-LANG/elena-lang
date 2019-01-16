@@ -1044,6 +1044,7 @@ public:
 //////   virtual void injectFieldExpression(SyntaxWriter& writer);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef, ref_t genericMessage);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
+   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);

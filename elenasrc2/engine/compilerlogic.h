@@ -73,9 +73,6 @@ class CompilerLogic : public _CompilerLogic
 //   bool loadBranchingInfo(_CompilerScope& scope, ref_t reference);
    bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount);
 
-   ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t* signatures, int paramCount, int& stackSafeAttr);
-   ref_t resolveImplicitConstructor(_ModuleScope& scope, ClassInfo& info, ref_t* signatures, int signatureLen, int& stackSafeAttr);
-
    ref_t getClassClassRef(_ModuleScope& scope, ref_t reference);
 
    bool isBoolean(_ModuleScope& scope, ref_t reference);
@@ -159,11 +156,10 @@ public:
 
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
 //   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
-   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
+   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
    virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef);
    virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, 
       ref_t elementRef, ident_t ns);
-   //virtual bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t signRef);
    virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr);
 
 //   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef);
