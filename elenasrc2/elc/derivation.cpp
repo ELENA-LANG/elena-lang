@@ -891,7 +891,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
             int index = derivationScope.parameters.get(terminal.identifier());
             if (index != 0) {
                targetType = lxTemplateParam;
-               targetArgument = index;
+               targetArgument = index + derivationScope.nestedLevel;
             }
          }
 
@@ -1202,13 +1202,20 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
    List<SNode> parameters;
    IdentifierString templateName;
 
-   SNode nameNode = node.prevNode();   
+   SyntaxTree tempTree;
+   SyntaxWriter tempWriter(tempTree);
+
+   SNode nameNode = node.prevNode();
    SNode current = nameNode.prevNode();
    if (current == lxTarget) {
-      parameters.add(current);
+      // generate property type
+      //derivationScope.nestedLevel += 0x100;
+      generateAttributes(tempWriter, current, derivationScope);
+      //derivationScope.nestedLevel -= 0x100;
 
       current = current.prevNode();
    }
+
    while (current == lxAttribute) {
       if (current.argument == V_PROPERTY) {
          templateName.copy(current.firstChild(lxTerminalMask).identifier());
@@ -1216,6 +1223,11 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
       }
 
       current = current.prevNode();
+   }
+
+   current = tempTree.readRoot();
+   if (current.compare(lxTarget, lxTemplateParam)) {
+      parameters.add(current);
    }
 
    // COMPILER MAGIC : generate property body
