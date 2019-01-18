@@ -4341,6 +4341,22 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
 
          parameters.add(current);
       }
+      else if (current == lxAttribute && current.argument == V_TEMPLATE) {         
+         current = lxTarget;
+         current.setArgument(resolveTemplateDeclaration(current, scope, false));
+
+         // HOTFIX : inject the reference and comment the target nodes out
+         SNode terminalNode = current.firstChild(lxTerminalMask);
+         terminalNode.set(lxReference, scope.module->resolveReference(current.argument));
+         do {
+            terminalNode = terminalNode.nextNode();
+            if (terminalNode == lxTarget) {
+               terminalNode = lxIdle;
+            }
+         } while (terminalNode != lxNone);
+
+         parameters.add(current);
+      }
       else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 
       current = current.nextNode();

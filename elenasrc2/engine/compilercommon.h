@@ -290,7 +290,7 @@ struct _ModuleScope
 
    void raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
    {
-      SNode terminal = SyntaxTree::findTerminalInfo(node);
+         SNode terminal = SyntaxTree::findTerminalInfo(node);
 
       int col = terminal.findChild(lxCol).argument;
       int row = terminal.findChild(lxRow).argument;

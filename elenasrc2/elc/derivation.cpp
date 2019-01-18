@@ -47,6 +47,17 @@ constexpr auto MODE_PROPERTYMETHOD = -4u;
 
 // --- DerivationWriter ---
 
+inline SNode goToLastNode(SNode current)
+{
+   SNode lastOne;
+   while (current != lxNone) {
+      lastOne = current;
+      current = current.nextNode();
+   }      
+
+   return lastOne;
+}
+
 inline SNode goToNode(SNode current, LexicalType type)
 {
    while (current != lxNone && current != type)
@@ -1404,7 +1415,12 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
    writer.insert(0, lxEnding, 0);
    if (attrRef == V_TEMPLATE) {
       // copy the template parameters
-      generateExpressionAttribute(writer, current.findChild(lxToken), derivationScope, true);
+      SNode attrNode = goToLastNode(current.findChild(lxToken));
+      while (attrNode == lxToken) {
+         generateExpressionAttribute(writer, attrNode, derivationScope, true);
+
+         attrNode = attrNode.prevNode();
+      }      
    }
 
    if (current == lxToken) {
@@ -1839,13 +1855,9 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
    }
    else if (current == lxTemplateIdentParam) {
       if (current.argument < 0x100) {
-         // name node is always the last parameter
          SNode nodeToInject = scope.parameterValues.get(current.argument);
-         //if (nodeToInject == lxTarget && nodeToInject.argument != 0) {
-         //   // HOTFIX : if it is a type identifier
-         //   writer.appendNode(lxGlobalReference, scope.moduleScope->module->resolveReference(nodeToInject.argument));
-         //}
-         /*else*/ copyChildren(writer, nodeToInject, scope);
+
+         copyChildren(writer, nodeToInject, scope);
       }
       else {
          // if it is a nested template
@@ -1869,6 +1881,9 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
          copyIdentifier(writer, parentNode.firstChild(lxTerminalMask));
          writer.closeNode();
       }
+   }
+   else if (current == lxIdle) {
+      // skip idle nodes
    }
    else copyExpressionTree(writer, current, scope);
 }

@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * support direct attribute, so no extension / multi-method resolving will be used
                  * implement break
                  * stringOpHelper should be able to call the original trim method, currently it is not possible to call trim
                    method for the anonymous object

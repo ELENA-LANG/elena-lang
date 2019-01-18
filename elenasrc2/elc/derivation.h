@@ -254,6 +254,7 @@ class TemplateGenerator
    };
 
    SNode       _root;
+
    void copyNodes(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyChildren(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
