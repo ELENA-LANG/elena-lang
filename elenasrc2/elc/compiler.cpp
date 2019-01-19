@@ -3702,28 +3702,10 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
    ref_t invokeAction = scope.module->mapAction(INVOKE_MESSAGE, 0, false);
    methodScope.message = encodeMessage(/*lazyExpression ? EVAL_MESSAGE_ID : */invokeAction, 0, SPECIAL_MESSAGE);
 
-   ref_t outputRef = 0;
    if (argNode != lxNone) {
       // define message parameter
-      methodScope.message = declareInlineArgumentList(argNode, methodScope, outputRef, false);
+      methodScope.message = declareInlineArgumentList(argNode, methodScope, false);
    }
-
-   ref_t parentRef = scope.info.header.parentRef;
-   //if (lazyExpression) {
-   //   parentRef = scope.moduleScope->lazyExprReference;
-   //}
-   //else {
-      NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-
-      ref_t closureRef = scope.moduleScope->resolveClosure(methodScope.message/*, outputRef*/, nsScope->ns);
-//      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
-      if (closureRef) {
-         parentRef = closureRef;
-      }
-      else throw InternalError(errClosureError);
-   //}
-
-   compileParentDeclaration(SNode(), scope, parentRef);
 
    //return lazyExpression;
 }
@@ -3737,14 +3719,9 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
    MethodScope methodScope(&scope);
    /*bool lazyExpression = */declareActionScope(scope, argNode, methodScope, mode);
-
    methodScope.closureMode = true;
 
-   scope.include(methodScope.message);
-   scope.addHint(methodScope.message, tpAction);
-
-   // exclude abstract flag if presented
-   scope.removeHint(methodScope.message, tpAbstract);
+   ref_t multiMethod = resolveMultimethod(scope, methodScope.message);
 
    // HOTFIX : if the closure emulates code brackets
    if (test(mode, HINT_SUBCODE_CLOSURE))
@@ -3753,12 +3730,49 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    // if it is single expression
    //if (!lazyExpression) {
       initialize(scope, methodScope);
+      methodScope.closureMode = true;
+
+      if (multiMethod)
+         // if it is a strong-typed closure, output should be defined by the closure 
+         methodScope.outputRef = V_AUTO;
 
       compileActionMethod(writer, node, methodScope);
    //}
    //else compileLazyExpressionMethod(writer, node, methodScope);
 
-   ref_t multiMethod = resolveMultimethod(scope, methodScope.message);
+   if (methodScope.outputRef == V_AUTO)
+      // if the output was not defined - ignore it
+      methodScope.outputRef = 0;
+
+      // the parent is defined aftr the closure compilation to define correctly the output type
+   ref_t parentRef = scope.info.header.parentRef;
+   //if (lazyExpression) {
+   //   parentRef = scope.moduleScope->lazyExprReference;
+   //}
+   //else {
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+   ref_t closureRef = scope.moduleScope->resolveClosure(methodScope.message, methodScope.outputRef, nsScope->ns);
+   //      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
+   if (closureRef) {
+      parentRef = closureRef;
+   }
+   else throw InternalError(errClosureError);
+   //}
+
+   compileParentDeclaration(SNode(), scope, parentRef);
+
+   // include the message, it is done after the compilation due to the implemetation
+   scope.include(methodScope.message);
+   scope.addHint(methodScope.message, tpAction);
+
+   // exclude abstract flag if presented
+   scope.removeHint(methodScope.message, tpAbstract);
+
+   // set the message output if available
+   if (methodScope.outputRef)
+      scope.info.methodHints.add(Attribute(methodScope.message, maReference), methodScope.outputRef);
+
    if (multiMethod) {
       // inject a virtual invoke multi-method if required
       SyntaxTree virtualTree;
@@ -4031,14 +4045,23 @@ ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeS
 
 ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode)
 {
+   bool autoMode = false;
    ref_t targetRef = 0;
    if (test(mode, HINT_ROOT)) {
       targetRef = scope.getReturningRef();
+      if (targetRef == V_AUTO) {
+         autoMode = true;
+         targetRef = 0;
+      }
    }
 
    writer.newBookmark();
 
    ObjectInfo info = compileExpression(writer, node, scope, targetRef, mode);
+   if (autoMode) {
+      targetRef = resolveObjectReference(scope, info);
+      scope.resolveAutoOutput(targetRef);
+   }
 
    // HOTFIX : implementing closure exit
    if (test(mode, HINT_ROOT)) {
@@ -4673,12 +4696,6 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             compileRootExpression(writer, current, scope);
             writer.closeNode();
             break;
-//         case lxLoop:
-//            writer.newNode(lxExpression);
-//            writer.appendNode(lxBreakpoint, dsStep);
-//            compileLoop(writer, current, scope);
-//            writer.closeNode();
-//            break;
          case lxReturning:
          {
             needVirtualEnd = false;
@@ -4693,14 +4710,6 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
 
             break;
          }
-//         case lxVariable:
-//            compileVariable(writer, current, scope);
-//            break;
-//         case lxExtern:
-//            writer.newNode(lxExternFrame);
-//            compileCode(writer, current.findSubNode(lxCode), scope);
-//            writer.closeNode();
-//            break;
          case lxEOF:
             needVirtualEnd = false;
             writer.newNode(lxBreakpoint, dsEOP);
@@ -4952,7 +4961,7 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, bool binaryArray,
    return true;
 }
 
-ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, ref_t&/* outputRef*/declareInlineArgumentList, bool declarationMode)
+ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, bool declarationMode)
 {
 //   IdentifierString signature;
    IdentifierString messageStr;
@@ -5383,7 +5392,7 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
    // stack already contains previous $self value
    codeScope.level++;
 
-   compileCode(writer, body == lxReturning ? node : body, codeScope);
+   ObjectInfo retVal = compileCode(writer, body == lxReturning ? node : body, codeScope);
 
    writer.closeNode();
 

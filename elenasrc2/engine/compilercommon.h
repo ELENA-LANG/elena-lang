@@ -266,7 +266,7 @@ struct _ModuleScope
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode) = 0;
 
-   virtual ref_t resolveClosure(ref_t closureMessage/*, ref_t outputRef, ExtensionMap* extensionsToExport*/, ident_t ns) = 0;
+   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;

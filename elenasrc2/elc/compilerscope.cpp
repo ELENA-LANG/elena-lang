@@ -549,7 +549,7 @@ void ModuleScope :: generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_
    compiler->registerExtensionTemplate(tree, *this, ns, extensionRef);
 }
 
-ref_t ModuleScope :: resolveClosure(ref_t closureMessage/*, ref_t outputRef, ExtensionMap* extensions*/, ident_t ns)
+ref_t ModuleScope :: resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns)
 {
    ref_t signRef = 0;
    module->resolveAction(getAction(closureMessage), signRef);
@@ -579,11 +579,11 @@ ref_t ModuleScope :: resolveClosure(ref_t closureMessage/*, ref_t outputRef, Ext
       for (size_t i = 0; i < signLen; i++) {
          dummyWriter.appendNode(lxTarget, signatures[i]);
       }
-      //if (outputRef) {
-      //   parameters.add(outputRef);
-      //}
+      if (outputRef) {
+         dummyWriter.appendNode(lxTarget, outputRef);
+      }
       // if the output signature is not provided - use the super class
-      /*else */dummyWriter.appendNode(lxTarget, superReference);
+      else dummyWriter.appendNode(lxTarget, superReference);
 
       dummyWriter.closeNode();
 

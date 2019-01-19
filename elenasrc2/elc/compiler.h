@@ -272,7 +272,14 @@ private:
             }
             else return false;
          }
-   
+         virtual bool resolveAutoOutput(ref_t reference)
+         {
+            if (parent) {
+               return parent->resolveAutoOutput(reference);
+            }
+            else return false;
+         }
+
          virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode)
          {
             if (parent) {
@@ -565,6 +572,16 @@ private:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
          return scope ? scope->reference : 0;
+      }
+
+      virtual bool resolveAutoOutput(ref_t reference)
+      {
+         if (outputRef == V_AUTO) {
+            outputRef = reference;
+
+            return true;
+         }
+         else return Scope::resolveAutoOutput(reference);
       }
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
@@ -917,7 +934,7 @@ private:
 
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
    void declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode);
-   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, ref_t& outputRef, bool declarationMode);
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
    /*bool*/void declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
 
 ////   void declareSingletonClass(SNode node, ClassScope& scope);
