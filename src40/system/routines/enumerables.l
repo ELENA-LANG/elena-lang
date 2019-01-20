@@ -383,6 +383,25 @@ public extension enumerableOp
 
 // --- indexableOp ---
 
+public extension indexableOp<T>
+{
+    populate(Func<int,T> f)
+    {
+        Indexer it := self.indexer();
+
+        while (it.Available)
+        {
+            int i := it.Index;
+            
+            it.set(f(i));
+            
+            it.appendIndex:1
+        };
+        
+        ^ self
+    }
+}    
+
 public extension indexableOp
 {
 ////    exchange : anIndex1 : anIndex2
@@ -451,22 +470,6 @@ public extension indexableOp
 ////        ^ aCopy.
 ////    ]
         
-    populate(Func<int,object> f)
-    {
-        Indexer it := self.indexer();
-
-        while (it.Available)
-        {
-            int i := it.Index;
-            
-            it.set(f(i));
-            
-            it.appendIndex:1
-        };
-        
-        ^ self
-    }    
-
 //    populate(ExtensionMessage ext_mssg)
 //        = self~indexableOp populate(:n)<int>[ ^n~ext_mssg get ].
 //

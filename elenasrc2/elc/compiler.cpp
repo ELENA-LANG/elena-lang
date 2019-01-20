@@ -4060,6 +4060,9 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
    ObjectInfo info = compileExpression(writer, node, scope, targetRef, mode);
    if (autoMode) {
       targetRef = resolveObjectReference(scope, info);
+      if (isPrimitiveRef(targetRef))
+         targetRef = resolvePrimitiveReference(scope, targetRef, info.element, false);
+
       scope.resolveAutoOutput(targetRef);
    }
 
