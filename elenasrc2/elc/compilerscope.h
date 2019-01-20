@@ -37,7 +37,7 @@ struct ModuleScope : _ModuleScope
       return loadReferenceModule(module->resolveReference(reference), moduleReference);
    }
 
-   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode);
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, bool ignoreFields);
    
    virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)

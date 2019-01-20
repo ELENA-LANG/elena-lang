@@ -1395,7 +1395,7 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, iden
    else scope.raiseError(errInvalidLink, node);
 }
 
-Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/)
+Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields/*, bool ignoreSealed*/)
 {
    _ModuleScope* moduleScope = scope.moduleScope;
 
@@ -1418,10 +1418,10 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
          ClassInfo copy;
          copy.load(&reader);
 
-         moduleScope->importClassInfo(copy, scope.info, module, false, true);
+         moduleScope->importClassInfo(copy, scope.info, module, false, true, ignoreFields);
       }
       else {
-         scope.info.load(&reader);
+         scope.info.load(&reader, false, ignoreFields);
 
          // mark all methods as inherited
          ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
@@ -1453,12 +1453,12 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
    else return irUnsuccessfull;
 }
 
-void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreSealed*/)
+void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields/*, bool ignoreSealed*/)
 {
    scope.info.header.parentRef = parentRef;
    InheritResult res = irSuccessfull;
    if (scope.info.header.parentRef != 0) {
-      res = inheritClass(scope, scope.info.header.parentRef/*, ignoreSealed*/);
+      res = inheritClass(scope, scope.info.header.parentRef, ignoreFields/*, ignoreSealed*/);
    }
 
    //if (res == irObsolete) {
@@ -3760,7 +3760,8 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    else throw InternalError(errClosureError);
    //}
 
-   compileParentDeclaration(SNode(), scope, parentRef);
+   // NOTE : the fields are presaved, so the closure parent should be stateless
+   compileParentDeclaration(SNode(), scope, parentRef, true);
 
    // include the message, it is done after the compilation due to the implemetation
    scope.include(methodScope.message);

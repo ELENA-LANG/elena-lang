@@ -538,24 +538,26 @@ struct ClassInfo
       if (!headerAndSizeOnly) {
          staticValues.write(writer);
          methods.write(writer);
-         fields.write(writer);
-         fieldTypes.write(writer);
          methodHints.write(writer);
          statics.write(writer);
+         fields.write(writer);
+         fieldTypes.write(writer);
       }
    }
 
-   void load(StreamReader* reader, bool headerOnly = false)
+   void load(StreamReader* reader, bool headerOnly = false, bool ignoreFields = false)
    {
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
       if (!headerOnly) {
          staticValues.read(reader);
          methods.read(reader);
-         fields.read(reader);
-         fieldTypes.read(reader);
          methodHints.read(reader);
          statics.read(reader);
+         if (!ignoreFields) {
+            fields.read(reader);
+            fieldTypes.read(reader);
+         }
       }
    }
 
