@@ -2418,7 +2418,8 @@ ObjectInfo Compiler :: compileTemplateSymbol(SyntaxWriter& writer, SNode node, C
 {
    ObjectInfo retVal = mapClassSymbol(scope, resolveTemplateDeclaration(node, scope, false));
       
-   writeTerminal(writer, node, scope, retVal, mode);
+   if (!test(mode, HINT_VIRTUALEXPR))
+      writeTerminal(writer, node, scope, retVal, mode);
 
    return retVal;
 }

@@ -87,18 +87,15 @@ public sealed List<T> : Enumerable<T>
 //            i := i + 1.
 //        ].
 //    ]
-//        
-//    constructor(Enumerator<type> e)
-//    [
-//        theCapacity := 16.
-//        theLength := 0.
-//        theArray := V<type>(16).
-//
-//        while(e next)
-//        [
-//            self append(e get)
-//        ]
-//    ]
+        
+    constructor(Enumerator<T> e)
+        <= ()
+    {
+        while(e.next())
+        {
+            self.append(e.get())
+        }
+    }
     
     constructor(int capacity)
     {

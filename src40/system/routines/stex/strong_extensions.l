@@ -13,19 +13,19 @@ public extension strongEnumerableOp<T>
     Enumerator<T> filterBy(Func<T,bool> f)
         = new StrongFilter<T>(f, cast Enumerator<T>(self.enumerator()));
         
-    Enumerator<T> selectBy(Func<T,T> f)
-        = new StrongSelector<T,T>(f, cast Enumerator<T>(self.enumerator()));
+//    Enumerator<T> selectBy(Func<T,T> f)
+//        = new StrongSelector<T,T>(f, cast Enumerator<T>(self.enumerator()));
         
 //    system'Enumerator<object> selectBy(Func<type,object> f)
 //        = StrongSelector<type,object>(f, system'Enumerator<type>(self enumerator)).
 }
 
-//public extension strongEnumerableOp<type1,type2>
-//{
-//    system'Enumerator<type2> selectBy(Func<type1,type2> f)
-//        = StrongSelector<type1,type2>(f, system'Enumerator<type1>(self enumerator)).    
-//}
-//
+public extension strongEnumerableOp<T1,T2>
+{
+    Enumerator<T2> selectBy(Func<T1,T2> f)
+        = new StrongSelector<T1,T2>(f, cast Enumerator<T1>(self.enumerator()));    
+}
+
 //public extension strongEnumerableOp<type1,type2,type3>
 //{
 //    system'Enumerator<type3> join(object list) on(Func<type1,type2,bool> filter_f) selectBy(Func<type1,type2,type3> select_f)
