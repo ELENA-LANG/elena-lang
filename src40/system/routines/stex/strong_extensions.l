@@ -10,12 +10,12 @@ public extension strongEnumerableOp<T>
         }
     }
     
-//    system'Enumerator<type> filterBy(Func<type,bool> f)
-//        = StrongFilter<type>(f, system'Enumerator<type>(self enumerator)).
-//        
-//    system'Enumerator<type> selectBy(Func<type,type> f)
-//        = StrongSelector<type,type>(f, system'Enumerator<type>(self enumerator)).
-//        
+    Enumerator<T> filterBy(Func<T,bool> f)
+        = new StrongFilter<T>(f, cast Enumerator<T>(self.enumerator()));
+        
+    Enumerator<T> selectBy(Func<T,T> f)
+        = new StrongSelector<T,T>(f, cast Enumerator<T>(self.enumerator()));
+        
 //    system'Enumerator<object> selectBy(Func<type,object> f)
 //        = StrongSelector<type,object>(f, system'Enumerator<type>(self enumerator)).
 }
@@ -31,15 +31,13 @@ public extension strongEnumerableOp<T>
 //    system'Enumerator<type3> join(object list) on(Func<type1,type2,bool> filter_f) selectBy(Func<type1,type2,type3> select_f)
 //        = StrongJoinEnumerator<type1,type2,type3>(filter_f, select_f, system'Enumerator<type1>(self enumerator), system'Enumerator<type2>(list enumerator)).        
 //}
-//
-//public extension strongEnumerableOp2<type>
-//{
-//    stackunsafe type summarize(ref<type> retVal)
-//    [
-//        auto p := StrongSumming<type>(retVal).
-//        
-//        p run(system'Enumerator<type>(self enumerator)).
-//        
-//        ^ retVal value
-//    ]
-//}
+
+public extension strongEnumerableOp2<T>
+{
+    /*stackunsafe */T summarize(T defValue)
+    {
+        auto p := new StrongSumming<T>(defValue);
+        
+        ^ p.run(cast Enumerator<T>(self.enumerator()))
+    }
+}

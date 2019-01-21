@@ -3,7 +3,12 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * it should be possible to declare something like this - var Array<object> o := nil;
+                 * the following code should generate an error : var a.doSomething(b)
                  * support direct attribute, so no extension / multi-method resolving will be used
+                 * var attribute as a class prefix #471
+                 * Simplify the syntax : list of long numbers #457
+                 * implement lazy expressions
                  * implement break
                  * stringOpHelper should be able to call the original trim method, currently it is not possible to call trim
                    method for the anonymous object
@@ -30,7 +35,6 @@ In development:
                    work
                  * the folowing code should raise an error - real cast() = RealNumber new(self);
                  * long constant should not be boxed like int constants
-                 * it should be possible to declare something like this - var Array<object> o := nil;
 
                  * support Array<type> constructors
                  * array operation with Array<type> should be resolved directly (an array is embeddable)

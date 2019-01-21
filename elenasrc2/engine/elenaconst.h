@@ -455,7 +455,8 @@ namespace _ELENA_
   // --- ELENA class prefixes / postfixes ---
    #define PRIVATE_PREFIX_NS        "'$private'"
 
-   #define TEMPLATE_PREFIX_NS       "'$auto'"
+   constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
+   constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
    #define TEMPLATE_PREFIX_NS_LEN   7 
 
    #define FORWARD_PREFIX_NS        "$forwards'"
