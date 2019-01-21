@@ -37,6 +37,7 @@ constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 constexpr auto HINT_MESSAGEREF      = 0x01000000;
 constexpr auto HINT_LOOP            = 0x00800000;
 constexpr auto HINT_SWITCH          = 0x00400000;
+constexpr auto HINT_DIRECTCALL      = 0x00200000;
 constexpr auto HINT_MODULESCOPE     = 0x00100000;
 constexpr auto HINT_PARAMSOP		   = 0x00080400;
 constexpr auto HINT_ASSIGNING_EXPR  = 0x00040000;
@@ -3304,6 +3305,27 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
    ref_t resolvedMessageRef = 0;
    ref_t targetRef = resolveObjectReference(scope, target);
 
+   if (withExtension) {
+      ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, stackSafeAttr);
+      if (extensionRef != 0) {
+         // if there is an extension to handle the compile-time resolved message - use it
+         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
+
+         return generalMessageRef;
+      }
+
+      // check if the extension handles the variadic message
+      ref_t variadicMessage = resolveVariadicMessage(scope, generalMessageRef);
+
+      extensionRef = mapExtension(scope, variadicMessage, implicitSignatureRef, target, stackSafeAttr);
+      if (extensionRef != 0) {
+         // if there is an extension to handle the compile-time resolved message - use it
+         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
+
+         return variadicMessage;
+      }
+   }
+
    // try to resolve the message as is
    resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, stackSafeAttr);
    if (resolvedMessageRef != 0) {
@@ -3319,36 +3341,6 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
       if (resolvedMessageRef != 0) {
          // if the object handles the compile-time resolved variadic message - use it
          return resolvedMessageRef;
-      }
-   }
-
-   if (withExtension) {
-      // check the existing extensions if allowed
-      if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
-         // could be stacksafe
-         stackSafeAttr |= 1;
-
-         // if the object handles the general message - do not use extensions
-         return generalMessageRef;
-      }
-
-      ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, stackSafeAttr);
-      if (extensionRef != 0) {
-         // if there is an extension to handle the compile-time resolved message - use it
-         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
-
-         return generalMessageRef;
-      }
-      
-      // check if the extension handles the variadic message
-      ref_t variadicMessage = resolveVariadicMessage(scope, generalMessageRef);
-
-      extensionRef = mapExtension(scope, variadicMessage, implicitSignatureRef, target, stackSafeAttr);
-      if (extensionRef != 0) {
-         // if there is an extension to handle the compile-time resolved message - use it
-         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
-
-         return variadicMessage;
       }
    }
 
@@ -3381,7 +3373,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       }
       else {
          int stackSafeAttr = 0;
-         messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, stackSafeAttr);
+         if (!test(mode, HINT_DIRECTCALL))
+            messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, stackSafeAttr);
 
          if (!test(stackSafeAttr, 1)) {
             mode |= HINT_DYNAMIC_OBJECT;
@@ -4482,9 +4475,12 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
             msgNode = lxWrapping;
             exprAttr |=  HINT_VIRTUALEXPR;
          }
-		 if (attributes.paramsAttr) {
-			 exprAttr |= HINT_PARAMSOP;
-		 }
+         if (attributes.directAttr) {
+            exprAttr |= HINT_DIRECTCALL;
+         }
+         if (attributes.paramsAttr) {
+	         exprAttr |= HINT_PARAMSOP;
+         }
 	  }
 
       if (attributes.typeAttr && test(mode, HINT_ROOT) && !attributes.castAttr) {
@@ -4609,6 +4605,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    // COMPILER MAGIC : compile the expression attributes
    if (current.compare(lxAttribute, lxTarget)) {
       targetMode |= compileExpressionAttributes(writer, current, scope, mode);
+      if (test(targetMode, HINT_DIRECTCALL)) {
+         // HOTFIX : direct call attribute should be applied to the operation
+         mode |= HINT_DIRECTCALL;
+         targetMode &= ~HINT_DIRECTCALL;
+      }
    }
       
    SNode operationNode = current.nextNode();

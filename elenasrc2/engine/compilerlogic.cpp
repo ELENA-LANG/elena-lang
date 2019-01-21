@@ -1846,6 +1846,13 @@ bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttri
             return true;
          }
          else return false;
+      case (int)V_DIRECT:
+         if (!attributes.directAttr) {
+            attributes.directAttr = true;
+
+            return true;
+         }
+         else return false;
       default:
          return false;
    }

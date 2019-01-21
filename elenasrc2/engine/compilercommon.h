@@ -90,6 +90,7 @@
 #define V_LOOP           (ref_t)-16394
 #define V_IMPORT         (ref_t)-16395
 #define V_EXTERN         (ref_t)-16396
+#define V_DIRECT         (ref_t)-16397
 //#define V_ATTRTEMPLATE   (ref_t)-16398
 #define V_GETACCESSOR    (ref_t)-16399
 //#define V_BLOCK          (ref_t)-16400
@@ -400,10 +401,11 @@ public:
       bool  mssgAttr;
       bool  wrapAttr;
       bool  classAttr;
+      bool  directAttr;
 
       bool isExprAttr()
       {
-         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | classAttr;
+         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | classAttr | directAttr;
       } 
 
       ExpressionAttributes()
@@ -411,6 +413,7 @@ public:
          refAttr = externAttr = typeAttr = castAttr = templateAttr = forwardAttr = false;
          paramsAttr = newOpAttr = loopAttr = internAttr = false;
          classAttr = mssgAttr = wrapAttr = subjAttr = memberAttr = false;
+         directAttr = false;
       }
    };
 
