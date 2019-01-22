@@ -13,6 +13,7 @@
 #include "syntaxtree.h"
 
 constexpr auto V_CATEGORY_MASK   = 0x7FFFFF00u;
+constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
 
 // attributes / prmitive types
 

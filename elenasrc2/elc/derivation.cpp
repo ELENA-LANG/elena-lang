@@ -58,6 +58,28 @@ inline SNode goToLastNode(SNode current)
    return lastOne;
 }
 
+inline SNode goToFirstNode(SNode current, LexicalType type)
+{
+   SNode firstOne = current;
+   while (current != lxNone && current == type) {
+      firstOne = current;
+      current = current.prevNode();
+   }
+
+   return firstOne;
+}
+
+inline SNode goToFirstNode(SNode current, LexicalType type1, LexicalType type2)
+{
+   SNode firstOne = current;
+   while (current != lxNone && current.compare(type1, type2)) {
+      firstOne = current;
+      current = current.prevNode();
+   }
+
+   return firstOne;
+}
+
 inline SNode goToNode(SNode current, LexicalType type)
 {
    while (current != lxNone && current != type)
@@ -530,7 +552,7 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPr
       ref_t ref = _scope->attributes.get(token);
       if (isPrimitiveRef(ref)) {
          // Compiler magic : check if the attribute have correct order
-         if ((ref & V_CATEGORY_MASK) > previusCategory) {
+         if ((ref & V_CATEGORY_MASK) < previusCategory) {
             previusCategory = ref & V_CATEGORY_MASK;
          }
          else ref = 0u;
@@ -558,7 +580,7 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPr
       ref_t ref = _scope->attributes.get(token);      
       if (isPrimitiveRef(ref)) {
          // Compiler magic : check if the attribute have correct order
-         if ((ref & V_CATEGORY_MASK) > previusCategory) {
+         if ((ref & V_CATEGORY_MASK) < previusCategory) {
             previusCategory = ref & V_CATEGORY_MASK;
          }
          else ref = 0u;
@@ -579,18 +601,19 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPr
 
          SNode scopeNode = goToNode(node, lxClassField);
          if (scopeNode.existChild(lxScope)) {
-            // if the property has a body
-            recognizeClassMebers(scopeNode);
-
-            paramCount += SyntaxTree::countChild(scopeNode, lxClassMethod);
+            paramCount += SyntaxTree::countChild(scopeNode, lxScope);
          }
 
          templateName.append('#');
          templateName.appendInt(paramCount);
 
          ref_t templateRef = _scope->attributes.get(templateName.ident());
-         if (templateRef)
+         if (templateRef) {
+            // if the property has a body
+            recognizeClassMebers(scopeNode);
+
             return V_PROPERTY;
+         }            
       }
 
       if (!isPrimitiveRef(ref) && !allowType)
@@ -625,15 +648,16 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
    SNode nameNode = current;
    nameNode = lxNameAttr;
 
-   current = current.prevNode();
+   current = goToFirstNode(nameNode.prevNode(), lxToken);
 
    bool privateOne = true;
    bool visibilitySet = false;
-   bool allowType = true;
    bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
    bool withoutMapping = false;
-   ref_t attributeCategory = 0u;
+   ref_t attributeCategory = V_CATEGORY_MAX;
    while (current == lxToken) {
+      bool allowType = current.nextNode() == lxNameAttr;
+
       ref_t attrRef = mapAttribute(current, allowType, allowPropertyTemplate, attributeCategory);
       if (isPrimitiveRef(attrRef)) {
          current.set(lxAttribute, attrRef);
@@ -654,11 +678,11 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
       }
       else if (attrRef != 0 || allowType) {
          current.set(lxTarget, attrRef);
+         allowType = false;
       }
       else _scope->raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, _filePath, current);
-
-      allowType = false;
-      current = current.prevNode();
+      
+      current = current.nextNode();
    }
    
    SNode nameTerminal = nameNode.firstChild(lxTerminalMask);
@@ -878,9 +902,9 @@ void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxToken) {
-         writer.newBookmark();
+         //writer.newBookmark();
          generateExpressionAttribute(writer, current, derivationScope, attributeCategory);
-         writer.removeBookmark();
+         //writer.removeBookmark();
       }
       current = current.nextNode();
    }
@@ -894,7 +918,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
    if (current == lxNameAttr) {
       nameNode = current;
 
-      current = current.prevNode();
+      current = goToFirstNode(nameNode.prevNode(), lxAttribute, lxTarget);
    }
 
    while (true) {
@@ -934,7 +958,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
       }
       else break;
 
-      current = current.prevNode();
+      current = current.nextNode();
    }
    if (nameNode != lxNone) {
       if (nameNode.existChild(lxDynamicSizeDecl))
@@ -1430,29 +1454,36 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
    else if (onlyAttributes || isPrimitiveRef(attrRef))
       attrType = lxAttribute;
 
-   writer.insert(0, lxEnding, 0);
+   writer.newNode(attrType, attrRef);
+
+   if (current == lxToken) {
+      //insertIdentifier(writer, current.firstChild(lxTerminalMask));
+      copyIdentifier(writer, current.firstChild(lxTerminalMask));
+      if (current.existChild(lxDynamicSizeDecl)) {
+         if (attrType == lxTarget || attrType == lxTemplateParam || attrRef == V_TEMPLATE) {
+            //writer.insertChild(0, lxSize, -1);
+            writer.appendNode(lxSize, -1);
+         }
+         else _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
+      }
+   }
+   //else insertIdentifier(writer, current);
+   else copyIdentifier(writer, current);
+   //writer.insert(0, attrType, attrRef);
+
+   //writer.insert(0, lxEnding, 0);
    if (attrRef == V_TEMPLATE) {
       // copy the template parameters
-      SNode attrNode = goToLastNode(current.findChild(lxToken));
+      SNode attrNode = current.findChild(lxToken);
       ref_t attributeCategory = 0u;
       while (attrNode == lxToken) {
          generateExpressionAttribute(writer, attrNode, derivationScope, attributeCategory, true);
 
-         attrNode = attrNode.prevNode();
+         attrNode = attrNode.nextNode();
       }      
    }
 
-   if (current == lxToken) {
-      insertIdentifier(writer, current.firstChild(lxTerminalMask));
-      if (current.existChild(lxDynamicSizeDecl)) {
-         if (attrType == lxTarget || attrType == lxTemplateParam || attrRef == V_TEMPLATE) {
-            writer.insertChild(0, lxSize, -1);
-         }
-         else _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
-      }         
-   }
-   else insertIdentifier(writer, current);
-   writer.insert(0, attrType, attrRef);
+   writer.closeNode();
 }
 
 void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope)
@@ -1469,9 +1500,9 @@ void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current,
       SNode argNode = current.nextNode();
       ref_t attributeCategory = 0u;
       while (argNode == lxToken) {
-         writer.newBookmark();
+         //writer.newBookmark();
          generateExpressionAttribute(writer, argNode, derivationScope, attributeCategory, true);
-         writer.removeBookmark();
+         //writer.removeBookmark();
 
          argNode = argNode.nextNode();
       }
@@ -1522,22 +1553,15 @@ void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Sco
 
 void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope, bool rootMode)
 {
-   ref_t attributeCategory = 0u;
+   ref_t attributeCategory = V_CATEGORY_MAX;
    if (node.nextNode().compare(lxCollection, lxNestedClass)) {
       generateExpressionAttribute(writer, node, derivationScope, attributeCategory, false, true);
    }
    else {
       if (node.nextNode() == lxToken) {
-         SNode current;
-         // find the last attribute
-         do {
-            current = node;
+         while (node.nextNode() == lxToken) {
+            generateExpressionAttribute(writer, node, derivationScope, attributeCategory);
             node = node.nextNode();
-         } while (node.nextNode() == lxToken);
-
-         while (current != lxNone) {
-            generateExpressionAttribute(writer, current, derivationScope, attributeCategory);
-            current = current.prevNode();
          }
       }
       if (rootMode) {

@@ -6757,6 +6757,8 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       // if the class is closed, no new methods can be declared
       // except private sealed ones (which are declared outside the class VMT)
       if (included && closed && !privateOne) {
+         //ref_t dummy = 0;
+         //ident_t msg = scope.module->resolveAction(getAction(message), dummy);
          scope.raiseError(errClosedParent, findParent(current, lxClass/*, lxNestedClass*/));
       }
 
