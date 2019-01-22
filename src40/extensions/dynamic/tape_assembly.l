@@ -108,7 +108,7 @@ sealed class ParameterContext
     }        
 }
 
-interface class Strategy
+interface Strategy
 {
 //    T<Strategy> preloaded_one []
 //    T<Strategy> symbol_one    []

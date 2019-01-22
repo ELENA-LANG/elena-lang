@@ -136,7 +136,7 @@ class DerivationWriter : public _DerivationWriter
 
    void saveScope(SyntaxWriter& writer);
 
-   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate);
+   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory);
    void declareAttribute(SNode node);
 
    void recognizeScope();
@@ -161,7 +161,7 @@ class DerivationWriter : public _DerivationWriter
    void generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope, bool rootMode);
    void generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/);
    void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-   void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool templateArgMode = false, bool onlyAttributes = false);
+   void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, bool templateArgMode = false, bool onlyAttributes = false);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
    void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);

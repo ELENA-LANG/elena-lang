@@ -3,7 +3,7 @@ import system'routines;
 
 // --- Strategy ---
 
-interface class BaseStrategy
+interface BaseStrategy
 {
     abstract at(Indexer[] indexers, int length) {}
     

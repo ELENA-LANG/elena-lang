@@ -2335,7 +2335,7 @@ public class BaseExtender
 /// A generic variable. 
 ///
 /// Extends an assigned value
-sealed public class Variable : BaseVariable, ref<object>
+public sealed class Variable : BaseVariable, ref<object>
 {
     /// Creates the empty variable
     constructor()

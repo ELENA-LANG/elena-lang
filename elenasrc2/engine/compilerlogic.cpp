@@ -2655,7 +2655,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
 
                      signType = signType + nextArg + 1;
 
-                     int index = ident_t(tmp).toInt();
+                     size_t index = ident_t(tmp).toInt();
                      ref_t templateArgRef = scope.mapFullReference(templateArg);
                      if (!parameters[index - 1]) {
                         parameters[index - 1] = templateArgRef;

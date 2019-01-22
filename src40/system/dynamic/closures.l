@@ -1,6 +1,6 @@
 // --- DynamicClosure ---
 
-public interface class DynamicClosure
+public interface DynamicClosure
 {
     abstract closure(params object[] args) {}
 }

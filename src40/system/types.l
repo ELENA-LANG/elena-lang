@@ -1,69 +1,70 @@
-/// Attributes
-#16390 = type;
-#16386 = class;
-#8197  = struct;
-#16389 = symbol;
-#16384 = constructor;
-//enum            = #8198.
-#8195  = sealed;
-#8193  = embeddable;
-//template        = #16391.
-#8203  = extension;
+/// Attribute categories:
+/// visibility? property? scope_prefix? scope? type?
 
-#8201  = const;
-#8208  = singleton;
-#8202  = generic;
-#8194  = static;
-#16385 = var;
-#50    = auto;
-#8196  = interface;
-#16392 = property;
-#16393 = method;
-#16394 = __loop;
-#8204  = nonstructural;
-#16395 = import;
-#16396 = extern;
-#8205  = closure;
-#8206  = mixin;
-#16397 = __direct;
-#16399 = get;
+/// visibility:
+#80004001 = public;
+#80004002 = private;
+#80004003 = internal;
 
-//__block         = #16400.
-//__nested        = #16401.
+/// property:
+#80003001 = sealed;
+#80003002 = abstract;
+#80003003 = closed;
+#80003005 = predefined;
+
+/// scope_prefix:
+#80002001 = const;
+#80002002 = embeddable;
+#80002003 = ref;
+#80002004 = __direct;
+#80002005 = __loop;
+#80002007 = get;
+#80002008 = set;
+
+/// scope:
+#80001001 = class;
+#80001002 = struct;
+#80001003 = symbol;
+#80001004 = constructor;
+#80001005 = extension;
+#80001006 = singleton;
+#80001007 = interface;
+#80001008 = method;
+#80001009 = field;
+#8000100A = type;
+#8000100B = generic;
+#8000100C = closure;
+#8000100D = var;
+#8000100E = this;
+#8000100F = static;
+#80001011 = cast;
+#80001012 = new;
+#80001013 = dispatch;
+#80001014 = params;
+#80001015 = extern;
+#80001016 = intern;
+#80001017 = forward;
+#80001018 = import;
+#80001019 = mixin;
+#8000101A = property;
+#8000101B = nonstructural;
+#8000101C = auto;
+
+/// primitive types
+#80000801 = __string;
+#80000802 = __float;
+#80000803 = __int;
+#80000804 = __raw;
+#80000805 = __ptr;
+#80000806 = __mssg;
+#80000807 = __subj;
+#80000806 = mssgconst;
+#80000807 = subjconst;
+#80000808 = __symbol;
+
 //preloaded       = #8207.
-#16387 = cast;
-#16404 = new;
-#16405 = forward;
-#16406 = set;
-#16407 = field;
-#16408 = ref;
-#16409 = intern;
-#16410 = this;
-
-#8210  = abstract;
-#8211  = public;
-#8212  = private;
-#8213  = internal;
-#8214  = closed;
-#8215  = predefined;
-#8216  = dispatch;
-
-#32    = params;
-
-#8200  = __string;
-
-#09    = __float;
-#10    = __int;
-#11    = __raw;
-#12    = __ptr;
-//__dword         = #16.
-#19    = __mssg;
-#18    = __subj;
-#19    = mssgconst;
-#18    = subjconst;
 //__extmssg       = #21.
-////__tape_mixin    = #8209.
-#22    = __symbol;
+//__tape_mixin    = #8209.
 //dynamic         = #30.
 //stackunsafe     = #16403.
 

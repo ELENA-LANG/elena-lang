@@ -12,98 +12,92 @@
 #include "elena.h"
 #include "syntaxtree.h"
 
-// virtual objects
+constexpr auto V_CATEGORY_MASK   = 0x7FFFFF00u;
+
+// attributes / prmitive types
+
+/// visibility:
+constexpr auto V_PUBLIC          = 0x80004001u;
+constexpr auto V_PRIVATE         = 0x80004002u;
+constexpr auto V_INTERNAL        = 0x80004003u;
+
+/// property:
+constexpr auto V_SEALED          = 0x80003001u;
+constexpr auto V_ABSTRACT        = 0x80003002u;
+constexpr auto V_CLOSED          = 0x80003003u;
+constexpr auto V_PREDEFINED      = 0x80003005u;
+
+/// scope_prefix:
+constexpr auto V_CONST           = 0x80002001u;
+constexpr auto V_EMBEDDABLE      = 0x80002002u;
+constexpr auto V_WRAPPER         = 0x80002003u;
+constexpr auto V_DIRECT          = 0x80002004u;
+constexpr auto V_LOOP            = 0x80002005u;
+constexpr auto V_PRELOADED       = 0x80002006u;
+constexpr auto V_GETACCESSOR     = 0x80002007u;
+constexpr auto V_SETACCESSOR     = 0x80002008u;
+
+/// scope:
+constexpr auto V_CLASS           = 0x80001001u;
+constexpr auto V_STRUCT          = 0x80001002u;
+constexpr auto V_SYMBOLEXPR      = 0x80001003u;
+constexpr auto V_CONSTRUCTOR     = 0x80001004u;
+constexpr auto V_EXTENSION       = 0x80001005u;
+constexpr auto V_SINGLETON       = 0x80001006u;
+constexpr auto V_LIMITED         = 0x80001007u;
+constexpr auto V_METHOD          = 0x80001008u;
+constexpr auto V_FIELD           = 0x80001009u;
+constexpr auto V_TYPETEMPL       = 0x8000100Au;
+constexpr auto V_GENERIC         = 0x8000100Bu;
+constexpr auto V_ACTION          = 0x8000100Cu;     // a closure attribute
+constexpr auto V_VARIABLE        = 0x8000100Du;
+constexpr auto V_MEMBER          = 0x8000100Eu;
+constexpr auto V_STATIC          = 0x8000100Fu;
+constexpr auto V_CONVERSION      = 0x80001011u;
+constexpr auto V_NEWOP           = 0x80001012u;
+constexpr auto V_DISPATCHER      = 0x80001013u;
+constexpr auto V_ARGARRAY        = 0x80001014u;
+constexpr auto V_EXTERN          = 0x80001015u;
+constexpr auto V_INTERN          = 0x80001016u;
+constexpr auto V_FORWARD         = 0x80001017u;
+constexpr auto V_IMPORT          = 0x80001018u;
+constexpr auto V_GROUP           = 0x80001019u;
+constexpr auto V_PROPERTY        = 0x8000101Au;
+constexpr auto V_NOSTRUCT        = 0x8000101Bu;
+constexpr auto V_AUTO            = 0x8000101Cu;
+constexpr auto V_INITIALIZER     = 0x8000101Du;
+constexpr auto V_TEMPLATE        = 0x8000101Eu;
+
+/// primitive type attributes
+constexpr auto V_STRING          = 0x80000801u;
+constexpr auto V_FLOAT           = 0x80000802u;
+constexpr auto V_INTBINARY       = 0x80000803u;
+constexpr auto V_BINARY          = 0x80000804u;
+constexpr auto V_PTRBINARY       = 0x80000805u;
+constexpr auto V_MESSAGE         = 0x80000806u;
+constexpr auto V_SUBJECT         = 0x80000807u;
+constexpr auto V_SYMBOL          = 0x80000808u;
+
+/// primitive types
+constexpr auto V_FLAG            = 0x80000001u;
+constexpr auto V_NIL             = 0x80000002u;
+constexpr auto V_INT32           = 0x80000003u;
+constexpr auto V_INT64           = 0x80000004u;
+constexpr auto V_DWORD           = 0x80000005u;
+constexpr auto V_REAL64          = 0x80000006u;
+constexpr auto V_EXTMESSAGE      = 0x80000007u;
+constexpr auto V_PTR32           = 0x80000008u;
+constexpr auto V_OBJARRAY        = 0x80000009u;
+constexpr auto V_INT32ARRAY      = 0x8000000Au;
+constexpr auto V_BINARYARRAY     = 0x8000000Bu;
+constexpr auto V_INT16ARRAY      = 0x8000000Cu;
+constexpr auto V_INT8ARRAY       = 0x8000000Du;
+constexpr auto V_OBJECT          = 0x8000000Eu;
+constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
+
 //#define V_PARAMETER      (ref_t)-02
-#define V_FLAG           (ref_t)-03
-#define V_NIL            (ref_t)-04
-#define V_TYPE           (ref_t)-05
-
-#define V_FLOAT          (ref_t)-9
-#define V_INTBINARY      (ref_t)-10
-#define V_BINARY         (ref_t)-11
-#define V_PTRBINARY      (ref_t)-12
-#define V_INT32          (ref_t)-13
-#define V_INT64          (ref_t)-14
-#define V_REAL64         (ref_t)-15
-#define V_DWORD          (ref_t)-16
-#define V_PTR32          (ref_t)-17
-#define V_SUBJECT        (ref_t)-18
-#define V_MESSAGE        (ref_t)-19
-#define V_EXTMESSAGE     (ref_t)-21
-#define V_SYMBOL         (ref_t)-22
 //#define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
-
-#define V_OBJECT         (ref_t)-28
-
-#define V_PRIMARRAY      (ref_t)-29
-#define V_OBJARRAY       (ref_t)-30
-#define V_INT32ARRAY     (ref_t)-31
-#define V_ARGARRAY       (ref_t)-32
-#define V_BINARYARRAY    (ref_t)-35
-#define V_INT16ARRAY     (ref_t)-38
-#define V_INT8ARRAY      (ref_t)-39
-#define V_UNBOXEDARGS	 (ref_t)-40
-
-#define V_AUTO           (ref_t)-50
-
-//#define V_IFBRANCH      (ref_t)-4097
-//#define V_IFNOTBRANCH   (ref_t)-4098
-////#define V_WARNING1    (ref_t)-4099
-////#define V_WARNING2    (ref_t)-4100
-////#define V_WARNING3    (ref_t)-4101
-
-#define V_EMBEDDABLE     (ref_t)-8193
-#define V_STATIC         (ref_t)-8194
-#define V_SEALED         (ref_t)-8195
-#define V_LIMITED        (ref_t)-8196
-#define V_STRUCT         (ref_t)-8197
-//#define V_ENUMLIST       (ref_t)-8198
-#define V_DYNAMIC        (ref_t)-8199
-#define V_STRING         (ref_t)-8200
-#define V_CONST          (ref_t)-8201
-#define V_GENERIC        (ref_t)-8202
-#define V_EXTENSION      (ref_t)-8203
-#define V_NOSTRUCT       (ref_t)-8204
-#define V_ACTION         (ref_t)-8205     // a closure attribute
-#define V_GROUP          (ref_t)-8206
-#define V_PRELOADED      (ref_t)-8207
-#define V_SINGLETON      (ref_t)-8208
-////#define V_TAPEGROUP      (ref_t)-8209
-#define V_ABSTRACT       (ref_t)-8210
-#define V_PUBLIC         (ref_t)-8211
-#define V_PRIVATE        (ref_t)-8212
-#define V_INTERNAL       (ref_t)-8213
-#define V_CLOSED         (ref_t)-8214
-#define V_PREDEFINED     (ref_t)-8215
-#define V_DISPATCHER     (ref_t)-8216
-
-#define V_CONSTRUCTOR    (ref_t)-16384
-#define V_VARIABLE       (ref_t)-16385
-#define V_CLASS          (ref_t)-16386
-#define V_CONVERSION     (ref_t)-16387
-#define V_INITIALIZER    (ref_t)-16388
-#define V_SYMBOLEXPR     (ref_t)-16389
-#define V_TYPETEMPL      (ref_t)-16390
-#define V_TEMPLATE       (ref_t)-16391
-#define V_PROPERTY       (ref_t)-16392
-#define V_METHOD         (ref_t)-16393
-#define V_LOOP           (ref_t)-16394
-#define V_IMPORT         (ref_t)-16395
-#define V_EXTERN         (ref_t)-16396
-#define V_DIRECT         (ref_t)-16397
-//#define V_ATTRTEMPLATE   (ref_t)-16398
-#define V_GETACCESSOR    (ref_t)-16399
-//#define V_BLOCK          (ref_t)-16400
-//#define V_NESTEDBLOCK    (ref_t)-16401
-//#define V_SET            (ref_t)-16402
-//#define V_STACKUNSAFE    (ref_t)-16403
-#define V_NEWOP          (ref_t)-16404
-#define V_FORWARD        (ref_t)-16405
-#define V_SETACCESSOR    (ref_t)-16406
-#define V_FIELD          (ref_t)-16407
-#define V_WRAPPER        (ref_t)-16408
-#define V_INTERN         (ref_t)-16409
-#define V_MEMBER         (ref_t)-16410
+//#define V_TAPEGROUP      (ref_t)-8209
 
 namespace _ELENA_
 {

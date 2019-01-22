@@ -3,14 +3,16 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * var attribute as a class prefix #471
-                 * Simplify the syntax : list of long numbers #457
+                 * var attribute as a class prefix #471 : introducing attribute order, attributes can be aranged in categories, only
+                   one of its kind is allowed 
+                 * expression attributes validation should be refactored / simplified, some structuring should be introduced
+
                  * implement lazy expressions
                  * new anyToken { .. } - should raise an error?
 
-                 * expression attributes validation should be refactored / simplified, some structuring should be introduced
+                 * should be possible to write : a.read(ref var a) 
+                 * warn on operations with unassigned variable
                  * the following code should generate an error : var a.doSomething(b)
-
                  * implement break
                  * stringOpHelper should be able to call the original trim method, currently it is not possible to call trim
                    method for the anonymous object

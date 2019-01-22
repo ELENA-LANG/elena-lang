@@ -1,6 +1,6 @@
 import system'collections;
 
-public interface class Expression
+public interface Expression
 {
     static Expression Constant(object o)
         = new ConstantExpression(o);

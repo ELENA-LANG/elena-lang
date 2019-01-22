@@ -2636,7 +2636,7 @@ ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implic
    ref_t strongMessage2 = 0;
 
    // typified template extension
-   ref_t generalRoleRef3 = 0;
+   //ref_t generalRoleRef3 = 0;
    ref_t roleRef3 = 0;
    ref_t strongMessage3 = 0;
 

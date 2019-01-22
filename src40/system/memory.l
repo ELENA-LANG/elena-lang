@@ -111,7 +111,7 @@ public sealed Array<T> : Indexable<T>
 
 // --- Array template ---
 
-public nonstructural sealed VariadicArray<T> //:: Indexable<template_subj>
+public sealed nonstructural VariadicArray<T> //:: Indexable<template_subj>
 {
     embeddable T[] theArray;
 
@@ -1145,7 +1145,7 @@ public nonstructural sealed VariadicArray<T> //:: Indexable<template_subj>
 // --- emptyString ---
 
 /// An empty literal value
-const public string emptyString = "";
+public const string emptyString = "";
 
 // --- String ---
 

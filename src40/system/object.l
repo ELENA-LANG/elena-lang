@@ -30,7 +30,7 @@ public class Object
 }
 
 /// A common boolean value
-public /*enum */interface class BoolValue
+public interface BoolValue
 {
     /// return the default value
     static bool Default

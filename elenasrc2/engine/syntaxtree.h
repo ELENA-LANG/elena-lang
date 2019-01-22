@@ -48,11 +48,11 @@ enum LexicalType
    lxMessage         = 0x0001B, // arg - message
    lxDispatchCode    = 0x00020,
    lxAssign          = 0x00021,
-   ////   lxStatic          = 0x00022,
    lxParent          = 0x00023,
    lxConstructor     = 0x00024,
    lxStaticMethod    = 0x00025,
    lxSwitchOption    = 0x0003C,
+   lxWrapping        = 0x0002B,
    lxLastSwitchOption = 0x0003D,
    lxAttributeDecl   = 0x0004E,
    lxClassField      = 0x0004F,
@@ -65,31 +65,6 @@ enum LexicalType
    lxSubMessage      = 0x0007D,
 
    lxTypecast        = 0x00100,
-
-//   lxObject          = 0x00003,
-////   lxAngleOperator   = 0x00005,
-//   lxNamespace       = 0x00006,
-//   lxFieldTemplate   = 0x00014,
-//   lxAttributeValue  = 0x00015,
-//   lxNestedClass     = 0x00018,
-   lxWrapping        = 0x0002B,
-//   lxAltOperation    = 0x0002C,
-//   lxCatchOperation  = 0x0002F,
-//   lxLoop            = 0x00030,
-////   lxInlineExpression= 0x00032,
-//   lxMessageReference= 0x08033,
-//   lxExtern          = 0x00039,
-//   lxLastSwitchOption = 0x0003D,
-//   lxBiggerSwitchOption = 0x0003E,
-//   lxLessSwitchOption = 0x0003F,
-//   lxLazyExpression  = 0x08040,
-   
-////   //lxDefaultGeneric  = 0x00046,
-////   lxSubject         = 0x00047,
-//////   lxImplicitConstructor = 0x0004B,
-//   lxScope           = 0x0004D,
-//   lxMessageParameter= 0x0C04E,
-//   lxReferenceExpr   = 0x0C060,
 
    // parameters
    lxEOF             = 0x18003, // indicating closing code bracket

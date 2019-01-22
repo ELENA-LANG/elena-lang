@@ -185,7 +185,7 @@ public sealed struct Date : BaseNumber
 
     static Date MinValue = new Date();
 
-    constructor get Now()
+    get constructor Now()
     {
        SystemTime v;
        systemTimeFactory.readNow(ref v); 
