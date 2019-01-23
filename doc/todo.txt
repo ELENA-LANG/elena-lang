@@ -47,7 +47,7 @@ In development:
 
                  * identifier - message message
 
-                 * migrate twentyfour, 99 Bottles of Beer
+                 * migrate twentyfour, 99 Bottles of Beer, aks test for primes
                  * support 2.2 syntax (without r postfix)
                  * allow to work with ref<int> directly
                  * the following code should be supported : newLength := newLength + cast int(theLength);
