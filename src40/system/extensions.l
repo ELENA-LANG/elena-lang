@@ -1552,13 +1552,13 @@ public extension stringWeakOp
 //    Substring(object anIndex, object aLength)
 //        = self Substring:aLength at:anIndex.
     
-    trimLeft(ch)
+    trimLeft(char ch)
         = stringOpDispatcher.trimLeft(self, ch);
 
-    trimRight(ch)
+    trimRight(char ch)
         = stringOpDispatcher.trimRight(self, ch);
 
-    trim(ch)
+    trim(char ch)
         = stringOpDispatcher.trim(self, ch);
     
     trimLeft()

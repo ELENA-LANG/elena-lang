@@ -3305,7 +3305,34 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
    ref_t resolvedMessageRef = 0;
    ref_t targetRef = resolveObjectReference(scope, target);
 
+   // try to resolve the message as is
+   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, stackSafeAttr);
+   if (resolvedMessageRef != 0) {
+      // if the object handles the compile-time resolved message - use it
+      return resolvedMessageRef;
+   }
+
+   // check if the object handles the variadic message
+   if (targetRef) {
+      resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, resolveVariadicMessage(scope, generalMessageRef),
+         targetRef, implicitSignatureRef, stackSafeAttr);
+
+      if (resolvedMessageRef != 0) {
+         // if the object handles the compile-time resolved variadic message - use it
+         return resolvedMessageRef;
+      }
+   }
+
    if (withExtension) {
+      // check the existing extensions if allowed
+      if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
+         // could be stacksafe
+         stackSafeAttr |= 1;
+
+         // if the object handles the general message - do not use extensions
+         return generalMessageRef;
+      }
+
       ref_t extensionRef = mapExtension(scope, generalMessageRef, implicitSignatureRef, target, stackSafeAttr);
       if (extensionRef != 0) {
          // if there is an extension to handle the compile-time resolved message - use it
@@ -3323,24 +3350,6 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
          target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
 
          return variadicMessage;
-      }
-   }
-
-   // try to resolve the message as is
-   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, stackSafeAttr);
-   if (resolvedMessageRef != 0) {
-      // if the object handles the compile-time resolved message - use it
-      return resolvedMessageRef;
-   }
-
-   // check if the object handles the variadic message
-   if (targetRef) {
-      resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, resolveVariadicMessage(scope, generalMessageRef), 
-         targetRef, implicitSignatureRef, stackSafeAttr);
-
-      if (resolvedMessageRef != 0) {
-         // if the object handles the compile-time resolved variadic message - use it
-         return resolvedMessageRef;
       }
    }
 
