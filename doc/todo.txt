@@ -3,13 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * var attribute as a class prefix #471 : introducing attribute order, attributes can be aranged in categories, only
-                   one of its kind is allowed 
-                 * expression attributes validation should be refactored / simplified, some structuring should be introduced
-
                  * implement lazy expressions
                  * new anyToken { .. } - should raise an error?
-
                  * should be possible to write : a.read(ref var a) 
                  * warn on operations with unassigned variable
                  * the following code should generate an error : var a.doSomething(b)

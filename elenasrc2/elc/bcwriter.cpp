@@ -1895,14 +1895,14 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             break;
          case bdStruct:
             writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
-            if (peekNext(it) == dsStructInfo) {
+            if (peekNext(it) == bdLocalInfo) {
                it++;
                writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
             }
             break;
          case bdStructSelf:
             writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLocalPtr, frameLevel);
-            if (peekNext(it) == dsStructInfo) {
+            if (peekNext(it) == bdLocalInfo) {
                it++;
                writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
             }
