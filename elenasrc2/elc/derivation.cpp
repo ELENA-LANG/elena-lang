@@ -1317,21 +1317,23 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
 
 void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
 {
-   writer.insert(lxMethodParameter);
-   writer.closeNode();
-
-   node = node.nextNode();
-   while (node == lxParameter) {
-      writer.newNode(lxMethodParameter);
-      writer.newBookmark();
-
-      SNode tokenNode = node.findChild(lxToken);
-      generateTokenExpression(writer, tokenNode, derivationScope, false);
-
-      writer.removeBookmark();
-      writer.closeNode();;
+   if (node != lxClosureExpr) {
+      writer.insert(lxMethodParameter);
+      writer.closeNode();
 
       node = node.nextNode();
+      while (node == lxParameter) {
+         writer.newNode(lxMethodParameter);
+         writer.newBookmark();
+
+         SNode tokenNode = node.findChild(lxToken);
+         generateTokenExpression(writer, tokenNode, derivationScope, false);
+
+         writer.removeBookmark();
+         writer.closeNode();;
+
+         node = node.nextNode();
+      }
    }
 
    if (node == lxReturning) {
@@ -1702,6 +1704,11 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
          case lxCollection:
             generateCollectionTree(writer, current, derivationScope);
             first = false;
+            break;
+         case lxClosureExpr:
+            // COMPILER MAGIC : recognize the closure without parameters, 
+            //                  the one with parameters should be handled in default case
+            generateClosureTree(writer, current, derivationScope);
             break;
          default:
             if (isTerminal(current.type)) {
