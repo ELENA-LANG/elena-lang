@@ -50,16 +50,16 @@ public interface TapeExpression
         
     abstract saveTo(List<DynamicClosure> list) {}
     
-//    compiled
-//    [
-//        List<DynamicClosure> list := List<DynamicClosure>(8).
-//        
-//        self saveTo(list).
-//        
-//        T<ClosureTape> tape := ClosureTape new:list.
-//        
-//        ^ [ TapeAssembly new(tape); eval ]
-//    ]
+    compiled()
+    {
+        auto list := new List<DynamicClosure>(8);
+        
+        self.saveTo(list);
+        
+        ClosureTape tape := ClosureTape.new(list);
+        
+        ^ (){ ^ TapeAssembly.load(tape).eval() };
+    }
 }
 
 //public class TapeSymbolExpression :: TapeExpression
