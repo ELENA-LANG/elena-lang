@@ -3,7 +3,11 @@ In development:
 ------                              
 
               dev - elena 4.0
+		 * using / finally statements in ELENA
+                 * Module initializer
+                 * Explicit literal constants
                  * implement lazy expressions
+                 * passing variadic list to the implicit constructor (see - TapeExpression)
                  * new anyToken { .. } - should raise an error?
                  * should be possible to write : a.read(ref var a) 
                  * warn on operations with unassigned variable

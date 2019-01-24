@@ -6,29 +6,29 @@ public interface TapeExpression
     constructor Constant(object o)
         = new TapeConstantExpression(o);
         
-//    generic constructor MessageCall(TapeExpression dest, literal message, V<TapeExpression> arguments)
-//        = TapeMessageCallExpression new(dest,message,arguments).
-//        
-//    constructor MessageCall(TapeExpression dest, literal message)
-//        = TapeMessageCallExpression new(dest,message).
-//        
+    constructor MessageCall(TapeExpression dest, string message, params TapeExpression[] arguments)
+        = TapeMessageCallExpression.new(dest,message,params arguments);
+        
+    constructor MessageCall(TapeExpression dest, string message)
+        = new TapeMessageCallExpression(dest,message);
+        
 //    constructor Symbol(TapeExpression expression)
 //        = TapeSymbolExpression new(expression).
-//        
-//    generic constructor Singleton(V<TapeExpression> methods)
-//        = TapeSingleton new(methods).
-//        
-//    generic constructor Method(literal message, TapeCode body, V<TapeExpression> parameters)
-//        = TapeMethod new(message, body, parameters).
-//        
-//    constructor Method(literal message, TapeCode body)
-//        = TapeMethod new(message, body).
-//        
-//    generic constructor Code(V<TapeExpression> statements)
-//        = TapeCode new(statements).
-//        
-//    constructor Parameter(literal name)
-//        = TapeParameterExpression new(name).
+        
+    constructor Singleton(params TapeExpression[] methods)
+        = TapeSingleton.new(params methods);
+        
+    constructor Method(string message, TapeCode body, params TapeExpression[] parameters)
+        = /*new */TapeMethod.new(message, body, params parameters);
+        
+    constructor Method(string message, TapeCode body)
+        = /*new */TapeMethod.new(message, body);
+        
+    constructor Code(params TapeExpression[] statements)
+        = TapeCode.new(params statements);
+        
+    constructor Parameter(string name)
+        = new TapeParameterExpression(name);
         
     constructor Variable(string name)
         = new TapeVariableExpression(name);
@@ -39,9 +39,9 @@ public interface TapeExpression
     constructor Assigning(string name, TapeExpression value)
         = new TapeAssigningExpression(name, value);
         
-//    constructor Loop(TapeExpression condition, TapeExpression body)
-//        = TapeLoopExpression new(condition, body).
-//        
+    constructor Loop(TapeExpression condition, TapeExpression body)
+        = new TapeLoopExpression(condition, body);
+        
 //    constructor Returning(TapeExpression value)
 //        = TapeReturningExpression new(value).
 //        
@@ -78,103 +78,96 @@ public interface TapeExpression
 //        list append(closeClosure).
 //    ]
 //}
-//
-//public class TapeSingleton :: TapeExpression
-//{
-//    List<TapeExpression> methods.
-//    
-//    generic constructor new(V<TapeExpression> methods)
-//    [
-//        @methods := methods.
-//    ]
-//    
-//    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(openSingletonClosure).
-//        
-//        int len := methods length.
-//        int i := 0.
-//        while(i < len)
-//        [
-//            methods[i] saveTo(list).
-//            
-//            i += 1.            
-//        ].
-//        
-//        list append(closeClosure).
-//    ]
-//}
-//
-//public class TapeMethod :: TapeExpression
-//{
-//    literal               message.
-//    T<TapeCode>        body.
-//    Array<TapeExpression> parameters.
-//    
-//    generic constructor new(literal message, TapeCode body, V<TapeExpression> parameters)
-//    [
-//        @message := message.
-//        @body := body.
-//        @parameters := parameters.
-//    ]
-//    
-//    constructor new(literal message, TapeCode body)
-//    [
-//        @message := message.
-//        @body := body.
-//        @parameters := nil.
-//    ]
-//    
-//    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(openMethodClosure).
-//        list append(newMessageClosure new:message).
-//        
-//        if (nil != parameters)
-//        [
-//            int len := parameters length.
-//            int i := 0.
-//            while(i < len)
-//            [
-//                parameters[i] saveTo(list).
-//                
-//                i += 1.            
-//            ].            
-//        ].
-//
-//        list append(newParamTokenClosure new:"self").
-//                
-//        body saveTo(list).
-//        
-//        list append(closeClosure).
-//    ]    
-//}
-//
-//public class TapeCode :: TapeExpression
-//{
-//    List<TapeExpression> statements.
-//    
-//    generic constructor new(V<TapeExpression> statements)
-//    [
-//        @statements := statements.
-//    ]
-//    
-//    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(openCodeClosure).
-//        
-//        int len := statements length.
-//        int i := 0.
-//        while(i < len)
-//        [
-//            statements[i] saveTo(list).
-//            
-//            i += 1.            
-//        ].
-//        
-//        list append(closeClosure).
-//    ]
-//}
+
+public class TapeSingleton : TapeExpression
+{
+    TapeExpression[] methods;
+    
+    constructor new(params TapeExpression[] methods)
+        <= new(cast TapeExpression[](methods));
+    
+    constructor new(TapeExpression[] methods)
+        = methods;
+    
+    saveTo(List<DynamicClosure> list)
+    {
+        list.append(openSingletonClosure);
+        
+        int len := methods.Length;
+        for (int i := 0, i < len, i += 1)
+        {
+            methods[i].saveTo(list)
+        };
+        
+        list.append(closeClosure)
+    }
+}
+
+public class TapeCode : TapeExpression
+{
+    TapeExpression[] statements;
+
+    constructor new(TapeExpression[] statements)
+        = statements;
+            
+    constructor new(params TapeExpression[] statements)
+        <= new(cast TapeExpression[](statements));
+    
+    saveTo(List<DynamicClosure> list)
+    {
+        list.append(openCodeClosure);
+        
+        int len := statements.Length;
+        for (int i := 0, i < len, i += 1)
+        {
+            statements[i].saveTo(list)
+        };
+        
+        list.append(closeClosure)
+    }
+}
+
+public class TapeMethod : TapeExpression
+{
+    string           message;
+    TapeCode         body;
+    TapeExpression[] parameters;
+    
+    constructor new(string message, TapeCode body, params TapeExpression[] parameters)
+    {
+        this message := message;
+        this body := body;
+        this parameters := parameters;
+    }
+    
+    constructor new(string message, TapeCode body)
+    {
+        this message := message;
+        this body := body;
+        this parameters := nil;
+    }
+    
+    saveTo(List<DynamicClosure> list)
+    {
+        list.append(openMethodClosure);
+        list.append(new newMessageClosure(message));
+        
+        if (nil != parameters)
+        {
+            int len := parameters.Length;
+            for (int i := 0, i < len, i += 1)
+            {
+                parameters[i].saveTo(list)
+            }
+        };
+
+        list.append(new newParamTokenClosure("self"));
+                
+        body.saveTo(list);
+        
+        list.append(closeClosure)
+    }    
+}
 
 public class TapeConstantExpression : TapeExpression
 {
@@ -191,20 +184,20 @@ public class TapeConstantExpression : TapeExpression
     }
 }
 
-//public class TapeParameterExpression :: TapeExpression
-//{
-//    literal name.
-//    
-//    constructor new(literal name)
-//    [
-//        @name := name.
-//    ]
-//    
-//    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(newParamTokenClosure new(name))
-//    ]
-//}
+public class TapeParameterExpression : TapeExpression
+{
+    string name;
+    
+    constructor(string name)
+    {
+        this name := name
+    }
+    
+    saveTo(List<DynamicClosure> list)
+    {
+        list.append(new newParamTokenClosure(name))
+    }
+}
 
 public class TapeVariableExpression : TapeExpression
 {
@@ -238,49 +231,46 @@ public class TapeNewVariableExpression : TapeExpression
     }
 }
 
-//public class TapeMessageCallExpression :: TapeExpression
-//{
-//    literal               message.
-//    T<TapeExpression>     dest.
-//    Array<TapeExpression> arguments.
-//    
-//    generic constructor new(TapeExpression dest, literal message, V<TapeExpression> arguments)
-//    [
-//        @message := message.
-//        @dest := dest.
-//        @arguments := arguments.
-//    ]
-//    
-//    constructor new(TapeExpression dest, literal message)
-//    [
-//        @message := message.
-//        @dest := dest.
-//        @arguments := nil.
-//    ]
-//    
-//    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(openExpressionClosure).
-//        
-//        dest saveTo(list).
-//        
-//        list append(newMessageClosure new:message).
-//        
-//        if (nil != arguments)
-//        [
-//            int len := arguments length.
-//            int i := 0.
-//            while(i < len)
-//            [
-//                arguments[i] saveTo(list).
-//                
-//                i += 1.            
-//            ]
-//        ].
-//        
-//        list append(closeClosure).
-//    ]
-//}
+public class TapeMessageCallExpression : TapeExpression
+{
+    string           message;
+    TapeExpression   dest;
+    TapeExpression[] arguments;
+    
+    constructor new(TapeExpression dest, string message, params TapeExpression[] arguments)
+    {
+        this message := message;
+        this dest := dest;
+        this arguments := arguments;
+    }
+    
+    constructor(TapeExpression dest, string message)
+    {
+        this message := message;
+        this dest := dest;
+        this arguments := nil
+    }
+    
+    saveTo(List<DynamicClosure> list)
+    {
+        list.append(openExpressionClosure);
+        
+        dest.saveTo(list);
+        
+        list.append(new newMessageClosure(message));
+        
+        if (nil != arguments)
+        {
+            int len := arguments.Length;
+            for (int i := 0, i < len, i += 1)
+            {
+                arguments[i].saveTo(list)
+            }
+        };
+        
+        list.append(closeClosure)
+    }
+}
 
 public class TapeAssigningExpression : TapeExpression
 {
@@ -321,34 +311,34 @@ public class TapeAssigningExpression : TapeExpression
 //        list append(closeClosure).
 //    ]
 //}
-//
-//public class TapeLoopExpression :: TapeExpression
-//{
-//    T<TapeExpression>  condition.
-//    T<TapeExpression>  body.
-//    
-//    constructor new(TapeExpression condition, TapeExpression body)
-//    [
-//        @condition := condition.
-//        @body := body.
-//    ]
-//    
-//    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(openLoopClosure).
-//        list append(openExpressionClosure).
-//        list append(ifClosure).
-//        condition saveTo(list).
-//        
-//        list append(openExpressionClosure).
-//        body saveTo(list).
-//        list append(closeClosure).
-//        
-//        list append(closeClosure).
-//        list append(closeClosure).
-//    ]
-//}
-//
+
+public class TapeLoopExpression : TapeExpression
+{
+    TapeExpression condition;
+    TapeExpression body;
+    
+    constructor(TapeExpression condition, TapeExpression body)
+    {
+        this condition := condition;
+        this body := body;
+    }
+    
+    saveTo(List<DynamicClosure> list)
+    {
+        list.append(openLoopClosure);
+        list.append(openExpressionClosure);
+        list.append(ifClosure);
+        condition.saveTo(list);
+        
+        list.append(openExpressionClosure);
+        body.saveTo(list);
+        list.append(closeClosure);
+        
+        list.append(closeClosure);
+        list.append(closeClosure)
+    }
+}
+
 //public class TapeIfExpression :: TapeExpression
 //{
 //    T<TapeExpression>  condition.

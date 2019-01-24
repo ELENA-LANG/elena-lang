@@ -2755,6 +2755,62 @@ labEnd:
   throw
 
 end
+                                         
+procedure __exit_closure."params##invoke$system@Object[2]"
+
+  bloadfi 1
+  count
+  dcopye
+  dsavefi -2  
+  aloadsi 1
+  quit
+
+end
+
+procedure __jumpif_closure."params##invoke$system@Object[2]"
+
+  bcopya
+  aloadsi 1
+  elser labSkip const : system'true
+  acopyb
+  nloade
+  dloadfi -2
+  add
+  dsavefi -2  
+
+labSkip:
+  aloadsi 2
+  quitn 2
+
+end
+
+procedure __jumpifnot_closure."params##invoke$system@Object[2]"
+
+  bcopya
+  aloadsi 1
+  elser labSkip const : system'false
+  acopyb
+  nloade
+  dloadfi -2
+  add
+  dsavefi -2  
+
+labSkip:
+  aloadsi 2
+  quitn 2
+
+end
+
+procedure __jump_closure."params##invoke$system@Object[2]"
+
+  nloade
+  dloadfi -2
+  add
+  dsavefi -2
+  aloadsi 1
+  quitn 1
+
+end
 
 symbol sta_start
 

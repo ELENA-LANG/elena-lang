@@ -1,7 +1,7 @@
 import system'collections;
 import system'dynamic;
 import system'text;
-//import extensions.
+import extensions;
 
 singleton message_token;
 singleton expr_end_token;
@@ -9,8 +9,8 @@ singleton subexpr_token;
 singleton expr_var_token;
 singleton previous_token;
 singleton assign_token;
-//singleton if_token.
-//singleton code_token.
+singleton if_token;
+singleton code_token;
 
 const int METHOD_PARAM = 1;
 const int FORWARD_PARAM = 2;
@@ -110,18 +110,18 @@ sealed class ParameterContext
 
 interface Strategy
 {
-//    T<Strategy> preloaded_one []
-//    T<Strategy> symbol_one    []
+    Strategy preloaded_one() {}
+    Strategy symbol_one()    {}
     Strategy expression()    {}
     Strategy singleton_one() {}
     Strategy method_one()    {}
     Strategy code_one()      {}
-//    T<Strategy> returning     []
-    Strategy variable_one () {}
-//    T<Strategy> loop_one      []
-//
-//    T<Strategy> if_one(ClassContext context)   []
-//    T<Strategy> next_one(ClassContext context, ParameterContext parameters) []
+    Strategy returning()     {}
+    Strategy variable_one()  {}
+    Strategy loop_one()      {}
+
+    Strategy if_one(ClassContext context)   {}
+    Strategy next_one(ClassContext context, ParameterContext parameters) {}
         
     begin(ClassContext context, ParameterContext parameters) {}
     end(ClassContext context, ParameterContext parameters)   {}
@@ -129,8 +129,8 @@ interface Strategy
     setReference(ClassContext context, String r)       {}
     setConstant(ClassContext context, object o)        {}
     setMessageToken(ClassContext context, String m)    {}
-//    setLiteral(ClassContext context, LiteralValue l)         []
-//    setNumericToken(ClassContext context, LiteralValue l)    []
+    setLiteral(ClassContext context, String l)         {}
+    setNumericToken(ClassContext context, String l)    {}
     setAssignToken(ClassContext context, String t)     {}
     setIdentToken(ClassContext context, String m, ParameterContext parameters) {}
     setParamToken(ClassContext context, String m, ParameterContext parameters) {}
@@ -138,77 +138,77 @@ interface Strategy
 
 singleton StartOne : Strategy
 {
-//    T<Strategy> preloaded_one = PreloadedOne.
-//    
-//    T<Strategy> symbol_one = SymbolOne.
+    Strategy preloaded_one() = PreloadedOne;
+    
+    Strategy symbol_one() = SymbolOne;
     
     Strategy singleton_one() = Singleton;
 }
 
-//singleton SymbolOne :: Strategy
-//{
-//    T<Strategy> expression = SymbolBody.
-//    
-//    begin(ClassContext context, ParameterContext parameters)  
-//    [
-//        context push(context length).    
-//    ]
-//    
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        var t := context tape.
-//        var s := t __className.
-//        
-//        int index := context pop.
-//        int len := context length - index.
-//        var tape := ClosureTape new(context tape, index, len).
-//        
-//        context trim(index).
-//        context append(tape).
-//    ]    
-//}
-//
-//singleton PreloadedOne :: Strategy
-//{
-//    begin(ClassContext context, ParameterContext parameters)  
-//    [
-//        context push(context length).
-//    ]
-//    
-//    T<Strategy> expression = SymbolBody.
-//    
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        int index := context pop.
-//        int len := context length - index.
-//        var tape := ClosureTape new(context tape, index, len).
-//        
-//        context trim(index).
-//        context append(tape).
-//        
-//        tape().
-//    ]
-//}
+singleton SymbolOne : Strategy
+{
+    Strategy expression() = SymbolBody;
+    
+    begin(ClassContext context, ParameterContext parameters)  
+    {
+        context.push(context.Length)
+    }
+    
+    end(ClassContext context, ParameterContext parameters)
+    {
+        var t := context.tape();
+        var s := t.__getClassName();
+        
+        int index := context.pop();
+        int len := context.Length - index;
+        var tape := ClosureTape.new(context.tape(), index, len);
+        
+        context.trim(index);
+        context.append(tape)
+    }    
+}
+
+singleton PreloadedOne : Strategy
+{
+    begin(ClassContext context, ParameterContext parameters)  
+    {
+        context.push(context.Length)
+    }
+    
+    Strategy expression() = SymbolBody;
+    
+    end(ClassContext context, ParameterContext parameters)
+    {
+        int index := context.pop();
+        int len := context.Length - index;
+        var tape := ClosureTape.new(context.tape(), index, len);
+        
+        context.trim(index);
+        context.append(tape);
+        
+        tape()
+    }
+}
 
 class BaseCode : Strategy
 {
     Strategy expression()   = RootExpresson;
-//    T<Strategy> returning    = RetExpression.
+    Strategy returning()    = RetExpression;
     Strategy variable_one() = Variable; 
-//    T<Strategy> loop_one     = Loop.      
+    Strategy loop_one()     = Loop;      
 }
 
 singleton Code : BaseCode{}
 
-//singleton SubCode :: BaseCode
-//{
-//}
+singleton SubCode : BaseCode
+{
+}
 
 singleton Method : Strategy
 {
     Strategy code_one() = Code;
     
-//    T<Strategy> returning = RetExpression.
+    Strategy returning() = RetExpression;
     
     setParamToken(ClassContext context, String value, ParameterContext parameters)
     {
@@ -319,19 +319,19 @@ singleton Singleton : BaseClass
     }
 }
 
-//singleton Nested :: BaseClass
-//{
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        var pos := context pop.
-//        var len := context length - pos.
-//        
-//        var class := ClosureClass new(context tape, pos, len).
-//        
-//        context trim(pos).
-//        context push(ConstantClosure new(class)).
-//    ]
-//}
+singleton Nested : BaseClass
+{
+    end(ClassContext context, ParameterContext parameters)
+    {
+        var pos := context.pop();
+        var len := context.Length - pos;
+        
+        var class := ClosureClass.new(context.tape(), pos, len);
+        
+        context.trim(pos);
+        context.push(new ConstantClosure(class))
+    }
+}
 
 class BaseExpression : Strategy
 {
@@ -340,7 +340,7 @@ class BaseExpression : Strategy
         context.push:expr_end_token
     }    
  
-//    T<Strategy> singleton_one = Nested.
+    Strategy singleton_one() = Nested;
           
     setReference(ClassContext context, string r) 
     {
@@ -352,15 +352,15 @@ class BaseExpression : Strategy
         context.push(new ConstantClosure(c))
     }
     
-//    setLiteral(ClassContext context, LiteralValue l) 
-//    [
-//        context push(ConstantClosure new:l).
-//    ]
-//
-//    setNumericToken(ClassContext context, LiteralValue l)
-//    [
-//        context push(ConstantClosure new(l toInt)).
-//    ]
+    setLiteral(ClassContext context, String l) 
+    {
+        context.push(new ConstantClosure(l))
+    }
+
+    setNumericToken(ClassContext context, String l)
+    {
+        context.push(new ConstantClosure(l.toInt()))
+    }
     
     setMessageToken(ClassContext context, String m) 
     {
@@ -402,13 +402,13 @@ class BaseExpression : Strategy
         }
     }
     
-//    T<Strategy> next_one(ClassContext context, ParameterContext parameters) 
-//    [
-//        self end(context, parameters).
-//        self begin(context, parameters).
-//        
-//        context push:previous_token.
-//    ]
+    Strategy next_one(ClassContext context, ParameterContext parameters) 
+    {
+        self.end(context, parameters);
+        self.begin(context, parameters);
+        
+        context.push:previous_token
+    }
     
     end(ClassContext context, ParameterContext parameters)
     {
@@ -483,10 +483,10 @@ class BaseExpression : Strategy
     }    
 }
 
-//singleton SymbolBody :: BaseExpression
-//{
-//    T<Strategy> expression = SubExpression.
-//}
+singleton SymbolBody : BaseExpression
+{
+    Strategy expression() = SubExpression;
+}
 
 singleton SubExpression : BaseExpression
 {
@@ -504,12 +504,12 @@ singleton RootExpresson : BaseExpression
 {
     Strategy expression() = SubExpression;
     
-//    T<Strategy> if_one(ClassContext context)
-//    [
-//        context push:if_token.
-//        
-//        ^ IfExpression.
-//    ]
+    Strategy if_one(ClassContext context)
+    {
+        context.push:if_token;
+        
+        ^ IfExpression
+    }
     
     end(ClassContext context, ParameterContext parameters)
     {
@@ -519,129 +519,130 @@ singleton RootExpresson : BaseExpression
     }    
 }
 
-//singleton Expresson :: BaseExpression
-//{
-//    T<Strategy> expression = SubExpression.
-//}
-//
-//singleton RetExpression :: BaseExpression
-//{
-//    T<Strategy> expression = Expresson.
-//    
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        super end(context, parameters).
-//        
-//        context append:exitClosure.
-//    ]
-//}
-//
-//singleton CondExpression :: BaseExpression
-//{
-//    begin(ClassContext context, ParameterContext parameters)
-//    [
-//        super begin(context, parameters).
-//    ]
-//    
-//    T<Strategy> code_one = SubCode.
-//    
-//    T<Strategy> expression = SubExpression.
-//    
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        super end(context, parameters).
-//        
-//        var token := context pop.
-//        if (token equalReference:if_token)
-//        [
-//            context push(context length).
-//            context append:nilValue.
-////            context append:%"tapeOp.tape_goifnot[]".
-//            context push(code_token).
-//        ];
-//        [
-//            context push(token).
-//        ]
-//    ]    
-//}
-//
-//singleton IfExpression :: BaseExpression
-//{
-//    T<Strategy> expression = CondExpression.
-//    
-//    T<Strategy> code_one = SubCode.
-//    
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        var token := context pop.
-//        
-//        int pos := context pop.
-//        
-//        super end(context, parameters).
-//        
-//        int offset := context length - pos - 1.
-//        
-//        context[pos] := JumpIfNotClosure new(offset).
-//    ]        
-//}
-
-singleton Variable : Strategy
+singleton Expresson : BaseExpression
 {
-    setIdentToken(ClassContext context, string value, ParameterContext parameters) 
+    Strategy expression() = SubExpression;
+}
+
+singleton RetExpression : BaseExpression
+{
+    Strategy expression() = Expresson;
+    
+    end(ClassContext context, ParameterContext parameters)
     {
-        context.append(new ConstantClosure(nil));
+        super.end(context, parameters);
         
-        int method_level := context.peek();        
-        int level := parameters.Level;
+        context.append:exitClosure
+    }
+}
+
+singleton CondExpression : BaseExpression
+{
+    begin(ClassContext context, ParameterContext parameters)
+    {
+        super.begin(context, parameters)
+    }
+    
+    Strategy code_one() = SubCode;
+    
+    Strategy expression() = SubExpression;
+    
+    end(ClassContext context, ParameterContext parameters)
+    {
+        super.end(context, parameters);
         
-        level := level - method_level;
-        level := level + 1;
-        
-        parameters.add(value, METHOD_PARAM, level)
+        var token := context.pop();
+        if (token.equalReference:if_token)
+        {
+            context.push(context.Length);
+            context.append:nilValue;
+//            context append:%"tapeOp.tape_goifnot[]".
+            context.push(code_token)
+        }
+        else
+        {
+            context.push(token)
+        }
     }    
 }
 
-//singleton Loop :: Strategy
+singleton IfExpression : BaseExpression
+{
+    Strategy expression() = CondExpression;
+    
+    Strategy code_one() = SubCode;
+    
+    end(ClassContext context, ParameterContext parameters)
+    {
+        var token := context.pop();
+        
+        int pos := context.pop();
+        
+        super.end(context, parameters);
+        
+        int offset := context.Length - pos - 1;
+        
+        context[pos] := new JumpIfNotClosure(offset)
+    }        
+}
+
+//singleton Variable : Strategy
 //{
-//    T<Strategy> expression = LoopExpresson.    
-//    
-//    begin(ClassContext context, ParameterContext parameters)
-//    [
-//        context push(context length).
-//    ]
+//    setIdentToken(ClassContext context, string value, ParameterContext parameters) 
+//    {
+//        context.append(new ConstantClosure(nil));
+//        
+//        int method_level := context.peek();        
+//        int level := parameters.Level;
+//        
+//        level := level - method_level;
+//        level := level + 1;
+//        
+//        parameters.add(value, METHOD_PARAM, level)
+//    }    
 //}
-//
-//singleton LoopExpresson :: BaseExpression
-//{
-//    T<Strategy> if_one(ClassContext context)
-//    [
-//        context push:if_token.
-//        
-//        ^ LoopIfExpression.
-//    ]
-//}    
-//
-//singleton LoopIfExpression :: BaseExpression
-//{
-//    T<Strategy> expression = CondExpression.
-//    
-//    end(ClassContext context, ParameterContext parameters)
-//    [
-//        var token := context pop.
-//        
-//        int pos := context pop.
-//        
-//        super end(context, parameters).
-//        
-//        int loop_pos := context pop.
-//        
-//        context append(GoToClosure new(loop_pos - context length - 1)).
-//        
-//        int offset := context length - pos - 1.
-//        
-//        context[pos] := JumpIfNotClosure new(offset).        
-//    ]        
-//}
+
+singleton Loop : Strategy
+{
+    Strategy expression() = LoopExpresson;    
+    
+    begin(ClassContext context, ParameterContext parameters)
+    {
+        context.push(context.Length)
+    }
+}
+
+singleton LoopExpresson : BaseExpression
+{
+    Strategy if_one(ClassContext context)
+    {
+        context.push:if_token;
+        
+        ^ LoopIfExpression
+    }
+}    
+
+singleton LoopIfExpression : BaseExpression
+{
+    Strategy expression() = CondExpression;
+    
+    end(ClassContext context, ParameterContext parameters)
+    {
+        var token := context.pop();
+        
+        int pos := context.pop();
+        
+        super.end(context, parameters);
+        
+        int loop_pos := context.pop();
+        
+        context.append(new GoToClosure(loop_pos - context.Length - 1));
+        
+        int offset := context.Length - pos - 1;
+        
+        context[pos] := new JumpIfNotClosure(offset)        
+    }        
+}
 
 public class TapeAssembly
 {
@@ -674,11 +675,11 @@ public class TapeAssembly
         _state.begin(_context, _parameters)
     }
     
-//    openPreloadedSymbol
-//        <= open(%preloaded_one).
-//            
-//    openSymbol
-//        <= open(%symbol_one).
+    openPreloadedSymbol()
+        <= open(subjconst preloaded_one);
+            
+    openSymbol()
+        <= open(subjconst symbol_one);
     
     openSingleton()
         <= open(subjconst singleton_one);
@@ -692,14 +693,14 @@ public class TapeAssembly
     openExpression()
         <= open(subjconst expression);
     
-//    openReturning
-//        <= open(%returning).
+    openReturning()
+        <= open(subjconst returning);
     
     openVariable()
         <= open(subjconst variable_one);
     
-//    openLoop
-//        <= open(%loop_one).
+    openLoop()
+        <= open(subjconst loop_one);
         
     newReference(r)
     {
@@ -711,15 +712,15 @@ public class TapeAssembly
         _state.setConstant(_context, r)
     }
     
-//    newLiteralToken : l
-//    [
-//        _state setLiteral(_context, l literal).
-//    ]
-//    
-//    newNumericToken : l
-//    [
-//        _state setNumericToken(_context, l literal).
-//    ]
+    newLiteralToken(l)
+    {
+        _state.setLiteral(_context, l.Printable)
+    }
+    
+    newNumericToken(l)
+    {
+        _state.setNumericToken(_context, l.Printable)
+    }
     
     newMessageToken(m)
     {
@@ -741,22 +742,22 @@ public class TapeAssembly
         _state.setAssignToken(_context, t.Printable)
     }
     
-//    if
-//    [
-//        _state := _state if_one(_context).
-//    ]
-//    
-//    include(LiteralValue name,LiteralValue symbolName)
-//    [
-//        var symbol := Symbol new(symbolName).
-//        
-//        _parameters add(name, FORWARD_PARAM, symbol).
-//    ]
-//    
-//    nextOperation
-//    [
-//        _state next_one(_context, _parameters).
-//    ]
+    if()
+    {
+        _state := _state.if_one(_context)
+    }
+    
+    include(string name, string symbolName)
+    {
+        var symbol := new Symbol(symbolName);
+        
+        _parameters.add(name, FORWARD_PARAM, symbol)
+    }
+    
+    nextOperation()
+    {
+        _state.next_one(_context, _parameters)
+    }
     
     close()
     {
@@ -781,17 +782,17 @@ public class TapeAssembly
 //    first => _context.
 }
 
-//public singleton openSymbolClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t openSymbol.
-//}
-//
-//public singleton openPreloadedSymbolClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t openSymbol.
-//}
+public singleton openSymbolClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.openSymbol();
+}
+
+public singleton openPreloadedSymbolClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.openSymbol();
+}
 
 public singleton openSingletonClosure : DynamicClosure
 {
@@ -817,11 +818,11 @@ public singleton openExpressionClosure : DynamicClosure
         = t.openExpression();
 }
 
-//public singleton openReturningClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t openReturning.
-//}
+public singleton openReturningClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.openReturning();
+}
 
 public singleton openVariableClosure : DynamicClosure
 {
@@ -829,11 +830,11 @@ public singleton openVariableClosure : DynamicClosure
         = t.openVariable();
 }
 
-//public singleton openLoopClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t openLoop.
-//}
+public singleton openLoopClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.openLoop();
+}
 
 public singleton closeClosure : DynamicClosure
 {
@@ -851,33 +852,33 @@ public singleton newAssignClosure : DynamicClosure
 //{
 //    new : x = newAssignClosure.
 //}.
-//
-//public singleton ifClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t if.
-//}
-//
-//public singleton nextClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t nextOperation.
-//}
-//
-//public class includeClosure :: DynamicClosure
-//{
-//    literal forward.
-//    literal reference.
-//    
-//    constructor new(literal forward, literal reference)
-//    [
-//        @forward:=forward.
-//        @reference:=reference.
-//    ]
-//    
-//    generic closure(object t, V<object> args)
-//        = t include(forward,reference).
-//}
+
+public singleton ifClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.if();
+}
+
+////public singleton nextClosure :: DynamicClosure
+////{
+////    generic closure(object t, V<object> args)
+////        = t nextOperation.
+////}
+////
+////public class includeClosure :: DynamicClosure
+////{
+////    literal forward.
+////    literal reference.
+////    
+////    constructor new(literal forward, literal reference)
+////    [
+////        @forward:=forward.
+////        @reference:=reference.
+////    ]
+////    
+////    generic closure(object t, V<object> args)
+////        = t include(forward,reference).
+////}
 
 public abstract class DynamicClosureWithParam : DynamicClosure
 {
@@ -917,26 +918,26 @@ public class newConstantClosure : DynamicClosureWithParam
         = t.newConstant:param;
 }
 
-//public class newLiteralClosure :: DynamicClosureWithParam
+//public class newLiteralClosure : DynamicClosureWithParam
 //{    
-//    constructor new : param
-//    [
-//        @param := param
-//    ]
+//    constructor(param)
+//    {
+//        this param := param
+//    }
 //    
-//    generic closure(object t, V<object> args)
-//        = t newLiteralToken:param.    
+//    closure(object t, params object[] args)
+//        = t.newLiteralToken:param;    
 //}
 //
-//public class newNumericClosure :: DynamicClosureWithParam
+//public class newNumericClosure : DynamicClosureWithParam
 //{    
-//    constructor new : param
-//    [
-//        @param := param
-//    ]
+//    constructor(param)
+//    {
+//        this param := param
+//    }
 //    
-//    generic closure(object t, V<object> args)
-//        = t newNumericToken:param.    
+//    closure(object t, params object[] args)
+//        = t.newNumericToken:param;    
 //}
 
 public class newParamTokenClosure : DynamicClosureWithParam
@@ -973,11 +974,11 @@ singleton popPrevClosure : DynamicClosure
         = prevElement;
 }
 
-//singleton exitClosure :: DynamicClosure
-//{
-//    generic closure(V<object> args)
-//        => system'core_routines'__exit_closure.
-//}
+singleton exitClosure : DynamicClosure
+{
+    closure(params object[] args)
+        => system'core_routines'__exit_closure;
+}
 
 struct VarClosure : DynamicClosure
 {
@@ -1046,29 +1047,29 @@ struct AssignClosure : DynamicClosure
 //    generic closure(V<object> args)
 //        => system'core_routines'__jumpif_closure.    
 //}
-//
-//struct JumpIfNotClosure :: DynamicClosure
-//{
-//    int index.
-//    
-//    constructor new(int index)
-//    [
-//        @index := index.
-//    ]
-//    
-//    generic closure(V<object> args)
-//        => system'core_routines'__jumpifnot_closure.    
-//}
-//        
-//struct GoToClosure :: DynamicClosure
-//{
-//    int index.
-//    
-//    constructor new(int index)
-//    [
-//        @index := index.
-//    ]
-//    
-//    generic closure(V<object> args)
-//        => system'core_routines'__jump_closure.    
-//}
+
+struct JumpIfNotClosure : DynamicClosure
+{
+    int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    closure(params object[] args)
+        => system'core_routines'__jumpifnot_closure;
+}
+        
+struct GoToClosure : DynamicClosure
+{
+    int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    closure(params object[] args)
+        => system'core_routines'__jump_closure;
+}

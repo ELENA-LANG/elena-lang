@@ -924,7 +924,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
    while (true) {
       if (current == lxAttribute) {
          writer.newNode(lxAttribute, current.argument);
-         copyIdentifier(writer, current.findChild(lxIdentifier));
+         copyIdentifier(writer, current.firstChild(lxTerminalMask));
          if (current.argument == V_TEMPLATE) {
             generateTemplateAttributes(writer, current, derivationScope);
          }
