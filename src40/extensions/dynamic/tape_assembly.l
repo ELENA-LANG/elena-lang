@@ -117,7 +117,7 @@ interface Strategy
     Strategy method_one()    {}
     Strategy code_one()      {}
 //    T<Strategy> returning     []
-//    T<Strategy> variable_one  []
+    Strategy variable_one () {}
 //    T<Strategy> loop_one      []
 //
 //    T<Strategy> if_one(ClassContext context)   []
@@ -127,11 +127,11 @@ interface Strategy
     end(ClassContext context, ParameterContext parameters)   {}
     
     setReference(ClassContext context, String r)       {}
-//    setConstant(ClassContext context, object o)       []
+    setConstant(ClassContext context, object o)        {}
     setMessageToken(ClassContext context, String m)    {}
 //    setLiteral(ClassContext context, LiteralValue l)         []
 //    setNumericToken(ClassContext context, LiteralValue l)    []
-//    setAssignToken(ClassContext context, LiteralValue t)     []
+    setAssignToken(ClassContext context, String t)     {}
     setIdentToken(ClassContext context, String m, ParameterContext parameters) {}
     setParamToken(ClassContext context, String m, ParameterContext parameters) {}
 }
@@ -194,7 +194,7 @@ class BaseCode : Strategy
 {
     Strategy expression()   = RootExpresson;
 //    T<Strategy> returning    = RetExpression.
-//    T<Strategy> variable_one = Variable. 
+    Strategy variable_one() = Variable; 
 //    T<Strategy> loop_one     = Loop.      
 }
 
@@ -347,11 +347,11 @@ class BaseExpression : Strategy
         context.push(new ConstantClosure(new Symbol(r)))
     }
     
-//    setConstant(ClassContext context, object c) 
-//    [
-//        context push(ConstantClosure new(c)).
-//    ]
-//    
+    setConstant(ClassContext context, object c) 
+    {
+        context.push(new ConstantClosure(c))
+    }
+    
 //    setLiteral(ClassContext context, LiteralValue l) 
 //    [
 //        context push(ConstantClosure new:l).
@@ -387,21 +387,21 @@ class BaseExpression : Strategy
         }
     }
     
-//    setAssignToken(ClassContext context, LiteralValue t)
-//    [
-//        var token := context pop.
-//        if (token equalReference:expr_var_token)
-//        [
-//            token := context pop.            
-//            context push(AssignClosure new(token)).
-//        ];
-//        [
-//            context push:token.
-//            context push:assign_token.
-//        ]
-//    ]
-//    
-//    
+    setAssignToken(ClassContext context, string t)
+    {
+        var token := context.pop();
+        if (token.equalReference:expr_var_token)
+        {
+            token := context.pop();            
+            context.push(new AssignClosure(token))
+        }
+        else
+        {
+            context.push:token;
+            context.push:assign_token
+        }
+    }
+    
 //    T<Strategy> next_one(ClassContext context, ParameterContext parameters) 
 //    [
 //        self end(context, parameters).
@@ -584,23 +584,23 @@ singleton RootExpresson : BaseExpression
 //        context[pos] := JumpIfNotClosure new(offset).
 //    ]        
 //}
-//
-//singleton Variable :: Strategy
-//{
-//    setIdentToken(ClassContext context, LiteralValue value, ParameterContext parameters) 
-//    [
-//        context append(ConstantClosure new(Object new)). // !! cannot pass nil
-//        
-//        int method_level := context peek.        
-//        int level := parameters level.
-//        
-//        level := level - method_level.
-//        level := level + 1.
-//        
-//        parameters add(value, METHOD_PARAM, level).        
-//    ]    
-//}
-//
+
+singleton Variable : Strategy
+{
+    setIdentToken(ClassContext context, string value, ParameterContext parameters) 
+    {
+        context.append(new ConstantClosure(nil));
+        
+        int method_level := context.peek();        
+        int level := parameters.Level;
+        
+        level := level - method_level;
+        level := level + 1;
+        
+        parameters.add(value, METHOD_PARAM, level)
+    }    
+}
+
 //singleton Loop :: Strategy
 //{
 //    T<Strategy> expression = LoopExpresson.    
@@ -694,10 +694,10 @@ public class TapeAssembly
     
 //    openReturning
 //        <= open(%returning).
-//    
-//    openVariable
-//        <= open(%variable_one).
-//    
+    
+    openVariable()
+        <= open(subjconst variable_one);
+    
 //    openLoop
 //        <= open(%loop_one).
         
@@ -706,11 +706,11 @@ public class TapeAssembly
         _state.setReference(_context, r.Printable)
     }
         
-//    newConstant : r
-//    [
-//        _state setConstant(_context, r).
-//    ]
-//    
+    newConstant(r)
+    {
+        _state.setConstant(_context, r)
+    }
+    
 //    newLiteralToken : l
 //    [
 //        _state setLiteral(_context, l literal).
@@ -736,11 +736,11 @@ public class TapeAssembly
         _state.setIdentToken(_context, m.Printable, _parameters)
     }
 
-//    newAssignToken : t
-//    [
-//        _state setAssignToken(_context, t literal).
-//    ]
-//    
+    newAssignToken(t)
+    {
+        _state.setAssignToken(_context, t.Printable)
+    }
+    
 //    if
 //    [
 //        _state := _state if_one(_context).
@@ -822,13 +822,13 @@ public singleton openExpressionClosure : DynamicClosure
 //    generic closure(object t, V<object> args)
 //        = t openReturning.
 //}
-//
-//public singleton openVariableClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t openVariable.
-//}
-//
+
+public singleton openVariableClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.openVariable();
+}
+
 //public singleton openLoopClosure :: DynamicClosure
 //{
 //    generic closure(object t, V<object> args)
@@ -841,12 +841,12 @@ public singleton closeClosure : DynamicClosure
         = t.close();
 }
 
-//public singleton newAssignClosure :: DynamicClosure
-//{
-//    generic closure(object t, V<object> args)
-//        = t newAssignToken:"=".
-//}
-//
+public singleton newAssignClosure : DynamicClosure
+{
+    closure(object t, params object[] args)
+        = t.newAssignToken:"=";
+}
+
 //public assignClosureFactory =
 //{
 //    new : x = newAssignClosure.
@@ -906,17 +906,17 @@ public class newMessageClosure : DynamicClosureWithParam
         = t.newMessageToken:param;    
 }
 
-//public class newConstantClosure :: DynamicClosureWithParam
-//{    
-//    constructor new : param
-//    [
-//        @param := param
-//    ]
-//    
-//    generic closure(object t, V<object> args)
-//        = t newConstant:param.    
-//}
-//
+public class newConstantClosure : DynamicClosureWithParam
+{    
+    constructor(param)
+    {
+        this param := param
+    }
+    
+    closure(object t, params object[] args)
+        = t.newConstant:param;
+}
+
 //public class newLiteralClosure :: DynamicClosureWithParam
 //{    
 //    constructor new : param
