@@ -4359,6 +4359,21 @@ ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
    return ref;
 }
 
+SNode Compiler :: injectAttributeIdentidier(SNode current, Scope& scope)
+{
+   ident_t refName = scope.module->resolveReference(current.argument);
+
+   SNode terminalNode = current.firstChild(lxTerminalMask);
+   if (terminalNode != lxNone) {
+      if (isWeakReference(refName)) {
+         terminalNode.set(lxReference, refName);
+      }
+      else terminalNode.set(lxGlobalReference, refName);
+   }
+
+   return terminalNode;
+}
+
 void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope)
 {
    if (current.compare(lxIdentifier, lxReference))
@@ -4369,15 +4384,17 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
       if (current == lxTarget) {
          current.setArgument(mapTypeAttribute(current, scope));
 
+         // HOTFIX : inject the reference
+         injectAttributeIdentidier(current, scope);
+
          parameters.add(current);
       }
       else if (current == lxAttribute && current.argument == V_TEMPLATE) {         
          current = lxTarget;
          current.setArgument(resolveTemplateDeclaration(current, scope, false));
 
-         // HOTFIX : inject the reference and comment the target nodes out
-         SNode terminalNode = current.firstChild(lxTerminalMask);
-         terminalNode.set(lxReference, scope.module->resolveReference(current.argument));
+         // HOTFIX : inject the reference and comment the target nodes out         
+         SNode terminalNode = injectAttributeIdentidier(current, scope);
          do {
             terminalNode = terminalNode.nextNode();
             if (terminalNode == lxTarget) {
@@ -5150,15 +5167,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          ref_t classRef = withoutWeakMessages ? scope.moduleScope->superReference : 0;
          ref_t elementRef = 0;
 
-         ident_t terminal = current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier();
-         if (scope.parameters.exist(terminal))
-            scope.raiseError(errDuplicatedLocal, current);
-
          declareArgumentAttributes(current, scope, classRef, elementRef, declarationMode);
          if (!classRef) {
             classRef = scope.moduleScope->superReference;
          }
          else weakSignature = false;
+
+         ident_t terminal = current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier();
+         if (scope.parameters.exist(terminal))
+            scope.raiseError(errDuplicatedLocal, current);
 
          paramCount++;
          if (paramCount >= ARG_COUNT || test(flags, VARIADIC_MESSAGE))

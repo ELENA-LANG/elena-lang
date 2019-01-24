@@ -1,8 +1,8 @@
-//import system'collections.
-//import system'dynamic.
-//
-//public interface class TapeExpression
-//{
+import system'collections;
+import system'dynamic;
+
+public interface TapeExpression
+{
 //    constructor Constant(object o)
 //        = TapeConstantExpression new(o).
 //        
@@ -32,10 +32,10 @@
 //        
 //    constructor Variable(literal name)
 //        = TapeVariableExpression new(name).
-//        
-//    constructor Declaring(literal name)
-//        = TapeNewVariableExpression new(name).
-//        
+        
+    constructor Declaring(string name)
+        = new TapeNewVariableExpression(name);
+        
 //    constructor Assigning(literal name, TapeExpression value)
 //        = TapeAssigningExpression new(name, value).
 //        
@@ -47,11 +47,9 @@
 //        
 //    constructor If(TapeExpression condition, TapeExpression truePart)
 //        = TapeIfExpression new(condition, truePart).
-//        
-//    abstract saveTo(List<DynamicClosure> list)
-//    [
-//    ]
-//    
+        
+    //abstract saveTo(List<DynamicClosure> list) {}
+    
 //    compiled
 //    [
 //        List<DynamicClosure> list := List<DynamicClosure>(8).
@@ -62,8 +60,8 @@
 //        
 //        ^ [ TapeAssembly new(tape); eval ]
 //    ]
-//}
-//
+}
+
 //public class TapeSymbolExpression :: TapeExpression
 //{
 //    T<TapeExpression> expr.
@@ -207,39 +205,39 @@
 //        list append(newParamTokenClosure new(name))
 //    ]
 //}
-//
-//public class TapeVariableExpression :: TapeExpression
-//{
-//    literal name.
-//    
-//    constructor new(literal name)
-//    [
-//        @name := name.
-//    ]
-//    
+
+public class TapeVariableExpression : TapeExpression
+{
+    string name;
+    
+    constructor(string name)
+    {
+        this name := name
+    }
+    
 //    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(newIdentifierClosure new(name))
-//    ]
-//}
-//
-//public class TapeNewVariableExpression :: TapeExpression
-//{
-//    literal name.
-//    
-//    constructor new(literal name)
-//    [
-//        @name := name.
-//    ]
-//    
+//    {
+//        list.append(new newIdentifierClosure(name))
+//    }
+}
+
+public class TapeNewVariableExpression : TapeExpression
+{
+    string name;
+    
+    constructor(string name)
+    {
+        this name := name
+    }
+    
 //    saveTo(List<DynamicClosure> list)
 //    [
 //        list append(openVariableClosure).
 //        list append(newIdentifierClosure new(name)).
 //        list append(closeClosure).
 //    ]
-//}
-//
+}
+
 //public class TapeMessageCallExpression :: TapeExpression
 //{
 //    literal               message.

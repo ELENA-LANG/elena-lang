@@ -2591,7 +2591,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
    size_t argumentLen = 0;
    ref_t parameters[ARG_COUNT] = { 0 };
    ref_t signatures[ARG_COUNT];
-   size_t signLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
+   scope.module->resolveSignature(implicitSignatureRef, signatures);
 
    // matching pattern with the provided signature
    size_t i = pattern.find('.') + 2;

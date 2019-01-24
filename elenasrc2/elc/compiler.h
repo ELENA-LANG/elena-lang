@@ -892,7 +892,8 @@ private:
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t exptectedRef*/, ObjectInfo target, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
-//
+
+   SNode injectAttributeIdentidier(SNode current, Scope& scope);
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope);
    ref_t compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode);
 
