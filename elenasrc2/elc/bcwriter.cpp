@@ -3852,6 +3852,9 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
       //   tape.write(bcBCopyF, argument);
       //   tape.write(bcAXSaveBI, 0);
       //   break;
+      case lxBaseField:
+         tape.write(bcASaveBI, argument);
+         break;
       default:
          break;
    }
@@ -4993,6 +4996,11 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 
             assignBaseTo(tape, lxResult);
          }
+      }
+      else if (node.existChild(lxByRefTarget) && size == 0) {
+         // HOTFIX : to support boxed by ref operation
+         loadBase(tape, target.type, target.argument);
+         saveObject(tape, lxBaseField, 0);
       }
       else {
          // if assinging the result of primitive assigning operation

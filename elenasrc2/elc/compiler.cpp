@@ -1868,7 +1868,7 @@ size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
    return 0; // !! dummy returning statement, the code never reaches this point
 }
 
-void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ref_t typeRef, bool dynamicArray)
+void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle)
 {
 //   //if (terminal == lxExpression)
 //   //   terminal = terminal.findChild(lxIdentifier, lxPrivate);
@@ -1902,7 +1902,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
 
          opNode = sizeExprNode.nextNode();
       }
-      if (opNode == lxNone) {
+      if (opNode == lxNone && canBeIdle) {
          // HOTFIX : remove the variable if the statement contains only a declaration
          terminal = lxIdle;
       }
@@ -3587,6 +3587,9 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 //      }
 //   }
 //   else {
+      if (byRefAssigning)
+         writer.appendNode(lxByRefTarget);
+
       writer.insert(operationType, operand);
       writer.closeNode();
    //}
@@ -4509,7 +4512,7 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          }
 	  }
 
-      if (attributes.typeAttr && test(mode, HINT_ROOT) && !attributes.castAttr) {
+      if (attributes.typeAttr && !attributes.castAttr) {
          // if it is a variable declaration
          newVariable = true;
 
@@ -4574,7 +4577,7 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
       if (!typeRef)
          typeRef = scope.moduleScope->superReference;
 
-      compileVariable(writer, current, scope, typeRef, dynamicSize);
+      compileVariable(writer, current, scope, typeRef, dynamicSize, !testany(exprAttr, HINT_REFOP));
    }
 
    return exprAttr;

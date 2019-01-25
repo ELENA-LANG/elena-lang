@@ -859,7 +859,7 @@ private:
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 
    void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   void compileVariable(SyntaxWriter& writer, SNode& node, CodeScope& scope, ref_t typeRef, bool dynamicArray);
+   void compileVariable(SyntaxWriter& writer, SNode& node, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);

@@ -5,26 +5,41 @@ In development:
               dev - elena 4.0
 		 * using / finally statements in ELENA
                  * Module initializer
-                 * Explicit literal constants
                  * implement lazy expressions
                  * passing variadic list to the implicit constructor (see - TapeExpression)
+                 * implement break
+                 * embeddable constructors for structures
+                 * embeddable property call
+                 * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
+                 * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
+                   work
+                 * attribute cannot be used as a class constant - s the code - 
+                       = { bool equal(o) = self(object); }; - is not allowed
+                 * support 2.2 syntax (without r postfix)
+                 * allow to work with ref<int> directly
+                 * uncomment extern scope - ConsoleReader
+                 * implement a ? b, a ? b : c, a ? {}, a ? {} : {}
+                 * imlement if(a) b else c;
+                 * IntNumber.#cast<'IntNumber> - why it always creates a new object?
+                 * abstract class cannot have constructors / default constructor
+                 * uncomment validateClassDeclaration
+                 * a ? b : c
+                 * if (a) b else c;
+
+
+                 * Explicit literal constants
                  * new anyToken { .. } - should raise an error?
-                 * should be possible to write : a.read(ref var a) 
                  * warn on operations with unassigned variable
                  * the following code should generate an error : var a.doSomething(b)
-                 * implement break
                  * stringOpHelper should be able to call the original trim method, currently it is not possible to call trim
                    method for the anonymous object
                  * in the interface it was possible to declare a parameter of non-existing class
                  * support - singleton Code : BaseCode;
-                 * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
                  * syntax : template should be the last token in expression and one before the last for declaration
                  * the following code - theIndexers[i] := arguments[i].indexer() - does not work correctly
                    (see SequentialEnumerator)
                  * debugger : variables inside for loop
                  * reimplement AKS test for primes
-
-                 * embeddable constructors for structures
                  * optimize SystemTime
                  * the following code should not be allowed - real n := n;
                  * uncomment __closuretape."#dispatch[1]  - check the subject correctly
@@ -33,17 +48,11 @@ In development:
 
                  * test unboxing with variadic arg list
 
-                 * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
-                   work
                  * the folowing code should raise an error - real cast() = RealNumber new(self);
                  * long constant should not be boxed like int constants
 
                  * support Array<type> constructors
                  * array operation with Array<type> should be resolved directly (an array is embeddable)
-
-                 * should it be possible to compile the following code: class; public program() { class class := new class(); }
-                 * attribute cannot be used as a class constant - s the code - 
-                       = { bool equal(o) = self(object); }; - is not allowed
 
                  * mixin {  }
 
@@ -52,12 +61,8 @@ In development:
                  * identifier - message message
 
                  * migrate twentyfour, 99 Bottles of Beer, aks test for primes
-                 * support 2.2 syntax (without r postfix)
-                 * allow to work with ref<int> directly
                  * the following code should be supported : newLength := newLength + cast int(theLength);
                  * TokenEnumerator : class TextBuilder should not be found (system'text is not imported)
-                 * reimplement lazy expressions
-                 * uncomment extern scope - ConsoleReader
                  * test try / catch operation : method not found, printing calling stack
                  * no need to box variadic argument list for template opertions
                  * (re)implement dynamic variadic argument resolving
@@ -68,21 +73,17 @@ In development:
                  * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one
 
-                 * implement a ? b, a ? b : c, a ? {}, a ? {} : {}
-                 * imlement if(a) b else c;
 
                  * support c style return statement - return x;
 
-                 * IntNumber.#cast<'IntNumber> - why it always creates a new object?
                  * uncomment _ELC_::Project::compileSources
-                 * uncomment ELENARTMachine::loadMessage
-                 * abstract class cannot have constructors / default constructor
-                 * uncomment validateClassDeclaration
                  * Indexer.Index property - should support abstract get and set accessors
                  * unboxing of boxing (in case if analizer does not resolve the issue)
                  * cache resolved built-in tampletes
                  * test all possible syntax combination
                  * simplify DerivationWriter :: newNode - use a common mask for all expression nonterminals
+                 * optimizate operations with byref dynamic variable (no need for boxing / unboxing) - should be locally
+                   boxed
  
               dev - tests          
                  * test : interpreter
