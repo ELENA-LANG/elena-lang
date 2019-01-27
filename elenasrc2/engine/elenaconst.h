@@ -35,10 +35,7 @@ namespace _ELENA_
 
    constexpr auto INVALID_REF             = 0xFFFFFFFFu;
 
-   //#define NEW_MESSAGE_ID          0x0003
    constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
-   //#define EVAL_MESSAGE_ID         0x0005
-   //#define GET_MESSAGE_ID          0x0006
    constexpr auto SET_OPERATOR_ID         = 0x0007;
    constexpr auto LESS_OPERATOR_ID        = 0x0008;
    constexpr auto IF_OPERATOR_ID          = 0x0009;
@@ -62,16 +59,11 @@ namespace _ELENA_
    constexpr auto SHIFTL_OPERATOR_ID      = 0x001B;
    constexpr auto INCREASE_OPERATOR_ID    = 0x001C;
    constexpr auto SEPARATE_OPERATOR_ID    = 0x001D;
+   constexpr auto FINALLY_OPERATOR_ID     = 0x001E;
 
-   //#define SHIFT_MESSAGE_ID        0x001C
-   //#define CAST_MESSAGE_ID         0x001D             // virtual method used for casting
-   //#define INVOKE_MESSAGE_ID       0x001E             // virtual method used for closure call
-   //#define DEFAULT_MESSAGE_ID      0x001F             // virtual method used for the implicit constructor
-   //#define INIT_MESSAGE_ID         0x0020             // virtual method used for the field initializer constructor 
-   //#define IF_ELSE_MESSAGE_ID      0x0021
    constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
    constexpr auto CATCH_OPERATOR_ID       = 0x0023;
-   constexpr auto ALT_OPERATOR_ID       = 0x0024;
+   constexpr auto ALT_OPERATOR_ID         = 0x0024;
 
 //   // virtual operator
 //   #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -419,6 +411,7 @@ namespace _ELENA_
    constexpr auto ISNIL_OPERATOR       = "??";
    constexpr auto CATCH_OPERATOR       = "|";
    constexpr auto ALT_OPERATOR         = "\\";
+   constexpr auto FINALLY_OPERATOR     = "$fnl";
 
   // --- ELENA explicit variables ---
    constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target

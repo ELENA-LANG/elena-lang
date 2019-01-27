@@ -87,6 +87,7 @@ enum Symbol
    nsNestedStatements           = 0x0107B,
    nsNestedStatement            = 0x0107C,
    nsSubMessage                 = 0x0107D,
+   nsL6bOperator                = 0x0107E,
 
 //   nsDeclarationEndExpected         = 0x04000,               // error-terminals
 //   nsStatementEndExpected           = 0x04001,               

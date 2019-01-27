@@ -133,6 +133,7 @@ class ByteCodeWriter
    void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
+   void doCatch(CommandTape& tape);
    void declareAlt(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
@@ -218,6 +219,7 @@ class ByteCodeWriter
 
    void freeVirtualStack(CommandTape& tape, int count);
 
+   void endTry(CommandTape& tape);
    void endCatch(CommandTape& tape);
    void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);

@@ -227,15 +227,6 @@ property fnprop<T, get_accessor>
 //    ]
 //}
 //
-//// --- while statement ---
-//
-//public __loop while<expr>
-//[
-//    T<bool>(expr) ?
-//    [
-//    ].
-//]    
-
 // --- extern statement ---
 
 public extern<extern_block>()
@@ -263,16 +254,6 @@ public ifnot<if_block>(expr)
 {
     cast bool(expr) ! if_block
 }
-
-//
-//public __block __block ifnot<expr>
-//[
-//    T<bool>(expr) inverted ?
-//    [
-//    ]
-//    ! [
-//    ].
-//]
 
 // --- while statement ---
 
@@ -328,22 +309,14 @@ public try<try_block,catch_block1,catch_block2>:catch,catch()
 //    {
 //    }).
 //]
-//
-//// -- finally statement ---
-//
-//public __block finally<expr>
-//[
-//    expr then:
-//        [
-//        ]                 
-//        | raise:[].
-//]        
-//
-//public __block __block template finally
-//[
-//    true doFinally([],[]).
-//]
-//
+
+// -- finally statement ---
+
+public try<try_block,finally_block>:finally()
+{
+    try_block $fnl finally_block | raise();
+}
+
 //// --- using statement ---
 //
 //public __block using<expr>

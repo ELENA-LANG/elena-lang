@@ -2995,7 +2995,8 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
          // if it is branching operators
          return compileBranchingOperator(writer, roperand, scope, target, mode, operator_id);
       case CATCH_OPERATOR_ID:
-         return compileCatchOperator(writer, roperand, scope/*, target, mode, operator_id*/);
+      case FINALLY_OPERATOR_ID:
+         return compileCatchOperator(writer, roperand, scope/*, target, mode*/, operator_id);
       case ALT_OPERATOR_ID:
          return compileAltOperator(writer, roperand, scope, target/*, mode, operator_id*/);
       case APPEND_OPERATOR_ID:
@@ -4089,11 +4090,26 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
    return info;
 }
 
-ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, CodeScope& scope)
+ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t operator_id)
 {
+   writer.insert(lxExpression);
+   writer.closeNode();
+
+   SNode current = node.firstChild();
+   if (operator_id == FINALLY_OPERATOR_ID) {
+      writer.newNode(lxFinally);
+      writer.newBookmark();
+      compileObject(writer, current, scope, 0, 0);
+      writer.removeBookmark();
+      writer.closeNode();
+
+      // HOTFIX : catch operation follow the finally operation
+      current = node.nextNode().firstChild();
+   }
+
    writer.newBookmark();
    writer.appendNode(lxResult);
-   compileOperation(writer, node.firstChild(), scope, ObjectInfo(okObject), 0);
+   compileOperation(writer, current, scope, ObjectInfo(okObject), 0);
    
    writer.removeBookmark();
 

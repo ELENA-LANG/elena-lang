@@ -232,6 +232,7 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsL5Operator:
       case nsL6Operator:
       case nsL0Operator:
+      case nsL6bOperator:
          _cacheWriter.newNode(lxOperator);
          break;
       case nsAssignmentOperand:

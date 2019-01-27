@@ -914,7 +914,7 @@ private:
 
    ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, int mode);
 
-   ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope);
+   ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ref_t operator_id);
    ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo);
 //   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 

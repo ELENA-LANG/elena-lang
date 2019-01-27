@@ -46,6 +46,7 @@ __define NIL_OPERATOR           4218
 __define SUB_BLOCK		4219
 __define SUB_ROOT_EXPRESSION    4220
 __define SUBMESSAGE		4221
+__define L6b_OPERATOR           4222
 
 __define eof            	12291
 __define literal		12292
@@ -478,10 +479,14 @@ L6_OPERATIONS ->
 
 L6_OPERATION ->
 	L6_OPERATOR L6_OPERAND
+	| L6b_OPERATOR OPERAND_EXPRESSION || L6_OPERAND
 
 L6_OPERATOR ->
 	||
 	| \
+
+L6b_OPERATOR ->
+	$fnl
 
 L6_OPERAND ->
 	MESSAGE MESSAGE_BODY

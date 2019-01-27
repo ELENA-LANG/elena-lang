@@ -371,11 +371,23 @@ void ByteCodeWriter :: declareTry(CommandTape& tape)
    tape.write(bcAllocStack, 3);
 }
 
-void ByteCodeWriter :: declareCatch(CommandTape& tape)
+void ByteCodeWriter :: endTry(CommandTape& tape)
 {
    //   unhook
+   tape.write(bcUnhook);
+}
+
+void ByteCodeWriter :: declareCatch(CommandTape& tape)
+{
    //   jump labEnd
    // labErr:
+
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+}
+
+void ByteCodeWriter :: doCatch(CommandTape& tape)
+{
    //   popa
    //   flag
    //   andn elMessage
@@ -386,10 +398,6 @@ void ByteCodeWriter :: declareCatch(CommandTape& tape)
    //   acallvi 0
    // labSkip:
    //   unhook
-
-   tape.write(bcUnhook);
-   tape.write(bcJump, baPreviousLabel);
-   tape.setLabel();
 
    tape.newLabel();
 
@@ -1383,7 +1391,9 @@ void ByteCodeWriter :: endInitializer(CommandTape& tape)
 void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
 {
    // finally block - should free the lock if the exception was thrown
+   endTry(tape);
    declareCatch(tape);
+   doCatch(tape);
 
    tape.write(bcBCopyA);
    tape.write(bcPopA);
@@ -5029,18 +5039,31 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
 
    declareTry(tape);
 
+   SNode finallyNode = node.findChild(lxFinally);
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (test(current.type, lxObjectMask)) {
-         generateObject(tape, current);
-
          if (first) {
+            generateCodeBlock(tape, current);
+            endTry(tape);
+            if (finallyNode != lxNone) {
+               // generate finally
+               pushObject(tape, lxResult);
+               generateCodeBlock(tape, finallyNode);
+               popObject(tape, lxResult);
+            }
             declareCatch(tape);
+            if (finallyNode != lxNone) {
+               // generate finally
+               generateCodeBlock(tape, finallyNode);
+            }
+            doCatch(tape);
 
             // ...
 
             first = false;
          }
+         else generateObject(tape, current);
       }
       current = current.nextNode();
    }
@@ -5569,7 +5592,7 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, int mod
       else if (current == lxExternFrame) {
          generateExternFrame(tape, current);
       }
-//      else generateDebugInfo(tape, current);
+      else generateDebugInfo(tape, current);
 
       current = current.nextNode();
    }
