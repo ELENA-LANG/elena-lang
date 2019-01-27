@@ -301,14 +301,12 @@ public try<try_block,catch_block1,catch_block2>:catch,catch()
     try_block | on(catch_block1,catch_block2);
 }
 
-//// -- try-finally-catch statement ---
-//
-//public __block __nested try<expr>
-//[
-//    expr then:[] | catch([],
-//    {
-//    }).
-//]
+// -- try-finally-catch statement ---
+
+public try<try_block,finally_block, catch_block>:finally,catch()
+{
+    try_block $fnl finally_block | on(catch_block);
+}
 
 // -- finally statement ---
 
