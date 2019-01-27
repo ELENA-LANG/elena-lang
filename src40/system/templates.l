@@ -315,9 +315,18 @@ public try<try_block,finally_block>:finally()
     try_block $fnl finally_block | raise();
 }
 
-//// --- using statement ---
-//
-//public __block using<expr>
-//[
-//    expr doAndClose:[].
-//]    
+// --- using statement ---
+
+public using<block>(expr)
+{
+    auto v := expr;
+    
+    try
+    {
+        block;
+    }
+    finally
+    {
+        v.close()
+    }
+}

@@ -3,7 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
-		 * using / finally statements in ELENA
+		 * using statements in ELENA
 		 * review static symbol implementation
                  * Module initializer
                  * implement lazy expressions

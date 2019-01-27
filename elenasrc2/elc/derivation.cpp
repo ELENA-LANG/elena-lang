@@ -1515,7 +1515,7 @@ void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current,
    else if (derivationScope.templateMode == ScopeType::stCodeTemplate) {
       int paramIndex = derivationScope.parameters.get(current.identifier());
       if (paramIndex != 0) {
-         writer.newNode(lxTemplateParam, paramIndex);
+         writer.newNode(lxTemplateParam, paramIndex + derivationScope.nestedLevel);
          copyIdentifier(writer, current);
          writer.closeNode();
       }
