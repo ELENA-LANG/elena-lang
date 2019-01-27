@@ -1313,25 +1313,25 @@ public sealed const struct String : BaseValue
         ^ new IntNumber(retVal)
     }
 
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(literal aLiteral) at(int anIndex)
-//    [
-//        int aRetVal := 0.
-//        self indexOf(anIndex, aLiteral, &aRetVal).
-//        
-//        ^ IntNumber new(aRetVal).
-//    ]
-//
-//    /// Inserts the substring into and returns the new one
-//    literal insert(int anIndex, literal aLiteral)
-//        => system'core_routines'__literal.
-//
-//    /// Inserts a character into and returns the new one
-//    literal insert(int index, char ch)
-//        = self insert(index, T<literal>(ch)).
-//
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, string s)
+    {
+        int retVal := 0;
+        self.indexOf(index, s, ref retVal);
+        
+        ^ new IntNumber(retVal)
+    }
+
+    /// Inserts the substring into and returns the new one
+    string insert(int index, string s)
+        => system'core_routines'__literal;
+
+    /// Inserts a character into and returns the new one
+    string insert(int index, char ch)
+        = self.insert(index, cast string(ch));
+
 //    /// Inserts an object into and returns the new one
 //    insert : anObject at:anIndex
 //        = self insert(anIndex, anObject).
@@ -1634,10 +1634,10 @@ public sealed class Variant
     real cast()
         = realConvertor.convert(theValue);
 
-//    /// Returns a literal value
-//    cast T<literal>
-//        = literalConvertor convert:theValue.
-//    
+    /// Returns a literal value
+    string cast()
+        = stringConvertor.convert(theValue);
+    
 //    /// Returns a wide literal value
 //    cast T<wide>
 //        = wideConvertor convert:theValue.

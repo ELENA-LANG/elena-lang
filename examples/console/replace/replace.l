@@ -1,22 +1,22 @@
-import extensions.
-import extensions'text.
+import extensions;
+import extensions'text;
 
 // --- Program ---
 
-public program =
-[
-    var aText := console print:"Enter the text:"; readLineTo(String new).
-    var aSearchText := console print:"Enter the phrase to be found:"; readLine.  
-    var aReplaceText := console print:"Enter the phrase to replace with:"; readLine.
+public program()
+{
+    var text := console.print:"Enter the text:".loadLineTo(new StringWriter());
+    var searchText := console.print:"Enter the phrase to be found:".readLine();  
+    var replaceText := console.print:"Enter the phrase to replace with:".readLine();
 
-    var aBM := StringBookmark new:aText.
+    var bm := new StringBookmark(text);
 
-    while (aBM find:aSearchText)
-    [
-        aBM delete:aSearchText; insert:aReplaceText.
-    ].
+    while (bm.find(searchText))
+    {
+        bm.delete(searchText).insert(replaceText)
+    };
 
     console
-        printLine("The resulting text:",aBM);
-        readChar. // wait for any key
-].
+        .printLine("The resulting text:",bm)
+        .readChar() // wait for any key
+}

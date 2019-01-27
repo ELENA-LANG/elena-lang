@@ -668,6 +668,50 @@ labEnd:
   
 end
 
+procedure __literal."insert$system@IntNumber$system@String[3]"
+
+  // ; calculate length
+  blen
+  dec
+  ecopyd
+  
+  aloadsi 3
+  blen
+  add
+
+  acopyr class : system'String
+  bcreate
+
+  // ; copy left side               
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 1
+  dcopy 0
+  callextr api : insert
+
+  // ; insert
+  aloadsi 3
+  ecopyd
+  blen
+  dec
+  eswap
+  callextr api : insert
+  
+  // ; copy right side 
+  ecopyd
+  aloadsi 2
+  nload  
+  eswap
+  aloadsi 1
+  callextr api : sadd
+
+  acopyb
+  quitn 3
+  
+end
+
 procedure __wide."read:Length$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1

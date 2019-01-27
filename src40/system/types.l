@@ -18,6 +18,7 @@
 #80002003 = ref;
 #80002004 = __direct;
 #80002005 = __loop;
+#80002006 = preloaded;
 #80002007 = get;
 #80002008 = set;
 
@@ -62,7 +63,6 @@
 #80000807 = subjconst;
 #80000808 = __symbol;
 
-//preloaded       = #8207.
 //__extmssg       = #21.
 //__tape_mixin    = #8209.
 //dynamic         = #30.

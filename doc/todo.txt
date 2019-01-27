@@ -3,9 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-		 * using statements in ELENA
-		 * review static symbol implementation
-                 * Module initializer
                  * implement lazy expressions
                  * passing variadic list to the implicit constructor (see - TapeExpression)
                  * implement break
@@ -26,7 +23,6 @@ In development:
                  * uncomment validateClassDeclaration
                  * a ? b : c
                  * if (a) b else c;
-
 
                  * Explicit literal constants
                  * new anyToken { .. } - should raise an error?

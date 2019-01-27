@@ -43,7 +43,11 @@ bin\elc examples\console\binary\binary.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc examples\console\replace\replace.prj
+bin\elc examples\console\replace\replace.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem bin\elc examples\console\goods\goods.prj
 rem bin\elc examples\console\datetime\dtcalculator.prj
 rem bin\elc examples\console\random\random.prj

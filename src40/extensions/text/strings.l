@@ -1,146 +1,151 @@
 ////import extensions.
-//
-//// --- StringBookmark ---
-//
-//public class StringBookmark :: BaseValue
-//{
-//    object theValue.
-//    object theIndex.
-//    object theStart.
-//    
-//    constructor new
-//    [
-//        theValue := emptyLiteral.
-//        theIndex := 0.
-//        theStart := 0.
-//    ]
-//
-//    constructor new : aText
-//    [
-//        theValue := aText.
-//        theIndex := 0.
-//        theStart := 0.
-//    ]
-//
-//    bool equal(int aValue)
-//        => theIndex.
-//
-//    bool equal(literal aValue)
-//        => theValue.
-//
-//    bool equal(wide aValue)
-//        => theValue.
-//
-//    find : anObject
-//        <= find(T<int>(anObject)).
-//
-//    append : anObject
-//        <= append(T<int>(anObject)).
-//
-//    insert : anObject
-//        <= insert(anObject literal).
-//
-//    delete : anObject
-//        <= delete(T<int>(anObject)).
-//
-//    find(int anIndex)
-//    [
-//        theIndex := anIndex.
-//    ]
-//
-//    find(literal aValue)
-//    [
-//        theIndex := theValue indexOf:aValue at:theIndex.
-//        
-//        ^ (-1 != theIndex)
-//    ]
-//    
-//    find(wide aValue)
-//    [
-//        theIndex := theValue indexOf:aValue at:theIndex.
-//        
-//        ^ (-1 != theIndex)
-//    ]
-//    
-//    mark
-//    [
-//        if(-1 == theIndex)
-//            [
-//                self clear
-//            ];
-//            [
-//                theIndex := 1 + theIndex.
-//                theStart := theIndex
-//            ].
-//        
-//    ]
-//    
-//    append(literal aValue)
-//    [
-//        theValue := theValue + aValue.
-//    ]
-//    
-//    append(wide aValue)
-//    [
-//        theValue := theValue + aValue.
-//    ]
-//    
-//    append(int aValue)
-//    [
-//        theIndex := theIndex + aValue.
-//    ]
-//    
-//    insert(literal aValue)
-//    [
-//        theValue := theValue insert:aValue at:theIndex.
-//        
-//        theIndex := theIndex + aValue length.
-//    ]
-//    
-//    insert(wide aValue)
-//    [
-//        theValue := theValue insert:aValue at:theIndex.
-//        
-//        theIndex := theIndex + aValue length.
-//    ]
-//    
-//    delete(int aLength)
-//    [
-//        theValue := theValue delete:aLength at:theIndex.
-//    ]
-//
-//    delete(literal l)
-//        <= delete(l length).
-//
-//    delete(wide l)
-//        <= delete(l length).
-//
-//    clear
-//    [
-//        theValue := emptyLiteral.
-//        theIndex := 0.
-//        theStart := 0.
-//    ]
-//
-//    Marked
-//    [
-//        if(-1 == theIndex)
-//            [ ^theValue Substring:theStart ];
-//            [ ^theValue Substring:(theIndex - theStart) at:theStart ]
-//    ]
-//    
-//    T<literal> literal => theValue.
-//    
-//    cast T<literal> = T<literal>(theValue).
-//    
-//    cast T<wide> = T<wide>(theValue).
-//    
-//    cast T<int> = T<int>(theIndex).
-//    
-//    length => theValue.
-//    
-//    index = theIndex.
-//}
+
+// --- StringBookmark ---
+
+public class StringBookmark : BaseValue
+{
+    string theValue;
+    int    theIndex;
+    int    theStart;
+    
+    constructor()
+    {
+        theValue := emptyString;
+        theIndex := 0;
+        theStart := 0
+    }
+
+    constructor(text)
+    {
+        theValue := text;
+        theIndex := 0;
+        theStart := 0
+    }
+
+    bool equal(int value)
+        => theIndex;
+
+    bool equal(string value)
+        => theValue;
+
+    bool equal(wide value)
+        => theValue;
+
+    find(object)
+        <= find(cast int(object));
+
+    append(object)
+        <= append(cast int(object));
+
+    insert(object)
+        <= insert(object.Printable);
+
+    delete(object)
+        <= delete(cast int(object));
+
+    find(int n)
+    {
+        theIndex := n
+    }
+
+    find(string s)
+    {
+        theIndex := theValue.indexOf(theIndex, s);
+        
+        ^ (-1 != theIndex)
+    }
+    
+    find(wide s)
+    {
+        theIndex := theValue.indexOf(theIndex, s);
+        
+        ^ (-1 != theIndex)
+    }
+    
+    mark()
+    {
+        if(-1 == theIndex)
+        {
+            self.clear()
+        }
+        else
+        {
+            theIndex := 1 + theIndex;
+            theStart := theIndex
+        }        
+    }
+    
+    append(string s)
+    {
+        theValue := theValue + s
+    }
+    
+    append(wide s)
+    {
+        theValue := theValue + s
+    }
+    
+    append(int n)
+    {
+        theIndex := theIndex + n
+    }
+    
+    insert(string s)
+    {
+        theValue := theValue.insert(theIndex, s);
+        
+        theIndex := theIndex + s.Length
+    }
+    
+    insert(wide s)
+    {
+        theValue := theValue.insert(theIndex, s);
+        
+        theIndex := theIndex + s.Length
+    }
+    
+    delete(int len)
+    {
+        theValue := theValue.delete(theIndex, len)
+    }
+
+    delete(string s)
+        <= delete(s.Length);
+
+    delete(wide s)
+        <= delete(s.Length);
+
+    clear()
+    {
+        theValue := emptyString;
+        theIndex := 0;
+        theStart := 0
+    }
+
+    get Marked()
+    {
+        if(-1 == theIndex)
+        {
+            ^ theValue.Substring:theStart
+        }
+        else
+        {
+            ^ theValue.Substring(theStart, theIndex - theStart)           
+        }
+    }
+    
+    get string Printable() => theValue;
+    
+    string cast() = cast string(theValue);
+    
+    wide cast() = cast wide(theValue);
+    
+    int cast() = cast int(theIndex);
+    
+    get Length() => theValue;
+    
+    get Index() = theIndex;
+}
 
 // --- StringWriter ---
 
@@ -218,9 +223,17 @@ public sealed class StringWriter //: BaseVariable
 
     string cast() = theValue;
 
-    string Value = theValue;
+    prop string Value
+    {
+        get() = theValue;
+        
+        set(string val)
+        {
+            theValue := val
+        }
+    }
 
 //    cast T<wide> = theValue.
-//
-//    dispatch => theValue.
+
+    dispatch() => theValue;
 }
