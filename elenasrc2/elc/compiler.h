@@ -788,6 +788,8 @@ private:
 
    ObjectInfo mapClassSymbol(Scope& scope, int classRef);
 
+   ref_t resolveTypeAttribute(Scope& scope, SNode node, bool declarationMode);
+
    ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);
 
    ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef, bool declarationMode);
@@ -894,7 +896,7 @@ private:
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 
    SNode injectAttributeIdentidier(SNode current, Scope& scope);
-   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope);
+   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
    ref_t compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode);
 
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);

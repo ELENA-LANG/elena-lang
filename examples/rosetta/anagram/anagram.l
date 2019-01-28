@@ -3,53 +3,53 @@
 // http://www.puzzlers.org/pub/wordlists/unixdict.txt, find the sets of words 
 // that share the same characters that contain the most words in them. 
 
-import system'routines.
-import system'calendar.
-import system'io.
-import system'collections.
-import extensions.
-import extensions'routines.
-import extensions'text.
+import system'routines;
+import system'calendar;
+import system'io;
+import system'collections;
+import extensions;
+import extensions'routines;
+import extensions'text;
 
 // --- Normalized ---
 
 extension op
 {
-     T<literal> normalized
-         = self toArray; ascendant; summarize(StringWriter new).
+     string normalized()
+         = self.toArray().ascendant().summarize(new StringWriter());
 }
 
 // --- Program ---
 
-public program
-[
-    var aStart := now.
-
-    auto aDictionary := Map<literal,object>().
-
-    File new("unixdict.txt"); forEachLine(:aWord)
-    [    
-        var s := aWord.
-        var aKey := aWord normalized.
-        var anItem := aDictionary[aKey].
-        if (nil == anItem)
-        [
-            anItem := ArrayList new.
-            aDictionary[aKey] := anItem.
-        ].
+public program()
+{
+    var start := now;
     
-        anItem append:aWord.
-    ].
+    auto dictionary := new Map<string,object>();
 
-    aDictionary values;
-        sort(:aFormer:aLater)( aFormer item2; length > aLater item2; length );
-        top:20; forEach(:aPair)[ console printLine(aPair item2) ].
+    new File("unixdict.txt").forEachLine:(word)
+    {
+        var key := word.normalized();
+        var item := dictionary[key];
+        if (nil == item)
+        {
+            item := new ArrayList();
+            dictionary[key] := item
+        };
     
-    var anEnd := now.
+        item.append:word
+    };
+
+    dictionary.Values
+        .sort:(former,later => former.Item2.Length > later.Item2.Length )
+        .top:20
+        .forEach:(pair){ console.printLine(pair.Item2) };
+    
+    var end := now;
    
-    var aDiff := anEnd - aStart.
+    var diff := end - start;
 
-    console printLine("Time elapsed in msec:",aDiff milliseconds).
+    console.printLine("Time elapsed in msec:",diff.Milliseconds);
     
-    console readChar
-]
+    console.readChar()
+}

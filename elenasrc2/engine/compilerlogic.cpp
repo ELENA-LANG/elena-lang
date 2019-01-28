@@ -1513,7 +1513,7 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
    injectOverloadList(scope, info, compiler, classRef);
 }
 
-bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg, bool& templateArg)
+bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg)
 {
    switch ((size_t)attrValue) {
       case V_WRAPPER:
@@ -1521,16 +1521,13 @@ bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, b
             byRefArg = true;
             return true;
          }
+         else return false;
       case V_ARGARRAY:
          if (!paramsArg) {
             paramsArg = true;
             return true;
          }
-      case V_TEMPLATE:
-         if (!templateArg) {
-            templateArg = true;
-            return true;
-         }
+         else return false;
       case V_VARIABLE:
          return true;
    }
@@ -1593,7 +1590,6 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
 bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue)
 {
    bool dummy = false;
-   bool dummy2 = false;
    switch ((size_t)attrValue)
    {
       case V_METHOD:
@@ -1602,22 +1598,16 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue)
       case V_CONVERSION:
       case V_GENERIC:
       case V_ACTION:
-         return validateMethodAttribute(attrValue, dummy, dummy2);
+         return validateMethodAttribute(attrValue, dummy);
       default:
          return false;
    }
 }
 
-bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode, bool& templateMode)
+bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
 {
    switch ((size_t)attrValue)
    {
-//      case V_IFBRANCH:
-//         attrValue = tpIfBranch;
-//         return true;
-//      case V_IFNOTBRANCH:
-//         attrValue = tpIfNotBranch;
-//         return true;
       case V_EMBEDDABLE:
          attrValue = tpEmbeddable;
          return true;
@@ -1679,10 +1669,6 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_SETACCESSOR:
          attrValue = tpSetAccessor;
          return true;
-      case V_TEMPLATE:
-         attrValue = 0;
-         templateMode = true;
-         return true;
       default:
          return false;
    }
@@ -1721,7 +1707,6 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       case V_INTBINARY:
       case V_PTRBINARY:
       case V_STRING:
-      case V_TEMPLATE:
       case V_MESSAGE:
       case V_SUBJECT:
       case V_EXTMESSAGE:
@@ -1759,13 +1744,6 @@ bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttri
       case (int)V_NEWOP:
          if (!attributes.castAttr && !attributes.newOpAttr) {
             attributes.newOpAttr = true;
-            return true;
-         }
-         else return false;
-      case (int)V_TEMPLATE:
-         if (!attributes.templateAttr) {
-            attributes.templateAttr = true;
-
             return true;
          }
          else return false;

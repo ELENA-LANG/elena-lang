@@ -897,18 +897,51 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
    writer.closeNode();
 }
 
-void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope)
+void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode current, Scope& derivationScope)
 {
    ref_t attributeCategory = 0u;
-   SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxToken) {
-         //writer.newBookmark();
          generateExpressionAttribute(writer, current, derivationScope, attributeCategory);
-         //writer.removeBookmark();
       }
       current = current.nextNode();
    }
+}
+
+void DerivationWriter :: generateTypeAttribute(SyntaxWriter& writer, SNode attrNodes, SNode terminal, size_t dimensionCounter, 
+   ref_t argRef, Scope& derivationScope)
+{
+   writer.newNode(lxTypeAttribute);
+   for (size_t i = 0; i < dimensionCounter; i++)
+      writer.newNode(lxArrayType);
+
+   if (attrNodes != lxNone) {
+      writer.newNode(lxTarget, V_TEMPLATE);
+      copyIdentifier(writer, terminal);
+      generateTemplateAttributes(writer, attrNodes, derivationScope);
+      writer.closeNode();
+   }
+   else {
+      LexicalType targetType = lxTarget;
+      int targetArgument = argRef;
+      if (derivationScope.withTypeParameters()) {
+         // check template parameter if required
+         int index = derivationScope.parameters.get(terminal.identifier());
+         if (index != 0) {
+            targetType = lxTemplateParam;
+            targetArgument = index + derivationScope.nestedLevel;
+         }
+      }
+
+      writer.newNode(targetType, targetArgument);
+      copyIdentifier(writer, terminal);
+      writer.closeNode();
+   }
+
+   for (size_t i = 0; i < dimensionCounter; i++)
+      writer.closeNode();
+
+   writer.closeNode();
 }
 
 void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool rootMode, bool templateMode, bool expressionMode*/)
@@ -923,39 +956,24 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
    }
 
    while (true) {
-      if (current == lxAttribute) {
+      if (current == lxTarget || (current.argument == V_TEMPLATE && current == lxAttribute)) {
+         SNode terminal = current.firstChild(lxTerminalMask);
+         size_t dimensionCounter = SyntaxTree::countChild(current, lxDynamicSizeDecl);
+
+         SNode attrNodes;
+         if (current == lxAttribute)
+            attrNodes = current.firstChild();
+
+         generateTypeAttribute(writer, attrNodes, terminal, dimensionCounter, current.argument, derivationScope);
+      }
+      else if (current == lxAttribute) {
          writer.newNode(lxAttribute, current.argument);
          copyIdentifier(writer, current.firstChild(lxTerminalMask));
-         if (current.argument == V_TEMPLATE) {
-            generateTemplateAttributes(writer, current, derivationScope);
-         }
 
          if (current.existChild(lxDynamicSizeDecl))
             _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
 
          writer.closeNode();
-      }
-      else if (current == lxTarget) {
-         SNode terminal = current.firstChild(lxTerminalMask);
-
-         LexicalType targetType = lxTarget;
-         int targetArgument = current.argument;
-         if (derivationScope.withTypeParameters()) {
-            // check template parameter if required
-            int index = derivationScope.parameters.get(terminal.identifier());
-            if (index != 0) {
-               targetType = lxTemplateParam;
-               targetArgument = index + derivationScope.nestedLevel;
-            }
-         }
-
-         writer.newNode(targetType, targetArgument);
-         copyIdentifier(writer, terminal);
-         writer.closeNode();
-
-         if (current.existChild(lxDynamicSizeDecl)) {
-            writer.appendNode(lxSize, -1);
-         }
       }
       else break;
 
@@ -1440,53 +1458,26 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
    if (current == lxToken) {
       identNode = current.firstChild(lxTerminalMask);
    }
-      
-   LexicalType attrType = lxNone;
+   
+   size_t dimensionCounter = SyntaxTree::countChild(current, lxDynamicSizeDecl);
+   if (dimensionCounter && !allowType)
+      _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
+
    ref_t attrRef = mapAttribute(current, allowType, allowProperty, previousCategory);
-   if (allowType) {
-      if (attrRef == V_TEMPLATE) {
-         // NOTE : template type declaration has a highest priority
-         attrType = lxAttribute;
-      }
-      else if (derivationScope.isTypeParameter(identNode.identifier(), attrRef)) {
-         // NOTE : check if it is a template parameter
-         attrType = lxTemplateParam;
-      }
-      else attrType = isPrimitiveRef(attrRef) ? lxAttribute : lxTarget;
+   if (allowType && (attrRef == V_TEMPLATE || !isPrimitiveRef(attrRef))) {
+      SNode attrNode;
+      if (attrRef == V_TEMPLATE)
+         attrNode = current.findChild(lxToken);
+
+      generateTypeAttribute(writer, attrNode, identNode, dimensionCounter, attrRef, derivationScope);
    }
-   else if (onlyAttributes || isPrimitiveRef(attrRef))
-      attrType = lxAttribute;
+   else if (isPrimitiveRef(attrRef)) {
+      writer.newNode(lxAttribute, attrRef);
 
-   writer.newNode(attrType, attrRef);
+      copyIdentifier(writer, identNode);
 
-   if (current == lxToken) {
-      //insertIdentifier(writer, current.firstChild(lxTerminalMask));
-      copyIdentifier(writer, current.firstChild(lxTerminalMask));
-      if (current.existChild(lxDynamicSizeDecl)) {
-         if (attrType == lxTarget || attrType == lxTemplateParam || attrRef == V_TEMPLATE) {
-            //writer.insertChild(0, lxSize, -1);
-            writer.appendNode(lxSize, -1);
-         }
-         else _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
-      }
+      writer.closeNode();
    }
-   //else insertIdentifier(writer, current);
-   else copyIdentifier(writer, current);
-   //writer.insert(0, attrType, attrRef);
-
-   //writer.insert(0, lxEnding, 0);
-   if (attrRef == V_TEMPLATE) {
-      // copy the template parameters
-      SNode attrNode = current.findChild(lxToken);
-      ref_t attributeCategory = 0u;
-      while (attrNode == lxToken) {
-         generateExpressionAttribute(writer, attrNode, derivationScope, attributeCategory, true);
-
-         attrNode = attrNode.nextNode();
-      }      
-   }
-
-   writer.closeNode();
 }
 
 void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope)
@@ -2124,18 +2115,6 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
    SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         //if (current.argument == V_TEMPLATE/* && scope.type != TemplateScope::ttAttrTemplate*/) {
-         //   // ignore template attributes
-         //}
-         //else if (current.argument == V_FIELD/* && scope.type != TemplateScope::ttAttrTemplate*/) {
-         //   // ignore template attributes
-         //}
-         //else if (current.argument == V_ACCESSOR) {
-         //   if (scope.type == DerivationScope::ttFieldTemplate) {
-         //      // HOTFIX : is it is a method template, consider the field name as a message subject
-         //      scope.type = DerivationScope::ttMethodTemplate;
-         //   }
-         //}
          if (scope.type == TemplateScope::ttPropertyTemplate) {
             // do not copy the property attributes
          }
@@ -2206,16 +2185,6 @@ void TemplateGenerator :: importClass(SyntaxWriter& output, SNode classNode)
       current = current.nextNode();
    }
 }
-
-//ref_t TemplateGenerator::generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters, bool importMode)
-//{
-//   TemplateScope templateScope(&scope, reference, NULL, NULL);
-//   _Memory* body = scope.loadTemplateTree();
-//   if (body == NULL)
-//      return false;
-//
-//   SyntaxTree templateTree(body);
-//}
 
 ref_t TemplateGenerator :: declareTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)
 {

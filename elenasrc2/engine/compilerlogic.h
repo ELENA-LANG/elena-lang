@@ -174,14 +174,14 @@ public:
    virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateClassAttribute(int& attrValue);
-   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode, bool& templateMode);
+   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool validateImplicitMethodAttribute(int& attrValue);
    virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant, bool& isEmbeddable);
    virtual bool validateExpressionAttribute(int attrValue, ExpressionAttributes& attributes);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne);
 //////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);
-   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg, bool& templateArg);
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg);
 
 ////   virtual bool validateClassFlag(ClassInfo& info, int flag);
    virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);

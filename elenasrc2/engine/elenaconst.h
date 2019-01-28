@@ -16,8 +16,8 @@ namespace _ELENA_
    #define ENGINE_MINOR_VERSION           0
    #define ENGINE_RELEASE_VERSION         1
 
-   #define LINE_LEN                       0x1000            // the maximal source line length
-   #define IDENTIFIER_LEN                 0x0100            // the maximal identifier length
+   constexpr auto LINE_LEN                = 0x1000;         // the maximal source line length
+   constexpr auto IDENTIFIER_LEN          = 0x0100;         // the maximal identifier length
 
   // --- ELENA Standart message constants ---
    constexpr int ACTION_ORDER             = 9;

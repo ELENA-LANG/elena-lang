@@ -1572,7 +1572,7 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
             flags |= value;
          }
       }
-      else if (current == lxTarget) {
+      else if (current == lxTypeAttribute) {
          scope.raiseError(errInvalidSyntax, current);
       }
       current = current.nextNode();
@@ -1588,6 +1588,26 @@ void Compiler :: validateType(Scope& scope, SNode current, ref_t typeRef, bool i
       scope.raiseError(errInvalidType, current);
 }
 
+ref_t Compiler :: resolveTypeAttribute(Scope& scope, SNode node, bool declarationMode)
+{
+   ref_t typeRef = 0;
+   
+   SNode current = node.firstChild();
+   if (current == lxArrayType) {
+      typeRef = resolvePrimitiveArray(scope, resolveTypeAttribute(scope, current, declarationMode), declarationMode);
+   }
+   else if (current == lxTarget) {
+      if (current.argument == V_TEMPLATE) {
+         typeRef = resolveTemplateDeclaration(current, scope, false);
+      }
+      else typeRef = current.argument != 0 ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
+   }
+
+   validateType(scope, node, typeRef, declarationMode);
+
+   return typeRef;
+}
+
 void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode)
 {
    SNode current = node.firstChild();
@@ -1599,9 +1619,8 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
       }
-      else if (current == lxTarget) {
-         scope.outputRef = current.argument != 0 ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-         validateType(scope, current, scope.outputRef, declarationMode);
+      else if (current == lxTypeAttribute) {
+         scope.outputRef = resolveTypeAttribute(scope, current, declarationMode);
       }
 
       current = current.nextNode();
@@ -1638,9 +1657,6 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
                   // if it is a string attribute
                   scope.info.header.flags |= elDebugLiteral;
                }
-               else if (current.argument == V_TEMPLATE) {
-                  fieldRef = resolveTemplateDeclaration(current, scope, false);
-               }
                // if it is a primitive type
                else fieldRef = current.argument;
             }
@@ -1648,10 +1664,9 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
          }
          else scope.raiseError(errInvalidHint, current);
       }
-      else if (current == lxTarget) {
+      else if (current == lxTypeAttribute) {
          if (fieldRef == 0) {
-            fieldRef = current.argument != 0 ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-            validateType(scope, current, fieldRef, false);
+            fieldRef = resolveTypeAttribute(scope, current, false);
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -4393,37 +4408,30 @@ SNode Compiler :: injectAttributeIdentidier(SNode current, Scope& scope)
    return terminalNode;
 }
 
-void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope)
+void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode)
 {
    if (current.compare(lxIdentifier, lxReference))
       current = current.nextNode();
 
    ExpressionAttributes attributes;
    while (current != lxNone) {
-      if (current == lxTarget) {
-         current.setArgument(mapTypeAttribute(current, scope));
+      if (current == lxTypeAttribute) {
+         ref_t typeRef = resolveTypeAttribute(scope, current, declarationMode);
 
-         // HOTFIX : inject the reference
-         injectAttributeIdentidier(current, scope);
-
-         parameters.add(current);
-      }
-      else if (current == lxAttribute && current.argument == V_TEMPLATE) {         
-         current = lxTarget;
-         current.setArgument(resolveTemplateDeclaration(current, scope, false));
+         SNode targetNode = current.firstChild();
+         targetNode.set(lxTarget, typeRef);
 
          // HOTFIX : inject the reference and comment the target nodes out         
-         SNode terminalNode = injectAttributeIdentidier(current, scope);
-         do {
-            terminalNode = terminalNode.nextNode();
-            if (terminalNode == lxTarget) {
-               terminalNode = lxIdle;
-            }
-         } while (terminalNode != lxNone);
-
-         parameters.add(current);
+         SNode terminalNode = injectAttributeIdentidier(targetNode, scope);
+         if (current.argument == V_TEMPLATE) {
+            do {
+               terminalNode = terminalNode.nextNode();
+               if (terminalNode == lxTarget) {
+                  terminalNode = lxIdle;
+               }
+            } while (terminalNode != lxNone);
+         }
       }
-      else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 
       current = current.nextNode();
    }
@@ -4452,7 +4460,7 @@ ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope, bool decl
 {
    // generate an reference class
    List<SNode> parameters;
-   compileTemplateAttributes(node.firstChild(), parameters, scope);
+   compileTemplateAttributes(node.firstChild(), parameters, scope, declarationMode);
    
    ref_t templateRef = mapTemplateAttribute(node, scope);
    if (!templateRef)
@@ -4478,17 +4486,6 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
       int value = current.argument;
       if (!_logic->validateExpressionAttribute(value, attributes))
          scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-
-      if (attributes.templateAttr && test(mode, HINT_ROOT)) {
-         if (typeRef == 0) {
-            typeRef = resolveTemplateDeclaration(current, scope, false);
-            if (!typeRef)
-               scope.raiseError(errInvalidHint, current);
-         }
-         else scope.raiseError(errIllegalOperation, current);
-
-         newVariable = true;
-      }      
 
       if (attributes.isExprAttr() && !newVariable && !typeRef) {
          if (attributes.forwardAttr) {
@@ -4560,13 +4557,12 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
       current = current.nextNode();
    }
 
-   if (current == lxTarget) {
+   if (current == lxTypeAttribute) {
       if (typeRef == 0) {
-         typeRef = mapTypeAttribute(current, scope);
-         validateType(scope, current, typeRef, false);
+         typeRef = resolveTypeAttribute(scope, current, false);
 
          newVariable = true;
-         if (current.existChild(lxSize)) {
+         if (current.existChild(lxArrayType)) {
             dynamicSize = true;
          }
       }
@@ -4574,16 +4570,6 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
 
       current = current.nextNode();
    }
-
-   //            // negative value defines the target virtual class
-   //            if (variable.extraparam == 0) {
-   //               variable.extraparam = value;
-   //            }
-   //            //else if (value == V_OBJARRAY) {
-   //            //   variable.element = variable.extraparam;
-   //            //   variable.extraparam = value;
-   //            //}
-   //            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 
    if (invalidExpr) {
       scope.raiseError(errInvalidSyntax, current.parentNode());
@@ -4648,7 +4634,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
    SNode current = node.firstChild();
    // COMPILER MAGIC : compile the expression attributes
-   if (current.compare(lxAttribute, lxTarget)) {
+   if (current.compare(lxAttribute, lxTypeAttribute)) {
       targetMode |= compileExpressionAttributes(writer, current, scope, mode);
       if (test(targetMode, HINT_DIRECTCALL)) {
          // HOTFIX : direct call attribute should be applied to the operation
@@ -5103,27 +5089,29 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (_logic->validateArgumentAttribute(current.argument, byRefArg, paramsArg, templateArg)) {
-            if (templateArg) {
-               if (!typeSet) {
-                  classRef = resolveTemplateDeclaration(current, scope, declarationMode);
-                  validateType(scope, current, classRef, declarationMode);
-                  typeSet = true;
-               }
-               else scope.raiseError(errIllegalOperation, current);
-            }
+         if (_logic->validateArgumentAttribute(current.argument, byRefArg, paramsArg)) {
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }      
-      else if (current == lxTarget) {
+      else if (current == lxTypeAttribute) {
          typeSet = true;
+         if (paramsArg) {
+            SNode argNode = current.firstChild();
+            if (argNode == lxArrayType) {
+               arrayArg = true;
+               classRef = resolveTypeAttribute(scope, argNode, declarationMode);
+            }
+            else scope.raiseError(errIllegalMethod, node);
+         }
+         else classRef = resolveTypeAttribute(scope, current, declarationMode);
+
          classRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
          if (!declarationMode)
             validateType(scope, current, classRef, declarationMode);
       }
-      else if (current == lxSize) {
-         arrayArg = true;
-      }
+      //else if (current == lxSize) {
+      //   arrayArg = true;
+      //}
 
       current = current.nextNode();
    }
@@ -5132,15 +5120,10 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
       elementRef = classRef;
       classRef = V_WRAPPER;
    }
-   if (arrayArg) {
+   if (paramsArg) {
       elementRef = classRef;
-      if (paramsArg) {
-         classRef = V_ARGARRAY;
-      }
-      else classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef);
+      classRef = V_ARGARRAY;
    }
-   else if (paramsArg)
-      scope.raiseError(errIllegalMethod, node);
 }
 
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode)
@@ -6629,26 +6612,20 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
          hintChanged = true;
       }
-      else if (current == lxTarget) {
+      else if (current == lxTypeAttribute) {
          if (!allowTypeAttribute) {
             scope.raiseError(errTypeNotAllowed, node);
          }
-         else if (current.argument != 0) {
-            outputRef = current.argument;
+         else {
+            ref_t ref = resolveTypeAttribute(scope, current, true);
+            if (!outputRef) {
+               outputRef = ref;
 
-            outputChanged = true;
+               outputChanged = true;
+            }
+            else if (outputRef != ref)
+               scope.raiseError(errTypeAlreadyDeclared, node);
          }
-         else if (outputRef == 0) {
-            outputRef = resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-            if (!outputRef)
-               scope.raiseError(errUnknownClass, current);
-
-            outputChanged = true;
-         }
-         else if (outputRef != resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask))) {
-            scope.raiseError(errTypeAlreadyDeclared, node);
-         }
-         else outputChanged = true;
       }
 //      else if (current == lxClassMethodOpt) {
 //         SNode mssgAttr = SyntaxTree::findChild(current, lxMessage);
@@ -7031,14 +7008,10 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      bool templateMode = false;
       bool explicitMode = false;
       if (current == lxAttribute) {
          int value = current.argument;
-         if (_logic->validateMethodAttribute(value, explicitMode, templateMode)) {
-            if (templateMode) {
-               scope.outputRef = resolveTemplateDeclaration(current, scope, true);
-            }
+         if (_logic->validateMethodAttribute(value, explicitMode)) {
             scope.hints |= value;
 
             current.setArgument(value);
@@ -7049,10 +7022,9 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
       }
-      else if (current == lxTarget) {
+      else if (current == lxTypeAttribute) {
          // if it is a type attribute
-         scope.outputRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-         validateType(scope, current, scope.outputRef, true);
+         scope.outputRef = resolveTypeAttribute(scope, current, true);
       }
       else if (current == lxNameAttr && !explicitMode) {
          // resolving implicit method attributes
@@ -8840,8 +8812,9 @@ void Compiler :: injectVirtualReturningMethod(_ModuleScope& scope, SNode classNo
    methNode.appendNode(lxAttribute, tpEmbeddable);
    methNode.appendNode(lxAttribute, tpSealed);
 
-   if (outputRef)
-      methNode.appendNode(lxTarget, outputRef);
+   if (outputRef) {
+      methNode.appendNode(lxTypeAttribute).appendNode(lxTarget, outputRef);
+   }      
 
    SNode expr = methNode.appendNode(lxReturning).appendNode(lxExpression);
    expr.appendNode(lxIdentifier, variable);
@@ -8886,7 +8859,7 @@ void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, Id
    int signIndex = signature.Length();
 
    IdentifierString templateName(node.firstChild(lxTerminalMask).identifier());
-   int paramCounter = SyntaxTree::countChild(node, lxTarget, lxTemplateParam);
+   int paramCounter = SyntaxTree::countChild(node, lxTypeAttribute, lxTemplateParam);
 
    templateName.append('#');
    templateName.appendInt(paramCounter);
@@ -8907,12 +8880,10 @@ void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, Id
          signature.appendInt(current.argument);
          signature.append('}');
       }
-      else if (current == lxTarget) {
+      else if (current == lxTypeAttribute) {
          signature.append('&');
 
-         ref_t classRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-         if (!classRef)
-            scope.raiseError(errUnknownClass, current);
+         ref_t classRef = resolveTypeAttribute(scope, current, true);
 
          ident_t className = scope.module->resolveReference(classRef);
          if (isWeakReference(className))
@@ -8959,10 +8930,8 @@ void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& sco
             signaturePattern.appendInt(targetNode.argument);
             signaturePattern.append('}');
          }
-         else if (targetNode == lxTarget) {
-            ref_t classRef = targetNode.argument ? targetNode.argument : resolveImplicitIdentifier(scope, targetNode.firstChild(lxTerminalMask));
-            if (!classRef)
-               scope.raiseError(errUnknownClass, targetNode);
+         else if (targetNode == lxTypeAttribute) {
+            ref_t classRef = resolveTypeAttribute(scope, targetNode, true);
 
             ident_t className = scope.module->resolveReference(classRef);
             if (isWeakReference(className))
@@ -8971,16 +8940,16 @@ void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& sco
             signaturePattern.append(className);
          }
          else if (targetNode == lxAttribute) {
-            bool byRefArg = false;
-            bool paramsArg = false;
-            bool templateArg = false;
-            if (_logic->validateArgumentAttribute(targetNode.argument, byRefArg, paramsArg, templateArg)) {
-               if (templateArg) {
-                  registerTemplateSignature(targetNode, scope, signaturePattern);
-               }
-               else scope.raiseError(errNotApplicable, current);
-            }
-            else scope.raiseError(errNotApplicable, current);
+            //bool byRefArg = false;
+            //bool paramsArg = false;
+            //bool templateArg = false;
+            //if (_logic->validateArgumentAttribute(targetNode.argument, byRefArg, paramsArg, templateArg)) {
+            //   if (templateArg) {
+            //      registerTemplateSignature(targetNode, scope, signaturePattern);
+            //   }
+            //   else scope.raiseError(errNotApplicable, current);
+            //}
+            /*else */scope.raiseError(errNotApplicable, current);
          }
          else scope.raiseError(errNotApplicable, current);
       }
