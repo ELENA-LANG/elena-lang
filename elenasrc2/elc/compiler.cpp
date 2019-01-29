@@ -8871,7 +8871,7 @@ void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, Id
          if (targetNode == lxTemplateParam) {
             signature.append('&');
             signature.append('{');
-            signature.appendInt(current.argument);
+            signature.appendInt(targetNode.argument);
             signature.append('}');
          }
          else if (targetNode == lxTarget) {

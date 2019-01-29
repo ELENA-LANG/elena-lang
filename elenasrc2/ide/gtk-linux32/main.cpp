@@ -112,7 +112,7 @@ int main( int argc, char *argv[])
 
    // init paths & settings
 //   Paths::init(&model, appPath, defPath);
-   Settings::init(&model, "/usr/elena-lang/src/elena/src30", "/usr/lib/elena/lib30");
+   Settings::init(&model, "/usr/elena-lang/src/elena/src40", "/usr/lib/elena/lib40");
 
    _ELENA_::Path configPath("/etc/elena");
    configPath.combine(_T("ide.config"));

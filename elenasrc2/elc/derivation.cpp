@@ -1299,7 +1299,7 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
 
    current = tempTree.readRoot();
    if (current == lxTypeAttribute /*.compare(lxTarget, lxTemplateParam)*/) {
-      parameters.add(current.findChild(lxTarget));
+      parameters.add(current.findChild(lxTarget, lxTemplateParam));
    }
 
    // COMPILER MAGIC : generate property body
