@@ -332,7 +332,7 @@ void ProjectSettingsDialog :: loadTemplateList()
 
 void ProjectSettingsDialog :: onCreate()
 {
-   setTextLimit(IDC_SETTINGS_PACKAGE, IDENTIFIER_LEN);
+   setTextLimit(IDC_SETTINGS_PACKAGE, _ELENA_::IDENTIFIER_LEN);
 
    setText(IDC_SETTINGS_PACKAGE, TextString(_project->getPackage()));
    setText(IDC_SETTINGS_TARGET, TextString(_project->getTarget()));
@@ -377,12 +377,12 @@ void ProjectSettingsDialog :: onOK()
    getText(IDC_SETTINGS_OPTIONS, (wchar_t**)(&path), MAX_PATH);
    _project->setOptions(_ELENA_::IdentifierString(path));
 
-   wchar_t name[IDENTIFIER_LEN + 1] ;
-   getText(IDC_SETTINGS_PACKAGE, (wchar_t**)(&name), IDENTIFIER_LEN);
+   wchar_t name[_ELENA_::IDENTIFIER_LEN + 1] ;
+   getText(IDC_SETTINGS_PACKAGE, (wchar_t**)(&name), _ELENA_::IDENTIFIER_LEN);
    _project->setPackage(_ELENA_::IdentifierString(name));
 
    if (getComboBoxIndex(IDC_SETTINGS_TEPMPLATE) != -1) {
-      getText(IDC_SETTINGS_TEPMPLATE, (wchar_t**)(&name), IDENTIFIER_LEN);
+      getText(IDC_SETTINGS_TEPMPLATE, (wchar_t**)(&name), _ELENA_::IDENTIFIER_LEN);
       _project->setTemplate(_ELENA_::IdentifierString(name));
    }
 
@@ -412,9 +412,9 @@ bool ProjectForwardsDialog :: validateItem(wchar_t* &text)
 
 void ProjectForwardsDialog :: addItem()
 {
-   wchar_t item[IDENTIFIER_LEN * 2 + 1];
+   wchar_t item[_ELENA_::IDENTIFIER_LEN * 2 + 1];
 
-   getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), IDENTIFIER_LEN * 2);
+   getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), _ELENA_::IDENTIFIER_LEN * 2);
 
    wchar_t* s = item;
    if (validateItem(s)) {
@@ -430,7 +430,7 @@ void ProjectForwardsDialog :: getItem()
 {
    _current = getListIndex(IDC_FORWARDS_LIST);
 
-   wchar_t item[IDENTIFIER_LEN * 2 + 1];
+   wchar_t item[_ELENA_::IDENTIFIER_LEN * 2 + 1];
 
    getListItem(IDC_FORWARDS_LIST, _current, (wchar_t**)(&item));
    setText(IDC_FORWARDS_EDIT, item);
@@ -439,9 +439,9 @@ void ProjectForwardsDialog :: getItem()
 void ProjectForwardsDialog :: editItem()
 {
    if (_current != -1) {
-      wchar_t item[IDENTIFIER_LEN * 2 + 1];
+      wchar_t item[_ELENA_::IDENTIFIER_LEN * 2 + 1];
 
-      getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), IDENTIFIER_LEN * 2);
+      getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), _ELENA_::IDENTIFIER_LEN * 2);
 
       wchar_t* s = item;
       if (validateItem(s)) {
@@ -488,7 +488,7 @@ void ProjectForwardsDialog :: onOK()
       _project->clearForwards();
 
       int count = getListCount(IDC_FORWARDS_LIST);
-      text_c item[IDENTIFIER_LEN * 2 + 1];      
+      text_c item[_ELENA_::IDENTIFIER_LEN * 2 + 1];
       for (int i = 0 ; i < count ; i++) {
          getListItem(IDC_FORWARDS_LIST, i, (wchar_t**)(&item));
 

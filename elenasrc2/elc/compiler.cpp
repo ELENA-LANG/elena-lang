@@ -1598,7 +1598,7 @@ ref_t Compiler :: resolveTypeAttribute(Scope& scope, SNode node, bool declaratio
    }
    else if (current == lxTarget) {
       if (current.argument == V_TEMPLATE) {
-         typeRef = resolveTemplateDeclaration(current, scope, false);
+         typeRef = resolveTemplateDeclaration(current, scope, declarationMode);
       }
       else typeRef = current.argument != 0 ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
    }
@@ -1641,6 +1641,7 @@ int Compiler :: resolveSize(SNode node, Scope& scope)
 
 void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef*/, int& size, bool& isStaticField, bool& isSealed, bool& isConstant, bool& isEmbeddable)
 {
+   bool inlineArray = false;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
@@ -1654,8 +1655,8 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
             }
             else if (!value && isPrimitiveRef(current.argument)) {
                if (current.argument == V_STRING) {
-                  // if it is a string attribute
-                  scope.info.header.flags |= elDebugLiteral;
+                  // if it is an inline array attribute
+                  inlineArray = true;
                }
                // if it is a primitive type
                else fieldRef = current.argument;
@@ -1666,7 +1667,16 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
       }
       else if (current == lxTypeAttribute) {
          if (fieldRef == 0) {
-            fieldRef = resolveTypeAttribute(scope, current, false);
+            if (inlineArray) {
+               // if it is an inline array - it should be compiled differently
+               SNode arrayNode = current.firstChild();
+               if (arrayNode == lxArrayType) {
+                  fieldRef = resolveTypeAttribute(scope, arrayNode, false);
+                  size = -1;
+               }
+               else scope.raiseError(errInvalidHint, current);
+            }
+            else fieldRef = resolveTypeAttribute(scope, current, false);
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -4368,9 +4378,9 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
    SNode terminalNode = node.firstChild(lxTerminalMask);
    IdentifierString templateName(terminalNode.identifier());
    int paramCounter = 0;
-   SNode current = node.findChild(lxTarget);
+   SNode current = node.findChild(lxTypeAttribute);
    while (current != lxNone) {
-      if (current == lxTarget) {
+      if (current == lxTypeAttribute) {
          paramCounter++;
       }
       else scope.raiseError(errInvalidOperation, node);
@@ -4431,6 +4441,8 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
                }
             } while (terminalNode != lxNone);
          }
+
+         parameters.add(targetNode);
       }
 
       current = current.nextNode();
@@ -5104,10 +5116,6 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
             else scope.raiseError(errIllegalMethod, node);
          }
          else classRef = resolveTypeAttribute(scope, current, declarationMode);
-
-         classRef = current.argument ? current.argument : resolveImplicitIdentifier(scope, current.firstChild(lxTerminalMask));
-         if (!declarationMode)
-            validateType(scope, current, classRef, declarationMode);
       }
       //else if (current == lxSize) {
       //   arrayArg = true;
@@ -6016,9 +6024,14 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
 //            }
 
             initialize(scope, methodScope);
-            if (methodScope.outputRef)
+            if (methodScope.outputRef) {
                // HOTFIX : validate the output type once again in case it was declared later in the code
-               validateType(scope, current, methodScope.outputRef, false);
+               SNode typeNode = current.findChild(lxTypeAttribute);
+               if (typeNode) {
+                  resolveTypeAttribute(scope, typeNode, false);
+               }
+               else validateType(scope, current, methodScope.outputRef, false);
+            }
 
             // if it is a dispatch handler
             if (methodScope.message == scope.moduleScope->dispatch_message) {
@@ -6620,11 +6633,11 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
             ref_t ref = resolveTypeAttribute(scope, current, true);
             if (!outputRef) {
                outputRef = ref;
-
-               outputChanged = true;
             }
             else if (outputRef != ref)
                scope.raiseError(errTypeAlreadyDeclared, node);
+
+            outputChanged = true;
          }
       }
 //      else if (current == lxClassMethodOpt) {
@@ -6804,12 +6817,6 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
          scope.info.methodHints.exclude(Attribute(message, maHint));
          scope.info.methodHints.add(Attribute(message, maHint), methodHints);
-
-         ////HOTFIX : for the private message : update the virtual method as well
-         //if ((message & MESSAGE_FLAG_MASK) == SEALED_MESSAGE) {
-         //   scope.info.methodHints.exclude(Attribute(message & ~SEALED_MESSAGE, maHint));
-         //   scope.info.methodHints.add(Attribute(message & ~SEALED_MESSAGE, maHint), methodHints);
-         //}
       }
 
       if (!included && test(methodHints, tpAbstract)) {
@@ -6825,22 +6832,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          // private / internal methods cannot be declared in the extension
          scope.raiseError(errIllegalPrivate, current);
 
-      //// create overloadlist if required
-      //if (test(methodHints, tpMultimethod)) {
-      //   NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-
-      //   scope.info.methodHints.exclude(Attribute(message, maOverloadlist));
-      //   scope.info.methodHints.add(Attribute(message, maOverloadlist), namespaceScope->mapAnonymous(resolveActionName(scope.module, message)));
-
-      //   scope.info.header.flags |= elWithMuti;
-
-      //   //// save extensions if required ; private method should be ignored
-      //   //if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate)) {
-      //   //   // NOTE : only general message should be saved
-      //   //   saveExtension(scope, message, scope.internalOne);
-      //   //}
-      //}
-      /*else */if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate) && isGeneralMessage(scope.module, message)) {
+      if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate) && isGeneralMessage(scope.module, message)) {
          // NOTE : only general public message should be saved
          saveExtension(scope, message, scope.internalOne);
       }
@@ -7061,7 +7053,7 @@ ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
    else if (test(node.type, lxTerminalMask)) {
       parentRef = resolveImplicitIdentifier(scope, node);
    }
-   else if (node.existChild(lxTarget)) {
+   else if (node.existChild(lxTypeAttribute)) {
       // if it is a template based class
       parentRef = resolveTemplateDeclaration(node, scope, silentMode);
    }
@@ -8874,22 +8866,29 @@ void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, Id
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxTemplateParam) {
-         signature.append('&');
-         signature.append('{');
-         signature.appendInt(current.argument);
-         signature.append('}');
-      }
-      else if (current == lxTypeAttribute) {
-         signature.append('&');
+      if (current == lxTypeAttribute) {
+         SNode targetNode = current.firstChild();
+         if (targetNode == lxTemplateParam) {
+            signature.append('&');
+            signature.append('{');
+            signature.appendInt(current.argument);
+            signature.append('}');
+         }
+         else if (targetNode == lxTarget) {
+            signature.append('&');
 
-         ref_t classRef = resolveTypeAttribute(scope, current, true);
+            ref_t classRef = targetNode.argument 
+                                 ? targetNode.argument : resolveImplicitIdentifier(scope, targetNode.firstChild(lxTerminalMask));
+            if (!classRef)
+               scope.raiseError(errUnknownClass, current);
 
-         ident_t className = scope.module->resolveReference(classRef);
-         if (isWeakReference(className))
-            signature.append(scope.module->Name());
+            ident_t className = scope.module->resolveReference(classRef);
+            if (isWeakReference(className))
+               signature.append(scope.module->Name());
 
-         signature.append(className);
+            signature.append(className);
+         }
+         else scope.raiseError(errNotApplicable, current);
       }
       else if (current == lxIdentifier) {
          // !! ignore identifier
@@ -8924,34 +8923,32 @@ void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& sco
       else if (current == lxMethodParameter) {
          paramCount++;
          signaturePattern.append('/');
-         SNode targetNode = current.findChild(lxTemplateParam, lxTarget, lxAttribute);
-         if (targetNode == lxTemplateParam) {
-            signaturePattern.append('{');
-            signaturePattern.appendInt(targetNode.argument);
-            signaturePattern.append('}');
-         }
-         else if (targetNode == lxTypeAttribute) {
-            ref_t classRef = resolveTypeAttribute(scope, targetNode, true);
+         SNode typeAttr = current.findChild(lxTypeAttribute);
+         if (typeAttr == lxTypeAttribute) {
+            SNode targetNode = typeAttr.firstChild();
+            if (targetNode == lxTemplateParam) {
+               signaturePattern.append('{');
+               signaturePattern.appendInt(targetNode.argument);
+               signaturePattern.append('}');
+            }
+            else if (targetNode == lxTarget) {
+               if (targetNode.argument == V_TEMPLATE) {
+                  registerTemplateSignature(targetNode, scope, signaturePattern);
+               }
+               else {
+                  ref_t classRef = targetNode.argument ? targetNode.argument : resolveImplicitIdentifier(scope, targetNode.firstChild(lxTerminalMask));
+                  if (!classRef)
+                     scope.raiseError(errUnknownClass, targetNode);
 
-            ident_t className = scope.module->resolveReference(classRef);
-            if (isWeakReference(className))
-               signaturePattern.append(scope.module->Name());
+                  ident_t className = scope.module->resolveReference(classRef);
+                  if (isWeakReference(className))
+                     signaturePattern.append(scope.module->Name());
 
-            signaturePattern.append(className);
+                  signaturePattern.append(className);
+               }
+            }
+            else scope.raiseError(errNotApplicable, current);
          }
-         else if (targetNode == lxAttribute) {
-            //bool byRefArg = false;
-            //bool paramsArg = false;
-            //bool templateArg = false;
-            //if (_logic->validateArgumentAttribute(targetNode.argument, byRefArg, paramsArg, templateArg)) {
-            //   if (templateArg) {
-            //      registerTemplateSignature(targetNode, scope, signaturePattern);
-            //   }
-            //   else scope.raiseError(errNotApplicable, current);
-            //}
-            /*else */scope.raiseError(errNotApplicable, current);
-         }
-         else scope.raiseError(errNotApplicable, current);
       }
       current = current.nextNode();
    }

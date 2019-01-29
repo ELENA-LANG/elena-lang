@@ -27,9 +27,9 @@ constexpr auto MODE_ROOT            = 0x01;
 //#define MODE_MESSAGE_BODY    0x20  // indicates that sub-expressions should be an expression themselves
 constexpr auto MODE_PROPERTYALLOWED = 0x40;
 
-constexpr auto MODE_CLOSURE        = -2u;
-constexpr auto MODE_COMPLEXMESSAGE = -3u;
-constexpr auto MODE_PROPERTYMETHOD = -4u;
+constexpr auto MODE_CLOSURE         = -2;
+constexpr auto MODE_COMPLEXMESSAGE  = -3;
+constexpr auto MODE_PROPERTYMETHOD  = -4;
 
 #define EXPRESSION_IMPLICIT_MODE   1
 ////#define EXPRESSION_MESSAGE_MODE    2
@@ -830,7 +830,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
                writer.newNode(lxParent);               
                copyIdentifier(writer, baseNameNode.firstChild(lxTerminalMask));
                if (baseNameNode.existChild(lxToken)) {
-                  generateTemplateAttributes(writer, baseNameNode, derivationScope);
+                  generateTemplateAttributes(writer, baseNameNode.findChild(lxToken), derivationScope);
                }
                writer.closeNode();
 
@@ -1243,7 +1243,7 @@ void DerivationWriter :: generateClassTemplateTree(SyntaxWriter& writer, SNode n
    SyntaxTree bufferTree;
    SyntaxWriter bufferWriter(bufferTree);
    bufferWriter.newNode(lxRoot);
-   generateTemplateAttributes(bufferWriter, nameNode, derivationScope);
+   generateTemplateAttributes(bufferWriter, nameNode.firstChild(), derivationScope);
    bufferWriter.closeNode();
 
    List<SNode> parameters;
@@ -1251,8 +1251,8 @@ void DerivationWriter :: generateClassTemplateTree(SyntaxWriter& writer, SNode n
    templateName.copy(nameNode.firstChild(lxTerminalMask).identifier());
 
    SNode current = bufferTree.readRoot().firstChild();
-   while (current == lxTarget) {
-      parameters.add(current);
+   while (current == lxTypeAttribute) {
+      parameters.add(current.findChild(lxTarget));
 
       current = current.nextNode();
    }
@@ -1298,8 +1298,8 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
    }
 
    current = tempTree.readRoot();
-   if (current.compare(lxTarget, lxTemplateParam)) {
-      parameters.add(current);
+   if (current == lxTypeAttribute /*.compare(lxTarget, lxTemplateParam)*/) {
+      parameters.add(current.findChild(lxTarget));
    }
 
    // COMPILER MAGIC : generate property body
@@ -1989,6 +1989,9 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
          writer.appendNode(current.type, current.argument);
       }
       else if (current == lxAttribute) {
+         copyTreeNode(writer, current, scope);
+      }
+      else if (current == lxTypeAttribute) {
          copyTreeNode(writer, current, scope);
       }
 

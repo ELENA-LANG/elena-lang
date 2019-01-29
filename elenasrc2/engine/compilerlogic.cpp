@@ -1463,14 +1463,18 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 //      else info.header.flags |= elWrapper;
 //   }
 
-   // adjust literal wrapper
-   if ((info.header.flags & elDebugMask) == elDebugLiteral) {
-      info.header.flags &= ~elDebugMask;
-      if (info.size == -2) {
-         info.header.flags |= elDebugWideLiteral;
+   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
+      if (classRef == scope.literalReference) {
+         // recognize string constant
+         if (info.size == -1) {
+            info.header.flags |= elDebugLiteral;
+         }
       }
-      else if (info.size == -1) {
-         info.header.flags |= elDebugLiteral;
+      else if (classRef == scope.wideReference) {
+         // recognize wide string constant
+         if (info.size == -2) {
+            info.header.flags |= elDebugWideLiteral;
+         }
       }
    }
 

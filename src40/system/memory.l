@@ -3,7 +3,7 @@
 
 public sealed Array<T> : Indexable<T>
 {
-    embeddable T[] theArray;
+    embeddable __string T[] theArray;
 
 //    constructor allocate(int length)
 //        = new T[](length);
@@ -1732,7 +1732,7 @@ public sealed class Variant
 /// An array
 public sealed Array : Indexable//, Array<object>
 {
-    object[] theArray;
+    __string object[] theArray;
     
 //    /// Creates an empty array
 //    constructor min

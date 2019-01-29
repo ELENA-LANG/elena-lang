@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Text Reader class declaration.
 //
-//                                              (C)2005-2015, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textsourceH
@@ -33,7 +33,7 @@ const char dfaQuote          = 's';
 const char dfaMinusLA        = '-';
 const char dfaDotLA          = '$';
 
-class TextSourceReader : public _ELENA_::_TextParser<dfaMaxChar, dfaStart, dfaWhitespace, LINE_LEN>
+class TextSourceReader : public _ELENA_::_TextParser<dfaMaxChar, dfaStart, dfaWhitespace, _ELENA_::LINE_LEN>
 {
 protected:
    void copyToken(_ELENA_::LineInfo& info, char* token, size_t length)

@@ -1881,7 +1881,7 @@ bool IDEController :: loadModule(text_t ns, text_t source)
    // HOTFIX : if it is template code
    size_t pos = text_str(source).findLast('\'');
    if (pos != NOTFOUND_POS) {
-      text_c templateNs[IDENTIFIER_LEN];
+      text_c templateNs[_ELENA_::IDENTIFIER_LEN];
       size_t dummy = pos;
       _ELENA_::Convertor::copy(templateNs, source, (size_t)pos, dummy);
       templateNs[pos] = 0;

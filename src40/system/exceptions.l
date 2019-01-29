@@ -15,7 +15,7 @@ extension op
 /// A call stack
 public sealed class CallStack
 {
-    Array<int> theStack;
+    int[] theStack;
     
     /// Creates a current call stack
     constructor()

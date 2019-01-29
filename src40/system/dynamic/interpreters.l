@@ -4,7 +4,7 @@
 
 public mixin Struct
 {
-    object[] items;
+    __string object[] items;
     
     internal constructor allocate(int n)
         = new object[](n);
