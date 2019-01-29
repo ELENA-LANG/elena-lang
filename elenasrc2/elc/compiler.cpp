@@ -4574,9 +4574,9 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          typeRef = resolveTypeAttribute(scope, current, false);
 
          newVariable = true;
-         if (current.existChild(lxArrayType)) {
-            dynamicSize = true;
-         }
+         //if (current.existChild(lxArrayType)) {
+         //   dynamicSize = true;
+         //}
       }
       else scope.raiseError(errIllegalOperation, current);
 
