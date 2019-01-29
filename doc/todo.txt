@@ -3,7 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * int[] a := new int[](3); a[0] := 1; - direct operations with an array should be used
                  * test amb
                  * implement lazy expressions  
                  * passing variadic list to the implicit constructor (see - TapeExpression)

@@ -1570,8 +1570,9 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
       }
       else generateIdentifier(writer, node, derivationScope);
 
-      if (node.existChild(lxDynamicSizeDecl)) {
-         writer.appendNode(lxSize, -1);
+      size_t dimensionCounter = SyntaxTree::countChild(node, lxDynamicSizeDecl);
+      if (dimensionCounter > 0) {
+         writer.appendNode(lxDimensionAttr, dimensionCounter);
       }
    }
 }
@@ -1873,9 +1874,9 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
          }
       }
       else if (scope.type == TemplateScope::ttPropertyTemplate || scope.type == TemplateScope::ttClassTemplate) {
-         SNode sizeNode = current.findChild(lxSize);
+         SNode sizeNode = current.findChild(lxDimensionAttr);
          SNode nodeToInject = scope.parameterValues.get(current.argument);
-         if (sizeNode == lxSize) {
+         if (sizeNode == lxDimensionAttr) {
             // HOTFIX : if it is a node with the size postfix
             if (nodeToInject.strArgument != -1) {
                writer.newNode(nodeToInject.type, nodeToInject.identifier());
@@ -1985,7 +1986,7 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
 //      else if (current == lxTemplateAttribute) {
 //         copyParamAttribute(writer, current, scope);
 //      }
-      else if (current == lxSize) {
+      else if (current == lxDimensionAttr) {
          writer.appendNode(current.type, current.argument);
       }
       else if (current == lxAttribute) {

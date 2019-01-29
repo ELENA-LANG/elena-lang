@@ -274,6 +274,7 @@ enum LexicalType
    lxTemplateIdentParam       = 0x20048,
    lxByRefTarget              = 0x20049,
    lxArrayType                = 0x2004A,
+   lxDimensionAttr            = 0x2004B,
 
    lxTempAttr                 = 0x2010D,
 };

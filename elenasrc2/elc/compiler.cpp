@@ -4339,10 +4339,13 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, int mode)
 {
    switch (current.type) {
-      case lxSize:
-         if (current.argument == -1 && current.nextNode() == lxTypecast && objectInfo.kind == okClass) {
+      case lxDimensionAttr:
+         if (current.nextNode() == lxTypecast && objectInfo.kind == okClass) {
             // COMPILER MAGIC : if it is a primitive array creation
             objectInfo.element = objectInfo.param;
+            for (int i = 1; i < current.argument; i++) {
+               objectInfo.element = resolvePrimitiveArray(scope, objectInfo.element, false);
+            }
             objectInfo.param = resolvePrimitiveArray(scope, objectInfo.element, false);
             objectInfo.reference = V_OBJARRAY;
 
@@ -4547,7 +4550,7 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
       if (attributes.castAttr || attributes.newOpAttr) {
          SNode msgNode = goToNode(current, lxMessage, lxCollection);
          if (msgNode == lxCollection && !attributes.castAttr) {
-            if (goToNode(current, lxSize) == lxSize) {
+            if (goToNode(current, lxDimensionAttr) == lxDimensionAttr) {
                msgNode.set(lxTypecast, V_OBJARRAY);
                exprAttr |= HINT_VIRTUALEXPR;
             }
@@ -6495,7 +6498,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    if (test(scope.info.header.flags, elDynamicRole)) {
       if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
          // compiler magic : turn a field declaration into an array or string one
-         if (size != 0 && !test(scope.info.header.flags, elNonStructureRole)) {
+         if (size > 0 && !test(scope.info.header.flags, elNonStructureRole)) {
             scope.info.header.flags |= elStructureRole;
             scope.info.size = -size;
          }
@@ -7371,7 +7374,7 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
    ObjectInfo retVal(okObject, 0, targetRef, 0, elementRef);
 
    int size = _logic->defineStructSize(*scope.moduleScope, targetRef, elementRef);
-   if (size != 0) {
+   if (size > 0) {
       if (allocateStructure(scope, size, false, retVal)) {
          retVal.extraparam = targetRef;
 
