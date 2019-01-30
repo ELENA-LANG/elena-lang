@@ -858,6 +858,7 @@ private:
 
    size_t resolveArraySize(SNode node, Scope& scope);
 
+   ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 
    void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);

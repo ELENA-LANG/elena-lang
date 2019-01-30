@@ -996,5 +996,5 @@ int main()
 
       project.cleanUp();
    }
-      return exitCode;
+   return exitCode;
 }

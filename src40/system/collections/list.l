@@ -265,23 +265,20 @@ public sealed List<T> : Enumerable<T>
 //        
 //        ^ copy.
 //    ]
-//
-//    Array<type> value
-//    [
-//        int len := T<int>(theLength).
-//        Array<type> copy := V<type>(len).
-//        
-//        int i := 0.
-//        while (i < len)
-//        [
-//            copy[i] := theArray[i].
-//            
-//            i += 1.
-//        ].
-//        
-//        ^ copy.
-//    ]
-//
+
+    get T[] Value()
+    {
+        int len := cast int(theLength);
+        T[] copy := new T[](len);
+        
+        for (int i := 0, i < len, i += 1)
+        {
+            copy[i] := theArray[i]
+        };
+        
+        ^ copy
+    }
+
 //    clone
 //        = List<type>(theArray, T<int>(theLength)).
 }

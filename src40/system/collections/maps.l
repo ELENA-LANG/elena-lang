@@ -4,7 +4,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
     int theHashMask;
     
     List<Tuple<TKey, TValue>> theList;
-    Array<int[]>              theHashTable; 
+    int[][]                   theHashTable; 
     
 //    value_type     theDefault.
 
@@ -19,7 +19,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
         size := size - 1;
         theHashMask := new IntNumber(size);
         
-        theHashTable := new Array<int[]>(hashLength);
+        theHashTable := new int[][](hashLength);
         theList := new List<Tuple<TKey, TValue>>(capacity);
         
 //        theDefault := aDefault.
@@ -59,14 +59,14 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
 
         auto new_item := new Tuple<TKey, TValue>(key);
 
-        i := theList.Length;
+        int i := theList.Length;
         theList.append(new_item);
         
         // Extend a backet
         int capacity := backet.Length;
         if (capacity == len)
         {
-            auto new_backet := new Array<int[]>(capacity + 4);
+            auto new_backet := new int[](capacity + 4);
             new_backet.write(0, capacity, backet);
 
             backet := new_backet;
@@ -126,7 +126,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
     
     clear()
     {
-        theHashTable := new Array<int[]>(theHashTable.Length);
+        theHashTable := new int[][](theHashTable.Length);
         theList.clear()
     }
     

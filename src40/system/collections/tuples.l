@@ -61,11 +61,11 @@ public sealed Tuple<T1, T2>
         Item2 := o2
     }
 
-//    constructor(type1 o1)
-//    [
-//        field1 := o1.
-//    ]
-//
+    constructor(T1 o1)
+    {
+        Item1 := o1
+    }
+
 //    getAt(int index)
 //    [
 //        index =>

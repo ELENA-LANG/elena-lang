@@ -4432,14 +4432,15 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
          ref_t typeRef = resolveTypeAttribute(scope, current, declarationMode);
 
          SNode targetNode = current.firstChild();
+         bool templateOne = targetNode.argument == V_TEMPLATE;
          targetNode.set(lxTarget, typeRef);
 
          // HOTFIX : inject the reference and comment the target nodes out         
          SNode terminalNode = injectAttributeIdentidier(targetNode, scope);
-         if (current.argument == V_TEMPLATE) {
+         if (templateOne) {
             do {
                terminalNode = terminalNode.nextNode();
-               if (terminalNode == lxTarget) {
+               if (terminalNode == lxTypeAttribute) {
                   terminalNode = lxIdle;
                }
             } while (terminalNode != lxNone);
@@ -4471,18 +4472,36 @@ bool Compiler :: isTemplateParameterDeclared(SNode node, Scope& scope)
    return true;
 }
 
-ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode)
+ref_t Compiler :: resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode)
 {
-   // generate an reference class
+   // generate an reference class - inner implementation
    List<SNode> parameters;
+
    compileTemplateAttributes(node.firstChild(), parameters, scope, declarationMode);
-   
+
    ref_t templateRef = mapTemplateAttribute(node, scope);
    if (!templateRef)
       scope.raiseError(errInvalidHint, node);
 
    NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::slNamespace);
    return scope.moduleScope->generateTemplate(templateRef, parameters, ns->ns.c_str(), declarationMode);
+}
+
+ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode)
+{
+   // generate an reference class - safe implementation
+   if (declarationMode) {
+      // HOTFIX : clone the type attribute tree to prevent it from modifications
+      SyntaxTree dummyTree;
+      SyntaxWriter dummyWriter(dummyTree);
+      dummyWriter.newNode(node.type);
+      SyntaxTree::copyNode(dummyWriter, node);
+      dummyWriter.closeNode();
+
+      SNode dummyNode = dummyTree.readRoot();
+      return resolveTemplateDeclarationUnsafe(dummyTree.readRoot(), scope, declarationMode);
+   }
+   else return resolveTemplateDeclarationUnsafe(node, scope, declarationMode);
 }
 
 ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int mode)
