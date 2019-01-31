@@ -1370,9 +1370,9 @@ public sealed const struct String : BaseValue
     /// Returns the string enumerator
     Enumerator<char> enumerator() = new StringEnumerator(self);
 
-//    /// Returns the string indexer
-//    Indexer<char> indexer = LiteralIndexer new(self).
-//    
+    /// Returns the string indexer
+    Indexer<char> indexer() = new StringIndexer(self);
+    
 //    /// Clones the value
 //    clone = LiteralValue new(self).
 }
@@ -1587,13 +1587,13 @@ public sealed const struct WideString : BaseValue
 //
 //    internal saveToShortArray(int anIndex, ShortArray anArray, int aRetVal)
 //        => system'core_routines'__wide.
-//
-//    /// Returns the object enumerator
-//    Enumerator<char> enumerator = WideLiteralEnumerator new(self).
-//    
-//    /// Returns the object indexer
-//    Indexer<char> indexer = WideLiteralIndexer new(self).
-//    
+
+    /// Returns the object enumerator
+    Enumerator<char> enumerator() = new WideStringEnumerator(self);
+    
+    /// Returns the object indexer
+    Indexer<char> indexer() = new WideStringIndexer(self);
+    
 //    /// Clones the value
 //    clone = WideLiteralValue new(self).
 }
@@ -2456,198 +2456,204 @@ class StringEnumerator : Enumerator<char>
     char get() = theChar;
 }
 
-//// --- LiteralIndexer ---
-//
-///// A literal value indexer
-//class LiteralIndexer :: Indexer<char>
-//{
-//    literal  theLiteral.
-//    ref<int> theIndex.
-//    
+// --- LiteralIndexer ---
+
+/// A literal value indexer
+class StringIndexer : Indexer<char>
+{
+    string   theLiteral;
+    ref<int> theIndex;
+    
 //    /// Creates an indexer
 //    constructor new : anObject
 //        <= new(T<literal>(anObject)).
 //    
-//    /// Creates an indexer
-//    constructor new(literal aLiteral)
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    bool available
-//    [
-//        int aLength := theLiteral length.
-//        int val := theIndex.
-//        
-//        ^ val < aLength.
-//    ]
-//
-//    /// Returns the current character
-//    char get
-//    [
-//        char ch := $0.
-//        theLiteral read(T<int>(theIndex), &ch).
-//        
-//        ^ ch.
-//    ]
-//    
-//    /// Sets the index by specified value
-//    set (char ch)
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo(ref<int> retVal)
-//    [
-//        theIndex readValueTo(retVal).
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex(int val)
-//    [
-//        theIndex value := val.
-//    ]
-//    
-//    appendIndex(int val)
-//    [
-//        theIndex append(val).
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo(ref<int> retVal)
-//        => theLiteral.
-//        
-//    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.
-//}
-//
-//// --- WideLiteralEnumerator ---
-//
-///// A literal enumerator
-//class WideLiteralEnumerator :: Enumerator<char>
-//{
-//    wide      theLiteral.
-//    ref<int>  theIndex.
-//    ref<int>  theDiff.
-//    ref<char> theChar.
-//    
+    /// Creates an indexer
+    constructor(string s)
+    {
+        theLiteral := s;
+        theIndex := 0
+    }
+    
+    /// Returns false if the index out of range
+    get bool Available()
+    {
+        int len := theLiteral.Length;
+        int val := theIndex.Value;
+        
+        ^ val < len
+    }
+
+    /// Returns the current character
+    char get()
+    {
+        char ch := $0;
+        theLiteral.read(cast int(theIndex), ref ch);
+        
+        ^ ch
+    }
+    
+    /// Sets the index by specified value
+    set (char ch)
+    {
+        system'NotSupportedException.raise()
+    }
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref int retVal)
+    {
+        theIndex.readValueTo(ref retVal)
+    }
+    
+    /// Sets the index by specified value
+    writeIndex(int val)
+    {
+        theIndex.Value := val
+    }
+    
+    appendIndex(int val)
+    {
+        theIndex.append(val)
+    }
+    
+    /// Reads the length to the output parameter    
+    readLengthTo(ref int retVal)
+    {
+        retVal := theLiteral.Length
+    }
+        
+    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
+}
+
+// --- WideLiteralEnumerator ---
+
+/// A literal enumerator
+class WideStringEnumerator : Enumerator<char>
+{
+    wide      theLiteral;
+    ref<int>  theIndex;
+    ref<int>  theDiff;
+    ref<char> theChar;
+    
 //    /// Creates an enumerator
 //    constructor new : anObject
 //        <= new(T<wide>(anObject)).
 //    
-//    /// Creates an enumerator
-//    constructor new(wide aLiteral)
-//    [
-//        theLiteral := aLiteral.
-//        theIndex := -1.
-//        theDiff := 1.
-//        theChar := $0.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex value := -1.
-//        theDiff value := 1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        int aLength := theLiteral length.
-//
-//        int diff := theDiff value.
-//        theIndex append(diff).
-//        
-//        if (theIndex < aLength)
-//            [
-//                theChar := theLiteral getAt(T<int>(theIndex)).
-//                
-//                theChar readLengthTo(theDiff).
-//                theDiff append:1.
-//                theDiff value := theDiff value / 2.
-//                
-//                ^ true
-//            ].
-//
-//        theDiff value := 0.
-//        theChar := $0.
-//
-//        ^ false
-//    ]
-//    
-//    cast T<Enumerator> = Enumerator::
-//    {
-//        embeddable dispatch => self.
-//    }.
-//    
-//    enumerable = theLiteral.
-//    
-//    /// Returns the current character
-//    char get = theChar.
-//}
-//
-//// --- WideLiteralInexer ---
-//
-///// A wide literal enumerator
-//class WideLiteralIndexer :: Indexer<wide>
-//{
-//    wide     theLiteral.
-//    ref<int> theIndex.
-//    
+    /// Creates an enumerator
+    constructor(wide s)
+    {
+        theLiteral := s;
+        theIndex := -1;
+        theDiff := 1;
+        theChar := $0
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1;
+        theDiff.Value := 1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int len := theLiteral.Length;
+
+        int diff := theDiff.Value;
+        theIndex.append(diff);
+        
+        int index := theIndex.Value;
+        if (index < len)
+        {
+            theChar := theLiteral.at(index);
+            
+            theChar.readLengthTo(ref theDiff);
+            theDiff.append:1;
+            theDiff.Value := theDiff.Value / 2;
+            
+            ^ true
+        };
+
+        theDiff.Value := 0;
+        theChar := $0;
+
+        ^ false
+    }
+    
+    Enumerator cast() = new Enumerator:
+    {
+        embeddable dispatch() => self;
+    };
+    
+    enumerable() = theLiteral;
+    
+    /// Returns the current character
+    char get() = theChar;
+}
+
+// --- WideLiteralInexer ---
+
+/// A wide literal enumerator
+class WideStringIndexer : Indexer<char>
+{
+    wide     theLiteral;
+    ref<int> theIndex;
+    
 //    /// Creates an indexer
 //    constructor new : anObject
 //        <= new(T<wide>(anObject)).
-//    
-//    /// Creates an indexer
-//    constructor new(wide s)
-//    [
-//        theLiteral := s.
-//        theIndex := 0.
-//    ]
-//
-//    /// Returns false if the index out of range    
-//    bool available
-//    [
-//        int aLength := theLiteral length.
-//        
-//        ^ theIndex < aLength
-//    ]
-//
-//    /// Returns the current character
-//    wide get
-//        = theLiteral getAt(T<int>(theIndex)).
-//    
-//    set(wide ch)
-//    [
-//        system'NotSupportedException new; raise
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo(ref<int> retVal)
-//    [
-//        theIndex readValueTo(retVal).
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex(int val)
-//    [
-//        theIndex value := val.
-//    ]
-//    
-//    appendIndex(int val)
-//    [
-//        theIndex append(val).
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo(ref<int> retVal)
-//        => theLiteral.
-//        
-//    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.        
-//}
+    
+    /// Creates an indexer
+    constructor(wide s)
+    {
+        theLiteral := s;
+        theIndex := 0
+    }
+
+    /// Returns false if the index out of range    
+    get bool Available()
+    {
+        int len := theLiteral.Length;
+        int val := theIndex.Value;
+        
+        ^ val < len
+    }
+
+    /// Returns the current character
+    char get()
+        = theLiteral.at(cast int(theIndex));
+    
+    set(char ch)
+    {
+        system'NotSupportedException.raise()
+    }
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref int retVal)
+    {
+        theIndex.readValueTo(ref retVal)
+    }
+    
+    /// Sets the index by specified value
+    writeIndex(int val)
+    {
+        theIndex.Value := val
+    }
+    
+    appendIndex(int val)
+    {
+        theIndex.append(val)
+    }
+    
+    /// Reads the length to the output parameter    
+    readLengthTo(ref int retVal)
+    {
+        retVal := theLiteral.Length
+    }
+        
+    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
+}
 
 // --- ArrayIndexer ---
 
@@ -2706,9 +2712,11 @@ public class ArrayIndexer : Indexer
         _index.append(offs)
     }
 
-//    /// Reads the length to the output parameter    
-//    readLengthTo(ref<int> anOutput)
-//        => theArray.
+    /// Reads the length to the output parameter    
+    readLengthTo(ref int retVal)
+    {
+        retVal := _array.Length;
+    }
 }
 
 // --- ArrayEnumerator ---

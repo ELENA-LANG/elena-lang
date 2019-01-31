@@ -2180,14 +2180,14 @@ public sealed const struct CharValue : BaseValue
 //    /// Returns the maximal possible character value (010FFFFh)
 //    constructor max
 //        = $010FFFFh.
-//
-//    internal readValue(ref<int> retVal)
-//    [
-//        int val := theValue.
-//        
-//        retVal value := val.
-//    ]
-//
+
+    internal readValue(ref int retVal)
+    {
+        int val := theValue;
+        
+        retVal := val
+    }
+
 //    bool equal:o
 //    [
 //        var n := T<char>(o) ?? nil.
@@ -2217,16 +2217,14 @@ public sealed const struct CharValue : BaseValue
     bool equal(char val)
         = val == theValue;
 
-//    bool less(char val)
-//    [
-//        int c := theValue.
-//        
-//        int v := 0.
-//        val readValue(&v).        
-//        
-//        ^ c < v.
-//    ]
-//    
+    bool less(char val)
+    {
+        int c := theValue;        
+        val.readValue(ref int v);        
+        
+        ^ c < v
+    }
+    
 //    bool less(literal val)
 //        = val < T<literal>(self).
 //

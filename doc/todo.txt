@@ -5,6 +5,7 @@ In development:
               dev - elena 4.0
                  * test amb
                  * implement lazy expressions  
+                 * property attribute - can be only the top most token
                  * passing variadic list to the implicit constructor (see - TapeExpression)
                  * implement break
                  * embeddable constructors for structures

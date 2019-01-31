@@ -84,10 +84,16 @@ public interface Indexer
 
     abstract appendIndex(int anIndex) {}
 
-//    /// Reads the length to the output parameter    
-//    abstract readLengthTo(ref int retVal) {}
+    /// Reads the length to the output parameter    
+    abstract readLengthTo(ref int retVal) {}
     
-//    int rvprop length :: readLengthTo.
+    vprop int Length
+    {
+        read(ref int retVal)
+        {
+            self.readLengthTo(ref retVal)
+        }
+    }
 }
 
 public interface Indexer<T>
@@ -122,10 +128,16 @@ public interface Indexer<T>
 
     abstract appendIndex(int anIndex) {}
                                 
-//    /// Reads the length to the output parameter    
-//    abstract readLengthTo(ref<int> retVal) []
-//    
-//    int rvprop length :: readLengthTo.
+    /// Reads the length to the output parameter    
+    abstract readLengthTo(ref int retVal) {}
+    
+    vprop int Length
+    {
+        read(ref int retVal)
+        {
+            self.readLengthTo(ref retVal)
+        }
+    }
     
     abstract Indexer cast() {}
 }
@@ -1073,10 +1085,10 @@ public abstract BaseIndexer<T> : Indexer<T>
         theIndex := theIndex + anIndex
     }     
     
-//    readLengthTo(ref<int> retVal)
-//    [
-//        retVal value := theLength.
-//    ]
+    readLengthTo(ref int retVal)
+    {
+        retVal := theLength;
+    }
     
     Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
 }

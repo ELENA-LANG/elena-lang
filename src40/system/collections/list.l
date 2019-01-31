@@ -934,10 +934,10 @@ public class ArrayListIndexer : Indexer
         theIndex.Value := n
     }
     
-//    readLengthTo(ref<int> retVal)
-//    [
-//        theList readLengthTo(retVal).
-//    ]
+    readLengthTo(ref int retVal)
+    {
+        retVal := theList.Length
+    }
 }
 
 // --- Dictionary ---

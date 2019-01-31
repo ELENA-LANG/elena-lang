@@ -305,7 +305,7 @@ public singleton arrayConvertorEx
         if (arr == nil)
         {
             var it := o.indexer();
-            int len := it.Length();
+            int len := it.Length;
             arr := Array.allocate(len);
             for (int i := 0, i < len, i += 1)
             {
