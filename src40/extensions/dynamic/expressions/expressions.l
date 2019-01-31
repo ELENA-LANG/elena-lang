@@ -87,7 +87,9 @@ public class TapeSingleton : TapeExpression
         <= new(cast TapeExpression[](methods));
     
     constructor new(TapeExpression[] methods)
-        = methods;
+    {
+        this methods := methods
+    }
     
     saveTo(List<DynamicClosure> list)
     {
@@ -108,7 +110,9 @@ public class TapeCode : TapeExpression
     TapeExpression[] statements;
 
     constructor new(TapeExpression[] statements)
-        = statements;
+    {
+        this statements := statements;
+    }
             
     constructor new(params TapeExpression[] statements)
         <= new(cast TapeExpression[](statements));

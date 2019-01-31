@@ -586,21 +586,21 @@ singleton IfExpression : BaseExpression
     }        
 }
 
-//singleton Variable : Strategy
-//{
-//    setIdentToken(ClassContext context, string value, ParameterContext parameters) 
-//    {
-//        context.append(new ConstantClosure(nil));
-//        
-//        int method_level := context.peek();        
-//        int level := parameters.Level;
-//        
-//        level := level - method_level;
-//        level := level + 1;
-//        
-//        parameters.add(value, METHOD_PARAM, level)
-//    }    
-//}
+singleton Variable : Strategy
+{
+    setIdentToken(ClassContext context, string value, ParameterContext parameters) 
+    {
+        context.append(new ConstantClosure(nil));
+        
+        int method_level := context.peek();        
+        int level := parameters.Level;
+        
+        level := level - method_level;
+        level := level + 1;
+        
+        parameters.add(value, METHOD_PARAM, level)
+    }    
+}
 
 singleton Loop : Strategy
 {

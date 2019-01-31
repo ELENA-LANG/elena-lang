@@ -4,7 +4,7 @@ import system'collections;
 
 public mixin ClosureTape
 {
-    DynamicClosure[] theList;
+    __string DynamicClosure[] theList;
     
     internal constructor allocate(int len)
         = new DynamicClosure[](len);
@@ -65,7 +65,7 @@ public mixin ClosureTape
 
 public mixin ClosureClass
 {
-    object[] items;
+    __string object[] items;
     
     internal constructor allocate(int n)
         = new object[](n);

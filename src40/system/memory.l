@@ -113,7 +113,7 @@ public sealed Array<T> : Indexable<T>
 
 public sealed nonstructural VariadicArray<T> //:: Indexable<template_subj>
 {
-    embeddable T[] theArray;
+    embeddable __string T[] theArray;
 
     vprop int Length
     {
@@ -121,7 +121,7 @@ public sealed nonstructural VariadicArray<T> //:: Indexable<template_subj>
             => system'core_routines'__args;
     }
     
-    Array<T> cast()
+    T[] cast()
     {
         int len := self.Length;
         
