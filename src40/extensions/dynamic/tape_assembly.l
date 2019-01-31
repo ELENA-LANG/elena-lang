@@ -590,7 +590,7 @@ singleton Variable : Strategy
 {
     setIdentToken(ClassContext context, string value, ParameterContext parameters) 
     {
-        context.append(new ConstantClosure(nil));
+        context.append(new ConstantClosure(nilValue));
         
         int method_level := context.peek();        
         int level := parameters.Level;
