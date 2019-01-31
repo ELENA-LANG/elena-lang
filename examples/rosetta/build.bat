@@ -15,7 +15,7 @@ rem ..\..\bin\elc binary\binary.prj
 ..\..\bin\elc amb\amb.prj
 rem ..\..\bin\elc bitwise\bitwise.prj
 rem ..\..\bin\elc brackets\brackets.prj
-rem ..\..\bin\elc anagram\anagram.prj
+..\..\bin\elc anagram\anagram.prj
 rem ..\..\bin\elc median\median.prj
 rem ..\..\bin\elc smavg\smavg.prj
 rem ..\..\bin\elc caesar\caesar.prj

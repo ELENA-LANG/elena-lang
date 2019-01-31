@@ -2183,7 +2183,7 @@ public sealed const struct CharValue : BaseValue
 
     internal readValue(ref int retVal)
     {
-        int val := theValue;
+        intConvertor.convert(self, ref int val);
         
         retVal := val
     }
@@ -2215,14 +2215,11 @@ public sealed const struct CharValue : BaseValue
 //        = val == T<wide>(self).
 
     bool equal(char val)
-        = val == theValue;
+        = theValue == val;
 
     bool less(char val)
     {
-        int c := theValue;        
-        val.readValue(ref int v);        
-        
-        ^ c < v
+        ^ theValue < val;
     }
     
 //    bool less(literal val)

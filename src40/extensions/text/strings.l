@@ -177,6 +177,11 @@ public sealed class StringWriter //: BaseVariable
         theValue := theValue.add:s
     }
     
+    write(char ch)
+    {
+        theValue := theValue.add:ch
+    }
+    
     writeLine(string s)
     {
         self.write(s).write(theNewLine)
@@ -191,12 +196,13 @@ public sealed class StringWriter //: BaseVariable
 //    [
 //        theValue := aText.
 //    ]
-//
-//    append : aText
-//    [
-//        theValue := theValue add:aText.
-//    ]
-//    
+
+    append(string s)
+        <= write(s); 
+    
+    append(char ch)
+        <= write(ch); 
+    
 //    insert:s at:index
 //    [
 //        theValue := theValue insert:s at:index.

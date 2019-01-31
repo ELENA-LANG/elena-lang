@@ -240,6 +240,11 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(LESS_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTLESS_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
+
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
@@ -895,10 +900,10 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
             if (outputRefMulti != 0) {
                ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
                if (outputRef == 0) {
-                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.firstChild(lxTerminalMask));
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
                }
                else if (!isCompatible(scope, outputRefMulti, outputRef)) {
-                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.firstChild(lxTerminalMask));
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
                }
             }            
          }
