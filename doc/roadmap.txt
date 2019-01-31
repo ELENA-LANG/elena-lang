@@ -5,7 +5,7 @@ Ultimate goals
 - maximally reusable code        
 - dynamic code without reflection
 
-Version 3.x.x
+Version 4.1.x
 -------------
 - basic linux version (only console)
 - start the code documentation
