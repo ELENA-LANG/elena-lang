@@ -918,17 +918,17 @@ public class newConstantClosure : DynamicClosureWithParam
         = t.newConstant:param;
 }
 
-//public class newLiteralClosure : DynamicClosureWithParam
-//{    
-//    constructor(param)
-//    {
-//        this param := param
-//    }
-//    
-//    closure(object t, params object[] args)
-//        = t.newLiteralToken:param;    
-//}
-//
+public class newStringClosure : DynamicClosureWithParam
+{    
+    constructor(param)
+    {
+        this param := param
+    }
+    
+    closure(object t, params object[] args)
+        = t.newLiteralToken:param;    
+}
+
 //public class newNumericClosure : DynamicClosureWithParam
 //{    
 //    constructor(param)

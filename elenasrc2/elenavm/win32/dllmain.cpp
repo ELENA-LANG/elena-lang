@@ -352,9 +352,9 @@ EXTERN_DLL_EXPORT int EvaluateTape(void* systemEnv, void* tape)
 
 EXTERN_DLL_EXPORT const char* GetVMLastError()
 {
-//   Instance* instance = getCurrentInstance();
-//
-   return  /*instance ? instance->getStatus() : */"Not initialized";
+   Instance* instance = _Machine->getInstance();
+
+   return  instance ? instance->getStatus() : "Not initialized";
 }
 
 // --- initmachine ---

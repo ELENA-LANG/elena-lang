@@ -101,7 +101,7 @@
                            <= += " extensions'dynamic'newNumericClosure ^ ""new[1]"" " => ;
 
    #define literal     ::=   "literal" "=" str_quote
-                           <= += " extensions'dynamic'newLiteralClosure ^ ""new[1]"" " => ;
+                           <= += " extensions'dynamic'newStringClosure ^ ""new[1]"" " => ;
 
    #define reference   ::=   "reference" "=" ref_quote
                            <= += " extensions'dynamic'newReferenceClosure ^ ""new[1]"" " => ;

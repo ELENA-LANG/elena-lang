@@ -110,16 +110,16 @@ public sealed const struct UnsafePointer
 //        
 //        ^ val
 //    ]
-//
-//    // unsafe code
-//    T<literal> literal
-//    [
-//        int     aLen := system'external'KERNEL32 lstrlenA(self).
-//        literal aLiteral := LiteralValue new(aLen).
-//        system'external'KERNEL32 lstrcpyA(aLiteral, self).
-//        
-//        ^ aLiteral
-//    ]        
+
+    // unsafe code
+    string cast()
+    {
+        int  len := extern KERNEL32.lstrlenA(self);
+        string s := String.allocate(len);
+        extern KERNEL32.lstrcpyA(s, self);
+        
+        ^ s
+    }        
 
     // unsafe code
     wide cast()
@@ -131,18 +131,18 @@ public sealed const struct UnsafePointer
         ^ s
     }
     
-////    stacksafe saveTo bytearray:target int:offs
-////    [
-////        target write int:offs int:thePointer.
-////    ]
-////    
-////    stacksafe saveTo intarray:target int:offs
-////    [
-////        target write int:offs int:thePointer.
-////    ]
+//    stacksafe saveTo bytearray:target int:offs
+//    [
+//        target write int:offs int:thePointer.
+//    ]
 //    
-//    bool isEmpty
-//        = 0 == thePointer.
+//    stacksafe saveTo intarray:target int:offs
+//    [
+//        target write int:offs int:thePointer.
+//    ]
+    
+    bool isEmpty()
+        = thePointer == 0;
 }
 
 //// --- COORD ---

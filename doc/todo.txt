@@ -201,8 +201,6 @@ Pipeline:
 
               dev - general implementation
                  * compileExpression, compileObject : refactor collection compilation
-                 * method declaration method(Object arg1, Object arg2) - should be compiled as generic one (without multimethod if
-                   no other overload functions provided)
                  * cache isEmbeddable operation result
                  * fn3prop : embeddable option for the function with three arguments should be recognized
                  * ByteNumber.get&min - could we return the constant object?
@@ -326,9 +324,6 @@ Pipeline:
                  * the following grammar rule is not correctly split (code is ignored) :
                        #define literal    ::= <= """" "$literal" """" =>; // both constants are added at the start
 
-              zdev 
-                 * partial-evaluation
-
               xdev - general optimization  
                  * map isEmbeddable results, to reuse them
 
@@ -346,7 +341,6 @@ Pipeline:
                  * Make possible to provide alternative path to lib #188
 
               xdev - generic development 
-                 * get rid of __ifoperator / ifnotoeprator - embeddable attribute should be used instead
                  * bug : extensions in template - are not fully resolved
                  * no need to copy to the buffer field / variable / method attributes
                  * get rid of listable attribute, use accumulators for bool values
@@ -448,9 +442,6 @@ Pipeline:
               ydev
                  * upndown : implementing, play with chaotic computer player
 
-              xdev - byte code optimization                               
-                       * #269 : short-circuit boolean operation
-
               xdev - generic development
                        * #265 : enumeration list (declaration,pool of possible values,literal representation)
 
@@ -488,8 +479,6 @@ Pipeline:
                        * try to use lamda expressin for brackets example
 
               xdev - generic development
-                       * Implicit constructor should not have return statements
-
                        * embeddable dispatcher validation : only redirection to the field is allowed
 
                        * optimize #var(dirty_ptr)aPtr := system'external'sqlite3 sqlite3_errmsg &int:1. - assigning is done three times!!
@@ -504,8 +493,6 @@ Pipeline:
                          cast methods work correct after this
                                          	
                        * check template type before applying (i.e. method template should be declared only for the method declaration)
-
-                       * array of long
 
                        * singleton template : make sure it is not possible to declare fields for them??
 

@@ -10,7 +10,7 @@ Version 4.1.x
 - basic linux version (only console)
 - start the code documentation
 - declarative gui description
-- migrate upndown to lib30
+- migrate upndown to lib40
 - eldoc
 - sockets
 - gcx: multi-theading beta (standalone, vm client, gui, console)
@@ -34,7 +34,6 @@ Version 4.1.x
 - gcx, final version
 - x86 native code: optimize with pentium pro commands
 - start work on visualizer
-- lib30 review -> lib31
 - optimize elenavm
 - optimize elenart
 - optimize elenasm

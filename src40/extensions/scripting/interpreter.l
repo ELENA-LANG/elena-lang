@@ -86,7 +86,7 @@ public class ScriptEngine
         ^ retVal
     }
         
-    evaluate(script)
+    eval(script)
         = self.evaluateScript(script);
         
     loadPath(string path)
