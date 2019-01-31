@@ -3164,22 +3164,24 @@ bool Compiler :: convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t tar
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
       if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, sourceRef, source.element, nsScope->ns.c_str()))
-         return typecastObject(writer, scope, targetRef, source);
+         return sendTypecast(writer, scope, targetRef, source);
    }
    return true;
 }
 
-bool Compiler :: typecast(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t signature)
+bool Compiler :: typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
 {
-   ref_t signatures[ARG_COUNT];
-   size_t count = scope.module->resolveSignature(signature, signatures);
-   if (count == 1) {
-      return typecastObject(writer, scope, targetRef, ObjectInfo(okObject, 0, signatures[0]));
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+   ref_t sourceRef = resolveObjectReference(scope, source);
+   if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
+      // if it is not compatible - send type-casting message
+      return sendTypecast(writer, scope, targetRef, source);
    }
-   else return false;   
+   return true;
 }
 
-bool Compiler :: typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
+bool Compiler :: sendTypecast(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
 {
    if (targetRef != 0 && !isPrimitiveRef(targetRef)) {
       if (targetRef != scope.moduleScope->superReference) {
@@ -4296,8 +4298,8 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
    if (paramCount == 1 && node.argument == V_CONVERSION) {
       // if it is a cast expression
       ObjectInfo object = compileExpression(writer, node.nextNode(), scope, /*targetRef*/0, mode);
-      if (!convertObject(writer, scope, targetRef, object))
-         scope.raiseError(errIllegalOperation, node);
+      if(!typecastObject(writer, scope, targetRef, object))
+         scope.raiseError(errInvalidOperation, node);
    }
    else if (node.argument == V_NEWOP) {
       // if it is a implicit constructor
@@ -4441,6 +4443,7 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
             do {
                terminalNode = terminalNode.nextNode();
                if (terminalNode == lxTypeAttribute) {
+                  // NOTE : Type attributes should be removed to correctly compile the array of templates
                   terminalNode = lxIdle;
                }
             } while (terminalNode != lxNone);

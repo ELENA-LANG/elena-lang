@@ -27,7 +27,7 @@ public program()
     
     auto dictionary := new Map<string,object>();
 
-    new File("unixdict.txt").forEachLine:(word)
+    File.assign("unixdict.txt").forEachLine:(word)
     {
         var key := word.normalized();
         var item := dictionary[key];

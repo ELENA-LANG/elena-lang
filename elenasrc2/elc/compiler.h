@@ -995,7 +995,7 @@ private:
 
    bool convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
    bool typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
-   bool typecast(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t signature);
+   bool sendTypecast(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
 
    void compileExternalArguments(SNode node, NamespaceScope& scope);
 
