@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2018, by Alexei Rakov
+//                                              (C)2009-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -658,31 +658,31 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             ecodes.writeByte(bcPushR);
             helper.writeTape(ecodes, loadSymbol(arg, mskInt32Ref), mskRDataRef);
             break;
-         //case PUSHR_TAPE_MESSAGE_ID:
-         //   //pushr r
-         //   ecodes.writeByte(bcPushR);
-         //   helper.writeTape(ecodes, loadSymbol(arg, mskRealRef), mskRDataRef);
-         //   break;
-         //case PUSHL_TAPE_MESSAGE_ID:
-         //   //pushr r
-         //   ecodes.writeByte(bcPushR);
-         //   helper.writeTape(ecodes, loadSymbol(arg, mskInt64Ref), mskRDataRef);
-         //   break;
+         case PUSHR_TAPE_MESSAGE_ID:
+            //pushr r
+            ecodes.writeByte(bcPushR);
+            helper.writeTape(ecodes, loadSymbol(arg, mskRealRef), mskRDataRef);
+            break;
+         case PUSHL_TAPE_MESSAGE_ID:
+            //pushr r
+            ecodes.writeByte(bcPushR);
+            helper.writeTape(ecodes, loadSymbol(arg, mskInt64Ref), mskRDataRef);
+            break;
          case PUSHM_TAPE_MESSAGE_ID:
             // pushr r
             ecodes.writeByte(bcPushR);
             helper.writeTape(ecodes, loadSymbol(arg, mskMessage), mskRDataRef);
             break;
-         //case PUSHE_TAPE_MESSAGE_ID:
-         //   // pushr r
-         //   ecodes.writeByte(bcPushR);
-         //   helper.writeTape(ecodes, loadSymbol(arg, mskExtMessage), mskRDataRef);
-         //   break;
-         //case PUSHG_TAPE_MESSAGE_ID:
-         //   // pushr r
-         //   ecodes.writeByte(bcPushR);
-         //   helper.writeTape(ecodes, loadSymbol(arg, mskSignature), mskRDataRef);
-         //   break;
+         case PUSHE_TAPE_MESSAGE_ID:
+            // pushr r
+            ecodes.writeByte(bcPushR);
+            helper.writeTape(ecodes, loadSymbol(arg, mskExtMessage), mskRDataRef);
+            break;
+         case PUSHG_TAPE_MESSAGE_ID:
+            // pushr r
+            ecodes.writeByte(bcPushR);
+            helper.writeTape(ecodes, loadSymbol(arg, mskMessageName), mskRDataRef);
+            break;
          case POP_TAPE_MESSAGE_ID:
             //popi param
             ecodes.writeByte(bcPopI);

@@ -87,14 +87,14 @@ namespace _ELENA_
    constexpr auto PUSH_TAPE_MESSAGE_ID    = 0x05E4;             // push constant
    constexpr auto PUSHS_TAPE_MESSAGE_ID   = 0x05E5;             // push literal constant
    constexpr auto PUSHN_TAPE_MESSAGE_ID   = 0x05E6;             // push integer constant
-//   #define PUSHR_TAPE_MESSAGE_ID   0x05E7             // push floating numeric constant
-//   #define PUSHL_TAPE_MESSAGE_ID   0x05E8             // push long integer constant
+   constexpr auto PUSHR_TAPE_MESSAGE_ID   = 0x05E7;             // push floating numeric constant
+   constexpr auto PUSHL_TAPE_MESSAGE_ID   = 0x05E8;             // push long integer constant
    constexpr auto PUSHM_TAPE_MESSAGE_ID   = 0x05E9;             // push message reference
-//   #define PUSHG_TAPE_MESSAGE_ID   0x05EA             // push the subject reference
+   constexpr auto PUSHG_TAPE_MESSAGE_ID   = 0x05EA;             // push the subject reference
    constexpr auto POP_TAPE_MESSAGE_ID     = 0x01EB;             // free the stack content
    constexpr auto SEND_TAPE_MESSAGE_ID    = 0x05EC;             // send the message
    constexpr auto REVERSE_TAPE_MESSAGE_ID = 0x01ED;             // reverse the stack
-//   #define PUSHE_TAPE_MESSAGE_ID   0x05EE             // push message reference
+   constexpr auto PUSHE_TAPE_MESSAGE_ID   = 0x05EE;             // push message reference
 
    constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
 
