@@ -189,8 +189,8 @@ public singleton UTF8Encoding
         s.saveToByteArray(index, array, length)
     }
         
-//    toLiteral(int anIndex, int aLength, ByteArray anArray)
-//        = LiteralValue fromByteArray(anIndex, aLength, anArray).
+    toString(int index, int length, byte[] array)
+        = String.fromByteArray(index, length, array);
         
 //    convert(int anIndex, ref<int> aLength, literal aByteArray, CharArray anOutput, ref<int> anOutputLength)
 //        => system'core_routines'__utf8encoder.

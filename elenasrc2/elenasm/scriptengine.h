@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2018, by Alexei Rakov
+//                                              (C)2011-2019 by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef scriptEngineH
@@ -58,7 +58,7 @@ public:
 
    void writeCallCommand(ident_t reference)
    {
-   //   writeCommand(CALL_TAPE_MESSAGE_ID, reference);
+      writeCommand(CALL_TAPE_MESSAGE_ID, reference);
    }
 
    void writeCommand(pos_t command, ident_t param)

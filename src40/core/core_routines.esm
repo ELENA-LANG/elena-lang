@@ -2856,6 +2856,23 @@ procedure __jump_closure."params##invoke$system@Object[2]"
 
 end
 
+procedure __vmtape."evaluateTape$system@UnsafePointer[2]"
+
+  aloadsi 2
+  nload
+  exclude
+  pushd
+  system
+  pushe
+  callextr extern : EvaluateTape
+  popi 2
+  include
+  pushd
+  popa
+  quitn 2
+
+end
+
 symbol sta_start
 
   pushr entry : "$forwards'$program"

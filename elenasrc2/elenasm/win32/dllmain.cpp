@@ -94,15 +94,15 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 {
    switch (ul_reason_for_call)
    {
-   case DLL_PROCESS_ATTACH:
-      newSession(hModule);
-      return TRUE;
-   case DLL_THREAD_ATTACH:
-   case DLL_THREAD_DETACH:
-      return TRUE;
-   case DLL_PROCESS_DETACH:
-      freeSession();
-      break;
+      case DLL_PROCESS_ATTACH:
+         newSession(hModule);
+         return TRUE;
+      case DLL_THREAD_ATTACH:
+      case DLL_THREAD_DETACH:
+         return TRUE;
+      case DLL_PROCESS_DETACH:
+         freeSession();
+         break;
    }
    return TRUE;
 }

@@ -42,11 +42,11 @@ public interface TapeExpression
     constructor Loop(TapeExpression condition, TapeExpression body)
         = new TapeLoopExpression(condition, body);
         
-//    constructor Returning(TapeExpression value)
-//        = TapeReturningExpression new(value).
-//        
-//    constructor If(TapeExpression condition, TapeExpression truePart)
-//        = TapeIfExpression new(condition, truePart).
+    constructor Returning(TapeExpression value)
+        = new TapeReturningExpression(value);
+        
+    constructor If(TapeExpression condition, TapeExpression truePart)
+        = new TapeIfExpression(condition, truePart);
         
     abstract saveTo(List<DynamicClosure> list) {}
     
@@ -299,22 +299,22 @@ public class TapeAssigningExpression : TapeExpression
     }
 }
 
-//public class TapeReturningExpression :: TapeExpression
-//{
-//    T<TapeExpression>  value.
-//    
-//    constructor new(TapeExpression value)
-//    [
-//        @value := value.
-//    ]
-//    
-//    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(openReturningClosure).
-//        value saveTo(list).        
-//        list append(closeClosure).
-//    ]
-//}
+public class TapeReturningExpression : TapeExpression
+{
+    TapeExpression  value;
+    
+    constructor(TapeExpression value)
+    {
+        this value := value
+    }
+    
+    saveTo(List<DynamicClosure> list)
+    {
+        list.append(openReturningClosure);
+        value.saveTo(list);
+        list.append(closeClosure);
+    }
+}
 
 public class TapeLoopExpression : TapeExpression
 {
@@ -343,25 +343,25 @@ public class TapeLoopExpression : TapeExpression
     }
 }
 
-//public class TapeIfExpression :: TapeExpression
-//{
-//    T<TapeExpression>  condition.
-//    T<TapeExpression>  truePart.
-//    
-//    constructor new(TapeExpression condition, TapeExpression truePart)
-//    [
-//        @condition := condition.
-//        @truePart := truePart.
-//    ]
-//    
-//    saveTo(List<DynamicClosure> list)
-//    [
-//        list append(openExpressionClosure).
-//        list append(extensions'dynamic'ifClosure).
-//        
-//        condition saveTo(list).        
-//        truePart saveTo(list).
-//        
-//        list append(closeClosure).
-//    ]
-//}
+public class TapeIfExpression : TapeExpression
+{
+    TapeExpression  condition;
+    TapeExpression  truePart;
+    
+    constructor(TapeExpression condition, TapeExpression truePart)
+    {
+        this condition := condition;
+        this truePart := truePart;
+    }
+    
+    saveTo(List<DynamicClosure> list)
+    {
+        list.append(openExpressionClosure);
+        list.append(extensions'dynamic'ifClosure);
+        
+        condition.saveTo(list);
+        truePart.saveTo(list);
+        
+        list.append(closeClosure);
+    }
+}

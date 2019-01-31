@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2011-2017, by Alexei Rakov
+//                                             (C)2011-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef inlineparserH
@@ -16,10 +16,10 @@ namespace _ELENA_
 
 class VMTapeParser : public _Parser
 {
-   MessageMap _verbs;
+   //MessageMap _verbs;
    TempString _postfix;
 
-   int mapVerb(ident_t literal);
+   //int mapVerb(ident_t literal);
 
    void writeSubject(TapeWriter& writer, ident_t message);
    bool writeObject(TapeWriter& writer, int state, ident_t token);
