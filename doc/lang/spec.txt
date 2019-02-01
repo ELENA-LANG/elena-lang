@@ -1,6 +1,6 @@
 ELENA 4.x Specification
-   by Aleksey Rakov
-   (revision 1)
+by Aleksey Rakov
+(revision 1)
 
 1. Program Structure, Project Types, Program Entry Point
 
@@ -22,7 +22,7 @@ E.g.
 
 test.l file is declared in *mytest* namespace, subns\test.l one in *mytest'subns*.
 
-_NOTE : By default all source files are UTF8 encoded. The project file is an XML document with *configuration* root node. In the current
+_NOTE : By default all source files are UTF8 encoded. The project file is an XML document with **configuration** root node. In the current
 implementation the project file contains no xml namespace attributes_
 
 Typically the project compilation produces a single module file (.nl). But it is possible to specify multi-library output:
@@ -46,24 +46,54 @@ In this case several libraries will be generated - mytest.nl and mytest\sub1.nl
 A project file contains the project settings, source files, forwards and so on. The project may be based on a project template. 
 In this case it inherits all the parent settings except the overloaded ones. The template may be based on another one and so on.
 
+## Project Settings
+
+ XPath | Descriptions
+------ | ------------
+configuration/project/debuginfo | -1 - the dubug information is generated; 0 - without debug information 
+configuration/project/executable | - 
+configuration/project/libpath |
+configuration/project/namespace |
+configuration/project/output |
+configuration/project/template |
+configuration/project/warn/weakunresolved |
+
+## Linker Settings
+
+## System Settings
+
+## Compiler Settings
+
+## Files
+
+## Forwards
+
+## Primitives
+
+## Templates
+
+## Winapi
+
+## Externals
+
+## References
+
+## Targets
+
+## Project Base Templates
+
 Currently several major project templates are supported:
-* console - STA CUI stand-alone application (templates\win32_console.cfg)
-* mta_console - MTA CUI stand-alone application (templates\win32_consolex.cfg)
-* gui - STA GUI stand-alone application (templates\win32_gui.cfg)
-* mta_gui - MTA GUI stand-alone application (templates\win32_guix.cfg)
-* vm_console - STA CUI vm-client application (templates\vm_win32_console.cfg)
-* lib - ELENA library (templates\lib.cfg)
+* **console** - STA CUI stand-alone application (templates\win32_console.cfg)
+* **mta_console** - MTA CUI stand-alone application (templates\win32_consolex.cfg)
+* **gui** - STA GUI stand-alone application (templates\win32_gui.cfg)
+* **mta_gui** - MTA GUI stand-alone application (templates\win32_guix.cfg)
+* **vm_console** - STA CUI vm-client application (templates\vm_win32_console.cfg)
+* **lib** - ELENA library (templates\lib.cfg)
 
-_NOTE : 
-CUI - console user interface 
-GUI - graphical user interface 
-STA - single-thread application
-MTA - multi-thread application_
+_where :_ 
+* _CUI - console user interface_
+* _GUI - graphical user interface_ 
+* _STA - single-thread application_
+* _MTA - multi-thread application_
 
-2. Grammar
-
-3. Attributes
-
-4. Identifiers, Namespaces
-
-5. Forwards
+## Program entry point
