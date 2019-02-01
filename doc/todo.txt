@@ -3,6 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * test vm sta : critical exception handlers
+
                  * test amb
                  * implement lazy expressions  
                  * property attribute - can be only the top most token
@@ -95,7 +97,6 @@ In development:
               dev - tests          
                  * test vm sta : preloaded symbols / initializers
                  * test vm sta : exception handlers
-                 * test vm sta : critical exception handlers
                  * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
                  * vm : Execute Brain****
                  * mta system : check the situation when too many threads (> MAX_THREAD)

@@ -1,19 +1,69 @@
-== Grammar ==
+ELENA 4.x Specification
+   by Aleksey Rakov
+   (revision 1)
 
-    declaration    ::= attribute* name { class | symbol }
+1. Program Structure, Project Types, Program Entry Point
 
-    symbol         ::= "=" expr "."
+A typical ELENA project consists of a project file (.prj) and source files (.l) located in the project root and sub folders.
 
-    class          ::= { "." | class_body }
+Root source files are declared in the project root namespace, ones in sub folders - in nested namespaces.
 
-    class_body     ::= class_base? "{" class_member* "}"
+E.g.
 
-    class_base     ::= "::" class_parent? ("," class_base_template)*
+    <project>
+        <namespace>mytest</namespace>
+    </project>
+    <files>
+        <module>
+            <include>test.l</include>
+            <include>subns\test.l</include>
+        </module>
+    </files>
 
-    class_member   ::= attribute* name { field | method }
+test.l file is declared in *mytest* namespace, subns\test.l one in *mytest'subns*.
 
-    field          ::= { "." | initializer | field_template }
+_NOTE : By default all source files are UTF8 encoded. The project file is an XML document with *configuration* root node. In the current
+implementation the project file contains no xml namespace attributes_
 
-    initializer    ::= ":=" expr "."
+Typically the project compilation produces a single module file (.nl). But it is possible to specify multi-library output:
 
-    field_template ::= "::" parameter ("," parameter)* initializer
+    <project>
+        <namespace>mytest</namespace>
+    </project>
+    <files>
+        <module>
+            <include>test.l</include>
+            <include>subns\test.l</include>
+        </module>
+        <module name="sub1">
+            <include>sub1\op.l</include>
+            <include>sub1\sub2\op2.l</include>
+        </module>
+    </files>
+
+In this case several libraries will be generated - mytest.nl and mytest\sub1.nl
+
+A project file contains the project settings, source files, forwards and so on. The project may be based on a project template. 
+In this case it inherits all the parent settings except the overloaded ones. The template may be based on another one and so on.
+
+Currently several major project templates are supported:
+* console - STA CUI stand-alone application (templates\win32_console.cfg)
+* mta_console - MTA CUI stand-alone application (templates\win32_consolex.cfg)
+* gui - STA GUI stand-alone application (templates\win32_gui.cfg)
+* mta_gui - MTA GUI stand-alone application (templates\win32_guix.cfg)
+* vm_console - STA CUI vm-client application (templates\vm_win32_console.cfg)
+* lib - ELENA library (templates\lib.cfg)
+
+_NOTE : 
+CUI - console user interface 
+GUI - graphical user interface 
+STA - single-thread application
+MTA - multi-thread application_
+
+2. Grammar
+
+3. Attributes
+
+4. Identifiers, Namespaces
+
+5. Forwards
