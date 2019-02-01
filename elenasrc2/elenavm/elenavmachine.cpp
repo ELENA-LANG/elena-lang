@@ -338,13 +338,13 @@ ident_t Instance :: retrieveReference(void* address, ref_t mask)
    //   return retrieveKey(_actions.start(), (ref_t)address, DEFAULT_STR);
    //}
    //else {
-   //   switch (mask & mskImageMask) {
-   //   case mskRDataRef:
-   //      return retrieveKey(_dataReferences.start(), (ref_t)address, DEFAULT_STR);
-   //   default:
-         return NULL;
-   //   }
-   //}
+      switch (mask & mskImageMask) {
+         case mskRDataRef:
+            return retrieveKey(_dataReferences.start(), (ref_t)address, DEFAULT_STR);
+         default:
+            return nullptr;
+      }
+//   }
 }
 
 _Module* Instance :: resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference)
