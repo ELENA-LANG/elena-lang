@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 6;
+constexpr auto ELENAVM_REVISION = 7;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2019 by Alex Rakov";
@@ -104,7 +104,7 @@ public:
    Templates templates;
    Config    config;
 
-   void startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* tape);
+   void startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* sehTable, void* tape);
 
    void Exit(int exitCode);
 
@@ -233,10 +233,10 @@ protected:
 
    bool loadTemplate(ident_t name);
 
-   virtual bool restart(SystemEnv* env, bool debugMode);
+   virtual bool restart(SystemEnv* env, void* sehTable, bool debugMode);
 
    void translate(MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator);
-   void configurate(SystemEnv* env, MemoryReader& reader, int terminator);
+   void configurate(SystemEnv* env, void* sehTable, MemoryReader& reader, int terminator);
    void resolveMessageTable();
 
    void onNewCode();
@@ -250,10 +250,10 @@ protected:
 
    int parseMessage(ident_t message);
 
-   void saveActionNames(MemoryWriter* writer)
-   {
-//      _actions.write(writer);
-   }
+//   void saveActionNames(MemoryWriter* writer)
+//   {
+////      _actions.write(writer);
+//   }
 
 public:
    ident_t getStatus() { return emptystr(_status) ? NULL : (const char*)_status; }
@@ -369,18 +369,18 @@ public:
    {      
       void* ref = NULL;
       if (_debugMode) {
-         // remove subject list from the debug section
+         //// remove subject list from the debug section
          _Memory* debugSection = getTargetDebugSection();
-         if ((*debugSection)[0] > 0)
-            debugSection->trim((*debugSection)[0]);
+         //if ((*debugSection)[0] > 0)
+         //   debugSection->trim((*debugSection)[0]);
 
          ref = loadSymbol(referenceName, mskSymbolRef, silentMode);
 
          (*debugSection)[0] = debugSection->Length();
 
-         // add subject list to the debug section
-         _ELENA_::MemoryWriter debugWriter(debugSection);
-         saveActionNames(&debugWriter);
+         //// add subject list to the debug section
+         //_ELENA_::MemoryWriter debugWriter(debugSection);
+         //saveActionNames(&debugWriter);
 
          raiseBreakpoint();
       }
@@ -433,7 +433,7 @@ public:
    void* loadSymbol(ident_t reference, int mask, bool silentMode = false);
 //   //size_t loadMessage(ident_t reference);
 
-   int interprete(SystemEnv* env, void* tape, bool standAlone);
+   int interprete(SystemEnv* env, void* sehTable, void* tape, bool standAlone);
 
    bool loadAddressInfo(void* address, char* buffer, size_t& maxLength);
 

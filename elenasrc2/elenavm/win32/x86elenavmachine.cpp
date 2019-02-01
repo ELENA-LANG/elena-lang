@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2018, by Alexei Rakov
+//                                              (C)2009-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -130,7 +130,7 @@ void* x86Instance :: loadDebugSection()
    return _debugProcess.get(0);
 }
 
-bool x86Instance :: restart(SystemEnv* env, bool debugMode)
+bool x86Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
 {
    // !! make sure all threads are stopped
 
@@ -156,7 +156,7 @@ bool x86Instance :: restart(SystemEnv* env, bool debugMode)
    _compiler = new _ELENA_::x86JITCompiler(debugMode);
    _linker = new JITLinker(this, _compiler, false, _codeProcess.get(0)/*, _config.maxThread*/);
 
-   return Instance::restart(env, debugMode);
+   return Instance::restart(env, sehTable, debugMode);
 }
 
 void x86Instance :: createConsole()

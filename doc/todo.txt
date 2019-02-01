@@ -3,8 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * test vm sta : critical exception handlers
-
                  * test amb
                  * implement lazy expressions  
                  * property attribute - can be only the top most token
@@ -85,6 +83,7 @@ In development:
                  * simplify DerivationWriter :: newNode - use a common mask for all expression nonterminals
                  * optimizate operations with byref dynamic variable (no need for boxing / unboxing) - should be locally
                    boxed
+                 * default se_handler seems not working properly (coreapi'seh_handler)
  
               dev - tests          
                  * test : interpreter

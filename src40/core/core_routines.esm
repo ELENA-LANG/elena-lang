@@ -2886,6 +2886,21 @@ symbol sta_start
 
 end
 
+symbol vm_sta_start
+
+  pushr rdata : "$elena'@tapekey"
+  pushr api : seh_handler
+  pushr api : default_handler
+  system
+  pushe
+  callextr api : get_seh_handler
+  pushe
+  callextr extern : InitializeVMSTA
+  popi 4
+  quit
+
+end
+
 procedure critical_exception_handler
 
   open 1
@@ -2894,16 +2909,4 @@ procedure critical_exception_handler
   throw
 
 end
-
-symbol vm_sta_start
-
-  pushr rdata : "$elena'@tapekey"
-  pushr api : seh_handler
-  pushr api : default_handler
-  system
-  pushe
-  callextr extern : InitializeVMSTA
-  popi 4
-  quit
-
-end
+	

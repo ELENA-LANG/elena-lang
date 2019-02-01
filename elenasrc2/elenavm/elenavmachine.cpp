@@ -536,7 +536,7 @@ void Instance :: resolveMessageTable()
    }
 }
 
-bool Instance :: restart(SystemEnv* env, bool debugMode)
+bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
 {
    printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION);
    printInfo(L"Initializing...");
@@ -564,7 +564,7 @@ bool Instance :: restart(SystemEnv* env, bool debugMode)
 
    _compiler->setTLSKey((void*)*env->TLSIndex);
    _compiler->setThreadTable(env->ThreadTable);
-   //_compiler->setEHTable(ehTable);
+   _compiler->setEHTable(sehTable);
    _compiler->setGCTable(env->Table);
 
    // load predefined code
@@ -831,7 +831,7 @@ void Instance :: addPackagePath(ident_t line)
    else addPackagePath(NULL, line);
 }
 
-void Instance :: configurate(SystemEnv* env, MemoryReader& reader, int terminator)
+void Instance :: configurate(SystemEnv* env, void* sehTable, MemoryReader& reader, int terminator)
 {
    size_t pos = reader.Position();
 
@@ -867,7 +867,7 @@ void Instance :: configurate(SystemEnv* env, MemoryReader& reader, int terminato
          case START_VM_MESSAGE_ID:
             createConsole();
 
-            if(!restart(env, _debugMode))
+            if(!restart(env, sehTable, _debugMode))
                throw EAbortException();
 
             break;
@@ -882,7 +882,7 @@ void Instance :: configurate(SystemEnv* env, MemoryReader& reader, int terminato
    reader.seek(pos);
 }
 
-int Instance :: interprete(SystemEnv* env, void* tape, bool standAlone)
+int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool standAlone)
 {
    ByteArray    tapeArray(tape, -1);
    MemoryReader tapeReader(&tapeArray);
@@ -890,7 +890,7 @@ int Instance :: interprete(SystemEnv* env, void* tape, bool standAlone)
    stopVM();
 
    // configurate VM instance
-   configurate(env, tapeReader, 0);
+   configurate(env, sehTable, tapeReader, 0);
 
    if (!_initialized)
       throw InternalError("ELENAVM is not initialized");
@@ -899,12 +899,12 @@ int Instance :: interprete(SystemEnv* env, void* tape, bool standAlone)
    if (tapeArray[tapeReader.Position()] == 0)
       return -1;
 
-   if (_debugMode) {
-      // remove subject list from the debug section
-      _Memory* debugSection = getTargetDebugSection();
-      if ((*debugSection)[0] > 0)
-         debugSection->trim((*debugSection)[0]);
-   }
+   //if (_debugMode) {
+   //   // remove subject list from the debug section
+   //   _Memory* debugSection = getTargetDebugSection();
+   //   if ((*debugSection)[0] > 0)
+   //      debugSection->trim((*debugSection)[0]);
+   //}
 
    // !! probably, it is better to use jitlinker reference helper class
    ImageReferenceHelper helper(this);
@@ -932,9 +932,9 @@ int Instance :: interprete(SystemEnv* env, void* tape, bool standAlone)
 
       (*debugSection)[0] = debugSection->Length();
 
-      // add subject list to the debug section
-      _ELENA_::MemoryWriter debugWriter(debugSection);
-      saveActionNames(&debugWriter);
+      //// add subject list to the debug section
+      //_ELENA_::MemoryWriter debugWriter(debugSection);
+      //saveActionNames(&debugWriter);
    }
 
    onNewCode();
@@ -1066,7 +1066,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t rootPath)
    config.load(configPath.c_str(), &templates);
 }
 
-void ELENAVMMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* tape)
+void ELENAVMMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* sehTable, void* tape)
 {
    // setting up system
    __routineProvider.Prepare();
@@ -1074,7 +1074,7 @@ void ELENAVMMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
 
    if (tape != nullptr) {
       // if it is a stand alone application
-      _instance->interprete(env, tape, true);
+      _instance->interprete(env, sehTable, tape, true);
 
       // winding down system
       Exit(0);

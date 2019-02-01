@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line DSA script terminal main file
-//                                              (C)2011-2018, by Alexei Rakov
+//                                              (C)2011-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -15,13 +15,14 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   4
+#define ELT_BUILD_NUMBER   5
  
 // global variables
 int       _encoding = feAnsi;
 pos_t     _tlsIndex = 0;
 GCTable   _table = { 0 };
 SystemEnv _env = { 0 };
+int       _sehTable = 0;
 
 void print(const char* str, ...)
 {
@@ -51,7 +52,7 @@ void printHelp()
 
 void executeTape(void* tape)
 {
-   int retVal = EvaluateTape(&_env, tape);
+   int retVal = EvaluateTape(&_env, &_sehTable, tape);
    Release(tape);
 
    // copy vm error if retVal is zero
@@ -169,13 +170,13 @@ void runSession()
 
 int main(int argc, char* argv[])
 {
-   print("ELENA command line VM terminal %d.%d.%d (C)2011-2018 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
+   print("ELENA command line VM terminal %d.%d.%d (C)2011-2019 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
    _env.MaxThread = 1;
    _env.Table = &_table;
    _env.TLSIndex = &_tlsIndex;
 
-   InitializeVMSTA(&_env, nullptr, nullptr, nullptr);
+   InitializeVMSTA(&_sehTable, &_env, nullptr, nullptr, nullptr);
 
    loadScript("~\\elt.es");
    loadScript("~\\scripts\\assembly.es");

@@ -4120,6 +4120,13 @@ procedure coreapi'thread_default_handler
 
 end
 
+procedure coreapi'get_seh_handler
+
+  mov  ecx, data : % CORE_ET_TABLE
+  ret
+
+end
+
 procedure coreapi'seh_handler
 
   push ebp
@@ -4166,27 +4173,6 @@ lab6:
   pop ebx 
   mov esp, ebp
   pop ebp
-  ret
-
-end
-
-// ; console_vm_entry()
-procedure coreapi'vm_console_entry
-
-  push ebx
-  push ecx
-  push edi
-  push esi
-  push ebp
-  
-//  call code : % INIT
-
-  pop  ebp
-  pop  esi
-  pop  edi
-  pop  ecx
-  pop  ebx
-                                                           
   ret
 
 end

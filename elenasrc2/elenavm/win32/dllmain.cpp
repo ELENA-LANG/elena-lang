@@ -26,7 +26,7 @@ void loadDLLPath(HMODULE hModule)
 
 // ==== DLL entries ====
 
-EXTERN_DLL_EXPORT void InitializeVMSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape)
+EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape)
 {
    ProgramHeader header;
    // initialize the exception handler
@@ -44,7 +44,7 @@ EXTERN_DLL_EXPORT void InitializeVMSTA(void* systemEnv, void* exceptionHandler, 
    //_SystemEnv = systemEnv;
 
    // start the system
-   _Machine->startSTA(&header, (SystemEnv*)systemEnv, vmTape);
+   _Machine->startSTA(&header, (SystemEnv*)systemEnv, sehTable, vmTape);
 }
 
 EXTERN_DLL_EXPORT void Exit(int exitCode)
@@ -310,14 +310,14 @@ EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
    }
 }
 
-EXTERN_DLL_EXPORT int EvaluateTape(void* systemEnv, void* tape)
+EXTERN_DLL_EXPORT int EvaluateTape(void* systemEnv, void* sehTable, void* tape)
 {
    Instance* instance = _Machine->getInstance();
    if (instance == NULL)
       return 0;
    
    try {
-      int retVal = instance->interprete((SystemEnv*)systemEnv, tape, false);
+      int retVal = instance->interprete((SystemEnv*)systemEnv, sehTable, tape, false);
 
       return retVal;
    }
