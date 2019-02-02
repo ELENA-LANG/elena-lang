@@ -344,7 +344,7 @@ ident_t Instance :: retrieveReference(void* address, ref_t mask)
          default:
             return nullptr;
       }
-//   }
+   //}
 }
 
 _Module* Instance :: resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference)
@@ -479,6 +479,11 @@ void Instance :: addForward(ident_t line)
 void Instance :: onNewCode()
 {
    resolveMessageTable();
+}
+
+ident_t Instance :: getSubject(ref_t subjectRef)
+{
+   return _linker->retrieveResolvedAction(subjectRef);
 }
 
 void* Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
@@ -974,6 +979,8 @@ bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
 
 int Instance :: parseMessage(ident_t message)
 {
+   return _linker->parseMessage(message, false);
+
    //IdentifierString signature;
    //int subject = 0;
    //int param = 0;

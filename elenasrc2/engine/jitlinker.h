@@ -188,6 +188,7 @@ public:
    void* calculateVAddress(MemoryWriter* writer, int mask);
 
    ref_t parseMessage(ident_t reference, bool actionOnlyMode);
+   ident_t retrieveResolvedAction(ref_t reference);
 
    virtual void onModuleLoad(_Module* module);
 

@@ -50,13 +50,12 @@ In this case it inherits all the parent settings except the overloaded ones. The
 
  XPath | Descriptions
 ------ | ------------
-configuration/project/debuginfo | -1 - the dubug information is generated; 0 - without debug information 
-configuration/project/executable | - 
-configuration/project/libpath |
-configuration/project/namespace |
-configuration/project/output |
-configuration/project/template |
-configuration/project/warn/weakunresolved |
+configuration/project/debuginfo | -1 / 0 - turn on/off the dubug information generation 
+configuration/project/executable | the project target name (a name of the generated executable file)
+configuration/project/libpath | a path to the language libraries
+configuration/project/namespace | a project root namespace
+configuration/project/output |  a path to the output directory
+configuration/project/template | a project base template
 
 ## Linker Settings
 

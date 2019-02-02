@@ -256,12 +256,14 @@ int Execute(void* address, FrameHeader* framePtr)
 
       push esi
       push edi
+      mov  esi, prevFrame
+      mov  edi, resrv
       push ecx
       push ebx
       push ebp
       mov  ebp, esp
-      push prevFrame
-      push resrv
+      push esi
+      push edi
       mov  ebp, esp
       call eax
       add  esp, 8

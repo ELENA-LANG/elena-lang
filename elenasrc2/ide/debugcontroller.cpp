@@ -543,9 +543,9 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
 
 void DebugController :: loadSubjectInfo(StreamReader& addressReader)
 {
-   _subjects.clear();
+   //_subjects.clear();
 
-   _subjects.read(&addressReader);
+   //_subjects.read(&addressReader);
 }
 
 bool DebugController :: loadTapeDebugInfo(size_t selfPtr)

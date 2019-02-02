@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 8;
+constexpr auto ELENAVM_REVISION = 9;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2019 by Alex Rakov";
@@ -350,15 +350,7 @@ public:
       return retrieveReference(vmtAddress, mskVMTRef);
    }
 
-   virtual ident_t getSubject(ref_t subjectRef)
-   {
-      return retrieveReference((void*)subjectRef, 0);
-   }
-
-   virtual ident_t getVerb(size_t verb_id)
-   {
-      return retrieveKey(_verbs.start(), verb_id, DEFAULT_STR);
-   }
+   virtual ident_t getSubject(ref_t subjectRef);
 
    //virtual void* getClassVMTRef(const wchar16_t* referenceName)
    //{
@@ -399,7 +391,7 @@ public:
          return 0;
       }         
 
-      return (ref_t)resolveReference(subjectName, 0);
+      return _linker->parseMessage(subjectName, true);
    }
 
    virtual ref_t getMessageRef(ident_t messageName)

@@ -2862,6 +2862,8 @@ procedure __vmtape."evaluateTape$system@UnsafePointer[2]"
   nload
   exclude
   pushd
+  callextr api : get_seh_handler
+  pushe
   system
   pushe
   callextr extern : EvaluateTape

@@ -892,6 +892,9 @@ public class newReferenceClosure : DynamicClosureWithParam
         this param := param
     }
     
+    constructor new(param)
+        <= (param);
+    
     closure(object t, params object[] args)
         = t.newReference:param;
 }
@@ -902,6 +905,9 @@ public class newMessageClosure : DynamicClosureWithParam
     {
         this param := param
     }
+    
+    constructor new(param)
+        <= (param);
     
     closure(object t, params object[] args)
         = t.newMessageToken:param;    
@@ -914,6 +920,9 @@ public class newConstantClosure : DynamicClosureWithParam
         this param := param
     }
     
+    constructor new(param)
+        <= (param);
+    
     closure(object t, params object[] args)
         = t.newConstant:param;
 }
@@ -924,6 +933,9 @@ public class newStringClosure : DynamicClosureWithParam
     {
         this param := param
     }
+    
+    constructor new(param)
+        <= (param);
     
     closure(object t, params object[] args)
         = t.newLiteralToken:param;    
@@ -946,7 +958,10 @@ public class newParamTokenClosure : DynamicClosureWithParam
     {
         this param := param
     }
-    
+
+    constructor new(param)
+        <= (param);
+            
     closure(object t, params object[] args)
         = t.newParamToken:param;
 }
@@ -957,6 +972,9 @@ public class newIdentifierClosure : DynamicClosureWithParam
     {
         this param := param
     }
+    
+    constructor new(param)
+        <= (param);
     
     closure(object t, params object[] args)
         = t.newIdentToken:param;    

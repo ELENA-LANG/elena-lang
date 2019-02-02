@@ -3,6 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * elena vm - message name should be resolved
+                 * (re)implement tape debugger
                  * test amb
                  * implement lazy expressions  
                  * property attribute - can be only the top most token
