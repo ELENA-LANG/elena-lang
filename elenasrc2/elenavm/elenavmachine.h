@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 9;
+constexpr auto ELENAVM_REVISION = 0x000A;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2019 by Alex Rakov";
@@ -248,7 +248,7 @@ protected:
    virtual void resumeVM() = 0;
    virtual void stopVM() = 0;
 
-   int parseMessage(ident_t message);
+   void* parseMessage(ident_t message);
 
 //   void saveActionNames(MemoryWriter* writer)
 //   {
@@ -402,7 +402,7 @@ public:
          return 0;
       }
 
-      return parseMessage(messageName);
+      return (ref_t)parseMessage(messageName);
    }
 
    virtual bool initSymbolReference(void* object, ident_t referenceName)

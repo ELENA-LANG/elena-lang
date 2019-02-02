@@ -977,67 +977,43 @@ bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
    return maxLength > 0;
 }
 
-int Instance :: parseMessage(ident_t message)
+void* Instance :: parseMessage(ident_t message)
 {
-   return _linker->parseMessage(message, false);
+   IdentifierString messageName;
+   size_t subject = 0;
+   size_t param = 0;
+   int paramCount = -1;
+   for (size_t i = 0; i < getlength(message); i++) {
+      if (message[i] == '[') {
+         if (message[getlength(message) - 1] == ']') {
+            messageName.copy(message + i + 1, getlength(message) - i - 2);
+            paramCount = messageName.ident().toInt();
+            if (paramCount > ARG_COUNT)
+               return nullptr;
+         }
+         else return nullptr;
 
-   //IdentifierString signature;
-   //int subject = 0;
-   //int param = 0;
-   //int verb_id = 0;
-   //int paramCount = -1;
-   //for (size_t i = 0; i < getlength(message); i++) {
-   //   if (message[i] == '&' && subject == 0) {
-   //      signature.copy(message, i);
-   //      verb_id = _verbs.get(signature);
-   //      if (verb_id != 0) {
-   //         subject = i + 1;
-   //      }
-   //   }
-   //   else if (message[i] == '.') {
-   //      return NULL;
-   //   }
-   //   else if (message[i] == '[') {
-   //      if (message[i + 1] == ']') {
-   //         //HOT FIX : support open argument list
-   //         paramCount = OPEN_ARG_COUNT;
-   //      }
-   //      else if (message[getlength(message) - 1] == ']') {
-   //         signature.copy(message + i + 1, getlength(message) - i - 2);
-   //         paramCount = signature.ident().toInt();
-   //         if (paramCount > 12)
-   //            return NULL;
-   //      }
-   //      else return NULL;
+         param = i;
+      }
+      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+      }
+      else if (message[i] == ']' && i == (getlength(message) - 1)) {
+      }
+      else return nullptr;
+   }
 
-   //      param = i;
-   //   }
-   //   else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-   //   }
-   //   else if (message[i] == ']' && i == (getlength(message) - 1)) {
-   //   }
-   //   else return NULL;
-   //}
+   ref_t flags = 0;
 
-   //int flags = 0;
-   //if (message.startsWith("set&")) {
-   //   subject = 4;
-   //   flags = PROPSET_MESSAGE;
-   //}
-   //else if (message.compare("set", param)) {
-   //   flags = PROPSET_MESSAGE;
-   //}
+   if (param != 0) {
+      messageName.copy(message + subject, param - subject);
+   }
+   else messageName.copy(message + subject);
 
-   //if (param != 0) {
-   //   signature.copy(message + subject, param - subject);
-   //}
-   //else signature.copy(message + subject);
+   ref_t actionRef = getSubjectRef(messageName.ident());
+   if (!actionRef)
+      return nullptr;
 
-   //ref_t signatureId = (ref_t)resolveReference(signature, 0);
-
-   //return encodeMessage(signatureId, paramCount) | flags;
-
-   return 0; // !! temporal
+   return (void*)(encodeMessage(actionRef, paramCount, flags));
 }
 
 // --- ELENAMachine::Config ---
