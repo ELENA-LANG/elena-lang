@@ -941,16 +941,19 @@ public class newStringClosure : DynamicClosureWithParam
         = t.newLiteralToken:param;    
 }
 
-//public class newNumericClosure : DynamicClosureWithParam
-//{    
-//    constructor(param)
-//    {
-//        this param := param
-//    }
-//    
-//    closure(object t, params object[] args)
-//        = t.newNumericToken:param;    
-//}
+public class newNumericClosure : DynamicClosureWithParam
+{    
+    constructor(param)
+    {
+        this param := param
+    }
+    
+    constructor new(param)
+        <= (param);
+    
+    closure(object t, params object[] args)
+        = t.newNumericToken:param;    
+}
 
 public class newParamTokenClosure : DynamicClosureWithParam
 {    

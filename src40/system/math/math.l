@@ -172,25 +172,25 @@ singleton mathController
 //
 //    bool isNonnegative:n
 //        <= isNonnegative(n value).
-//                
-//    real power(real n, int m)
-//        = n~realOp power(m).
-//        
-//    real power(real n, real m)
-//        = n~realOp power(m).        
-//        
-//    power(byte n, int m)
-//        = n~byteOp power(m).        
-//        
-//    power(short n, int m)
-//        = n~shortOp power(m).        
-//        
-//    power(int n, int m)
-//        = n~intOp power(m).        
-//        
-//    power(long n, int m)
-//        = n~longOp power(m).        
-//        
+                
+    real power(real n, int m)
+        = mixin realOp(n).power(m);
+        
+    real power(real n, real m)
+        = mixin realOp(n).power(m);        
+        
+    power(byte n, int m)
+        = mixin byteOp(n).power(m);       
+        
+    power(short n, int m)
+        = mixin shortOp(n).power(m);        
+        
+    power(int n, int m)
+        = mixin intOp(n).power(m);      
+        
+    power(long n, int m)
+        = mixin longOp(n).power(m);
+        
 //    power(object n, object m)
 //        <= power(n value, m).
 //        
@@ -298,10 +298,10 @@ public extension mathOp
 //    
 //    sqrt
 //        = T<real>(self) sqrt.
-//
-//    power : aPower
-//        = mathController power(self, aPower).
-//
+
+    power(p)
+        = mathController.power(self, p);
+
 //    sqr
 //        = mathController sqr(self).
 //        

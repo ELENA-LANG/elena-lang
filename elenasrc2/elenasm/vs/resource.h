@@ -2,7 +2,7 @@
 
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by elenart.rc
+// Used by elenasm.rc
 
 // Next default values for new objects
 // 
@@ -15,7 +15,7 @@
 #endif
 #endif
 
-#define ELENASM_REVISION_NUMBER        2
+#define ELENASM_REVISION_NUMBER        3
 
 #define STRINGIZE2(s) #s
 #define STRINGIZE(s) STRINGIZE2(s)

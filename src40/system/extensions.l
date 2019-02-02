@@ -484,22 +484,19 @@ public extension longOp : LongNumber
         ^ new LongNumber(x - z)
     }
     
-//    long power(long y)
-//    [
-//        long x := self.
-//        long r := 1.
-//        
-//        long i := 0l.
-//        while (i < y)
-//        [
-//            r := r * x.
-//            
-//            i += 1l.
-//        ].
-//        
-//        ^ LongNumber new(r)
-//    ]
-//    
+    long power(long y)
+    {
+        long x := self;
+        long r := 1;
+        
+        for(long i := 0l, i < y, i += 1l)
+        {
+            r := r * x;
+        };
+        
+        ^ new LongNumber(r)
+    }
+    
 //    long power(int y)
 //    [
 //        long x := self.

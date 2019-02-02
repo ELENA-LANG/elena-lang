@@ -8,7 +8,7 @@
     </project>
     <manifest>
       <name>ELENA Extension Library</name>
-      <version>4.0.15</version>
+      <version>4.0.16</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>
@@ -18,6 +18,7 @@
             <include>win32_args.l</include>
             <include>basic.l</include>
             <include>random.l</include>
+            <include>math\functions.l</include>
             <include>text\strings.l</include>
             <include>text\words.l</include>
         </module>

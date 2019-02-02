@@ -47,7 +47,7 @@ root
                 )
 =>;
 
-   #define statement      ::= expression "." ;
+   #define statement      ::= expression ";" ;
 
    #define last_statement ::= 
  
@@ -102,7 +102,7 @@ root
 
    #define operations     ::= operation next_operation*;
 
-   #define operation      ::= message message_body?;
+   #define operation      ::= "." message message_body?;
 
    #define m_params       ::= "(" m_param next_mparam* ")";
 
