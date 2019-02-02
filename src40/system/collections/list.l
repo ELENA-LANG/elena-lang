@@ -6,29 +6,6 @@ public sealed List<T> : Enumerable<T>
     ref<int> theLength;
     ref<int> theCapacity;
 
-    private expand()
-    {
-        int cap := theCapacity.Value;
-        int len := theLength.Value;
-        
-        if (cap <= len)
-        {
-            theCapacity.append(32);
-            cap += 32;
-            
-            T[] newArray := new T[](cap);
-
-            for(int i := 0, i < len, i += 1)
-            {
-                //newArray[i] := theArray[i]
-                T tmp := theArray[i];
-                newArray[i] := tmp
-            };
-            
-            theArray := newArray
-        }
-    }
-
 //    constructor(Array list)
 //    [
 //        int len := list length.
@@ -119,28 +96,28 @@ public sealed List<T> : Enumerable<T>
         }        
     }
     
-//    private expand()
-//    {
-//        int cap := theCapacity.Value;
-//        int len := theLength.Value;
-//        
-//        if (cap <= len)
-//        {
-//            theCapacity.append(32);
-//            cap += 32;
-//            
-//            T[] newArray := new T[](cap);
-//
-//            for(int i := 0, i < len, i += 1)
-//            {
-//                //newArray[i] := theArray[i]
-//                T tmp := theArray[i];
-//                newArray[i] := tmp
-//            };
-//            
-//            theArray := newArray
-//        }
-//    }
+    private expand()
+    {
+        int cap := theCapacity.Value;
+        int len := theLength.Value;
+        
+        if (cap <= len)
+        {
+            theCapacity.append(32);
+            cap += 32;
+            
+            T[] newArray := new T[](cap);
+
+            for(int i := 0, i < len, i += 1)
+            {
+                //newArray[i] := theArray[i]
+                T tmp := theArray[i];
+                newArray[i] := tmp
+            };
+            
+            theArray := newArray
+        }
+    }
     
 //    /// Returns the object at the specified position
 //    type getAt : anIndex

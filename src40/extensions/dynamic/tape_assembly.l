@@ -281,6 +281,8 @@ singleton Method : Strategy
         context.trim(pos);
         context.append(new Message(cast string(name)));
         context.append(tape);
+        
+        var pp := context.tape().Value;
     }    
 }
 

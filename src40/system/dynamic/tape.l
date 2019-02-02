@@ -101,7 +101,9 @@ public mixin ClosureClass
     {
         for (int i := 0, i < length, i += 1)
         {
-            items[i]:= list.at(i)
+            int n := i + index;
+            
+            items[i]:= list.at(n)
         }
     }
     
