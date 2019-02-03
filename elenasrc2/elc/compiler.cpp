@@ -7899,8 +7899,24 @@ ref_t Compiler :: analizeSubExpression(SNode node, NamespaceScope& scope, int mo
    ref_t result = 0;
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (test(current.type, lxObjectMask)) {
-         result = analizeExpression(current, scope, mode);
+      switch (current.type) {
+         case lxElse:
+         case lxCode:
+         case lxIf:
+         case lxExternFrame:
+            analizeExpressionTree(current, scope);
+            result = 0;
+            break;
+         case lxBranching:
+         case lxLooping:
+            analizeBranching(current, scope);
+            result = 0;
+            break;
+         default:
+            if (test(current.type, lxObjectMask)) {
+               result = analizeExpression(current, scope, mode);
+            }
+            break;
       }
       current = current.nextNode();
    }
