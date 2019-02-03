@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   5
+#define ELT_BUILD_NUMBER   6
  
 // global variables
 int       _encoding = feAnsi;
@@ -175,6 +175,8 @@ int main(int argc, char* argv[])
    _env.MaxThread = 1;
    _env.Table = &_table;
    _env.TLSIndex = &_tlsIndex;
+   _env.GCMGSize = 0x54000;
+   _env.GCYGSize = 0x15000;
 
    InitializeVMSTA(&_sehTable, &_env, nullptr, nullptr, nullptr);
 

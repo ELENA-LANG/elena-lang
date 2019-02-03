@@ -85,6 +85,7 @@ In development:
                  * optimizate operations with byref dynamic variable (no need for boxing / unboxing) - should be locally
                    boxed
                  * default se_handler seems not working properly (coreapi'seh_handler)
+                 * elt - exception handlers
  
               dev - tests          
                  * test : interpreter
