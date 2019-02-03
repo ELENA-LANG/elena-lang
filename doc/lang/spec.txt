@@ -50,7 +50,7 @@ In this case it inherits all the parent settings except the overloaded ones. The
 
  XPath | Descriptions
 ------ | ------------
-configuration/project/debuginfo | -1 / 0 - turn on/off the dubug information generation 
+configuration/project/debuginfo | -1 / 0 - turn on/off the debug information generation 
 configuration/project/executable | the project target name (a name of the generated executable file)
 configuration/project/libpath | a path to the language libraries
 configuration/project/namespace | a project root namespace
@@ -59,9 +59,21 @@ configuration/project/template | a project base template
 
 ## Linker Settings
 
+ XPath | Descriptions
+------ | ------------
+configuration/linker/heapcommit | specifies total heap allocation size in physical memory, the default value is 65536
+configuration/linker/heapresrv | specifies total heap allocation size in virtual memory, the default value is 1048576
+configuration/linker/imagebase | specifies the image base address, the default value is 4194304 (40000h)
+configuration/linker/mgsize | specifies the initial size of GC generation 1 in hexadecimals
+configuration/linker/stackcommit | specifies the total stack allocation size in physical memory, the default value is 4096
+configuration/linker/stackresrv | specifies the total stack allocation size in virtual memory, the default value is 1048576
+configuration/linker/ygsize | specifies the size of GC generation 0 in hexadecimals
+
 ## System Settings
 
 ## Compiler Settings
+
+## Manifest Info
 
 ## Files
 

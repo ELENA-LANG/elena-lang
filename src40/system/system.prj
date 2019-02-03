@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>4.0.45</version>
+     <version>4.0.46</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -58,6 +58,11 @@
        <include>dynamic\closures.l</include>
        <include>dynamic\tape.l</include>
        <include>dynamic\expressions\expressions.l</include>
+     </module>
+     <module name="threading">
+       <include>threading\win32_handlers.l</include>
+       <include>threading\thread.l</include>
+       <include>threading\thread_patterns.l</include>
      </module>
   </files>
 </configuration>

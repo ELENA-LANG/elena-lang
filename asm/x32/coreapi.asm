@@ -4228,7 +4228,6 @@ labFill:
 
 end
 
-/*
 procedure coreapi'alloc_index
 
   mov  eax, [stat : "$elena'@referencetable"]
@@ -4268,7 +4267,6 @@ labReuse:
   ret
 
 end
-*/
 
 // ; free_index
 procedure coreapi'free_index

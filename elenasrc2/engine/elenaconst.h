@@ -231,29 +231,29 @@ namespace _ELENA_
   // --- ELENA Platform type ---
    enum PlatformType {
       // masks
-//      mtPlatformMask     = 0x000FF,
-//      mtWin32            = 0x00001,
+      mtPlatformMask     = 0x000FF,
+      mtWin32            = 0x00001,
 //      mtLinux32          = 0x00002,
 //      mtWin64            = 0x00081,
-//
-//      mtTargetMask       = 0x00F00,
-//      mtStandalone       = 0x00000,
-//      mtVMClient         = 0x00100,
+
+      mtTargetMask       = 0x00F00,
+      mtStandalone       = 0x00000,
+      mtVMClient         = 0x00100,
 
       mtUIMask           = 0x0F000,
       mtCUI              = 0x00000,
       mtGUI              = 0x01000,
-//
-//      mtThreadMask       = 0xF0000,
-//      mtSingleThread     = 0x00000,
-//      mtMultyThread      = 0x10000,
+
+      mtThreadMask       = 0xF0000,
+      mtSingleThread     = 0x00000,
+      mtMultyThread      = 0x10000,
 
       ptLibrary          = 0x00000,
       ptWin32Console     = 0x00001,
       ptWin64Console     = 0x00081,
 //      ptWin32GUI         = 0x01001,
       ptVMWin32Console   = 0x00101,
-//      ptWin32ConsoleX    = 0x10001,
+      ptWin32ConsoleX    = 0x10001,
 //      ptWin32GUIX        = 0x11001,
 //      ptVMWin32GUI       = 0x01101,
 //      ptLinux32Console   = 0x00002,

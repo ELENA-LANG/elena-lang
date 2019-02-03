@@ -910,17 +910,17 @@ int main()
 //
 //         print(ELC_SUCCESSFUL_LINKING);
 //      }
-//      else if (platform == _ELENA_::ptWin32ConsoleX) {
-//         print(ELC_LINKING);
-//
-//         _ELENA_::Linker linker;
-//         ImageHelper helper(&linker, true);
-//         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
-//
-//         linker.run(project, image, helper.tls_directory);
-//
-//         print(ELC_SUCCESSFUL_LINKING);
-//      }
+      else if (platform == _ELENA_::ptWin32ConsoleX) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker;
+         ImageHelper helper(&linker, true);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
+
+         linker.run(project, image, helper.tls_directory);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
       else if (platform == _ELENA_::ptVMWin32Console) {
          print(ELC_LINKING);
 

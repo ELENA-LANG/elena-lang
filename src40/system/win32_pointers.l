@@ -28,37 +28,38 @@ public sealed const struct Handle
 //        = theHandle == anOperand.
 }
 
-//// --- RTPointer ---
-//
-//public static rt_sync = Object new.
-//
-//public sealed const struct RTPointer
-//{
-//    int theIndex.
-//
-//    constructor(int n)
-//    [
-//        theIndex := n.
-//    ]
-//    
-//    constructor new : anObject
-//    [
-//        system'core_routines'__rtptr new(self, anObject).
-//    ]
-//
-//    int rvprop index :: readIndexTo.
-//
-//    readIndexTo(ref<int> retVal)
-//    [
-//        retVal value := theIndex.
-//    ]
-//        
-//    get
-//        => system'core_routines'__rtptr.
-//
-//    free
-//        => system'core_routines'__rtptr.
-//}
+// --- RTPointer ---
+
+public static rt_sync = new Object();
+
+public sealed const struct RTPointer
+{
+    int theIndex;
+
+    constructor(int n)
+    {
+        theIndex := n
+    }
+    
+    constructor assign(object)
+    {
+        intern system'core_routines'__rtptr.new(self, object)
+    }
+
+    vprop int Index
+    {
+        readIndexTo(ref int retVal)
+        {
+            retVal := theIndex
+        }
+    }
+        
+    get()
+        => system'core_routines'__rtptr;
+
+    free()
+        => system'core_routines'__rtptr;
+}
 
 // --- UnsafePointer ---
 

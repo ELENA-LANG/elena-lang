@@ -3,6 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * Thread.assign:(){} should be supported
+                 * support gui, mta_gui, vm_console, vm_mta_console
                  * (re)implement tape debugger
                  * test amb
                  * implement lazy expressions  
@@ -18,7 +20,6 @@ In development:
                        = { bool equal(o) = self(object); }; - is not allowed
                  * support 2.2 syntax (without r postfix)
                  * allow to work with ref<int> directly
-                 * uncomment extern scope - ConsoleReader
                  * implement a ? b, a ? b : c, a ? {}, a ? {} : {}
                  * imlement if(a) b else c;
                  * IntNumber.#cast<'IntNumber> - why it always creates a new object?
@@ -124,7 +125,6 @@ In development:
               dev - general implementation
                  * (re)implement sockets
                  * (re)implement tcpserver / tcpclient
-                 * #459 : Ambiguity between an array and a variadic argument
 
               xdev - general optimization  
                  - optimize r * n + 0.5r
@@ -202,7 +202,6 @@ Pipeline:
                  * templates unresolved references - probably they should be tested with super object if all references are resolved
 
               dev - general implementation
-                 * compileExpression, compileObject : refactor collection compilation
                  * cache isEmbeddable operation result
                  * fn3prop : embeddable option for the function with three arguments should be recognized
                  * ByteNumber.get&min - could we return the constant object?

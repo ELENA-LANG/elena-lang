@@ -130,6 +130,8 @@ class DerivationWriter : public _DerivationWriter
 
    void saveScope(SyntaxWriter& writer);
 
+   ref_t resolveTemplate(ident_t templateName);
+
    ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory);
    void declareAttribute(SNode node);
 

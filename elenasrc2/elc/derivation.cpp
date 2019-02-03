@@ -1371,6 +1371,26 @@ void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, 
       node = node.nextNode();
 }
 
+ref_t DerivationWriter :: resolveTemplate(ident_t templateName)
+{
+   for (auto it = _importedNs.start(); !it.Eof(); it++) {
+      IdentifierString fullName(*it);
+      fullName.append("'");
+      fullName.append(templateName);
+
+      ref_t templateRef = 0;
+      _Module* templateModule = _scope->loadReferenceModule(fullName.c_str(), templateRef);
+      if (templateModule != nullptr && templateModule->mapSection(templateRef | mskSyntaxTreeRef, true) != nullptr) {
+         if (_scope->module != templateModule) {
+            return importReference(templateModule, templateRef, _scope->module);
+         }
+         else return templateRef;
+      }
+   }
+
+   return 0;
+}
+
 void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
 {
    IdentifierString templateName;
@@ -1403,7 +1423,8 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
    templateName.append('#');
    templateName.appendInt(exprCounters);
 
-   ref_t templateRef = _scope->attributes.get(templateName.c_str());
+   //ref_t templateRef = _scope->attributes.get(templateName.c_str());
+   ref_t templateRef = resolveTemplate(templateName.c_str());
    if (!templateRef)
       _scope->raiseError(errInvalidSyntax, _filePath, node.parentNode());
 

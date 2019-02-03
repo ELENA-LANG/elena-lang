@@ -88,5 +88,5 @@ type mssg       = Message;
 type string     = String;
 type wide       = WideString;
 type handle     = Handle;
-//type rt_ptr     = system'RTPointer.
+type rt_ptr     = RTPointer;
 type dirty_ptr  = UnsafePointer;
