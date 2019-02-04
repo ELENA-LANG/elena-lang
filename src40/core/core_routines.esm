@@ -3049,7 +3049,7 @@ labCreate:
   callextr api : resolve_index  
 
   pusha  
-  xindexrm system'winforms'WindowCallback message : "wm_create<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'CREATESTRUCT,'auto'system@ref#1&system@IntNumber>[5]"
+  xindexrm system'winforms'WindowCallback message : "wm_create<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'CREATESTRUCT,'$auto'system@ref#1&system@IntNumber>[5]"
 
   acallvd
   popa
@@ -3090,7 +3090,7 @@ labDestroy:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback message : "eval<system'winforms'WindowHandle,system'IntNumber,'auto'system@ref#1&system@IntNumber>[3]"
+  xindexrm system'winforms'WindowCallback message : "eval<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[3]"
   acallvd
   popa
 
@@ -3134,7 +3134,7 @@ labCommand:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback message : "wm_command<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'WindowHandle,'auto'system@ref#1&system@IntNumber>[5]"
+  xindexrm system'winforms'WindowCallback message : "wm_command<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'WindowHandle,'$auto'system@ref#1&system@IntNumber>[5]"
   acallvd
   popa
 
@@ -3178,7 +3178,7 @@ labCursor:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback message : "eval<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'IntNumber,'auto'system@ref#1&system@IntNumber>[5]"
+  xindexrm system'winforms'WindowCallback message : "eval<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[5]"
   acallvd
   popa
 
@@ -3218,7 +3218,7 @@ labPaint:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback message : "wm_paint<system'winforms'WindowHandle,system'IntNumber,'auto'system@ref#1&system@IntNumber>[3]"
+  xindexrm system'winforms'WindowCallback message : "wm_paint<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[3]"
 
   acallvd
   popa
@@ -3263,7 +3263,7 @@ labSize:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback message : "eval<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'IntNumber,'auto'system@ref#1&system@IntNumber>[5]"
+  xindexrm system'winforms'WindowCallback message : "eval<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[5]"
   acallvd
   popa
 

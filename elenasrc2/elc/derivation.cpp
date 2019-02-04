@@ -1877,6 +1877,10 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
    else if (current == lxTemplateParam) {
       if (scope.type == TemplateScope::ttCodeTemplate) {
          if (current.argument < 0x100) {
+            // HOTFIX : to prevent the targets declared in the main scope from importing
+            _Module* ori_templateModule = scope.templateModule;
+            scope.templateModule = scope.moduleScope->module;
+
             SNode nodeToInject = scope.parameterValues.get(current.argument);
             if (nodeToInject == lxCode) {
                writer.newNode(lxExpression);
@@ -1886,6 +1890,8 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
             else if (nodeToInject == lxExpression) {
                copyExpressionTree(writer, nodeToInject, scope);
             }
+
+            scope.templateModule = ori_templateModule;
          }
          else {
             // if it is a nested template

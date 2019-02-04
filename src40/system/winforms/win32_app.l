@@ -12,7 +12,7 @@ public class SDIApplication //:: BaseApplication
     
     constructor()
     {
-//        RTPointer new:$self.
+        RTPointer.assign:self;
         
         theMainWindow := forward MainWindow.new();
     }
@@ -147,6 +147,8 @@ public startUp =
             }
             catch(Exception e)
             {
+                var l := e.Message
+                
                 //messageBox open literal:"ELENA" literal(e message) int:MB_ICONEXCLAMATION.
             }
             catch(AbortException e)

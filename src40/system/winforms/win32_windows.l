@@ -5,7 +5,7 @@ singleton windowClassControl
     internal fillWndClass(byte[] array, wide name, int style, HInstance instance, int background)
         => system'core_routines'__hwnd;
     
-    wide createClass(string name, HInstance instance, int style, background)
+    wide createClass(string name, HInstance instance, int style, int background)
     {
         byte struct[40];
         wide wideName := name;

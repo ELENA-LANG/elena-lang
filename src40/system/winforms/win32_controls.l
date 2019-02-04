@@ -12,14 +12,14 @@ public sealed const struct WindowHandle
 {
     embeddable __raw theHandle[4];
     
-//    constructor new
-//    [
-//        theHandle := 0.
-//    ]
-//
-//    constructor min
-//        <= new.
-//
+    constructor()
+    {
+        theHandle := 0
+    }
+
+    get constructor Default()
+        <=();
+
 //    stacksafe constructor new hwnd:aHandle
 //    [
 //        theHandle := aHandle.
