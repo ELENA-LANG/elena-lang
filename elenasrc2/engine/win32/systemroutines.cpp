@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  Win32 ELENA System Routines
 //
-//                                              (C)2018, by Alexei Rakov
+//                                              (C)2018-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -242,7 +242,6 @@ inline void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
 inline void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
 {
    env->Table->gc_stack_frame = frameHeader->previousFrame;
-
 }
 
 int Execute(void* address, FrameHeader* framePtr)
@@ -293,4 +292,18 @@ int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry)
    }
 
    return retVal;
+}
+
+void SystemRoutineProvider :: OpenFrame(SystemEnv* env, FrameHeader* frameHeader)
+{
+   if (env->MaxThread <= 1) {
+      OpenSTAFrame(env, frameHeader);
+   }
+}
+
+void SystemRoutineProvider :: CloseFrame(SystemEnv* env, FrameHeader* frameHeader)
+{
+   if (env->MaxThread <= 1) {
+      CloseSTAFrame(env, frameHeader);
+   }
 }

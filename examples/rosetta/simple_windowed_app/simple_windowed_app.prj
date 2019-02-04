@@ -1,13 +1,16 @@
-﻿[project]
-executable=simple.exe
-output=obj
-namespace=swapp
-template=gui
-debuginfo=-1
-
-[files]
-main.l
-
-[forwards]
-'mainWindow=swapp'Window
-
+﻿<configuration>
+    <project>
+        <executable>simple.exe</executable>
+        <arguments></arguments>
+        <output>obj</output>
+        <options></options>
+        <namespace>swapp</namespace>
+        <template>gui</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

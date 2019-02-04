@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the win32 command-line compiler
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #define __MSVCRT_VERSION__ 0x0800
@@ -800,15 +800,15 @@ const char* showPlatform(int platform)
    else if (platform == _ELENA_::ptWin64Console) {
       return ELC_WIN64CONSOLE;
    }
-   //else if (platform == _ELENA_::ptWin32ConsoleX) {
-   //   return ELC_WIN32CONSOLEX;
-   //}
-   //else if (platform == _ELENA_::ptVMWin32Console) {
-   //   return ELC_WIN32VMCONSOLEX;
-   //}
-   //else if (platform == _ELENA_::ptWin32GUI) {
-   //   return ELC_WIN32GUI;
-   //}
+   else if (platform == _ELENA_::ptWin32ConsoleX) {
+      return ELC_WIN32CONSOLEX;
+   }
+   else if (platform == _ELENA_::ptVMWin32Console) {
+      return ELC_WIN32VMCONSOLEX;
+   }
+   else if (platform == _ELENA_::ptWin32GUI) {
+      return ELC_WIN32GUI;
+   }
    //else if (platform == _ELENA_::ptVMWin32GUI) {
    //   return ELC_WIN32VMGUI;
    //}
@@ -932,16 +932,16 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
-//      else if (platform == _ELENA_::ptWin32GUI) {
-//         print(ELC_LINKING);
-//
-//         _ELENA_::Linker linker;
-//         ImageHelper helper(&linker, false);
-//         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
-//         linker.run(project, image, (_ELENA_::ref_t) - 1);
-//
-//         print(ELC_SUCCESSFUL_LINKING);
-//      }
+      else if (platform == _ELENA_::ptWin32GUI) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker;
+         ImageHelper helper(&linker, false);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
 //      else if (platform == _ELENA_::ptWin32GUIX) {
 //         print(ELC_LINKING);
 //

@@ -26,7 +26,7 @@ rem ..\..\bin\elc bullscows\bullscows.prj
 rem ..\..\bin\elc calendar\calendar.prj
 ..\..\bin\elc doors\doors.prj
 rem ..\..\bin\elc twentyfour\twentyfour.prj
-rem ..\..\bin\elc simple_windowed_app\simple_windowed_app.prj
+..\..\bin\elc simple_windowed_app\simple_windowed_app.prj
 rem ..\..\bin\elc gui_component_interaction\gui_component_interaction.prj
 rem ..\..\bin\elc string_append\string_append.prj
 rem ..\..\bin\elc string_case\string_case.prj

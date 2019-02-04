@@ -17,7 +17,7 @@
 #include "compilerscope.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x00BD
+#define ELC_REVISION_NUMBER         0x00BE
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -109,10 +109,10 @@ constexpr auto RULES_FILE           = "rules.dat";
 
 #define ELC_WIN32CONSOLE            "STA Win32 Console"
 #define ELC_WIN64CONSOLE            "STA Win64 Console"
-//#define ELC_WIN32CONSOLEX           "MTA Win32 Console"
-//#define ELC_WIN32VMCONSOLEX         "STA Win32 VM Console"
+#define ELC_WIN32CONSOLEX           "MTA Win32 Console"
+#define ELC_WIN32VMCONSOLEX         "STA Win32 VM Console"
 //#define ELC_WIN32VMGUI              "STA Win32 VM GUI"
-//#define ELC_WIN32GUI                "STA Win32 GUI"
+#define ELC_WIN32GUI                "STA Win32 GUI"
 //#define ELC_WIN32GUIX               "MTA Win32 GUI"
 //#define ELC_LINUX32CONSOLE          "STA Linux i386 Console"
 #define ELC_LIBRARY                 "library"

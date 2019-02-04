@@ -64,5 +64,15 @@
        <include>threading\thread.l</include>
        <include>threading\thread_patterns.l</include>
      </module>
+     <module name="drawing">
+       <include>drawing\common.l</include>
+     </module>
+     <module name="winforms">
+       <include>winforms\win32_common.l</include>
+       <include>winforms\win32_handles.l</include>
+       <include>winforms\win32_controls.l</include>
+       <include>winforms\win32_windows.l</include>
+       <include>winforms\win32_app.l</include>
+     </module>
   </files>
 </configuration>

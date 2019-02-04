@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                              (C)2018, by Alexei Rakov
+//                                              (C)2018-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenamachineH
@@ -124,6 +124,9 @@ public:
 
    static void Exit(pos_t exitCode);
    static void ExitThread(SystemEnv* env, pos_t exitCode, bool withExit);
+
+   static void OpenFrame(SystemEnv* env, FrameHeader* frameHeader);
+   static void CloseFrame(SystemEnv* env, FrameHeader* frameHeader);
 
 } __routineProvider;
 

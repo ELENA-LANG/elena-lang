@@ -44,7 +44,12 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem bin\elc src34\net\net.prj
-rem bin\elc src33\forms\forms.prj
+
+bin\elc src40\forms\forms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem bin\elc src34\sqlite\sqlite.prj
 rem bin\elc src34\cellular\cellular.prj
 rem bin\elc src33\graphics\graphics.prj

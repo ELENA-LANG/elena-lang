@@ -55,19 +55,44 @@ void ECodesAssembler :: compileICommand(ByteCode code, TokenInfo& token, MemoryW
    writeCommand(ByteCommand(code, offset), writer);
 }
 
-bool ECodesAssembler :: readMessage(ident_t quote, IdentifierString& subject, ref_t& signRef, int& paramCount)
+bool ECodesAssembler :: readMessage(ident_t quote, IdentifierString& subject, ref_t& signRef, int& paramCount, _Module* binary)
 {
    size_t len = getlength(quote);
    size_t param_index = quote.find('[');
    if (len == 0 || param_index == NOTFOUND_POS || quote[len - 1] != ']')
       return false;
 
-   subject.copy(quote, param_index);
+   size_t sign_index = quote.find('<');
+   if (sign_index != NOTFOUND_POS) {
+      size_t sign_end_index = param_index - 1;
+      if (quote[sign_end_index] != '>')
+         return false;
+
+      subject.copy(quote, sign_index);
+
+      ref_t signatures[ARG_COUNT];
+      size_t sign_len = 0;
+      IdentifierString argType;
+      size_t startArg = sign_index + 1;
+      while (startArg <= sign_end_index) {
+         size_t endArg = quote.find(startArg, ',', sign_end_index);
+
+         argType.copy(quote.c_str() + startArg, endArg - startArg);
+         signatures[sign_len++] = binary->mapReference(argType.ident(), false);
+
+         startArg = endArg + 1;
+      }
+
+      signRef = binary->mapSignature(signatures, sign_len, false);
+   }
+   else {
+      signRef = 0;
+
+      subject.copy(quote, param_index);
+   }
 
    IdentifierString content;
    content.copy(quote + param_index + 1, len - param_index - 2);
-
-   signRef = 0;
 
    paramCount = content.ident().toInt();
 
@@ -93,17 +118,15 @@ void ECodesAssembler :: readMessage(TokenInfo& token, IdentifierString& subject,
    token.read("]", "Invalid operand (%d)");
 }
 
-void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& message)
+void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& message, ref_t& signRef, _Module* binary)
 {   
    IdentifierString action;
 
    int paramCount = 0;
-   ref_t signRef = 0;
-
    if (token.terminal.state == dfaQuote) {
       QuoteTemplate<IdentifierString> quote(token.terminal.line);
 
-      if (!readMessage(quote.ident(), action, signRef, paramCount))
+      if (!readMessage(quote.ident(), action, signRef, paramCount, binary))
          token.raiseErr("Invalid operand (%d)");
    }
    else readMessage(token, action, signRef, paramCount);
@@ -132,7 +155,10 @@ void ECodesAssembler :: compileMessageName(TokenInfo& token, IdentifierString& m
 ref_t ECodesAssembler :: compileRMessageArg(TokenInfo& token, _Module* binary)
 {
    IdentifierString message;
-   compileMessage(token, message);
+   ref_t signRef = 0;
+   compileMessage(token, message, signRef, binary);
+   if (signRef)
+      token.raiseErr("Strong-typed message is not supported (%d)\n");
 
    return binary->mapReference(message) | mskMessage;
 }
@@ -151,7 +177,8 @@ ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
       token.read();
 
       IdentifierString message;
-      compileMessage(token, message);
+      ref_t signRef = 0;
+      compileMessage(token, message, signRef, binary);
 
       int paramCount = message[0] - '0';
       int flags = 0;
@@ -168,7 +195,7 @@ ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
          flags |= SPECIAL_MESSAGE;
       }
 
-      ref_t subj = binary->mapAction(subject, 0, false);
+      ref_t subj = binary->mapAction(subject, signRef, false);
 
       return encodeMessage(subj, paramCount, flags);
    }
@@ -582,7 +609,10 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
       token.read();
 
       IdentifierString message;
-      compileMessage(token, message);
+      ref_t signRef = 0;
+      compileMessage(token, message, signRef, binary);
+      if (signRef)
+         token.raiseErr("Explicitly defined a strong-typed message is not supported (%d)\n");
 
       method.append('.');
       method.append(message);

@@ -71,6 +71,23 @@ configuration/linker/ygsize | specifies the size of GC generation 0 in hexadecim
 
 ## System Settings
 
+ XPath | Descriptions
+------ | ------------
+configuration/system/maxthread | specifies the maximal number of simultaneous threads
+configuration/system/platform | specifies the target platform
+
+**maxthread** should 0 or 1 for the STA (single-thread application) and more than 1 for MTA (multi-thread application)
+
+**platform** defines the target platform
+
+ Target | Descriptions
+------- | ------------
+0 | a library
+1 | Win32 CUI (console user interface) stand-alone STA
+4097 | Win32 GUI (graphical user interface) stand-alone STA
+257 | Win32 CUI (console user interface) vm-client STA
+65537 | Win32 CUI (console user interface) stand-alone MTA
+
 ## Compiler Settings
 
 ## Manifest Info

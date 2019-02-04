@@ -3,7 +3,7 @@
 //
 //		This header contains abstract ECODES Assembler declarations
 //
-//                                             (C)2013-2015, by Alexei Rakov
+//                                             (C)2013-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ecassemblerH
@@ -60,9 +60,9 @@ class ECodesAssembler : public Assembler
 
    void fixJump(ident_t label, MemoryWriter& writer, LabelInfo& info);
 
-   bool readMessage(ident_t quote, IdentifierString& subject, ref_t& signRef, int& paramCount);
+   bool readMessage(ident_t quote, IdentifierString& subject, ref_t& signRef, int& paramCount, _Module* binary);
    void readMessage(TokenInfo& token, IdentifierString& subject, ref_t& signRef, int& paramCount);
-   void compileMessage(TokenInfo& token, IdentifierString& message);
+   void compileMessage(TokenInfo& token, IdentifierString& message, ref_t& signRef, _Module* binary);
    void compileMessageName(TokenInfo& token, IdentifierString& message);
 
    ref_t compileRArg(TokenInfo& token, _Module* binary);

@@ -47,6 +47,16 @@ EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* ex
    _Machine->startSTA(&header, (SystemEnv*)systemEnv, sehTable, vmTape);
 }
 
+EXTERN_DLL_EXPORT void OpenFrame(void* systemEnv, void* frameHeader)
+{
+   SystemRoutineProvider::OpenFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+}
+
+EXTERN_DLL_EXPORT void CloseFrame(void* systemEnv, void* frameHeader)
+{
+   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+}
+
 EXTERN_DLL_EXPORT void Exit(int exitCode)
 {
    _Machine->Exit(exitCode);

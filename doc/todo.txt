@@ -3,8 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * support new forward mainWindow
+                 * support gui
                  * Thread.assign:(){} should be supported
-                 * support gui, mta_gui, vm_console, vm_mta_console
                  * (re)implement tape debugger
                  * test amb
                  * implement lazy expressions  
@@ -87,6 +88,7 @@ In development:
                    boxed
                  * default se_handler seems not working properly (coreapi'seh_handler)
                  * elt - exception handlers
+                 * support mta_gui, vm_console, vm_mta_console
  
               dev - tests          
                  * test : interpreter

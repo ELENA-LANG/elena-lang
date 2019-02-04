@@ -68,6 +68,16 @@ EXTERN_DLL_EXPORT int StartThread(void* systemEnv, void* exceptionHandler, void*
    return 0;
 }
 
+EXTERN_DLL_EXPORT void OpenFrame(void* systemEnv, void* frameHeader)
+{
+   SystemRoutineProvider::OpenFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+}
+
+EXTERN_DLL_EXPORT void CloseFrame(void* systemEnv, void* frameHeader)
+{
+   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+}
+
 EXTERN_DLL_EXPORT void Exit(int exitCode)
 {
    _Instance->Exit(exitCode);
