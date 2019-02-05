@@ -29,11 +29,11 @@ public closed class WindowCallback
         retVal := result;
     }
     
-//    stacksafe onclick hwnd:aControl vint:aResult
-//    [
-//        aResult int := 0.
-//    ]
-//    
+    onclick(WindowHandle hwnd, ref int retVal)
+    {
+        retVal := 0
+    }
+    
 //    stacksafe onchange hwnd:aControl vint:aResult
 //    [
 //        aResult int := 0.
@@ -113,12 +113,12 @@ public closed class WindowCallback
     {
 //        if (0 == aControl)
 //            [ $self onmenu int:wParam vint:aRetVal. ^ $self ].
-//
-//        int aCommand := wParam >> 16.
-//
-//        if (aCommand == BN_CLICKED)
-//            [ $self onclick hwnd:aControl vint:aRetVal. ^ $self ].
-//
+
+        int command := wParam $shr 16;
+
+        if (command == BN_CLICKED)
+            { self.onclick(control, ref retVal); ^ self };
+
 //        if (aCommand == EN_CHANGE)
 //            [ $self onchange hwnd:aControl vint:aRetVal. ^ $self ].
 //

@@ -50,7 +50,7 @@ public const int BS_PUSHBUTTON           = 0;
 // --- messages ---
 public const int WM_DESTROY       = 02h;
 public const int WM_SIZE          = 05h;
-//const int WM_SETTEXT       = 0Ch.
+public const int WM_SETTEXT       = 0Ch;
 //const int WM_GETTEXT       = 0Dh.
 //const int WM_GETTEXTLENGTH = 0Eh.
 public const int WM_PAINT         = 0Fh;
@@ -68,11 +68,11 @@ public const int WM_SETCURSOR     = 20h;
 //const int CB_GETCURSEL     = 0147h.
 //const int CB_SETCURSEL     = 014Eh.
 //const int CB_GETITEMDATA   = 0150h.
-//
-//// --- Notifications ---
-//const int BN_CLICKED       = 0000h.
+
+// --- Notifications ---
+public const int BN_CLICKED       = 0000h;
 //const int EN_CHANGE        = 0300h.
-//
+
 //const int CBN_SELCHANGE    = 0001h.
 //
 ////#symbol(const,int)SW_SHOW          = 5.

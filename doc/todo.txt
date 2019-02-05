@@ -90,6 +90,7 @@ In development:
                  * elt - exception handlers
                  * support mta_gui, vm_console, vm_mta_console
                  * the following code does not work - theOwner.resize(int width, int height)  (see forms'SDIWindowListener.onsize)
+                 * interfaceof - can the wrapper class be saved to use it several times?
  
               dev - tests          
                  * test : interpreter

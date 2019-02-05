@@ -1,13 +1,13 @@
 import forms;
-//import extensions.
+import extensions;
 
 public class MainWindow : SDIDialog
 {
     Label  lblClicks;
     Button btmClickMe;
     
-//    //Store how much clicks the user doed
-//    object clicksCount.
+    //Store how much clicks the user doed
+    int clicksCount;
     
     constructor new()
        <= new()
@@ -15,7 +15,7 @@ public class MainWindow : SDIDialog
         lblClicks := new Label();
         btmClickMe := new Button();
         
-//        clicksCount := 0.
+        clicksCount := 0;
         self
             .appendControl(lblClicks)
             .appendControl(btmClickMe);        
@@ -29,15 +29,13 @@ public class MainWindow : SDIDialog
         btmClickMe.Caption := "Click me";
         btmClickMe.setRegion(7, 20, 140, 30);
         
-//        btmClickMe 
-//            set onClick(:args)[ $self $onButtonClick ]
+        btmClickMe.onClick := (args){ self.onButtonClick(); };
     }
     
-//    $onButtonClick
-//    [
-//        clicksCount := clicksCount + 1.
-//        lblClicks set caption("Clicks: " + clicksCount literal).
-//    ]
-//    
-//    dispatch => form.
+    private onButtonClick()
+    {
+        clicksCount := clicksCount + 1;
+        
+        lblClicks.Caption := "Clicks: " + clicksCount.toString();
+    }
 }

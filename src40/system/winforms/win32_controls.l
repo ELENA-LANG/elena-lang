@@ -96,12 +96,12 @@ public sealed const struct WindowHandle
 //
 //		^ (aResult == BST_CHECKED)
 //    ]    
-//            
-//    setCaption wide:aValue
-//    [
-//        system'external'USER32 SendMessageW int:theHandle int:WM_SETTEXT int:0 wide:aValue.
-//    ]
-//    
+            
+    setCaption(wide s)
+    {
+        extern USER32.SendMessageW(theHandle, WM_SETTEXT, 0, s)
+    }
+    
 //    getCaption
 //    [
 //        int aLength := system'external'USER32 SendMessageW int:theHandle int:WM_GETTEXTLENGTH int:0 int:0.

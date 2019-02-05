@@ -9,9 +9,9 @@ public interface IControl
 //    control = $self.
 //    
 //    control_object = $nil.
-//    
-//    stacksafe retrieve hwnd:aHandle = $nil.
-//    
+    
+    abstract IControl retrieve(WindowHandle handle) {}
+    
 //    stacksafe readDimensionTo vint:aWidth vint:aHeight []
 //    
 //    stacksafe readLocationTo vint:x vint:y []
@@ -21,6 +21,8 @@ public interface IControl
 //    stacksafe setLocation int:x int:y []
     
     abstract open() {}
+
+    abstract click() {}
 
 //    change []
         
@@ -62,16 +64,16 @@ public abstract class BaseWinControl : BaseControl
     {
     }
     
-//    stacksafe retrieve hwnd:aHandle
-//    [
-//        if($nil == theHandle)
-//            [ ^ $nil ].
-//            
-//        if(theHandle == aHandle)
-//            [ ^ $self ].
-//            
-//        ^ $nil 
-//    ]
+    IControl retrieve(WindowHandle handle)
+    {
+        if(nil == theHandle)
+            { ^ nil };
+            
+        if(theHandle == handle)
+            { ^ self };
+            
+        ^ nil 
+    }
 
     internal abstract createHandle() {}            
 
@@ -80,9 +82,9 @@ public abstract class BaseWinControl : BaseControl
 //        ifnot(theEnabled )
 //            [ theHandle setEnabled int:0 ].
 //    ]
-//
-//    click []
-//    
+
+    click() {}
+    
 //    change []
     
     close()
@@ -127,16 +129,17 @@ public abstract class BaseWinControl : BaseControl
 //            ].
 //    ]
 //    
-//    set caption : aCaption
-//    [
-//        $super set caption:aCaption.
-//        
-//        ifnot($nil == theHandle)
-//            [
-//                theHandle setCaption wide(aCaption wide).
-//            ].
-//    ]
-//    
+    set:Caption(string s)
+    {
+        theCaption := s;
+        //super.Caption := s;
+        
+        ifnot(nil == theHandle)
+        {
+            theHandle.setCaption(cast wide(s))
+        }
+    }
+
 //    append caption : aValue
 //    [    
 //        $self set caption($self caption + aValue wide)
@@ -226,26 +229,23 @@ public abstract class BaseWinContainer : BaseWinControl
 //    [
 //        theResize := anAction func1.
 //    ]
-//
-//    retrieve hwnd:aHandle
-//    [
-//        if(theHandle == aHandle)
-//            [ ^ $self ].
-//
-//        control    aCurrent := $nil.
-//        enumerator it := theControls enumerator.
-//        var        aRetVal := $nil.
-//        while (it next)
-//        [ 
-//            aCurrent := it get.
-//        
-//            aRetVal := aCurrent retrieve hwnd:aHandle.
-//            if($nil != aRetVal)
-//                [ ^ aRetVal ]
-//        ].
-//                                    
-//        ^ $nil
-//    ]
+
+    IControl retrieve(WindowHandle handle)
+    {
+        if(theHandle == handle)
+            { ^ self };
+
+        int len := theControls.Length;
+        IControl current;
+        for (int i := 0, i < len, i += 1) {
+            current := theControls[i].retrieve(handle);
+            if (current != nil) {
+                ^ current;
+            }
+        };
+                            
+        ^ nil
+    }
         
     open()
     {
@@ -489,18 +489,13 @@ public closed class Label : BaseWinControl, interface<IControl>
 
 public abstract class BaseButton : BaseWinControl
 {
-//    func1 theClick.
+    event Func1 onClick;
     
     constructor new()
         <= new()
     {
 //        theTabStop := true.
     }
-    
-//    set onClick:aFunction
-//    [
-//        theClick := aFunction func1
-//    ]
     
     internal updateStyles(ref int retVal)
     {
@@ -514,11 +509,11 @@ public abstract class BaseButton : BaseWinControl
         retVal := styles
     }
     
-//    click 
-//    [
-//        if($nil != theClick)
-//            [ theClick eval:$self ]
-//    ]
+    click()
+    {
+        if(nil != onClick)
+            { onClick(self) }
+    }
 }
 
 // --- Button ---

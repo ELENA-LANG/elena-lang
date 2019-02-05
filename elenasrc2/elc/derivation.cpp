@@ -1279,7 +1279,7 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
 
    SNode nameNode = node.prevNode();
    SNode current = nameNode.prevNode();
-   if (current == lxTarget) {
+   if (current == lxTarget || (current == lxAttribute && current.argument == V_TEMPLATE)) {
       // generate property type
       //derivationScope.nestedLevel += 0x100;
       generateAttributes(tempWriter, current, derivationScope);

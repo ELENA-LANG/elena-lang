@@ -70,15 +70,15 @@ class SDIWindowListener : SDIWindowCallback
         result := 0;
     }
     
-//    onclick hwnd:aHandle vint:aResult
-//    [
-//        var aControl := theOwner retrieve hwnd:aHandle.
-//        if($nil != aControl)
-//            [ aControl click ].
-//        
-//        $super onclick hwnd:aHandle vint:aResult
-//    ]
-//    
+    onclick(WindowHandle handle, ref int result)
+    {
+        auto control := theOwner.retrieve(handle);
+        if(nil != control)
+            { control.click() };
+        
+        super.onclick(handle, ref result)
+    }
+    
 //    onchange hwnd:aHandle vint:aResult
 //    [
 //        var aControl := theOwner retrieve hwnd:aHandle.

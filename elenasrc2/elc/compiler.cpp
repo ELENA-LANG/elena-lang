@@ -7084,11 +7084,6 @@ ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
    }
    else parentRef = resolveImplicitIdentifier(scope, node.firstChild(lxTerminalMask));
 
-   //if (isWeakReference(baseClassName) && !isTemplateWeakReference(baseClassName)) {
-   //   parentRef = scope.module->mapReference(baseClassName, true);
-   //}
-   //else parentRef = scope.moduleScope->mapFullReference(baseClassName, true);
-
    if (parentRef == 0 && !silentMode)
       scope.raiseError(errUnknownClass, node);
 
