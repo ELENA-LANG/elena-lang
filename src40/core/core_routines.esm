@@ -3181,7 +3181,7 @@ labCursor:
   pushb
 
   pusha  
-  xindexrm system'winforms'WindowCallback message : "eval<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[5]"
+  xindexrm system'winforms'WindowCallback message : "eval<system'winforms'WindowHandle,system'IntNumber,system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[5]"
   acallvd
   popa
 

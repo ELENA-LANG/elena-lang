@@ -89,6 +89,7 @@ In development:
                  * default se_handler seems not working properly (coreapi'seh_handler)
                  * elt - exception handlers
                  * support mta_gui, vm_console, vm_mta_console
+                 * the following code does not work - theOwner.resize(int width, int height)  (see forms'SDIWindowListener.onsize)
  
               dev - tests          
                  * test : interpreter

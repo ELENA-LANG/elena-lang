@@ -126,27 +126,27 @@ public closed class WindowCallback
 //            [ $self onchange hwnd:aControl vint:aRetVal. ^ $self ]
     }
 
-//    stacksafe eval hwnd:anHWND int:aMessage hwnd:aControl int:aLParam vint:aRetVal
-//    [
-//        if (aMessage == WM_SETCURSOR)
-//            [
-//                int code := aLParam && 0FFFFh.
-//                
-//                if (code == HTCLIENT)
-//                [
-//                    int h := system'external'USER32 LoadCursorW int:0 int:IDC_ARROW.
-//                    system'external'USER32 SetCursor int:h.
-//                    
-//                    aRetVal int := -1.
-//                    
-//                    ^ $self
-//                ]
-//            ].
-//        
-//        int result := system'external'USER32 DefWindowProcW int:anHWND int:aMessage hwnd:aControl int:aLParam.
-//        
-//        aRetVal int := result
-//    ]
+    eval(WindowHandle hwnd, int message, WindowHandle control, int lParam, ref int retVal)
+    {
+        if (message == WM_SETCURSOR)
+        {
+            int code := lParam && 0FFFFh;
+            
+            if (code == HTCLIENT)
+            {
+                int h := extern USER32.LoadCursorW(0, IDC_ARROW);
+                extern USER32.SetCursor(h);
+                
+                retVal := -1;
+                
+                ^ self
+            }
+        };
+        
+        int result := extern USER32.DefWindowProcW(hwnd, message, control, lParam);
+        
+        retVal := result
+    }
 
 //    eval handle:anHWND int:aMessage int:aWParam int:aLParam vint:aRetVal
 //    [

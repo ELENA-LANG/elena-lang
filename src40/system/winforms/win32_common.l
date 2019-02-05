@@ -55,7 +55,7 @@ public const int WM_SIZE          = 05h;
 //const int WM_GETTEXTLENGTH = 0Eh.
 public const int WM_PAINT         = 0Fh;
 public const int WM_CLOSE         = 10h;
-//const int WM_SETCURSOR     = 20h.
+public const int WM_SETCURSOR     = 20h;
 //const int WM_QUIT          = 12h.
 //
 //const int SWP_NOSIZE       = 0001h.
@@ -86,11 +86,11 @@ public const int COLOR_BACKGROUND = 5;
 public const int WS_ELENAWINDOW   = 0100Bh;
 //const int CS_VREDRAW       = 00001h.
 //const int CS_HREDRAW       = 00002h.
-//
-//const int HTCLIENT         = 1.
-//
-//const int IDC_ARROW        = 7F00h.
-//
+
+public const int HTCLIENT         = 1;
+
+public const int IDC_ARROW        = 7F00h;
+
 //const int MF_STRING        = 00000000h.
 //const int MF_POPUP         = 00000010h.
 //
