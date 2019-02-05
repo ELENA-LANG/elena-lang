@@ -12,6 +12,13 @@ public abstract class BaseWinForm : BaseWinContainer
     {
     }
     
+    appendControl(BaseControl control)
+    {
+        control.Parent := self;
+        
+        theControls.append(control)
+    }
+    
 //    controls = theControls.
 //
 //    set onOpen:aFunction

@@ -5,7 +5,7 @@ public const int GWL_USERDATA            = -21;
 // --- styles ---
 public const int WS_OVERLAPPEDWINDOW     = 00CF0000h;
 public const int WS_DIALOGWINDOW         = 00C80000h;
-//const int WS_CHILD                = 40000000h.
+public const int WS_CHILD                = 40000000h;
 public const int WS_VISIBLE              = 10000000h;
 //const int WS_BORDER               = 00800000h.
 //const int WS_TABSTOP              = 00010000h.
@@ -26,10 +26,10 @@ public const int EX_SDI_OVERLAPPEDWINDOW = 00040101h;
 //
 //// --- static styles ---
 //const int SS_SIMPLE               = 0000000Bh.
-//
-//// --- button styles ---
-//
-//const int BS_PUSHBUTTON           = 0. 
+
+// --- button styles ---
+
+public const int BS_PUSHBUTTON           = 0; 
 //const int BS_DEFPUSHBUTTON        = 1. 
 //const int BS_AUTOCHECKBOX         = 3.
 //const int BS_GROUPBOX             = 7.

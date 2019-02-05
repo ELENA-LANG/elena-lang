@@ -1,9 +1,9 @@
 //import system'drawing.
-//
-//// --- classes ---
-//const wide StaticClass = "Static"w.
+
+// --- classes ---
+public const wide StaticClass = "Static"w;
 //const wide EditClass   = "Edit"w.
-//const wide ButtonClass = "Button"w.
+public const wide ButtonClass = "Button"w;
 //const wide ComboboxClass = "Combobox"w.
 
 // --- WindowHandle ---
@@ -54,11 +54,11 @@ public sealed const struct WindowHandle
         };
 
 //        int err := system'external'KERNEL32 GetLastError.
-//
-//        if (aHandle==0)
-//            [ WinFormsException new; raise ].
-//
-//        theHandle := aHandle
+
+        if (h==0)
+            { WinFormsException.raise() };
+
+        theHandle := h
     }
 
 //    setVisible int:aValue

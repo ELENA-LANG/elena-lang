@@ -160,9 +160,9 @@ public sealed List<T> : Enumerable<T>
         theLength.append(1)
     }
 
-//    append : object
-//        <= append(T<type>(object)).
-//
+    append(object)
+        <= append(cast T(object));
+
 //    /// Removes an object at the specified position
 //    remove(int anIndex)
 //    [

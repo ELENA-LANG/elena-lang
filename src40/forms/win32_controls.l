@@ -1,11 +1,11 @@
-//import system'collections.
+import system'collections;
 //import system'drawing.
 import system'winforms;
 
-//// --- IControl ---
-//
-//limited class IControl
-//{
+// --- IControl ---
+
+public interface IControl
+{
 //    control = $self.
 //    
 //    control_object = $nil.
@@ -19,15 +19,15 @@ import system'winforms;
 //    stacksafe setDimension int:aWidth int:aHeight []
 //    
 //    stacksafe setLocation int:x int:y []
-//    
-//    open []
-//
+    
+    abstract open() {}
+
 //    change []
-//        
-//    close []
-//}
-//
-//template icontrolof :: type
+        
+    abstract close() {}
+}
+
+//public IControlOf<T>
 //{
 //    control = IControl::
 //    {
@@ -84,8 +84,10 @@ public abstract class BaseWinControl : BaseControl
 //    click []
 //    
 //    change []
-//    
-//    close []    
+    
+    close()
+    {
+    }
 
     open()
     {
@@ -211,13 +213,13 @@ public abstract class BaseWinControl : BaseControl
 
 public abstract class BaseWinContainer : BaseWinControl
 {
-//    controls theControls.
+    List<IControl> theControls;
 //    func1    theResize.
     
     constructor new()
         <= new()
     {
-//        theControls := ControlCollection new:$self
+        theControls := new List<IControl>();
     }
 
 //    set onResize:anAction
@@ -249,17 +251,19 @@ public abstract class BaseWinContainer : BaseWinControl
     {
         super.open();
         
-//        enumerator it := theControls enumerator.
-//        while (it next)
-//            [ it get; open ]
+        int len := theControls.Length;
+        for (int i := 0, i < len, i += 1) {
+            theControls[i].open()
+        }
     }
         
-//    close
-//    [
-//        enumerator it := theControls enumerator.
-//        while (it next)
-//            [ it get; close ]
-//    ]
+    close()
+    {
+        int len := theControls.Length;
+        for (int i := 0, i < len, i += 1) {
+            theControls[i].close()
+        }
+    }
     
     internal resize(int width, int height)
     {
@@ -300,38 +304,37 @@ public abstract class BaseWinContainer : BaseWinControl
 //                        hwnd:aParent hinstance:CurrentInstance object:$nil.
 //    ]
 //}
-//
-//// --- Label ---
-//
-//limited class Label :: BaseWinControl, icontrolof<label>
-//{
-//    constructor new
-//        <= new;
-//    [
-//    ]
-//    
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//        
-//        int Styles := WS_CHILD.
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:0
-//                        wide:StaticClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:$nil.
-//    ]
-//}
-//
+
+// --- Label ---
+public closed class Label : BaseWinControl, interface<IControl>
+{
+    constructor()
+        <= new()
+    {
+    }
+    
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+        
+        int styles := WS_CHILD;
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        0,
+                        StaticClass, 
+                        theCaption, 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        nil)
+    }
+}
+
 //// --- Label ---
 //
 //class StaticLabel :: Label
@@ -481,74 +484,73 @@ public abstract class BaseWinContainer : BaseWinControl
 //                        hwnd:aParent hinstance:CurrentInstance object:$nil.
 //    ]
 //}
-//
-//// --- BaseButton ---
-//
-//class BaseButton :: BaseWinControl
-//{
+
+// --- BaseButton ---
+
+public abstract class BaseButton : BaseWinControl
+{
 //    func1 theClick.
-//    
-//    constructor new
-//        <= new;
-//    [
+    
+    constructor new()
+        <= new()
+    {
 //        theTabStop := true.
-//    ]
-//    
+    }
+    
 //    set onClick:aFunction
 //    [
 //        theClick := aFunction func1
 //    ]
-//    
-//    stacksafe $updateStyles vint:aRetVal
-//    [
-//        int Styles := aRetVal.
-//        
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
+    
+    internal updateStyles(ref int retVal)
+    {
+        int styles := retVal;
+        
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
 //        if(theTabStop)
 //            [ Styles := Styles || WS_TABSTOP ].
-//            
-//        aRetVal int := Styles
-//    ]
-//    
+            
+        retVal := styles
+    }
+    
 //    click 
 //    [
 //        if($nil != theClick)
 //            [ theClick eval:$self ]
 //    ]
-//}
-//
-//// --- Button ---
-//
-//sealed class Button :: BaseButton, icontrolof<button>
-//{
-//    constructor new
-//        <= new;
-//    [
-//    ]
-//    
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//        
-//        int Styles := 0.
-//        Styles := (WS_CHILD || BS_PUSHBUTTON).
-//        $self $updateStyles vint:Styles.
-//                
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:0
-//                        wide:ButtonClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:$nil
-//    ]
-//}
-//
+}
+
+// --- Button ---
+
+public sealed class Button : BaseButton, interface<IControl>
+{
+    constructor()
+        <= new()
+    {
+    }
+    
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+        
+        int styles := WS_CHILD || BS_PUSHBUTTON;
+        self.updateStyles(ref styles);
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        0,
+                        ButtonClass, 
+                        theCaption, 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        nil)                        
+    }
+}
+
 //// --- RadioButton ---
 //
 //limited class RadioButton :: BaseButton, icontrolof<radiobutton>

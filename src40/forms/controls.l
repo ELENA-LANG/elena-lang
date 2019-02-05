@@ -21,7 +21,7 @@ public class BaseControl
 //    bool   theTabStop.
     
     wide   theCaption;
-//    object theParent.
+    object theParent;
     
     constructor new()
     {
@@ -46,6 +46,13 @@ public class BaseControl
 //        theEnabled := aValue bool.
 //    ]
 //    
+    Parent = theParent;    
+
+    internal set Parent(object o)
+    {
+        theParent := o
+    }
+
 //    parent = theParent.
 //    
 //    $set parent:aParent

@@ -155,7 +155,7 @@ public class OutOfRangeException : Exception
 {
     static raise()
     {
-        new OutOfRangeException().raise()
+        OutOfRangeException.new().raise()
     }
     
     /// Creates the exception
@@ -200,7 +200,7 @@ public class InvalidArgumentException : Exception
 
     static raise()
     {
-        new InvalidArgumentException().raise()
+        InvalidArgumentException.new().raise()
     }
 }
 
@@ -218,7 +218,7 @@ public class InvalidOperationException : Exception
 
     static raise()
     {
-        new InvalidOperationException().raise()
+        InvalidOperationException.new().raise()
     }
 }
 
@@ -245,7 +245,7 @@ public class NotSupportedException : Exception
 {
     static raise()
     {
-        new NotSupportedException().raise()
+        NotSupportedException.new().raise()
     }
     
     /// Creates the exception
@@ -264,7 +264,7 @@ public class AbortException : Exception
 {
     static raise()
     {
-        new AbortException().raise()
+        AbortException.new().raise()
     }
     
     /// Creates the exception
