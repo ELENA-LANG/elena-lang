@@ -1920,10 +1920,18 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
       else throw InternalError("Not yet supported");
    }
    else if (current == lxTemplateNameParam) {
-      // name node is always the last parameter
-      SNode nodeToInject = scope.parameterValues.get(scope.parameterValues.Count());
+      if (current.argument < 0x100) {
+         // name node is always the last parameter
+         SNode nodeToInject = scope.parameterValues.get(scope.parameterValues.Count());
 
-      copyChildren(writer, nodeToInject, scope);
+         copyChildren(writer, nodeToInject, scope);
+      }
+      else {
+         // if it is a nested template
+         writer.newNode(current.type, current.argument - 0x100);
+         copyChildren(writer, current, scope);
+         writer.closeNode();
+      }
    }
    else if (current == lxTemplateIdentParam) {
       if (current.argument < 0x100) {

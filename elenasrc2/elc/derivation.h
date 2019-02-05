@@ -51,7 +51,7 @@ class DerivationWriter : public _DerivationWriter
       bool isNameParameter(ident_t name, ref_t& argument)
       {
          if (templateMode == stPropertyTemplate && name.compare(PROPERTY_VAR)) {
-            argument = 1;
+            argument = nestedLevel + 1;
 
             return true;
          }

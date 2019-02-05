@@ -8,8 +8,12 @@
 ***************************************************************
 
 [ELENA]
+[!] several critical bug fixes
 [!] the syntax deeply refactored and streamlined
 [*] #355 : Multimethods : nil
+
+[LIB]
+[*] forms library (re)implemented
 
 [Misc]
 [*] ELENA 4.x Specification (see doc\lang\spec.txt)

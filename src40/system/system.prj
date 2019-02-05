@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>4.0.49</version>
+     <version>4.0.50</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -24,6 +24,7 @@
        <include>dynamic.l</include>
        <include>extensions.l</include>
        <include>exceptions.l</include>
+       <include>events.l</include>
        <include>console.l</include>
        <include>win32_app.l</include>
        <include>collections\list.l</include>
