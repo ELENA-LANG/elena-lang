@@ -163,11 +163,11 @@ public sealed const struct WindowHandle
 //    [
 //        system'external'USER32 SetMenu int:theHandle int:aMenuHandle
 //    ]
-//            
-//    stacksafe free
-//    [
-//        system'external'USER32 DestroyWindow int:theHandle
-//    ]
+            
+    free()
+    {
+        extern USER32.DestroyWindow(theHandle)
+    }
 }
 
 //// --- PAINTSTRUCT ---

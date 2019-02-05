@@ -585,7 +585,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
 
       fixJump(token.value, writer, info);
 
-	  info.declareLabel(token.value);
+      info.declareLabel(token.value);
 
       writeCommand(ByteCommand(bcNop), writer);
 

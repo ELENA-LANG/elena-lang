@@ -21,11 +21,9 @@ public class MainWindow : SDIDialog
 //            append:lblClicks;
 //            append:btmClickMe.
 //    
-//        form 
-//            set caption:"Rosseta Code";
-//            set x:100 y:100;
-//            set width:160 height:80.
-//    
+        self.Caption := "Rosseta Code";
+        self.setRegion(100, 100, 160, 80);
+    
 //        lblClicks 
 //            set x:10 y:2;
 //            set width:160 height:20;

@@ -260,7 +260,6 @@ int Execute(void* address, FrameHeader* framePtr)
       push ecx
       push ebx
       push ebp
-      mov  ebp, esp
       push esi
       push edi
       mov  ebp, esp

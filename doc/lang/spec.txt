@@ -90,9 +90,37 @@ configuration/system/platform | specifies the target platform
 
 ## Compiler Settings
 
+ XPath | Descriptions
+------ | ------------
+configuration/compiler/l0 | -1 / 0 - turn on/off the byte-code level optimization
+
 ## Manifest Info
 
+This section provides the module manifest info
+
+ XPath | Descriptions
+------ | ------------
+configuration/manifest/name | specifies the module name
+configuration/manifest/version | specifies the module version
+configuration/manifest/author | specifies the module author
+
 ## Files
+
+This section contains the list of source and the target libraries. It may specifies the parsing target for the script files.
+
+In the simplest case it contains the list of source file names:
+
+    <configuration>
+      <files>
+        <module>
+          <include>controls.l</include>
+          <include>win32_controls.l</include>
+          <include>win32_forms.l</include>
+        </module>
+      </files>
+    <configuration> 
+
+The files will be compiled into the single module in the root namespace specified in **configuration/project/namespace**
 
 ## Forwards
 

@@ -3022,8 +3022,8 @@ labEnd:
   quitn 4
   
 labCreate:
-  pushn 0
-  pushn 0
+  open 1
+  reserve 0  // ; open new frame
   acopys 0
   pusha
   system
@@ -3059,13 +3059,14 @@ labCreate:
   system
   pushe
   callextr extern : CloseFrame
-  popi 4
+  restore 2
+  close
 
   quitn 4
   
 labDestroy:
-  pushn 0
-  pushn 0
+  open 1
+  reserve 0  // ; open new frame
   acopys 0
   pusha
   system
@@ -3099,13 +3100,14 @@ labDestroy:
   system
   pushe
   callextr extern : CloseFrame
-  popi 4
+  restore 2
+  close
 
   quitn 4
   
 labCommand:
-  pushn 0
-  pushn 0
+  open 1
+  reserve 0  // ; open new frame
   acopys 0
   pusha
   system
@@ -3143,13 +3145,14 @@ labCommand:
   system
   pushe
   callextr extern : CloseFrame
-  popi 4
+  restore 2
+  close
 
   quitn 4
   
 labCursor:
-  pushn 0
-  pushn 0
+  open 1
+  reserve 0  // ; open new frame
   acopys 0
   pusha
   system
@@ -3187,13 +3190,14 @@ labCursor:
   system
   pushe
   callextr extern : CloseFrame
-  popi 4
+  restore 2
+  close
 
   quitn 4
   
 labPaint:
-  pushn 0
-  pushn 0
+  open 1
+  reserve 0  // ; open new frame
   acopys 0
   pusha
   system
@@ -3228,13 +3232,14 @@ labPaint:
   system
   pushe
   callextr extern : CloseFrame
-  popi 4
+  restore 2
+  close
 
   quitn 4
   
 labSize:
-  pushn 0
-  pushn 0
+  open 1
+  reserve 0  // ; open new frame
   acopys 0
   pusha
   system
@@ -3272,7 +3277,8 @@ labSize:
   system
   pushe
   callextr extern : CloseFrame
-  popi 4
+  restore 2
+  close
 
   quitn 4
 

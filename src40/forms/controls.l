@@ -65,6 +65,16 @@ public class BaseControl
 //            ]
 //    ]
 //    
+    prop string Caption
+    {
+        string get() = theCaption;
+        
+        set(string s)
+        {
+            theCaption := s
+        }        
+    }
+
 //    set caption : aValue
 //    [
 //        theCaption := aValue.
@@ -81,17 +91,64 @@ public class BaseControl
 //    [
 //        theRegion writeLocation int:x int:y.
 //    ]
-//    
-//    set x:aValue
-//        <= set x:aValue y(theRegion y).
-//    
-//    set y:aValue
-//        <= set x(theRegion x) y:aValue.
-//    
-//    set x:x y:y
-//    [
-//        $self setLocation int(x int) int(y int).
-//    ]
+    
+    vprop int X
+    {
+        read(ref int retVal)
+        {
+            retVal := theRegion.X;
+        }
+        
+        set(int n)
+        {
+            theRegion.X := n
+        }
+    }
+
+    vprop int Y
+    {
+        read(ref int retVal)
+        {
+            retVal := theRegion.Y;
+        }
+        
+        set(int n)
+        {
+            theRegion.Y := n
+        }
+    }
+
+    vprop int Width
+    {
+        read(ref int retVal)
+        {
+            retVal := theRegion.Width;
+        }
+        
+        set(int n)
+        {
+            theRegion.Width := n
+        }
+    }
+
+    vprop int Height
+    {
+        read(ref int retVal)
+        {
+            retVal := theRegion.Height;
+        }
+        
+        set(int n)
+        {
+            theRegion.Height := n
+        }
+    }
+
+    setRegion(int x, int y, int width, int height)
+    {
+        theRegion.set(x, y, width, height);
+    }
+
 //    
 //    location = theRegion point.
 //
@@ -101,17 +158,6 @@ public class BaseControl
 //    [
 //        theRegion writeDimension int:aWidth int:aHeight.
 //    ]
-//    
-//    set width:aWidth height:aHeight
-//    [
-//        $self setDimension int:(aWidth int) int:(aHeight int)
-//    ]
-//
-//    set width:aWidth
-//        <= set width:aWidth height(theRegion height).
-//    
-//    set height:aHeight
-//        <= set width(theRegion width) height:aHeight.
 //            
 //    stacksafe readDimensionTo vint:aWidth vint:aHeight
 //    [

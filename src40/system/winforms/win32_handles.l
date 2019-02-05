@@ -67,11 +67,15 @@ public sealed struct CREATESTRUCT
 //    stacksafe implicit int:n
 //    [
 //    ]
-//    
-//    stacksafe readCreateParamTo vint:aRetVal
-//    [
-//        aRetVal int := theCreateParam.
-//    ]
+    
+    public vprop int CreateParam
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theCreateParam
+        }        
+    }
+    
 }
 
 //// --- HMENU ---

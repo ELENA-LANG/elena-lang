@@ -3,11 +3,11 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * support new forward mainWindow
                  * support gui
+                 * gui : support SET_CURSOR
                  * Thread.assign:(){} should be supported
                  * (re)implement tape debugger
-                 * test amb
+
                  * implement lazy expressions  
                  * property attribute - can be only the top most token
                  * passing variadic list to the implicit constructor (see - TapeExpression)

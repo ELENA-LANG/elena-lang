@@ -1,10 +1,10 @@
-//const int GWL_USERDATA            = -21.
-//
+public const int GWL_USERDATA            = -21;
+
 //const int CW_USEDEFAULT           = 80000000h.
 
 // --- styles ---
 public const int WS_OVERLAPPEDWINDOW     = 00CF0000h;
-//const int WS_DIALOGWINDOW         = 00C80000h.
+public const int WS_DIALOGWINDOW         = 00C80000h;
 //const int WS_CHILD                = 40000000h.
 public const int WS_VISIBLE              = 10000000h;
 //const int WS_BORDER               = 00800000h.
@@ -46,15 +46,15 @@ public const int EX_SDI_OVERLAPPEDWINDOW = 00040101h;
 //const int ES_AUTOVSCROLL       = 0040h.
 //const int ES_AUTOHSCROLL       = 0080h.
 //const int ES_WANTRETURN        = 1000h.
-//
-//// --- messages ---
-//const int WM_DESTROY       = 02h.
-//const int WM_SIZE          = 05h.
+
+// --- messages ---
+public const int WM_DESTROY       = 02h;
+public const int WM_SIZE          = 05h;
 //const int WM_SETTEXT       = 0Ch.
 //const int WM_GETTEXT       = 0Dh.
 //const int WM_GETTEXTLENGTH = 0Eh.
-//const int WM_PAINT         = 0Fh.
-//const int WM_CLOSE         = 10h.
+public const int WM_PAINT         = 0Fh;
+public const int WM_CLOSE         = 10h;
 //const int WM_SETCURSOR     = 20h.
 //const int WM_QUIT          = 12h.
 //

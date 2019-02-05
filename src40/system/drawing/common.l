@@ -209,21 +209,68 @@ public sealed struct Region : BaseValue
 //        theWidth := aWidth.
 //        theHeight := aHeight.
 //    ]
-//
-//    int vprop x      :: readXTo, writeX.
-//    int vprop y      :: readYTo, writeY.
-//    int vprop width  :: readWidthTo, writeWidth.
-//    int vprop height :: readHeightTo, writeHeight.
-//        
+
+    vprop int X
+    {
+        read(ref int retVal)
+        {
+            retVal := theX
+        }
+        
+        write(int val)
+        {
+            theX := val
+        }
+    }
+
+    vprop int Y
+    {
+        read(ref int retVal)
+        {
+            retVal := theY
+        }
+        
+        write(int val)
+        {
+            theY := val
+        }
+    }
+
+    vprop int Width
+    {
+        read(ref int retVal)
+        {
+            retVal := theWidth
+        }
+        
+        write(int val)
+        {
+            theWidth := val
+        }
+    }
+
+    vprop int Height
+    {
+        read(ref int retVal)
+        {
+            retVal := theHeight
+        }
+        
+        write(int val)
+        {
+            theHeight := val
+        }
+    }
+
 //    clone = Region new int:theX int:theY int:theWidth int:theHeight.
-//    
-//    write int:anX int:anY int:aWidth int:aHeight
-//    [
-//        theX := anX.
-//        theY := anY.
-//        theWidth := aWidth.
-//        theHeight := aHeight.
-//    ]
+    
+    set(int x, int y, int width, int height)
+    {
+        theX := x;
+        theY := y;
+        theWidth := width;
+        theHeight := height
+    }
     
     read(ref int x, ref int y, ref int width, ref int height)
     {
@@ -278,13 +325,13 @@ public sealed struct Region : BaseValue
 //        theX := anX.
 //        theY := anY.
 //    ]
-//    
-//    stacksafe writeDimension int:aWidth int:aHeight
-//    [
-//        theWidth := aWidth.
-//        theHeight := aHeight.
-//    ]
-//    
+    
+    writeDimension(int width, int height)
+    {
+        theWidth := width;
+        theHeight := height
+    }
+    
 //    stacksafe readLocationTo vint:anX vint:anY
 //    [
 //        anX int := theX.

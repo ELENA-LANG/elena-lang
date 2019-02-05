@@ -98,9 +98,9 @@ public abstract class BaseWinControl : BaseControl
     }
 
 //    opened = ($nil != theHandle).
-//    
-//    hwnd = theHandle.
-//
+    
+    WindowHandle cast() = theHandle;
+
 //    set visible : aValue
 //    [
 //        $super set visible:aValue.
@@ -175,11 +175,11 @@ public abstract class BaseWinControl : BaseControl
 //        if($nil != theHandle)
 //            [ theHandle refresh ]
 //    ]
-//    
-//    stacksafe $resize int:aWidth int:aHeight
-//    [
-//        theRegion writeDimension int:aWidth int:aHeight
-//    ]  
+    
+    internal resize(int width, int height)
+    {
+        theRegion.writeDimension(width, height)
+    }  
 }    
 
 //// --- ControlCollection ---
@@ -260,14 +260,14 @@ public abstract class BaseWinContainer : BaseWinControl
 //        while (it next)
 //            [ it get; close ]
 //    ]
-//    
-//    stacksafe $resize int:aWidth int:aHeight
-//    [
-//        $super $resize int:aWidth int:aHeight.
-//        
+    
+    internal resize(int width, int height)
+    {
+        super.resize(width, height);
+
 //        ifnot($nil == theResize)
 //            [ theResize eval:$self ]
-//    ]  
+    }  
 }
 
 //// --- Frame ---

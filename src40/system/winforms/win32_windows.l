@@ -22,15 +22,13 @@ singleton windowClassControl
 
 public closed class WindowCallback
 {
-//    win_callback = $self.
-//
-//    stacksafe onpaint hwnd:aControl vint:aRetVal
-//    [
-//        int result := system'external'USER32 DefWindowProcW int:aControl int:WM_PAINT int:0 int:0.
-//        
-//        aRetVal int := result.
-//    ]
-//    
+    onpaint(WindowHandle hwnd, ref int retVal)
+    {
+        int result := extern USER32.DefWindowProcW(hwnd, WM_PAINT, 0, 0);
+        
+        retVal := result;
+    }
+    
 //    stacksafe onclick hwnd:aControl vint:aResult
 //    [
 //        aResult int := 0.
@@ -45,75 +43,74 @@ public closed class WindowCallback
 //    [
 //        aResult int := 0.
 //    ]
-//    
-//    stacksafe onsize hwnd:aControl int:aWidth int:aHeight vint:aResult
-//    [
-//        aResult int := 0.
-//    ]
-//    
-//    stacksafe ondestroy hwnd:aControl vint:aResult
-//    [
-//        int anIndex := system'external'USER32 SetWindowLongW int:aControl int:GWL_USERDATA int:0.
-//        if (anIndex != 0)
-//            [
-//                rt_ptr ptr := anIndex.
-//                
-//                ptr free
-//            ].
-//
-//        aResult int := 0.
-//    ]
-//        
-//    stacksafe wm_create hwnd:anHWND int:aMessage int:aWParam win_createstruct:aCreateStruct vint:aRetVal
-//    [
-//        int param := 0.
-//        aCreateStruct readCreateParamTo vint:param.
-//        
-//        system'external'USER32 SetWindowLongW int:anHWND int:GWL_USERDATA int:param.
-//        
-//        system'external'USER32 DefWindowProcW int:anHWND int:aMessage int:aWParam win_createstruct:aCreateStruct.
-//        
-//        aRetVal int := 0
-//    ]
-//    
-//    stacksafe eval hwnd:anHWND int:aMessage vint:aRetVal
-//    [
-//        if (aMessage == WM_DESTROY)
-//            [
-//                $self ondestroy hwnd:anHWND vint:aRetVal.                            
-//                
-//                ^ $self
-//            ].                
-//        
-//        int result := system'external'USER32 DefWindowProcW int:anHWND int:aMessage int:0 int:0.
-//         
-//        aRetVal int := result.
-//    ]
-//    
-//    stacksafe eval hwnd:anHWND int:aMessage int:wParam int:lParam vint:aRetVal
-//    [
-//        if (aMessage == WM_SIZE)
-//            [
-//                int width := lParam && 0FFFFh.
-//                int height := lParam >> 16.
-//        
-//                $self onsize hwnd:anHWND int:width int:height vint:aRetVal.
-//                
-//                ^ $self
-//            ].                
-//                
-//        int result := system'external'USER32 DefWindowProcW int:anHWND int:aMessage int:wParam int:lParam.
-//        
-//        aRetVal int := result.
-//    ]
-//    
-//    stacksafe wm_paint hwnd:anHWND int:aMessage vint:aRetVal
-//    [
-//        $self onpaint hwnd:anHWND vint:aRetVal.
-//    ]
-//    
-//    stacksafe wm_command hwnd:anHWND int:aMessage int:wParam hwnd:aControl vint:aRetVal
-//    [
+    
+    onsize(WindowHandle hwnd, int width, int height, ref int result)
+    {
+        result := 0
+    }
+    
+    ondestroy(WindowHandle hwnd, ref int result)
+    {
+        int index := extern USER32.SetWindowLongW(hwnd, GWL_USERDATA, 0);
+        if (index != 0)
+        {
+            rt_ptr ptr := index;
+            
+            ptr.free()
+        };
+
+        result := 0
+    }
+        
+    wm_create(WindowHandle hwnd, int message, int wParam, CREATESTRUCT struct, ref int retVal)
+    {
+        int param := struct.CreateParam;
+        
+        extern USER32.SetWindowLongW(hwnd, GWL_USERDATA, param);
+        
+        extern USER32.DefWindowProcW(hwnd, message, wParam, struct);
+        
+        retVal := 0
+    }
+    
+    eval(WindowHandle hwnd, int message, ref int retVal)
+    {
+        if (message == WM_DESTROY)
+        {
+            self.ondestroy(hwnd, ref retVal);                            
+            
+            ^ self
+        };                
+        
+        int result := extern USER32.DefWindowProcW(hwnd, message, 0, 0);
+         
+        retVal := result;
+    }
+    
+    eval(WindowHandle hwnd, int message, int wParam, int lParam, ref int retVal)
+    {
+        if (message == WM_SIZE)
+        {
+            int width := lParam && 0FFFFh;
+            int height := lParam $shr 16;
+    
+            self.onsize(hwnd, width, height, ref retVal);
+            
+            ^ self
+        };
+                
+        int result := extern USER32.DefWindowProcW(hwnd, message, wParam, lParam);
+        
+        retVal := result
+    }
+    
+    wm_paint(WindowHandle hwnd, int message, ref int retVal)
+    {
+        self.onpaint(hwnd, ref retVal)
+    }
+    
+    wm_command(WindowHandle hwnd, int message, int wParam, WindowHandle control, ref int retVal)
+    {
 //        if (0 == aControl)
 //            [ $self onmenu int:wParam vint:aRetVal. ^ $self ].
 //
@@ -127,8 +124,8 @@ public closed class WindowCallback
 //
 //        if (aCommand == CBN_SELCHANGE)
 //            [ $self onchange hwnd:aControl vint:aRetVal. ^ $self ]
-//    ]
-//
+    }
+
 //    stacksafe eval hwnd:anHWND int:aMessage hwnd:aControl int:aLParam vint:aRetVal
 //    [
 //        if (aMessage == WM_SETCURSOR)
@@ -150,7 +147,7 @@ public closed class WindowCallback
 //        
 //        aRetVal int := result
 //    ]
-//
+
 //    eval handle:anHWND int:aMessage int:aWParam int:aLParam vint:aRetVal
 //    [
 //        int result := system'external'USER32 DefWindowProcW handle:anHWND int:aMessage int:aWParam int:aLParam.
@@ -163,30 +160,30 @@ public closed class WindowCallback
 
 public class SDIWindowCallback : WindowCallback
 {
-//    eval hwnd:anHWND int:aMessage vint:aRetVal
-//    [
-//        if (aMessage == WM_CLOSE)
-//            [
-//                anHWND free.
-//                
-//                aRetVal int := 0.
-//                
-//                ^ $self
-//            ].
-//        
-//        if (aMessage == WM_DESTROY)
-//            [
-//                // NOTE: SDIWindow is the main program window, so closing it means exiting the program
-//                'program stop.
-//                
-//                $self ondestroy hwnd:anHWND vint:aRetVal.
-//                
-//                ^ $self
-//            ].
-//        
+    eval(WindowHandle hwnd, int message, ref int retVal)
+    {
+        if (message == WM_CLOSE)
+        {
+            hwnd.free();
+            
+            retVal := 0;
+            
+            ^ self
+        };
+        
+        if (message == WM_DESTROY)
+        {
+            // NOTE: SDIWindow is the main program window, so closing it means exiting the program
+            forward program.stop();
+            
+            self.ondestroy(hwnd, ref retVal);
+            
+            ^ self
+        };
+        
 //        $super eval hwnd:anHWND int:aMessage vint:aRetVal.
-//    ]
-//
+    }
+
 ////    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
 ////    [
 ////        $super eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal.

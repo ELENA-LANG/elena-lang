@@ -71,11 +71,11 @@ public class SDIApplication //:: BaseApplication
 //            ].
 //        ].
 //    ]
-//            
-//    stop
-//    [
-//        system'external'USER32 PostQuitMessage int:0.
-//    ]
+            
+    stop()
+    {
+        extern USER32.PostQuitMessage(0)
+    }
 }
 
 //// --- SDIApplication ---

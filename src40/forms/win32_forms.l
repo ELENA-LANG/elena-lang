@@ -56,13 +56,13 @@ class SDIWindowListener : SDIWindowCallback
         theOwner := owner
     }
     
-//    onsize hwnd:aControl int:width int:height vint:aResult
-//    [
-//        theOwner $resize int:width int:height.
-//        
-//        aResult int := 0.
-//    ]
-//    
+    onsize(WindowHandle hwnd, int width, int height, ref int result)
+    {
+        theOwner.resize(int width, int height);
+        
+        result := 0;
+    }
+    
 //    onclick hwnd:aHandle vint:aResult
 //    [
 //        var aControl := theOwner retrieve hwnd:aHandle.
@@ -139,26 +139,24 @@ public class SDIDialog : SDIForm
     {
     }
     
-//    $createHandle
-//    [
-//        int Styles := WS_DIALOGWINDOW.
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:EX_SDI_OVERLAPPEDWINDOW 
-//                        wide:SDIWindowClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:(WindowHandle min) 
-//                        hinstance:CurrentInstance 
-//                        object:(SDIWindowListener new sdiform:$self)
-//    ]
+    internal createHandle()
+    {
+        int styles := WS_DIALOGWINDOW;
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                            EX_SDI_OVERLAPPEDWINDOW,
+                            SDIWindowClass,
+                            theCaption,
+                            styles,
+                            x, y, width, height,
+                            WindowHandle.Default,
+                            CurrentInstance,
+                            new SDIWindowListener(self));
+    }
 }
 
 //// --- Child ---
