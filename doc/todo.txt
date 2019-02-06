@@ -3,17 +3,23 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * support gui
-                 * gui : support SET_CURSOR
+                 * implement lazy expressions  
+                 * property attribute - can be only the top most token
+                 * embeddable property call
+                 * implement length property optimization -> replace direct operation with byref one
+                 * no need to box variadic argument list for template opertions
+                 * array operation with Array<type> should be resolved directly (an array is embeddable)
+                 * support - singleton Code : BaseCode;
+                 * syntax : template should be the last token in expression and one before the last for declaration
+                 * a ? b : c
+
+
                  * Thread.assign:(){} should be supported
                  * (re)implement tape debugger
 
-                 * implement lazy expressions  
-                 * property attribute - can be only the top most token
                  * passing variadic list to the implicit constructor (see - TapeExpression)
                  * implement break
                  * embeddable constructors for structures
-                 * embeddable property call
                  * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
                  * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
                    work
@@ -26,7 +32,6 @@ In development:
                  * IntNumber.#cast<'IntNumber> - why it always creates a new object?
                  * abstract class cannot have constructors / default constructor
                  * uncomment validateClassDeclaration
-                 * a ? b : c
                  * if (a) b else c;
 
                  * Explicit literal constants
@@ -36,8 +41,6 @@ In development:
                  * stringOpHelper should be able to call the original trim method, currently it is not possible to call trim
                    method for the anonymous object
                  * in the interface it was possible to declare a parameter of non-existing class
-                 * support - singleton Code : BaseCode;
-                 * syntax : template should be the last token in expression and one before the last for declaration
                  * the following code - theIndexers[i] := arguments[i].indexer() - does not work correctly
                    (see SequentialEnumerator)
                  * debugger : variables inside for loop
@@ -54,7 +57,6 @@ In development:
                  * long constant should not be boxed like int constants
 
                  * support Array<type> constructors
-                 * array operation with Array<type> should be resolved directly (an array is embeddable)
 
                  * mixin {  }
 
@@ -66,15 +68,12 @@ In development:
                  * the following code should be supported : newLength := newLength + cast int(theLength);
                  * TokenEnumerator : class TextBuilder should not be found (system'text is not imported)
                  * test try / catch operation : method not found, printing calling stack
-                 * no need to box variadic argument list for template opertions
                  * (re)implement dynamic variadic argument resolving
                  * primitive array should be passed directly without unboxing if allowed
                  * test - a[](...) - should be illegal
                  * test boxing / unboxing with dynamic reference
-                 * implement length property optimization -> replace direct operation with byref one
                  * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one
-
 
                  * support c style return statement - return x;
 
@@ -90,7 +89,7 @@ In development:
                  * elt - exception handlers
                  * support mta_gui, vm_console, vm_mta_console
                  * the following code does not work - theOwner.resize(int width, int height)  (see forms'SDIWindowListener.onsize)
-                 * interfaceof - can the wrapper class be saved to use it several times?
+                 * interface - can the wrapper class be saved to use it several times?
  
               dev - tests          
                  * test : interpreter
