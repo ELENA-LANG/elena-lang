@@ -3045,6 +3045,21 @@ labEnd:
 
 end
 
+procedure __lazyexpression."#dispatch[1]"
+
+  pushe
+  pusha
+  copym message : "#invoke[0]"
+
+  xindexrm system'BaseLazyExpression message : "#invoke[0]"
+  acallvd
+
+  pope
+  asavesi 1
+  ajumpvi 0
+
+end
+
 // ; win32 constants
 define WM_CREATE            1
 define WM_DESTROY           2

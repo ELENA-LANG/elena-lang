@@ -3,7 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * implement lazy expressions  
+                 * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
+                 * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * property attribute - can be only the top most token
                  * embeddable property call
                  * implement length property optimization -> replace direct operation with byref one
@@ -90,6 +91,7 @@ In development:
                  * support mta_gui, vm_console, vm_mta_console
                  * the following code does not work - theOwner.resize(int width, int height)  (see forms'SDIWindowListener.onsize)
                  * interface - can the wrapper class be saved to use it several times?
+                 * reimplement loop similar to lazy / direct
  
               dev - tests          
                  * test : interpreter

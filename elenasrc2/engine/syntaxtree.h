@@ -63,6 +63,8 @@ enum LexicalType
    lxClosureExpr     = 0x0006E,
    lxFieldInit       = 0x00077,
    lxSubMessage      = 0x0007D,
+   lxInlineClosure   = 0x0007F,
+   lxAttrExpression  = 0x00080,
 
    lxTypecast        = 0x00100,
 

@@ -37,6 +37,7 @@ constexpr auto V_LOOP            = 0x80002005u;
 constexpr auto V_PRELOADED       = 0x80002006u;
 constexpr auto V_GETACCESSOR     = 0x80002007u;
 constexpr auto V_SETACCESSOR     = 0x80002008u;
+constexpr auto V_LAZY            = 0x80002009u;
 
 /// scope:
 constexpr auto V_CLASS           = 0x80001001u;
@@ -217,7 +218,7 @@ struct _ModuleScope
    ref_t             arrayTemplateReference;
    ref_t             argArrayTemplateReference;
    ref_t             closureTemplateReference;
-//   ref_t             lazyExprReference;
+   ref_t             lazyExprReference;
 
    // cached messages
    ref_t             dispatch_message;
@@ -324,7 +325,7 @@ struct _ModuleScope
       longReference = literalReference = wideReference = 0;
       charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
-/*      lazyExprReference = */extMessageReference = 0;
+      lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;
       argArrayTemplateReference = 0;
 
@@ -396,10 +397,11 @@ public:
       bool  wrapAttr;
       bool  classAttr;
       bool  directAttr;
+      bool  lazyAttr;
 
       bool isExprAttr()
       {
-         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | classAttr | directAttr;
+         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | classAttr | directAttr | lazyAttr;
       } 
 
       ExpressionAttributes()
@@ -407,7 +409,7 @@ public:
          refAttr = externAttr = typeAttr = castAttr = forwardAttr = false;
          paramsAttr = newOpAttr = loopAttr = internAttr = false;
          classAttr = mssgAttr = wrapAttr = subjAttr = memberAttr = false;
-         directAttr = false;
+         lazyAttr = directAttr = false;
       }
    };
 
@@ -515,7 +517,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue) = 0;
    virtual bool validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant, bool& isEmbeddable) = 0;
-   virtual bool validateExpressionAttribute(int attrValue, ExpressionAttributes& attributes) = 0;
+   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;

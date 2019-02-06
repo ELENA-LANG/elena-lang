@@ -939,12 +939,12 @@ private:
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
    void declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode);
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
-   /*bool*/void declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
+   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
 
 ////   void declareSingletonClass(SNode node, ClassScope& scope);
 
    void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-//   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);

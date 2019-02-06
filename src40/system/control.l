@@ -562,17 +562,17 @@ public interface Func<T1,T2,T3,T4,T5,T6,TResult>
 //        ^ nil
 //    ]
 //}
-//
-//public interface Func<type1,type2,type3,type4,type5,type6,type7, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7) []
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
+
+public interface Func<T1,T2,T3,T4,T5,T6,T7, TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 ///// A base eight variable function
 //public interface Func8
 //{
@@ -608,17 +608,17 @@ public interface Func<T1,T2,T3,T4,T5,T6,TResult>
 //        ^ nil
 //    ]
 //}
-//
-//public interface Func<type1,type2,type3,type4,type5,type6,type7,type8, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8) []
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
+
+public interface Func<T1,T2,T3,T4,T5,T6,T7,T8, TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 ///// A base nine variable function
 //public interface Func9
 //{
@@ -656,17 +656,17 @@ public interface Func<T1,T2,T3,T4,T5,T6,TResult>
 //        ^ nil
 //    ]
 //}
-//
-//public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8, type9 param9) []
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
+
+public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9, TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 ///// A base ten variable function
 //public interface Func10
 //{
@@ -704,18 +704,18 @@ public interface Func<T1,T2,T3,T4,T5,T6,TResult>
 //        ^ nil
 //    ]
 //}
-//
-//public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
-//                            type9 param9, type10 param10) []
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
+
+public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10, TRresult>
+{
+    /// Executes the action
+    abstract TRresult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8,
+                            T9 param9, T10 param10) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 ///// A base eleven variable functions
 //public interface Func11
 //{
@@ -754,27 +754,27 @@ public interface Func<T1,T2,T3,T4,T5,T6,TResult>
 //        ^ nil
 //    ]
 //}
-//
-//public interface Func<type1,type2,type3,type4,type5,type6,type7,type8,type9,type10,type11, ret_type>
-//{
-//    /// Executes the action
-//    abstract ret_type closure(type1 param1, type2 param2, type3 param3, type4 param4, type5 param5, type6 param6, type7 param7, type8 param8,
-//                            type9 param9, type10 param10, type11 param11) []
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
-//// --- base lazy expression ---
-//
-//public abstract closed BaseLazyExpression
-//{
-//    abstract eval []
-//    
-//    dispatch => system'core_routines'__lazyexpression.
-//}
-//
+
+public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,TResult>
+{
+    /// Executes the action
+    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8,
+                            T9 param9, T10 param10, T11 param11) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
+// --- base lazy expression ---
+
+public abstract BaseLazyExpression
+{
+    abstract closure() {}
+    
+    dispatch() => system'core_routines'__lazyexpression;
+}
+
 //// --- IndexFunction ---
 //
 //public extension<Func<int,object>> indexFunctionOp

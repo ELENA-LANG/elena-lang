@@ -437,12 +437,10 @@ namespace _ELENA_
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"
    #define EXTENSION_SECTION        "#extensions"
-////   #define ACTION_SECTION           "#actions"
    #define INITIALIZER_SECTION      "#initializer"
    #define PACKAGE_SECTION          "#package"
    #define IMPORTS_SECTION          "#import"
    #define NAMESPACES_SECTION       "#namespaces"
-//   #define AUTOEXTENSION_SECTION    "#auto_extensions"
    #define NAMESPACE_REF            "#namespace"
 
   // --- ELENA class prefixes / postfixes ---
@@ -493,17 +491,16 @@ namespace _ELENA_
 
    // predefined system forwards
    constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
-//   #define LAZYEXPR_FORWARD         "$lazyexpression"                // the base lazy expression class
-   constexpr auto INT_FORWARD             ="$int";
+   constexpr auto LAZYEXPR_FORWARD        = "$lazyexpression";                // the base lazy expression class
+   constexpr auto INT_FORWARD             = "$int";
    constexpr auto LONG_FORWARD            = "$long";
    constexpr auto REAL_FORWARD            = "$real";
    constexpr auto STR_FORWARD             = "$literal";
    constexpr auto WIDESTR_FORWARD         = "$wideliteral";
-   constexpr auto CHAR_FORWARD            ="$char";
+   constexpr auto CHAR_FORWARD            = "$char";
    constexpr auto MESSAGE_FORWARD         = "$message";
    constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
    constexpr auto MESSAGENAME_FORWARD     = "$messagename";
-//   #define ARRAY_FORWARD            "$array"
    constexpr auto REFTEMPLATE_FORWARD     = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
    constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";

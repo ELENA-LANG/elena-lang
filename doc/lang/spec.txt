@@ -118,9 +118,64 @@ In the simplest case it contains the list of source file names:
           <include>win32_forms.l</include>
         </module>
       </files>
-    <configuration> 
+    </configuration> 
 
 The files will be compiled into the single module in the root namespace specified in **configuration/project/namespace**
+
+If files contains sub-folder the appropriate nested namespace will be used:
+
+    <configuration>
+      <files>
+        <module>
+          <include>convertors.l</include>
+          <include>console.l</include>
+          <include>win32_args.l</include>
+          <include>basic.l</include>
+          <include>random.l</include>
+          <include>math\functions.l</include>
+          <include>text\strings.l</include>
+          <include>text\words.l</include>
+        </module>
+      </files>
+    </configuration> 
+
+e.g math\functions.l will be compiled in math sub-namespace
+
+Several **configuration\files\module** can be used. Only one of them may omit the **name** attribute. As a result 
+several modules will be generated:
+
+    <configuration>
+      <project>
+        <namespace>mytest</namespace>
+      </project>
+      <files>
+        <module>
+            <include>test.l</include>
+            <include>subns\test.l</include>
+        </module>
+        <module name="sub1">
+            <include>sub1\op.l</include>
+            <include>sub1\sub2\op2.l</include>
+        </module>
+      </files>
+    </configuration> 
+ 
+here several libraries will be produced - mytest.nl and mytest\sub1.nl in mytest and mytest'sub1 namespaces.
+
+    <configuration>
+      <files>
+         <module name="rules" target="eson">
+           <include>calc.es</include>
+         </module>
+         <module>
+           <include>parser.l</include>
+           <include>control.l</include>
+         </module>
+        </files>
+    </configuration> 
+
+**configuration\files\module** may have **target** attribute which will be used to compile user-defined grammar source
+files. Appropriate targets should be declared in the **configuration\targets** section.
 
 ## Forwards
 
@@ -153,3 +208,9 @@ _where :_
 * _MTA - multi-thread application_
 
 ## Program entry point
+
+2. Grammar
+
+3. Attributes
+
+4. Identifiers, Namespaces, Forwards

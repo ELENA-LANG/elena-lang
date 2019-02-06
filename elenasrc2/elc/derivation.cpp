@@ -1336,7 +1336,10 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
 
 void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
 {
-   if (node != lxClosureExpr) {
+   if (node == lxInlineClosure) {
+      node = node.firstChild();
+   }
+   else if (node != lxClosureExpr) {
       writer.insert(lxMethodParameter);
       writer.closeNode();
 
@@ -1569,7 +1572,7 @@ void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Sco
 void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope, bool rootMode)
 {
    ref_t attributeCategory = V_CATEGORY_MAX;
-   if (node.nextNode().compare(lxCollection, lxNestedClass)) {
+   if (node.nextNode().compare(lxCollection, lxNestedClass, lxAttrExpression)) {
       generateExpressionAttribute(writer, node, derivationScope, attributeCategory, false, true);
    }
    else {
@@ -1653,13 +1656,9 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
    writer.newBookmark();
    
    bool first = true;
-   //   bool implicitMode = test(mode, EXPRESSION_IMPLICIT_MODE);
-   bool expressionExpected = !/*implicitMode*/test(mode, EXPRESSION_IMPLICIT_MODE);
+   bool expressionExpected = !test(mode, EXPRESSION_IMPLICIT_MODE);
    
    SNode current = node.firstChild();
-   //   if (test(mode, EXPRESSION_OPERATOR_MODE))
-   //      current = current.nextNode();
-   //
    while (current != lxNone) {
       switch (current.type) {
          case lxMessage:
@@ -1681,6 +1680,9 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             //   generateExpressionTree(writer, current, scope);
             //}
             /*else */generateExpressionTree(writer, current, derivationScope, 0/*EXPRESSION_IMPLICIT_MODE*/);
+            break;
+         case lxAttrExpression:
+            generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
             break;
          case lxOperator:
          case lxAssign:
@@ -1720,6 +1722,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
             first = false;
             break;
          case lxClosureExpr:
+         case lxInlineClosure:
             // COMPILER MAGIC : recognize the closure without parameters, 
             //                  the one with parameters should be handled in default case
             generateClosureTree(writer, current, derivationScope);

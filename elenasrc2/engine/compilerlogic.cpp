@@ -1730,126 +1730,64 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
    }
 }
 
-bool CompilerLogic :: validateExpressionAttribute(int attrValue, ExpressionAttributes& attributes)
+bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes)
 {
    switch (attrValue) {
       case 0:
          // HOTFIX : recognize idle attributes
          return true;
-      case (int)V_VARIABLE:
-      case (int)V_AUTO:
-         if (!attributes.typeAttr) {
-            attributes.typeAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_CONVERSION:
-         if (!attributes.castAttr && !attributes.newOpAttr) {
-            attributes.castAttr = true;
-            return true;
-         }
-         else return false;
-      case (int)V_NEWOP:
-         if (!attributes.castAttr && !attributes.newOpAttr) {
-            attributes.newOpAttr = true;
-            return true;
-         }
-         else return false;
-      case (int)V_FORWARD:
-         if (!attributes.forwardAttr) {
-            attributes.forwardAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_EXTERN:
-         if (!attributes.externAttr) {
-            attributes.externAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_WRAPPER:
-         if (!attributes.refAttr) {
-            attributes.refAttr = true;
-
-            return true;
-         }
-         else return false;
-	  case (int)V_ARGARRAY:
-		  if (!attributes.paramsAttr) {
-			  attributes.paramsAttr = true;
-
-			  return true;
-		  }
-		  else return false;
-	  case (int)V_INTERN:
-         if (!attributes.internAttr) {
-            attributes.internAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_LOOP:
-         if (!attributes.loopAttr) {
-            attributes.loopAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_MEMBER:
-         if (!attributes.memberAttr) {
-            attributes.memberAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_SUBJECT:
-         if (!attributes.subjAttr) {
-            attributes.subjAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_MESSAGE:
-         if (!attributes.mssgAttr) {
-            attributes.mssgAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_GROUP:
-         if (!attributes.wrapAttr) {
-            attributes.wrapAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_CLASS:
-         if (!attributes.classAttr) {
-            attributes.classAttr = true;
-
-            return true;
-         }
-         else return false;
-      case (int)V_DIRECT:
-         if (!attributes.directAttr) {
-            attributes.directAttr = true;
-
-            return true;
-         }
-         else return false;
+      case V_VARIABLE:
+      case V_AUTO:
+         attributes.typeAttr = true;
+         return true;
+      case V_CONVERSION:
+         attributes.castAttr = true;
+         return true;
+      case V_NEWOP:
+         attributes.newOpAttr = true;
+         return true;
+      case V_FORWARD:
+         attributes.forwardAttr = true;
+         return true;
+      case V_EXTERN:
+         attributes.externAttr = true;
+         return true;
+      case V_WRAPPER:
+         attributes.refAttr = true;
+         return true;
+	  case V_ARGARRAY:
+			attributes.paramsAttr = true;
+			return true;
+	  case V_INTERN:
+         attributes.internAttr = true;
+         return true;
+      case V_LOOP:
+         attributes.loopAttr = true;
+         return true;
+      case V_MEMBER:
+         attributes.memberAttr = true;
+         return true;
+      case V_SUBJECT:
+         attributes.subjAttr = true;
+         return true;
+      case V_MESSAGE:
+         attributes.mssgAttr = true;
+         return true;
+      case V_GROUP:
+         attributes.wrapAttr = true;
+         return true;
+      case V_CLASS:
+         attributes.classAttr = true;
+         return true;
+      case V_DIRECT:
+         attributes.directAttr = true;
+         return true;
+      case V_LAZY:
+         attributes.lazyAttr = true;
+         return true;
       default:
          return false;
    }
-
-//   if (attrValue == (int)V_INT8) {
-//      return true;
-//   }
-//   //else if (attrValue == (int)V_OBJARRAY) {
-//   //   return true;
-//   //}
 }
 
 bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne)
