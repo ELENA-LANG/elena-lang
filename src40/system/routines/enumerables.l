@@ -141,9 +141,9 @@ public extension enumerableOp
 
 //    forEach(ExtensionMessage anExtMessage)
 //        = self~enumerableOp forEach(:n)(n~anExtMessage eval).
-//        
-//    forEach:fn
-//        = self~enumerableOp forEach(:n)[ fn(n) ].
+        
+    forEach(fn)
+        = self.forEach:(n){ fn(n) };
 
     selectBy(selector)
         = Selector.new(selector, cast Enumerator(self.enumerator()));

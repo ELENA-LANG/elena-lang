@@ -3,7 +3,7 @@
 ..\..\bin\elc addfield\addfield.prj
 ..\..\bin\elc anonymrec\anonymrec.prj
 ..\..\bin\elc aplusb\aplusb.prj
-rem ..\..\bin\elc applycallback\arraycallback.prj
+..\..\bin\elc applycallback\arraycallback.prj
 rem ..\..\bin\elc arithmeticint\arithmeticint.prj
 rem ..\..\bin\elc arithmmean\arithmmean.prj
 rem ..\..\bin\elc arrayconcat\arrayconcat.prj
