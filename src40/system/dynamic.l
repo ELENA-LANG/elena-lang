@@ -88,13 +88,13 @@ public sealed const struct MessageName
 //    /// Creates a dynamic signature
 //    constructor new(Signature subject)
 //        = subject.
-//
-//    /// Creates a dynamic signature
-//    constructor new(literal aSubjectName)
-//    [
-//        system'core_routines'__signature load(self, aSubjectName)
-//    ]
-//
+
+    /// Creates a dynamic signature
+    constructor(string s)
+    {
+        intern system'core_routines'__signature.load(self, s)
+    }
+
 //    /// Creates a dynamic signature
 //    constructor new(wide aSubjectName)
 //        <= new(T<literal>(aSubjectName)).

@@ -63,11 +63,20 @@ bin\elc examples\console\random\random.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc examples\files\textdb\textdb.prj
+bin\elc examples\files\textdb\textdb.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem bin\elc examples\console\trans\tanslit.prj
 rem bin\elc examples\console\matrix\matrix.prj
 rem bin\elc examples\console\pi2\pi2.prj
-rem bin\elc examples\script\interpreter\interpreter.prj
+
+bin\elc examples\script\interpreter\interpreter.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem bin\elc examples\script\calculator\calc.xprj
 rem bin\elc examples\script\calculator\calc.prj
 rem bin\elc examples\script\js\vmconsole.prj

@@ -259,6 +259,12 @@ void* ELENARTMachine :: loadMessage(ident_t message)
    }
    else messageName.copy(message + subject);
 
+   if (messageName.ident().startsWith("prop#")) {
+      flags |= PROPERTY_MESSAGE;
+
+      messageName.cut(0, getlength("prop#"));
+   }
+
    ref_t actionRef = (ref_t)loadSubject(messageName.ident());
    if (!actionRef)
       return nullptr;

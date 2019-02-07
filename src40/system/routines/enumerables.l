@@ -39,29 +39,30 @@ public extension stringListOp : String
         ^ list
     }
     
-//    T<Array> split(literal aValue)
-//    [
-//        T<ArrayList> aList := ArrayList new.
-//        int          aStart := 0.
-//        int          anIndex := 0.
-//        int          aValueLen := aValue length.
-//        int          aLiteralLen := self length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self indexOf(aStart, aValue, &anIndex).
-//            if (-1 != anIndex)
-//            [
-//                aList append(self Substring(aStart, anIndex - aStart)).
-//                aStart := anIndex + aValueLen
-//            ];
-//            [
-//                aList append(self Substring(aStart, aLiteralLen - aStart))
-//            ]
-//        ].
-//        
-//        ^ aList
-//    ]
+    Array split(string value)
+    {
+        ArrayList list := new ArrayList();
+        int       start := 0;
+        int       index := 0;
+        int       valueLen := value.Length;
+        int       literalLen := self.Length;
+        
+        while (index >= 0)
+        {
+            self.indexOf(start, value, ref index);
+            if (-1 != index)
+            {
+                list.append(self.Substring(start, index - start));
+                start := index + valueLen
+            }
+            else
+            {
+                list.append(self.Substring(start, literalLen - start))
+            }
+        };
+        
+        ^ list
+    }
 }
 
 //// --- wideListOp ---
@@ -610,26 +611,26 @@ public extension indexableOp
 //    ]    
 }
 
-//// --- stringListOp ---
-//
-//singleton stringController
-//{
-//    split(literal l, char ch)
-//        = l~literalListOp split(ch).
-//        
-//    split(literal l, literal sp_l)
-//        = l~literalListOp split(sp_l).
-//        
+// --- stringListOp ---
+
+singleton stringController
+{
+    split(string l, char ch)
+        = l.split(ch);
+        
+    split(string l, string sp_l)
+        = l.split(sp_l);
+        
 //    split(wide l, char ch)
-//        = l~wideListOp split(ch).
+//        = l.split(ch);
 //        
 //    split(wide l, wide sp_l)
-//        = l~wideListOp split(sp_l).
-//        
-//}
-//
-//public extension stringListOp
-//{
-//    splitBy:aSplitter
-//        = stringController split(self, aSplitter).
-//}
+//        = l.split(sp_l);
+        
+}
+
+public extension weakStringListOp
+{
+    splitBy(splitter)
+        = stringController.split(self, splitter);
+}

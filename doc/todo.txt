@@ -3,6 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * invoke property - get / set
+                 * implement textdb sample
+                 * replace buble sort with merge sort
                  * a ? b : c, modify anonym recursion sample
 
                  * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
