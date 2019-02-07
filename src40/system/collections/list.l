@@ -260,79 +260,87 @@ public sealed List<T> : Enumerable<T>
 //        = List<type>(theArray, T<int>(theLength)).
 }
 
-//// --- ListItem ---
-//
-///// A list item
-//sealed class ListItem
-//{
-//    object      theContent.
-//    T<ListItem> theNext.
-//    
-//    /// Creates a new item
-//    constructor new : aValue
-//    [
-//        theContent := aValue.
-//    ]
-//
-//    /// Returns the item object
-//    get = theContent.
-//            
-//    /// Sets the item object
-//    set : anObject
-//    [
-//        theContent := anObject.
-//    ]    
-//
-//    /// Returns the next item
-//    T<ListItem> nextItem = theNext.
-//
-//    /// Sets the next item
-//    setNextItem(ListItem aNext)
-//    [
-//        theNext := aNext.
-//    ]
-//}
-//
-//// --- ListEnumerator ---
-//
-///// A list enumerator
-//class ListEnumerator :: Enumerator
-//{
-//    T<List>     theList.
-//    T<ListItem> theCurrent.
-//    
-//    /// Creates a list enumerator
-//    constructor new(List aList)
-//    [
-//        theList := aList.
-//    ]
-//
+// --- ListItem ---
+
+/// A list item
+sealed class ListItem
+{
+    object   theContent;
+    ListItem theNext;
+    
+    /// Creates a new item
+    constructor new(object)
+    {
+        theContent := object
+    }
+
+    /// Returns the item object
+    get() = theContent;
+            
+    /// Sets the item object
+    set(object)
+    {
+        theContent := object
+    }
+
+    prop ListItem NextItem
+    {
+        /// Returns the next item
+        ListItem get() = theNext;
+      
+        /// Sets the next item  
+        set(ListItem next)
+        {
+            theNext := next
+        }
+    }
+}
+
+// --- ListEnumerator ---
+
+/// A list enumerator
+class ListEnumerator : Enumerator
+{
+    List     theList;
+    ListItem theCurrent;
+    
+    /// Creates a list enumerator
+    constructor(List list)
+    {
+        theList := list
+    }
+
 //    /// Creates a list enumerator
 //    constructor new : anObject
 //        <= new(T<List>(anObject)).
-//
-//    /// Returns the current object
-//    get = theCurrent get.
-//    
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theCurrent := nil.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        if (nil == theCurrent)
-//            [ theCurrent := theList topItem ];
-//            [ theCurrent := theCurrent nextItem ].
-//            
-//        ^ nil != theCurrent
-//    ]
-//    
-//    enumerable = theList.
-//}
-//
+
+    /// Returns the current object
+    get() = theCurrent.get();
+    
+    /// Resets the enumerator
+    reset()
+    {
+        theCurrent := nil
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        if (nil == theCurrent)
+        { 
+            theCurrent := theList.TopItem 
+        }
+        else
+        { 
+            theCurrent := theCurrent.NextItem 
+        };
+            
+        ^ nil != theCurrent
+    }
+    
+    enumerable() = theList;
+}
+
 //// --- ListIndexer ---
 //
 ///// A list indexer
@@ -408,22 +416,22 @@ public sealed List<T> : Enumerable<T>
 //        theList readLengthTo(retVal).
 //    ]
 //}
-//
-//// --- List ---
-//
-///// A list object
-//public sealed class List :: Enumerable
-//{
-//    ref<int>    theCount.
-//    T<ListItem> theTop.
-//    T<ListItem> theLast.
-//
-//    /// Creates a list
-//    constructor new
-//    [
-//        theCount := 0.
-//    ]
-//
+
+// --- List ---
+
+/// A list object
+public sealed class List : Enumerable
+{
+    ref<int> theCount;
+    ListItem theTop;
+    ListItem theLast;
+
+    /// Creates a list
+    constructor()
+    {
+        theCount := 0
+    }
+
 //    constructor new(Array l)
 //    [
 //        theCount := 0.
@@ -434,33 +442,33 @@ public sealed List<T> : Enumerable<T>
 //            self append(it get)
 //        ].
 //    ]
-//
-//    /// Returns the top item
-//    internal T<ListItem> topItem = theTop.
-//
+
+    /// Returns the top item
+    internal ListItem TopItem = theTop;
+
 //    /// Returns the top object
 //    first = theTop get.
 //
 //    /// Returns the last object
 //    last = theLast get.    
-//
-//    append : anObject
-//    [
-//        theCount append(1).
-//        if(nil == theTop)
-//        [
-//            theTop := ListItem new:anObject.
-//            theLast := theTop.
-//        ];
-//        [
-//            auto aNewItem := ListItem new:anObject.
-//            
-//            theLast setNextItem(aNewItem).
-//            theLast := aNewItem.
-//        ].
-//
-//    ]
-//
+
+    append(object)
+    {
+        theCount.append(1);
+        if(nil == theTop)
+        {
+            theTop := ListItem.new(object);
+            theLast := theTop
+        }
+        else
+        {
+            auto newItem := ListItem.new(object);
+            
+            theLast.NextItem := newItem;
+            theLast := newItem
+        }
+    }
+
 //    insert : anObject
 //    [
 //        theCount append(1).
@@ -469,33 +477,33 @@ public sealed List<T> : Enumerable<T>
 //        aNewItem setNextItem(theTop).
 //        theTop := aNewItem.
 //    ]
-//    
-//    /// Returns the list item at the specified position
-//    internal T<ListItem> getItemAt(int anIndex)
-//    [
-//        int         aCurrentIndex := anIndex.
-//        T<ListItem> anItem := theTop.
-//        
-//        while (aCurrentIndex > 0)
-//        [
-//            anItem := anItem nextItem.
-//            if (nil == anItem)
-//                [ OutOfRangeException new; raise ].
-//            
-//            aCurrentIndex := aCurrentIndex - 1
-//        ].
-//        
-//        ^ anItem.
-//    ]
-//
-//    /// Returns the object at the specified position
-//    getAt(int anIndex)
-//        = self getItemAt(anIndex); get.
-//
-//    /// Returns the object at the specified position
-//    setAt(int anIndex, object anObject)
-//        = self getItemAt(anIndex); set:anObject.
-//
+    
+    /// Returns the list item at the specified position
+    internal ListItem getItemAt(int index)
+    {
+        int      currentIndex := index;
+        ListItem item := theTop;
+        
+        while (currentIndex > 0)
+        {
+            item := item.NextItem;
+            if (nil == item)
+                { OutOfRangeException.raise() };
+            
+            currentIndex := currentIndex - 1
+        };
+        
+        ^ item
+    }
+
+    /// Returns the object at the specified position
+    at(int index)
+        = self.getItemAt(index).get();
+
+    /// Returns the object at the specified position
+    setAt(int index, object object)
+        = self.getItemAt(index).set(object);
+
 //    insert : anObject at:anIndex
 //        <= insert(anIndex, anObject).
 //
@@ -542,14 +550,15 @@ public sealed List<T> : Enumerable<T>
 //    removeAt:anIndex
 //        <= remove(T<int>(anIndex)).
 //
-//    int rvprop length :: readLengthTo.
-//        
-//    /// Reads the number of list item to the output parameter
-//    readLengthTo(ref<int> aLength)
-//    [
-//        theCount readValueTo(aLength).
-//    ]
-//    
+    vprop int Length
+    {
+        /// Reads the number of list item to the output parameter
+        readTo(ref int length)
+        {
+            theCount.readValueTo(ref length)
+        }
+    }
+    
 //    /// Clears the list
 //    clear 
 //    [
@@ -558,10 +567,10 @@ public sealed List<T> : Enumerable<T>
 //        theTop := nil.
 //        theLast := nil.
 //    ]
-//
-//    /// Returns the list enumerator
-//    T<Enumerator> enumerator = ListEnumerator new(self).
-//
+
+    /// Returns the list enumerator
+    Enumerator enumerator() = new ListEnumerator(self);
+
 //    /// Returns the list indexer
 //    T<Indexer> indexer = ListIndexer new(self).
 //    
@@ -580,7 +589,7 @@ public sealed List<T> : Enumerable<T>
 //        
 //        ^ aList
 //    ]
-//}
+}
 
 // --- ArrayList ---
 

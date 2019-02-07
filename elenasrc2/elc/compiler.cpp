@@ -1676,7 +1676,9 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
                }
                else scope.raiseError(errInvalidHint, current);
             }
-            else fieldRef = resolveTypeAttribute(scope, current, false);
+            // NOTE : the field type should be already declared only for the structure
+            else fieldRef = resolveTypeAttribute(scope, current, 
+               !test(scope.info.header.flags, elStructureRole));
          }
          else scope.raiseError(errInvalidHint, node);
       }
