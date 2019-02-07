@@ -16,15 +16,15 @@ sealed struct RandomGenerator
         extern elenart.core_rnd_next(theSeed, maxValue, ref retVal)
     }
 
-//    eval(ref<int> aRetVal)
-//    [
-//        system'external core_rnd_nextint(theSeed, &aRetVal).
-//    ]
-//
+    eval(ref int retVal)
+    {
+        extern elenart.core_rnd_nextint(theSeed, ref retVal)
+    }
+
 //    eval(object minValue, object maxValue)
 //        = minValue + self eval(maxValue - minValue).
 
-    eval(int maxValue)
+    int eval(int maxValue)
     {
         int nextValue := 0;
         self.eval(maxValue, ref nextValue);
@@ -32,29 +32,29 @@ sealed struct RandomGenerator
         ^ new IntNumber(nextValue)
     }
     
-//    nextInt
-//    [
-//        int aNextValue := 0.
-//        self eval(&aNextValue).
-//        
-//        ^ IntNumber new(aNextValue).
-//    ]
+    int nextInt()
+    {
+        int nextValue := 0;
+        self.eval(ref nextValue);
+        
+        ^ new IntNumber(nextValue)
+    }
 
-    nextInt(val)
+    int nextInt(val)
         = self.eval(cast int(val));
         
-//    real nextReal
-//    [
-//        int next := 0.
-//        self eval(1000000, &next).
-//        
-//        real retVal := 0.0r.
-//        realConvertor convert(next, &retVal).
-//        
-//        retVal := retVal / 1000000.0r.
-//        
-//        ^ RealNumber new(retVal).
-//    ]
+    real nextReal()
+    {
+        int next := 0;
+        self.eval(1000000, ref next);
+        
+        real retVal := 0.0r;
+        realConvertor.convert(next, ref retVal);
+        
+        retVal := retVal / 1000000.0r;
+        
+        ^ new RealNumber(retVal)
+    }
 }
 
 // --- randomGenerator ---

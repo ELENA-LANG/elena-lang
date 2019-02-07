@@ -58,7 +58,11 @@ bin\elc examples\console\datetime\dtcalculator.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc examples\console\random\random.prj
+bin\elc examples\console\random\random.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem bin\elc examples\files\textdb\textdb.prj
 rem bin\elc examples\console\trans\tanslit.prj
 rem bin\elc examples\console\matrix\matrix.prj

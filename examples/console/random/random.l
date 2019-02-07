@@ -1,69 +1,69 @@
 // based on msdn random sample
 
-import extensions.
+import extensions;
 
 // --- program ---
 
-const int rows = 4.
-const int cols = 6.
+const int rows = 4;
+const int cols = 6;
 
-const int runCount = 1000000.
-const int distGroupCount = 20.
+const int runCount = 1000000;
+const int distGroupCount = 20;
 
-public program =
-[
-    var intGroupSize := (1.0r + IntNumber max) / distGroupCount.
+public program()
+{
+    auto intGroupSize := (1.0r + IntNumber.MaxValue) / distGroupCount;
 
-    var intCounts := IntArray new:distGroupCount.
-    var realCounts := IntArray new:distGroupCount.
+    var intCounts := new int[](distGroupCount);
+    var realCounts := new int[](distGroupCount);
 
-    console printLine:"Random reals:".
-    0 till:rows do(:i)
-    [
-        0 to:cols do(:j)
-        [
-            console printPaddingRight(12, randomGenerator nextReal).
-        ].
+    console.printLine:"Random reals:";
+    for(int i := 0, i < rows, i += 1)
+    {
+        for(int j := 0, j <= cols, j += 1)
+        {
+            console.printPaddingRight(12, randomGenerator.nextReal());
+        };
         
-        console writeLine.
-    ].
+        console.writeLine()
+    };
 
-    console writeLine.
-    console writeLine:"Random integers:".
-    0 till:rows do(:i)
-    [
-        0 to:cols do(:j)
-        [
-            console printPaddingRight(12, randomGenerator nextInt).
-        ].
+    console.writeLine();
+    console.writeLine:"Random integers:";
+    for(int i := 0, i < rows, i += 1)
+    {
+        for(int j := 0, j <= cols, j += 1)
+        {
+            console.printPaddingRight(12, randomGenerator.nextInt());
+        };
         
-        console writeLine.
-    ].
+        console.writeLine()
+    };
 
-    console writeLine.
-    console writeLine:"Distribution".
+    console.writeLine();
+    console.writeLine:"Distribution";
 
-    0 till:runCount do(:i)
-    [
-        var index := (randomGenerator nextInt / intGroupSize) toInt.
+    for(int i := 0, i < runCount, i += 1)
+    {
+        int index := (randomGenerator.nextInt() / intGroupSize).toInt();
         if(index < distGroupCount)
-            [ intCounts[index] := intCounts[index] + 1. ].
+            { intCounts[index] := intCounts[index] + 1 };
         
-        index := (randomGenerator nextReal * distGroupCount) toInt.
+        index := (randomGenerator.nextReal() * distGroupCount).toInt();
         if(index < distGroupCount)
-            [ realCounts[index] := realCounts[index] + 1. ].
-    ].    
+            { realCounts[index] := realCounts[index] + 1 }
+    };    
 
-    0 till:distGroupCount do(:i)
-    [
-        console printPaddingLeft(12, (i * intGroupSize) toInt,"-").
-        console printPaddingLeft(12, ((i + 1) * intGroupSize - 1) toInt).
-        console printPaddingLeft(12, intCounts[i]).
+    for(int i := 0, i < distGroupCount, i += 1)
+    {
+        console.printPaddingLeft(12, (i * intGroupSize).toInt(),"-");
+        console.printPaddingLeft(12, ((i + 1) * intGroupSize - 1).toInt());
+        console.printPaddingLeft(12, intCounts[i]);
 
-        console printPaddingLeft(14, i toReal / distGroupCount,"-").
-        console printPaddingLeft(12, (i + 1) toReal / distGroupCount).
-        console printPaddingLeft(12, realCounts[i]).
+        console.printPaddingLeft(14, i.toReal() / distGroupCount,"-");
+        console.printPaddingLeft(12, (i + 1).toReal() / distGroupCount);
+        console.printPaddingLeft(12, realCounts[i]);
                 
-        console writeLine.
-    ].
-].
+        console.writeLine()
+    }
+}

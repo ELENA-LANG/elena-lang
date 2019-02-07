@@ -1608,31 +1608,43 @@ public extension stringWeakOp
 //
 //    write : aLine length:aCounter
 //        = self~stringOp fillString(aLine, T<int>(aCounter)).
-//        
-//    write : aLine paddingLeft:aWidth
-//        = self~stringOp write:aLine paddingLeft:aWidth with:$32.
-//
-//    write : aLine paddingLeft:aWidth with:aChar
-//    [
-//        var aPaddedStr := aLine padLeft(aChar, aWidth).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self
-//    ]
-//
-//    write : aLine paddingRight:aWidth
-//        = self~stringOp write:aLine paddingRight:aWidth with:$32.
-//
-//    write : aLine paddingRight:aWidth with:aChar
-//    [
-//        var aPaddedStr := aLine padRight(aChar, aWidth).
-//
-//        self write:aPaddedStr.
-//            
-//        ^ self
-//    ]
-//    
+
+    writePaddingLeft(line, char ch, int width)
+    {
+        var paddedStr := line.padLeft(ch, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePaddingRight(line, char ch, int width)
+    {
+        var paddedStr := line.padRight(ch, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePaddingLeft(line, int width)
+    {
+        var paddedStr := line.padLeft(width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePaddingRight(line, int width)
+    {
+        var paddedStr := line.padRight(width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
 //    write : aLine padding:aWidth with:aChar
 //    [
 //        int aWidthInt := aWidth.

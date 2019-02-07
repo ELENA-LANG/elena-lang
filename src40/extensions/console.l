@@ -1,5 +1,5 @@
 import system'routines;
-//import system'text.
+import system'text;
 
 // --- outputOp ---
 
@@ -52,49 +52,43 @@ public extension outputOp
     }    
 }
 
-//public extension outputFormatterOp
-//{
-//    generic printPaddingRight(int width, V<object> list)
-//    [
-//        auto aBuffer := TextBuilder new.
-//        
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            aBuffer write(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        self write:(aBuffer literal) paddingRight:width with:$32.
-//            
-//        ^ self
-//    ]
-//
-//    generic printPaddingLeft(int width, V<object> list)
-//    [
-//        auto aBuffer := TextBuilder new.
-//        
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            aBuffer write(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        self write:(aBuffer literal) paddingLeft:width with:$32.
-//            
-//        ^ self
-//    ]
-//}
-//
+public extension outputFormatterOp
+{
+    printPaddingRight(int width, params object[] list)
+    {
+        auto buffer := new TextBuilder();
+        
+        int len := list.Length;
+        for (int i := 0, i < len, i += 1)
+        {
+            object obj := list[i];
+            
+            buffer.write(obj.toString())
+        };
+        
+        self.writePaddingRight(buffer.Value, $32, width);
+            
+        ^ self
+    }
+
+    printPaddingLeft(int width, params object[] list)
+    {
+        auto buffer := new TextBuilder();
+        
+        int len := list.Length;
+        for (int i := 0, i < len, i += 1)
+        {
+            object obj := list[i];
+            
+            buffer.write(obj.toString())
+        };
+        
+        self.writePaddingLeft(buffer.Value, $32, width);
+            
+        ^ self
+    }
+}
+
 //public extension outputCharFormatterOp
 //{
 //    generic printPaddingRightChar(int width, char ch, V<object> list)
