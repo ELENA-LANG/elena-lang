@@ -58,6 +58,17 @@ inline SNode goToLastNode(SNode current)
    return lastOne;
 }
 
+inline SNode goToFirstNode(SNode current)
+{
+   SNode firstOne = current;
+   while (current != lxNone) {
+      firstOne = current;
+      current = current.prevNode();
+   }
+
+   return firstOne;
+}
+
 inline SNode goToFirstNode(SNode current, LexicalType type)
 {
    SNode firstOne = current;
@@ -1394,6 +1405,27 @@ ref_t DerivationWriter :: resolveTemplate(ident_t templateName)
    return 0;
 }
 
+void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope& derivationScope)
+{
+   //ref_t templateRef = _scope->attributes.get(templateName.c_str());
+   ref_t templateRef = resolveTemplate(templateName);
+   if (!templateRef)
+      _scope->raiseError(errInvalidSyntax, _filePath, node.parentNode());
+
+   // load code template parameters
+   List<SNode> parameters;
+   SNode current = tempTree.readRoot();
+   while (current != lxNone) {
+      if (current == lxExpression) {
+         parameters.add(current);
+      }
+
+      current = current.nextNode();
+   }
+
+   _scope->generateTemplateCode(writer, templateRef, parameters);
+}
+
 void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
 {
    IdentifierString templateName;
@@ -1426,11 +1458,6 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
    templateName.append('#');
    templateName.appendInt(exprCounters);
 
-   //ref_t templateRef = _scope->attributes.get(templateName.c_str());
-   ref_t templateRef = resolveTemplate(templateName.c_str());
-   if (!templateRef)
-      _scope->raiseError(errInvalidSyntax, _filePath, node.parentNode());
-
    // generate members
    SyntaxTree tempTree;
    SyntaxWriter tempWriter(tempTree);
@@ -1450,18 +1477,7 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
       current = current.nextNode();
    }
 
-   // load code template parameters
-   List<SNode> parameters;
-   current = tempTree.readRoot();
-   while (current != lxNone) {
-      if (current == lxExpression) {
-         parameters.add(current);
-      }
-
-      current = current.nextNode();
-   }
-
-   _scope->generateTemplateCode(writer, templateRef, parameters);
+   generateCodeTemplateTree(writer, node, tempTree, templateName.ident(), derivationScope);
 
    while (node.nextNode() != lxNone)
       node = node.nextNode();
@@ -1651,6 +1667,136 @@ void DerivationWriter :: generateCollectionTree(SyntaxWriter& writer, SNode node
    writer.closeNode();
 }
 
+void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope)
+{
+   // revert the first operand
+   writer.trim();
+
+   current = lxIdle;
+
+   SNode node = goToFirstNode(current);
+
+   IdentifierString templateName;
+   SNode operatorNode = current.firstChild(lxTerminalMask);
+   if (operatorNode.identifier().compare(IF_OPERATOR)) {
+      templateName.copy(DOIFNOTNIL_OPERATOR);
+   }
+   else if (operatorNode.identifier().compare(ALT_OPERATOR)) {
+      templateName.copy(TRYORRETURN_OPERATOR);
+   }
+
+   // generate members
+   SyntaxTree tempTree;
+   SyntaxWriter tempWriter(tempTree);
+
+   // generate loperand
+   derivationScope.nestedLevel += 0x100;
+   bool dummy1 = false, dummy2 = false;
+   tempWriter.newNode(lxExpression);
+   generateExpressionNode(tempWriter, node, dummy1,dummy2, derivationScope);
+   tempWriter.closeNode();
+   derivationScope.nestedLevel -= 0x100;
+
+   // generate roperand
+   derivationScope.nestedLevel += 0x100;
+   generateExpressionTree(tempWriter, current.parentNode(), derivationScope);
+   derivationScope.nestedLevel -= 0x100;
+
+   generateCodeTemplateTree(writer, node, tempTree, templateName.ident(), derivationScope);
+
+   while (node.nextNode() != lxNone)
+      node = node.nextNode();
+
+   current = node;
+}
+
+void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& current, bool& first, bool& expressionExpected, 
+   Scope& derivationScope)
+{
+   switch (current.type) {
+      case lxMessage:
+      case lxImplicitMessage:
+         if (!first) {
+            writer.insert(lxExpression);
+            writer.closeNode();
+         }
+         else first = false;
+
+         generateMesage(writer, current, derivationScope);
+         break;
+      case lxSubMessage:
+         generateMesage(writer, current, derivationScope);
+         break;
+      case lxExpression:
+         //first = false;
+         //if (test(mode, MODE_MESSAGE_BODY)) {
+         //   generateExpressionTree(writer, current, scope);
+         //}
+         /*else */generateExpressionTree(writer, current, derivationScope, 0/*EXPRESSION_IMPLICIT_MODE*/);
+         break;
+      case lxAttrExpression:
+         generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
+         break;
+      case lxOperator:
+      case lxAssign:
+         if (!first) {
+            writer.insert(lxExpression);
+            writer.closeNode();
+         }
+         else first = false;
+         writer.newNode(current.type, current.argument);
+         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         writer.closeNode();
+         break;
+      case lxTemplateOperator:
+         // COMPILER MAGIC : recognize the operator template
+         generateOperatorTemplateTree(writer, current, derivationScope);
+         break;
+      case lxNestedClass:
+         recognizeClassMebers(current);
+         generateClassTree(writer, current, derivationScope, true);
+         first = false;
+         break;
+      case lxCode:
+         generateCodeExpression(writer, current, derivationScope, first);
+         first = false;
+         break;
+      case lxToken:
+         generateTokenExpression(writer, current, derivationScope, true);
+         break;
+      case lxPropertyParam:
+         // to indicate the get property call
+         writer.appendNode(lxPropertyParam);
+         break;
+      case lxSwitching:
+         generateSwitchTree(writer, current, derivationScope);
+         writer.insert(lxSwitching);
+         writer.closeNode();
+         expressionExpected = true;
+         break;
+      case lxCollection:
+         generateCollectionTree(writer, current, derivationScope);
+         first = false;
+         break;
+      case lxClosureExpr:
+      case lxInlineClosure:
+         // COMPILER MAGIC : recognize the closure without parameters, 
+         //                  the one with parameters should be handled in default case
+         generateClosureTree(writer, current, derivationScope);
+         break;
+      default:
+         if (isTerminal(current.type)) {
+            generateTokenExpression(writer, current, derivationScope, true);
+
+            if (current.nextNode().compare(lxClosureExpr, lxParameter, lxReturning)) {
+               // COMPILER MAGIC : recognize the closure
+               generateClosureTree(writer, current, derivationScope);
+            }
+         }
+         break;
+   }
+}
+
 void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode)
 {
    writer.newBookmark();
@@ -1660,84 +1806,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
    
    SNode current = node.firstChild();
    while (current != lxNone) {
-      switch (current.type) {
-         case lxMessage:
-         case lxImplicitMessage:
-            if (!first) {
-               writer.insert(lxExpression);
-               writer.closeNode();
-            }
-            else first = false;
-
-            generateMesage(writer, current, derivationScope);
-            break;
-         case lxSubMessage:
-            generateMesage(writer, current, derivationScope);
-            break;
-         case lxExpression:
-            //first = false;
-            //if (test(mode, MODE_MESSAGE_BODY)) {
-            //   generateExpressionTree(writer, current, scope);
-            //}
-            /*else */generateExpressionTree(writer, current, derivationScope, 0/*EXPRESSION_IMPLICIT_MODE*/);
-            break;
-         case lxAttrExpression:
-            generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
-            break;
-         case lxOperator:
-         case lxAssign:
-            if (!first) {
-               writer.insert(lxExpression);
-               writer.closeNode();
-            }
-            else first = false;
-            writer.newNode(current.type, current.argument);
-            copyIdentifier(writer, current.firstChild(lxTerminalMask));
-            writer.closeNode();
-            break;
-         case lxNestedClass:
-            recognizeClassMebers(current);            
-            generateClassTree(writer, current, derivationScope, true);
-            first = false;
-            break;
-         case lxCode:
-            generateCodeExpression(writer, current, derivationScope, first);
-            first = false;            
-            break;
-         case lxToken:
-            generateTokenExpression(writer, current, derivationScope, true);
-            break;
-         case lxPropertyParam:
-            // to indicate the get property call
-            writer.appendNode(lxPropertyParam);
-            break;
-         case lxSwitching:
-            generateSwitchTree(writer, current, derivationScope);
-            writer.insert(lxSwitching);
-            writer.closeNode();
-            expressionExpected = true;
-            break;
-         case lxCollection:
-            generateCollectionTree(writer, current, derivationScope);
-            first = false;
-            break;
-         case lxClosureExpr:
-         case lxInlineClosure:
-            // COMPILER MAGIC : recognize the closure without parameters, 
-            //                  the one with parameters should be handled in default case
-            generateClosureTree(writer, current, derivationScope);
-            break;
-         default:
-            if (isTerminal(current.type)) {
-               generateTokenExpression(writer, current, derivationScope, true);
-
-               if (current.nextNode().compare(lxClosureExpr, lxParameter, lxReturning)) {
-                  // COMPILER MAGIC : recognize the closure
-                  generateClosureTree(writer, current, derivationScope);
-               }
-            }
-            break;
-      }
+      generateExpressionNode(writer, current, first, expressionExpected, derivationScope);
 
       current = current.nextNode();
    }

@@ -142,9 +142,11 @@ class DerivationWriter : public _DerivationWriter
 
    bool recognizeMetaScope(SNode node);
    
+   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
    void generateTemplateTree(SNode node, SNode nameNode, ScopeType templateType);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
    void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
+   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope& derivationScope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
@@ -161,6 +163,7 @@ class DerivationWriter : public _DerivationWriter
    void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, bool templateArgMode = false, bool onlyAttributes = false);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
+   void generateExpressionNode(SyntaxWriter& writer, SNode& current, bool& first, bool& expressionExpected, Scope& derivationScope);
    void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);

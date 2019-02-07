@@ -413,6 +413,10 @@ namespace _ELENA_
    constexpr auto ALT_OPERATOR         = "\\";
    constexpr auto FINALLY_OPERATOR     = "$fnl";
 
+  // operator templates
+   constexpr auto DOIFNOTNIL_OPERATOR  = "doIfNotNil#1#1";
+   constexpr auto TRYORRETURN_OPERATOR = "tryOrReturn#1#1";
+
   // --- ELENA explicit variables ---
    constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target
    constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference

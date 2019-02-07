@@ -330,3 +330,21 @@ public using<block>(expr)
         v.close()
     }
 }
+
+// === operator templates ===
+
+// .?
+public doIfNotNil<expr>(identifier)
+{
+    if (nil != identifier)
+    {
+        expr        
+    }
+}
+
+// .\
+public tryOrReturn<expr>(identifier)
+{
+    expr \ back:identifier;
+}
+
