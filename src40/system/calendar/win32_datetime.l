@@ -76,121 +76,135 @@ public sealed struct TimeStruct
 //    [
 //        self write(aTime).
 //    ]
-//
-//    int vprop  year        :: readYearTo,writeYear.
-//    int vprop  month       :: readMonthTo,writeMonth.
-//    int rvprop dayOfWeek   :: readDayOfWeekTo.
-//    int vprop  day         :: readDayTo,writeDay.
-//    int vprop  hour        :: readHourTo,writeHour.
-//    int vprop  minute      :: readMinuteTo,writeMinute.
-//    int vprop  second      :: readSecondTo,writeSecond.
-//    int vprop  millisecond :: readMillisecondTo,writeMillisecond.
-//
-//    readYearTo(ref<int> aRetVal)
-//    [
-//        int val := theYear.
-//        
-//        aRetVal value := val.
-//    ]
-//
-//    readMonthTo(ref<int> aRetVal)
-//    [
-//        int val := theMonth.
-//        
-//        aRetVal value := val.
-//    ]
-//
-//    readDayOfWeekTo(ref<int> aRetVal)
-//    [
-//        int val := theDayOfWeek.
-//        
-//        aRetVal value := val.
-//    ]
-//
-//    readDayTo(ref<int> aRetVal)
-//    [
-//        int val := theDay.
-//        
-//        aRetVal value := val.
-//    ]
-//
-//    readHourTo(ref<int> aRetVal)
-//    [
-//        int val := theHour.
-//        
-//        aRetVal value := val.
-//    ]
-//
-//    readMinuteTo(ref<int> aRetVal)
-//    [
-//        int val := theMinute.
-//        
-//        aRetVal value := val.
-//    ]
-//
-//    readSecondTo(ref<int> aRetVal)
-//    [
-//        int val := theSecond.
-//        
-//        aRetVal value := val.
-//    ]
-//
-//    readMillisecondTo(ref<int> aRetVal)
-//    [
-//        int val := theMillisecond.
-//        
-//        aRetVal value := val.
-//    ]
-//
-//    writeYear(int aValue)
-//    [
-//        short n := aValue.
-//
-//        theYear := n.
-//    ]
-//
-//    writeMonth(int aValue)
-//    [ 
-//        short n := aValue.
-//            
-//        theMonth := n.
-//    ]
-//
-//    writeDay(int aValue)
-//    [ 
-//        short n := aValue.
-//            
-//        theDay := n.
-//    ]
-//
-//    writeHour(int aValue)
-//    [ 
-//        short n := aValue.
-//            
-//        theHour := n.
-//    ]
-//
-//    writeMinute(int aValue)
-//    [ 
-//        short n := aValue.
-//            
-//        theMinute := n.
-//    ]
-//
-//    writeSecond(int aValue)
-//    [ 
-//        short n := aValue.
-//            
-//        theSecond := n.
-//    ]
-//
-//    writeMillisecond(int aValue)
-//    [ 
-//        short n := aValue.
-//            
-//        theMillisecond := n.
-//    ]
-//
+
+    vprop int Year
+    {
+        read(ref int retVal)
+        {
+            int val := theYear;
+            
+            retVal := val
+        }
+    
+        write(int value)
+        {
+            short n := value;
+    
+            theYear := n
+        }
+    }
+
+    vprop int Month
+    {
+        read(ref int retVal)
+        {
+            int val := theMonth;
+            
+            retVal := val
+        }
+        
+        write(int value)
+        {
+            short n := value;
+                
+            theMonth := n
+        }
+    }
+
+    vprop int DayOfWeek
+    {
+        read(ref int retVal)
+        {
+            int val := theDayOfWeek;
+            
+            retVal := val
+        }
+    }
+
+    vprop int Day
+    {
+        read(ref int retVal)
+        {
+            int val := theDay;
+            
+            retVal := val
+        }
+    
+        write(int value)
+        {
+            short n := value;
+                
+            theDay := n
+        }
+    }
+
+    vprop int Hour
+    {
+        read(ref int retVal)
+        {
+            int val := theHour;
+            
+            retVal := val
+        }
+        write(int value)
+        { 
+            short n := value;
+                
+            theHour := n
+        }
+    }
+
+    vprop int Minute
+    {
+        read(ref int retVal)
+        {
+            int val := theMinute;
+            
+            retVal := val
+        }
+    
+        write(int value)
+        {
+            short n := value;
+                
+            theMinute := n
+        }
+    }
+
+    vprop int Second
+    {
+        read(ref int retVal)
+        {
+            int val := theSecond;
+            
+            retVal := val
+        }
+    
+        write(int value)
+        { 
+            short n := value;
+                
+            theSecond := n
+        }
+    }
+
+    vprop int Millisecond
+    {
+        read(ref int retVal)
+        {
+            int val := theMillisecond;
+            
+            retVal := val
+        }
+    
+        write(int value)
+        {
+            short n := value;
+                
+            theMillisecond := n
+        }
+    }
+
 //    read(ref<SystemTime> aRetVal)
 //    [
 //        T<SystemTime> value := 0l.        
@@ -239,13 +253,13 @@ public sealed struct TimeStruct
 
 public singleton systemTimeFactory
 {
-//    readUtcNow(ref<SystemTime> retVal)
-//    [
-//        T<SystemTime> aTime := 0l.        
-//        system'external'KERNEL32 GetSystemTimeAsFileTime(aTime).
-//        
-//        retVal value := aTime.
-//    ]
+    readUtcNow(ref SystemTime retVal)
+    {
+        SystemTime time := 0l;        
+        extern KERNEL32.GetSystemTimeAsFileTime(time);
+        
+        retVal := time
+    }
     
     readNow(ref SystemTime retVal)
     {

@@ -1,6 +1,6 @@
 import system'collections;
 import system'routines;
-//import system'calendar.
+import system'calendar;
 import system'text;
 //import system'dynamic.
 
@@ -426,11 +426,11 @@ public extension convertorOp
 //public convertor 
 //      = { generic : n = Wrap::(n, convertorOp)~received get. }.
 //
-//public extension<Date> dateFormatterOp 
-//{
-//    toShortTimeLiteral
-//        = T<TimeStruct>(self) toShortTime; literal.
-//}
+public extension dateFormatterOp : Date
+{
+    string toShortTimeString()
+        = cast TimeStruct(self).toShortTime();
+}
 
 // --- enumerableConvertor ---
 

@@ -1,27 +1,29 @@
-import system'calendar.
-import extensions.
+import system'calendar;
+import extensions;
 
 // --- Control ---
 
-public control =
+public singleton control
 {
-    prompt
-        = "Please select your option:" + forwards'newLine +
-          " 1 - current local date" + forwards'newLine +
-          " 2 - current UTC date" + forwards'newLine +
-          " 3 - current year" + forwards'newLine +
-          " 4 - current time" + forwards'newLine +
-          " 7 - exit" + forwards'newLine +
-          ">".
+    get string Prompt
+        = "Please select your option:
+ 1 - current local date
+ 2 - current UTC date
+ 3 - current year
+ 4 - current time
+ 7 - exit
+>";
     
-    proceed : aChoice
-    [
-        (aChoice toInt) =>
-            1 [ ^now literal. ];
-            2 [ ^utcNow literal ];
-            3 [ ^now year; literal ];
-            4 [ ^now toShortTimeLiteral ];
-            7 [ forwards'program stop. ^ emptyLiteral ];
-            ! [ ^"Invalid choice" ].
-    ]
-}.
+    proceed(s)
+    {
+        auto choice := s.toInt();
+        
+        choice =>
+            1 { ^now.toString() }
+            2 { ^utcNow.toString() }
+            3 { ^now.Year.toString() }
+            4 { ^now.toShortTimeString() }
+            7 { forward program.stop(); ^ emptyString }
+            : { ^"Invalid choice" }
+    }
+}

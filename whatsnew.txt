@@ -11,6 +11,7 @@
 [!] several critical bug fixes
 [!] the syntax deeply refactored and streamlined
 [*] #355 : Multimethods : nil
+[+] new operators : .\ and .?
 
 [LIB]
 [*] forms library (re)implemented

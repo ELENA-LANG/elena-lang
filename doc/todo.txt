@@ -13,6 +13,9 @@ In development:
                  * support - singleton Code : BaseCode;
                  * syntax : template should be the last token in expression and one before the last for declaration
                  * a ? b : c
+                 * it should be possible to call property accessor
+                 * => operator should work with expression as well - s.toInt() => ...
+                   toInt is ignored
 
 
                  * Thread.assign:(){} should be supported

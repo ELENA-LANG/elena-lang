@@ -187,18 +187,18 @@ public sealed struct Date : BaseNumber
 
     get constructor Now()
     {
-       SystemTime v;
-       systemTimeFactory.readNow(ref v); 
-        
-       //systemTimeFactory.readNow(ref theValue)
+       systemTimeFactory.readNow(ref SystemTime v); 
        theValue := v
     }
 
-//    constructor utcNow
-//    [
-//        systemTimeFactory readUtcNow(&theValue).
-//    ]
-//            
+    get constructor UtcNow()
+    {
+       //systemTimeFactory.readUtcNow(ref theValue);
+        
+       systemTimeFactory.readUtcNow(ref SystemTime v); 
+       theValue := v
+    }
+            
 //    constructor(SystemTime aValue)
 //    [
 //        theValue := aValue.
@@ -229,8 +229,9 @@ public sealed struct Date : BaseNumber
 //        <= new(aYear, aMonth, aDay, 0, 0, 0).
 //  
 //    cast T<SystemTime> = SystemTime new(theValue).
-//
-//    cast T<TimeStruct> = TimeStruct new(theValue).
+
+    TimeStruct cast()
+        = new TimeStruct(theValue);
 
     vprop SystemTime SystemTime
     {
@@ -278,62 +279,86 @@ public sealed struct Date : BaseNumber
 //        
 //        ^ Date new(theValue add(aValue)).
 //    ]
-//
-//    int year
-//    [
-//        T<TimeStruct> aSystemTime := theValue.
-//        
-//        ^ aSystemTime year.
-//    ]
-//    
-//    int month
-//    [
-//        T<TimeStruct> aSystemTime := theValue.
-//        
-//        ^ aSystemTime month.
-//    ]
-//
-//    int day
-//    [
-//        T<TimeStruct> aSystemTime := theValue.
-//        
-//        ^ aSystemTime day.
-//    ]
-//
-//    int dayOfWeek
-//    [
-//        T<TimeStruct> aSystemTime := theValue.
-//        
-//        ^ aSystemTime dayOfWeek.
-//    ]
-//
-//    int hour
-//    [
-//        T<TimeStruct> aSystemTime := theValue.
-//        
-//        ^ aSystemTime hour.
-//    ]
-//
-//    int minute
-//    [
-//        T<TimeStruct> aSystemTime := theValue.
-//        
-//        ^ aSystemTime minute.
-//    ]
-//
-//    int second
-//    [
-//        T<TimeStruct> aSystemTime := theValue.
-//        
-//        ^ aSystemTime second.
-//    ]
-//
-//    int millisecond
-//    [
-//        T<TimeStruct> aSystemTime := theValue.
-//        
-//        ^ aSystemTime millisecond.
-//    ]
+
+    vprop int Year
+    {
+        read(ref int retVal)
+        {
+            TimeStruct systemTime := theValue;
+            
+            retVal := systemTime.Year;
+        }
+    }
+
+    vprop int Month
+    {
+        read(ref int retVal)
+        {
+            TimeStruct systemTime := theValue;
+            
+            retVal := systemTime.Month;
+        }
+    }
+
+    vprop int Day
+    {
+        read(ref int retVal)
+        {
+            TimeStruct systemTime := theValue;
+            
+            retVal := systemTime.Day;
+        }
+    }
+
+    vprop int DayOfWeek
+    {
+        read(ref int retVal)
+        {
+            TimeStruct systemTime := theValue;
+            
+            retVal := systemTime.DayOfWeek;
+        }
+    }
+
+    vprop int Hour
+    {
+        read(ref int retVal)
+        {
+            TimeStruct systemTime := theValue;
+            
+            retVal := systemTime.Hour;
+        }
+    }
+
+    vprop int Minute
+    {
+        read(ref int retVal)
+        {
+            TimeStruct systemTime := theValue;
+            
+            retVal := systemTime.Minute;
+        }
+    }
+
+    vprop int Second
+    {
+        read(ref int retVal)
+        {
+            TimeStruct systemTime := theValue;
+            
+            retVal := systemTime.Second;
+        }
+    }
+
+    vprop int Millisecond
+    {
+        read(ref int retVal)
+        {
+            TimeStruct systemTime := theValue;
+            
+            retVal := systemTime.Millisecond;
+        }
+    }
 //
 //    addYears(int val)
 //    [
@@ -408,4 +433,4 @@ public sealed struct Date : BaseNumber
 
 public Date now = Date.Now;
 
-//public T<Date> utcNow = Date utcNow.
+public Date utcNow = Date.UtcNow;
