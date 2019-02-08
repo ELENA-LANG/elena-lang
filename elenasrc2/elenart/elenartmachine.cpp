@@ -26,7 +26,7 @@ void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
    _Entry entry;
    entry.address = programEntry;
 
-   (*entry.entry)();
+   __routineProvider.ExecuteInNewFrame(env, entry);
 
    // winding down system
    Exit(0);

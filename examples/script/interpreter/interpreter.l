@@ -247,7 +247,7 @@ public program1()
                           TapeExpression.MessageCall(
                              TapeExpression.MessageCall(
                                 TapeExpression.Variable("tape"),
-                                "getAt",
+                                "at",
                                 TapeExpression.Variable("ptr")
                              ),
                              "notequal",
@@ -259,7 +259,7 @@ public program1()
                                  "write",
                                  TapeExpression.MessageCall(
                                    TapeExpression.Variable("tape"),
-                                   "getAt",
+                                   "at",
                                    TapeExpression.Variable("ptr")
                                  )),
                               // tape[ptr] := console readChar
@@ -275,7 +275,7 @@ public program1()
     var bf_tape := Array.allocate(1024).populate:(n => $0);
     var o := (c.compiled())();
 
-    //o.eval(bf_tape)
+    o.eval(bf_tape)
 }    
 
 //public symbol program2 =

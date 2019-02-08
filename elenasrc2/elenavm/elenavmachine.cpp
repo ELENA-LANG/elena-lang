@@ -958,7 +958,8 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
    if (!standAlone) {
       retVal = __routineProvider.ExecuteInFrame(env, entry);
    }
-   else retVal = (*entry.entry)();
+   else retVal = __routineProvider.ExecuteInNewFrame(env, entry);
+   //else retVal = (*entry.entry)();
 
    if (retVal == 0)
       setStatus("Broken");
