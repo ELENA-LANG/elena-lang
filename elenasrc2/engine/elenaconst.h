@@ -512,6 +512,7 @@ namespace _ELENA_
    constexpr auto BOOL_FORWARD            = "$bool";
    constexpr auto TRUE_FORWARD            = "$true";
    constexpr auto FALSE_FORWARD           = "$false";
+   constexpr auto EXTENSION_FORWARD       = "$extension";
 
    constexpr auto PROGRAM_ENTRY           = "$program";                     // the program entry
    constexpr auto SYSTEM_ENTRY            = "$system_entry";                // the system entry

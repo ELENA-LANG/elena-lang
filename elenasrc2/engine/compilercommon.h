@@ -219,6 +219,7 @@ struct _ModuleScope
    ref_t             argArrayTemplateReference;
    ref_t             closureTemplateReference;
    ref_t             lazyExprReference;
+   ref_t             wrapReference;
 
    // cached messages
    ref_t             dispatch_message;
@@ -327,7 +328,7 @@ struct _ModuleScope
       closureTemplateReference = refTemplateReference = 0;
       lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;
-      argArrayTemplateReference = 0;
+      wrapReference = argArrayTemplateReference = 0;
 
       init_message = newobject_message = dispatch_message = 0;
       constructor_message = 0;

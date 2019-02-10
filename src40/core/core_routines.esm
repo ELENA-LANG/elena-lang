@@ -3083,6 +3083,30 @@ procedure __lazyexpression."#dispatch[1]"
 
 end
 
+procedure __extension."#dispatch[1]"
+
+  bcopya
+  aloadbi 0
+  asavesi 1
+  aloadbi 1
+  bsredirect
+
+  open    4
+  reserve 2
+  esavesi 3
+  bcopys  -3
+  pushb
+  pusha
+  acopyr class : system'Message
+  pushr class : system'MethodNotFoundException
+  asavesi 5
+  aloadsi 0
+  pushr const : %"new[2]"
+
+  throw
+
+end
+
 // ; win32 constants
 define WM_CREATE            1
 define WM_DESTROY           2

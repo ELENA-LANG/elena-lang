@@ -114,3 +114,22 @@ public sealed const struct MessageName
     /// Qualifies incoming messages and redirects to the target
     dispatch() => system'core_routines'__signature;
 }
+
+// --- Extension ---
+
+public mixin Extension
+{
+    object[] items;
+    
+    dispatch() => system'core_routines'__extension;
+}
+
+//// --- Wrap ---
+//
+//public mixin Wrap
+//{
+//    object[] items;
+//    
+//    dispatch() => system'core_routines'__wrap;
+//}
+//

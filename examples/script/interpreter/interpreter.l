@@ -1,158 +1,158 @@
-//import system'collections.
+import system'collections;
 import system'routines;
 ////import system'dynamic.
-//
-//import extensions.
+
+import extensions;
 //import extensions'scripting;
 //import extensions'dynamic;
 import extensions'dynamic'expressions;
 
-//class TapeAssembler
-//{    
-//    T<Stack>             theBrackets.
-//    List<TapeExpression> theTape.
-//    
-//    constructor new
-//    [
-//        theBrackets := Stack new.
-//        theTape := List<TapeExpression>().
-//        
-//        theTape append(TapeExpression Declaring("ptr")).
-//        theTape append(TapeExpression Assigning("ptr", TapeExpression Constant(0))).
-//    ]
-//    
-//    constructor new : assembly_program
-//        <= new;
-//    [
-//        assembly_program(self).
-//    ]    
-//    
-//    open
-//    [
-//        theBrackets push(theTape).
-//        theTape := List<TapeExpression>().
-//    ]
-//    
-//    close
-//    [
-//        var loop := TapeExpression Loop(
-//                          TapeExpression MessageCall(
-//                             TapeExpression MessageCall(
-//                                TapeExpression Variable("tape"),
-//                                "getAt",
-//                                TapeExpression Variable("ptr")
-//                             ),
-//                             "notequal",
-//                             TapeExpression Constant($0)),
-//                          TapeExpression Code(theTape value)).
-//                          
-//        theTape := theBrackets pop.
-//        theTape append(loop).                        
-//    ]
-//    
-//    input
-//    [
-//        theTape append(TapeExpression MessageCall(
-//                        TapeExpression Variable("tape"),
-//                        "setAt",
-//                        TapeExpression Variable("ptr"),
-//                        TapeExpression MessageCall(
-//                           TapeExpression Constant(console),
-//                           "readChar"
-//                        ))).
-//    ]
-//    
-//    output
-//    [
-//        theTape append(TapeExpression MessageCall(
-//                                 TapeExpression Constant(console), 
-//                                 "write",
-//                                 TapeExpression MessageCall(
-//                                   TapeExpression Variable("tape"),
-//                                   "getAt",
-//                                   TapeExpression Variable("ptr")
-//                                 ))).
-//    ]
-//    
-//    next
-//    [
-//        theTape append(TapeExpression Assigning(
-//            "ptr",
-//            TapeExpression MessageCall(
-//                TapeExpression Variable("ptr"),
-//                "add",
-//                TapeExpression Constant(1)))).
-//    ]
-//    
-//    previous
-//    [
-//        theTape append(TapeExpression Assigning(
-//            "ptr",
-//            TapeExpression MessageCall(
-//                TapeExpression Variable("ptr"),
-//                "subtract",
-//                TapeExpression Constant(1)))).
-//    ]
-//    
-//    increase
-//    [
-//        theTape append(TapeExpression MessageCall(
-//                                TapeExpression Variable("tape"),
-//                                "setAt",
-//                                TapeExpression Variable("ptr"), 
-//                                TapeExpression MessageCall(
-//                                    TapeExpression Constant(CharValue),
-//                                    "new",
-//                                    TapeExpression MessageCall(
-//                                        TapeExpression MessageCall(
-//                                            TapeExpression Constant(convertor),
-//                                            "toInt",
-//                                            TapeExpression MessageCall(
-//                                                TapeExpression Variable("tape"),
-//                                                "getAt",
-//                                                TapeExpression Variable("ptr"))
-//                                        ),
-//                                        "add",
-//                                        TapeExpression Constant(1))))).
-//    ]
-//    
-//    decrease
-//    [
-//        theTape append(TapeExpression MessageCall(
-//                                TapeExpression Variable("tape"),
-//                                "setAt",
-//                                TapeExpression Variable("ptr"), 
-//                                TapeExpression MessageCall(
-//                                    TapeExpression Constant(CharValue),
-//                                    "new",
-//                                    TapeExpression MessageCall(
-//                                        TapeExpression MessageCall(
-//                                            TapeExpression Constant(convertor),
-//                                            "toInt",
-//                                            TapeExpression MessageCall(
-//                                                TapeExpression Variable("tape"),
-//                                                "getAt",
-//                                                TapeExpression Variable("ptr"))
-//                                        ),
-//                                        "subtract",
-//                                        TapeExpression Constant(1))))).
-//
-//    ]
-//    
-//    get
-//    [
-//        var program := TapeExpression Singleton(
-//                TapeExpression Method(
-//                   "eval",
-//                   TapeExpression Code(theTape value),
-//                   TapeExpression Parameter("tape"))).
-//                   
-//        var o := (program compiled)().
-//                   
-//        ^(:tape) [ o eval(tape) ]
-//    ]
-//}
-//
+class TapeAssembler
+{    
+    Stack                theBrackets;
+    List<TapeExpression> theTape;
+    
+    constructor()
+    {
+        theBrackets := new Stack();
+        theTape := new List<TapeExpression>();
+        
+        theTape.append(TapeExpression.Declaring("ptr"));
+        theTape.append(TapeExpression.Assigning("ptr", TapeExpression.Constant(0)));
+    }
+    
+    constructor new(assembly_program)
+        <= ()
+    {
+        assembly_program(self)
+    }    
+    
+    open()
+    {
+        theBrackets.push(theTape);
+        theTape := new List<TapeExpression>();
+    }
+    
+    close()
+    {
+        var loop := TapeExpression.Loop(
+                          TapeExpression.MessageCall(
+                             TapeExpression.MessageCall(
+                                TapeExpression.Variable("tape"),
+                                "at",
+                                TapeExpression.Variable("ptr")
+                             ),
+                             "notequal",
+                             TapeExpression.Constant($0)),
+                          TapeExpression.Code(theTape.Value)).
+                          
+        theTape := theBrackets.pop();
+        theTape.append(loop)                 
+    }
+    
+    input()
+    {
+        theTape.append(TapeExpression.MessageCall(
+                        TapeExpression.Variable("tape"),
+                        "setAt",
+                        TapeExpression.Variable("ptr"),
+                        TapeExpression.MessageCall(
+                           TapeExpression.Constant(console),
+                           "readChar"
+                        )))
+    }
+    
+    output()
+    {
+        theTape.append(TapeExpression.MessageCall(
+                                 TapeExpression.Constant(console), 
+                                 "write",
+                                 TapeExpression.MessageCall(
+                                   TapeExpression.Variable("tape"),
+                                   "at",
+                                   TapeExpression.Variable("ptr")
+                                 )))
+    }
+    
+    next()
+    {
+        theTape.append(TapeExpression.Assigning(
+            "ptr",
+            TapeExpression.MessageCall(
+                TapeExpression.Variable("ptr"),
+                "add",
+                TapeExpression.Constant(1))))
+    }
+    
+    previous()
+    {
+        theTape.append(TapeExpression.Assigning(
+            "ptr",
+            TapeExpression.MessageCall(
+                TapeExpression.Variable("ptr"),
+                "subtract",
+                TapeExpression.Constant(1))))
+    }
+    
+    increase()
+    {
+        theTape.append(TapeExpression.MessageCall(
+                                TapeExpression.Variable("tape"),
+                                "setAt",
+                                TapeExpression.Variable("ptr"), 
+                                TapeExpression.MessageCall(
+                                    TapeExpression.Constant(CharValue),
+                                    "new",
+                                    TapeExpression.MessageCall(
+                                        TapeExpression.MessageCall(
+                                            TapeExpression.Constant(convertor),
+                                            "toInt",
+                                            TapeExpression.MessageCall(
+                                                TapeExpression.Variable("tape"),
+                                                "at",
+                                                TapeExpression.Variable("ptr"))
+                                        ),
+                                        "add",
+                                        TapeExpression.Constant(1)))))
+    }
+    
+    decrease()
+    {
+        theTape.append(TapeExpression.MessageCall(
+                                TapeExpression.Variable("tape"),
+                                "setAt",
+                                TapeExpression.Variable("ptr"), 
+                                TapeExpression.MessageCall(
+                                    TapeExpression.Constant(CharValue),
+                                    "new",
+                                    TapeExpression.MessageCall(
+                                        TapeExpression.MessageCall(
+                                            TapeExpression.Constant(convertor),
+                                            "toInt",
+                                            TapeExpression.MessageCall(
+                                                TapeExpression.Variable("tape"),
+                                                "at",
+                                                TapeExpression.Variable("ptr"))
+                                        ),
+                                        "subtract",
+                                        TapeExpression Constant(1)))))
+
+    }
+    
+    get()
+    {
+        var program := TapeExpression.Singleton(
+                TapeExpression.Method(
+                   "eval",
+                   TapeExpression.Code(theTape.Value),
+                   TapeExpression.Parameter("tape")));
+                   
+        var o := (program.compiled())();
+                   
+        ^(tape){ o eval(tape) }
+    }
+}
+
 //class TapeCGenerator
 //{    
 //    object theOutput.
@@ -278,16 +278,16 @@ public program1()
     o.eval(bf_tape)
 }    
 
-//public symbol program2 =
-//[
-//    var bfProgram := TapeAssembler new;
-//        input; open; output; input; close; get.
-//                    
-//    var bfTape := Array new:1024; populate(:n)<int>($0).
-//    
-//    bfProgram(bfTape).
-//].
-//
+public program2()
+{
+    var bfProgram := new TapeAssembler()
+        .input().open().output().input().close().get();
+                    
+    var bf_tape := Array.allocate(1024).populate:(n => $0);
+    
+    bfProgram(bfTape)
+}
+
 //public symbol program3bis =
 //[
 //    var bfAssemblyProgram := ScriptEngine 

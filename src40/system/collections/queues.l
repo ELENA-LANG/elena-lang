@@ -1,73 +1,86 @@
-//// --- Stack ---
-//
-//public sealed class Stack :: Enumerable
-//{
-//    T<ArrayList> theList.
-//    ref<int>     theTop.
-//    
-//    constructor new
-//    [
-//        theList := ArrayList new.
-//        theTop := 0.
-//    ]
-//    
-//    int internal top_pointer = theTop.
-//    
-//    cast T<ArrayList> = theList.
-//    
-//    T<Enumerator> enumerator = StackEnumerator new(self).
-//    
-//    int rvprop length :: readLengthTo.
-//    
-//    readLengthTo(ref<int> aLength)
-//    [
-//        theTop readValueTo(aLength).
-//    ]
-//    
-//    bool isEmpty
-//        = 0 == theTop.
-//    
-//    bool isNotEmpty
-//        = 0 != theTop.
-//    
-//    push : anObject
-//    [
-//        int aCapacity := theList length.
-//        
-//        if (theTop < aCapacity)
-//            [ theList setAt(T<int>(theTop), anObject) ];
-//            [ theList append:anObject ].
-//            
-//        theTop append(1)
-//    ]
-//    
-//    peek
-//    [
-//        if (0 == theTop)
-//            [ InvalidOperationException new:"Stack is empty"; raise ].
-//            
-//        ^ theList getAt(T<int>(theTop) - 1)
-//    ]        
-//    
-//    pop
-//    [
-//        if (0 == theTop)
-//            [ InvalidOperationException new:"Stack is empty"; raise ].
-//            
-//        theTop reduce(1).
-//        
-//        var item := theList getAt(T<int>(theTop)).
-//        theList setAt(T<int>(theTop), nil).
-//        
-//        ^ item
-//    ]
-//    
-//    clear
-//    [
-//        theList clear.
-//        theTop value := 0.
-//    ]
-//}
+// --- Stack ---
+
+public sealed class Stack : Enumerable
+{
+    ArrayList theList;
+    ref<int>  theTop;
+    
+    constructor()
+    {
+        theList := new ArrayList();
+        theTop := 0
+    }
+    
+    internal int TopPointer = theTop;
+    
+    ArrayList cast() = theList;
+    
+    Enumerator enumerator() = new StackEnumerator(self);
+    
+    vprop int Length
+    {
+        readTo(ref int retVal)
+        {
+            theTop.readValueTo(ref retVal)
+        }
+    }        
+    
+    bool isEmpty()
+        = 0 == theTop;
+    
+    bool isNotEmpty()
+        = 0 != theTop;
+    
+    push(object)
+    {
+        int capacity := theList.Length;
+        int top := theTop.Value;
+        
+        if (top < capacity)
+        {
+            theList.setAt(top, object)
+        }
+        else
+        {
+            theList.append(object)
+        };
+            
+        theTop.append(1)
+    }
+    
+    peek()
+    {
+        int top := theTop.Value;
+        
+        if (0 == top)
+            { InvalidOperationException.raise() };
+            
+        ^ theList[top - 1]
+    }        
+    
+    pop()
+    {
+        int top := theTop.Value;
+        
+        if (0 == top)
+            { InvalidOperationException.new("Stack is empty").raise() };
+            
+        theTop.reduce(1);
+        
+        top -= 1;
+        
+        var item := theList[top];
+        theList[top] := nil;
+        
+        ^ item
+    }
+    
+    clear()
+    {
+        theList.clear();
+        theTop.Value := 0
+    }
+}
 
 // --- Stack Template ---
 
@@ -351,47 +364,48 @@ public sealed Stack<T> : Enumerable<T>
 //        theTale value:=0
 //    ]    
 //}
-//
-//// --- StackEnumerator ---
-//
-//public class StackEnumerator :: Enumerator
-//{
-//    T<Stack>     theStack.
-//    T<ArrayList> theList.
-//    int          theIndex. 
-//    
-//    constructor new(Stack aStack)
-//    [
-//        theStack := aStack.
-//        theList := aStack .
-//        theIndex := aStack top_pointer.
-//    ]
-//    
-//    bool next 
-//    [
-//        if (theIndex > 0)
-//        [
-//            theIndex -= 1.
-//            
-//            ^ true
-//        ];
-//        [
-//            ^ false
-//        ]
-//    ]
-//        
-//    get
-//        = theList[theIndex].
-//        
-//    reset
-//    [
-//        theList := theStack.
-//        theIndex := theStack top_pointer.
-//    ]   
-//    
-//    enumerable = theStack.     
-//}
-//
+
+// --- StackEnumerator ---
+
+public class StackEnumerator : Enumerator
+{
+    Stack     theStack;
+    ArrayList theList;
+    int       theIndex; 
+    
+    constructor(Stack stack)
+    {
+        theStack := stack;
+        theList := stack;
+        theIndex := stack.TopPointer;
+    }
+    
+    bool next()
+    {
+        if (theIndex > 0)
+        {
+            theIndex -= 1;
+            
+            ^ true
+        }
+        else
+        {
+            ^ false
+        }
+    }
+        
+    get()
+        = theList[theIndex];
+        
+    reset()
+    {
+        theList := theStack;
+        theIndex := theStack.TopPointer
+    }   
+    
+    enumerable() = theStack;
+}
+
 //// --- QueueEnumerator ---
 //
 //class QueueEnumerator :: Enumerator

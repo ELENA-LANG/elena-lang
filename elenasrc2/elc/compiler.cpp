@@ -48,7 +48,7 @@ constexpr auto HINT_VIRTUALEXPR     = 0x00004000;
 constexpr auto HINT_INTERNALOP      = 0x00002000;
 constexpr auto HINT_SUBJECTREF      = 0x00001000;
 constexpr auto HINT_MEMBER          = 0x00000800;
-////#define HINT_RESENDEXPR       0x00000400
+constexpr auto HINT_CALL_MODE       = 0x00000400;
 constexpr auto HINT_LAZY_EXPR       = 0x00000200;
 constexpr auto HINT_DYNAMIC_OBJECT  = 0x00000100;  // indicates that the structure MUST be boxed
 constexpr auto HINT_UNBOXINGEXPECTED= 0x00000080;
@@ -2418,8 +2418,11 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //
 //      writer.removeBookmark();
 //   }            
-   /*else */if (!test(mode, HINT_VIRTUALEXPR))
+   /*else */if (!test(mode, HINT_VIRTUALEXPR)) {
       writeTerminal(writer, terminal, scope, object, mode);
+   }
+   else if (object.kind == okUnknown)
+      scope.raiseError(errUnknownObject, terminal);      
 
    return object;
 }
@@ -3660,7 +3663,7 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
    return retVal;
 }
 
-ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role)
+ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, bool callMode)
 {
    ref_t expectedClassRef = 0;
    ref_t classRef = resolveObjectReference(scope, role);
@@ -3693,10 +3696,27 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
    }
    else scope.raiseError(errNotApplicable, node.parentNode());
 
-   // if it is a generic role
-   if (role.kind != okConstantRole && role.kind != okSubject) {
-      writer.newNode(lxOverridden);
+   if (callMode) {
+      // if it is a generic role
+      if (role.kind != okConstantRole && role.kind != okSubject) {
+         writer.newNode(lxOverridden);
+         writeTerminal(writer, node, scope, role, 0);
+         writer.closeNode();
+      }
+   }
+   else {
+      writer.insert(lxMember);
+      writer.closeNode();
+
+      writer.newNode(lxMember);
       writeTerminal(writer, node, scope, role, 0);
+      writer.closeNode();
+
+      role = ObjectInfo(okObject);
+      role.reference = scope.moduleScope->wrapReference;
+
+      writer.appendNode(lxTarget, role.reference);
+      writer.insert(lxNested, 2);
       writer.closeNode();
    }
 
@@ -4370,7 +4390,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
          objectInfo = compileOperator(writer, current, scope, objectInfo, mode);
          break;
       case lxWrapping:
-         objectInfo = compileWrapping(writer, current, scope, objectInfo);
+         objectInfo = compileWrapping(writer, current, scope, objectInfo, test(mode, HINT_CALL_MODE));
          break;
    }
 
@@ -4658,6 +4678,11 @@ inline bool isAssigmentOp(SNode node)
    return node == lxAssign || (node == lxOperator && node.argument == -1);
 }
 
+inline bool isCallingOp(SNode node)
+{
+   return node == lxMessage;
+}
+
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, int mode)
 {
    ObjectInfo objectInfo;
@@ -4669,7 +4694,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
    mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
 
-   int targetMode = mode & ~(HINT_PROP_MODE | HINT_LOOP);
+   int targetMode = mode & ~(HINT_PROP_MODE | HINT_LOOP | HINT_CALL_MODE);
 
    SNode current = node.firstChild();
    // COMPILER MAGIC : compile the expression attributes
@@ -4690,6 +4715,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          targetMode |= (HINT_NOBOXING/* | HINT_ASSIGNTARGET*/);
 
       mode |= HINT_NOUNBOXING;
+   }
+   else if (isCallingOp(operationNode)) {
+      targetMode |= HINT_CALL_MODE;
    }
    else if (operationNode == lxNone) {
       targetMode |= mode;
@@ -8485,6 +8513,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
    scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
+   scope.wrapReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXTENSION_FORWARD));
 
    scope.branchingInfo.reference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
    scope.branchingInfo.trueRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(TRUE_FORWARD));

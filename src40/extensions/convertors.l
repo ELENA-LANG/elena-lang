@@ -424,8 +424,8 @@ public extension convertorOp
 }
 
 //public convertor 
-//      = { generic : n = Wrap::(n, convertorOp)~received get. }.
-//
+//      = new : { generic : n = Wrap::(n, convertorOp)~received get. }.
+
 public extension dateFormatterOp : Date
 {
     string toShortTimeString()

@@ -46,7 +46,7 @@ In this case several libraries will be generated - mytest.nl and mytest\sub1.nl
 A project file contains the project settings, source files, forwards and so on. The project may be based on a project template. 
 In this case it inherits all the parent settings except the overloaded ones. The template may be based on another one and so on.
 
-## Project Settings
+### Project Settings
 
  XPath | Descriptions
 ------ | ------------
@@ -57,7 +57,7 @@ configuration/project/namespace | a project root namespace
 configuration/project/output |  a path to the output directory
 configuration/project/template | a project base template
 
-## Linker Settings
+### Linker Settings
 
  XPath | Descriptions
 ------ | ------------
@@ -69,7 +69,7 @@ configuration/linker/stackcommit | specifies the total stack allocation size in 
 configuration/linker/stackresrv | specifies the total stack allocation size in virtual memory, the default value is 1048576
 configuration/linker/ygsize | specifies the size of GC generation 0 in hexadecimals
 
-## System Settings
+### System Settings
 
  XPath | Descriptions
 ------ | ------------
@@ -88,13 +88,13 @@ configuration/system/platform | specifies the target platform
 257 | Win32 CUI (console user interface) vm-client STA
 65537 | Win32 CUI (console user interface) stand-alone MTA
 
-## Compiler Settings
+### Compiler Settings
 
  XPath | Descriptions
 ------ | ------------
 configuration/compiler/l0 | -1 / 0 - turn on/off the byte-code level optimization
 
-## Manifest Info
+### Manifest Info
 
 This section provides the module manifest info
 
@@ -104,7 +104,7 @@ configuration/manifest/name | specifies the module name
 configuration/manifest/version | specifies the module version
 configuration/manifest/author | specifies the module author
 
-## Files
+### Files
 
 This section contains the list of source and the target libraries. It may specifies the parsing target for the script files.
 
@@ -177,7 +177,7 @@ here several libraries will be produced - mytest.nl and mytest\sub1.nl in mytest
 **configuration\files\module** may have **target** attribute which will be used to compile user-defined grammar source
 files. Appropriate targets should be declared in the **configuration\targets** section.
 
-## Forwards
+### Forwards
 
 **configuration\forwards** section contains the list of weak references which are resolved in a link time.
  
@@ -191,17 +191,19 @@ The system forwards start with a dollar sign ($), the program ones are normal id
 
 Forwards are used for example to resolve the program entry.
 
-## Primitives
+### Primitives
 
-## Templates
+**configuration\primitives** section contains the list of binary files used by the linker
 
-## Winapi
+### References
 
-## Externals
+**configuration\references** section contains the list of paths to the external libraries (the ones which are not located in
+the folder specified in **configuration/project/libpath**)
 
-## References
+### Targets
 
-## Targets
+**configuration\targets** section contains the list of script engine setting to parse the specified files with an external
+grammar.
 
 ## Project Base Templates
 
