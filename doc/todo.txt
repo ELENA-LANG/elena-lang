@@ -3,9 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * support explicit mixin creation - mixin Invoker(x) - should be boxed into the Wrap class;
                  * mixin :: {  }
-
+                 * new::{} ??
+                 * create a nested class / collection - syntax review
 
                  * invoke property - get / set
                  * implement textdb sample

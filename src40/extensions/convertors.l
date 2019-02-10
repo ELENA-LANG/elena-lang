@@ -423,8 +423,8 @@ public extension convertorOp
         = new Variant(self).saveTo(target);
 }
 
-//public convertor 
-//      = new : { generic : n = Wrap::(n, convertorOp)~received get. }.
+public convertor 
+    = new : { generic(n) = mixin __received(mixin convertorOp(n)).eval(); };
 
 public extension dateFormatterOp : Date
 {

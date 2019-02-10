@@ -3708,7 +3708,7 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
       writer.insert(lxMember);
       writer.closeNode();
 
-      writer.newNode(lxMember);
+      writer.newNode(lxMember, 1);
       writeTerminal(writer, node, scope, role, 0);
       writer.closeNode();
 
@@ -5191,6 +5191,10 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
 
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode)
 {
+   if (withoutWeakMessages && test(scope.hints, tpGeneric))
+      // HOTFIX : nested generic message should not have a multimethod
+      withoutWeakMessages = false;
+
    IdentifierString actionStr;
    ref_t actionRef = 0;
 
@@ -5203,8 +5207,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
    SNode nameNode = node.findChild(lxNameAttr);
    SNode identNode = nameNode.firstChild(lxTerminalMask);
-//   if (action == lxNone)
-//      action = node.findChild(lxMessage);
 
    SNode current = /*action == lxNone ? */node.findChild(lxMethodParameter)/* : action.nextNode()*/;
 
@@ -5306,7 +5308,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       }
       else if (test(scope.hints, tpSealed | tpGeneric)/* && paramCount < OPEN_ARG_COUNT*/) {
          if (signatureLen > 0 || !unnamedMessage)
-            scope.raiseError(errInvalidHint, nameNode);
+            scope.raiseError(errInvalidHint, node);
 
          actionStr.copy(GENERIC_PREFIX);
          unnamedMessage = false;
@@ -5341,28 +5343,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          else scope.raiseError(errIllegalMethod, node);
       }
 
-//      //if (test(scope.hints, tpSealed | tpConversion)) {
-//      else if (test(scope.hints, tpSealed | tpConversion)) {
-//         SNode typeNode = node.findChild(lxClassRefAttr);
-//         if (typeNode != lxNone) {
-//            if (signatureLen == 0) {
-//               signature[0] = scope.moduleScope->mapFullReference(typeNode.identifier(), true);
-//               signatureLen++;
-//               actionStr.copy(CAST_MESSAGE);
-//            }
-//            else scope.raiseError(errIllegalMethod, node);
-//         }
-//         else if (signatureLen == 1 && signature[0] == scope.moduleScope->literalReference) {
-//            flags |= SPECIAL_MESSAGE;
-//            constantConversion = true;
-//         }
-//         else scope.raiseError(errIllegalMethod, node);
-//      }
-      /*else */if (test(scope.hints, tpPrivate)) {
+      if (test(scope.hints, tpPrivate)) {
          flags |= STATIC_MESSAGE;
       }
-//      else if (unnamedMessage && emptystr(actionStr))
-//         actionStr.append(EVAL_MESSAGE);
 
       if (actionRef != 0) {
          // HOTFIX : if the action was already resolved - do nothing
@@ -5393,17 +5376,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       scope.message = overwriteParamCount(scope.message, 1);
    }
 }
-
-//bool Compiler :: verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount)
-//{
-//   for (auto it = scope.info.methods.start(); !it.Eof(); it++) {
-//      if (isOpenArg(it.key()) && _logic->isMethodGeneric(scope.info, it.key()) && getAbsoluteParamCount(it.key()) == expectedParamCount) {
-//         return true;
-//      }
-//   }
-//
-//   return false;
-//}
 
 void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
 {
