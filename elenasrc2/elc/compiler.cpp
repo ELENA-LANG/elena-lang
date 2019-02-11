@@ -4297,6 +4297,11 @@ ObjectInfo Compiler :: compileVariadicUnboxing(SyntaxWriter& writer, SNode node,
 		writer.insert(lxArgUnboxing);
 		writer.closeNode();
 	}
+   else if (_logic->isArray(*scope.moduleScope, operandRef)) {
+      objectInfo.reference = V_UNBOXEDARGS;
+      writer.insert(lxArgUnboxing, -1);
+      writer.closeNode();
+   }
 	else scope.raiseError(errNotApplicable, node);
 
 	writer.removeBookmark();
@@ -7456,12 +7461,12 @@ ref_t Compiler :: analizeInternalCall(SNode node, NamespaceScope& scope)
    return V_INT32;
 }
 
-//ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, int)
-//{
-//   analizeExpressionTree(node, scope, HINT_NOBOXING);
-//
-//   return 0;
-//}
+ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, int)
+{
+   analizeExpressionTree(node, scope, HINT_NOBOXING);
+
+   return 0;
+}
 
 int Compiler :: allocateStructure(SNode node, int& size)
 {
@@ -7968,8 +7973,8 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
          return analizeBoxing(current, scope, mode);
       case lxArgBoxing:
          return analizeArgBoxing(current, scope, mode);
-      //case lxArgUnboxing:
-      //   return analizeArgUnboxing(current, scope, /*warningScope, */mode);
+      case lxArgUnboxing:
+         return analizeArgUnboxing(current, scope, /*warningScope, */mode);
       case lxAssigning:
          return analizeAssigning(current, scope, mode);
       case lxSymbolReference:

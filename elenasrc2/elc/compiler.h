@@ -1005,12 +1005,12 @@ private:
    ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeBoxing(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, int mode);
-//   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
+   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeSubExpression(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
-   ref_t analizeInternalCall(SyntaxTree::Node node, NamespaceScope& scope);
-   ref_t analizeExtCall(SyntaxTree::Node node, NamespaceScope& scope);
+   ref_t analizeInternalCall(SNode node, NamespaceScope& scope);
+   ref_t analizeExtCall(SNode node, NamespaceScope& scope);
    ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
    void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
    void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);

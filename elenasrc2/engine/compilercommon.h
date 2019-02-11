@@ -473,6 +473,7 @@ public:
 
    virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
    virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared) = 0;
+   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;
 
    virtual bool isWrapper(ClassInfo& info) = 0;
    virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element) = 0;

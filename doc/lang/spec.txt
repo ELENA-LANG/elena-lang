@@ -223,7 +223,37 @@ _where :_
 
 ## Program entry point
 
+The program entry is defined by the project forward references. The system entry is defined in **$system_entry**, the program
+one - in $program. The system entry is used to initialize the program environment (e.g. initialize a system environment record,
+allocate a program heap and so on). The system entry in its turn invoke the program entry point. In most cases the program entry
+invokes the program main symbol (for the CUI) or the program main window (for GUI).
+
+The program main symbol / window should be declared in the project root namespace. For console application the symbol name should
+be - **program**, for graphical application - **MainWindow**
+
 2. Grammar
+
+ELENA uses LL(1) grammar. It is an analytical grammar, meaning that the role of the terminal token is defined by its position in
+the statement. As a result the grammar lacks the keywords ( instead user-defined attributes are used ) and there are no reserved 
+words. For example, it is possible to write the following code:
+
+    class class;
+    
+    singleton Tester
+    {
+        do(var class class)
+        {        
+        }
+    }
+    
+    public program()
+    {
+        var class class := new class();
+            
+        Tester.do(class);
+    }
+                                                          
+where **class** is used as an attribute to declare a new class, as a identifier type and as an identifier.
 
 3. Attributes
 

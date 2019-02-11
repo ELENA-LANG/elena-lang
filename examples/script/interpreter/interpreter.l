@@ -3,7 +3,7 @@ import system'routines;
 ////import system'dynamic.
 
 import extensions;
-//import extensions'scripting;
+import extensions'scripting;
 //import extensions'dynamic;
 import extensions'dynamic'expressions;
 
@@ -21,7 +21,7 @@ class TapeAssembler
         theTape.append(TapeExpression.Assigning("ptr", TapeExpression.Constant(0)));
     }
     
-    constructor new(assembly_program)
+    constructor load(assembly_program)
         <= ()
     {
         assembly_program(self)
@@ -44,7 +44,7 @@ class TapeAssembler
                              ),
                              "notequal",
                              TapeExpression.Constant($0)),
-                          TapeExpression.Code(theTape.Value)).
+                          TapeExpression.Code(theTape.Value));
                           
         theTape := theBrackets.pop();
         theTape.append(loop)                 
@@ -102,7 +102,7 @@ class TapeAssembler
                                 TapeExpression.Variable("ptr"), 
                                 TapeExpression.MessageCall(
                                     TapeExpression.Constant(CharValue),
-                                    "new",
+                                    "load",
                                     TapeExpression.MessageCall(
                                         TapeExpression.MessageCall(
                                             TapeExpression.Constant(convertor),
@@ -124,7 +124,7 @@ class TapeAssembler
                                 TapeExpression.Variable("ptr"), 
                                 TapeExpression.MessageCall(
                                     TapeExpression.Constant(CharValue),
-                                    "new",
+                                    "load",
                                     TapeExpression.MessageCall(
                                         TapeExpression.MessageCall(
                                             TapeExpression.Constant(convertor),
@@ -135,7 +135,7 @@ class TapeAssembler
                                                 TapeExpression.Variable("ptr"))
                                         ),
                                         "subtract",
-                                        TapeExpression Constant(1)))))
+                                        TapeExpression.Constant(1)))))
 
     }
     
@@ -149,7 +149,7 @@ class TapeAssembler
                    
         var o := (program.compiled())();
                    
-        ^(tape){ o eval(tape) }
+        ^(tape){ o.eval(tape) }
     }
 }
 
@@ -283,42 +283,40 @@ public program2()
     var bfProgram := new TapeAssembler()
         .input().open().output().input().close().get();
                     
-    var bf_tape := Array.allocate(1024).populate:(n => $0);
+    var bfTape := Array.allocate(1024).populate:(n => $0);
     
     bfProgram(bfTape)
 }
 
-//public symbol program3bis =
-//[
-//    var bfAssemblyProgram := ScriptEngine 
-//        new;
-//        loadPath:"asmrules.es";
-//        eval (">,[.,]").
-//
-//    var bfProgram := TapeAssembler new(bfAssemblyProgram); get.
-//
-//    var bfTape := Array new:1024; populate(:n)<int>($0).
-//
-//    bfProgram(bfTape).
-//].
-//
-//public symbol program3 =
-//[
-//    if (forwards'program'arguments length == 1)
-//        [ console write:"Please provide the path to the file to interpret". AbortException new; raise. ].
-//
-//    var bfAssemblyProgram := ScriptEngine 
-//        new;
-//        loadPath:"asmrules.es";
-//        evalPath(forwards'program'arguments[1]).
-//
-//    var bfProgram := TapeAssembler new(bfAssemblyProgram); get.
-//
-//    var bfTape := Array new:1024; populate(:n)<int>($0).
-//
-//    bfProgram(bfTape).
-//].
-//
+public program3bis()
+{
+    var bfAssemblyProgram := new ScriptEngine() 
+        .loadPath("asmrules.es")
+        .eval(">,[.,]");
+
+    var bfProgram := TapeAssembler.load(bfAssemblyProgram).get();
+
+    var bfTape := Array.allocate(1024).populate:(n => $0);
+
+    bfProgram(bfTape)
+}
+
+public program3()
+{
+    if (program_arguments.Length == 1)
+        { console.write:"Please provide the path to the file to interpret"; AbortException.raise() };
+
+    var bfAssemblyProgram := new ScriptEngine() 
+        .loadPath("asmrules.es")
+        .evalPath(program_arguments[1]);
+
+    var bfProgram := TapeAssembler.load(bfAssemblyProgram).get();
+
+    var bfTape := Array.allocate(1024).populate:(n => $0);
+
+    bfProgram(bfTape)
+}
+
 //public symbol program4 =
 //[
 //    if (forwards'program'arguments length == 1)

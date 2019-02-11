@@ -980,29 +980,29 @@ void ByteCodeWriter :: boxArgList(CommandTape& tape, ref_t vmtReference)
    tape.write(bcPopA);
 }
 
-void ByteCodeWriter :: unboxArgList(CommandTape& tape/*, bool arrayMode*/)
+void ByteCodeWriter :: unboxArgList(CommandTape& tape, bool arrayMode)
 {
-//   if (arrayMode) {
-//      // pushn 0
-//      // bcopya
-//      // len
-//      // labNext:
-//      // dec
-//      // get
-//      // pusha
-//      // elsen labNext
-//      tape.write(bcPushN, 0);
-//      tape.write(bcBCopyA);
-//      tape.write(bcLen);
-//      tape.newLabel();
-//      tape.setLabel(true);
-//      tape.write(bcDec);
-//      tape.write(bcGet);
-//      tape.write(bcPushA);
-//      tape.write(bcElseN, baCurrentLabel, 0);
-//      tape.releaseLabel();
-//   }
-//   else {
+   if (arrayMode) {
+      // pushn 0
+      // bcopya
+      // len
+      // labNext:
+      // dec
+      // get
+      // pusha
+      // elsen labNext
+      tape.write(bcPushN, 0);
+      tape.write(bcBCopyA);
+      tape.write(bcLen);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcDec);
+      tape.write(bcGet);
+      tape.write(bcPushA);
+      tape.write(bcElseN, baCurrentLabel, 0);
+      tape.releaseLabel();
+   }
+   else {
       // bcopya
       // dcopy 0
       // labSearch:
@@ -1038,7 +1038,7 @@ void ByteCodeWriter :: unboxArgList(CommandTape& tape/*, bool arrayMode*/)
       tape.write(bcPushA);
       tape.write(bcElseN, baCurrentLabel, 0);
       tape.releaseLabel();
-//   }
+   }
 }
 
 void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
@@ -4590,7 +4590,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
       if (current == lxArgUnboxing) {
          argUnboxMode = true;
          generateExpression(tape, current, ACC_REQUIRED);
-         unboxArgList(tape/*, current.argument != 0*/);
+         unboxArgList(tape, current.argument != 0);
       }
       else if (test(member.type, lxObjectMask)) {
          if (member == lxResult && !accTarget) {

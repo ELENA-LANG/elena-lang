@@ -571,6 +571,20 @@ bool CompilerLogic :: isVariable(ClassInfo& info)
    return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
 }
 
+bool CompilerLogic :: isArray(_ModuleScope& scope, ref_t classReference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference))
+      return false;
+
+   return isArray(info);
+}
+
+bool CompilerLogic :: isArray (ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole);
+}
+
 bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, bool ignoreUndeclared)
 {
    ClassInfo info;

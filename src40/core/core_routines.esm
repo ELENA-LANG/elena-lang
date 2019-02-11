@@ -1131,6 +1131,29 @@ labErr:
 
 end
 
+procedure __charconvertor."convert$system@IntNumber$@system@ref#1&system@CharValue[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+  
+  lessn labErr 0
+  lessn labCopy 110000h
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+labCopy:
+
+  nsave
+  acopyb
+  quitn 3
+
+end
+
 procedure __args."read:Length$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1

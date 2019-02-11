@@ -27,6 +27,9 @@ public interface TapeExpression
     constructor Code(params TapeExpression[] statements)
         = TapeCode.new(params statements);
         
+    constructor Code(TapeExpression[] statements)
+        = TapeCode.new(statements);
+        
     constructor Parameter(string name)
         = new TapeParameterExpression(name);
         

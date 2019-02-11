@@ -3,8 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * mixin :: {  }
-                 * new::{} ??
+                 * review new {a,b,c} - syntax, it is inconsisten with root expression
+                 * mixin :: { collection }, new::{ collection } - get rid of - new {}
                  * create a nested class / collection - syntax review
 
                  * invoke property - get / set
@@ -13,7 +13,6 @@ In development:
                  * a ? b : c, modify anonym recursion sample
 
                  * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
-                 * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * property attribute - can be only the top most token
                  * embeddable property call
                  * implement length property optimization -> replace direct operation with byref one

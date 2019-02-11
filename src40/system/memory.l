@@ -2298,11 +2298,11 @@ public singleton charConvertor
 //    /// Converts a short integer into a character and saves the result into an output parameter
 //    convert(short aValue, ref<char> aRetVal)
 //        => system'core_routines'__charconvertor.
-//
-//    /// Converts an integer into a character and saves the result into an output parameter
-//    convert(int aValue, ref<char> aRetVal)
-//        => system'core_routines'__charconvertor.
-//        
+
+    /// Converts an integer into a character and saves the result into an output parameter
+    convert(int n, ref char retVal)
+        => system'core_routines'__charconvertor;
+        
 //    char convert(BaseVariable v)
 //        <= convert(v value).
         
@@ -2377,15 +2377,15 @@ public singleton charConvertor
 //        
 //        ^ CharValue new(aRetVal)
 //    ]        
-//        
-//    /// Converts an integer into a character
-//    char convert(int aValue)
-//    [
-//        char aRetVal := $0.
-//        self convert(aValue, &aRetVal).
-//        
-//        ^ CharValue new(aRetVal)
-//    ]
+        
+    /// Converts an integer into a character
+    char convert(int n)
+    {
+        char retVal := $0;
+        self.convert(n, ref retVal);
+        
+        ^ new CharValue(retVal)
+    }
         
     char convert(o)
         = cast char(o);

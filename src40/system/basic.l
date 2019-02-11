@@ -2165,21 +2165,17 @@ public sealed const struct CharValue : BaseValue
     constructor(char value)
         = value;
 
-//    /// Creates the object with specified numeric value
-//    constructor new(int anOperand)
-//        <= new(charConvertor convert(anOperand)).
-//
-//    /// return the default value
-//    constructor
-//        = $0.
-//
-//    /// Returns the minimal possible character value (0)
-//    constructor min
-//        = $0.
-//
-//    /// Returns the maximal possible character value (010FFFFh)
-//    constructor max
-//        = $010FFFFh.
+    /// Creates the object with specified numeric value
+    constructor load(int n)
+        = charConvertor.convert(n);
+
+    /// Returns the minimal possible character value (0)
+    static char MinValue
+        = $0;
+
+    /// Returns the maximal possible character value (010FFFFh)
+    static char MaxValue
+        = $010FFFFh;
 
     internal readValue(ref int retVal)
     {

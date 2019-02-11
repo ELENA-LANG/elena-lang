@@ -5,7 +5,7 @@
         <output></output>
         <options></options>
         <namespace>interpreter</namespace>
-        <template>console</template>
+        <template>vm_console</template>
         <debuginfo>-1</debuginfo>
     </project>
     <files>
@@ -14,6 +14,6 @@
         </module>
     </files>
     <forwards>
-        <forward key="program">interpreter'program1</forward>
+        <forward key="program">interpreter'program3</forward>
     </forwards>
 </configuration>

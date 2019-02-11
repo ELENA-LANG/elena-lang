@@ -177,7 +177,7 @@ class ByteCodeWriter
    void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
    void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
    void boxArgList(CommandTape& tape, ref_t vmtReference);
-   void unboxArgList(CommandTape& tape/*, bool arrayMode*/);
+   void unboxArgList(CommandTape& tape, bool arrayMode);
    void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
 
    void releaseObject(CommandTape& tape, int count = 1);

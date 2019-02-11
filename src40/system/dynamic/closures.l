@@ -16,6 +16,9 @@ public struct MessageClosure : DynamicClosure
         theMessage := message
     }
     
+    constructor new(mssg message)
+        <= (message);
+    
     closure(params object[] args)
         => system'core_routines'__mssg_closure;
 }
