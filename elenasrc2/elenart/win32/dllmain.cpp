@@ -177,7 +177,7 @@ EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
    return _Instance->loadMessage((const char*)messageName);
 }
 
-EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
+EXTERN_DLL_EXPORT void* LoadSymbol(void* systemEnv, void* referenceName)
 {
    return _Instance->loadSymbol((const char*)referenceName);
 }

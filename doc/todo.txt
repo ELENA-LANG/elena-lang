@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * Instance::transalte() - use loop for the tape creation - see NEW_TAPE_MESSAGE_ID
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * mixin :: { collection }, new::{ collection } - get rid of - new {}
                  * create a nested class / collection - syntax review

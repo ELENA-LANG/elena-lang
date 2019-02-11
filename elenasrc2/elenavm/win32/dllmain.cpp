@@ -293,14 +293,14 @@ EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
    }
 }
 
-EXTERN_DLL_EXPORT void* LoadSymbol(void* referenceName)
+EXTERN_DLL_EXPORT void* LoadSymbol(void* systemEnv, void* referenceName)
 {
    Instance* instance = _Machine->getInstance();
    if (instance == NULL)
       return 0;
 
    try {
-      return instance->getSymbolRef((const char*)referenceName, false);
+      return instance->getSymbolRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
    }
    catch (JITUnresolvedException& e)
    {

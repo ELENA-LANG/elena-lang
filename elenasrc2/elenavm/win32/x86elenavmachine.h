@@ -30,8 +30,6 @@ protected:
    virtual _Memory* getTargetDebugSection();
    virtual _Memory* getMessageSection();
 
-   virtual void mapReference(ident_t reference, void* vaddress, size_t mask);
-
    virtual bool restart(SystemEnv* env, void* sehTable, bool debugMode);
 
    virtual void resumeVM();

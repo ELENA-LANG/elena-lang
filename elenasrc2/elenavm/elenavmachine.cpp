@@ -476,9 +476,11 @@ void Instance :: addForward(ident_t line)
    }
 }
 
-void Instance :: onNewCode()
+void Instance :: onNewCode(SystemEnv* env)
 {
    resolveMessageTable();
+
+   env->Table->gc_rootcount = (_linker->getStaticCount() << 2);
 }
 
 ident_t Instance :: getSubject(ref_t subjectRef)
@@ -590,6 +592,7 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
 
    // HOTFIX : set gc_roots
    env->Table->gc_roots = (pos_t)getTargetSection(mskStatRef)->get(0);
+   env->Table->gc_rootcount = (_linker->getStaticCount() << 2);
 
    printInfo(L"Done...");
 
@@ -751,13 +754,14 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
 
             // ; assign content
             // bcopya
-
+            
             // ; repeat param-time
             // popa
             // axsavebi i
 
             // pushb
             ecodes.writeByte(bcBCopyA);
+
             while (level > 0) {
                ecodes.writeByte(bcPopA);
                ecodes.writeByte(bcAXSaveBI);
@@ -942,7 +946,7 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
       //saveActionNames(&debugWriter);
    }
 
-   onNewCode();
+   onNewCode(env);
 
    resumeVM();
 

@@ -61,7 +61,8 @@ struct GCTable
    pos_t tt_ptr;                       // !! is not used for STA
    pos_t tt_lock;                      // !! is not used for STA
    pos_t dbg_ptr;                      // NOTE : used only for VM Client
-   pos_t gc_roots;                     // NOTE : used only for VM Client
+   pos_t gc_roots;                     
+   pos_t gc_rootcount;
 };
 
 // --- TLSEntry ---
@@ -79,8 +80,8 @@ struct TLSEntry
 
 struct SystemEnv
 {
-   pos_t             StatLength;
-   void*             StatRoots;
+   pos_t             StatLength;   // NOTE : it is an initial value, should be copied to GCTable
+   void*             StatRoots;    // NOTE : it is an initial value, should be copied to GCTable
    GCTable*          Table;
    pos_t*            TLSIndex;
    pos_t*            ThreadTable;

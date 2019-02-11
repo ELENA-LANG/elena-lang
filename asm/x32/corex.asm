@@ -38,9 +38,9 @@ define gc_stack_frame        0030h
 define gc_lock               0034h 
 define gc_signal             0038h 
 define tt_lock               0040h 
+define gc_rootcount          004Ch
 
 // SYSTEM_ENV OFFSETS
-define se_statlen            0000h
 define se_mgsize	     0014h
 define se_ygsize	     001Ch
 
@@ -225,7 +225,7 @@ labSkipWait:
 
   // ; save static roots
   mov  esi, data : %CORE_STATICROOT
-  mov  ecx, [data : %SYSTEM_ENV + se_statlen]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_rootcount]
   push esi
   push ecx
 

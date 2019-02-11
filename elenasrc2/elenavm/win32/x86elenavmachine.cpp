@@ -77,16 +77,6 @@ _Memory* x86Instance :: getMessageSection()
    return &_messageProcess;
 }
 
-void x86Instance :: mapReference(ident_t reference, void* vaddress, size_t mask)
-{
-   Instance::mapReference(reference, vaddress, mask);
-
-   if (mask == mskStatRef) {
-      // fix up static table size
-      _compiler->setStaticRootCounter(this, _linker->getStaticCount(), false);
-   }
-}
-
 ref_t x86Instance :: resolveExternal(ident_t external)
 {
    ref_t reference = _exportReferences.get(external);

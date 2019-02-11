@@ -39,9 +39,9 @@ define gc_lock               0034h
 define gc_signal             0038h 
 define tt_ptr                003Ch 
 define tt_lock               0040h 
+define gc_rootcount          004Ch
 
 // SYSTEM_ENV OFFSETS
-define se_statlen            0000h
 define se_mgsize	     0014h
 define se_ygsize	     001Ch
 
@@ -94,6 +94,7 @@ structure %CORE_GC_TABLE
   dd 0 // ; tt_lock               : +40h 
   dd 0 // ; dbg_ptr               : +44h 
   dd 0 // ; gc_roots              : +48h 
+  dd 0 // ; gc_rootcount          : +4Ch 
 
 end
 
@@ -162,8 +163,8 @@ labYGCollect:
 
   // ; save static roots
   mov  esi, data : %CORE_STATICROOT
-  mov  ecx, [data : %SYSTEM_ENV + se_statlen]
-	  push esi
+  mov  ecx, [data : %CORE_GC_TABLE + gc_rootcount]
+  push esi
   push ecx
 
   // ; collect frames

@@ -45,6 +45,10 @@ inline void Init(SystemEnv* env)
  //  rep  stos
    memset(env->StatRoots, 0, env->StatLength);
 
+   // set the GC root counter
+   env->Table->gc_rootcount = env->StatLength;
+   env->Table->gc_roots = (pos_t)env->StatRoots;
+
    // ; allocate memory heap
 //  mov  ecx, 8000000h // ; 10000000h
 //  mov  ebx, [data : %CORE_GC_SIZE]

@@ -2774,8 +2774,10 @@ procedure __symbol."load$system@Symbol$system@String[2]"
 
   aloadsi 2   // ; read aName parameter
   pusha
+  system
+  pushe
   callextr extern : LoadSymbol
-  pop
+  popi 2
   ifn labError 0
   bloadsi 1
   nsave

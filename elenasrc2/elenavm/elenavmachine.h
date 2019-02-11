@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x000C;
+constexpr auto ELENAVM_REVISION = 0x000D;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2019 by Alex Rakov";
@@ -239,7 +239,7 @@ protected:
    void configurate(SystemEnv* env, void* sehTable, MemoryReader& reader, int terminator);
    void resolveMessageTable();
 
-   void onNewCode();
+   void onNewCode(SystemEnv* env);
 
    //void* findDebugEntryPoint(ByteArray& tape);
 
@@ -357,7 +357,7 @@ public:
    //   return loadSymbol(referenceName, mskVMTRef);
    //}
 
-   virtual void* getSymbolRef(ident_t referenceName, bool silentMode)
+   virtual void* getSymbolRef(SystemEnv* systemEnv, ident_t referenceName, bool silentMode)
    {      
       void* ref = NULL;
       if (_debugMode) {
@@ -378,7 +378,7 @@ public:
       }
       else ref = loadSymbol(referenceName, mskSymbolRef, silentMode);
 
-      onNewCode();
+      onNewCode(systemEnv);
 
       return ref;
    }
