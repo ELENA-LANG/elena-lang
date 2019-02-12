@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textparserH
@@ -51,11 +51,12 @@ struct LineInfo
 
    int position;
    int column, row;
+   int readerPos;
 
    LineInfo()
    {
       line = NULL;
-      column = row = state = 0;
+      column = row = state = readerPos = 0;
    }
    LineInfo(int position, int column, int row)
    {
@@ -63,6 +64,15 @@ struct LineInfo
       this->column = column;
       this->row = row;
       this->state = 0;
+      this->readerPos = 0;
+   }
+   LineInfo(int position, int column, int row, int readerPos)
+   {
+      this->position = position;
+      this->column = column;
+      this->row = row;
+      this->state = 0;
+      this->readerPos = readerPos;
    }
 };
 
@@ -79,6 +89,7 @@ protected:
    int         _tabSize;
    char*       _line;
    size_t      _position;
+   size_t      _sourcePos;
    size_t      _column, _row;
 
    void nextColumn(size_t& position)
@@ -93,6 +104,7 @@ protected:
 
    bool cacheLine()
    {
+      _sourcePos = _source->Position();
       if (_source->read(_line, maxLength)) {
          _position = 0;
 
@@ -143,6 +155,7 @@ public:
                continueLine();
             }
             else if(cacheLine()) {
+               info.readerPos = _sourcePos;
                info.position = _position;
                info.column = _column;
                info.row = _row;
@@ -152,7 +165,7 @@ public:
          step(_line[_position], state, terminateState);
          if (terminateState) {
             if (terminateState == dfaWhitespace) {
-               info = LineInfo(_position, _column, _row);
+               info = LineInfo(_position, _column, _row, _sourcePos);
 
                state = startState;
                terminateState = 0;
@@ -168,6 +181,7 @@ public:
 
    void reset()
    {
+      _sourcePos = 0;
       _source->reset();
       _row = 0;
       _column = 0;
@@ -182,6 +196,7 @@ public:
    {
       _tabSize = tabSize;
       _source = source;
+      _sourcePos = 0;
       _row = 0;
       _line = StrFactory::allocate(maxLength + 1, DEFAULT_STR);
 

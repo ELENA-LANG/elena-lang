@@ -2399,6 +2399,16 @@ procedure __real."exp$system@RealNumber$@system@ref#1&system@RealNumber[3]"
 
 end
 
+procedure __real."sqrt$system@RealNumber$@system@ref#1&system@RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  callextr api : rsqrt
+
+  quitn 3
+
+end
+
 procedure __signature."#dispatch[1]"
 
   bloadsi 1

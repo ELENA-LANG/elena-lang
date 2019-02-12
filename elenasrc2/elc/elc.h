@@ -17,7 +17,7 @@
 #include "compilerscope.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x00C8
+#define ELC_REVISION_NUMBER         0x00C9
 // --- ELC default file names ---
 #ifdef _WIN32
 
@@ -142,7 +142,7 @@ class Project : public _ELENA_::Project
 
    //_ELENA_::SourceFileInfo* initSourceFileInfo(_ELENA_::CompilerScope& scope, _ELENA_::ident_t filePath);
    void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree);
-//   void buildSyntaxTree(_ELENA_::ScriptParser& parser, _ELENA_::FileMapping* source, _ELENA_::CompilerScope& scope, _ELENA_::SourceFileList& files);
+   void buildSyntaxTree(_ELENA_::ScriptParser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree);
 
 public:
    _ELENA_::Path appPath;

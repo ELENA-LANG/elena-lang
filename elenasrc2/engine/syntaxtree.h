@@ -239,10 +239,8 @@ enum LexicalType
 //   lxIdleMsgParameter= 0x20022,
    lxBinarySelf               = 0x20023, // debug info only
    lxOvreriddenMessage        = 0x20024, // arg - message ; used for extension / implicit constructor call
-//////   lxClassRef        = 0x20025,
-//////   lxPreloadedAttr   = 0x20026,
-//   lxInclude         = 0x20027,
-//   lxTemplateField   = 0x20028,
+   lxInclude                  = 0x20027,
+   lxTemplateField            = 0x20028,
 //   lxTypeAttr        = 0x2002A,
    lxStacksafeAttr            = 0x2002B,
 //   lxTemplateAttribute = 0x2002C,

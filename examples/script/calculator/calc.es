@@ -16,13 +16,13 @@
     #define rule_body  ::= "=>" add_cont next_state;
     #define rule_body  ::= "=>" next_state;
 
-    #define new_leaf   ::= <= target.newLeaf({ => "(" body ")" <= }); =>;
-    #define new_leaf   ::= <= target.newFunction({ => "<" body ">" <= }); =>;
-    #define new_node   ::= <= target.newNode({ => "[" body "]" <= }); =>;
-    #define add_cont   ::= "+=" <= target.addContent(c); =>;
+    #define new_leaf   ::= <= __target.newLeaf({ => "(" body ")" <= }); =>;
+    #define new_leaf   ::= <= __target.newFunction({ => "<" body ">" <= }); =>;
+    #define new_node   ::= <= __target.newNode({ => "[" body "]" <= }); =>;
+    #define add_cont   ::= "+=" <= __target.addContent(c); =>;
 
     #define level        ::= integer; 
-    #define next_state   ::= <= target. => "=" out_state <= (); =>;
+    #define next_state   ::= <= __target. => "=" out_state <= (); =>;
 
     #define in_state     ::= ident <= : { =>;
     #define state        ::= ident <= : function(c) { => ;
@@ -31,32 +31,32 @@
     #define ident        ::= <= $identifier =>;
 ]]
 
-state0
-  : digit => ( "order : 5; evalToken: function(s) { return convertor.toReal(s); };" ) += = state2
-  : minus => ( "order : 5; evalToken: function(s) { return convertor.toReal(s); };" ) += = state2
-  : letter => < "order : 6; sqrt : function(v) { return math.sqrt(v); }; min : function(l,r) { return math.min(l,r); };" > += = state3
-  : opening => = state0
-  : comma => = state0
-  : whitespace => = state0
+State0
+  : digit => ( "order : 5; evalToken: function(s) { return convertor.toReal(s); };" ) += = State2
+  : minus => ( "order : 5; evalToken: function(s) { return convertor.toReal(s); };" ) += = State2
+  : letter => < "order : 6; sqrt : function(v) { return math.sqrt(v); }; min : function(l,r) { return math.min(l,r); };" > += = State3
+  : opening => = State0
+  : comma => = State0
+  : whitespace => = State0
 
-state1
-  : plus => [ "order : 1; evalNode: function(left,right){ return left.add(right); }; " ] = state0
-  : minus => [ "order : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = state0
-  : star => [ "order : 2; evalNode: function(left,right){ return left.multiply(right); }; " ] = state0
-  : slash => [ "order : 2; evalNode: function(left,right){ return left.divide(right); }; " ] = state0
-  : closing => = state1
+State1
+  : plus => [ "order : 1; evalNode: function(left,right){ return left.add(right); }; " ] = State0
+  : minus => [ "order : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = State0
+  : star => [ "order : 2; evalNode: function(left,right){ return left.multiply(right); }; " ] = State0
+  : slash => [ "order : 2; evalNode: function(left,right){ return left.divide(right); }; " ] = State0
+  : closing => = State1
 
-state2
-  : digit => += = state2
-  : plus => [ "order : 1; evalNode: function(left,right){ return left.add(right); }; " ] = state0
-  : minus => [ "order : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = state0
-  : star => [ "order : 2; evalNode: function(left,right){ return left.multiply(right); }; " ] = state0
-  : slash => [ "order : 2; evalNode: function(left,right){ return left.divide(right); }; " ] = state0
-  : closing => = state1
-  : dot => += =state2
-  : comma => = state0
-  : whitespace => = state2
+State2
+  : digit => += = State2
+  : plus => [ "order : 1; evalNode: function(left,right){ return left.add(right); }; " ] = State0
+  : minus => [ "order : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = State0
+  : star => [ "order : 2; evalNode: function(left,right){ return left.multiply(right); }; " ] = State0
+  : slash => [ "order : 2; evalNode: function(left,right){ return left.divide(right); }; " ] = State0
+  : closing => = State1
+  : dot => += =State2
+  : comma => = State0
+  : whitespace => = State2
 
-state3
-  : letter => += = state3
-  : opening => = state0
+State3
+  : letter => += = State3
+  : opening => = State0

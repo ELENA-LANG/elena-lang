@@ -109,6 +109,7 @@ void saveReference(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, Scr
    ScriptBookmark bm;
    parser->readScriptBookmark(ptr, bm);
 
+   log.writeCoord(bm.column, bm.row);
    log.write(scriptReader.lookup(bm));
 }
 
@@ -117,6 +118,7 @@ void saveLiteral(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, Scrip
    ScriptBookmark bm;
    parser->readScriptBookmark(ptr, bm);
 
+   log.writeCoord(bm.column, bm.row);
    log.writeQuote(scriptReader.lookup(bm));
 }
 
@@ -125,6 +127,7 @@ void saveLiteralContent(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr
    ScriptBookmark bm;
    parser->readScriptBookmark(ptr, bm);
 
+   log.writeCoord(bm.column, bm.row);
    log.write(scriptReader.lookup(bm));
 }
 
@@ -833,7 +836,7 @@ void CFParser :: parse(_ScriptReader& reader, MemoryDump* output)
    generateOutput(trace, reader, log);
 
    IdentifierTextReader logReader((const char*)log.getBody());
-   ScriptReader scriptReader(&logReader);
+   ScriptReader scriptReader(&logReader, log.getCoordinateMap());
       
    _baseParser->parse(scriptReader, output);
 

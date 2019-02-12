@@ -198,24 +198,13 @@ inline bool isConstantArguments(SNode node)
 
 // --- Compiler::NamespaceScope ---
 
-Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope/*, ident_t path*/, ident_t ns/*, IdentifierList* imported*//*, bool withFullInfo*/)
+Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ident_t ns)
    : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr), extensionTemplates(NULL, freestr)
 {
    this->ns.copy(ns);
-//   this->sourcePath = path;
 
    // load private namespaces
    loadExtensions(moduleScope->module->Name(), ns, true);
-
-//   for (auto it = imported->start(); !it.Eof(); it++) {
-//      ident_t imported_ns = *it;
-//
-//      importedNs.add(imported_ns);
-//
-////      if (withFullInfo) {
-////         loadModuleInfo(imported_ns);
-////      }         
-//   }
 }
 
 pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
@@ -301,7 +290,16 @@ ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
 {
    if (terminal == lxNameAttr) {
       // verify if the name is unique
-      ident_t name = module->resolveReference(terminal.argument);
+      ident_t name;
+      if (!terminal.argument) {
+         bool privateOne = false;
+
+         // if it is a script engine generated syntax tree
+         name = terminal.firstChild(lxTerminalMask).identifier();
+         terminal.setArgument(moduleScope->mapNewIdentifier(ns.c_str(), name, privateOne));
+      }
+      else name = module->resolveReference(terminal.argument);
+
       ref_t reference = terminal.argument;
       if (name.startsWith(PRIVATE_PREFIX_NS)) {
          IdentifierString altName("'", name.c_str() + getlength(PRIVATE_PREFIX_NS));
@@ -5215,7 +5213,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
    SNode current = /*action == lxNone ? */node.findChild(lxMethodParameter)/* : action.nextNode()*/;
 
-   if (identNode/*.compare(*/ == lxIdentifier/*, lxMessage)*/) {
+   if (identNode == lxIdentifier) {
       actionStr.copy(identNode.identifier());
       // COMPILER MAGIC : adding complex message name
       SNode messageNode = nameNode.nextNode();
@@ -8168,15 +8166,15 @@ void Compiler :: analizeSymbolTree(SNode node, Scope& scope)
 //      classScope.save();
 //   }
 //}
-//
-//void Compiler :: compileForward(SNode ns, NamespaceScope& scope)
-//{
-//   ident_t shortcut = ns.findChild(lxIdentifier, lxReference).identifier();
-//   ident_t reference = ns.findChild(lxForward).findChild(lxIdentifier, lxReference).identifier();
-//
-//   if (!scope.defineForward(shortcut, reference))
-//      scope.raiseError(errDuplicatedDefinition, ns);
-//}
+
+void Compiler :: compileForward(SNode ns, NamespaceScope& scope)
+{
+   ident_t shortcut = ns.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier();
+   ident_t reference = ns.findChild(lxForward).firstChild(lxTerminalMask).identifier();
+
+   if (!scope.defineForward(shortcut, reference))
+      scope.raiseError(errDuplicatedDefinition, ns);
+}
 
 //////bool Compiler :: validate(_ProjectManager& project, _Module* module, int reference)
 ////{
@@ -8255,9 +8253,9 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current) {
-//         case lxInclude:
-//            compileForward(current, scope);
-//            break;
+         case lxInclude:
+            compileForward(current, scope);
+            break;
          case lxClass:
          {
             ident_t name = scope.module->resolveReference(current.argument);

@@ -77,7 +77,11 @@ bin\elc examples\script\interpreter\interpreter.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc examples\script\calculator\calc.xprj
+bin\elc examples\script\calculator\calc_static.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem bin\elc examples\script\calculator\calc.prj
 rem bin\elc examples\script\js\vmconsole.prj
 rem bin\elc examples\script\js\fibonacci.xprj 

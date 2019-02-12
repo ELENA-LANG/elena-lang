@@ -406,14 +406,12 @@ private:
          loadExtensions(name);
       }
 
-////      bool defineForward(ident_t forward, ident_t referenceName)
-////      {
-////         ObjectInfo info = mapTerminal(referenceName, true, 0);
-////      
-////         return forwards.add(forward, info.param, true);
-////      }
-////
-//////      pos_t saveSourcePath(ByteCodeWriter& writer, ident_t sourcePath);
+      bool defineForward(ident_t forward, ident_t referenceName)
+      {
+         ObjectInfo info = mapTerminal(referenceName, true, 0);
+      
+         return forwards.add(forward, info.param, true);
+      }
 
       NamespaceScope(_ModuleScope* moduleScope/*, ident_t path*/, ident_t ns/*, IdentifierList* imported*//*, bool withFullInfo*/);
    };
@@ -967,6 +965,7 @@ private:
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope, bool ignoreAutoMultimethods = false);
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileForward(SNode ns, NamespaceScope& scope);
 
    void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField, bool embeddable);
    void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, /*ref_t elementRef, */bool isSealed, bool isConst);

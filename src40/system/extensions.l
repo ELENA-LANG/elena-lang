@@ -317,7 +317,13 @@ public extension intOp : IntNumber
 //    int rvprop absolute :: absolute.
 //    
 //    int rvprop sqr      :: sqr.
-//    
+    int sqrt()
+    {
+        self.sqrt(ref int n);
+        
+        ^ n
+    }
+
 //    int rvprop sqrt     :: sqrt.
 //    
 //    absolute(ref<int> retVal)
@@ -378,23 +384,23 @@ public extension intOp : IntNumber
 //        retVal value := n * n.
 //    ]
 //    
-//    sqrt(ref<int> retVal)
-//    [
-//        int num := self.
-//        
-//        if (num == 0)
-//            [ ^ 0 ].
-//            
-//        int n := num / 2 + 1.
-//        int n1 := (n + (num / n)) / 2.
-//        while (n1 < n)
-//        [
-//            n := n1.
-//            n1 := (n + (num / n)) / 2
-//        ].
-//        
-//        retVal value := n
-//    ]
+    sqrt(ref int retVal)
+    {   
+        int num := self;
+        
+        if (num == 0)
+            { ^ 0 };
+            
+        int n := num / 2 + 1;
+        int n1 := (n + (num / n)) / 2;
+        while (n1 < n)
+        {
+            n := n1;
+            n1 := (n + (num / n)) / 2
+        };
+        
+        retVal := n
+    }
 
     power(n)
         = self.power(cast int(n));
@@ -603,15 +609,15 @@ public extension realOp : RealNumber
         ^ new RealNumber(retVal)
     }
     
-//    real sqrt
-//    [
-//        real n := self.      
-//        real aRetVal := 0.0r.
-//        
-//        realOpController sqrt(n, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
+    real sqrt()
+    {
+        real n := self;
+        real retVal := 0.0r;
+        
+        realOpController.sqrt(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
 
     real power(real y)
     {

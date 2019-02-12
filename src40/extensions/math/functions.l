@@ -56,9 +56,9 @@ public singleton mathControl
 //            
 //    real log10(real x)
 //        = x log10.
-//    
-//    sqrt(real x)
-//        = x sqrt.
+    
+    sqrt(real x)
+        = x.sqrt();
 
     power(v, p)
         = v.power(p);

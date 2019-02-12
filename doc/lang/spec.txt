@@ -235,7 +235,20 @@ be - **program**, for graphical application - **MainWindow**
 
 ELENA uses LL(1) grammar. It is an analytical grammar, meaning that the role of the terminal token is defined by its position in
 the statement. As a result the grammar lacks the keywords ( instead user-defined attributes are used ) and there are no reserved 
-words. For example, it is possible to write the following code:
+words. For example, it is possible to write the code without attributes at all:
+
+    class
+    {
+       field;
+
+       method(param)
+       {
+       }
+    } 
+
+where a class with a name **class** is declared. It has one field with a name **field** and one method - **method[1]**
+
+But in most cases it is required to provide additional info. So the token role is defined by its position.
 
     class class;
     

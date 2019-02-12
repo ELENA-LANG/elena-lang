@@ -3107,10 +3107,10 @@ public singleton realOpController
 //        
 //    arctan(real aReal, ref<real> aRetVal)
 //        => system'core_routines'__real.
-//                
-//    sqrt(real aReal, ref<real> aRetVal)
-//        => system'core_routines'__real.
-//        
+                
+    sqrt(real r, ref real retVal)
+        => system'core_routines'__real;
+        
 //    pi(ref<real> aRetVal)
 //        => system'core_routines'__real.
 //        

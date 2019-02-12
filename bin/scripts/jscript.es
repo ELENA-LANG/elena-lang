@@ -1,7 +1,7 @@
 [[
    #grammar cf
 
-   #define start      ::= <= root ( => members <= ) =>;
+   #define start      ::= <= root ( namespace ( => members <= )) =>;
    #define start      ::= $eof;
 
    #define members    ::= member ";" members;
@@ -46,7 +46,7 @@
    #define cls_mmbrs  ::= cls_mmbr ";" cls_mmbrs;
    #define cls_mmbrs  ::= "}";
 
-   #define cls_mmbr   ::= <= method ( => name ":" mmbr_expr <= ) =>;
+   #define cls_mmbr   ::= <= method ( => m_name ":" mmbr_expr <= ) =>;
    #define mmbr_expr  ::= <= returning ( => expression <= ) =>;
    #define mmbr_expr  ::= "function" "(" f_params f_body;
 
@@ -66,9 +66,9 @@
    #define f_eof      ::= "}";
 
    #define numeric    ::= <= numeric = $numeric =>;
-   #define name       ::= <= message = $identifier =>;
-   #define s_name     ::= <= identifier = $identifier =>;
-   #define parameter  ::= <= parameter = $identifier =>;
+   #define m_name     ::= <= nameattr ( identifier = $identifier ) =>;
+   #define s_name     ::= <= nameattr ( identifier = $identifier ) =>;
+   #define parameter  ::= <= parameter ( nameattr ( identifier = $identifier )) =>;
    #define identifier ::= <= identifier = $identifier =>;
    #define message    ::= <= message = $identifier =>;
    #define literal    ::= <= literal = "$literal" =>;

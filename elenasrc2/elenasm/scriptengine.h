@@ -176,6 +176,8 @@ public:
    virtual void switchDFA(const char** dfa) = 0;
 };
 
+typedef Map<pos_t, ref64_t> CoordMap;
+
 class ScriptReader : public _ScriptReader
 {
 protected:
@@ -183,6 +185,8 @@ protected:
    MemoryDump   buffer;
    char         token[LINE_LEN];
    bool         eof;
+
+   CoordMap*    coordinates;
 
 public:
    virtual bool Eof()
@@ -203,8 +207,16 @@ public:
 
       bm.offset = buffer.Length();
       bm.state = info.state;
-      bm.column = info.column;
-      bm.row = info.row;
+      ref64_t savedCoord = coordinates ? coordinates->get(info.readerPos + info.position) : 0;
+      if (savedCoord) {
+         bm.column = savedCoord & 0xFFFFFFFFull;
+         bm.row = savedCoord >> 32;
+      }
+      else {
+         bm.column = info.column;
+         bm.row = info.row;
+      }
+
       if (info.state == _ELENA_TOOL_::dfaEOF)
          eof = true;
 
@@ -249,6 +261,12 @@ public:
       : reader(4, script)
    {
       eof = false;
+      coordinates = nullptr;
+   }
+   ScriptReader(TextReader* script, CoordMap* coordinates)
+      : ScriptReader(script)
+   {
+      this->coordinates = coordinates;
    }
 };
 
@@ -257,6 +275,7 @@ public:
 class ScriptLog
 {
    MemoryDump _log;
+   CoordMap   _coordinates;
 
 public:
    void write(char ch)
@@ -265,6 +284,7 @@ public:
 
       writer.writeChar(ch);
    }
+
    void write(ident_t token)
    {
       size_t length = getlength(token);
@@ -313,6 +333,15 @@ public:
       writer.writeLiteral(num);
    }
 
+   void writeCoord(int col, int row)
+   {
+      ref64_t coord = row;
+      coord <<= 32;
+      coord |= col;
+
+      _coordinates.add(_log.Length(), coord);
+   }
+
    void* getBody() 
    { 
       write((char)0);
@@ -320,11 +349,22 @@ public:
       return _log.get(0); 
    } 
 
+   CoordMap* getCoordinateMap()
+   {
+      return &_coordinates;
+   }
+
    size_t Length() const { return _log.Length(); }
 
    void clear()
    {
       _log.trim(0);
+   }
+
+   ScriptLog::ScriptLog()
+      : _coordinates(0)
+   {
+
    }
 };
 
