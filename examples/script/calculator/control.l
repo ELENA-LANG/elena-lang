@@ -1,5 +1,5 @@
 //import system'dynamic.
-//import extensions.
+import extensions;
 import extensions'scripting;
 //import extensions'dynamic.
 
@@ -54,13 +54,15 @@ staticTestCases()
 
     "2+3-1".testStaticEvaluation();
             
-    "-2+3".testEvaluation();
+    "-2+3".testStaticEvaluation();
 
     "2+3*4".testStaticEvaluation();
 
     "(2+3)*4".testStaticEvaluation();
     
-    "sqrt(2*2)".testEvaluation();
+    "sqrt(2*2)".testStaticEvaluation();
+    
+    "min(2,3)".testStaticEvaluation();
 }
 
 // --- controller ---

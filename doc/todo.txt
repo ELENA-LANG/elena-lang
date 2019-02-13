@@ -25,6 +25,7 @@ In development:
                  * => operator should work with expression as well - s.toInt() => ...
                    toInt is ignored
                  * example of external library references
+                 * calc sample - support properties
 
 
                  * Thread.assign:(){} should be supported

@@ -3005,9 +3005,9 @@ public singleton realConvertor
 //    /// Converts a wide literal string into a real number and saves the result into an output parameter
 //    convert(wide aValue, ref<real> aRetVal)
 //        => system'core_routines'__realconvertor.
-//        
-//    real convert(BaseVariable v)
-//        <= convert(v value).
+        
+    real convert(BaseVariable v)
+        <= convert(v.Value);
         
     /// Converts a literal string into a real number
     real convert(string s)

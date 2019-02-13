@@ -149,7 +149,7 @@ public class StringBookmark : BaseValue
 
 // --- StringWriter ---
 
-public sealed class StringWriter //: BaseVariable
+public sealed class StringWriter : BaseVariable
 {    
     string theValue;
     string theNewLine;
@@ -192,11 +192,6 @@ public sealed class StringWriter //: BaseVariable
         self.write(theNewLine)
     }    
 
-//    set value : aText
-//    [
-//        theValue := aText.
-//    ]
-
     append(string s)
         <= write(s); 
     
@@ -218,8 +213,6 @@ public sealed class StringWriter //: BaseVariable
 //        theValue := theValue replace(s literal, s2 literal).
 //    ]
 //    
-//    value = theValue.
-//
 //    clear
 //    [
 //        theValue := emptyLiteral.

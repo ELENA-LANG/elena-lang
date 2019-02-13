@@ -32,26 +32,26 @@
 ]]
 
 State0
-  : digit => ( "order : 5; evalToken: function(s) { return convertor.toReal(s); };" ) += = State2
-  : minus => ( "order : 5; evalToken: function(s) { return convertor.toReal(s); };" ) += = State2
-  : letter => < "order : 6; sqrt : function(v) { return math.sqrt(v); }; min : function(l,r) { return math.min(l,r); };" > += = State3
+  : digit => ( "Order : 5; evalToken: function(s) { return convertor.toReal(s); };" ) += = State2
+  : minus => ( "Order : 5; evalToken: function(s) { return convertor.toReal(s); };" ) += = State2
+  : letter => < "Order : 6; sqrt : function(v) { return math.sqrt(v); }; min : function(l,r) { return math.min(l,r); };" > += = State3
   : opening => = State0
   : comma => = State0
   : whitespace => = State0
 
 State1
-  : plus => [ "order : 1; evalNode: function(left,right){ return left.add(right); }; " ] = State0
-  : minus => [ "order : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = State0
-  : star => [ "order : 2; evalNode: function(left,right){ return left.multiply(right); }; " ] = State0
-  : slash => [ "order : 2; evalNode: function(left,right){ return left.divide(right); }; " ] = State0
+  : plus => [ "Order : 1; evalNode: function(left,right){ return left.add(right); }; " ] = State0
+  : minus => [ "Order : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = State0
+  : star => [ "Order : 2; evalNode: function(left,right){ return left.multiply(right); }; " ] = State0
+  : slash => [ "Order : 2; evalNode: function(left,right){ return left.divide(right); }; " ] = State0
   : closing => = State1
 
 State2
   : digit => += = State2
-  : plus => [ "order : 1; evalNode: function(left,right){ return left.add(right); }; " ] = State0
-  : minus => [ "order : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = State0
-  : star => [ "order : 2; evalNode: function(left,right){ return left.multiply(right); }; " ] = State0
-  : slash => [ "order : 2; evalNode: function(left,right){ return left.divide(right); }; " ] = State0
+  : plus => [ "Order : 1; evalNode: function(left,right){ return left.add(right); }; " ] = State0
+  : minus => [ "Order : 1; evalNode: function(left,right){ return left.subtract(right); }; " ] = State0
+  : star => [ "Order : 2; evalNode: function(left,right){ return left.multiply(right); }; " ] = State0
+  : slash => [ "Order : 2; evalNode: function(left,right){ return left.divide(right); }; " ] = State0
   : closing => = State1
   : dot => += =State2
   : comma => = State0

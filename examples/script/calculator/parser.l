@@ -1,312 +1,334 @@
-//import system'routines.
-//import extensions.
-//import extensions'text.
-//
-//extension lexicalOp
-//{
-//    lexicalType
-//    [
-//        if ((self >= $48)&&(self <= $57))
-//            [ ^ %digit ].
-//
-//        if ((self >= $97)&&(self <= $122))
-//            [ ^ %letter ].
-//
-//        self =>
-//            $32 [ ^ %whitespace ];
-//            $40 [ ^ %opening ];
-//            $41 [ ^ %closing ];
-//            $42 [ ^ %star ];
-//            $43 [ ^ %plus ];
-//            $44 [ ^ %comma ];
-//            $45 [ ^ %minus ];
-//            $46 [ ^ %dot ];
-//            $47 [ ^ %slash ];
-//            ! [ ^ %unknown ].
-//    ]
-//}
-//
-//class DerivationTree
-//{
-//    object theRoot.
-//    object theLast.
-//
-//    last_node = theLast.
-//    
-//    value => theRoot.
-//
-//    append : aNode
-//    [
-//        theLast := aNode.
-//
-//        theRoot := theRoot + aNode.
-//    ]
-//
-//    newArgument
-//    [
-//        theLast := theLast newArgument.
-//    ]
-//
-//    constructor new
-//    [
-//        theRoot := BaseTreeNode::{ level = -1. add : aNode = aNode. }
-//    ]
-//}
-//
-//// --- BaseTreeNode ---
-//
-//class BaseTreeNode
-//{
-//    object theStrategy.
-//    object theLevel.
-//    
-//    level = theLevel.
-//    
-//    add : aNode
-//    [
-//        if (self level < aNode level)
-//        [
-//            self append:aNode.
-//            
-//            ^ self
-//        ];
-//        [
-//            aNode append:self.
-//            
-//            ^ aNode
-//        ].
-//    ]
-//
-//    setFunction : function []
-//        
-//    constructor new:strategy baseLevel:baseLevel
-//    [
-//        theStrategy := strategy.
-//        theLevel := baseLevel + strategy order.
-//    ]
-//}
-//
-//// --- TreeNode ---
-//
-//class TreeNode :: BaseTreeNode
-//{
-//    object theLeft.
-//    object theRight.
-//
-//    append : aNode
-//    [
-//        if (nil == theLeft)
-//            [ theLeft := aNode ];
-//            [
-//                if (nil == theRight)
-//                    [ theRight := aNode ];
-//                    [ theRight := theRight + aNode ]
-//            ]
-//    ]
-//    
-//    value
-//    [
-//        if (nil == theLeft)
-//            [ InvalidArgumentException new; raise ].
-//        
-//        if (nil == theRight)
-//            [ InvalidArgumentException new; raise ].
-//        
-//        ^ theStrategy evalNode(theLeft value, theRight value)
-//    ]
-//    
-//    constructor new:aStrategy baseLevel:baseLevel
-//        <= new:aStrategy baseLevel:baseLevel;
-//    [
-//    ]    
-//}
-//
-//// --- TreeLeaf ---
-//
-//class TreeLeaf :: BaseTreeNode
-//{
-//    object theToken.
-//    object theFunction.
-//
-//    setFunction : function
-//    [
-//        theFunction := function.
-//    ]
-//
-//    newArgument
-//    [
-//        if (nil == theFunction)
-//            [ InvalidArgumentException new; raise ].
-//            
-//        ^ theFunction eval
-//    ]
-//
-//    appendContent : aChar
-//    [
-//        theToken append:aChar
-//    ]
-//
-//    value = theStrategy evalToken:theToken.
-//            
-//    constructor new:aStrategy baseLevel:baseLevel
-//        <= new:aStrategy baseLevel:baseLevel;
-//    [
-//        theToken := String new.
-//    ]
-//}
-//
-//// --- FunctionNode ---
-//
-//class FunctionNode :: TreeLeaf
-//{
-//    object theArg1.
-//    object theArg2.
-//    
-//    object theArgState.
-//    
-//    value
-//    [
-//        var subj := Signature new(theToken).
-//        
-//        if (nil == theArg1)
-//            [ ^ theStrategy~subj get ].
-//            
-//        if (nil == theArg2)
-//            [ ^ theStrategy~subj eval(theArg1 value) ].
-//            
-//        ^ theStrategy~subj eval(theArg1 value, theArg2 value).
-//    ]
-//
-//    first_arg:node
-//    [
-//        if (nil == theArg1)
-//            [ theArg1 := node setFunction:self ];
-//            [ theArg1 := theArg1 + node setFunction:self ]
-//    ]
-//
-//    second_arg:node
-//    [
-//        if (nil == theArg2)
-//            [ theArg2 := node setFunction:self ];
-//            [ theArg2 := theArg2 + node setFunction:self ]
-//    ]
-//        
-//    first_arg
-//    [
-//        theArgState := %second_arg.
-//    ]    
-//        
-//    second_arg
-//    [
-//        theArgState := %third_arg.
-//    ]    
-//
-//    eval
-//        => theArgState.
-//
-//    append : aNode
-//        => theArgState.
-//        
-//    constructor new:aStrategy baseLevel:baseLevel
-//        <= new:aStrategy baseLevel:baseLevel;
-//    [
-//        theArgState := %first_arg
-//    ]
-//}
+import system'routines;
+import extensions;
+import extensions'text;
+
+extension lexicalOp
+{
+    get LexicalType()
+    {
+        if (self >= $48 && self <= $57)
+            { ^ subjconst digit };
+
+        if (self >= $97 && self <= $122)
+            { ^ subjconst letter };
+
+        self =>
+            $32 { ^ subjconst whitespace }
+            $40 { ^ subjconst opening }
+            $41 { ^ subjconst closing }
+            $42 { ^ subjconst star }
+            $43 { ^ subjconst plus }
+            $44 { ^ subjconst comma }
+            $45 { ^ subjconst minus }
+            $46 { ^ subjconst dot }
+            $47 { ^ subjconst slash }
+            : { ^ subjconst unknown }
+    }
+}
+
+class DerivationTree
+{
+    theRoot;
+    theLast;
+
+    LastNode = theLast;
+    
+    get Value() => theRoot;
+
+    append(node)
+    {
+        theLast := node;
+
+        theRoot := theRoot + node;
+    }
+
+    newArgument()
+    {
+        theLast := theLast.newArgument()
+    }
+
+    constructor()
+    {
+        theRoot := new BaseTreeNode:{ Level = -1; add(node) = node; }
+    }
+}
+
+// --- BaseTreeNode ---
+
+class BaseTreeNode
+{
+    theStrategy;
+    theLevel;
+    
+    Level = theLevel;
+
+    add(node)
+    {
+        if (self.Level < node.Level)
+        {
+            self.append(node);
+            
+            ^ self
+        }
+        else
+        {
+            node.append(self);
+            
+            ^ node
+        }
+    }
+
+    setFunction(function) {}
+        
+    constructor(strategy, baseLevel)
+    {
+        theStrategy := strategy;
+        theLevel := baseLevel + strategy.Order()
+    }
+}
+
+// --- TreeNode ---
+
+class TreeNode : BaseTreeNode
+{
+    theLeft;
+    theRight;
+
+    append(node)
+    {
+        if (nil == theLeft)
+        { 
+            theLeft := node 
+        }
+        else
+        {
+            if (nil == theRight)
+            { 
+                theRight := node 
+            }
+            else
+            { 
+                theRight := theRight + node 
+            }
+        }
+    }
+    
+    get Value()
+    {
+        if (nil == theLeft)
+            { InvalidArgumentException.raise() };
+        
+        if (nil == theRight)
+            { InvalidArgumentException.raise() };
+        
+        ^ theStrategy.evalNode(theLeft.Value, theRight.Value)
+    }
+    
+    constructor(strategy, baseLevel)
+        <= (strategy, baseLevel);
+}
+
+// --- TreeLeaf ---
+
+class TreeLeaf : BaseTreeNode
+{
+    theToken;
+    theFunction;
+
+    setFunction(function)
+    {
+        theFunction := function
+    }
+
+    newArgument()
+    {
+        if (nil == theFunction)
+            { InvalidArgumentException.raise() };
+            
+        ^ theFunction.eval();
+    }
+
+    appendContent(ch)
+    {
+        theToken.append(ch)
+    }
+
+    Value = theStrategy.evalToken(theToken);
+            
+    constructor(strategy, baseLevel)
+        <= (strategy, baseLevel)
+    {
+        theToken := new StringWriter()
+    }
+}
+
+// --- FunctionNode ---
+
+class FunctionNode : TreeLeaf
+{
+    theArg1;
+    theArg2;
+    
+    theArgState;
+    
+    get Value()
+    {
+        var subj := new MessageName(cast string(theToken));
+        
+        if (nil == theArg1) {
+            ^ mixin subj(theStrategy).eval()
+        }
+        else if (nil == theArg2) {
+            ^ mixin subj(theStrategy).eval(theArg1.Value)
+        }
+        else {
+            ^ mixin subj(theStrategy).eval(theArg1.Value, theArg2.Value)
+        }
+    }
+
+    first_arg(node)
+    {
+        if (nil == theArg1)
+        { 
+            theArg1 := node.setFunction(self) 
+        }
+        else
+        { 
+            theArg1 := theArg1 + node.setFunction(self) 
+        }
+    }
+
+    second_arg(node)
+    {
+        if (nil == theArg2)
+        { 
+            theArg2 := node.setFunction(self) 
+        }
+        else
+        { 
+            theArg2 := theArg2 + node.setFunction(self) 
+        }
+    }
+        
+    first_arg()
+    {
+        theArgState := subjconst second_arg
+    }    
+        
+    second_arg()
+    {
+        theArgState := subjconst third_arg
+    }    
+
+    eval()
+        => theArgState;
+
+    append(node)
+        => theArgState;
+        
+    constructor(strategy, baseLevel)
+        <= (strategy, baseLevel)
+    {
+        theArgState := subjconst first_arg;
+    }
+}
 
 // --- StateMachine ---
 
 class StateMachine
 {
-//    object theStates.
-//    object theCurrentState.
-//    object theDerivationTree.
-//    
-//    int prop level :: theLevel.
+    theStates;
+    theCurrentState;
+    theDerivationTree;
+    
+    prop int Level;
 
     constructor assign(states)
     {
-//        theDerivationTree := DerivationTree new.
-//        theStates := states.
-//        theLevel := 0
+        theDerivationTree := new DerivationTree();
+        theStates := states;
+        Level := 0
     }
 
-//    generic eval
-//    [
-//        theCurrentState := theStates~received get
-//    ]
-//
-//    opening : ch
-//    [
-//        theLevel := theLevel + 10.
-//        
-//        self~theCurrentState opening:ch
-//    ]
-//
-//    closing : ch
-//    [
-//        theLevel := theLevel - 10.
-//        
-//        if (0 > theLevel)
-//            [ InvalidOperationException new; raise ].
-//        
-//        self~theCurrentState closing:ch
-//    ]
-//
-//    comma : ch
-//    [
-//        theDerivationTree newArgument.
-//        
-//        self~theCurrentState comma:ch
-//    ]
-//
-//    invalidate
-//    [
-//        theDerivationTree := nil
-//    ]
-//
-//    func1 = (:aChar)
-//    [
-//        var type := aChar lexicalType.
-//
-//        self~type eval:aChar.
-//    ].
-//
-//    value
-//    [
-//        var aValue := nil.
-//        
-//        if (nil == theDerivationTree)
-//            [ aValue := "Invalid expression" ];
-//            [
-//                aValue := theDerivationTree value
-//                    | back:"Invalid expression"
-//            ].
-//            
-//        ^ aValue
-//    ]
-//
-//    newLeaf : strategy
-//    [
-//        theDerivationTree append:(TreeLeaf new:strategy baseLevel:theLevel).
-//    ]
-//
-//    newNode : strategy
-//    [
-//        theDerivationTree append:(TreeNode new:strategy baseLevel:theLevel).
-//    ]
-//
-//    newFunction : strategy
-//    [
-//        theDerivationTree append:(FunctionNode new:strategy baseLevel:theLevel).
-//    ]
-//    
-//    addContent : content
-//    [
-//        theDerivationTree last_node; appendContent:content
-//    ]
-//    
-//    dispatch => theCurrentState.
+    generic()
+    {
+        theCurrentState := mixin __received(theStates).eval()
+    }
+
+    opening(ch)
+    {
+        Level := Level + 10;
+        
+        mixin theCurrentState(self).opening:ch
+    }
+
+    closing(ch)
+    {
+        Level := Level - 10;
+        
+        if (0 > Level)
+            { InvalidOperationException.raise() };
+        
+        mixin theCurrentState(self).closing(ch)
+    }
+
+    comma(ch)
+    {
+        theDerivationTree.newArgument();
+        
+        mixin theCurrentState(self).comma(ch)
+    }
+
+    invalidate()
+    {
+        theDerivationTree := nil
+    }
+
+    Func = (ch)
+    {
+        var type := ch.LexicalType;
+
+        mixin type(self).eval:ch
+    };
+
+    get Value()
+    {
+        var value := nil;
+        
+        if (nil == theDerivationTree)
+        { 
+            value := "Invalid expression" 
+        }
+        else
+        {
+            value := theDerivationTree.Value
+                | back:"Invalid expression"
+        };
+            
+        ^ value
+    }
+
+    newLeaf(strategy)
+    {
+        theDerivationTree.append(new TreeLeaf(strategy, Level));
+    }
+
+    newNode(strategy)
+    {
+        theDerivationTree.append(new TreeNode(strategy, Level));
+    }
+
+    newFunction(strategy)
+    {
+        theDerivationTree.append(new FunctionNode(strategy, Level))
+    }
+    
+    addContent(content)
+    {
+        theDerivationTree.LastNode.appendContent(content)
+    }
+    
+    dispatch() => theCurrentState;
 }
 
 // --- parserOp ---
@@ -315,17 +337,17 @@ extension parserOp
 {
     evaluatedWith(states)
     {
-        var stateMachine := StateMachine.assign(states).State0;
+        var stateMachine := StateMachine.assign(states).State0();
         
         try
         {
-            self forEach(stateMachine func1)
+            self.forEach(stateMachine.Func)
         }
         catch(Exception e)
         {
-                console.printLine(e);
-                
-                stateMachine.invalidate()
+            console.printLine(e);
+            
+            stateMachine.invalidate()
         };
         
         ^ stateMachine.Value
