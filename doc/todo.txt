@@ -3,7 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * Instance::transalte() - use loop for the tape creation - see NEW_TAPE_MESSAGE_ID
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * mixin :: { collection }, new::{ collection } - get rid of - new {}
                  * create a nested class / collection - syntax review
@@ -26,7 +25,8 @@ In development:
                    toInt is ignored
                  * example of external library references
                  * calc sample - support properties
-
+                 * review elenasm - simplify the coordination info, probably it should be encoded into the log itself,
+                   so no need to fill the list (what about the string in calc sample)
 
                  * Thread.assign:(){} should be supported
                  * (re)implement tape debugger

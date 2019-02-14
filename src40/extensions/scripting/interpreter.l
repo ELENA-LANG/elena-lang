@@ -63,7 +63,7 @@ public class ScriptEngine
                             (scopeId, path, encoding, autoDetect);
             
         if (tape.isEmpty())
-            { ScriptEngineException new(self.lastScriptError()).raise() };
+            { ScriptEngineException.new(self.lastScriptError()).raise() };
             
         extern elenasm.Release(tape)
     }
@@ -74,7 +74,7 @@ public class ScriptEngine
                             (scopeId, path, encoding, autoDetect);
             
         if (tape.isEmpty())
-            { ScriptEngineException new(self.lastScriptError()).raise() };
+            { ScriptEngineException.new(self.lastScriptError()).raise() };
             
         var retVal := self.evaluateTape(tape);
         

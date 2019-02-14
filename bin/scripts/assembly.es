@@ -6,7 +6,7 @@
    #define start       ::= $eof;
 
    #define module      ::= <= ( > => 
-                             "root" "(" include* symbol* ")" 
+                             "root" "(" "namespace" "(" include* symbol* ")" ")" 
                            <= "*system'dynamic'ClosureTape=" # ) =>;
 
    #define include     ::=   "include" "(" forward identifier_v ")"
@@ -22,7 +22,7 @@
                               <= += " extensions'dynamic'closeClosure " =>;
 
    #define symbol_expr ::= <= += " extensions'dynamic'openSymbolClosure "  => 
-                             "symbol" "(" identifier expression ")" 
+                             "symbol" "(" s_identifier expression ")" 
                            <= += " extensions'dynamic'closeClosure " =>;
 
    #define symbol_expr ::= <= += " extensions'dynamic'openPreloadedSymbolClosure "  => 
@@ -56,12 +56,12 @@
    #define method      ::= <= 
                               += " extensions'dynamic'openMethodClosure " 
                            =>
-                             "method" "(" message meth_params meth_body ")"
+                             "method" "(" message_ident meth_params meth_body ")"
                               <= += " extensions'dynamic'closeClosure " =>;
 
-   #define meth_params ::= parameter* <= += " ""target"" extensions'dynamic'newParamTokenClosure ^ ""new[1]"" " =>;
+   #define meth_params ::= <= += " ""__target"" extensions'dynamic'newParamTokenClosure ^ ""new[1]"" " => parameter*;
 
-   #define parameter   ::=   "parameter" "=" ident_quote
+   #define parameter   ::=   "parameter" "(" "nameattr" "(" "identifier" "=" ident_quote ")" ")"
                            <= += " extensions'dynamic'newParamTokenClosure ^ ""new[1]"" " => ;
 
    #define meth_body   ::= ret_expr;
@@ -94,6 +94,11 @@
    #define operator    ::=   "operator" "=" "?"
                            <= += " extensions'dynamic'ifClosure " => ;
 
+   #define message_ident ::= "nameattr" "(" "identifier" "=" ident_quote ")" 
+                           <= += " extensions'dynamic'newMessageClosure ^ ""new[1]"" " => ;
+
+   #define s_identifier ::= "nameattr" "(" identifier ")" ;
+
    #define identifier  ::=   "identifier" "=" ident_quote
                            <= += " extensions'dynamic'newIdentifierClosure ^ ""new[1]"" " => ;
 
@@ -111,7 +116,7 @@
 
    #define reference_v ::= "reference" "=" ref_quote;
 
-   #define identifier_v::= "identifier" "=" ident_quote;
+   #define identifier_v::= "nameattr" "(" "identifier" "=" ident_quote ")";
 
    #define operator_quote ::= <= >> " ""equal"" " > =>
                              "==";

@@ -88,6 +88,22 @@ sealed class ParameterContext
         _buffer.append(name).append(type).append(value)
     }
     
+    reverse(int type, int value)
+    {
+        int counter := value - 1;
+        int reversed := 1;
+        int i := _buffer.Length;
+        while (counter > 0) {
+            i -= 2;
+            if(_buffer[i] == type) {
+                reversed += 1;
+                counter -= 1;
+                _buffer[i+1] := reversed;
+            };
+            i -= 1;            
+        }
+    }
+    
     resolve(string name, ref int retVal)
     {
         int len := _buffer.Length;
@@ -217,9 +233,14 @@ singleton Method : Strategy
         
         level := level - method_level;
         level := level + 1;
+        if (level != 1) {            
+            parameters.reverse(METHOD_PARAM, level);
+            
+            level := 1
+        };   
         
         parameters.add(value, METHOD_PARAM, level);
-        
+                
         context.append(expr_var_token)
     }
     
@@ -281,8 +302,6 @@ singleton Method : Strategy
         context.trim(pos);
         context.append(new Message(cast string(name)));
         context.append(tape);
-        
-        var pp := context.tape().Value;
     }    
 }
 
@@ -861,26 +880,26 @@ public singleton ifClosure : DynamicClosure
         = t.if();
 }
 
-////public singleton nextClosure :: DynamicClosure
-////{
-////    generic closure(object t, V<object> args)
-////        = t nextOperation.
-////}
-////
-////public class includeClosure :: DynamicClosure
-////{
-////    literal forward.
-////    literal reference.
-////    
-////    constructor new(literal forward, literal reference)
-////    [
-////        @forward:=forward.
-////        @reference:=reference.
-////    ]
-////    
-////    generic closure(object t, V<object> args)
-////        = t include(forward,reference).
-////}
+//public singleton nextClosure :: DynamicClosure
+//{
+//    generic closure(object t, V<object> args)
+//        = t nextOperation.
+//}
+
+public class includeClosure : DynamicClosure
+{
+    string forward;
+    string reference;
+    
+    constructor new(string forward, string reference)
+    {
+        this forward := forward;
+        this reference := reference;
+    }
+    
+    closure(object t, params object[] args)
+        = t.include(forward,reference);
+}
 
 public abstract class DynamicClosureWithParam : DynamicClosure
 {

@@ -2542,7 +2542,7 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode termi
       retVal.reference = V_MESSAGE;
    }
    else if (terminal == lxTemplate) {
-      SNode current = terminal.findChild(lxTarget);
+      SNode current = terminal.findChild(lxTypeAttribute).findChild(lxTarget);
       ref_t extensionRef = mapTypeAttribute(current, scope);
       message.append(scope.moduleScope->module->resolveReference(extensionRef));
       message.append('.');
@@ -6206,6 +6206,21 @@ inline int countFields(SNode node)
    return counter;
 }
 
+void Compiler :: validateClassFields(SNode node, ClassScope& scope)
+{
+   SNode current = node.firstChild();
+
+   while (current != lxNone) {
+      if (current == lxClassField) {
+         SNode typeNode = current.findChild(lxTypeAttribute);
+         if (typeNode != lxNone) {
+            resolveTypeAttribute(scope, typeNode, false);
+         }
+      }
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleField)
 {
    SNode current = node.firstChild();
@@ -7167,6 +7182,11 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
    }
    else if (_logic->isEmbeddable(scope.info)) {
       scope.embeddable = true;
+   }
+
+   // validate field types
+   if (!testany(scope.info.header.flags, elStructureRole | elDynamicRole) && scope.info.fieldTypes.Count() > 0) {
+      validateClassFields(node, scope);
    }
 
    writer.newNode(lxClass, node.argument);

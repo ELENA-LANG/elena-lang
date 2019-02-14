@@ -1,9 +1,33 @@
 ..\..\bin\elc accumulator\accumulator.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc ackermann\ackerman.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc addfield\addfield.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc anonymrec\anonymrec.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc aplusb\aplusb.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc applycallback\arraycallback.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc arithmeticint\arithmeticint.prj
 rem ..\..\bin\elc arithmmean\arithmmean.prj
 rem ..\..\bin\elc arrayconcat\arrayconcat.prj
@@ -13,9 +37,17 @@ rem ..\..\bin\elc associativearrays\associativearrays.prj
 rem ..\..\bin\elc bestshuffle\bestshuffle.prj
 rem ..\..\bin\elc binary\binary.prj
 ..\..\bin\elc amb\amb.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc bitwise\bitwise.prj
 rem ..\..\bin\elc brackets\brackets.prj
 ..\..\bin\elc anagram\anagram.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc median\median.prj
 rem ..\..\bin\elc smavg\smavg.prj
 rem ..\..\bin\elc caesar\caesar.prj
@@ -25,8 +57,16 @@ rem ..\..\bin\elc combinations\combinations.prj
 rem ..\..\bin\elc bullscows\bullscows.prj
 rem ..\..\bin\elc calendar\calendar.prj
 ..\..\bin\elc doors\doors.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc twentyfour\twentyfour.prj
 ..\..\bin\elc simple_windowed_app\simple_windowed_app.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc gui_component_interaction\gui_component_interaction.prj
 rem ..\..\bin\elc string_append\string_append.prj
 rem ..\..\bin\elc string_case\string_case.prj
@@ -55,3 +95,13 @@ rem ..\..\bin\elc zhangsuen\zhangsuen.prj
 rem ..\..\bin\elc zeckendorf\zeckendorf.prj
 rem ..\..\bin\elc zeckendorf_arithm\zeckendorf_arithm.prj 
 rem ..\..\bin\elc ycombinator\ycombinator.prj
+
+@echo off 
+goto:eof
+@echo on
+
+:CompilerError
+echo ELC returns error %ERRORLEVEL%
+@echo off
+goto:eof
+@echo on

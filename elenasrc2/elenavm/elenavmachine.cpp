@@ -755,20 +755,38 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             // ; assign content
             // bcopya
             
-            // ; repeat param-time
-            // popa
-            // axsavebi i
-
-            // pushb
             ecodes.writeByte(bcBCopyA);
 
-            while (level > 0) {
-               ecodes.writeByte(bcPopA);
-               ecodes.writeByte(bcAXSaveBI);
-               level--;
+            if (level > 5) {
+               // dcopy level
+               // labNext
+               // dec
+               // popa
+               // xset
+               // greatern 0,labNext
+               ecodes.writeByte(bcDCopy);
                ecodes.writeDWord(level);
+               ecodes.writeByte(bcNop);
+               ecodes.writeByte(bcDec);
+               ecodes.writeByte(bcPopA);
+               ecodes.writeByte(bcXSet);
+               ecodes.writeByte(bcGreaterN);
+               ecodes.writeDWord(0);
+               ecodes.writeDWord(-13);
+            }
+            else {
+               // ; repeat param-time
+               // popa
+               // axsavebi i
+               while (level > 0) {
+                  ecodes.writeByte(bcPopA);
+                  ecodes.writeByte(bcAXSaveBI);
+                  level--;
+                  ecodes.writeDWord(level);
+               }
             }
 
+            // pushb
             ecodes.writeByte(bcPushB);
             break;
          }

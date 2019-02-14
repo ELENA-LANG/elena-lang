@@ -827,6 +827,7 @@ private:
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false/*, bool ignoreSealed = false*/);
    void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode);
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
+   void validateClassFields(SNode node, ClassScope& scope);
 
    void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode);
    void declareClassAttributes(SNode node, ClassScope& scope);

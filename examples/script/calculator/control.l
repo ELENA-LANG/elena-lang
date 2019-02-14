@@ -71,7 +71,7 @@ public singleton control
 {
     greeting() = "Enter the expression to evaluate (e.g. 2+2) or -q to exit";
     
-    prompt() = ">";
+    Prompt = ">";
     
     proceed(line)
     {
@@ -84,9 +84,4 @@ public singleton control
             ^ line.evaluatedWith(forward rules)
         }
     }    
-}
-
-public program()
-{
-    staticTestCases()
 }

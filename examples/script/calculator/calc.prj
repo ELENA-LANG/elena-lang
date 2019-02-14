@@ -18,5 +18,6 @@
         <forward key="program">extensions'programLoop</forward>
         <forward key="program'control">calc'control</forward>
         <forward key="rules">calc'dynamicRules</forward>
+        <forward key="xprogram">calc'testCases</forward>
     </forwards>
 </configuration>
