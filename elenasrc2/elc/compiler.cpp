@@ -323,10 +323,9 @@ ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
 
       return terminal.argument;
    }
-////   else if (terminal == lxNone) {
-////      return mapAnonymous();
-////   }
-//   else return moduleScope->mapNewIdentifier(ns, terminal.identifier(), false);
+   else if (terminal == lxNone) {
+      return moduleScope->mapAnonymous();
+   }
    else throw InternalError("Cannot map new terminal"); // !! temporal
 }
 

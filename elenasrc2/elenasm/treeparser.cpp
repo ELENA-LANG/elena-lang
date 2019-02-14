@@ -23,6 +23,7 @@ TreeScriptParser :: TreeScriptParser()
    _tokens.add("singleton", lxClass);
    _tokens.add("nested", lxNestedClass);
    _tokens.add("method", lxClassMethod);
+   _tokens.add("action", lxClassMethod);
    _tokens.add("message", lxMessage);
    _tokens.add("code", lxCode);
    _tokens.add("expression", lxExpression);
@@ -44,6 +45,7 @@ TreeScriptParser :: TreeScriptParser()
 
    _attributes.add("singleton", V_SINGLETON);
    _attributes.add("preloaded_symbol", V_PRELOADED);
+   _attributes.add("action", V_ACTION);
 }
 
 void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer, LexicalType type)

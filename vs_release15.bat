@@ -139,7 +139,7 @@ md doc\api
 copy %1\doc\api\*.html doc\api
 
 md doc\lang
-copy %1\doc\lang\dictionary.txt  doc\lang
+copy %1\doc\lang\spec.txt  doc\lang
 
 md doc\tech 
 copy %1\doc\tech\bytecode.txt doc\tech 

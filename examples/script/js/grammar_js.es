@@ -5,16 +5,19 @@
 
    #define start     ::= 
 <=
-root
-(
+root 
+( 
+  namespace
+  (
 =>
-   scope $eof
+    scope $eof
 <=
+  )
 )
 =>;
 
    #define scope ::= 
-<= 
+<=
    preloaded_symbol
    (
        expression
@@ -38,17 +41,15 @@ root
       method
       (
 =>
-      "function" function_name "(" function_params? ")" "{" function_body "}"
+      "function" function_name  "(" function_params? ")" "{" function_body "}"
 <=
       )
 =>;
 
    #define code      ::= 
 <= 
-                method
+                action
                 (
-                   message = eval
-
                    code
                    (
 =>
@@ -132,8 +133,11 @@ root
 	     )
 =>;
 
-   #define function_name ::=
+   #define message_name ::=
 		<= message = $current =>  (!"print" | "if" | "loop" | "var" | "while");
+
+   #define function_name ::=
+		<= nameattr ( identifier = $current =>  (!"print" | "if" | "loop" | "var" | "while") <= ) =>;
 
    #define parameter  ::=
                 expression;
@@ -224,7 +228,7 @@ root
              (
                 identifier = target
 =>                
-                function_name "(" parameter? next_parameter* ")"
+                message_name "(" parameter? next_parameter* ")"
 <=                                           
 	     )
 =>;

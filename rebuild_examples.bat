@@ -88,7 +88,12 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem bin\elc examples\script\js\vmconsole.prj
-rem bin\elc examples\script\js\fibonacci.xprj 
+
+bin\elc examples\script\js\fibonacci_static.prj 
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem bin\elc examples\gui\agenda\agenda.prj
 rem bin\elc examples\gui\graphs\graphs.prj
 rem bin\elc examples\gui\c_a_g\c_area_gui.prj
