@@ -1900,13 +1900,13 @@ ref_t CompilerLogic :: retrievePrimitiveReference(_ModuleScope&, ClassInfo& info
    return 0;
 }
 
-ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRef)
+ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, elementRef, true))
       return 0;
 
-   if (isEmbeddable(info)) {
+   if (isEmbeddable(info) && structOne) {
       if (isCompatible(scope, V_INT32, elementRef)) {
          switch (info.size) {
             case 4:

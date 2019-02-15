@@ -3,6 +3,13 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * embeddable property call
+                 * embeddable eval[1]
+                 * embeddable get[1]
+                 * embeddable eval[2]
+                 * ref<> template #455
+
+                 * fixing vmconsole sample
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * mixin :: { collection }, new::{ collection } - get rid of - new {}
                  * create a nested class / collection - syntax review
@@ -14,7 +21,6 @@ In development:
 
                  * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
                  * property attribute - can be only the top most token
-                 * embeddable property call
                  * implement length property optimization -> replace direct operation with byref one
                  * no need to box variadic argument list for template opertions
                  * array operation with Array<type> should be resolved directly (an array is embeddable)
@@ -293,9 +299,6 @@ Pipeline:
                  * support sealed accumulator constants
                  * warn on method duplications in the template
                  * warn on field duplications in the template
-                 * embeddable eval[1]
-                 * embeddable get[1]
-                 * embeddable eval[2]
                  * elenart : correctly display strong typed message names
                  * elenavm : correctly display strong typed message names
                  * Signature should support only get, set, eval

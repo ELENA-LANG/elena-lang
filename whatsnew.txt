@@ -7,8 +7,12 @@
                              What's New in 4.0.2, release 
 ***************************************************************
 
+[ELENA]
+[-] #461 : Resolving strong-typed message with variadic argument list
+[-] #455 : ref<> template 
+
 ***************************************************************
-                             What's New in 4.0.1, second beta 
+                             What's New in 4.0.1, second beta    
 ***************************************************************
 
 [ELENA]

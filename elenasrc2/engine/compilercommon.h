@@ -453,7 +453,7 @@ public:
    virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
    virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
 
-   virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef) = 0;
+   virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
 
    // retrieve the call type
    virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;

@@ -1935,7 +1935,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
          if (!isPrimitiveRef(variable.reference)) {
             // if it is a primitive array
             variable.element = variable.reference;
-            variable.reference = _logic->definePrimitiveArray(*scope.moduleScope, variable.element);
+            variable.reference = _logic->definePrimitiveArray(*scope.moduleScope, variable.element, true);
          }
          else scope.raiseError(errInvalidHint, terminal);
       }
@@ -6539,7 +6539,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
       if (test(scope.info.header.flags, elSealed)) {
          scope.info.header.flags |= elWrapper;
-         if (size > 0)
+         if (size > 0 && !test(scope.info.header.flags, elNonStructureRole))
             scope.info.header.flags |= elStructureRole;
       }         
    }
@@ -6553,7 +6553,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
             scope.info.size = -size;
          }
 
-         ref_t arrayRef = _logic->definePrimitiveArray(*scope.moduleScope, classRef);
+         ref_t arrayRef = _logic->definePrimitiveArray(*scope.moduleScope, classRef, test(scope.info.header.flags, elStructureRole));
 
          scope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(arrayRef, classRef));
          scope.info.fields.add(terminal, -2);

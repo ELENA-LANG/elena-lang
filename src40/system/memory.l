@@ -111,7 +111,7 @@ public sealed Array<T> : Indexable<T>
 
 // --- Array template ---
 
-public sealed nonstructural VariadicArray<T> //:: Indexable<template_subj>
+public sealed nonstructural VariadicArray<T> : Indexable<T>
 {
     embeddable __string T[] theArray;
 
@@ -133,6 +133,45 @@ public sealed nonstructural VariadicArray<T> //:: Indexable<template_subj>
         
         ^ array
     }
+    
+    Enumerator<T> enumerator() = new BaseEnumerator<T>:
+    {
+        this theIndex := -1;
+        
+        this theLength := self.Length;
+        
+        T get() = self.at(this theIndex.Value);
+        
+        enumerable() = self;
+        
+        reset()
+        {
+            this theIndex := -1
+        }
+    };
+
+    Indexer<T> indexer() = new BaseIndexer<T>:
+    {
+        this theIndex := 0;
+        
+        this theLength := self.Length;
+        
+        T get()
+            = self.at(theIndex);
+            
+        set(T o)
+        {
+            self.setAt(theIndex, o)
+        }
+    };    
+    
+    T at(int n)
+        = theArray[n];
+
+    setAt(int n, T item)
+    {
+        theArray[n] := item;
+    }    
 }
 
 //// --- matrixof ---
