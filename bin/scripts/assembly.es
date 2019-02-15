@@ -33,6 +33,10 @@
                              "expression" "(" expr_member+ ")"
                               <= += " extensions'dynamic'closeClosure " =>;
 
+   #define expression  ::= <= += " extensions'dynamic'openExpressionClosure " += " extensions'dynamic'ifClosure " =>
+                             "expression" "(" expr_member if_operator expr_member ")"
+                              <= += " extensions'dynamic'closeClosure " += " extensions'dynamic'closeClosure " =>;
+
    #define expr_member ::=   nested;
    #define expr_member ::=   numeric;
    #define expr_member ::=   literal;
@@ -91,8 +95,7 @@
    #define operator    ::=   "operator" "=" operator_quote
                            <= += " extensions'dynamic'newMessageClosure ^ ""new[1]"" " => ;
 
-   #define operator    ::=   "operator" "=" "?"
-                           <= += " extensions'dynamic'ifClosure " => ;
+   #define if_operator    ::=   "operator" "=" "?" ;
 
    #define message_ident ::= "nameattr" "(" "identifier" "=" ident_quote ")" 
                            <= += " extensions'dynamic'newMessageClosure ^ ""new[1]"" " => ;
