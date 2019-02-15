@@ -3000,10 +3000,19 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    return retVal;
 }
 
+inline ident_t resolveOperatorName(SNode node)
+{
+   SNode terminal = node.firstChild(lxTerminalMask);
+   if (terminal != lxNone) {
+      return terminal.identifier();
+   }
+   else return node.identifier();
+}
+
 ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode)
 {
    SNode current = node;
-   int operator_id = (int)current.argument > 0 ? current.argument : _operators.get(current.firstChild(lxTerminalMask).identifier());
+   int operator_id = (int)current.argument > 0 ? current.argument : _operators.get(resolveOperatorName(current));
 
    SNode roperand = node.nextNode();
 //   if (operatorNode.prevNode() == lxNone)

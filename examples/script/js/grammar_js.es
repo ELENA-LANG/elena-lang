@@ -48,8 +48,10 @@ root
 
    #define code      ::= 
 <= 
-                action
+                method 
                 (
+                   nameattr ( identifier = eval )
+
                    code
                    (
 =>
@@ -89,9 +91,8 @@ root
 <= 
              expression
              (
-                 operator = "?"
 =>
-         "if" "(" expression ")" code_brackets
+         "if" "(" expression ")" if_code_brackets
 <=
              )
 =>;
@@ -109,6 +110,12 @@ root
              )
           )
 =>;
+
+   #define if_code_brackets ::=
+<=
+                operator = "?"
+=>
+                code_brackets;
 
    #define code_brackets ::= 
 <=
@@ -226,16 +233,16 @@ root
 <=
              expression
              (
-                identifier = target
+                identifier = __target
 =>                
                 message_name "(" parameter? next_parameter* ")"
 <=                                           
 	     )
 =>;
 
-   #define object     ::= <= literal = "$literal" =>;
-   #define object     ::= <= identifier = $identifier =>;
-   #define object     ::= <= numeric = $numeric =>;
+   #define object     ::= <= expression ( literal = "$literal" ) =>;
+   #define object     ::= <= expression ( identifier = $identifier ) =>;
+   #define object     ::= <= expression ( numeric = $numeric ) =>;
 
-   #define function_param ::= <= parameter = $identifier =>;
+   #define function_param ::= <= parameter ( nameattr ( identifier = $identifier ) ) =>;
 ]]
