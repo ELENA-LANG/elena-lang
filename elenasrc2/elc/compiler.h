@@ -1019,7 +1019,7 @@ private:
    void analizeClassTree(SNode node, ClassScope& scope);
    void analizeSymbolTree(SNode node, Scope& scope);
 
-//   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
+   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 
    void createPackageInfo(_Module* module, _ProjectManager& project);
 
@@ -1060,7 +1060,7 @@ public:
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
       ref_t targetRef*/, int stacksafeAttr);
-//   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject);
+   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t actionRef);
 //   virtual void injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
 //////   virtual void injectFieldExpression(SyntaxWriter& writer);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef, ref_t genericMessage);

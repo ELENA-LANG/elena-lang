@@ -4,11 +4,13 @@ In development:
 
               dev - elena 4.0
                  * embeddable property call
+                 * embeddable idle - returning self - see cast methods
+                 * ref<> template #455
+
+
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
-                 * ref<> template #455
-
                  * fixing vmconsole sample
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * mixin :: { collection }, new::{ collection } - get rid of - new {}

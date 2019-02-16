@@ -195,18 +195,18 @@ public:
 
 //   bool recognizeEmbeddableOp(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject);
 //   bool recognizeEmbeddableOp2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject);
-//
-//   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject);
+
+   virtual bool recognizeEmbeddableGet(_ModuleScope& scope, SNode node, /*ref_t extensionRef, */ref_t returningRef, ref_t& actionRef);
 //   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject);
 //   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject);
 //   virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject);
 //   virtual bool recognizeEmbeddableEval2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject);
-//   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
+   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
 //   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef);
-//
-//   virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope);
-//   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node);
-//   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node);
+
+   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope);
+   virtual bool optimizeEmbeddableGet(_ModuleScope& scope, _Compiler& compiler, SNode node);
+   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
    virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node);
 
    virtual bool validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired);

@@ -110,19 +110,19 @@ inline ident_t findSourceRef(SNode node)
 //{
 //   int attribute;
 //   int paramCount;   // -1 indicates that operation should be done with the assigning target
-//   int verb;
+//   //int verb;
 //
-//   EmbeddableOp(int attr, int count, int verb)
+//   EmbeddableOp(int attr, int count/*, int verb*/)
 //   {
 //      this->attribute = attr;
 //      this->paramCount = count;
-//      this->verb = verb;
+//     // this->verb = verb;
 //   }
 //};
-//#define EMBEDDABLEOP_MAX 5
+//constexpr auto EMBEDDABLEOP_MAX = /*5*/1;
 //EmbeddableOp embeddableOps[EMBEDDABLEOP_MAX] =
 //{
-//   EmbeddableOp(maEmbeddableGetAt, 2, READ_MESSAGE_ID),
+//   EmbeddableOp(maEmbeddableGetAt, 2/*, READ_MESSAGE_ID*/),
 //   EmbeddableOp(maEmbeddableGetAt2, 3, READ_MESSAGE_ID),
 //   EmbeddableOp(maEmbeddableEval, 2, EVAL_MESSAGE_ID),
 //   EmbeddableOp(maEmbeddableEval2, 3, EVAL_MESSAGE_ID),
@@ -1951,25 +1951,25 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
       emptyStructure = true;
 }
 
-//bool CompilerLogic :: recognizeEmbeddableGet(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject)
-//{
-//   if (returningRef != 0 && defineStructSize(scope, returningRef, 0) > 0) {
-//      root = root.findChild(lxNewFrame);
-//
-//      if (root.existChild(lxReturning)) {
-//         SNode message = SyntaxTree::findPattern(root, 2,
-//            SNodePattern(lxExpression),
-//            SNodePattern(lxDirectCalling, lxSDirctCalling));
-//
-//         // if it is eval&subject2:var[1] message
-//         if (getParamCount(message.argument) != 1)
-//            return false;
-//
-//         // check if it is operation with $self
-//         SNode target = SyntaxTree::findPattern(root, 3,
-//            SNodePattern(lxExpression),
-//            SNodePattern(lxDirectCalling, lxSDirctCalling),
-//            SNodePattern(lxSelfLocal, lxLocal));
+bool CompilerLogic :: recognizeEmbeddableGet(_ModuleScope& scope, SNode root, /*ref_t extensionRef, */ref_t returningRef, ref_t& actionRef)
+{
+   if (returningRef != 0 && defineStructSize(scope, returningRef, 0) > 0) {
+      root = root.findChild(lxNewFrame);
+
+      if (root.existChild(lxReturning)) {
+         SNode message = SyntaxTree::findPattern(root, 2,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling));
+
+         // if it is eval&subject2:var[1] message
+         if (getParamCount(message.argument) != 1)
+            return false;
+
+         // check if it is operation with $self
+         SNode target = SyntaxTree::findPattern(root, 3,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling),
+            SNodePattern(lxSelfLocal, lxLocal));
 //         if (target == lxNone) {
 //            target = SyntaxTree::findPattern(root, 4,
 //               SNodePattern(lxExpression),
@@ -1982,41 +1982,41 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //            if (message.findChild(lxCallTarget).argument != extensionRef)
 //               return false;
 //         }
-//         else if (target != lxSelfLocal || target.argument != 1)
-//            return false;
-//
-//         // check if the argument is returned
-//         SNode arg = SyntaxTree::findPattern(root, 4,
-//            SNodePattern(lxExpression),
-//            SNodePattern(lxDirectCalling, lxSDirctCalling),
-//            SNodePattern(lxExpression),
-//            SNodePattern(lxLocalAddress));
-//
-//         if (arg == lxNone) {
-//            arg = SyntaxTree::findPattern(root, 5,
-//               SNodePattern(lxExpression),
-//               SNodePattern(lxDirectCalling, lxSDirctCalling),
-//               SNodePattern(lxExpression),
-//               SNodePattern(lxExpression),
-//               SNodePattern(lxLocalAddress));
-//         }
-//
-//         SNode ret = SyntaxTree::findPattern(root, 3,
-//            SNodePattern(lxReturning),
-//            SNodePattern(lxBoxing),
-//            SNodePattern(lxLocalAddress));
-//
-//         if (arg != lxNone && ret != lxNone && arg.argument == ret.argument) {
-//            subject = getAction(message.argument);
-//
-//            return true;
-//         }
-//      }
-//   }
-//
-//   return false;
-//}
-//
+         /*else */if (target != lxSelfLocal || target.argument != 1)
+            return false;
+
+         // check if the argument is returned
+         SNode arg = SyntaxTree::findPattern(root, 4,
+            SNodePattern(lxExpression),
+            SNodePattern(lxDirectCalling, lxSDirctCalling),
+            SNodePattern(lxExpression),
+            SNodePattern(lxLocalAddress));
+
+         if (arg == lxNone) {
+            arg = SyntaxTree::findPattern(root, 5,
+               SNodePattern(lxExpression),
+               SNodePattern(lxDirectCalling, lxSDirctCalling),
+               SNodePattern(lxExpression),
+               SNodePattern(lxExpression),
+               SNodePattern(lxLocalAddress));
+         }
+
+         SNode ret = SyntaxTree::findPattern(root, 3,
+            SNodePattern(lxReturning),
+            SNodePattern(lxBoxing),
+            SNodePattern(lxLocalAddress));
+
+         if (arg != lxNone && ret != lxNone && arg.argument == ret.argument) {
+            actionRef = getAction(message.argument);
+
+            return true;
+         }
+      }
+   }
+
+   return false;
+}
+
 //bool CompilerLogic :: recognizeEmbeddableOp(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t verb, ref_t& subject)
 //{
 //   if (returningRef != 0 && defineStructSize(scope, returningRef, 0) > 0) {
@@ -2190,17 +2190,17 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //{
 //   return recognizeEmbeddableOp2(scope, root, extensionRef, returningRef, EVAL_MESSAGE_ID, subject);
 //}
-//
-//bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOne)
-//{
-//   SNode object = SyntaxTree::findPattern(methodNode, 3,
-//      SNodePattern(lxNewFrame),
-//      SNodePattern(lxReturning),
-//      SNodePattern(extensionOne ? lxLocal : lxSelfLocal));
-//
-//   return extensionOne ? (object == lxLocal && object.argument == -1) : (object == lxSelfLocal && object.argument == 1);
-//}
-//
+
+bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOne)
+{
+   SNode object = SyntaxTree::findPattern(methodNode, 3,
+      SNodePattern(lxNewFrame),
+      SNodePattern(lxReturning),
+      SNodePattern(extensionOne ? lxLocal : lxSelfLocal));
+
+   return extensionOne ? (object == lxLocal && object.argument == -1) : (object == lxSelfLocal && object.argument == 1);
+}
+
 //bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& messageRef)
 //{
 //   SNode attr = methodNode.findChild(lxEmbeddableMssg);
@@ -2211,28 +2211,28 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //   }
 //   else return false;
 //}
-//
-//bool CompilerLogic :: optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node)
-//{
-//   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
-//   SNode callTarget = callNode.findChild(lxCallTarget);
-//
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, callTarget.argument))
-//      return false;
-//
-//   ref_t subject = info.methodHints.get(Attribute(callNode.argument, maEmbeddableGet));
-//   // if it is possible to replace get&subject operation with eval&subject2:local
-//   if (subject != 0) {
-//      compiler.injectEmbeddableGet(node, callNode, subject);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool CompilerLogic :: optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node)
-//{
+
+bool CompilerLogic :: optimizeEmbeddableGet(_ModuleScope& scope, _Compiler& compiler, SNode node)
+{
+   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
+   SNode callTarget = callNode.findChild(lxCallTarget);
+
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, callTarget.argument))
+      return false;
+
+   ref_t actionRef = info.methodHints.get(Attribute(callNode.argument, maEmbeddableGet));
+   // if it is possible to replace get&subject operation with eval&subject2:local
+   if (actionRef != 0) {
+      compiler.injectEmbeddableGet(node, callNode, actionRef);
+
+      return true;
+   }
+   else return false;
+}
+
+bool CompilerLogic :: optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node)
+{
 //   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
 //   SNode callTarget = callNode.findChild(lxCallTarget);
 //
@@ -2253,9 +2253,9 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //         return true;
 //      }
 //   }
-//
-//   return false;
-//}
+
+   return false;
+}
 
 bool CompilerLogic :: validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired)
 {
@@ -2320,24 +2320,24 @@ bool CompilerLogic :: validateBoxing(_ModuleScope& scope, _Compiler& compiler, S
 ////      targetRef = info.fieldTypes.get(0).value1;
 ////   }
 ////}
-//
-//bool CompilerLogic :: optimizeEmbeddable(SNode node, _CompilerScope& scope)
-//{
-//   // check if it is a virtual call
-//   if (node == lxDirectCalling && getParamCount(node.argument) == 0) {
-//      SNode callTarget = node.findChild(lxCallTarget);
-//
-//      ClassInfo info;
-//      if (defineClassInfo(scope, info, callTarget.argument) && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
-//         // if it is an idle call, remove it
-//         node = lxExpression;
-//
-//         return true;
-//      }
-//   }
-//
-//   return false;
-//}
+
+bool CompilerLogic :: optimizeEmbeddable(SNode node, _ModuleScope& scope)
+{
+   // check if it is a virtual call
+   if (node == lxDirectCalling && getParamCount(node.argument) == 0) {
+      SNode callTarget = node.findChild(lxCallTarget);
+
+      ClassInfo info;
+      if (defineClassInfo(scope, info, callTarget.argument) && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
+         // if it is an idle call, remove it
+         node = lxExpression;
+
+         return true;
+      }
+   }
+
+   return false;
+}
 
 void CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode node)
 {

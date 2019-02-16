@@ -2,15 +2,19 @@
 /// visibility? property? scope_prefix? scope? type?
 
 /// visibility:
-#80004001 = public;
-#80004002 = private;
-#80004003 = internal;
+#80005001 = public;
+#80005002 = private;
+#80005003 = internal;
 
 /// property:
-#80003001 = sealed;
-#80003002 = abstract;
-#80003003 = closed;
-#80003005 = predefined;
+#80004001 = sealed;
+#80004002 = abstract;
+#80004003 = closed;
+#80004005 = predefined;
+
+/// scope_accessors:
+#80003007 = get;
+#80003008 = set;
 
 /// scope_prefix:
 #80002001 = const;
@@ -19,8 +23,6 @@
 #80002004 = __direct;
 #80002005 = __loop;
 #80002006 = preloaded;
-#80002007 = get;
-#80002008 = set;
 #80002009 = lazy;
 
 /// scope:

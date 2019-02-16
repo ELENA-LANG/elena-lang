@@ -18,15 +18,19 @@ constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
 // attributes / prmitive types
 
 /// visibility:
-constexpr auto V_PUBLIC          = 0x80004001u;
-constexpr auto V_PRIVATE         = 0x80004002u;
-constexpr auto V_INTERNAL        = 0x80004003u;
+constexpr auto V_PUBLIC          = 0x80005001u;
+constexpr auto V_PRIVATE         = 0x80005002u;
+constexpr auto V_INTERNAL        = 0x80005003u;
 
 /// property:
-constexpr auto V_SEALED          = 0x80003001u;
-constexpr auto V_ABSTRACT        = 0x80003002u;
-constexpr auto V_CLOSED          = 0x80003003u;
-constexpr auto V_PREDEFINED      = 0x80003005u;
+constexpr auto V_SEALED          = 0x80004001u;
+constexpr auto V_ABSTRACT        = 0x80004002u;
+constexpr auto V_CLOSED          = 0x80004003u;
+constexpr auto V_PREDEFINED      = 0x80004005u;
+
+/// accessors:
+constexpr auto V_GETACCESSOR = 0x80003007u;
+constexpr auto V_SETACCESSOR = 0x80003008u;
 
 /// scope_prefix:
 constexpr auto V_CONST           = 0x80002001u;
@@ -35,8 +39,6 @@ constexpr auto V_WRAPPER         = 0x80002003u;
 constexpr auto V_DIRECT          = 0x80002004u;
 constexpr auto V_LOOP            = 0x80002005u;
 constexpr auto V_PRELOADED       = 0x80002006u;
-constexpr auto V_GETACCESSOR     = 0x80002007u;
-constexpr auto V_SETACCESSOR     = 0x80002008u;
 constexpr auto V_LAZY            = 0x80002009u;
 
 /// scope:
@@ -346,8 +348,8 @@ public:
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
       ref_t targetRef*/, int stacksafeAttr) = 0;
 ////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
-//
-//   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
+
+   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef, ref_t genericMessage) = 0;
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
@@ -528,17 +530,17 @@ public:
 
    // optimization
    virtual bool validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired) = 0;
-//   virtual bool recognizeEmbeddableGet(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
+   virtual bool recognizeEmbeddableGet(_ModuleScope& scope, SNode node, /*ref_t extensionRef, */ref_t returningRef, ref_t& actionRef) = 0;
 //   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableEval2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
-//   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
+   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
 //   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef) = 0;
-//   virtual bool optimizeEmbeddable(SNode node, _CompilerScope& scope) = 0;
-//
-//   virtual bool optimizeEmbeddableGet(_CompilerScope& scope, _Compiler& compiler, SNode node) = 0;
-//   virtual bool optimizeEmbeddableOp(_CompilerScope& scope, _Compiler& compiler, SNode node/*, int verb, int attribte, int paramCount*/) = 0;
+   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope) = 0;
+
+   virtual bool optimizeEmbeddableGet(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
+   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;

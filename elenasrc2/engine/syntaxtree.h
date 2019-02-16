@@ -229,7 +229,7 @@ enum LexicalType
    lxElseValue                = 0x20018, // arg - reference
    lxSize                     = 0x20019,
    lxTemplateParam            = 0x2001A,
-//   lxEmbeddable      = 0x2001B,
+   lxEmbeddable               = 0x2001B,
    lxIntExtArgument           = 0x2001C,
    lxExtArgument              = 0x2001D,
    lxExtInteranlRef           = 0x2001E,
@@ -244,7 +244,7 @@ enum LexicalType
 //   lxTypeAttr        = 0x2002A,
    lxStacksafeAttr            = 0x2002B,
 //   lxTemplateAttribute = 0x2002C,
-//   lxEmbeddableAttr  = 0x2002D,
+   lxEmbeddableAttr           = 0x2002D,
    lxBoxableAttr              = 0x2002E,
 //   lxClosureMessage  = 0x20030,
    lxExtArgumentRef           = 0x20031,
@@ -724,10 +724,10 @@ public:
          tree->refresh(*this);
       }
 
-      //Node findPattern(NodePattern pattern)
-      //{
-      //   return tree->findPattern(*this, 1, pattern);
-      //}
+      Node findPattern(NodePattern pattern)
+      {
+         return tree->findPattern(*this, 1, pattern);
+      }
 
       Node findChild(LexicalType type)
       {
