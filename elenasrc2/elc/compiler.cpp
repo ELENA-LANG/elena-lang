@@ -8665,12 +8665,17 @@ void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, i
 
 void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t actionRef)
 {
-   // removing assinging operation
-   assignNode = lxExpression;
-
    // move assigning target into the call node
-   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+   SNode assignTarget;
+   if (assignNode.existChild(lxByRefTarget)) {
+      assignTarget = assignNode.findChild(lxLocal);
+   } 
+   else assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+
    if (assignTarget != lxNone) {
+      // removing assinging operation
+      assignNode = lxExpression;
+
       callNode.appendNode(assignTarget.type, assignTarget.argument);
       assignTarget = lxIdle;
       callNode.setArgument(encodeMessage(actionRef, 1, 0));
