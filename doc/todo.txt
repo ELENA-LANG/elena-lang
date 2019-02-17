@@ -3,11 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * embeddable property call
-                 * embeddable idle - returning self - see cast methods
-                 * ref<> template #455
-
-
+                 * fix anagram
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]

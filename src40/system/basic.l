@@ -18,7 +18,15 @@ public sealed ref<T> : BaseVariable
     
     T cast() = theValue;
     
-    T Value = theValue;
+    get embeddable T Value()
+    {
+        T retVal;
+        self.readValueTo(ref retVal);
+        
+         ^ retVal 
+    }
+    //get T Value()
+    //  = theValue;
     
     set Value(T val)
     {

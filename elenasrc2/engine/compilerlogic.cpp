@@ -1970,14 +1970,14 @@ bool CompilerLogic :: recognizeEmbeddableGet(_ModuleScope& scope, SNode root, /*
             SNodePattern(lxExpression),
             SNodePattern(lxDirectCalling, lxSDirctCalling),
             SNodePattern(lxSelfLocal, lxLocal));
-//         if (target == lxNone) {
-//            target = SyntaxTree::findPattern(root, 4,
-//               SNodePattern(lxExpression),
-//               SNodePattern(lxDirectCalling, lxSDirctCalling),
-//               SNodePattern(lxExpression),
-//               SNodePattern(lxSelfLocal, lxLocal));
-//         }
-//
+         if (target == lxNone) {
+            target = SyntaxTree::findPattern(root, 4,
+               SNodePattern(lxExpression),
+               SNodePattern(lxDirectCalling, lxSDirctCalling),
+               SNodePattern(lxExpression),
+               SNodePattern(lxSelfLocal, lxLocal));
+         }
+
 //         if (target == lxLocal && target.argument == -1 && extensionRef != 0) {            
 //            if (message.findChild(lxCallTarget).argument != extensionRef)
 //               return false;

@@ -36,7 +36,7 @@ property prop<T,get_accessor,set_accessor>
 
 property vprop<T,get_accessor>
 {
-    /*embeddable */get T __property()
+    get embeddable T __property()
     {
         T retVal := T.Default;
         
