@@ -8,11 +8,12 @@
     </project>
     <manifest>
       <name>ELENA Extension Library</name>
-      <version>4.0.19</version>
+      <version>4.0.20</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>
         <module>
+            <include>control.l</include>
             <include>convertors.l</include>
             <include>console.l</include>
             <include>win32_args.l</include>

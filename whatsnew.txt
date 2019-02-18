@@ -11,6 +11,9 @@
 [-] #461 : Resolving strong-typed message with variadic argument list
 [-] #455 : ref<> template 
 
+[Misc]
+[+] adding ELENA LIB unit tests
+
 ***************************************************************
                              What's New in 4.0.1, second beta    
 ***************************************************************

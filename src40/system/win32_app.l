@@ -38,15 +38,19 @@ public symbol startUp =
             {
                 forward program()
             }
+//            finally
+//            {
+//               events stopping:nil    
+//            }
             catch(Exception e)
             {
                 console.writeLine(e.Printable);
+                
+                extern elenart.Exit(-1);
             }
             catch(AbortException e)
             {
-            };
-
-//            events stopping:nil
+            }
         }        
     }
     .start()/*:startUpEvents*/;

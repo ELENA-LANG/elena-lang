@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>4.0.53</version>
+     <version>4.0.54</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -75,6 +75,10 @@
        <include>winforms\win32_controls.l</include>
        <include>winforms\win32_windows.l</include>
        <include>winforms\win32_app.l</include>
+     </module>
+     <module name="net">
+       <include>net\win32_common.l</include>
+       <include>net\win32_sockets.l</include>
      </module>
   </files>
 </configuration>

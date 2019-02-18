@@ -6494,27 +6494,22 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       scope.raiseError(errIllegalField, current);
 
    int size = (classRef != 0) ? _logic->defineStructSize(*scope.moduleScope, classRef, elementRef) : 0;
-   //bool fieldArray = false;
+   bool fieldArray = false;
    if (sizeHint != 0) {
       if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
          // for primitive types size should be specified
          size = sizeHint;
       }      
-      //else if (sizeHint == 8 && classRef == V_INT32) {
-      //   // HOTFIX : turn int32 flag into int64
-      //   classRef = V_INT64;
-      //   size = 8;
-      //}
-   //   else if (size > 0) {
-   //      size *= sizeHint;
+      else if (size > 0) {
+         size *= sizeHint;
 
-   //      // HOTFIX : to recognize the fixed length array
-   //      if (elementRef == 0 && !isPrimitiveRef(classRef))
-   //         elementRef = classRef;
+         // HOTFIX : to recognize the fixed length array
+         if (elementRef == 0 && !isPrimitiveRef(classRef))
+            elementRef = classRef;
 
-   //      fieldArray = true;
-   //      classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef);
-   //   }
+         fieldArray = true;
+         classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef, true);
+      }
       else scope.raiseError(errIllegalField, current);
    }
 
@@ -6523,7 +6518,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       scope.raiseError(errIllegalField, current);
    }
    // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-   else if (embeddable/* && !fieldArray*/) {
+   else if (embeddable && !fieldArray) {
       if (!singleField || scope.info.fields.Count() > 0)
          scope.raiseError(errIllegalField, current);
 
@@ -6579,9 +6574,9 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       }
       // if it is a normal field
       else {
-         //// primitive / virtual classes cannot be declared
-         //if (size != 0 && isPrimitiveRef(classRef))
-         //   scope.raiseError(errIllegalField, current);
+         // primitive / virtual classes cannot be declared
+         if (size != 0 && isPrimitiveRef(classRef))
+            scope.raiseError(errIllegalField, current);
 
          scope.info.header.flags |= elNonStructureRole;
 

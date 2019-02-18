@@ -3,7 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * fix anagram
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]

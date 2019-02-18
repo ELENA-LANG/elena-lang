@@ -106,8 +106,12 @@ rem bin\elc examples\net\chat\chatserver.prj
 rem bin\elc examples\net\chat\chat.prj
 rem bin\elc examples\gui\helloworld\xforms_hellowindow.prj
 rem bin\elc examples\gui\helloworld\xforms_hellowindow.xprj
-rem bin\elc tests\system\system_test.prj
 rem bin\elc examples\script\live\live.prj 
+
+bin\elc tests\system\system_test.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 @echo off 
 goto:eof
