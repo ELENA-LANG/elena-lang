@@ -43,7 +43,10 @@ bin\elc src40\extensions\extensions.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src34\net\net.prj
+bin\elc src40\net\net.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 bin\elc src40\forms\forms.prj
 @echo off 

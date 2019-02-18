@@ -17,36 +17,40 @@
 //public const int SOMAXCONN = 5.
 //
 //public const int SD_BOTH = 2.
-//
-//// --- WSAException ---
-//
-//public class SocketException :: Exception
-//{
-//    int theCode.
-//    
-//    /// Creates the exception
-//    constructor new(literal message) error_code(int code)
-//        <= new(message);
-//    [
-//        theCode := code.
-//    ]
-//    
+
+// --- WSAException ---
+
+public class SocketException : Exception
+{
+    int theCode;
+    
+    /// Creates the exception
+    constructor new(string message, int code)
+        <= new(message)
+    {
+        theCode := code
+    }
+    
 //    constructor new(literal message)
 //        <= new(message);
 //    [
 //        theCode := system'external'WS2_32 WSAGetLastError.
 //    ]
-//    
-//    int error_code = theCode.
-//    
-//    /// Returns the message and the call stack
-//    T<literal> literal
-//    [
-//        literal retVal := theMessage add($10"Socket Error code:"); add(theCode literal); add($10"Call stack:"$10).
-//        
-//        ^ retVal add(theCallStack literal)
-//    ]
-//}
+    
+    int ErrorCode = theCode;
+    
+    /// Returns the message and the call stack
+    get string Printable()
+    {
+        string retVal := theMessage
+                            .add($10"Socket Error code:")
+                            .add(theCode.Printable)
+                            .add($10"Call stack:"$10)
+                            .add(theCallstack.Printable);
+        
+        ^ retVal
+    }
+}
 
 // --- WSAStartUp ---
 
@@ -67,18 +71,18 @@ sealed struct WSADATA
     {
         short wVersionRequested := version * 10h + highVersion;
 
-//        int aRetVal := system'external'WS2_32 WSAStartup(wVersionRequested, self).
-//            
-//        ifnot (0 == aRetVal)
-//            [ SocketException new:"Cannot start socket service" error_code(aRetVal); raise ].
-//            
-//        startUpEvents onStop := (:e)[ self close ].
+        int retVal := extern WS2_32.WSAStartup(wVersionRequested, self);
+            
+        ifnot (0 == retVal)
+            { SocketException.new("Cannot start socket service", retVal).raise() };
+            
+        startUpEvents.OnStop := (){ self.close() }
     }
     
-//    close
-//    [
-//        system'external'WS2_32 WSACleanup.
-//    ]
+    close()
+    {
+        extern WS2_32.WSACleanup()
+    }
 }
 
-//preloaded static WSAStartUp22 = WSADATA init(2, 2).
+preloaded static WSAStartUp22 = WSADATA.init(2, 2);

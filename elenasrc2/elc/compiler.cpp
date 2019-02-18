@@ -4063,7 +4063,17 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
 
 ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
 {
-   target.reference = resolvePrimitiveArray(scope, target.element, false);
+   if (target.reference == V_OBJARRAY) {
+      target.reference = resolvePrimitiveArray(scope, target.element, false);
+   }
+   else if (target.kind == okClass) {
+      // HOTFIX : class class reference should be turned into class one
+      IdentifierString className(scope.module->resolveReference(target.reference));
+      className.cut(getlength(className) - getlength(CLASSCLASS_POSTFIX), getlength(CLASSCLASS_POSTFIX));
+
+      target.reference = scope.moduleScope->mapFullReference(className);
+   }
+   else scope.raiseError(errInvalidOperation, node);
 
    int counter = 0;
    int size = _logic->defineStructSize(*scope.moduleScope, target.reference, 0);
@@ -4362,6 +4372,9 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, int mode)
 {
    switch (current.type) {
+      case lxCollection:
+         objectInfo = compileCollection(writer, current, scope, objectInfo);
+         break;
       case lxDimensionAttr:
          if (current.nextNode() == lxTypecast && objectInfo.kind == okClass) {
             // COMPILER MAGIC : if it is a primitive array creation
@@ -4598,8 +4611,8 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          if (msgNode == lxCollection && !attributes.castAttr) {
             if (goToNode(current, lxDimensionAttr) == lxDimensionAttr) {
                msgNode.set(lxTypecast, V_OBJARRAY);
-               exprAttr |= HINT_VIRTUALEXPR;
             }
+            exprAttr |= HINT_VIRTUALEXPR;
          }
          else if (msgNode == lxMessage && msgNode.firstChild() == lxNone) {
             exprAttr |= HINT_MODULESCOPE;
@@ -8502,7 +8515,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
    scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
-   scope.wrapReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXTENSION_FORWARD));
+   scope.wrapReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WRAP_FORWARD));
 
    scope.branchingInfo.reference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
    scope.branchingInfo.trueRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(TRUE_FORWARD));

@@ -33,14 +33,14 @@ public mixin Group
 ////    
 ////    dispatch => system'core_routines'__castover.
 ////}
-//
-//// --- extensions ---
-//
-//public extension dynamicOp
-//{
-//    mixInto:role
-//        = Extension::(role, self).
-//        
+
+// --- extensions ---
+
+public extension dynamicOp
+{
+    mixInto(role)
+        = new Extension { self, role };
+        
 //    groupWith:object
 //    [
 //        if(nil == object)
@@ -136,4 +136,4 @@ public mixin Group
 ////                    [ ^ Cast new args:(self,object) ]
 ////            ].
 ////    ]        
-//}
+}

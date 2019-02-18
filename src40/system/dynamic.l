@@ -117,19 +117,18 @@ public sealed const struct MessageName
 
 // --- Extension ---
 
+public mixin Wrap
+{
+    object[] items;
+    
+    dispatch() => system'core_routines'__wrap;
+}
+
+// --- Wrap ---
+
 public mixin Extension
 {
     object[] items;
     
     dispatch() => system'core_routines'__extension;
 }
-
-//// --- Wrap ---
-//
-//public mixin Wrap
-//{
-//    object[] items;
-//    
-//    dispatch() => system'core_routines'__wrap;
-//}
-//
