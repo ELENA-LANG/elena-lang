@@ -47,6 +47,18 @@ If you use VS2017 type the following:
 To build the ELENA libraries type the following command:
 
     rebuild_lib.bat
+    
+To build ELENA samples type the following command:
+
+    rebuild_examples.bat 
+    
+To build ELENA Rosetta-code samples type the following command:
+
+    examples\rosetta\build.bat 
+    
+To run unit-tests type the following command:
+
+    lib_tests.bat     
 
 ## Contribute!
 
