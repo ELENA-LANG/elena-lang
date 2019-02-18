@@ -52,13 +52,13 @@
 
 sealed struct WSADATA
 {
-    short       wVersion;
-    short       wHighVersion;
-//    V<byte,257> szDescription.
-//    V<byte,129> szSystemStatus.
-//    short       iMaxSockets.
-//    short       iMaxUdpDg.
-//    int         lpVendorInfo.
+    short wVersion;
+    short wHighVersion;
+    byte  szDescription[257];
+    byte  szSystemStatus[129];
+    short iMaxSockets;
+    short iMaxUdpDg;
+    int   lpVendorInfo;
     
     constructor init(int version, int highVersion)
         <= init(cast byte(version), cast byte(highVersion));

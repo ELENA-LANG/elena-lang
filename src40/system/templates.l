@@ -308,6 +308,13 @@ public try<try_block,finally_block, catch_block>:finally,catch()
     try_block $fnl finally_block | on(catch_block);
 }
 
+// -- try-finally-catch-catch statement ---
+
+public try<try_block,finally_block,catch_block1,catch_block2>:finally,catch,catch()
+{
+    try_block $fnl finally_block | on(catch_block1,catch_block2);
+}
+
 // -- finally statement ---
 
 public try<try_block,finally_block>:finally()

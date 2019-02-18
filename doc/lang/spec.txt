@@ -268,6 +268,58 @@ But in most cases it is required to provide additional info. So the token role i
                                                           
 where **class** is used as an attribute to declare a new class, as a identifier type and as an identifier.
 
+## Lexical grammar
+
+    input ::=
+       { input-element* new-line }*
+
+    input-element ::=
+        whitespace | comment | token
+        
+### Line terminators
+             
+    new-line ::=
+       Carriage return character (U+000D) followed by line feed character (U+000A) 
+       | Line feed character (U+000A)
+
+### White space
+
+    whitespace ::=
+       whitespace-character+  
+
+    whitespace-character ::=
+       Horizontal tab character (U+0009)
+       | Space (U+0020)
+
+### Comments
+
+    comment ::=
+       single-line-comment
+       | delimited-comment
+
+    single-line-comment ::=
+       "//" input-character*
+
+    input-character ::=
+       Any Unicode character except a new-line-character
+
+    new-line-character ::=
+       Carriage return character (U+000D)
+       | Line feed character (U+000A)       
+  
+    delimited-comment ::=
+       "/*" delimited-comment-section* "*"+ "/"
+
+    delimited-comment-section ::=
+       not-asterisk
+       | "*"+ not-slash
+
+    not-asterisk ::=
+       Any Unicode character except *
+
+    not-slash ::=
+       Any Unicode character except /
+
 3. Attributes
 
 4. Identifiers, Namespaces, Forwards

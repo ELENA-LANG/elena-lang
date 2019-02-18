@@ -13,44 +13,43 @@ singleton CommandLineFactory
 public commandLine = 
     CommandLineFactory.load();
 
-//// --- startUp ---
-//
-//class StartUpEvents
-//{
-//    T<Func1> event onStop :: theFinializeEvent.
-//    
-//    /*internal */stopping : arg
-//    [
-//        ifnot (nil == theFinializeEvent)
-//            [ theFinializeEvent(arg) ]
-//    ]
-//}
-//
-//public static startUpEvents = StartUpEvents new.
+// --- startUp ---
 
-public symbol startUp =
+class StartUpEvents
+{
+    event Func OnStop;
+    
+    internal stopping()
     {
-        start(/*StartUpEvents events*/)
-        {
-            intern system'core_routines'__exception.register();
-            
-            try
-            {
-                forward program()
-            }
-//            finally
-//            {
-//               events stopping:nil    
-//            }
-            catch(Exception e)
-            {
-                console.writeLine(e.Printable);
-                
-                extern elenart.Exit(-1);
-            }
-            catch(AbortException e)
-            {
-            }
-        }        
+        ifnot (nil == OnStop)
+            { OnStop() }
     }
-    .start()/*:startUpEvents*/;
+}
+
+public static startUpEvents = new StartUpEvents();
+
+entry()
+{
+    intern system'core_routines'__exception.register();
+    
+    try
+    {
+        forward program()
+    }
+    finally
+    {
+       startUpEvents.stopping()
+    }
+    catch(AbortException e)
+    {
+    }   
+    catch(Exception e)
+    {
+        console.writeLine(e.Printable);
+        
+        extern elenart.Exit(-1);
+    }
+}
+
+public symbol startUp
+    = entry();
