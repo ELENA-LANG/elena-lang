@@ -79,72 +79,78 @@ public sealed struct AddrInfo
         self.clear()
     }
     
-//    int rvprop Flags :: readFlagsTo.
-//    
-//    set Flags(int val)
-//    [
-//        ai_flags := val.
-//    ]
-//    
-//    readFlagsTo(ref<int> retVal)
-//    [
-//        retVal value := ai_flags.
-//    ]
-//    
-//    int rvprop Family :: readFamilyTo.
-//    
-//    set Family(int val)
-//    [
-//        ai_family := val.
-//    ]
-//
-//    readFamilyTo(ref<int> retVal)
-//    [
-//        retVal value := ai_family.
-//    ]
-//        
-//    int rvprop SocketType :: readSocketTypeTo.        
-//        
-//    set SocketType(int val)
-//    [
-//        ai_socktype := val.
-//    ]
-//    
-//    readSocketTypeTo(ref<int> retVal)
-//    [
-//        retVal value := ai_socktype.
-//    ]
-//    
-//    int rvprop Protocol :: readProtocolTo.        
-//    
-//    set Protocol(int val)
-//    [
-//        ai_protocol := val.
-//    ]
-//    
-//    readProtocolTo(ref<int> retVal)
-//    [
-//        retVal value := ai_protocol.
-//    ]
-//    
-//    int rvprop AddressLen :: readAddressLenTo.
-//    
-//    set AddressLen(int val)
-//    [
-//        ai_addrlen := val.
-//    ]
-//
-//    readAddressLenTo(ref<int> retVal)
-//    [
-//        retVal value := ai_addrlen.
-//    ]
-//        
-//    dirty_ptr rvprop Address :: readAddressTo.
-//
-//    readAddressTo(ref<dirty_ptr> retVal)
-//    [
-//        retVal value := ai_addr.
-//    ]
+    vprop int Flags
+    {
+        readTo(ref int retVal)
+        {
+            retVal := ai_flags
+        }
+        
+        write(int val)
+        {
+            ai_flags := val
+        }
+    }
+    
+    vprop int Family
+    {
+        readTo(ref int retVal)
+        {
+            retVal := ai_family
+        }
+        
+        write(int val)
+        {
+            ai_family := val
+        }
+    }
+
+    vprop int SocketType
+    {
+        readTo(ref int retVal)
+        {
+            retVal := ai_socktype
+        }
+        
+        write(int val)
+        {
+            ai_socktype := val
+        }
+    }
+
+    vprop int Protocol
+    {
+        readTo(ref int retVal)
+        {
+            retVal := ai_protocol
+        }
+        
+        write(int val)
+        {
+            ai_protocol := val
+        }
+    }
+
+    vprop int AddressLen
+    {
+        readTo(ref int retVal)
+        {
+            retVal := ai_addrlen
+        }
+            
+        write(int val)
+        {
+            ai_addrlen := val
+        }
+    }
+
+    vprop dirty_ptr Address
+    {
+        readTo(ref dirty_ptr retVal)
+        {
+            retVal := ai_addr
+        }
+    }
                 
     clear()
     {
@@ -159,37 +165,37 @@ public sealed struct AddrInfo
     }
 }
 
-//// --- AddrInfoReader ---
-//
-//public sealed struct AddrInfoReader
-//{
-//    dirty_ptr paddrinfo.
-//    dirty_ptr prootinfo.
-//    
-//    embeddable constructor new(literal service, AddrInfo info)
-//    [
-//        dirty_ptr ptr := T<dirty_ptr>().
-//        int retVal := system'external'WS2_32 getaddrinfo(0, service, info, &ptr).
-//            
-//        ifnot (0 == retVal)
-//            [ SocketException new:"getaddrinfo failed" error_code(retVal); raise ].
-//            
-//        paddrinfo := ptr.
-//        prootinfo := ptr.
-//    ]
-//
-//    embeddable constructor new(literal node, literal service, AddrInfo info)
-//    [
-//        dirty_ptr ptr := T<dirty_ptr>().
-//        int retVal := system'external'WS2_32 getaddrinfo(node, service, info, ptr).
-//            
-//        ifnot (0 == retVal)
-//            [ SocketException new:"getaddrinfo failed" error_code(retVal); raise ].
-//            
-//        paddrinfo := ptr.
-//        prootinfo := ptr.
-//    ]
-//
+// --- AddrInfoReader ---
+
+public sealed struct AddrInfoReader
+{
+    dirty_ptr paddrinfo;
+    dirty_ptr prootinfo;
+    
+    embeddable constructor(string service, AddrInfo info)
+    {
+        dirty_ptr ptr := new dirty_ptr();
+        int retVal := extern WS2_32.getaddrinfo(0, service, info, ptr);
+            
+        ifnot(0 == retVal)
+            { SocketException.new("getaddrinfo failed", retVal).raise() };
+            
+        paddrinfo := ptr;
+        prootinfo := ptr;
+    }
+
+    embeddable constructor(string node, string service, AddrInfo info)
+    {
+        dirty_ptr ptr := new dirty_ptr();
+        int retVal := extern WS2_32.getaddrinfo(node, service, info, ptr);
+            
+        ifnot(0 == retVal)
+            { SocketException.new("getaddrinfo failed", retVal).raise() };
+            
+        paddrinfo := ptr;
+        prootinfo := ptr;
+    }
+
 //    bool available
 //        = paddrinfo isEmpty; inverted.
 //    
@@ -200,17 +206,17 @@ public sealed struct AddrInfo
 //        
 //        paddrinfo := ptr.
 //    ]
-//    
-//    read(AddrInfo info)
-//    [
-//        system'external'KERNEL32 RtlMoveMemory(info, paddrinfo, 32).
-//    ]
-//    
-//    close
-//    [
-//        system'external'WS2_32 freeaddrinfo(prootinfo).
-//    ]
-//}
+    
+    read(AddrInfo info)
+    {
+        extern KERNEL32.RtlMoveMemory(info, paddrinfo, 32)
+    }
+    
+    close()
+    {
+        extern WS2_32.freeaddrinfo(prootinfo)
+    }
+}
 
 // --- Socket ---
 
@@ -229,42 +235,42 @@ public sealed const struct Socket
 //    ]
     
 //    cast T<int> = theHandle.
-//    
-//    constructor new(int adressFamily, int type, int protocol)
+    
+    constructor(int adressFamily, int type, int protocol)
+    {
+        theHandle := extern WS2_32.socket(adressFamily, type, protocol);
+        
+        if (theHandle == INVALID_SOCKET)
+            { SocketException.new("Error at socket").raise() };
+    }
+    
+//    stacksafe open dirty_ptr:aSockAddrPtr int:aNameLen
 //    [
-//        theHandle := system'external'WS2_32 socket(adressFamily, type, protocol).
-//        
-//        if (theHandle == INVALID_SOCKET)
+//        int aRetVal := system'external'WS2_32 connect 
+//            int:theHandle
+//            dirty_ptr:aSockAddrPtr
+//            int:aNameLen.
+//            
+//        if (SOCKET_ERROR == aRetVal)
 //            [ SocketException new:"Error at socket"; raise. ].
 //    ]
-//    
-////    stacksafe open dirty_ptr:aSockAddrPtr int:aNameLen
-////    [
-////        int aRetVal := system'external'WS2_32 connect 
-////            int:theHandle
-////            dirty_ptr:aSockAddrPtr
-////            int:aNameLen.
-////            
-////        if (SOCKET_ERROR == aRetVal)
-////            [ SocketException new:"Error at socket"; raise. ].
-////    ]
-//
-//    bind(dirty_ptr sockAddrPtr, int nameLen)
-//    [
-//        int retVal := system'external'WS2_32 bind(theHandle, sockAddrPtr, nameLen).
-//            
-//        if (retVal == SOCKET_ERROR)
-//            [ SocketException new:"Error at socket"; raise ].
-//    ]
-//
-//    listen(int backLog)
-//    [
-//        int aRetVal := system'external'WS2_32 listen(theHandle, backLog).
-//            
-//        if (aRetVal == SOCKET_ERROR)
-//            [ SocketException new:"Error at socket"; raise ].
-//    ]
-//
+
+    bind(dirty_ptr sockAddrPtr, int nameLen)
+    {
+        int retVal := extern WS2_32.bind(theHandle, sockAddrPtr, nameLen);
+            
+        if (retVal == SOCKET_ERROR)
+            { SocketException.new("Error at socket").raise() };
+    }
+
+    listen(int backLog)
+    {
+        int retVal := extern WS2_32.listen(theHandle, backLog);
+            
+        if (retVal == SOCKET_ERROR)
+            { SocketException.new("Error at socket").raise() }
+    }
+
 //    bool tryOpen(dirty_ptr ptr, int len)
 //    [
 //        int retVal := system'external'WS2_32 connect(theHandle, ptr, len).            

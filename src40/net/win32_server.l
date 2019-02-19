@@ -32,7 +32,7 @@ import system'net;
 
 public sealed class TcpServer
 {
-//    T<Socket>             theListenSocket.
+    Socket             theListenSocket;
 //    List<TcpRemoteClient> theClients.
 //    T<Thread>             theListenThread.
 //    T<ByteArray>          theBuffer.
@@ -56,29 +56,29 @@ public sealed class TcpServer
         //resolve server address and port
         AddrInfo addrinfo := new AddrInfo();
         
-//        // set address info
-//        addrinfo Family := AF_INET.
-//        addrinfo SocketType := SOCK_STREAM.
-//        addrinfo Protocol := IPPROTO_TCP.
-//        addrinfo Flags  := AI_PASSIVE.
-//        
-//        // Create a SOCKET for connecting to server
-//        T<AddrInfoReader> reader := AddrInfoReader new(port literal, addrinfo).
-//        
-//        reader read(addrinfo).        
-//        int       ai_family := addrinfo Family.
-//        int       ai_socktype := addrinfo SocketType.
-//        int       ai_protocol := addrinfo Protocol.
-//        int       ai_addrlen := addrinfo AddressLen.
-//        dirty_ptr ai_addrptr := addrinfo Address.
-//
-//        theListenSocket := Socket new(ai_family, ai_socktype, ai_protocol).
-//        
-//        theListenSocket bind(ai_addrptr, ai_addrlen).
-//        
-//        reader close.
-//        
-//        theListenSocket listen(SOMAXCONN).
+        // set address info
+        addrinfo.Family := AF_INET;
+        addrinfo.SocketType := SOCK_STREAM;
+        addrinfo.Protocol := IPPROTO_TCP;
+        addrinfo.Flags  := AI_PASSIVE;
+        
+        // Create a SOCKET for connecting to server
+        AddrInfoReader reader := new AddrInfoReader(port.Printable, addrinfo);
+        
+        reader.read(addrinfo);
+        int       ai_family := addrinfo.Family;
+        int       ai_socktype := addrinfo.SocketType;
+        int       ai_protocol := addrinfo.Protocol;
+        int       ai_addrlen := addrinfo.AddressLen;
+        dirty_ptr ai_addrptr := addrinfo.Address;
+
+        theListenSocket := new Socket(ai_family, ai_socktype, ai_protocol);
+        
+        theListenSocket.bind(ai_addrptr, ai_addrlen);
+        
+        reader.close();
+        
+        theListenSocket.listen(SOMAXCONN)
     }
 
 //    Enumerable<TcpRemoteClient> Clients = Enumerable<TcpRemoteClient>::{ /*embeddable dispatch => theClients.*/Enumerator<TcpRemoteClient> enumerator => theClients. }.
