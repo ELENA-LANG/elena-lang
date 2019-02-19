@@ -343,15 +343,15 @@ public sealed const struct Socket
 //        if (retVal == SOCKET_ERROR)
 //            [ SocketException new:"Error at socket"; raise ]
 //    ]
-//
-//    iocommand(int command, ref<int> parameter)
-//    [
-//        int retVal := system'external'WS2_32 ioctlsocket(theHandle, command, parameter).
-//            
-//        if (retVal == SOCKET_ERROR)
-//            [ SocketException new:"Error at socket"; raise ].
-//    ]
-//
+
+    iocommand(int command, ref int parameter)
+    {
+        int retVal := extern WS2_32.ioctlsocket(theHandle, command, ref parameter);
+            
+        if (retVal == SOCKET_ERROR)
+            { SocketException.new("Error at socket").raise() }
+    }
+
 //    option(int level, int option, bool value)
 //    [
 //        int n := value iif(1,0).

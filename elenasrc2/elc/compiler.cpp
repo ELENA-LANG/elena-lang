@@ -8694,6 +8694,9 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t act
 void Compiler :: injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/)
 {
    SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+   if (assignTarget == lxNone)
+      //HOTFIX : embeddable constructor should be applied only for the stack-allocated varaible
+      return;
 
    if (paramCount == -1/* && verb == 0*/) {
       // if it is an embeddable constructor call

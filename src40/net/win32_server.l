@@ -3,13 +3,13 @@
 import system'net;
 //import system'threading.
 //import system'text.
-//
-//public sealed class TcpRemoteClient
-//{
+
+public sealed class TcpRemoteClient
+{
 //    T<Socket> theSocket.
-//    
-//    object prop Parameter :: theParameter.
-//    
+    
+    prop object Parameter;
+    
 //    constructor new(Socket socket)
 //    [
 //        theSocket := socket.
@@ -28,7 +28,7 @@ import system'net;
 //    
 //    close
 //        => theSocket.
-//}
+}
 
 public sealed class TcpServer
 {
@@ -38,8 +38,8 @@ public sealed class TcpServer
 //    T<ByteArray>          theBuffer.
 //    int                   theMaxLength.
 //
-//    Func<TcpRemoteClient,object>               event onConnect  :: theConnectFunc.
-//    Func<TcpRemoteClient,object>               event onLeave    :: theLeaveFunc.
+    event Func<TcpRemoteClient,object> OnConnect;
+    event Func<TcpRemoteClient,object> OnLeave;
 //    Func<TcpRemoteClient,ByteArray,int,object> event onReceived :: theReadFunc.
 //    Func<TcpRemoteClient,Exception,object>     event onError    :: theErrorFunc.
     
@@ -82,19 +82,19 @@ public sealed class TcpServer
     }
 
 //    Enumerable<TcpRemoteClient> Clients = Enumerable<TcpRemoteClient>::{ /*embeddable dispatch => theClients.*/Enumerator<TcpRemoteClient> enumerator => theClients. }.
-//
-//    set Blocking(bool val)
-//    [
-//        int mode := 0.
-//        
-//        ifnot (val)
-//            [
-//                mode := 1.
-//            ].
-//
-//        theListenSocket iocommand(FIONBIO, &mode).
-//    ]    
-//    
+
+    set Blocking(bool val)
+    {
+        int mode := 0;
+        
+        ifnot (val)
+        {
+            mode := 1
+        };
+
+        theListenSocket.iocommand(FIONBIO, ref mode)
+    }    
+    
 //    private T<TcpRemoteClient> newClient
 //    [
 //        auto socket := theListenSocket accept.

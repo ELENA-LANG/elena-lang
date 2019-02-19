@@ -9,16 +9,15 @@
 
 const int DEFAULT_PORT = 6881;
 
-//class BaseClient
-//{
-    
+class BaseClient
+{
 //    T<MemoryBuffer> theBuffer.
-//    
-//    constructor new
-//    [
+    
+    constructor()
+    {
 //        theBuffer := MemoryBuffer new.
-//    ]    
-//
+    }
+
 //    write(T<ByteArray> buffer, length)
 //    [
 //        theBuffer write(0, length, buffer)
@@ -46,8 +45,8 @@ const int DEFAULT_PORT = 6881;
 //        
 //        ^ nil
 //    ]        
-//}
-//
+}
+
 //class CommandDTO
 //{
 //    dto_prop Command :: _command.

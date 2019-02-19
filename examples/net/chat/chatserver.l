@@ -1,43 +1,43 @@
 //import system'routines'stex.
 ////import system'text.
 ////import system'io.
-//import system'threading.
+import system'threading;
 ////import extensions.
 ////import extensions'dynamic.
 import net;
 
-//sealed class ChatMember :: BaseClient
-//{
-//    T<TcpRemoteClient> theOwner.
-//    T<ChatServer>      theServer.
-//    
+sealed class ChatMember : BaseClient
+{
+    TcpRemoteClient theOwner;
+    ChatServer      theServer;
+    
 //    literal prop Name :: theName.
-//
-//    constructor new(TcpRemoteClient owner) of(ChatServer server)
-//        <= new;
-//    [
-//        theOwner := owner.
-//        
-//        theServer := server.
-//    ]    
-//    
+
+    constructor(TcpRemoteClient owner, ChatServer server)
+        <= ()
+    {
+        theOwner := owner;
+        
+        theServer := server
+    }    
+    
 //    T<ChatServer> server = theServer.
-//}
+}
 
 sealed class ChatServer
 {
-//    object     theLock.
-//    
+    object     theLock;
+    
     TcpServer theNetworkServer;
 //    T<Thread>    theBroadcastThread.
     
     constructor assign(int port)
     {
-//        theLock := Object new.
+        theLock := new Object();
         
         theNetworkServer := TcpServer.assign(port);
         
-//        theNetworkServer Blocking := false.
+        theNetworkServer.Blocking := false
     }
     
 //    translate : command
@@ -79,36 +79,36 @@ sealed class ChatServer
 //        
 //        ^ true.
 //    ]
-//    
-//    start
-//    [
-//        theNetworkServer onConnect := (:client)<TcpRemoteClient>
-//        [
-//                lock (theLock)
-//                [
-//                    console writeLine:"new client joint".
-//                
-//                    client Parameter := ChatMember new:client of:self.
-//                ].                                
-//        ].
-//        
-//        theNetworkServer onLeave := (:client)<TcpRemoteClient>
-//        [
-//                lock (theLock)
-//                [
-//                    console writeLine:"client left".
-//                ].
-//        ].
-//        
-//        theNetworkServer onError := (:client:e)<TcpRemoteClient,Exception>
-//        [
-//                lock (theLock)
-//                [
-//                    console printLine("exception #",e error_code).
-//                ].
-//        ].
-//        
-//        theNetworkServer onReceived := (:client:data:length)<TcpRemoteClient,ByteArray,int>
+    
+    start()
+    {
+        theNetworkServer.OnConnect := (TcpRemoteClient client)
+        {
+            lock (theLock)
+            {
+                console.writeLine:"new client joint";
+            
+                client.Parameter := new ChatMember(client, self)
+            }                                
+        };
+        
+        theNetworkServer.OnLeave := (TcpRemoteClient client)
+        {
+            lock (theLock)
+            {
+                console.writeLine:"client left"
+            }
+        };
+        
+//        theNetworkServer.OnError := (TcpRemoteClient client, SocketException e)
+//        {
+//            lock (theLock)
+//            {
+//                console.printLine("exception #",e.ErrorCode)
+//            }
+//        };
+        
+//        theNetworkServer OnReceived := (:client:data:length)<TcpRemoteClient,ByteArray,int>
 //        [
 //                lock (theLock)
 //                [
@@ -124,5 +124,5 @@ sealed class ChatServer
 //        ].
 //       
 //        theBroadcastThread start.
-//    ]
+    }
 }

@@ -7,7 +7,7 @@ public program()
     
     auto server := ChatServer.assign(DEFAULT_PORT);
 
-//    server start.
-//
-//    console readChar.
+    server.start();
+
+    console.readChar()
 }
