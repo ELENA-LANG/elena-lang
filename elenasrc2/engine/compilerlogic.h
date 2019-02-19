@@ -155,6 +155,7 @@ public:
       return isReadonly(info);
    }
    virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
+   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
 
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
 //   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);

@@ -594,6 +594,22 @@ bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, boo
    return isValidType(info);
 }
 
+bool CompilerLogic :: validateAutoType(_ModuleScope& scope, ref_t& reference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, reference))
+      return false;
+
+   while (isRole(info)) {
+      reference = info.header.parentRef;
+
+      if (!defineClassInfo(scope, info, reference))
+         return false;
+   }
+
+   return true;
+}
+
 bool CompilerLogic :: isValidType(ClassInfo& info)
 {
    return !testany(info.header.flags, elRole);

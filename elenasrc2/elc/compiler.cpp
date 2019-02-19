@@ -3499,6 +3499,9 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScop
    if (isPrimitiveRef(sourceRef))
       sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
 
+   if (!_logic->validateAutoType(*scope.moduleScope, sourceRef))
+      return false;
+
    return scope.resolveAutoType(target, sourceRef, source.element);
 }
 
@@ -4123,6 +4126,8 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
       targetRef = resolveObjectReference(scope, info);
       if (isPrimitiveRef(targetRef))
          targetRef = resolvePrimitiveReference(scope, targetRef, info.element, false);
+
+     _logic->validateAutoType(*scope.moduleScope, targetRef);
 
       scope.resolveAutoOutput(targetRef);
    }
