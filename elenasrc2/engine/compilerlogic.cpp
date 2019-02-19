@@ -105,29 +105,29 @@ inline ident_t findSourceRef(SNode node)
    return node.findChild(lxSourcePath).identifier();
 }
 
-//// --- CompilerLogic Optimization Ops ---
-//struct EmbeddableOp
-//{
-//   int attribute;
-//   int paramCount;   // -1 indicates that operation should be done with the assigning target
-//   //int verb;
-//
-//   EmbeddableOp(int attr, int count/*, int verb*/)
-//   {
-//      this->attribute = attr;
-//      this->paramCount = count;
-//     // this->verb = verb;
-//   }
-//};
-//constexpr auto EMBEDDABLEOP_MAX = /*5*/1;
-//EmbeddableOp embeddableOps[EMBEDDABLEOP_MAX] =
-//{
+// --- CompilerLogic Optimization Ops ---
+struct EmbeddableOp
+{
+   int attribute;
+   int paramCount;   // -1 indicates that operation should be done with the assigning target
+   //int verb;
+
+   EmbeddableOp(int attr, int count/*, int verb*/)
+   {
+      this->attribute = attr;
+      this->paramCount = count;
+     // this->verb = verb;
+   }
+};
+constexpr auto EMBEDDABLEOP_MAX = /*5*/1;
+EmbeddableOp embeddableOps[EMBEDDABLEOP_MAX] =
+{
 //   EmbeddableOp(maEmbeddableGetAt, 2/*, READ_MESSAGE_ID*/),
 //   EmbeddableOp(maEmbeddableGetAt2, 3, READ_MESSAGE_ID),
 //   EmbeddableOp(maEmbeddableEval, 2, EVAL_MESSAGE_ID),
 //   EmbeddableOp(maEmbeddableEval2, 3, EVAL_MESSAGE_ID),
-//   EmbeddableOp(maEmbeddableNew, -1, 0) 
-//};
+   EmbeddableOp(maEmbeddableNew, -1/*, 0*/) 
+};
 
 // --- CompilerLogic ---
 
@@ -753,45 +753,50 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
       compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR, classRef);
    }
 
-//   // generate structure embeddable constructor
-//   if (test(info.header.flags, elSealed | elStructureRole)) {
-//      List<Attribute> generatedConstructors;
-//      bool found = 0;
-//      SNode current = node.firstChild();
-//      while (current != lxNone) {
-//         if (current == lxConstructor) {
-//            SNode attr = current.firstChild();
-//            while (attr != lxNone) {
-//               if (attr == lxAttribute && attr.argument == tpEmbeddable) {
+   // generate structure embeddable constructor
+   if (test(info.header.flags, /*elSealed | */elStructureRole)) {
+      List<ref_t/*Attribute*/> generatedConstructors;
+      bool found = 0;
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxConstructor) {
+            SNode attr = current.firstChild();
+            while (attr != lxNone) {
+               if (attr == lxAttribute && attr.argument == tpEmbeddable) {
 //                  SNode multiMethodAttr = current.findChild(lxMultiMethodAttr);
-//
-//                  generatedConstructors.add(Attribute(current.argument, multiMethodAttr.argument));
-//
-//                  current.set(lxClassMethod, current.argument | SEALED_MESSAGE);
-//                  attr.argument = tpPrivate;
-//
-//                  if (multiMethodAttr != lxNone)
-//                     // HOTFIX : replace the multimethod message with correct one
-//                     multiMethodAttr.setArgument(multiMethodAttr.argument | SEALED_MESSAGE);
-//
-//                  found = true;
-//                  break;
-//               }
-//               attr = attr.nextNode();
-//            }
-//         }
-//         current = current.nextNode();
-//      }
-//
-//      if (found) {
-//         for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
-//            ref_t message = (*it).value1;
+
+                  ref_t dummy = 0;
+                  ident_t actionName = scope.module->resolveAction(getAction(current.argument), dummy);
+                  if (actionName.compare(CONSTRUCTOR_MESSAGE)) {
+                     // NOTE : Only implciit constructors can be embeddable
+                     generatedConstructors.add(/*Attribute(*/current.argument/*, multiMethodAttr.argument)*/);
+
+                     current.set(lxClassMethod, current.argument | STATIC_MESSAGE);
+                     attr.argument = tpPrivate;
+
+                     //                  if (multiMethodAttr != lxNone)
+                     //                     // HOTFIX : replace the multimethod message with correct one
+                     //                     multiMethodAttr.setArgument(multiMethodAttr.argument | SEALED_MESSAGE);
+
+                     found = true;
+                  }
+                  break;
+               }
+               attr = attr.nextNode();
+            }
+         }
+         current = current.nextNode();
+      }
+
+      if (found) {
+         for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
+            ref_t message = /*(*/*it/*).value1*/;
 //            ref_t dispatchArg = (*it).value2;
-//
-//            compiler.injectEmbeddableConstructor(node, message, message | SEALED_MESSAGE, dispatchArg);
-//         }
-//      }
-//   }
+
+            compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE/*, dispatchArg*/);
+         }
+      }
+   }
 }
 
 void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
@@ -2201,16 +2206,16 @@ bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOn
    return extensionOne ? (object == lxLocal && object.argument == -1) : (object == lxSelfLocal && object.argument == 1);
 }
 
-//bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& messageRef)
-//{
-//   SNode attr = methodNode.findChild(lxEmbeddableMssg);
-//   if (attr != lxNone) {
-//      messageRef = attr.argument;
-//
-//      return true;
-//   }
-//   else return false;
-//}
+bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& messageRef)
+{
+   SNode attr = methodNode.findChild(lxEmbeddableMssg);
+   if (attr != lxNone) {
+      messageRef = attr.argument;
+
+      return true;
+   }
+   else return false;
+}
 
 bool CompilerLogic :: optimizeEmbeddableGet(_ModuleScope& scope, _Compiler& compiler, SNode node)
 {
@@ -2233,26 +2238,26 @@ bool CompilerLogic :: optimizeEmbeddableGet(_ModuleScope& scope, _Compiler& comp
 
 bool CompilerLogic :: optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node)
 {
-//   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
-//   SNode callTarget = callNode.findChild(lxCallTarget);
-//
-//   ClassInfo info;
-//   if(!defineClassInfo(scope, info, callTarget.argument))
-//      return false;
-//
-//   for (int i = 0; i < EMBEDDABLEOP_MAX; i++) {
-//      EmbeddableOp op = embeddableOps[i];
-//      ref_t subject = info.methodHints.get(Attribute(callNode.argument, op.attribute));
-//
-//      //ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
-//
-//      // if it is possible to replace get&subject operation with eval&subject2:local
-//      if (subject != 0) {
-//         compiler.injectEmbeddableOp(scope, node, callNode, subject, op.paramCount, op.verb);
-//
-//         return true;
-//      }
-//   }
+   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
+   SNode callTarget = callNode.findChild(lxCallTarget);
+
+   ClassInfo info;
+   if(!defineClassInfo(scope, info, callTarget.argument))
+      return false;
+
+   for (int i = 0; i < EMBEDDABLEOP_MAX; i++) {
+      EmbeddableOp op = embeddableOps[i];
+      ref_t subject = info.methodHints.get(Attribute(callNode.argument, op.attribute));
+
+      //ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
+
+      // if it is possible to replace get&subject operation with eval&subject2:local
+      if (subject != 0) {
+         compiler.injectEmbeddableOp(scope, node, callNode, subject, op.paramCount/*, op.verb*/);
+
+         return true;
+      }
+   }
 
    return false;
 }

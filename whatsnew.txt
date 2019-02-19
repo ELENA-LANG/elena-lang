@@ -10,6 +10,7 @@
 [ELENA]
 [-] #461 : Resolving strong-typed message with variadic argument list
 [-] #455 : ref<> template 
+[-] #451 : Embeddable implicit constructors
 
 [Misc]
 [+] adding ELENA LIB unit tests

@@ -350,8 +350,8 @@ public:
 ////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
-//   virtual void injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb) = 0;
-//   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef, ref_t genericMessage) = 0;
+   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
+   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/) = 0;
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
    virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
@@ -536,7 +536,7 @@ public:
 //   virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
 //   virtual bool recognizeEmbeddableEval2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
    virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
-//   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef) = 0;
+   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef) = 0;
    virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope) = 0;
 
    virtual bool optimizeEmbeddableGet(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;

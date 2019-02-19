@@ -36,7 +36,6 @@ In development:
 
                  * passing variadic list to the implicit constructor (see - TapeExpression)
                  * implement break
-                 * embeddable constructors for structures
                  * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
                  * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
                    work

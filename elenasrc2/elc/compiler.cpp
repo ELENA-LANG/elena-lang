@@ -5656,15 +5656,15 @@ void Compiler :: compileConstructorDispatchExpression(SyntaxWriter& writer, SNod
       importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
    }
    else {
-      //SNode dispatchMssg = node.parentNode().findChild(lxEmbeddableMssg);
+      SNode dispatchMssg = node.parentNode().findChild(lxEmbeddableMssg);
 
-      //if (node.argument == -1 && dispatchMssg != lxNone) {
-      //   writer.appendNode(lxCalling, -1);
-      //   writer.newNode(lxImplicitJump, dispatchMssg.argument);
-      //   writer.appendNode(lxTarget, scope.getClassRefId());
-      //   writer.closeNode();
-      //}
-      /*else */scope.raiseError(errInvalidOperation, node);
+      if (node.argument == -1 && dispatchMssg != lxNone) {
+         writer.appendNode(lxCalling, -1);
+         writer.newNode(lxImplicitJump, dispatchMssg.argument);
+         writer.appendNode(lxTarget, scope.getClassRefId());
+         writer.closeNode();
+      }
+      else scope.raiseError(errInvalidOperation, node);
    }   
 }
 
@@ -5888,10 +5888,11 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
 {
    writer.newNode(lxClassMethod, scope.message);
 
-//   SNode attrNode = node.findChild(lxEmbeddableMssg);
-//   if (attrNode != lxNone) {
-//      writer.appendNode(attrNode.type, attrNode.argument);
-//   }
+   SNode attrNode = node.findChild(lxEmbeddableMssg);
+   if (attrNode != lxNone) {
+      // COMPILER MAGIC : copy an attribute so it will be recognized as embeddable call
+      writer.appendNode(attrNode.type, attrNode.argument);
+   }
 
    declareParameterDebugInfo(writer, node, scope, true/*, false*/);
 
@@ -8185,13 +8186,13 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
       classScope.save();
    }
 
-//   // Optimization : embeddable constructor call
-//   ref_t message = 0;
-//   if (_logic->recognizeEmbeddableMessageCall(methodNode, message)) {
-//      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableNew), message);
-//
-//      classScope.save();
-//   }
+   // Optimization : embeddable constructor call
+   ref_t message = 0;
+   if (_logic->recognizeEmbeddableMessageCall(methodNode, message)) {
+      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableNew), message);
+
+      classScope.save();
+   }
 }
 
 void Compiler :: compileForward(SNode ns, NamespaceScope& scope)
@@ -8690,50 +8691,49 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t act
    }
 }
 
-//void Compiler :: injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb)
-//{
-//   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
-//
-//   if (paramCount == -1 && verb == 0) {
-//      // if it is an embeddable constructor call
-//      SNode sourceNode = assignNode.firstChild(lxObjectMask);
-//      
-//      SNode callTargetNode = callNode.firstChild(lxObjectMask);
-//      callTargetNode.set(sourceNode.type, sourceNode.argument);
-//
-//      callNode.setArgument(subject);
-//
-//      SNode targetNode = assignTarget.findChild(lxTarget);
-//
-//      SNode callTarget = callNode.findChild(lxCallTarget);
-//      callTarget.setArgument(targetNode.argument);
-//
-//      assignNode = lxExpression;
-//      sourceNode = lxIdle;
-//
-//      // check if inline initializer is declared
-//      ClassInfo targetInfo;
-//      scope.loadClassInfo(targetInfo, targetNode.argument);
-//      ref_t initConstructor = encodeMessage(INIT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
-//      if (targetInfo.methods.exist(initConstructor)) {
-//         // inject inline initializer call
-//         SNode initNode = callTargetNode.appendNode(lxImplicitCall, initConstructor);
-//         initNode.appendNode(lxTarget, targetNode.argument);
-//      }
-//   }
-//   else {
-//      // removing assinging operation
-//      assignNode = lxExpression;
-//
-//      // move assigning target into the call node
-//
-//      if (assignTarget != lxNone) {
-//         callNode.appendNode(assignTarget.type, assignTarget.argument);
-//         assignTarget = lxIdle;
-//         callNode.setArgument(encodeMessage(subject, paramCount));
-//      }
-//   }
-//}
+void Compiler :: injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/)
+{
+   SNode assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+
+   if (paramCount == -1/* && verb == 0*/) {
+      // if it is an embeddable constructor call
+      SNode sourceNode = assignNode.firstChild(lxObjectMask);
+      
+      SNode callTargetNode = callNode.firstChild(lxObjectMask);
+      callTargetNode.set(sourceNode.type, sourceNode.argument);
+
+      callNode.setArgument(subject);
+
+      SNode targetNode = assignTarget.findChild(lxTarget);
+
+      SNode callTarget = callNode.findChild(lxCallTarget);
+      callTarget.setArgument(targetNode.argument);
+
+      assignNode = lxExpression;
+      sourceNode = lxIdle;
+
+      // check if inline initializer is declared
+      ClassInfo targetInfo;
+      scope.loadClassInfo(targetInfo, targetNode.argument);
+      if (targetInfo.methods.exist(scope.init_message)) {
+         // inject inline initializer call
+         SNode initNode = callTargetNode.appendNode(lxImplicitCall, scope.init_message);
+         initNode.appendNode(lxTarget, targetNode.argument);
+      }
+   }
+   //else {
+   //   // removing assinging operation
+   //   assignNode = lxExpression;
+
+   //   // move assigning target into the call node
+
+   //   if (assignTarget != lxNone) {
+   //      callNode.appendNode(assignTarget.type, assignTarget.argument);
+   //      assignTarget = lxIdle;
+   //      callNode.setArgument(encodeMessage(subject, paramCount));
+   //   }
+   //}
+}
 
 void Compiler :: injectLocalBoxing(SNode node, int size)
 {
@@ -8757,19 +8757,19 @@ void Compiler :: injectLocalBoxing(SNode node, int size)
 ////   writer.insert(lxFieldExpression);
 ////   writer.closeNode();
 ////}
-//
-//void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t embeddedMessageRef, ref_t genericMessage)
-//{
-//   SNode methNode = classNode.appendNode(lxConstructor, message);
-//   methNode.appendNode(lxEmbeddableMssg, embeddedMessageRef);
-//   methNode.appendNode(lxAttribute, tpEmbeddable);
-//   methNode.appendNode(lxAttribute, tpConstructor);
-//
-//   if (genericMessage)
-//      methNode.appendNode(lxMultiMethodAttr, genericMessage);
-//
-//   SNode codeNode = methNode.appendNode(lxDispatchCode, -1);
-//}
+
+void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t embeddedMessageRef/*, ref_t genericMessage*/)
+{
+   SNode methNode = classNode.appendNode(lxConstructor, message);
+   methNode.appendNode(lxEmbeddableMssg, embeddedMessageRef);
+   methNode.appendNode(lxAttribute, tpEmbeddable);
+   methNode.appendNode(lxAttribute, tpConstructor);
+
+   //if (genericMessage)
+   //   methNode.appendNode(lxMultiMethodAttr, genericMessage);
+
+   SNode codeNode = methNode.appendNode(lxDispatchCode, -1);
+}
 
 void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType)
 {

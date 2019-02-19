@@ -60,25 +60,25 @@
 //}
 //
 //const int SOCKADDR_IN_SIZE = 16.
-//
-//// --- AddrInfo ---
-//
-//public sealed struct AddrInfo
-//{
-//    int       ai_flags.
-//    int       ai_family.
-//    int       ai_socktype.
-//    int       ai_protocol.
-//    int       ai_addrlen.
-//    dirty_ptr ai_canonname.
-//    dirty_ptr ai_addr.
-//    dirty_ptr ai_next.
-//    
-//    embeddable constructor new
-//    [
-//        self clear.
-//    ]
-//    
+
+// --- AddrInfo ---
+
+public sealed struct AddrInfo
+{
+    int       ai_flags;
+    int       ai_family;
+    int       ai_socktype;
+    int       ai_protocol;
+    int       ai_addrlen;
+    dirty_ptr ai_canonname;
+    dirty_ptr ai_addr;
+    dirty_ptr ai_next;
+    
+    embeddable constructor()
+    {
+        self.clear()
+    }
+    
 //    int rvprop Flags :: readFlagsTo.
 //    
 //    set Flags(int val)
@@ -145,20 +145,20 @@
 //    [
 //        retVal value := ai_addr.
 //    ]
-//                
-//    clear
-//    [
-//        ai_flags := 0.
-//        ai_family := 0.
-//        ai_socktype := 0.
-//        ai_protocol := 0.
-//        ai_addrlen := 0.
-//        ai_canonname := T<dirty_ptr>().
-//        ai_addr := T<dirty_ptr>().
-//        ai_next := T<dirty_ptr>().
-//    ]
-//}
-//
+                
+    clear()
+    {
+        ai_flags := 0;
+        ai_family := 0;
+        ai_socktype := 0;
+        ai_protocol := 0;
+        ai_addrlen := 0;
+        ai_canonname := new dirty_ptr();
+        ai_addr := new dirty_ptr();
+        ai_next := new dirty_ptr();
+    }
+}
+
 //// --- AddrInfoReader ---
 //
 //public sealed struct AddrInfoReader

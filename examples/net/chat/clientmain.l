@@ -1,7 +1,5 @@
 import system'dynamic;
 
-const int DEFAULT_PORT = 6881;
-
 class Client
 {
 //    T<ChatClient> theClient.

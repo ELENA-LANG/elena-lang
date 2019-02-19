@@ -6,9 +6,12 @@
 //const int INTRODUCTION = 1.
 //const int SEND         = 2.
 //const int TRANSLATE    = 3.
-//
+
+const int DEFAULT_PORT = 6881;
+
 //class BaseClient
 //{
+    
 //    T<MemoryBuffer> theBuffer.
 //    
 //    constructor new

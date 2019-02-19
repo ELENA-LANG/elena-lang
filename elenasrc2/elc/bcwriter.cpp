@@ -14,7 +14,7 @@ using namespace _ELENA_;
 
 #define ACC_REQUIRED    0x0001
 #define BOOL_ARG_EXPR   0x0002
-//#define EMBEDDABLE_EXPR 0x0004
+#define EMBEDDABLE_EXPR 0x0004
 
 // check if the node contains only the simple nodes
 
@@ -3870,15 +3870,15 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    }
 }
 
-void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, int/* mode*/)
+void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, int mode)
 {
    loadObject(tape, node.type, node.argument);
 
-//   if (node.type == lxLocalAddress && test(mode, EMBEDDABLE_EXPR)) {
-//      SNode implicitNode = node.findChild(lxImplicitCall);
-//      if (implicitNode != lxNone)
-//         callInitMethod(tape, implicitNode.findChild(lxTarget).argument, implicitNode.argument, false);
-//   }
+   if (node.type == lxLocalAddress && test(mode, EMBEDDABLE_EXPR)) {
+      SNode implicitNode = node.findChild(lxImplicitCall);
+      if (implicitNode != lxNone)
+         callInitMethod(tape, implicitNode.findChild(lxTarget).argument, implicitNode.argument, false);
+   }
 }
 
 //void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
@@ -4601,9 +4601,9 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 
          paramCount++;
       }
-      //else if (current == lxEmbeddableAttr) {
-      //   argMode |= EMBEDDABLE_EXPR;
-      //}
+      else if (current == lxEmbeddableAttr) {
+         argMode |= EMBEDDABLE_EXPR;
+      }
 
       // presave the boxed arguments if required
       if (member == lxUnboxing) {
@@ -5475,12 +5475,12 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxSDirctCalling:
          generateCallExpression(tape, node);
          break;
-//      case lxImplicitCall:
-//         callInitMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
-//         break;
-//      case lxImplicitJump:
-//         resendResolvedMethod(tape, node.findChild(lxTarget).argument, node.argument);
-//         break;
+      //case lxImplicitCall:
+      //   callInitMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
+      //   break;
+      case lxImplicitJump:
+         resendResolvedMethod(tape, node.findChild(lxTarget).argument, node.argument);
+         break;
       case lxTrying:
          generateTrying(tape, node);
          break;

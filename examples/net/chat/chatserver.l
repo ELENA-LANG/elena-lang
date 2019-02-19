@@ -4,8 +4,8 @@
 //import system'threading.
 ////import extensions.
 ////import extensions'dynamic.
-//import net.
-//
+import net;
+
 //sealed class ChatMember :: BaseClient
 //{
 //    T<TcpRemoteClient> theOwner.
@@ -23,23 +23,23 @@
 //    
 //    T<ChatServer> server = theServer.
 //}
-//
-//sealed class ChatServer
-//{
+
+sealed class ChatServer
+{
 //    object     theLock.
 //    
-//    T<TcpServer> theNetworkServer.
+    TcpServer theNetworkServer;
 //    T<Thread>    theBroadcastThread.
-//    
-//    constructor new(int port)
-//    [
+    
+    constructor assign(int port)
+    {
 //        theLock := Object new.
-//        
-//        theNetworkServer := TcpServer new(port).
-//        
+        
+        theNetworkServer := TcpServer.assign(port);
+        
 //        theNetworkServer Blocking := false.
-//    ]
-//    
+    }
+    
 //    translate : command
 //    [
 //        literal json := command toJson.
@@ -125,4 +125,4 @@
 //       
 //        theBroadcastThread start.
 //    ]
-//}
+}

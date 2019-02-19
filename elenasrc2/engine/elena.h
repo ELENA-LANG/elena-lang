@@ -505,7 +505,7 @@ enum MethodAttribute
 //   maEmbeddableGetAt    = 0x106,
 //   maEmbeddableGetAt2   = 0x107,
 //   maEmbeddableEval2    = 0x108,
-//   maEmbeddableNew      = 0x409,
+   maEmbeddableNew      = 0x409,
    maOverloadlist       = 0x20A,
    maMultimethod        = 0x40B,
 };

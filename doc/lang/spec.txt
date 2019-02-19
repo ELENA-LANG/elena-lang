@@ -320,6 +320,52 @@ where **class** is used as an attribute to declare a new class, as a identifier 
     not-slash ::=
        Any Unicode character except /
 
+### Tokens
+
+    token ::=
+       identifier
+       | reference
+       | integer-literal
+       | real-literal
+       | character-literal
+       | string-literal
+       | operator-literal
+       | operator-or-punctuator
+
+### Identifiers and References
+
+    identifier ::=
+       identifier-start-character identifier-part-character* 
+
+    reference ::= 
+       identifier { "'" identifier }+
+
+    identifier-start-character ::=
+       letter-character
+       | "_"
+
+    identifier-part-character ::=
+       letter-character
+       | decimal-digit-character
+       | "_"      
+
+    letter-character ::=
+       A Unicode character of classes Lu, Ll, Lt, Lm, Lo, or Nl
+
+    decimal-digit-character ::=
+       A Unicode character of the class Nd
+
+### Literals
+
+    integer-literal ::=
+       decimal-digit+ integer-type-suffix?
+
+    decimal-digit ::=
+       "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+    integer-type-suffix ::=
+       "h" | "l"
+
 3. Attributes
 
 4. Identifiers, Namespaces, Forwards

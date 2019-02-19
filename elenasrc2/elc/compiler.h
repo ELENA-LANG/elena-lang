@@ -1061,9 +1061,9 @@ public:
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
       ref_t targetRef*/, int stacksafeAttr);
    virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t actionRef);
-//   virtual void injectEmbeddableOp(_CompilerScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount, int verb);
+   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
 //////   virtual void injectFieldExpression(SyntaxWriter& writer);
-//   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef, ref_t genericMessage);
+   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);

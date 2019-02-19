@@ -1,6 +1,6 @@
 //import system'collections.
 ////import system'routines.
-//import system'net.
+import system'net;
 //import system'threading.
 //import system'text.
 //
@@ -29,9 +29,9 @@
 //    close
 //        => theSocket.
 //}
-//
-//public sealed class TcpServer
-//{
+
+public sealed class TcpServer
+{
 //    T<Socket>             theListenSocket.
 //    List<TcpRemoteClient> theClients.
 //    T<Thread>             theListenThread.
@@ -42,20 +42,20 @@
 //    Func<TcpRemoteClient,object>               event onLeave    :: theLeaveFunc.
 //    Func<TcpRemoteClient,ByteArray,int,object> event onReceived :: theReadFunc.
 //    Func<TcpRemoteClient,Exception,object>     event onError    :: theErrorFunc.
-//    
-//    constructor new(int port)
-//        <= new(port, 1024).
-//    
-//    constructor new(int port, int bufferSize)
-//    [
+    
+    constructor assign(int port)
+        <= assign(port, 1024);
+    
+    constructor assign(int port, int bufferSize)
+    {
 //        theMaxLength := bufferSize.
 //        theBuffer := ByteArray new(theMaxLength).
 //
 //        theClients := List<TcpRemoteClient>().
-//        
-//        //resolve server address and port
-//        T<AddrInfo> addrinfo := AddrInfo new.
-//        
+        
+        //resolve server address and port
+        AddrInfo addrinfo := new AddrInfo();
+        
 //        // set address info
 //        addrinfo Family := AF_INET.
 //        addrinfo SocketType := SOCK_STREAM.
@@ -79,8 +79,8 @@
 //        reader close.
 //        
 //        theListenSocket listen(SOMAXCONN).
-//    ]
-//
+    }
+
 //    Enumerable<TcpRemoteClient> Clients = Enumerable<TcpRemoteClient>::{ /*embeddable dispatch => theClients.*/Enumerator<TcpRemoteClient> enumerator => theClients. }.
 //
 //    set Blocking(bool val)
@@ -243,4 +243,4 @@
 //        
 //        theListenSocket close.
 //    ]
-//}
+}
