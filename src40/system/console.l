@@ -16,7 +16,7 @@ public interface IConsoleReader
 // --- Console ---
 
 /// A console
-class Console
+sealed class Console
 {
     object         theWriter;
     IConsoleReader theReader;
@@ -110,4 +110,4 @@ class Console
 }
 
 /// A standard console
-public static console = new Console(io'stdConsoleReader, io'stdConsoleWriter);
+public static Console console = new Console(io'stdConsoleReader, io'stdConsoleWriter);
