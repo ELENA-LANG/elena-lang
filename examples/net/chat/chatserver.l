@@ -2,7 +2,8 @@
 ////import system'text.
 ////import system'io.
 import system'threading;
-////import extensions.
+import system'net;
+import extensions;
 ////import extensions'dynamic.
 import net;
 
@@ -100,13 +101,13 @@ sealed class ChatServer
             }
         };
         
-//        theNetworkServer.OnError := (TcpRemoteClient client, SocketException e)
-//        {
-//            lock (theLock)
-//            {
-//                console.printLine("exception #",e.ErrorCode)
-//            }
-//        };
+        theNetworkServer.OnError := (TcpRemoteClient client, SocketException e)
+        {
+            lock (theLock)
+            {
+                console.printLine("exception #",e.ErrorCode)
+            }
+        };
         
 //        theNetworkServer OnReceived := (:client:data:length)<TcpRemoteClient,ByteArray,int>
 //        [

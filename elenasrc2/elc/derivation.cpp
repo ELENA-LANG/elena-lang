@@ -913,7 +913,7 @@ void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode 
    ref_t attributeCategory = 0u;
    while (current != lxNone) {
       if (current == lxToken) {
-         generateExpressionAttribute(writer, current, derivationScope, attributeCategory);
+         generateExpressionAttribute(writer, current, derivationScope, attributeCategory, true);
       }
       current = current.nextNode();
    }
