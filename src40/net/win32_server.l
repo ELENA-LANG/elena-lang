@@ -40,8 +40,8 @@ public sealed class TcpServer
 //
     event Func<TcpRemoteClient,object> OnConnect;
     event Func<TcpRemoteClient,object> OnLeave;
-//    Func<TcpRemoteClient,ByteArray,int,object> event onReceived :: theReadFunc.
-    //event Func<TcpRemoteClient,SocketException,object> OnError;
+//    event Func<TcpRemoteClient,byte[],int,object> OnReceived;
+    event Func<TcpRemoteClient,SocketException,object> OnError;
     
     constructor assign(int port)
         <= assign(port, 1024);

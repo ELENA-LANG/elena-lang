@@ -1193,16 +1193,9 @@ public sealed const struct String : BaseValue
 {
     __string byte[] theArray;
 
-//    constructor new
-//        <= min.
-//
-//    /// return the default value
-//    constructor
-//        = emptyLiteral.
-//        
-//    /// Creates the empty literal
-//    constructor min
-//        = emptyLiteral.
+    /// Creates the empty literal
+    static string Default
+        = emptyString;
         
     /// Creates the literal string with specified length        
     constructor allocate(int size)
@@ -1398,7 +1391,6 @@ public sealed const struct String : BaseValue
             => system'core_routines'__literal;
     }
 
-
     /// Saves the literal into a UTF-32 character array
     save(int index, char[] array, ref int retVal)
         => system'core_routines'__literal;
@@ -1428,10 +1420,10 @@ public sealed const struct WideString : BaseValue
 {
     __string short[] theArray;
 
-//    /// return the default value
-//    constructor
-//        = emptyWideLiteral.
-//
+    /// return the default value
+    static wide Default
+        = emptyWideString;
+
 //    /// Creates the empty literal
 //    constructor min
 //        = emptyWideLiteral.

@@ -109,14 +109,14 @@ sealed class ChatServer
             }
         };
         
-//        theNetworkServer OnReceived := (:client:data:length)<TcpRemoteClient,ByteArray,int>
-//        [
-//                lock (theLock)
-//                [
-//                    T<ChatMember>(client Parameter) write(data, length).
-//                ].                        
-//        ].
-//        
+        theNetworkServer.OnReceived := (TcpRemoteClient client, byte[] data, int length)
+        {
+            lock (theLock)
+            {
+                cast ChatMember(client.Parameter).write(data, length)
+            }                        
+        };
+        
 //        theNetworkServer start.
 //        
 //        theBroadcastThread := Thread new:

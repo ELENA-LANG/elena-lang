@@ -1,5 +1,5 @@
 //import system'text.
-//import system'io.
+import system'io;
 ////import extensions.
 //import extensions'dynamic.
 //
@@ -11,18 +11,18 @@ const int DEFAULT_PORT = 6881;
 
 class BaseClient
 {
-//    T<MemoryBuffer> theBuffer.
+    MemoryBuffer theBuffer;
     
     constructor()
     {
-//        theBuffer := MemoryBuffer new.
+        theBuffer := new MemoryBuffer()
     }
 
-//    write(T<ByteArray> buffer, length)
-//    [
-//        theBuffer write(0, length, buffer)
-//    ]
-//    
+    write(byte[] buffer, length)
+    {
+        theBuffer.write(0, length, buffer)
+    }
+    
 //    readCommand
 //    [
 //        int len := theBuffer length.

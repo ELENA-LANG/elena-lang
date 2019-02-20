@@ -3,7 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * embeddable List<>.length #453
+                 * embeddable get should work with nonstructure types #424
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]

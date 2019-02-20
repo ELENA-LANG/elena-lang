@@ -1445,6 +1445,65 @@ labErr:
 
 end
 
+procedure __bytearray."read$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber[4]"
+
+  bcopya
+  blen
+  ecopyd  
+  aloadsi 2
+  nload
+  notless labErr
+  lessn   labErr 0
+ 
+  aloadsi 3
+  nload
+  ecopyd
+  aloadsi 2
+  nload
+  acopyb
+
+  bloadsi 4
+  callextr api : subcopy
+  quitn 4
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __bytearray."write$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber[4]"
+
+  bcopya
+  aloadsi 2
+  nload
+  ecopyd
+  aloadsi 3
+  nload
+  pushd
+  add
+  ecopyd
+  acopyb
+  blen
+  less labErr
+  pope
+  aloadsi 2
+  nload
+  aloadsi 4
+  callextr api : insert
+  quitn 4
+
+labErr:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
 procedure __chararray."write$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
 
   aloadsi 1
