@@ -163,22 +163,22 @@ public sealed List<T> : Enumerable<T>
     append(object)
         <= append(cast T(object));
 
-//    /// Removes an object at the specified position
-//    remove(int anIndex)
-//    [
-//        ifnot (anIndex < theLength)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theLength reduce(1).
-//        
-//        int i := anIndex.
-//        while(i < theLength)
-//        [
-//            theArray setAt(i, theArray getAt(i + 1)).
-//            
-//            i := i + 1
-//        ]
-//    ]
+    /// Removes an object at the specified position
+    remove(int index)
+    {
+        ifnot (index < theLength)
+            { OutOfRangeException.raise() };
+        
+        theLength.reduce(1);
+        
+        int i := index;
+        while(i < theLength)
+        {
+            theArray[i] := theArray[i + 1];
+            
+            i := i + 1
+        }
+    }
         
     /// Returns the top object
     T First = theArray.at(0);

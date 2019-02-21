@@ -310,32 +310,35 @@ public sealed const struct Socket
 //            
 //        sent value := retVal.            
 //    ]
-//
-//    read(ByteArray buffer, int maxLength, int flags, ref<int> recvd)
-//    [
-//        int retVal := system'external'WS2_32 recv(theHandle,buffer,maxLength,flags).
-//        
-//        if (retVal == SOCKET_ERROR)
-//        [
-//            int err := system'external'WS2_32 WSAGetLastError.
-//            if (err != WSAEWOULDBLOCK)
-//                [ SocketException new:"Error at socket"; raise ].
-//        ].
-//            
-//        recvd value := retVal.    
-//    ]
-//
-//    T<Socket> accept  
-//    [
-//        T<Socket> socket := system'external'WS2_32 accept(theHandle, 0, 0).
-//            
-//        if (socket != INVALID_SOCKET)
-//            [
-//                ^ socket
-//            ];
-//            [ ^ nil ]
-//    ]
-//
+
+    read(byte[] buffer, int maxLength, int flags, ref int recvd)
+    {
+        int retVal := extern WS2_32.recv(theHandle,buffer,maxLength,flags);
+        
+        if (retVal == SOCKET_ERROR)
+        {
+            int err := extern WS2_32.WSAGetLastError();
+            if (err != WSAEWOULDBLOCK)
+                { SocketException.new("Error at socket").raise() }
+        };
+            
+        recvd := retVal
+    }
+
+    Socket accept()
+    {
+        Socket socket := extern WS2_32.accept(theHandle, 0, 0);
+            
+        if (socket != INVALID_SOCKET)
+        {
+            ^ socket
+        }
+        else
+        { 
+            ^ nil 
+        }
+    }
+
 //    shutdown(int how)
 //    [
 //        int retVal := system'external'WS2_32 shutdown(theHandle, how).
@@ -352,19 +355,19 @@ public sealed const struct Socket
             { SocketException.new("Error at socket").raise() }
     }
 
-//    option(int level, int option, bool value)
-//    [
-//        int n := value iif(1,0).
-//        
-//        int retVal := system'external'WS2_32 setsockopt(
-//                        theHandle, level, option, &n, 1).
-//            
-//        if (retVal == SOCKET_ERROR)
-//            [ SocketException new:"Error at socket"; raise ]
-//    ]
-//
-//    close
-//    [
-//        system'external'WS2_32 closesocket(theHandle)
-//    ]
+    option(int level, int option, bool value)
+    {
+        int n := value.iif(1,0);
+        
+        int retVal := extern WS2_32.setsockopt(
+                        theHandle, level, option, ref n, 1);
+            
+        if (retVal == SOCKET_ERROR)
+            { SocketException.new("Error at socket").raise() }
+    }
+
+    close()
+    {
+        extern WS2_32.closesocket(theHandle)
+    }
 }

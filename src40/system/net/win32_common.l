@@ -7,12 +7,12 @@ public const int AF_INET     = 2;
 public const int SOCK_STREAM = 1;
 public const int IPPROTO_TCP = 6;
 
-//public const int TCP_NODELAY = 1. 
+public const int TCP_NODELAY = 1;
 
 public const int FIONBIO = 8004667Eh;
 
-//public const int WSAEWOULDBLOCK = 10035.
-//public const int WSAECONNRESET  = 10054.
+public const int WSAEWOULDBLOCK = 10035;
+public const int WSAECONNRESET  = 10054;
 
 public const int SOMAXCONN = 5;
 

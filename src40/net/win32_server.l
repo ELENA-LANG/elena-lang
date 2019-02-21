@@ -1,43 +1,43 @@
-//import system'collections.
+import system'collections;
 ////import system'routines.
 import system'net;
-//import system'threading.
+import system'threading;
 //import system'text.
 
 public sealed class TcpRemoteClient
 {
-//    T<Socket> theSocket.
+    Socket theSocket;
     
     prop object Parameter;
     
-//    constructor new(Socket socket)
-//    [
-//        theSocket := socket.
-//    ]
-//    
-//    read(ByteArray buffer, int maxLength, ref<int> recv)
-//    [
-//        theSocket read(buffer, maxLength, 0, recv).
-//    ]
-//    
+    constructor assign(Socket socket)
+    {
+        theSocket := socket
+    }
+    
+    read(byte[] buffer, int maxLength, ref int recv)
+    {
+        theSocket.read(buffer, maxLength, 0, ref recv)
+    }
+    
 //    write(ByteArray buffer, int length)
 //    [
 //        int sent := 0.
 //        theSocket write(buffer, length, 0, &sent).
 //    ]
-//    
-//    close
-//        => theSocket.
+    
+    close()
+        => theSocket;
 }
 
 public sealed class TcpServer
 {
-    Socket             theListenSocket;
-//    List<TcpRemoteClient> theClients.
-//    T<Thread>             theListenThread.
-//    T<ByteArray>          theBuffer.
-//    int                   theMaxLength.
-//
+    Socket                theListenSocket;
+    List<TcpRemoteClient> theClients;
+    Thread                theListenThread;
+    byte[]                theBuffer;
+    int                   theMaxLength;
+
     event Func<TcpRemoteClient,object> OnConnect;
     event Func<TcpRemoteClient,object> OnLeave;
     event Func<TcpRemoteClient,byte[],int,object> OnReceived;
@@ -48,10 +48,10 @@ public sealed class TcpServer
     
     constructor assign(int port, int bufferSize)
     {
-//        theMaxLength := bufferSize.
-//        theBuffer := ByteArray new(theMaxLength).
-//
-//        theClients := List<TcpRemoteClient>().
+        theMaxLength := bufferSize;
+        theBuffer := new byte[](theMaxLength);
+
+        theClients := new List<TcpRemoteClient>();
         
         //resolve server address and port
         AddrInfo addrinfo := new AddrInfo();
@@ -95,99 +95,97 @@ public sealed class TcpServer
         theListenSocket.iocommand(FIONBIO, ref mode)
     }    
     
-//    private T<TcpRemoteClient> newClient
-//    [
-//        auto socket := theListenSocket accept.
-//        T<TcpRemoteClient> client := nil.
-//        if (nil != socket)
-//        [
-//            socket option(IPPROTO_TCP, TCP_NODELAY, true).
-//            
-//            client := TcpRemoteClient new(socket).
-//            
-//            theClients append:client
-//        ].
-//        
-//        ^ client
-//    ]
-//    
-//    private closeClient(TcpRemoteClient client, int index)
-//    [
-//        theClients remove(index).
-//        
-//        client close.
-//                
-//        if (nil != theLeaveFunc)
-//            [ theLeaveFunc(client) ].            
-//    ]
-//    
-//    
-//    private handleError(SocketException e) for(TcpRemoteClient client) at(int n)
-//    [
-//        if (nil != theErrorFunc)
-//            [ theErrorFunc(client, e) ].
-//        
-//        int err := e error_code.
-//        if (err == WSAECONNRESET)
-//            [ self closeClient(client, n) ].
-//    ]
-//    
-//    private readClients
-//    [
-//        int i := 0.
-//        int counter := theClients length.
-//        
-//        while (i < counter)
-//        [
-//            T<TcpRemoteClient> client := theClients[i].
-//
-//            int rcvd := 0.
-//            try(client read(theBuffer, theMaxLength, &rcvd))
-//            {
-//                on(SocketException e)
-//                [
-//                    self handleError:e for:client at:i.
-//                ]                
-//            }.
-//            
-//            if (rcvd == 0)
-//                [ self closeClient(client, i) ];
-//                [ 
-//                    if (rcvd > 0)
-//                    [
-//                        if (nil != theReadFunc)
-//                            [ theReadFunc(client,theBuffer,rcvd) ]
-//                    ]
-//                ].
-//            
-//            i := i + 1
-//        ].
-//    ]
-//    
-//    private T<bool> proceed
-//    [
-//        auto client := self newClient.
-//        if (nil != client)
-//        [
-//            if(nil != theConnectFunc)
-//                [ theConnectFunc(client) ]
-//        ].
-//
-//        self readClients.
-//        
-//        ^ true.
-//    ]
+    private TcpRemoteClient newClient()
+    {
+        auto socket := theListenSocket.accept();
+        TcpRemoteClient client := nil;
+        if (nil != socket)
+        {
+            socket.option(IPPROTO_TCP, TCP_NODELAY, true);
+            
+            client := TcpRemoteClient.assign(socket);
+            
+            theClients.append(client)
+        };
+        
+        ^ client
+    }
     
-//    start()
-//    {
-//        theListenThread := Thread.assign(()
-//        {
-//            while (self.proceed()){}
-//        });
-//        
-//        theListenThread.start()
-//    }
-//    
+    private closeClient(TcpRemoteClient client, int index)
+    {
+        theClients.remove(index);
+        
+        client.close();
+                
+        if (nil != OnLeave)
+            { OnLeave(client) }         
+    }
+    
+    private handleError(SocketException e, TcpRemoteClient client, int n)
+    {
+        if (nil != OnError)
+            { OnError(client, e) };
+        
+        int err := e.ErrorCode;
+        if (err == WSAECONNRESET)
+            { self.closeClient(client, n) }
+    }
+    
+    private readClients()
+    {
+        int counter := theClients.Length;
+        for (int i := 0, i < counter, i += 1) {
+            TcpRemoteClient client := theClients[i];
+
+            int rcvd := 0;
+            try
+            {
+                client.read(theBuffer, theMaxLength, ref rcvd)
+            }
+            catch(SocketException e)
+            {
+                self.handleError(e, client, i)
+            };
+            
+            if (rcvd == 0)
+            { 
+                self.closeClient(client, i) 
+            }
+            else
+            { 
+                if (rcvd > 0)
+                {
+                    if (nil != OnReceived)
+                        { OnReceived(client,theBuffer,rcvd) }
+                }
+            }
+        }
+    }
+    
+    private bool proceed()
+    {
+        auto client := self.newClient();
+        if (nil != client)
+        {
+            if(nil != OnConnect)
+                { OnConnect(client) }
+        };
+
+        self.readClients();
+        
+        ^ true
+    }
+    
+    start()
+    {
+        theListenThread := Thread.assign(()
+        {
+            while (self.proceed()){}
+        });
+        
+        theListenThread.start()
+    }
+    
 //    T<TcpServer> sendAll(ByteArray buffer, int length)
 //    [
 //        int i := 0.
