@@ -1,1 +1,0 @@
-Relocated to GITHUB, see http://github.com/ELENA-LANG/elena-lang/issues for details

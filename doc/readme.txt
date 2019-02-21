@@ -78,14 +78,7 @@ To compile the program types : elena-lc <path to .project file>
 * Documentation
 ****************************************************************************
 
-Visit the project web site for the latest info on the project: 
-http://elenalang.sourceforge.net/
-
-The documentation is available as HTML pages, and text. 
-These are all available on http://github.com/ELENA-LANG/elena-lang/wiki
-(see Docs page) and in <app root>\doc
-
-There you also can find Getting Started tutorial
+The documentation is available on http://github.com/ELENA-LANG/elena-lang/wiki
 
 ****************************************************************************
 * Suggestions, Help, Bug reporting  ...
@@ -111,16 +104,6 @@ in the folder <app root>\src40.
 
 The source code of ELENA samples could be found
 in the folder <app root>\examples.
-
-****************************************************************************
-* ELENA Language API & Documentation
-****************************************************************************
-
-ELENA API Documentation could be found in the folder <app root>\doc\api.
-Number of other documents (todo list, known bugs, road map) are located in
-<app root>\doc. For any suggestion, comments or correction please contact
-the author via twitter - https://twitter.com/elena_language 
-or github - https://github.com/ELENA-LANG/elena-lang/issues
 
 ****************************************************************************
 * ELENA Project Source code
