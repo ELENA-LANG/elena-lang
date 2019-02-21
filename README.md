@@ -1,5 +1,4 @@
 Windows : [![Build status](https://ci.appveyor.com/api/projects/status/qc5dvs5lueubivuo?svg=true)](https://ci.appveyor.com/project/arakov/elena-lang)
-
 # ELENA Programming Language
 
 ELENA is a general-purpose, object-oriented language with late binding. It features message dispatching, mixins and a script engine.
@@ -12,7 +11,6 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 - **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Twitter:** <https://twitter.com/elena_language>
 - **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
-- **Homepage:** <http://elenalang.sourceforge.net/>
 - **Binaries mirror:** <https://sourceforge.net/projects/elenalang/files/>
 
 ## Currently Supported Platforms
