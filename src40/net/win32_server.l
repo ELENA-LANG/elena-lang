@@ -40,7 +40,7 @@ public sealed class TcpServer
 //
     event Func<TcpRemoteClient,object> OnConnect;
     event Func<TcpRemoteClient,object> OnLeave;
-//    event Func<TcpRemoteClient,byte[],int,object> OnReceived;
+    event Func<TcpRemoteClient,byte[],int,object> OnReceived;
     event Func<TcpRemoteClient,SocketException,object> OnError;
     
     constructor assign(int port)
@@ -177,16 +177,16 @@ public sealed class TcpServer
 //        
 //        ^ true.
 //    ]
-//    
-//    start
-//    [
-//        theListenThread := Thread new:
-//        [
-//            while (self proceed)[].
-//        ].
+    
+//    start()
+//    {
+//        theListenThread := Thread.assign(()
+//        {
+//            while (self.proceed()){}
+//        });
 //        
-//        theListenThread start.
-//    ]
+//        theListenThread.start()
+//    }
 //    
 //    T<TcpServer> sendAll(ByteArray buffer, int length)
 //    [

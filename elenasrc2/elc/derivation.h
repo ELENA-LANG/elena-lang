@@ -214,16 +214,18 @@ class TemplateGenerator
 //         ttExtTemplate    = 4
       };
 
-      Type         type;
-      ref_t        templateRef;
-      ref_t        reference;
-      NodeMap      parameterValues;
+      Type          type;
+      ref_t         templateRef;
+      ref_t         reference;
+      NodeMap       parameterValues;
 
-      _Module*       templateModule;
-      _ModuleScope*  moduleScope;
+      _Module*      templateModule;
+      _ModuleScope* moduleScope;
 
-      ident_t          ns;
-      ident_t          sourcePath;
+      ident_t       ns;
+      ident_t       sourcePath;
+
+      bool          importMode;
 
       bool withTypeParameters()
       {
@@ -246,6 +248,7 @@ class TemplateGenerator
          this->templateRef = templateRef;
          this->reference = 0;
          this->templateModule = nullptr;
+         this->importMode = false;
       }
    };
 

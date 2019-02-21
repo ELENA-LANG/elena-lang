@@ -1941,7 +1941,7 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
 //      writer.appendNode(lxTemplate, scope.templateRef);
 //   }
    else if (current == lxTarget && current.argument != 0) {
-      if (scope.moduleScope->module != scope.templateModule)
+      if (!scope.importMode && scope.moduleScope->module != scope.templateModule)
          current.setArgument(importReference(scope.templateModule, current.argument, scope.moduleScope->module));
 
       copyExpressionTree(writer, current, scope);
@@ -1950,8 +1950,8 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
       if (scope.type == TemplateScope::ttCodeTemplate) {
          if (current.argument < 0x100) {
             // HOTFIX : to prevent the targets declared in the main scope from importing
-            _Module* ori_templateModule = scope.templateModule;
-            scope.templateModule = scope.moduleScope->module;
+            bool oldMode = scope.importMode;
+            scope.importMode = true;
 
             SNode nodeToInject = scope.parameterValues.get(current.argument);
             if (nodeToInject == lxCode) {
@@ -1963,7 +1963,7 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
                copyExpressionTree(writer, nodeToInject, scope);
             }
 
-            scope.templateModule = ori_templateModule;
+            scope.importMode = oldMode;
          }
          else {
             // if it is a nested template
@@ -1975,6 +1975,9 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
       else if (scope.type == TemplateScope::ttPropertyTemplate || scope.type == TemplateScope::ttClassTemplate) {
          SNode sizeNode = current.findChild(lxDimensionAttr);
          SNode nodeToInject = scope.parameterValues.get(current.argument);
+         bool oldMode = scope.importMode;
+         scope.importMode = true;
+
          if (sizeNode == lxDimensionAttr) {
             // HOTFIX : if it is a node with the size postfix
             if (nodeToInject.strArgument != -1) {
@@ -1988,6 +1991,8 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
             writer.closeNode();
          }
          else copyExpressionTree(writer, nodeToInject, scope);
+
+         scope.importMode = oldMode;
       }
       else throw InternalError("Not yet supported");
    }

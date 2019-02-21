@@ -117,8 +117,8 @@ sealed class ChatServer
             }                        
         };
         
-//        theNetworkServer start.
-//        
+        theNetworkServer.start();
+        
 //        theBroadcastThread := Thread new:
 //        [
 //            while(self proceed) [].
