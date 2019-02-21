@@ -1,5 +1,4 @@
 Windows : [![Build status](https://ci.appveyor.com/api/projects/status/qc5dvs5lueubivuo?svg=true)](https://ci.appveyor.com/project/arakov/elena-lang)
-
 # ELENA Programming Language
 
 ELENA is a general-purpose, object-oriented language with late binding. It features message dispatching, mixins and a script engine.
