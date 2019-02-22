@@ -79,7 +79,12 @@ rem ..\..\bin\elc string_concatenation\string_concatenation.prj
 rem ..\..\bin\elc string_interpolation\string_interpolation.prj
 rem ..\..\bin\elc string_matching\string_matching.prj
 rem ..\..\bin\elc string_prepend\string_prepend.prj
-rem ..\..\bin\elc ninetynine\ninetynine.prj
+
+..\..\bin\elc ninetynine\ninetynine.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc evolutionary\evolutionary.prj
 rem ..\..\bin\elc compare_str_list\complist.prj
 rem ..\..\bin\elc dynamic_var\dynamic_var.prj

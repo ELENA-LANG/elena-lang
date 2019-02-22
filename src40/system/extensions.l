@@ -127,8 +127,8 @@ public extension objectOp
     bool safeEqual(o)
         = self.equal:o \ back:false;
 
-//    doWith:action
-//        = action(self).
+    doWith(action)
+        = action(self);
         
     reallocate(int newLength)
         => system'core_routines'__array;
