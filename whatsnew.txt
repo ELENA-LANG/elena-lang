@@ -12,6 +12,9 @@
 [-] #455 : ref<> template 
 [-] #451 : Embeddable implicit constructors
 
+[LIB]
+[-] fixing critical bug in float-based arithmetic
+
 [Misc]
 [+] adding ELENA LIB unit tests
 

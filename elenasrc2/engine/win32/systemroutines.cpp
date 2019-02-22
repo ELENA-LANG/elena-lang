@@ -34,8 +34,10 @@ inline pos_t NewHeap(int totalSize, int committedSize)
 
 inline void Init(SystemEnv* env)
 {
-   //// ; initialize fpu
-   //finit
+   // ; initialize fpu
+   __asm {
+      finit
+   }
 
    // ; initialize static roots
  //  mov  ecx, [data : %CORE_STAT_COUNT]

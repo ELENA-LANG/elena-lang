@@ -534,7 +534,6 @@ procedure coreapi'strtoreal
   stosd
   stosd
   mov   [edi], eax
-  mov   ecx, 19
 
 atof1:
   lodsb

@@ -1643,7 +1643,7 @@ end
 procedure __realconvertor."convert$system@String$@system@ref#1&system@RealNumber[3]"
   
   bloadsi  3
-  dcopy    10
+  ecopy    19
   aloadsi  2
   callextr api : strtoreal
   ifr      labErr 0
