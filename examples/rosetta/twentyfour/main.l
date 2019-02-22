@@ -57,36 +57,46 @@ class ExpressionTree
         }
     }
     
-//    eval : aNode
-//    [
-//        if (aNode containsProperty:%leaf)
-//            [ ^ aNode leaf ];
-//            [
-//                var aLeft := self eval:(aNode left).
-//                var aRight := self eval:(aNode right).
-//                
-//                ^ aLeft~(aNode operation) eval:aRight
-//            ]
-//    ]
-//    
-//    value
-//        <= eval:theTree.
-//        
-//    readLeaves : aList at:aNode
-//    [
-//        if (nil == aNode)
-//            [ InvalidArgumentException new; raise ].
-//        
-//        if (aNode containsProperty:%leaf)
-//            [ aList append(aNode leaf) ];
-//            [
-//                self readLeaves:aList at(aNode left).
-//                self readLeaves:aList at(aNode right).
-//            ].
-//    ]        
-//    
-//    readLeaves : aList
-//        <= readLeaves:aList at:theTree.
+    eval(node)
+    {
+        if (node.containsProperty(subjconst Leaf))
+        { 
+            ^ node.Leaf 
+        }
+        else
+        {
+            var left := self.eval(node.Left);
+            var right := self.eval(node.Right);
+            
+            var op := node.Operation;
+            
+            ^ mixin op(left).eval:right
+        }
+    }
+    
+    get Value()
+        <= eval(theTree);
+        
+    readLeaves(list, node)
+    {
+        if (nil == node)
+            { InvalidArgumentException.raise() };
+        
+        var s := subjconst Leaf;
+        
+        if (node.containsProperty(subjconst Leaf))
+        { 
+            list.append(node.Leaf) 
+        }
+        else
+        {
+            self.readLeaves(list, node.Left);
+            self.readLeaves(list, node.Right)
+        }
+    }        
+    
+    readLeaves(list)
+        <= readLeaves(list,theTree);
 }
 
 // --- Game ---

@@ -339,13 +339,13 @@ public sealed const struct Socket
         }
     }
 
-//    shutdown(int how)
-//    [
-//        int retVal := system'external'WS2_32 shutdown(theHandle, how).
-//            
-//        if (retVal == SOCKET_ERROR)
-//            [ SocketException new:"Error at socket"; raise ]
-//    ]
+    shutdown(int how)
+    {
+        int retVal := extern WS2_32.shutdown(theHandle, how);
+            
+        if (retVal == SOCKET_ERROR)
+            { SocketException.new("Error at socket").raise() }
+    }
 
     iocommand(int command, ref int parameter)
     {

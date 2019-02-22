@@ -30,7 +30,7 @@ sealed class ChatServer
     object     theLock;
     
     TcpServer theNetworkServer;
-//    T<Thread>    theBroadcastThread.
+    Thread    theBroadcastThread;
     
     constructor assign(int port)
     {
@@ -47,39 +47,39 @@ sealed class ChatServer
 //        
 //        theNetworkServer sendAll(json length); sendAll(json).
 //    ]
-//    
-//    private proceed
-//    [
-//        theNetworkServer Clients; forEach(:client)<TcpRemoteClient>
-//        [
-//            lock (theLock)
-//            [
-//                auto member := T<ChatMember>(client Parameter).
-//                if(nil != member)
-//                [
-//                    var command := member readCommand.
-//                    if (nil != command)
-//                        [
-//                            (command Command) =>
-//                                INTRODUCTION
-//                                [
-//                                    member Name := command Value.
-//                                    
-//                                    console printLine(command Value," joined").
-//                                ];
-//                                SEND
-//                                [
-//                                    console printLine(member Name,":",command Value).
-//                                    
-//                                    member server; translate:CommandDTO::{ @_command := TRANSLATE. @_value := command Value. @_user := member Name. }.
-//                                ]
-//                        ]
-//                ]
-//            ]
-//        ].
-//        
-//        ^ true.
-//    ]
+    
+    private bool proceed()
+    {
+        theNetworkServer.Clients().forEach:(TcpRemoteClient client)
+        {
+            lock (theLock)
+            {
+                auto member := cast ChatMember(client.Parameter);
+                if(nil != member)
+                {
+                    var command := member.readCommand();
+                    if (nil != command)
+                    {
+//                        (command.Command) =>
+//                            INTRODUCTION
+//                            {
+//                                member.Name := command.Value;
+//                                
+//                                console.printLine(command.Value," joined")
+//                            }
+//                            SEND
+//                            {
+//                                console.printLine(member.Name,":",command.Value).
+//                                
+//                                member.Server.translate:CommandDTO::{ @_command := TRANSLATE. @_value := command Value. @_user := member Name. }.
+//                            };
+                    }
+                }
+            }
+        };
+        
+        ^ true
+    }
     
     start()
     {
@@ -119,11 +119,11 @@ sealed class ChatServer
         
         theNetworkServer.start();
         
-//        theBroadcastThread := Thread new:
-//        [
-//            while(self proceed) [].
-//        ].
-//       
-//        theBroadcastThread start.
+        theBroadcastThread := Thread.assign(
+        (){
+            while(self.proceed()) {}
+        });
+       
+        theBroadcastThread.start()
     }
 }

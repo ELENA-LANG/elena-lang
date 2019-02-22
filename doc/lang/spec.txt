@@ -393,6 +393,50 @@ where **class** is used as an attribute to declare a new class, as a identifier 
     real-type-suffix ::=
        "r"
 
+### Operators
+
+    operator-literal ::=
+       $shr
+       | $shl
+       | $fnl
+
+    operator-or-punctuator ::=
+       "{"
+       | "}"
+       | "["
+       | "]"
+       | "("
+       | ")"
+       | "."
+       | ","
+       | ":"
+       | ";"
+       | "+"
+       | "-"
+       | "*"
+       | "/"
+       | "|"
+       | "\"
+       | "^"
+       | "!"
+       | "="
+       | "<"
+       | ">"
+       | "?"
+       | "&&"
+       | "||"
+       | "=="
+       | "!="
+       | "<="
+       | ">="
+       | "+="
+       | "-="
+       | "*="
+       | "/="
+       | "=>"
+       | ":="
+       | "[]"       
+
 3. Attributes
 
 4. Identifiers, Namespaces, Forwards

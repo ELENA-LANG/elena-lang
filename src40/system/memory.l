@@ -107,6 +107,15 @@ public sealed Array<T> : Indexable<T>
 //    /// Returns the item at the specified index
 //    template_subj getAt : aParam
 //        <= getAt(T<int>(aParam)).
+
+    T[] clone()
+    {
+        int len := self.Length;
+        T[] copy := new T[](len);
+        for(int i := 0, i < len, i+=1) {
+            copy[i] := theArray
+        }
+    }
 }
 
 // --- Array template ---

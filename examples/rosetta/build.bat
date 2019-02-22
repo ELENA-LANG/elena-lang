@@ -61,7 +61,11 @@ rem ..\..\bin\elc calendar\calendar.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc twentyfour\twentyfour.prj
+..\..\bin\elc twentyfour\twentyfour.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc simple_windowed_app\simple_windowed_app.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError

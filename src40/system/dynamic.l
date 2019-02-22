@@ -98,10 +98,10 @@ public sealed const struct MessageName
 //    /// Creates a dynamic signature
 //    constructor new(wide aSubjectName)
 //        <= new(T<literal>(aSubjectName)).
-//
-//    /// Compares the values
-//    bool equal(Signature subject)
-//        = theValue == subject.
+
+    /// Compares the values
+    bool equal(MessageName subject)
+        = theValue == subject;
 
     get string Printable()
     {

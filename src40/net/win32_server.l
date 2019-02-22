@@ -229,16 +229,16 @@ public sealed class TcpServer
 //        
 //        self sendAll(T<ByteArray>(buffer), 4).
 //    ]
-//    
-////    stacksafe send int:index bytearray:buffer int:length    
-////    [
-////        theClients getAt int:index; tcp_remoteclient; write bytearray:buffer int:length.
-////    ]
-//    
-//    close
+    
+//    stacksafe send int:index bytearray:buffer int:length    
 //    [
-//        theListenSocket shutdown(SD_BOTH).
-//        
-//        theListenSocket close.
+//        theClients getAt int:index; tcp_remoteclient; write bytearray:buffer int:length.
 //    ]
+    
+    close()
+    {
+        theListenSocket.shutdown(SD_BOTH);
+        
+        theListenSocket.close()
+    }
 }

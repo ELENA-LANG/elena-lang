@@ -16,7 +16,7 @@ public const int WSAECONNRESET  = 10054;
 
 public const int SOMAXCONN = 5;
 
-//public const int SD_BOTH = 2.
+public const int SD_BOTH = 2;
 
 // --- WSAException ---
 

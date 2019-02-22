@@ -99,24 +99,23 @@ public class DynamicStruct
         theStruct.setAt(i + 1, o);
     }
     
-//    containsProperty(Signature subj)
-//    [
-//        int anIndex := 0.
-//        int aLength := 0.
-//        
-//        theStruct readFieldCountTo(&aLength).
-//        while (anIndex < aLength)
-//        [
-//            var aCurrent := theStruct~classROp getField(anIndex).
-//            
-//            if(subj equal(T<Signature>(aCurrent)))
-//                [ ^ true ].
-//                
-//            anIndex := anIndex + 2.                
-//        ].
-//        
-//        ^ false
-//    ]
+    containsProperty(MessageName subj)
+    {
+        int index := 0;        
+        int length := theStruct.Length;
+        
+        while (index < length)
+        {
+            var current := theStruct[index];
+            
+            if(subj.equal(cast MessageName(current)))
+                { ^ true };
+                
+            index := index + 2
+        };
+        
+        ^ false
+    }
     
     dispatch() => theStruct;
 }

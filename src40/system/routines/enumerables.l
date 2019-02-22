@@ -216,8 +216,8 @@ public extension enumerableOp
 ////        ^ true
 ////    ]
 //             
-////    sequenceEqual:list
-////        = self~enumerableOp equal enumerable:list.
+//    sequenceEqual:list
+//        = self~enumerableOp equal enumerable:list.
                                                   
     get FirstMember()
     {
@@ -560,27 +560,27 @@ public extension indexableOp
 //        
 //        ^ Array new(aLength); populate(:i)<int>(it writeIndex(anIndex + i); get)
 //    ]
-//    
-//    sequenceEqual:anArray
-//    [
-//        if (self length != anArray length)
-//            [ ^ false ].
-//            
-//        T<Indexer> a := self indexer.
-//        T<Indexer> b := anArray indexer.
-//        
-//        while (a available)
-//        [
-//            ifnot (a get == b get)
-//                [ ^ false ].
-//                
-//            a appendIndex:1.
-//            b appendIndex:1
-//        ].
-//          
-//        ^ true                
-//    ]
-//            
+    
+    sequenceEqual(array)
+    {
+        if (self.Length != array.Length)
+            { ^ false };
+            
+        Indexer a := self.indexer();
+        Indexer b := array.indexer();
+        
+        while (a.Available)
+        {
+            ifnot (a.get() == b.get())
+                { ^ false };
+                
+            a.appendIndex:1;
+            b.appendIndex:1
+        };
+          
+        ^ true                
+    }
+            
 //    sequenceReverse
 //        = self~indexableOp sequenceReverse(self length) at:0.
 //            
