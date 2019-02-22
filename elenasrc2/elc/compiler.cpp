@@ -7201,6 +7201,10 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
    if (!testany(scope.info.header.flags, elStructureRole | elDynamicRole) && scope.info.fieldTypes.Count() > 0) {
       validateClassFields(node, scope);
    }
+   else if (scope.info.statics.Count() > 0) {
+      //HOTFIX : validate static fields as well
+      validateClassFields(node, scope);
+   }
 
    writer.newNode(lxClass, node.argument);
    compileVMT(writer, node, scope);
