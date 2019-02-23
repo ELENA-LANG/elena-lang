@@ -52,7 +52,12 @@ rem ..\..\bin\elc median\median.prj
 rem ..\..\bin\elc smavg\smavg.prj
 rem ..\..\bin\elc caesar\caesar.prj
 rem ..\..\bin\elc charmatch\charmatch.prj
-rem ..\..\bin\elc arithmeval\arithmeval.prj
+
+..\..\bin\elc arithmeval\arithmeval.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc combinations\combinations.prj
 rem ..\..\bin\elc bullscows\bullscows.prj
 rem ..\..\bin\elc calendar\calendar.prj

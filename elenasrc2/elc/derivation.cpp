@@ -201,6 +201,7 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsSubExpression:
       case nsSingleExpression:
       case nsSubSingleExpression:
+      case nsL1Operand:
       case nsL2Operand:
       case nsL3Operand:
       case nsL4Operand:
