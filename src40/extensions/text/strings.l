@@ -212,11 +212,11 @@ public sealed class StringWriter : BaseVariable
 //    [
 //        theValue := theValue replace(s literal, s2 literal).
 //    ]
-//    
-//    clear
-//    [
-//        theValue := emptyLiteral.
-//    ]
+    
+    clear()
+    {
+        theValue := emptyString
+    }
 
     string Printable = theValue;
 

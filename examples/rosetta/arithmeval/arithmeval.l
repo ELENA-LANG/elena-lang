@@ -57,7 +57,7 @@ class DifferenceNode : Node
     constructor new(int level)
         <= new(level + 1);
     
-    Number = theLeft.Number - theRight.Number;
+    Number = Left.Number - Right.Number;
 }
 
 // --- ProductNode ---
@@ -67,7 +67,7 @@ class ProductNode : Node
     constructor new(int level)
         <= new(level + 2);
     
-    Number = theLeft.Number * theRight.Number;
+    Number = Left.Number * Right.Number;
 }
 
 // --- FractionNode ---
@@ -77,7 +77,7 @@ class FractionNode : Node
     constructor new(int level)
         <= new(level + 2);
     
-    Number = theLeft.Number / theRight.Number;
+    Number = Left.Number / Right.Number;
 }
 
 // --- Expression ---
@@ -89,7 +89,7 @@ class Expression
     
     constructor new(int level)
     {
-        theLevel := level
+        Level := level
     }
     
     prop object Right
@@ -113,7 +113,7 @@ singleton operatorState
     {
         ch =>
             $40 {      // (
-                ^ __target.newBracket().gotoStarting
+                ^ __target.newBracket().gotoStarting()  
             }
             : {
                 ^ __target.newToken().append(ch).gotoToken()
@@ -156,7 +156,7 @@ singleton startState
                 ^ __target.newBracket().gotoStarting()
             }
             $45 { // -
-                ^ __target.newToken.append("0").newDifference().gotoOperator()
+                ^ __target.newToken().append("0").newDifference().gotoOperator()
             }
             : {
                 ^ __target.newToken().append:ch.gotoToken()
@@ -275,7 +275,7 @@ class Parser
 {
     appendToken(object expression, int level)
     {
-        var token := Token.new(evel).
+        var token := Token.new(level);
         
         expression.Top := self.append(expression.Top, token);
         
@@ -289,7 +289,7 @@ class Parser
 
     appendDifference(object expression, int level)
     {
-        anExpression.Top := self.append(expression.Top, DifferenceNode.new(level))
+        expression.Top := self.append(expression.Top, DifferenceNode.new(level))
     }
 
     appendProduct(object expression, int level)
@@ -299,7 +299,7 @@ class Parser
 
     appendFraction(object expression, int level)
     {
-        anExpression.Top := self.append(expression.Top, FractionNode.new(level))
+        expression.Top := self.append(expression.Top, FractionNode.new(level))
     }
 
     appendSubexpression(object expression, int level)
@@ -313,11 +313,11 @@ class Parser
             { ^ newNode };
         
         if (newNode.Level <= lastNode.Level)
-            { aNewNode.Left := lastNode; ^ newNode };
+            { newNode.Left := lastNode; ^ newNode };
             
         var parent := lastNode;
         var current := lastNode.Right;
-        while (nil != aCurrent && aNewNode.Level > current.Level)
+        while (nil != current && newNode.Level > current.Level)
             { parent := current; current := current.Right };
         
         if (nil == current)
@@ -355,7 +355,9 @@ public program()
         }
         catch(Exception e)
         {
-            console.writeLine:"Invalid Expression"
+            console.writeLine(e.Printable)
+            
+            //console.writeLine:"Invalid Expression"
         };
         
         text.clear()

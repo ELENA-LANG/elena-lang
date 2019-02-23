@@ -235,25 +235,25 @@ public singleton Assert
     }
 }
 
-//// --- controlOp ---
-//
-//public extension controlOp
-//{
-//    saveTo:o
-//    [
-//        o write:self.
-//        
-//        ^ self.
-//    ]
-//    
+// --- controlOp ---
+
+public extension controlOp
+{
+    saveTo(o)
+    {
+        o.write:self;
+        
+        ^ self
+    }
+    
 //    exchangeWith:v
 //    [
 //        var tmp := self value.
 //        self value := v value.
 //        v value := tmp.
 //    ]
-//}
-//
+}
+
 //public singleton control
 //{
 //    do:action
