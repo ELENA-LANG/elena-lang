@@ -367,12 +367,12 @@ public extension intOp : IntNumber
         }
     }
 
-//    int mod : anOperand
-//    [
-//        int retVal := self mod(T<int>(anOperand)).
-//        
-//        ^ retVal
-//    ]
+    int mod(o)
+    {
+        int retVal := self.mod(cast int(o));
+        
+        ^ retVal
+    }
     
     real realDiv(n)
         = new RealNumber(self).divide:n;

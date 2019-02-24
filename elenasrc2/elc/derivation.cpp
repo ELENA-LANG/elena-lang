@@ -1080,6 +1080,14 @@ bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
       SNode nameNode = node.prevNode();
 
       bufferWriter.newNode(lxFieldInit);
+      SNode attrNode = nameNode.prevNode();
+      if (attrNode == lxAttribute && attrNode.argument == V_MEMBER) {
+         // HOTFIX : if the field has scope prefix - copy it as well
+         bufferWriter.newNode(lxAttribute, attrNode.argument);
+         copyIdentifier(bufferWriter, attrNode.firstChild(lxTerminalMask));
+         bufferWriter.closeNode();
+      }
+
       ::copyIdentifier(bufferWriter, nameNode.firstChild(lxTerminalMask));
       bufferWriter.appendNode(lxAssign);
       generateExpressionTree(bufferWriter, bodyNode.findChild(lxExpression), derivationScope);

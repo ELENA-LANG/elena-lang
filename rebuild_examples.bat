@@ -70,7 +70,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 
 rem bin\elc examples\console\trans\tanslit.prj
 rem bin\elc examples\console\matrix\matrix.prj
-rem bin\elc examples\console\pi2\pi2.prj
+
+bin\elc examples\console\pi2\pi2.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 bin\elc examples\script\interpreter\interpreter.prj
 @echo off 

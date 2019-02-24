@@ -28,11 +28,24 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc arithmeticint\arithmeticint.prj
+..\..\bin\elc arithmeticint\arithmeticint.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc arithmmean\arithmmean.prj
-rem ..\..\bin\elc arrayconcat\arrayconcat.prj
+..\..\bin\elc arrayconcat\arrayconcat.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc arraymode\arraymode.prj
-rem ..\..\bin\elc arrays\arrays.prj
+
+..\..\bin\elc arrays\arrays.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc associativearrays\associativearrays.prj
 rem ..\..\bin\elc bestshuffle\bestshuffle.prj
 rem ..\..\bin\elc binary\binary.prj

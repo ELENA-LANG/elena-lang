@@ -37,10 +37,10 @@ singleton mathController
         
 //    mod(long n, object m)
 //        = n~longOp mod:m.
-//
-//    mod(object n, object m)
-//        <= mod(n value, m).
-//                
+
+    mod(n, m)
+        <= mod(n.Value, m);
+                
 ////    isOdd value:n
 ////    [
 ////        system'NotSupportedException new; raise

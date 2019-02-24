@@ -1,30 +1,30 @@
 /// basic array syntax
 
-import system'collections.
-import extensions.
+import system'collections;
+import extensions;
 
-public program
-[
-    var aStaticArray := (1, 2, 3).
+const staticArray := new int[](1, 2, 3);
+
+public program()
+{
+    var array := Array.allocate(3);
+    array[0] := 1;
+    array[1] := 2;
+    array[2] := 3;
     
-    var anArray := system'Array new(3).
-    anArray[0] := 1.
-    anArray[1] := 2.
-    anArray[2] := 3.
+    int stackAllocatedArray[3];
+    stackAllocatedArray[0] := 1;
+    stackAllocatedArray[1] := 2;
+    stackAllocatedArray[2] := 3;            
     
-    V<int,3> aStackAllocatedArray.
-    aStackAllocatedArray[0] := 1.
-    aStackAllocatedArray[1] := 2.
-    aStackAllocatedArray[2] := 3.            
-    
-    var aDynamicArray := ArrayList new.
-    aDynamicArray append:1.
-    aDynamicArray append:2.
-    aDynamicArray append:4.
+    var dynamicArray := new system'collections'ArrayList();
+    dynamicArray.append:1;
+    dynamicArray.append:2;
+    dynamicArray.append:4;
  
-    aDynamicArray[2] := 3.    
+    dynamicArray[2] := 3;    
     
-    system'console writeLine(anArray[0]).
-    system'console writeLine(aStackAllocatedArray[1]).
-    system'console writeLine(aDynamicArray[2]).
-]
+    console.writeLine(array[0]);
+    console.writeLine(stackAllocatedArray[1]);
+    console.writeLine(dynamicArray[2]);
+}

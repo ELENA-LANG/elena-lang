@@ -100,7 +100,26 @@ public sealed Array<T> : Indexable<T>
             system'InvalidArgumentException.raise()
         }
     }
-               
+
+    /// Concatinates the arrays    
+    add(T[] a)
+    {
+        int length1 := self.Length;
+        int length2 := a.Length;
+        
+        auto retVal := new T[](length1 + length2);
+
+        for (int i:=0, i < length1, i += 1) {
+            retVal[i] := theArray[i]
+        };
+
+        for (int i:=0, i < length2, i += 1) {
+            retVal[length1 + i] := a[i]
+        };
+            
+        ^ retVal
+    }
+                              
 //    setAt(object n, object object)
 //        <= setAt(T<int>(n), T<template_subj>(object)).
 //                  
@@ -1802,34 +1821,26 @@ public sealed Array : Indexable//, Array<object>
 //    [
 //        self setAt(0, singleItem).
 //    ]
-//
-//    /// Concatinates the arrays    
-//    add(Array anArray)
-//    [
-//        int aLength1 := self length.
-//        int aLength2 := anArray length.
-//        
-//        auto aRetVal := Array new(aLength1 + aLength2).
-//
-//        int anIndex := 0.
-//        while(anIndex < aLength1)
-//        [
-//            aRetVal setAt(anIndex, self getAt(anIndex)).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//
-//        anIndex := 0.
-//        while(anIndex < aLength2)
-//        [
-//            aRetVal setAt(aLength1 + anIndex, anArray getAt(anIndex)).
-//            
-//            anIndex := anIndex + 1.
-//        ].
-//            
-//        ^ aRetVal
-//    ]
-//
+
+    /// Concatinates the arrays    
+    add(Array a)
+    {
+        int length1 := self.Length;
+        int length2 := a.Length;
+        
+        auto retVal := Array.allocate(length1 + length2);
+
+        for (int i:=0, i < length1, i += 1) {
+            retVal[i] := theArray[i]
+        };
+
+        for (int i:=0, i < length2, i += 1) {
+            retVal[length1 + i] := a[i]
+        };
+            
+        ^ retVal
+    }
+
     vprop int Length
     {
         /// Reads the array length into an output parameter
