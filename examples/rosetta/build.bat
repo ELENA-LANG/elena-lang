@@ -43,23 +43,47 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc arraymode\arraymode.prj
+..\..\bin\elc arraymode\arraymode.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 ..\..\bin\elc arrays\arrays.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc associativearrays\associativearrays.prj
-rem ..\..\bin\elc bestshuffle\bestshuffle.prj
-rem ..\..\bin\elc binary\binary.prj
+..\..\bin\elc associativearrays\associativearrays.prj
 ..\..\bin\elc amb\amb.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc bitwise\bitwise.prj
-rem ..\..\bin\elc brackets\brackets.prj
+..\..\bin\elc bestshuffle\bestshuffle.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc binary\binary.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc amb\amb.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc bitwise\bitwise.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc brackets\brackets.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc anagram\anagram.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError

@@ -1,4 +1,4 @@
-//import system'routines.
+import system'routines;
 
 // --- RandomGenerator ---
 
@@ -61,30 +61,28 @@ sealed struct RandomGenerator
 
 public static randomGenerator = new RandomGenerator();
 
-//// -- ERandomizer --
-//
-//public extension randomOp
-//{
-//    randomize : aCount
-//    [
-//        var list := self clone.
-//        
-//        int n := T<int>(aCount).
-//        int i := 0.
-//        
-//        var max := self length.
-//        
-//        while (i < n)
-//        [
-//            var j := randomGenerator eval:max.
-//            
-//            list~indexableOp exchange(i, j).
-//            
-//            i := i + 1
-//        ].
-//        
-//        ^ list
-//    ]
-//    
-//    
-//}
+// -- ERandomizer --
+
+public extension randomOp
+{
+    randomize(count)
+    {
+        var list := self.clone();
+        
+        int n := cast int(count);
+        int i := 0;
+        
+        int max := self.Length;
+        
+        while (i < n)
+        {
+            var j := randomGenerator.eval(max);
+            
+            mixin indexableOp(list).exchange(i, j);
+            
+            i := i + 1
+        };
+        
+        ^ list
+    }
+}

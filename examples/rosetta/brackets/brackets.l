@@ -2,50 +2,53 @@
 // Determine whether the generated string is balanced; that is, whether it consists entirely of pairs of opening/closing brackets (in that order),
 // none of which mis-nest. 
 
-import system'routines.
-import extensions.
-import extensions'text.
+import system'routines;
+import extensions;
+import extensions'text;
 
 // --- RandomBrackets ---
 
 randomBrackets(len)
-[
+{
     if (0 == len)
-        [ ^emptyLiteral ];
-        [
-            var aBrackets := 
-                Array new(len); populate(:i)($91) 
-                + 
-                Array new(len); populate(:i)($93).
-    
-            aBrackets := aBrackets randomize(len * 2).
+    { 
+        ^emptyString 
+    }
+    else
+    {
+        var brackets := 
+            Array.allocate(len).populate:(i => $91) 
+            + 
+            Array.allocate(len).populate:(i => $93);
 
-            ^ aBrackets summarize(StringWriter new); toLiteral
-        ]
-]
+        brackets := brackets.randomize(len * 2);
+
+        ^ brackets.summarize(new StringWriter()).toString()
+    }
+}
 
 extension op
 {
-    isBalanced
-    [
-        var aCounter := Integer new:0.
+    get isBalanced()
+    {
+        var counter := new Integer(0);
     
-        self seekEach(:ch)(aCounter append((ch==$91)iif (1,-1)) < 0).
+        self.seekEach:(ch => counter.append((ch==$91).iif(1,-1)) < 0);
     
-        ^ (0 == aCounter)
-    ]
+        ^ (0 == counter)
+    }
 }
 
 // --- Program ---
 
-public program
-[
-    0 to:9 do(:len)
-    [
-        var str := randomBrackets(len).
+public program()
+{
+    for(int len := 0, len < 9, len += 1)
+    {
+        var str := randomBrackets(len);
 
-        console printLine("""",str,"""",str isBalanced; iif(" is balanced"," is not balanced"))
-    ].
+        console.printLine("""",str,"""",str.isBalanced.iif(" is balanced"," is not balanced"))
+    };
 
-    console readChar
-]
+    console.readChar()
+}

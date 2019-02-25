@@ -1,21 +1,21 @@
 /// a routine to perform a bitwise AND, OR, and XOR on two integers, a bitwise NOT on the first integer, a left shift, right
 
-import extensions.
+import extensions;
 
 extension testOp
 {
-    bitwiseTest : y
-    [
-        console printLine(self," and ",y," = ",self and:y).
-        console printLine(self," or ",y," = ",self or:y).
-        console printLine(self," xor ",y," = ",self xor:y).
-        console printLine("not ",self," = ",self inverted).
-        console printLine(self," shr ",y," = ",self shiftRight:y).
-        console printLine(self," shl ",y," = ",self shiftLeft:y).
-    ]
+    bitwiseTest(y)
+    {
+        console.printLine(self," and ",y," = ",self.and(y));
+        console.printLine(self," or ",y," = ",self.or(y));
+        console.printLine(self," xor ",y," = ",self.xor(y));
+        console.printLine("not ",self," = ",self.Inverted);
+        console.printLine(self," shr ",y," = ",self.shiftRight(y));
+        console.printLine(self," shl ",y," = ",self.shiftLeft(y));
+    }
 }
 
-public program =
-[
-    console readLineTo(Integer new); bitwiseTest(console readLineTo(Integer new)).
-].
+public program()
+{
+    console.loadLineTo(new Integer()).bitwiseTest(console.loadLineTo(new Integer()))
+}

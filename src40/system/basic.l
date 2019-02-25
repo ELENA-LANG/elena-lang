@@ -478,14 +478,14 @@ public sealed const struct ByteNumber : IntBaseNumber
     real divide(real n)
         = new RealNumber(self).divide(n);
 
-//    and:n
-//        <= and(T<byte>(n)).
-//        
-//    or:n
-//        <= or(T<byte>(n)).
-//        
-//    xor:n
-//        <= xor(T<byte>(n)).
+    and(n)
+        <= and(cast byte(n));
+        
+    or(n)
+        <= or(cast byte(n));
+        
+    xor(n)
+        <= xor(cast byte(n));
         
 //    byte and(BaseVariable v)
 //        <= and(v value).
@@ -787,15 +787,15 @@ public sealed const struct ShortNumber : IntBaseNumber
     divide(real n)
         = new RealNumber(self).divide(n);
 
-//    and:n
-//        <= and(T<short>(n)).
-//        
-//    or:n
-//        <= divide(T<short>(n)).
-//        
-//    xor:n
-//        <= xor(T<short>(n)).
-//        
+    and(n)
+        <= and(cast short(n));
+        
+    or(n)
+        <= divide(cast short(n));
+        
+    xor(n)
+        <= xor(cast short(n));
+        
 //    short and(BaseVariable v)
 //        <= and(v value).
 //        
@@ -948,14 +948,13 @@ public sealed const struct IntNumber : IntBaseNumber
     /// Returns the real number
     uint cast() = new UIntNumber(self);
     
-//    bool equal:o
-//    [
-//        var n := T<int>(o) ?? nil.
-//        (nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ self equal(n) ]
-//    ]
-//
+    bool equal(o)
+    {
+        var n := cast int(o) ?? nil;
+        (nil == n)
+            ? { ^ false } : { ^ self.equal(n) }
+    }
+
 //    bool less:n
 //        <= less(T<int>(n)).
 //        
@@ -1013,15 +1012,15 @@ public sealed const struct IntNumber : IntBaseNumber
     int divide(int n)
         = theValue / n;
 
-//    and:n
-//        <= and(T<int>(n)).
-//        
-//    or:n
-//        <= divide(T<int>(n)).
-//        
-//    xor:n
-//        <= xor(T<int>(n)).
-//        
+    and(n)
+        <= and(cast int(n));
+        
+    or(n)
+        <= divide(cast int(n));
+        
+    xor(n)
+        <= xor(cast int(n));
+        
 //    int and(BaseVariable v)
 //        <= and(v value).
 //        
@@ -1184,16 +1183,16 @@ public sealed const struct IntNumber : IntBaseNumber
     /// Clones the value
     int clone = new IntNumber(self);
 
-//    int shiftLeft(BaseVariable v)
-//        <= shiftLeft(v value).
+    int shiftLeft(BaseVariable v)
+        <= shiftLeft(v.Value);
 
     int shiftLeft(int val)
     {
         ^ theValue $shl val
     }
 
-//    int shiftRight(BaseVariable v)
-//        <= shiftRight(v value).
+    int shiftRight(BaseVariable v)
+        <= shiftRight(v.Value);
 
     int shiftRight(int val)
     {
@@ -1369,15 +1368,15 @@ public sealed const struct UIntNumber : IntBaseNumber
     int divide(int n)
         = theValue / n;
 
-//    and:n
-//        <= and(T<int>(n)).
-//        
-//    or:n
-//        <= divide(T<int>(n)).
-//        
-//    xor:n
-//        <= xor(T<int>(n)).
-//        
+    and(n)
+        <= and(cast int(n));
+        
+    or(n)
+        <= divide(cast int(n));
+        
+    xor(n)
+        <= xor(cast int(n));
+        
 //    int and(BaseVariable v)
 //        <= and(v value).
 //        
@@ -1570,15 +1569,15 @@ public sealed const struct UIntNumber : IntBaseNumber
     /// Clones the value
     uint clone = new UIntNumber(self);
 
-//    uint shiftLeft(int val)
-//    [
-//        ^ theValue << val
-//    ]
-//
-//    uint shiftRight(int val)
-//    [
-//        ^ theValue >> val
-//    ]
+    uint shiftLeft(int val)
+    {
+        ^ theValue $shl val
+    }
+
+    uint shiftRight(int val)
+    {
+        ^ theValue $shr val
+    }
     
     /// Bitwise inversion
     get uint Inverted()
@@ -1712,15 +1711,15 @@ public sealed const struct LongNumber : IntBaseNumber
     long divide(long n)
         = theValue / n;
 
-//    and:n
-//        <= and(T<long>(n)).
-//        
-//    or:n
-//        <= divide(T<long>(n)).
-//        
-//    xor:n
-//        <= xor(T<long>(n)).
-//        
+    and(n)
+        <= and(cast long(n));
+        
+    or(n)
+        <= divide(cast long(n));
+        
+    xor(n)
+        <= xor(cast long(n));
+        
 //    long and(BaseVariable v)
 //        <= and(v value).
 //        

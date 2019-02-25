@@ -1,53 +1,52 @@
 /// Shuffles the characters of a string in such a way that as many of the character values are in a different position as possible.
 
-import system'routines.
-import extensions.
-import extensions'text.
+import system'routines;
+import extensions;
+import extensions'text;
 
 extension op
 {
-    shuffled
-    [
-        var anOriginal := self toArray.
-        var aShuffled := self toArray.
+    get Shuffled()
+    {
+        var original := self.toArray();
+        var shuffled := self.toArray();
     
-        0 to:(anOriginal length - 1) do(:i)
-        [
-            0 to:(anOriginal length - 1) do(:j)
-            [
-                if ((i != j) && (anOriginal[i] != aShuffled[j]) && $(anOriginal[j] != aShuffled[i]))
-                [
-                    aShuffled exchange(i,j)
-                ].
-            ].
-        ].
+        for (int i := 0, i < original.Length, i += 1) {
+            for (int j := 0, j < original.Length, j += 1) {
+                if (i != j && original[i] != shuffled[j] && original[j] != shuffled[i])
+                {
+                    shuffled.exchange(i,j)
+                }                
+            }
+        };
     
-        ^ aShuffled summarize(StringWriter new); toLiteral
-    ]
+        ^ shuffled.summarize(new StringWriter()).toString()
+    }
     
-    score : anOriginalText
-    [
-        var aShuffled := self toArray.
-        var anOriginal := anOriginalText toArray.
-        var aScore := Integer new.
+    score(originalText)
+    {
+        var shuffled := self.toArray();
+        var original := originalText.toArray();
+        int score := 0;
 
-        0 to(anOriginal length - 1) do(:i)
-            [ if (anOriginal[i] == aShuffled[i]) [ aScore append:1 ] ].
+        for (int i := 0, i < original.Length, i += 1) {
+            if (original[i] == shuffled[i]) { score += 1 }
+        };
         
-        ^ aScore value.
-    ]
+        ^ score
+    }
 }
 
 // --- Program ---
 
-public program
-[
-    ("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a") forEach(:s)
-    [
-        var shuffled_s := s shuffled.
+public program()
+{
+    new string[]{"abracadabra", "seesaw", "grrrrrr", "pop", "up", "a"}.forEach:(s)
+    {
+        var shuffled_s := s.Shuffled;
 
-        console printLine("The best shuffle of ",s," is ",shuffled_s,"(",shuffled_s score:s,")").
-    ].
+        console.printLine("The best shuffle of ",s," is ",shuffled_s,"(",shuffled_s.score(s),")")
+    };
 
-    console readChar
-]
+    console.readChar()
+}

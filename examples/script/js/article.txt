@@ -10,17 +10,22 @@ could be used to customize ELENA language.
 
 Let's create a VM console client. We will use a command cycle template. First we have to create a project file (vmconsole.prj):
 
-    [project]
-    executable=vmconsole.exe
-    namespace=vmconsole
-    template=vm_console
-
-    [files]
-    vmconsole.l
-
-    [forwards]
-    'program=extensions'programLoop
-    'program'control=vmconsole'control
+    <configuration>
+        <project>
+            <executable>vmconsole.exe</executable>
+            <arguments>fibonacci.js</arguments>
+            <output></output>
+            <options></options>
+            <namespace>vmconsole</namespace>
+            <template>vm_console</template>
+            <debuginfo>-1</debuginfo>
+        </project>
+        <files>
+            <module>
+                <include>main.l</include>
+            </module>
+        </files>
+    </configuration>
 
 Now let's create a simple feedback loop (vmconsole.l):
 

@@ -1158,9 +1158,9 @@ public sealed  class Dictionary //: Enumerable
     
 //    cast T<ArrayList>
 //        = theList clone.
-//
-//    T<ArrayList> values = theList clone.
-//
+
+    ArrayList Values = theList.clone();
+
 //    /// Clones a dictionary
 //    clone 
 //    [
