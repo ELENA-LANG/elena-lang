@@ -1,30 +1,33 @@
 ///  a program to find the mean (arithmetic average) of a numeric vector. 
-import extensions.
+import extensions;
 
 // --- Average ---
 
 extension op
 {
-    average
-    [
-        var aSum := Real new.
-        var aCount := Integer new:0.
+    average()
+    {
+        real sum := 0;
+        int count := 0;
         
-        var anEnumerator := self enumerator.
+        var enumerator := self.enumerator();
         
-        while (anEnumerator next)
-        [
-            aSum append(anEnumerator get).
-            aCount append(1).
-        ].
+        while (enumerator.next())
+        {
+            sum += enumerator.get();
+            count += 1;
+        };
         
-        ^ aSum / aCount.
-    ]
+        ^ sum / count
+    }
 }
+
 // --- Program ---
 
-public program
-[
-    var anArray := (1, 2, 3, 4, 5, 6, 7, 8).
-    console printLine("Arithmetic mean of {",anArray,"} is ",anArray average); readChar.
-]
+public program()
+{
+    var array := new int[]{1, 2, 3, 4, 5, 6, 7, 8};
+    console.printLine(
+        "Arithmetic mean of {",array.asEnumerable(),"} is ",
+        array.average()).readChar()
+}

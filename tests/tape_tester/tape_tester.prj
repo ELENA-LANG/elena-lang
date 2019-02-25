@@ -1,10 +1,16 @@
-﻿[project]
-vmpath=..\..\bin
-executable=tape_tester.exe
-namespace=tape_tester
-template=vm_console
-debuginfo=-1
-
-[files]
-main.l
-
+<configuration>
+    <project>
+        <executable>tape_tester.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>tape_tester</namespace>
+        <template>vm_console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

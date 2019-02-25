@@ -159,6 +159,8 @@ public class TapeMethod : TapeExpression
         list.append(openMethodClosure);
         list.append(new newMessageClosure(message));
         
+        list.append(new newParamTokenClosure("self"));
+                
         if (nil != parameters)
         {
             int len := parameters.Length;
@@ -168,8 +170,6 @@ public class TapeMethod : TapeExpression
             }
         };
 
-        list.append(new newParamTokenClosure("self"));
-                
         body.saveTo(list);
         
         list.append(closeClosure)

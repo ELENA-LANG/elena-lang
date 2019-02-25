@@ -33,7 +33,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc arithmmean\arithmmean.prj
+..\..\bin\elc arithmmean\arithmmean.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc arrayconcat\arrayconcat.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError

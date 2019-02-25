@@ -331,6 +331,7 @@ where **class** is used as an attribute to declare a new class, as a identifier 
        | string-literal
        | operator-literal
        | operator-or-punctuator
+       | attribute-literal
 
 ### Identifiers and References
 
@@ -370,8 +371,14 @@ where **class** is used as an attribute to declare a new class, as a identifier 
        '"' string-character* '"'
        | quote-escape-sequence
 
+    attribute-literal ::=
+      "#" hexadecimal-digit+
+
     decimal-digit ::=
        "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+
+    hexadecimal-digit ::=
+       "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "A" | "B" | "C" | "D" | "E" | "F"
 
     exponent-part ::=
        "e" sign? decimal-digit+
@@ -437,6 +444,26 @@ where **class** is used as an attribute to declare a new class, as a identifier 
        | ":="
        | "[]"       
 
-3. Attributes
+## Syntactic grammar
+
+    module ::=
+       attribute_declaration* compilation-unit*
+
+### Attribute declaration
+
+    attribute_declaration ::=
+       attribute-literal "=" identifier ";"
+
+### Member pattern
+
+    compilation-unit-pattern ::=
+       visibility_attribute? property_attribute? scope_prefix_attribute? scope_attribute? type? identifier scope
+       
+### Module members
+
+    compilation-unit ::=
+       symbol_scope
+
+3. Symbols, Classes, Nested classes and closures
 
 4. Identifiers, Namespaces, Forwards

@@ -1,25 +1,17 @@
-import extensions.
-import extensions'scripting.
+import extensions;
+import extensions'scripting;
 
-const script0 = "^system'console writeLine(""Hello World"")".
-const script1 = "^ { eval(x) [ ^extensions'math'mathControl power(x, 2 ) ] }".
-
-InterpreterTest = (:script)
-[
-    escript eval(script).
-].
-
-InterpreterTestWithParam = (:script:param)
-[
-    var o := escript eval(script).
+public program()
+{
+    escript.eval("system'console.writeLine(""Hello World"");");
     
-    ^ o eval(param).
-].
+    var o := escript.eval(
+       "^ { eval(x) { ^extensions'math'mathControl.power(x, 2 ) }}");
 
-program =
-[
-    Assert notFailed:[InterpreterTest(script0)].
-    Assert ifEqual(InterpreterTestWithParam(script1,2), 4).
+    console.printLine(o.eval(2));        
     
-    console writeLine("passed").
-].
+    var o2 := escript.eval(
+       "^ { eval(x,y) { ^x.add(y) }}");
+
+    console.printLine(o2.eval(2,3));        
+}

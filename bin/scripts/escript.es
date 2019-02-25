@@ -6,9 +6,12 @@
 <=
 root
 (
+   namespace
+   (
 =>
        scope $eof
 <=
+   ) 
 )
 =>;
 
@@ -36,7 +39,7 @@ root
 <= 
                 method
                 (
-                   message = eval
+                   nameattr ( identifier = eval )
 
                    code
                    (
@@ -95,7 +98,7 @@ root
                  code
                  (
 =>
-                   "[" statement* last_statement? "]"
+                   "{" statement* last_statement? "}"
 <= 
                  )
 =>;
@@ -115,12 +118,14 @@ root
    #define next_parameter ::= "," expression;
    #define next_operation ::= <= ; => operation;
 
+   #define m_name         ::= <= nameattr ( => identifier  <= ) =>;
+   #define m_param        ::= <= parameter ( nameattr ( => identifier <= ) ) =>;
+
    #define object         ::= "{" nested "}" ;
    #define object         ::= <= reference = $reference =>;
    #define object         ::= <= literal = "$literal" =>;
-   #define object         ::= <= identifier = $identifier =>;
+   #define object         ::= identifier;
    #define object         ::= <= numeric = $numeric =>;
    #define message        ::= <= message = $identifier =>;
-   #define m_param        ::= <= parameter = $identifier =>;
-   #define m_name         ::= <= message = $identifier =>;
+   #define identifier     ::= <= identifier = $identifier =>;
 ]]
