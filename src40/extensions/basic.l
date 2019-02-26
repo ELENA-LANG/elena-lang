@@ -70,8 +70,8 @@ public sealed class Real : BaseVariable, ref<real>
         theValue := v
     }
     
-//    append : n
-//        <= append(T<real>(n)).
+    append(n)
+        <= append(cast real(n));
     
     reduce(real n)
     {
@@ -81,8 +81,8 @@ public sealed class Real : BaseVariable, ref<real>
         theValue := v
     }
     
-//    reduce : n
-//        <= reduce(T<real>(n)).
+    reduce(n)
+        <= reduce(cast real(n));
         
     dispatch() => theValue;
 }

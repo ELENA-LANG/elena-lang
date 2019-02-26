@@ -193,29 +193,29 @@ singleton mathController
         
 //    power(object n, object m)
 //        <= power(n value, m).
-//        
-//    sqr(byte n)
-//        = n~byteOp sqr.
-//        
-////    sqr value:n
-////    [
-////        system'NotSupportedException new; raise
-////    ]
-//
-//    sqr(short n)
-//        = n~shortOp sqr.
-//        
-//    sqr(int n)
-//        = n~intOp sqr.
-//        
-//    sqr(long n)
-//        = n~longOp sqr.
-//        
-//    sqr(real n)
-//        = n~realOp sqr.
-//        
-//    sqr:n
-//        <= sqr(n value).
+        
+    sqr(byte n)
+        = n.sqr();
+        
+//    sqr value:n
+//    [
+//        system'NotSupportedException new; raise
+//    ]
+
+    sqr(short n)
+        = n.sqr();
+        
+    sqr(int n)
+        = n.sqr();
+        
+    sqr(long n)
+        = n.sqr();
+        
+    sqr(real n)
+        = n.sqr();
+        
+    sqr(n)
+        <= sqr(n.Value);
 }
 
 // --- mathOp ---
@@ -295,16 +295,16 @@ public extension mathOp
 //        
 //        ^ x / y.
 //    ]
-//    
-//    sqrt
-//        = T<real>(self) sqrt.
+    
+    sqrt()
+        = cast real(self).sqrt();
 
     power(p)
         = mathController.power(self, p);
 
-//    sqr
-//        = mathController sqr(self).
-//        
+    sqr()
+        = mathController.sqr(self);
+        
 //    rounded
 //        = T<real>(self) rounded.
 //

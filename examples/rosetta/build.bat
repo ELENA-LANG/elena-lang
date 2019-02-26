@@ -89,8 +89,16 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc median\median.prj
-rem ..\..\bin\elc smavg\smavg.prj
+..\..\bin\elc median\median.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc smavg\smavg.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc caesar\caesar.prj
 rem ..\..\bin\elc charmatch\charmatch.prj
 

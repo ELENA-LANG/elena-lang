@@ -183,15 +183,15 @@ public extension byteOp : ByteNumber
         ^ new ByteNumber(r)
     }
     
-//    byte sqr
-//    [
-//        byte aRetVal := 0.
-//        
-//        aRetVal := self * self.
-//        
-//        ^ ByteNumber new(aRetVal)
-//    ]
-//
+    byte sqr()
+    {
+        byte retVal := 0;
+        
+        retVal := self * self;
+        
+        ^ new ByteNumber(retVal)
+    }
+
 //    power : aPower
 //        = self~byteOp power(aPower).
 //                
@@ -254,16 +254,16 @@ public extension shortOp : ShortNumber
         ^ new ShortNumber(r)
     }
     
-//    short sqr
-//    [
-//        short n := self.
-//        short aRetVal := 0.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ ShortNumber new(aRetVal)
-//    ]
-//
+    short sqr()
+    {
+        short n := self;
+        short retVal := 0;
+        
+        retVal := n * n;
+        
+        ^ new ShortNumber(retVal)
+    }
+
 //    power : aPower
 //        = self~shortOp power(aPower).
 //                
@@ -315,17 +315,21 @@ public extension intOp : IntNumber
     }
     
 //    int rvprop absolute :: absolute.
-//    
-//    int rvprop sqr      :: sqr.
+    
     int sqrt()
     {
         self.sqrt(ref int n);
         
         ^ n
     }
-
-//    int rvprop sqrt     :: sqrt.
-//    
+    
+    int sqr()
+    {
+        self.sqr(ref int n);
+        
+        ^ n
+    }
+    
 //    absolute(ref<int> retVal)
 //    [
 //        int n := self.
@@ -377,13 +381,13 @@ public extension intOp : IntNumber
     real realDiv(n)
         = new RealNumber(self).divide:n;
    
-//    sqr(ref<int> retVal)
-//    [
-//        int n := self.        
-//        
-//        retVal value := n * n.
-//    ]
-//    
+    sqr(ref int retVal)
+    {
+        int n := self;        
+        
+        retVal := n * n
+    }
+    
     sqrt(ref int retVal)
     {   
         int num := self;
@@ -518,17 +522,17 @@ public extension longOp : LongNumber
 //        
 //        ^ LongNumber new(r)
 //    ]
-//    
-//    long sqr
-//    [
-//        long n := self.        
-//        long aRetVal := 0l.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ LongNumber new(aRetVal)
-//    ]
-//
+    
+    long sqr()
+    {
+        long n := self;        
+        long retVal := 0l;
+        
+        retVal := n * n;
+        
+        ^ new LongNumber(retVal)
+    }
+
 //    power : aPower
 //        = self~longOp power(T<long>(aPower)).
 //                
@@ -676,17 +680,17 @@ public extension realOp : RealNumber
 
 //    power : aPower
 //        = self~realOp power(T<int>(aPower)).
-//
-//    real sqr
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        aRetVal := n * n.
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//
+
+    real sqr()
+    {
+        real n := self;        
+        real retVal := 0.0r;
+        
+        retVal := n * n;
+        
+        ^ new RealNumber(retVal)
+    }
+
 //    real rounded
 //    [
 //        real n := self.        

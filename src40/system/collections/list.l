@@ -521,35 +521,36 @@ public sealed class List : Enumerable
 //                aNew setNextItem(aNext)
 //            ]
 //    ]
-//
-//    /// Removes an object at the specified position
-//    remove(int anIndex)
-//    [
-//        if (nil == theTop)
-//            [ OutOfRangeException new; raise ].
-//        
-//        if (0 == anIndex)
-//            [
-//                theTop := theTop nextItem.
-//                if (nil == theTop)
-//                    [ theLast := nil. ]
-//            ];
-//            [
-//                T<ListItem> aPrevious := self getItemAt(anIndex - 1).
-//                T<ListItem> aNext := aPrevious nextItem.
-//                
-//                aPrevious setNextItem(aNext nextItem).
-//                
-//                if(aNext equalReference:theLast)
-//                    [ theLast := aPrevious ].
-//            ].
-//            
-//        theCount reduce(1).
-//    ]
-//        
-//    removeAt:anIndex
-//        <= remove(T<int>(anIndex)).
-//
+
+    /// Removes an object at the specified position
+    remove(int index)
+    {
+        if (nil == theTop)
+            { OutOfRangeException.raise() };
+        
+        if (0 == index)
+        {
+            theTop := theTop.NextItem;
+            if (nil == theTop)
+                { theLast := nil }
+        }
+        else
+        {
+            ListItem previous := self.getItemAt(index - 1);
+            ListItem next := previous.NextItem;
+            
+            previous.NextItem := next.NextItem;
+            
+            if(next.equalReference(theLast))
+                { theLast := previous }
+        };
+            
+        theCount.reduce(1)
+    }
+        
+    removeAt(index)
+        <= remove(cast int(index));
+
     vprop int Length
     {
         /// Reads the number of list item to the output parameter
