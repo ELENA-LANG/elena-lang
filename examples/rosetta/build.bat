@@ -99,7 +99,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc caesar\caesar.prj
+..\..\bin\elc caesar\caesar.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc charmatch\charmatch.prj
 
 ..\..\bin\elc arithmeval\arithmeval.prj
@@ -108,7 +112,12 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem ..\..\bin\elc combinations\combinations.prj
-rem ..\..\bin\elc bullscows\bullscows.prj
+
+..\..\bin\elc bullscows\bullscows.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc calendar\calendar.prj
 ..\..\bin\elc doors\doors.prj
 @echo off 

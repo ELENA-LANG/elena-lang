@@ -943,7 +943,7 @@ private:
 ////   void declareSingletonClass(SNode node, ClassScope& scope);
 
    void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
-   void compileLazyExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+   void compileExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope, bool lazyMode);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);

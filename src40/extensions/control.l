@@ -111,25 +111,25 @@
 //    to(object maxValue) by(object step) seek(Func1 func)
 //        = func retrieve(RangeEnumerator from:self to:maxValue by:step).
 //}
-//
-//public extension loopOp
-//{
-//    doWhile:anAction
-//    [
-//        while (T<bool>(self))
-//        [
-//            anAction().
-//        ].
-//    ]
-//    
-//    doWhile
-//    [
-//        while (T<bool>(self))
-//        [
-//        ].
-//    ]        
-//}
-//
+
+public extension loopOp
+{
+    doWhile(action)
+    {
+        while (cast bool(self))
+        {
+            action()
+        }
+    }
+    
+    doWhile()
+    {
+        while (cast bool(self))
+        {
+        }
+    }
+}
+
 //public extension<Func> blockOp
 //{
 //    repeatUntil:aCondition

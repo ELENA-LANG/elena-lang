@@ -910,8 +910,27 @@ public extension intArrayOp : Array<int>
 //        = self~intArrayOp populate(:n)<int,int>[ ^f(n) ].    
 }
 
-//// --- arrayOp ---
-//
+// --- arrayOp ---
+
+public extension weakArrayOp
+{
+    Array Subarray(int index, int length)
+    {
+        auto it := self.indexer();
+        it.Index := index;
+        
+        auto a := Array.allocate(length);
+        for (int i := 0, i < length, i += 1)
+        {
+            a[i] := it.get();
+            
+            it.appendIndex(1)
+        };
+        
+        ^ a;
+    }
+}
+
 //public extension<Array> arrayOp
 //{
 ////    exchange : anIndex1 : anIndex2
@@ -1064,7 +1083,15 @@ public extension intArrayOp : Array<int>
 //        ^ Array new(aLength); populate(:i)<int>(it writeIndex(anIndex + i); get).
 //    ]
 //}
-//
+
+public extension arrayOp<T> : Array<T>
+{
+    T[] Subarray(int index, int length)
+    {
+        ^ new Array<T>(self, index, length)
+    }
+}
+
 //// --- intmatrixOp ---
 //
 //public extension<IntMatrix> intMatrixOp

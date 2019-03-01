@@ -2,25 +2,26 @@
 In development:
 ------                              
 
+              dev - elena 4.0
+                 * replace buble sort with quick sort
+                 * review new {a,b,c} - syntax, it is inconsisten with root expression
+                 * ?. operator cannot be applied for invoking closures, there should be special case of that operator
+
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
-                 * ?. operator cannot be applied for invoking closures, there should be special case of that operator
+                 * lazy::(console.write("Reading a number:").readLine().toInt()) should generate an error?
                  * embeddable get should work with nonstructure types #424
                  * embeddable eval[1]
                  * embeddable get[1]
                  * embeddable eval[2]
-                 * fixing vmconsole sample
-                 * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * mixin :: { collection }, new::{ collection } - get rid of - new {}
                  * create a nested class / collection - syntax review
 
                  * invoke property - get / set
                  * implement textdb sample
-                 * replace buble sort with merge sort
-                 * a ? b : c, modify anonym recursion sample
 
                  * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
                  * property attribute - can be only the top most token

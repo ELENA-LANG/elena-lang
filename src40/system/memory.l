@@ -5,17 +5,17 @@ public sealed Array<T> : Indexable<T>
 {
     embeddable __string T[] theArray;
 
-//    constructor allocate(int length)
-//        = new T[](length);
+    constructor allocate(int length)
+        = new T[](length);
         
-//    constructor(T[] array, int length)
-//        <= allocate(length)
-//    {
-//        for(int i := 0 , i < length, i += 1)
-//        {
-//            theArray[i] := array[i]
-//        }
-//    }
+    constructor(T[] array, int index, int length)
+        <= allocate(length)
+    {
+        for(int i := 0 , i < length, i += 1)
+        {
+            theArray[i] := array[i + index]
+        }
+    }
 
     Enumerator<T> enumerator() = new BaseEnumerator<T>:
     {
@@ -132,7 +132,7 @@ public sealed Array<T> : Indexable<T>
         int len := self.Length;
         T[] copy := new T[](len);
         for(int i := 0, i < len, i+=1) {
-            copy[i] := theArray
+            copy[i] := theArray[i]
         }
     }
 }

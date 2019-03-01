@@ -1,15 +1,15 @@
-import extensions.
-import extensions'text.
+import extensions;
+import extensions'text;
 
-public symbol program =
-[
-    true doWhile:
-    [
-        var aSource := console writeLine:"Enter the cyrillic text for transliteration or prese enter to exit:"; readLineTo(String new).
+public program()
+{
+    while(true)
+    {
+        var source := console.writeLine:"Enter the cyrillic text for transliteration or prese enter to exit:".loadLineTo(new StringWriter());
 
-        if (0 == aSource length)
-            [ AbortException new; raise. ].
+        if (0 == source.Length)
+            { AbortException.raise() };
 
-        console writeLine(Transliteration(aSource)).
-    ].
-].
+        console.writeLine(Transliteration(source))
+    }
+}

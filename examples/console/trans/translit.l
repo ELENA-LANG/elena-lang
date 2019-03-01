@@ -1,60 +1,65 @@
-import system'routines.
-import system'text.
-import extensions.
+import system'routines;
+import system'text;
+import extensions;
 
 // --- RusLatRules ---
 
-const rusLatRules =
-(
-    { from = "а". to = "a". },
-    { from = "б". to = "b". },
-    { from = "в". to = "v". },
-    { from = "г". to = "g". },
-    { from = "д". to = "d". },
-    { from = "е". to = "e". },
-    { from = "ë". to = "jo". },
-    { from = "ж". to = "zh". },
-    { from = "з". to = "z". },
-    { from = "и". to = "i". },
-    { from = "й". to = "ij". },
-    { from = "к". to = "k". },
-    { from = "л". to = "l". },
-    { from = "m". to = "m". },
-    { from = "н". to = "n". },
-    { from = "о". to = "о". },
-    { from = "п". to = "p". },
-    { from = "р". to = "r". },
-    { from = "c". to = "s". },
-    { from = "т". to = "t". },
-    { from = "у". to = "u". },
-    { from = "ф". to = "f". },
-    { from = "х". to = "h". },
-    { from = "ц". to = "c". },
-    { from = "ч". to = "ch". },
-    { from = "ш". to = "sh". },
-    { from = "щ". to = "w". },
-    { from = "ы". to = "y". },
-    { from = "ь". to = "'". },
-    { from = "э". to = "je". },
-    { from = "ю". to = "ju". },
-    { from = "я". to = "ja". }
-).
+const rusLatRules = new object[]
+{
+    new : { from = "а"; to = "a"; },
+    new : { from = "б"; to = "b"; },
+    new : { from = "в"; to = "v"; },
+    new : { from = "г"; to = "g"; },
+    new : { from = "д"; to = "d"; },
+    new : { from = "е"; to = "e"; },
+    new : { from = "ë"; to = "jo"; },
+    new : { from = "ж"; to = "zh"; },
+    new : { from = "з"; to = "z"; },
+    new : { from = "и"; to = "i"; },
+    new : { from = "й"; to = "ij"; },
+    new : { from = "к"; to = "k"; },
+    new : { from = "л"; to = "l"; },
+    new : { from = "m"; to = "m"; },
+    new : { from = "н"; to = "n"; },
+    new : { from = "о"; to = "о"; },
+    new : { from = "п"; to = "p"; },
+    new : { from = "р"; to = "r"; },
+    new : { from = "c"; to = "s"; },
+    new : { from = "т"; to = "t"; },
+    new : { from = "у"; to = "u"; },
+    new : { from = "ф"; to = "f"; },
+    new : { from = "х"; to = "h"; },
+    new : { from = "ц"; to = "c"; },
+    new : { from = "ч"; to = "ch"; },
+    new : { from = "ш"; to = "sh"; },
+    new : { from = "щ"; to = "w"; },
+    new : { from = "ы"; to = "y"; },
+    new : { from = "ь"; to = "'"; },
+    new : { from = "э"; to = "je"; },
+    new : { from = "ю"; to = "ju"; },
+    new : { from = "я"; to = "ja"; }
+};
 
 // === Transliteration ===
 
-Transliteration = (:aText)
-[
-    var anOutput := TextBuilder new.
+Transliteration(text)
+{
+    var output := new TextBuilder();
     
-    aText forEach(:aChar)
-    [
-        var aRule := rusLatRules seekEach
-            (:x)( x from == aChar literal ).
+    text.forEach:(ch)
+    {
+        var rule := rusLatRules.seekEach:
+            (x => x.from == ch.Printable );
                 
-        if (nil == aRule)
-            [ anOutput << aChar. ];
-            [ anOutput << aRule to. ].
-    ].
+        if (nil == rule)
+        { 
+            output.write(ch) 
+        }
+        else
+        { 
+            output.write(rule.to)
+        }
+    };
     
-    ^ anOutput literal.
-].
+    ^ output.Value
+}
