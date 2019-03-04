@@ -447,7 +447,7 @@ where **class** is used as an attribute to declare a new class, as a identifier 
 ## Syntactic grammar
 
     module ::=
-       attribute_declaration* compilation-unit*
+       attribute_declaration* module_member*
 
 ### Attribute declaration
 
@@ -456,18 +456,18 @@ where **class** is used as an attribute to declare a new class, as a identifier 
 
 ### Member pattern
 
-    compilation-unit-pattern ::=
+    module_member-pattern ::=
        visibility_attribute? property_attribute? scope_prefix_attribute? scope_attribute? type? identifier scope
        
 ### Module members
 
-    compilation-unit ::=
-       symbol_scope
-       | class_scope
+    module_member ::=
+       symbol_declaration
+       | class_declaration
 
 ### Symbol declaration
 
-    symbol_scope ::=
+    symbol_declaration ::=
        visibility? prefix? scope_attribute? identifier "=" expression ";"
 
     visibility ::=
@@ -484,7 +484,7 @@ where **class** is used as an attribute to declare a new class, as a identifier 
 
 ### Class declaration
 
-    class_scope ::=
+    class_declaration ::=
        visibility? attribute? prefix? scope_attribute? identifier template_parameters? class_body
 
     class_body ::=
@@ -492,7 +492,7 @@ where **class** is used as an attribute to declare a new class, as a identifier 
        | single_method
 
     base_class ::=
-       ":" { identififer | reference }
+       ":" { identifier | reference }
 
     class_member ::=
        field
@@ -538,8 +538,49 @@ where **class** is used as an attribute to declare a new class, as a identifier 
        "<" template_parameter { "," template_parameter }* ">"
 
     template_parameter ::=
-       { identififer | reference } template_parameters?
+       { identifier | reference } template_parameters?
 
-3. Symbols, Classes, Nested classes and closures
+3. Symbols, Classes
+
+A typical module contains the list of class members : symbols and classes
+
+    module_member ::=
+       visibility? symbol_attributes? identifier symbol_declaration
+       | visibility? class_attributes? identifier class_declaration
+
+### Visibility
+
+    visibility ::=
+       "public"
+       | "internal"
+
+A declared symbol or class can be internal or public. The internal symbol cannot be accessed outside its module.
+If the visibility attribute is skipped the member is internal.
+
+## Symbols
+
+Symbols are the named expression. They are used to declare constant symbols, singletons and class symbols
+
+    symbol_declaration ::=
+       visibility? prefix? scope_attribute? identifier "=" expression ";"
+
+    visibility ::=
+       "public"
+       | "internal"
+
+    prefix ::=
+       "const"
+       | "preloaded"
+
+    scope_attribute ::=
+       "symbol"
+       | "static"
+
+
+### Simple symbols
+
+    symbol_declaration ::=
+       visibility? "symbol"? identifier "=" expression ";"
+   
 
 4. Identifiers, Namespaces, Forwards

@@ -2133,9 +2133,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okRealConstant:
          writer.newNode(lxConstantReal, object.param);
          break;
-//      case okArrayConst:
-//         writer.newNode(lxConstantList, object.param);
-//         break;
+      case okArrayConst:
+         writer.newNode(lxConstantList, object.param);
+         break;
       case okParam:
       case okLocal:
          writeParamTerminal(writer, scope, object, mode, lxLocal);

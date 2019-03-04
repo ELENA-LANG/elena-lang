@@ -118,7 +118,11 @@ rem ..\..\bin\elc combinations\combinations.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc calendar\calendar.prj
+..\..\bin\elc calendar\calendar.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc doors\doors.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError

@@ -1,8 +1,8 @@
-import system'text.
-import system'routines.
-import system'calendar.
-import extensions.
-import extensions'routines.
+import system'text;
+import system'routines;
+import system'calendar;
+import extensions;
+import extensions'routines;
 
 // --- calendar ---
 
