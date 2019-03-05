@@ -122,9 +122,12 @@ public sealed class Directory
     }
     
     string[] getFiles()
+        <= getFiles("*.*");
+    
+    string[] getFiles(string mask)
     {
         auto l := new List<string>();
-        auto e := FileEnumerator.assign(thePath + "\*.*");
+        auto e := FileEnumerator.assign(thePath + "\" + mask);
         while (e.next())
         {
             auto ddf := e.get();
