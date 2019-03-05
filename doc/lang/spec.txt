@@ -581,6 +581,26 @@ Symbols are the named expression. They are used to declare constant symbols, sin
 
     symbol_declaration ::=
        visibility? "symbol"? identifier "=" expression ";"
-   
 
+A symbol can be used to reuse the expressions:
+
+    import extensions;
+    
+    public symbol InputNumber
+        = console.write("Reading a number:").readLine().toInt();
+    
+    public program()
+    {
+        var n1 := InputNumber;
+        var n2 := InputNumber;
+        
+        console.printLine("The sum of ",n1," and ",n2," is ",n1+n2);
+    }
+
+The output is:
+
+    Reading a number:2
+    Reading a number:3
+    The sum of 2 and 3 is 5
+   
 4. Identifiers, Namespaces, Forwards

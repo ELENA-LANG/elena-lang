@@ -6,149 +6,149 @@ import extensions'routines;
 
 // --- calendar ---
 
-const MonthNames = ("JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER").
-const DayNames = ("MO", "TU", "WE", "TH", "FR", "SA", "SU").
+const MonthNames = new string[] {"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"};
+const DayNames = new string[] {"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
 
 class CalendarMonthPrinter
 {
-    object theDate.
-    object theLine.
-    object theMonth.
-    object theYear.
-    object theRow.
+    Date        theDate;
+    TextBuilder theLine;
+    int         theMonth;
+    int         theYear;
+    ref<int>    theRow;
     
-    constructor year:aYear month:aMonth
-    [
-        theMonth := aMonth.
-        theYear := aYear.
-        theLine := TextBuilder new.
-        theRow := Integer new(0).
-    ]
-
-    writeTitle
-    [        
-        theRow value := 0.
-        theDate := Date new(theYear, theMonth, 1).
-        DayNames forEach(:aName)
-            [ theLine print(" ",aName) ]
-    ]
-    
-    writeLine
-    [
-        theLine clear.
-        
-        if (theDate month == theMonth)
-            [
-                theLine write:"   " length((theDate dayOfWeek == 0)iif(7,theDate dayOfWeek) - 1).
-                
-                [
-                    theLine write:(theDate day; literal) paddingLeft:3 with:$32.
-                    
-                    theDate := theDate addDays:1.
-                ]         
-                repeatUntil:$((theDate month != theMonth)||(theDate dayOfWeek == 1)).
-            ].
-        
-        int aLength := theLine length.
-        if (aLength < 21)
-            [ theLine write:" " length(21 - aLength). ].
-            
-        theRow append(1).            
-    ]
-    
-    indexer = BaseIndexer::
+    constructor(year, month)
     {
-        bool available = theRow < 7.
+        theMonth := month;
+        theYear := year;
+        theLine := new TextBuilder();
+        theRow := new Integer(0);
+    }
 
-        readIndexTo(ref<int> anIndex) [ theRow readValueTo(anIndex) ]
-
-        writeIndex(int anIndex)
-        [
-            if (anIndex <= theRow)
-                [ self writeTitle ].
-                
-            while (anIndex > theRow)
-                [ self writeLine ]
-        ]
-
-        appendIndex(int anIndex)
-            <= writeIndex(theRow value + anIndex).
-        
-        readLengthTo(ref<int> retVal) [ retVal value := 7 ]
-
-        get = self.
-        
-        set : o [ NotSupportedException new; raise ]
-    }.
+    writeTitle()
+    {
+        theRow.Value := 0;
+        theDate := Date.new(theYear, theMonth, 1);
+        DayNames.forEach:(name)
+            { theLine.print(" ",name) }
+    }
     
-    printTitleTo : anOutput
-    [
-        anOutput write(MonthNames[theMonth - 1]) padding:21 with:$32.
-    ]
+    writeLine()
+    {
+        theLine.clear();
+        
+        if (theDate.Month == theMonth)
+        {
+            theLine.write("   ",theDate.DayOfWeek == 0 ? 7 : (theDate.DayOfWeek - 1));
+            
+            until(theDate.Month != theMonth || theDate.DayOfWeek == 1)
+            {
+                theLine.writePaddingLeft(theDate.Day.Printable, 3, $32);
+                
+                theDate := theDate.addDays:1
+            }         
+        };
+        
+        int length := theLine.Length;
+        if (length < 21)
+            { theLine.write(" ", 21 - length) };
+            
+        theRow.append(1)
+    }
+    
+    indexer() = new Indexer:
+    {
+        bool Available = theRow < 7;
+
+        readIndexTo(ref int retVal) { theRow.readValueTo(ref retVal) }
+
+        writeIndex(int index)
+        {
+            if (index <= theRow)
+                { self.writeTitle() };
+                
+            while (index > theRow)
+                { self.writeLine }
+        }
+
+        appendIndex(int index)
+            <= writeIndex(theRow.Value + index);
+        
+        readLengthTo(ref int retVal) { retVal := 7 }
+
+        get() = self;
+        
+        set(o) { NotSupportedException.raise() }
+    };
+    
+    printTitleTo(output)
+    {
+        output.writePadding(MonthNames[theMonth - 1], 21, $32)
+    }
    
-    printTo : anOutput
-    [
-        anOutput write(theLine literal).
-    ]
+    printTo(output)
+    {
+        output.write(theLine.Value)
+    }
 }
 
 class Calendar
 {
-    int theYear.
-    int theRowLength.
+    int theYear;
+    int theRowLength;
     
-    constructor new : aYear
-    [
-        theYear := aYear.
-        theRowLength := 3.
-    ]
+    constructor new(int year)
+    {
+        theYear := year.
+        theRowLength := 3
+    }
     
-    printTo:anOutput
-    [
-        anOutput write:"[SNOOPY]" padding:(theRowLength * 25) with:$32. 
-        anOutput writeLine.        
-        anOutput write:(theYear literal) padding:(theRowLength * 25) with:$32. 
-        anOutput writeLine; writeLine.
+    printTo(output)
+    {
+        output.writePadding("[SNOOPY]", theRowLength * 25, $32); 
+        output.writeLine();
+        output.write(theYear.Printable, theRowLength * 25, $32); 
+        output.writeLine().writeLine();
         
-        var aRowCount := 12 / theRowLength.
-        var Months := Array new(aRowCount); populate(:i)
-            (Array new:theRowLength; 
-                populate(:j)
-                    ( CalendarMonthPrinter year:theYear month(i * theRowLength + j + 1))).
+        var rowCount := 12 / theRowLength;
+        var months := Array.allocate(aRowCount).populate:(i =>
+            Array.allocate(theRowLength) 
+                  .populate:(j =>
+                     CalendarMonthPrinter.new(theYear, i * theRowLength + j + 1)));
         
-        Months forEach(:aRow)
-        [
-            aRow forEach(:aMonth)
-            [
-                aMonth printTitleTo:anOutput.
+        months.forEach:(row)
+        {
+            row.forEach:(month)
+            {
+                month.printTitleTo:output;
                     
-                anOutput write:"   ".
-            ].
+                output.write:"   "
+            };
             
-            anOutput writeLine.
+            output.writeLine();
             
-            ParallelEnumerator new:aRow; forEach(:aLine)
-            [
-                aLine forEach(:aPrinter)
-                [
-                    aPrinter printTo:anOutput.
+            ParallelEnumerator.new(row).forEach:(line)
+            {
+                line.forEach:(printer)
+                {
+                    printer.printTo:output;
 
-                    anOutput write:"   "
-                ].
+                    output.write:"   "
+                };
 
-                anOutput writeLine
-            ].
-        ].        
-    ]
+                output.writeLine()
+            }
+        }        
+    }
 }
 
 // --- program ---
 
-public program
-[
-    var aCalender := Calendar new(console write:"ENTER THE YEAR:"; readLineTo(Integer new)).
+public program()
+{
+    var calender := Calendar.new(console.write:"ENTER THE YEAR:".loadLineTo(new Integer()));
     
-    aCalender printTo:console.
+    calender.printTo:console;
     
-    console readChar
-]
+    console.readChar()
+}

@@ -37,7 +37,8 @@ public sealed /*nonstructural */ class TextBuilder
         theLength.Value := 0
     }
 
-//    cast T<CharArray> = theBuffer.
+    char[] cast()
+        = theBuffer;
 
     string cast()
         = String.new(0, cast int(theLength), theBuffer);

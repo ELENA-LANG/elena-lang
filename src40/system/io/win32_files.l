@@ -1,23 +1,23 @@
 import system'text;
 
 // --- File Access Modes ---
-//const int FILE_READ_DATA     = 00000001h.
-//const int FILE_APPEND_DATA   = 00000004h.
+const int FILE_READ_DATA     = 00000001h;
+const int FILE_APPEND_DATA   = 00000004h;
 const int FILE_GENERIC_READ  = 80000000h;
-//const int FILE_GENERIC_WRITE = 40000000h.
+const int FILE_GENERIC_WRITE = 40000000h;
 
 const int OPEN_EXISTING      = 0003h;
-//const int CREATE_ALWAYS      = 0002h.
-//const int OPEN_ALWAYS        = 0004h.
+const int CREATE_ALWAYS      = 0002h;
+const int OPEN_ALWAYS        = 0004h;
 
 const int FILE_SHARE_READ    = 00000001h;
-//const int FILE_SHARE_WRITE   = 00000002h.
+const int FILE_SHARE_WRITE   = 00000002h;
 
 const int FILE_BEGIN = 0;
 const int FILE_CURRENT = 1;
-//const int FILE_END = 2.
-//
-//const int FILE_ATTRIBUTE_DIRECTORY = 10h.
+const int FILE_END = 2;
+
+const int FILE_ATTRIBUTE_DIRECTORY = 10h;
 
 // --- FileStream ---
 
@@ -28,14 +28,14 @@ public struct FileStream : Stream
     constructor openForRead(path)
         <= new(cast wide(path), FILE_GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, 0);
     
-//    constructor openForReWrite:aPath
-//        <= new(T<wide>(aPath), FILE_GENERIC_WRITE, FILE_SHARE_READ, CREATE_ALWAYS, 0).
-//    
-//    constructor openForAppend:aPath
-//        <= new(T<wide>(aPath), FILE_APPEND_DATA, FILE_SHARE_READ, OPEN_ALWAYS, 0).
-//    
-//    constructor openForEdit:aPath
-//        <= new(T<wide>(aPath), FILE_GENERIC_WRITE, FILE_SHARE_READ, OPEN_EXISTING, 0).
+    constructor openForReWrite(path)
+        <= new(cast wide(path), FILE_GENERIC_WRITE, FILE_SHARE_READ, CREATE_ALWAYS, 0);
+    
+    constructor openForAppend(path)
+        <= new(cast wide(path), FILE_APPEND_DATA, FILE_SHARE_READ, OPEN_ALWAYS, 0);
+    
+    constructor openForEdit(path)
+        <= new(cast wide(path), FILE_GENERIC_WRITE, FILE_SHARE_READ, OPEN_EXISTING, 0);
     
     constructor new(wide path, int dwDesiredAccess, int dwShareMode, int dwCreationDisposition, int dwFlagsAndAttributes)
     {
@@ -52,16 +52,16 @@ public struct FileStream : Stream
             { IOException.new("Cannot open the file").raise() }
     }
     
-//    write(ByteArray aDump, int aLength)
-//    [
-//        int aWritten := 0.
-//        system'external'KERNEL32 WriteFile(
-//            theHandle,
-//            aDump,
-//            aLength,
-//            &aWritten,
-//            0).
-//    ]
+    write(byte[] dump, int length)
+    {
+        int written := 0;
+        extern KERNEL32.WriteFile(
+            theHandle,
+            dump,
+            length,
+            ref written,
+            0)
+    }
 
     read(byte[] dump, ref int retVal)
     {
@@ -95,25 +95,25 @@ public struct FileStream : Stream
             FILE_BEGIN)
     }
     
-//    readLengthTo(ref<int> aLength) 
-//    [ 
-//        int n := system'external'KERNEL32 GetFileSize(
-//            theHandle,
-//            0).
-//    
-//        aLength value := n. 
-//    ]
-//    
-//    writeLength(int length)
-//    [
-//        int pos := self index.
-//        
-//        self writeIndex(length).
-//        system'external'KERNEL32 SetEndOfFile(theHandle).
-//        
-//        if(length > pos)
-//            [ self writeIndex(pos) ]
-//    ]
+    readLengthTo(ref int length) 
+    { 
+        int n := extern KERNEL32.GetFileSize(
+            theHandle,
+            0);
+    
+        length := n 
+    }
+    
+    writeLength(int length)
+    {
+        int pos := self.Index;
+        
+        self.writeIndex(length);
+        extern KERNEL32.SetEndOfFile(theHandle);
+        
+        if(length > pos)
+            { self.writeIndex(pos) }
+    }
     
     close()
     {
@@ -121,72 +121,78 @@ public struct FileStream : Stream
     }
 }
 
-//// --- fileStreamHelper ---
-//
-//class fileStreamHelper =
-//{
-//    T<Stream> openForWrite(literal aPath, bool anAppendMode)
-//    [
-//        if(anAppendMode) [ ^ FileStream openForAppend:aPath ].
-//        
-//        ^ FileStream openForReWrite:aPath
-//    ]
-//}.
-//
-//// --- StreamWriter ---
-//
-//public class StreamWriter :: TextWriter
-//{
-//    T<Stream>  theStream.
-//    T<Encoder> theEncoder.
-//
-//    constructor new(Stream aStream, Encoder anEncoder)
-//    [
-//        theBuffer := TextBuilder new.
-//        theStream := aStream.
-//        theEncoder := anEncoder.
-//
-//        theNewLineConstant := forwards'newLine literal.
-//    ]
-//
-//    constructor new:aPath
-//        <= new(FileStream openForReWrite:aPath, UTF8Encoder).
-//        
-//    constructor new(literal aPath, bool anAppendMode)
-//        <= new(fileStreamHelper openForWrite(aPath, anAppendMode), UTF8Encoder).
-//        
-//    T<Stream> stream = theStream.        
-//        
-//    T<Encoder> encoder = theEncoder.        
-//        
-//    write(CharArray anInput, int aLength)
-//    [
-//        int        aTotal := aLength.
-//        V<byte,64> aBuffer.
-//        int        aBlockLength := 0.
-//        int        aBufferLength := 0.
-//        int        anOffset := 0.
-//        
-//        while (aTotal > 0)
-//        [
-//            if(aTotal < 64)
-//                [ aBlockLength := aTotal ];
-//                [ aBlockLength := 64 ].
-//                
-//            theEncoder convert(anOffset, &aBlockLength, anInput, T<ByteArray>(aBuffer), &aBufferLength).
-//            
-//            theStream write(T<ByteArray>(aBuffer), aBufferLength).
-//            
-//            aTotal := aTotal - aBlockLength.
-//            anOffset := anOffset + aBlockLength
-//        ]
-//    ]
-//    
-//    close
-//    [
-//        theStream close
-//    ]
-//}
+// --- fileStreamHelper ---
+
+fileStreamHelper =
+{
+    Stream openForWrite(string path, bool appendMode)
+    {
+        if(appendMode) { ^ FileStream.openForAppend(path) };
+        
+        ^ FileStream.openForReWrite(path)
+    }
+};
+
+// --- StreamWriter ---
+
+public class StreamWriter : TextWriter
+{
+    Stream  theStream;
+    Encoder theEncoder;
+
+    constructor new(Stream stream, Encoder encoder)
+    {
+        theBuffer := new TextBuilder();
+        theStream := stream;
+        theEncoder := encoder;
+
+        theNewLineConstant := forward newLine;                
+        theNewLineLength := theNewLineConstant.Length;
+    }
+
+    constructor new(path)
+        <= new(FileStream.openForReWrite(path), UTF8Encoder);
+        
+    constructor new(string path, bool appendMode)
+        <= new(fileStreamHelper.openForWrite(path, appendMode), UTF8Encoder);
+        
+    Stream Stream = theStream;        
+        
+    Encoder Encoder = theEncoder;
+        
+    write(char[] input, int length)
+    {
+        int  total := length;
+        byte buffer[64];
+        int  blockLength := 0;
+        int  bufferLength := 0;
+        int  offset := 0;
+        
+        while (total > 0)
+        {
+            if(total < 64)
+            { 
+                blockLength := total 
+            }
+            else
+            { 
+                blockLength := 64 
+            };
+                
+            theEncoder.convert(offset, ref blockLength, input, buffer, ref bufferLength);
+            
+            theStream.write(buffer, bufferLength);
+            
+            total := total - blockLength;
+            offset := offset + blockLength
+        }
+    }
+    
+    close()
+    {
+        theStream.close()
+    }
+}
 
 // --- StreamReader ---
 
@@ -210,8 +216,8 @@ public class StreamReader : TextReader
     constructor new(path)
         <= new(FileStream.openForRead(path), UTF8Encoder);
         
-//    constructor new(literal aPath, Encoder anEncoder)
-//        <= new(FileStream openForRead:aPath, anEncoder).
+    constructor new(string path, Encoder encoder)
+        <= new(FileStream.openForRead:path, encoder);
 
     bool Available = theOpen;
 
@@ -246,106 +252,106 @@ public class StreamReader : TextReader
     }
 }
 
-//// --- BinaryFileReader ---
-//
-//sealed BinaryFileReader :: BinaryReader
-//{
-//    constructor new(Stream aStream)
-//    [
-//        theStream := aStream.
-//        
-//        theLength := aStream length.
-//    ]
-//    
-//    constructor new:aPath
-//        <= new(FileStream openForRead:aPath).
-//}
-//
-//// --- BinaryFileWriter ---
-//
-//sealed BinaryFileWriter :: BinaryWriter
-//{
-//    constructor new(Stream aStream)
-//    [
-//        theStream := aStream.
-//    ]
-//    
-//    constructor new:aPath
-//        <= new(FileStream openForReWrite:aPath).
-//}
+// --- BinaryFileReader ---
+
+public sealed BinaryFileReader : BinaryReader
+{
+    constructor new(Stream stream)
+    {
+        theStream := stream;
+        
+        theLength := stream.Length;
+    }
+    
+    constructor new(path)
+        <= new(FileStream.openForRead(path));
+}
+
+// --- BinaryFileWriter ---
+
+public sealed BinaryFileWriter : BinaryWriter
+{
+    constructor new(Stream stream)
+    {
+        theStream := stream
+    }
+    
+    constructor new(path)
+        <= new(FileStream.openForReWrite:path);
+}
 
 // --- fileOp ---
 
 singleton fileControl
 {
-//    openForRead : path = FileStream openForRead:path.
-//    
-//    openForReWrite : path = FileStream openForReWrite:path.
-//    
-//    openForEdit : path = FileStream openForEdit:path.
-//    
-//    openForAppend : path = FileStream openForAppend:path.
+    BinaryReader openForRead(path) = FileStream.openForRead(path);
+    
+    BinaryReader openForReWrite(path) = FileStream.openForReWrite(path);
+    
+    BinaryReader openForEdit(path) = FileStream.openForEdit(path);
+    
+    BinaryReader openForAppend(path) = FileStream.openForAppend(path);
         
     TextReader newReader(path) = StreamReader.new:path;
     
-//    T<TextWriter> writer : path = StreamWriter new:path.
-//    
-//    T<TextWriter> logger :path = StreamWriter new(path, true).
-//    
-//    bool isAvailable:path
-//    [
-//        int ret := system'external'KERNEL32 GetFileAttributesW(T<wide>(path)).
-//        
-//        if(ret != 0FFFFFFFFh)
-//            [
-//                ret := ret && FILE_ATTRIBUTE_DIRECTORY.
-//                
-//                ^ ret == 0
-//            ].
-//            
-//        ^ false
-//    ]
-//    
-//    delete : path
-//    [
-//        int ret := system'external'KERNEL32 DeleteFileW(T<wide>(path)).
-//        
-//       ^ ret != 0
-//    ]
+    TextWriter writer(path) = StreamWriter.new:path;
+    
+    TextWriter logger(path) = StreamWriter.new(path, true);
+    
+    bool isAvailable(path)
+    {
+        int ret := extern KERNEL32.GetFileAttributesW(cast wide(path));
+        
+        if(ret != 0FFFFFFFFh)
+        {
+            ret := ret && FILE_ATTRIBUTE_DIRECTORY;
+            
+            ^ ret == 0
+        };
+            
+        ^ false
+    }
+    
+    bool delete(path)
+    {
+        int ret := extern KERNEL32.DeleteFileW(cast wide(path));
+        
+       ^ ret != 0
+    }
 }
 
-//// --- directoryExtOp
-//
-//singleton directoryControl
-//{
-//    bool isAvailable:path
-//    [
-//        int ret := system'external'KERNEL32 GetFileAttributesW(T<wide>(path)).
-//     
-//        if(ret != 0FFFFFFFFh)
-//            [
-//                ret := ret && FILE_ATTRIBUTE_DIRECTORY.
-//                
-//                ^ ret != 0
-//            ].
-//            
-//        ^ false
-//    ]    
-//    
-//    create : path
-//    [
-//        int ret := system'external'KERNEL32 CreateDirectoryW(
-//            T<wide>(path),
-//            0).
-//            
-//        if(ret == 0)
-//            [ IOException new("Cannot create a directory"); raise ]
-//    ]
-//    
-//    delete : path
-//    [
-//        int ret := system'external'KERNEL32 RemoveDirectoryW(T<wide>(path)).
-//        
-//       ^ ret != 0
-//    ]    
-//}
+// --- directoryExtOp
+
+singleton directoryControl
+{
+    bool isAvailable(path)
+    {
+        int ret := extern KERNEL32.GetFileAttributesW(cast wide(path));
+     
+        if(ret != 0FFFFFFFFh)
+            {
+                ret := ret && FILE_ATTRIBUTE_DIRECTORY;
+                
+                ^ ret != 0
+            };
+            
+        ^ false
+    }    
+    
+    create(path)
+    {
+        int ret := extern KERNEL32.CreateDirectoryW(
+            cast wide(path),
+            0);
+            
+        if(ret == 0)
+            { IOException.new("Cannot create a directory").raise() }
+    }
+    
+    delete(path)
+    {
+        int ret := extern KERNEL32.RemoveDirectoryW(cast wide(path));
+        
+       ^ ret != 0
+    }    
+}

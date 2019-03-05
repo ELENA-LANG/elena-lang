@@ -734,3 +734,72 @@ ident_t ByteCodeCompiler :: decode(ByteCode code, char* s)
 
    return s;
 }
+
+
+bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Module* module, size_t messageRef)
+{
+   ref_t actionRef, flags;
+   int paramCount = 0;
+   decodeMessage(messageRef, actionRef, paramCount, flags);
+
+   if (test(flags, VARIADIC_MESSAGE)) {
+      messageName.append("params#");
+   }
+   if (test(flags, PROPERTY_MESSAGE)) {
+      messageName.append("prop#");
+   }
+
+   //if (actionRef == DISPATCH_MESSAGE_ID) {
+   //   command.append("#dispatch");
+   //}
+   /////*else */if (actionRef == NEWOBJECT_MESSAGE_ID) {
+   ////   if (test(reference, CONVERSION_MESSAGE)) {
+   ////      command.append("#init");
+   ////   }
+   ////   else command.append("#new");
+   ////}
+   //   if (test(reference, SPECIAL_MESSAGE)) {
+   //      command.append("#conversion&");
+   //   }
+   /*else */if (test(messageRef, STATIC_MESSAGE)) {
+      messageName.append("#private&");
+   }
+
+   //   if (test(reference, SPECIAL_MESSAGE)) {         
+   //   }
+   //   else {
+   //      if (test(reference, SEALED_MESSAGE)) {
+   //         command.append("#private&");
+   //      }
+   //      if (test(reference, PROPSET_MESSAGE)) {
+   //         command.append("set&");
+   //      }
+   //   }
+   ref_t signature = 0;
+   ident_t actionName = module->resolveAction(actionRef, signature);
+   if (emptystr(actionName))
+      return false;
+
+   messageName.append(actionName);
+   if (signature) {
+      ref_t references[ARG_COUNT];
+
+      messageName.append('<');
+      size_t len = module->resolveSignature(signature, references);
+      for (size_t i = 0; i < len; i++) {
+         if (i != 0)
+            messageName.append(',');
+
+         messageName.append(module->resolveReference(references[i]));
+      }
+      messageName.append('>');
+   }
+
+   if (paramCount > 0) {
+      messageName.append('[');
+      messageName.appendInt(paramCount);
+      messageName.append(']');
+   }
+
+   return true;
+}

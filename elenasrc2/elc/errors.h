@@ -139,6 +139,9 @@ namespace _ELENA_
    #define wrnDuplicateInclude      "%s(%d:%d): warning 425: '%s': duplicate inclusion\n"
    #define wrnExplicitExtension     "%s(%d:%d): warning 426: an extension '%s' should not be used directly\n"
 
+   constexpr auto infoAbstractMetod = "abstract method %s";
+   constexpr auto infoNewMethod     = "new method %s";
+
 //   #define wrnDuplicateInfo         "Duplicate extension - "
 
 } // _ELENA_

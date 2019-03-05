@@ -4,9 +4,18 @@
 
 public interface Stream
 {
-//    stream = $self.
-    
-//    int vprop length :: readLengthTo,writeLength.
+    vprop int Length
+    {
+        read(ref int retVal)
+        {
+            self.readLengthTo(ref retVal)
+        }
+        
+        write(int retVal)
+        {
+            self.writeLength(retVal)
+        }
+    }
     
     vprop int Index
     {
@@ -27,9 +36,9 @@ public interface Stream
     /// Sets the index by specified value
     abstract writeIndex(int anIndex) {}
 
-//    abstract writeLength(int aLength) [ ]
-//        
-//    abstract readLengthTo(ref<int> aLength) [ ]
+    abstract writeLength(int length) {}
+        
+    abstract readLengthTo(ref int length) {}
 
     appendIndex(int offs)
     {
@@ -51,7 +60,7 @@ public interface Stream
         
     abstract read(byte[] dump, ref int length) {}
     
-//    abstract write(ByteArray aDump, int aLength) []
+    abstract write(byte[] dump, int length) {}
     
     abstract close() {}
 }

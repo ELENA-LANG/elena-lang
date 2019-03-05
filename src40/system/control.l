@@ -1027,38 +1027,38 @@ public abstract class BaseEnumerator<T> : Enumerator<T>
     Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
 }
 
-//// --- BaseIndexer ---
-//
-//public abstract class BaseIndexer :: Indexer
-//{
-//    int theIndex.
-//    int theLength.
-//    
-//    /// Returns false if the index out of range
-//    bool available = (theIndex < theLength).
-//    
-//    /// Reads the current i-index into an output parameter
-//    readIndexTo(ref<int> retVal)
-//    [
-//        retVal value := theIndex
-//    ]    
-//    
-//    /// Sets the i-index by specified value
-//    writeIndex(int anIndex)
-//    [ 
-//        theIndex := anIndex
-//    ] 
-//    
-//    appendIndex(int anIndex)
-//    [ 
-//        theIndex := theIndex + anIndex.
-//    ] 
-//    
-//    readLengthTo(ref<int> retVal)
-//    [
-//        retVal value := theLength.
-//    ]    
-//}
+// --- BaseIndexer ---
+
+public abstract class BaseIndexer : Indexer
+{
+    int theIndex;
+    int theLength;
+    
+    /// Returns false if the index out of range
+    bool Available = (theIndex < theLength);
+    
+    /// Reads the current i-index into an output parameter
+    readIndexTo(ref int retVal)
+    {
+        retVal := theIndex
+    }
+    
+    /// Sets the i-index by specified value
+    writeIndex(int index)
+    { 
+        theIndex := index
+    }
+    
+    appendIndex(int index)
+    { 
+        theIndex += index
+    }
+    
+    readLengthTo(ref int retVal)
+    {
+        retVal := theLength
+    }    
+}
 
 public abstract BaseIndexer<T> : Indexer<T>
 {

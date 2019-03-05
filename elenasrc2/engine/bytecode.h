@@ -531,6 +531,8 @@ public:
             return false;
       }
    }
+
+   static bool resolveMessageName(IdentifierString& messageName, _Module* module, size_t messageRef);
 };
 
 // --- CommandTape ---

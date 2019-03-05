@@ -6885,6 +6885,8 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       if (included && closed && !privateOne) {
          //ref_t dummy = 0;
          //ident_t msg = scope.module->resolveAction(getAction(message), dummy);
+         scope.moduleScope->printMessageInfo(infoNewMethod, message);
+
          scope.raiseError(errClosedParent, findParent(current, lxClass/*, lxNestedClass*/));
       }
 

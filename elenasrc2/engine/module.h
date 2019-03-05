@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of the class implementing
 //      ELENA Engine Module class
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef moduleH

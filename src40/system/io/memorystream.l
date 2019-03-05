@@ -153,15 +153,15 @@ public class MemoryStream : Stream
 //        $self $write(anArray, anIndex, aLength).
 //    ]
     
-//    write(ByteArray dump, int length)
-//    [
-//        theBuffer write(0, length, dump).
-//    ]
-//
-//    sealed $write bytearray:aDump int:anIndex int:aLength
-//    [
-//        theBuffer write int:anIndex int:aLength bytearray:aDump.
-//    ]
+    write(byte[] dump, int length)
+    {
+        theBuffer.write(0, length, dump)
+    }
+
+    private write(byte[] dump, int index, int length)
+    {
+        theBuffer.write(index, length, dump)
+    }
 
     read(byte[] dump, ref int len)
     {
@@ -188,17 +188,17 @@ public class MemoryStream : Stream
         thePosition.Value := index
     }
     
-//    readLengthTo(ref<int> retVal)
-//    [ 
-//        int len := theBuffer length.
-//    
-//        retVal value := len. 
-//    ]
-//    
-//    writeLength(int length)
-//    [
-//        NotSupportedException new; raise
-//    ]
+    readLengthTo(ref int retVal)
+    { 
+        int len := theBuffer.Length;
+    
+        retVal := len
+    }
+    
+    writeLength(int length)
+    {
+        NotSupportedException.raise()
+    }
     
     close()
     {

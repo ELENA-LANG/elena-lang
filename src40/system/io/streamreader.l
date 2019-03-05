@@ -1,119 +1,119 @@
 //import system'routines.
 import system'text;
 
-//// --- BinaryReader ---
-//
-//public interface BinaryReader
-//{
-//    T<Stream> theStream.
-//    int       theLength.
-//    
-//    read(ByteArray anArray, ref<int> anActualLength)
-//    [
-//        theStream read(anArray, anActualLength).
-//    ]
-//
-//    T<Stream> stream = theStream.
-//
-//    close => theStream.
-//
-//    bool available
-//    [
-//        int aPosition := theStream index.
-//        
-//        ^ aPosition < theLength
-//    ]
-//            
-//    read(ByteArray anArray, int aLength)
-//    [
-//        int aRead := aLength.
-//        
-//        self read(anArray, &aRead).
-//         
-//        if(aLength > aRead)
-//            [ IOException new; raise ]
-//    ]
-//
-//    read(ref<byte> anInt)
-//    [
-//        V<byte,4> aBuffer.
-//        int       aRead := 1.
-//        
-//        self read(T<ByteArray>(aBuffer), &aRead).
-//        
-//        if (aRead < 1)
-//            [ IOException new; raise ].
-//     
-//        byte b := aBuffer[0].
-//                          
-//        anInt byte := b.
-//    ]
-//
-//    read(ref<short> anInt)
-//    [
-//        V<byte,4> aBuffer.
-//        int       aRead := 2.
-//        
-//        self read(T<ByteArray>(aBuffer), &aRead).
-//        
-//        if (aRead < 1)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read(T<ByteArray>(aBuffer), 0, anInt).
-//    ]
-//
-//    read(ref<char> anInt)
-//    [
-//        V<byte,4> aBuffer.
-//        int       aRead := 4.
-//        
-//        self read(T<ByteArray>(aBuffer), &aRead).
-//        
-//        if (aRead < 1)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read(T<ByteArray>(aBuffer), 0, anInt).
-//    ]
-//
-//    read(ref<int> anInt)
-//    [
-//        V<byte,4> aBuffer.
-//        int       aRead := 4.
-//        
-//        self read(T<ByteArray>(aBuffer), &aRead).
-//        
-//        if (aRead < 4)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read(T<ByteArray>(aBuffer), 0, anInt).
-//    ]
-//
-//    read(ref<long> aLong)
-//    [
-//        V<byte,8> aBuffer.
-//        int       aRead := 8.
-//        
-//        self read(T<ByteArray>(aBuffer), &aRead).
-//        
-//        if(aRead < 8)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read(T<ByteArray>(aBuffer), 0, aLong)
-//    ]
-//
-//    read(ref<real> aReal)
-//    [
-//        V<byte,8> aBuffer.
-//        int       aRead := 8.
-//        
-//        self read(T<ByteArray>(aBuffer), &aRead).
-//        
-//        if(aRead < 8)
-//            [ IOException new; raise ].
-//            
-//        byteArrayHelper read(T<ByteArray>(aBuffer), 0, aReal)
-//    ]
-//}
+// --- BinaryReader ---
+
+public interface BinaryReader
+{
+    Stream theStream;
+    int    theLength;
+    
+    read(byte[] array, ref int actualLength)
+    {
+        theStream.read(array, ref actualLength)
+    }
+
+    Stream Stream = theStream;
+
+    close() => theStream;
+
+    get bool Available()
+    {
+        int position := theStream.Index;
+        
+        ^ position < theLength
+    }
+            
+    read(byte[] array, int length)
+    {
+        int read := length;
+        
+        self.read(array, ref read);
+         
+        if(length > read)
+            { IOException.new("Cannot read the specified amount").raise() }
+    }
+
+    read(ref byte int)
+    {
+        byte buffer[4];
+        int  read := 1;
+        
+        self.read(buffer, ref read);
+        
+        if (read < 1)
+            { IOException.new("Cannot read the specified amount").raise() };
+     
+        byte b := buffer[0];
+                          
+        int := b
+    }
+
+    read(ref short int)
+    {
+        byte buffer[4];
+        int  read := 2;
+        
+        self.read(buffer, ref read);
+        
+        if (read < 2)
+            { IOException.new("Cannot read the specified amount").raise() };
+            
+        buffer.read(0, ref int)
+    }
+
+    read(ref char ch)
+    {
+        byte buffer[4];
+        int  read := 4;
+        
+        self.read(buffer, ref read);
+        
+        if (read < 4)
+            { IOException.new("Cannot read the specified amount").raise() };
+            
+        buffer.read(0, ref ch)
+    }
+
+    read(ref int int)
+    {
+        byte buffer[4];
+        int  read := 4;
+        
+        self.read(buffer, ref read);
+        
+        if (read < 4)
+            { IOException.new("Cannot read the specified amount").raise() };
+            
+        buffer.read(0, ref int)
+    }
+
+    read(ref long long)
+    {
+        byte buffer[8];
+        int  read := 8;
+        
+        self.read(buffer, ref read);
+        
+        if (read < 8)
+            { IOException.new("Cannot read the specified amount").raise() };
+            
+        buffer.read(0, ref long)
+    }
+
+    read(ref real real)
+    {
+        byte buffer[8];
+        int  read := 8;
+        
+        self.read(buffer, ref read);
+        
+        if (read < 8)
+            { IOException.new("Cannot read the specified amount").raise() };
+            
+        buffer.read(0, ref real)
+    }
+}
 
 // --- TextReader ---
 

@@ -11,6 +11,7 @@
 
 #include "elena.h"
 #include "syntaxtree.h"
+#include "bytecode.h"
 
 constexpr auto V_CATEGORY_MASK   = 0x7FFFFF00u;
 constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
@@ -298,6 +299,14 @@ struct _ModuleScope
       ident_t identifier = terminal.identifier();
 
       project->raiseWarning(level, message, sourcePath, row, col, identifier);
+   }
+
+   void printMessageInfo(const char* info, ref_t message)
+   {
+      IdentifierString messageName;
+      ByteCodeCompiler::resolveMessageName(messageName, module, message);
+
+      project->printInfo(info, messageName.ident());
    }
 
 //   void raiseWarning(int level, const char* message, ident_t sourcePath, ident_t identifier)

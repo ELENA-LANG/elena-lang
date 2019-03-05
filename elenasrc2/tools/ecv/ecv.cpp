@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   26
+#define REVISION_VERSION   27
 
 #define INT_CLASS                "system'IntNumber" 
 #define LONG_CLASS               "system'LongNumber" 
@@ -38,7 +38,6 @@
 using namespace _ELENA_;
 
 // === Variables ===
-MessageMap         _verbs;
 ident_t _integer = INT_CLASS;
 ident_t _long = LONG_CLASS;
 ident_t _real = REAL_CLASS;
@@ -378,17 +377,10 @@ void parseMessageConstant(IdentifierString& message, ident_t reference)
          verbId = verb[1] - 0x20;
       }
 
-      message.append(retrieveKey(_verbs.start(), verbId, DEFAULT_STR));
       message.append(signature);
    }
    else {
-      // if it is a predefined verb
-      if (reference[0] == '#') {
-         verbId = reference[1] - 0x20;
-
-         message.append(retrieveKey(_verbs.start(), verbId, DEFAULT_STR));
-      }
-      else message.append(reference);
+      message.append(reference);
    }
 }
 
@@ -455,68 +447,7 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
 
 void printMessage(IdentifierString& command, _Module* module, size_t reference)
 {
-   ref_t actionRef, flags;
-   int paramCount = 0;
-   decodeMessage(reference, actionRef, paramCount, flags);
-
-   if (test(flags, VARIADIC_MESSAGE)) {
-      command.append("params#");
-   }
-   if (test(flags, PROPERTY_MESSAGE)) {
-      command.append("prop#");
-   }
-
-   //if (actionRef == DISPATCH_MESSAGE_ID) {
-   //   command.append("#dispatch");
-   //}
-   /////*else */if (actionRef == NEWOBJECT_MESSAGE_ID) {
-   ////   if (test(reference, CONVERSION_MESSAGE)) {
-   ////      command.append("#init");
-   ////   }
-   ////   else command.append("#new");
-   ////}
-   //   if (test(reference, SPECIAL_MESSAGE)) {
-   //      command.append("#conversion&");
-   //   }
-   /*else */if (test(reference, STATIC_MESSAGE)) {
-      command.append("#private&");
-   }
-
-   ident_t verbName = retrieveKey(_verbs.start(), actionRef, DEFAULT_STR);
-   command.append(verbName);
-
-   //   if (test(reference, SPECIAL_MESSAGE)) {         
-   //   }
-   //   else {
-   //      if (test(reference, SEALED_MESSAGE)) {
-   //         command.append("#private&");
-   //      }
-   //      if (test(reference, PROPSET_MESSAGE)) {
-   //         command.append("set&");
-   //      }
-   //   }
-   ref_t signature = 0;
-   ident_t actionName = module->resolveAction(actionRef, signature);
-   command.append(actionName);
-   if (signature) {
-      ref_t references[ARG_COUNT];
-
-      command.append('<');
-      size_t len = module->resolveSignature(signature, references);
-      for (size_t i = 0; i < len; i++) {
-         if (i != 0)
-            command.append(',');
-
-         command.append(module->resolveReference(references[i]));
-      }
-      command.append('>');
-   }
-
-   if (paramCount > 0) {
-      command.append('[');
-      command.appendInt(paramCount);
-      command.append(']');
-   }
+   ByteCodeCompiler::resolveMessageName(command, module, reference);
 }
 
 bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<int>& labels)
@@ -1355,8 +1286,6 @@ int main(int argc, char* argv[])
 
       printManifest(module);
    }
-
-//   ByteCodeCompiler::loadVerbs(_verbs);
 
    runSession(module, rows);
 

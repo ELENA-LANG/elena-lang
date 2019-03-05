@@ -1958,8 +1958,11 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
    if (!isAbstract(info)) {
       for (auto it = info.methodHints.start(); !it.Eof(); it++) {
          auto key = it.key();
-         if (key.value2 == maHint && test(*it, tpAbstract))
+         if (key.value2 == maHint && test(*it, tpAbstract)) {
+            scope.printMessageInfo(infoAbstractMetod, key.value1);
+
             withAbstractMethods = true;
+         }            
       }
    }
 

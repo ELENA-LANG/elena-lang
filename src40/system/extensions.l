@@ -1806,6 +1806,27 @@ public extension byteArrayHelper : Array<byte>
     /// Copies the byte array at the specified position
     write(int index, int length, byte[] dump)
         => system'core_routines'__bytearray;
+        
+    /// Copies the byte array at the specified position
+    /// Copies the byte array at the specified position
+    write(int index, short value)
+        => system'core_routines'__bytearray;
+        
+    /// Copies the byte array at the specified position
+    write(int index, int value)
+        => system'core_routines'__bytearray;
+        
+    /// Copies the byte array at the specified position
+    write(int index, char value)
+        => system'core_routines'__bytearray;
+        
+    /// Copies the byte array at the specified position
+    write(int index, long value)
+        => system'core_routines'__bytearray;
+        
+    /// Copies the byte array at the specified position
+    write(int index, real value)
+        => system'core_routines'__bytearray;
 }
 
 // --- charArrayHelper ---
