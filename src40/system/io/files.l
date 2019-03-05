@@ -1,4 +1,5 @@
 import system'text;
+import system'collections;
 
 // --- File ---
 
@@ -16,8 +17,8 @@ public sealed /*nonstructural*/ class File
     wide cast() = thePath;
 
 //    T<literal> rprop path :: thePath.
-//
-//    T<literal> literal = thePath.
+
+    string Printable = thePath;
     
     TextReader textreader() = fileControl.newReader(thePath);
     
@@ -105,7 +106,7 @@ public sealed class Directory
         thePath := path
     }
 
-    //T<literal> literal = thePath.
+    string Printable = thePath;
     
     bool Available
         = directoryControl.isAvailable(thePath);    
@@ -118,5 +119,41 @@ public sealed class Directory
     delete()
     {
         directoryControl.delete(thePath)
+    }
+    
+    string[] getFiles()
+    {
+        auto l := new List<string>();
+        auto e := FileEnumerator.assign(thePath + "\*.*");
+        while (e.next())
+        {
+            auto ddf := e.get();
+            if (ddf.isFile())
+            {
+                string s := thePath + "\" + ddf.FileName;
+                
+                l.append(s);
+            }            
+        };
+        
+        ^l.Value;
+    }
+    
+    string[] getDirectories()
+    {
+        auto l := new List<string>();
+        auto e := FileEnumerator.assign(thePath + "\*.*");
+        while (e.next())
+        {
+            auto ddf := e.get();
+            if (ddf.isDirectory())
+            {
+                string s := thePath + "\" + ddf.FileName;
+                
+                l.append(s);
+            }            
+        };
+        
+        ^l.Value;
     }
 }

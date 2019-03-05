@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * fix UTF16Encoding.toString
                  * replace buble sort with quick sort
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * ?. operator cannot be applied for invoking closures, there should be special case of that operator

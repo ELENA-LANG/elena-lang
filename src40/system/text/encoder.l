@@ -189,7 +189,7 @@ public singleton UTF8Encoding
         s.saveToByteArray(index, array, length)
     }
         
-    toString(int index, int length, byte[] array)
+    string toString(int index, int length, byte[] array)
         = String.fromByteArray(index, length, array);
         
 //    convert(int anIndex, ref<int> aLength, literal aByteArray, CharArray anOutput, ref<int> anOutputLength)
@@ -238,14 +238,35 @@ public singleton UTF16Encoding
 //        
 //        self convert(0, temp_len, T<CharArray>(temp), anOutput, anOutputLength)
 //    ]
-//        
-//    literal toLiteral(int anIndex, int aSize, ShortArray anInput)
-//    [
-//        V<char,64> temp.
-//        int        temp_len := 64.
-//        
-//        self convert(anIndex, aSize, anInput, T<CharArray>(temp), &temp_len).
-//        
-//        ^ LiteralValue new(0, temp_len, T<CharArray>(temp))
-//    ]
+        
+    string toString(int index, int length, short[] array)
+    {
+        char temp[64];
+        int  temp_len := 64;
+        string s := nil;
+        int i := index;
+        int l := length;
+        while (l > 0)
+        {
+            temp_len := 64;
+            if (temp_len < l)
+            {
+                temp_len := l
+            };
+        
+            self.convert(i, temp_len, array, temp, ref temp_len);
+            if (s == nil)
+            {
+                s := String.new(0, temp_len, temp)
+            }
+            else
+            {
+                s := s + String.new(0, temp_len, temp);
+            };
+            
+            l -= temp_len;
+        };
+        
+        ^ s
+    }
 }

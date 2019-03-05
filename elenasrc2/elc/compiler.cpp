@@ -1636,7 +1636,7 @@ int Compiler :: resolveSize(SNode node, Scope& scope)
    }
 }
 
-void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef*/, int& size, bool& isStaticField, bool& isSealed, bool& isConstant, bool& isEmbeddable)
+void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, /*ref_t& elementRef, */int& size, bool& isStaticField, bool& isSealed, bool& isConstant, bool& isEmbeddable)
 {
    bool inlineArray = false;
    SNode current = node.firstChild();
@@ -2215,7 +2215,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
             int size = _logic->defineStructSizeVariable(*scope.moduleScope, resolveObjectReference(scope, object), object.element, variable);
             if (size < 0 && type == lxFieldAddress) {
                // if it is fixed-size array
-               size = defineFieldSize(scope, object.param) * (-size);
+               size = defineFieldSize(scope, object.param)/* * (-size)*/;
             }
             writer.newNode((variable && !test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxBoxing, size);
 
@@ -6619,7 +6619,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          scope.info.size += size;
 
          scope.info.fields.add(terminal, offset);
-         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*elementRef*/0));
+         scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, elementRef));
 
          if (isPrimitiveRef(classRef))
             _logic->tweakPrimitiveClassFlags(classRef, scope.info);
