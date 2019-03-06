@@ -80,9 +80,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
     //  case dfaMember:
     //     terminal.symbol = tsMember;
     //     break;
-    //  case dfaGlobal:
-    //     terminal.symbol = tsGlobal;
-    //     break;
+      case dfaGlobal:
+         terminal.symbol = tsGlobal;
+         break;
     //  case dfaPrivate:
     //     if (terminal.value[1] == 0) {
     //        //HOTFIX : if it is $ symbol

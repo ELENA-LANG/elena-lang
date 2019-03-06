@@ -318,6 +318,10 @@ void DerivationWriter :: writeTerminal(TerminalInfo& terminal)
          _cacheWriter.newNode(type, quote.ident());
       }
    }
+   else if (terminal == tsGlobal) {
+      // HOTFIX : skip the leading symbol for the global reference
+      _cacheWriter.newNode(type, terminal.value + 1);
+   }
    else _cacheWriter.newNode(type, terminal.value);
 
    _cacheWriter.appendNode(lxCol, terminal.col);

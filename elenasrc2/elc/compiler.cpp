@@ -2836,7 +2836,7 @@ inline int defineBranchingOperandMode(SNode node)
       mode |= HINT_INLINE_EXPR;
    }
 
-   else return mode;
+   return mode;
 }
 
 void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal)

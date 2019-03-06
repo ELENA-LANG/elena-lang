@@ -1,4 +1,4 @@
-                      ELENA Language Project V. 4.0.0
+                      ELENA Language Project V. 4.0.3
                         (C)2005-2019  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
@@ -31,7 +31,7 @@ For more information see at http://elenalang.sourceforge.net/
 ****************************************************************************
 
  - Windows XP(with some limitations) / 7 / 8 / 10, x86
- - Linux I386
+ - Linux I386 (no longer maintained)
 
 ****************************************************************************
 * License

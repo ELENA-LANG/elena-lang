@@ -40,7 +40,7 @@ enum Symbol
 //   tsExplicitConst              = 0x0300E,
    tsAttribute                  = 0x0300F,
 //   tsMember                     = 0x03010,
-//   tsGlobal                     = 0x03011,
+   tsGlobal                     = 0x03011,
 
    nsToken                      = 0x01010,               // non-terminals
    nsRootExpression             = 0x01011,
