@@ -1,5 +1,0 @@
-// --- tester ---
-
-#symbol tester =
-[
-].
