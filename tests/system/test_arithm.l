@@ -885,3 +885,65 @@ variadicTest()
 //    
 //    console writeLine("done").
 //].
+
+class NestedTester
+{
+    int param1;
+    int param2;
+    
+    constructor()
+    {
+        param1 := 1;
+        param2 := 2;
+    } 
+    
+    validate()
+    {
+        var c := (){ ^ param2 };        
+        
+        Assert.ifTrue(c() == param2);
+    }
+}
+
+nestedTest()
+{
+    console.write("NestedTest..");
+    
+    auto tester := new NestedTester();
+        
+    tester.validate();
+    
+    console.writeLine("done")
+}
+
+class NestetNestedTester
+{
+    int param1;
+    int param2;
+    
+    constructor()
+    {
+        param1 := 1;
+        param2 := 2;
+    } 
+    
+    validate()
+    {
+        var c := (){ ^ (){ ^ param2 } };        
+        var cc := c();
+        
+        Assert.ifTrue(cc() == param2);
+    }
+}
+
+
+nestetNestedTest()
+{
+    console.write("NestetNestedTest..");
+    
+    auto tester := new NestetNestedTester();
+        
+    tester.validate();
+    
+    console.writeLine("done")
+}

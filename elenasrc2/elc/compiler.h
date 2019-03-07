@@ -118,8 +118,8 @@ public:
       okExtMessageConstant,           // param - reference
       okMessageNameConstant,          // param - reference
       okArrayConst,
-      okField,                        // param - reference, param - field offset, extraparam - class reference
-      okReadOnlyField,                // param - reference, param - field offset, extraparam - class reference
+      okField,                        // param - reference, param - field offset
+      okReadOnlyField,                // param - reference, param - field offset
       okStaticField,                  // param - reference
       okStaticConstantField,          // param - reference
       okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset

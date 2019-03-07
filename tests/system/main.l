@@ -47,6 +47,8 @@ public program()
     shortCircuitBooleanOperation();
     variadicTest();
 //    proberTest().
+    nestedTest();
+    nestetNestedTest();
 
     console.writeLine:"=== Passed ==="
 }
