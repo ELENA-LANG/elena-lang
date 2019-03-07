@@ -111,7 +111,10 @@ rem ..\..\bin\elc charmatch\charmatch.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc combinations\combinations.prj
+..\..\bin\elc combinations\combinations.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 ..\..\bin\elc bullscows\bullscows.prj
 @echo off 

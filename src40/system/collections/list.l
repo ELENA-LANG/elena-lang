@@ -816,8 +816,8 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
     Array cast()
         = new Array(0, cast int(theLength), theArray);
 
-//    value 
-//        = Array new(0, T<int>(theLength), theArray).
+    get Array Value()
+        = new Array(0, cast int(theLength), theArray);
 }
 
 // --- ArrayListEnumerator ---

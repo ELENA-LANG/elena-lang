@@ -41,7 +41,7 @@ class CalendarMonthPrinter
         {
             theLine.writeCopies("   ",theDate.DayOfWeek == 0 ? 7 : (theDate.DayOfWeek - 1));
             
-            until(theDate.Month != theMonth || theDate.DayOfWeek == 1)
+            doUntil(theDate.Month != theMonth || theDate.DayOfWeek == 1)
             {
                 theLine.writePaddingLeft(theDate.Day.Printable, $32, 3);
                 

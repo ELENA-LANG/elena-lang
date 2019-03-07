@@ -289,6 +289,13 @@ public doUntil<loop_body>(init_expr, cond_expr, step_expr)
     __loop cast bool(cond_expr) ! { step_expr; loop_body }
 }
 
+public doUntil<loop_body>(cond_expr)
+{
+    loop_body;
+    
+    __loop cast bool(cond_expr) ! { loop_body }
+}
+
 
 // -- try-catch statement ---
 

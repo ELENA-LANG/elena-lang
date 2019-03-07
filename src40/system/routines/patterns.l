@@ -783,27 +783,27 @@ public class Summing : BasePattern
     closure(param) { theResult.append(param) }
 }
 
-//// --- Accumulating ---
-//
-//class Accumulating :: BasePattern
-//{
-//    T<Func2> theOperation.
-//    
-//    constructor new(object aVariable, Func2 anOperation)
-//    [
-//        theResult := aVariable.
-//        theOperation := anOperation.
-//    ]
-//
-//    constructor new(object aVariable, ExtensionMessage anOperation)
-//    [
-//        theResult := aVariable.
-//        theOperation := (:a:b)[ a~anOperation eval:b ].
-//    ]
-//
-//    closure : aParam [ theResult value := theOperation(theResult value,aParam). ]
-//}
-//
+// --- Accumulating ---
+
+public class Accumulating : BasePattern
+{
+    Func2 theOperation;
+    
+    constructor new(object variable, Func2 operation)
+    {
+        theResult := variable;
+        theOperation := operation
+    }
+
+    constructor new(object variable, ExtensionMessage operation)
+    {
+        theResult := variable;
+        theOperation := (a,b){ mixin operation(a).eval(b) }
+    }
+
+    closure(param) { theResult.Value := theOperation(theResult.Value, param) }
+}
+
 //// --- JoinEnumerator ---
 //
 //public class JoinEnumerator :: Enumerator

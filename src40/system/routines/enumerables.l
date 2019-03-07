@@ -355,14 +355,14 @@ public extension enumerableOp
 //        
 //    to:max repeat:aRepeater
 //        = Repeater new(self, max + 1, aRepeater).
-//        
-//    accumulate : aVariable with:operation
-//    [
-//        Accumulating new(aVariable, operation); run(T<Enumerator>(self enumerator)).
-//        
-//        ^ aVariable value.
-//    ]
-//    
+        
+    accumulate(variable, operation)
+    {
+        Accumulating.new(variable, operation).run(cast Enumerator(self.enumerator()));
+        
+        ^ variable.Value
+    }
+    
 //    accumulateWith:operation 
 //        = self~enumerableOp accumulate(Variable new) with:operation.        
         

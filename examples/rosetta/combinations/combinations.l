@@ -1,26 +1,26 @@
-import system'routines.
-import extensions.
-import extensions'routines.
+import system'routines;
+import extensions;
+import extensions'routines;
 
-const int M = 3.
-const int N = 5. 
+const int M = 3;
+const int N = 5; 
 
 // --- Numbers ---
 
-numbers = (:anN)
-[
-    ^ Array new(anN); populate(:n)<int>( n )
-].
+numbers(n)
+{
+    ^ Array.allocate(n).populate:(int n => n)
+}
 
 // --- Program ---
 
-public program =
-[
-    var aNumbers := numbers(N).    
-    Combinator new:M of:aNumbers; forEach(:aRow)
-    [
-        console printLine(aRow toLiteral)
-    ].
+public program()
+{
+    var numbers := numbers(N);    
+    Combinator.new(M, numbers).forEach:(row)
+    {
+        console.printLine(row.toString())
+    };
     
-    console readChar.
-].
+    console.readChar()
+}

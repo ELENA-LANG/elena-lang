@@ -102,60 +102,60 @@ singleton parallelStart : BaseStrategy
     }
 }
 
-//// --- combination strategy ---
-//
-//class combinationNext = BaseStrategy::
-//{
-//    bool result = true.
-//
-//    getAt(Array Indexers, int aLength)
-//    [
-//        ^ Array new(aLength); populate(:i)<int>(T<Array>(Indexers) getAt(i); get)
-//    ]
-//        
-//    T<BaseStrategy> eval(Array Indexers, int aLength)
-//    [
-//        T<Array> anArray := T<Array>(Indexers).
-//        int      k := anArray length.
-//        int      i := k - 1.
-//        
-//        T<Indexer> aCurrentIndexer := anArray getAt(i).
-//        
-//        if(aCurrentIndexer appendIndex:1; available)
-//            [ ^ self ].
-//             
-//        while ((i > 0) && (T<int>(anArray getAt(i - 1); index) + k - i + 1 >= aLength))
-//            [ i := i - 1 ].
-//        
-//        if(i == 0)
-//            [ ^ combinationEnd ].
-//        
-//        anArray getAt(i - 1); appendIndex:1.
-//        
-//        //i to &int:(k - 1)
-//        IntNumber new(i); runIntLoop(k - 1,
-//            (:j)<int>[ anArray getAt(j); writeIndex(IntNumber new(anArray getAt(j - 1); index + 1)) ]).
-//            
-//        ^ self          
-//    ]
-//}.
-//
-//class combinationStart = BaseStrategy::
-//{
-//    bool result = false.
-//
-//    getAt(Array Indexers, int aLength) = nil.
-//
-//    T<BaseStrategy> eval(Array Indexers, int n)
-//    [
-//        auto anArray := T<Array>(Indexers).
-//        int aLength := anArray length.
-//        
-//        0~intLoopOp to(aLength - 1) do(:i)<int>[ anArray getAt(i); writeIndex(i) ].
-//        
-//        ^ combinationNext
-//    ]
-//}.
+// --- combination strategy ---
+
+singleton combinationNext : BaseStrategy
+{
+    bool Result = true;
+
+    at(Indexer[] indexers, int length)
+    {
+        ^ Array.allocate(length).populate:(int i => indexers.at(i).get())
+    }
+
+    BaseStrategy eval(Indexer[] indexers, int length)
+    {
+        int k := indexers.Length;
+        int i := k - 1;
+        
+        Indexer currentIndexer := indexers[i];
+        
+        if(currentIndexer.appendIndex:1.Available)
+            { ^ self };
+             
+        while (i > 0 && indexers[i - 1].Index + k - i + 1 >= length)
+            { i := i - 1 };
+        
+        if(i == 0)
+            { ^ combinationEnd };
+        
+        indexers[i - 1].appendIndex:1;
+        
+        for (int j := i,j <= k - 1, j += 1) {
+           indexers[j].Index := indexers[j - 1].Index + 1
+        };
+            
+        ^ self          
+    }
+}
+
+singleton combinationStart : BaseStrategy
+{
+    bool Result = false;
+
+    at(Indexer[] indexers, int length) = nil;
+    
+    BaseStrategy eval(Indexer[] indexers, int length)
+    {
+        int len := indexers.Length;
+         
+        for (int i := 0, i < len, i+=1) {
+            indexers[i].Index := i
+        };
+        
+        ^ combinationNext
+    }
+}
 
 // --- BaseRowEnumerator ---
 
@@ -250,43 +250,36 @@ public class ParallelEnumerator : BaseRowEnumerator
     }
 }
 
-//// --- Combinator ---
-//
-//public class Combinator :: BaseRowEnumerator
-//{
-//    int theTotalLength.
-//    
-//    constructor new : Arguments
-//    [
-//        theLength := Arguments length.
-//        theIndexers := Array new(theLength).
-//        
-//        int i := 0.
-//        while (i < theLength)
-//        [
-//            theIndexers setAt(i, Arguments[i] indexer).
-//            
-//            i := i + 1
-//        ].
-//        
-//        self reset
-//    ]
-//        
-//    constructor new : aSubLength of:aSet
-//        <= new : (Array new(T<int>(aSubLength)); populate(:n)<int>(aSet));
-//    [
-//        theTotalLength := aSet length.
-//    ]
-//    
-//    bool next
-//    [
-//        theStrategy := theStrategy eval(theIndexers, theTotalLength).
-//
-//        ^ theStrategy result
-//    ]
-//    
-//    reset
-//    [
-//        theStrategy := combinationStart
-//    ]
-//}
+// --- Combinator ---
+
+public class Combinator : BaseRowEnumerator
+{
+    int theTotalLength;
+    
+    constructor new(arguments)
+    {
+        theLength := arguments.Length;
+        
+        theIndexers := new Indexer[](theLength);
+        
+        for (int i := 0, i < theLength, i += 1)
+        {
+            Indexer it := arguments[i].indexer();
+            
+            theIndexers[i] := /*arguments[i].indexer()*/it
+        };
+        
+        self.reset()
+    }
+        
+    constructor new(int subLength, set)
+        <= new(Array.allocate(subLength).populate:(int n => set))
+    {
+        theTotalLength := set.Length
+    }
+    
+    reset()
+    {
+        theStrategy := combinationStart
+    }
+}
