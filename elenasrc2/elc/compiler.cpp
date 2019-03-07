@@ -5274,17 +5274,23 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
    else unnamedMessage = true;
       
    bool weakSignature = true;
+   bool noSignature = true; // NOTE : is similar to weakSignature except if withoutWeakMessages=true
    int paramCount = 0;
    // if method has an argument list
    while (current != lxNone) {
       if (current == lxMethodParameter) {
          int index = 1 + scope.parameters.Count();
          int size = 0;
-         // NOTE : for the nested classes there should be no weak methods (see compileNestedVMT)
-         ref_t classRef = withoutWeakMessages ? scope.moduleScope->superReference : 0;
+         ref_t classRef = 0;
          ref_t elementRef = 0;
-
          declareArgumentAttributes(current, scope, classRef, elementRef, declarationMode);
+
+         // NOTE : for the nested classes there should be no weak methods (see compileNestedVMT)
+         if (withoutWeakMessages && !classRef) {
+            classRef = scope.moduleScope->superReference;
+         }
+         else noSignature = false;
+
          if (!classRef) {
             classRef = scope.moduleScope->superReference;
          }
@@ -5406,6 +5412,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
             signatureRef = scope.moduleScope->module->mapSignature(signature, signatureLen, false);
 
          actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), signatureRef, false);
+
+         if (withoutWeakMessages && noSignature && test(scope.getClassFlags(false), elClosed)) {
+            // HOTFIX : for the nested closed class - special handling is requiered
+            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+            if (!classScope->info.methods.exist(encodeMessage(actionRef, paramCount, flags))) {
+               actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
+            }
+         }
       }
       else scope.raiseError(errIllegalMethod, node);
 

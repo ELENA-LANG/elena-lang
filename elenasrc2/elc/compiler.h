@@ -559,12 +559,12 @@ private:
          return outputRef;
       }
 
-      //ref_t getClassFlags(bool ownerClass = true)
-      //{
-      //   ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
-      //   return scope ? scope->info.header.flags : 0;
-      //}
+         return scope ? scope->info.header.flags : 0;
+      }
       ref_t getClassRef(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
