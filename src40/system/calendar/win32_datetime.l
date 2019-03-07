@@ -41,12 +41,12 @@ public sealed const struct SystemTime : BaseValue
         ^ new SystemTime(result)
     }
 
-//    T<SystemTime> add(SystemTime anOperand)
-//    [
-//        T<SystemTime> result := theValue + anOperand.
-//        
-//        ^ SystemTime new(result).
-//    ]
+    SystemTime add(SystemTime operand)
+    {
+        SystemTime result := theValue + operand;
+        
+        ^ new SystemTime(result)
+    }
 }
 
 // --- TimeStruct ---
@@ -62,16 +62,16 @@ public sealed struct TimeStruct
     short theSecond;
     short theMillisecond;
 
-    constructor(SystemTime time)
+    embeddable constructor(SystemTime time)
     {
         self.init(time)
     }
 
-//    embeddable constructor new
-//    [
-//        system'core_routines'__timest empty(self).
-//    ]
-//
+    embeddable constructor()
+    {
+        intern system'core_routines'__timest.empty(self);
+    }
+
 //    constructor new(SystemTime aTime)
 //    [
 //        self write(aTime).
@@ -205,13 +205,13 @@ public sealed struct TimeStruct
         }
     }
 
-//    read(ref<SystemTime> aRetVal)
-//    [
-//        T<SystemTime> value := 0l.        
-//        system'external'KERNEL32 SystemTimeToFileTime(self, value).
-//        
-//        aRetVal value := value.
-//    ]    
+    readTo(ref SystemTime retVal)
+    {
+        SystemTime value := 0l;
+        extern KERNEL32.SystemTimeToFileTime(self, value);
+        
+        retVal := value
+    }
     
     private init(SystemTime fileTime)
     {

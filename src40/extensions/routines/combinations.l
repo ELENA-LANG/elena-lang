@@ -63,40 +63,45 @@ singleton sequentialStart : BaseStrategy
     }
 }
 
-//// --- Parallel strategies
-//
-//class parallelNext = BaseStrategy::
-//{
-//    bool result = true.
-//    
-//    T<BaseStrategy> eval(Array Indexers, int aLength)
-//    [
-//        if(nil != Indexers seekEach(:anIndexer)(anIndexer appendIndex:1; available; inverted ))
-//            [ ^ combinationEnd ].
-//            
-//        ^ self       
-//    ]
-//        
-//    getAt(Array Indexers, int aLength)
-//    [
-//        ^ Array new(aLength); populate(:i)<int>(T<Array>(Indexers) getAt(i); get ).
-//    ]
-//}.
-//
-//class parallelStart = BaseStrategy::
-//{
-//    bool result = false.
-//    
-//    getAt(Array Indexers, int aLength) = nil.
-//    
-//    T<BaseStrategy> eval(Array Indexers, int aLength)
-//    [
-//        Indexers forEach(:anIndexer)[ anIndexer writeIndex(0) ].
-//        
-//        ^ parallelNext
-//    ]
-//}.
-//
+// --- Parallel strategies
+
+singleton parallelNext : BaseStrategy
+{
+    bool Result = true;
+    
+    BaseStrategy eval(Indexer[] indexers, int length)
+    {
+        if(nil == (indexers.seekEach:(indexer)
+                {
+                    auto it := cast Indexer(indexer); 
+                    
+                    ^ it.appendIndex(1).Available.Inverted
+                }))
+            { ^ combinationEnd };
+            
+        ^ self          
+    }
+        
+    at(Indexer[] indexers, int length)
+    {
+        ^ Array.allocate(length).populate:(int i => indexers.at(i).get())
+    }
+}
+
+singleton parallelStart : BaseStrategy
+{
+    bool Result = false;
+    
+    at(Indexer[] indexers, int length) = nil;
+    
+    BaseStrategy eval(Indexer[] indexers, int length)
+    {
+        indexers.forEach:(indexer){ indexer.Index := 0 };
+        
+        ^ parallelNext
+    }
+}
+
 //// --- combination strategy ---
 //
 //class combinationNext = BaseStrategy::
@@ -217,32 +222,31 @@ public class SequentialEnumerator : BaseRowEnumerator
     }
 }
 
-//// --- ParallelEnumerator ---
-//
-//public class ParallelEnumerator :: BaseRowEnumerator
-//{
-//    constructor new : Arguments
-//    [
-//        theLength := Arguments length.
-//        theIndexers := Array new(theLength).
-//        
-//        int i := 0.
-//        while (i < theLength)
-//        [
-//            theIndexers setAt(i, Arguments[i] indexer).
-//            
-//            i := i + 1
-//        ].
-//        
-//        self reset
-//    ]
-//        
-//    reset
-//    [
-//        theStrategy := parallelStart.
-//    ]
-//}
-//
+// --- ParallelEnumerator ---
+
+public class ParallelEnumerator : BaseRowEnumerator
+{
+    constructor new(object[] arguments)
+    {
+        theLength := arguments.Length;
+        theIndexers := new Indexer[](theLength);
+        
+        for (int i := 0, i < theLength, i += 1)
+        {
+            Indexer it := arguments[i].indexer();
+            
+            theIndexers[i] := /*arguments[i].indexer()*/it
+        };
+        
+        self.reset()        
+    }
+        
+    reset()
+    {
+        theStrategy := parallelStart
+    }
+}
+
 //// --- Combinator ---
 //
 //public class Combinator :: BaseRowEnumerator

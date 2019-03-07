@@ -3371,6 +3371,22 @@ labNext:
 
 end
 
+procedure __timest."empty$system@calendar@TimeStruct[1]"
+
+  bloadsi 1
+  ecopy 0
+  dcopy 0
+  nwrite
+  dcopy 1
+  nwrite
+  dcopy 2
+  nwrite
+  dcopy 3
+  nwrite
+  quitn 1
+
+end
+
 // ; win32 constants
 define WM_CREATE            1
 define WM_DESTROY           2

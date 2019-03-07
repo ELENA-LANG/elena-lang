@@ -22,7 +22,7 @@ class CalendarMonthPrinter
         theMonth := month;
         theYear := year;
         theLine := new TextBuilder();
-        theRow := new Integer(0);
+        theRow := 0;
     }
 
     writeTitle()
@@ -43,7 +43,7 @@ class CalendarMonthPrinter
             
             until(theDate.Month != theMonth || theDate.DayOfWeek == 1)
             {
-                theLine.writePaddingLeft(theDate.Day.Printable, 3, $32);
+                theLine.writePaddingLeft(theDate.Day.Printable, $32, 3);
                 
                 theDate := theDate.addDays:1
             }         
@@ -83,7 +83,7 @@ class CalendarMonthPrinter
     
     printTitleTo(output)
     {
-        output.writePadding(MonthNames[theMonth - 1], 21, $32)
+        output.writePadding(MonthNames[theMonth - 1], $32, 21)
     }
    
     printTo(output)
@@ -99,22 +99,22 @@ class Calendar
     
     constructor new(int year)
     {
-        theYear := year.
+        theYear := year;
         theRowLength := 3
     }
     
     printTo(output)
     {
-        output.writePadding("[SNOOPY]", theRowLength * 25, $32); 
+        output.writePadding("[SNOOPY]", $32, theRowLength * 25); 
         output.writeLine();
-        output.write(theYear.Printable, theRowLength * 25, $32); 
+        output.writePadding(theYear.Printable, $32, theRowLength * 25); 
         output.writeLine().writeLine();
         
         var rowCount := 12 / theRowLength;
-        var months := Array.allocate(aRowCount).populate:(i =>
+        var months := Array.allocate(rowCount).populate:(i =>
             Array.allocate(theRowLength) 
                   .populate:(j =>
-                     CalendarMonthPrinter.new(theYear, i * theRowLength + j + 1)));
+                     new CalendarMonthPrinter(theYear, i * theRowLength + j + 1)));
         
         months.forEach:(row)
         {
@@ -146,7 +146,7 @@ class Calendar
 
 public program()
 {
-    var calender := Calendar.new(console.write:"ENTER THE YEAR:".loadLineTo(new Integer()));
+    var calender := Calendar.new(console.write:"ENTER THE YEAR:".readLine().toInt());
     
     calender.printTo:console;
     

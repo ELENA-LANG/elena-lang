@@ -1628,21 +1628,17 @@ public extension stringWeakOp
 //    
 //    replace(aReplacee, aReplacer)
 //        = stringOpDispatcher replace(self, aReplacee, aReplacer).
-//    
-//    fillString(object aLiteral, int aCounter)
-//    [
-//        int aNumber := aCounter.
-//        
-//        while (aNumber > 0)
-//        [
-//            self write:aLiteral. 
-//            
-//            aNumber := aNumber - 1
-//        ].
-//            
-//        ^ self
-//    ]
-//
+    
+    fillString(s, int counter)
+    {
+        for (int i := 0, i < counter, i += 1)
+        {
+            self.write(s)
+        };
+            
+        ^ self
+    }
+
 //    write : aLine length:aCounter
 //        = self~stringOp fillString(aLine, T<int>(aCounter)).
 
@@ -1682,24 +1678,26 @@ public extension stringWeakOp
         ^ self
     }
     
-//    write : aLine padding:aWidth with:aChar
-//    [
-//        int aWidthInt := aWidth.
-//        int aLength := aLine length.        
-//        
-//        if (aLength < aWidthInt)
-//            [
-//                int aLen := aWidthInt - aLength.
-//                int aLeftLen := aLen / 2.
-//                
-//                self~stringOp fillString(aChar, aLeftLen).
-//                self write:aLine.
-//                self~stringOp fillString(aChar, aLen - aLeftLen)
-//            ];
-//            [ self write:aLine ].
-//            
-//        ^ self
-//    ]    
+    writePadding(line, char ch, int width)
+    {
+        int length := line.Length;        
+        
+        if (length < width)
+        {
+            int len := width - length;
+            int leftLen := len / 2;
+            
+            self.fillString(ch, leftLen);
+            self.write(line);
+            self.fillString(ch, len - leftLen)
+        }
+        else
+        { 
+            self.write(line)
+        };
+            
+        ^ self
+    }    
 }
 
 // --- charOp ---
