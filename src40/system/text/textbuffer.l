@@ -2,7 +2,7 @@ const int TextPageSize = 128;
 
 // --- TextBuffer ---
 
-public sealed /*nonstructural */ class TextBuilder
+public sealed class TextBuilder
 {
     char[]    theBuffer;
     ref<int>  theLength;

@@ -1862,6 +1862,8 @@ public sealed Array : Indexable//, Array<object>
     /// Returns the array indexer
     Indexer indexer() = new ArrayIndexer(self);
 
+    object[] Value = theArray;
+
     /// Clones the array
     Array clone()
         = new Array(self);

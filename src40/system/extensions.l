@@ -1639,8 +1639,8 @@ public extension stringWeakOp
         ^ self
     }
 
-//    write : aLine length:aCounter
-//        = self~stringOp fillString(aLine, T<int>(aCounter)).
+    writeCopies(line, counter)
+        = self.fillString(line, cast int(counter));
 
     writePaddingLeft(line, char ch, int width)
     {

@@ -39,7 +39,7 @@ class CalendarMonthPrinter
         
         if (theDate.Month == theMonth)
         {
-            theLine.write("   ",theDate.DayOfWeek == 0 ? 7 : (theDate.DayOfWeek - 1));
+            theLine.writeCopies("   ",theDate.DayOfWeek == 0 ? 7 : (theDate.DayOfWeek - 1));
             
             until(theDate.Month != theMonth || theDate.DayOfWeek == 1)
             {
@@ -51,7 +51,7 @@ class CalendarMonthPrinter
         
         int length := theLine.Length;
         if (length < 21)
-            { theLine.write(" ", 21 - length) };
+            { theLine.writeCopies(" ", 21 - length) };
             
         theRow.append(1)
     }
@@ -68,7 +68,7 @@ class CalendarMonthPrinter
                 { self.writeTitle() };
                 
             while (index > theRow)
-                { self.writeLine }
+                { self.writeLine() }
         }
 
         appendIndex(int index)
@@ -118,6 +118,8 @@ class Calendar
         
         months.forEach:(row)
         {
+            var r := row;
+            
             row.forEach:(month)
             {
                 month.printTitleTo:output;

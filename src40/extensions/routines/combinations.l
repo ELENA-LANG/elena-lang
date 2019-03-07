@@ -71,7 +71,7 @@ singleton parallelNext : BaseStrategy
     
     BaseStrategy eval(Indexer[] indexers, int length)
     {
-        if(nil == (indexers.seekEach:(indexer)
+        if(nil != (indexers.seekEach:(indexer)
                 {
                     auto it := cast Indexer(indexer); 
                     
@@ -240,6 +240,9 @@ public class ParallelEnumerator : BaseRowEnumerator
         
         self.reset()        
     }
+        
+    constructor new(Array a)
+        <= new(a.Value);    
         
     reset()
     {
