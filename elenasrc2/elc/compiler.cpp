@@ -8442,7 +8442,10 @@ void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFu
          else if (duplicateInclusion) {
             scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
          }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current);
+         else {
+            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current);
+            current = lxIdle; // remove the node, to prevent duplicate warnings
+         }
       }
 
       current = current.nextNode();

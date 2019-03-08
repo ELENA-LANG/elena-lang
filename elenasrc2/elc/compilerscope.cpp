@@ -665,7 +665,7 @@ bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ident_t name, b
    // check if the namespace exists
    ReferenceNs virtualRef(name, NAMESPACE_REF);
    ref_t dummyRef = 0;
-   _Module* extModule = project->resolveModule(virtualRef, dummyRef);
+   _Module* extModule = project->resolveModule(virtualRef, dummyRef, true);
    if (extModule && dummyRef) {
       ident_t value = retrieve(importedNs.start(), name, NULL);
       if (value == NULL) {
