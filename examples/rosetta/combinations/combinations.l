@@ -7,7 +7,7 @@ const int N = 5;
 
 // --- Numbers ---
 
-numbers(n)
+Numbers(n)
 {
     ^ Array.allocate(n).populate:(int n => n)
 }
@@ -16,7 +16,7 @@ numbers(n)
 
 public program()
 {
-    var numbers := numbers(N);    
+    var numbers := Numbers(N);    
     Combinator.new(M, numbers).forEach:(row)
     {
         console.printLine(row.toString())

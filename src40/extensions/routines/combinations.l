@@ -114,7 +114,7 @@ singleton combinationNext : BaseStrategy
     }
 
     BaseStrategy eval(Indexer[] indexers, int length)
-    {
+    {        
         int k := indexers.Length;
         int i := k - 1;
         
@@ -123,7 +123,7 @@ singleton combinationNext : BaseStrategy
         if(currentIndexer.appendIndex:1.Available)
             { ^ self };
              
-        while (i > 0 && indexers[i - 1].Index + k - i + 1 >= length)
+        while (i > 0 && (indexers[i - 1].Index + k - i + 1) >= length)
             { i := i - 1 };
         
         if(i == 0)
@@ -276,6 +276,13 @@ public class Combinator : BaseRowEnumerator
         <= new(Array.allocate(subLength).populate:(int n => set))
     {
         theTotalLength := set.Length
+    }
+    
+    bool next()
+    {
+        theStrategy := theStrategy.eval(theIndexers, theTotalLength);
+
+        ^ theStrategy.Result
     }
     
     reset()
