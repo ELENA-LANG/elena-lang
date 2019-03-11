@@ -1,94 +1,73 @@
-//
-//public interface class Space
-//{
-//    int fn3prop getLiveCell :: calcLiveCells.
-//    
-//    vprop int Rows
-//    {
-//        abstract readRowsTo(ref<int> retVal)
-//    }
-//    
-//    int rvprop rows         :: readRowsTo.
-//    int rvprop columns      :: readColumnsTo.
-//    
-//    abstract update(RuleSet rs)
-//    [
-//    ]
-//    
-//    abstract read(int i, int j, ref<int> retVal)
-//    [        
-//    ]
-//    
-//    embeddable int getAt(int i, int j)
-//    [
-//        int retVal := 0.
-//        self read(i, j, &retVal).
-//        
-//        ^ retVal
-//    ]
-//    
-//    calcLiveCells(int k, int l, int state, ref<int> retVal)
-//    [
-//        int i := -1.
-//        int j := -1.
-//        int counter := 0.
-//        while (i < 2)
-//        [
-//            j := -1.
-//            while (j < 2)
-//            [
-//                int cell := self getAt(k + i, l + j).
-//                if (cell == state)
-//                    [ counter := counter + 1 ].
-//                
-//                j := j + 1
-//            ].
-//            i := i + 1
-//        ].
-//        
-//        retVal value := counter
-//    ]
-//    
-//    /// Returns the space actual number of rows    
-//    abstract readRowsTo(ref<int> retVal)
-//    [
-//    ]
-//    
-//    /// Returns the space actual number of columns
-//    abstract readColumnsTo(ref<int> retVal)
-//    [
-//    ]
-//}
-//
-//public sealed class IntMatrixSpace :: Space
-//{
-//    T<IntMatrix> theMatrix.
-//    int          theN.
-//    int          theM.
-//    
-//    constructor new(int n, int m)
-//    [
-//        theN := n.
-//        theM := m.
-//        
-//        theMatrix := IntMatrix new(n, m).
-//
-//        int i := 0.
-//        int j := 0.
-//        while (i < theN)
-//        [
-//            j := 0.            
-//            while(j < theM)
-//            [
-//                theMatrix write(i, j, 0).
-//                
-//                j := j + 1
-//            ].
-//            
-//            i := i + 1
-//        ]         
-//    ]
-//
+
+public interface Space
+{
+    fn3prop int LiveCell
+    {
+        calc(int k, int l, int state, ref int retVal)
+        {
+            int j := -1;
+            int counter := 0;
+            for (int i := -1, i < 2, i += 1)
+            {
+                for (int j := -1, j < 2, j += 1)
+                {
+                    int cell := self.at(k + i, l + j);
+                    if (cell == state)
+                        { counter := counter + 1 }
+                }
+            };
+            
+            retVal := counter
+        }        
+    }
+    
+    vprop int Rows
+    {
+        /// Returns the space actual number of rows
+        abstract readTo(ref int retVal) {}
+    }
+    
+    vprop int Columns
+    {
+        /// Returns the space actual number of columns
+        abstract readTo(ref int retVal) {}
+    }
+    
+    abstract update(RuleSet rs) {}
+    
+    abstract read(int i, int j, ref int retVal) {}
+
+    embeddable int at(int i, int j)
+    {
+        int retVal := 0;
+        self.read(i, j, ref retVal);
+        
+        ^ retVal
+    }
+}
+
+public sealed class IntMatrixSpace : Space
+{
+    IntMatrix theMatrix;
+    int       theN;
+    int       theM;
+    
+    constructor(int n, int m)
+    {
+        theN := n;
+        theM := m;
+        
+        theMatrix := new IntMatrix(n, m);
+
+        for (int i := 0, i < theN, i+=1)
+        {
+            for (int j := 0, j < theM, j+=1)
+            {
+                theMatrix.write(i, j, 0)
+            }
+        }
+    }
+
 //    constructor new(int n, int m, RuleSet rs)
 //        <= new(n, m);
 //    [
@@ -115,49 +94,55 @@
 //            i := i + 1
 //        ].
 //    ]
-//
-//    update(RuleSet rs)
-//    [
-//        T<IntMatrix> newMatrix := IntMatrix new(theN, theM).
-//        
-//        self internalUpdate(rs, newMatrix).
-//        
-//        theMatrix := newMatrix.
-//    ]
-//
-//    read(int k, int l, ref<int> retVal)
-//    [
-//        int i := k.
-//        (i < 0)?
-//        [
-//            i := theN + i.
-//        ].
-//        
-//        (i >= theN)?
-//        [
-//            i := i mod(theN).
-//        ].
-//        
-//        int j := l.
-//        (j < 0)?
-//        [
-//            j := theM + j.
-//        ].
-//        (j >= theM)?
-//        [
-//            j := j mod(theM).
-//        ].
-//        
-//        theMatrix read(i, j, retVal).
-//    ]
-//    
-//    readRowsTo(ref<int> retVal)
-//    [
-//        retVal value := theN.
-//    ]
-//    
-//    readColumnsTo(ref<int> retVal)
-//    [
-//        retVal value := theM.
-//    ]
-//}
+
+    update(RuleSet rs)
+    {
+        IntMatrix newMatrix := new IntMatrix(theN, theM);
+        
+        self.internalUpdate(rs, newMatrix);
+        
+        theMatrix := newMatrix
+    }
+
+    read(int k, int l, ref int retVal)
+    {
+        int i := k;
+        if(i < 0)
+        {
+            i := theN + i
+        };
+        
+        if(i >= theN)
+        {
+            i := i.mod:theN
+        };
+        
+        int j := l;
+        if(j < 0)
+        {
+            j := theM + j
+        };
+        if(j >= theM)
+        {
+            j := j.mod:theM
+        };
+        
+        theMatrix.read(i, j, ref retVal)
+    }
+    
+    Rows
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theN
+        }
+    }
+    
+    Columns
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theM
+        }
+    }
+}

@@ -1,12 +1,12 @@
 //import extensions;
-//
-//// --- Rule Set ---
-//
-//public interface RuleSet
-//{
-//    abstract proceed(Space s, int i, int j, ref int newState) {}
-//}
-//
+
+// --- Rule Set ---
+
+public interface RuleSet
+{
+    abstract proceed(Space s, int i, int j, ref int newState) {}
+}
+
 //public singleton randomSet : RuleSet
 //{
 //    proceed(Space s, int i, int j, ref int newState)

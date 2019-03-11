@@ -193,7 +193,7 @@ property rprop<T>
 
 property fnprop<T, get_accessor>
 {
-    /*embeddable*/T __property(T n)
+    embeddable T __property(T n)
     {
         T retVal := T.Default;
         
@@ -203,30 +203,34 @@ property fnprop<T, get_accessor>
     }    
 }
 
-//// --- fn2prop ---
-//
-//public __accessor fn2prop<type,template_fn>
-//{
-//    embeddable type template_fn(type n, type m)
-//    [
-//        type retVal := T<type>().
-//        self __get(n, m, &retVal).
-//        ^ retVal.            
-//    ]
-//}
-//
-//// --- fn3prop ---
-//
-//public __accessor fn3prop<type,template_fn>
-//{
-//    embeddable type template_fn(type n, type m, type o)
-//    [
-//        type retVal := T<type>().
-//        self __get(n, m, o, &retVal).
-//        ^ retVal.            
-//    ]
-//}
-//
+// --- fn2prop ---
+
+property fn2prop<T, get_accessor>
+{
+    embeddable T __property(T n, T m)
+    {
+        T retVal := T.Default;
+        
+        self.get_accessor(n, m, ref retVal);
+        
+        ^ retVal
+    }
+}
+
+// --- fn3prop ---
+
+property fn3prop<T, get_accessor>
+{
+    embeddable T __property(T n, T m, T o)
+    {
+        T retVal := T.Default;
+        
+        self.get_accessor(n, m, o, ref retVal);
+        
+        ^ retVal
+    }
+}
+
 // --- extern statement ---
 
 public extern<extern_block>()

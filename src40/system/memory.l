@@ -818,23 +818,23 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 //    /// Returns the array indexer
 //    T<Indexer> indexer = BitArray32Indexer new(self).
 //}
-//
-//// --- IntMatrix ---
-//
-//public sealed class IntMatrix
-//{
-//    T<IntArray> theArray.
-//    int         theRows.
-//    int         theColumns.
-//    
-//    constructor new(int Rows, int Columns)
-//    [
-//        theRows := Rows.
-//        theColumns := Columns.
-//        
-//        theArray := IntArray new(Columns * Rows).        
-//    ]
-//        
+
+// --- IntMatrix ---
+
+public sealed class IntMatrix
+{
+    int[] theArray;
+    int   theRows;
+    int   theColumns;
+    
+    constructor(int rows, int columns)
+    {
+        theRows := rows;
+        theColumns := columns;
+        
+        theArray := new int[](columns * rows)
+    }
+        
 //    constructor new(Rows,Columns)
 //        <= new(T<int>(Rows), T<int>(Columns)).
 //        
@@ -844,28 +844,31 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 //        Rows value := theRows.
 //        Columns value := theColumns
 //    ]
-//
-//    readLengthTo(ref<int> retVal)
-//    [
-//        retVal value := theRows
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//
-//    readColumnsTo(ref<int> retVal)
-//    [
-//        retVal value := theColumns
-//    ]
-//    
-//    int rvprop columns :: readColumnsTo.
-//
-//    readRowsTo(ref<int> retVal)
-//    [
-//        retVal value := theRows
-//    ]
-//    
-//    int rvprop rows :: readRowsTo.
-//
+
+    vprop int Length
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theRows
+        }
+    }    
+
+    vprop int Columns
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theColumns
+        }
+    }
+
+    vprop int Rows
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theRows
+        }
+    }
+
 //    /// Writes an integer value at the specified position
 //    write(int i, int j, int aValue)
 //    [
@@ -959,8 +962,8 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 //        
 //        enumerable = self.
 //    }.
-//}
-//
+}
+
 //// --- RealArray ---
 //
 ///// An array of real numbers
