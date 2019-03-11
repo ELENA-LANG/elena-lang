@@ -1,0 +1,22 @@
+<configuration>
+    <project>
+        <executable></executable>
+        <arguments></arguments>
+        <output>..\..\lib40</output>
+        <options></options>
+        <namespace>cellular</namespace>
+        <template>lib</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <manifest>
+      <name>ELENA Cellular Library</name>
+      <version>4.0.1</version>
+      <author>Alex Rakov</author>
+    </manifest>
+    <files>
+        <module>
+            <include>universe.l</include>
+            <include>rulesets.l</include>
+        </module>
+    </files>
+</configuration>

@@ -148,12 +148,14 @@ class DerivationWriter : public _DerivationWriter
    void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope& derivationScope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
+   void generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, List<SNode>* parameters);
    void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode);
    // returns true if in-place init found
+   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    bool generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer); 
    void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
    void generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope, bool rootMode);

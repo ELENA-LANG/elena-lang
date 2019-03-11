@@ -2,34 +2,41 @@
 //   - test if they are all lexically equal
 //   - test if every string is lexically less than the one after it (i.e. whether the list is in strict ascending order) 
 
-import system'collections.
-import system'routines.
-import extensions.
+import system'collections;
+import system'routines;
+import extensions;
 
 extension helper
 {
-    isEqual
-        = nil == self seekFor(self firstMember) eachPair(:n:m)( m equal:n; inverted ).
+    isEqual()
+        = nil == self.seekEach(self.FirstMember, (n,m => m.equal:n.Inverted ));
         
-    isAscending
-    [
-        var former := self enumerator.
-        var later := self enumerator.
+    isAscending()
+    {
+        var former := self.enumerator();
+        var later := self.enumerator();
         
-        later next.
+        later.next();
         
-        ^ nil == former zip:later by(:prev:next)( next <= prev ); seekEach(:b)( b )
-    ]
+        ^ nil == former.zipBy(later, (prev,next => next <= prev )).seekEach:(b => b)
+    }
 }
 
-public program =
-[
-    (("AA","BB","CC"),("AA","AA","AA"),("AA","CC","BB"),("AA","ACB","BB","CC"),List new; append:"single_element")
-        forEach(:list)
-        [
-            console printLine(list," all equal - ",list isEqual).
-            console printLine(list," ascending - ",list isAscending)
-        ].
+testCases
+    = new string[][] {
+         new string[]{"AA","BB","CC"},
+         new string[]{"AA","AA","AA"},
+         new string[]{"AA","CC","BB"},
+         new string[]{"AA","ACB","BB","CC"},
+         new string[]{"single_element"}};
+
+public program()
+{
+    testCases.forEach:(list)
+        {
+            console.printLine(list.asEnumerable()," all equal - ",list.isEqual());
+            console.printLine(list.asEnumerable()," ascending - ",list.isAscending())
+        };
         
-    console readChar.            
-].
+    console.readChar()
+}

@@ -53,12 +53,17 @@ bin\elc src40\forms\forms.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src34\sqlite\sqlite.prj
-rem bin\elc src34\cellular\cellular.prj
-rem bin\elc src33\graphics\graphics.prj
-rem bin\elc src33\xforms\xforms.prj
+rem bin\elc src40\sqlite\sqlite.prj
 
-rem bin\elc src31\system\system_64.prj
+bin\elc src40\cellular\cellular.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+rem bin\elc src40\graphics\graphics.prj
+rem bin\elc src40\xforms\xforms.prj
+
+rem bin\elc src40\system\system_64.prj
 
 @echo off 
 goto:eof

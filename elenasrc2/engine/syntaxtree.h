@@ -68,6 +68,7 @@ enum LexicalType
    lxTemplateOperator         = 0x00081,
 
    lxTypecast                 = 0x00100,
+   lxClassProperty            = 0x00101,
 
    // parameters
    lxEOF                      = 0x18003, // indicating closing code bracket

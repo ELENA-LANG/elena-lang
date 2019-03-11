@@ -149,15 +149,15 @@ public extension enumerableOp
     selectBy(selector)
         = Selector.new(selector, cast Enumerator(self.enumerator()));
 
-////    forEachPair(object object, ext_mssg anExtMessage)
-////        = self~enumerableOp forEachPair(object, (:o:n)(o~anExtMessage eval:n)).
-//    
-//    forEachPair(object anObject, Func2 aFunction)
-//      = aFunction run(anObject, T<Enumerator>(self enumerator)).
-//    
-////    multi forEachPair:object:fn
-////        = self~enumerableOp forEachPair(object, (:o:n)[ fn(o,n) ]).
-//
+//    forEachPair(object object, ext_mssg anExtMessage)
+//        = self~enumerableOp forEachPair(object, (:o:n)(o~anExtMessage eval:n)).
+    
+    forEachPair(object object, Func2 f)
+      = f.run(object, cast Enumerator(self.enumerator()));
+    
+//    multi forEachPair:object:fn
+//        = self~enumerableOp forEachPair(object, (:o:n)[ fn(o,n) ]).
+
 //    runFor(object param) eachPair(Func2 f)
 //        = f run(param, T<Enumerator>(self enumerator)).
 //
@@ -178,10 +178,10 @@ public extension enumerableOp
 ////        
 ////    multi seekEach:fn
 ////        = self~enumerableOp seekEach(:n)[ fn(n) ].
-//
-//    seekFor(object param) eachPair(Func2 f)
-//        = f retrieve(param, T<Enumerator>(self enumerator)).
-//
+
+    seekEach(object param, Func2 f)
+        = f.retrieve(param, cast Enumerator(self.enumerator()));
+
 //    seekFor(Object param) eachPair(ExtensionMessage ext)
 //        = self~enumerableOp seekFor:param eachPair(:n:m)( n~ext eval(m) ).
 //
@@ -401,6 +401,20 @@ public extension indexableOp<T>
         
         ^ self
     }
+        
+    forEvery(Func<int,T> fn)
+    {
+        Indexer it := self.indexer();
+        
+        while (it.Available)
+        {
+            int i := it.Index;
+            
+            fn(i);
+            
+            it.appendIndex:1
+        }
+    }    
 }    
 
 public extension indexableOp
@@ -425,18 +439,6 @@ public extension indexableOp
         indexer.set:o2
     }
     
-//    forEvery(Func<int,object> fn)
-//    [
-//        T<Indexer> it := self indexer.
-//        
-//        while (it available)
-//        [
-//            fn(it index).
-//            
-//            it appendIndex:1.
-//        ].
-//    ]
-//    
 //    forEvery(Func1 fn)
 //        = self~indexableOp forEvery(:n)<int>(fn(n)).
     

@@ -156,7 +156,12 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem ..\..\bin\elc evolutionary\evolutionary.prj
-rem ..\..\bin\elc compare_str_list\complist.prj
+
+..\..\bin\elc compare_str_list\complist.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc dynamic_var\dynamic_var.prj
 rem ..\..\bin\elc firstclass\firstclass.prj
 rem ..\..\bin\elc loop_multiple_arrays\loopma.prj
@@ -169,7 +174,12 @@ rem ..\..\bin\elc toppergroup\toppergroup.prj
 rem ..\..\bin\elc twelvestats\twelvestats.prj
 rem ..\..\bin\elc truncprime\truncprime.prj
 rem ..\..\bin\elc treeview\treeview.prj
-rem ..\..\bin\elc gameoflife\gameoflife.prj
+
+..\..\bin\elc gameoflife\gameoflife.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc zhangsuen\zhangsuen.prj
 rem ..\..\bin\elc zeckendorf\zeckendorf.prj
 rem ..\..\bin\elc zeckendorf_arithm\zeckendorf_arithm.prj 

@@ -478,6 +478,10 @@ md src40\sqlite
 xcopy %1\src40\sqlite\*.l src40\sqlite /s
 xcopy %1\src40\sqlite\*.prj src40\sqlite /s
 
+md src40\cellular
+xcopy %1\src40\cellular\*.l src40\cellular /s
+xcopy %1\src40\cellular\*.prj src40\cellular /s
+
 copy %1\recompile15.bat 
 copy %1\rebuild_lib.bat 
 copy %1\rebuild_examples.bat 
@@ -717,7 +721,12 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem bin\elc src40\sqlite\sqlite.prj
-rem bin\elc src40\cellular\cellular.prj
+
+bin\elc src40\cellular\cellular.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem bin\elc src40\graphics\graphics.prj
 rem bin\elc src40\xforms\xforms.prj
 
