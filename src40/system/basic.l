@@ -2230,9 +2230,9 @@ public sealed const struct CharValue : BaseValue
 //
 //    bool less(wide val)
 //        = val < T<wide>(self).
-//
-//    /// Clones the value
-//    clone = CharValue new(self).
+
+    /// Clones the value
+    char clone() = new CharValue(self);
 
     /// Returns the literal value
     string Printable = stringConvertor.convert(self);

@@ -202,14 +202,27 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
     }    
 }
 
-//// --- matrixof ---
-//
-//public sealed Matrix<template_subj>
-//{
-//    Array<template_subj> theArray.
-//    int                  theRows.
-//    int                  theColumns.
-//    
+// --- matrixof ---
+
+public sealed Matrix<T>
+{
+    T[] theArray;
+    int theRows;
+    int theColumns;
+    
+    constructor(int rows, int columns)
+    {
+        theRows := rows;
+        theColumns := columns;
+        
+        int len := theRows * theColumns;
+        
+        theArray := new T[](len)
+    }
+    
+    constructor(rows, columns)
+        <= (cast int(rows), cast int(columns));
+    
 //    constructor(params)
 //    [
 //        theRows := params rows.
@@ -243,7 +256,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 //                    i := i + 1
 //                ]
 //            ]
-//    ]
+//    ]    
 //    
 //    /// Reads the matrix lengths to the output parameter
 //    readLengths(ref<int> Rows, ref<int> Columns)
@@ -253,36 +266,54 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 //    ]
 //
 //    int rvprop length  :: readLengthTo.    
-//    int rvprop columns :: readColumnsTo.
-//    int rvprop rows    :: readRowsTo.
-//
-//    readLengthTo(ref<int> retVal)
-//    [
-//        retVal int := theRows.
-//    ]
-//
-//    readColumnsTo(ref<int> retVal)
-//    [
-//        retVal value := theColumns.
-//    ]
-//
-//    readRowsTo(ref<int> retVal)
-//    [
-//        retVal value := theRows.
-//    ]
-//
-//    /// Writes an integer value at the specified position
-//    setAt(int i, int j, template_subj v)
-//    [
-//        theArray setAt(i * theColumns + j, v).
-//    ]
-//
-//    embeddable template_subj getAt(int i, int j)
-//        = theArray getAt(i * theColumns + j).
-//
-//    getAt(i,j)
-//        = self getAt(T<int>(i), T<int>(j)).
-//
+
+    vprop int Length
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theRows
+        }
+    }    
+
+    vprop int Columns
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theColumns
+        }
+    }
+
+    vprop int Rows
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theRows
+        }
+    }
+
+    /// Writes an integer value at the specified position
+    setAt(int i, int j, T v)
+    {        
+        int index := i * theColumns + j;
+        
+        theArray[index] := v
+    }
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int i, int j, ref T retVal)
+    {
+        int index := i * theColumns + j;
+        
+        retVal := theArray[index];
+    }
+
+    embeddable T at(int i, int j)
+    {
+        T retVal := T.Default;
+        self.read(i, j, ref retVal);
+        ^ retVal
+    }
+
 //    setAt(i, j, v)
 //    [
 //        self setAt(T<int>(i), T<int>(j), T<template_subj>(v)).    
@@ -343,8 +374,8 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 //              ]
 //          }.
 //    ]
-//}
-//
+}
+
 //// === basic memory classes ===
 //
 //// --- ByteArray ---
@@ -1223,20 +1254,20 @@ public sealed const struct String : BaseValue
     constructor allocate(int size)
         = new byte[](size + 1);
 
-//    /// Creates the literal string with specified length and copies the parameter value
-//    constructor new(int aSize, literal aLiteral)
-//        <= new(aSize);
-//    [
-//        system'core_routines'__literal copy(aLiteral, self).
-//    ]
+    /// Creates the literal string with specified length and copies the parameter value
+    constructor copy(int size, string s)
+        <= allocate(size)
+    {
+        intern system'core_routines'__literal.copy(s, self)
+    }
 
     /// Creates the literal string with specified length fills with specified character value        
     constructor fill(int size, char ch)
         => system'core_routines'__literal;
 
-//    /// Creates the literal string copy              
-//    constructor new(literal aLiteral)
-//        <= new(aLiteral length, aLiteral).
+    /// Creates the literal string copy              
+    constructor copy(string s)
+        <= copy(s.Length, s);
         
     /// Creates the copy of a subarray        
     constructor new(int index, int length, char[] array)
@@ -1426,8 +1457,8 @@ public sealed const struct String : BaseValue
     /// Returns the string indexer
     Indexer<char> indexer() = new StringIndexer(self);
     
-//    /// Clones the value
-//    clone = LiteralValue new(self).
+    /// Clones the value
+    string clone() = String.copy(self);
 }
 
 // --- emptyWideString ---
@@ -1454,21 +1485,21 @@ public sealed const struct WideString : BaseValue
     constructor allocate(int size)
         = new short[](size + 1);
 
-//    /// Creates the literal string with specified length and copies the parameter value
-//    constructor new(int aSize, wide aLiteral)
-//        <= new(aSize);
-//    [
-//        system'core_routines'__wide copy(aLiteral, self).
-//    ]
-//
+    /// Creates the literal string with specified length and copies the parameter value
+    constructor copy(int size, wide s)
+        <= allocate(size)
+    {
+        intern system'core_routines'__wide.copy(s, self)
+    }
+
 //    /// Creates the literal string with specified length fills with spciefied character value
 //    constructor new(int aSize, char aChar)
 //        => system'core_routines'__wide.
-//
-//    /// Creates the literal string copy
-//    constructor new(wide aLiteral)
-//        <= new(aLiteral length, aLiteral).
-//        
+
+    /// Creates the literal string copy
+    constructor copy(wide s)
+        <= copy(s.Length, s);
+        
 //    /// Creates the copy of a subarray
 //    constructor new(int anIndex, int aSize, CharArray anArray)
 //        => system'core_routines'__wide.
@@ -1647,8 +1678,8 @@ public sealed const struct WideString : BaseValue
     /// Returns the object indexer
     Indexer<char> indexer() = new WideStringIndexer(self);
     
-//    /// Clones the value
-//    clone = WideLiteralValue new(self).
+    /// Clones the value
+    wide clone() = WideString.copy(self);
 }
 
 // --- Variant ---
