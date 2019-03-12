@@ -68,11 +68,11 @@ public sealed class IntMatrixSpace : Space
         }
     }
 
-//    constructor new(int n, int m, RuleSet rs)
-//        <= new(n, m);
-//    [
-//        self internalUpdate(rs, theMatrix).
-//    ]
+    constructor(int n, int m, RuleSet rs)
+        <= (n, m)
+    {
+        self.internalUpdate(rs, theMatrix)
+    }
 
     private internalUpdate(RuleSet rs, IntMatrix matrix)
     {

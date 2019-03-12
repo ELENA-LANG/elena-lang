@@ -21,8 +21,8 @@ sealed struct RandomGenerator
         extern elenart.core_rnd_nextint(theSeed, ref retVal)
     }
 
-//    eval(object minValue, object maxValue)
-//        = minValue + self eval(maxValue - minValue).
+    eval(minValue, maxValue)
+        = minValue + self.eval(maxValue - minValue);
 
     int eval(int maxValue)
     {

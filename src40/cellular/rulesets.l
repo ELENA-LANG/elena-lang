@@ -1,4 +1,4 @@
-//import extensions;
+import extensions;
 
 // --- Rule Set ---
 
@@ -7,14 +7,14 @@ public interface RuleSet
     abstract proceed(Space s, int i, int j, ref int newState) {}
 }
 
-//public singleton randomSet : RuleSet
-//{
-//    proceed(Space s, int i, int j, ref int newState)
-//    {
-//        newState := randomGenerator.eval(0,2);
-//    }
-//}
-//
+public singleton randomSet : RuleSet
+{
+    proceed(Space s, int i, int j, ref int newState)
+    {
+        newState := randomGenerator.eval(0,2)
+    }
+}
+
 //public class LoadedSet : RuleSet
 //{
 //    IntMatrix theSet;
