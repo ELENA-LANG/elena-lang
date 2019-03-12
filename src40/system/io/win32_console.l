@@ -2,50 +2,52 @@ import system'text;
 
 const int FILE_TYPE_CHAR = 2;
 
-//sealed struct CONSOLE_SCREEN_BUFFER_INFO
-//{
-//    T<COORD>      dwSize.    
-//    T<COORD>      dwCursorPosition.    
-//    short         wAttributes.
-//    T<SMALL_RECT> srWindow.
-//    T<COORD>      dwMaximumWindowSize.
-//    
-//    embeddable constructor new
-//    [
-//    ]
-//
-//    short rvprop SizeX :: readSizeXTo.
-//    
-//    short rvprop SizeY :: readSizeYTo.
-//
-//    readSizeXTo(ref<short> aRetVal)
-//    [
-//        dwSize readXTo(aRetVal).
-//    ]
-//
-//    readSizeYTo(ref<short> aRetVal)
-//    [
-//        dwSize readYTo(aRetVal).
-//    ]
-//
-//    readSizeTo(COORD r)
-//    [
-//        short x := dwSize X.
-//        short y := dwSize Y.
-//        
-//        r write(x, y).
-//    ]
-//
-//    readCursorPositionTo(COORD r)
-//    [
-//        T<COORD> aCopy := dwCursorPosition.
-//        
-//        short x := aCopy X.
-//        short y := aCopy Y.
-//        
-//        r write(x, y).
-//    ]
-//}
+sealed struct CONSOLE_SCREEN_BUFFER_INFO
+{
+    COORD      dwSize;    
+    COORD      dwCursorPosition;    
+    short      wAttributes;
+    SMALL_RECT srWindow;
+    COORD      dwMaximumWindowSize;
+    
+    embeddable constructor()
+    {
+    }
+
+    vprop short SizeX
+    {
+        readTo(ref short retVal)
+        {
+            dwSize.readTo X(ref retVal)
+        }
+    }
+
+    vprop short SizeY
+    {
+        readTo(ref short retVal)
+        {
+            dwSize.readTo Y(ref retVal)
+        }
+    }
+
+    readSizeTo(COORD r)
+    {
+        short x := dwSize.X;
+        short y := dwSize.Y;
+        
+        r.write(x, y)
+    }
+
+    readCursorPositionTo(COORD r)
+    {
+        COORD copy := dwCursorPosition;
+        
+        short x := copy.X;
+        short y := copy.Y;
+        
+        r.write(x, y)
+    }
+}
 
 // --- ConsoleHandleFactory --
 
@@ -117,39 +119,39 @@ sealed class ConsoleWriter
         // !!check the result of the operation
     }
     
-//    clear
-//    [
-//        auto aBuffer := CONSOLE_SCREEN_BUFFER_INFO new.
-//        int  aLength := 0.
-//        int  aRetVal := 0.
-//
-//        system'external'KERNEL32 GetConsoleScreenBufferInfo(theHandle, aBuffer).
-//
-//        short aSizeX := aBuffer SizeX.
-//        short aSizeY := aBuffer SizeY.
-//                
-//        aLength := aSizeX * aSizeY.
-//        
-//        system'external'KERNEL32 FillConsoleOutputCharacterW(theHandle, T<short>(32), aLength, 0, &aRetVal).
-//        
-//        system'external'KERNEL32 SetConsoleCursorPosition(theHandle, 0).
-//    ]
-//
-//    setCursorPosition(int x, int y)
-//    [
-//        int coord := y * 10000h + x.
-//                
-//        system'external'KERNEL32 SetConsoleCursorPosition(theHandle, coord)
-//    ]
+    clear()
+    {
+        auto buffer := new CONSOLE_SCREEN_BUFFER_INFO();
+        int  length := 0;
+        int  retVal := 0;
+
+        extern KERNEL32.GetConsoleScreenBufferInfo(theHandle, buffer);
+
+        short sizeX := buffer.SizeX;
+        short sizeY := buffer.SizeY;
+                
+        length := sizeX * sizeY;
+        
+        extern KERNEL32.FillConsoleOutputCharacterW(theHandle, cast short(32), length, 0, ref retVal);
+        
+        extern KERNEL32.SetConsoleCursorPosition(theHandle, 0)
+    }
+
+    setCursorPosition(int x, int y)
+    {
+        int coord := y * 10000h + x;
+                
+        extern KERNEL32.SetConsoleCursorPosition(theHandle, coord)
+    }
 
     refresh()
     {
     }    
 
-//    free
-//    [
-//        system'external'KERNEL32 CloseHandle(theHandle).
-//    ]
+    close()
+    {
+        extern KERNEL32.CloseHandle(theHandle)
+    }
 }
 
 // --- FileWriter ---
@@ -172,29 +174,27 @@ sealed class FileWriter
             (theHandle, buffer, length, ref written, 0)
     }
 
-//    write(wide literal)
-//    {
-//        byte[] buffer[256];
-//        int    length := literal.Length;
-//        int    index := 0.
-//        int    buf_len := 256.
-//        int    subs_len := 256.
-//        while (length > 0)
-//        [
-//            buf_len := 256.
-//            
-//            if (length < 128)
-//                [ subs_len := length ] ;
-//                [ subs_len := 128 ].
-//            
-//            OEMEncoder convert(index, &subs_len, literal, T<ByteArray>(buffer), &buf_len).
-//            
-//            self write(buffer, buf_len).
-//            
-//            index := index + subs_len.
-//            length := length - subs_len.
-//        ].
-//    }
+    write(wide literal)
+    {
+        byte buffer[256];
+        int  length := literal.Length;
+        int  index := 0;
+        int  buf_len := 256;
+        int  subs_len := 256;
+        while (length > 0)
+        {
+            buf_len := 256;
+            
+            subs_len := length < 128 ? length : 128;
+            
+            OEMEncoder.convert(index, ref subs_len, literal, buffer, ref buf_len);
+            
+            self.write(buffer, buf_len);
+            
+            index := index + subs_len;
+            length := length - subs_len
+        }
+    }
     
 //    writeLine(wide s)
 //    {
@@ -242,18 +242,18 @@ sealed class FileWriter
         }
     }
     
-//    clear
-//    [
-//    ]
+    clear()
+    {
+    }
 
     refresh()
     {
     }
 
-//    free
-//    [
-//        system'external'KERNEL32 CloseHandle(theHandle).
-//    ]
+    close()
+    {
+        extern KERNEL32.CloseHandle(theHandle)
+    }
 }
 
 // --- ConsoleReader ---
@@ -325,43 +325,43 @@ sealed struct ConsoleReader : Object, interface<IConsoleReader>
 //                    
 //        byteArrayHelper read(T<ByteArray>(aDump), 8, aKey)
 //    ]
-//
-//    bool isKeyAvailable
-//    [
-//        T<byte,20> aDump.
-//        int        aNumberRead := 0.
-//        short      anEventType := 0.
-//        int        aKeyDown := 0.
-//        
-//        while (true)
-//        [
-//            aNumberRead := 0.
-//            
-//            extern()
-//            [
-//                system'external'KERNEL32 PeekConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
-//            ].
-//                        
-//            if (0 == aNumberRead)
-//                [ ^ false ].
-//                                                                                    
-//            byteArrayHelper read(T<ByteArray>(aDump), 0, &anEventType).
-//            if (anEventType == 1)
-//                [ 
-//                    byteArrayHelper read(T<ByteArray>(aDump), 4, &aKeyDown).
-//                        
-//                    if (aKeyDown == 1)
-//                        [ ^ true ]
-//                ].
-//
-//            extern()
-//            [
-//                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
-//            ].                
-//        ].
-//        
-//        ^ false.                   
-//    ]
+
+    get bool KeyAvailable()
+    {
+        byte  dump[20];
+        int   numberRead := 0;
+        short eventType := 0;
+        int   keyDown := 0;
+        
+        while (true)
+        {
+            numberRead := 0;
+            
+            extern
+            {
+                extern KERNEL32.PeekConsoleInputW(theHandle, dump, 1, ref numberRead)
+            };
+                        
+            if (0 == numberRead)
+                { ^ false };
+                            
+            dump.read(0, ref eventType);
+            if (eventType == 1)
+            {
+                dump.read(4, ref keyDown);
+                    
+                if (keyDown == 1)
+                    { ^ true }
+            };
+
+            extern
+            {
+                extern KERNEL32.ReadConsoleInputW(theHandle, dump, 1, ref numberRead)
+            }                
+        };
+        
+        ^ false
+    }
 
     read(short[] dump, ref int retVal)
     {
@@ -419,12 +419,11 @@ sealed struct ConsoleReader : Object, interface<IConsoleReader>
 //        
 //        ^ CharValue new char:aRetVal
 //    ]
-//
-//    free
-//    [
-//        system'external'KERNEL32 CloseHandle
-//            int:theHandle.
-//    ]
+
+    close()
+    {
+        extern KERNEL32.CloseHandle(theHandle)
+    }
 }
 
 // --- Console Standard Symbols

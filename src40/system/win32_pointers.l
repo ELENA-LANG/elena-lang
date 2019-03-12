@@ -146,98 +146,104 @@ public sealed const struct UnsafePointer
         = thePointer == 0;
 }
 
-//// --- COORD ---
-//
-//public sealed struct COORD
-//{
-//    short theX.
-//    short theY.
-//    
-//    constructor new
-//    [
-//        theX := 0.
-//        theY := 0.
-//    ]
-//    
-//    write(short X, short Y)
-//    [
-//        theX := X.
-//        theY := Y.
-//    ]
-//    
-//    write(COORD r)
-//    [
-//        short tmp := r X.
-//        theX := tmp.
-//        
-//        tmp := r Y.
-//        theY := tmp.
-//    ]
-//    
-//    readXTo(ref<short> aRetVal)
-//    [
-//        aRetVal value := theX.
-//    ]
-//    
-//    short rvprop X :: readXTo.
-//    
-//    readYTo(ref<short> aRetVal)
-//    [
-//        aRetVal value := theY.
-//    ]
-//    
-//    short rvprop Y :: readYTo.
-//}
-//
-//// --- SMALL_RECT --
-//
-//public sealed struct SMALL_RECT
-//{
-//    short theLeft.
-//    short theTop.
-//    short theRight.
-//    short theBottom.
-//    
-//    short rvprop Left   :: readLeftTo.
-//    
-//    short rvprop Top    :: readTopTo.
-//    
-//    short rvprop Right  :: readRightTo.
-//    
-//    short rvprop Bottom :: readBottomTo.
-//    
-//    readLeftTo(ref<short> aRetVal)
-//    [
-//        aRetVal value := theLeft.
-//    ]
-//    
-//    readTopTo(ref<short> aRetVal)
-//    [
-//        aRetVal value := theTop.
-//    ]
-//    
-//    readRightTo(ref<short> aRetVal)
-//    [
-//        aRetVal value := theRight.
-//    ]
-//    
-//    readBottomTo(ref<short> aRetVal)
-//    [
-//        aRetVal value := theBottom.
-//    ]
-//    
-//    write(SMALL_RECT r)
-//    [
-//        short tmp := r Left.
-//        theLeft := tmp.
-//        
-//        tmp := r  Top.
-//        theTop := tmp.
-//        
-//        tmp := r Right.
-//        theRight := tmp.
-//        
-//        tmp := r Bottom.
-//        theBottom := tmp.
-//    ]
-//}    
+// --- COORD ---
+
+public sealed struct COORD
+{
+    short theX;
+    short theY;
+    
+    embeddable constructor()
+    {
+        theX := 0;
+        theY := 0;
+    }
+    
+    write(short X, short Y)
+    {
+        theX := X;
+        theY := Y
+    }
+    
+    write(COORD r)
+    {
+        short tmp := r.X;
+        theX := tmp;
+        
+        tmp := r.Y;
+        theY := tmp
+    }
+    
+    vprop short X
+    {
+        readTo(ref short retVal)
+        {
+            retVal := theX
+        }
+    }
+    
+    vprop short Y
+    {    
+        readTo(ref short retVal)
+        {
+            retVal := theY
+        }
+    }
+}
+
+// --- SMALL_RECT --
+
+public sealed struct SMALL_RECT
+{
+    short theLeft;
+    short theTop;
+    short theRight;
+    short theBottom;
+    
+    vprop short Left
+    {
+        readTo(ref short retVal)
+        {
+            retVal := theLeft
+        }
+    }
+    
+    vprop short Top
+    {
+        readTo(ref short retVal)
+        {
+            retVal := theTop
+        }
+    }
+    
+    vprop short Right
+    {
+        readTo(ref short retVal)
+        {
+            retVal := theRight
+        }        
+    }
+    
+    vprop short Bottom
+    {
+        readBottomTo(ref short retVal)
+        {
+            retVal := theBottom
+        }
+    }
+    
+    write(SMALL_RECT r)
+    {
+        short tmp := r.Left;
+        theLeft := tmp;
+        
+        tmp := r.Top;
+        theTop := tmp;
+        
+        tmp := r.Right;
+        theRight := tmp;
+        
+        tmp := r.Bottom;
+        theBottom := tmp;
+    }
+}    

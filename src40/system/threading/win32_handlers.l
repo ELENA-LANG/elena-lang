@@ -45,16 +45,16 @@ public sealed struct ThreadHandle
     }
 }
 
-//public singleton threadControl
-//{
-//    sleep(int interval)
-//    [
-//        extern()
-//        [
-//            system'external'KERNEL32 Sleep(interval).
-//        ].
-//    ]
-//}
+public singleton threadControl
+{
+    sleep(int interval)
+    {
+        extern
+        {
+            extern KERNEL32.Sleep(interval)
+        }
+    }
+}
 
 public extension threadOp
 {

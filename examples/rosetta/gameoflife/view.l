@@ -1,31 +1,24 @@
-import cellular.
+import cellular;
 
-public extension<Space> presenterOp
+public extension presenterOp : Space
 {
-    print
-    [
-        console setCursorPosition(0, 0).
+    print()
+    {
+        console.setCursorPosition(0, 0);
         
-        int columns := self columns.
-        int rows := self rows.
+        int columns := self.Columns;
+        int rows := self.Rows;
         
-        int i := 0.
-        int j := 0.
-        while (i < rows)
-        [
-            j := 0.
-            
-            while (j < columns)
-            [
-                int cell := self getAt(i, j).
+        for(int i := 0, i < rows, i += 1)
+        {
+            for(int j := 0, j < columns, j += 1)
+            {
+                int cell := self.at(i, j);
                 
-                console write((cell == 0)iif(" ","o")).
-                
-                j := j + 1
-            ].
+                console.write((cell == 0).iif(" ","o"));
+            };
             
-            i := i + 1.
-            console writeLine
-        ].
-    ]
+            console.writeLine()
+        }
+    }
 }

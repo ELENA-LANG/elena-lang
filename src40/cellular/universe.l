@@ -63,7 +63,7 @@ public sealed class IntMatrixSpace : Space
         {
             for (int j := 0, j < theM, j+=1)
             {
-                theMatrix.write(i, j, 0)
+                theMatrix.setAt(i, j, 0)
             }
         }
     }
@@ -73,27 +73,20 @@ public sealed class IntMatrixSpace : Space
 //    [
 //        self internalUpdate(rs, theMatrix).
 //    ]
-//
-//    private internalUpdate(RuleSet rs, IntMatrix matrix)
-//    [
-//        int i := 0.
-//        int j := 0.
-//        while (i < theN)
-//        [
-//            j := 0.            
-//            while(j < theM)
-//            [
-//                int cell := 0.
-//                rs proceed(self, i, j, &cell).
-//                    
-//                matrix write(i, j, cell).
-//                
-//                j := j + 1
-//            ].
-//            
-//            i := i + 1
-//        ].
-//    ]
+
+    private internalUpdate(RuleSet rs, IntMatrix matrix)
+    {
+        for (int i := 0, i < theN, i += 1)
+        {
+            for(int j := 0, j < theM, j += 1)            
+            {
+                int cell := 0;
+                rs.proceed(self, i, j, ref cell);
+                    
+                matrix.setAt(i, j, cell)
+            }
+        }
+    }
 
     update(RuleSet rs)
     {

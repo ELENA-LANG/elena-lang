@@ -869,38 +869,29 @@ public sealed class IntMatrix
         }
     }
 
-//    /// Writes an integer value at the specified position
-//    write(int i, int j, int aValue)
-//    [
-//        theArray write(i * theColumns + j, aValue)
-//    ]
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    read(int i, int j, ref<int> anInt)
-//    [
-//        theArray read(i * theColumns + j, anInt)
-//    ]
-//
-//    embeddable int getAt(int i, int j)
-//    [
-//        int retVal := 0.
-//        self read(i, j, &retVal).
-//        ^ retVal
-//    ]
-//
-//    getAt(object i, object j)
-//    [
-//        int aValue := 0.
-//        self read(T<int>(i), T<int>(j), &aValue).
-//        
-//        ^ aValue
-//    ]
-//
-//    setAt(object i, object j, object aValue)
-//    [
-//        self write(T<int>(i), T<int>(j), T<int>(aValue)).
-//    ]
-//
+    /// Writes an integer value at the specified position
+    setAt(int i, int j, int v)
+    {
+        int index := i * theColumns + j;
+        
+        theArray[index] := v
+    }
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int i, int j, ref int retVal)
+    {
+        int index := i * theColumns + j;
+        
+        retVal := theArray[index];
+    }
+
+    embeddable int at(int i, int j)
+    {
+        int retVal := 0;
+        self.read(i, j, ref retVal);
+        ^ retVal
+    }
+
 //    /// Returns a row
 //    getAt(int i) = Indexable<int>::
 //    {

@@ -3,11 +3,12 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * ?. operator cannot be applied for invoking closures, there should be special case of that operator
+
                  * property template - should support public / internal visibility attributes
                  * fix UTF16Encoding.toString
                  * replace buble sort with quick sort
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
-                 * ?. operator cannot be applied for invoking closures, there should be special case of that operator
 
 ------                                                           
 Pipeline:

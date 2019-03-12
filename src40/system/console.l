@@ -10,7 +10,7 @@ public interface IConsoleReader
     
     abstract read(ref char retVal) {}
     
-//    abstract bool isKeyAvailable []
+    abstract get bool KeyAvailable() {}
 }
 
 // --- Console ---
@@ -72,12 +72,12 @@ sealed class Console
         theWriter.refresh();
     }
 
-//    /// Clears the console
-//    clear 
-//        => theWriter.
-//
-//    setCursorPosition(int x, int y)
-//        => theWriter.
+    /// Clears the console
+    clear()
+        => theWriter;
+
+    setCursorPosition(int x, int y)
+        => theWriter;
 
     /// Reads the next line of characters from the standard input stream.
     string readLine()
@@ -96,9 +96,9 @@ sealed class Console
         ^  ch
     }
 
-//    bool isKeyAvailable
-//        => theReader.
-//
+    get bool KeyAvailable()
+        => theReader;
+
 //    /// Reads the next key code from the input stream
 //    readKey
 //    [
