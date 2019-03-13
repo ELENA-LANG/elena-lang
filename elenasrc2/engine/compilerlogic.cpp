@@ -1001,23 +1001,6 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
    return test(info.header.flags, elReadOnlyRole);
 }
 
-//bool CompilerLogic :: injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, classClassRef))
-//      return false;
-//
-//   ref_t defaultConstructor = encodeMessage(DEFAULT_MESSAGE_ID, 0);
-//   if (!info.methods.exist(defaultConstructor, true))
-//      return false;
-//
-//   writer.insertChild(0, lxConstantClass, targetRef);
-//
-//   compiler.injectDirectMethodCall(writer, classClassRef, defaultConstructor);
-//
-//   return true;
-//}
-//
 //bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef)
 //{
 //   ClassInfo info;
@@ -1144,6 +1127,16 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleSco
 
    }
    else return false;
+}
+
+bool CompilerLogic :: injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef)
+{
+   int stackSafeAttr = 0;
+   setSignatureStacksafe(scope, scope.literalReference, stackSafeAttr);
+
+   compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef), stackSafeAttr);
+
+   return true;
 }
 
 ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
@@ -1285,7 +1278,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 //         return true;
 //      }
 //   }
-//
+
 //   // check if there are implicit constructors
 //   if (sourceRef == V_OBJARRAY) {
 //      // HOTFIX : recognize primitive object array
@@ -1295,7 +1288,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 //         test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, sourceRef, true);
 //   }
    // HOTFIX : recognize primitive data except of a constant literal
-   else if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
+   /*else */if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
       sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, ns, false);
 
    return injectImplicitConstructor(writer, scope, compiler, info, targetRef, /*elementRef, */&sourceRef, 1);

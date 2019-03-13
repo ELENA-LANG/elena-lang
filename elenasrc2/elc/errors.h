@@ -71,7 +71,7 @@ namespace _ELENA_
 //   #define errNoConstructorDefined  "%s(%d:%d): error 151: Class '%s' has no implicit or explicit constructors\n"
    #define errIllegalMethod         "%s(%d:%d): error 152: Illegal method declaration\n"
    #define errIllegalOperation      "%s(%d:%d): error 153: Illegal operation\n"
-//   #define errInvalidConstant       "%s(%d:%d): error 154: Invalid constant '%s'\n"
+   constexpr auto errInvalidConstant            = "%s(%d:%d): error 154: Invalid constant '%s'\n";
 //   #define errInvalidMultimethod    "%s(%d:%d): error 155: Invalid multimethod declararion in the class '%s'\n"
    #define errTypeNotAllowed        "%s(%d:%d): error 156: returning type attribute '%s' cannot be specified for this method\n"
    #define errNotCompatibleMulti    "%s(%d:%d): error 157: type attribute should be the same for the overloaded method '%s'\n"
@@ -84,10 +84,10 @@ namespace _ELENA_
    #define errNotAbstractClass      "%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n"
    #define errNoMethodOverload      "%s(%d:%d): error 165: An attribute '%s' cannot be applied for an already existing method\n"
    #define errIllegalPrivate        "%s(%d:%d): error 166: An attribute '%s' cannot be applied for an extension\n"
-   #define errDupPublicMethod       "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n"
+   constexpr auto errDupPublicMethod            = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
 //   #define errOneDefaultConstructor "%s(%d:%d): error 168: a class '%s' should have only one default constructor\n"
-   #define errEmptyStructure        "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n"
-   #define errReadOnlyField         "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n"
+   constexpr auto errEmptyStructure             = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
+   constexpr auto errReadOnlyField              = "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n";
    constexpr auto errDefaultConstructorNotFound = "%s(%d:%d): error 171: implicit constructor is not found for '%s'\n";
    constexpr auto errInvalidType                = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
 

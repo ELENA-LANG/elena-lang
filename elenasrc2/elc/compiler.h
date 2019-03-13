@@ -143,7 +143,7 @@ public:
       okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
-//      okExplicitConstant,             // param - reference, extraparam - subject
+      okExplicitConstant,             // param - reference, extraparam - subject
       okExtension,
       okClassSelf,                    // param - class reference; used in class resending expression
 

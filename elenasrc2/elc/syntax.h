@@ -37,7 +37,7 @@ enum Symbol
    tsCharacter                  = 0x0300B,
    tsLong                       = 0x0300C,
    tsWide                       = 0x0300D,
-//   tsExplicitConst              = 0x0300E,
+   tsExplicitConst              = 0x0300E,
    tsAttribute                  = 0x0300F,
 //   tsMember                     = 0x03010,
    tsGlobal                     = 0x03011,

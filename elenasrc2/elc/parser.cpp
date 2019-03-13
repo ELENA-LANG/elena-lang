@@ -107,9 +107,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
             case 'r':
                terminal.symbol = tsReal;
                break;
-    //        default:
-    //           terminal.symbol = tsExplicitConst;
-    //           break;
+            default:
+               terminal.symbol = tsExplicitConst;
+               break;
          }
          break;
       case dfaLong:

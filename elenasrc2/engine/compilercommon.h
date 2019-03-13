@@ -101,7 +101,7 @@ constexpr auto V_OBJECT          = 0x8000000Eu;
 constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
 
 //#define V_PARAMETER      (ref_t)-02
-//#define V_STRCONSTANT    (ref_t)-23 // used for explicit constant operations
+constexpr auto V_STRCONSTANT     = 0x80000010u; // used for explicit constant operations
 //#define V_TAPEGROUP      (ref_t)-8209
 
 namespace _ELENA_
@@ -518,6 +518,7 @@ public:
    virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr) = 0;
    virtual void injectNewOperation(SyntaxWriter& writer, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
    virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
+   virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;

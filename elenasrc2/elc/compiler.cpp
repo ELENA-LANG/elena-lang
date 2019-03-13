@@ -2356,19 +2356,21 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 //         // if it is a temporal variable
 //         object = ObjectInfo(okLocal, terminal.argument);
 //         break;
-//      case lxExplicitConst:
-//      {
-//         // try to resolve explicit constant
-//         size_t len = getlength(token);
-//         
-//         IdentifierString action(token + len - 1);
-//         ref_t dummyRef = 0;
-//         ref_t actionRef = scope.module->mapAction(action, scope.module->mapSignature(&scope.moduleScope->literalReference, 1, false), dummyRef);
-//
-//         action.copy(token, len - 1);
-//         object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(action), actionRef);
-//         break;
-//      }
+      case lxExplicitConst:
+      {
+         // try to resolve explicit constant
+         size_t len = getlength(token);
+         
+         IdentifierString action(token + len - 1);
+         action.append(CONSTRUCTOR_MESSAGE);
+         
+         ref_t dummyRef = 0;
+         ref_t actionRef = scope.module->mapAction(action, scope.module->mapSignature(&scope.moduleScope->literalReference, 1, false), dummyRef);
+
+         action.copy(token, len - 1);
+         object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(action), 0, 0, actionRef);
+         break;
+      }
       default:
          if (testany(mode, HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER | HINT_SUBJECTREF | HINT_MESSAGEREF)) {
             if (test(mode, HINT_FORWARD)) {
@@ -2396,26 +2398,27 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
          break;
    }
 
-//   if (object.kind == okExplicitConstant) {
-//      // replace an explicit constant with the appropriate object
-//      writer.newBookmark();
-//      writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
-//
-//      NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//      Pair<ref_t, ref_t>  constInfo = nsScope->extensions.get(encodeMessage(object.extraparam, 1) | SPECIAL_MESSAGE);
-//      if (constInfo.value2 != 0) {
-//         ref_t signRef = 0;
-//         scope.module->resolveAction(object.extraparam, signRef);
-//         if (!convertObject(writer, scope, constInfo.value2, V_STRCONSTANT, signRef))
-//            scope.raiseError(errInvalidConstant, terminal);
-//      }
-//      else scope.raiseError(errInvalidConstant, terminal);
-//
-//      object = ObjectInfo(okObject, constInfo.value2);
-//
-//      writer.removeBookmark();
-//   }            
-   /*else */if (!test(mode, HINT_VIRTUALEXPR)) {
+   if (object.kind == okExplicitConstant) {
+      // replace an explicit constant with the appropriate object
+      writer.newBookmark();
+      writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
+
+      ref_t messageRef = encodeMessage(object.extraparam, 1, 0);
+      NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+      Pair<ref_t, ref_t>  constInfo = nsScope->extensions.get(messageRef);
+      if (constInfo.value2 != 0) {
+         ref_t signRef = 0;
+         scope.module->resolveAction(object.extraparam, signRef);
+         if (!_logic->injectConstantConstructor(writer, *scope.moduleScope, *this, constInfo.value2, messageRef))
+            scope.raiseError(errInvalidConstant, terminal);
+      }
+      else scope.raiseError(errInvalidConstant, terminal);
+
+      object = ObjectInfo(okObject, constInfo.value2);
+
+      writer.removeBookmark();
+   }
+   else if (!test(mode, HINT_VIRTUALEXPR)) {
       writeTerminal(writer, terminal, scope, object, mode);
    }
    else if (object.kind == okUnknown)
@@ -5251,7 +5254,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
    ref_t signature[ARG_COUNT];
    size_t signatureLen = 0;
 
-//   bool constantConversion = false;
+   bool constantConversion = false;
    bool unnamedMessage = false;
    ref_t flags = 0;
 
@@ -5356,6 +5359,13 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
             unnamedMessage = false;
          }
+         else if (paramCount == 1 && !unnamedMessage && signature[0] == scope.moduleScope->literalReference) 
+         {
+            constantConversion = true;
+
+            actionStr.append(CONSTRUCTOR_MESSAGE);
+            scope.hints |= tpConstructor;
+         }
          else scope.raiseError(errIllegalMethod, node);
       }
       else if (test(scope.hints, tpConstructor) && unnamedMessage) {
@@ -5425,12 +5435,12 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
       scope.message = encodeMessage(actionRef, paramCount, flags);
 
-//      // if it is an explicit constant conversion
-//      if (constantConversion) {
-//         NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//
-//         saveExtension(*nsScope, scope.getClassRef(), 0, scope.message, false);
-//      }
+      // if it is an explicit constant conversion
+      if (constantConversion) {
+         NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
+         saveExtension(*nsScope, scope.getClassRef(), 0, scope.message, false);
+      }
    }
 
    if (scope.genericClosure) {
