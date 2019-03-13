@@ -3141,43 +3141,6 @@ public singleton realOpController
 //real public pi_value = realOpController pi.
 //
 //real public e_value = realOpController e.
-//public sealed class LongInteger :: BaseVariable, ref<long>
-//{
-//    constructor new
-//    [
-//        theValue := 0l.
-//    ]
-//    
-//    constructor new(long n) 
-//    [
-//        theValue := n.
-//    ]
-//    
-//    constructor new : n
-//        <= new(T<long>(n)).
-//        
-//    append : n
-//        <= append(T<long>(n)).
-//
-//    reduce : n
-//        <= reduce(T<long>(n)).
-//                
-//    append(long n)
-//    [
-//        long v := theValue.
-//        v := v + n.
-//        
-//        theValue := v.
-//    ]
-//    
-//    reduce(long n)
-//    [
-//        long v := theValue.
-//        v := v - n.
-//        
-//        theValue := v.
-//    ]
-//}
 
 // === basic type extensions ===
 

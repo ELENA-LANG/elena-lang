@@ -132,82 +132,88 @@ public extension outputFormatterOp
 //        ^ self
 //    ]    
 //}
-//
-//// --- formatterOp ---
-//
-//singleton helper
-//{
-//    readIndex(literal s, ref<int> i, ref<int> retVal)
-//    [
-//        char ch := $0.
-//        int  n := 0.
-//        int  v := 0.
-//        
-//        s read(T<int>(i), &ch).
-//        while (ch != $125)
-//        [
-//            intConvertor convert(ch, &n).
-//            if((n >= 30h)&&(n <= 39h))
-//            [                
-//                n := n - 30h.
-//                
-//                v := v * 10.
-//                v := v + n.
-//            ];
-//            [ InvalidArgumentException new; raise ].
-//                
-//            i append(1).
-//            s read(T<int>(i), &ch)
-//        ].
-//        
-//        retVal value := v
-//    ]
-//}
-//
-//public extension formatterOp
-//{
-//    generic printFormatted(literal s, V<object> args)
-//    [
-//        auto buffer := TextBuilder new.
-//        
-//        int  len := s length.
-//        int  i := 0.
-//        char ch := $0.
-//        int  chlen := 0.
-//        int  index := 0.
-//        
-//        while (i < len)
-//        [
-//            s read(i, &ch).
-//            
-//            if (ch == $123)
-//                [ 
-//                    i := i + 1.
-//                    
-//                    helper readIndex(s, &i, &index).
-//                    buffer write((args[index])~convertorOp toLiteral).
-//                    
-//                    chlen := 1.
-//                ];
-//                [ 
-//                    buffer write(ch). 
-//                    ch readLengthTo(&chlen)
-//                ].
-//            
-//            i := i + chlen
-//        ].
-//        
-//        self write:buffer.
-//        
-//        ^ self
-//    ]
-//    
-//    generic printLineFormatted(literal s, V<object> args)
-//    [
-//        self~formatterOp printFormatted(s, args).
-//        self writeLine.
-//    ]
-//}
+
+// --- formatterOp ---
+
+singleton helper
+{
+    readIndex(string s, ref int i, ref int retVal)
+    {
+        char ch := $0;
+        int  n := 0;
+        int  v := 0;
+        
+        s.read(i, ref ch);
+        while (ch != $125)
+        {
+            intConvertor.convert(ch, ref n);
+            if(n >= 30h && n <= 39h)
+            {              
+                n := n - 30h;
+                
+                v := v * 10;
+                v := v + n
+            }
+            else
+            { 
+                InvalidArgumentException.raise()
+            };
+              
+            i := i + 1;  
+            s.read(i, ref ch)
+        };
+        
+        retVal := v
+    }
+}
+
+public extension formatterOp
+{
+    printFormatted(string s, params object[] args)
+    {
+        auto buffer := new TextBuilder();
+        
+        int  len := s.Length;
+        int  i := 0;
+        char ch := $0;
+        int  chlen := 0;
+        int  index := 0;
+        
+        while (i < len)
+        {
+            s.read(i, ref ch);
+            
+            if (ch == $123)
+            {
+                i := i + 1;
+                
+                helper.readIndex(s, ref i, ref index);
+                
+                var arg := args[index];
+                buffer.write(arg.toString());
+                
+                chlen := 1
+            }
+            else
+            { 
+                buffer.write(ch); 
+                ch.readLengthTo(ref chlen)
+            };
+            
+            i := i + chlen
+        };
+        
+        self.write:buffer;
+        
+        ^ self
+    }
+    
+    printLineFormatted(string s, params object[] args)
+    {
+        self.printFormatted(s, params args);
+        self.writeLine();
+    }
+}
 
 // --- inputOp ---
 
