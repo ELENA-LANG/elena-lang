@@ -1,76 +1,76 @@
-import system'routines.
-import extensions.
-import extensions'text.
+import system'routines;
+import extensions;
+import extensions'text;
 
-const literal Target = "METHINKS IT IS LIKE A WEASEL".
-const literal AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ".
+const string Target = "METHINKS IT IS LIKE A WEASEL";
+const string AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-const int C = 100.
-const real P = 0.05r.
+const int C = 100;
+const real P = 0.05r;
 
-rnd = randomGenerator.
+rnd = randomGenerator;
 
 randomChar 
-    = AllowedCharacters[rnd nextInt(AllowedCharacters length)].
+    = AllowedCharacters[rnd.nextInt(AllowedCharacters.Length)];
 
 extension evoHelper
 {
-    randomString
-        = 0 till:self repeat(:x)( randomChar ); summarize(StringWriter new); literal.
+    randomString()
+        = 0.repeatTill(self).selectBy:(x => randomChar).summarize(new StringWriter());
         
-    fitnessOf:s
-        = self zip:s by(:a:b)( (a == b)iif(1,0) ); summarize(Integer new); toInt.
+    fitnessOf(s)
+        = self.zipBy(s, (a,b => a==b ? 1 : 0)).summarize(new Integer()).toInt();
         
-    mutate : p
-        = self selectBy(:ch)( (rnd nextReal <= p) iif(randomChar,ch) ); summarize(StringWriter new); literal.
+    mutate(p)
+        = self.selectBy:(ch => rnd.nextReal() <= p ? randomChar : ch).summarize(new StringWriter());
 }
 
-class EvoAlgorithm :: Enumerator
+class EvoAlgorithm : Enumerator
 {
-    object theTarget.
-    object theCurrent.
-    object theVariantCount.
+    object theTarget;
+    object theCurrent;
+    object theVariantCount;
 
-    constructor new : s of:count
-    [
-        theTarget := s.
-        theVariantCount := count toInt.
-    ]
+    constructor new:of(s,count)
+    {
+        theTarget := s;
+        theVariantCount := count.toInt();
+    }
 
-    get = theCurrent.
+    get() = theCurrent;
 
-    bool next
-    [
+    bool next()
+    {
         if (nil == theCurrent)
-            [ theCurrent := theTarget length; randomString. ^ true ].
+            { theCurrent := theTarget.Length.randomString(); ^ true };
             
         if (theTarget == theCurrent)
-            [ ^ false ].
+            { ^ false };
             
-        auto variants := Array new:theVariantCount; populate(:x)( theCurrent mutate:P ).
+        auto variants := Array.allocate(theVariantCount).populate:(x => theCurrent.mutate:P );
         
-        theCurrent := variants sort(:a:b)( a fitnessOf:Target > b fitnessOf:Target ); getAt:0.
+        theCurrent := variants.sort:(a,b => a.fitnessOf:Target > b.fitnessOf:Target ).at:0;
         
-        ^ true.
-    ] 
+        ^ true
+    } 
     
-    reset
-    [
-        theCurrent := nil.
-    ]
+    reset()
+    {
+        theCurrent := nil
+    }
     
-    enumerable => theTarget.                          
+    enumerable() => theTarget;                          
 }
 
-public program
-[
-    var attempt := Integer new.
-    EvoAlgorithm new:Target of:C; forEach(:current)
-    [
+public program()
+{
+    var attempt := new Integer();
+    EvoAlgorithm.new:Target of:C.forEach:(current)
+    {
         console 
-            printPaddingLeft(10,"#",attempt append:1);
-            printLine(" ",current," fitness: ",current fitnessOf:Target).
-    ].
+            .printPaddingLeft(10,"#",attempt.append(1))
+            .printLine(" ",current," fitness: ",current.fitnessOf(Target))
+    };
     
-    console readChar
-]
+    console.readChar()
+}

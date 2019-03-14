@@ -1,12 +1,16 @@
-﻿[project]
-executable=dynamic_var.exe
-namespace=dynamic_var
-template=vm_console
-debuginfo=-1
-
-[files]
-main.l
-
-[forwards]
-'program=dynamic_var'program
-
+<configuration>
+    <project>
+        <executable>dynamic_var.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>dynamic_var</namespace>
+        <template>vm_console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

@@ -155,14 +155,21 @@ rem ..\..\bin\elc string_prepend\string_prepend.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc evolutionary\evolutionary.prj
+..\..\bin\elc evolutionary\evolutionary.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 ..\..\bin\elc compare_str_list\complist.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc dynamic_var\dynamic_var.prj
+..\..\bin\elc dynamic_var\dynamic_var.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc firstclass\firstclass.prj
 rem ..\..\bin\elc loop_multiple_arrays\loopma.prj
 rem ..\..\bin\elc knutalg\knutalg.prj

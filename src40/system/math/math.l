@@ -276,25 +276,25 @@ public extension mathOp
 //
 //    real exp
 //        = (T<real>(self))~realOp exp.
-//    
-//    real ln
-//        = T<real>(self) ln.
-//  
-//    real log2
-//    [
-//        real x := self~mathOp ln.
-//        real y := 2~mathOp ln.
-//        
-//        ^ x / y.
-//    ]
-//        
-//    real log10
-//    [
-//        real x := self~mathOp ln.
-//        real y := 10~mathOp ln.
-//        
-//        ^ x / y.
-//    ]
+    
+    real ln()
+        = cast real(self).ln();
+  
+    real log2()
+    {
+        real x := self.ln();
+        real y := mixin mathOp(2).ln();
+        
+        ^ x / y
+    }
+        
+    real log10()
+    {
+        real x := self.ln();
+        real y := mixin mathOp(10).ln();
+        
+        ^ x / y
+    }
     
     sqrt()
         = cast real(self).sqrt();

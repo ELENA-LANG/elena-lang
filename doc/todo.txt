@@ -3,7 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * property template - should support public / internal visibility attributes
                  * fix UTF16Encoding.toString
                  * replace buble sort with quick sort
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
@@ -13,6 +12,7 @@ Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
+                 * property template - should support public / internal visibility attributes
                  * lazy::(console.write("Reading a number:").readLine().toInt()) should generate an error?
                  * embeddable get should work with nonstructure types #424
                  * embeddable eval[1]
@@ -26,15 +26,12 @@ Pipeline:
 
                  * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
                  * property attribute - can be only the top most token
-                 * implement length property optimization -> replace direct operation with byref one
                  * no need to box variadic argument list for template opertions
                  * array operation with Array<type> should be resolved directly (an array is embeddable)
                  * support - singleton Code : BaseCode;
                  * syntax : template should be the last token in expression and one before the last for declaration
-                 * it should be possible to call property accessor
                  * => operator should work with expression as well - s.toInt() => ...
                    toInt is ignored
-                 * example of external library references
                  * calc sample - support properties
                  * review elenasm - simplify the coordination info, probably it should be encoded into the log itself,
                    so no need to fill the list (what about the string in calc sample)
@@ -68,11 +65,9 @@ Pipeline:
                  * the following code - theIndexers[i] := arguments[i].indexer() - does not work correctly
                    (see SequentialEnumerator)
                  * debugger : variables inside for loop
-                 * reimplement AKS test for primes
                  * optimize SystemTime
                  * the following code should not be allowed - real n := n;
                  * uncomment __closuretape."#dispatch[1]  - check the subject correctly
-
 
                  * test unboxing with variadic arg list
 
@@ -81,12 +76,10 @@ Pipeline:
 
                  * support Array<type> constructors
 
-
                  * reddit post - Switch statement
 
                  * identifier - message message
 
-                 * migrate twentyfour, 99 Bottles of Beer, aks test for primes
                  * the following code should be supported : newLength := newLength + cast int(theLength);
                  * TokenEnumerator : class TextBuilder should not be found (system'text is not imported)
                  * test try / catch operation : method not found, printing calling stack
@@ -99,7 +92,6 @@ Pipeline:
 
                  * support c style return statement - return x;
 
-                 * uncomment _ELC_::Project::compileSources
                  * Indexer.Index property - should support abstract get and set accessors
                  * unboxing of boxing (in case if analizer does not resolve the issue)
                  * cache resolved built-in tampletes
@@ -114,10 +106,9 @@ Pipeline:
                  * interface - can the wrapper class be saved to use it several times?
                  * reimplement loop similar to lazy / direct
                  * set operation with constant array should not be allowed
+                 * vm client : incorrect error if the program entry is not defined
  
               dev - tests          
-                 * test : interpreter
-                 * test : script samples
                  * test elt
 
               exp - live programming

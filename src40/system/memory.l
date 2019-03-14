@@ -34,10 +34,10 @@ public sealed Array<T> : Indexable<T>
     };
 
 //    cast T<Indexable> = Indexable::{ /*embeddable dispatch => self.*/T<Indexer> indexer => self. }.
-//    
-//    cast Enumerable<template_subj> = Enumerable<template_subj>::{ /*embeddable dispatch => self.*/Enumerator<template_subj> enumerator => self. }.
-//
-//    cast T<Enumerable> = Enumerable::{ /*embeddable dispatch => self.*/T<Enumerator> enumerator => self. }.
+    
+//    cast Enumerable<T> = new Enumerable<T>:{ embeddable dispatch => self; };
+
+    Enumerable cast() = new Enumerable:{ Enumerator enumerator() => self; };
 
     Indexer<T> indexer() = new BaseIndexer<T>:
     {
