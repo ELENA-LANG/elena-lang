@@ -367,18 +367,18 @@ public closed class Label : BaseWinControl, interface<IControl>
 //                        hwnd:aParent hinstance:CurrentInstance object:$nil
 //    ]
 //}
-//
-//// --- BaseEdit ---
-//
-//class BaseEdit :: BaseWinControl
-//{
+
+// --- BaseEdit ---
+
+abstract class BaseEdit : BaseWinControl
+{
 //    func1 theChanged.
 //    
-//    constructor new
-//        <= new;
-//    [
-//    ]
-//    
+    constructor new()
+        <= new()
+    {
+    }
+    
 //    set onChange:aFunction
 //    [
 //        theChanged := aFunction func1.
@@ -387,9 +387,9 @@ public closed class Label : BaseWinControl, interface<IControl>
 //    wide = $self caption.
 //          
 //    literal = $self caption.
-//          
-//    value = $self caption.
-//    
+          
+    string Value = self.Caption;
+    
 //    append : aValue
 //    [
 //        $self set caption:($self caption + aValue wide).
@@ -399,57 +399,57 @@ public closed class Label : BaseWinControl, interface<IControl>
 //    [
 //        $self set caption:(aValue wide).
 //    ]          
-//    
-//    stacksafe $updateStyles vint:aRetVal
-//    [
-//        int Styles := aRetVal.
-//        
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//        if(theTabStop)
-//            [ Styles := Styles || WS_TABSTOP ].
-//            
-//        aRetVal int := Styles.
-//    ]
-//    
+    
+    internal updateStyles(ref int retVal)
+    {
+        int styles := retVal;
+        
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+        if(theTabStop)
+            { styles := styles || WS_TABSTOP };
+            
+        retVal := styles
+    }
+    
 //    change 
 //    [
 //        if($nil != theChanged)
 //            [ theChanged eval:$self ]
 //    ]
-//}
-//
-//// --- Edit ---
-//
-//sealed class Edit :: BaseEdit, icontrolof<edit>
-//{
-//    constructor new
-//        <= new;
-//    [
-//        theTabStop := true
-//    ]
-//    
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//        
-//        int Styles := WS_CHILD || WS_BORDER.
-//        $self $updateStyles vint:Styles.
-//        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:WS_EX_CLIENTEDGE
-//                        wide:EditClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:$nil.
-//    ]
-//}
-//
+}
+
+// --- Edit ---
+
+public sealed class Edit : BaseEdit, interface<IControl>
+{
+    constructor()
+        <= new()
+    {
+        theTabStop := true
+    }
+    
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+        
+        int styles := WS_CHILD || WS_BORDER;
+        self.updateStyles(ref styles);
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        WS_EX_CLIENTEDGE,
+                        EditClass, 
+                        theCaption, 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        nil)                        
+    }
+}
+
 //// --- Memo ---
 //
 //sealed class Memo :: BaseEdit, icontrolof<memo>

@@ -7,8 +7,8 @@ public const int WS_OVERLAPPEDWINDOW     = 00CF0000h;
 public const int WS_DIALOGWINDOW         = 00C80000h;
 public const int WS_CHILD                = 40000000h;
 public const int WS_VISIBLE              = 10000000h;
-//const int WS_BORDER               = 00800000h.
-//const int WS_TABSTOP              = 00010000h.
+public const int WS_BORDER               = 00800000h;
+public const int WS_TABSTOP              = 00010000h;
 //const int WS_CLIPSIBLINGS         = 04000000h.
 //const int WS_DLGFRAME             = 00400000h.
 //const int WS_POPUPWINDOW          = 80880000h.
@@ -19,7 +19,7 @@ public const int WS_VISIBLE              = 10000000h;
 //const int WS_EX_DLGMODALFRAME     = 00000001h.
 //const int WS_EX_OVERLAPPEDWINDOW  = 00000300h.
 public const int EX_SDI_OVERLAPPEDWINDOW = 00040101h;
-//const int WS_EX_CLIENTEDGE        = 00000200h.
+public const int WS_EX_CLIENTEDGE        = 00000200h;
 //const int WS_EX_CONTROLPARENT     = 00010000h.
 ////#symbol(const,int)WS_EX_NOPARENTNOTIFY    = 00000004h.
 //const int WS_EX_TRANSPARENT       = 00000020h.
@@ -93,13 +93,13 @@ public const int IDC_ARROW        = 7F00h;
 
 //const int MF_STRING        = 00000000h.
 //const int MF_POPUP         = 00000010h.
-//
-//// --- message box flags ---
+
+// --- message box flags ---
 //const int MB_ICONWARNING     = 00000030h.
-//const int MB_ICONEXCLAMATION = 00000030h.
+public const int MB_ICONEXCLAMATION = 00000030h;
 //const int MB_ICONINFORMATION = 00000040h.
 //const int MB_ICONASTERISK    = 00000040h.
-//const int MB_ICONQUESTION    = 00000020h.
+public const int MB_ICONQUESTION    = 00000020h;
 //const int MB_ICONSTOP        = 00000010h.
 //const int MB_ICONERROR       = 00000010h.
 //const int MB_ICONHAND        = 00000010h.
@@ -111,11 +111,11 @@ public const int IDC_ARROW        = 7F00h;
 //const int MB_OK                = 00000000h.
 //const int MB_OKCANCEL          = 00000001h.
 //const int MB_RETRYCANCEL       = 00000005h.
-//const int MB_YESNO             = 00000004h.
+public const int MB_YESNO             = 00000004h;
 //const int MB_YESNOCANCEL       = 00000003h.
-//
-//const int IDNO                 = 7.
+
+public const int IDNO                 = 7;
 //const int IDOK                 = 1.
 //const int IDRETRY              = 4.
 //const int IDTRYAGAIN           = 10.
-//const int IDYES                = 6.
+public const int IDYES                = 6;

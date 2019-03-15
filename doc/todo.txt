@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * Support enumeration list #265
                  * fix UTF16Encoding.toString
                  * replace buble sort with quick sort
                  * review new {a,b,c} - syntax, it is inconsisten with root expression

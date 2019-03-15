@@ -141,7 +141,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc gui_component_interaction\gui_component_interaction.prj
+..\..\bin\elc gui_component_interaction\gui_component_interaction.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc string_append\string_append.prj
 rem ..\..\bin\elc string_case\string_case.prj
 rem ..\..\bin\elc string_comparison\string_comparision.prj

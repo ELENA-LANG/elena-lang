@@ -2,7 +2,7 @@
 
 // --- classes ---
 public const wide StaticClass = "Static"w;
-//const wide EditClass   = "Edit"w.
+public const wide EditClass   = "Edit"w;
 public const wide ButtonClass = "Button"w;
 //const wide ComboboxClass = "Combobox"w.
 

@@ -17,7 +17,7 @@ public class SDIApplication //:: BaseApplication
         theMainWindow := forward MainWindow.new();
     }
     
-//    mainWindow = theMainWindow.
+    MainWindow = theMainWindow;
     
     closure()
     {
@@ -145,14 +145,16 @@ public startUp =
             {
                 forward program()
             }
-            catch(Exception e)
+            finally
             {
-                var l := e.Message
-                
-                //messageBox open literal:"ELENA" literal(e message) int:MB_ICONEXCLAMATION.
+               startUpEvents.stopping()
             }
             catch(AbortException e)
             {
+            }
+            catch(Exception e)
+            {
+                messageBox.open("ELENA", e.Message, MB_ICONEXCLAMATION)
             };
     
             //events $onStop:$nil.

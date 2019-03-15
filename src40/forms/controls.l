@@ -18,7 +18,7 @@ public class BaseControl
     bool   theVisible;
 //    bool   theEnabled.
     Region theRegion;
-//    bool   theTabStop.
+    bool   theTabStop;
     
     wide   theCaption;
     object theParent;
@@ -28,7 +28,7 @@ public class BaseControl
         theVisible := true;
 //        theEnabled := true.
         theRegion := new Region();
-//        theTabStop := false.
+        theTabStop := false;
         theCaption := emptyWideString;
     }
     
