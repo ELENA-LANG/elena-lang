@@ -1,12 +1,16 @@
-﻿[project]
-executable=firstclass.exe
-namespace=firstclass
-template=console
-debuginfo=-1
-
-[files]
-firstclass.l
-
-[forwards]
-'program=firstclass'program
-
+<configuration>
+    <project>
+        <executable>firstclass.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>firstclass</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>firstclass.l</include>
+        </module>
+    </files>
+</configuration>

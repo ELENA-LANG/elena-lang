@@ -4,21 +4,21 @@
 // Implement function composition as in Functional Composition. Finally, demonstrate that the result of applying the composition 
 // of each function in A and its inverse in B to a value, is the original value
 
-import system'routines.
-import system'math.
-import extensions'routines.
+import system'routines;
+import system'math;
+import extensions'routines;
  
 extension op
 {
-    compose : f : g
-        = (self~g eval)~f eval.
+    compose(f,g)
+        = mixin f(mixin g(self).eval()).eval();
 }
  
-program =
-[
-   var fs := (%"mathOp.sin[0]", %"mathOp.cos[0]", { eval [ ^ self power:3.0r ] }).
-   var gs := (%"mathOp.arcsin[0]", %"mathOp.arccos[0]", { eval[ ^ self power:(1.0r / 3) ]}).
+public program()
+{
+   var fs := new object[]{ %"mathOp.sin[0]", %"mathOp.cos[0]", new:{ eval() { ^ self.power:3.0r } }};
+   var gs := (%"mathOp.arcsin[0]", %"mathOp.arccos[0]", new:{ eval(){ ^ self.power:(1.0r / 3) }});
  
-   fs zip:gs by(:f:g)( 0.5r compose(f,g) );
-        forEach:printingLn.
-].
+   fs.zipBy(gs, (f,g => 0.5r.compose(f,g) )
+     .forEach:printingLn
+}

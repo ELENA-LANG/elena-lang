@@ -170,7 +170,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc firstclass\firstclass.prj
+..\..\bin\elc firstclass\firstclass.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc loop_multiple_arrays\loopma.prj
 rem ..\..\bin\elc knutalg\knutalg.prj
 rem ..\..\bin\elc manboy\manboy.prj

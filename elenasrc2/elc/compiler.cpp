@@ -3559,7 +3559,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    switch (target.kind) {
       case okLocal:
       case okField:
-//      case okStaticField:
+      case okStaticField:
       case okOuterField:
       case okOuterStaticField:
          break;

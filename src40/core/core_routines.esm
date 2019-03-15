@@ -107,15 +107,40 @@ end
 
 procedure __exception."on[2]"
 
-  popd
-  popa // exception
-  popb // block
-  pusha
-  pushd
-  acopyb
+  bcopya
+  aloadsi 2
+  open 1
+
+  hook labNotFound
+
+  pushb
   copym message : "#invoke[1]"
-  bsredirect
-  aloadsi 3
+  acallvi 0
+
+labReturn:
+
+  unhook
+
+  close
+  quitn 2
+
+labNotFound:
+
+  dloadsi 9
+  address labReturn
+  else labContinueError
+
+  restore 1
+
+  close
+  aloadsi 4
+  pusha
+
+labContinueError:
+
+  popa
+  unhook
+  pusha
   throw
 
 end
