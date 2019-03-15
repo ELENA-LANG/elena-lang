@@ -3105,15 +3105,15 @@ public singleton realOpController
 //        
 //    truncate(real aReal, ref<real> aRetVal)
 //        => system'core_routines'__real.
-//        
-//    sin(real aReal, ref<real> aRetVal)
-//        => system'core_routines'__real.
-//        
-//    cos(real aReal, ref<real> aRetVal)
-//        => system'core_routines'__real.
-//        
-//    arctan(real aReal, ref<real> aRetVal)
-//        => system'core_routines'__real.
+        
+    sin(real r, ref real retVal)
+        => system'core_routines'__real;
+        
+    cos(real r, ref real retVal)
+        => system'core_routines'__real;
+        
+    arctan(real r, ref real retVal)
+        => system'core_routines'__real;
                 
     sqrt(real r, ref real retVal)
         => system'core_routines'__real;

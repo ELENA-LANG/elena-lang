@@ -191,8 +191,8 @@ singleton mathController
     power(long n, int m)
         = mixin longOp(n).power(m);
         
-//    power(object n, object m)
-//        <= power(n value, m).
+    power(object n, object m)
+        <= power(n.Value, m);
         
     sqr(byte n)
         = n.sqr();
@@ -319,25 +319,25 @@ public extension mathOp
 //
 //    frac
 //        = (T<real>(self))~realOp frac.
-//
-//    sin
-//        = (T<real>(self))~realOp sin.
-//
-//    cos
-//        = (T<real>(self))~realOp cos.
-//
-//    tan
-//        = (T<real>(self))~realOp tan.
-//
-//    arctan
-//        = (T<real>(self))~realOp arctan.
-//            
-//    arcsin
-//        = (T<real>(self))~realOp arcsin.
-//            
-//    arccos
-//        = (T<real>(self))~realOp arccos.
-//            
+
+    sin()
+        = cast real(self).sin();
+
+    cos()
+        = cast real(self).cos();
+
+    tan()
+        = cast real(self).tan();
+
+    arctan()
+        = cast real(self).arctan();
+            
+    arcsin()
+        = cast real(self).arcsin();
+                    
+    arccos()
+        = cast real(self).arccos();
+            
 //    radian
 //        = (T<real>(self))~realOp radian.
 //            

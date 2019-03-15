@@ -758,81 +758,75 @@ public extension realOp : RealNumber
 //        
 //        ^ RealNumber new(n - aRetVal)
 //    ]
-//
-//    real sin
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController sin(n, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//
-//    real cos
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController cos(n, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//
-//    real tan
-//    [
-//        real n := self.        
-//        real aSinVal := 0.0r.
-//        real aCosVal := 0.0r.
-//        
-//        realOpController sin(n, &aSinVal).
-//        realOpController cos(n, &aCosVal).
-//        
-//        ^ RealNumber new(aSinVal / aCosVal)
-//    ]
-//
-//    real arctan
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController arctan(n, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//            
-//    real arcsin
-//    [
-//        real n := self.        
-//        real arg := 0.0r.
-//        real retVal := 0.0r.
-//        
-//        retVal := n * n.        
-//        retVal := 1.0r - retVal.        
-//        realOpController sqrt(retVal, &arg).
-//        
-//        arg := n / arg.        
-//        realOpController arctan(arg, &retVal).
-//        
-//        ^ RealNumber new(retVal)
-//    ]
-//            
-//    real arccos
-//    [
-//        real n := self.        
-//        real arg := 0.0r.
-//        real retVal := 0.0r.
-//        
-//        retVal := n * n.        
-//        retVal := 1.0r - retVal.        
-//        realOpController sqrt(retVal, &arg).
-//        
-//        arg := arg / n.        
-//        realOpController arctan(arg, &retVal).
-//        
-//        ^ RealNumber new(retVal)
-//    ]
-//            
+
+    real sin()
+    {
+        real n := self;  
+        real retVal := 0.0r;
+        
+        realOpController.sin(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+
+    real cos()
+    {
+        real n := self;
+        real retVal := 0.0r;
+        
+        realOpController.cos(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+
+    real tan()
+    {
+        real n := self;
+        
+        realOpController.sin(n, ref real sinVal);
+        realOpController.cos(n, ref real cosVal);
+        
+        ^ new RealNumber(sinVal / cosVal)
+    }
+
+    real arctan()
+    {
+        real n := self;
+        realOpController.arctan(n, ref real retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+            
+    real arcsin()
+    {
+        real n := self;
+        real retVal := 0.0r;
+        
+        retVal := n * n;    
+        retVal := 1.0r - retVal;
+        realOpController.sqrt(retVal, ref real arg);
+        
+        arg := n / arg;
+        realOpController.arctan(arg, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+            
+    real arccos()
+    {
+        real n := self;        
+        real retVal := 0.0r;
+        
+        retVal := n * n;    
+        retVal := 1.0r - retVal;        
+        realOpController.sqrt(retVal, ref real arg);
+        
+        arg := arg / n;
+        realOpController.arctan(arg, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+            
 //    real radian
 //    [
 //        real aValue := self.

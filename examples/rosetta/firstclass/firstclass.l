@@ -16,9 +16,9 @@ extension op
  
 public program()
 {
-   var fs := new object[]{ %"mathOp.sin[0]", %"mathOp.cos[0]", new:{ eval() { ^ self.power:3.0r } }};
-   var gs := (%"mathOp.arcsin[0]", %"mathOp.arccos[0]", new:{ eval(){ ^ self.power:(1.0r / 3) }});
+   var fs := new object[]{ mssgconst sin<mathOp>[0], mssgconst cos<mathOp>[0], new:{ eval() { ^ __target.power:3.0r } }};
+   var gs := new object[]{ mssgconst arcsin<mathOp>[0], mssgconst arccos<mathOp>[0], new:{ eval(){ ^ __target.power(1.0r / 3) } }};
  
-   fs.zipBy(gs, (f,g => 0.5r.compose(f,g) )
+   fs.zipBy(gs, (f,g => 0.5r.compose(f,g)))
      .forEach:printingLn
 }

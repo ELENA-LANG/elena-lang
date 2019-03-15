@@ -2651,6 +2651,36 @@ procedure __real."sqrt$system@RealNumber$@system@ref#1&system@RealNumber[3]"
 
 end
 
+procedure __real."sin$system@RealNumber$@system@ref#1&system@RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rsin
+  
+  quitn 3
+
+end
+
+procedure __real."cos$system@RealNumber$@system@ref#1&system@RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rcos
+  
+  quitn 3
+
+end
+
+procedure __real."arctan$system@RealNumber$@system@ref#1&system@RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rarctan
+  
+  quitn 3
+  
+end
+
 procedure __signature."#dispatch[1]"
 
   bloadsi 1

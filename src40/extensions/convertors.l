@@ -412,9 +412,9 @@ public extension convertorOp
 //
 //    T<long> toHexLong
 //        = longConvertor convert(self, 16).
-//    
-//    T<char> toChar
-//        = charConvertor convert:self.
+    
+    char toChar()
+        = charConvertor.convert:self;
 
     toReal()
         = realConvertor.convert:self;
