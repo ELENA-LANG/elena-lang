@@ -1243,10 +1243,10 @@ public sealed const struct UIntNumber : IntBaseNumber
         theValue := n
     }
     
-//    cast u(literal s)
-//    [
-//        theValue := intConvertor convertUnsigned(s).
-//    ]
+    cast u(string s)
+    {
+        theValue := intConvertor.convertUnsigned(s)
+    }
     
     /// return the default value
     static int Default
@@ -3114,8 +3114,8 @@ public singleton realOpController
     exp(real n, ref real retVal)
         => system'core_routines'__real;
         
-//    abs(real aReal, ref<real> aRetVal)
-//        => system'core_routines'__real.
+    abs(real r, ref real retVal)
+        => system'core_routines'__real;
         
     ln(real n, ref real retVal)
         => system'core_routines'__real;

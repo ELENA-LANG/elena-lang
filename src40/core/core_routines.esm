@@ -2708,6 +2708,16 @@ procedure __real."pi$@system@ref#1&system@RealNumber[2]"
   
 end
 
+procedure __real."abs$system@RealNumber$@system@ref#1&system@RealNumber[3]"
+
+  aloadsi 2
+  bloadsi 3
+  rabs
+
+  quitn 3
+
+end
+
 procedure __signature."#dispatch[1]"
 
   bloadsi 1

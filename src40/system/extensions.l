@@ -154,14 +154,14 @@ public extension byteOp : ByteNumber
             => system'core_routines'__int;        
     }
 
-//    byte absolute
-//    [
-//        byte n := self.
-//        if (n < 0)
-//            [ n := n * -1 ].
-//                
-//        ^ ByteNumber new(n)
-//    ]
+    get byte Absolute()
+    {
+        byte n := self;
+        if (n < 0)
+            { n := n * -1 };
+                
+        ^ new ByteNumber(n)
+    }
     
     byte mod(operand)
     {
@@ -225,14 +225,14 @@ public extension shortOp : ShortNumber
             => system'core_routines'__int;        
     }
     
-//    short absolute
-//    [
-//        short n := self.
-//        if (n < 0)
-//            [ n := n * -1 ].
-//                
-//        ^ ShortNumber new(n)
-//    ]
+    get short Absolute()
+    {
+        short n := self;
+        if (n < 0)
+            { n := n * -1 };
+                            
+        ^ new ShortNumber(n)
+    }
     
     short mod(operand)
     {
@@ -314,8 +314,6 @@ public extension intOp : IntNumber
             => system'core_routines'__int;        
     }
     
-//    int rvprop absolute :: absolute.
-    
     int sqrt()
     {
         self.sqrt(ref int n);
@@ -330,16 +328,19 @@ public extension intOp : IntNumber
         ^ n
     }
     
-//    absolute(ref<int> retVal)
-//    [
-//        int n := self.
-//
-//        if (n < 0)
-//            [ n := n * -1 ].
-//
-//        retVal value := n
-//    ]
-//    
+    vprop int Absolute
+    {
+        absolute(ref int retVal)
+        {
+            int n := self;
+    
+            if (n < 0)
+                { n := n * -1 };
+    
+            retVal := n
+        }
+    }
+
     fnprop int power
     {
         read(int y, ref int retVal)
@@ -473,15 +474,15 @@ public extension longOp : LongNumber
             => system'core_routines'__int;        
     }
     
-//    long absolute
-//    [
-//        long n := self.
-//
-//        if (n < 0l)
-//            [ n := n * -1l ].
-//                
-//        ^ LongNumber new(n)
-//    ]
+    get long Absolute()
+    {
+        long n := self;
+
+        if (n < 0l)
+            { n := n * -1l };
+                
+        ^ new LongNumber(n)
+    }
     
     long mod(n)
     {
@@ -583,16 +584,16 @@ public extension realOp : RealNumber
             => system'core_routines'__int;        
     }
     
-//    real absolute
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController abs(n, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//        
+    get real Absolute()
+    {
+        real n := self;        
+        real retVal := 0.0r;
+        
+        realOpController.abs(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+        
 //    real exp
 //    [
 //        real n := self.        
@@ -1717,58 +1718,58 @@ public extension charOp : CharValue
         ^ false
     }
     
-//    bool isDigit
-//    [
-//        int ch := 0.
-//        intConvertor convert(self, &ch).
-//        
-//        ^ (ch >= 30h) and: (ch <= 39h)
-//    ]
-//    
-//    bool isNewLine
-//    [
-//        ^ self == $10
-//    ]
-//    
-//    bool isLetter
-//    [
-//        int ch := 0.
-//        intConvertor convert(self, &ch).
-//        
-//        if ((ch >= 41h) && (ch <= 5Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 61h) && (ch <= 7Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 3ACh) && (ch <= 3CEh))
-//            [ ^ true ].
-//            
-//        if ((ch >= 400h) && (ch <= 42Fh))
-//            [ ^ true ].
-//            
-//        ^ false
-//    ]
-//    
-//    bool isLToken
-//    [
-//        int ch := 0.
-//        intConvertor convert(self, &ch).
-//        
-//        if ((ch >= 41h) && (ch <= 5Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 61h) && (ch <= 7Ah))
-//            [ ^ true ].
-//        
-//        if ((ch >= 3ACh) && (ch <= 3CEh))
-//            [ ^ true ].
-//            
-//        if ((ch >= 400h) && (ch <= 42Fh))
-//            [ ^ true ].
-//            
-//        ^ ch == 39
-//    ]
+    bool isDigit()
+    {
+        int ch := 0;
+        intConvertor.convert(self, ref ch);
+        
+        ^ (ch >= 30h) && (ch <= 39h)
+    }
+    
+    bool isNewLine()
+    {
+        ^ self == $10
+    }
+    
+    bool isLetter()
+    {
+        int ch := 0;
+        intConvertor.convert(self, ref ch);
+        
+        if (ch >= 41h && ch <= 5Ah)
+            { ^ true };
+        
+        if (ch >= 61h && ch <= 7Ah)
+            { ^ true };
+        
+        if (ch >= 3ACh && ch <= 3CEh)
+            { ^ true };
+            
+        if (ch >= 400h && ch <= 42Fh)
+            { ^ true };
+            
+        ^ false
+    }
+    
+    bool isLToken()
+    {
+        int ch := 0;
+        intConvertor.convert(self, ref ch);
+        
+        if (ch >= 41h && ch <= 5Ah)
+            { ^ true };
+        
+        if (ch >= 61h && ch <= 7Ah)
+            { ^ true };
+        
+        if (ch >= 3ACh && ch <= 3CEh)
+            { ^ true };
+            
+        if (ch >= 400h && ch <= 42Fh)
+            { ^ true };
+            
+        ^ ch == 39
+    }
 }
 
 // --- byteArrayHelper ---

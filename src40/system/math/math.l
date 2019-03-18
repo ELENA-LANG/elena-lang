@@ -6,25 +6,25 @@ singleton mathController
 ////    [
 ////        system'NotSupportedException new; raise
 ////    ]
-//    
-//    absolute(byte n)
-//        = n~byteOp absolute.
-//        
-//    absolute(short n)
-//        = n~shortOp absolute.
-//        
-//    absolute(int n)
-//        = n~intOp absolute.
-//        
-//    absolute(long n)
-//        = n~longOp absolute.
-//        
-//    absolute(real n)
-//        = n~realOp absolute.
-//        
-//    absolute:n
-//        <= absolute(n value).
-//        
+    
+    absolute(byte n)
+        = n.Absolute;
+        
+    absolute(short n)
+        = n.Absolute;
+        
+    absolute(int n)
+        = n.Absolute;
+        
+    absolute(long n)
+        = n.Absolute;
+        
+    absolute(real n)
+        = n.Absolute;
+        
+    absolute(n)
+        <= absolute(n.Value);
+        
 //    mod(byte n, object m)
 //        = n~byteOp mod:m.
 //        
@@ -222,8 +222,8 @@ singleton mathController
 
 public extension mathOp
 {
-//    absolute
-//        = mathController absolute:self.
+    Absolute
+        = mathController.absolute:self;
 
     mod(n)
         = mathController.mod(self, n);

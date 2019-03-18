@@ -36,77 +36,78 @@ public class SimpleStatemachine : Statemachine
     bool isWhitespace() = theSpaceMode;
 }
 
-//public class ExpressionStatemachine :: Statemachine
-//{
-//    bool theSpaceMode.
-//    bool theQuoteMode.
-//    bool theNewToken.
-//    bool theOperatorMode.
-//    
-//    constructor new
-//    [
-//        theSpaceMode := true.
-//        theQuoteMode := false.
-//        theNewToken := true.
-//        theOperatorMode := false.
-//    ]
-//    
-//    bool proceed(char aChar)
-//    [
-//        if (theQuoteMode)
-//            [
-//                if (aChar == $22h)
-//                    [ theQuoteMode := false. theSpaceMode := false. theNewToken := false. theOperatorMode := true ].
-//                    
-//                ^ false
-//            ].
-//        
-//        bool whitespace := aChar isWhitespace.
-//        bool digit := aChar isDigit.
-//        bool letter := aChar isLToken.
-//        if (whitespace)
-//            [
-//                ifnot(theSpaceMode)
-//                    [ theSpaceMode := true. theNewToken := true. ^ true ]
-//            ];
-//            [
-//                if (aChar == $22h)
-//                    [
-//                        ifnot(theNewToken)
-//                            [ theNewToken := true. ^ true ].
-//                        
-//                        theQuoteMode := true.
-//                        theSpaceMode := false.
-//                        
-//                        ^ false
-//                    ].
-//                                      
-//                if (theNewToken)
-//                    [ 
-//                        theNewToken := false.
-//                        theSpaceMode := false. 
-//                        if (letter or:digit)
-//                            [ theOperatorMode := false ];
-//                            [ theOperatorMode := true ].
-//                    ];
-//                    [                
-//                        if (letter || digit)
-//                            [
-//                                if(theOperatorMode)
-//                                    [ theNewToken := true. theOperatorMode := false. ^ true ]
-//                            ];
-//                            [ 
-//                                theOperatorMode := true.
-//                                theNewToken := true. ^ true
-//                            ]
-//                    ]
-//            ].
-//        
-//        ^ false
-//    ]
-//    
-//    bool isWhitespace = theSpaceMode.    
-//}
+public class ExpressionStatemachine : Statemachine
+{
+    bool theSpaceMode;
+    bool theQuoteMode;
+    bool theNewToken;
+    bool theOperatorMode;
+    
+    constructor()
+    {
+        theSpaceMode := true;
+        theQuoteMode := false;
+        theNewToken := true;
+        theOperatorMode := false
+    }
+    
+    bool proceed(char ch)
+    {
+        if (theQuoteMode)
+        {
+            if (ch == $22h)
+                { theQuoteMode := false; theSpaceMode := false; theNewToken := false; theOperatorMode := true };
+                
+            ^ false
+        };
+        
+        bool whitespace := ch.isWhitespace();
+        bool digit := ch.isDigit();
+        bool letter := ch.isLToken();
+        if (whitespace)
+        {
+            ifnot(theSpaceMode)
+                { theSpaceMode := true; theNewToken := true; ^ true }
+        }
+        else
+        {
+            if (ch == $22h)
+            {
+                ifnot(theNewToken)
+                    { theNewToken := true; ^ true };
+                
+                theQuoteMode := true;
+                theSpaceMode := false;
+                
+                ^ false
+            };
+            
+            if (theNewToken)
+            { 
+                theNewToken := false;
+                theSpaceMode := false; 
+                theOperatorMode := (letter || digit) ? false : true
+            }
+            else
+            {                
+                if (letter || digit)
+                {
+                    if(theOperatorMode)
+                        { theNewToken := true; theOperatorMode := false; ^ true }
+                }
+                else
+                { 
+                    theOperatorMode := true;
+                    theNewToken := true; ^ true
+                }
+            }                  
+        };
+        
+        ^ false
+    }
+    
+    bool isWhitespace() = theSpaceMode;    
+}
 
 public class TokenStatemachine : Statemachine
 {

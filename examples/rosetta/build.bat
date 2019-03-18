@@ -179,8 +179,16 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc loop_multiple_arrays\loopma.prj
-rem ..\..\bin\elc knutalg\knutalg.prj
+..\..\bin\elc loop_multiple_arrays\loopma.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc knutalg\knutalg.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc manboy\manboy.prj
 rem ..\..\bin\elc reverse_words_in_string\rev_words.prj
 rem ..\..\bin\elc tokenizer\tokenizer.prj
