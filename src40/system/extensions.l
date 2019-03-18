@@ -162,13 +162,13 @@ public extension byteOp : ByteNumber
 //                
 //        ^ ByteNumber new(n)
 //    ]
-//    
-//    byte mod : anOperand
-//    [
-//        var retVal := self / anOperand * anOperand.
-//        
-//        ^ byteConvertor convert(retVal)
-//    ]    
+    
+    byte mod(operand)
+    {
+        var retVal := self / operand * operand;
+        
+        ^ byteConvertor.convert(retVal)
+    }    
     
     byte power(int y)
     {
@@ -194,24 +194,24 @@ public extension byteOp : ByteNumber
 
 //    power : aPower
 //        = self~byteOp power(aPower).
-//                
-//    bool isOdd
-//        = self~byteOp mod:2 != 0.
-//        
-//    bool isEven
-//        = self~byteOp mod:2 == 0.
-//        
-//    bool isZero
-//        = self equal(0).
-//        
-//    bool isPositive
-//        = self > 0.
-//        
-//    bool isNegative
-//        = self < 0.
-//        
-//    bool isNonnegative
-//        = self <= 0.
+                
+    bool isOdd()
+        = self.mod:2 != 0;
+        
+    bool isEven()
+        = self.mod:2 == 0;
+        
+    bool isZero()
+        = self.equal(0);
+        
+    bool isPositive()
+        = self > 0;
+        
+    bool isNegative()
+        = self < 0;
+        
+    bool isNonnegative()
+        = self <= 0;
 }
 
 // --- shortOp ---
@@ -233,13 +233,13 @@ public extension shortOp : ShortNumber
 //                
 //        ^ ShortNumber new(n)
 //    ]
-//    
-//    short mod : anOperand
-//    [
-//        var retVal := self / anOperand * anOperand.
-//        
-//        ^ shortConvertor convert(retVal)
-//    ]
+    
+    short mod(operand)
+    {
+        var retVal := self / operand * operand;
+        
+        ^ shortConvertor.convert(retVal)
+    }
     
     short power(int y)
     {
@@ -266,25 +266,25 @@ public extension shortOp : ShortNumber
 
 //    power : aPower
 //        = self~shortOp power(aPower).
-//                
-//    bool isOdd
-//        = self~shortOp mod:2 != 0.
-//        
-//    bool isEven
-//        = self~shortOp mod:2 == 0.
-//        
-//    bool isZero
-//        = self equal(0).
-//        
-//    bool isPositive
-//        = self > 0.
-//        
-//    bool isNegative
-//        = self < 0.
-//        
-//    bool isNonnegative
-//        = self <= 0.
-//    
+                
+    bool isOdd()
+        = self.mod:2 != 0;
+        
+    bool isEven()
+        = self.mod:2 == 0;
+        
+    bool isZero()
+        = self.equal(0);
+        
+    bool isPositive()
+        = self > 0;
+        
+    bool isNegative()
+        = self < 0;
+        
+    bool isNonnegative()
+        = self <= 0;
+    
 //    byte high
 //    [
 //        short aWord := self.
@@ -412,21 +412,21 @@ public extension intOp : IntNumber
     bool isOdd()
         = (self && 1) != 0;
         
-//    bool isEven
-//        = self and(1) == 0.
-//        
-//    bool isZero
-//        = self equal(0).
-//        
-//    bool isPositive
-//        = self > 0.
-//        
-//    bool isNegative
-//        = self < 0.
-//        
-//    bool isNonnegative
-//        = self <= 0.
-//
+    bool isEven()
+        = self.and(1) == 0;
+        
+    bool isZero()
+        = self.equal(0);
+        
+    bool isPositive()
+        = self > 0;
+        
+    bool isNegative()
+        = self < 0;
+        
+    bool isNonnegative()
+        = self <= 0;
+
 //    high
 //    [
 //        int aWord := self.
@@ -535,25 +535,25 @@ public extension longOp : LongNumber
 
 //    power : aPower
 //        = self~longOp power(T<long>(aPower)).
-//                
-//    bool isOdd
-//        = self~longOp mod:2l != 0.
-//        
-//    bool isEven
-//        = self~longOp mod:2l == 0.
-//        
-//    bool isZero
-//        = self equal(0l).
-//        
-//    bool isPositive
-//        = self > 0l.
-//        
-//    bool isNegative
-//        = self < 0l.
-//        
-//    bool isNonnegative
-//        = self <= 0l.
-//
+                
+    bool isOdd()
+        = self.mod:2l != 0;
+        
+    bool isEven()
+        = self.mod:2l == 0;
+        
+    bool isZero()
+        = self.equal(0l);
+        
+    bool isPositive()
+        = self > 0l;
+        
+    bool isNegative()
+        = self < 0l;
+        
+    bool isNonnegative()
+        = self <= 0l;
+
 //    int high
 //    [
 //        long aWord := self.
@@ -851,18 +851,18 @@ public extension realOp : RealNumber
 //        
 //        ^ RealNumber new(1.0r / aValue)
 //    ]    
-//            
-//    bool isZero
-//        = self == 0.0r.
-//        
-//    bool isPositive
-//        = self > 0.0r.
-//        
-//    bool isNegative
-//        = self < 0.0r.
-//        
-//    bool isNonnegative
-//        = self <= 0.0r.
+            
+    bool isZero()
+        = self == 0.0r;
+        
+    bool isPositive()
+        = self > 0.0r;
+        
+    bool isNegative()
+        = self < 0.0r;
+        
+    bool isNonnegative()
+        = self <= 0.0r;
 }
 
 // --- intArrayOp ---

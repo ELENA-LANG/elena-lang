@@ -2210,12 +2210,34 @@ public sealed const struct CharValue : BaseValue
 //        
 //    bool equal(int val)
 //        = theValue == val.
-//
-//    bool equal(literal val)
-//        = val == T<literal>(self).
-//
-//    bool equal(wide val)
-//        = val == T<wide>(self).
+
+    bool equal(string val)
+    {
+        int chLen := self.Length;        
+        int ln := val.Length;
+        (ln == chLen)?
+        {
+            char ch := val[0];
+            
+            ^ self == ch;
+        };
+        
+        ^ false
+    }
+
+    bool equal(wide val)
+    {
+        int chLen := self.WideLength;        
+        int ln := val.Length;
+        (ln == chLen)?
+        {
+            char ch := val[0];
+            
+            ^ self == ch;
+        };
+        
+        ^ false
+    }
 
     bool equal(char val)
         = theValue == val;
@@ -2237,30 +2259,29 @@ public sealed const struct CharValue : BaseValue
     /// Returns the literal value
     string Printable = stringConvertor.convert(self);
 
-//    /// Returns the literal value
-//    cast T<literal> = literalConvertor convert(self).
-//    
-//    /// Returns the wide literal value
-//    cast T<wide> = wideConvertor convert(self).
-//    
-//    /// Reads the number of bytes to represent the symbol
-//    readWideLengthTo(ref<int> aRetVal)
-//    [
-//        int aLength := 0.
-//        self readLengthTo(&aLength).
-//        
-//        aLength := aLength + 1.
-//        aLength := aLength / 2.
-//
-//        aRetVal value := aLength
-//    ]
+    /// Returns the literal value
+    string cast() = stringConvertor.convert(self);
+    
+    /// Returns the wide literal value
+    wide cast() = wideConvertor.convert(self);
+    
+    /// Reads the number of bytes to represent the symbol
+    readWideLengthTo(ref int retVal)
+    {
+        self.readLengthTo(ref int length);
+        
+        length := length + 1;
+        length := length / 2;
+
+        retVal := length
+    }
 
     /// Reads the number of bytes to represent the symbol
     readLengthTo(ref int retVal)
         => system'core_routines'__char;
 
     /// Retuns the number of bytes to represent the symbol        
-    /*embeddable */get int Length()
+    get embeddable int Length()
     {
         int retVal := 0;
         
@@ -2269,15 +2290,14 @@ public sealed const struct CharValue : BaseValue
         ^ retVal
     }
 
-//    /// Retuns the number of short integers to represent the symbol
-//    embeddable int wideLength
-//    [
-//        int aLength := 0.
-//        self readWideLengthTo(&aLength).
-//        
-//        ^ aLength.
-//    ]
-//
+    /// Retuns the number of short integers to represent the symbol
+    get embeddable int WideLength()
+    {
+        self.readWideLengthTo(ref int length);
+        
+        ^ length
+    }
+
 //    // Reads the object hash code into the output parameter
 //    readHashCodeTo(ref<int> aCode)
 //        => system'core_routines'__int.

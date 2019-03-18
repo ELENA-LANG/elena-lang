@@ -41,115 +41,115 @@ singleton mathController
     mod(n, m)
         <= mod(n.Value, m);
                 
-////    isOdd value:n
-////    [
-////        system'NotSupportedException new; raise
-////    ]
-//    
-//    bool isOdd(byte n)
-//        = n~byteOp isOdd.
-//        
-//    bool isOdd(short n)
-//        = n~shortOp isOdd.
-//        
-//    bool isOdd(int n)
-//        = n~intOp isOdd.
-//        
-//    bool isOdd(long n)
-//        = n~longOp isOdd.
-//
-//    bool isOdd:n
-//        <= isOdd(n value).
-//                        
-////    isEven value:n
-////    [
-////        system'NotSupportedException new; raise
-////    ]
-//    
-//    bool isEven(byte n)
-//        = n~byteOp isEven.
-//        
-//    bool isEven(short n)
-//        = n~shortOp isEven.
-//        
-//    bool isEven(int n)
-//        = n~intOp isEven.
-//        
-//    bool isEven(long n)
-//        = n~longOp isEven.
-//
-//    bool isEven:n
-//        <= isEven(n value).
-//                
-////    isZero value:n
-////    [
-////        system'NotSupportedException new; raise
-////    ]
-//    
-//    bool isZero(byte n)
-//        = n~byteOp isZero.
-//        
-//    bool isZero(short n)
-//        = n~shortOp isZero.
-//        
-//    bool isZero(int n)
-//        = n~intOp isZero.
-//        
-//    bool isZero(long n)
-//        = n~longOp isZero.
-//        
-//    bool isZero(real n)
-//        = n~realOp isZero.
-//        
-//    bool isZero:n
-//        <= isZero(n value).
-//        
-////    isPositive value:n
-////    [
-////        system'NotSupportedException new; raise
-////    ]
-//    
-//    bool isPositive(byte n)
-//        = n~byteOp isPositive.
-//        
-//    bool isPositive(short n)
-//        = n~shortOp isPositive.
-//        
-//    bool isPositive(int n)
-//        = n~intOp isPositive.
-//        
-//    bool isPositive(long n)
-//        = n~longOp isPositive.
-//        
-//    bool isPositive(real n)
-//        = n~realOp isPositive.
-//        
-//    bool isPositive:n
-//        <= isPositive(n value).
-//        
-////    isNegative value:n
-////    [
-////        system'NotSupportedException new; raise
-////    ]
-//    
-//    bool isNegative(byte n)
-//        = n~byteOp isNegative.
-//        
-//    bool isNegative(short n)
-//        = n~shortOp isNegative.
-//        
-//    bool isNegative(int n)
-//        = n~intOp isNegative.
-//        
-//    bool isNegative(long n)
-//        = n~longOp isNegative.
-//        
-//    bool isNegative(real n)
-//        = n~realOp isNegative.
-//
-//    bool isNegative:n
-//        <= isNegative(n value).
-//                
+//    isOdd value:n
+//    [
+//        system'NotSupportedException new; raise
+//    ]
+    
+    bool isOdd(byte n)
+        = n.isOdd();
+        
+    bool isOdd(short n)
+        = n.isOdd();
+        
+    bool isOdd(int n)
+        = n.isOdd();
+        
+    bool isOdd(long n)
+        = n.isOdd();
+
+    bool isOdd(n)
+        <= isOdd(n.Value);
+                        
+//    isEven value:n
+//    [
+//        system'NotSupportedException new; raise
+//    ]
+    
+    bool isEven(byte n)
+        = n.isEven();
+        
+    bool isEven(short n)
+        = n.isEven();
+        
+    bool isEven(int n)
+        = n.isEven();
+        
+    bool isEven(long n)
+        = n.isEven();
+
+    bool isEven(n)
+        <= isEven(n.Value);
+                
+//    isZero value:n
+//    [
+//        system'NotSupportedException new; raise
+//    ]
+    
+    bool isZero(byte n)
+        = n.isZero();
+        
+    bool isZero(short n)
+        = n.isZero();
+        
+    bool isZero(int n)
+        = n.isZero();
+        
+    bool isZero(long n)
+        = n.isZero();
+        
+    bool isZero(real n)
+        = n.isZero();
+        
+    bool isZero(n)
+        <= isZero(n.Value);
+        
+//    isPositive value:n
+//    [
+//        system'NotSupportedException new; raise
+//    ]
+    
+    bool isPositive(byte n)
+        = n.isPositive();
+        
+    bool isPositive(short n)
+        = n.isPositive();
+        
+    bool isPositive(int n)
+        = n.isPositive();
+        
+    bool isPositive(long n)
+        = n.isPositive();
+        
+    bool isPositive(real n)
+        = n.isPositive();
+        
+    bool isPositive(n)
+        <= isPositive(n.Value);
+        
+//    isNegative value:n
+//    [
+//        system'NotSupportedException new; raise
+//    ]
+    
+    bool isNegative(byte n)
+        = n.isNegative();
+        
+    bool isNegative(short n)
+        = n.isNegative();
+        
+    bool isNegative(int n)
+        = n.isNegative();
+        
+    bool isNegative(long n)
+        = n.isNegative();
+        
+    bool isNegative(real n)
+        = n.isNegative();
+
+    bool isNegative(n)
+        <= isNegative(n.Value);
+                
 ////    isNonnegative value:n
 ////    [
 ////        system'NotSupportedException new; raise

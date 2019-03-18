@@ -1286,21 +1286,16 @@ public sealed const struct String : BaseValue
 
     string Printable = self;
 
-//    bool equal:n
-//    [
-//        var l := T<literal>(n) ?? nil.
-//        if (nil == l)
-//        [
-//            ^ false.
-//        ];
-//        [
-//            ^ self equal(l).
-//        ]
-//    ]
-//
-//    bool less:o
-//        <= less(T<literal>(o)).
-//        
+    bool equal(o)
+    {
+        var s := cast string(o) ?? nil;
+        (nil == s)
+            ? { ^ false } : { ^ self.equal(s) }
+    }
+
+    bool less(o)
+        <= less(cast string(o));
+        
 //    bool equal(BaseVariable v)
 //        <= equal(v value).
 //        
@@ -1315,21 +1310,21 @@ public sealed const struct String : BaseValue
     bool less(string s)
         => system'core_routines'__literal;
 
-//    /// Compares the values
-//    bool equal(wide aLiteral)
-//        = T<wide>(self) equal(aLiteral).
-//
-//    /// Compares the values
-//    bool less(wide aLiteral)
-//        = T<wide>(self) less(aLiteral).
-//
-//    /// Compares the values
-//    bool equal(char aChar)
-//        <= equal(T<literal>(aChar)).
-//
-//    /// Compares the values
-//    bool less(char aChar)
-//        <= less(T<literal>(aChar)).
+    /// Compares the values
+    bool equal(wide s)
+        = cast wide(self).equal(s);
+
+    /// Compares the values
+    bool less(wide s)
+        = cast wide(self).less(s);
+
+    /// Compares the values
+    bool equal(char ch)
+        <= equal(cast string(ch));
+
+    /// Compares the values
+    bool less(char ch)
+        <= less(cast string(ch));
 
     /// Returns the character at the specified index
     char at(int n)
@@ -1513,45 +1508,38 @@ public sealed const struct WideString : BaseValue
     /// Converts to UTF-8 literal
     string cast() = stringConvertor.convert(self);
 
-//    T<literal> literal = literalConvertor convert(self).
-//    
-//    bool equal:n
-//    [
-//        var l := T<wide>(n) ?? nil.
-//        if (nil == l)
-//        [
-//            ^ false.
-//        ];
-//        [
-//            ^ self equal(l).
-//        ]
-//    ]
-//
-//    bool less:n
-//        <= less(T<wide>(n)).
-//        
+    bool equal(o)
+    {
+        var s := cast wide(o) ?? nil;
+        (nil == s)
+            ? { ^ false } : { ^ self.equal(s) }
+    }
+
+    bool less(o)
+        <= less(cast wide(o));
+        
 //    bool equal(BaseVariable v)
 //        <= equal(v value).
 //        
 //    bool less(BaseVariable v)
 //        <= less(v value).
-//
-//    /// Compares the values
-//    bool equal(wide aLiteral)
-//        => system'core_routines'__wide.
-//
-//    /// Compares the values
-//    bool less(wide aLiteral)
-//        => system'core_routines'__wide.
-//
-//    /// Compares the values
-//    bool equal(char aChar)
-//        <= equal(T<wide>(aChar)).
-//
-//    /// Compares the values
-//    bool less(char aChar)
-//        <= less(T<wide>(aChar)).
-//
+
+    /// Compares the values
+    bool equal(wide s)
+        => system'core_routines'__wide;
+
+    /// Compares the values
+    bool less(wide s)
+        => system'core_routines'__wide;
+
+    /// Compares the values
+    bool equal(char ch)
+        <= equal(cast wide(ch));
+
+    /// Compares the values
+    bool less(char ch)
+        <= less(cast wide(ch));
+
 //    /// Returns the character at the specified index
 //    getAt : aParam
 //        <= getAt(T<int>(aParam)).

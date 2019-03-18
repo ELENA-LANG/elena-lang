@@ -896,6 +896,24 @@ procedure __wide."copy$system@WideString$system@WideString[2]"
 
 end
 
+procedure __wide."equal$system@WideString[2]"
+
+  bloadsi 2
+  callextr api : wequal
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
+procedure __wide."less$system@WideString[2]"
+
+  bloadsi 2
+  callextr api : wless
+  selectr const : system'false const : system'true
+  quitn 2
+  
+end
+
 procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
