@@ -868,13 +868,13 @@ public sealed class IntMatrix
         
 //    constructor new(Rows,Columns)
 //        <= new(T<int>(Rows), T<int>(Columns)).
-//        
-//    /// Reads the matrix lengths to the output parameter
-//    readLengthsTo(ref<int> Rows, ref<int> Columns)
-//    [
-//        Rows value := theRows.
-//        Columns value := theColumns
-//    ]
+        
+    /// Reads the matrix lengths to the output parameter
+    readLengthsTo(ref int rows, ref int columns)
+    {
+        rows := theRows;
+        columns := theColumns
+    }
 
     vprop int Length
     {
@@ -923,35 +923,35 @@ public sealed class IntMatrix
         ^ retVal
     }
 
-//    /// Returns a row
-//    getAt(int i) = Indexable<int>::
-//    {
-//        length = theColumns.
-//        
-//        Indexer<int> indexer = BaseIndexer<int>::
-//        {
-//            @theIndex := 0.
-//            
-//            @theLength := self columns.
-//            
-//            int get
-//                = self getAt(i,theIndex).
-//                
-//            set(int o)
-//            [
-//                self setAt(i,theIndex,o).
-//            ]                        
-//        }.    
-//        
-//        getAt(int j)
-//            = self getAt(i,j).
-//        
-//        setAt(int j, int aValue)
-//        [
-//            self setAt(i,j,aValue).
-//        ]
-//    }.
-//    
+    /// Returns a row
+    at(int i) = new Indexable<int>:
+    {
+        Length = theColumns;
+        
+        Indexer<int> indexer() = new BaseIndexer<int>:
+        {
+            this theIndex := 0;
+            
+            this theLength := self.Columns;
+            
+            int get()
+                = self.at(i,theIndex);
+                
+            set(int o)
+            {
+                self.setAt(i,theIndex,o);
+            }                        
+        }; 
+        
+        int at(int j)
+            = self.at(i,j);
+        
+        setAt(int j, int v)
+        {
+            self.setAt(i,j,v)
+        }
+    };
+    
 //    enumerator = Enumerator::
 //    {
 //        int i := -1.

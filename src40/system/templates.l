@@ -289,6 +289,15 @@ public for<loop_body>(init_expr, cond_expr, step_expr)
     __loop cast bool(cond_expr) ? { loop_body; step_expr }
 }
 
+// --- for statement ---
+
+public for<loop_body>(init_expr, cond_expr, step1_expr, step2_expr)
+{
+    init_expr;
+    
+    __loop cast bool(cond_expr) ? { loop_body; step1_expr; step2_expr }
+}
+
 // --- doUntil statement ---
 
 public doUntil<loop_body>(init_expr, cond_expr, step_expr)
