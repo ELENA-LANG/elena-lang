@@ -194,7 +194,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc reverse_words_in_string\rev_words.prj
+..\..\bin\elc reverse_words_in_string\rev_words.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc tokenizer\tokenizer.prj
 rem ..\..\bin\elc trigonometric\trigonometric.prj
 rem ..\..\bin\elc toppergroup\toppergroup.prj

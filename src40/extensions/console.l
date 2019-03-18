@@ -203,7 +203,7 @@ public extension formatterOp
             i := i + chlen
         };
         
-        self.write:buffer;
+        self.write(buffer.Value);
         
         ^ self
     }

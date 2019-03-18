@@ -103,7 +103,7 @@ public sealed Stack<T> : Enumerable<T>
     
     vprop int Length
     {
-        readTo(ref retVal)
+        readTo(ref int retVal)
         {
             theTop.readValueTo(ref retVal)
         }
@@ -175,79 +175,97 @@ public sealed Stack<T> : Enumerable<T>
     };
 }
 
-//// --- Queue ---
-//
-//public sealed class Queue :: Enumerable
-//{
-//    T<ArrayList> theList.
-//    ref<int>     theTop.
-//    ref<int>     theTale.
-//    
-//    constructor new
-//    [
-//        theList := ArrayList new.
-//        theTop := 0.
-//        theTale := 0.
-//    ]
-//    
-//    cast T<ArrayList> = theList.
-//    
-//    T<Enumerator> enumerator = QueueEnumerator new(self).
-//    
-//    int rvprop length :: readLengthTo.
-//    
-//    push : anObject
-//    [
-//        int aCapacity := theList length.
-//        
-//        if (theTale < aCapacity)
-//            [ theList setAt(theTale, anObject) ];
-//            [ theList append:anObject ].
-//            
-//        theTale append(1).
-//    ]
-//    
-//    peek
-//    [
-//        if (theTale == theTop)
-//            [ InvalidOperationException new:"Queue is empty"; raise ].
-//            
-//        ^ theList getAt(T<int>(theTop))
-//    ]
-//    
-//    pop
-//    [
-//        if(theTale == theTop)
-//            [ InvalidOperationException new:"Queue is empty"; raise ].
-//
-//        var item := theList getAt(T<int>(theTop)).
-//                                    
-//        theTop append(1).
-//        
-//        // reuse the space if the queue is empty
-//        if(theTale == theTop)
-//            [
-//                theTop  value := 0.
-//                theTale value := 0.
-//            ].
-//            
-//        ^ item
-//    ]
-//    
-//    readLengthTo(ref<int> aRetVal)
-//    [
-//        int n := T<int>(theTale) - T<int>(theTop).
-//        
-//        aRetVal value := n.
-//    ]
-//    
-//    clear
-//    [
-//        theList clear.
-//        theTop value :=0.
-//        theTale value:=0
-//    ]
-//    
+// --- Queue ---
+
+public sealed class Queue : Enumerable
+{
+    ArrayList theList;
+    ref<int>  theTop;
+    ref<int>  theTale;
+    
+    constructor()
+    {
+        theList := new ArrayList();
+        theTop := 0;
+        theTale := 0
+    }
+    
+    ArrayList cast() = theList;
+    
+    Enumerator enumerator() = new QueueEnumerator(self);
+
+    internal int TopPointer = theTop;
+    internal int TalePointer = theTale;    
+        
+    vprop int Length
+    {
+        readTo(ref int retVal)
+        {
+            theTale.readValueTo(ref int tale);
+            theTop.readValueTo(ref int top);
+            
+            int n := tale - top;
+            
+            retVal := n
+        }
+    }
+    
+    push(object)
+    {
+        int capacity := theList.Length;        
+        int tale := theTale.Value;
+        if (tale < capacity)
+        { 
+            theList.setAt(theTale, object) 
+        }
+        else
+        { 
+            theList.append:object 
+        };
+            
+        theTale.append(1)
+    }
+    
+    peek()
+    {
+        int top := theTop.Value;
+        int tale := theTale.Value;
+        
+        if (tale == top)
+            { InvalidOperationException.new:"Queue is empty".raise() };
+            
+        ^ theList.at(top)
+    }
+    
+    pop()
+    {
+        int top := theTop.Value;
+        int tale := theTale.Value;
+        
+        if(tale == top)
+            { InvalidOperationException.new:"Queue is empty".raise() };
+
+        var item := theList.at(top);
+                                    
+        theTop.append(1);
+        
+        // reuse the space if the queue is empty
+        if(tale == top)
+        {
+            theTop.Value := 0;
+            theTale.Value := 0
+        };
+            
+        ^ item
+    }
+        
+    clear()
+    {
+        theList.clear();
+        theTop.Value := 0;
+        theTale.Value := 0
+    }
+    
 //    shift : offset
 //    [
 //        int i := theTop.
@@ -264,106 +282,122 @@ public sealed Stack<T> : Enumerable<T>
 //        
 //        theList setAt(i, topItem)
 //    ]
-//}
-//
-//// --- Queue Template ---
-//
-//public sealed Queue<type> :: Enumerable<type>
-//{
-//    collections'List<type> theArray.
-//    ref<int>       theTop.
-//    ref<int>       theTale.
-//    
-//    constructor
-//    [
-//        theArray := collections'List<type>(8).
-//        theTop := 0.
-//        theTale := 0.
-//    ]
-//    
-//    constructor(int capacity)
-//    [
-//        theArray := collections'List<type>(capacity).
-//        theTop := 0.
-//        theTale := 0.
-//    ]
-//        
-//    int rvprop length :: readLengthTo.
-//    
-//    readLengthTo(ref<int> aLength)
-//    [
-//        int n := T<int>(theTale) - T<int>(theTop).
-//        
-//        aLength value := n.
-//    ]
-//    
+}
+
+// --- Queue Template ---
+
+public sealed Queue<T> : Enumerable<T>
+{
+    List<T>  theArray;
+    ref<int> theTop;
+    ref<int> theTale;
+    
+    constructor()
+    {
+        theArray := new List<T>(8);
+        theTop := 0;
+        theTale := 0;
+    }
+    
+    constructor allocate(int capacity)
+    {
+        theArray := new List<T>(capacity);
+        theTop := 0;
+        theTale := 0;
+    }
+        
+    vprop int Length
+    {
+        readTo(ref int retVal)
+        {
+            int top := theTop.Value;
+            int tale := theTale.Value;
+            
+            int n := tale - top;
+            
+            retVal := n
+        }
+    }
+    
 //    bool isEmpty
 //        = theTop == theTale.
 //    
 //    bool isNotEmpty
 //        = theTop != theTale.
-//    
-//    push(type anObject)
-//    [
-//        int aCapacity := theArray length.
-//        
-//        if (theTale < aCapacity)
-//            [ theArray setAt(T<int>(theTale), anObject) ];
-//            [ theArray append(anObject) ].
-//            
-//        theTale append(1).
-//    ]
-//    
-//    type peek
-//    [
-//        if (theTale == theTop)
-//            [ InvalidOperationException new:"Queue is empty"; raise ].
-//            
-//        ^ theArray getAt(T<int>(theTop))
-//    ]        
-//    
-//    type pop
-//    [
-//        if (theTale == theTop)
-//            [ InvalidOperationException new:"Queue is empty"; raise ].
-//                        
-//        type item := theArray getAt(T<int>(theTop)).
-//                        
-//        theTop append(1).
-//        
-//        // reuse the space if the queue is empty
-//        if(theTale == theTop)
-//            [
-//                theTop  value := 0.
-//                theTale value := 0.
-//            ].        
-//        
-//        ^ item
-//    ]
-//
-//    Enumerator<type> enumerator = BaseEnumerator<type>::
-//    {
-//        @theIndex := -1.
-//        
-//        @theLength := self length.
-//        
-//        type get = theArray getAt(@theIndex).
-//        
-//        enumerable = self.
-//        
-//        reset
-//        [
-//            @theIndex := -1
-//        ]
-//    }.    
-//        
-//    clear
-//    [
-//        theArray clear.
-//        theTop value :=0.
-//        theTale value:=0
-//    ]    
-//}
+    
+    push(T object)
+    {
+        int capacity := theArray.Length;
+        int tale := theTale.Value;
+        
+        if (tale < capacity)
+        { 
+            theArray.setAt(tale, object) 
+        }
+        else
+        { 
+            theArray.append(object) 
+        };
+            
+        theTale.append(1)
+    }
+    
+    T peek()
+    {
+        int top := theTop.Value;
+        int tale := theTale.Value;
+        
+        if (tale == top)
+            { InvalidOperationException.new:"Queue is empty".raise() };
+            
+        ^ theArray.at(top)
+    }        
+    
+    T pop()
+    {
+        int top := theTop.Value;
+        int tale := theTale.Value;
+        
+        if (tale == top)
+            { InvalidOperationException.new:"Queue is empty".raise() };
+                        
+        T item := theArray.at(top);
+                        
+        theTop.append(1);
+        
+        // reuse the space if the queue is empty
+        if(tale == top)
+        {
+            theTop.Value := 0;
+            theTale.Value := 0
+        };
+        
+        ^ item
+    }
+
+    Enumerator<T> enumerator() = new BaseEnumerator<T>:
+    {
+        this theIndex := -1;
+        
+        this theLength := self.Length;
+        
+        T get() = theArray.at(this theIndex);
+        
+        enumerable() = self;
+        
+        reset()
+        {
+            this theIndex := -1
+        }
+    };
+        
+    clear()
+    {
+        theArray.clear();
+        theTop.Value :=0;
+        theTale.Value:=0
+    }    
+}
 
 // --- StackEnumerator ---
 
@@ -406,29 +440,47 @@ public class StackEnumerator : Enumerator
     enumerable() = theStack;
 }
 
-//// --- QueueEnumerator ---
-//
-//class QueueEnumerator :: Enumerator
-//{
-//    T<Queue>      theQueue.
-//    T<Enumerator> theEnumerator.
-//    
-//    constructor new(Queue aQueue)
-//    [
-//        theQueue := aQueue.
-//        theEnumerator := T<ArrayList>(aQueue) enumerator.
-//    ]
-//    
-//    bool next 
-//        = theEnumerator next.
-//        
-//    get
-//        = theEnumerator get.        
-//        
-//    reset
-//    [
-//        theEnumerator reset.
-//    ]        
-//    
-//    enumerable = theQueue.
-//}
+// --- QueueEnumerator ---
+
+class QueueEnumerator : Enumerator
+{
+    Queue     theQueue;
+    ArrayList theList;
+    int       theIndex; 
+    int       theTale; 
+    
+    constructor(Queue queue)
+    {
+        theQueue := queue;
+        theList := queue;
+        
+        theIndex := queue.TopPointer;
+        theTale := queue.TalePointer
+    }
+    
+    bool next()
+    {
+        if (theIndex < theTale)
+        {
+            theIndex -= 1;
+            
+            ^ true
+        }
+        else
+        {
+            ^ false
+        }    
+    }
+        
+    get()
+        = theList[theIndex];
+        
+    reset()
+    {
+        theList := theQueue;
+        theIndex := theQueue.TopPointer;
+        theTale := theQueue.TalePointer
+    }   
+    
+    enumerable() = theQueue;
+}
