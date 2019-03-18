@@ -2699,6 +2699,15 @@ procedure __real."arctan$system@RealNumber$@system@ref#1&system@RealNumber[3]"
   
 end
 
+procedure __real."pi$@system@ref#1&system@RealNumber[2]"
+
+  bloadsi 2
+  callextr api : rpi
+  
+  quitn 2
+  
+end
+
 procedure __signature."#dispatch[1]"
 
   bloadsi 1

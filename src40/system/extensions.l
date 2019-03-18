@@ -827,24 +827,24 @@ public extension realOp : RealNumber
         ^ new RealNumber(retVal)
     }
             
-//    real radian
-//    [
-//        real aValue := self.
-//        
-//        aValue := aValue * pi_value.
-//        
-//        ^ RealNumber new(aValue / 180.0r)
-//    ]
-//            
-//    real degree
-//    [
-//        real aValue := self.
-//        
-//        aValue := aValue * 180.0r.
-//        
-//        ^ RealNumber new(aValue / pi_value)
-//    ]
-//            
+    get real Radian()
+    {
+        real value := self;
+        
+        value := value * Pi_value;
+        
+        ^ new RealNumber(value / 180.0r)
+    }
+            
+    get real Degree()
+    {
+        real value := self;
+        
+        value := value * 180.0r;
+        
+        ^ new RealNumber(value / Pi_value)
+    }
+            
 //    real reciprocal
 //    [
 //        real aValue := self.

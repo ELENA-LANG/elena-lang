@@ -259,6 +259,13 @@ public ifnot<if_block>(expr)
     cast bool(expr) ! if_block
 }
 
+// --- ifnot-else statement ---
+
+public ifnot<ifnot_block,else_block>:else(expr)
+{
+    cast bool(expr) ? else_block : ifnot_block
+}
+
 // --- while statement ---
 
 public while<loop_block>(expr)

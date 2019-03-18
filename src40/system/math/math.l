@@ -338,12 +338,12 @@ public extension mathOp
     arccos()
         = cast real(self).arccos();
             
-//    radian
-//        = (T<real>(self))~realOp radian.
-//            
-//    degree
-//        = (T<real>(self))~realOp degree.
-//            
+    Radian
+        = cast real(self).Radian;
+            
+    Degree
+        = cast real(self).Degree;
+            
 //    reciprocal
 //        = (T<real>(self))~realOp reciprocal.
 }

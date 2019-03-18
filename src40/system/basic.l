@@ -3138,29 +3138,29 @@ public singleton realOpController
     sqrt(real r, ref real retVal)
         => system'core_routines'__real;
         
-//    pi(ref<real> aRetVal)
-//        => system'core_routines'__real.
-//        
-//    embeddable real pi
-//    [
-//        real aRetVal := 0.0r.
-//        self pi(&aRetVal).
-//        
-//        ^ aRetVal
-//    ]        
-//    
-//    embeddable real e
-//    [
-//        real aRetVal := 0.0r.
-//        self exp(1.0r, &aRetVal).
-//        
-//        ^ aRetVal
-//    ]        
+    pi(ref real r)
+        => system'core_routines'__real;
+        
+    embeddable real pi()
+    {
+        real retVal := 0.0r;
+        self.pi(ref retVal);
+        
+        ^ retVal
+    }        
+    
+    embeddable real e()
+    {
+        real retVal := 0.0r;
+        self.exp(1.0r, ref retVal);
+        
+        ^ retVal
+    }        
 }
 
-//real public pi_value = realOpController pi.
-//
-//real public e_value = realOpController e.
+public real Pi_value = realOpController.pi();
+
+public real E_value = realOpController.e();
 
 // === basic type extensions ===
 

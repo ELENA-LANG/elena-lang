@@ -4,6 +4,7 @@ In development:
 
               dev - elena 4.0
                  * sta / gc : Hailstone sequence
+                 * replace new object[]{-19.0r, 7.0r, -4.0r, 6.0r} with []{-19.0r, 7.0r, -4.0r, 6.0r}?
                  * Support enumeration list #265
                  * fix UTF16Encoding.toString
                  * replace buble sort with quick sort
