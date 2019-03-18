@@ -213,21 +213,21 @@ public sealed List<T> : Enumerable<T>
         }
     };
 
-//    Indexer<type> indexer = BaseIndexer<type>::
-//    {
-//        @theIndex := 0.
-//        
-//        @theLength := self length.
-//        
-//        type get
-//            = self getAt(theIndex).
-//            
-//        set(type o)
-//        [
-//            self setAt(theIndex, o).
-//        ]
-//    }.    
-//        
+    Indexer<T> indexer() = new BaseIndexer<T>:
+    {
+        this theIndex := 0;
+        
+        this theLength := self.Length;
+        
+        T get()
+            = self.at(theIndex);
+            
+        set(T o)
+        {
+            self.setAt(theIndex, o)
+        }
+    };
+        
 //    cast T<Array>
 //    [
 //        int len := T<int>(theLength).
