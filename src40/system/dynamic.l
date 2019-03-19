@@ -35,9 +35,12 @@ public sealed const struct Message
 //    /// Loads a message
 //    constructor new(mssg message)
 //        = message.
-//
-//    T<Signature> signature
-//        => system'core_routines'__message.
+
+    MessageName getMessageName()
+        => system'core_routines'__message;
+
+    MessageName MessageName
+        = self.getMessageName();
 
     get string Printable()
     {

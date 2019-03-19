@@ -594,15 +594,15 @@ public extension realOp : RealNumber
         ^ new RealNumber(retVal)
     }
         
-//    real exp
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController exp(n, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal).
-//    ]
+    real exp()
+    {
+        real n := self;        
+        real retVal := 0.0r;
+        
+        realOpController.exp(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
     
     real ln()
     {
@@ -692,16 +692,16 @@ public extension realOp : RealNumber
         ^ new RealNumber(retVal)
     }
 
-//    real rounded
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController round(n, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//    
+    get real Rounded()
+    {
+        real n := self;        
+        real retVal := 0.0r;
+        
+        realOpController.round(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+    
 //    real round(int precision)
 //    [
 //        real a := self.
@@ -721,44 +721,44 @@ public extension realOp : RealNumber
 //    
 //        ^neg iif(a * -1.0r, a). 
 //    ]
-//    
-//    real truncate(int precision)
-//    [
-//        real a := self.
-//        bool neg := false.
-//        if(self isNegative)
-//        [
-//            a := a * -1.0r.
-//            neg := true.
-//        ].
-//       
-//        int b := 10 power:precision.
-//        real c := (a * b) integer. // returns the integer part of the real number
-//
-//        a := c / b.
-//
-//        ^(neg) iif(a * -1.0r, a). 
-//    ]
-//
-//    real integer
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//
-//        realOpController truncate(n, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
-//
-//    real frac
-//    [
-//        real n := self.        
-//        real aRetVal := 0.0r.
-//        
-//        realOpController abs(n, &aRetVal).
-//        
-//        ^ RealNumber new(n - aRetVal)
-//    ]
+    
+    real truncate(int precision)
+    {
+        real a := self;
+        bool neg := false;
+        if(self.isNegative())
+        {
+            a := a * -1.0r;
+            neg := true
+        };
+       
+        int b := 10.power(precision);
+        real c := (a * b).Integer; // returns the integer part of the real number
+
+        a := c / b;
+
+        ^ neg ? (a * -1.0r) : a 
+    }
+
+    get real Integer()
+    {
+        real n := self;
+        real retVal := 0.0r;
+
+        realOpController.truncate(n, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
+
+    real frac()
+    {
+        real n := self;
+        real retVal := 0.0r;
+        
+        realOpController.abs(n, ref retVal);
+        
+        ^ new RealNumber(n - retVal)
+    }
 
     real sin()
     {
@@ -846,12 +846,12 @@ public extension realOp : RealNumber
         ^ new RealNumber(value / Pi_value)
     }
             
-//    real reciprocal
-//    [
-//        real aValue := self.
-//        
-//        ^ RealNumber new(1.0r / aValue)
-//    ]    
+    get real Reciprocal()
+    {
+        real value := self;
+        
+        ^ new RealNumber(1.0r / value)
+    }    
             
     bool isZero()
         = self == 0.0r;
@@ -1251,25 +1251,25 @@ public extension stringOp : String
         ^ self
     }
 
-//    bool startingWith(literal s)
-//    [
-//        int n := 0.
-//        self indexOf(0, s, &n).
-//        
-//        ^ 0 == n
-//    ]
-//        
-//    bool endingWith(literal s)
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//
-//        int n := 0.
-//        self indexOf(l1 - l2, s, &n).
-//        
-//        ^ n != -1
-//    ]
-//        
+    bool startingWith(string s)
+    {
+        int n := 0;
+        self.indexOf(0, s, ref n);
+        
+        ^ 0 == n
+    }
+        
+    bool endingWith(string s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+
+        int n := 0;
+        self.indexOf(l1 - l2, s, ref n);
+        
+        ^ n != -1
+    }
+        
 //    bool containing(literal s)
 //    [
 //        int l1 := self length.
@@ -1292,38 +1292,43 @@ public extension stringOp : String
 ////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
 ////            [ ^ self ].
 ////    ]    
-//    
-//    replace(literal aReplacee, literal aReplacer)
-//    [
-//        literal aTarget := emptyLiteral.
-//        int     aStart := 0.
-//        int     anEnd := 0.
-//        int     aReplaceeLen := aReplacee length.
-//        
-//        self indexOf(aStart, aReplacee, &anEnd).
-//        
-//        while (anEnd != -1)
-//        [
-//            aTarget := aTarget
-//                add(self Substring(aStart, anEnd - aStart));
-//                add(aReplacer).
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            self indexOf(aStart, aReplacee, &anEnd)
-//        ].
-//    
-//        (aStart != 0)
-//            ? [ ^ aTarget add(self~literalOp Substring(aStart)) ]
-//            ! [ ^ self ]
-//    ]
-//    
-//    bool isEmpty
-//    [
-//        int aLength := self length.
-//        
-//        ^ aLength == 0
-//    ]    
+    
+    replace(string replacee, string replacer)
+    {
+        string target := emptyString;
+        int    start := 0;
+        int    end := 0;
+        int    replaceeLen := replacee.Length;
+        
+        self.indexOf(start, replacee, ref end);
+        
+        while (end != -1)
+        {
+            target := target
+                .add(self.Substring(start, end - start))
+                .add(replacer);
+            
+            start := end + replaceeLen;
+            
+            self.indexOf(start, replacee, ref end)
+        };
+    
+        if(start != 0)
+        {
+            ^ target.add(self.Substring(start))
+        }
+        else
+        {
+            ^ self
+        }
+    }
+    
+    bool isEmpty()
+    {
+        int length := self.Length;
+        
+        ^ length == 0
+    }
 }
 
 // --- wideOp ---
@@ -1527,15 +1532,15 @@ singleton stringOpDispatcher
 //    padLeft(wide s, char ch, int len)
 //        = s~wideOp padLeft(ch, len).
         
-//    bool startingWith(literal s, literal subs)
-//        = s~literalOp startingWith(subs).
-//
+    bool startingWith(string s, string subs)
+        = s.startingWith(subs);
+
 //    bool startingWith(wide s, wide subs)
 //        = s~wideOp startingWith(subs).
-//
-//    bool endingWith(literal s, literal subs)
-//        = s~literalOp endingWith(subs).
-//
+
+    bool endingWith(string s, string subs)
+        = s.endingWith(subs);
+
 //    bool endingWith(wide s, wide subs)
 //        = s~wideOp endingWith(subs).
 //        
@@ -1563,12 +1568,12 @@ singleton stringOpDispatcher
     trim(wide s, char ch)
         =s.trim(ch);
         
-//    replace(literal s, object src, object dst)
-//        = s~literalOp replace(T<literal>(src), T<literal>(dst)).
-//        
-//    replace(literal s, literal src, literal dst)
-//        = s~literalOp replace(src, dst).
-//        
+    replace(string s, src, dst)
+        = s.replace(cast string(src), cast string(dst));
+        
+    replace(string s, string src, string dst)
+        = s.replace(src, dst);
+        
 //    replace(wide s, wide src, wide dst)
 //        = s~wideOp replace(src, dst).
 }
@@ -1605,12 +1610,12 @@ public extension stringWeakOp
     padRight(object padSymbol, object len)
         = stringOpDispatcher.padRight(self, padSymbol, len);
 
-//    startingWith : s
-//        = stringOpDispatcher startingWith(self, s).
-//
-//    endingWith : s
-//        = stringOpDispatcher endingWith(self, s).
-//
+    startingWith(s)
+        = stringOpDispatcher.startingWith(self, s);
+
+    endingWith(s)
+        = stringOpDispatcher.endingWith(self, s);
+
 //    containing : s
 //        = stringOpDispatcher containing(self, s).
 //
@@ -1620,9 +1625,9 @@ public extension stringWeakOp
 ////        
 ////        ^ self~dispatcher replaceFirst literal:aReplacee literal:aReplacer
 ////    ]
-//    
-//    replace(aReplacee, aReplacer)
-//        = stringOpDispatcher replace(self, aReplacee, aReplacer).
+    
+    replace(replacee, replacer)
+        = stringOpDispatcher.replace(self, replacee, replacer);
     
     fillString(s, int counter)
     {

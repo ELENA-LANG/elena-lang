@@ -164,13 +164,15 @@ public sealed class StringWriter : BaseVariable
 //    [
 //        theValue := aText.
 //    ]
-//
-//    constructor new(literal s, int count)
-//    [
-//        theValue := emptyLiteral.
-//        
-//        0 till:count do(:i)[ self append(s) ].
-//    ]
+
+    constructor(string s, int count)
+        <= ()
+    {
+        for (int i := 0, i < count, i += 1)
+        {
+            self.append(s);
+        }
+    }
     
     write(string s)
     {
@@ -202,16 +204,16 @@ public sealed class StringWriter : BaseVariable
 //    [
 //        theValue := theValue insert:s at:index.
 //    ]
-//
-//    replace(literal s, literal s2)
-//    [
-//        theValue := theValue replace(s, s2).
-//    ]
-//    
-//    replace(object s, object s2)
-//    [
-//        theValue := theValue replace(s literal, s2 literal).
-//    ]
+
+    replace(string s, string s2)
+    {
+        theValue := theValue.replace(s, s2)
+    }
+    
+    replace(object s, object s2)
+    {
+        theValue := theValue.replace(cast string(s), cast string(s2))
+    }
     
     clear()
     {

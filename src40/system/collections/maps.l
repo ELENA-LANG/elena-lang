@@ -108,6 +108,19 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
     
     Array<Tuple<TKey, TValue>> Values = theList.Value;
 
+    get TValue[] MapValues()
+    {
+        auto list := new List<TValue>();
+        auto it := theList.enumerator();
+        while (it.next())
+        {
+            list.append(it.get().Item2)
+        };
+        
+        ^ list.Value
+    }
+
+
 //    /// Clones a dictionary
 //    clone 
 //    [

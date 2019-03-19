@@ -152,94 +152,96 @@ public sealed class TextBuilder
         }
     }
 
-//    private readIndex(literal s, ref<int> i, ref<int> retVal)
-//    [
-//        char ch := $0.
-//        int  n := 0.
-//        int  v := 0.
-//        
-//        int i_val := i.
-//        
-//        s read(i_val, &ch).
-//        while (ch != $125)
-//        [
-//            intConvertor convert(ch, &n).
-//            if((n >= 30h)and:(n <= 39h))
-//            [                
-//                n := n - 30h.
-//                
-//                v := v * 10.
-//                v := v + n.
-//            ];
-//            [ InvalidArgumentException new; raise ].
-//                
-//            i append(1).
-//            i_val := i.
-//            s read(i_val, &ch)
-//        ].
-//        
-//        retVal value := v
-//    ]
-//
-//    generic writeFormatted(literal s, V<object> args)
-//    [
-//        int  len := s length.
-//        int  i := 0.
-//        char ch := $0.
-//        int  chlen := 0.
-//        int  index := 0.
-//        
-//        while (i < len)
-//        [
-//            s read(i, &ch).
-//            
-//            if (ch == $123)
-//                [ 
-//                    i := i + 1.
-//                    
-//                    self readIndex(s, &i, &index).
-//                    self write(args[index]).
-//                    
-//                    chlen := 1.
-//                ];
-//                [ 
-//                    self write(ch).
-//                    ch readLengthTo(&chlen)
-//                ].
-//            
-//            i := i + chlen
-//        ]
-//    ]
-//
-//    fill(literal s, int counter)
-//    [
-//        int i := 0.
-//        while (i < counter)
-//        [
-//            self write(s).
-//        ]
-//    ]
-//
-//    fill(wide s, int counter)
-//    [
-//        int i := 0.
-//        while (i < counter)
-//        [
-//            self write(s).
-//        ]
-//    ]
-//
-//    fill(char ch, int counter)
-//    [
-//        int i := 0.
-//        while (i < counter)
-//        [
-//            self write(ch).
-//            
-//            i += 1
-//        ]
-//    ]
-//
+    private readIndex(string s, ref int i, ref int retVal)
+    {
+        char ch := $0;
+        int  n := 0;
+        int  v := 0;
+        
+        int i_val := i;
+        
+        s.read(i_val, ref ch);
+        while (ch != $125)
+        {
+            intConvertor.convert(ch, ref n);
+            if(n >= 30h && n <= 39h)
+            {               
+                n := n - 30h;
+                
+                v := v * 10;
+                v := v + n
+            }
+            else
+            { 
+                InvalidArgumentException.raise()
+            };
+                
+            i := i + 1;
+            i_val := i;
+            s.read(i_val, ref ch)
+        };
+        
+        retVal := v
+    }
+
+    writeFormatted(string s, params object[] args)
+    {
+        int  len := s.Length;
+        int  i := 0;
+        char ch := $0;
+        int  chlen := 0;
+        int  index := 0;
+        
+        while (i < len)
+        {
+            s.read(i, ref ch);
+            
+            if (ch == $123)
+            { 
+                i := i + 1;
+                
+                self.readIndex(s, ref i, ref index);
+                self.write(args[index]);
+                
+                chlen := 1
+            }
+            else
+            {
+                self.write(ch);
+                chlen := ch.Length
+            };
+            
+            i := i + chlen
+        }
+    }
+
+    fill(string s, int counter)
+    {
+        for (int i := 0, i < counter, i += 1)
+        {
+            self.write(s)
+        }
+    }
+
+    fill(wide s, int counter)
+    {
+        for (int i := 0, i < counter, i += 1)
+        {
+            self.write(s)
+        }
+    }
+
+    fill(char ch, int counter)
+    {
+        int i := 0;
+        while (i < counter)
+        {
+            self.write(ch);
+            
+            i += 1
+        }
+    }
+
 //    insert(int anIndex, int aLength, CharArray anArray)
 //    [
 //        self reserve(aLength).

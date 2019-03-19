@@ -260,14 +260,14 @@ public class IntBaseNumber : BaseNumber
 //    [
 //        system'NotSupportedException new; raise.
 //    ]
-//    
-//    /// Returns true if all the mask bits are set
-//    bool allMask : anOperand
-//        = self and:anOperand == anOperand.
-//        
-//    /// Returns true if any of the mask bits are set    
-//    bool anyMask : anOperand
-//        = 0 != self and:anOperand.
+    
+    /// Returns true if all the mask bits are set
+    bool allMask(operand)
+        = self.and:operand == operand;
+        
+    /// Returns true if any of the mask bits are set    
+    bool anyMask(operand)
+        = 0 != self.and:operand;
 }
 
 // --- ByteNumber ---
@@ -1218,6 +1218,23 @@ public sealed const struct IntNumber : IntBaseNumber
     /// Negates the value
     int Negative
         = 0 - theValue;
+        
+    /// Returns true if all the mask bits are set
+    bool allMask(int operand)
+    {
+        int v := operand && theValue;
+        
+        ^ v == operand
+    }
+        
+    /// Returns true if any of the mask bits are set    
+    bool anyMask(int operand)
+    {
+        int v := operand && theValue;
+        
+        ^ v != 0
+    }
+        
 }
 
 // --- UIntNumber ---
@@ -2722,8 +2739,8 @@ public singleton intConvertor
     convert(real real, ref int retVal)
         => system'core_routines'__intconvertor;
 
-//    int convert(BaseVariable v)
-//        <= convert(v value).
+    int convert(BaseVariable v)
+        <= convert(v.Value);
         
     /// Converts a literal string into an integer
     int convert(string s)
@@ -3120,11 +3137,11 @@ public singleton realOpController
     ln(real n, ref real retVal)
         => system'core_routines'__real;
         
-//    round(real aReal, ref<real> aRetVal)
-//        => system'core_routines'__real.
-//        
-//    truncate(real aReal, ref<real> aRetVal)
-//        => system'core_routines'__real.
+    round(real r, ref real retVal)
+        => system'core_routines'__real;
+        
+    truncate(real r, ref real retVal)
+        => system'core_routines'__real;
         
     sin(real r, ref real retVal)
         => system'core_routines'__real;

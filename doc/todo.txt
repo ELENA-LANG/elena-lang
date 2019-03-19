@@ -3,6 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
+                   Short-circuit evaluation, Set of real numbers  
                  * sta / gc : Hailstone sequence
                  * replace new object[]{-19.0r, 7.0r, -4.0r, 6.0r} with []{-19.0r, 7.0r, -4.0r, 6.0r}?
                  * Support enumeration list #265

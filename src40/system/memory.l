@@ -2357,13 +2357,13 @@ public singleton wideConvertor
 /// An Unicode character convertor
 public singleton charConvertor
 {
-//    /// Converts a byte value into a character and saves the result into an output parameter
-//    convert(byte aValue, ref<char> aRetVal)
-//        => system'core_routines'__charconvertor.
-//
-//    /// Converts a short integer into a character and saves the result into an output parameter
-//    convert(short aValue, ref<char> aRetVal)
-//        => system'core_routines'__charconvertor.
+    /// Converts a byte value into a character and saves the result into an output parameter
+    convert(byte n, ref char retVal)
+        => system'core_routines'__charconvertor;
+
+    /// Converts a short integer into a character and saves the result into an output parameter
+    convert(short n, ref char retVal)
+        => system'core_routines'__charconvertor;
 
     /// Converts an integer into a character and saves the result into an output parameter
     convert(int n, ref char retVal)
@@ -2376,14 +2376,14 @@ public singleton charConvertor
     char convert(char ch)
         = new CharValue(ch);
   
-//    internal convert(int anIndex, literal aLiteral, ref<char> char)
-//        => system'core_routines'__charconvertor.
-//        
-//    internal convert(int anIndex, ByteArray aLiteral, ref<char> char)
-//        => system'core_routines'__charconvertor.
-//  
-//    internal convert(int anIndex, wide aLiteral, ref<char> char)
-//        => system'core_routines'__charconvertor.
+    internal convert(int index, string s, ref char char)
+        => system'core_routines'__charconvertor;
+        
+    internal convert(int index, byte[] s, ref char char)
+        => system'core_routines'__charconvertor;
+  
+    internal convert(int index, wide s, ref char char)
+        => system'core_routines'__charconvertor;
 
     internal convert(int index, short[] buffer, ref char char)
         => system'core_routines'__charconvertor;
@@ -2394,55 +2394,49 @@ public singleton charConvertor
     internal save(char ch, int index, byte[] charArray, ref int length)
         => system'core_routines'__charconvertor;
 
-//    /// Converts a literal string into a character
-//    char convert(literal aValue)
-//    [
-//        char aRetVal := $0.
-//        self convert(0, aValue, &aRetVal).
-//        
-//        int l1 := 0.
-//        int l2 := aValue length.
-//        aRetVal readLengthTo(&l1).
-//        
-//        (l1 != l2)
-//            ? [ system'InvalidArgumentException new; raise ].
-//        
-//        ^ CharValue new(aRetVal)
-//    ]        
-//        
-//    /// Converts a wide literal string into a character                
-//    char convert(wide aValue)
-//    [
-//        char aRetVal := $0.
-//        self convert(0, aValue, &aRetVal).
-//
-//        int l1 := 0.
-//        int l2 := aValue length.
-//        aRetVal readWideLengthTo(&l1).
-//                
-//        (l1 != l2)
-//            ? [ system'InvalidArgumentException new; raise ].
-//        
-//        ^ CharValue new(aRetVal)
-//    ]        
-//        
-//    /// Converts a byte value into a character
-//    char convert(byte aValue)
-//    [
-//        char aRetVal := $0.
-//        self convert(aValue, &aRetVal).
-//        
-//        ^ CharValue new(aRetVal)
-//    ]        
-//        
-//    /// Converts a short integer into a character
-//    char convert(short aValue)
-//    [
-//        char aRetVal := $0.
-//        self convert(aValue, &aRetVal).
-//        
-//        ^ CharValue new(aRetVal)
-//    ]        
+    /// Converts a literal string into a character
+    char convert(string s)
+    {
+        self.convert(0, s, ref char retVal);
+        
+        int l1 := retVal.Length;
+        int l2 := s.Length;
+        
+        (l1 != l2)
+            ? { InvalidArgumentException.new().raise() };
+        
+        ^ new CharValue(retVal)
+    }        
+        
+    /// Converts a wide literal string into a character                
+    char convert(wide s)
+    {
+        self.convert(0, s, ref char retVal);
+
+        int l1 := retVal.Length;
+        int l2 := s.Length;
+                
+        (l1 != l2)
+            ? { InvalidArgumentException.new().raise() };
+        
+        ^ new CharValue(retVal)
+    }      
+        
+    /// Converts a byte value into a character
+    char convert(byte n)
+    {
+        self.convert(n, ref char retVal);
+        
+        ^ new CharValue(retVal)
+    }        
+        
+    /// Converts a short integer into a character
+    char convert(short n)
+    {
+        self.convert(n, ref char retVal);
+        
+        ^ new CharValue(retVal)
+    }
         
     /// Converts an integer into a character
     char convert(int n)

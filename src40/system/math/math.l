@@ -154,24 +154,24 @@ singleton mathController
 ////    [
 ////        system'NotSupportedException new; raise
 ////    ]
-//    
-//    bool isNonnegative(byte n)
-//        = n~byteOp isNonnegative.
-//        
-//    bool isNonnegative(short n)
-//        = n~shortOp isNonnegative.
-//        
-//    bool isNonnegative(int n)
-//        = n~intOp isNonnegative.
-//        
-//    bool isNonnegative(long n)
-//        = n~longOp isNonnegative.
-//        
-//    bool isNonnegative(real n)
-//        = n~realOp isNonnegative.
-//
-//    bool isNonnegative:n
-//        <= isNonnegative(n value).
+    
+    bool isNonnegative(byte n)
+        = n.isNonnegative();
+        
+    bool isNonnegative(short n)
+        = n.isNonnegative();
+        
+    bool isNonnegative(int n)
+        = n.isNonnegative();
+        
+    bool isNonnegative(long n)
+        = n.isNonnegative();
+        
+    bool isNonnegative(real n)
+        = n.isNonnegative();
+
+    bool isNonnegative(n)
+        <= isNonnegative(n.Value);
                 
     real power(real n, int m)
         = mixin realOp(n).power(m);
@@ -228,61 +228,65 @@ public extension mathOp
     mod(n)
         = mathController.mod(self, n);
 
-//    bool isOdd
-//        = mathController isOdd(self).
-//
-//    bool isEven
-//        = mathController isEven(self).
-//
-//    bool isZero
-//        = mathController isZero(self).
-//
-//    bool isPositive
-//        = mathController isPositive(self).
-//
-//    bool isNegative
-//        = mathController isNegative(self).
-//
-//    bool isNonnegative
-//        = mathController isNonnegative(self).
-//
-//    real floor
-//    [
-//        real x := T<real>(self).
-//        
-//        if (x >= 0)
-//        [
-//            ^ x integer.
-//        ];
-//        [
-//            real y := x integer.
-//            
-//            ^ (y == x)iif(y,y-1).
-//        ].
-//    ]
-//
-//    real ceil
-//    [
-//        real x := T<real>(self).
-//        
-//        x := x * (-1.0r).
-//        
-//        x := x~mathOp floor.
-//        
-//        x := x * (-1.0r).
-//        
-//        ^ x.
-//    ]
-//
-//    real exp
-//        = (T<real>(self))~realOp exp.
+    bool isOdd()
+        = mathController.isOdd(self);
+
+    bool isEven()
+        = mathController.isEven(self);
+
+    bool isZero()
+        = mathController.isZero(self);
+
+    bool isPositive()
+        = mathController.isPositive(self);
+
+    bool isNegative()
+        = mathController.isNegative(self);
+
+    bool isNonnegative()
+        = mathController.isNonnegative(self);
+
+    real floor()
+    {
+        real x := cast real(self);
+        
+        if (x >= 0)
+        {
+            ^ x.Integer
+        }
+        else
+        {
+            real y := x.Integer;
+            
+            ^ (y == x).iif(y,y-1)
+        }
+    }
+
+    real ceil()
+    {
+        real x := cast real(self);
+        
+        if (x < 0)
+        {
+            ^ x.Integer
+        }
+        else
+        {
+            real y := x.Integer;
+            
+            ^ (y == x).iif(y,y+1)
+        }
+    }
+
+    real exp()
+        = cast real(self).exp();
     
     real ln()
         = cast real(self).ln();
   
     real log2()
     {
-        real x := self.ln();
+        real x := mixin mathOp(self).ln();
         real y := mixin mathOp(2).ln();
         
         ^ x / y
@@ -290,7 +294,7 @@ public extension mathOp
         
     real log10()
     {
-        real x := self.ln();
+        real x := mixin mathOp(self).ln();
         real y := mixin mathOp(10).ln();
         
         ^ x / y
@@ -305,20 +309,20 @@ public extension mathOp
     sqr()
         = mathController.sqr(self);
         
-//    rounded
-//        = T<real>(self) rounded.
-//
-//    roundedInt
-//        = intConvertor convert(T<real>(self) rounded).
-//
-//    integer
-//        = (T<real>(self))~realOp integer.
-//
-//    integerInt
-//        = intConvertor convert((T<real>(self))~realOp integer).
-//
-//    frac
-//        = (T<real>(self))~realOp frac.
+    Rounded
+        = cast real(self).Rounded;
+
+    RoundedInt
+        = intConvertor.convert(cast real(self).Rounded);
+
+    Integer
+        = cast real(self).Integer;
+
+    IntegerInt
+        = intConvertor.convert(cast real(self).Integer);
+
+    frac()
+        = cast real(self).frac();
 
     sin()
         = cast real(self).sin();
@@ -344,6 +348,6 @@ public extension mathOp
     Degree
         = cast real(self).Degree;
             
-//    reciprocal
-//        = (T<real>(self))~realOp reciprocal.
+    Reciprocal
+        = cast real(self).Reciprocal;
 }

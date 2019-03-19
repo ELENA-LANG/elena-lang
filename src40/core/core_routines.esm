@@ -1208,6 +1208,121 @@ labCopy:
 
 end
 
+procedure __charconvertor."convert$system@ByteNumber$@system@ref#1&system@CharValue[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+
+  lessn labErr 0
+  lessn labCopy 080h
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+labCopy:
+
+  nsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __charconvertor."convert$system@ShortNumber$@system@ref#1&system@CharValue[3]"
+  
+  bloadsi 3
+  aloadsi 2
+  nload
+
+  lessn labErr 0
+  lessn labCopy 010000h
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+labCopy:
+
+  nsave
+  acopyb
+  quitn 3
+
+end
+
+procedure __charconvertor."system$$convert$system@IntNumber$system@String$@system@ref#1&system@CharValue[4]"
+  
+  aloadsi 2
+  nload
+  aloadsi 3
+
+  callextr api : strtochar
+  ifr   labErr 0
+
+  dcopye
+  bloadsi 4
+  nsave
+  acopyb
+  quitn 4
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@CharValue[4]"
+  
+  aloadsi 2
+  nload
+  aloadsi 3
+
+  callextr api : strtochar
+  ifr   labErr 0
+
+  dcopye
+  bloadsi 4
+  nsave
+  acopyb
+  quitn 4
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
+procedure __charconvertor."system$$convert$system@IntNumber$system@WideString$@system@ref#1&system@CharValue[4]"
+  
+  aloadsi 2
+  nload
+  aloadsi 3
+
+  callextr api : wstrtochar
+  ifr   labErr 0
+
+  dcopye
+  bloadsi 4
+  nsave
+  acopyb
+  quitn 4
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
+end
+
 procedure __args."read:Length$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
@@ -2323,6 +2438,32 @@ labError:
 
 end
 
+procedure __message."copy$system@Message$system@IntNumber[2]"
+
+  aloadsi 2  
+  bloadsi 1
+  nload
+  nsave
+  quitn 2
+
+end
+
+procedure __message."getMessageName[1]"
+
+  pusha
+  newn   class : system'MessageName 4
+  bcopya
+  popa
+  nload
+  ecopyd
+  dcopyverb
+  nsave
+  acopyb
+
+  quitn 1
+
+end
+
 procedure __extmessage."#dispatch[1]"
 
   bloadsi 1
@@ -2714,6 +2855,26 @@ procedure __real."abs$system@RealNumber$@system@ref#1&system@RealNumber[3]"
   bloadsi 3
   rabs
 
+  quitn 3
+
+end
+
+procedure __real."round$system@RealNumber$@system@ref#1&system@RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  rround
+  
+  quitn 3
+
+end
+
+procedure __real."truncate$system@RealNumber$@system@ref#1&system@RealNumber[3]"
+
+  aloadsi 2  
+  bloadsi 3
+  rint
+  
   quitn 3
 
 end

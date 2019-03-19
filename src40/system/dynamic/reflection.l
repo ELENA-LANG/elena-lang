@@ -1,10 +1,10 @@
-//////#symbol $classControl =
-//////{
-//////    #method(stacksafe) readLength : anObject &vint:aLength        
-//////        => system'core_routines'arrptr_getLen.        
-//////}.
-////
-////type mssgarray = array<Message>.
+import system'collections;
+
+////#symbol $classControl =
+////{
+////    #method(stacksafe) readLength : anObject &vint:aLength        
+////        => system'core_routines'arrptr_getLen.        
+////}.
 
 // --- classOp ---
 
@@ -31,28 +31,52 @@ public extension classROp
 //        
 ////    stacksafe respondTo mssg:aMessage
 ////        => system'core_routines'__object.
-//
-//    Array<Message> __messages
-//    [
-//        dirty_ptr class := self~objectOp __class.
-//
-//        T<int,256> tmp_array.
-//        int retVal := system'external core_readvmt(0,class,256,T<IntArray>(tmp_array)).
-//
-//        Array<Message> array := V<Message>(retVal).
-//        int i := 0.
-//        while (i < retVal)
-//        [
-//           T<Message> message.
-//           system'core_routines'__message copy(message, tmp_array[i]).
-//            
-//           array[i] := message.
-//            
-//           i += 1.
-//        ].
-//
-//        ^ array.
-//    ]
+
+    Message[] __getMessages()
+    {
+        dirty_ptr class := self/*.__getClass()*/;
+
+        int tmp_array[256];
+        int retVal := extern elenart.core_readvmt(0,class,256,tmp_array);
+
+        List<Message> list := new List<Message>();
+        for(int i := 0, i < retVal, i += 1)
+        {
+           ifnot (tmp_array[i].anyMask(60h))
+           {
+               Message message;
+               intern system'core_routines'__message.copy(message, tmp_array[i]);
+               
+               list.append(message);
+           };
+        };
+
+        ^ list.Value
+    }
+    
+    MessageName[] __getProperties()
+    {
+        dirty_ptr class := self/*.__getClass()*/;
+
+        int tmp_array[256];
+        int retVal := extern elenart.core_readvmt(0,class,256,tmp_array);
+
+        auto list := new List<MessageName>();
+        for(int i := 0, i < retVal, i += 1)
+        {
+           if (tmp_array[i].allMask(40h))
+           {
+               Message message;
+               intern system'core_routines'__message.copy(message, tmp_array[i]);
+               
+               MessageName prop := message.MessageName;
+               
+               list.append(prop);
+           };
+        };
+
+        ^ list.Value
+    }
     
     setFields(params object[] objects)
     {

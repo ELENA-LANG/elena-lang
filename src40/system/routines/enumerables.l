@@ -296,20 +296,20 @@ public extension enumerableOp
         ^ counter
     }
     
-//    allMatchedBy(Func1 f)
-//    [
-//        auto   en := T<Enumerator>(self enumerator).
-//        while (en next)
-//        [
-//            ifnot (f(en get))
-//            [
-//                ^ false
-//            ]
-//        ].
-//        
-//        ^ true.
-//    ]
-//    
+    allMatchedBy(Func1 f)
+    {
+        auto   en := cast Enumerator(self.enumerator());
+        while (en.next())
+        {
+            ifnot (f(en.get()))
+            {
+                ^ false
+            }
+        };
+        
+        ^ true
+    }
+    
 //    allMatchedBy(ExtensionMessage extMessage)
 //        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
 
