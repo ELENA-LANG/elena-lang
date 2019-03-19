@@ -13,12 +13,12 @@ public sealed class TextBuilder
         theLength := 0;
     }
 
-//    constructor new : value
-//        <= new;
-//    [
-//        self write(value).
-//    ] 
-//
+    constructor load(value)
+        <= ()
+    {
+        self.write(value)
+    } 
+
     vprop int Length
     {
         read(ref int retVal)
@@ -135,10 +135,10 @@ public sealed class TextBuilder
         self.write(ch_tmp, len)
     }
 
-//    write : anObject
-//    [
-//        self write(anObject literal).
-//    ]
+    write(object)
+    {
+        self.write(cast string(object))
+    }
 
     write(char[] array, int length)
     {

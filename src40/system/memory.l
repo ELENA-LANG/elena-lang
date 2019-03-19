@@ -1806,10 +1806,10 @@ public sealed Array : Indexable//, Array<object>
 {
     __string object[] theArray;
     
-//    /// Creates an empty array
-//    constructor min
-//        = dynamic<object>(0).
-//    
+    /// Creates an empty array
+    constructor MinValue
+        = new object[](0);
+    
 //    /// Creates the array with the specified length
 //    constructor new : aLength
 //        <= new(T<int>(aLength)).

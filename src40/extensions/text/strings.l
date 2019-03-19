@@ -160,10 +160,10 @@ public sealed class StringWriter : BaseVariable
         theNewLine := forward newLine;
     }
     
-//    constructor new : aText
-//    [
-//        theValue := aText.
-//    ]
+    constructor load(string s)
+    {
+        theValue := s
+    }
 
     constructor(string s, int count)
         <= ()

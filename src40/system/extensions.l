@@ -1143,9 +1143,9 @@ public extension stringOp : String
 //
 //    indexOf(char aChar)
 //        = self indexOf:aChar at:0.
-//        
-//    literal Substring : anIndex
-//        = self~literalOp Substring(T<int>(anIndex)).
+        
+    string Substring(index)
+        = self.Substring(cast int(index));
         
     string Substring(int index)
     {
@@ -1270,28 +1270,27 @@ public extension stringOp : String
         ^ n != -1
     }
         
-//    bool containing(literal s)
+    bool containing(string s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+
+        self.indexOf(0, s, ref int n);
+        
+        ^ n != -1
+    }
+
+//    replaceFirst literal:aReplacee literal:aReplacer
 //    [
-//        int l1 := self length.
-//        int l2 := s length.
-//
-//        int n := 0.
-//        self indexOf(0, s, &n).
+//        int aReplaceeLen := aReplacee length.
+//        int anIndex := 0.
 //        
-//        ^ n != -1
-//    ]
-//
-////    replaceFirst literal:aReplacee literal:aReplacer
-////    [
-////        int aReplaceeLen := aReplacee length.
-////        int anIndex := 0.
-////        
-////        self indexOf int:0 literal:aReplacee vint:anIndex.
-////        
-////        if (anIndex != -1)
-////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
-////            [ ^ self ].
-////    ]    
+//        self indexOf int:0 literal:aReplacee vint:anIndex.
+//        
+//        if (anIndex != -1)
+//            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
+//            [ ^ self ].
+//    ]    
     
     replace(string replacee, string replacer)
     {
@@ -1543,10 +1542,10 @@ singleton stringOpDispatcher
 
 //    bool endingWith(wide s, wide subs)
 //        = s~wideOp endingWith(subs).
-//        
-//    bool containing(literal s, literal subs)
-//        = s~literalOp containing(subs).
-//
+        
+    bool containing(string s, string subs)
+        = s.containing(subs);
+
 //    bool containing(wide s, wide subs)
 //        = s~wideOp containing(subs).
         
@@ -1580,9 +1579,9 @@ singleton stringOpDispatcher
 
 public extension stringWeakOp
 {
-//    Substring : anIndex
-//        = self Substring:(self length - anIndex) at:anIndex.
-//            
+    Substring(index)
+        = self.Substring(index, self.Length - index);
+            
 //    Substring(object anIndex, object aLength)
 //        = self Substring:aLength at:anIndex.
     
@@ -1616,9 +1615,9 @@ public extension stringWeakOp
     endingWith(s)
         = stringOpDispatcher.endingWith(self, s);
 
-//    containing : s
-//        = stringOpDispatcher containing(self, s).
-//
+    containing(s)
+        = stringOpDispatcher.containing(self, s);
+
 ////    replaceFirst literal:aReplacee literal:aReplacer
 ////    [
 ////        var dispatcher := self cast:%eval to:stringOpDispatcher.

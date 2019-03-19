@@ -43,22 +43,22 @@ public interface Encoder
 //        
 //        self.convert(0, ref temp_len, temp, output, ref outputLength).
 //    ]
-//    
-//    toByteArray(int anIndex, int aLength, literal aLiteral)
+    
+//    toByteArray(int index, int length, string s)
 //    [
-//        int          i := anIndex.
-//        T<ByteArray> aRetVal := nil.
-//        int          remaining := aLength.
+//        int    i := index;
+//        byte[] retVal := nil;
+//        int    remaining := aLength.
 //        
-//        while (i < aLength)
+//        while (i < length)
 //        [
-//            V<byte,64> tmp.
-//            int        tmp_len := 64.
-//            int        len := remaining.
+//            byte tmp[64];
+//            int  tmp_len := 64;
+//            int  len := remaining;
 //            if (len > tmp_len)
-//                [ len := tmp_len ].
+//                { len := tmp_len };
 //             
-//            self convert(i, &len, aLiteral, T<ByteArray>(tmp), &tmp_len).
+//            self.convert(i, ref len, s, tmp, ref tmp_len);
 //            
 //            if (nil == aRetVal)
 //                [ aRetVal := ByteArray new(0, tmp_len, T<ByteArray>(tmp)) ];
@@ -124,7 +124,7 @@ public interface Encoder
 //        
 //        ^ aRetVal.
 //    ]
-//    
+    
 //    toWide(int anIndex, int aLength, ByteArray anArray)
 //    [
 //        int  i := anIndex.
@@ -196,16 +196,16 @@ public singleton UTF8Encoding
 //        => system'core_routines'__utf8encoder.
 }
 
-//// --- UTF16Encoder ---
-//
-//public singleton UTF16Encoder :: Encoder
-//{
-//    convert(int anIndex, ref<int> aLength, ByteArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
-//        => system'core_routines'__utf16encoder.
-//    
-//    convert(int anIndex, ref<int> aLength, CharArray aByteArray, ByteArray anOutput, ref<int>anOutputLength)
-//        => system'core_routines'__utf16encoder.
-//}
+// --- UTF16Encoder ---
+
+public singleton UTF16Encoder : Encoder
+{
+    convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
+        => system'core_routines'__utf16encoder;
+    
+    convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
+        => system'core_routines'__utf16encoder;
+}
 
 // --- UTF16Encoding ---
 
