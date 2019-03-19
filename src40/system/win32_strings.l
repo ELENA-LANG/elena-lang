@@ -104,57 +104,57 @@ public extension caseStringOp : String
     }
 }
 
-//// --- caseLitrealOp ---
-//
-//public extension<wide> caseWideOp
-//{
-//    upperCase
-//    [
-//        wide aRetVal := emptyWideLiteral.        
-//        int  anIndex := 0.
-//        char aCurrent := $0.
-//        char aConverted := $0.
-//        int  aCurrentLen := 0.
-//
-//        int  aLength := self length.
-//                
-//        while (anIndex < aLength)
-//        [
-//            self read(anIndex, &aCurrent).
-//            aCurrentLen := aCurrent length.
-//            
-//            characterController toUpperCase(aCurrent, &aConverted).
-//            
-//            aRetVal := aRetVal add(aConverted).
-//            
-//            anIndex := anIndex + aCurrentLen
-//        ].
-//            
-//        ^ aRetVal
-//    ]
-//
-//    lowerCase
-//    [
-//        wide aRetVal := emptyWideLiteral.        
-//        int  anIndex := 0.
-//        char aCurrent := $0.
-//        char aConverted := $0.
-//        int  aCurrentLen := 0.
-//        
-//        int  aLength := self length.
-//        
-//        while (anIndex < aLength)
-//        [
-//            self read(anIndex, &aCurrent).
-//            aCurrentLen := aCurrent length.
-//            
-//            characterController toLowerCase(aCurrent, &aConverted).
-//            
-//            aRetVal := aRetVal add(aConverted).
-//            
-//            anIndex := anIndex + aCurrentLen
-//        ].
-//            
-//        ^ aRetVal
-//    ]
-//}
+// --- caseLitrealOp ---
+
+public extension caseWideOp : WideString
+{
+    upperCase()
+    {
+        wide retVal := emptyWideString;        
+        int  index := 0;
+        char current := $0;
+        char converted := $0;
+        int  currentLen := 0;
+
+        int length := self.Length;
+                
+        while (index < length)
+        {
+            self.read(index, ref current);
+            currentLen := current.Length;
+            
+            characterController.toUpperCase(current, ref converted);
+            
+            retVal := retVal.add(converted);
+            
+            index := index + currentLen
+        };
+            
+        ^ retVal
+    }
+
+    lowerCase()
+    {
+        wide retVal := emptyWideString;        
+        int  index := 0;
+        char current := $0;
+        char converted := $0;
+        int  currentLen := 0;
+        
+        int length := self.Length;
+        
+        while (index < length)
+        {
+            self.read(index, ref current);
+            currentLen := current.Length;
+            
+            characterController.toLowerCase(current, ref converted);
+            
+            retVal := retVal.add(converted);
+            
+            index := index + currentLen
+        };
+            
+        ^ retVal
+    }
+}

@@ -192,8 +192,8 @@ public singleton UTF8Encoding
     string toString(int index, int length, byte[] array)
         = String.fromByteArray(index, length, array);
         
-//    convert(int anIndex, ref<int> aLength, literal aByteArray, CharArray anOutput, ref<int> anOutputLength)
-//        => system'core_routines'__utf8encoder.
+    convert(int index, ref int length, string s, char[] output, ref int outputLength)
+        => system'core_routines'__utf8encoder;
 }
 
 // --- UTF16Encoder ---
@@ -220,24 +220,24 @@ public singleton UTF16Encoding
 //    [
 //        aLiteral saveToShortArray(anIndex, anArray, aLength).
 //    ]
-//
-//    convert(int anIndex, int aSize, ShortArray aByteArray, CharArray anOutput, ref<int> anOutputLength)
-//        => system'core_routines'__utf16encoder.
+
+    convert(int index, int size, short[] array, char[] output, ref int outputLength)
+        => system'core_routines'__utf16encoder;
         
     convert(int index, int size, char[] array, short[] output, ref int outputLength)
         => system'core_routines'__utf16encoder;
         
-//    convert(int anIndex, ref<int> aSize, literal aLiteral, ShortArray anOutput, ref<int> anOutputLength)
-//    [
-//        V<char,64> temp.
-//        int        temp_len := 64.
-//        if (temp_len < aSize)
-//            [ aSize value := temp_len ].
-//        
-//        UTF8Encoding convert(anIndex, aSize, aLiteral, T<CharArray>(temp), &temp_len).
-//        
-//        self convert(0, temp_len, T<CharArray>(temp), anOutput, anOutputLength)
-//    ]
+    convert(int index, ref int size, string s, short[] output, ref int outputLength)
+    {
+        char temp[64];
+        int  temp_len := 64;
+        if (temp_len < size)
+            { size := temp_len };
+        
+        UTF8Encoding.convert(index, ref size, s, temp, ref temp_len);
+        
+        self.convert(0, temp_len, temp, output, ref outputLength)
+    }
         
     string toString(int index, int length, short[] array)
     {

@@ -1653,12 +1653,12 @@ public sealed const struct WideString : BaseValue
             => system'core_routines'__wide;
     }
 
-//    /// Saves the literal into a UTF-32 character array
-//    save(int anIndex, CharArray anArray, ref<int> aLength)
-//        => system'core_routines'__wide.
-//
-//    internal saveToShortArray(int anIndex, ShortArray anArray, int aRetVal)
-//        => system'core_routines'__wide.
+    /// Saves the literal into a UTF-32 character array
+    save(int index, char[] array, ref int length)
+        => system'core_routines'__wide;
+
+    internal saveToShortArray(int index, short[] array, int retVal)
+        => system'core_routines'__wide;
 
     /// Returns the object enumerator
     Enumerator<char> enumerator() = new WideStringEnumerator(self);
