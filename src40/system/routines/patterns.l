@@ -1,6 +1,6 @@
 import system'collections;
 
-//symbol idleFunc1 = (:x) [].
+idleFunc1 = (x){};
 
 // === pattern enumerators ==
 

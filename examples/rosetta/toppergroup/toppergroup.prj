@@ -1,9 +1,16 @@
-﻿[project]
-executable=toppergroup.exe
-namespace=toppergroup
-template=console
-debuginfo=-1
-
-[files]
-toppergroup.l
-
+<configuration>
+    <project>
+        <executable>toppergroup.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>toppergroup</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>toppergroup.l</include>
+        </module>
+    </files>
+</configuration>

@@ -246,12 +246,12 @@ public extension controlOp
         ^ self
     }
     
-//    exchangeWith:v
-//    [
-//        var tmp := self value.
-//        self value := v value.
-//        v value := tmp.
-//    ]
+    exchangeWith(v)
+    {
+        var tmp := self.Value;
+        self.Value := v.Value;
+        v.Value := tmp
+    }
 }
 
 //public singleton control

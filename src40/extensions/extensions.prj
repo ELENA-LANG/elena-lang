@@ -8,7 +8,7 @@
     </project>
     <manifest>
       <name>ELENA Extension Library</name>
-      <version>4.0.27</version>
+      <version>4.0.28</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>
@@ -27,6 +27,7 @@
         <module name="routines">
             <include>routines\enumerating.l</include>
             <include>routines\combinations.l</include>
+            <include>routines\compound.l</include>
         </module>
         <module name="dynamic">
             <include>dynamic\json.l</include>

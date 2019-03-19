@@ -1603,10 +1603,10 @@ public extension stringWeakOp
     trim()
         = stringOpDispatcher.trim(self, $32);
 
-    padLeft(object padSymbol, object len)
+    padLeft(padSymbol, len)
         = stringOpDispatcher.padLeft(self, padSymbol, len);
         
-    padRight(object padSymbol, object len)
+    padRight(padSymbol, len)
         = stringOpDispatcher.padRight(self, padSymbol, len);
 
     startingWith(s)
@@ -1661,7 +1661,7 @@ public extension stringWeakOp
     
     writePaddingLeft(line, int width)
     {
-        var paddedStr := line.padLeft(width);
+        var paddedStr := line.padLeft($32, width);
 
         self.write(paddedStr);
             
@@ -1670,7 +1670,7 @@ public extension stringWeakOp
     
     writePaddingRight(line, int width)
     {
-        var paddedStr := line.padRight(width);
+        var paddedStr := line.padRight($32, width);
 
         self.write(paddedStr);
             

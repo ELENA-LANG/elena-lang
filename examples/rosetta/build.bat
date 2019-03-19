@@ -201,10 +201,19 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 
 rem ..\..\bin\elc tokenizer\tokenizer.prj
 rem ..\..\bin\elc trigonometric\trigonometric.prj
-rem ..\..\bin\elc toppergroup\toppergroup.prj
+
+..\..\bin\elc toppergroup\toppergroup.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc twelvestats\twelvestats.prj
 rem ..\..\bin\elc truncprime\truncprime.prj
-rem ..\..\bin\elc treeview\treeview.prj
+
+..\..\bin\elc treeview\treeview.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 ..\..\bin\elc gameoflife\gameoflife.prj
 @echo off 

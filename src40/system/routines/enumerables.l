@@ -369,8 +369,8 @@ public extension enumerableOp
     zipBy(enumerable, zipper)
         = ZipEnumerator.new(zipper, cast Enumerator(self.enumerator()), cast Enumerator(enumerable.enumerator()));
 
-//    zip:anEnumerable forEach:func2
-//        = self~enumerableOp zip:anEnumerable by:func2; forEach:idleFunc1.
+    zipForEach(enumerable, func2)
+        = self.zipBy(enumerable, func2).forEach:idleFunc1;
         
     orderBy(orderFunc)
         = OrderingEnumerator.new(orderFunc, cast Enumerator(self.enumerator()));

@@ -26,10 +26,18 @@ public sealed class Stack : Enumerable
     }        
     
     bool isEmpty()
-        = 0 == theTop;
+    {
+        int top := theTop.Value;
+        
+        ^ top == 0
+    }
     
     bool isNotEmpty()
-        = 0 != theTop;
+    {
+        int top := theTop.Value;
+        
+        ^ top != 0
+    }
     
     push(object)
     {
@@ -109,11 +117,11 @@ public sealed Stack<T> : Enumerable<T>
         }
     }
         
-//    bool isEmpty
-//        = 0 == theTop.
-//    
-//    bool isNotEmpty
-//        = 0 != theTop.
+    bool isEmpty()
+        = 0 == theTop.Value;
+    
+    bool isNotEmpty()
+        = 0 != theTop.Value;
     
     push(T o)
     {
@@ -319,11 +327,21 @@ public sealed Queue<T> : Enumerable<T>
         }
     }
     
-//    bool isEmpty
-//        = theTop == theTale.
-//    
-//    bool isNotEmpty
-//        = theTop != theTale.
+    bool isEmpty()
+    {
+        int top := theTop.Value;
+        int tale := theTale.Value;
+        
+        ^ top == tale
+    }
+    
+    bool isNotEmpty()
+    {
+        int top := theTop.Value;
+        int tale := theTale.Value;
+        
+        ^ top != tale
+    }
     
     push(T object)
     {
