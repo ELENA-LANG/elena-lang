@@ -1138,11 +1138,11 @@ public extension stringOp : String
 //    indexOf : anObject
 //        = self indexOf:anObject at:0.
 //
-//    indexOf(literal aLiteral)
-//        = self indexOf:aLiteral at:0.
-//
-//    indexOf(char aChar)
-//        = self indexOf:aChar at:0.
+    int indexOf(string s)
+        = self.indexOf(0, s);
+
+    int indexOf(char ch)
+        = self.indexOf(0, ch);
         
     string Substring(index)
         = self.Substring(cast int(index));
@@ -1225,10 +1225,10 @@ public extension stringOp : String
     string trim()
         = self.trimLeft($32).trimRight($32);
     
-    padLeft(int length)
+    string padLeft(int length)
         = self.padLeft($32, length);
     
-    padLeft(char ch, int length)
+    string padLeft(char ch, int length)
     {
         int currentLength := self.Length;
         
@@ -1238,10 +1238,10 @@ public extension stringOp : String
         ^ self
     }
     
-    padRight(int length)
+    string padRight(int length)
         = self.padRight($32, length);
     
-    padRight(char ch, int length)
+    string padRight(char ch, int length)
     {
         int currentLength := self.Length;
 
@@ -1292,7 +1292,7 @@ public extension stringOp : String
 //            [ ^ self ].
 //    ]    
     
-    replace(string replacee, string replacer)
+    string replace(string replacee, string replacer)
     {
         string target := emptyString;
         int    start := 0;
@@ -1348,24 +1348,24 @@ public extension wideOp : WideString
     
 //    indexOf : anObject
 //        = self indexOf:anObject at:0.
-//        
-//    indexOf(wide aLiteral)
-//        = self indexOf:aLiteral at:0.
-//
-//    indexOf(char aChar)
-//        = self indexOf:aChar at:0.
-//                
-//    wide Substring:anIndex
+        
+    indexOf(wide s)
+        = self.indexOf(0, s);
+
+    indexOf(char ch)
+        = self.indexOf(0, ch);
+                
+//    wide Substring(index)
 //        = self~wideOp Substring(T<int>(anIndex)).
-//        
-//    wide Substring(int anIndex)
-//    [
-//        int aLength := self length.
-//        
-//        aLength := aLength - anIndex.
-//        
-//        ^ self Substring(anIndex, aLength)
-//    ]
+        
+    wide Substring(int index)
+    {
+        int length := self.Length;
+        
+        length := length - index;
+        
+        ^ self.Substring(index, length)
+    }
      
     wide trimLeft(char ch)
     {
@@ -1421,98 +1421,103 @@ public extension wideOp : WideString
     wide trim()
         = self.trimLeft($32).trimRight($32);
     
-//    padLeft(char aChar, int aLength)
+    wide padLeft(char ch, int length)
+    {
+        int currentLength := self.Length;
+        
+        if (currentLength < length)
+            { ^ WideString.fill(length - currentLength, ch).add(self) };
+            
+        ^ self
+    }
+    
+    wide padRight(char ch, int length)
+    {
+        int currentLength := self.Length;
+
+        if (currentLength < length)
+            { ^ self.add(WideString.fill(length - currentLength, ch)) };
+            
+        ^ self
+    }
+
+    bool startingWith(wide s)
+    {
+        int n := 0;
+        self.indexOf(0, s, ref n);
+        
+        ^ 0 == n
+    }
+    
+    bool endingWith(wide s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+        int n := 0;
+        self.indexOf(l1 - l2, s, ref n);
+        
+        ^ n != -1
+    }
+    
+    bool containing(wide s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+        int n := 0;
+        
+        self.indexOf(0, s, ref n);
+        
+        ^ n != -1
+    }
+    
+//    replaceFirst wide:aReplacee wide:aReplacer
 //    [
-//        int aCurrentLength := self length.
+//        int aReplaceeLen := aReplacee length.
+//        int anIndex := 0.
 //        
-//        if (aCurrentLength < aLength)
-//            [ ^ WideLiteralValue new(aLength - aCurrentLength, aChar); add(self) ].
-//            
-//        ^ self
-//    ]
-//    
-//    padRight(char aChar, int aLength)
-//    [
-//        int aCurrentLength := self length.
-//
-//        if (aCurrentLength < aLength)
-//            [ ^ self add(WideLiteralValue new(aLength - aCurrentLength, aChar)) ].
-//            
-//        ^ self
-//    ]
-//
-//    bool startingWith(wide s)
-//    [
-//        int n := 0.
-//        self indexOf(0, s, &n).
+//        self indexOf int:0 wide:aReplacee vint:anIndex.
 //        
-//        ^ 0 == n
-//    ]
-//    
-//    bool endingWith(wide s)
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//        int n := 0.
-//        self indexOf(l1 - l2, s, &n).
-//        
-//        ^ n != -1
-//    ]
-//    
-//    bool containing(wide s)
-//    [
-//        int l1 := self length.
-//        int l2 := s length.
-//        int n := 0.
-//        
-//        self indexOf(0, s, &n).
-//        
-//        ^ n != -1
-//    ]
-//    
-////    replaceFirst wide:aReplacee wide:aReplacer
-////    [
-////        int aReplaceeLen := aReplacee length.
-////        int anIndex := 0.
-////        
-////        self indexOf int:0 wide:aReplacee vint:anIndex.
-////        
-////        if (anIndex != -1)
-////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex wide:aReplacee ];
-////            [ ^ self ].
-////    ]
-////        
-//    replace(wide aReplacee, wide aReplacer)
-//    [
-//        wide aTarget := emptyWideLiteral.
-//        int  aStart := 0.
-//        int  anEnd := 0.
-//        int  aReplaceeLen := aReplacee length.
-//        
-//        self indexOf(aStart, aReplacee, &anEnd).
-//        
-//        while (anEnd != -1)
-//        [
-//            aTarget := aTarget
-//                add(self Substring(aStart, anEnd - aStart));
-//                add:aReplacer.
-//            
-//            aStart := anEnd + aReplaceeLen.
-//            
-//            self indexOf(aStart, aReplacee, &anEnd)
-//        ].
-//    
-//        if (aStart != 0)
-//            [ ^ aTarget add(self~wideOp Substring(aStart)) ];
+//        if (anIndex != -1)
+//            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex wide:aReplacee ];
 //            [ ^ self ].
 //    ]
-//
-//    bool isEmpty
-//    [
-//        int aLength := self length.
-//        
-//        ^ aLength == 0
-//    ]
+        
+    replace(wide replacee, wide replacer)
+    {
+        wide target := emptyWideString;
+        int  start := 0;
+        int  end := 0;
+        int  replaceeLen := replacee.Length;
+        
+        self.indexOf(start, replacee, ref end);
+        
+        while (end != -1)
+        {
+            target := target
+                .add(self.Substring(start, end - start))
+                .add:replacer;
+            
+            start := end + replaceeLen;
+            
+            self.indexOf(start, replacee, ref end)
+        };
+    
+        if (start != 0)
+        { 
+            ^ target.add(self.Substring(start)) 
+        }
+        else
+        { 
+            ^ self 
+        }
+    }
+
+    bool isEmpty()
+    {
+        int length := self.Length;
+        
+        ^ length == 0
+    }
 }
 
 // --- stringOp ---
@@ -1522,32 +1527,32 @@ singleton stringOpDispatcher
     padRight(string s, char ch, int len)
         = s.padRight(ch, len);
     
-//    padRight(wide s, char ch, int len)
-//        = s~wideOp padRight(ch, len).
+    padRight(wide s, char ch, int len)
+        = s.padRight(ch, len);
         
     padLeft(string s, char ch, int len)
         = s.padLeft(ch, len);
     
-//    padLeft(wide s, char ch, int len)
-//        = s~wideOp padLeft(ch, len).
+    padLeft(wide s, char ch, int len)
+        = s.padLeft(ch, len);
         
     bool startingWith(string s, string subs)
         = s.startingWith(subs);
 
-//    bool startingWith(wide s, wide subs)
-//        = s~wideOp startingWith(subs).
+    bool startingWith(wide s, wide subs)
+        = s.startingWith(subs);
 
     bool endingWith(string s, string subs)
         = s.endingWith(subs);
 
-//    bool endingWith(wide s, wide subs)
-//        = s~wideOp endingWith(subs).
+    bool endingWith(wide s, wide subs)
+        = s.endingWith(subs);
         
     bool containing(string s, string subs)
         = s.containing(subs);
 
-//    bool containing(wide s, wide subs)
-//        = s~wideOp containing(subs).
+    bool containing(wide s, wide subs)
+        = s.containing(subs);
         
     trimLeft(string s, char ch)
         =s.trimLeft(ch);       
@@ -1573,8 +1578,8 @@ singleton stringOpDispatcher
     replace(string s, string src, string dst)
         = s.replace(src, dst);
         
-//    replace(wide s, wide src, wide dst)
-//        = s~wideOp replace(src, dst).
+    replace(wide s, wide src, wide dst)
+        = s.replace(src, dst);
 }
 
 public extension stringWeakOp

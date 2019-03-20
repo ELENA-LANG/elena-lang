@@ -713,147 +713,152 @@ public sealed Matrix<T>
 //    /// Creates the object copy
 //    clone = IntArray new(self).
 //}
-//
-//// --- BitArray ---
-//
-//public sealed class BitArray
-//{
-//    T<IntArray> theArray.
-//    int         theLength.
-//    
-//    /// Creates the array with the specified length
-//    constructor new(int length)
+
+// --- BitArray ---
+
+public sealed class BitArray
+{
+    int[] theArray;
+    int   theLength;
+    
+    /// Creates the array with the specified length
+    constructor allocate(int length)
+    {
+        theLength := length;
+        theArray := new int[](length / 32 + 1)
+    }
+    
+    vprop int Length
+    {
+        readTo(ref int retVal)
+        {
+            retVal := theLength
+        }
+    }
+    
+    at(index)
+        = self.at(cast int(index));
+    
+    bool at(int index)
+    {
+        int arr_index := index / 32;
+        int bit_index := arr_index * 32;
+        bit_index := index - arr_index;
+        
+        int bit_mask := 1;
+        if (bit_index != 0)
+            { bit_mask := bit_mask $shl bit_index };
+        
+        int bits := theArray[arr_index];
+        
+        ^ (bits && bit_mask) != 0
+    }
+
+//    setAt:index:value
 //    [
-//        theLength := length.
-//        theArray := IntArray new(length / 32 + 1).
+//        $self setAt int:index bool:value.
 //    ]
+    
+    setAt(int index, bool value)
+    {
+        int arr_index := index / 32;
+        int bit_index := arr_index * 32;
+        bit_index := index - arr_index;
+        
+        int bit_mask := 1;
+        if (bit_index != 0)
+            { bit_mask := bit_mask $shl bit_index };
+        
+        int bits := theArray[arr_index];
+        
+        if(value)
+        { 
+            bits := bits || bit_mask 
+        }
+        else
+        {  
+            bit_mask := bit_mask.Inverted;
+            
+            bits := bits && bit_mask
+        };
+            
+        theArray[arr_index] := bits
+    }
+    
+    /// Returns the array enumerator
+    Enumerator<bool> enumerator() = new BitArrayEnumerator(self);
+
+    /// Returns the array indexer
+    Indexer<bool> indexer() = new BitArrayIndexer(self);
+}
+
+// --- BitArray32 ---
+
+public sealed class BitArray32
+{
+    int theValue;
+    
+    constructor load(int value)
+    {
+        theValue := value
+    }
+    
+//    constructor new:value
+//        <= new int:value.
+    
+    int Length = 32;
+    
+    write(int value)
+    {
+        theValue := value
+    }
 //    
-//    readLengthTo(ref<int> retVal)
+//    write : value
 //    [
-//        retVal value := theLength.
+//        value cast:%write to:$self.
 //    ]
-//    
-//    int rvprop length :: readLengthTo.
-//    
+    
 //    getAt:index
-//        = self getAt(T<int>(index)).
-//    
-//    bool getAt(int index)
+//        = $self getAt int:index.
+    
+    bool at(int index)
+    {
+        int bit_mask := 1;
+        if (index != 0)
+            { bit_mask := bit_mask $shl index };
+        
+        ^ (theValue && bit_mask) != 0
+    }
+    
+//    setAt:index:value
 //    [
-//        int arr_index := index / 32.
-//        int bit_index := arr_index * 32.
-//        bit_index := index - arr_index.
-//        
-//        int bit_mask := 1.
-//        if (bit_index != 0)
-//            [ bit_mask := bit_mask << bit_index ].
-//        
-//        int bits := 0.
-//        theArray read(arr_index, &bits).
-//        
-//        ^ (bits && bit_mask) != 0
+//        $self setAt int:index bool:value.
 //    ]
-////    
-////    setAt:index:value
-////    [
-////        $self setAt int:index bool:value.
-////    ]
-//    
-//    setAt(int index, bool value)
-//    [
-//        int arr_index := index / 32.
-//        int bit_index := arr_index * 32.
-//        bit_index := index - arr_index.
-//        
-//        int bit_mask := 1.
-//        if (bit_index != 0)
-//            [ bit_mask := bit_mask << bit_index ].
-//        
-//        int bits := 0.
-//        theArray read(arr_index, &bits).
-//        
-//        value
-//            ? [ bits := bits || bit_mask. ]
-//            ! [  
-//                bit_mask := bit_mask inverted.
-//                
-//                bits := bits && bit_mask
-//            ].
-//            
-//        theArray write(arr_index, bits)
-//    ]
-//    
-//    /// Returns the array enumerator
-//    Enumerator<bool> enumerator = BitArrayEnumerator new(self).
-//
-//    /// Returns the array indexer
-//    Indexer<bool> indexer = BitArrayIndexer new(self).
-//}
-//
-//// --- BitArray32 ---
-//
-//public sealed class BitArray32
-//{
-//    int theValue.
-//    
-//    constructor new(int value)
-//    [
-//        theValue := value.
-//    ]
-//    
-////    constructor new:value
-////        <= new int:value.
-//    
-//    int length = 32.
-//    
-//    write(int value)
-//    [
-//        theValue := value.
-//    ]
-////    
-////    write : value
-////    [
-////        value cast:%write to:$self.
-////    ]
-//    
-////    getAt:index
-////        = $self getAt int:index.
-//    
-//    bool getAt(int index)
-//    [
-//        int bit_mask := 1.
-//        if (index != 0)
-//            [ bit_mask := bit_mask << index ].
-//        
-//        ^ (theValue && bit_mask) != 0
-//    ]
-//    
-////    setAt:index:value
-////    [
-////        $self setAt int:index bool:value.
-////    ]
-//    
-//    setAt(int index, bool value)
-//    [
-////        int bit_mask := 1.
-////        if (index != 0)
-////            [ bit_mask := bit_mask << index ].
-////        
-////        if(value)
-////            [ theValue := theValue || bit_mask ];
-////            [  
-////                bit_mask := bit_mask inverted.
-////                
-////                theValue := theValue && bit_mask
-////            ].
-//    ]
-//    
-//    /// Returns the array enumerator
-//    T<Enumerator> enumerator = BitArray32Enumerator new(self).
-//
-//    /// Returns the array indexer
-//    T<Indexer> indexer = BitArray32Indexer new(self).
-//}
+    
+    setAt(int index, bool value)
+    {
+        int bit_mask := 1;
+        if (index != 0)
+            { bit_mask := bit_mask $shl index };
+        
+        if(value)
+        { 
+            theValue := theValue || bit_mask 
+        }
+        else
+        {  
+            bit_mask := bit_mask.Inverted;
+            
+            theValue := theValue && bit_mask
+        }
+    }
+    
+    /// Returns the array enumerator
+    Enumerator<bool> enumerator() = new BitArray32Enumerator(self);
+
+    /// Returns the array indexer
+    Indexer<bool> indexer() = new BitArray32Indexer(self);
+}
 
 // --- IntMatrix ---
 
@@ -1287,7 +1292,7 @@ public sealed const struct String : BaseValue
     /// Converts to UTF-16 literal
     wide cast() = wideConvertor.convert(self);
 
-//    cast Enumerable<char> = Enumerable<char>::{ Enumerator<char> enumerator => self. }.
+    Enumerable<char> cast() = new Enumerable<char>:{ Enumerator<char> enumerator() => self; };
 
     string Printable = self;
 
@@ -1340,9 +1345,9 @@ public sealed const struct String : BaseValue
         ^ new CharValue(ch)
     }
 
-//    literal add : anObject 
-//        <= add(T<literal>(anObject)).
-//
+    string add(o)
+        <= add(cast string(o));
+
 //    /// Concatinates the values
 //    literal add(BaseVariable v)
 //        <= add(v value).
@@ -1371,9 +1376,9 @@ public sealed const struct String : BaseValue
     read(int index, ref char ch)
         => system'core_routines'__literal;
 
-//    // Reads the byte at the specified index and saves into an output parameter
-//    read(int anIndex, ref<byte> anInt)
-//        => system'core_routines'__literal.
+    // Reads the byte at the specified index and saves into an output parameter
+    read(int index, ref byte int)
+        => system'core_routines'__literal;
 
     /// Saves the index of the first occurence of the specified substring into an output parameter.
     ///
@@ -1417,21 +1422,9 @@ public sealed const struct String : BaseValue
     string insert(int index, char ch)
         = self.insert(index, cast string(ch));
 
-//    /// Inserts an object into and returns the new one
-//    insert : anObject at:anIndex
-//        = self insert(anIndex, anObject).
-//
-//    /// Deletes the substring from the object and returns the new one
-//    delete:aLength at:anIndex
-//        = self delete(T<int>(anIndex), T<int>(aLength)).
-
     /// Deletes the substring from the object and returns the new one
     string delete(int index, int length)
         => system'core_routines'__literal;
-
-//    /// Returns the substring
-//    Substring : aLength at:anIndex
-//        = self Substring(T<int>(anIndex), T<int>(aLength)).
 
     /// Returns the substring
     string Substring(int index, int length)
@@ -1492,17 +1485,17 @@ public sealed const struct WideString : BaseValue
         intern system'core_routines'__wide.copy(s, self)
     }
 
-//    /// Creates the literal string with specified length fills with spciefied character value
-//    constructor new(int aSize, char aChar)
-//        => system'core_routines'__wide.
+    /// Creates the literal string with specified length fills with spciefied character value
+    constructor fill(int aSize, char ch)
+        => system'core_routines'__wide;
 
     /// Creates the literal string copy
     constructor copy(wide s)
         <= copy(s.Length, s);
         
-//    /// Creates the copy of a subarray
-//    constructor new(int anIndex, int aSize, CharArray anArray)
-//        => system'core_routines'__wide.
+    /// Creates the copy of a subarray
+    constructor new(int index, int size, char[] array)
+        => system'core_routines'__wide;
 
     internal constructor fromShortArray(int anIndex, int aSize, short[] anArray)
         <= allocate(aSize)
@@ -1558,9 +1551,9 @@ public sealed const struct WideString : BaseValue
         ^ new CharValue(ch)
     }
 
-//    wide add : anObject 
-//        <= add(T<literal>(anObject)).
-//
+    wide add(o)
+        <= add(cast string(o));
+
 //    /// Concatinates the values
 //    wide add(BaseVariable v)
 //        <= add(v value).
@@ -1569,76 +1562,68 @@ public sealed const struct WideString : BaseValue
     wide add(wide s)
         => system'core_routines'__wide;
 
-//    /// Concatinates the values
-//    wide add(char aChar)
-//        = self add(wideConvertor convert(aChar)).
-//
-//    /// Concatinates the values
-//    wide add(literal aLiteral)
-//        = self add(T<wide>(aLiteral)).
+    /// Concatinates the values
+    wide add(char ch)
+        = self.add(wideConvertor.convert(ch));
+
+    /// Concatinates the values
+    wide add(string s)
+        = self.add(cast wide(s));
 
     // Reads the character at the specified index and saves into an output parameter
     read(int n, ref char ch)
         => system'core_routines'__wide;
 
-//    // Reads the short integer at the specified index and saves into an output parameter
-//    read(int anIndex, ref<short>aValue)
-//        => system'core_routines'__wide.
-//
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int anIndex, wide aLiteral, ref<int> aRetVal)
-//        => system'core_routines'__wide.
-//
-//    /// Saves the index of the first occurence of the specified character into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int anIndex, char aChar, ref<int> aRetVal)
-//        => system'core_routines'__wide.
-//
-//    /// Returns the index of the first occurence of the specified character.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(char aChar) at(int anIndex)
-//    [
-//        int aRetVal := 0.
-//        self indexOf(anIndex, aChar, &aRetVal).
-//        
-//        ^ IntNumber new(aRetVal).
-//    ]
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(wide aLiteral) at(int anIndex)
-//    [
-//        int aRetVal := 0.
-//        self indexOf(anIndex, aLiteral, &aRetVal).
-//        
-//        ^ IntNumber new(aRetVal).
-//    ]
-//
-//    /// Inserts the substring into and returns the new one
-//    wide insert(int anIndex, wide aLiteral)
-//        => system'core_routines'__wide.
-//
-//    /// Inserts the substring into and returns the new one
-//    wide insert(int anIndex, literal aLiteral)
-//        = self insert(anIndex, T<wide>(aLiteral)).
-//
-//    /// Inserts a character into and returns the new one
-//    wide insert(int anIndex, char aChar)
-//        = self insert(anIndex, wideConvertor convert(aChar)).
-//
-//    /// Inserts an object into and returns the new one
-//    insert : anObject at:anIndex
-//        = self insert(anIndex, anObject).
-//
-//    /// Deletes the substring from the object and returns the new one
-//    delete:aLength at:anIndex
-//        = self delete(T<int>(anIndex), T<int>(aLength)).
-            
+    // Reads the short integer at the specified index and saves into an output parameter
+    read(int index, ref short value)
+        => system'core_routines'__wide;
+
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int anIndex, wide s, ref<int> aRetVal)
+        => system'core_routines'__wide;
+
+    /// Saves the index of the first occurence of the specified character into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, char ch, ref int retVal)
+        => system'core_routines'__wide;
+
+    /// Returns the index of the first occurence of the specified character.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, char ch)
+    {
+        int retVal := 0;
+        self.indexOf(index, ch, ref retVal);
+        
+        ^ new IntNumber(retVal)
+    }
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, wide s)
+    {
+        int retVal := 0;
+        self.indexOf(index, s, ref retVal);
+        
+        ^ new IntNumber(retVal)
+    }
+
+    /// Inserts the substring into and returns the new one
+    wide insert(int index, wide s)
+        => system'core_routines'__wide;
+        
+    /// Inserts the substring into and returns the new one
+    wide insert(int index, string s)
+        = self.insert(index, cast wide(s));
+
+    /// Inserts a character into and returns the new one
+    wide insert(int index, char ch)
+        = self.insert(index, wideConvertor.convert(ch));
+
     /// Deletes the substring from the object and returns the new one            
     wide delete(int index, int length)
         => system'core_routines'__wide;
@@ -1646,9 +1631,6 @@ public sealed const struct WideString : BaseValue
     /// Returns the substring
     wide Substring(int n, int length)
         => system'core_routines'__wide;
-
-//    wide Substring:aLength at:anIndex
-//        <= Substring(T<int>(anIndex), T<int>(aLength)).
 
     /// Reads the literal length into an output parameter
     vprop int Length
@@ -2129,187 +2111,187 @@ public singleton stringConvertor
 /// A wide literal convertor
 public singleton wideConvertor
 {
-//    wide convert(BaseVariable v)
-//        <= convert(v value).
-//    
-//    /// Converts the parameter to the literal value
-//    convert(char aValue, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//    
-//    wide convert(char aValue)
-//    [
-//        T<short,2> buffer.
-//        int        length := 0.
-//        
-//        self convert(aValue, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]    
-//    
-//    /// Converts the parameter to the literal value
-//    convert(int aNumber, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    convert(uint aNumber, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(int aNumber)
-//    [
-//        T<short,12> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(uint aNumber)
-//    [
-//        T<short,12> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, buffer, T<ShortArray>(buffer)).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    convert(short aNumber, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(short aNumber)
-//    [
-//        T<short,12> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    convert(byte aNumber, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(byte aNumber)
-//    [
-//        T<short,12> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    convert(long aNumber, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(long aNumber)
-//    [
-//        T<short,64> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer)).
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    convert(int aNumber, int aRadix, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    convert(uint aNumber, int aRadix, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(int aNumber, int aRadix)
-//    [
-//        T<short,32> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, aRadix, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(uint aNumber, int aRadix)
-//    [
-//        T<short,32> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, aRadix, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    convert(short aNumber, int aRadix, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(short aNumber, int aRadix)
-//    [
-//        T<short,16> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, aRadix, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    convert(byte aNumber, int aRadix, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(byte aNumber, int aRadix)
-//    [
-//        T<short,12> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, aRadix, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    convert(long aNumber, int aRadix, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(long aNumber, int aRadix)
-//    [
-//        T<short,64> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, aRadix, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
-//
-//    /// Converts the parameter to the literal value
-//    convert(real aNumber, ShortArray buffer, ref<int> length)
-//        => system'core_routines'__wideconvertor.
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(real aNumber)
-//    [
-//        T<short,32> buffer.
-//        int         length := 0.
-//        
-//        self convert(aNumber, T<ShortArray>(buffer), &length).
-//        
-//        ^ WideLiteralValue fromShortArray(0, length, T<ShortArray>(buffer))
-//    ]
+    wide convert(BaseVariable v)
+        <= convert(v.Value);
+    
+    /// Converts the parameter to the literal value
+    convert(char ch, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+    
+    wide convert(char ch)
+    {
+        short buffer[2];
+        int   length := 0;
+        
+        self.convert(ch, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }    
+    
+    /// Converts the parameter to the literal value
+    convert(int n, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value
+    convert(uint number, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value
+    wide convert(int n)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(uint n)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    convert(short n, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value
+    wide convert(short n)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    convert(byte aNumber, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value
+    wide convert(byte n)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    convert(long n, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value
+    wide convert(long n)
+    {
+        short buffer[64];
+        int   length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    convert(int n, int radix, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value with the provided radix
+    convert(uint n, int radix, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(int n, int radix)
+    {
+        short buffer[32];
+        int   length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(uint n, int radix)
+    {
+        short buffer[32];
+        int   length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    convert(short n, int radix, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(short n, int radix)
+    {
+        short buffer[16];
+        int   length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    convert(byte n, int radix, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(byte n, int radix)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    convert(long n, int radix, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(long n, int radix)
+    {
+        short buffer[64];
+        int   length := 0;
+        
+        self.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    convert(real n, short[] buffer, ref int length)
+        => system'core_routines'__wideconvertor;
+
+    /// Converts the parameter to the literal value
+    wide convert(real n)
+    {
+        short buffer[32];
+        int   length := 0;
+        
+        self.convert(n, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
 
     /// Converts UTF-8 literal to UTF-16e
     convert(string sl, short[] buffer, ref int length)
@@ -2351,12 +2333,12 @@ public singleton wideConvertor
     }
         
     /// Returns a parameter
-    wide convert(wide aLiteral)
-        = aLiteral;
+    wide convert(wide s)
+        = s;
 
-//    /// Returns the literal presentation of the parameter
-//    wide convert(o)
-//        = cast wide(o literal);
+    /// Returns the literal presentation of the parameter
+    wide convert(o)
+        = cast wide(o.Printable);
 }
 
 /// An Unicode character convertor
@@ -2822,208 +2804,219 @@ class ArrayEnumerator : Enumerator
     enumerable() = theArray;
 }
 
-//// --- BitArrayIndexer ---
-//
-///// An array indexer
-//class BitArrayIndexer :: Indexer<bool>
-//{
-//    T<BitArray> theArray.
-//    ref<int>    theIndex.
-//
-//    /// Returns the parameter indexer
-//    constructor new : anArray
-//        <= new(T<BitArray>(anArray)).
-//    
-//    /// Returns the parameter indexer
-//    constructor new(BitArray anArray)
-//    [
-//        theArray := anArray.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    bool available
-//    [
-//        int aLength := theArray length.
-//        
-//        ^ T<int>(theIndex) < aLength.
-//    ]
-//
-//    /// Returns the current member
-//    bool get
-//        = theArray getAt(T<int>(theIndex)).
-//    
-//    /// Sets the current member
-//    set(bool val)
-//    [
-//        theArray setAt(T<int>(theIndex), val).
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo(ref<int> retVal)
-//    [
-//        theIndex readValueTo(retVal)
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex(int val)
-//    [
-//        theIndex value := val.
-//    ]
-//    
-//    appendIndex(int val)
-//    [
-//        theIndex append(val).
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo(ref<int> retVal)
-//        => theArray.
-//        
-//    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.        
-//}
-//
-//// --- BitArrayEnumerator ---
-//
-///// An array enumerator
-//class BitArrayEnumerator :: Enumerator<bool>
-//{
-//    T<BitArray> theArray.
-//    ref<int>    theIndex.
-//    
-//    /// Creates an array enumerator
-//    constructor new : anArray
-//        <= new(T<BitArray>(anArray)).
-//    
-//    /// Creates an array enumerator
-//    constructor new(BitArray a)
-//    [
-//        theArray := a.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex value := -1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        int aLength := theArray length.
-//        
-//        theIndex append(1).
-//
-//        ^ T<int>(theIndex) < aLength.
-//    ]
-//    
-//    /// Returns the current object
-//    bool get
-//        = theArray getAt(T<int>(theIndex)).
-//        
-//    enumerable = theArray.
-//    
-//    cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
-//}
-//
-//// --- BitArray32Indexer ---
-//
-///// An array indexer
-//class BitArray32Indexer :: Indexer<bool>
-//{
-//    T<BitArray32> theArray.
-//    ref<int>      theIndex.
-//
-//    /// Returns the parameter indexer
-//    constructor new : anArray
-//        <= new(T<BitArray32>(anArray)).
-//    
-//    /// Returns the parameter indexer
-//    constructor new(BitArray32 bs)
-//    [
-//        theArray := bs.
-//        theIndex := 0.
-//    ]
-//    
-//    /// Returns false if the index out of range
-//    bool available
-//    [
-//        ^ T<int>(theIndex) < 32
-//    ]
-//
-//    /// Returns the current member
-//    bool get
-//        = theArray getAt(T<int>(theIndex)).
-//    
-//    /// Sets the current member
-//    set(bool val)
-//    [
-//        theArray setAt(T<int>(theIndex), val)
-//    ]
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    readIndexTo(ref<int> retVal)
-//    [
-//        theIndex readValueTo(retVal).
-//    ]
-//    
-//    /// Sets the index by specified value
-//    writeIndex(int val)
-//    [
-//        theIndex value := val.
-//    ]
-//    
-//    appendIndex(int val)
-//    [
-//        theIndex append(val).
-//    ]
-//    
-//    /// Reads the length to the output parameter    
-//    readLengthTo(ref<int> retVal)
-//        => theArray.
-//        
-//    cast T<Indexer> = Indexer::{ embeddable dispatch => self. }.        
-//}
-//
-//// --- BitArray32Enumerator ---
-//
-///// An array enumerator
-//class BitArray32Enumerator :: Enumerator<bool>
-//{
-//    T<BitArray32> theArray.
-//    ref<int>      theIndex.
-//    
-//    /// Creates an array enumerator
-//    constructor new : anArray
-//        <= new(T<BitArray32>(anArray)).
-//    
-//    /// Creates an array enumerator
-//    constructor new(BitArray32 bs)
-//    [
-//        theArray := bs.
-//        theIndex := -1.
-//    ]
-//
-//    /// Resets the enumerator
-//    reset
-//    [
-//        theIndex value := -1.
-//    ]
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next
-//    [
-//        theIndex append(1).
-//
-//        ^ T<int>(theIndex) < 32.
-//    ]
-//    
-//    /// Returns the current object
-//    bool get
-//        = theArray getAt(T<int>(theIndex)).
-//        
-//    enumerable = theArray.        
-//    
-//    cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
-//}
+// --- BitArrayIndexer ---
+
+/// An array indexer
+class BitArrayIndexer : Indexer<bool>
+{
+    BitArray theArray;
+    ref<int> theIndex;
+
+    /// Returns the parameter indexer
+    constructor(BitArray anArray)
+    {
+        theArray := anArray;
+        theIndex := 0
+    }
+    
+    /// Returns false if the index out of range
+    get bool Available()
+    {
+        int length := theArray.Length;
+        int index := theIndex.Value;
+        
+        ^ index < length
+    }
+
+    /// Returns the current member
+    bool get()
+    {
+        int index := theIndex.Value;
+        
+        ^ theArray.at(index)
+    }
+    
+    /// Sets the current member
+    set(bool val)
+    {
+        int index := theIndex.Value;
+        
+        theArray.setAt(theIndex, val)
+    }
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref int retVal)
+    {
+        theIndex.readValueTo(ref retVal)
+    }
+    
+    /// Sets the index by specified value
+    writeIndex(int val)
+    {
+        theIndex.Value := val
+    }
+    
+    appendIndex(int val)
+    {
+        theIndex.append(val)
+    }
+    
+    /// Reads the length to the output parameter    
+    readLengthTo(ref int retVal)
+        => theArray;
+        
+    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };        
+}
+
+// --- BitArrayEnumerator ---
+
+/// An array enumerator
+class BitArrayEnumerator : Enumerator<bool>
+{
+    BitArray theArray;
+    ref<int> theIndex;
+    
+    /// Creates an array enumerator
+    constructor(BitArray a)
+    {
+        theArray := a;
+        theIndex := -1
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int length := theArray.Length;
+        
+        theIndex.append(1);
+        
+        int index := theIndex.Value;
+
+        ^ index < length
+    }
+    
+    /// Returns the current object
+    bool get()
+    {
+        int index := theIndex.Value;
+        
+        ^ theArray.at(index)
+    }
+        
+    enumerable() = theArray;
+    
+    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+}
+
+// --- BitArray32Indexer ---
+
+/// An array indexer
+class BitArray32Indexer : Indexer<bool>
+{
+    BitArray32 theArray;
+    ref<int>   theIndex;
+
+    /// Returns the parameter indexer
+    constructor(BitArray32 bs)
+    {
+        theArray := bs;
+        theIndex := 0
+    }
+    
+    /// Returns false if the index out of range
+    get bool Available()
+    {
+        int index := theIndex;
+        
+        ^ index < 32
+    }
+
+    /// Returns the current member
+    bool get()
+    {
+        int index := theIndex;
+        
+        ^ theArray.at(index)
+    }
+    
+    /// Sets the current member
+    set(bool val)
+    {
+        int index := theIndex;
+        
+        theArray.setAt(index, val)
+    }
+    
+    /// Reads the current index and saves it into an output parameter
+    readIndexTo(ref int retVal)
+    {
+        theIndex.readValueTo(ref retVal)
+    }
+    
+    /// Sets the index by specified value
+    writeIndex(int val)
+    {
+        theIndex.Value := val
+    }
+    
+    appendIndex(int val)
+    {
+        theIndex.append(val)
+    }
+    
+    /// Reads the length to the output parameter    
+    readLengthTo(ref int retVal)
+        => theArray;
+        
+    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };        
+}
+
+// --- BitArray32Enumerator ---
+
+/// An array enumerator
+class BitArray32Enumerator : Enumerator<bool>
+{
+    BitArray32 theArray;
+    ref<int>   theIndex;
+    
+    /// Creates an array enumerator
+    constructor(BitArray32 bs)
+    {
+        theArray := bs;
+        theIndex := -1
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        theIndex.append(1);
+
+        int index := theIndex;
+
+        ^ index < 32
+    }
+    
+    /// Returns the current object
+    bool get()
+    {
+        int index := theIndex;
+        
+        ^ theArray.at(index)
+    }
+        
+    enumerable() = theArray;        
+    
+    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+}
