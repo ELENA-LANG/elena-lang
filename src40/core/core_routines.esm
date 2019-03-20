@@ -1182,7 +1182,7 @@ procedure __wide."new$system@IntNumber$system@IntNumber$@system@Array#1&system@C
   ecopyd
   callextr api : wslen_ch
 
-  acopyr class : system'WideLiteralValue
+  acopyr class : system'WideString
   inc
   wcreate
   bcopya
@@ -1206,7 +1206,7 @@ procedure __wide."new$system@IntNumber$system@IntNumber$@system@Array#1&system@C
   
 labEmpty:
   dcopy 1
-  acopyr class : system'WideLiteralValue
+  acopyr class : system'WideString
   wcreate
   bcopya
   dcopy 0

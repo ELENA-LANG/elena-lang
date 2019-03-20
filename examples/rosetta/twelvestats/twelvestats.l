@@ -47,7 +47,7 @@ public program()
     
     for(int n := 0, n < 2.power(12), n += 1)
     {
-        var bits := new BitArray32(n).top(12).toArray();
+        var bits := BitArray32.load(n).top(12).toArray();
         var results := puzzle.selectBy:(r => r(bits)).toArray();
         
         var counts := bits.zipBy(results, (b,r => b.xor:r.toBit() )).summarize();
