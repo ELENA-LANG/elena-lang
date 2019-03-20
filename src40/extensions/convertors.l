@@ -310,11 +310,11 @@ public singleton arrayConvertorEx
     Array convert(Array arr)
         = arr;
 
-//    T<Array> convert(literal l)
-//        <= convert(T<Enumerator>(l enumerator)).
-//
-//    T<Array> convert(wide l)
-//        <= convert(T<Enumerator>(l enumerator)).
+    Array convert(string s)
+        <= convert(cast Enumerator(s.enumerator()));
+
+    Array convert(wide s)
+        <= convert(cast Enumerator(s.enumerator()));
 
     Array convert(Enumerator en)
     {

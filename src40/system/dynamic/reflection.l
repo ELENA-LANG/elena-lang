@@ -40,7 +40,7 @@ public extension classROp
         int retVal := extern elenart.core_readvmt(0,class,256,tmp_array);
 
         List<Message> list := new List<Message>();
-        for(int i := 0, i < retVal, i += 1)
+        for(int i := 1, i < retVal, i += 1)
         {
            ifnot (tmp_array[i].anyMask(60h))
            {

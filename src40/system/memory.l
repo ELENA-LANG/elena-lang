@@ -136,7 +136,9 @@ public sealed Array<T> : Indexable<T>
         T[] copy := new T[](len);
         for(int i := 0, i < len, i+=1) {
             copy[i] := theArray[i]
-        }
+        };
+        
+        ^ copy
     }
 }
 

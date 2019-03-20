@@ -725,14 +725,14 @@ public class OrderingEnumerator : Enumerator
         self.reset();
     }
     
-//    constructor new(Func1 orderVal, Enumerator enumerator)
-//    [
-//        theOrderFunc := (:p:n)(orderVal(p) < orderVal(n) ).
-//        theEnumerator := enumerator.
-//        
-//        self reset.
-//    ]
-//    
+    constructor new(Func1 orderVal, Enumerator enumerator)
+    {
+        theOrderFunc := (p,n => orderVal(p) < orderVal(n) );
+        theEnumerator := enumerator;
+        
+        self.reset()
+    }
+    
 //    constructor new(ExtensionMessage fn, Enumerator enumerator)
 //        <= new((:x:y)(x~fn eval:y), enumerator).
     
