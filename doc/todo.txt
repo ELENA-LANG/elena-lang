@@ -6,7 +6,7 @@ In development:
                  * reimpleent Sorting algorithms/Quicksort, using it as default sorting algorithn, when the size is less than 7
                    use selection sort
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
-                   Short-circuit evaluation, Set of real numbers, String length, String case, Stack traces, Sleep, Sockets,
+                   Short-circuit evaluation, Set of real numbers, String length, Stack traces, Sleep, Sockets,
                    Stack, Sort using a custom comparator, Sort disjoint sublist, Sort an integer array,
                    Zig-zag matrix, Zhang-Suen thinning algorithm, Zeckendorf number representation,
                    Zeckendorf arithmetic, Y combinator, World Cup group stage, Wireworld,

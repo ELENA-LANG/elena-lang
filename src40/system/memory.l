@@ -102,10 +102,13 @@ public sealed Array<T> : Indexable<T>
     }
 
     /// Concatinates the arrays    
-    add(T[] a)
+    T[] add(T[] a)
+        <= add(a, a.Length);
+                              
+    T[] add(T[] a, int length)
     {
         int length1 := self.Length;
-        int length2 := a.Length;
+        int length2 := length;
         
         auto retVal := new T[](length1 + length2);
 
