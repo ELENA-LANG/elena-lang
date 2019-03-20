@@ -298,9 +298,9 @@ rem md examples\gui\agenda
 rem copy %1\examples\gui\agenda\*.l examples\gui\agenda
 rem copy %1\examples\gui\agenda\*.prj examples\gui\agenda
 
-rem md examples\console\binary 
-rem copy %1\examples\console\binary\*.l examples\console\binary
-rem copy %1\examples\console\binary\*.prj examples\console\binary
+md examples\console\binary 
+copy %1\examples\console\binary\*.l examples\console\binary
+copy %1\examples\console\binary\*.prj examples\console\binary
 
 md examples\console\bsort
 copy %1\examples\console\bsort\*.l examples\console\bsort

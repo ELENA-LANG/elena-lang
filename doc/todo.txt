@@ -4,8 +4,7 @@ In development:
 
               dev - elena 4.0
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
-                   Short-circuit evaluation, Set of real numbers, Stack traces, Sleep, Sockets,
-                   Stack, Sort an integer array,
+                   Short-circuit evaluation, Set of real numbers, Sleep, Sockets,
                    Zig-zag matrix, Zhang-Suen thinning algorithm, Zeckendorf number representation,
                    Zeckendorf arithmetic, Y combinator, World Cup group stage, Wireworld,
                    UTF-8 encode and decode, Unbias a random generator, Twelve statements, Truncatable primes,
@@ -13,7 +12,7 @@ In development:
                    Ternary logic, Time a function
                  * reimpleent Sorting algorithms/Quicksort, using it as default sorting algorithn, when the size is less than 7
                    use selection sort
-                 * migrate Sorting algorithms
+                 * migrate Sorting algorithms, Sort an integer array
                  * sta / gc : Hailstone sequence
                  * replace new object[]{-19.0r, 7.0r, -4.0r, 6.0r} with []{-19.0r, 7.0r, -4.0r, 6.0r}?
                  * Support enumeration list #265

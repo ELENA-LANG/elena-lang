@@ -1,9 +1,16 @@
-﻿[project]
-executable=twelvestats.exe
-namespace=twelvestats
-template=console
-debuginfo=-1
-
-[files]
-twelvestats.l
-
+<configuration>
+    <project>
+        <executable>twelvestats.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>twelvestats</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>twelvestats.l</include>
+        </module>
+    </files>
+</configuration>

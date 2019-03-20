@@ -207,7 +207,11 @@ rem ..\..\bin\elc trigonometric\trigonometric.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc twelvestats\twelvestats.prj
+..\..\bin\elc twelvestats\twelvestats.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem ..\..\bin\elc truncprime\truncprime.prj
 
 ..\..\bin\elc treeview\treeview.prj
