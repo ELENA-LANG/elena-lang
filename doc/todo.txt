@@ -3,29 +3,27 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
-                   Short-circuit evaluation, Set of real numbers, Sleep, Sockets,
-                   Zig-zag matrix, Zhang-Suen thinning algorithm, Zeckendorf number representation,
-                   Zeckendorf arithmetic, Y combinator, World Cup group stage, Wireworld,
-                   UTF-8 encode and decode, Unbias a random generator, Twelve statements, Truncatable primes,
-                   Trigonometric functions, Trabb Pardo-Knuth algorithm, 
-                   Ternary logic, Time a function
                  * reimpleent Sorting algorithms/Quicksort, using it as default sorting algorithn, when the size is less than 7
                    use selection sort
-                 * migrate Sorting algorithms, Sort an integer array
-                 * sta / gc : Hailstone sequence
-                 * replace new object[]{-19.0r, 7.0r, -4.0r, 6.0r} with []{-19.0r, 7.0r, -4.0r, 6.0r}?
+                 * migrate Sorting algorithms, Sort an integer array, UTF-8 encode and decode (the last symbol utf8 encoding)
+                 * fix : Hailstone sequence, Trigonometric functions (arctan),
+                 * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
+                 * Sockets
+                 * implenent break analog
+                 * Zhang-Suen thinning algorithm
                  * Support enumeration list #265
-                 * fix UTF16Encoding.toString
                  * replace buble sort with quick sort
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
+                 * replace new object[]{-19.0r, 7.0r, -4.0r, 6.0r} with []{-19.0r, 7.0r, -4.0r, 6.0r}?
+                 * Zeckendorf number representation,
+                   Zeckendorf arithmetic, World Cup group stage, Wireworld
+                 * property template - should support public / internal visibility attributes
 
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
-                 * property template - should support public / internal visibility attributes
                  * lazy::(console.write("Reading a number:").readLine().toInt()) should generate an error?
                  * embeddable get should work with nonstructure types #424
                  * embeddable eval[1]
@@ -34,7 +32,6 @@ Pipeline:
                  * mixin :: { collection }, new::{ collection } - get rid of - new {}
                  * create a nested class / collection - syntax review
 
-                 * invoke property - get / set
                  * implement textdb sample
 
                  * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
@@ -53,7 +50,6 @@ Pipeline:
                  * (re)implement tape debugger
 
                  * passing variadic list to the implicit constructor (see - TapeExpression)
-                 * implement break
                  * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
                  * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
                    work

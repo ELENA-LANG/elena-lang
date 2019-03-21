@@ -16,7 +16,7 @@ puzzle = new Func1[]
 {
     (bits => bits.Length == 12),
     
-    (bits => bits.last:6.selectBy:(x => x.toBit()).summarize() == 3 ),
+    (bits => bits.last(6).selectBy:(x => x.toBit()).summarize() == 3 ),
     
     (bits => bits.zipBy(new Range(1, 12), 
                         (x,i => (i.toInt().isEven()).and:x.toBit())).summarize() == 2 ),
@@ -32,13 +32,13 @@ puzzle = new Func1[]
     
     (bits => bits[6].iif(bits[5] && bits[4],true) ),
     
-    (bits => bits.Top:6.selectBy:(x => x.toBit() ).summarize() == 3 ),
+    (bits => bits.top(6).selectBy:(x => x.toBit() ).summarize() == 3 ),
     
     (bits => bits[10] && bits[11] ),
     
     (bits => (bits[6].toBit() + bits[7].toBit() + bits[8].toBit())==1 ),
     
-    (bits => bits.top:11.selectBy:(x => x.toBit()).summarize() == 4 )
+    (bits => bits.top(11).selectBy:(x => x.toBit()).summarize() == 4 )
 };
 
 public program()

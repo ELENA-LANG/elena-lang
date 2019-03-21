@@ -1,11 +1,9 @@
-import system'collections.
-import system'routines.
-import extensions.
-import extensions'routines.
+import system'collections;
+import system'routines;
+import extensions;
+import extensions'routines;
 
-type charmatrix = matrix<CharValue>.
-
-const image = (
+const string[] image = new string[]{
         "                                                          ",
         " #################                   #############        ",
         " ##################               ################        ",
@@ -23,87 +21,93 @@ const image = (
         " ########     ####### ######    ################## ###### ",
         " ########     ####### ######      ################ ###### ",
         " ########     ####### ######         ############# ###### ",
-        "                                                          ").
+        "                                                          "};
 
-nbrs = ((0, -1), (1, -1), (1, 0), (1, 1), (0, 1),
-        (-1, 1), (-1, 0), (-1, -1), (0, -1)).
-
-nbrGroups = (((0, 2, 4), (2, 4, 6)), ((0, 2, 6),
-        (0, 4, 6))).
-
-charmatrix extension zhangsuenOp
+int[][] nbrs = new int[][]
 {
-    $proceed : r : c : toWhite : firstStep
-    [
+    new int[]{0, -1}, new int[]{1, -1}, new int[]{1, 0},   new int[]{1, 1}, new int[]{0, 1},
+    new int[]{-1, 1}, new int[]{-1, 0}, new int[]{-1, -1}, new int[]{0, -1}
+};
+
+int[][][] nbrGroups = new int[][][]
+{
+    new int[][]{new int[]{0, 2, 4}, new int[]{2, 4, 6}}, 
+    new int[][]{new int[]{0, 2, 6}, new int[]{0, 4, 6}}
+};
+
+extension zhangsuenOp : Matrix<char>
+{
+    private proceed(r, c, toWhite, firstStep)
+    {
         if (self[r][c] != $35)
-            [ ^ false ].
+            { ^ false };
         
-        int nn := self numNeighbors(r,c).
+        int nn := self.numNeighbors(r,c);
         
-        if ((nn < 2) || (nn > 6))
-            [ ^ false ].
+        if (nn < 2 || nn > 6)
+            { ^ false };
             
-        if(self numTransitions(r,c) != 1)
-            [ ^ false ].
+        if(self.numTransitions(r,c) != 1)
+            { ^ false };
 
-        ifnot (self atLeastOneIsWhite(r,c,firstStep iif(0,1)))
-            [ ^ false ].
+        ifnot (self.atLeastOneIsWhite(r,c,firstStep.iif(0,1)))
+            { ^ false };
 
-        toWhite append:{ x = c. y = r. }.
+        toWhite.append(new:{ X = c; Y = r; });
         
-        ^ true.      
-    ]
+        ^ true     
+    }
     
-    numNeighbors :r : c
+    numNeighbors(r : c)
     [
-        int count := 0.
+        int count := 0;
         
-        0 till(nbrs length - 1) do(:i)
-        [
+        for(int i := 0, i < nbrs.Length - 1, i += 1)
+        {
             if (self[r + nbrs[i][1]][c + nbrs[i][0]] == $35)
-                [ count := count + 1. ].
-        ].
+                { count := count + 1 }
+        };
                 
-        ^ count.
+        ^ count
     ]
 
-    numTransitions : r : c
-    [
-        int count := 0.
+    numTransitions(r, c)
+    {
+        int count := 0;
         
-        0 till(nbrs length - 1) do(:i)
-        [
+        for(int i := 0, i < nbrs.Length - 1, i += 1)
+        {
             if (self[r + nbrs[i][1]][c + nbrs[i][0]] == $32)
-            [
+            {
                 if (self[r + nbrs[i + 1][1]][c + nbrs[i + 1][0]] == $35)
-                [
-                    count := count + 1.
-                ].
-            ].
-        ].
+                {
+                    count := count + 1
+                }
+            }
+        };
                 
-        ^ count.
-    ]  
+        ^ count
+    }
     
-    atLeastOneIsWhite : r : c : step
-    [
-        int count := 0.
-        var group := nbrGroups[step].
-        0 till:2 do(:i)
-        [            
-            0 till(group[i] length) seek(:j)
-            [
+    atLeastOneIsWhite(r, c, step)
+    {
+        int count := 0;
+        var group := nbrGroups[step];
+        for(int i := 0, i < 2, i += 1)
+        {
+            for(int j := 0, j < group[i].Length, j += 1
+            {
                 var nbr := nbrs[group[i][j]].
                 
                 if (self[r + nbr[1]][c + nbr[0]] == $32)
                     [ count := count + 1. ^ true ].
                     
                 ^ false.                    
-            ].
-        ].
+            }
+        };
         
-        ^ count > 1.
-    ]    
+        ^ count > 1
+    }    
     
     thinImage
     [
@@ -144,21 +148,21 @@ charmatrix extension zhangsuenOp
     ]
 }
 
-program =
-[
-    charmatrix grid := MatrixSpace::
+program()
+{
+    Matrix<char> grid := new MatrixSpace:
     {
-        rows = image length.
+        Rows = image length.
         
-        columns = image[0] length.
+        Columns = image[0] length.
         
-        getAt int:i int:j
-            = image[i][j].
-    }.
+        at(int i, int j)
+            = image[i][j];
+    };
 
-    grid thinImage.
+    grid.thinImage();
             
-    grid print.
+    grid.print();
     
-    console readChar.
-].
+    console.readChar()
+}

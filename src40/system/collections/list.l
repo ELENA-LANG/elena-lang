@@ -25,45 +25,23 @@ public sealed List<T> : Enumerable<T>
 //            i := i + 1.
 //        ].
 //    ]
-//
-//    constructor(Array<type> list)
-//    [
-//        int len := list length.
-//        int size := len / 32.
-//        size := size + 1.
-//        size := size * 32.
-//        
-//        theLength := len.
-//        theCapacity := size.
-//        theArray := V<type>(size).
-//        
-//        int i := 0.
-//        while(i < len)
-//        [
-//            theArray[i] := list[i].
-//            
-//            i := i + 1.
-//        ].
-//    ]
-//        
-//    constructor(Array<type> list, int len)
-//    [
-//        int size := len / 32.
-//        size := size + 1.
-//        size := size * 32.
-//        
-//        theLength := len.
-//        theCapacity := size.
-//        theArray := V<type>(size).
-//        
-//        int i := 0.
-//        while(i < len)
-//        [
-//            theArray[i] := list[i].
-//            
-//            i := i + 1.
-//        ].
-//    ]
+
+    constructor(T[] a)
+    {
+        int len := a.Length;
+        int size := len / 32;
+        size := size + 1;
+        size := size * 32;
+        
+        theLength := len;
+        theCapacity := size;
+        theArray := new T[](size);
+        
+        for(int i := 0, i < len, i += 1)
+        {
+            theArray[i] := a[i]
+        }
+    }
         
     constructor(Enumerator<T> e)
         <= ()

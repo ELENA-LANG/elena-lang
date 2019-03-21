@@ -172,20 +172,14 @@ public extension loopOp
 
 // --- testOp ---
 
-//public extension testOp
-//{
-//    assertTrue
-//    [
-//        ifnot (self)
-//            [ console writeLine:"Assertion fails!" ].
-//    ]
-//    
-//    assertFalse
-//    [
-//        if(self)
-//            [ console writeLine:"Assertion fails!" ].
-//    ]
-//}
+public extension testOp
+{
+    assertTrue()
+        = Assert.ifTrue(self);
+    
+    assertFalse()
+        = Assert.ifFalse(self);
+}
 
 // --- Assert ---
 

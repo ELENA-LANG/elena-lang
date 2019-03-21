@@ -1,10 +1,16 @@
-﻿[project]
-executable=ycombinator.exe
-options=-w3
-namespace=ycombinator
-template=console
-debuginfo=-1
-
-[files]
-ycombinator.l
-
+<configuration>
+    <project>
+        <executable>ycombinator.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>ycombinator</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>ycombinator.l</include>
+        </module>
+    </files>
+</configuration>

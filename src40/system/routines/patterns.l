@@ -851,20 +851,20 @@ public class Accumulating : BasePattern
 //    
 //    enumerable => _left.
 //}
-//
-//// --- patternOp ---
-//
-//public extension patternOp
-//{
+
+// --- patternOp ---
+
+public extension patternOp
+{
 //    skipping:counter
 //        = SkipFilter new(counter, T<Enumerator>(self enumerator)).
-//
-//    last:counter
-//        = TopFilter new(counter, self length - counter, T<Enumerator>(self enumerator)).
-//
+
+    last(int counter)
+        = TopFilter.new(counter, self.Length - counter, cast Enumerator(self.enumerator()));
+
 //    orderBy:orderFunc
 //        = OrderingEnumerator new(orderFunc, T<Enumerator>(self enumerator)).
 //
 ////    filter pattern:patternFun
 ////        = Filter new(patternFun, T<Enumerator>(self enumerator)).
-//}
+}

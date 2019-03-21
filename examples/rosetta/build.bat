@@ -200,7 +200,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem ..\..\bin\elc tokenizer\tokenizer.prj
-rem ..\..\bin\elc trigonometric\trigonometric.prj
+
+..\..\bin\elc trigonometric\trigonometric.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 ..\..\bin\elc toppergroup\toppergroup.prj
 @echo off 
@@ -225,9 +229,17 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem ..\..\bin\elc zhangsuen\zhangsuen.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
+
 rem ..\..\bin\elc zeckendorf\zeckendorf.prj
 rem ..\..\bin\elc zeckendorf_arithm\zeckendorf_arithm.prj 
-rem ..\..\bin\elc ycombinator\ycombinator.prj
+
+..\..\bin\elc ycombinator\ycombinator.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 @echo off 
 goto:eof

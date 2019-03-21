@@ -1,9 +1,16 @@
-﻿[project]
-executable=truncprime.exe
-namespace=truncprime
-template=console
-debuginfo=-1
-
-[files]
-truncprime.l
-
+<configuration>
+    <project>
+        <executable>truncprime.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>truncprime</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>truncprime.l</include>
+        </module>
+    </files>
+</configuration>
