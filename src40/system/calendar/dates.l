@@ -1,6 +1,6 @@
 // --- TimeSpan --
 
-public sealed struct Timespan : BaseNumber
+public sealed struct Timespan : BaseValue
 {
     SystemTime theValue;
 
@@ -171,7 +171,7 @@ public sealed struct Timespan : BaseNumber
 
 // --- Date ---
 
-public sealed struct Date : BaseNumber
+public sealed struct Date : BaseValue
 {
     SystemTime theValue;
 

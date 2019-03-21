@@ -31,6 +31,15 @@ public class StringBookmark : BaseValue
     bool equal(wide value)
         => theValue;
 
+    bool less(int value)
+        => theIndex;
+
+    bool less(string value)
+        => theValue;
+
+    bool less(wide value)
+        => theValue;
+
     find(object)
         <= find(cast int(object));
 

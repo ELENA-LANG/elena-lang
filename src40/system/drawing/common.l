@@ -179,14 +179,14 @@
 
 // --- Region ---
 
-public sealed struct Region : BaseValue
+public sealed struct Region //: BaseValue
 {
     int theX;
     int theY;
     int theWidth;
     int theHeight;
     
-    /*embeddable */constructor()
+    embeddable constructor()
     {
         theX := 0;
         theY := 0;

@@ -25,8 +25,6 @@ public sealed ref<T> : BaseVariable
         
          ^ retVal 
     }
-    //get T Value()
-    //  = theValue;
     
     set Value(T val)
     {
@@ -41,9 +39,8 @@ public sealed ref<T> : BaseVariable
     bool equal(o)
         => theValue;
 
-    string Printable
-//        => theValue;
-        = theValue.Printable;
+    get string Printable()
+        => theValue;
         
     dispatch() => theValue;
 }
@@ -95,8 +92,8 @@ public sealed singleton true : BoolValue
     /// Returns literal representation.
     string Printable = "true";
 
-//    /// Returns itself.
-//    clone = self.
+    /// Returns itself.
+    bool clone() = self;
 }
 
 // --- false ---
@@ -149,32 +146,25 @@ public sealed singleton false : BoolValue
     /// Returns literal representation
     string Printable = "false";
     
-//    /// Returns itself
-//    clone = self.
+    /// Returns itself
+    bool clone() = self;
 }
 
 // === basic data classes ===
 
 // --- BaseValue ---
 
-// A base value
-public class BaseValue
+/// A base value
+public abstract class BaseValue
 {
-//    bool equal(BaseVariable var)
-//        <= equal(var value).
-//    
-//    bool less(BaseVariable var)
-//        <= equal(var value).
-//    
-//    /// Compares the values
-//    bool equal : anObject
-//        = false.
-//
-//    /// Compares the values
-//    bool less : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
+    bool equal(BaseVariable var)
+        <= equal(var.Value);
+    
+    bool less(BaseVariable var)
+        <= equal(var.Value);
+    
+    /// Compares the values
+    abstract bool less(o) {}
 
     /// Compares the values
     bool greater(o) = o.less(self);
@@ -187,43 +177,31 @@ public class BaseValue
 // --- BaseNumber ---
 
 /// A base numeric value
-public class BaseNumber : BaseValue
+public abstract class BaseNumber : BaseValue
 {
-//    add(BaseVariable var)
-//        <= add(var value).
-//
-//    subtract(BaseVariable var)
-//        <= subtract(var value).
-//    
-//    multiply(BaseVariable var)
-//        <= multiply(var value).
-//
-//    divide(BaseVariable var)
-//        <= divide(var value).
-//    
-//    /// Adds the value
-//    add : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Subtracts the value
-//    subtract : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Multiply by the value
-//    multiply : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Divides into the value
-//    divide : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
+    add(BaseVariable var)
+        <= add(var.Value);
+
+    subtract(BaseVariable var)
+        <= subtract(var.Value);
+    
+    multiply(BaseVariable var)
+        <= multiply(var.Value);
+
+    divide(BaseVariable var)
+        <= divide(var.Value);
+    
+    /// Adds the value
+    abstract add(o) {}
+
+    /// Subtracts the value
+    abstract subtract(o) {}
+
+    /// Multiply by the value
+    abstract multiply(o) {}
+
+    /// Divides into the value
+    abstract divide(o) {}
     
     Negative
         = 0 - self;
@@ -232,34 +210,25 @@ public class BaseNumber : BaseValue
 // --- IntBaseNumber ---
 
 /// A base integer value
-public class IntBaseNumber : BaseNumber
+public abstract class IntBaseNumber : BaseNumber
 {
-//    and(BaseVariable var)
-//        <= and(var value).
-//        
-//    or(BaseVariable var)
-//        <= or(var value).
-//        
-//    xor(BaseVariable var)
-//        <= xor(var value).
-//    
-//    /// Execute bitwise AND operation
-//    and : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//
-//    /// Execute bitwise OR operation
-//    or : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
-//    
-//    /// Execute bitwise XOR operation
-//    xor : anObject
-//    [
-//        system'NotSupportedException new; raise.
-//    ]
+    and(BaseVariable var)
+        <= and(var.Value);
+        
+    or(BaseVariable var)
+        <= or(var.Value);
+        
+    xor(BaseVariable var)
+        <= xor(var.Value);
+    
+    /// Execute bitwise AND operation
+    abstract and(o) {}
+
+    /// Execute bitwise OR operation
+    abstract or(o) {}
+    
+    /// Execute bitwise XOR operation
+    abstract xor(o) {}
     
     /// Returns true if all the mask bits are set
     bool allMask(operand)
@@ -302,9 +271,9 @@ public sealed const struct ByteNumber : IntBaseNumber
     constructor(byte value)
         = value;
 
-//    /// Creates the object with a specified value
-//    constructor new : val
-//        <= new(T<byte>(val)).
+    /// Creates the object with a specified value
+    constructor new(val)
+        <= (cast byte(val) ?? 0);
 
     /// Returns the value as a short integer
     short cast() = new ShortNumber(self);
@@ -321,8 +290,8 @@ public sealed const struct ByteNumber : IntBaseNumber
     /// Returns the value as a real number
     real cast() = new RealNumber(self);
 
-//    bool equal(BaseVariable v)
-//        <= equal(v value).
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
 
     bool equal(byte n)
         = theValue == n;
@@ -338,19 +307,19 @@ public sealed const struct ByteNumber : IntBaseNumber
     bool equal(real n)
         = new RealNumber(self).equal(n);
         
-//    bool equal : o
-//    [
-//        var n := T<byte>(o) ?? nil.
-//        (nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ self equal(n) ]
-//    ]
-//
-//    bool less : n
-//        <= less(T<byte>(n)).
-//
-//    bool less(BaseVariable v)
-//        <= less(v value).
+    bool equal(o)
+    {
+        var n := cast byte(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast byte(n));
+
+    bool less(BaseVariable v)
+        <= less(v.Value);
 
     bool less(byte n)
         = theValue < n;
@@ -374,29 +343,29 @@ public sealed const struct ByteNumber : IntBaseNumber
     bool less(real n)
         = new RealNumber(self).less(n);
 
-//    add:n
-//        <= add(T<byte>(n)).
-//
-//    subtract:n
-//        <= subtract(T<byte>(n)).
-//
-//    multiply:n
-//        <= multiply(T<byte>(n)).
-//
-//    divide:n
-//        <= divide(T<byte>(n)).
-//
-//    byte add(BaseVariable v)
-//        <= add(v value).
-//
-//    byte subtract(BaseVariable v)
-//        <= subtract(v value).
-//
-//    byte multiply(BaseVariable v)
-//        <= multiply(v value).
-//
-//    byte divide(BaseVariable v)
-//        <= divide(v value).
+    add(n)
+        <= add(cast byte(n));
+
+    subtract(n)
+        <= subtract(cast byte(n));
+
+    multiply(n)
+        <= multiply(cast byte(n));
+
+    divide(n)
+        <= divide(cast byte(n));
+
+    byte add(BaseVariable v)
+        <= add(v.Value);
+
+    byte subtract(BaseVariable v)
+        <= subtract(v.Value);
+
+    byte multiply(BaseVariable v)
+        <= multiply(v.Value);
+
+    byte divide(BaseVariable v)
+        <= divide(v.Value);
 
     /// Returns the sum
     byte add(byte n)
@@ -487,14 +456,14 @@ public sealed const struct ByteNumber : IntBaseNumber
     xor(n)
         <= xor(cast byte(n));
         
-//    byte and(BaseVariable v)
-//        <= and(v value).
-//        
-//    byte or(BaseVariable v)
-//        <= or(v value).
-//        
-//    byte xor(BaseVariable v)
-//        <= xor(v value).
+    byte and(BaseVariable v)
+        <= and(v.Value);
+        
+    byte or(BaseVariable v)
+        <= or(v.Value);
+        
+    byte xor(BaseVariable v)
+        <= xor(v.Value);
         
     /// Returns the result of bitwise AND operation
     byte and(byte n)
@@ -607,9 +576,9 @@ public sealed const struct ShortNumber : IntBaseNumber
     constructor()
         = 0;
 
-//    /// Creates the object with specified value
-//    constructor new : anObject
-//        <= new(T<short>(anObject)).
+    /// Creates the object with specified value
+    constructor new(o)
+        <= (cast short(o) ?? 0);
 
     /// Returns the byte value        
     byte cast() = byteConvertor.convert(self);
@@ -626,22 +595,22 @@ public sealed const struct ShortNumber : IntBaseNumber
     /// Returns the value as a real number
     real cast() = new RealNumber(self);
 
-//    bool equal:o
-//    [
-//        var n := T<short>(o) ?? nil.
-//        (nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ self equal(n) ]
-//    ]
-//
-//    bool less:n
-//        <= less(n).
-//
-//    bool equal(BaseVariable v)
-//        <= equal(v value).
-//                
-//    bool less(BaseVariable v)
-//        <= equal(v value).
+    bool equal(o)
+    {
+        var n := cast short(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast short(n));
+
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+                
+    bool less(BaseVariable v)
+        <= equal(v.Value);
 
     /// Compares the value
     bool equal(short n)
@@ -683,29 +652,29 @@ public sealed const struct ShortNumber : IntBaseNumber
     bool less(real n)
         = new RealNumber(self).less(n);
 
-//    add:n
-//        <= add(T<short>(n)).
-//
-//    subtract:n
-//        <= subtract(T<short>(n)).
-//
-//    multiply:n
-//        <= multiply(T<short>(n)).
-//
-//    divide:n
-//        <= divide(T<short>(n)).
-//
-//    short add(BaseVariable v)
-//        <= add(v value).
-//
-//    short subtract(BaseVariable v)
-//        <= subtract(v value).
-//
-//    short multiply(BaseVariable v)
-//        <= multiply(v value).
-//
-//    short divide(BaseVariable v)
-//        <= divide(v value).
+    add(n)
+        <= add(cast short(n));
+
+    subtract(n)
+        <= subtract(cast short(n));
+
+    multiply(n)
+        <= multiply(cast short(n));
+
+    divide(n)
+        <= divide(cast short(n));
+
+    short add(BaseVariable v)
+        <= add(v.Value);
+
+    short subtract(BaseVariable v)
+        <= subtract(v.Value);
+
+    short multiply(BaseVariable v)
+        <= multiply(v.Value);
+
+    short divide(BaseVariable v)
+        <= divide(v.Value);
 
     /// Returns the sum
     short add(short n)
@@ -796,14 +765,14 @@ public sealed const struct ShortNumber : IntBaseNumber
     xor(n)
         <= xor(cast short(n));
         
-//    short and(BaseVariable v)
-//        <= and(v value).
-//        
-//    short or(BaseVariable v)
-//        <= divide(v value).
-//        
-//    short xor(BaseVariable v)
-//        <= xor(v value).
+    short and(BaseVariable v)
+        <= and(v.Value);
+        
+    short or(BaseVariable v)
+        <= divide(v.Value);
+        
+    short xor(BaseVariable v)
+        <= xor(v.Value);
         
     /// Returns the result of bitwise AND operation
     short and(short n)
@@ -870,11 +839,8 @@ public sealed const struct ShortNumber : IntBaseNumber
     /// Returns the literal presentation
     string Printable = stringConvertor.convert(self);
 
-//    /// Returns the literal presentation
-//    wide = system'wideConvertor convert short:$self.
-
     /// Clones the value
-    short clone = new ShortNumber(self);
+    short clone() = new ShortNumber(self);
 }
 
 // --- IntNumber ---
@@ -917,21 +883,9 @@ public sealed const struct IntNumber : IntBaseNumber
     constructor(uint value)
         = value;
 
-//    /// Creates the object with specified value
-//    constructor new(short value)
-//        = intConvertor convert(value).
-//
-//    /// Creates the object with specified value
-//    constructor new(byte value)
-//        = intConvertor convert(value).
-//
-//    /// Creates the object with a default value (0)
-//    constructor new
-//        <= new(0).
-//
-//    /// Creates the object with specified value
-//    constructor new : anObject
-//        <= new(T<int>(anObject)).
+    /// Creates the object with specified value
+    constructor new(o)
+        <= (cast int(o));
 
     /// Returns the value as a short integer    
     short cast() = shortConvertor.convert(self);
@@ -955,14 +909,14 @@ public sealed const struct IntNumber : IntBaseNumber
             ? { ^ false } : { ^ self.equal(n) }
     }
 
-//    bool less:n
-//        <= less(T<int>(n)).
-//        
-//    bool equal(BaseVariable v)
-//        <= equal(v value).
-//        
-//    bool less(BaseVariable v)
-//        <= less(v value).
+    bool less(n)
+        <= less(cast int(n));
+        
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+        
+    bool less(BaseVariable v)
+        <= less(v.Value);
         
     /// Compares the value
     bool equal(int n)
@@ -984,17 +938,17 @@ public sealed const struct IntNumber : IntBaseNumber
     divide(n)
         <= divide(cast int(n));
         
-//    int add(BaseVariable v)
-//        <= add(v value).
-//
-//    int subtract(BaseVariable v)
-//        <= subtract(v value).
-//
-//    int multiply(BaseVariable v)
-//        <= multiply(v value).
-//
-//    int divide(BaseVariable v)
-//        <= divide(v value).
+    int add(BaseVariable v)
+        <= add(v.Value);
+
+    int subtract(BaseVariable v)
+        <= subtract(v.Value);
+
+    int multiply(BaseVariable v)
+        <= multiply(v.Value);
+
+    int divide(BaseVariable v)
+        <= divide(v.Value);
         
     /// Returns the sum
     int add(int n)
@@ -1021,15 +975,15 @@ public sealed const struct IntNumber : IntBaseNumber
     xor(n)
         <= xor(cast int(n));
         
-//    int and(BaseVariable v)
-//        <= and(v value).
-//        
-//    int or(BaseVariable v)
-//        <= or(v value).
-//        
-//    int xor(BaseVariable v)
-//        <= xor(v value).
-//        
+    int and(BaseVariable v)
+        <= and(v.Value);
+        
+    int or(BaseVariable v)
+        <= or(v.Value);
+        
+    int xor(BaseVariable v)
+        <= xor(v.Value);
+        
     /// Returns the result of bitwise AND operation
     int and(int n)
         = theValue && n;
@@ -1177,11 +1131,8 @@ public sealed const struct IntNumber : IntBaseNumber
     /// Returns the literal presentation
     string Printable = stringConvertor.convert(self);
 
-////    /// Returns the literal presentation
-////    wide = system'wideConvertor convert int:$self.
-
     /// Clones the value
-    int clone = new IntNumber(self);
+    int clone() = new IntNumber(self);
 
     int shiftLeft(BaseVariable v)
         <= shiftLeft(v.Value);
@@ -1233,8 +1184,7 @@ public sealed const struct IntNumber : IntBaseNumber
         int v := operand && theValue;
         
         ^ v != 0
-    }
-        
+    }        
 }
 
 // --- UIntNumber ---
@@ -1277,20 +1227,8 @@ public sealed const struct UIntNumber : IntBaseNumber
     static int MaxValue
         = 0FFFFFFFFh;
         
-//    constructor new(int n)
-//    [
-//        theValue := n.
-//    ]        
-//        
-//    constructor new(byte n)
-//    [
-//        theValue := n.
-//    ]        
-//        
-//    constructor new(short n)
-//    [
-//        theValue := n.
-//    ]        
+    constructor new(o)
+        <= (cast int(o));
         
     constructor(uint n)
     {
@@ -1303,9 +1241,6 @@ public sealed const struct UIntNumber : IntBaseNumber
     /// Returns the literal presentation
     string Printable = stringConvertor.convert(self);
 
-//    /// Returns the literal presentation
-//    wide = system'wideConvertor convert uint:$self.
-        
     /// Returns the value as a short integer    
     short cast() = shortConvertor.convert(self);
 
@@ -1320,22 +1255,22 @@ public sealed const struct UIntNumber : IntBaseNumber
     /// Returns the real number
     real cast() = new RealNumber(self);
 
-//    bool equal:o
-//    [
-//        var n := T<int>(o) ?? nil.
-//        (nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ self equal(n) ]
-//    ]
-//
-//    bool less:n
-//        <= less(T<int>(n)).
-//        
-//    bool equal(BaseVariable v)
-//        <= equal(v value).
-//        
-//    bool less(BaseVariable v)
-//        <= less(v value).
+    bool equal(o)
+    {
+        var n := cast int(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast int(n));
+        
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+        
+    bool less(BaseVariable v)
+        <= less(v.Value);
         
     /// Compares the value
     bool equal(int n)
@@ -1345,29 +1280,29 @@ public sealed const struct UIntNumber : IntBaseNumber
     bool less(int n)
         = theValue < n;
         
-//    add:n
-//        <= add(T<int>(n)).
-//
-//    subtract:n
-//        <= subtract(T<int>(n)).
-//
-//    multiply:n
-//        <= multiply(T<int>(n)).
-//
-//    divide:n
-//        <= divide(T<int>(n)).
+    add(n)
+        <= add(cast int(n));
+
+    subtract(n)
+        <= subtract(cast int(n));
+
+    multiply(n)
+        <= multiply(cast int(n));
+
+    divide(n)
+        <= divide(cast int(n));
         
-//    int add(BaseVariable v)
-//        <= add(v value).
-//
-//    int subtract(BaseVariable v)
-//        <= subtract(v value).
-//
-//    int multiply(BaseVariable v)
-//        <= multiply(v value).
-//
-//    int divide(BaseVariable v)
-//        <= divide(v value).
+    int add(BaseVariable v)
+        <= add(v.Value);
+
+    int subtract(BaseVariable v)
+        <= subtract(v.Value);
+
+    int multiply(BaseVariable v)
+        <= multiply(v.Value);
+
+    int divide(BaseVariable v)
+        <= divide(v.Value);
         
     /// Returns the sum
     int add(int n)
@@ -1394,14 +1329,14 @@ public sealed const struct UIntNumber : IntBaseNumber
     xor(n)
         <= xor(cast int(n));
         
-//    int and(BaseVariable v)
-//        <= and(v value).
-//        
-//    int or(BaseVariable v)
-//        <= or(v value).
-//        
-//    int xor(BaseVariable v)
-//        <= xor(v value).
+    int and(BaseVariable v)
+        <= and(v.Value);
+        
+    int or(BaseVariable v)
+        <= or(v.Value);
+        
+    int xor(BaseVariable v)
+        <= xor(v.Value);
         
     /// Returns the result of bitwise AND operation
     int and(int n)
@@ -1607,7 +1542,7 @@ public sealed const struct UIntNumber : IntBaseNumber
 public sealed const struct LongNumber : IntBaseNumber
 {
     embeddable __int theValue[8];
-//    
+
     /// return the default value
     static long Default
         = 0l;
@@ -1644,9 +1579,9 @@ public sealed const struct LongNumber : IntBaseNumber
     constructor(byte value)
         = longConvertor.convert(value);
 
-//    /// Creates the object with specified value
-//    constructor new : anObject
-//        <= new(T<long>(anObject)).
+    /// Creates the object with specified value
+    constructor new(o)
+        <= (cast long(o));
 
     /// Returns an integer value
     int cast() = intConvertor.convert(self);
@@ -1663,22 +1598,22 @@ public sealed const struct LongNumber : IntBaseNumber
     /// Returns a real value
     real cast() = new RealNumber(self);
     
-//    bool equal:o
-//    [
-//        var n := T<long>(o) ?? nil.
-//        (nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ self equal(n) ]
-//    ]
-//
-//    bool less:n
-//        <= less(T<long>(n)).
-//        
-//    bool equal(BaseVariable v)
-//        <= equal(v value).
-//        
-//    bool less(BaseVariable v)
-//        <= less(v value).
+    bool equal(o)
+    {
+        var n := cast long(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast long(n));
+        
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+        
+    bool less(BaseVariable v)
+        <= less(v.Value);
         
     /// Compares the value
     bool equal(long n)
@@ -1688,29 +1623,29 @@ public sealed const struct LongNumber : IntBaseNumber
     bool less(long n)
         = theValue < n;
         
-//    add:n
-//        <= add(T<long>(n)).
-//
-//    subtract:n
-//        <= subtract(T<long>(n)).
-//
-//    multiply:n
-//        <= multiply(T<long>(n)).
-//
-//    divide:n
-//        <= divide(T<long>(n)).
-//        
-//    long add(BaseVariable v)
-//        <= add(v value).
-//
-//    long subtract(BaseVariable v)
-//        <= subtract(v value).
-//
-//    long multiply(BaseVariable v)
-//        <= multiply(v value).
-//
-//    long divide(BaseVariable v)
-//        <= divide(v value).
+    add(n)
+        <= add(cast long(n));
+
+    subtract(n)
+        <= subtract(cast long(n));
+
+    multiply(n)
+        <= multiply(cast long(n));
+
+    divide(n)
+        <= divide(cast long(n));
+        
+    long add(BaseVariable v)
+        <= add(v.Value);
+
+    long subtract(BaseVariable v)
+        <= subtract(v.Value);
+
+    long multiply(BaseVariable v)
+        <= multiply(v.Value);
+
+    long divide(BaseVariable v)
+        <= divide(v.Value);
         
     /// Returns the sum
     long add(long n)
@@ -1737,14 +1672,14 @@ public sealed const struct LongNumber : IntBaseNumber
     xor(n)
         <= xor(cast long(n));
         
-//    long and(BaseVariable v)
-//        <= and(v value).
-//        
-//    long or(BaseVariable v)
-//        <= divide(v value).
-//        
-//    long xor(BaseVariable v)
-//        <= xor(v value).
+    long and(BaseVariable v)
+        <= and(v.Value);
+        
+    long or(BaseVariable v)
+        <= divide(v.Value);
+        
+    long xor(BaseVariable v)
+        <= xor(v.Value);
         
     /// Returns the result of bitwise AND operation
     long and(long n)
@@ -1893,25 +1828,22 @@ public sealed const struct LongNumber : IntBaseNumber
     /// Returns the literal presentation
     string Printable = stringConvertor.convert(self);
 
-//    /// Returns the literal presentation
-//    wide = system'wideConvertor convert long:$self.
-
     /// Clones the value
     long clone() = new LongNumber(self);
     
-//    long shiftLeft(int val)
-//    [
-//        ^ theValue << val
-//    ]
-//
-//    long shiftRight(int val)
-//    [
-//        ^ theValue >> val
-//    ]
-//    
-//    /// Bitwise inversion
-//    long inverted
-//        => system'core_routines'__long.  
+    long shiftLeft(int val)
+    {
+        ^ theValue $shl val
+    }
+
+    long shiftRight(int val)
+    {
+        ^ theValue $shr val
+    }
+    
+    /// Bitwise inversion
+    get long Inverted()
+        => system'core_routines'__long;  
         
     /// Negates the value
     Negative
@@ -1980,26 +1912,26 @@ public sealed const struct RealNumber : BaseNumber
     constructor(long value)
         = realConvertor.convert(value);
         
-//    /// Creates the object with specified value
-//    constructor new : anObject
-//        <= new(T<real>(anObject)).
-//        
-//    bool equal:o
-//    [
-//        var n := T<real>(o) ?? nil.
-//        (nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ self equal(n) ]
-//    ]
-//
-//    bool less:n
-//        <= less(T<real>(n)).
-//        
-//    bool equal(BaseVariable v)
-//        <= equal(v value).
-//        
-//    bool less(BaseVariable v)
-//        <= less(v value).
+    /// Creates the object with specified value
+    constructor new(o)
+        <= (cast real(o));
+        
+    bool equal(o)
+    {
+        var n := cast real(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast real(n));
+        
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+        
+    bool less(BaseVariable v)
+        <= less(v.Value);
         
     /// Compares the value
     bool equal(real n)
@@ -2021,17 +1953,17 @@ public sealed const struct RealNumber : BaseNumber
     divide(n)
         <= divide(cast real(n));
         
-//    real add(BaseVariable v)
-//        <= add(v value).
-//
-//    real subtract(BaseVariable v)
-//        <= subtract(v value).
-//
-//    real multiply(BaseVariable v)
-//        <= multiply(v value).
-//
-//    real divide(BaseVariable v)
-//        <= divide(v value).
+    real add(BaseVariable v)
+        <= add(v.Value);
+
+    real subtract(BaseVariable v)
+        <= subtract(v.Value);
+
+    real multiply(BaseVariable v)
+        <= multiply(v.Value);
+
+    real divide(BaseVariable v)
+        <= divide(v.Value);
         
     /// Returns the sum
     real add(real n)
@@ -2160,9 +2092,6 @@ public sealed const struct RealNumber : BaseNumber
     /// Returns the literal presentation
     string Printable = stringConvertor.convert(self);
 
-//    /// Returns the literal presentation
-//    wide = system'wideConvertor convert real:$self.
-
     /// Clones the value    
     real clone = new RealNumber(self);
     
@@ -2208,25 +2137,25 @@ public sealed const struct CharValue : BaseValue
         retVal := val
     }
 
-//    bool equal:o
-//    [
-//        var n := T<char>(o) ?? nil.
-//        (nil == n)
-//            ? [ ^ false ]
-//            ! [ ^ self equal(n) ]
-//    ]
-//
-//    bool less:n
-//        <= less(T<char>(n)).
-//        
-//    bool equal(BaseVariable v)
-//        <= equal(v value).
-//        
-//    bool less(BaseVariable v)
-//        <= less(v value).
-//        
-//    bool equal(int val)
-//        = theValue == val.
+    bool equal(o)
+    {
+        var n := cast char(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast char(n));
+        
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+        
+    bool less(BaseVariable v)
+        <= less(v.Value);
+        
+    bool equal(int val)
+        = theValue == val;
 
     bool equal(string val)
     {
@@ -2264,11 +2193,11 @@ public sealed const struct CharValue : BaseValue
         ^ theValue < val;
     }
     
-//    bool less(literal val)
-//        = val < T<literal>(self).
-//
-//    bool less(wide val)
-//        = val < T<wide>(self).
+    bool less(string val)
+        = val < (cast string(self));
+
+    bool less(wide val)
+        = val < (cast wide(self));
 
     /// Clones the value
     char clone() = new CharValue(self);
@@ -2314,18 +2243,6 @@ public sealed const struct CharValue : BaseValue
         
         ^ length
     }
-
-//    // Reads the object hash code into the output parameter
-//    readHashCodeTo(ref<int> aCode)
-//        => system'core_routines'__int.
-//    
-//    embeddable int hash_code
-//    [
-//        int aCode := 0.
-//        self readHashCodeTo(&aCode).
-//        
-//        ^ aCode.
-//    ]
 }
 
 // --- nil constant ---
@@ -2382,11 +2299,6 @@ public sealed class Variable : BaseVariable, ref<object>
     {
         theValue := value
     }
-    
-//    set : value
-//    [
-//        $value := value.
-//    ]
     
     append(val)
     {
@@ -2495,8 +2407,8 @@ public singleton byteConvertor
     convert(wide value, ref byte retVal)
         => system'core_routines'__byteconvertor;
         
-//    byte convert(BaseVariable v)
-//        <= convert(v value).
+    byte convert(BaseVariable v)
+        <= convert(v.value);
                         
     /// Returns the parameter        
     byte convert(byte n)
@@ -2613,8 +2525,8 @@ public singleton shortConvertor
     convert(wide val, ref short retVal)
         => system'core_routines'__shortconvertor;
         
-//    short convert(BaseVariable v)
-//        <= convert(v value).
+    short convert(BaseVariable v)
+        <= convert(v.Value);
                         
     /// Returns a short integer value        
     short convert(short n)
@@ -2846,11 +2758,11 @@ public singleton intConvertor
 /// A unsigned integer convertor
 public singleton uintConvertor
 {
-//    uint convert : object
-//        = T<uint>(object).
-//    
-//    uint convert(int val)
-//        = UIntNumber new(val).
+    uint convert(object)
+        = cast uint(object);
+    
+    uint convert(int val)
+        = new UIntNumber(val);
         
     /// Converts a long integer into an integer and saves the result into an output parameter
     convert(long n, ref int retVal)
@@ -2869,40 +2781,40 @@ public singleton uintConvertor
 /// A long integer convertor
 public singleton longConvertor
 {
-//    /// Converts a literal string into a long integer and saves the result into an output parameter
-//    convert(literal aValue, ref<long> aRetVal)
-//        => system'core_routines'__longconvertor.
-//
-//    /// Converts a literal string into a long integer and saves the result into an output parameter
-//    convert(literal value, int base, ref<long> retVal)
-//        => system'core_routines'__longconvertor.
-//
-//    /// Converts a wide literal string into a long integer and saves the result into an output parameter
-//    convert(wide aValue, ref<long> aRetVal)
-//        => system'core_routines'__longconvertor.
-//
-//    /// Converts a wide literal string into a long integer and saves the result into an output parameter
-//    convert(wide value, int base, ref<long> retVal)
-//        => system'core_routines'__longconvertor.
+    /// Converts a literal string into a long integer and saves the result into an output parameter
+    convert(string s, ref long retVal)
+        => system'core_routines'__longconvertor;
+
+    /// Converts a literal string into a long integer and saves the result into an output parameter
+    convert(string s, int base, ref long retVal)
+        => system'core_routines'__longconvertor;
+
+    /// Converts a wide literal string into a long integer and saves the result into an output parameter
+    convert(wide s, ref long retVal)
+        => system'core_routines'__longconvertor;
+
+    /// Converts a wide literal string into a long integer and saves the result into an output parameter
+    convert(wide value, int base, ref<long> retVal)
+        => system'core_routines'__longconvertor;
 
     convert(int n, ref long retVal)
         => system'core_routines'__longconvertor;
         
-//    convert(uint aValue, ref<long> aRetVal)
-//        => system'core_routines'__longconvertor.
-//        
-//    convert(short aValue, ref<long> aRetVal)
-//        => system'core_routines'__longconvertor.
-//
-//    convert(byte aValue, ref<long> aRetVal)
-//        => system'core_routines'__longconvertor.
-//
-//    /// Converts a real number into a long integer and saves the result into an output parameter
-//    convert(real aValue, ref<long> aRetVal)
-//        => system'core_routines'__longconvertor.
-//
-//    long convert(BaseVariable v)
-//        <= convert(v value).
+    convert(uint n, ref long retVal)
+        => system'core_routines'__longconvertor;
+        
+    convert(short n, ref long retVal)
+        => system'core_routines'__longconvertor;
+
+    convert(byte n, ref long retVal)
+        => system'core_routines'__longconvertor;
+
+    /// Converts a real number into a long integer and saves the result into an output parameter
+    convert(real n, ref long retVal)
+        => system'core_routines'__longconvertor;
+
+    long convert(BaseVariable v)
+        <= convert(v.Value);
         
     /// Converts an integer value into a long integer
     long convert(int n)
@@ -2913,86 +2825,84 @@ public singleton longConvertor
         ^ new LongNumber(retVal)
     }
 
-//    /// Converts an integer value into a long integer
-//    long convert(uint aValue)
-//    [
-//        long n := 0l.
-//        self convert(aValue, &n).
-//        
-//        ^ LongNumber new(n)
-//    ]
-//
-//    /// Converts an integer value into a long integer
-//    long convert(byte aValue)
-//    [
-//        long n := 0l.
-//        self convert(aValue, &n).
-//        
-//        ^ LongNumber new(n)
-//    ]
-//
-//    /// Converts an integer value into a long integer
-//    long convert(short aValue)
-//    [
-//        long n := 0l.
-//        self convert(aValue, &n).
-//        
-//        ^ LongNumber new(n)
-//    ]
-//
-//    /// Converts a real number into a long integer
-//    long convert(real aValue)
-//    [
-//        long aRetVal := 0l.
-//        self convert(aValue, &aRetVal).
-//        
-//        ^ LongNumber new(aRetVal)
-//    ]
-//
-//    /// Converts a character into a long integer
-//    long convert(char aValue)
-//    [
-//        int aRetVal := 0.
-//        intConvertor convert(aValue, &aRetVal).
-//        
-//        ^ LongNumber new(aRetVal)
-//    ]
-//
-//    /// Converts a literal string into a long integer
-//    long convert(literal aLiteral)
-//    [
-//        long aRetVal := 0l.
-//        self convert(aLiteral, &aRetVal).
-//        
-//        ^ LongNumber new(aRetVal)
-//    ]
-//
-////    /// Converts a literal string into a long integer
-////    stacksafe long convert literal:literal base:base
-////    [
-////        long retVal := 0l.
-////        $self convert literal:literal int:base vlong:retVal.
-////        
-////        ^ LongNumber new long:retVal
-////    ]
-//
-//    /// Converts a wide literal string into a long integer
-//    long convert(wide aLiteral)
-//    [
-//        long aRetVal := 0l.
-//        self convert(aLiteral, &aRetVal).
-//        
-//        ^ LongNumber new(aRetVal)
-//    ]
-//
-////    /// Converts a wide literal string into a long integer
-////    stacksafe long convert wide:literal base:base
-////    [
-////        long retVal := 0l.
-////        $self convert wide:literal int:base vlong:retVal.
-////        
-////        ^ LongNumber new long:retVal
-////    ]
+    /// Converts an integer value into a long integer
+    long convert(uint val)
+    {
+        long n := 0l;
+        self.convert(val, ref n);
+        
+        ^ new LongNumber(n)
+    }
+
+    /// Converts an integer value into a long integer
+    long convert(byte val)
+    {
+        long n := 0l;
+        self.convert(val, ref n);
+        
+        ^ new LongNumber(n)
+    }
+
+    /// Converts an integer value into a long integer
+    long convert(short val)
+    {
+        long n := 0l;
+        self.convert(val, ref n);
+        
+        ^ new LongNumber(n)
+    }
+
+    /// Converts a real number into a long integer
+    long convert(real val)
+    {
+        long retVal := 0l;
+        self.convert(val, ref retVal);
+        
+        ^ new LongNumber(retVal)
+    }
+
+    /// Converts a character into a long integer
+    long convert(char ch)
+    {
+        int retVal := 0;
+        intConvertor.convert(ch, ref retVal);
+        
+        ^ new LongNumber(retVal)
+    }
+
+    /// Converts a literal string into a long integer
+    long convert(string s)
+    {
+        long retVal := 0l;
+        self.convert(s, ref retVal);
+        
+        ^ new LongNumber(retVal)
+    }
+
+    /// Converts a literal string into a long integer
+    long convert(string s, int base)
+    {
+        self.convert(s, base, ref long retVal);
+        
+        ^ new LongNumber(retVal)
+    }
+
+    /// Converts a wide literal string into a long integer
+    long convert(wide s)
+    {
+        long retVal := 0l;
+        self.convert(s, ref retVal);
+        
+        ^ new LongNumber(retVal)
+    }
+
+    /// Converts a wide literal string into a long integer
+    long convert(wide s, int base)
+    {
+        self.convert(s, base, ref long retVal);
+        
+        ^ new LongNumber(retVal)
+    }
     
     /// Returns a parameter
     long convert(long n)
@@ -3046,9 +2956,9 @@ public singleton realConvertor
     convert(string s, ref real retVal)
         => system'core_routines'__realconvertor;
 
-//    /// Converts a wide literal string into a real number and saves the result into an output parameter
-//    convert(wide aValue, ref<real> aRetVal)
-//        => system'core_routines'__realconvertor.
+    /// Converts a wide literal string into a real number and saves the result into an output parameter
+    convert(wide s, ref real retVal)
+        => system'core_routines'__realconvertor;
         
     real convert(BaseVariable v)
         <= convert(v.Value);
@@ -3062,14 +2972,14 @@ public singleton realConvertor
         ^ new RealNumber(retVal)
     }
         
-//    /// Converts a wide literal string into a real number
-//    real convert(wide aLiteral)
-//    [
-//        real aRetVal := 0.0r.
-//        self convert(aLiteral, &aRetVal).
-//        
-//        ^ RealNumber new(aRetVal)
-//    ]
+    /// Converts a wide literal string into a real number
+    real convert(wide s)
+    {
+        real retVal := 0.0r;
+        self.convert(s, ref retVal);
+        
+        ^ new RealNumber(retVal)
+    }
 
     /// Returns a parameter
     real convert(real r)

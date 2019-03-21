@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>4.0.73</version>
+     <version>4.0.74</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -52,6 +52,7 @@
      <module name="routines">
        <include>routines\enumerables.l</include>
        <include>routines\patterns.l</include>
+       <include>routines\sorting.l</include>
      </module>
      <module name="routines'stex">
        <include>routines\stex\strong_extensions.l</include>

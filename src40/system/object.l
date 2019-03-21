@@ -54,7 +54,7 @@ public interface BoolValue
 
     abstract get bool Inverted() {}
 
-//    abstract clone []
+    abstract bool clone() {}
 }
 
 public extension commonOp
@@ -64,28 +64,4 @@ public extension commonOp
  
     then(Func code)
         = code();
-        
-//    thenClose(Func code)
-//    [
-//        code().
-//        
-//        self close
-//    ]
-//    
-//    doFinally(Func c1, Func c2)
-//    [
-//        (c1()) then:c2
-//            | raise:c2.
-//    ]
-//    
-//    doAndClose(Func code)
-//    [
-//        self thenClose:code
-//            | raise:[ self close ].
-//    ]        
 }
-
-//public singleton __prober
-//{
-//    dispatch => system'core_routines'__prober.    
-//}
