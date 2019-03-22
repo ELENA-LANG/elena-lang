@@ -330,7 +330,7 @@ public sealed class TextBuilder
         int maxIndex := theLength;
         maxIndex := maxIndex - strLen;
         
-        while (index < maxIndex)
+        while (index <= maxIndex)
         {
             current := theBuffer[index];
             

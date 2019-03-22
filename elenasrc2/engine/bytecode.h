@@ -586,6 +586,16 @@ struct CommandTape
       labels.pop();
    }
 
+   int exchangeFirstsLabel(int newLabel)
+   {
+      auto it = labels.end();
+
+      int oldLabel = *it;
+      *it = newLabel;
+
+      return oldLabel;
+   }
+
    ByteCodeIterator find(ByteCode code);
    ByteCodeIterator find(ByteCode code, int argument);
 

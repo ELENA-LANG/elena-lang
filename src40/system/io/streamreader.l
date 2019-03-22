@@ -162,7 +162,7 @@ public interface TextReader
         if(len < 0) 
         {
             line := cast string(theOutput);
-            theOutput.clear()
+            theOutput.clear();
         }
         else
         {

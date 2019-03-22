@@ -1,4 +1,5 @@
 //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
 //		This file contains ELENA byte code compiler class implementation.
@@ -371,10 +372,49 @@ void ByteCodeWriter :: declareTry(CommandTape& tape)
    tape.write(bcAllocStack, 3);
 }
 
+int ByteCodeWriter :: declareSafeTry(CommandTape& tape)
+{
+   int label = tape.newLabel();                  // declare ret-end-label
+   tape.newLabel();                  // declare end-label
+   tape.newLabel();                  // declare alternative-label
+
+   // hook labAlt
+
+   tape.write(bcHook, baCurrentLabel);
+   tape.write(bcAllocStack, 3);
+
+   return tape.exchangeFirstsLabel(label);
+}
+
 void ByteCodeWriter :: endTry(CommandTape& tape)
 {
    //   unhook
    tape.write(bcUnhook);
+}
+
+void ByteCodeWriter :: declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel)
+{
+   //   jump labEnd
+   tape.write(bcJump, baPreviousLabel);
+
+   if (finallyNode != lxNone) {
+      // restore the original ret label and return the overridden one
+      retLabel = tape.exchangeFirstsLabel(retLabel);
+
+      // tryRet:
+      tape.setPredefinedLabel(retLabel);
+      tape.write(bcUnhook);
+
+      // generate finally
+      pushObject(tape, lxResult);
+      generateCodeBlock(tape, finallyNode);
+      popObject(tape, lxResult);
+
+      gotoEnd(tape, baFirstLabel);
+   }
+
+   // labErr:
+   tape.setLabel();
 }
 
 void ByteCodeWriter :: declareCatch(CommandTape& tape)
@@ -1293,6 +1333,16 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
 
    tape.setLabel();
    tape.write(bcFreeStack, 3);
+}
+
+void ByteCodeWriter :: endSafeCatch(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+   tape.write(bcFreeStack, 3);
+
+   tape.releaseLabel(); // retCatch is aleady set
 }
 
 void ByteCodeWriter :: endAlt(CommandTape& tape)
@@ -5037,7 +5087,7 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
 {
    bool first = true;
 
-   declareTry(tape);
+   int retLabel = declareSafeTry(tape);
 
    SNode finallyNode = node.findChild(lxFinally);
    SNode current = node.firstChild();
@@ -5052,7 +5102,7 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
                generateCodeBlock(tape, finallyNode);
                popObject(tape, lxResult);
             }
-            declareCatch(tape);
+            declareSafeCatch(tape, finallyNode, retLabel);
             if (finallyNode != lxNone) {
                // generate finally
                generateCodeBlock(tape, finallyNode);
@@ -5068,7 +5118,7 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
       current = current.nextNode();
    }
 
-   endCatch(tape);
+   endSafeCatch(tape);
 }
 
 void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)

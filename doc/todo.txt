@@ -130,8 +130,7 @@ Pipeline:
               dev - tests          
                  * test vm sta : preloaded symbols / initializers
                  * test vm sta : exception handlers
-                 * vm : Dynamic variable names, Runtime evaluation, Runtime evaluation/In an environment
-                 * vm : Execute Brain****
+                 * vm : Runtime evaluation, Runtime evaluation/In an environment
                  * mta system : check the situation when too many threads (> MAX_THREAD)
                  * nested code : read only outer field
 

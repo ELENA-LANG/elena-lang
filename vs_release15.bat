@@ -455,8 +455,7 @@ copy %1\asm\x32\*.asm asm\x32
 copy %1\asm\*.esm asm
 
 md src40\core
-xcopy %1\src40\core\*.l src40\core /s
-xcopy %1\src40\core\*.prj src40\core /s
+xcopy %1\src40\core\*.esn src40\core /s
 
 md src40\system
 xcopy %1\src40\system\*.l src40\system /s

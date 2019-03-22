@@ -132,7 +132,9 @@ class ByteCodeWriter
    void declareSwitchBlock(CommandTape& tape);
    void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
+   int declareSafeTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
+   void declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel);
    void doCatch(CommandTape& tape);
    void declareAlt(CommandTape& tape);
 
@@ -221,6 +223,7 @@ class ByteCodeWriter
 
    void endTry(CommandTape& tape);
    void endCatch(CommandTape& tape);
+   void endSafeCatch(CommandTape& tape);
    void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);
    void endLoop(CommandTape& tape);
