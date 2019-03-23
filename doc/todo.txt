@@ -3,20 +3,21 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * reimpleent Sorting algorithms/Quicksort, using it as default sorting algorithn, when the size is less than 7
-                   use selection sort
-                 * migrate Sorting algorithms, Sort an integer array, UTF-8 encode and decode (the last symbol utf8 encoding)
-                 * fix : Hailstone sequence, Trigonometric functions (arctan),
+                 * UTF-8 encode and decode (the last symbol utf8 encoding)
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
                  * Sockets
-                 * implenent break analog
                  * Zhang-Suen thinning algorithm
+                 * reimpleent Sorting algorithms/Quicksort, using it as default sorting algorithn, when the size is less than 7
+                   use selection sort
+                 * fix : Hailstone sequence, Trigonometric functions (arctan),
+                 * implenent break analog
                  * Support enumeration list #265
                  * replace buble sort with quick sort
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * replace new object[]{-19.0r, 7.0r, -4.0r, 6.0r} with []{-19.0r, 7.0r, -4.0r, 6.0r}?
                  * Zeckendorf number representation,
                    Zeckendorf arithmetic, World Cup group stage, Wireworld
+                 * Sorting algorithms/Sleep sort
                  * property template - should support public / internal visibility attributes
 
 ------                                                           

@@ -3618,9 +3618,14 @@ inline size_t countChildren(SNode node)
    return counter;
 }
 
-bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node)
+bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, bool ignoreBranching)
 {
    if (node != lxNone) {
+      if (ignoreBranching && node.nextNode().compare(lxBranching, lxLooping)) {
+         // HOTFIX : do not generate a block breakpoint for the looping / branching
+         return false;
+      }
+
       // try to find the terminal symbol
       SNode terminal = node;
       while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
@@ -4491,7 +4496,7 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
 {
    SNode bpNode = node.findChild(lxBreakpoint);
    if (bpNode != lxNone) {
-      translateBreakpoint(tape, bpNode);
+      translateBreakpoint(tape, bpNode, false);
 
       declareBlock(tape);
    }
@@ -4531,7 +4536,7 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 {
    SNode bpNode = callNode.findChild(lxBreakpoint);
    if (bpNode != lxNone) {
-      translateBreakpoint(tape, bpNode);
+      translateBreakpoint(tape, bpNode, false);
 
       declareBlock(tape);
    }
@@ -4887,7 +4892,7 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
 
 void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
 {
-   if (translateBreakpoint(tape, node.findSubNode(lxBreakpoint))) {
+   if (translateBreakpoint(tape, node.findSubNode(lxBreakpoint), false)) {
       declareBlock(tape);
       generateExpression(tape, node, ACC_REQUIRED);
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
@@ -4969,7 +4974,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
             target = child;
          }
          else if (child == lxExpression) {
-            translateBreakpoint(tape, child.findChild(lxBreakpoint));
+            translateBreakpoint(tape, child.findChild(lxBreakpoint), false);
 
             source = child.findSubNodeMask(lxObjectMask);
          }
@@ -5146,6 +5151,10 @@ void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
 
 void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
+   SNode breakpoint = node.prevNode();
+   if (breakpoint != lxBreakpoint)
+      breakpoint = lxNone;
+
    declareLoop(tape, true);
 
    //declareBlock(tape);
@@ -5204,6 +5213,10 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
       }
 
       else if (test(current.type, lxObjectMask)) {
+         // breakpoint should be generated here for better debugging 
+         if (breakpoint != lxNone)
+            translateBreakpoint(tape, breakpoint, false);
+
          declareBlock(tape);
          generateObject(tape, current);
          declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
@@ -5251,6 +5264,10 @@ void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node nod
 
 void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node node)
 {
+   SNode breakpoint = node.prevNode();
+   if (!breakpoint.compare(lxBreakpoint, lxNone))
+      breakpoint = lxNone;
+
    bool switchBranching = node.argument == -1;
 
    if (switchBranching) {
@@ -5309,9 +5326,17 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
             generateCodeBlock(tape, current.findSubNode(lxCode));
             break;
          default:
-            if (test(current.type, lxObjectMask))
-               generateObject(tape, current, ACC_REQUIRED);
-
+            if (test(current.type, lxObjectMask)) {
+               if (breakpoint != lxNone && translateBreakpoint(tape, breakpoint, false)) {
+                  //HOTFIX : breakpoint should be generated here for better debugging 
+                  declareBlock(tape);
+                  generateObject(tape, current, ACC_REQUIRED);
+                  declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+                  
+                  breakpoint = lxNone;
+               }
+               else generateObject(tape, current, ACC_REQUIRED);
+            }
             break;
       }
 
@@ -5742,7 +5767,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
       switch (type)
       {
          case lxExpression:
-            if (translateBreakpoint(tape, current.findChild(lxBreakpoint))) {
+            if (translateBreakpoint(tape, current.findChild(lxBreakpoint), true)) {
                declareBlock(tape);
                generateExpression(tape, current);
                declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
@@ -5763,7 +5788,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
                current.findChild(lxClassName).identifier());
             break;
          case lxBreakpoint:
-            translateBreakpoint(tape, current);
+            translateBreakpoint(tape, current, false);
             break;
          case lxVariable:
          case lxIntVariable:

@@ -233,45 +233,47 @@ public extension enumerableOp
         }
     }
 
-//    maximalMember
-//    [
-//        auto en := T<Enumerator>(self enumerator).
-//        
-//        object maximal := nil.
-//        while (en next)
-//        [
-//            var item := en get.
-//            if (nil == maximal)
-//            [
-//                maximal := item
-//            ]; if (maximal < item)
-//            [
-//                maximal := item
-//            ]
-//        ].
-//        
-//        ^ maximal   
-//    ]
-//    
-//    minimalMember
-//    [
-//        auto en := T<Enumerator>(self enumerator).
-//        
-//        object maximal := nil.
-//        while (en next)
-//        [
-//            var item := en get.
-//            if (nil == maximal)
-//            [
-//                maximal := item
-//            ]; if (maximal > item)
-//            [
-//                maximal := item
-//            ]
-//        ].
-//        
-//        ^ maximal   
-//    ]
+    get MaximalMember()
+    {
+        auto en := cast Enumerator(self.enumerator());
+        
+        object maximal := nil;
+        while (en.next())
+        {
+            var item := en.get();
+            if (nil == maximal)
+            {
+                maximal := item
+            }
+            else if (maximal < item)
+            {
+                maximal := item
+            }
+        };
+        
+        ^ maximal   
+    }
+    
+    get MinimalMember()
+    {
+        auto en := cast Enumerator(self.enumerator());
+        
+        object maximal := nil;
+        while (en.next())
+        {
+            var item := en.get();
+            if (nil == maximal)
+            {
+                maximal := item
+            }
+            else if (maximal > item)
+            {
+                maximal := item
+            }
+        };
+        
+        ^ maximal   
+    }
     
     get LastMember()
     {
@@ -494,27 +496,27 @@ public extension indexableOp
     populate(action)
         = self.populate:(int n){ ^action(n) };
 
-//    bool isSorted(Func2 aCompareFunc)
-//    [
-//        auto it := T<Indexer>(self indexer).
-//        if (it available)
-//        [
-//            var previous := it get.
-//            it appendIndex:1.
-//            while (it available)
-//            [
-//                ifnot (aCompareFunc(previous, it get))
-//                [
-//                    ^ false
-//                ].
-//                
-//                previous := it get.
-//                it appendIndex:1
-//            ]
-//        ].
-//        
-//        ^ true.
-//    ]
+    bool isSorted(Func2 compareFunc)
+    {
+        auto it := cast Indexer(self.indexer());
+        if (it.Available)
+        {
+            var previous := it.get();
+            it.appendIndex:1;
+            while (it.Available)
+            {
+                ifnot (compareFunc(previous, it.get()))
+                {
+                    ^ false
+                };
+                
+                previous := it.get();
+                it.appendIndex:1
+            }
+        };
+        
+        ^ true
+    }
 
     sort(Func2 compareFunc)
     {
@@ -550,9 +552,9 @@ public extension indexableOp
         ^ copy.sort(ifOrdered)
     }
 
-//    isAscendant
-//        = self~indexableOp isSorted:ifOrdered.
-//
+    isAscendant()
+        = self.isSorted(ifOrdered);
+
 //    Subarray : aLength at:anIndex
 //        = self~indexableOp Subarray(anIndex, aLength).
 //                

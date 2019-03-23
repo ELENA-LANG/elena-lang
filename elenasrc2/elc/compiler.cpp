@@ -4203,7 +4203,7 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Co
    return ObjectInfo(okObject);
 }
 
-ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo)
+ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo)
 {
    // allocate a temporal local
    int tempLocal = scope.newLocal();
@@ -4572,7 +4572,7 @@ ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope, bool decl
    else return resolveTemplateDeclarationUnsafe(node, scope, declarationMode);
 }
 
-ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int mode)
+ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int)
 {
    ref_t exprAttr = 0;
 
@@ -7679,7 +7679,7 @@ ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int mode
    return node.findChild(lxTarget).argument;
 }
 
-ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int mode)
+ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
 {
    //ref_t targetRef = node.findChild(lxTarget).argument;
    SNode targetNode = node.firstChild(lxObjectMask);

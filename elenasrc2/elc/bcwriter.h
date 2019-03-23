@@ -272,7 +272,7 @@ class ByteCodeWriter
    void doShortArrayOperation(CommandTape& tape, int operator_id);
    void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
 
-   bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node);
+   bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, bool ignoreBranching);
 
    void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);

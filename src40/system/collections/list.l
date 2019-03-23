@@ -673,38 +673,34 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
         theLength.append(1)
     }
     
-//    appendRange : subarray
-//    [
-//        if (nil != subarray)
-//        [
-//            int len := subarray length.
-//            int i := 0.
-//            while (i < len)
-//            [
-//                self append(subarray getAt(i)).
-//                i := i + 1
-//            ]
-//        ]
-//    ]
-//
-//    appendRange(Indexable indexable)
-//    [
-//        if (nil != indexable)
-//        [
-//            int len := indexable length.
-//            T<Indexer> it := indexable indexer.
-//            
-//            int i := 0.
-//            while (it available)
-//            [                
-//                self append(it get).
-//                
-//                i += 1.
-//                it writeIndex(i).
-//            ]
-//        ]
-//    ]        
-//                
+    appendRange(subarray)
+    {
+        if (nil != subarray)
+        {
+            int len := subarray.Length;
+            for(int i := 0, i < len, i += 1)
+            {
+                self.append(subarray.at(i))
+            }
+        }
+    }
+
+    appendRange(Indexable indexable)
+    {
+        if (nil != indexable)
+        {
+            int len := indexable.Length;
+            Indexer it := indexable.indexer();
+            
+            while (it.Available)
+            {       
+                self.append(it.get());
+                
+                it.appendIndex(1)
+            }
+        }
+    }
+                
 //    /// Inserts a new object to the specified position
 //    insert(int anIndex, object anObject)
 //    [
