@@ -60,6 +60,11 @@ bin\elc src40\cellular\cellular.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elc src40\algorithms\algorithms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 rem bin\elc src40\graphics\graphics.prj
 rem bin\elc src40\xforms\xforms.prj
 

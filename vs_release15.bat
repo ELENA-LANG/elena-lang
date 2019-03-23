@@ -465,6 +465,10 @@ md src40\extensions
 xcopy %1\src40\extensions\*.l src40\extensions /s
 xcopy %1\src40\extensions\*.prj src40\extensions /s
 
+md src40\algorithms
+xcopy %1\src40\algorithms\*.l src40\algorithms /s
+xcopy %1\src40\algorithms\*.prj src40\algorithms /s
+
 md src40\net
 xcopy %1\src40\net\*.l src40\net /s
 xcopy %1\src40\net\*.prj src40\net /s
