@@ -162,8 +162,8 @@ private:
    bool prevChar(disp_t& disp)
    {
 #ifdef _UTF8
-      if (_status == 0 && _ELENA_::test((*_page).text[_offset], 0x80)) {
-         while (!_ELENA_::test((*_page).text[_offset], 0xC0)) {
+      if (_status == 0 && _ELENA_::test((*_page).text[_offset-1], 0x80)) {
+         while (!_ELENA_::test((*_page).text[_offset-1], 0xC0)) {
             if (!go(-1))
                return false;
 
@@ -172,7 +172,7 @@ private:
       }
       return go(-1);
 #else
-      if ((unsigned)(*_page).text[_offset] >= 0xDC00) {
+      if ((unsigned)(*_page).text[_offset - 1] >= 0xDC00) {
          disp++;
          return go(-2);
       }
