@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>4.0.75</version>
+     <version>4.0.76</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -57,6 +57,7 @@
      <module name="routines'stex">
        <include>routines\stex\strong_extensions.l</include>
        <include>routines\stex\strong_patterns.l</include>
+       <include>routines\stex\strong_sorting.l</include>
      </module>
      <module name="dynamic">
        <include>dynamic\reflection.l</include>

@@ -520,28 +520,7 @@ public extension indexableOp
 
     sort(Func2 compareFunc)
     {
-        Indexer former := self.indexer();
-        Indexer later := self.indexer();
-
-        while (former.Available)
-        {
-            int i := former.Index;
-            
-            later.writeIndex(i + 1);
-            
-            while (later.Available)
-            {
-                ifnot (compareFunc(former.get(), later.get()))
-                    {
-                        var tmp := former.get();
-                        former.set(later.get());
-                        later.set(tmp)
-                    };
-                    
-                later.appendIndex(1)
-            };
-            former.appendIndex(1)
-        }
+        QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
     }
     
     ascendant()
@@ -555,15 +534,12 @@ public extension indexableOp
     isAscendant()
         = self.isSorted(ifOrdered);
 
-//    Subarray : aLength at:anIndex
-//        = self~indexableOp Subarray(anIndex, aLength).
-//                
-//    Subarray(int anIndex, int aLength)
-//    [
-//        auto it := T<Indexer>(self indexer).
-//        
-//        ^ Array new(aLength); populate(:i)<int>(it writeIndex(anIndex + i); get)
-//    ]
+    Subarray(int index, int length)
+    {
+        auto it := cast Indexer(self.indexer());
+        
+        ^ Array.allocate(length).populate:(int i => it.writeIndex(index + i).get())
+    }
     
     sequenceEqual(array)
     {

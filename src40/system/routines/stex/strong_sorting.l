@@ -1,18 +1,18 @@
-public interface SortingAgent
+public interface SortingAgent<T>
 {
     vprop int Length
     {
         abstract readTo(ref int retVal) {}
     }    
     
-    abstract at(int index) {}
+    abstract T at(int index) {}
     
     abstract exchange(int i, int j) {}
 }
 
-public sealed ArraySortingAgent : SortingAgent
+public sealed ArraySortingAgent<T> : SortingAgent<T>
 {
-    field a;
+    T[] a;
     
     int Length
     {
@@ -24,68 +24,25 @@ public sealed ArraySortingAgent : SortingAgent
         }
     }
         
-    constructor(a)
+    constructor(T[] a)
     {
         this a := a
     }
     
-    at(int index)
+    T at(int index)
         = a[index];
 
     exchange(int i, int j)
     {
-        var tmp := a[i];
+        T tmp := a[i];
         a[i]:= a[j];
         a[j] := tmp
     }    
 }
 
-public sealed IndexerSortingAgent : SortingAgent
+public singleton QuickSorting<T>
 {
-    Indexer a;
-    
-    int Length
-    {
-        readTo(ref int retVal)
-        {
-            int len := a.Length;
-            
-            retVal := len
-        }
-    }
-        
-    constructor(Indexer a)
-    {
-        this a := a
-    }
-    
-    constructor(a)
-        <=(cast Indexer(a.indexer()));
-    
-    at(int index)
-    {
-        a.Index := index;
-        
-        ^ a.get()
-    }
-
-    exchange(int i, int j)
-    {
-        a.Index := i;
-        var vi := a.get();
-
-        a.Index := j;
-        var vj := a.get();
-        a.set(vi);
-        
-        a.Index := i;
-        a.set(vj)
-    }    
-}
-
-public singleton QuickSorting
-{
-    private int partion(SortingAgent a, int start, int end, int pivot, Func2 compf)
+    private int partion(SortingAgent<T> a, int start, int end, int pivot, Func<T, T, bool> compf)
     {
         a.exchange(pivot, start);
         int i := start + 1;
@@ -103,11 +60,11 @@ public singleton QuickSorting
         ^ i - 1
     }
 
-    private int median(SortingAgent a, int i1, int i2, int i3, Func2 compf)
+    private int median(SortingAgent<T> a, int i1, int i2, int i3, Func<T, T, bool> compf)
     {
-        var t1 := a[i1];
-        var t2 := a[i2];
-        var t3 := a[i3];
+        T t1 := a[i1];
+        T t2 := a[i2];
+        T t3 := a[i3];
         
         if (compf(t1, t2))
         {
@@ -133,7 +90,7 @@ public singleton QuickSorting
         }
     }
             
-    sort(SortingAgent a, int start, int end, Func2 compf)
+    sort(SortingAgent<T> a, int start, int end, Func<T, T, bool> compf)
     {
         int len := end - start;
         if (end <= start)
@@ -153,7 +110,7 @@ public singleton QuickSorting
         self.sort(a, start2, end, compf)
     }
     
-    sort(SortingAgent a, Func2 compf)
+    sort(SortingAgent<T> a, Func<T, T, bool> compf)
     {
         int length := a.Length;
         int last := length - 1;
