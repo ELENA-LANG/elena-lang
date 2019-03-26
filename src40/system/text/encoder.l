@@ -183,14 +183,14 @@ public singleton UTF8Encoder : Encoder
     convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
         => system'core_routines'__utf8encoder;
     
-//    convert(int anIndex, ref<int> aLength, literal aLiteral, ByteArray anOutput, ref<int> anOutputLength)
-//    [
+//    convert(int index, ref int length, string s, byte[] output, ref int outputLength)
+//    {
 //        int l := aLength value.
-//        aLiteral saveToByteArray(anIndex, anOutput, l).
+//        s.saveToByteArray(index, output, l).
 //
 //        aLength readValueTo(anOutputLength).
-//    ]
-//    
+//    }
+    
 //    toLiteral(int anIndex, int aLength, ByteArray anArray)
 //        = UTF8Encoding toLiteral(anIndex, aLength, anArray).
 }

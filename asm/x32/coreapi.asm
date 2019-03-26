@@ -3287,7 +3287,6 @@ lab4:
   mov  edx, ebx
   mov  bl, byte ptr [eax]
   add  eax, 1
-  mov  edx, ebx
   shl  edx, 18
   shl  ebx, 12
   add  edx, ebx
@@ -3304,6 +3303,7 @@ lab4:
   
   add  edx, ebx
   sub  edx, 3C82080h
+  sub  ecx, 3
   jmp  labSave  
 
 lab2:  
@@ -3314,6 +3314,7 @@ lab2:
   shl  edx, 6
   add  edx, ebx
   sub  edx, 3080h
+  sub  ecx, 1
   jmp  short labSave  
   
 lab3:
@@ -3328,6 +3329,7 @@ lab3:
   add  eax, 1
   add  edx, ebx
   sub  edx, 0E2080h
+  sub  ecx, 2
   jmp  short labSave  
   
 lab1:
@@ -3722,38 +3724,39 @@ labNext:
    cmp  ebx, 10000h
    jl   short lab3
 
-   sub  ecx, 4
-   jb   short err
+   sub  ecx, 1
+
+   mov  edx, ebx
+   shr  edx, 18
+   and  edx, 03Fh
+   add  edx, 000000F0h 
+   mov  byte ptr [edi], dl
+   add  edi, 1
+
+   mov  edx, ebx
+   and  edx, 03F000h
+   shr  edx, 12
+   add  edx, 00000080h 
+   mov  byte ptr [edi], dl
+   add  edi, 1
+
+   mov  edx, ebx
+   and  edx, 0FC0h   
+   shr  edx, 6
+   add  edx, 00000080h
+   mov  byte ptr [edi], dl
+   add  edi, 1
+
    mov  edx, ebx
    and  edx, 03Fh
    add  edx, 00000080h
    mov  byte ptr [edi], dl
    add  edi, 1
 
-   mov  edx, ebx
-   shr  edx, 12
-   and  edx, 0000003Fh
-   add  edx, 00000080h
-   mov  byte ptr [edi], dl
-   add  edi, 1
-   
-   mov  edx, ebx
-   shr  edx, 6
-   and  edx, 0000003Fh
-   add  edx, 00000080h
-   mov  byte ptr [edi], dl
-   add  edi, 1
-    
-   mov  edx, ebx
-   and  edx, 03Fh
-   add  edx, 00000080h
-   mov  byte ptr [edi], dl
-   add  edi, 1
    jmp  labSave
 
 lab2:
-   sub  ecx, 2
-   jb   short err
+   sub  ecx, 1
 
    mov  edx, ebx
    shr  edx, 6
@@ -3768,8 +3771,7 @@ lab2:
    jmp  labSave
 
 lab3:
-   sub  ecx, 2
-   jb   short err
+   sub  ecx, 1
 
    mov  edx, ebx
    shr  edx, 12
@@ -3787,7 +3789,6 @@ lab3:
    and  ebx, 03Fh
    add  ebx, 00000080h
    mov  byte ptr [edi], bl
-   add  edi, 1
    jmp  short labSave
    
 lab1:

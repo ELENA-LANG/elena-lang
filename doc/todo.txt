@@ -3,8 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * UTF-8 encode and decode (the last symbol utf8 encoding)
-
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
                  * Sockets
                  * Zhang-Suen thinning algorithm
@@ -18,6 +16,7 @@ In development:
                    Zeckendorf arithmetic, World Cup group stage, Wireworld
                  * Sorting algorithms/Sleep sort
                  * property template - should support public / internal visibility attributes
+                 * (re)implement UTF8Encoder.convert(..,string,byte[]) method
 
 ------                                                           
 Pipeline:
