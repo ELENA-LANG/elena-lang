@@ -3,6 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * Sorting algorithms/Sleep sort
+                 * Zeckendorf number representation,
+                   Zeckendorf arithmetic, World Cup group stage, Wireworld
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
                  * Sockets
                  * Zhang-Suen thinning algorithm
@@ -12,11 +15,10 @@ In development:
                  * replace buble sort with quick sort
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * replace new object[]{-19.0r, 7.0r, -4.0r, 6.0r} with []{-19.0r, 7.0r, -4.0r, 6.0r}?
-                 * Zeckendorf number representation,
-                   Zeckendorf arithmetic, World Cup group stage, Wireworld
-                 * Sorting algorithms/Sleep sort
                  * property template - should support public / internal visibility attributes
                  * (re)implement UTF8Encoder.convert(..,string,byte[]) method
+                 * implement Heap, Balanced Search Tree and Hash tables, review Map<T,Key> template, if it could be
+                   optimized
 
 ------                                                           
 Pipeline:

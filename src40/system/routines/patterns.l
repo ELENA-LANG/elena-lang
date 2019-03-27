@@ -54,52 +54,52 @@ public class TopFilter : Enumerator
     enumerable() => theEnumerator;
 }
 
-//// --- SkipFilter ---
-//
-//public class SkipFilter :: Enumerator
-//{
-//    ref<int>      theCounter.    
-//    bool          skipped.    
-//    T<Enumerator> theEnumerator.
-//    
-//    constructor new(int aCounter, Enumerator en)
-//    [
-//        theCounter := aCounter.
-//        skipped := false.
-//        theEnumerator := en.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        ifnot (skipped)
-//        [
-//            skipped := true.
-//            
-//            int i := theCounter.
-//            while (i > 0)            
-//            [
-//                ifnot (theEnumerator next)
-//                [
-//                    ^ false
-//                ].
-//                
-//                i -= 1.
-//            ]
-//        ].
-//        
-//        ^ theEnumerator next
-//    ]
-//    
-//    reset 
-//    [
-//        theEnumerator reset.
-//        skipped := false.
-//    ]    
-//    
-//    enumerable => theEnumerator.
-//}
+// --- SkipFilter ---
+
+public class SkipFilter : Enumerator
+{
+    int        theCounter;    
+    bool       skipped;    
+    Enumerator theEnumerator;
+    
+    constructor new(int counter, Enumerator en)
+    {
+        theCounter := counter;
+        skipped := false;
+        theEnumerator := en
+    }
+    
+    get() = theEnumerator.get();
+    
+    bool next()
+    {
+        ifnot (skipped)
+        {
+            skipped := true;
+            
+            int i := theCounter;
+            while (i > 0)            
+            {
+                ifnot (theEnumerator.next())
+                {
+                    ^ false
+                };
+                
+                i -= 1
+            }
+        };
+        
+        ^ theEnumerator.next()
+    }
+    
+    reset()
+    {
+        theEnumerator.reset();
+        skipped := false
+    }
+    
+    enumerable() => theEnumerator;
+}
 
 // --- Filtering ---
 
@@ -856,8 +856,8 @@ public class Accumulating : BasePattern
 
 public extension patternOp
 {
-//    skipping:counter
-//        = SkipFilter new(counter, T<Enumerator>(self enumerator)).
+    skipping(int counter)
+        = SkipFilter.new(counter, cast Enumerator(self.enumerator()));
 
     last(int counter)
         = TopFilter.new(counter, self.Length - counter, cast Enumerator(self.enumerator()));

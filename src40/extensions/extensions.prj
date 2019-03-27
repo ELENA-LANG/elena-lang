@@ -8,7 +8,7 @@
     </project>
     <manifest>
       <name>ELENA Extension Library</name>
-      <version>4.0.29</version>
+      <version>4.0.30</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>
@@ -39,6 +39,9 @@
             <include>scripting\escript.l</include>
             <include>scripting\jscript.l</include>
             <include>scripting\assembly.l</include>
+        </module>
+        <module name="threading">
+          <include>threading\threading.l</include>
         </module>
     </files>
 </configuration>
