@@ -1291,36 +1291,44 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
    // method parameter debug info
    while (current != lxNone) {
       if (current == lxMethodParameter/* || current == lxIdentifier*/) {
-         ident_t name = /*(current == lxIdentifier) ? current.identifier() : */current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier();
-         Parameter param = scope.parameters.get(name);
-         if (param.offset != -1) {
-            if (param.class_ref == V_ARGARRAY) {
-               writer.newNode(lxParamsVariable);
-            }
-            else if (param.class_ref == moduleScope->intReference) {
-               writer.newNode(lxIntVariable);
-            }
-            else if (param.class_ref == moduleScope->longReference) {
-               writer.newNode(lxLongVariable);
-            }
-            else if (param.class_ref == moduleScope->realReference) {
-               writer.newNode(lxReal64Variable);
-            }
-            else if (param.size != 0 && param.class_ref != 0) {
-               ref_t classRef = param.class_ref;
-               if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
-                  writer.newNode(lxBinaryVariable);
-                  writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+         SNode identNode = current.findChild(lxNameAttr);
+         if (identNode != lxNone) {
+            identNode = identNode.firstChild(lxTerminalMask);
+         }
+         else identNode = current.firstChild(lxTerminalMask);
+
+         if (identNode != lxNone) {
+            ident_t name = identNode.identifier();
+            Parameter param = scope.parameters.get(name);
+            if (param.offset != -1) {
+               if (param.class_ref == V_ARGARRAY) {
+                  writer.newNode(lxParamsVariable);
+               }
+               else if (param.class_ref == moduleScope->intReference) {
+                  writer.newNode(lxIntVariable);
+               }
+               else if (param.class_ref == moduleScope->longReference) {
+                  writer.newNode(lxLongVariable);
+               }
+               else if (param.class_ref == moduleScope->realReference) {
+                  writer.newNode(lxReal64Variable);
+               }
+               else if (param.size != 0 && param.class_ref != 0) {
+                  ref_t classRef = param.class_ref;
+                  if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
+                     writer.newNode(lxBinaryVariable);
+                     writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+                  }
+                  else writer.newNode(lxVariable);
                }
                else writer.newNode(lxVariable);
+
+               writer.appendNode(lxLevel, prefix - param.offset);
+               writer.newNode(lxIdentifier, name);
+               writer.closeNode();
+
+               writer.closeNode();
             }
-            else writer.newNode(lxVariable);
-
-            writer.appendNode(lxLevel, prefix - param.offset);
-            writer.newNode(lxIdentifier, name);
-            writer.closeNode();
-
-            writer.closeNode();
          }
       }
       else if (current == lxSourcePath) {

@@ -2504,7 +2504,7 @@ end
 
 procedure __realconvertor."convert$system@LongNumber$@system@ref#1&system@RealNumber[3]"
   
-  bcopya
+  bloadsi  3
   aloadsi 2
   callextr api : longtoreal
   acopyb

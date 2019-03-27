@@ -408,9 +408,14 @@ labConvert:
 
   xor  eax, eax
   lodsb
+  cmp  eax, 3Ah
+  jl   short lab11
+  sub  al, 7
+lab11:
   sub  al, 30h
   jb   short labErr
-  cmp  al, 9
+  mov  edx, [esp+4]
+  cmp  dl, al
   ja   short labErr
 
   add ebx, eax       // DLO + EAX
@@ -438,6 +443,7 @@ labSave:
 
 labErr:
   xor  eax, eax
+  pop  edx
   pop  ebx
   pop  edi
 

@@ -403,6 +403,9 @@ public extension convertorOp
     long toHexLong()
         = longConvertor.convert(self, 16);
     
+    long toLong(int radix)
+        = longConvertor.convert(self, radix);
+    
     char toChar()
         = charConvertor.convert:self;
 
