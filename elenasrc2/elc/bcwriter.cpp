@@ -1954,7 +1954,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             writeMessageInfo(scope, dsMessage, (const char*)_strings.get((*it).additional));
             break;
          case bdStruct:
-            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, 0);
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsStructPtr, frameLevel);
             if (peekNext(it) == bdLocalInfo) {
                it++;
                writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
@@ -5930,6 +5930,10 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
          case lxSelfVariable:
             declareSelfInfo(tape, current.argument);
             break;
+         case lxBinarySelf:
+            declareSelfStructInfo(tape, SELF_VAR, current.argument,
+               current.findChild(lxClassName).identifier());
+            break;
          case lxIntVariable:
             declareLocalIntInfo(tape,
                current.firstChild(lxTerminalMask).identifier(),
@@ -5948,6 +5952,19 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
                current.firstChild(lxTerminalMask).identifier(),
                current.findChild(lxLevel).argument);
             break;
+         case lxBinaryVariable:
+         {
+            int level = current.findChild(lxLevel).argument;
+
+            // HOTFIX : only for dynamic objects
+            if (current.argument != 0)
+               generateBinary(tape, current, level);
+
+            declareStructInfo(tape,
+               current.findChild(lxIdentifier).identifier(),
+               level, current.findChild(lxClassName).identifier());
+            break;
+         }
       }
 
       current = current.nextNode();

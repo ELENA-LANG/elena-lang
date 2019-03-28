@@ -1265,6 +1265,20 @@ ref_t Compiler :: resolveObjectReference(_ModuleScope& scope, ObjectInfo object)
    }
 }
 
+inline void writeClassNameInfo(SyntaxWriter& writer, _Module* module, ref_t reference)
+{
+   ident_t className = module->resolveReference(reference);
+   if (isTemplateWeakReference(className)) {
+      // HOTFIX : save weak template-based class name directly
+      writer.appendNode(lxClassName, className);
+   }
+   else {
+      IdentifierString fullName(module->Name(), className);
+
+      writer.appendNode(lxClassName, fullName.c_str());
+   }
+}
+
 void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/)
 {
    _ModuleScope* moduleScope = scope.moduleScope;
@@ -1272,10 +1286,11 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
    // declare built-in variables
    if (withSelf) {
       if (scope.classEmbeddable) {
-         IdentifierString className(scope.moduleScope->module->resolveReference(scope.getClassRef()));
+         writer.newNode(lxBinarySelf, 1);
 
-         SNode debugNode = node.insertNode(lxBinarySelf, 1);
-         debugNode.appendNode(lxClassName, className.c_str());
+         writeClassNameInfo(writer, scope.module, scope.getClassRef());
+
+         writer.closeNode();
       }
       else writer.appendNode(lxSelfVariable, 1);
    }
@@ -1316,8 +1331,9 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
                else if (param.size != 0 && param.class_ref != 0) {
                   ref_t classRef = param.class_ref;
                   if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
+
                      writer.newNode(lxBinaryVariable);
-                     writer.appendNode(lxClassName, scope.moduleScope->module->resolveReference(classRef));
+                     writeClassNameInfo(writer, scope.module, classRef);
                   }
                   else writer.newNode(lxVariable);
                }

@@ -45,6 +45,9 @@ sealed struct ZeckendorfNumber
                 dLen := i
             };
             
+            int v2 := dVal $shr (i * 2);
+            int v := (dVal $shr (i * 2)) && 3;
+            
             ((dVal $shr (i * 2)) && 3) =>
                 0 { ^ self }
                 1 { ^ self }
@@ -59,7 +62,9 @@ sealed struct ZeckendorfNumber
                     ^ self
                 }
                 3 {
-                    dVal := dVal && ((3 $shl i*2).Inverted);
+                    int tmp := 3 $shl (i * 2);
+                    tmp := tmp.xor(-1);
+                    dVal := dVal && tmp;
                     
                     self.b((i+1)*2)
                 };
@@ -97,7 +102,10 @@ sealed struct ZeckendorfNumber
     {
         if ((dVal $shr pos).allMask:1)
         {
-            dVal := dVal && (1 $shr pos).Inverted;
+            int tmp := 1 $shl pos;
+            tmp := tmp.xor(-1);
+            
+            dVal := dVal && tmp;
             
             ^ self
         };
@@ -157,10 +165,10 @@ sealed struct ZeckendorfNumber
     {
         n.readContent(ref dVal, ref dLen);              
         
-        var Na := m;
-        var Nb := m;
-        var Nr := 0n;
-        var Nt := 0n;
+        ZeckendorfNumber Na := m;
+        ZeckendorfNumber Nb := m;
+        ZeckendorfNumber Nr := 0n;
+        ZeckendorfNumber Nt := 0n;
         
         for(int i := 0, i < (dLen + 1) * 2, i += 1) 
         {
@@ -173,7 +181,7 @@ sealed struct ZeckendorfNumber
             Na := Nt
         };
         
-        Nr.readContent(ref dVal, ref dLen)
+        Nr.readContent(ref dVal, ref dLen);
     }
     
     internal constructor newInternal(int v, int l)

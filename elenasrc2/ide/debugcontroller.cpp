@@ -1287,7 +1287,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
             readIntArray(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsStructPtr) {
-            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            size_t localPtr = _debugger.Context()->readDWord(_debugger.Context()->Local(lineInfo[index].addresses.local.level));
             ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(lineInfo[index + 1].addresses.source.nameRef));
             if (classPtr != 0) {
                readObject(watch, localPtr, 

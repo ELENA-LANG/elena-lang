@@ -3,7 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * Zeckendorf arithmetic, World Cup group stage, Wireworld
+                 * World Cup group stage, Wireworld
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
                  * Zhang-Suen thinning algorithm
                  * fix : Hailstone sequence, Trigonometric functions (arctan), anagram
