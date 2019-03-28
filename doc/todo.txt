@@ -3,16 +3,13 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * Sorting algorithms/Sleep sort
-                 * Zeckendorf number representation,
-                   Zeckendorf arithmetic, World Cup group stage, Wireworld
+                 * Zeckendorf arithmetic, World Cup group stage, Wireworld
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
-                 * Sockets
                  * Zhang-Suen thinning algorithm
                  * fix : Hailstone sequence, Trigonometric functions (arctan), anagram
                  * implenent break analog
                  * Support enumeration list #265
-                 * replace buble sort with quick sort
+                 * Sockets
                  * review new {a,b,c} - syntax, it is inconsisten with root expression
                  * replace new object[]{-19.0r, 7.0r, -4.0r, 6.0r} with []{-19.0r, 7.0r, -4.0r, 6.0r}?
                  * property template - should support public / internal visibility attributes
@@ -117,6 +114,7 @@ Pipeline:
                  * reimplement loop similar to lazy / direct
                  * set operation with constant array should not be allowed
                  * vm client : incorrect error if the program entry is not defined
+                 * bool_expr ? 1 : 0 - the expression result should be strong-typed
  
               dev - tests          
                  * test elt

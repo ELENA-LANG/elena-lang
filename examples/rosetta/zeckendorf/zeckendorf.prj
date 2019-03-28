@@ -1,8 +1,16 @@
-﻿[project]
-executable=zeckendorf.exe
-namespace=zeckendorf
-template=console
-debuginfo=-1
-
-[files]
-zeckendorf.l
+<configuration>
+    <project>
+        <executable>zeckendorf.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>zeckendorf</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>zeckendorf.l</include>
+        </module>
+    </files>
+</configuration>

@@ -3015,10 +3015,10 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
          // HOTFIX : to compile switch statement
          roperand = ObjectInfo(okLocal, roperandNode.argument);
       }*/
-      /*if (test(roperandNode.type, lxTerminalMask)) {*/
+      if (test(roperandNode.type, lxTerminalMask)) {
          roperand = compileObject(writer, roperandNode, scope, 0, 0);
-      /*}
-      else roperand = compileExpression(writer, roperandNode, scope, 0, 0);*/
+      }
+      else roperand = compileExpression(writer, roperandNode, scope, 0, 0);
    }
 
    if (operator_id == ISNIL_OPERATOR_ID) {
@@ -3232,7 +3232,10 @@ bool Compiler :: sendTypecast(SyntaxWriter& writer, CodeScope& scope, ref_t targ
 ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
 {
    ref_t argRef = resolveObjectReference(scope, info);
-   if (isPrimitiveRef(argRef))
+   if (!argRef) {
+      return 0;
+   }
+   else if (isPrimitiveRef(argRef))
       argRef = resolvePrimitiveReference(scope, argRef, info.element, false);
 
    return scope.module->mapSignature(&argRef, 1, false);
@@ -3244,6 +3247,9 @@ ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info1, Obje
 
    argRef[0] = resolveObjectReference(scope, info1);
    argRef[1] = resolveObjectReference(scope, info2);
+
+   if (!argRef[0] || !argRef[1])
+      return 0;
 
    if (isPrimitiveRef(argRef[0]))
       argRef[0] = resolvePrimitiveReference(scope, argRef[0], info1.element, false);
@@ -5984,7 +5990,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
       if (scope.multiMethod && bodyNode.argument != 0) {
          compileMultidispatch(writer, bodyNode, codeScope, classClassScope);
 
-         bodyNode = lxNone;
+         bodyNode = SNode();
       }
       else {
          compileConstructorResendExpression(writer, bodyNode, codeScope, classClassScope, withFrame);
@@ -7785,10 +7791,6 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
             }
             else if (subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
                SNode createNode = subNode.findChild(lxCreatingStruct/*, lxImplicitCall*/);
-               //if (createNode == lxImplicitCall && createNode.argument != encodeAction(NEWOBJECT_MESSAGE_ID))
-               //   // HOTFIX : recognize only implicit constructor call
-               //   createNode = lxNone;
-
                if (createNode != lxNone && targetNode == lxLocalAddress) {
                   // if it is implicit conversion
                   createNode.set(targetNode.type, targetNode.argument);

@@ -2384,9 +2384,10 @@ ref_t TemplateGenerator :: generateTemplate(SyntaxWriter& writer, _ModuleScope& 
    }
 
    // NOTE : for the import mode, no need to declare a new class
-   generateTemplate(writer, templateScope, !importMode, importModuleInfo);
-
-   return templateScope.reference;
+   if (generateTemplate(writer, templateScope, !importMode, importModuleInfo)) {
+      return templateScope.reference;
+   }
+   else return 0;   
 }
 
 void TemplateGenerator :: generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)

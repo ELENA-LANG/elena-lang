@@ -233,8 +233,15 @@ rem @echo off
 rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
 rem @echo on
 
-rem ..\..\bin\elc zeckendorf\zeckendorf.prj
-rem ..\..\bin\elc zeckendorf_arithm\zeckendorf_arithm.prj 
+..\..\bin\elc zeckendorf\zeckendorf.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc zeckendorf_arithm\zeckendorf_arithm.prj 
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 ..\..\bin\elc ycombinator\ycombinator.prj
 @echo off 

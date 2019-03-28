@@ -1,9 +1,16 @@
-﻿[project]
-executable=zeckendorf_arithm.exe
-namespace=zeckendorf
-template=console
-debuginfo=-1
-
-[files]
-zeckendorf_arithm.l
-
+<configuration>
+    <project>
+        <executable>zeckendorf_arithm.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>zeckendorf_arithm</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>zeckendorf_arithm.l</include>
+        </module>
+    </files>
+</configuration>

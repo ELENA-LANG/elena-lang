@@ -5153,7 +5153,7 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
    SNode breakpoint = node.prevNode();
    if (breakpoint != lxBreakpoint)
-      breakpoint = lxNone;
+      breakpoint = SNode();
 
    declareLoop(tape, true);
 
@@ -5266,7 +5266,7 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
 {
    SNode breakpoint = node.prevNode();
    if (!breakpoint.compare(lxBreakpoint, lxNone))
-      breakpoint = lxNone;
+      breakpoint = SNode();
 
    bool switchBranching = node.argument == -1;
 
@@ -5333,7 +5333,7 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
                   generateObject(tape, current, ACC_REQUIRED);
                   declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
                   
-                  breakpoint = lxNone;
+                  breakpoint = lxIdle;
                }
                else generateObject(tape, current, ACC_REQUIRED);
             }
