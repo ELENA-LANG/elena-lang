@@ -913,6 +913,10 @@ public:
       {
          return findChild(type1, type2, type3) != lxNone;
       }
+      bool existSubChild(LexicalType type1, LexicalType type2)
+      {
+         return findSubNode(type1, type2) != lxNone;
+      }
 
       bool compare(LexicalType type1, LexicalType type2)
       {

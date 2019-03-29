@@ -316,6 +316,13 @@ public doUntil<loop_body>(cond_expr)
     __loop cast bool(cond_expr) ! { loop_body }
 }
 
+public doWhile<loop_body>(cond_expr)
+{
+    loop_body;
+    
+    __loop cast bool(cond_expr) ? { loop_body }
+}
+
 
 // -- try-catch statement ---
 

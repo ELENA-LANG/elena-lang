@@ -120,7 +120,7 @@ inline bool isTerminal(LexicalType type)
    return test(int(type), lxTerminalMask);
 }
 
-inline void copyIdentifier(SyntaxWriter& writer, SNode ident)
+inline void copyIdentifier(SyntaxWriter& writer, SNode ident, bool ignoreTerminalInfo)
 {
    ident_t s = ident.identifier();
    if (!emptystr(s)) {
@@ -128,14 +128,16 @@ inline void copyIdentifier(SyntaxWriter& writer, SNode ident)
    }
    else writer.newNode(ident.type);
 
-   SyntaxTree::copyNode(writer, lxRow, ident);
-   SyntaxTree::copyNode(writer, lxCol, ident);
-   SyntaxTree::copyNode(writer, lxLength, ident);
+   if (!ignoreTerminalInfo) {
+      SyntaxTree::copyNode(writer, lxRow, ident);
+      SyntaxTree::copyNode(writer, lxCol, ident);
+      SyntaxTree::copyNode(writer, lxLength, ident);
+   }
 
    writer.closeNode();
 }
 
-inline void insertIdentifier(SyntaxWriter& writer, SNode ident)
+inline void insertIdentifier(SyntaxWriter& writer, SNode ident, bool ignoreTerminalInfo)
 {
    SNode col = ident.findChild(lxCol);
    SNode row = ident.findChild(lxRow);
@@ -143,9 +145,11 @@ inline void insertIdentifier(SyntaxWriter& writer, SNode ident)
 
    writer.insert(0, lxEnding, 0);
 
-   writer.insertChild(0, lxCol, col.argument);
-   writer.insertChild(0, lxRow, row.argument);
-   writer.insertChild(0, lxLength, len.argument);
+   if (!ignoreTerminalInfo) {
+      writer.insertChild(0, lxCol, col.argument);
+      writer.insertChild(0, lxRow, row.argument);
+      writer.insertChild(0, lxLength, len.argument);
+   }
 
    ident_t s = ident.identifier();
    if (!emptystr(s)) {
@@ -218,25 +222,9 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsRetExpression:
          _cacheWriter.newNode(lxReturning);
          break;
-////      case nsMethodParameter:
-////         _writer.newNode(lxMethodParameter);
-////         break;
-////      case nsMessageParameter:
-////      case nsExprMessageParameter:
-////         _writer.newNode(lxMessageParameter);
-////         break;
-////      case nsNestedClass:
-////         _writer.newNode(lxNestedClass);
-////         break;
       case nsResendExpression:
          _cacheWriter.newNode(lxResendExpression);
          break;
-//      case nsObject:
-//         _writer.newNode(lxObject);
-//         break;
-//      case nsBaseClass:
-//         _writer.newNode(lxBaseParent);
-//         break;
       case nsL1Operator:
       case nsL2Operator:
       case nsL3Operator:
@@ -383,6 +371,7 @@ void DerivationWriter :: generateTemplateTree(SNode node, SNode nameNode, ScopeT
    templateScope.templateMode = templateType;
    if (templateScope.templateMode == ScopeType::stCodeTemplate) {
       loadTemplateExprParameters(templateScope, node);
+      templateScope.ignoreTerminalInfo = true;
    }
 
    loadTemplateParameters(templateScope, nameNode);
@@ -846,7 +835,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
             SNode baseNameNode = current.findChild(lxNameAttr);
             if (firstParent) {
                writer.newNode(lxParent);               
-               copyIdentifier(writer, baseNameNode.firstChild(lxTerminalMask));
+               copyIdentifier(writer, baseNameNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
                if (baseNameNode.existChild(lxToken)) {
                   generateTemplateAttributes(writer, baseNameNode.findChild(lxToken), derivationScope);
                }
@@ -938,7 +927,7 @@ void DerivationWriter :: generateTypeAttribute(SyntaxWriter& writer, SNode attrN
 
    if (attrNodes != lxNone) {
       writer.newNode(lxTarget, V_TEMPLATE);
-      copyIdentifier(writer, terminal);
+      copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
       generateTemplateAttributes(writer, attrNodes, derivationScope);
       writer.closeNode();
    }
@@ -955,7 +944,7 @@ void DerivationWriter :: generateTypeAttribute(SyntaxWriter& writer, SNode attrN
       }
 
       writer.newNode(targetType, targetArgument);
-      copyIdentifier(writer, terminal);
+      copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
       writer.closeNode();
    }
 
@@ -989,7 +978,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
       }
       else if (current == lxAttribute) {
          writer.newNode(lxAttribute, current.argument);
-         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
 
          if (current.existChild(lxDynamicSizeDecl))
             _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
@@ -1010,19 +999,10 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
       ref_t nameArgument = nameNode.argument;
       if (derivationScope.isNameParameter(terminal.identifier(), nameArgument)) {
          nameType = lxTemplateNameParam;
-         //      else if (scope.type == DerivationScope::ttFieldTemplate || scope.type == DerivationScope::ttMethodTemplate) {
-         //         // HOTFIX : in field template the last parameter is a name
-         //         int paramIndex = scope.mapParameter(nameNode.firstChild(lxTerminalMask).identifier());
-         //         if (paramIndex != 0 && paramIndex == (int)scope.parameters.Count()) {
-         //            writer.appendNode(lxTemplateParam, paramIndex);
-         //         }
-         //         else scope.copyName(writer, nameNode.firstChild(lxTerminalMask));
-         //      }
       }
 
-      //      if (rootMode) {
       writer.newNode(nameType, nameArgument);
-      copyIdentifier(writer, terminal);
+      copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
       writer.closeNode();
 
       if (nameArgument == MODE_COMPLEXMESSAGE) {
@@ -1030,12 +1010,9 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
          SNode parentNode = node.parentNode().prevNode();
 
          writer.newNode(lxMessage);
-         copyIdentifier(writer, parentNode.firstChild(lxTerminalMask));
+         copyIdentifier(writer, parentNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
          writer.closeNode();
       }
-      //      }
-
-//      else scope.copyName(writer, nameNode.firstChild(lxTerminalMask));
    }
 }
 
@@ -1098,7 +1075,7 @@ bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
       SNode nameNode = node.prevNode().firstChild(lxTerminalMask);
 
       writer.newNode(lxFieldInit);
-      ::copyIdentifier(writer, nameNode);
+      ::copyIdentifier(writer, nameNode, derivationScope.ignoreTerminalInfo);
       writer.closeNode();
    }
    else {
@@ -1106,7 +1083,7 @@ bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
       SNode sizeNode = node.findChild(lxSizeDecl);
       if (sizeNode != lxNone) {
          writer.newNode(lxSize);
-         copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask));
+         copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
          writer.closeNode();
       }
 
@@ -1127,11 +1104,11 @@ bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
       if (attrNode == lxAttribute && attrNode.argument == V_MEMBER) {
          // HOTFIX : if the field has scope prefix - copy it as well
          bufferWriter.newNode(lxAttribute, attrNode.argument);
-         copyIdentifier(bufferWriter, attrNode.firstChild(lxTerminalMask));
+         copyIdentifier(bufferWriter, attrNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
          bufferWriter.closeNode();
       }
 
-      ::copyIdentifier(bufferWriter, nameNode.firstChild(lxTerminalMask));
+      ::copyIdentifier(bufferWriter, nameNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
       bufferWriter.appendNode(lxAssign);
       generateExpressionTree(bufferWriter, bodyNode.findChild(lxExpression), derivationScope);
       bufferWriter.closeNode();
@@ -1168,12 +1145,6 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //   SNode attribute;
    while (current != lxNone) {
       switch (current) {
-//         case lxAttributeValue:
-//            if (current.nextNode() == lxMethodParameter) {
-//               attribute = current;
-//               break;
-//            }
-//            else attribute = SNode();             
          case lxParameter:
          {
             writer.newNode(lxMethodParameter, current.argument);
@@ -1183,14 +1154,8 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
             paramNode.refresh();
 
             generateAttributes(writer, paramNode, derivationScope);
-            //            copyIdentifier(writer, current.firstChild(lxTerminalMask));
-            //            if (attribute != lxNone) {
-            //               // if the type attribute available
-            //               generateTypeAttribute(writer, attribute, scope, templateMode);
-            //            }
 
             writer.closeNode();
-            //            attribute = SNode();
             break;
          }
          case lxParent:
@@ -1198,7 +1163,7 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
             // COMPILER MAGIC : if it is a complex name
             writer.newNode(lxMessage);
             SNode identNode = current.findChild(lxToken).firstChild(lxTerminalMask);
-            copyIdentifier(writer, identNode);
+            copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
             writer.closeNode();
             break;
          }
@@ -1210,9 +1175,6 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 
       current = current.nextNode();
    }
-
-//   if (templateMode)
-//      scope.reference = INVALID_REF;
 
    if (propertyMode) {
       writer.newNode(lxReturning);
@@ -1266,11 +1228,13 @@ void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node, Scop
          case lxEOF:
          {
             writer.newNode(lxEOF);
-
-            SNode terminal = current.firstChild();
-            SyntaxTree::copyNode(writer, lxRow, terminal);
-            SyntaxTree::copyNode(writer, lxCol, terminal);
-            SyntaxTree::copyNode(writer, lxLength, terminal);
+            if (!derivationScope.ignoreTerminalInfo)
+            {
+               SNode terminal = current.firstChild();
+               SyntaxTree::copyNode(writer, lxRow, terminal);
+               SyntaxTree::copyNode(writer, lxCol, terminal);
+               SyntaxTree::copyNode(writer, lxLength, terminal);
+            }
 
             writer.closeNode();
             break;
@@ -1572,7 +1536,7 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
    else if (isPrimitiveRef(attrRef)) {
       writer.newNode(lxAttribute, attrRef);
 
-      copyIdentifier(writer, identNode);
+      copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
 
       writer.closeNode();
    }
@@ -1585,9 +1549,9 @@ void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current,
    if (current.nextNode() == lxToken) {
       writer.newNode(lxTemplate);
       if (current == lxToken) {
-         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
       }
-      else copyIdentifier(writer, current);
+      else copyIdentifier(writer, current, derivationScope.ignoreTerminalInfo);
       
       SNode argNode = current.nextNode();
       ref_t attributeCategory = 0u;
@@ -1605,22 +1569,22 @@ void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current,
       int paramIndex = derivationScope.parameters.get(current.identifier());
       if (paramIndex != 0) {
          writer.newNode(lxTemplateParam, paramIndex + derivationScope.nestedLevel);
-         copyIdentifier(writer, current);
+         copyIdentifier(writer, current, derivationScope.ignoreTerminalInfo);
          writer.closeNode();
       }
-      else copyIdentifier(writer, current);
+      else copyIdentifier(writer, current, derivationScope.ignoreTerminalInfo);
    }
    else if (derivationScope.isNameParameter(current.identifier(), argument)) {
       writer.newNode(lxTemplateNameParam, argument);
-      copyIdentifier(writer, current);
+      copyIdentifier(writer, current, derivationScope.ignoreTerminalInfo);
       writer.closeNode();
    }
    else if (derivationScope.isIdentifierParameter(current.identifier(), argument)) {
       writer.newNode(lxTemplateIdentParam, argument);
-      copyIdentifier(writer, current);
+      copyIdentifier(writer, current, derivationScope.ignoreTerminalInfo);
       writer.closeNode();
    }
-   else copyIdentifier(writer, current);
+   else copyIdentifier(writer, current, derivationScope.ignoreTerminalInfo);
 }
 
 void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope)
@@ -1630,13 +1594,13 @@ void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Sco
    SNode identNode = current.firstChild(lxTerminalMask);
    if (current == lxMessage && derivationScope.isMessageParameter(identNode.identifier(), argument)) {
       writer.newNode(lxTemplateMsgParam, argument);
-      copyIdentifier(writer, identNode);
+      copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
       writer.closeNode();
    }
    else {
       writer.newNode(lxMessage);
       if (current.compare(lxMessage, lxSubMessage)) {
-         copyIdentifier(writer, identNode);
+         copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
       }
       writer.closeNode();
 
@@ -1803,7 +1767,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
          }
          else first = false;
          writer.newNode(current.type, current.argument);
-         copyIdentifier(writer, current.firstChild(lxTerminalMask));
+         copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
          writer.closeNode();
          break;
       case lxTemplateOperator:
@@ -1918,7 +1882,7 @@ void DerivationWriter :: generateImport(SyntaxWriter& writer, SNode ns)
          return;
 
       writer.newNode(lxImport, name);
-      copyIdentifier(writer, nameNode);
+      copyIdentifier(writer, nameNode, false);
       writer.closeNode();
 
       _importedNs.add(name.clone());
@@ -1993,7 +1957,7 @@ void TemplateGenerator :: copyExpressionTree(SyntaxWriter& writer, SNode node, T
 void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope& scope)
 {
    if (test(current.type, lxTerminalMask | lxObjectMask)) {
-      copyIdentifier(writer, current);
+      copyIdentifier(writer, current, false);
    }
 //   else if (current == lxTemplate) {
 //      writer.appendNode(lxTemplate, scope.templateRef);
@@ -2093,7 +2057,7 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
          SNode parentNode = nodeToInject.parentNode().prevNode();
 
          writer.newNode(lxMessage);
-         copyIdentifier(writer, parentNode.firstChild(lxTerminalMask));
+         copyIdentifier(writer, parentNode.firstChild(lxTerminalMask), false);
          writer.closeNode();
       }
    }

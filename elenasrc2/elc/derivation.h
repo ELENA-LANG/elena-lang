@@ -47,6 +47,7 @@ class DerivationWriter : public _DerivationWriter
       ScopeType      templateMode;
       ForwardMap     parameters;
       int            nestedLevel;
+      bool           ignoreTerminalInfo;
 
       bool isNameParameter(ident_t name, ref_t& argument)
       {
@@ -107,6 +108,7 @@ class DerivationWriter : public _DerivationWriter
       {
          templateMode = ScopeType::stNormal;
          nestedLevel = 0;
+         ignoreTerminalInfo = false;
       }
    };
 

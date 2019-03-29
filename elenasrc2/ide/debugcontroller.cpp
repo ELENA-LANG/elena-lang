@@ -202,7 +202,11 @@ DebugLineInfo* DebugController :: getNextStep(DebugLineInfo* step, bool stepOver
          next = &next[1];
       }
 
-      return next;
+      if (next->row == step->row && next->col == step->col) {
+         // HOTFIX : ignore the step in the same position
+         return getNextStep(next, stepOverMode);
+      }
+      else return next;
    }
    return NULL;
 }

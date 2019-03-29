@@ -3621,11 +3621,6 @@ inline size_t countChildren(SNode node)
 bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, bool ignoreBranching)
 {
    if (node != lxNone) {
-      if (ignoreBranching && node.nextNode().compare(lxBranching, lxLooping)) {
-         // HOTFIX : do not generate a block breakpoint for the looping / branching
-         return false;
-      }
-
       // try to find the terminal symbol
       SNode terminal = node;
       while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
@@ -3653,7 +3648,23 @@ bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, bool i
             terminal.findChild(lxLength).argument, node.argument);
       }
 
-      return true;
+      node = lxIdle; // comment breakpoint out to prevent duplicate compilation
+
+      if (ignoreBranching) {
+         // generate debug step scope only if requiered
+         SNode next = node.nextNode();
+
+         switch (node.nextNode()) {
+            case lxDirectCalling:
+            case lxSDirctCalling:
+            case lxCalling:
+            case lxNone:
+               return true;
+            default:
+               return false;
+         }
+      }
+      else return true;
    }
    else return false;
 }
@@ -5151,10 +5162,6 @@ void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
 
 void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
 {
-   SNode breakpoint = node.prevNode();
-   if (breakpoint != lxBreakpoint)
-      breakpoint = SNode();
-
    declareLoop(tape, true);
 
    //declareBlock(tape);
@@ -5213,10 +5220,6 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node)
       }
 
       else if (test(current.type, lxObjectMask)) {
-         // breakpoint should be generated here for better debugging 
-         if (breakpoint != lxNone)
-            translateBreakpoint(tape, breakpoint, false);
-
          declareBlock(tape);
          generateObject(tape, current);
          declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
@@ -5264,10 +5267,6 @@ void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node nod
 
 void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node node)
 {
-   SNode breakpoint = node.prevNode();
-   if (!breakpoint.compare(lxBreakpoint, lxNone))
-      breakpoint = SNode();
-
    bool switchBranching = node.argument == -1;
 
    if (switchBranching) {
@@ -5327,15 +5326,10 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
             break;
          default:
             if (test(current.type, lxObjectMask)) {
-               if (breakpoint != lxNone && translateBreakpoint(tape, breakpoint, false)) {
-                  //HOTFIX : breakpoint should be generated here for better debugging 
-                  declareBlock(tape);
-                  generateObject(tape, current, ACC_REQUIRED);
-                  declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-                  
-                  breakpoint = lxIdle;
-               }
-               else generateObject(tape, current, ACC_REQUIRED);
+               //HOTFIX : breakpoint should be generated here for better debugging 
+               declareBlock(tape);
+               generateObject(tape, current, ACC_REQUIRED);
+               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
             }
             break;
       }
@@ -5756,6 +5750,9 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
             level, current.findChild(lxClassName).identifier());
          break;
       }
+      case lxBreakpoint:
+         translateBreakpoint(tape, current, false);
+         break;
    }
 }
 

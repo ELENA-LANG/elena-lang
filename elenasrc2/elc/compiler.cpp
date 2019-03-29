@@ -3645,7 +3645,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       // COMPILER MAGIC : implementing assignment operators
       //writer.newNode(lxExpression);
       writer.newBookmark();
-      writeTerminal(writer, node, scope, target, assignMode);
+      writeTerminal(writer, node.prevNode(), scope, target, assignMode);
       compileOperator(writer, node, scope, target, assignMode);
       writer.removeBookmark();
       //writer.closeNode();
@@ -4878,10 +4878,16 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
    while (current != lxNone) {
       switch(current) {
          case lxExpression:
-            writer.newNode(lxExpression);
-            writer.appendNode(lxBreakpoint, dsStep);
-            compileRootExpression(writer, current, scope);
-            writer.closeNode();
+            //if (current.existSubChild(lxCodeExpression, lxCode)) {
+            //   compileRootExpression(writer, current, scope);
+            //}
+            //else {
+               writer.newNode(lxExpression);
+               writer.appendNode(lxBreakpoint, dsStep);
+               compileRootExpression(writer, current, scope);
+               writer.closeNode();
+            //}
+
             break;
          case lxReturning:
          {
