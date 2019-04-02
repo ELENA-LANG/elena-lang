@@ -3,10 +3,17 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * World Cup group stage, Wireworld
+                 * read-only fields
+
+                 * Class inheritance and static fields and methods #406
+                 * class attributes (run-time / meta)
+                 * global attributes / manifest
+
+                 * fix : Hailstone sequence
+                 * fix : Trigonometric functions (arctan), anagram
+
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
                  * Zhang-Suen thinning algorithm
-                 * fix : Hailstone sequence, Trigonometric functions (arctan), anagram
                  * implenent break analog
                  * Support enumeration list #265
                  * Sockets
@@ -16,12 +23,16 @@ In development:
                  * (re)implement UTF8Encoder.convert(..,string,byte[]) method
                  * implement Heap, Balanced Search Tree and Hash tables, review Map<T,Key> template, if it could be
                    optimized
+                 * implement correctly - a[i][j] += 1 (see World Cup group stage)
+                 * Wireworld
 
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
+                 * (#378) support AccessViolation - _pxcptinfoptrs
+                 * (#378) support Stackoverflow / OutOfMemory exception, reduce the maximal heap size in callstack
                  * lazy::(console.write("Reading a number:").readLine().toInt()) should generate an error?
                  * embeddable get should work with nonstructure types #424
                  * embeddable eval[1]

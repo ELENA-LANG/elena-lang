@@ -280,3 +280,12 @@ public class CriticalException : Exception
     constructor new()
         <= new("Critical exception");
 }
+
+// --- NilReferenceException ---
+
+public class NilReferenceException : CriticalException
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception : an operation with nil");
+}

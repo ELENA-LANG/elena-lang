@@ -596,7 +596,7 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, int scopeMode)
             ref_t val = info.staticValues.get(staticInfo.value1);
             if (val != mskStatRef) {
                if (classClassMode) {
-                  return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value1, staticInfo.value2, 0);
+                  return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value2, 0, staticInfo.value1);
                }
                else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
             }
@@ -604,13 +604,13 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, int scopeMode)
          else if(info.staticValues.exist(staticInfo.value1, mskConstantRef)) {
             // if it is a constant static sealed field
             if (classClassMode) {
-               return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value1, staticInfo.value2, 0);
+               return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value2, 0, staticInfo.value1);
             }
             else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
          }
 
          if (classClassMode) {
-            return ObjectInfo(okClassStaticField, 0, staticInfo.value1, staticInfo.value2, 0);
+            return ObjectInfo(okClassStaticField, 0, staticInfo.value2, 0, staticInfo.value1);
          }
          else return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2, 0, 0);
 
@@ -4878,16 +4878,10 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
    while (current != lxNone) {
       switch(current) {
          case lxExpression:
-            //if (current.existSubChild(lxCodeExpression, lxCode)) {
-            //   compileRootExpression(writer, current, scope);
-            //}
-            //else {
-               writer.newNode(lxExpression);
-               writer.appendNode(lxBreakpoint, dsStep);
-               compileRootExpression(writer, current, scope);
-               writer.closeNode();
-            //}
-
+            writer.newNode(lxExpression);
+            writer.appendNode(lxBreakpoint, dsStep);
+            compileRootExpression(writer, current, scope);
+            writer.closeNode();
             break;
          case lxReturning:
          {
