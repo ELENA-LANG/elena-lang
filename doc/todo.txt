@@ -3,14 +3,26 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * read-only fields
+                 * static field initializer should be invoked only if the class is used
+                 * implement class attribute - a preloaded code which is invoked only if the
+                   class is used
+                 * array accumulation - operation to be implemented in compile time
+                 * operations with meta data : introducing meta object : e.g
+                     __meta[class][name] := class
+                     __meta[class][dto] += name
+  
 
-                 * Class inheritance and static fields and methods #406
+                 * attr_template prop_template ... prop
+                 * attr_template ... method
+
+                 * property attributes should be leading ones
+
                  * class attributes (run-time / meta)
                  * global attributes / manifest
+                 * mainfest info
 
                  * fix : Hailstone sequence
-                 * fix : Trigonometric functions (arctan), anagram
+                 * fix : Trigonometric functions (arctan)
 
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
                  * Zhang-Suen thinning algorithm
@@ -25,6 +37,7 @@ In development:
                    optimized
                  * implement correctly - a[i][j] += 1 (see World Cup group stage)
                  * Wireworld
+                 * modify quicksort to use insert selection for smaller amount (test on anagram)
 
 ------                                                           
 Pipeline:
@@ -67,13 +80,11 @@ Pipeline:
                  * support 2.2 syntax (without r postfix)
                  * allow to work with ref<int> directly
                  * implement a ? b, a ? b : c, a ? {}, a ? {} : {}
-                 * imlement if(a) b else c;
                  * IntNumber.#cast<'IntNumber> - why it always creates a new object?
                  * abstract class cannot have constructors / default constructor
                  * uncomment validateClassDeclaration
                  * if (a) b else c;
 
-                 * Explicit literal constants
                  * new anyToken { .. } - should raise an error?
                  * warn on operations with unassigned variable
                  * the following code should generate an error : var a.doSomething(b)
@@ -117,7 +128,6 @@ Pipeline:
                  * simplify DerivationWriter :: newNode - use a common mask for all expression nonterminals
                  * optimizate operations with byref dynamic variable (no need for boxing / unboxing) - should be locally
                    boxed
-                 * default se_handler seems not working properly (coreapi'seh_handler)
                  * elt - exception handlers
                  * support mta_gui, vm_console, vm_mta_console
                  * the following code does not work - theOwner.resize(int width, int height)  (see forms'SDIWindowListener.onsize)

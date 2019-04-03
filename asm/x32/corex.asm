@@ -729,11 +729,14 @@ labYGCheck:
   mov  eax, [esi]
 
   // ; check if it valid reference
-  cmp  eax, ebx
-  jl   short labYGNext  
-  nop
-  cmp  edx, eax
-  jl   short labYGNext
+  mov  edi, eax
+  cmp  edi, ebx
+  setb al
+  cmp  edx, edi
+  setb ah
+  test eax, 0FFFFh
+  mov  eax, edi
+  jnz  labYGNext
 
   // ; check if it was collected
   mov  edi, [eax-elSizeOffset]
@@ -850,11 +853,14 @@ labMGCheck:
   mov  eax, [esi]
 
   // ; check if it valid reference
-  cmp  eax, ebx
-  jl   short labMGNext  
-  nop
-  cmp  edx, eax
-  jl   short labMGNext
+  mov  edi, eax
+  cmp  edi, ebx
+  setb al
+  cmp  edx, edi
+  setb ah
+  test eax, 0FFFFh
+  mov  eax, edi
+  jnz  labMGNext
 
   // ; check if it was collected
   mov  edi, [eax-elSizeOffset]
@@ -908,11 +914,14 @@ labFixCheck:
   mov  eax, [esi]
 
   // ; check if it valid reference
-  cmp  eax, ebx
-  jl   short labFixNext
-  nop
-  cmp  edx, eax
-  jl   short labFixNext
+  mov  edi, eax
+  cmp  edi, ebx
+  setb al
+  cmp  edx, edi
+  setb ah
+  test eax, 0FFFFh
+  mov  eax, edi
+  jnz  labFixNext
 
   lea  edi, [eax-elObjectOffset]
 
