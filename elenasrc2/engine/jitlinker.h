@@ -126,7 +126,6 @@ class JITLinker : _JITLoaderListener
    void*             _codeBase;
    int               _statLength;
    MethodMap         _staticMethods;
-   ModuleList        _loadedModules;
    ModuleReferences  _initializers;
 
 //   int            _uniqueID;           // used for dynamic subject

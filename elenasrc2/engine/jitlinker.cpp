@@ -1162,8 +1162,6 @@ void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReade
 
 void JITLinker :: onModuleLoad(_Module* module)
 {
-   _loadedModules.add(module);
-
    IdentifierString initSymbol("'", INITIALIZER_SECTION);
    ref_t initRef = module->mapReference(initSymbol, true);
    if (initRef)
