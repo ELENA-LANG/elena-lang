@@ -13,52 +13,7 @@ ECHO =========== Starting Release Compile ==================
 
 ECHO Command line Compiler compiling....
 ECHO -----------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\elc\vs\elc15.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-ECHO Virtual Machine compiling....
-ECHO -----------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\elenavm\vs\elenavm15.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-ECHO IDE compiling....
-ECHO -----------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\ide\vs\elide15.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-ECHO Run-Time Engine compiling....
-ECHO -----------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\elenart\vs\elenart15.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-ECHO Script Engine compiling....
-ECHO ----------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\elenasm\vs\elenasm15.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-ECHO Simplified Assembler compiling....
-ECHO -----------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\asm2bin\vs\asm2binx15.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-ECHO ECODES viewer compiling....
-ECHO ---------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\ecv\vs\ecv15.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-ECHO Virtual Machine Terminal compiling....
-ECHO --------------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\elt\vs\elt15.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-ECHO Optimization Rule Generator compiling....
-ECHO ------------------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\og\vs\og15.vcxproj /p:configuration=release
-IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-ECHO Syntax Parse Table Generator compiling....
-ECHO ------------------------------------------
-"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\tools\sg\vs\sg15.vcxproj /p:configuration=release
+"%InstallDir%\MSBuild\15.0\Bin\MSBuild.exe" %1\elenasrc2\elenasrc2.sln /p:configuration=release
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO =========== Release Compiled ==================
