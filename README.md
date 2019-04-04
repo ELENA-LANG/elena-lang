@@ -31,11 +31,7 @@ The compiler code is implemented in C++ and does not require external dependenci
 
 You have to add a path to _BIN_ folder to the system environment *PATH* or copy elenavm.dll and elenart.dll to _Windows\System32_ folder.
 
-To build the compiler under VS2015 you have to go to the root folder and type:
-
-    recompile.bat
-
-If you use VS2017 type the following:
+To build the compiler under VS2017 you have to go to the root folder and type:
 
     recompile15.bat
 
