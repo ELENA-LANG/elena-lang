@@ -10,14 +10,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
 
     private init(int capacity, int hashLength)
     {
-        int size := 32;
-        while (size < hashLength)
-        {
-            size := size $shl 1;
-        };
-
-        size := size - 1;
-        theHashMask := new IntNumber(size);
+        theHashMask := hashLength;
         
         theHashTable := new int[][](hashLength);
         theList := new List<Tuple<TKey, TValue>>(capacity);
@@ -27,7 +20,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
 
     constructor()
     {
-        self.init(32,32)
+        self.init(32,37)
     }
 
     constructor(int capacity, int hashLength)
@@ -85,7 +78,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
     {
         int code := key.HashCode;
 
-        code := code && theHashMask;
+        code := code.mod(theHashMask);
         
         auto item := self.retrieve(code, key);
         
@@ -96,7 +89,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
     {
         int code := key.HashCode;
 
-        code := code && theHashMask;
+        code := code.mod(theHashMask);
         
         auto item := self.retrieve(code, key);
         
@@ -147,7 +140,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
     {
         int index := key.HashCode;
 
-        index := index && theHashMask;
+        index := index.mod(theHashMask);
         
         auto backet := theHashTable[index];
         if (nil == backet)
