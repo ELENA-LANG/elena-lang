@@ -111,19 +111,22 @@ class JITLinker : _JITLoaderListener
       }
    };
 
-   typedef Pair<void*, int>                                       MethodInfo;
-   typedef MemoryMap<MethodInfo, int, false>                      MethodMap;
+   typedef Pair<void*, int>                  MethodInfo;
+   typedef MemoryMap<MethodInfo, int, false> MethodMap;
 //   typedef Memory32HashTable<ident_t, void*, mapReferenceKey, 29> StrongTypeMap;
 
-   _JITLoader*    _loader;
-   _JITCompiler*  _compiler; 
-   bool           _virtualMode;
-   bool           _withDebugInfo;
-   bool           _classSymbolAutoLoadMode;
-   void*          _codeBase;
-   int            _statLength;
-   MethodMap      _staticMethods;
-   ModuleList     _loadedModules;
+   typedef Pair<_Module*, ref_t>             ModuleReference;
+   typedef List<ModuleReference>             ModuleReferences;
+
+   _JITLoader*       _loader;
+   _JITCompiler*     _compiler; 
+   bool              _virtualMode;
+   bool              _withDebugInfo;
+   bool              _classSymbolAutoLoadMode;
+   void*             _codeBase;
+   int               _statLength;
+   MethodMap         _staticMethods;
+   ModuleReferences  _initializers;
 
 //   int            _uniqueID;           // used for dynamic subject
 

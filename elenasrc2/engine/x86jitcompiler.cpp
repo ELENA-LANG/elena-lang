@@ -1831,7 +1831,8 @@ void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
    MemoryWriter ecodes(&tape);
 
    ecodes.writeByte(bcCallR);
-   ecodes.writeDWord((size_t)address | mskCodeRef);}
+   ecodes.writeDWord((size_t)address | mskCodeRef);
+}
 
 void x86JITCompiler :: generateArg(MemoryDump& tape, void* address)
 {

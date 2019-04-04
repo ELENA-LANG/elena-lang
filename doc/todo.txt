@@ -21,6 +21,7 @@ In development:
                  * global attributes / manifest
                  * mainfest info
 
+                 * (re)implement hashTable
                  * fix : Hailstone sequence
                  * fix : Trigonometric functions (arctan)
 
