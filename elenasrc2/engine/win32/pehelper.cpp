@@ -20,12 +20,21 @@ size_t PEHelper :: findEntryPoint(path_t path)
       return (size_t)-1;
 
    // !! hard-coded offset
-   reader.seek(0xC8u);
+   //reader.seek(0xC8u);
+   //
+   //ref_t entry = 0;
+   //reader.readDWord(entry);
+   //
+   //return entry + 0x400000;
 
-   ref_t entry = 0;
-   reader.readDWord(entry);
-
-   return entry + 0x400000;
+   IMAGE_DOS_HEADER dosh;
+   reader.read(&dosh, sizeof(IMAGE_DOS_HEADER));
+   reader.seek((pos_t)dosh.e_lfanew);
+   
+   IMAGE_NT_HEADERS inth;
+   reader.read(&inth, sizeof(IMAGE_NT_HEADERS));
+   
+   return inth.OptionalHeader.AddressOfEntryPoint + inth.OptionalHeader.ImageBase;
 }
 
 bool PEHelper :: seekSection(StreamReader& reader, char* name, size_t& address)
