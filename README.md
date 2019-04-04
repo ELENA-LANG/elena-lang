@@ -27,7 +27,7 @@ To acquire the source code clone the git repository:
 
 ### Windows:
 
-The compiler code is implemented in C++ and does not require external dependencies. You just need Visual Studio 2015 or 2017.
+The compiler code is implemented in C++ and does not require external dependencies. You just need Visual Studio 2017 or later.
 
 You have to add a path to _BIN_ folder to the system environment *PATH* or copy elenavm.dll and elenart.dll to _Windows\System32_ folder.
 
