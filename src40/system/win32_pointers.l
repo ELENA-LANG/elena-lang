@@ -46,11 +46,11 @@ public sealed const struct RTPointer
         intern system'core_routines'__rtptr.new(self, object)
     }
 
-    vprop int Index
+    prop int Index
     {
-        readIndexTo(ref int retVal)
+        int get()
         {
-            retVal := theIndex
+            ^ theIndex
         }
     }
         
@@ -174,19 +174,19 @@ public sealed struct COORD
         theY := tmp
     }
     
-    vprop short X
+    prop short X
     {
-        readTo(ref short retVal)
+        short get()
         {
-            retVal := theX
+            ^ theX
         }
     }
     
-    vprop short Y
+    prop short Y
     {    
-        readTo(ref short retVal)
+        short get()
         {
-            retVal := theY
+            ^ theY
         }
     }
 }
@@ -200,35 +200,35 @@ public sealed struct SMALL_RECT
     short theRight;
     short theBottom;
     
-    vprop short Left
+    prop short Left
     {
-        readTo(ref short retVal)
+        short get()
         {
-            retVal := theLeft
+            ^ theLeft
         }
     }
     
-    vprop short Top
+    prop short Top
     {
-        readTo(ref short retVal)
+        short get()
         {
-            retVal := theTop
+            ^ theTop
         }
     }
     
-    vprop short Right
+    prop short Right
     {
-        readTo(ref short retVal)
+        short get()
         {
-            retVal := theRight
+            ^ theRight
         }        
     }
     
-    vprop short Bottom
+    prop short Bottom
     {
-        readBottomTo(ref short retVal)
+        get()
         {
-            retVal := theBottom
+            ^ theBottom
         }
     }
     

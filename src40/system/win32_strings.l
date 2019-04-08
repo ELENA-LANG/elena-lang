@@ -20,7 +20,7 @@ singleton characterController
 //        ^ (aRetVal != 0)
 //    ]
     
-    toUpperCase(char char, ref char retVal)
+    char toUpperCase(char char)
     {
         int   length := 0;
         short buffer[3];
@@ -31,10 +31,12 @@ singleton characterController
         
         extern USER32.CharUpperW(buffer);
         
-        charConvertor.convert(0, buffer, ref retVal)
+        charConvertor.convert(0, buffer, ref char retVal);
+        
+        ^ retVal
     }
     
-    toLowerCase(char char, ref char retVal)
+    char toLowerCase(char char)
     {
         int   length := 0;
         short buffer[3];
@@ -45,7 +47,9 @@ singleton characterController
         
         extern USER32.CharLowerW(buffer);
         
-        charConvertor.convert(0, buffer, ref retVal)
+        charConvertor.convert(0, buffer, ref char retVal);
+        
+        ^ retVal
     }
 }
 
@@ -53,7 +57,7 @@ singleton characterController
 
 public extension caseStringOp : String
 {
-    upperCase()
+    string upperCase()
     {
         string retVal := emptyString;
         int    index := 0;
@@ -68,7 +72,7 @@ public extension caseStringOp : String
             self.read(index, ref current);
             currentLen := current.Length;
             
-            characterController.toUpperCase(current, ref converted);
+            converted := characterController.toUpperCase(current);
             
             retVal := retVal.add(converted);
             
@@ -78,7 +82,7 @@ public extension caseStringOp : String
         ^ retVal
     }
     
-    lowerCase()
+    string lowerCase()
     {
         string retVal := emptyString;
         int    index := 0;
@@ -93,7 +97,7 @@ public extension caseStringOp : String
             self.read(index, ref current);
             currentLen := current.Length;
             
-            characterController.toLowerCase(current, ref converted);
+            converted := characterController.toLowerCase(current);
             
             retVal := retVal.add(converted);
             
@@ -108,7 +112,7 @@ public extension caseStringOp : String
 
 public extension caseWideOp : WideString
 {
-    upperCase()
+    wide upperCase()
     {
         wide retVal := emptyWideString;        
         int  index := 0;
@@ -123,7 +127,7 @@ public extension caseWideOp : WideString
             self.read(index, ref current);
             currentLen := current.Length;
             
-            characterController.toUpperCase(current, ref converted);
+            converted := characterController.toUpperCase(current);
             
             retVal := retVal.add(converted);
             
@@ -133,7 +137,7 @@ public extension caseWideOp : WideString
         ^ retVal
     }
 
-    lowerCase()
+    wide lowerCase()
     {
         wide retVal := emptyWideString;        
         int  index := 0;
@@ -148,7 +152,7 @@ public extension caseWideOp : WideString
             self.read(index, ref current);
             currentLen := current.Length;
             
-            characterController.toLowerCase(current, ref converted);
+            converted := characterController.toLowerCase(current);
             
             retVal := retVal.add(converted);
             

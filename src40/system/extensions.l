@@ -147,11 +147,15 @@ public extension objectOp
 
 public extension byteOp : ByteNumber
 {
-    vprop int HashCode
+    prop int HashCode
     {
         // Reads the object hash code into the output parameter
-        read(ref int retVal)
-            => system'core_routines'__int;        
+        int get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
     }
 
     get byte Absolute()
@@ -218,11 +222,15 @@ public extension byteOp : ByteNumber
 
 public extension shortOp : ShortNumber
 {
-    vprop int HashCode
+    prop int HashCode
     {
         // Reads the object hash code into the output parameter
-        read(ref int retVal)
-            => system'core_routines'__int;        
+        int get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
     }
     
     get short Absolute()
@@ -307,11 +315,15 @@ public extension shortOp : ShortNumber
 
 public extension intOp : IntNumber
 {
-    vprop int HashCode
+    prop int HashCode
     {
         // Reads the object hash code into the output parameter
-        read(ref int retVal)
-            => system'core_routines'__int;        
+        int get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
     }
     
     int sqrt()
@@ -328,48 +340,44 @@ public extension intOp : IntNumber
         ^ n
     }
     
-    vprop int Absolute
+    prop int Absolute
     {
-        absolute(ref int retVal)
+        int get()
         {
             int n := self;
     
             if (n < 0)
                 { n := n * -1 };
     
-            retVal := n
+            ^ n
         }
     }
 
-    fnprop int power
+    int power(int y)
     {
-        read(int y, ref int retVal)
+        int x := self;
+        int r := 1;
+        if (x == 0)
+            { r := 0 };
+        
+        for(int i := 0, i < y, i += 1)
         {
-            int x := self;
-            int r := 1;
-            if (x == 0)
-                { r := 0 };
-            
-            for(int i := 0, i < y, i += 1)
-            {
-                r := r * x
-            };
-            
-            retVal := r
-        }
+            r := r * x
+        };
+        
+        ^ r
     }
   
-    fnprop int mod
+    int mod(int y)
     {
-        read(int y, ref int retVal)
-        {
-            int x := self;
-            
-            int z := x / y;
-            z := z * y;
-            
-            retVal := (x - z)
-        }
+        int x := self;
+        
+        int z := x / y;
+        z := z * y;
+        
+        int retVal := x - z;
+        
+        ^ retVal
     }
 
     int mod(o)
@@ -382,14 +390,16 @@ public extension intOp : IntNumber
     real realDiv(n)
         = new RealNumber(self).divide:n;
    
-    sqr(ref int retVal)
+    int sqr()
     {
         int n := self;        
         
-        retVal := n * n
+        n := n * n;
+        
+        ^ n
     }
     
-    sqrt(ref int retVal)
+    int sqrt()
     {   
         int num := self;
         
@@ -404,7 +414,7 @@ public extension intOp : IntNumber
             n1 := (n + (num / n)) / 2
         };
         
-        retVal := n
+        ^ n
     }
 
     power(n)
@@ -455,11 +465,15 @@ public extension intOp : IntNumber
 
 public extension uintOp : UIntNumber
 {
-    vprop int HashCode
+    prop int HashCode
     {
         // Reads the object hash code into the output parameter
-        read(ref int retVal)
-            => system'core_routines'__int;        
+        int get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
     }
 }
     
@@ -467,11 +481,15 @@ public extension uintOp : UIntNumber
 
 public extension longOp : LongNumber
 {
-    vprop int HashCode
+    prop int HashCode
     {
         // Reads the object hash code into the output parameter
-        read(ref int retVal)
-            => system'core_routines'__int;        
+        int get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
     }
     
     get long Absolute()
@@ -577,51 +595,47 @@ public extension longOp : LongNumber
 
 public extension realOp : RealNumber
 {        
-    vprop int HashCode
+    prop int HashCode
     {
         // Reads the object hash code into the output parameter
-        read(ref int retVal)
-            => system'core_routines'__int;        
+        int get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
     }
     
     get real Absolute()
     {
         real n := self;        
-        real retVal := 0.0r;
+        real retVal := realOpController.abs(n);
         
-        realOpController.abs(n, ref retVal);
-        
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
         
     real exp()
     {
         real n := self;        
-        real retVal := 0.0r;
+        real retVal := realOpController.exp(n);
         
-        realOpController.exp(n, ref retVal);
-        
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
     
     real ln()
     {
         real n := self;
-        real retVal := 0.0r;
+        real retVal := realOpController.ln(n);
         
-        realOpController.ln(n, ref retVal);
-        
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
     
     real sqrt()
     {
         real n := self;
-        real retVal := 0.0r;
+        real retVal := realOpController.sqrt(n);
         
-        realOpController.sqrt(n, ref retVal);
-        
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
 
     real power(real y)
@@ -634,13 +648,13 @@ public extension realOp : RealNumber
         (y == 0.0r)
             ? { ^ 1.0r };
             
-        realOpController.ln(x, ref x);
+        x := realOpController.ln(x);
         
         x := x * y;
         
-        realOpController.exp(x, ref x);
+        x := realOpController.exp(x);
             
-        ^ new RealNumber(x)
+        ^ x
             
     }
 
@@ -658,25 +672,25 @@ public extension realOp : RealNumber
         {
             x := x * -1.0r;
             
-            realOpController.ln(x, ref x);
+            x := realOpController.ln(x);
             
             x := x * y;
             
-            realOpController.exp(x, ref x);
+            x := realOpController.exp(x);
             
             (y.isOdd())
                 ? { x := x * -1.0r }
         }
         else
         {
-            realOpController.ln(x, ref x);
+            x := realOpController.ln(x);
             
             x := x * y;
             
-            realOpController.exp(x, ref x)
+            x := realOpController.exp(x)
         };
         
-        ^ new RealNumber(x)
+        ^ x
     }
 
 //    power : aPower
@@ -689,17 +703,15 @@ public extension realOp : RealNumber
         
         retVal := n * n;
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
 
     get real Rounded()
     {
         real n := self;        
-        real retVal := 0.0r;
+        real retVal := realOpController.round(n);
         
-        realOpController.round(n, ref retVal);
-        
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
     
 //    real round(int precision)
@@ -743,59 +755,55 @@ public extension realOp : RealNumber
     get real Integer()
     {
         real n := self;
-        real retVal := 0.0r;
-
-        realOpController.truncate(n, ref retVal);
+        real retVal := realOpController.truncate(n);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
 
     real frac()
     {
         real n := self;
-        real retVal := 0.0r;
+        real retVal := realOpController.abs(n);
         
-        realOpController.abs(n, ref retVal);
+        retVal := n - retVal;
         
-        ^ new RealNumber(n - retVal)
+        ^ retVal
     }
 
     real sin()
     {
         real n := self;  
-        real retVal := 0.0r;
+        real retVal := realOpController.sin(n);
         
-        realOpController.sin(n, ref retVal);
-        
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
 
     real cos()
     {
         real n := self;
-        real retVal := 0.0r;
+        real retVal := realOpController.cos(n);
         
-        realOpController.cos(n, ref retVal);
-        
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
 
     real tan()
     {
         real n := self;
         
-        realOpController.sin(n, ref real sinVal);
-        realOpController.cos(n, ref real cosVal);
+        real sinVal := realOpController.sin(n);
+        real cosVal := realOpController.cos(n);
         
-        ^ new RealNumber(sinVal / cosVal)
+        n := sinVal / cosVal;
+        
+        ^ n
     }
 
     real arctan()
     {
         real n := self;
-        realOpController.arctan(n, ref real retVal);
+        real retVal :=realOpController.arctan(n);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
             
     real arcsin()
@@ -805,12 +813,12 @@ public extension realOp : RealNumber
         
         retVal := n * n;    
         retVal := 1.0r - retVal;
-        realOpController.sqrt(retVal, ref real arg);
+        real arg := realOpController.sqrt(retVal);
         
         arg := n / arg;
-        realOpController.arctan(arg, ref retVal);
+        retVal := realOpController.arctan(arg);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
             
     real arccos()
@@ -820,12 +828,12 @@ public extension realOp : RealNumber
         
         retVal := n * n;    
         retVal := 1.0r - retVal;        
-        realOpController.sqrt(retVal, ref real arg);
+        real arg := realOpController.sqrt(retVal);
         
         arg := arg / n;
-        realOpController.arctan(arg, ref retVal);
+        retVal := realOpController.arctan(arg);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
             
     get real Radian()
@@ -833,8 +841,9 @@ public extension realOp : RealNumber
         real value := self;
         
         value := value * Pi_value;
+        value := value / 180.0r;
         
-        ^ new RealNumber(value / 180.0r)
+        ^ value
     }
             
     get real Degree()
@@ -842,15 +851,18 @@ public extension realOp : RealNumber
         real value := self;
         
         value := value * 180.0r;
+        value := value / Pi_value;
         
-        ^ new RealNumber(value / Pi_value)
+        ^ value
     }
             
     get real Reciprocal()
     {
         real value := self;
         
-        ^ new RealNumber(1.0r / value)
+        value := 1.0r / value;
+        
+        ^ value
     }    
             
     bool isZero()
@@ -1122,16 +1134,16 @@ public extension arrayOp<T> : Array<T>
 
 public extension stringOp : String
 {
-    vprop int HashCode
+    prop int HashCode
     {
         /// Reads the object hash code into the output parameter
-        readHashCodeTo(ref int retVal)
+        int get()
         {
             int len := self.Length;
             
             int h := extern elenart.core_utf8hashcode(self, len);
             
-            retVal := h
+            ^ h
         }    
     }
 
@@ -1334,15 +1346,15 @@ public extension stringOp : String
 
 public extension wideOp : WideString
 {
-    vprop int HashCode
+    prop int HashCode
     {
-        read(ref int retVal)
+        int get()
         {
             int len := self.Length;
         
             int h := extern elenart.core_utf16hashcode(self, len);
         
-            retVal := h
+            ^ h
         }
     }
     
@@ -1708,11 +1720,15 @@ public extension stringWeakOp
 
 public extension charOp : CharValue
 {
-    vprop int HashCode
+    prop int HashCode
     {
         // Reads the object hash code into the output parameter
-        read(ref int retVal)
-            => system'core_routines'__int;        
+        int get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
     }
     
     bool isWhitespace()

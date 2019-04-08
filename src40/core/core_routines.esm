@@ -211,8 +211,9 @@ procedure __exception.register[0]
 
 end
 
-procedure __int."read:HashCode$@system@ref#1&system@IntNumber[2]"
+procedure __int."readHashCodeTo$system@IntNumber$@system@ref#1&system@IntNumber[1]"
 
+  aloadsi 1
   bloadsi 2
   ncopy
   quitn 2
