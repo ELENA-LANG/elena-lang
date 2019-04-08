@@ -17,11 +17,13 @@ public sealed class Stack : Enumerable
     
     Enumerator enumerator() = new StackEnumerator(self);
     
-    vprop int Length
+    prop int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
-            theTop.readValueTo(ref retVal)
+            int retVal := theTop.Value;
+            
+            ^ retVal
         }
     }        
     
@@ -109,11 +111,13 @@ public sealed Stack<T> : Enumerable<T>
         theTop := 0;
     }
     
-    vprop int Length
+    prop int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
-            theTop.readValueTo(ref retVal)
+            int retVal := theTop.Value;
+            
+            ^ retVal
         }
     }
         
@@ -205,16 +209,16 @@ public sealed class Queue : Enumerable
     internal int TopPointer = theTop;
     internal int TalePointer = theTale;    
         
-    vprop int Length
+    prop int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
-            theTale.readValueTo(ref int tale);
-            theTop.readValueTo(ref int top);
+            int tale := theTale.Value;
+            int top := theTop.Value;
             
             int n := tale - top;
             
-            retVal := n
+            ^ n
         }
     }
     
@@ -314,16 +318,16 @@ public sealed Queue<T> : Enumerable<T>
         theTale := 0;
     }
         
-    vprop int Length
+    prop int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
             int top := theTop.Value;
             int tale := theTale.Value;
             
             int n := tale - top;
             
-            retVal := n
+            ^ n
         }
     }
     

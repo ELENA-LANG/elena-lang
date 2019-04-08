@@ -19,14 +19,16 @@ public sealed class TextBuilder
         self.write(value)
     } 
 
-    vprop int Length
+    prop int Length
     {
-        read(ref int retVal)
+        int get()
         {
-            theLength.readValueTo(ref retVal)
+            int retVal := theLength.Value;
+            
+            ^ retVal
         }
             
-        setLength(int len)
+        set(int len)
         {
             theLength.Value := len
         }

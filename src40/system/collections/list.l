@@ -66,11 +66,13 @@ public sealed List<T> : Enumerable<T>
         theArray := new T[](16);
     }
     
-    vprop int Length
+    prop int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
-            theLength.readValueTo(ref retVal);
+            int retVal := theLength.Value;
+            
+            ^ retVal
         }        
     }
     
@@ -529,12 +531,14 @@ public sealed class List : Enumerable
     removeAt(index)
         <= remove(cast int(index));
 
-    vprop int Length
+    prop int Length
     {
         /// Reads the number of list item to the output parameter
-        readTo(ref int length)
+        int get()
         {
-            theCount.readValueTo(ref length)
+            int retVal := theCount.Value; 
+            
+            ^ retVal
         }
     }
     
@@ -618,12 +622,14 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
         theArray := array.clone()
     }
     
-    vprop int Length
+    prop int Length
     {
         /// Reads the number of list item to the output parameter
-        read(ref int retVal)
+        int get()
         {
-            theLength.readValueTo(ref retVal)
+            int retVal := theLength.Value;
+            
+            ^ retVal
         }
     }
 
@@ -878,10 +884,21 @@ public class ArrayListIndexer : Indexer
         theList.setAt(index, o)
     }
     
-    /// Reads the current index into an output parameter
-    readIndexTo(ref int retVal)
+    Index
     {
-        theIndex.readValueTo(ref retVal)
+        /// Reads the current index into an output parameter
+        int get()
+        {
+            int retVal := theIndex.Value;
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        writeIndex(int n)
+        {
+            theIndex.Value := n
+        }
     }
     
     appendIndex(int n)
@@ -889,15 +906,14 @@ public class ArrayListIndexer : Indexer
         theIndex.append(n)
     } 
     
-    /// Sets the index by specified value
-    writeIndex(int n)
+    Length
     {
-        theIndex.Value := n
-    }
-    
-    readLengthTo(ref int retVal)
-    {
-        retVal := theList.Length
+        int get()
+        {
+            int retVal := theList.Length;
+            
+            ^ retVal
+        }
     }
 }
 

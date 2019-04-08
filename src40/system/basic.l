@@ -2212,7 +2212,7 @@ public sealed const struct CharValue : BaseValue
     }
     
     /// Reads the number of bytes to represent the symbol
-    int get WideLength()
+    get int WideLength()
     {
         int length := self.Length
         

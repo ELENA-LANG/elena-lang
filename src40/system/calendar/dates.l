@@ -68,11 +68,11 @@ public sealed struct Timespan : BaseValue
 
 //    cast T<SystemTime> = theValue.
 
-    vprop SystemTime SystemTime
+    prop SystemTime SystemTime
     {
-        read(ref SystemTime retVal)
+        SystemTime get()
         {
-            retVal := theValue
+            ^ theValue
         }
     }
 
@@ -229,11 +229,11 @@ public sealed struct Date : BaseValue
     TimeStruct cast()
         = new TimeStruct(theValue);
 
-    vprop SystemTime SystemTime
+    prop SystemTime SystemTime
     {
-        read(ref SystemTime retVal)
+        SystemTime get()
         {
-            retVal := theValue
+            ^ theValue
         }
     }
 
@@ -272,83 +272,99 @@ public sealed struct Date : BaseValue
         ^ new Date(theValue.add(value))
     }
 
-    vprop int Year
+    prop int Year
     {
-        read(ref int retVal)
+        int get()
         {
             TimeStruct systemTime := theValue;
             
-            retVal := systemTime.Year;
+            int retVal := systemTime.Year;
+            
+            ^ retVal
         }
     }
 
-    vprop int Month
+    prop int Month
     {
-        read(ref int retVal)
+        int read()
         {
             TimeStruct systemTime := theValue;
             
-            retVal := systemTime.Month;
+            int retVal := systemTime.Month;
+            
+            ^ retVal
         }
     }
 
-    vprop int Day
+    prop int Day
     {
-        read(ref int retVal)
+        int get()
         {
             TimeStruct systemTime := theValue;
             
-            retVal := systemTime.Day;
+            int retVal := systemTime.Day;
+            
+            ^ retVal
         }
     }
 
-    vprop int DayOfWeek
+    prop int DayOfWeek
     {
-        read(ref int retVal)
+        int get()
         {
             TimeStruct systemTime := theValue;
             
-            retVal := systemTime.DayOfWeek;
+            int retVal := systemTime.DayOfWeek;
+            
+            ^ retVal
         }
     }
 
-    vprop int Hour
+    prop int Hour
     {
-        read(ref int retVal)
+        int get()
         {
             TimeStruct systemTime := theValue;
             
-            retVal := systemTime.Hour;
+            int retVal := systemTime.Hour;
+            
+            ^ retVal
         }
     }
 
-    vprop int Minute
+    prop int Minute
     {
-        read(ref int retVal)
+        int get()
         {
             TimeStruct systemTime := theValue;
             
-            retVal := systemTime.Minute;
+            int retVal := systemTime.Minute;
+            
+            ^ retVal
         }
     }
 
-    vprop int Second
+    prop int Second
     {
-        read(ref int retVal)
+        int get()
         {
             TimeStruct systemTime := theValue;
             
-            retVal := systemTime.Second;
+            int retVal := systemTime.Second;
+            
+            ^ retVal
         }
     }
 
-    vprop int Millisecond
+    prop int Millisecond
     {
-        read(ref int retVal)
+        int get()
         {
             TimeStruct systemTime := theValue;
             
-            retVal := systemTime.Millisecond;
+            int retVal := systemTime.Millisecond;
+            
+            ^ retVal  
         }
     }
 

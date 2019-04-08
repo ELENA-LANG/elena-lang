@@ -26,11 +26,11 @@ public sealed const struct SystemTime : BaseValue
 
     long cast() = theValue;
 
-    vprop long Value
+    prop long Value
     {
-        read(ref long retVal)
+        long get()
         {
-            retVal := theValue
+            ^ theValue
         }        
     }
 
@@ -77,16 +77,16 @@ public sealed struct TimeStruct
 //        self write(aTime).
 //    ]
 
-    vprop int Year
+    prop int Year
     {
-        read(ref int retVal)
+        int get()
         {
             int val := theYear;
             
-            retVal := val
+            ^ val
         }
     
-        write(int value)
+        set(int value)
         {
             short n := value;
     
@@ -94,16 +94,16 @@ public sealed struct TimeStruct
         }
     }
 
-    vprop int Month
+    prop int Month
     {
-        read(ref int retVal)
+        int get()
         {
             int val := theMonth;
             
-            retVal := val
+            ^ val
         }
         
-        write(int value)
+        set(int value)
         {
             short n := value;
                 
@@ -111,26 +111,26 @@ public sealed struct TimeStruct
         }
     }
 
-    vprop int DayOfWeek
+    prop int DayOfWeek
     {
-        read(ref int retVal)
+        int get()
         {
             int val := theDayOfWeek;
             
-            retVal := val
+            ^ val
         }
     }
 
-    vprop int Day
+    prop int Day
     {
-        read(ref int retVal)
+        int get()
         {
             int val := theDay;
             
-            retVal := val
+            ^ val
         }
     
-        write(int value)
+        set(int value)
         {
             short n := value;
                 
@@ -138,15 +138,15 @@ public sealed struct TimeStruct
         }
     }
 
-    vprop int Hour
+    prop int Hour
     {
-        read(ref int retVal)
+        int get()
         {
             int val := theHour;
             
-            retVal := val
+            ^ val
         }
-        write(int value)
+        set(int value)
         { 
             short n := value;
                 
@@ -154,16 +154,16 @@ public sealed struct TimeStruct
         }
     }
 
-    vprop int Minute
+    prop int Minute
     {
-        read(ref int retVal)
+        int get()
         {
             int val := theMinute;
             
-            retVal := val
+            ^ val
         }
     
-        write(int value)
+        set(int value)
         {
             short n := value;
                 
@@ -171,16 +171,16 @@ public sealed struct TimeStruct
         }
     }
 
-    vprop int Second
+    prop int Second
     {
-        read(ref int retVal)
+        int get()
         {
             int val := theSecond;
             
-            retVal := val
+            ^ val
         }
     
-        write(int value)
+        set(int value)
         { 
             short n := value;
                 
@@ -188,16 +188,16 @@ public sealed struct TimeStruct
         }
     }
 
-    vprop int Millisecond
+    prop int Millisecond
     {
-        read(ref int retVal)
+        int get()
         {
             int val := theMillisecond;
             
-            retVal := val
+            ^ val
         }
     
-        write(int value)
+        set(int value)
         {
             short n := value;
                 

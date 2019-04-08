@@ -1443,7 +1443,7 @@ public sealed const struct String : BaseValue
         /// Reads the literal length into an output parameter
         int get()
         {
-            intern system'core_routines'__literal.readLengthTo(self, ret int retVal);
+            intern system'core_routines'__literal.readLengthTo(self, ref int retVal);
             
             ^ retVal
         }
@@ -2460,7 +2460,7 @@ class StringIndexer : Indexer<char>
         /// Reads the length to the output parameter    
         int get()
         {
-            int retVal := theLiteral.Length
+            int retVal := theLiteral.Length;
             
             ^ retVal
         }
@@ -2578,7 +2578,7 @@ class WideStringIndexer : Indexer<char>
     {
         int get()
         {
-            theIndex.readValueTo(ref int retVal)
+            theIndex.readValueTo(ref int retVal);
             
             ^ retVal
         }
