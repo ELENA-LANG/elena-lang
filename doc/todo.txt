@@ -3,6 +3,16 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * get rid of embeddable hints for property / length and so on
+                 * support embeddable properties for the interfaces / closed classes
+
+                 * review if ref<int>.Value works correctly (it is embedded)
+                 * check CharValue.WideLength
+                 * review ByteConvertor
+
+                 * embeddable get should work with nonstructure types #424
+
+
                  * static field initializer should be invoked only if the class is used
                  * implement class attribute - a preloaded code which is invoked only if the
                    class is used
@@ -21,7 +31,7 @@ In development:
                  * global attributes / manifest
                  * mainfest info
 
-                 * (re)implement hashTable
+                 * (re)implement hashTable, using links, load control and so on
                  * fix : Hailstone sequence
                  * fix : Trigonometric functions (arctan)
 
@@ -39,6 +49,10 @@ In development:
                  * implement correctly - a[i][j] += 1 (see World Cup group stage)
                  * Wireworld
                  * modify quicksort to use insert selection for smaller amount (test on anagram)
+                 * optimize calendar'Date.prop#Printable - do we need to copy value
+
+                 * embeddable returning value : do not duplicate the method code - the original method should call
+                   static one
 
 ------                                                           
 Pipeline:
@@ -48,10 +62,6 @@ Pipeline:
                  * (#378) support AccessViolation - _pxcptinfoptrs
                  * (#378) support Stackoverflow / OutOfMemory exception, reduce the maximal heap size in callstack
                  * lazy::(console.write("Reading a number:").readLine().toInt()) should generate an error?
-                 * embeddable get should work with nonstructure types #424
-                 * embeddable eval[1]
-                 * embeddable get[1]
-                 * embeddable eval[2]
                  * mixin :: { collection }, new::{ collection } - get rid of - new {}
                  * create a nested class / collection - syntax review
 

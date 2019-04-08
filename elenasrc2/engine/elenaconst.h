@@ -427,6 +427,7 @@ namespace _ELENA_
    constexpr auto RETVAL_VAR           = "$$ret";            // the closure returning value
    constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
    constexpr auto PARENT_VAR           = "$$parent";         // the closure parent
+   constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
 //
 //   // template virtual methods / fields
 //   #define TEMPLATE_GET_MESSAGE     "__get"
@@ -454,14 +455,15 @@ namespace _ELENA_
    constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
    #define TEMPLATE_PREFIX_NS_LEN   7 
 
-   #define FORWARD_PREFIX_NS        "$forwards'"
-   #define FORWARD_PREFIX_NS_LEN    10
+   constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
+   constexpr auto FORWARD_PREFIX_NS_LEN      = 10;
 
-   #define CLASSCLASS_POSTFIX       "#class"
-   #define GENERIC_PREFIX           "#generic"
-////   #define EMBEDDED_PREFIX          "#embedded"
-////   #define TARGET_POSTFIX           "##"
-   #define STATICFIELD_POSTFIX      "#static"
+   constexpr auto CLASSCLASS_POSTFIX         = "#class";
+   constexpr auto GENERIC_PREFIX             = "#generic";
+      ////   #define EMBEDDED_PREFIX          "#embedded"
+      ////   #define TARGET_POSTFIX           "##"
+   constexpr auto STATICFIELD_POSTFIX        = "#static";
+   constexpr auto EMBEDDAMLE_PREFIX          = "auto#";
 
   // --- ELENA Standard module references ---
    #define DLL_NAMESPACE            "$dlls"

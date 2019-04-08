@@ -458,6 +458,13 @@ private:
          info.save(&metaWriter);
       }
 
+      void addAttribute(ref_t message, int attribute, ref_t value)
+      {
+         ClassInfo::Attribute attr(message, attribute);
+
+         info.methodHints.exclude(attr);
+         info.methodHints.add(attr, value);
+      }
       void addHint(ref_t message, int hint)
       {
          ClassInfo::Attribute attr(message, maHint);
@@ -539,6 +546,7 @@ private:
       bool         nestedMode;
       bool         subCodeMode;       
       bool         abstractMethod;
+      bool         embeddableRetMode;
 //      bool         dispatchMode;
       
       virtual Scope* getScope(ScopeLevel level)
@@ -667,6 +675,13 @@ private:
          return scope ? scope->getReturningRef() : 0;
       }
 
+      bool withEmbeddableRet()
+      {
+         MethodScope* scope = (MethodScope*)getScope(slMethod);
+
+         return scope ? scope->embeddableRetMode : false;
+      }
+
       ref_t getClassRefId(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
@@ -769,6 +784,8 @@ private:
 
    bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
    bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
+
+   bool isMethodEmbeddable(MethodScope& scope);
 
    void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
@@ -908,6 +925,7 @@ private:
    ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
    ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
    ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   void compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileSubCode(SyntaxWriter& writer, SNode thenNode, CodeScope& scope, bool branchingMode);
 
@@ -947,6 +965,7 @@ private:
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
+   void compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
@@ -1060,7 +1079,7 @@ public:
    virtual void injectLocalBoxing(SNode node, int size);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
       ref_t targetRef*/, int stacksafeAttr);
-   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t actionRef);
+   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
    virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
 //////   virtual void injectFieldExpression(SyntaxWriter& writer);
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/);

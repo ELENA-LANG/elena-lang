@@ -18,22 +18,14 @@ public sealed ref<T> : BaseVariable
     
     T cast() = theValue;
     
-    get embeddable T Value()
+    get T Value()
     {
-        T retVal;
-        self.readValueTo(ref retVal);
-        
-         ^ retVal 
+         ^ theValue
     }
     
     set Value(T val)
     {
         theValue := val
-    }
-    
-    readValueTo(ref T retVal)
-    {
-        retVal := theValue
     }
 
     bool equal(o)
@@ -1150,21 +1142,13 @@ public sealed const struct IntNumber : IntBaseNumber
         ^ theValue $shr val
     }
     
-//    /// Bitwise inversion
-//    readInvertedTo(ref int retVal)
-//        => system'core_routines'__int;
-//    
-//    /*embeddable*/get int Inverted()
-//    {
-//        int val := 0;
-//        self.readInvertedTo(ref val);
-//        
-//        ^ val
-//    }
-
     /// Bitwise inversion
     get int Inverted()
-        => system'core_routines'__int;
+    {
+        system'core_routines'__int.readInvertedTo(theValue, ref int retVal);
+        
+        ^ retVal
+    }
         
     /// Negates the value
     int Negative
@@ -1533,7 +1517,11 @@ public sealed const struct UIntNumber : IntBaseNumber
     
     /// Bitwise inversion
     get uint Inverted()
-        => system'core_routines'__uint;  
+    {
+        system'core_routines'__int.readInvertedTo(theValue, ref int retVal);
+        
+        ^ retVal
+    }
 }
 
 // --- LongNumber ---
@@ -1843,7 +1831,11 @@ public sealed const struct LongNumber : IntBaseNumber
     
     /// Bitwise inversion
     get long Inverted()
-        => system'core_routines'__long;  
+    {
+        system'core_routines'__long.readInvertedTo(theValue, ref long retVal);
+        
+        ^ retVal
+    }
         
     /// Negates the value
     Negative
@@ -2130,11 +2122,11 @@ public sealed const struct CharValue : BaseValue
     static char MaxValue
         = $010FFFFh;
 
-    internal readValue(ref int retVal)
+    internal get Value()
     {
         intConvertor.convert(self, ref int val);
         
-        retVal := val
+        ^ val
     }
 
     bool equal(o)
@@ -2210,37 +2202,25 @@ public sealed const struct CharValue : BaseValue
     
     /// Returns the wide literal value
     wide cast() = wideConvertor.convert(self);
+
+    /// Retuns the number of bytes to represent the symbol        
+    get int Length()
+    {
+        intern system'core_routines'__char.readLengthTo(theValue, ref int retVal);
+        
+        ^ retVal
+    }
     
     /// Reads the number of bytes to represent the symbol
-    readWideLengthTo(ref int retVal)
+    int get WideLength()
     {
+        int length := self.Length
+        
         self.readLengthTo(ref int length);
         
         length := length + 1;
         length := length / 2;
 
-        retVal := length
-    }
-
-    /// Reads the number of bytes to represent the symbol
-    readLengthTo(ref int retVal)
-        => system'core_routines'__char;
-
-    /// Retuns the number of bytes to represent the symbol        
-    get embeddable int Length()
-    {
-        int retVal := 0;
-        
-        self.readLengthTo(ref retVal);
-        
-        ^ retVal
-    }
-
-    /// Retuns the number of short integers to represent the symbol
-    get embeddable int WideLength()
-    {
-        self.readWideLengthTo(ref int length);
-        
         ^ length
     }
 }
@@ -2375,115 +2355,75 @@ public sealed class KeyValue
 /// A byte convertor
 public singleton byteConvertor
 {
-    /// Converts a character into a byte value and saves the result into an output parameter
-    convert(char value, ref byte retVal)
-        => system'core_routines'__byteconvertor;
-        
-    /// Converts a short integer into a byte value and saves the result into an output parameter
-    convert(short n, ref byte retVal)
-        => system'core_routines'__byteconvertor;
-        
-    /// Converts an integer into a byte value and saves the result into an output parameter
-    convert(int value, ref byte retVal)
-        => system'core_routines'__byteconvertor;
-
-    /// Converts an integer into a byte value and saves the result into an output parameter
-    convert(uint value, ref byte retVal)
-        => system'core_routines'__byteconvertor;
-
-    /// Converts a long integer into a byte value and saves the result into an output parameter
-    convert(long value, ref byte retVal)
-        => system'core_routines'__byteconvertor;
-        
-    /// Converts a real number into a byte value and saves the result into an output parameter
-    convert(real value, ref byte retVal)
-        => system'core_routines'__byteconvertor;
-        
-    /// Converts a literal value into a byte value and saves the result into an output parameter
-    convert(string value, ref byte retVal)
-        => system'core_routines'__byteconvertor;
-
-    /// Converts a wide literal value into a byte value and saves the result into an output parameter
-    convert(wide value, ref byte retVal)
-        => system'core_routines'__byteconvertor;
-        
     byte convert(BaseVariable v)
         <= convert(v.value);
                         
     /// Returns the parameter        
     byte convert(byte n)
-        = new ByteNumber(n);
+        = n;
         
     /// Converts a character into a byte value
     byte convert(char val)
     {
-        byte retVal := 0;
-        self.convert(val, ref retVal);
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
         
-        ^ new ByteNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a short integer into a byte value
     byte convert(short n)
     {
-        byte retVal := 0;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__byteconvertor.convert(n, ref byte retVal);
         
-        ^ new ByteNumber(retVal)
+        ^ retVal
     }
         
     /// Converts an integer into a byte value
     byte convert(int val)
     {
-        byte retVal := 0;
-        self.convert(val, ref retVal);
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
         
-        ^ new ByteNumber(retVal)
+        ^ retVal
     }
         
     /// Converts an integer into a byte value
     byte convert(uint val)
     {
-        byte retVal := 0;
-        self.convert(val, ref retVal);
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
         
-        ^ new ByteNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a long integer into a byte value
     byte convert(long val)
     {
-        byte retVal := 0;
-        self.convert(val, ref retVal);
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
         
-        ^ new ByteNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a real number into a byte value
     byte convert(real val)
     {
-        byte retVal := 0;
-        self.convert(val, ref retVal);
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
         
-        ^ new ByteNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a literal value into a byte value
     byte convert(string s)
     {
-        byte val := 0;
-        self.convert(s, ref val);
+        intern system'core_routines'__byteconvertor.convert(s, ref byte retVal);
         
-        ^ new ByteNumber(val)
+        ^ retVal
     }
                 
     /// Converts a wide literal value into a byte value
     byte convert(wide s)
     {
-        byte val := 0; 
-        self.convert(s, ref val);
+        intern system'core_routines'__byteconvertor.convert(s, ref byte retVal);
         
-        ^ new ByteNumber(val)
+        ^ retVal
     }
 
     byte convert(o)
@@ -2493,115 +2433,75 @@ public singleton byteConvertor
 /// A 16bit integer convertor
 public singleton shortConvertor
 {
-    /// Converts a character into a short integer value and saves the result into an output parameter
-    convert(char val, ref short retVal)
-        => system'core_routines'__shortconvertor;
-        
-    /// Converts a byte value into a short integer value and saves the result into an output parameter
-    convert(byte n, ref short retVal)
-        => system'core_routines'__shortconvertor;
-        
-    /// Converts an integer into a short integer value and saves the result into an output parameter
-    convert(int val, ref short retVal)
-        => system'core_routines'__shortconvertor;
-        
-    /// Converts an integer into a short integer value and saves the result into an output parameter
-    convert(uint val, ref short retVal)
-        => system'core_routines'__shortconvertor;
-        
-    /// Converts a long integer into a short integer value and saves the result into an output parameter
-    convert(long val, ref short retVal)
-        => system'core_routines'__shortconvertor;
-        
-    /// Converts a real number into a short integer value and saves the result into an output parameter
-    convert(real val, ref short retVal)
-        => system'core_routines'__shortconvertor;
-
-    /// Converts a literal string into a short integer value and saves the result into an output parameter
-    convert(string val, ref short retVal)
-        => system'core_routines'__shortconvertor;
-        
-    /// Converts a wide literal string into a short integer value and saves the result into an output parameter
-    convert(wide val, ref short retVal)
-        => system'core_routines'__shortconvertor;
-        
     short convert(BaseVariable v)
         <= convert(v.Value);
                         
     /// Returns a short integer value        
     short convert(short n)
-        = new ShortNumber(n);
+        = n;
         
     /// Converts a byte value into a short integer value
     short convert(byte n)
     {
-        short retVal := 0;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
         
-        ^ new ShortNumber(retVal)
+        ^ retVal
     }
 
     /// Converts an integer into a short integer value
     short convert(int n)
     {
-        short retVal := 0;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
         
-        ^ new ShortNumber(retVal)
+        ^ retVal
     }
 
     /// Converts an integer into a short integer value
     short convert(uint n)
     {
-        short retVal := 0;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
         
-        ^ new ShortNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a long integer into a short integer value
     short convert(long n)
     {
-        short retVal := 0;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
         
-        ^ new ShortNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a real number into a short integer value
     short convert(real n)
     {
-        short retVal := 0;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
         
-        ^ new ShortNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a character into a short integer value
     short convert(char ch)
     {
-        short retVal := 0;
-        self.convert(ch, ref retVal);
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
         
-        ^ new ShortNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a literal string into a short integer value
     short convert(string s)
     {
-        short retVal := 0;
-        self.convert(s, ref retVal);
+        intern system'core_routines'__shortconvertor.convert(s, ref short retVal);
         
-        ^ new ShortNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a wide literal string into a short integer value
     short convert(wide s)
     {
-        short retVal := 0;
-        self.convert(s, ref retVal);
+        intern system'core_routines'__shortconvertor.convert(s, ref short retVal);
         
-        ^ new ShortNumber(retVal)
+        ^ retVal
     }
         
     short convert(o)
@@ -2611,137 +2511,87 @@ public singleton shortConvertor
 /// An integer convertor
 public singleton intConvertor
 {
-    /// Converts a literal string into an integer and saves the result into an output parameter
-    convert(string s, ref int retVal)
-        => system'core_routines'__intconvertor;
-
-    /// Converts a literal string into an integer and saves the result into an output parameter
-    convertUnsigned(string s, ref int retVal)
-        => system'core_routines'__intconvertor;
-
-    /// Converts a literal string into an integer and saves the result into an output parameter
-    convert(string value, int base, ref int retVal)
-        => system'core_routines'__intconvertor;
-
-    /// Converts a wide literal string into an integer and saves the result into an output parameter
-    convert(wide value, ref int retVal)
-        => system'core_routines'__intconvertor;
-
-    /// Converts a wide literal string into an integer and saves the result into an output parameter
-    convert(wide value, int base, ref int retVal)
-        => system'core_routines'__intconvertor;
-
-    /// Converts a character value into an integer and saves the result into an output parameter
-    convert(char value, ref int retVal)
-        => system'core_routines'__intconvertor;
-
-    /// Converts a short integer value into an integer and saves the result into an output parameter
-    convert(short value, ref int retVal)
-        => system'core_routines'__intconvertor;
-
-    /// Converts a byte value into an integer and saves the result into an output parameter
-    convert(byte value, ref int retVal)
-        => system'core_routines'__intconvertor;
-
-    /// Converts a long integer into an integer and saves the result into an output parameter
-    convert(long value, ref int retVal)
-        => system'core_routines'__intconvertor;
-        
-    /// Converts a real number into an integer and saves the result into an output parameter
-    convert(real real, ref int retVal)
-        => system'core_routines'__intconvertor;
-
     int convert(BaseVariable v)
         <= convert(v.Value);
         
     /// Converts a literal string into an integer
     int convert(string s)
     {
-        int retVal := 0;
-        self.convert(s, ref retVal);
+        intern system'core_routines'__intconvertor.convert(s, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a literal string into an integer
     int convertUnsigned(string s)
     {
-        int retVal := 0;
-        self.convertUnsigned(s, ref retVal);
+        intern system'core_routines'__intconvertor.convert(s, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a literal string into an integer
     int convert(string s, int base)
     {
-        int retVal := 0;
-        self.convert(s, base, ref retVal);
+        intern system'core_routines'__intconvertor.convert(s, base, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a wide literal string into an integer
     int convert(wide s)
     {
-        int retVal := 0;
-        self.convert(s, ref retVal);
+        intern system'core_routines'__intconvertor.convert(s, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a wide literal string into an integer
     int convert(wide s, int base)
     {
-        int retVal := 0;
-        self.convert(s, base, ref retVal);
+        intern system'core_routines'__intconvertor.convert(s, base, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a character value into an integer
     int convert(char ch)
     {
-        int retVal := 0;
-        self.convert(ch, ref retVal);
+        intern system'core_routines'__intconvertor.convert(ch, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a byte value into an integer
     int convert(byte val)
     {
-        int retVal := 0;
-        self.convert(val, ref retVal);
+        intern system'core_routines'__intconvertor.convert(val, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a short integer value into an integer
     int convert(short val)
     {
-        int retVal := 0;
-        self.convert(val, ref retVal);
+        intern system'core_routines'__intconvertor.convert(val, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a long integer value into an integer and saves the result into an output parameter
     int convert(long val)
     {
-        int retVal := 0;
-        self.convert(val, ref retVal);
+        intern system'core_routines'__intconvertor.convert(val, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a long integer into an integer
     int convert(real n)
     {
-        int retVal := 0;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__intconvertor.convert(n, ref int retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
 
     /// Returns a parameter                                    
@@ -2771,137 +2621,96 @@ public singleton uintConvertor
     /// Converts a long integer value into an integer and saves the result into an output parameter
     uint convert(long n)
     {
-        int retVal := 0;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__uintconvertor.convert(n, ref int retVal);
         
-        ^ new UIntNumber(retVal)
+        ^ retVal
     }        
 }
 
 /// A long integer convertor
 public singleton longConvertor
 {
-    /// Converts a literal string into a long integer and saves the result into an output parameter
-    convert(string s, ref long retVal)
-        => system'core_routines'__longconvertor;
-
-    /// Converts a literal string into a long integer and saves the result into an output parameter
-    convert(string s, int base, ref long retVal)
-        => system'core_routines'__longconvertor;
-
-    /// Converts a wide literal string into a long integer and saves the result into an output parameter
-    convert(wide s, ref long retVal)
-        => system'core_routines'__longconvertor;
-
-    /// Converts a wide literal string into a long integer and saves the result into an output parameter
-    convert(wide value, int base, ref<long> retVal)
-        => system'core_routines'__longconvertor;
-
-    convert(int n, ref long retVal)
-        => system'core_routines'__longconvertor;
-        
-    convert(uint n, ref long retVal)
-        => system'core_routines'__longconvertor;
-        
-    convert(short n, ref long retVal)
-        => system'core_routines'__longconvertor;
-
-    convert(byte n, ref long retVal)
-        => system'core_routines'__longconvertor;
-
-    /// Converts a real number into a long integer and saves the result into an output parameter
-    convert(real n, ref long retVal)
-        => system'core_routines'__longconvertor;
-
     long convert(BaseVariable v)
         <= convert(v.Value);
         
     /// Converts an integer value into a long integer
     long convert(int n)
     {
-        long retVal := 0l;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__longconvertor.convert(n, ref long retVal);
         
-        ^ new LongNumber(retVal)
+        ^ retVal
     }
 
     /// Converts an integer value into a long integer
     long convert(uint val)
     {
-        long n := 0l;
-        self.convert(val, ref n);
+        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
         
-        ^ new LongNumber(n)
+        ^ retVal
     }
 
     /// Converts an integer value into a long integer
     long convert(byte val)
     {
-        long n := 0l;
-        self.convert(val, ref n);
+        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
         
-        ^ new LongNumber(n)
+        ^ retVal
     }
 
     /// Converts an integer value into a long integer
     long convert(short val)
     {
-        long n := 0l;
-        self.convert(val, ref n);
+        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
         
-        ^ new LongNumber(n)
+        ^ retVal
     }
 
     /// Converts a real number into a long integer
     long convert(real val)
     {
-        long retVal := 0l;
-        self.convert(val, ref retVal);
+        intern system'core_routines'__longconvertor.convert(val, ref long retVal);
         
-        ^ new LongNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a character into a long integer
     long convert(char ch)
     {
-        int retVal := 0;
-        intConvertor.convert(ch, ref retVal);
+        intern system'core_routines'__longconvertor.convert(ch, ref long retVal);
         
-        ^ new LongNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a literal string into a long integer
     long convert(string s)
     {
-        long retVal := 0l;
-        self.convert(s, ref retVal);
+        intern system'core_routines'__longconvertor.convert(s, ref long retVal);
         
-        ^ new LongNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a literal string into a long integer
     long convert(string s, int base)
     {
-        self.convert(s, base, ref long retVal);
+        intern system'core_routines'__longconvertor.convert(s, base, ref long retVal);
         
-        ^ new LongNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a wide literal string into a long integer
     long convert(wide s)
     {
-        long retVal := 0l;
-        self.convert(s, ref retVal);
+        intern system'core_routines'__longconvertor.convert(s, ref long retVal);
         
-        ^ new LongNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a wide literal string into a long integer
     long convert(wide s, int base)
     {
-        self.convert(s, base, ref long retVal);
+        intern system'core_routines'__longconvertor.convert(s, base, ref long retVal);
         
-        ^ new LongNumber(retVal)
+        ^ retVal
     }
     
     /// Returns a parameter
@@ -2919,66 +2728,23 @@ public singleton realConvertor
     convert(int v, ref real retVal)
         => system'core_routines'__realconvertor;
 
-    /// Converts an integer into a real number and saves the result into an output parameter
-    convert(uint n, ref real retVal)
-    {
-        (n < 0)?
-        {
-            // If the number is bigger than 2^31
-            // than we are unlucky
-            int odd := n && 1;
-            int halfed := n $shl 1;
-            
-            real r := 0;
-            self.convert(halfed, ref r);
-            r := r * 2.0r;
-            r := r + odd;
-            
-            retVal := r
-        }
-        : { self.convert(n, ref retVal) }
-    }        
-    //    => system'core_routines'__realconvertor.
-
-    /// Converts an integer into a real number and saves the result into an output parameter
-    convert(long n, ref real retVal)
-        => system'core_routines'__realconvertor;
-
-    /// Converts an integer into a real number and saves the result into an output parameter
-    convert(byte n, ref real retVal)
-        => system'core_routines'__realconvertor;
-
-    /// Converts an integer into a real number and saves the result into an output parameter
-    convert(short n, ref real retVal)
-        => system'core_routines'__realconvertor;
-
-    /// Converts a literal string into a real number and saves the result into an output parameter
-    convert(string s, ref real retVal)
-        => system'core_routines'__realconvertor;
-
-    /// Converts a wide literal string into a real number and saves the result into an output parameter
-    convert(wide s, ref real retVal)
-        => system'core_routines'__realconvertor;
-        
     real convert(BaseVariable v)
         <= convert(v.Value);
         
     /// Converts a literal string into a real number
     real convert(string s)
     {
-        real retVal := 0.0r;
-        self.convert(s, ref retVal);
+        intern system'core_routines'__realconvertor.convert(s, ref real retVal);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
         
     /// Converts a wide literal string into a real number
     real convert(wide s)
     {
-        real retVal := 0.0r;
-        self.convert(s, ref retVal);
+        intern system'core_routines'__realconvertor.convert(s, ref real retVal);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
 
     /// Returns a parameter
@@ -2988,46 +2754,56 @@ public singleton realConvertor
     /// Converts an integer into a real number
     real convert(int n)
     {
-        real retVal := 0.0r;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
         
     /// Converts an integer into a real number
     real convert(uint n)
     {
-        real retVal := 0.0r;
-        self.convert(n, ref retVal);
+        real retVal;
+        (n < 0)?
+        {
+            // If the number is bigger than 2^31
+            // than we are unlucky
+            int odd := n && 1;
+            int halfed := n $shl 1;
+            
+            real r := 0;
+            intern system'core_routines'__realconvertor.convert(halfed, ref r);
+            r := r * 2.0r;
+            r := r + odd;
+            
+            retVal := r
+        }
+        : { intern system'core_routines'__realconvertor.convert(halfed, ref retVal) };
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a long integer into a real number
     real convert(long n)
     {
-        real retVal := 0.0r;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a byte into a real number
     real convert(byte n)
     {
-        real retVal := 0.0r;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
 
     /// Converts a short integer into a real number
     real convert(short n)
     {
-        real retVal := 0.0r;
-        self.convert(n, ref retVal);
+        intern system'core_routines'__realconvertor.convert(n, ref real retVal);
         
-        ^ new RealNumber(retVal)
+        ^ retVal
     }
         
     real convert(o)
@@ -3038,48 +2814,79 @@ public singleton realConvertor
 
 public singleton realOpController
 {
-    exp(real n, ref real retVal)
-        => system'core_routines'__real;
-        
-    abs(real r, ref real retVal)
-        => system'core_routines'__real;
-        
-    ln(real n, ref real retVal)
-        => system'core_routines'__real;
-        
-    round(real r, ref real retVal)
-        => system'core_routines'__real;
-        
-    truncate(real r, ref real retVal)
-        => system'core_routines'__real;
-        
-    sin(real r, ref real retVal)
-        => system'core_routines'__real;
-        
-    cos(real r, ref real retVal)
-        => system'core_routines'__real;
-        
-    arctan(real r, ref real retVal)
-        => system'core_routines'__real;
-                
-    sqrt(real r, ref real retVal)
-        => system'core_routines'__real;
-        
-    pi(ref real r)
-        => system'core_routines'__real;
-        
-    embeddable real pi()
+    real exp(real n)
     {
-        real retVal := 0.0r;
-        self.pi(ref retVal);
+        intern system'core_routines'__real.exp(n, ref real retVal);
         
         ^ retVal
-    }        
+    }
+        
+    real abs(real r)
+    {
+        intern system'core_routines'__real.abs(n, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real ln(real n)
+    {
+        intern system'core_routines'__real.ln(n, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real round(real r)
+    {
+        intern system'core_routines'__real.round(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real truncate(real r)
+    {
+        intern system'core_routines'__real.truncate(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real sin(real r)
+    {
+        intern system'core_routines'__real.sin(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real cos(real r)
+    {
+        intern system'core_routines'__real.cos(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real arctan(real r)
+    {
+        intern system'core_routines'__real.arctan(r, ref real retVal);
+        
+        ^ retVal
+    }
+                
+    real sqrt(real r)
+    {
+        intern system'core_routines'__real.sqrt(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real pi()
+    {
+        intern system'core_routines'__real.pi(ref real retVal);
+        
+        ^ retVal
+    }
     
     embeddable real e()
     {
-        real retVal := 0.0r;
-        self.exp(1.0r, ref retVal);
+        real retVal := self.exp(1.0r);
         
         ^ retVal
     }        

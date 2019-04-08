@@ -656,6 +656,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->subCodeMode = false;
    this->abstractMethod = false;
    this->genericClosure = false;
+   this->embeddableRetMode = false;
 //   this->dispatchMode = false;
 }
 
@@ -1241,7 +1242,7 @@ ref_t Compiler :: resolveConstantObjectReference(CodeScope& scope, ObjectInfo ob
 ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, bool unboxWapper)
 {
    if (object.kind == okSelfParam) {
-      if (object.extraparam == -2u) {
+      if (object.extraparam == (ref_t)-2) {
          // HOTFIX : to return the primitive array
          return object.reference;
       }
@@ -3565,7 +3566,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    int operand = 0;
 
    SNode current = node;
-   SNode sourceNode = current.nextNode(lxObjectMask);
+   SNode sourceNode = current == lxReturning ? current.firstChild(lxObjectMask) : current.nextNode(lxObjectMask);
 
    if (scope.isInitializer()) {
       // HOTFIX : recognize static field initializer
@@ -4866,6 +4867,16 @@ ObjectInfo Compiler :: compileSubCode(SyntaxWriter& writer, SNode codeNode, Code
 //   compileExpression(writer, expr, scope, 0, HINT_LOOP);
 //}
 
+void Compiler :: compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
+{
+   ObjectInfo retVar = scope.mapTerminal(RETVAL_ARG, false, 0);
+
+   writer.newBookmark();   
+   writeTerminal(writer, node, scope, retVar, HINT_NOBOXING);
+   compileAssigning(writer, node, scope, retVar);
+   writer.removeBookmark();
+}
+
 ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
    ObjectInfo retVal;
@@ -4890,11 +4901,19 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             //if (test(scope.getMessageID(), SPECIAL_MESSAGE))
             //   scope.raiseError(errIllegalOperation, current);
 
-            writer.newNode(lxReturning);
-            writer.appendNode(lxBreakpoint, dsStep);
-            retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
-            writer.closeNode();
-
+            if (scope.withEmbeddableRet()) {
+               compileEmbeddableRetExpression(writer, current, scope);
+               writer.newNode(lxReturning);
+               writer.appendNode(lxBreakpoint, dsStep);
+               writeTerminal(writer, current, scope, scope.mapTerminal(SELF_VAR, false, 0), HINT_NODEBUGINFO);
+               writer.closeNode();
+            }
+            else {
+               writer.newNode(lxReturning);
+               writer.appendNode(lxBreakpoint, dsStep);
+               retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
+               writer.closeNode();
+            }
             break;
          }
          case lxEOF:
@@ -5828,6 +5847,76 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
    }
 }
 
+bool Compiler :: isMethodEmbeddable(MethodScope& scope)
+{
+   if (!test(_optFlag, 1))
+      return false;
+
+   if (getParamCount(scope.message) == ARG_COUNT || test(scope.message, VARIADIC_MESSAGE))
+      return false;
+
+   if (scope.generic || scope.closureMode)
+      return false;
+
+   //if (scope.outputRef == scope.getClassRef())
+   //   return false;
+
+   if (!scope.outputRef || !_logic->isEmbeddable(*scope.moduleScope, scope.outputRef)) {
+      return false;
+   }
+
+   ref_t dummy = 0;
+   ident_t actionName = scope.module->resolveAction(getAction(scope.message), dummy);
+   if (actionName.startsWith(CAST_MESSAGE))
+      // HOTFIX : exclude cast operations
+      return false;
+
+   return true;
+}
+
+void Compiler :: compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   ref_t dummy, flags;
+   int paramCount;
+   decodeMessage(scope.message, dummy, paramCount, flags);
+
+   ClassScope* ownerScope = (ClassScope*)scope.parent;
+
+   // generate private static method with an extra argument - retVal
+   MethodScope privateScope(ownerScope);
+   IdentifierString privateName(EMBEDDAMLE_PREFIX);
+   ref_t signRef = 0;
+   privateName.append(scope.module->resolveAction(getAction(scope.message), signRef));
+   ref_t signArgs[ARG_COUNT];
+   size_t signLen = scope.module->resolveSignature(signRef, signArgs);
+   signArgs[signLen++] = resolvePrimitiveReference(scope, V_WRAPPER, scope.outputRef, false);
+   privateScope.message = encodeMessage(
+      scope.module->mapAction(privateName.c_str(), scope.module->mapSignature(signArgs, signLen, false), false),
+      paramCount + 1,
+      flags | STATIC_MESSAGE);
+
+   declareArgumentList(node, privateScope, true, false);
+   privateScope.parameters.add(RETVAL_ARG, Parameter(1 + scope.parameters.Count(), V_WRAPPER, signArgs[signLen - 1], 0));
+   privateScope.classEmbeddable = scope.classEmbeddable;
+   privateScope.extensionMode = scope.extensionMode;
+   privateScope.embeddableRetMode = true;
+
+   // !! TEMPORAL : clone the method node, to compile it safely : until the proper implementation
+   SyntaxTree dummyTree;
+   SyntaxWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(node.type);
+   SyntaxTree::copyNode(dummyWriter, node);
+   dummyWriter.closeNode();
+   compileMethod(writer, dummyTree.readRoot(), privateScope);
+   //compileMethod(writer, node, privateScope);
+
+   compileMethod(writer, node, scope);
+
+   ownerScope->addHint(scope.message, tpEmbeddable);
+   ownerScope->addAttribute(scope.message, maEmbeddableRet, privateScope.message);
+   ownerScope->save();
+}
+
 void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
@@ -6187,6 +6276,11 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
                }
                else if (methodScope.abstractMethod) {
                   compileAbstractMethod(writer, current, methodScope);
+               }
+               else if (isMethodEmbeddable(methodScope)) {
+                  // COMPILER MAGIC : if the method retunging value can be passed as an extra argument
+                  compileEmbeddableMethod(writer, current, methodScope);
+
                }
                else compileMethod(writer, current, methodScope);
             }
@@ -7682,9 +7776,10 @@ ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
 
 ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int mode)
 {   
-   if (node.existChild(lxEmbeddableAttr)) {
+   SNode attr = node.findChild(lxEmbeddableAttr);
+   if (attr == lxEmbeddableAttr) {
       if (!_logic->optimizeEmbeddable(node, *scope.moduleScope))
-         node.appendNode(lxEmbeddable);
+         attr = lxEmbeddable;
    }
 
    int stackSafeAttr = node.findChild(lxStacksafeAttr).argument;
@@ -7801,7 +7896,7 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
          }
          else if (subNode != lxNone) {
             if (subNode.existChild(lxEmbeddable)) {
-               if (!_logic->optimizeEmbeddableGet(*scope.moduleScope, *this, node)) {
+               if (!_logic->optimizeReturningStructure(*scope.moduleScope, *this, node)) {
                   _logic->optimizeEmbeddableOp(*scope.moduleScope, *this, node);
                }
             }
@@ -8235,44 +8330,6 @@ void Compiler :: analizeSymbolTree(SNode node, Scope& scope)
 
 void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
 {
-   // Optimization : var = get&subject => eval&subject&ref[1]
-   ref_t actionRef = 0;
-   ref_t returnRef = classScope.info.methodHints.get(ClassInfo::Attribute(methodNode.argument, maReference));
-   if (_logic->recognizeEmbeddableGet(*classScope.moduleScope, methodNode, /*classScope.extensionClassRef != 0 ? classScope.reference : 0, */returnRef, actionRef)) {
-      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGet), actionRef);
-
-      // HOTFIX : allowing to recognize embeddable get in the class itself
-      classScope.save();
-   }
-//   // Optimization : var = getAt&int => read&int&subject&var[2]
-//   else if (_logic->recognizeEmbeddableGetAt(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
-//      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt), type);
-//
-//      // HOTFIX : allowing to recognize embeddable get in the class itself
-//      classScope.save();
-//   }
-//   // Optimization : var = getAt&int => read&int&subject&var[2]
-//   else if (_logic->recognizeEmbeddableGetAt2(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
-//      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableGetAt2), type);
-//
-//      // HOTFIX : allowing to recognize embeddable get in the class itself
-//      classScope.save();
-//   }
-//   // Optimization : var = eval&subj&int => eval&subj&var[2]
-//   else if (_logic->recognizeEmbeddableEval(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
-//      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval), type);
-//
-//      // HOTFIX : allowing to recognize embeddable get in the class itself
-//      classScope.save();
-//   }
-//   // Optimization : var = eval&int&int => evald&int&subject&var[2]
-//   else if (_logic->recognizeEmbeddableEval2(*classScope.moduleScope, methodNode, classScope.extensionClassRef != 0 ? classScope.reference : 0, returnRef, type)) {
-//      classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableEval2), type);
-//
-//      // HOTFIX : allowing to recognize embeddable get in the class itself
-//      classScope.save();
-//   }
-
    // Optimization : subject'get = self / $self
    if (_logic->recognizeEmbeddableIdle(methodNode, classScope.extensionClassRef != 0)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableIdle), INVALID_REF);
@@ -8769,7 +8826,7 @@ void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, i
    }
 }
 
-void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t actionRef)
+void Compiler :: injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t messageRef)
 {
    // move assigning target into the call node
    SNode assignTarget;
@@ -8784,7 +8841,7 @@ void Compiler :: injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t act
 
       callNode.appendNode(assignTarget.type, assignTarget.argument);
       assignTarget = lxIdle;
-      callNode.setArgument(encodeMessage(actionRef, 1, 0));
+      callNode.setArgument(messageRef);
    }
 }
 

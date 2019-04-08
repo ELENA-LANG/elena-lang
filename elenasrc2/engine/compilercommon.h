@@ -358,7 +358,7 @@ public:
       ref_t targetRef*/, int stacksafeAttr) = 0;
 ////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 
-   virtual void injectEmbeddableGet(SNode assignNode, SNode callNode, ref_t subject) = 0;
+   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
    virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/) = 0;
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
@@ -541,16 +541,11 @@ public:
 
    // optimization
    virtual bool validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired) = 0;
-   virtual bool recognizeEmbeddableGet(_ModuleScope& scope, SNode node, /*ref_t extensionRef, */ref_t returningRef, ref_t& actionRef) = 0;
-//   virtual bool recognizeEmbeddableGetAt(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
-//   virtual bool recognizeEmbeddableGetAt2(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
-//   virtual bool recognizeEmbeddableEval(_CompilerScope& scope, SNode node, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
-//   virtual bool recognizeEmbeddableEval2(_CompilerScope& scope, SNode root, ref_t extensionRef, ref_t returningRef, ref_t& subject) = 0;
    virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
    virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef) = 0;
    virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope) = 0;
 
-   virtual bool optimizeEmbeddableGet(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
+   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 

@@ -1,7 +1,7 @@
 
 public interface Space
 {
-    fn3prop int LiveCell
+    int LiveCell
     {
         calc(int k, int l, int state, ref int retVal)
         {

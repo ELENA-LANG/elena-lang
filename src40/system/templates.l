@@ -36,7 +36,7 @@ property prop<T,get_accessor,set_accessor>
 
 property vprop<T,get_accessor>
 {
-    get embeddable T __property()
+    get T __property()
     {
         T retVal := T.Default;
         
@@ -48,7 +48,7 @@ property vprop<T,get_accessor>
 
 property vprop<T,get_accessor,set_accessor>
 {
-    get embeddable T __property()
+    get T __property()
     {
         T retVal := T.Default;
         
@@ -109,128 +109,6 @@ property rprop<T>
 //    static __properties = theProperties.
 //}
 //
-//// --- vprop ---
-//
-//public __accessor __accessor vprop<prop_type,prop_name>
-//{
-//    embeddable prop_type prop_name
-//    [
-//        prop_type val := T<prop_type>().
-//        self __get(&val).
-//
-//        ^ val.
-//    ]
-//    
-//    embeddable set prop_name(prop_type val)
-//    [
-//        self __set(val).
-//    ]
-//}
-//
-////// --- vvprop ---
-////
-////__accessor __accessor template vvprop :: prop_type,prop_name
-////{
-////    embeddable prop_type prop_name
-////    [
-////        prop_type val := 0.        
-////        self __get(&val).
-////
-////        ^ val.
-////    ]
-////    
-////    embeddable set prop_name(prop_type val)
-////    [
-////        self __set(val).
-////    ]
-////    
-////    embeddable append prop_name(prop_type val)
-////    [
-////        prop_type newVal := 0.        
-////        $self $get var<prop_type>:newVal.
-////        
-////        newVal := newVal + val.
-////        
-////        $self $set prop_type:newVal.
-////    ]
-////    
-////    stacksafe embeddable reduce prop_name prop_type:val
-////    [
-////        prop_type newVal := 0.        
-////        $self $get var<prop_type>:newVal.
-////        
-////        newVal := newVal - val.
-////        
-////        $self $set prop_type:newVal.
-////    ]    
-////}
-//
-//////accessor template vprop :: type,prop_name
-//////{
-//////    stacksafe embeddable type prop_name
-//////    [
-//////        type val := 0.        
-//////        $self $get var<type>:val.
-//////
-//////        ^ val.
-//////    ]
-//////}
-//
-//// --- rvprop ---
-//
-//public __accessor rvprop<type,prop_name>
-//{
-//    embeddable type prop_name
-//    [
-//        type val := T<type>().     
-//        self __get(&val).
-//
-//        ^ val.
-//    ]
-//}
-
-// --- fnprop ---
-
-property fnprop<T, get_accessor>
-{
-    embeddable T __property(T n)
-    {
-        T retVal := T.Default;
-        
-        self.get_accessor(n, ref retVal);
-        
-        ^ retVal
-    }    
-}
-
-// --- fn2prop ---
-
-property fn2prop<T, get_accessor>
-{
-    embeddable T __property(T n, T m)
-    {
-        T retVal := T.Default;
-        
-        self.get_accessor(n, m, ref retVal);
-        
-        ^ retVal
-    }
-}
-
-// --- fn3prop ---
-
-property fn3prop<T, get_accessor>
-{
-    embeddable T __property(T n, T m, T o)
-    {
-        T retVal := T.Default;
-        
-        self.get_accessor(n, m, o, ref retVal);
-        
-        ^ retVal
-    }
-}
-
 // --- extern statement ---
 
 public extern<extern_block>()
