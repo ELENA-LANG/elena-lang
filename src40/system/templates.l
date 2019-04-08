@@ -34,35 +34,6 @@ property prop<T,get_accessor,set_accessor>
     }
 }
 
-property vprop<T,get_accessor>
-{
-    get T __property()
-    {
-        T retVal := T.Default;
-        
-        self.get_accessor(ref retVal);
-        
-        ^ retVal
-    }
-}
-
-property vprop<T,get_accessor,set_accessor>
-{
-    get T __property()
-    {
-        T retVal := T.Default;
-        
-        self.get_accessor(ref retVal);
-        
-        ^ retVal
-    }
-    
-    set __property(T val)
-    {
-        self.set_accessor(val)
-    }
-}
-
 property rprop<T>
 {
     T __property;
