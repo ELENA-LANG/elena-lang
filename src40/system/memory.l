@@ -54,14 +54,14 @@ public sealed Array<T> : Indexable<T>
         }
     };
 
-    vprop int Length
+    prop int Length
     {
-        read(ref int retVal)
+        int get()
         {
             int len := 0;
             theArray $shr len;
             
-            retVal := len
+            ^ len
         }
     }
 
@@ -148,10 +148,17 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 {
     embeddable __string T[] theArray;
 
-    vprop int Length
+    readLengthTo(ref int retVal)
+        => system'core_routines'__args;
+
+    prop int Length
     {
-        read(ref int retVal)
-            => system'core_routines'__args;
+        int get()
+        {
+            self.readLengthTo(ref int retVal);
+            
+            ^ retVal
+        }            
     }
     
     T[] cast()
@@ -272,27 +279,27 @@ public sealed Matrix<T>
 //
 //    int rvprop length  :: readLengthTo.    
 
-    vprop int Length
+    prop int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theRows
+            ^ theRows
         }
     }    
 
-    vprop int Columns
+    prop int Columns
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theColumns
+            ^ theColumns
         }
     }
 
-    vprop int Rows
+    prop int Rows
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theRows
+            ^ theRows
         }
     }
 
@@ -312,7 +319,7 @@ public sealed Matrix<T>
         retVal := theArray[index];
     }
 
-    embeddable T at(int i, int j)
+    T at(int i, int j)
     {
         T retVal := T.Default;
         self.read(i, j, ref retVal);
@@ -728,11 +735,11 @@ public sealed class BitArray
         theArray := new int[](length / 32 + 1)
     }
     
-    vprop int Length
+    prop int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theLength
+            ^ theLength
         }
     }
     
@@ -886,27 +893,27 @@ public sealed class IntMatrix
         columns := theColumns
     }
 
-    vprop int Length
+    prop int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theRows
+            ^ theRows
         }
     }    
 
-    vprop int Columns
+    prop int Columns
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theColumns
+            ^ theColumns
         }
     }
 
-    vprop int Rows
+    prop int Rows
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theRows
+            ^ theRows
         }
     }
 
@@ -926,10 +933,11 @@ public sealed class IntMatrix
         retVal := theArray[index];
     }
 
-    embeddable int at(int i, int j)
+    int at(int i, int j)
     {
-        int retVal := 0;
-        self.read(i, j, ref retVal);
+        int index := i * theColumns + j;
+        int retVal := theArray[index];
+        
         ^ retVal
     }
 
@@ -1395,23 +1403,23 @@ public sealed const struct String : BaseValue
     /// Returns the index of the first occurence of the specified symbol.
     /// 
     /// If the substring is not found. returns -1
-    indexOf(int index, char ch)
+    int indexOf(int index, char ch)
     {
         int retVal := 0;
         self.indexOf(index, ch, ref retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
 
     /// Returns the index of the first occurence of the specified substring.
     ///
     /// If the substring is not found. returns -1
-    indexOf(int index, string s)
+    int indexOf(int index, string s)
     {
         int retVal := 0;
         self.indexOf(index, s, ref retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
 
     /// Inserts the substring into and returns the new one
@@ -1430,11 +1438,15 @@ public sealed const struct String : BaseValue
     string Substring(int index, int length)
         => system'core_routines'__literal;
 
-    vprop int Length
+    prop int Length
     {
         /// Reads the literal length into an output parameter
-        read(ref int retVal)
-            => system'core_routines'__literal;
+        int get()
+        {
+            intern system'core_routines'__literal.readLengthTo(self, ret int retVal);
+            
+            ^ retVal
+        }
     }
 
     /// Saves the literal into a UTF-32 character array
@@ -1593,12 +1605,12 @@ public sealed const struct WideString : BaseValue
     /// Returns the index of the first occurence of the specified character.
     ///
     /// If the substring is not found. returns -1
-    indexOf(int index, char ch)
+    int indexOf(int index, char ch)
     {
         int retVal := 0;
         self.indexOf(index, ch, ref retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
 
     /// Returns the index of the first occurence of the specified substring.
@@ -1609,7 +1621,7 @@ public sealed const struct WideString : BaseValue
         int retVal := 0;
         self.indexOf(index, s, ref retVal);
         
-        ^ new IntNumber(retVal)
+        ^ retVal
     }
 
     /// Inserts the substring into and returns the new one
@@ -1633,11 +1645,15 @@ public sealed const struct WideString : BaseValue
         => system'core_routines'__wide;
 
     /// Reads the literal length into an output parameter
-    vprop int Length
+    prop int Length
     {
         /// Reads the literal length into an output parameter
-        read(ref int retVal)
-            => system'core_routines'__wide;
+        int get()
+        {
+           system'core_routines'__wide.readLengthTo(self, ref int retVal);
+           
+            ^ retVal 
+        }
     }
 
     /// Saves the literal into a UTF-32 character array
@@ -1841,11 +1857,15 @@ public sealed Array : Indexable//, Array<object>
         ^ retVal
     }
 
-    vprop int Length
+    prop int Length
     {
         /// Reads the array length into an output parameter
-        read(ref int retVal)
-            => system'core_routines'__array;
+        int get()
+        {
+            intern system'core_routines'__array.readLengthTo(self, ref int retVal);
+            
+            ^ retVal
+        }
     }
 
     /// Sets the specified array member
@@ -1882,25 +1902,15 @@ public singleton stringConvertor
     string convert(BaseVariable v, int radix)
         <= convert(v.Value, radix);
     
-    /// Converts the parameter to the literal value
-    convert(char ch, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
-    
     string convert(char ch)
     {
         byte buffer[4];
         int  length := 0;
-        
-        self.convert(ch, buffer, ref length);
+
+        system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
-    
-    convert(int n, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
-    
-    convert(uint n, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
     
     /// Converts the parameter to the literal value
     string convert(int n)
@@ -1908,7 +1918,7 @@ public singleton stringConvertor
         byte buffer[12];
         int  length := 0;
         
-        self.convert(n, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1919,44 +1929,32 @@ public singleton stringConvertor
         byte buffer[12];
         int  length := 0;
         
-        self.convert(n, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
 
-    /// Converts the parameter to the literal value
-    convert(short n, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
-    
     /// Converts the parameter to the literal value
     string convert(short n)
     {
         byte buffer[12];
         int  length := 0;
         
-        self.convert(n, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
 
-    /// Converts the parameter to the literal value
-    convert(byte n, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
-    
     /// Converts the parameter to the literal value
     string convert(byte n)
     {
         byte buffer[4];
         int  length := 0;
         
-        self.convert(n, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value
-    convert(long n, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
 
     /// Converts the parameter to the literal value
     string convert(long n)
@@ -1964,18 +1962,10 @@ public singleton stringConvertor
         byte buffer[64];
         int  length := 0;
         
-        self.convert(n, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value with the provided radix
-    convert(int n, int radix, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
-
-    /// Converts the parameter to the literal value with the provided radix
-    convert(uint n, int radix, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
 
     /// Converts the parameter to the literal value with the provided radix
     string convert(int n, int radix)
@@ -1983,7 +1973,7 @@ public singleton stringConvertor
         byte buffer[48];
         int  length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1994,14 +1984,10 @@ public singleton stringConvertor
         byte buffer[48];
         int  length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value with the provided radix
-    convert(short n, int radix, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
 
     /// Converts the parameter to the literal value with the provided radix
     string convert(short n, int radix)
@@ -2009,14 +1995,10 @@ public singleton stringConvertor
         byte buffer[32];
         int  length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value with the provided radix
-    string convert(byte n, int radix, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
 
     /// Converts the parameter to the literal value with the provided radix
     string convert(byte n, int radix)
@@ -2024,14 +2006,10 @@ public singleton stringConvertor
         byte buffer[8];
         int  length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value with the provided radix
-    convert(long n, int radix, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
 
     /// Converts the parameter to the literal value
     string convert(long n, int radix)
@@ -2039,14 +2017,10 @@ public singleton stringConvertor
         byte buffer[64];
         int  length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value
-    convert(real n, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
 
     /// Converts the parameter to the literal value
     string convert(real n)
@@ -2054,14 +2028,10 @@ public singleton stringConvertor
         byte buffer[32];
         int  length := 0;
         
-        self.convert(n, buffer, ref length);
+        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
-
-    /// Converts UTF-16 literal to UTF-8 one
-    convert(wide w, byte[] buffer, ref int length)
-        => system'core_routines'__literalconvertor;
 
     string convert(wide w)
     {
@@ -2072,7 +2042,7 @@ public singleton stringConvertor
         byte buffer[256];
         if (l < 128)
         {
-            self.convert(w, buffer, ref m);
+            system'core_routines'__literalconvertor.convert(w, buffer, ref m);
             
             ^ String.fromByteArray(0, m, buffer)
         };
@@ -2086,7 +2056,7 @@ public singleton stringConvertor
                page := 127
             };
             
-            self.convert(w.Substring(i, page), buffer, ref m);
+            system'core_routines'__literalconvertor.convert(w.Substring(i, page), buffer, ref m);
             
             retVal := retVal.add(String.fromByteArray(0, m, buffer));
             
@@ -2114,35 +2084,23 @@ public singleton wideConvertor
     wide convert(BaseVariable v)
         <= convert(v.Value);
     
-    /// Converts the parameter to the literal value
-    convert(char ch, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
-    
     wide convert(char ch)
     {
         short buffer[2];
         int   length := 0;
         
-        self.convert(ch, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(ch, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }    
     
-    /// Converts the parameter to the literal value
-    convert(int n, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
-
-    /// Converts the parameter to the literal value
-    convert(uint number, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
-
     /// Converts the parameter to the literal value
     wide convert(int n)
     {
         short buffer[12];
         int   length := 0;
         
-        self.convert(n, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
@@ -2153,14 +2111,10 @@ public singleton wideConvertor
         short buffer[12];
         int   length := 0;
         
-        self.convert(n, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value
-    convert(short n, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
 
     /// Converts the parameter to the literal value
     wide convert(short n)
@@ -2168,14 +2122,10 @@ public singleton wideConvertor
         short buffer[12];
         int   length := 0;
         
-        self.convert(n, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value
-    convert(byte aNumber, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
 
     /// Converts the parameter to the literal value
     wide convert(byte n)
@@ -2183,14 +2133,10 @@ public singleton wideConvertor
         short buffer[12];
         int   length := 0;
         
-        self.convert(n, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value
-    convert(long n, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
 
     /// Converts the parameter to the literal value
     wide convert(long n)
@@ -2198,18 +2144,10 @@ public singleton wideConvertor
         short buffer[64];
         int   length := 0;
         
-        self.convert(n, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value with the provided radix
-    convert(int n, int radix, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
-
-    /// Converts the parameter to the literal value with the provided radix
-    convert(uint n, int radix, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
 
     /// Converts the parameter to the literal value with the provided radix
     wide convert(int n, int radix)
@@ -2217,7 +2155,7 @@ public singleton wideConvertor
         short buffer[32];
         int   length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
@@ -2228,14 +2166,10 @@ public singleton wideConvertor
         short buffer[32];
         int   length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value with the provided radix
-    convert(short n, int radix, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
 
     /// Converts the parameter to the literal value with the provided radix
     wide convert(short n, int radix)
@@ -2243,14 +2177,10 @@ public singleton wideConvertor
         short buffer[16];
         int   length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value with the provided radix
-    convert(byte n, int radix, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
 
     /// Converts the parameter to the literal value with the provided radix
     wide convert(byte n, int radix)
@@ -2258,14 +2188,10 @@ public singleton wideConvertor
         short buffer[12];
         int   length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value with the provided radix
-    convert(long n, int radix, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
 
     /// Converts the parameter to the literal value with the provided radix
     wide convert(long n, int radix)
@@ -2273,14 +2199,10 @@ public singleton wideConvertor
         short buffer[64];
         int   length := 0;
         
-        self.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
-
-    /// Converts the parameter to the literal value
-    convert(real n, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
 
     /// Converts the parameter to the literal value
     wide convert(real n)
@@ -2288,14 +2210,10 @@ public singleton wideConvertor
         short buffer[32];
         int   length := 0;
         
-        self.convert(n, buffer, ref length);
+        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
         
         ^ WideString.fromShortArray(0, length, buffer)
     }
-
-    /// Converts UTF-8 literal to UTF-16e
-    convert(string sl, short[] buffer, ref int length)
-        => system'core_routines'__wideconvertor;
 
     /// Converts UTF-8 literal to UTF-16e
     wide convert(string s)
@@ -2307,7 +2225,7 @@ public singleton wideConvertor
         short buffer[256];            
         if (l < 256)
         {
-            self.convert(s, buffer, ref m);
+            intern system'core_routines'__wideconvertor.convert(s, buffer, ref m);
 
             ^ WideString.fromShortArray(0, m, buffer)
         };
@@ -2321,7 +2239,7 @@ public singleton wideConvertor
                 page := 256
             };
             
-            self.convert(s.Substring(i,page), buffer, ref m);
+            intern system'core_routines'__wideconvertor.convert(s.Substring(i,page), buffer, ref m);
             
             retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
             
@@ -2344,18 +2262,6 @@ public singleton wideConvertor
 /// An Unicode character convertor
 public singleton charConvertor
 {
-    /// Converts a byte value into a character and saves the result into an output parameter
-    convert(byte n, ref char retVal)
-        => system'core_routines'__charconvertor;
-
-    /// Converts a short integer into a character and saves the result into an output parameter
-    convert(short n, ref char retVal)
-        => system'core_routines'__charconvertor;
-
-    /// Converts an integer into a character and saves the result into an output parameter
-    convert(int n, ref char retVal)
-        => system'core_routines'__charconvertor;
-        
 //    char convert(BaseVariable v)
 //        <= convert(v value).
         
@@ -2363,28 +2269,10 @@ public singleton charConvertor
     char convert(char ch)
         = new CharValue(ch);
   
-    internal convert(int index, string s, ref char char)
-        => system'core_routines'__charconvertor;
-        
-    internal convert(int index, byte[] s, ref char char)
-        => system'core_routines'__charconvertor;
-  
-    internal convert(int index, wide s, ref char char)
-        => system'core_routines'__charconvertor;
-
-    internal convert(int index, short[] buffer, ref char char)
-        => system'core_routines'__charconvertor;
-
-    internal save(char ch, int index, short[] charArray, ref int length)
-        => system'core_routines'__charconvertor;
-    
-    internal save(char ch, int index, byte[] charArray, ref int length)
-        => system'core_routines'__charconvertor;
-
     /// Converts a literal string into a character
     char convert(string s)
     {
-        self.convert(0, s, ref char retVal);
+        system'core_routines'__charconvertor.convert(0, s, ref char retVal);
         
         int l1 := retVal.Length;
         int l2 := s.Length;
@@ -2392,13 +2280,13 @@ public singleton charConvertor
         (l1 != l2)
             ? { InvalidArgumentException.new().raise() };
         
-        ^ new CharValue(retVal)
+        ^ retVal
     }        
         
     /// Converts a wide literal string into a character                
     char convert(wide s)
     {
-        self.convert(0, s, ref char retVal);
+        system'core_routines'__charconvertor.convert(0, s, ref char retVal);
 
         int l1 := retVal.Length;
         int l2 := s.Length;
@@ -2406,32 +2294,31 @@ public singleton charConvertor
         (l1 != l2)
             ? { InvalidArgumentException.new().raise() };
         
-        ^ new CharValue(retVal)
+        ^ retVal
     }      
         
     /// Converts a byte value into a character
     char convert(byte n)
     {
-        self.convert(n, ref char retVal);
+        system'core_routines'__charconvertor.convert(n, ref char retVal);
         
-        ^ new CharValue(retVal)
+        ^ retVal
     }        
         
     /// Converts a short integer into a character
     char convert(short n)
     {
-        self.convert(n, ref char retVal);
+        system'core_routines'__charconvertor.convert(n, ref char retVal);
         
-        ^ new CharValue(retVal)
+        ^ retVal
     }
         
     /// Converts an integer into a character
     char convert(int n)
     {
-        char retVal := $0;
-        self.convert(n, ref retVal);
+        system'core_routines'__charconvertor.convert(n, ref char retVal);
         
-        ^ new CharValue(retVal)
+        ^ retVal
     }
         
     char convert(o)
@@ -2546,16 +2433,21 @@ class StringIndexer : Indexer<char>
         system'NotSupportedException.raise()
     }
     
-    /// Reads the current index and saves it into an output parameter
-    readIndexTo(ref int retVal)
+    Index
     {
-        theIndex.readValueTo(ref retVal)
-    }
-    
-    /// Sets the index by specified value
-    writeIndex(int val)
-    {
-        theIndex.Value := val
+        /// Reads the current index and saves it into an output parameter
+        int get()
+        {
+            theIndex.readValueTo(ref int retVal);
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int val)
+        {
+            theIndex.Value := val
+        }
     }
     
     appendIndex(int val)
@@ -2563,10 +2455,15 @@ class StringIndexer : Indexer<char>
         theIndex.append(val)
     }
     
-    /// Reads the length to the output parameter    
-    readLengthTo(ref int retVal)
+    Length
     {
-        retVal := theLiteral.Length
+        /// Reads the length to the output parameter    
+        int get()
+        {
+            int retVal := theLiteral.Length
+            
+            ^ retVal
+        }
     }
         
     Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
@@ -2677,15 +2574,20 @@ class WideStringIndexer : Indexer<char>
     }
     
     /// Reads the current index and saves it into an output parameter
-    readIndexTo(ref int retVal)
+    Index
     {
-        theIndex.readValueTo(ref retVal)
-    }
-    
-    /// Sets the index by specified value
-    writeIndex(int val)
-    {
-        theIndex.Value := val
+        int get()
+        {
+            theIndex.readValueTo(ref int retVal)
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int val)
+        {
+            theIndex.Value := val
+        }
     }
     
     appendIndex(int val)
@@ -2693,10 +2595,15 @@ class WideStringIndexer : Indexer<char>
         theIndex.append(val)
     }
     
-    /// Reads the length to the output parameter    
-    readLengthTo(ref int retVal)
+    Length
     {
-        retVal := theLiteral.Length
+        /// Reads the length to the output parameter    
+        readLengthTo()
+        {
+            int retVal := theLiteral.Length;
+            
+            ^ retVal
+        }
     }
         
     Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
@@ -2742,15 +2649,20 @@ public class ArrayIndexer : Indexer
     }
     
     /// Reads the current index and saves it into an output parameter
-    readIndexTo(ref int retVal)
+    Index
     {
-        _index.readValueTo(ref retVal)
-    }
-    
-    /// Sets the index by specified value
-    writeIndex(int n)
-    {
-       _index.Value := n
+        int get()
+        {
+            _index.readValueTo(ref int retVal);
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int n)
+        {
+           _index.Value := n
+        }
     }
     
     /// Sets the index by specified value
@@ -2759,10 +2671,15 @@ public class ArrayIndexer : Indexer
         _index.append(offs)
     }
 
-    /// Reads the length to the output parameter    
-    readLengthTo(ref int retVal)
+    Length
     {
-        retVal := _array.Length;
+        /// Reads the length to the output parameter    
+        int get()
+        {
+            int retVal := _array.Length;
+            
+            ^ retVal
+        }
     }
 }
 
@@ -2844,16 +2761,21 @@ class BitArrayIndexer : Indexer<bool>
         theArray.setAt(theIndex, val)
     }
     
-    /// Reads the current index and saves it into an output parameter
-    readIndexTo(ref int retVal)
+    Index
     {
-        theIndex.readValueTo(ref retVal)
-    }
-    
-    /// Sets the index by specified value
-    writeIndex(int val)
-    {
-        theIndex.Value := val
+        /// Reads the current index and saves it into an output parameter
+        int get()
+        {
+            theIndex.readValueTo(ref int retVal);
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int val)
+        {
+            theIndex.Value := val
+        }
     }
     
     appendIndex(int val)
@@ -2861,9 +2783,16 @@ class BitArrayIndexer : Indexer<bool>
         theIndex.append(val)
     }
     
-    /// Reads the length to the output parameter    
-    readLengthTo(ref int retVal)
-        => theArray;
+    Length
+    {
+        /// Reads the length to the output parameter    
+        int get()
+        {
+            int retVal := theArray.Length;
+            
+            ^ retVal
+        }
+    }
         
     Indexer cast() = new Indexer:{ embeddable dispatch() => self; };        
 }
@@ -2952,17 +2881,22 @@ class BitArray32Indexer : Indexer<bool>
         
         theArray.setAt(index, val)
     }
-    
-    /// Reads the current index and saves it into an output parameter
-    readIndexTo(ref int retVal)
-    {
-        theIndex.readValueTo(ref retVal)
-    }
-    
-    /// Sets the index by specified value
-    writeIndex(int val)
-    {
-        theIndex.Value := val
+
+    Index
+    {    
+        /// Reads the current index and saves it into an output parameter
+        int get()
+        {
+            theIndex.readValueTo(ref int retVal);
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int val)
+        {
+            theIndex.Value := val
+        }
     }
     
     appendIndex(int val)
@@ -2970,9 +2904,12 @@ class BitArray32Indexer : Indexer<bool>
         theIndex.append(val)
     }
     
-    /// Reads the length to the output parameter    
-    readLengthTo(ref int retVal)
-        => theArray;
+    Length
+    {
+        /// Reads the length to the output parameter    
+        int get()
+            => theArray;
+    }
         
     Indexer cast() = new Indexer:{ embeddable dispatch() => self; };        
 }

@@ -63,36 +63,18 @@ public interface Indexer
     /// Sets the current member
     abstract set(object) {}
     
-    vprop int Index
+    prop int Index
     {
-        read(ref int retVal)
-        {
-            self.readIndexTo(ref retVal)
-        }
+        abstract int get() {}
         
-        write(int retVal)
-        {
-            self.writeIndex(retVal)
-        }
+        abstract set(int retVal) {}
     }
 
-    /// Reads the current index into an output parameter
-    abstract readIndexTo(ref int retVal) {}
-
-    /// Sets the index by specified value
-    abstract writeIndex(int anIndex) {}
-
     abstract appendIndex(int anIndex) {}
-
-    /// Reads the length to the output parameter    
-    abstract readLengthTo(ref int retVal) {}
-    
-    vprop int Length
+   
+    prop int Length
     {
-        read(ref int retVal)
-        {
-            self.readLengthTo(ref retVal)
-        }
+        abstract int get() {}
     }
 }
 
@@ -107,36 +89,20 @@ public interface Indexer<T>
     /// Sets the current member
     abstract set(T object) {}
 
-    vprop int Index
+    prop int Index
     {
-        read(ref int retVal)
-        {
-            self.readIndexTo(ref retVal)
-        }
+        /// Reads the current index
+        abstract int get() {}
         
-        write(int retVal)
-        {
-            self.writeIndex(retVal)
-        }
+        /// Sets the index by specified value
+        abstract set(int retVal) {}
     }
-
-    /// Reads the current index into an output parameter
-    abstract readIndexTo(ref int retVal) {}
-
-    /// Sets the index by specified value
-    abstract writeIndex(int anIndex) {}
 
     abstract appendIndex(int anIndex) {}
                                 
-    /// Reads the length to the output parameter    
-    abstract readLengthTo(ref int retVal) {}
-    
-    vprop int Length
+    prop int Length
     {
-        read(ref int retVal)
-        {
-            self.readLengthTo(ref retVal)
-        }
+        abstract int get() {}
     }
     
     abstract Indexer cast() {}
@@ -240,32 +206,29 @@ public interface Func
     /// Executes the action
     abstract closure() {}
     
-////    /// Executes the action
-////    eval = $self().
-////    
-////    /// Executes the action while the condition is true
-////    sealed run while:aBool
-////    [
-////        while (aBool)
-////        [
-////            $self()
-////        ]
-////    ]
-////
-////    /// Executes the action while the condition is false
-////    ///
-////    /// Executes at least once
-////    sealed run until:aBool
-////    [
-////        bool flag := false.
-////        
-////        until (flag)
-////        [
-////            $self eval.
-////            
-////            flag := aBool bool
-////        ].
-////    ]
+//    /// Executes the action while the condition is true
+//    sealed run while:aBool
+//    [
+//        while (aBool)
+//        [
+//            $self()
+//        ]
+//    ]
+//
+//    /// Executes the action while the condition is false
+//    ///
+//    /// Executes at least once
+//    sealed run until:aBool
+//    [
+//        bool flag := false.
+//        
+//        until (flag)
+//        [
+//            $self eval.
+//            
+//            flag := aBool bool
+//        ].
+//    ]
 }
 
 /// A base function
@@ -1034,28 +997,34 @@ public abstract class BaseIndexer : Indexer
     
     /// Returns false if the index out of range
     bool Available = (theIndex < theLength);
-    
-    /// Reads the current i-index into an output parameter
-    readIndexTo(ref int retVal)
+
+    Index
     {
-        retVal := theIndex
-    }
-    
-    /// Sets the i-index by specified value
-    writeIndex(int index)
-    { 
-        theIndex := index
-    }
+        /// Reads the current i-index into an output parameter
+        int get()
+        {
+            ^ theIndex
+        }
+        
+        /// Sets the i-index by specified value
+        set(int index)
+        { 
+            theIndex := index
+        }
+    }    
     
     appendIndex(int index)
     { 
         theIndex += index
     }
     
-    readLengthTo(ref int retVal)
+    Length
     {
-        retVal := theLength
-    }    
+        int get()
+        {
+            ^ theLength
+        }
+    }
 }
 
 public abstract BaseIndexer<T> : Indexer<T>
@@ -1065,17 +1034,20 @@ public abstract BaseIndexer<T> : Indexer<T>
     
     /// Returns false if the index out of range
     bool Available = (theIndex < theLength);
-    
-    /// Reads the current i-index into an output parameter
-    readIndexTo(ref int retVal)
-    {
-        retVal := theIndex
-    }    
-    
-    /// Sets the i-index by specified value
-    writeIndex(int anIndex)
-    {
-        theIndex := anIndex
+
+    Index
+    {    
+        /// Reads the current i-index into an output parameter
+        int get()
+        {
+            ^ theIndex
+        }    
+        
+        /// Sets the i-index by specified value
+        set(int index)
+        {
+            theIndex := index
+        }
     } 
     
     appendIndex(int anIndex)
@@ -1083,9 +1055,12 @@ public abstract BaseIndexer<T> : Indexer<T>
         theIndex := theIndex + anIndex
     }     
     
-    readLengthTo(ref int retVal)
+    Length
     {
-        retVal := theLength;
+        int get()
+        {
+            ^ theLength;
+        }
     }
     
     Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
@@ -1216,13 +1191,13 @@ public sealed class Range : Enumerable<int>
 //        theEnd := end + 1.
 //    ]
 //    
-    vprop int Length
+    prop int Length
     {
-        read(ref int retVal)
+        int get()
         {
             int l := theEnd - theStart;
             
-            retVal := l
+            ^ l
         }
     }
     

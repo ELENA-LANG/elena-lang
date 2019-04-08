@@ -9,6 +9,8 @@ In development:
                  * review if ref<int>.Value works correctly (it is embedded)
                  * check CharValue.WideLength
                  * review ByteConvertor
+                 * check Array<..>
+                 * review String / WideString, get rid of internal methods - use them directly
 
                  * embeddable get should work with nonstructure types #424
 

@@ -241,7 +241,7 @@ labEnd:
 
 end
 
-procedure __literal."read:Length$@system@ref#1&system@IntNumber[2]"
+procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
   blen
@@ -1216,105 +1216,105 @@ labEmpty:
 
 end
 
-procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+procedure __literalconvertor."convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
 
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   dcopy 10
   
   callextr api : inttostr
 
-  bloadsi 4
+  bloadsi 3
   nwritei 0
 
-  quitn 4
+  quitn 3
 
 end
 
-procedure __literalconvertor."convert$system@UIntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+procedure __literalconvertor."convert$system@UIntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
 
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   dcopy 10
   
   callextr api : uinttostr
 
-  bloadsi 4
+  bloadsi 3
   nwritei 0
 
-  quitn 4
+  quitn 3
 
 end
 
-procedure __literalconvertor."convert$system@ShortNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+procedure __literalconvertor."convert$system@ShortNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
 
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   dcopy 10
   
   callextr api : inttostr
 
-  bloadsi 4
+  bloadsi 3
   nwritei 0
 
-  quitn 4
+  quitn 3
 
 end
 
-procedure __literalconvertor."convert$system@ByteNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+procedure __literalconvertor."convert$system@ByteNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
 
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   dcopy 10
   
   callextr api : inttostr
 
-  bloadsi 4
+  bloadsi 3
   nwritei 0
 
-  quitn 4
+  quitn 3
 
 end
 
-procedure __literalconvertor."convert$system@LongNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+procedure __literalconvertor."convert$system@LongNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
 
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   dcopy 10
   
   callextr api : longtostr
 
-  bloadsi 4
+  bloadsi 3
   nwritei 0
 
-  quitn 4
+  quitn 3
 
 
 end
 
-procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
 
-  aloadsi 2
-  bloadsi 3
+  aloadsi 1
+  bloadsi 2
   callextr api : wstrtostr
-  bloadsi 4
+  bloadsi 3
   nwritei 0
-  quitn 4
+  quitn 3
   
 end
 
-procedure __literalconvertor."convert$system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+procedure __literalconvertor."convert$system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
 
-  aloadsi 2
+  aloadsi 1
   nload
   ifn labEmpty 0
 
-  bloadsi 3
+  bloadsi 2
 
   callextr api : chartostr
-  bloadsi 4
+  bloadsi 3
   nwritei 0
-  quitn 4
+  quitn 3
   
 labEmpty:
   ecopy 0
@@ -1323,186 +1323,107 @@ labEmpty:
   quitn 4
 
 end
+                                                                                                                         
+procedure __literalconvertor."convert$system@RealNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
 
-procedure __literalconvertor."convert$system@RealNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
-
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   dcopy 24
   
   callextr api : realtostr
 
+  bloadsi 3
+  nwritei 0
+
+  quitn 3
+end
+
+procedure __literalconvertor."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  nload
+  aloadsi 1
+  
+  callextr api : inttostr
+
   bloadsi 4
   nwritei 0
 
   quitn 4
-end
-
-procedure __literalconvertor."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
-
-  bloadsi 4
-  aloadsi 3
-  nload
-  aloadsi 2
-  
-  callextr api : inttostr
-
-  bloadsi 5
-  nwritei 0
-
-  quitn 5
 
 end
 
-procedure __literalconvertor."convert$system@UIntNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+procedure __literalconvertor."convert$system@UIntNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
-  bloadsi 4
-  aloadsi 3
-  nload
+  bloadsi 3
   aloadsi 2
+  nload
+  aloadsi 1
   
   callextr api : uinttostr
 
-  bloadsi 5
+  bloadsi 4
   nwritei 0
 
-  quitn 5
+  quitn 4
 
 end
 
-procedure __literalconvertor."convert$system@ShortNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+procedure __literalconvertor."convert$system@ShortNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
-  bloadsi 4
-  aloadsi 3
-  nload
+  bloadsi 3
   aloadsi 2
+  nload
+  aloadsi 1
   
   callextr api : inttostr
 
-  bloadsi 5
+  bloadsi 4
   nwritei 0
 
-  quitn 5
+  quitn 4
 
 end
 
-procedure __literalconvertor."convert$system@ByteNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+procedure __literalconvertor."convert$system@ByteNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
-  bloadsi 4
-  aloadsi 3
-  nload
+  bloadsi 3
   aloadsi 2
+  nload
+  aloadsi 1
   
   callextr api : inttostr
 
-  bloadsi 5
+  bloadsi 4
   nwritei 0
 
-  quitn 5
+  quitn 4
 
 end
 
-procedure __literalconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+procedure __literalconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
-  bloadsi 4
-  aloadsi 3
-  nload
+  bloadsi 3
   aloadsi 2
+  nload
+  aloadsi 1
   
   callextr api : longtostr
 
-  bloadsi 5
-  nwritei 0
-
-  quitn 5
-
-end
-
-procedure __wideconvertor."convert$system@ShortNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[5]"
-
   bloadsi 4
-  aloadsi 3
-  nload
-  aloadsi 2
-  
-  callextr api : inttowstr
-
-  bloadsi 5
   nwritei 0
 
-  quitn 5
+  quitn 4
 
 end
 
-procedure __wideconvertor."convert$system@ByteNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[5]"
-
-  bloadsi 4
-  aloadsi 3
-  nload
-  aloadsi 2
-  
-  callextr api : inttowstr
-
-  bloadsi 5
-  nwritei 0
-
-  quitn 5
-
-end
-
-procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[5]"
-
-  bloadsi 4
-  aloadsi 3
-  nload
-  aloadsi 2
-  
-  callextr api : longtowstr
-
-  bloadsi 5
-  nwritei 0
-
-  quitn 5
-
-end
-
-procedure __wideconvertor."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[5]"
-
-  bloadsi 4
-  aloadsi 3
-  nload
-  aloadsi 2
-  
-  callextr api : inttowstr
-
-  bloadsi 5
-  nwritei 0
-
-  quitn 5
-
-end
-
-procedure __wideconvertor."convert$system@UIntNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[5]"
-
-  bloadsi 4
-  aloadsi 3
-  nload
-  aloadsi 2
-  
-  callextr api : uinttowstr
-
-  bloadsi 5
-  nwritei 0
-
-  quitn 5
-
-end
-
-procedure __wideconvertor."convert$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+procedure __wideconvertor."convert$system@ShortNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
-  dcopy 10
+  nload
+  aloadsi 1
   
   callextr api : inttowstr
 
@@ -1513,26 +1434,12 @@ procedure __wideconvertor."convert$system@IntNumber$@system@Array#1&system@Short
 
 end
 
-procedure __wideconvertor."convert$system@UIntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+procedure __wideconvertor."convert$system@ByteNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
-  dcopy 10
-  
-  callextr api : uinttowstr
-
-  bloadsi 4
-  nwritei 0
-
-  quitn 4
-
-end
-
-procedure __wideconvertor."convert$system@ShortNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
-
-  bloadsi 3
-  aloadsi 2
-  dcopy 10
+  nload
+  aloadsi 1
   
   callextr api : inttowstr
 
@@ -1540,29 +1447,15 @@ procedure __wideconvertor."convert$system@ShortNumber$@system@Array#1&system@Sho
   nwritei 0
 
   quitn 4
-  
+
 end
 
-procedure __wideconvertor."convert$system@ByteNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
-  dcopy 10
-  
-  callextr api : inttowstr
-
-  bloadsi 4
-  nwritei 0
-
-  quitn 4
-  
-end
-
-procedure __wideconvertor."convert$system@LongNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
-
-  bloadsi 3
-  aloadsi 2
-  dcopy 10
+  nload
+  aloadsi 1
   
   callextr api : longtowstr
 
@@ -1573,102 +1466,209 @@ procedure __wideconvertor."convert$system@LongNumber$@system@Array#1&system@Shor
 
 end
 
-procedure __wideconvertor."convert$system@RealNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+procedure __wideconvertor."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
 
   bloadsi 3
   aloadsi 2
+  nload
+  aloadsi 1
+  
+  callextr api : inttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@UIntNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  bloadsi 3
+  aloadsi 2
+  nload
+  aloadsi 1
+  
+  callextr api : uinttowstr
+
+  bloadsi 4
+  nwritei 0
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
+
+  bloadsi 2
+  aloadsi 1
+  dcopy 10
+  
+  callextr api : inttowstr
+
+  bloadsi 3
+  nwritei 0
+
+  quitn 3
+
+end
+
+procedure __wideconvertor."convert$system@UIntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
+
+  bloadsi 2
+  aloadsi 1
+  dcopy 10
+  
+  callextr api : uinttowstr
+
+  bloadsi 3
+  nwritei 0
+
+  quitn 3
+
+end
+
+procedure __wideconvertor."convert$system@ShortNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
+
+  bloadsi 2
+  aloadsi 1
+  dcopy 10
+  
+  callextr api : inttowstr
+
+  bloadsi 3
+  nwritei 0
+
+  quitn 3
+  
+end
+
+procedure __wideconvertor."convert$system@ByteNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
+
+  bloadsi 2
+  aloadsi 1
+  dcopy 10
+  
+  callextr api : inttowstr
+
+  bloadsi 3
+  nwritei 0
+
+  quitn 3
+  
+end
+
+procedure __wideconvertor."convert$system@LongNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
+
+  bloadsi 2
+  aloadsi 1
+  dcopy 10
+  
+  callextr api : longtowstr
+
+  bloadsi 3
+  nwritei 0
+
+  quitn 3
+
+end
+
+procedure __wideconvertor."convert$system@RealNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
+
+  bloadsi 2
+  aloadsi 1
   dcopy 24
   
   callextr api : realtowstr
 
-  bloadsi 4
+  bloadsi 3
   nwritei 0
 
-  quitn 4
+  quitn 3
 
 end
 
-procedure __wideconvertor."convert$system@CharValue$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+procedure __wideconvertor."convert$system@CharValue$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 
-  aloadsi 2
+  aloadsi 1
   nload
   ifn labEmpty 0
 
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   callextr api : chartowstr
-  bloadsi 4
+  bloadsi 3
   nwritei 0
-  quitn 4
+  quitn 3
 
 labEmpty:
   ecopy 0
-  bloadsi 4
-  nwritei 0
-  quitn 4
-
-end
-
-procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
-
-  aloadsi 2
   bloadsi 3
-  callextr api : strtowstr
-  bloadsi 4
   nwritei 0
-
-  quitn 4
+  quitn 3
 
 end
 
-procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[5]"
+procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 
-  aloadsi 2
+  aloadsi 1
+  bloadsi 2
+  callextr api : strtowstr
+  bloadsi 3
+  nwritei 0
+
+  quitn 3
+
+end
+
+procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  aloadsi 1
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
-  bloadsi 4
+  bloadsi 3
   callextr api : chartoshorts
   dcopye
-  bloadsi 5
+  bloadsi 4
   nsave
   
-  quitn 5
+  quitn 4
 
 end
 
-procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[5]"
+procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
-  aloadsi 2
+  aloadsi 1
   nload
   ecopyd
-  aloadsi 3
+  aloadsi 2
   nload
-  bloadsi 4
+  bloadsi 3
   callextr api : chartobytes
   dcopye
-  bloadsi 5
+  bloadsi 4
   nsave
   
-  quitn 5
+  quitn 4
 
 end
 
-procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@CharValue[4]"
+procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@CharValue[3]"
   
-  aloadsi 2
+  aloadsi 1
   nload
-  aloadsi 3
+  aloadsi 2
 
   callextr api : wstrtochar
   ifr   labErr 0
 
   dcopye
-  bloadsi 4
+  bloadsi 3
   nsave
   acopyb
-  quitn 4
+  quitn 3
 
 labErr:
   open 1
@@ -1678,10 +1678,10 @@ labErr:
 
 end
 
-procedure __charconvertor."convert$system@IntNumber$@system@ref#1&system@CharValue[3]"
+procedure __charconvertor."convert$system@IntNumber$@system@ref#1&system@CharValue[2]"
   
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   nload
   
   lessn labErr 0
@@ -1697,14 +1697,14 @@ labCopy:
 
   nsave
   acopyb
-  quitn 3
+  quitn 2
 
 end
 
-procedure __charconvertor."convert$system@ByteNumber$@system@ref#1&system@CharValue[3]"
+procedure __charconvertor."convert$system@ByteNumber$@system@ref#1&system@CharValue[2]"
   
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   nload
 
   lessn labErr 0
@@ -1720,14 +1720,14 @@ labCopy:
 
   nsave
   acopyb
-  quitn 3
+  quitn 2
 
 end
 
-procedure __charconvertor."convert$system@ShortNumber$@system@ref#1&system@CharValue[3]"
+procedure __charconvertor."convert$system@ShortNumber$@system@ref#1&system@CharValue[2]"
   
-  bloadsi 3
-  aloadsi 2
+  bloadsi 2
+  aloadsi 1
   nload
 
   lessn labErr 0
@@ -1743,24 +1743,47 @@ labCopy:
 
   nsave
   acopyb
+  quitn 2
+
+end
+
+procedure __charconvertor."system$$convert$system@IntNumber$system@String$@system@ref#1&system@CharValue[3]"
+  
+  aloadsi 1
+  nload
+  aloadsi 2
+
+  callextr api : strtochar
+  ifr   labErr 0
+
+  dcopye
+  bloadsi 3
+  nsave
+  acopyb
   quitn 3
 
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw  
+
 end
 
-procedure __charconvertor."system$$convert$system@IntNumber$system@String$@system@ref#1&system@CharValue[4]"
+procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@CharValue[3]"
   
-  aloadsi 2
+  aloadsi 1
   nload
-  aloadsi 3
+  aloadsi 2
 
   callextr api : strtochar
   ifr   labErr 0
 
   dcopye
-  bloadsi 4
+  bloadsi 3
   nsave
   acopyb
-  quitn 4
+  quitn 3
 
 labErr:
   open 1
@@ -1770,43 +1793,20 @@ labErr:
 
 end
 
-procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@CharValue[4]"
+procedure __charconvertor."system$$convert$system@IntNumber$system@WideString$@system@ref#1&system@CharValue[3]"
   
-  aloadsi 2
+  aloadsi 1
   nload
-  aloadsi 3
-
-  callextr api : strtochar
-  ifr   labErr 0
-
-  dcopye
-  bloadsi 4
-  nsave
-  acopyb
-  quitn 4
-
-labErr:
-  open 1
-  pushr class : system'InvalidArgumentException
-  pushr const : %new[0]
-  throw  
-
-end
-
-procedure __charconvertor."system$$convert$system@IntNumber$system@WideString$@system@ref#1&system@CharValue[4]"
-  
   aloadsi 2
-  nload
-  aloadsi 3
 
   callextr api : wstrtochar
   ifr   labErr 0
 
   dcopye
-  bloadsi 4
+  bloadsi 3
   nsave
   acopyb
-  quitn 4
+  quitn 3
 
 labErr:
   open 1
@@ -1816,7 +1816,7 @@ labErr:
 
 end
 
-procedure __args."read:Length$@system@ref#1&system@IntNumber[2]"
+procedure __args."readLength$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
   bcopya
