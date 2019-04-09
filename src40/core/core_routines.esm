@@ -764,7 +764,7 @@ labErr:
 
 end
 
-procedure __wide."read:Length$@system@ref#1&system@IntNumber[2]"
+procedure __wide."readLengthTo$system@WideString$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
   wlen

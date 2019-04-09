@@ -1650,7 +1650,7 @@ public sealed const struct WideString : BaseValue
         /// Reads the literal length into an output parameter
         int get()
         {
-           system'core_routines'__wide.readLengthTo(self, ref int retVal);
+           intern system'core_routines'__wide.readLengthTo(self, ref int retVal);
            
             ^ retVal 
         }
