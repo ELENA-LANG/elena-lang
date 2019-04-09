@@ -36,11 +36,12 @@ public sealed const struct Message
 //    constructor new(mssg message)
 //        = message.
 
-    MessageName getMessageName()
-        => system'core_routines'__message;
-
-    MessageName MessageName
-        = self.getMessageName();
+    get MessageName MessageName()
+    {
+        intern system'core_routines'__message.getMessageName(self, ref MessageName retVal);
+        
+        ^ retVal
+    }
 
     get string Printable()
     {

@@ -21,16 +21,16 @@ public interface Space
         }        
     }
     
-    vprop int Rows
+    prop int Rows
     {
         /// Returns the space actual number of rows
-        abstract readTo(ref int retVal) {}
+        abstract int get() {}
     }
     
-    vprop int Columns
+    prop int Columns
     {
         /// Returns the space actual number of columns
-        abstract readTo(ref int retVal) {}
+        abstract int get() {}
     }
     
     abstract update(RuleSet rs) {}
@@ -125,17 +125,17 @@ public sealed class IntMatrixSpace : Space
     
     Rows
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theN
+            ^ theN
         }
     }
     
     Columns
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theM
+            ^ theM
         }
     }
 }

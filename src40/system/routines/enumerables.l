@@ -484,8 +484,7 @@ public extension indexableOp
 
         while (it.Available)
         {
-            int i := 0;
-            it.readIndexTo(ref i);
+            int i := it.Index;
             
             it.set(f(i));
             
@@ -538,7 +537,7 @@ public extension indexableOp
     {
         auto it := cast Indexer(self.indexer());
         
-        ^ Array.allocate(length).populate:(int i => it.writeIndex(index + i).get())
+        ^ Array.allocate(length).populate:(int i => it.set Index(index + i).get())
     }
     
     sequenceEqual(array)

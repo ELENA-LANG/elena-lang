@@ -2066,6 +2066,12 @@ public singleton stringConvertor
         
         ^ retVal
     }
+    
+    /// Converts the parameter to the literal value
+    convert(char ch, byte[] buffer, ref int length)
+    {
+        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length)
+    }
 
     /// Returns a parameter                
     string convert(string s)
@@ -2264,6 +2270,44 @@ public singleton charConvertor
 {
 //    char convert(BaseVariable v)
 //        <= convert(v value).
+        
+    internal save(char ch, int index, short[] charArray, ref int length)
+    {
+        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
+    }
+    
+    internal save(char ch, int index, byte[] charArray, ref int length)
+    {
+        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
+    }
+    
+    internal char convert(int index, string s)
+    {
+        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
+        
+        ^ retVal
+    }
+        
+    internal char convert(int index, byte[] s)
+    {
+        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
+        
+        ^ retVal
+    }
+  
+    internal char convert(int index, wide s)
+    {
+        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
+        
+        ^ retVal
+    }
+
+    internal char convert(int index, short[] buffer)
+    {
+        intern system'core_routines'__charconvertor.convert(index, buffer, ref char retVal);
+        
+        ^ retVal
+    }    
         
     /// Returns a parameter        
     char convert(char ch)
@@ -2598,7 +2642,7 @@ class WideStringIndexer : Indexer<char>
     Length
     {
         /// Reads the length to the output parameter    
-        readLengthTo()
+        int get()
         {
             int retVal := theLiteral.Length;
             

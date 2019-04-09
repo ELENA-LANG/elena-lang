@@ -19,14 +19,14 @@ public mixin Struct
         }
     }
 
-    internal vprop int Length
+    internal prop int Length
     {
-        read(ref int retVal)
+        int get()
         {
             int len := 0;
             items $shr len;
             
-            retVal := len
+            ^ len
         }
     }
 

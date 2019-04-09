@@ -217,7 +217,7 @@ public class TokenEnumerator : Enumerator<string>, interface<Enumerator>
                     { theBuffer.write(ch) }
             };
                 
-            ch.readLengthTo(ref chLen);
+            chLen := ch.Length;
             current := current + chLen
         };
 

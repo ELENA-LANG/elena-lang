@@ -68,11 +68,11 @@ public sealed struct CREATESTRUCT
 //    [
 //    ]
     
-    public vprop int CreateParam
+    public prop int CreateParam
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := theCreateParam
+            ^ theCreateParam
         }        
     }
     

@@ -14,19 +14,23 @@ sealed struct CONSOLE_SCREEN_BUFFER_INFO
     {
     }
 
-    vprop short SizeX
+    prop short SizeX
     {
-        readTo(ref short retVal)
+        short get()
         {
-            dwSize.readTo X(ref retVal)
+            short retVal := dwSize.X;
+            
+            ^ retVal
         }
     }
 
-    vprop short SizeY
+    prop short SizeY
     {
-        readTo(ref short retVal)
+        short get()
         {
-            dwSize.readTo Y(ref retVal)
+            short retVal := dwSize.Y;
+            
+            ^ retVal
         }
     }
 

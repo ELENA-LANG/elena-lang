@@ -4,41 +4,19 @@
 
 public interface Stream
 {
-    vprop int Length
+    prop int Length
     {
-        read(ref int retVal)
-        {
-            self.readLengthTo(ref retVal)
-        }
+        abstract int get() {}
         
-        write(int retVal)
-        {
-            self.writeLength(retVal)
-        }
+        abstract set(int retVal) {}
     }
     
-    vprop int Index
+    prop int Index
     {
-        read(ref int retVal)
-        {
-            self.readIndexTo(ref retVal)
-        }
+        abstract get() {}
         
-        write(int retVal)
-        {
-            self.writeIndex(retVal)
-        }
+        abstract set(int retVal) {}
     }
-
-    /// Reads the current index into an output parameter
-    abstract readIndexTo(ref int retVal) {}
-
-    /// Sets the index by specified value
-    abstract writeIndex(int anIndex) {}
-
-    abstract writeLength(int length) {}
-        
-    abstract readLengthTo(ref int length) {}
 
     appendIndex(int offs)
     {

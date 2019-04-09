@@ -326,20 +326,6 @@ public extension intOp : IntNumber
         }
     }
     
-    int sqrt()
-    {
-        self.sqrt(ref int n);
-        
-        ^ n
-    }
-    
-    int sqr()
-    {
-        self.sqr(ref int n);
-        
-        ^ n
-    }
-    
     prop int Absolute
     {
         int get()

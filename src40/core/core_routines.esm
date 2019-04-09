@@ -1817,7 +1817,7 @@ labErr:
 
 end
 
-procedure __args."readLength$@system@ref#1&system@IntNumber[2]"
+procedure __args."readLengthTo$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
   bcopya
@@ -2959,19 +2959,17 @@ procedure __message."copy$system@Message$system@IntNumber[2]"
 
 end
 
-procedure __message."getMessageName[1]"
+procedure __message."getMessageName$system@Message$@system@ref#1&system@MessageName[2]"
 
-  pusha
-  newn   class : system'MessageName 4
-  bcopya
-  popa
+  aloadsi 1
+  bloadsi 2
   nload
   ecopyd
   dcopyverb
   nsave
   acopyb
 
-  quitn 1
+  quitn 2
 
 end
 
@@ -3850,25 +3848,25 @@ procedure __mssg_closure."params##invoke$system@Object[2]"
 
 end
 
-procedure __byte."Inverted[1]"
+procedure __byte."readInvertedTo$system@ByteNumber$@system@ref#1&system@ByteNumber[2]"
 
-  newn   class : system'ByteNumber 4
-  bcopya
-  aloadsi 1    // ; load source
-  nnot         // ; invert
-  acopyb
-  quitn 1
+  aloadsi 1
+  nload
+  not
+  bloadsi 2
+  nsave
+  quitn 2
   
 end
 
-procedure __short."Inverted[1]"
+procedure __short."readInvertedTo$system@ShortNumber$@system@ref#1&system@ShortNumber[2]"
 
-  newn   class : system'ShortNumber 4
-  bcopya
-  aloadsi 1    // ; load source
-  nnot         // ; invert
-  acopyb
-  quitn 1
+  aloadsi 1
+  nload
+  not
+  bloadsi 2
+  nsave
+  quitn 2
   
 end
 

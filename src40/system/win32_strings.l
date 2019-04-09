@@ -31,7 +31,7 @@ singleton characterController
         
         extern USER32.CharUpperW(buffer);
         
-        charConvertor.convert(0, buffer, ref char retVal);
+        char retVal := charConvertor.convert(0, buffer);
         
         ^ retVal
     }
@@ -47,7 +47,7 @@ singleton characterController
         
         extern USER32.CharLowerW(buffer);
         
-        charConvertor.convert(0, buffer, ref char retVal);
+        char retVal := charConvertor.convert(0, buffer);
         
         ^ retVal
     }

@@ -3566,8 +3566,16 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    int operand = 0;
 
    SNode current = node;
-   SNode sourceNode = current == lxReturning ? current.firstChild(lxObjectMask) : current.nextNode(lxObjectMask);
-
+   SNode sourceNode;
+   if (current == lxReturning) {
+      sourceNode = current.firstChild(lxObjectMask);
+      if (test(sourceNode.type, lxTerminalMask)) {
+         // HOTFIX
+         sourceNode = current;
+      }
+   }
+   else sourceNode = current.nextNode(lxObjectMask);
+      
    if (scope.isInitializer()) {
       // HOTFIX : recognize static field initializer
       if (target.kind == okStaticField || target.kind == okStaticConstantField) {
@@ -5847,9 +5855,13 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
    }
 }
 
-bool Compiler :: isMethodEmbeddable(MethodScope& scope)
+bool Compiler :: isMethodEmbeddable(MethodScope& scope, SNode node)
 {
    if (!test(_optFlag, 1))
+      return false;
+
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
+   if (body.compare(lxDispatchCode, lxResendExpression))
       return false;
 
    if (getParamCount(scope.message) == ARG_COUNT || test(scope.message, VARIADIC_MESSAGE))
@@ -6277,7 +6289,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
                else if (methodScope.abstractMethod) {
                   compileAbstractMethod(writer, current, methodScope);
                }
-               else if (isMethodEmbeddable(methodScope)) {
+               else if (isMethodEmbeddable(methodScope, node)) {
                   // COMPILER MAGIC : if the method retunging value can be passed as an extra argument
                   compileEmbeddableMethod(writer, current, methodScope);
 

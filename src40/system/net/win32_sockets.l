@@ -79,76 +79,76 @@ public sealed struct AddrInfo
         self.clear()
     }
     
-    vprop int Flags
+   prop int Flags
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := ai_flags
+            ^ ai_flags
         }
         
-        write(int val)
+        set(int val)
         {
             ai_flags := val
         }
     }
     
-    vprop int Family
+    prop int Family
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := ai_family
+            ^ ai_family
         }
         
-        write(int val)
+        set(int val)
         {
             ai_family := val
         }
     }
 
-    vprop int SocketType
+    prop int SocketType
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := ai_socktype
+            ^ ai_socktype
         }
         
-        write(int val)
+        set(int val)
         {
             ai_socktype := val
         }
     }
 
-    vprop int Protocol
+    prop int Protocol
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := ai_protocol
+            ^ ai_protocol
         }
         
-        write(int val)
+        set(int val)
         {
             ai_protocol := val
         }
     }
 
-    vprop int AddressLen
+    prop int AddressLen
     {
-        readTo(ref int retVal)
+        int get()
         {
-            retVal := ai_addrlen
+            ^ ai_addrlen
         }
             
-        write(int val)
+        set(int val)
         {
             ai_addrlen := val
         }
     }
 
-    vprop dirty_ptr Address
+    prop dirty_ptr Address
     {
-        readTo(ref dirty_ptr retVal)
+        dirty_ptr get()
         {
-            retVal := ai_addr
+            ^ ai_addr
         }
     }
                 

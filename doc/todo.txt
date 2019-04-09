@@ -55,6 +55,7 @@ In development:
 
                  * embeddable returning value : do not duplicate the method code - the original method should call
                    static one
+                 * review RealNumber.#new<system'IntNumber>[1], is a new object created twice
 
 ------                                                           
 Pipeline:

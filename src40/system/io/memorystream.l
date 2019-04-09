@@ -120,11 +120,13 @@ public sealed class MemoryBuffer
 //        theUsed reduce(length).
 //    ]
 //    
-    vprop int Length
+    prop int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
-            theUsed.readValueTo(ref retVal)
+            int retVal := theUsed.Value;
+            
+            ^ retVal
         }
     }
 
@@ -173,31 +175,38 @@ public class MemoryStream : Stream
 
         thePosition.append(pos);
     }
-    
-    readIndexTo(ref int retVal)
-    {
-        thePosition.readValueTo(ref retVal)
+
+    Index
+    {    
+        int get()
+        {
+            int retVal := thePosition.Value; 
+            ^ retVal
+        }
+        
+        set(int index)
+        {
+            int pos := theBuffer.Length;
+            if (pos < index)
+                { OutOfRangeException.raise() };
+                
+            thePosition.Value := index
+        }
     }
     
-    writeIndex(int index)
+    Length
     {
-        int pos := theBuffer.Length;
-        if (pos < index)
-            { OutOfRangeException.raise() };
-            
-        thePosition.Value := index
-    }
-    
-    readLengthTo(ref int retVal)
-    { 
-        int len := theBuffer.Length;
-    
-        retVal := len
-    }
-    
-    writeLength(int length)
-    {
-        NotSupportedException.raise()
+        int get()
+        { 
+            int len := theBuffer.Length;
+        
+            ^ len
+        }
+        
+        set(int length)
+        {
+            NotSupportedException.raise()
+        }
     }
     
     close()

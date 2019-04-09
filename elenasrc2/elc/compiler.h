@@ -785,7 +785,7 @@ private:
    bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
    bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
-   bool isMethodEmbeddable(MethodScope& scope);
+   bool isMethodEmbeddable(MethodScope& scope, SNode node);
 
    void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);

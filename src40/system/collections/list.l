@@ -895,7 +895,7 @@ public class ArrayListIndexer : Indexer
         }
         
         /// Sets the index by specified value
-        writeIndex(int n)
+        set(int n)
         {
             theIndex.Value := n
         }

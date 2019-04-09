@@ -74,45 +74,51 @@ public struct FileStream : Stream
             ref retVal,
             0)
     }
+
+    Index
+    {    
+        int get()
+        {
+            int ret := extern KERNEL32.SetFilePointer(
+                theHandle,
+                0,
+                0,
+                FILE_CURRENT);
+                
+            ^ ret
+        } 
+        
+        set(int index)
+        {
+            int ret := extern KERNEL32.SetFilePointer(
+                theHandle,
+                index,
+                0,
+                FILE_BEGIN)
+        }
+    }
     
-    readIndexTo(ref int retVal)
+    Length
     {
-        int ret := extern KERNEL32.SetFilePointer(
-            theHandle,
-            0,
-            0,
-            FILE_CURRENT);
+        int get() 
+        { 
+            int n := extern KERNEL32.GetFileSize(
+                theHandle,
+                0);
+        
+            ^ n 
+        }
+        
+        set(int length)
+        {
+            int pos := self.Index;
             
-        retVal := ret
-    } 
-    
-    writeIndex(int index)
-    {
-        int ret := extern KERNEL32.SetFilePointer(
-            theHandle,
-            index,
-            0,
-            FILE_BEGIN)
-    }
-    
-    readLengthTo(ref int length) 
-    { 
-        int n := extern KERNEL32.GetFileSize(
-            theHandle,
-            0);
-    
-        length := n 
-    }
-    
-    writeLength(int length)
-    {
-        int pos := self.Index;
-        
-        self.writeIndex(length);
-        extern KERNEL32.SetEndOfFile(theHandle);
-        
-        if(length > pos)
-            { self.writeIndex(pos) }
+            self.Index := length;
+            extern KERNEL32.SetEndOfFile(theHandle);
+            
+            if(length > pos)
+                { self.Index := pos }
+        }
     }
     
     close()

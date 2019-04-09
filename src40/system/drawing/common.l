@@ -210,53 +210,53 @@ public sealed struct Region //: BaseValue
 //        theHeight := aHeight.
 //    ]
 
-    vprop int X
+    prop int X
     {
-        read(ref int retVal)
+        int get()
         {
-            retVal := theX
+            ^ theX
         }
         
-        write(int val)
+        set(int val)
         {
             theX := val
         }
     }
 
-    vprop int Y
+    prop int Y
     {
-        read(ref int retVal)
+        int get()
         {
-            retVal := theY
+            ^ theY
         }
         
-        write(int val)
+        set(int val)
         {
             theY := val
         }
     }
 
-    vprop int Width
+    prop int Width
     {
-        read(ref int retVal)
+        int get()
         {
-            retVal := theWidth
+            ^ theWidth
         }
         
-        write(int val)
+        set(int val)
         {
             theWidth := val
         }
     }
 
-    vprop int Height
+    prop int Height
     {
-        read(ref int retVal)
+        int get()
         {
-            retVal := theHeight
+            ^ theHeight
         }
         
-        write(int val)
+        set(int val)
         {
             theHeight := val
         }

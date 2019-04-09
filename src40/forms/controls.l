@@ -99,11 +99,13 @@ public class BaseControl
 //        theRegion writeLocation int:x int:y.
 //    ]
     
-    vprop int X
+   prop int X
     {
-        read(ref int retVal)
+        int get()
         {
-            retVal := theRegion.X;
+            int retVal := theRegion.X;
+            
+            ^ retVal
         }
         
         set(int n)
@@ -112,11 +114,13 @@ public class BaseControl
         }
     }
 
-    vprop int Y
+    prop int Y
     {
-        read(ref int retVal)
+        int get()
         {
-            retVal := theRegion.Y;
+            int retVal := theRegion.Y;
+            
+            ^ retVal
         }
         
         set(int n)
@@ -125,11 +129,13 @@ public class BaseControl
         }
     }
 
-    vprop int Width
+    prop int Width
     {
-        read(ref int retVal)
+        int get()
         {
-            retVal := theRegion.Width;
+            int retVal := theRegion.Width;
+            
+            ^ retVal
         }
         
         set(int n)
@@ -138,11 +144,13 @@ public class BaseControl
         }
     }
 
-    vprop int Height
+    prop int Height
     {
-        read(ref int retVal)
+        int get()
         {
-            retVal := theRegion.Height;
+            int retVal := theRegion.Height;
+            
+            ^ retVal
         }
         
         set(int n)

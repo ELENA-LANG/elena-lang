@@ -1,8 +1,8 @@
 public interface SortingAgent<T>
 {
-    vprop int Length
+    prop int Length
     {
-        abstract readTo(ref int retVal) {}
+        abstract int get() {}
     }    
     
     abstract T at(int index) {}
@@ -16,11 +16,11 @@ public sealed ArraySortingAgent<T> : SortingAgent<T>
     
     int Length
     {
-        readTo(ref int retVal)
+        int get()
         {
             int len := a.Length;
             
-            retVal := len
+            ^ len
         }
     }
         

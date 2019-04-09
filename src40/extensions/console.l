@@ -197,7 +197,7 @@ public extension formatterOp
             else
             { 
                 buffer.write(ch); 
-                ch.readLengthTo(ref chlen)
+                chlen := ch.Length;
             };
             
             i := i + chlen

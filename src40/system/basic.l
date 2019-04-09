@@ -517,7 +517,11 @@ public sealed const struct ByteNumber : IntBaseNumber
     
     /// Bitwise inversion
     get byte Inverted()
-        => system'core_routines'__byte;
+    {
+        intern system'core_routines'__byte.readInverted(self, ref byte retVal);
+        
+        ^ retVal
+    }
         
     /// Returns the literal presentation
     string Printable = stringConvertor.convert(self);
@@ -826,7 +830,11 @@ public sealed const struct ShortNumber : IntBaseNumber
     
     /// Bitwise inversion
     get short Inverted()
-        => system'core_routines'__short;
+    {
+        intern system'core_routines'__short.readInverted(self, ref short retVal);
+        
+        ^ retVal
+    }
 
     /// Returns the literal presentation
     string Printable = stringConvertor.convert(self);
@@ -1850,19 +1858,13 @@ public sealed const struct RealNumber : BaseNumber
     embeddable __float theValue[8];
 
     constructor(int n)
-    {
-        realConvertor.convert(n,ref self)
-    }
+        = realConvertor.convert(n);
             
     constructor(byte n)
-    {
-        realConvertor.convert(n,ref self)
-    }
+        = realConvertor.convert(n);
             
     constructor(short n)
-    {
-        realConvertor.convert(n,ref self)
-    }
+        = realConvertor.convert(n);
             
     /// return the default value
     static real Default
@@ -2214,9 +2216,7 @@ public sealed const struct CharValue : BaseValue
     /// Reads the number of bytes to represent the symbol
     get int WideLength()
     {
-        int length := self.Length
-        
-        self.readLengthTo(ref int length);
+        int length := self.Length;
         
         length := length + 1;
         length := length / 2;
@@ -2483,7 +2483,7 @@ public singleton shortConvertor
     /// Converts a character into a short integer value
     short convert(char ch)
     {
-        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
+        intern system'core_routines'__shortconvertor.convert(ch, ref short retVal);
         
         ^ retVal
     }
@@ -2614,10 +2614,6 @@ public singleton uintConvertor
     uint convert(int val)
         = new UIntNumber(val);
         
-    /// Converts a long integer into an integer and saves the result into an output parameter
-    convert(long n, ref int retVal)
-        => system'core_routines'__uintconvertor;
-        
     /// Converts a long integer value into an integer and saves the result into an output parameter
     uint convert(long n)
     {
@@ -2724,10 +2720,6 @@ public singleton longConvertor
 /// A real number convertor
 public singleton realConvertor
 {
-    /// Converts an integer into a real number and saves the result into an output parameter
-    convert(int v, ref real retVal)
-        => system'core_routines'__realconvertor;
-
     real convert(BaseVariable v)
         <= convert(v.Value);
         
@@ -2777,7 +2769,7 @@ public singleton realConvertor
             
             retVal := r
         }
-        : { intern system'core_routines'__realconvertor.convert(halfed, ref retVal) };
+        : { intern system'core_routines'__realconvertor.convert(n, ref retVal) };
         
         ^ retVal
     }
@@ -2823,7 +2815,7 @@ public singleton realOpController
         
     real abs(real r)
     {
-        intern system'core_routines'__real.abs(n, ref real retVal);
+        intern system'core_routines'__real.abs(r, ref real retVal);
         
         ^ retVal
     }
