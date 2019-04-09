@@ -220,7 +220,7 @@ procedure __int."readHashCodeTo$system@IntNumber$@system@ref#1&system@IntNumber[
 
 end
 
-procedure __char."readLengthTo$system@IntNumber$@system@ref#1&system@IntNumber[2]"
+procedure __char."readLengthTo$system@CharValue$@system@ref#1&system@IntNumber[2]"
 
   bloadsi 2
   nload
@@ -1622,7 +1622,7 @@ procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNum
 
 end
 
-procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
 
   aloadsi 1
   nload
@@ -1639,7 +1639,7 @@ procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@syste
 
 end
 
-procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   aloadsi 1
   nload
@@ -1656,7 +1656,7 @@ procedure __charconvertor."system$$save$system@CharValue$system@IntNumber$@syste
 
 end
 
-procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@CharValue[3]"
+procedure __charconvertor."convert$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@CharValue[3]"
   
   aloadsi 1
   nload
@@ -1748,7 +1748,7 @@ labCopy:
 
 end
 
-procedure __charconvertor."system$$convert$system@IntNumber$system@String$@system@ref#1&system@CharValue[3]"
+procedure __charconvertor."convert$system@IntNumber$system@String$@system@ref#1&system@CharValue[3]"
   
   aloadsi 1
   nload
@@ -1771,7 +1771,7 @@ labErr:
 
 end
 
-procedure __charconvertor."system$$convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@CharValue[3]"
+procedure __charconvertor."convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@CharValue[3]"
   
   aloadsi 1
   nload
@@ -1794,7 +1794,7 @@ labErr:
 
 end
 
-procedure __charconvertor."system$$convert$system@IntNumber$system@WideString$@system@ref#1&system@CharValue[3]"
+procedure __charconvertor."convert$system@IntNumber$system@WideString$@system@ref#1&system@CharValue[3]"
   
   aloadsi 1
   nload
@@ -3870,7 +3870,7 @@ procedure __short."readInvertedTo$system@ShortNumber$@system@ref#1&system@ShortN
   
 end
 
-procedure __int."readInvertedTo$@system@ref#1&system@IntNumber[2]"
+procedure __int."readInvertedTo$system@IntNumber$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
   nload

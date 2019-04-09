@@ -3,7 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * get rid of embeddable hints for property / length and so on
                  * support embeddable properties for the interfaces / closed classes
 
                  * review if ref<int>.Value works correctly (it is embedded)

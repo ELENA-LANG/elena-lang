@@ -1907,7 +1907,7 @@ public singleton stringConvertor
         byte buffer[4];
         int  length := 0;
 
-        system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1918,7 +1918,7 @@ public singleton stringConvertor
         byte buffer[12];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1929,7 +1929,7 @@ public singleton stringConvertor
         byte buffer[12];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1940,7 +1940,7 @@ public singleton stringConvertor
         byte buffer[12];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1951,7 +1951,7 @@ public singleton stringConvertor
         byte buffer[4];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1962,7 +1962,7 @@ public singleton stringConvertor
         byte buffer[64];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1973,7 +1973,7 @@ public singleton stringConvertor
         byte buffer[48];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1984,7 +1984,7 @@ public singleton stringConvertor
         byte buffer[48];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -1995,7 +1995,7 @@ public singleton stringConvertor
         byte buffer[32];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -2006,7 +2006,7 @@ public singleton stringConvertor
         byte buffer[8];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -2017,7 +2017,7 @@ public singleton stringConvertor
         byte buffer[64];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -2028,7 +2028,7 @@ public singleton stringConvertor
         byte buffer[32];
         int  length := 0;
         
-        system'core_routines'__literalconvertor.convert(n, buffer, ref length);
+        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
         
         ^ String.fromByteArray(0, length, buffer)
     }
@@ -2042,7 +2042,7 @@ public singleton stringConvertor
         byte buffer[256];
         if (l < 128)
         {
-            system'core_routines'__literalconvertor.convert(w, buffer, ref m);
+            intern system'core_routines'__literalconvertor.convert(w, buffer, ref m);
             
             ^ String.fromByteArray(0, m, buffer)
         };
@@ -2056,7 +2056,7 @@ public singleton stringConvertor
                page := 127
             };
             
-            system'core_routines'__literalconvertor.convert(w.Substring(i, page), buffer, ref m);
+            intern system'core_routines'__literalconvertor.convert(w.Substring(i, page), buffer, ref m);
             
             retVal := retVal.add(String.fromByteArray(0, m, buffer));
             
@@ -2316,7 +2316,7 @@ public singleton charConvertor
     /// Converts a literal string into a character
     char convert(string s)
     {
-        system'core_routines'__charconvertor.convert(0, s, ref char retVal);
+        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
         
         int l1 := retVal.Length;
         int l2 := s.Length;
@@ -2330,7 +2330,7 @@ public singleton charConvertor
     /// Converts a wide literal string into a character                
     char convert(wide s)
     {
-        system'core_routines'__charconvertor.convert(0, s, ref char retVal);
+        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
 
         int l1 := retVal.Length;
         int l2 := s.Length;
@@ -2344,7 +2344,7 @@ public singleton charConvertor
     /// Converts a byte value into a character
     char convert(byte n)
     {
-        system'core_routines'__charconvertor.convert(n, ref char retVal);
+        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
         
         ^ retVal
     }        
@@ -2352,7 +2352,7 @@ public singleton charConvertor
     /// Converts a short integer into a character
     char convert(short n)
     {
-        system'core_routines'__charconvertor.convert(n, ref char retVal);
+        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
         
         ^ retVal
     }
@@ -2360,7 +2360,7 @@ public singleton charConvertor
     /// Converts an integer into a character
     char convert(int n)
     {
-        system'core_routines'__charconvertor.convert(n, ref char retVal);
+        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
         
         ^ retVal
     }

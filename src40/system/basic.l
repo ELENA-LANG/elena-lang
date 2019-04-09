@@ -518,7 +518,7 @@ public sealed const struct ByteNumber : IntBaseNumber
     /// Bitwise inversion
     get byte Inverted()
     {
-        intern system'core_routines'__byte.readInverted(self, ref byte retVal);
+        intern system'core_routines'__byte.readInvertedTo(self, ref byte retVal);
         
         ^ retVal
     }
@@ -831,7 +831,7 @@ public sealed const struct ShortNumber : IntBaseNumber
     /// Bitwise inversion
     get short Inverted()
     {
-        intern system'core_routines'__short.readInverted(self, ref short retVal);
+        intern system'core_routines'__short.readInvertedTo(self, ref short retVal);
         
         ^ retVal
     }
@@ -1153,7 +1153,7 @@ public sealed const struct IntNumber : IntBaseNumber
     /// Bitwise inversion
     get int Inverted()
     {
-        system'core_routines'__int.readInvertedTo(theValue, ref int retVal);
+        intern system'core_routines'__int.readInvertedTo(theValue, ref int retVal);
         
         ^ retVal
     }
@@ -1526,7 +1526,7 @@ public sealed const struct UIntNumber : IntBaseNumber
     /// Bitwise inversion
     get uint Inverted()
     {
-        system'core_routines'__int.readInvertedTo(theValue, ref int retVal);
+        intern system'core_routines'__int.readInvertedTo(theValue, ref int retVal);
         
         ^ retVal
     }
@@ -1840,7 +1840,7 @@ public sealed const struct LongNumber : IntBaseNumber
     /// Bitwise inversion
     get long Inverted()
     {
-        system'core_routines'__long.readInvertedTo(theValue, ref long retVal);
+        intern system'core_routines'__long.readInvertedTo(theValue, ref long retVal);
         
         ^ retVal
     }
@@ -2208,7 +2208,7 @@ public sealed const struct CharValue : BaseValue
     /// Retuns the number of bytes to represent the symbol        
     get int Length()
     {
-        intern system'core_routines'__char.readLengthTo(theValue, ref int retVal);
+        intern system'core_routines'__char.readLengthTo(self, ref int retVal);
         
         ^ retVal
     }
@@ -2672,7 +2672,7 @@ public singleton longConvertor
     /// Converts a character into a long integer
     long convert(char ch)
     {
-        intern system'core_routines'__longconvertor.convert(ch, ref long retVal);
+        intern system'core_routines'__intconvertor.convert(ch, ref int retVal);
         
         ^ retVal
     }
@@ -2769,9 +2769,12 @@ public singleton realConvertor
             
             retVal := r
         }
-        : { intern system'core_routines'__realconvertor.convert(n, ref retVal) };
+        : { 
+            int number := n;
+            intern system'core_routines'__realconvertor.convert(number, ref retVal);
         
-        ^ retVal
+            ^ retVal
+        }
     }
 
     /// Converts a long integer into a real number
