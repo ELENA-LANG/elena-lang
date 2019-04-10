@@ -619,6 +619,28 @@ public:
          return child;
       }
 
+      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
+      {
+         Node child = firstChild();
+         while (child != lxNone && child.type != type1) {
+            if (child == lxExpression) {
+               Node subNode = child.findSubNode(type1, type2, type3);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (child == type2)
+               break;
+            else if (child == type3)
+               break;
+            else if (child == type4)
+               break;
+
+            child = child.nextNode();
+         }
+
+         return child;
+      }
+
       Node lastChild() const
       {
          Node current = firstChild();

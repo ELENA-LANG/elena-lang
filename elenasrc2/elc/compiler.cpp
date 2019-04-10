@@ -3146,9 +3146,6 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       if (!test(mode, HINT_DYNAMIC_OBJECT) && _logic->isEmbeddable(*scope.moduleScope, classReference) && result.stackSafe)
          // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
          stackSafeAttr |= 1;
-
-      if (result.embeddable)
-         writer.appendNode(lxEmbeddableAttr);
    }
    else {
       // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
@@ -3165,6 +3162,9 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
       }         
    }
+
+   if (result.embeddable)
+      writer.appendNode(lxEmbeddableAttr);
 
    if (stackSafeAttr && !dispatchCall && !result.dynamicRequired)
       writer.appendNode(lxStacksafeAttr, stackSafeAttr);
@@ -5857,76 +5857,75 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
 
 bool Compiler :: isMethodEmbeddable(MethodScope& scope, SNode node)
 {
-   if (!test(_optFlag, 1))
-      return false;
+   if (test(scope.hints, tpEmbeddable)) {
+      ClassScope* ownerScope = (ClassScope*)scope.parent;
 
-   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
-   if (body.compare(lxDispatchCode, lxResendExpression))
-      return false;
+      return ownerScope->info.methodHints.exist(Attribute(scope.message, maEmbeddableRet));
+   }
+   else return false;
 
-   if (getParamCount(scope.message) == ARG_COUNT || test(scope.message, VARIADIC_MESSAGE))
-      return false;
-
-   if (scope.generic || scope.closureMode)
-      return false;
-
-   //if (scope.outputRef == scope.getClassRef())
+   //if ()
    //   return false;
 
-   if (!scope.outputRef || !_logic->isEmbeddable(*scope.moduleScope, scope.outputRef)) {
-      return false;
-   }
+   //SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
+   //if (body.compare(lxDispatchCode, lxResendExpression))
+   //   return false;
 
-   ref_t dummy = 0;
-   ident_t actionName = scope.module->resolveAction(getAction(scope.message), dummy);
-   if (actionName.startsWith(CAST_MESSAGE))
-      // HOTFIX : exclude cast operations
-      return false;
+   //if (getParamCount(scope.message) == ARG_COUNT || test(scope.message, VARIADIC_MESSAGE))
+   //   return false;
 
-   return true;
+   //if (scope.generic || scope.closureMode)
+   //   return false;
+
+   ////if (scope.outputRef == scope.getClassRef())
+   ////   return false;
+
+   //if (!scope.outputRef || !_logic->isEmbeddable(*scope.moduleScope, scope.outputRef)) {
+   //   return false;
+   //}
+
+   //ref_t dummy = 0;
+   //ident_t actionName = scope.module->resolveAction(getAction(scope.message), dummy);
+   //if (actionName.startsWith(CAST_MESSAGE))
+   //   // HOTFIX : exclude cast operations
+   //   return false;
+
+   //return true;
 }
 
 void Compiler :: compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
-   ref_t dummy, flags;
-   int paramCount;
-   decodeMessage(scope.message, dummy, paramCount, flags);
-
    ClassScope* ownerScope = (ClassScope*)scope.parent;
 
    // generate private static method with an extra argument - retVal
    MethodScope privateScope(ownerScope);
-   IdentifierString privateName(EMBEDDAMLE_PREFIX);
-   ref_t signRef = 0;
-   privateName.append(scope.module->resolveAction(getAction(scope.message), signRef));
-   ref_t signArgs[ARG_COUNT];
-   size_t signLen = scope.module->resolveSignature(signRef, signArgs);
-   signArgs[signLen++] = resolvePrimitiveReference(scope, V_WRAPPER, scope.outputRef, false);
-   privateScope.message = encodeMessage(
-      scope.module->mapAction(privateName.c_str(), scope.module->mapSignature(signArgs, signLen, false), false),
-      paramCount + 1,
-      flags | STATIC_MESSAGE);
+   privateScope.message = ownerScope->info.methodHints.get(Attribute(scope.message, maEmbeddableRet));
+
+   resolvePrimitiveReference(scope, V_WRAPPER, scope.outputRef, false);
 
    declareArgumentList(node, privateScope, true, false);
-   privateScope.parameters.add(RETVAL_ARG, Parameter(1 + scope.parameters.Count(), V_WRAPPER, signArgs[signLen - 1], 0));
+   privateScope.parameters.add(RETVAL_ARG, Parameter(1 + scope.parameters.Count(), V_WRAPPER, scope.outputRef, 0));
    privateScope.classEmbeddable = scope.classEmbeddable;
    privateScope.extensionMode = scope.extensionMode;
    privateScope.embeddableRetMode = true;
 
-   // !! TEMPORAL : clone the method node, to compile it safely : until the proper implementation
-   SyntaxTree dummyTree;
-   SyntaxWriter dummyWriter(dummyTree);
-   dummyWriter.newNode(node.type);
-   SyntaxTree::copyNode(dummyWriter, node);
-   dummyWriter.closeNode();
-   compileMethod(writer, dummyTree.readRoot(), privateScope);
-   //compileMethod(writer, node, privateScope);
+   if (scope.abstractMethod) {
+      // COMPILER MAGIC : if the method retunging value can be passed as an extra argument
+      compileAbstractMethod(writer, node, scope);
+      compileAbstractMethod(writer, node, privateScope);
+   }
+   else {
+      // !! TEMPORAL : clone the method node, to compile it safely : until the proper implementation
+      SyntaxTree dummyTree;
+      SyntaxWriter dummyWriter(dummyTree);
+      dummyWriter.newNode(node.type);
+      SyntaxTree::copyNode(dummyWriter, node);
+      dummyWriter.closeNode();
+      compileMethod(writer, dummyTree.readRoot(), privateScope);
+      //compileMethod(writer, node, privateScope);
 
-   compileMethod(writer, node, scope);
-
-   ownerScope->addHint(scope.message, tpEmbeddable);
-   ownerScope->addAttribute(scope.message, maEmbeddableRet, privateScope.message);
-   ownerScope->save();
+      compileMethod(writer, node, scope);
+   }
 }
 
 void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
@@ -6287,12 +6286,14 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
                   compileInitializer(writer, current, methodScope);
                }
                else if (methodScope.abstractMethod) {
-                  compileAbstractMethod(writer, current, methodScope);
+                  if (isMethodEmbeddable(methodScope, current)) {
+                     compileEmbeddableMethod(writer, current, methodScope);
+                  }
+                  else compileAbstractMethod(writer, current, methodScope);
                }
-               else if (isMethodEmbeddable(methodScope, node)) {
+               else if (isMethodEmbeddable(methodScope, current)) {
                   // COMPILER MAGIC : if the method retunging value can be passed as an extra argument
                   compileEmbeddableMethod(writer, current, methodScope);
-
                }
                else compileMethod(writer, current, methodScope);
             }
@@ -6374,7 +6375,10 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
             initialize(classClassScope, methodScope);
             declareArgumentList(current, methodScope, false, false);
 
-            compileMethod(writer, current, methodScope);
+            if (isMethodEmbeddable(methodScope, current)) {
+               compileEmbeddableMethod(writer, current, methodScope);
+            }
+            else compileMethod(writer, current, methodScope);
             break;
          }
       }
@@ -6632,8 +6636,9 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 
             current = lxIdle;
          }
-         else if (test(methodScope.hints, tpStatic))
+         else if (test(methodScope.hints, tpStatic)) {
             current = lxStaticMethod;
+         }
 
          if (!_logic->validateMessage(*methodScope.moduleScope, methodScope.message, false))
             scope.raiseError(errIllegalMethod, current);
@@ -6925,6 +6930,17 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       }
    }
 
+   if (outputRef) {
+      if (outputRef == scope.reference && _logic->isEmbeddable(scope.info)) {
+         hintChanged = true;
+         hint |= tpEmbeddable;
+      }
+      else if (_logic->isEmbeddable(*scope.moduleScope, outputRef)) {
+         hintChanged = true;
+         hint |= tpEmbeddable;
+      }
+   }
+
    if (hintChanged) {
       //if (test(hint, tpSealed | tpGeneric | tpAction)) {
       //   // HOTFIX : generic closure cannot be sealed
@@ -7088,6 +7104,48 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate) && isGeneralMessage(scope.module, message)) {
          // NOTE : only general public message should be saved
          saveExtension(scope, message, scope.internalOne);
+      }
+
+      if (!closed && test(methodHints, tpEmbeddable) 
+         && !testany(methodHints, tpDispatcher | tpAction | tpConstructor | tpConversion | tpGeneric | tpCast) 
+         && !test(message, VARIADIC_MESSAGE)
+         && !current.existChild(lxDispatchCode, lxResendExpression))
+      {
+         // COMPILER MAGIC : if embeddable returning argument is allowed
+         ref_t outputRef = scope.info.methodHints.get(Attribute(message, maReference));
+
+         bool embeddable = false;
+         if (outputRef == scope.reference && _logic->isEmbeddable(scope.info)) {
+            embeddable = true;
+         }
+         else if (_logic->isEmbeddable(*scope.moduleScope, outputRef)) {
+            embeddable = true;
+         }
+
+         if (embeddable) {
+            ref_t dummy, flags;
+            int paramCount;
+            decodeMessage(message, dummy, paramCount, flags);
+
+            // declare a method with an extra argument - retVal
+            IdentifierString privateName(EMBEDDAMLE_PREFIX);
+            ref_t signRef = 0;
+            privateName.append(scope.module->resolveAction(getAction(message), signRef));
+            ref_t signArgs[ARG_COUNT];
+            size_t signLen = scope.module->resolveSignature(signRef, signArgs);
+            signArgs[signLen++] = resolvePrimitiveReference(scope, V_WRAPPER, outputRef, true);
+            ref_t embeddableMessage = encodeMessage(
+               scope.module->mapAction(privateName.c_str(), scope.module->mapSignature(signArgs, signLen, false), false),
+               paramCount + 1,
+               flags);
+
+            if (!test(scope.info.header.flags, elSealed) || scope.info.methods.exist(embeddableMessage)) {
+               scope.include(embeddableMessage);
+            }
+            else embeddableMessage |= STATIC_MESSAGE;
+
+            scope.addAttribute(message, maEmbeddableRet, embeddableMessage);
+         }
       }
    }
 }
@@ -7847,7 +7905,7 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
          node.set(lxIntOp, SET_OPERATOR_ID);
       }
       else {
-         SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxAssigning);
+         SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxCalling, lxAssigning);
          if (subNode == lxAssigning && targetNode != lxFieldAddress) {
             // HOTFIX : an extra assignment should be removed only for the operations with local variables
             bool tempAttr = subNode.existChild(lxTempAttr);
@@ -7912,7 +7970,7 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
                   _logic->optimizeEmbeddableOp(*scope.moduleScope, *this, node);
                }
             }
-            else if (subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
+            else if (subNode != lxCalling && subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
                SNode createNode = subNode.findChild(lxCreatingStruct/*, lxImplicitCall*/);
                if (createNode != lxNone && targetNode == lxLocalAddress) {
                   // if it is implicit conversion
@@ -9046,6 +9104,7 @@ void Compiler :: injectVirtualReturningMethod(_ModuleScope& scope, SNode classNo
    methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
    methNode.appendNode(lxAttribute, tpEmbeddable);
    methNode.appendNode(lxAttribute, tpSealed);
+   methNode.appendNode(lxAttribute, tpCast);
 
    if (outputRef) {
       methNode.appendNode(lxTypeAttribute).appendNode(lxTarget, outputRef);

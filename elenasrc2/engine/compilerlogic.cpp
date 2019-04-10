@@ -1991,7 +1991,7 @@ bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& me
 
 bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node)
 {
-   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling);
+   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxCalling);
    SNode callTarget = callNode.findChild(lxCallTarget);
 
    ClassInfo info;

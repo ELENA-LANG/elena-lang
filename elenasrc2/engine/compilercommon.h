@@ -135,6 +135,7 @@ enum MethodHint
    tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
    tpInitializer = 0x200000,
    tpSetAccessor = 0x400000,
+   tpCast        = 0x800000
 };
 
 // --- _Project ---
