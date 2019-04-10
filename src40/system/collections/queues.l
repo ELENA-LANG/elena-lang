@@ -17,7 +17,7 @@ public sealed class Stack : Enumerable
     
     Enumerator enumerator() = new StackEnumerator(self);
     
-    prop int Length
+    Length
     {
         int get()
         {
@@ -111,7 +111,7 @@ public sealed Stack<T> : Enumerable<T>
         theTop := 0;
     }
     
-    prop int Length
+    Length
     {
         int get()
         {
@@ -209,7 +209,7 @@ public sealed class Queue : Enumerable
     internal int TopPointer = theTop;
     internal int TalePointer = theTale;    
         
-    prop int Length
+    Length
     {
         int get()
         {
@@ -318,7 +318,7 @@ public sealed Queue<T> : Enumerable<T>
         theTale := 0;
     }
         
-    prop int Length
+    Length
     {
         int get()
         {

@@ -14,7 +14,7 @@ sealed struct CONSOLE_SCREEN_BUFFER_INFO
     {
     }
 
-    prop short SizeX
+    SizeX
     {
         short get()
         {
@@ -24,7 +24,7 @@ sealed struct CONSOLE_SCREEN_BUFFER_INFO
         }
     }
 
-    prop short SizeY
+    SizeY
     {
         short get()
         {

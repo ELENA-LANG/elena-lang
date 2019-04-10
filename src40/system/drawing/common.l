@@ -210,7 +210,7 @@ public sealed struct Region //: BaseValue
 //        theHeight := aHeight.
 //    ]
 
-    prop int X
+    X
     {
         int get()
         {
@@ -223,7 +223,7 @@ public sealed struct Region //: BaseValue
         }
     }
 
-    prop int Y
+    Y
     {
         int get()
         {
@@ -236,7 +236,7 @@ public sealed struct Region //: BaseValue
         }
     }
 
-    prop int Width
+    Width
     {
         int get()
         {
@@ -249,7 +249,7 @@ public sealed struct Region //: BaseValue
         }
     }
 
-    prop int Height
+    Height
     {
         int get()
         {

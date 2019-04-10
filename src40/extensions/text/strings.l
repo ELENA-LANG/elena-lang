@@ -233,9 +233,9 @@ public sealed class StringWriter : BaseVariable
 
     string cast() = theValue;
 
-    prop string Value
+    Value
     {
-        get() = theValue;
+        string get() = theValue;
         
         set(string val)
         {

@@ -5315,7 +5315,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
    bool unnamedMessage = false;
    ref_t flags = 0;
 
-   SNode nameNode = node.findChild(lxNameAttr);
+   SNode nameNode = node.findChild(lxNameAttr, lxMessage);
    SNode identNode = nameNode.firstChild(lxTerminalMask);
 
    SNode current = /*action == lxNone ? */node.findChild(lxMethodParameter)/* : action.nextNode()*/;
@@ -7332,7 +7332,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
       else if (current == lxNameAttr && !explicitMode) {
          // resolving implicit method attributes
          int attr = scope.moduleScope->attributes.get(current.firstChild(lxTerminalMask).identifier());
-         if (_logic->validateImplicitMethodAttribute(attr)) {
+         if (_logic->validateImplicitMethodAttribute(attr, current.nextNode().type == lxMessage)) {
             scope.hints |= attr;
             current.set(lxAttribute, attr);
          }

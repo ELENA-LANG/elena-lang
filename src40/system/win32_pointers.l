@@ -46,7 +46,7 @@ public sealed const struct RTPointer
         intern system'core_routines'__rtptr.new(self, object)
     }
 
-    prop int Index
+    Index
     {
         int get()
         {
@@ -174,7 +174,7 @@ public sealed struct COORD
         theY := tmp
     }
     
-    prop short X
+    X
     {
         short get()
         {
@@ -182,7 +182,7 @@ public sealed struct COORD
         }
     }
     
-    prop short Y
+    Y
     {    
         short get()
         {
@@ -200,7 +200,7 @@ public sealed struct SMALL_RECT
     short theRight;
     short theBottom;
     
-    prop short Left
+    Left
     {
         short get()
         {
@@ -208,7 +208,7 @@ public sealed struct SMALL_RECT
         }
     }
     
-    prop short Top
+    Top
     {
         short get()
         {
@@ -216,7 +216,7 @@ public sealed struct SMALL_RECT
         }
     }
     
-    prop short Right
+    Right
     {
         short get()
         {
@@ -224,7 +224,7 @@ public sealed struct SMALL_RECT
         }        
     }
     
-    prop short Bottom
+    Bottom
     {
         get()
         {

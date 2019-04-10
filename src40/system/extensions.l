@@ -147,7 +147,7 @@ public extension objectOp
 
 public extension byteOp : ByteNumber
 {
-    prop int HashCode
+    HashCode
     {
         // Reads the object hash code into the output parameter
         int get()
@@ -222,7 +222,7 @@ public extension byteOp : ByteNumber
 
 public extension shortOp : ShortNumber
 {
-    prop int HashCode
+    HashCode
     {
         // Reads the object hash code into the output parameter
         int get()
@@ -315,7 +315,7 @@ public extension shortOp : ShortNumber
 
 public extension intOp : IntNumber
 {
-    prop int HashCode
+    HashCode
     {
         // Reads the object hash code into the output parameter
         int get()
@@ -326,7 +326,7 @@ public extension intOp : IntNumber
         }
     }
     
-    prop int Absolute
+    Absolute
     {
         int get()
         {
@@ -451,7 +451,7 @@ public extension intOp : IntNumber
 
 public extension uintOp : UIntNumber
 {
-    prop int HashCode
+    HashCode
     {
         // Reads the object hash code into the output parameter
         int get()
@@ -467,7 +467,7 @@ public extension uintOp : UIntNumber
 
 public extension longOp : LongNumber
 {
-    prop int HashCode
+    HashCode
     {
         // Reads the object hash code into the output parameter
         int get()
@@ -581,7 +581,7 @@ public extension longOp : LongNumber
 
 public extension realOp : RealNumber
 {        
-    prop int HashCode
+    HashCode
     {
         // Reads the object hash code into the output parameter
         int get()
@@ -1120,7 +1120,7 @@ public extension arrayOp<T> : Array<T>
 
 public extension stringOp : String
 {
-    prop int HashCode
+    HashCode
     {
         /// Reads the object hash code into the output parameter
         int get()
@@ -1332,7 +1332,7 @@ public extension stringOp : String
 
 public extension wideOp : WideString
 {
-    prop int HashCode
+    HashCode
     {
         int get()
         {
@@ -1706,7 +1706,7 @@ public extension stringWeakOp
 
 public extension charOp : CharValue
 {
-    prop int HashCode
+    HashCode
     {
         // Reads the object hash code into the output parameter
         int get()

@@ -68,7 +68,7 @@ public sealed struct Timespan : BaseValue
 
 //    cast T<SystemTime> = theValue.
 
-    prop SystemTime SystemTime
+    SystemTime
     {
         SystemTime get()
         {
@@ -229,7 +229,7 @@ public sealed struct Date : BaseValue
     TimeStruct cast()
         = new TimeStruct(theValue);
 
-    prop SystemTime SystemTime
+    SystemTime
     {
         SystemTime get()
         {
@@ -272,7 +272,7 @@ public sealed struct Date : BaseValue
         ^ new Date(theValue.add(value))
     }
 
-    prop int Year
+    Year
     {
         int get()
         {
@@ -284,9 +284,9 @@ public sealed struct Date : BaseValue
         }
     }
 
-    prop int Month
+    Month
     {
-        int read()
+        int get()
         {
             TimeStruct systemTime := theValue;
             
@@ -296,7 +296,7 @@ public sealed struct Date : BaseValue
         }
     }
 
-    prop int Day
+    Day
     {
         int get()
         {
@@ -308,7 +308,7 @@ public sealed struct Date : BaseValue
         }
     }
 
-    prop int DayOfWeek
+    DayOfWeek
     {
         int get()
         {
@@ -320,7 +320,7 @@ public sealed struct Date : BaseValue
         }
     }
 
-    prop int Hour
+    Hour
     {
         int get()
         {
@@ -332,7 +332,7 @@ public sealed struct Date : BaseValue
         }
     }
 
-    prop int Minute
+    Minute
     {
         int get()
         {
@@ -344,7 +344,7 @@ public sealed struct Date : BaseValue
         }
     }
 
-    prop int Second
+    Second
     {
         int get()
         {
@@ -356,7 +356,7 @@ public sealed struct Date : BaseValue
         }
     }
 
-    prop int Millisecond
+    Millisecond
     {
         int get()
         {

@@ -66,7 +66,7 @@ public sealed List<T> : Enumerable<T>
         theArray := new T[](16);
     }
     
-    prop int Length
+    Length
     {
         int get()
         {
@@ -263,7 +263,7 @@ sealed class ListItem
         theContent := object
     }
 
-    prop ListItem NextItem
+    NextItem
     {
         /// Returns the next item
         ListItem get() = theNext;
@@ -531,7 +531,7 @@ public sealed class List : Enumerable
     removeAt(index)
         <= remove(cast int(index));
 
-    prop int Length
+    Length
     {
         /// Reads the number of list item to the output parameter
         int get()
@@ -622,7 +622,7 @@ public sealed class ArrayList : Indexable//, interface<Enumerable>
         theArray := array.clone()
     }
     
-    prop int Length
+    Length
     {
         /// Reads the number of list item to the output parameter
         int get()

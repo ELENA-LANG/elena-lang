@@ -68,7 +68,7 @@ public sealed struct CREATESTRUCT
 //    [
 //    ]
     
-    public prop int CreateParam
+    CreateParam
     {
         int get()
         {

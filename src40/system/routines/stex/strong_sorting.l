@@ -1,6 +1,6 @@
 public interface SortingAgent<T>
 {
-    prop int Length
+    Length
     {
         abstract int get() {}
     }    
@@ -14,7 +14,7 @@ public sealed ArraySortingAgent<T> : SortingAgent<T>
 {
     T[] a;
     
-    int Length
+    Length
     {
         int get()
         {

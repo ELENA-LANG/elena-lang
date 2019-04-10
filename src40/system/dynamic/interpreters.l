@@ -19,7 +19,7 @@ public mixin Struct
         }
     }
 
-    internal prop int Length
+    internal Length
     {
         int get()
         {

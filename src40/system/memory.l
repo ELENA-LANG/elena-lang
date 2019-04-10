@@ -54,7 +54,7 @@ public sealed Array<T> : Indexable<T>
         }
     };
 
-    prop int Length
+    Length
     {
         int get()
         {
@@ -151,7 +151,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
     readLengthTo(ref int retVal)
         => system'core_routines'__args;
 
-    prop int Length
+    Length
     {
         int get()
         {
@@ -279,7 +279,7 @@ public sealed Matrix<T>
 //
 //    int rvprop length  :: readLengthTo.    
 
-    prop int Length
+    Length
     {
         int get()
         {
@@ -287,7 +287,7 @@ public sealed Matrix<T>
         }
     }    
 
-    prop int Columns
+    Columns
     {
         int get()
         {
@@ -295,7 +295,7 @@ public sealed Matrix<T>
         }
     }
 
-    prop int Rows
+    Rows
     {
         int get()
         {
@@ -735,7 +735,7 @@ public sealed class BitArray
         theArray := new int[](length / 32 + 1)
     }
     
-    prop int Length
+    Length
     {
         int get()
         {
@@ -893,7 +893,7 @@ public sealed class IntMatrix
         columns := theColumns
     }
 
-    prop int Length
+    Length
     {
         int get()
         {
@@ -901,7 +901,7 @@ public sealed class IntMatrix
         }
     }    
 
-    prop int Columns
+    Columns
     {
         int get()
         {
@@ -909,7 +909,7 @@ public sealed class IntMatrix
         }
     }
 
-    prop int Rows
+    Rows
     {
         int get()
         {
@@ -1438,7 +1438,7 @@ public sealed const struct String : BaseValue
     string Substring(int index, int length)
         => system'core_routines'__literal;
 
-    prop int Length
+    Length
     {
         /// Reads the literal length into an output parameter
         int get()
@@ -1645,7 +1645,7 @@ public sealed const struct WideString : BaseValue
         => system'core_routines'__wide;
 
     /// Reads the literal length into an output parameter
-    prop int Length
+    Length
     {
         /// Reads the literal length into an output parameter
         int get()
@@ -1857,7 +1857,7 @@ public sealed Array : Indexable//, Array<object>
         ^ retVal
     }
 
-    prop int Length
+    Length
     {
         /// Reads the array length into an output parameter
         int get()

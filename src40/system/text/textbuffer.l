@@ -19,7 +19,7 @@ public sealed class TextBuilder
         self.write(value)
     } 
 
-    prop int Length
+    Length
     {
         int get()
         {

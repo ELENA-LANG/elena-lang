@@ -72,7 +72,7 @@ public class BaseControl
 //            ]
 //    ]
 //    
-    prop string Caption
+    Caption
     {
         string get() = theCaption;
         
@@ -99,7 +99,7 @@ public class BaseControl
 //        theRegion writeLocation int:x int:y.
 //    ]
     
-   prop int X
+    X
     {
         int get()
         {
@@ -114,7 +114,7 @@ public class BaseControl
         }
     }
 
-    prop int Y
+    Y
     {
         int get()
         {
@@ -129,7 +129,7 @@ public class BaseControl
         }
     }
 
-    prop int Width
+    Width
     {
         int get()
         {
@@ -144,7 +144,7 @@ public class BaseControl
         }
     }
 
-    prop int Height
+    Height
     {
         int get()
         {

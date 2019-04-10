@@ -1,6 +1,6 @@
 public interface SortingAgent
 {
-    prop int Length
+    Length
     {
         abstract int get() {}
     }    

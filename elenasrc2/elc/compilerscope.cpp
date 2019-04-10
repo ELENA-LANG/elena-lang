@@ -523,15 +523,16 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
    }
    else {
       generatedReference = transformer.generateTemplate(writer, *this, reference, parameters, true, false);
+
+      writer.closeNode();
+      writer.closeNode();
+
       if (generatedReference) {
          IdentifierString path;
          path.copy("compiling ");
          path.append(resolveFullName(generatedReference));
          path.append(" template...");
          //writer.insertChild(0, lxSourcePath, path.c_str());
-
-         writer.closeNode();
-         writer.closeNode();
 
          try
          {

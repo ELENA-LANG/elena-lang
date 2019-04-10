@@ -26,7 +26,7 @@ public sealed const struct SystemTime : BaseValue
 
     long cast() = theValue;
 
-    prop long Value
+    Value
     {
         long get()
         {
@@ -77,7 +77,7 @@ public sealed struct TimeStruct
 //        self write(aTime).
 //    ]
 
-    prop int Year
+    Year
     {
         int get()
         {
@@ -94,7 +94,7 @@ public sealed struct TimeStruct
         }
     }
 
-    prop int Month
+    Month
     {
         int get()
         {
@@ -111,7 +111,7 @@ public sealed struct TimeStruct
         }
     }
 
-    prop int DayOfWeek
+    DayOfWeek
     {
         int get()
         {
@@ -121,7 +121,7 @@ public sealed struct TimeStruct
         }
     }
 
-    prop int Day
+    Day
     {
         int get()
         {
@@ -138,7 +138,7 @@ public sealed struct TimeStruct
         }
     }
 
-    prop int Hour
+    Hour
     {
         int get()
         {
@@ -154,7 +154,7 @@ public sealed struct TimeStruct
         }
     }
 
-    prop int Minute
+    Minute
     {
         int get()
         {
@@ -171,7 +171,7 @@ public sealed struct TimeStruct
         }
     }
 
-    prop int Second
+    Second
     {
         int get()
         {
@@ -188,7 +188,7 @@ public sealed struct TimeStruct
         }
     }
 
-    prop int Millisecond
+    Millisecond
     {
         int get()
         {

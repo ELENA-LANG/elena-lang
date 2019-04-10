@@ -79,7 +79,7 @@ public sealed struct AddrInfo
         self.clear()
     }
     
-   prop int Flags
+    Flags
     {
         int get()
         {
@@ -92,7 +92,7 @@ public sealed struct AddrInfo
         }
     }
     
-    prop int Family
+    Family
     {
         int get()
         {
@@ -105,7 +105,7 @@ public sealed struct AddrInfo
         }
     }
 
-    prop int SocketType
+    SocketType
     {
         int get()
         {
@@ -118,7 +118,7 @@ public sealed struct AddrInfo
         }
     }
 
-    prop int Protocol
+    Protocol
     {
         int get()
         {
@@ -131,7 +131,7 @@ public sealed struct AddrInfo
         }
     }
 
-    prop int AddressLen
+    AddressLen
     {
         int get()
         {
@@ -144,7 +144,7 @@ public sealed struct AddrInfo
         }
     }
 
-    prop dirty_ptr Address
+    Address
     {
         dirty_ptr get()
         {

@@ -120,7 +120,7 @@ public sealed class MemoryBuffer
 //        theUsed reduce(length).
 //    ]
 //    
-    prop int Length
+    Length
     {
         int get()
         {

@@ -21,37 +21,6 @@ property prop<T>
     }
 }
 
-property prop<T,get_accessor,set_accessor>
-{
-    get T __property()
-    {
-        ^ self.get_accessor()
-    }
-    
-    set __property(T value)
-    {
-        self.set_accessor(value)
-    }
-}
-
-property prop<T,get_accessor>
-{
-    get T __property()
-    {
-        ^ self.get_accessor()
-    }
-}
-
-property rprop<T>
-{
-    T __property;
-    
-    get T __property()
-    {
-        ^ __property
-    }    
-}
-
 //public field dto_prop<prop_type, prop_name>
 //{
 //    const static V<object> theProperties.

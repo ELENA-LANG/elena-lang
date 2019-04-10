@@ -21,13 +21,13 @@ public interface Space
         }        
     }
     
-    prop int Rows
+    Rows
     {
         /// Returns the space actual number of rows
         abstract int get() {}
     }
     
-    prop int Columns
+    Columns
     {
         /// Returns the space actual number of columns
         abstract int get() {}

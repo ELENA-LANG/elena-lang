@@ -1012,6 +1012,16 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
          writer.newNode(lxMessage);
          copyIdentifier(writer, parentNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
          writer.closeNode();
+
+         // copy the property attributes
+         SNode parentAttrNode = parentNode.prevNode();
+         while (parentAttrNode == lxAttribute) {
+            writer.newNode(parentAttrNode.type, parentAttrNode.argument);
+            SyntaxTree::copyNode(writer, parentAttrNode);
+            writer.closeNode();
+
+            parentAttrNode = parentAttrNode.prevNode();
+         }
       }
    }
 }

@@ -537,7 +537,7 @@ public extension indexableOp
     {
         auto it := cast Indexer(self.indexer());
         
-        ^ Array.allocate(length).populate:(int i => it.set Index(index + i).get())
+        ^ Array.allocate(length).populate:(int i){ it.Index := index + i; ^ it.get()}
     }
     
     sequenceEqual(array)

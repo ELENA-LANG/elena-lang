@@ -63,7 +63,7 @@ public interface Indexer
     /// Sets the current member
     abstract set(object) {}
     
-    prop int Index
+    Index
     {
         abstract int get() {}
         
@@ -72,7 +72,7 @@ public interface Indexer
 
     abstract appendIndex(int anIndex) {}
    
-    prop int Length
+    Length
     {
         abstract int get() {}
     }
@@ -89,7 +89,7 @@ public interface Indexer<T>
     /// Sets the current member
     abstract set(T object) {}
 
-    prop int Index
+    Index
     {
         /// Reads the current index
         abstract int get() {}
@@ -100,7 +100,7 @@ public interface Indexer<T>
 
     abstract appendIndex(int anIndex) {}
                                 
-    prop int Length
+    Length
     {
         abstract int get() {}
     }
@@ -1191,7 +1191,7 @@ public sealed class Range : Enumerable<int>
 //        theEnd := end + 1.
 //    ]
 //    
-    prop int Length
+    Length
     {
         int get()
         {

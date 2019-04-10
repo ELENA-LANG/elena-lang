@@ -4,14 +4,14 @@
 
 public interface Stream
 {
-    prop int Length
+    Length
     {
         abstract int get() {}
         
         abstract set(int retVal) {}
     }
     
-    prop int Index
+    Index
     {
         abstract get() {}
         
