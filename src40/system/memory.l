@@ -2697,7 +2697,7 @@ public class ArrayIndexer : Indexer
     {
         int get()
         {
-            _index.readValueTo(ref int retVal);
+            int retVal := _index.Value;
             
             ^ retVal
         }

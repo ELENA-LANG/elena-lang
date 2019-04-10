@@ -267,6 +267,7 @@ end
 
 procedure __char."readLengthTo$system@CharValue$@system@ref#1&system@IntNumber[2]"
 
+  aloadsi 1
   bloadsi 2
   nload
   // ; < 80 - 1
@@ -1881,6 +1882,7 @@ end
 
 procedure __array."readLengthTo$system@Array$@system@ref#1&system@IntNumber[2]"
 
+  aloadsi 1
   len
   bloadsi 2
   nsave
