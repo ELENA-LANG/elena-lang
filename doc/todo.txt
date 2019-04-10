@@ -3,16 +3,13 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * embeddable get should work with nonstructure types #424
-
                  * static field initializer should be invoked only if the class is used
                  * implement class attribute - a preloaded code which is invoked only if the
                    class is used
                  * array accumulation - operation to be implemented in compile time
                  * operations with meta data : introducing meta object : e.g
                      __meta[class][name] := class
-                     __meta[class][dto] += name
-  
+                     __meta[class][dto] += name  
 
                  * attr_template prop_template ... prop
                  * attr_template ... method
