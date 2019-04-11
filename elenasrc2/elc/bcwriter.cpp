@@ -1731,6 +1731,9 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
    // initialize vmt section writers
    MemoryWriter vmtWriter(compilerScope.mapSection(reference | mskVMTRef, false));
 
+   // initialize attribute section writers
+   MemoryWriter attrWriter(compilerScope.mapSection(reference | mskAttributeRef, false));
+
    vmtWriter.writeDWord(0);                              // save size place holder
    size_t classPosition = vmtWriter.Position();
 
@@ -1774,6 +1777,9 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
 
    // save Static table
    info.staticValues.write(&vmtWriter);
+
+   // save attributes
+   info.attributes.write(&attrWriter);
 }
 
 void ByteCodeWriter :: writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope)

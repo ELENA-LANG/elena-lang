@@ -587,7 +587,7 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, int scopeMode)
    else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
       auto fieldInfo = info.fieldTypes.get(-1);
 
-      return ObjectInfo(okSelfParam, 1, fieldInfo.value1, fieldInfo.value2, -2);
+      return ObjectInfo(okSelfParam, 1, fieldInfo.value1, fieldInfo.value2, (ref_t)-2);
    }
    else {
       ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
@@ -4376,7 +4376,7 @@ ObjectInfo Compiler :: compileVariadicUnboxing(SyntaxWriter& writer, SNode node,
 	}
    else if (_logic->isArray(*scope.moduleScope, operandRef)) {
       objectInfo.reference = V_UNBOXEDARGS;
-      writer.insert(lxArgUnboxing, -1);
+      writer.insert(lxArgUnboxing, (ref_t)-1);
       writer.closeNode();
    }
 	else scope.raiseError(errNotApplicable, node);
@@ -4449,7 +4449,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
          if (current.nextNode() == lxTypecast && objectInfo.kind == okClass) {
             // COMPILER MAGIC : if it is a primitive array creation
             objectInfo.element = objectInfo.param;
-            for (int i = 1; i < current.argument; i++) {
+            for (ref_t i = 1; i < current.argument; i++) {
                objectInfo.element = resolvePrimitiveArray(scope, objectInfo.element, false);
             }
             objectInfo.param = resolvePrimitiveArray(scope, objectInfo.element, false);

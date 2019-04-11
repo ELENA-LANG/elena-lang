@@ -3,7 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * static field initializer should be invoked only if the class is used
+                 * static field initializer should be invoked only if the class is used, special symbol should be used,
+                   passing a class as a reference
+
                  * implement class attribute - a preloaded code which is invoked only if the
                    class is used
                  * array accumulation - operation to be implemented in compile time
@@ -20,6 +22,16 @@ In development:
                  * global attributes / manifest
                  * mainfest info
 
+
+                 * rix random sample
+                 * fix debugger watch : bsort - ref<int> is not correctly recognized
+
+
+------                                                           
+Pipeline:
+------                                                                                         
+
+              dev - elena 4.0
                  * (re)implement hashTable, using links, load control and so on
                  * fix : Hailstone sequence
                  * fix : Trigonometric functions (arctan)
@@ -50,11 +62,6 @@ In development:
                  * check Array<..>
                  * review String / WideString, get rid of internal methods - use them directly
 
-------                                                           
-Pipeline:
-------                                                                                         
-
-              dev - elena 4.0
                  * (#378) support AccessViolation - _pxcptinfoptrs
                  * (#378) support Stackoverflow / OutOfMemory exception, reduce the maximal heap size in callstack
                  * lazy::(console.write("Reading a number:").readLine().toInt()) should generate an error?

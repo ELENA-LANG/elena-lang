@@ -443,6 +443,7 @@ ClassSectionInfo Instance :: getClassSectionInfo(ReferenceInfo referenceInfo, si
    else {
       sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
       sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
+      sectionInfo.attrSection = sectionInfo.module->mapSection(referenceID | mskAttributeRef, true);
    }
 
    return sectionInfo;

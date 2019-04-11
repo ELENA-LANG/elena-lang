@@ -109,11 +109,13 @@ struct ClassSectionInfo
    _Module* module;
    _Memory* codeSection;
    _Memory* vmtSection;
+   _Memory* attrSection;
 
    ClassSectionInfo()
    {
-      module = NULL;
-      codeSection = vmtSection = NULL;
+      module = nullptr;
+      codeSection = vmtSection = nullptr;
+      attrSection = nullptr;
    }
 };
 
@@ -514,24 +516,26 @@ struct ClassInfo
    typedef MemoryMap<ident_t, int, true>       FieldMap;
    typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
    typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
-   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
+   typedef MemoryMap<Attribute, ref_t, false>  CategoryInfoMap;
    typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
-   ClassHeader    header;
-   int            size;           // Object size
-   MethodMap      methods;        // list of methods, true means the method was declared in this instance
-   FieldMap       fields;
-   StaticFieldMap statics;
-   StaticInfoMap  staticValues;
+   ClassHeader     header;
+   int             size;           // Object size
+   MethodMap       methods;        // list of methods, true means the method was declared in this instance
+   FieldMap        fields;
+   StaticFieldMap  statics;
+   StaticInfoMap   staticValues;
 
-   FieldTypeMap   fieldTypes;
-   MethodInfoMap  methodHints;
+   FieldTypeMap    fieldTypes;
+   CategoryInfoMap methodHints;
+   CategoryInfoMap attributes;   
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
       writer->write((void*)this, sizeof(ClassHeader));
       writer->writeDWord(size);
       if (!headerAndSizeOnly) {
+         attributes.write(writer);
          staticValues.write(writer);
          methods.write(writer);
          methodHints.write(writer);
@@ -546,6 +550,7 @@ struct ClassInfo
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
       if (!headerOnly) {
+         attributes.read(reader);
          staticValues.read(reader);
          methods.read(reader);
          methodHints.read(reader);

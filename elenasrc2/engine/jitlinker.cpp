@@ -598,6 +598,8 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
 
    ReferenceHelper refHelper(this, sectionInfo.module, &references);
 
+   MemoryReader attrReader(sectionInfo.attrSection);
+
    // VMT just in time compilation
    MemoryReader vmtReader(sectionInfo.vmtSection);
    // read tape record size
@@ -694,9 +696,23 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
             resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
          }
       }
+
+      // generate run-time attributes
+      ClassInfo::CategoryInfoMap attributes;
+      attributes.read(&attrReader);
+
+      createAttributes(attributes);
    }
 
    return vaddress;
+}
+
+void JITLinker :: createAttributes(ClassInfo::CategoryInfoMap& attributes)
+{
+   auto it = attributes.start();
+   while (!it.Eof()) {
+      it++;
+   }
 }
 
 void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo)
