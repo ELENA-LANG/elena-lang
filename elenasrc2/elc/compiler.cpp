@@ -1439,12 +1439,12 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       // import references if we inheriting class from another module
       if (moduleScope->module != module) {
          ClassInfo copy;
-         copy.load(&reader);
+         copy.load(&reader, false, false, true);
 
          moduleScope->importClassInfo(copy, scope.info, module, false, true, ignoreFields);
       }
       else {
-         scope.info.load(&reader, false, ignoreFields);
+         scope.info.load(&reader, false, ignoreFields, true);
 
          // mark all methods as inherited
          ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
@@ -1661,14 +1661,15 @@ int Compiler :: resolveSize(SNode node, Scope& scope)
    }
 }
 
-void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, /*ref_t& elementRef, */int& size, bool& isStaticField, bool& isSealed, bool& isConstant, bool& isEmbeddable)
+void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, /*ref_t& elementRef, */int& size, bool& isStaticField, 
+   /*bool& isSealed, bool& isConstant, */bool& isEmbeddable)
 {
    bool inlineArray = false;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (_logic->validateFieldAttribute(value, isSealed, isConstant, isEmbeddable)) {
+         if (_logic->validateFieldAttribute(value, /*isSealed, isConstant, */isEmbeddable)) {
             if (value == lxStaticAttr) {
                isStaticField = true;
             }
@@ -3599,6 +3600,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       case okLocal:
       case okField:
       case okStaticField:
+      case okClassStaticField:
       case okOuterField:
       case okOuterStaticField:
          break;
@@ -3938,7 +3940,8 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
          _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef); 
       }
 
-      declareVMT(node, scope);
+      bool implicitMode = true;
+      declareVMT(node, scope, implicitMode);
 
       // COMPILER MAGIC : check if it is a virtual vmt (only for the class initialization)
       SNode current = node.firstChild();
@@ -6332,7 +6335,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
 
 void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-   bool staticFieldsInherited = false;
+   bool staticFieldsCopied = false;
 
    // add virtual constructor
    if (classClassScope.info.methods.exist(classScope.moduleScope->newobject_message, true)) {
@@ -6362,11 +6365,11 @@ void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& c
          }
          case lxStaticMethod:
          {
-            if (!staticFieldsInherited) {
+            if (!staticFieldsCopied) {
                // HOTFIX : inherit static fields
                classClassScope.copyStaticFields(classScope.info.statics, classScope.info.staticValues);
 
-               staticFieldsInherited = true;
+               staticFieldsCopied = true;
             }
 
             MethodScope methodScope(&classClassScope);
@@ -6445,19 +6448,19 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
          ref_t fieldRef = 0;
          ref_t elementRef = 0;
          bool isStatic = false;
-         bool isSealed = false;
-         bool isConst = false;
+         //bool isSealed = false;
+         //bool isConst = false;
          bool isEmbeddable = false;
          int sizeHint = 0;
-         declareFieldAttributes(current, scope, fieldRef/*, elementRef*/, sizeHint, isStatic, isSealed, isConst, isEmbeddable);
+         declareFieldAttributes(current, scope, fieldRef/*, elementRef*/, sizeHint, isStatic, /*isSealed, isConst, */isEmbeddable);
 
-         if (isStatic) {
-            if (sizeHint == -1) {
-               fieldRef = resolvePrimitiveArray(scope, fieldRef, false);
-            }
-            generateClassStaticField(scope, current, fieldRef/*, elementRef*/, isSealed, isConst);
+         if (isStatic && sizeHint == 0 && !isEmbeddable) { // !! temporal
+            //if (sizeHint == -1) {
+            //   fieldRef = resolvePrimitiveArray(scope, fieldRef, false);
+            //}
+            generateClassStaticField(scope, current, fieldRef/*, elementRef*//*, isSealed, isConst*/);
          }
-         else if (isSealed || isConst) {
+         else if (/*isSealed || isConst || */isStatic) {
             scope.raiseError(errIllegalField, current);
          }
          else generateClassField(scope, current, fieldRef, elementRef, sizeHint, singleField, isEmbeddable);
@@ -6524,24 +6527,20 @@ void Compiler :: compilePreloadedCode(_ModuleScope& scope, SNode node)
    _writer.saveTape(tape, scope);
 }
 
-void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope)
+void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope, bool implicitMode)
 {
-   if (classScope.info.header.parentRef == 0) {
-      //   classScope.raiseError(errNoConstructorDefined, node.findChild(lxIdentifier, lxPrivate));
-      classScope.info.header.parentRef = classScope.moduleScope->superReference;
-   }
-   else {
-      // the constructors aren't inherited for abstract or dynamic classes
-      if (!classScope.abstractMode && !test(classScope.info.header.flags, elDynamicRole)) {
-         IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
-         classClassParentName.append(CLASSCLASS_POSTFIX);
+   if (implicitMode) {
+      // if no static method / constructors are declared - class class should inherit the parent class class
+      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
+      classClassParentName.append(CLASSCLASS_POSTFIX);
 
-         classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-      }
-      else {
-         classClassScope.info.header.parentRef = classScope.moduleScope->superReference;
-         classClassScope.abstractMode = true;
-      }
+      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+   }
+   else classClassScope.info.header.parentRef = classScope.moduleScope->superReference;
+
+   if (classScope.abstractMode || test(classScope.info.header.flags, elDynamicRole)) {
+      // dynamic class should not have default constructor
+      classClassScope.abstractMode = true;
    }
 
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef/*, true*/);
@@ -6604,7 +6603,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
       methodScope.genericClosure = true;
 }
 
-void Compiler :: declareVMT(SNode node, ClassScope& scope)
+void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& implicitClass)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -6620,6 +6619,8 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
          else methodScope.message = current.argument;
 
          if (test(methodScope.hints, tpConstructor)) {
+            implicitClass = false;
+
             if (_logic->isAbstract(scope.info)) {
                // abstract class cannot have constructors
                scope.raiseError(errIllegalMethod, current);
@@ -6637,6 +6638,8 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
             current = lxIdle;
          }
          else if (test(methodScope.hints, tpStatic)) {
+            implicitClass = false;
+
             current = lxStaticMethod;
          }
 
@@ -6806,7 +6809,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, ref_t elementRef*/, bool isSealed, bool isConst)
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, ref_t elementRef*//*, bool isSealed, bool isConst*/)
 {
    _Module* module = scope.module;
 
@@ -6820,7 +6823,7 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       else scope.raiseError(errDuplicatedField, current);
    }
 
-   if (isSealed) {
+   //if (isSealed) {
       // generate static reference
       IdentifierString name(module->resolveReference(scope.reference));
       name.append(STATICFIELD_POSTFIX);
@@ -6829,27 +6832,27 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
          module->mapReference(name);
 
       scope.info.statics.add(terminal, ClassInfo::FieldInfo(ref, fieldRef));
-      if (isConst) {
-         // HOTFIX : add read-only attribute (!= mskStatRef)
-         scope.info.staticValues.add(ref, mskConstantRef);
-      }
-   }
-   else {
-      int index = ++scope.info.header.staticSize;
-      index = -index - 4;
+      //if (isConst) {
+      //   // HOTFIX : add read-only attribute (!= mskStatRef)
+      //   scope.info.staticValues.add(ref, mskConstantRef);
+      //}
+   //}
+   //else {
+   //   int index = ++scope.info.header.staticSize;
+   //   index = -index - 4;
 
-      scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
+   //   scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
 
-      if (isConst) {
-         ReferenceNs name(module->resolveReference(scope.reference));
-         name.append(STATICFIELD_POSTFIX);
-         name.append("##");
-         name.appendInt(-index);
+   //   if (isConst) {
+   //      ReferenceNs name(module->resolveReference(scope.reference));
+   //      name.append(STATICFIELD_POSTFIX);
+   //      name.append("##");
+   //      name.appendInt(-index);
 
-         scope.info.staticValues.add(index, module->mapReference(name) | mskConstArray);
-      }
-      else scope.info.staticValues.add(index, (ref_t)mskStatRef);
-   }
+   //      scope.info.staticValues.add(index, module->mapReference(name) | mskConstArray);
+   //   }
+   //   else scope.info.staticValues.add(index, (ref_t)mskStatRef);
+   //}
 }
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message, bool allowTypeAttribute)
@@ -7254,7 +7257,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
    bool closed = test(scope.info.header.flags, elClosed);
 
    if (isClassClass(classType)) {
-      if (!scope.abstractMode && _logic->isDefaultConstructorEnabled(scope.info)) {
+      if (!scope.abstractMode) {
          scope.include(scope.moduleScope->newobject_message);
       }
    }
@@ -7383,7 +7386,8 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
    declareClassAttributes(node, scope);
 
-   declareVMT(node, scope);
+   bool implicitMode = true;
+   declareVMT(node, scope, implicitMode);
 
    ClassType type = ClassType::ctUndefinedClass;
    generateClassDeclaration(node, scope, type);
@@ -7414,7 +7418,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
       ClassScope classClassScope((NamespaceScope*)scope.parent, scope.info.header.classRef);
       classClassScope.info.header.flags |= /*(*/elClassClass/* | elFinal)*/; // !! IMPORTANT : classclass flags should be set
 
-      compileClassClassDeclaration(node, classClassScope, scope);
+      compileClassClassDeclaration(node, classClassScope, scope, implicitMode);
    }
 }
 

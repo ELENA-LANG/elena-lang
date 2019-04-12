@@ -6,6 +6,16 @@ In development:
                  * static field initializer should be invoked only if the class is used, special symbol should be used,
                    passing a class as a reference
 
+                 * declaring a class attribute
+                 * an extension should be allowed to access class attributes?!
+
+                 * dynamic default constructor should create an empty dynamic object
+                 * calling parent constructor
+                 * abstract class cannot be created
+
+                 * support constant class attributes
+                 * support constant class meta attributes
+
                  * implement class attribute - a preloaded code which is invoked only if the
                    class is used
                  * array accumulation - operation to be implemented in compile time
