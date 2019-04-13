@@ -508,6 +508,12 @@ enum MethodAttribute
    maMultimethod        = 0x40B,
 };
 
+enum ClassAttribute
+{
+   caNone         = 0x000,
+   caInitializer  = 0x001
+};
+
 struct ClassInfo
 {
    typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element

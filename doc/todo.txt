@@ -3,9 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * static field initializer should be invoked only if the class is used, special symbol should be used,
-                   passing a class as a reference
-
                  * declaring a class attribute
                  * an extension should be allowed to access class attributes?!
 

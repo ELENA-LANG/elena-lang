@@ -976,6 +976,7 @@ private:
    void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
+   ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
    void compilePreloadedCode(SymbolScope& scope);
    void compilePreloadedCode(_ModuleScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);

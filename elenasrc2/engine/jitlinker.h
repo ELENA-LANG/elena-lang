@@ -152,7 +152,7 @@ class JITLinker : _JITLoaderListener
    ref_t resolveMessage(_Module* module, ref_t reference);
    ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne);
 
-   void createAttributes(ClassInfo::CategoryInfoMap& attributes);
+   void createAttributes(_Module* module, ClassInfo::CategoryInfoMap& attributes);
 
    void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveConstVariable(ident_t  reference, int mask);

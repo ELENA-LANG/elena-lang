@@ -6514,6 +6514,24 @@ void Compiler :: compilePreloadedCode(SymbolScope& scope)
    _writer.saveTape(tape, *scope.moduleScope);
 }
 
+ref_t Compiler :: compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node)
+{
+   _Module* module = scope.module;
+
+   IdentifierString sectionName(scope.module->resolveReference(classRef));
+   sectionName.append(INITIALIZER_SECTION);
+
+   ref_t actionRef = module->mapReference(sectionName);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, actionRef, node);
+
+   // create byte code sections
+   _writer.saveTape(tape, scope);
+
+   return actionRef;
+}
+
 void Compiler :: compilePreloadedCode(_ModuleScope& scope, SNode node)
 {
    _Module* module = scope.module;
@@ -7681,7 +7699,9 @@ void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScop
 
    analizeSymbolTree(expressionTree.readRoot(), scope);
 
-   compilePreloadedCode(*scope.moduleScope, expressionTree.readRoot());
+   ref_t actionRef = compileClassPreloadedCode(*scope.moduleScope, scope.reference, expressionTree.readRoot());
+   scope.info.attributes.exclude(Attribute(caInitializer, 0));
+   scope.info.attributes.add(Attribute(caInitializer, 0), actionRef);
 }
 
 // NOTE : elementRef is used for binary arrays

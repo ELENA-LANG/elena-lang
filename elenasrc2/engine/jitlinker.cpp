@@ -701,16 +701,21 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       ClassInfo::CategoryInfoMap attributes;
       attributes.read(&attrReader);
 
-      createAttributes(attributes);
+      createAttributes(referenceInfo.module, attributes);
    }
 
    return vaddress;
 }
 
-void JITLinker :: createAttributes(ClassInfo::CategoryInfoMap& attributes)
+void JITLinker :: createAttributes(_Module* module, ClassInfo::CategoryInfoMap& attributes)
 {
    auto it = attributes.start();
    while (!it.Eof()) {
+      ClassInfo::Attribute attr = it.key();
+      if (attr.value1 == caInitializer) {
+         _initializers.add(ModuleReference(module, *it));
+      }
+
       it++;
    }
 }
