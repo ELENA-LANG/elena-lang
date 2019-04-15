@@ -5749,6 +5749,12 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
             classRef = info.header.classRef;
             found = true;
 
+            target.reference = classRef;
+            if (implicitConstructor) {
+               messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), stackSafeAttr);
+            }
+            else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
+
             break;
          }
          else parent = info.header.parentRef;

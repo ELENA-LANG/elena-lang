@@ -409,7 +409,7 @@ char* StrFactory :: clone(const char* s)
 
 char* StrFactory :: allocate(size_t size, const char* value)
 {
-   char*s = (char*)malloc(size);
+   char* s = (char*)malloc(size);
 
    if (!emptystr(value))
       memcpy(s, value, size);

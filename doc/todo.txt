@@ -3,8 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * check critical exception handling
-
                  * declaring a class attribute
                  * class attribute can be only string / int currently
                  * inherit the attributes

@@ -177,9 +177,9 @@ inline void entryCriticalSection(void* tt_lock)
       labWait :
       // ; set lock
       xor  eax, eax
-         mov  edx, 1
-         lock cmpxchg dword ptr[esi], edx
-         jnz  short labWait
+      mov  edx, 1
+      lock cmpxchg dword ptr[esi], edx
+      jnz  short labWait
    }
 }
 
