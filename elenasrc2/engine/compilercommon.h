@@ -72,6 +72,8 @@ constexpr auto V_NOSTRUCT        = 0x8000101Bu;
 constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
+constexpr auto V_CLASSATTR       = 0x8000101Fu;
+constexpr auto V_ATTRSCOPE       = 0x80001020u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -393,6 +395,23 @@ public:
 class _CompilerLogic
 {
 public:
+   struct FieldAttributes
+   {
+      ref_t fieldRef;
+      ref_t elementRef;
+      int   size;
+      bool  isStaticField;
+      bool  isEmbeddable;
+      bool  isClassAttr;
+
+      FieldAttributes()
+      {
+         elementRef = fieldRef = 0;
+         size = 0;
+         isStaticField = isEmbeddable = isClassAttr = false;
+      }
+   };
+
    struct ExpressionAttributes
    {
       bool  typeAttr;
@@ -532,7 +551,7 @@ public:
    virtual bool validateClassAttribute(int& attrValue) = 0;
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
-   virtual bool validateFieldAttribute(int& attrValue, /*bool& isSealed, bool& isConstant, */bool& isEmbeddable) = 0;
+   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;

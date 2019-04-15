@@ -549,7 +549,7 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
          {
             compile(templateTree, path.c_str());
          }
-         catch (_Exception& e)
+         catch (_Exception&)
          {
             return 0;
          }

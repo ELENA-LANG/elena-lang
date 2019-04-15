@@ -66,6 +66,7 @@ constexpr auto INITIALIZER_SCOPE    = 0x00000001;   // indicates the constructor
 typedef Compiler::ObjectInfo                 ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute                 Attribute;
 typedef _CompilerLogic::ExpressionAttributes ExpressionAttributes;
+typedef _CompilerLogic::FieldAttributes      FieldAttributes;
 
 // --- Auxiliary routines ---
 
@@ -1254,7 +1255,7 @@ ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, bo
    else return resolveObjectReference(*scope.moduleScope, object);
 }
 
-ref_t Compiler :: resolveObjectReference(_ModuleScope& scope, ObjectInfo object)
+ref_t Compiler :: resolveObjectReference(_ModuleScope&, ObjectInfo object)
 {
    // if static message is sent to a class class
    switch (object.kind)
@@ -1661,17 +1662,16 @@ int Compiler :: resolveSize(SNode node, Scope& scope)
    }
 }
 
-void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fieldRef, /*ref_t& elementRef, */int& size, bool& isStaticField, 
-   /*bool& isSealed, bool& isConstant, */bool& isEmbeddable)
+void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttributes& attrs)
 {
    bool inlineArray = false;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (_logic->validateFieldAttribute(value, /*isSealed, isConstant, */isEmbeddable)) {
+         if (_logic->validateFieldAttribute(value, attrs)) {
             if (value == lxStaticAttr) {
-               isStaticField = true;
+               attrs.isStaticField = true;
             }
             else if (value == -1) {
                // ignore if constant / sealed attribute was set
@@ -1682,35 +1682,35 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
                   inlineArray = true;
                }
                // if it is a primitive type
-               else fieldRef = current.argument;
+               else attrs.fieldRef = current.argument;
             }
             else scope.raiseError(errInvalidHint, node);
          }
          else scope.raiseError(errInvalidHint, current);
       }
       else if (current == lxTypeAttribute) {
-         if (fieldRef == 0) {
+         if (attrs.fieldRef == 0) {
             if (inlineArray) {
                // if it is an inline array - it should be compiled differently
                SNode arrayNode = current.firstChild();
                if (arrayNode == lxArrayType) {
-                  fieldRef = resolveTypeAttribute(scope, arrayNode, false);
-                  size = -1;
+                  attrs.fieldRef = resolveTypeAttribute(scope, arrayNode, false);
+                  attrs.size = -1;
                }
                else scope.raiseError(errInvalidHint, current);
             }
             // NOTE : the field type should be already declared only for the structure
-            else fieldRef = resolveTypeAttribute(scope, current, 
+            else attrs.fieldRef = resolveTypeAttribute(scope, current,
                !test(scope.info.header.flags, elStructureRole));
          }
          else scope.raiseError(errInvalidHint, node);
       }
       else if (current == lxSize) {
-         if (size == 0) {
+         if (attrs.size == 0) {
             if (current.argument) {
-               size = current.argument;
+               attrs.size = current.argument;
             }
-            else size = resolveSize(current.firstChild(lxTerminalMask), scope);
+            else attrs.size = resolveSize(current.firstChild(lxTerminalMask), scope);
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -1719,58 +1719,58 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, ref_t& fi
    }
 
    //HOTFIX : recognize raw data
-   if (fieldRef == V_INTBINARY) {
-      switch (size) {
+   if (attrs.fieldRef == V_INTBINARY) {
+      switch (attrs.size) {
          case 1:
          case 2:
          case 4:
             // treat it like dword
-            fieldRef = V_INT32;
+            attrs.fieldRef = V_INT32;
             break;
          case 8:
             // treat it like qword
-            fieldRef = V_INT64;
+            attrs.fieldRef = V_INT64;
             break;
          default:
             scope.raiseError(errInvalidHint, node);
             break;
       }
    }
-   else if (fieldRef == V_BINARY) {
-      switch (size) {
+   else if (attrs.fieldRef == V_BINARY) {
+      switch (attrs.size) {
          case 4:
             // treat it like dword
-            fieldRef = V_DWORD;
+            attrs.fieldRef = V_DWORD;
             break;
          default:
             scope.raiseError(errInvalidHint, node);
             break;
       }
    }
-   else if (fieldRef == V_PTRBINARY) {
-      switch (size) {
+   else if (attrs.fieldRef == V_PTRBINARY) {
+      switch (attrs.size) {
          case 4:
             // treat it like dword
-            fieldRef = V_PTR32;
+            attrs.fieldRef = V_PTR32;
             break;
          default:
             scope.raiseError(errInvalidHint, node);
             break;
       }
    }
-   else if (fieldRef == V_MESSAGE || fieldRef == V_SUBJECT) {
-      if (size == 8 && fieldRef == V_MESSAGE) {
-         fieldRef = V_EXTMESSAGE;
+   else if (attrs.fieldRef == V_MESSAGE || attrs.fieldRef == V_SUBJECT) {
+      if (attrs.size == 8 && attrs.fieldRef == V_MESSAGE) {
+         attrs.fieldRef = V_EXTMESSAGE;
       }
-      else if (size != 4) {
+      else if (attrs.size != 4) {
          scope.raiseError(errInvalidHint, node);
       }
    }
-   else if (fieldRef == V_FLOAT) {
-      switch (size) {
+   else if (attrs.fieldRef == V_FLOAT) {
+      switch (attrs.size) {
          case 8:
             // treat it like dword
-            fieldRef = V_REAL64;
+            attrs.fieldRef = V_REAL64;
             break;
          default:
             scope.raiseError(errInvalidHint, node);
@@ -3219,8 +3219,6 @@ bool Compiler :: convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t tar
 
 bool Compiler :: typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
 {
-   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-
    ref_t sourceRef = resolveObjectReference(scope, source);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       // if it is not compatible - send type-casting message
@@ -5263,7 +5261,6 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
    bool byRefArg = false;
    bool arrayArg = false;
    bool paramsArg = false;
-   bool templateArg = false;
    bool typeSet = false;
 
    SNode current = node.firstChild();
@@ -5858,7 +5855,7 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
    }
 }
 
-bool Compiler :: isMethodEmbeddable(MethodScope& scope, SNode node)
+bool Compiler :: isMethodEmbeddable(MethodScope& scope, SNode)
 {
    if (test(scope.hints, tpEmbeddable)) {
       ClassScope* ownerScope = (ClassScope*)scope.parent;
@@ -6439,31 +6436,44 @@ void Compiler :: validateClassFields(SNode node, ClassScope& scope)
    }
 }
 
+bool Compiler :: isValidAttributeType(Scope& scope, ref_t fieldRef, int size)
+{
+   _ModuleScope* moduleScope = scope.moduleScope;
+
+   if (size != 0) {
+      return false;
+   }
+   else if (fieldRef == moduleScope->literalReference) {
+      return true;
+   }
+   else return false;
+}
+
 void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleField)
 {
    SNode current = node.firstChild();
 
    while (current != lxNone) {
       if (current == lxClassField) {
-         ref_t fieldRef = 0;
-         ref_t elementRef = 0;
-         bool isStatic = false;
-         //bool isSealed = false;
-         //bool isConst = false;
-         bool isEmbeddable = false;
-         int sizeHint = 0;
-         declareFieldAttributes(current, scope, fieldRef/*, elementRef*/, sizeHint, isStatic, /*isSealed, isConst, */isEmbeddable);
+         FieldAttributes attrs;
+         declareFieldAttributes(current, scope, attrs);
 
-         if (isStatic && sizeHint == 0 && !isEmbeddable) { // !! temporal
+         if (attrs.isStaticField && attrs.size == 0 && !attrs.isEmbeddable) { // !! temporal
             //if (sizeHint == -1) {
             //   fieldRef = resolvePrimitiveArray(scope, fieldRef, false);
             //}
-            generateClassStaticField(scope, current, fieldRef/*, elementRef*//*, isSealed, isConst*/);
+            generateClassStaticField(scope, current, attrs.fieldRef/*, elementRef*/, true, false);
          }
-         else if (/*isSealed || isConst || */isStatic) {
+         else if (/*isSealed || isConst || */attrs.isStaticField) {
             scope.raiseError(errIllegalField, current);
          }
-         else generateClassField(scope, current, fieldRef, elementRef, sizeHint, singleField, isEmbeddable);
+         else if (attrs.isClassAttr) {
+            if (!isValidAttributeType(scope, attrs.fieldRef, attrs.size))
+               scope.raiseError(errIllegalField, current);
+
+            generateClassStaticField(scope, current, attrs.fieldRef, false, true);
+         }
+         else generateClassField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.size, singleField, attrs.isEmbeddable);
       }
       //else if (current == lxFieldInit) {
       //   // HOTFIX : reallocate static constant
@@ -6827,7 +6837,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, ref_t elementRef*//*, bool isSealed, bool isConst*/)
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, ref_t elementRef*/, bool isSealed, bool isConst)
 {
    _Module* module = scope.module;
 
@@ -6841,7 +6851,9 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       else scope.raiseError(errDuplicatedField, current);
    }
 
-   //if (isSealed) {
+   if (isSealed) {
+      // if it is a static field
+
       // generate static reference
       IdentifierString name(module->resolveReference(scope.reference));
       name.append(STATICFIELD_POSTFIX);
@@ -6854,23 +6866,23 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       //   // HOTFIX : add read-only attribute (!= mskStatRef)
       //   scope.info.staticValues.add(ref, mskConstantRef);
       //}
-   //}
-   //else {
-   //   int index = ++scope.info.header.staticSize;
-   //   index = -index - 4;
+   }
+   else {
+      int index = ++scope.info.header.staticSize;
+      index = -index - 4;
 
-   //   scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
+      scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
 
-   //   if (isConst) {
-   //      ReferenceNs name(module->resolveReference(scope.reference));
-   //      name.append(STATICFIELD_POSTFIX);
-   //      name.append("##");
-   //      name.appendInt(-index);
+      if (isConst) {
+         //ReferenceNs name(module->resolveReference(scope.reference));
+         //name.append(STATICFIELD_POSTFIX);
+         //name.append("##");
+         //name.appendInt(-index);
 
-   //      scope.info.staticValues.add(index, module->mapReference(name) | mskConstArray);
-   //   }
+         //scope.info.staticValues.add(index, module->mapReference(name) | mskConstArray);
+      }
    //   else scope.info.staticValues.add(index, (ref_t)mskStatRef);
-   //}
+   }
 }
 
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message, bool allowTypeAttribute)
@@ -7868,7 +7880,7 @@ ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
    return node.findChild(lxTarget).argument;
 }
 
-ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int mode)
+ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
 {   
    SNode attr = node.findChild(lxEmbeddableAttr);
    if (attr == lxEmbeddableAttr) {
@@ -8235,7 +8247,7 @@ ref_t Compiler :: analizeSubExpression(SNode node, NamespaceScope& scope, int mo
    return result;
 }
 
-ref_t Compiler :: analizeAltExpression(SNode node, NamespaceScope& scope, int mode)
+ref_t Compiler :: analizeAltExpression(SNode node, NamespaceScope&, int)
 {
    SNode assignNode = node.findChild(lxAssigning);
    SNode assignTargetNode = assignNode.findChild(lxLocal);
@@ -9122,7 +9134,7 @@ void Compiler :: injectVirtualDispatchMethod(SNode classNode, ref_t message, Lex
    expr.appendNode(type, argument);
 }
 
-void Compiler :: injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef)
+void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, ref_t message, ident_t variable, ref_t outputRef)
 {
    SNode methNode = classNode.appendNode(lxClassMethod, message);
    methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration

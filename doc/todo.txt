@@ -4,7 +4,10 @@ In development:
 
               dev - elena 4.0
                  * declaring a class attribute
+                 * class attribute can be only string / int currently
 
+
+                 * declaring a message attribute
 
                  * an extension should be allowed to access class attributes?!
 

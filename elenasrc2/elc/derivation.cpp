@@ -1041,7 +1041,7 @@ inline void checkFieldPropAttributes(SNode node, bool& withPropertyTemplate, boo
    }
 }
 
-void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
+void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree&)
 {
    // COMPILER MAGIC : property declaration
    bool withPropertyTemplate = false;
@@ -1437,7 +1437,7 @@ ref_t DerivationWriter :: resolveTemplate(ident_t templateName)
    return 0;
 }
 
-void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope& derivationScope)
+void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope&)
 {
    //ref_t templateRef = _scope->attributes.get(templateName.c_str());
    ref_t templateRef = resolveTemplate(templateName);
@@ -2334,7 +2334,7 @@ void TemplateGenerator :: importClass(SyntaxWriter& output, SNode classNode)
    }
 }
 
-ref_t TemplateGenerator :: declareTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)
+ref_t TemplateGenerator :: declareTemplate(SyntaxWriter&, _ModuleScope& scope, ref_t reference, List<SNode>& parameters)
 {
    TemplateScope templateScope(&scope, reference, NULL, NULL);
    templateScope.sourcePath = "compiling template...";

@@ -1717,19 +1717,20 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
    }
 }
 
-bool CompilerLogic :: validateFieldAttribute(int& attrValue, /*bool& isSealed, bool& isConstant, */bool& isEmbeddable)
+bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& attrs)
 {
    switch ((size_t)attrValue)
    {
       case V_EMBEDDABLE:
-         if (!isEmbeddable) {
-            isEmbeddable = true;
-            attrValue = -1;
-            return true;
-         }
-         else return false;
+         attrs.isEmbeddable = true;
+         attrValue = -1;
+         return true;
       case V_STATIC:
          attrValue = lxStaticAttr;
+         return true;
+      case V_CLASSATTR:
+         attrValue = -1;
+         attrs.isClassAttr = true;
          return true;
       //case V_SEALED:
       //   if (!isSealed) {
@@ -2045,7 +2046,7 @@ bool CompilerLogic :: validateBoxing(_ModuleScope& scope, _Compiler& compiler, S
    SNode exprNode = node.findSubNodeMask(lxObjectMask);   
 
    if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
-      if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
+      if (exprNode.type != lxLocalAddress && exprNode.type != lxFieldAddress) {
       }
       else node = lxExpression;
    }
@@ -2331,7 +2332,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
          String<char, 5> tmp;
          tmp.copy(pattern + i + 1, end - i - 1);
 
-         int index = ident_t(tmp).toInt();
+         size_t index = ident_t(tmp).toInt();
 
          parameters[index - 1] = signatures[signIndex];
          if (argumentLen < index)

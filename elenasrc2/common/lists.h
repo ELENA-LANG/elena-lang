@@ -797,7 +797,9 @@ public:
 
    _MemoryIterator()
    {
-      _current = NULL;
+      _current = nullptr;
+      _map = nullptr;
+      _position = 0;
    }
 };
 

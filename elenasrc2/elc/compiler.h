@@ -841,6 +841,8 @@ private:
    ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
 //   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
 
+   bool isValidAttributeType(Scope& scope, ref_t fieldRef, int size);
+
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false/*, bool ignoreSealed = false*/);
    void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode);
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
@@ -849,8 +851,7 @@ private:
    void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode);
    void declareClassAttributes(SNode node, ClassScope& scope);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
-   void declareFieldAttributes(SNode member, ClassScope& scope, ref_t& fieldRef/*, ref_t& elementRef*/, int& size, bool& isStaticField, 
-      /*bool& isSealed, bool& isConstant, */bool& isEmbeddable);
+   void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
    void declareVMT(SNode member, ClassScope& scope, bool& implicitClass);
 
    ref_t mapTypeAttribute(SNode member, Scope& scope);
@@ -989,8 +990,8 @@ private:
    void compileForward(SNode ns, NamespaceScope& scope);
 
    void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField, bool embeddable);
-   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, *//*ref_t elementRef, *//*bool isSealed, bool isConst*/);
-
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, /*ref_t elementRef, */bool isSealed, bool isConst);
+   
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
