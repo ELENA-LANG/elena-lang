@@ -109,11 +109,13 @@ struct ClassSectionInfo
    _Module* module;
    _Memory* codeSection;
    _Memory* vmtSection;
+   _Memory* attrSection;
 
    ClassSectionInfo()
    {
-      module = NULL;
-      codeSection = vmtSection = NULL;
+      module = nullptr;
+      codeSection = vmtSection = nullptr;
+      attrSection = nullptr;
    }
 };
 
@@ -506,6 +508,12 @@ enum MethodAttribute
    maMultimethod        = 0x40B,
 };
 
+enum ClassAttribute
+{
+   caNone         = 0x000,
+   caInitializer  = 0x001
+};
+
 struct ClassInfo
 {
    typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
@@ -514,45 +522,50 @@ struct ClassInfo
    typedef MemoryMap<ident_t, int, true>       FieldMap;
    typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
    typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
-   typedef MemoryMap<Attribute, ref_t, false>  MethodInfoMap;
+   typedef MemoryMap<Attribute, ref_t, false>  CategoryInfoMap;
    typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
-   ClassHeader    header;
-   int            size;           // Object size
-   MethodMap      methods;        // list of methods, true means the method was declared in this instance
-   FieldMap       fields;
-   StaticFieldMap statics;
-   StaticInfoMap  staticValues;
+   ClassHeader     header;
+   int             size;           // Object size
+   MethodMap       methods;        // list of methods, true means the method was declared in this instance
+   FieldMap        fields;
+   StaticFieldMap  statics;
+   StaticInfoMap   staticValues;
 
-   FieldTypeMap   fieldTypes;
-   MethodInfoMap  methodHints;
+   FieldTypeMap    fieldTypes;
+   CategoryInfoMap methodHints;
+   CategoryInfoMap attributes;   
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
       writer->write((void*)this, sizeof(ClassHeader));
       writer->writeDWord(size);
       if (!headerAndSizeOnly) {
-         staticValues.write(writer);
+         attributes.write(writer);
          methods.write(writer);
          methodHints.write(writer);
-         statics.write(writer);
          fields.write(writer);
          fieldTypes.write(writer);
+         statics.write(writer);
+         staticValues.write(writer);
       }
    }
 
-   void load(StreamReader* reader, bool headerOnly = false, bool ignoreFields = false)
+   void load(StreamReader* reader, bool headerOnly = false, bool ignoreFields = false, bool ignoreStaticField = false)
    {
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
       if (!headerOnly) {
-         staticValues.read(reader);
+         attributes.read(reader);
          methods.read(reader);
          methodHints.read(reader);
-         statics.read(reader);
          if (!ignoreFields) {
             fields.read(reader);
             fieldTypes.read(reader);
+         }
+         if (!ignoreStaticField) {
+            statics.read(reader);
+            staticValues.read(reader);
          }
       }
    }

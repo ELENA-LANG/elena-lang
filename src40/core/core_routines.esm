@@ -247,8 +247,27 @@ procedure __int."readHashCodeTo$system@CharValue$@system@ref#1&system@IntNumber[
 
 end
 
+procedure __int."readHashCodeTo$system@ByteNumber$@system@ref#1&system@IntNumber[2]"
+
+  aloadsi 1
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
+procedure __int."readHashCodeTo$system@ShortNumber$@system@ref#1&system@IntNumber[2]"
+
+  aloadsi 1
+  bloadsi 2
+  ncopy
+  quitn 2
+
+end
+
 procedure __char."readLengthTo$system@CharValue$@system@ref#1&system@IntNumber[2]"
 
+  aloadsi 1
   bloadsi 2
   nload
   // ; < 80 - 1
@@ -1863,6 +1882,7 @@ end
 
 procedure __array."readLengthTo$system@Array$@system@ref#1&system@IntNumber[2]"
 
+  aloadsi 1
   len
   bloadsi 2
   nsave

@@ -42,7 +42,7 @@ class Record
         self.Phone := v;
     }
 
-    prop object Name
+    Name
     {
         get() = theName.Value;
         
@@ -52,7 +52,7 @@ class Record
         }
     }
 
-    prop object Age
+    Age
     {
         get() = theAge.Value;
         
@@ -62,7 +62,7 @@ class Record
         }
     }
 
-    prop object Phone
+    Phone
     {
         get() = thePhone.Value;
         

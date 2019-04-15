@@ -1717,7 +1717,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
    }
 }
 
-bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, bool& isConstant, bool& isEmbeddable)
+bool CompilerLogic :: validateFieldAttribute(int& attrValue, /*bool& isSealed, bool& isConstant, */bool& isEmbeddable)
 {
    switch ((size_t)attrValue)
    {
@@ -1731,20 +1731,20 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, bool& isSealed, boo
       case V_STATIC:
          attrValue = lxStaticAttr;
          return true;
-      case V_SEALED:
-         if (!isSealed) {
-            attrValue = -1;
-            isSealed = true;
-            return true;
-         }
-         else return false;
-      case V_CONST:
-         if (!isConstant) {
-            attrValue = -1;
-            isConstant = true;
-            return true;
-         }
-         else return false;
+      //case V_SEALED:
+      //   if (!isSealed) {
+      //      attrValue = -1;
+      //      isSealed = true;
+      //      return true;
+      //   }
+      //   else return false;
+      //case V_CONST:
+      //   if (!isConstant) {
+      //      attrValue = -1;
+      //      isConstant = true;
+      //      return true;
+      //   }
+      //   else return false;
       case V_FLOAT:
       case V_BINARY:
       case V_INTBINARY:

@@ -81,7 +81,7 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
       }
 
       // import method attributes
-      ClassInfo::MethodInfoMap::Iterator mtype_it = copy.methodHints.start();
+      auto mtype_it = copy.methodHints.start();
       while (!mtype_it.Eof()) {
          Attribute key = mtype_it.key();
          ref_t value = *mtype_it;
@@ -124,6 +124,17 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
          target.staticValues.add(staticValue_it.key(), val);
 
          staticValue_it++;
+      }
+
+      // import attributes
+      auto attribute_it = copy.attributes.start();
+      while (!attribute_it.Eof()) {
+         auto key = attribute_it.key();
+         ref_t val = *attribute_it;
+
+         target.attributes.add(key, val);
+         
+         attribute_it++;
       }
 
       if (!ignoreFields) {

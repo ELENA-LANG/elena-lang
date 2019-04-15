@@ -3,16 +3,22 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * embeddable get should work with nonstructure types #424
+                 * declaring a class attribute
+                 * an extension should be allowed to access class attributes?!
 
-                 * static field initializer should be invoked only if the class is used
+                 * dynamic default constructor should create an empty dynamic object
+                 * calling parent constructor
+                 * abstract class cannot be created
+
+                 * support constant class attributes
+                 * support constant class meta attributes
+
                  * implement class attribute - a preloaded code which is invoked only if the
                    class is used
                  * array accumulation - operation to be implemented in compile time
                  * operations with meta data : introducing meta object : e.g
                      __meta[class][name] := class
-                     __meta[class][dto] += name
-  
+                     __meta[class][dto] += name  
 
                  * attr_template prop_template ... prop
                  * attr_template ... method
@@ -23,6 +29,16 @@ In development:
                  * global attributes / manifest
                  * mainfest info
 
+
+                 * rix random sample
+                 * fix debugger watch : bsort - ref<int> is not correctly recognized
+
+
+------                                                           
+Pipeline:
+------                                                                                         
+
+              dev - elena 4.0
                  * (re)implement hashTable, using links, load control and so on
                  * fix : Hailstone sequence
                  * fix : Trigonometric functions (arctan)
@@ -53,11 +69,6 @@ In development:
                  * check Array<..>
                  * review String / WideString, get rid of internal methods - use them directly
 
-------                                                           
-Pipeline:
-------                                                                                         
-
-              dev - elena 4.0
                  * (#378) support AccessViolation - _pxcptinfoptrs
                  * (#378) support Stackoverflow / OutOfMemory exception, reduce the maximal heap size in callstack
                  * lazy::(console.write("Reading a number:").readLine().toInt()) should generate an error?

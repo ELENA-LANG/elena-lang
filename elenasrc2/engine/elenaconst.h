@@ -146,6 +146,7 @@ namespace _ELENA_
       mskMetaRDataRef        = 0x44000000u,   // meta data
       mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
       mskSyntaxTreeRef       = 0x46000000u,   // template, declared in subject namespace
+      mskAttributeRef        = 0x47000000u,
       //mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
       //mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
 
@@ -344,10 +345,10 @@ namespace _ELENA_
    constexpr int WARNING_MASK_3 = 7;
 
    // --- ELENA Module structure constants ---
-   constexpr auto ELENA_SIGNITURE         = "ELENA.14.";      // the stand alone image
-   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.14.";   // the ELENAVM client
+   constexpr auto ELENA_SIGNITURE         = "ELENA.15.";      // the stand alone image
+   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.15.";   // the ELENAVM client
 
-   constexpr auto MODULE_SIGNATURE        = "ELENA.14.0";     // the module version
+   constexpr auto MODULE_SIGNATURE        = "ELENA.15.0";     // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!2";
 
   // --- ELENA core module names ---
