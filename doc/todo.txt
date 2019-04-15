@@ -3,19 +3,11 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * declaring a class attribute
-                 * class attribute can be only string / int currently
-                 * inherit the attributes
-
-
-
-                 * support static as prefix to allow assign static field only
-
                  * declaring a method attribute
+                 * array static fields support accumulation operation
 
-                 * an extension should be allowed to access class attributes?!
 
-                 * support constant class attributes
+                 * support constant built-in class attributes : class name, manifest
                  * support constant class meta attributes
 
                  * implement class attribute - a preloaded code which is invoked only if the
@@ -31,18 +23,20 @@ In development:
                  * property attributes should be leading ones
 
                  * class attributes (run-time / meta)
-                 * global attributes / manifest
+                 * global attributes / manifest / class name as an attribute
                  * mainfest info
 
                  * dynamic default constructor should create an empty dynamic object
-                 * calling parent constructor
                  * abstract class cannot be created
 
+                 * an extension should be allowed to access class attributes?!
+
+                 * support seriaization properties - indicating which properties should be serilized
+                 * support class attributes - tests and test methods, test methods with data
+
+              maint
                  * rix random sample
                  * fix debugger watch : bsort - ref<int> is not correctly recognized
-
-                 * sealed static fields, cannot be changed in the child classes
-
 
 ------                                                           
 Pipeline:
@@ -167,6 +161,8 @@ Pipeline:
                  * set operation with constant array should not be allowed
                  * vm client : incorrect error if the program entry is not defined
                  * bool_expr ? 1 : 0 - the expression result should be strong-typed
+                 * support static prefix to allow operations with static field only
+                 * sealed static fields, cannot be changed in the child classes?!
  
               dev - tests          
                  * test elt

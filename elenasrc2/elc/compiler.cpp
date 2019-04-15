@@ -3507,17 +3507,10 @@ void Compiler :: inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, 
 void Compiler :: compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-   //bool accumulatorMode = false;
+   bool accumulatorMode = false;
 
    if (scope.isInitializer() && classScope != NULL) {
       ref_t valueRef = classScope->info.staticValues.get(retVal.param);
-      if (!test(valueRef, mskConstArray)) {
-         // if it is not an array - overwrite the value
-         valueRef = scope.moduleScope->mapAnonymous();
-
-         classScope->info.staticValues.add(retVal.param, valueRef | mskConstantRef);
-         classScope->save();
-      }
 
       SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::slNamespace), valueRef & ~mskAnyRef);
 
@@ -3546,7 +3539,7 @@ void Compiler :: compileClassConstantAssigning(SyntaxWriter& writer, SNode node,
       ref_t targetRef = /*accumulatorMode ? retVal.element : */retVal.reference;
       ref_t sourceRef = resolveConstantObjectReference(scope, source);
 
-      if (compileSymbolConstant(sourceNode, constantScope, source/*, accumulatorMode*/) && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
+      if (compileSymbolConstant(sourceNode, constantScope, source, accumulatorMode) && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       }
       else scope.raiseError(errInvalidOperation, node);
    }
@@ -6891,12 +6884,11 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
 
       if (isConst) {
-         //ReferenceNs name(module->resolveReference(scope.reference));
-         //name.append(STATICFIELD_POSTFIX);
-         //name.append("##");
-         //name.appendInt(-index);
+         int mask = mskConstantRef /* : mskConstArray */;
+         IdentifierString name(module->resolveReference(scope.reference));
+         name.append(STATICFIELD_POSTFIX);
 
-         //scope.info.staticValues.add(index, module->mapReference(name) | mskConstArray);
+         scope.info.staticValues.add(index, scope.moduleScope->mapAnonymous(name.c_str()) | mask);
       }
    //   else scope.info.staticValues.add(index, (ref_t)mskStatRef);
    }
@@ -7532,7 +7524,7 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
    }
 }
 
-bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal/*, bool accumulatorMode*/)
+bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
@@ -7541,7 +7533,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
    _Module* module = scope.moduleScope->module;
    MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
-   //if (accumulatorMode) {
+   if (accumulatorMode) {
    //   if (dataWriter.Position() == 0)
    //      dataWriter.Memory()->addReference(scope.moduleScope->arrayReference | mskVMTRef, (ref_t)-4);
 
@@ -7558,8 +7550,13 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
    //      dataWriter.Memory()->addReference(memberScope.reference | mskConstantRef, dataWriter.Position());
    //      dataWriter.writeDWord(0);
    //   //}
-   //}
-   //else {
+
+      return false; // !! temporal
+   }
+   else {
+      if (dataWriter.Position() > 0)
+         return false;
+
       if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
          size_t value = module->resolveConstant(retVal.param).toULong(16);
 
@@ -7633,7 +7630,7 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
          nsScope->defineConstantSymbol(scope.reference, V_INT32);
       }
       else nsScope->defineConstantSymbol(scope.reference, parentRef);
-   //}
+   }
 
    return true;
 }
@@ -7680,7 +7677,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
       if (isStatic)
          scope.raiseError(errInvalidOperation, expression);
 
-      if (!compileSymbolConstant(expressionTree.readRoot(), scope, retVal))
+      if (!compileSymbolConstant(expressionTree.readRoot(), scope, retVal, false))
          scope.raiseError(errInvalidOperation, expression);
    }
 
