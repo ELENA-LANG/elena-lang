@@ -72,8 +72,6 @@ constexpr auto V_NOSTRUCT        = 0x8000101Bu;
 constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
-constexpr auto V_CLASSATTR       = 0x8000101Fu;
-constexpr auto V_ATTRSCOPE       = 0x80001020u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -402,13 +400,14 @@ public:
       int   size;
       bool  isStaticField;
       bool  isEmbeddable;
-      bool  isClassAttr;
+      bool  isConstAttr;
+      bool  isSealedAttr;
 
       FieldAttributes()
       {
          elementRef = fieldRef = 0;
          size = 0;
-         isStaticField = isEmbeddable = isClassAttr = false;
+         isStaticField = isEmbeddable = isConstAttr = isSealedAttr = false;
       }
    };
 

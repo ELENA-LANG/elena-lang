@@ -1728,24 +1728,14 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
       case V_STATIC:
          attrValue = lxStaticAttr;
          return true;
-      case V_CLASSATTR:
+      case V_SEALED:
          attrValue = -1;
-         attrs.isClassAttr = true;
+         attrs.isSealedAttr = true;
          return true;
-      //case V_SEALED:
-      //   if (!isSealed) {
-      //      attrValue = -1;
-      //      isSealed = true;
-      //      return true;
-      //   }
-      //   else return false;
-      //case V_CONST:
-      //   if (!isConstant) {
-      //      attrValue = -1;
-      //      isConstant = true;
-      //      return true;
-      //   }
-      //   else return false;
+      case V_CONST:
+         attrValue = -1;
+         attrs.isConstAttr = true;
+         return true;
       case V_FLOAT:
       case V_BINARY:
       case V_INTBINARY:

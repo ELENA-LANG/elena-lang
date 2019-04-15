@@ -1440,12 +1440,12 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       // import references if we inheriting class from another module
       if (moduleScope->module != module) {
          ClassInfo copy;
-         copy.load(&reader, false, false, true);
+         copy.load(&reader);
 
          moduleScope->importClassInfo(copy, scope.info, module, false, true, ignoreFields);
       }
       else {
-         scope.info.load(&reader, false, ignoreFields, true);
+         scope.info.load(&reader, false, ignoreFields);
 
          // mark all methods as inherited
          ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
@@ -3511,6 +3511,14 @@ void Compiler :: compileClassConstantAssigning(SyntaxWriter& writer, SNode node,
 
    if (scope.isInitializer() && classScope != NULL) {
       ref_t valueRef = classScope->info.staticValues.get(retVal.param);
+      if (!test(valueRef, mskConstArray)) {
+         // if it is not an array - overwrite the value
+         valueRef = scope.moduleScope->mapAnonymous();
+
+         classScope->info.staticValues.add(retVal.param, valueRef | mskConstantRef);
+         classScope->save();
+      }
+
       SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::slNamespace), valueRef & ~mskAnyRef);
 
       SNode sourceNode = node;
@@ -6458,20 +6466,23 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
          FieldAttributes attrs;
          declareFieldAttributes(current, scope, attrs);
 
-         if (attrs.isStaticField && attrs.size == 0 && !attrs.isEmbeddable) { // !! temporal
+         if (attrs.isStaticField && attrs.isSealedAttr) { // !! temporal
+            if (attrs.size != 0 || attrs.isEmbeddable || attrs.isConstAttr)
+               scope.raiseError(errIllegalField, current);
+
             //if (sizeHint == -1) {
             //   fieldRef = resolvePrimitiveArray(scope, fieldRef, false);
             //}
-            generateClassStaticField(scope, current, attrs.fieldRef/*, elementRef*/, true, false);
+            generateClassStaticField(scope, current, attrs.fieldRef/*, elementRef*/, true, attrs.isConstAttr);
          }
-         else if (/*isSealed || isConst || */attrs.isStaticField) {
-            scope.raiseError(errIllegalField, current);
-         }
-         else if (attrs.isClassAttr) {
+         else if (attrs.isStaticField && attrs.isConstAttr) {
             if (!isValidAttributeType(scope, attrs.fieldRef, attrs.size))
                scope.raiseError(errIllegalField, current);
 
             generateClassStaticField(scope, current, attrs.fieldRef, false, true);
+         }
+         else if (attrs.isSealedAttr || attrs.isConstAttr || attrs.isStaticField) {
+            scope.raiseError(errIllegalField, current);
          }
          else generateClassField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.size, singleField, attrs.isEmbeddable);
       }

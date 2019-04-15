@@ -3,11 +3,17 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * check critical exception handling
+
                  * declaring a class attribute
                  * class attribute can be only string / int currently
+                 * inherit the attributes
 
 
-                 * declaring a message attribute
+
+                 * support static as prefix to allow assign static field only
+
+                 * declaring a method attribute
 
                  * an extension should be allowed to access class attributes?!
 
@@ -36,6 +42,8 @@ In development:
 
                  * rix random sample
                  * fix debugger watch : bsort - ref<int> is not correctly recognized
+
+                 * sealed static fields, cannot be changed in the child classes
 
 
 ------                                                           
