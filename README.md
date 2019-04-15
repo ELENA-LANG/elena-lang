@@ -27,13 +27,13 @@ To acquire the source code clone the git repository:
 
 ### Windows:
 
-The compiler code is implemented in C++ and does not require external dependencies. You just need Visual Studio 2017 or later.
+The compiler code is implemented in C++ and does not require external dependencies. You just need Visual Studio 2019.
 
 You have to add a path to _BIN_ folder to the system environment *PATH* or copy elenavm.dll and elenart.dll to _Windows\System32_ folder.
 
-To build the compiler under VS2017 you have to go to the root folder and type:
+To build the compiler under VS2019 you have to go to the root folder and type:
 
-    recompile15.bat
+    recompile19.bat
 
 To build the ELENA libraries type the following command:
 
