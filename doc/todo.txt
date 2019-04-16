@@ -3,6 +3,9 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * fix casting - no need to box the output 
+
+
                  * support accumulator attributes - list of messages
                  * read accumulator attributes
 

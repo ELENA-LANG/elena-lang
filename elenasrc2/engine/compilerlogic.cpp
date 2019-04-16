@@ -2057,9 +2057,9 @@ bool CompilerLogic :: validateBoxing(_ModuleScope& scope, _Compiler& compiler, S
    SNode exprNode = node.findSubNodeMask(lxObjectMask);   
 
    if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
-      if (exprNode.type != lxLocalAddress && exprNode.type != lxFieldAddress) {
-      }
-      else node = lxExpression;
+      //if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
+      //}
+      //else node = lxExpression;
    }
    else if (sourceRef == V_NIL) {
       // NIL reference is never boxed
