@@ -737,7 +737,7 @@ void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int ma
    return vaddress;
 }
 
-void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress)
+void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress, bool constArrayMode)
 {
    // resolve section references
    _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
@@ -770,6 +770,9 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
          if (_virtualMode) {
             image->addReference(mskCodeRef, offset + position);
          }
+      }
+      else if (constArrayMode && currentMask == mskMessage) {
+         (*image)[*it + position] = parseMessage(sectionInfo.module->resolveReference(currentRef), false);
       }
       else {
          void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
@@ -863,7 +866,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
       _compiler->compileCollection(&writer, sectionInfo.section);
 
       vmtVAddress = NULL; // !! to support dump array
-      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress, true);
       constantValue = true;
    }
    else if (vmtVAddress == LOADER_NOTLOADED) {
@@ -871,7 +874,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
       SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
       _compiler->compileBinary(&writer, sectionInfo.section);
 
-      fixSectionReferences(sectionInfo, image, position, vmtVAddress);
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress, false);
       constantValue = true;
    }
 

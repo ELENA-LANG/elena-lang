@@ -143,7 +143,7 @@ class JITLinker : _JITLoaderListener
    size_t getVMTFlags(void* vaddress);
 
    void fixReferences(References& relocations, _Memory* image);
-   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress);
+   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress, bool constArrayMode);
 
    size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
