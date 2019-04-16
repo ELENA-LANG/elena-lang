@@ -45,7 +45,7 @@ public sealed const struct Message
 
     get string Printable()
     {
-        intern system'core_routines'__message.getMessageName(self, ref MessageName retVal);
+        intern system'core_routines'__message.getWeakMessage(self, ref Message retVal);
         
         byte buffer[256];
         int  len := extern elenart.LoadMessageName(retVal, buffer, 255);

@@ -3020,6 +3020,22 @@ procedure __message."getMessageName$system@Message$@system@ref#1&system@MessageN
 
 end
 
+procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[2]"
+
+  aloadsi 1
+  bloadsi 2
+  nload
+  ecopyd
+  dcopyverb
+  dsetverb
+  dcopye
+  nsave
+  acopyb
+
+  quitn 2
+
+end
+
 procedure __extmessage."#dispatch[1]"
 
   bloadsi 1
