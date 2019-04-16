@@ -741,7 +741,7 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
             // if it is a method
             current = lxClassMethod;
          }
-         else if (current.firstChild().compare(lxSizeDecl, lxFieldInit, lxNone)) {
+         else if (current.firstChild().compare(lxSizeDecl, lxFieldInit, lxFieldAccum, lxNone)) {
             // if it is a field
             current = lxClassField;
             mode = MODE_PROPERTYALLOWED;
@@ -1103,7 +1103,7 @@ bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
    }
 
    // copy inplace initialization
-   SNode bodyNode = node.findChild(lxFieldInit);
+   SNode bodyNode = node.findChild(lxFieldInit, lxFieldAccum);
    if (bodyNode != lxNone) {
       SyntaxWriter bufferWriter(buffer);
 
@@ -1119,7 +1119,9 @@ bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
       }
 
       ::copyIdentifier(bufferWriter, nameNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
-      bufferWriter.appendNode(lxAssign);
+      
+      bufferWriter.appendNode(lxAssign, bodyNode == lxFieldAccum ? -1 : 0);
+
       generateExpressionTree(bufferWriter, bodyNode.findChild(lxExpression), derivationScope);
       bufferWriter.closeNode();
 

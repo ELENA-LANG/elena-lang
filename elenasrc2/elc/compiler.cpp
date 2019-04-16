@@ -1456,6 +1456,23 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
          }
       }
 
+      // inherit static field values
+      auto staticValue_it = scope.info.staticValues.start();
+      while (!staticValue_it.Eof()) {
+         ref_t ref = *staticValue_it;
+         if (ref != mskStatRef) {
+            int mask = ref & mskAnyRef;
+            IdentifierString name(module->resolveReference(scope.reference));
+            name.append(STATICFIELD_POSTFIX);
+
+            ref_t newRef = scope.moduleScope->mapAnonymous(name.c_str());
+
+            *staticValue_it = newRef | mask;
+         }
+
+         staticValue_it++;
+      }
+
       if (/*!ignoreSealed && */test(scope.info.header.flags, elSealed))
          return irSealed;
 
@@ -1689,19 +1706,23 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
          else scope.raiseError(errInvalidHint, current);
       }
       else if (current == lxTypeAttribute) {
+         SNode childNode = current.firstChild();
          if (attrs.fieldRef == 0) {
             if (inlineArray) {
                // if it is an inline array - it should be compiled differently
-               SNode arrayNode = current.firstChild();
-               if (arrayNode == lxArrayType) {
-                  attrs.fieldRef = resolveTypeAttribute(scope, arrayNode, false);
+               if (childNode == lxArrayType) {
+                  attrs.fieldRef = resolveTypeAttribute(scope, childNode, false);
                   attrs.size = -1;
                }
                else scope.raiseError(errInvalidHint, current);
             }
             // NOTE : the field type should be already declared only for the structure
-            else attrs.fieldRef = resolveTypeAttribute(scope, current,
-               !test(scope.info.header.flags, elStructureRole));
+            else {
+               attrs.fieldRef = resolveTypeAttribute(scope, current,
+                  !test(scope.info.header.flags, elStructureRole));
+
+               attrs.isArray = childNode == lxArrayType;
+            }
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -3083,16 +3104,16 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
          return compileAltOperator(writer, roperand, scope, target/*, mode, operator_id*/);
       case APPEND_OPERATOR_ID:
          node.setArgument(ADD_OPERATOR_ID);
-         return compileAssigning(writer, node, scope, target);
+         return compileAssigning(writer, node, scope, target, false);
       case REDUCE_OPERATOR_ID:
          node.setArgument(SUB_OPERATOR_ID);
-         return compileAssigning(writer, node, scope, target);
+         return compileAssigning(writer, node, scope, target, false);
       case INCREASE_OPERATOR_ID:
          node.setArgument(MUL_OPERATOR_ID);
-         return compileAssigning(writer, node, scope, target);
+         return compileAssigning(writer, node, scope, target, false);
       case SEPARATE_OPERATOR_ID:
          node.setArgument(DIV_OPERATOR_ID);
-         return compileAssigning(writer, node, scope, target);
+         return compileAssigning(writer, node, scope, target, false);
       default:
          return compileOperator(writer, roperand, scope, target, mode, operator_id);
    }
@@ -3504,42 +3525,25 @@ void Compiler :: inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, 
    }
 }
 
-void Compiler :: compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal)
+void Compiler :: compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal, bool accumulatorMode)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-   bool accumulatorMode = false;
 
    if (scope.isInitializer() && classScope != NULL) {
       ref_t valueRef = classScope->info.staticValues.get(retVal.param);
 
       SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::slNamespace), valueRef & ~mskAnyRef);
 
-      SNode sourceNode = node;
-      //SNode operatorNode = sourceNode.findSubNode(lxOperator);
-      //if (operatorNode != lxNone && operatorNode.identifier().compare("+")) {
-      //   SNode firstNode = sourceNode.findSubNodeMask(lxObjectMask);
-      //   ObjectInfo info = scope.mapTerminal(firstNode.identifier(), firstNode == lxReference, 0);
-      //   if (info.kind == retVal.kind && info.param == retVal.param) {
-      //      // HOTFIX : support accumulating attribute list
-      //      ClassInfo parentInfo;
-      //      scope.moduleScope->loadClassInfo(parentInfo, classScope->info.header.parentRef);
-      //      ref_t parentListRef = parentInfo.staticValues.get(retVal.param) & ~mskAnyRef;
+      ObjectInfo source = compileObject(writer, node, scope, 0, 0);
+      ref_t targetRef = accumulatorMode ? retVal.element : retVal.reference;
+      if (accumulatorMode && !targetRef)
+         targetRef = _logic->resolveArrayElement(*scope.moduleScope, retVal.reference);
 
-      //      if (parentListRef != 0) {
-      //         // inherit the parent list
-      //         inheritClassConstantList(*scope.moduleScope, parentListRef, constantScope.reference);
-      //      }
-
-      //      accumulatorMode = true;
-      //      sourceNode = operatorNode.nextNode();
-      //   }
-      //}
-      //ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, 0);
-      ObjectInfo source = compileObject(writer, sourceNode, scope, 0, 0);
-      ref_t targetRef = /*accumulatorMode ? retVal.element : */retVal.reference;
       ref_t sourceRef = resolveConstantObjectReference(scope, source);
+      if (isPrimitiveRef(sourceRef))
+         sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
 
-      if (compileSymbolConstant(sourceNode, constantScope, source, accumulatorMode) && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
+      if (compileSymbolConstant(node, constantScope, source, accumulatorMode, retVal.reference) && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       }
       else scope.raiseError(errInvalidOperation, node);
    }
@@ -3559,7 +3563,7 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScop
    return scope.resolveAutoType(target, sourceRef, source.element);
 }
 
-ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
+ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool accumulateMode)
 {
    ObjectInfo retVal = target;
    LexicalType operationType = lxAssigning;
@@ -3581,9 +3585,9 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       if (target.kind == okStaticField || target.kind == okStaticConstantField) {
          // HOTFIX : static field initializer should be compiled as preloaded symbol
          if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
-            compileClassConstantAssigning(writer, sourceNode, scope, target);
+            compileClassConstantAssigning(writer, sourceNode, scope, target, accumulateMode);
          }
-         else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::slClass)));
+         else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::slClass)), accumulateMode);
 
          writer.trim();
 
@@ -3592,6 +3596,10 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          return ObjectInfo();
       }
    }
+
+   if (accumulateMode)
+      // !! temporally
+      scope.raiseError(errInvalidOperation, sourceNode);
 
    ref_t targetRef = resolveObjectReference(scope, target, false);
    bool byRefAssigning = false;
@@ -4471,7 +4479,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
          objectInfo = compileBoxingExpression(writer, current, scope, objectInfo, mode);
          break;
       case lxAssign:
-         objectInfo = compileAssigning(writer, current, scope, objectInfo);
+         objectInfo = compileAssigning(writer, current, scope, objectInfo, current.argument == -1);
          break;
       case lxOperator:
          objectInfo = compileOperator(writer, current, scope, objectInfo, mode);
@@ -4883,7 +4891,7 @@ void Compiler :: compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node
 
    writer.newBookmark();   
    writeTerminal(writer, node, scope, retVar, HINT_NOBOXING);
-   compileAssigning(writer, node, scope, retVar);
+   compileAssigning(writer, node, scope, retVar, false);
    writer.removeBookmark();
 }
 
@@ -6443,17 +6451,22 @@ void Compiler :: validateClassFields(SNode node, ClassScope& scope)
    }
 }
 
-bool Compiler :: isValidAttributeType(Scope& scope, ref_t fieldRef, int size)
+bool Compiler :: isValidAttributeType(Scope& scope, FieldAttributes& attrs)
 {
    _ModuleScope* moduleScope = scope.moduleScope;
 
-   if (size != 0) {
+   if (attrs.isSealedAttr && attrs.isConstAttr)
       return false;
-   }
-   else if (fieldRef == moduleScope->literalReference) {
-      return true;
-   }
-   else return false;
+
+   //if ()
+
+   //if (size != 0) {
+   //   return false;
+   //}
+   //else if (fieldRef == moduleScope->literalReference) {
+   //   return true;
+   //}
+   /*else */return true;
 }
 
 void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleField)
@@ -6465,23 +6478,11 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
          FieldAttributes attrs;
          declareFieldAttributes(current, scope, attrs);
 
-         if (attrs.isStaticField && attrs.isSealedAttr) { // !! temporal
-            if (attrs.size != 0 || attrs.isEmbeddable || attrs.isConstAttr)
+         if (attrs.isStaticField || attrs.isClassAttr) {
+            if (!isValidAttributeType(scope, attrs))
                scope.raiseError(errIllegalField, current);
 
-            //if (sizeHint == -1) {
-            //   fieldRef = resolvePrimitiveArray(scope, fieldRef, false);
-            //}
-            generateClassStaticField(scope, current, attrs.fieldRef/*, elementRef*/, true, attrs.isConstAttr);
-         }
-         else if (attrs.isStaticField && attrs.isConstAttr) {
-            if (!isValidAttributeType(scope, attrs.fieldRef, attrs.size))
-               scope.raiseError(errIllegalField, current);
-
-            generateClassStaticField(scope, current, attrs.fieldRef, false, true);
-         }
-         else if (attrs.isSealedAttr || attrs.isConstAttr || attrs.isStaticField) {
-            scope.raiseError(errIllegalField, current);
+            generateClassStaticField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.isSealedAttr, attrs.isConstAttr, attrs.isArray);
          }
          else generateClassField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.size, singleField, attrs.isEmbeddable);
       }
@@ -6847,7 +6848,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef/*, ref_t elementRef*/, bool isSealed, bool isConst)
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst, bool isArray)
 {
    _Module* module = scope.module;
 
@@ -6872,10 +6873,10 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
          module->mapReference(name);
 
       scope.info.statics.add(terminal, ClassInfo::FieldInfo(ref, fieldRef));
-      //if (isConst) {
-      //   // HOTFIX : add read-only attribute (!= mskStatRef)
-      //   scope.info.staticValues.add(ref, mskConstantRef);
-      //}
+      if (isConst) {
+         // HOTFIX : add read-only attribute (!= mskStatRef)
+         scope.info.staticValues.add(ref, mskConstantRef);
+      }
    }
    else {
       int index = ++scope.info.header.staticSize;
@@ -6884,13 +6885,13 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
 
       if (isConst) {
-         int mask = mskConstantRef /* : mskConstArray */;
+         int mask = isArray ? mskConstArray : mskConstantRef;
          IdentifierString name(module->resolveReference(scope.reference));
          name.append(STATICFIELD_POSTFIX);
 
          scope.info.staticValues.add(index, scope.moduleScope->mapAnonymous(name.c_str()) | mask);
       }
-   //   else scope.info.staticValues.add(index, (ref_t)mskStatRef);
+      else scope.info.staticValues.add(index, (ref_t)mskStatRef);
    }
 }
 
@@ -7461,6 +7462,33 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    }
 }
 
+void Compiler :: copyStaticFieldValues(SNode node, ClassScope& scope)
+{
+   // inherit static field values
+   auto staticValue_it = scope.info.staticValues.start();
+   while (!staticValue_it.Eof()) {
+      ref_t ref = *staticValue_it;
+      if (ref != mskStatRef) {
+         int mask = ref & mskAnyRef;
+
+         if (mask == mskConstArray) {
+            // HOTFIX : inherit accumulating attribute list
+            ClassInfo parentInfo;
+            scope.moduleScope->loadClassInfo(parentInfo, scope.info.header.parentRef);
+            ref_t targtListRef = *staticValue_it & ~mskAnyRef;
+            ref_t parentListRef = parentInfo.staticValues.get(staticValue_it.key()) & ~mskAnyRef;
+
+            if (parentListRef != 0) {
+               // inherit the parent list
+               inheritClassConstantList(*scope.moduleScope, parentListRef, targtListRef);
+            }
+         }
+      }
+
+      staticValue_it++;
+   }
+}
+
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
    analizeClassTree(node, scope);
@@ -7502,6 +7530,9 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
       validateClassFields(node, scope);
    }
 
+   if (scope.info.statics.Count() > 0)
+      copyStaticFieldValues(node, scope);
+
    writer.newNode(lxClass, node.argument);
    compileVMT(writer, node, scope);
    writer.closeNode();
@@ -7524,7 +7555,7 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
    }
 }
 
-bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode)
+bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
@@ -7534,24 +7565,25 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
    MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
    if (accumulatorMode) {
-   //   if (dataWriter.Position() == 0)
-   //      dataWriter.Memory()->addReference(scope.moduleScope->arrayReference | mskVMTRef, (ref_t)-4);
+      if (dataWriter.Position() == 0) {
+         dataWriter.Memory()->addReference(accumulatorRef | mskVMTRef, (ref_t)-4);
+      }         
 
-   //   //if (retVal.kind == okSignatureConstant) {
-   //   //   dataWriter.Memory()->addReference(retVal.param | mskSignature, dataWriter.Position());
+      if (retVal.kind == okMessageConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskMessage, dataWriter.Position());
 
-   //   //   dataWriter.writeDWord(0);
-   //   //}
-   //   //else {
-   //      SymbolScope memberScope(nsScope, nsScope->mapAnonymous());
-   //      if (!compileSymbolConstant(node, memberScope, retVal))
-   //         return false;
+         dataWriter.writeDWord(0);
+      }
+      else {
+         SymbolScope memberScope(nsScope, nsScope->moduleScope->mapAnonymous());
+         if (!compileSymbolConstant(node, memberScope, retVal, false, 0))
+            return false;
 
-   //      dataWriter.Memory()->addReference(memberScope.reference | mskConstantRef, dataWriter.Position());
-   //      dataWriter.writeDWord(0);
-   //   //}
+         dataWriter.Memory()->addReference(memberScope.reference | mskConstantRef, dataWriter.Position());
+         dataWriter.writeDWord(0);
+      }
 
-      return false; // !! temporal
+      return true;
    }
    else {
       if (dataWriter.Position() > 0)
@@ -7677,7 +7709,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
       if (isStatic)
          scope.raiseError(errInvalidOperation, expression);
 
-      if (!compileSymbolConstant(expressionTree.readRoot(), scope, retVal, false))
+      if (!compileSymbolConstant(expressionTree.readRoot(), scope, retVal, false, 0))
          scope.raiseError(errInvalidOperation, expression);
    }
 
@@ -7697,8 +7729,12 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    _writer.saveTape(tape, *scope.moduleScope);
 }
 
-void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/)
+void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/, bool accumulatorMode)
 {
+   // !! temporal
+   if (accumulatorMode)
+      scope.raiseError(errIllegalOperation, node);
+
    SyntaxTree expressionTree;
    SyntaxWriter writer(expressionTree);
 

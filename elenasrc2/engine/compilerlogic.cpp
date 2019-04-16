@@ -280,6 +280,15 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
    }
 }
 
+ref_t CompilerLogic :: resolveArrayElement(_ModuleScope& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      return info.fieldTypes.get(-1).value2;
+   }
+   else return 0;
+}
+
 int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
 {
    ClassInfo info;
@@ -1734,6 +1743,11 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
          return true;
       case V_CONST:
          attrValue = -1;
+         attrs.isConstAttr = true;
+         return true;
+      case V_ATTRIBUTE:
+         attrValue = -1;
+         attrs.isClassAttr = true;
          attrs.isConstAttr = true;
          return true;
       case V_FLOAT:

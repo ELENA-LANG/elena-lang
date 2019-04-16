@@ -66,6 +66,7 @@ enum LexicalType
    lxInlineClosure            = 0x0007F,
    lxAttrExpression           = 0x00080,
    lxTemplateOperator         = 0x00081,
+   lxFieldAccum               = 0x00083,
 
    lxTypecast                 = 0x00100,
    lxClassProperty            = 0x00101,
@@ -948,11 +949,15 @@ public:
       {
          return (this->type == type1) || (this->type == type2) || (this->type == type3);
       }
+      bool compare(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
+      {
+         return (this->type == type1) || (this->type == type2) || (this->type == type3) || (this->type == type4);
+      }
 
       Node()
       {
          type = lxNone;
-         argument = 0;
+         position = argument = 0;
          strArgument = -1;
 
          tree = NULL;

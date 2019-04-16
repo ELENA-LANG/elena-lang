@@ -72,6 +72,7 @@ constexpr auto V_NOSTRUCT        = 0x8000101Bu;
 constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
+constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -402,12 +403,15 @@ public:
       bool  isEmbeddable;
       bool  isConstAttr;
       bool  isSealedAttr;
+      bool  isClassAttr;
+      bool  isArray;
 
       FieldAttributes()
       {
          elementRef = fieldRef = 0;
          size = 0;
-         isStaticField = isEmbeddable = isConstAttr = isSealedAttr = false;
+         isClassAttr = isStaticField = isEmbeddable = isConstAttr = isSealedAttr = false;
+         isArray = false;
       }
    };
 
@@ -497,6 +501,7 @@ public:
    virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
    virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info) = 0;
+   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference) = 0;
 
    // check if the classes is compatible
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef) = 0;

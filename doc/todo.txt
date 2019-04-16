@@ -3,6 +3,18 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * support accumulator attributes - list of messages
+                 * read accumulator attributes
+
+
+                 * support attributes - after declaration - every class child should initialize it,
+                   an array attributes inherites their previous value, normal one - not
+                 * support constants - declared only once and used through the class hierarchy
+                 * support static fields - after declaration - every class child should initialize it
+                 * support sealed static fields
+                 * warn if the attribute value is not set
+
+
                  * declaring a method attribute
                  * array static fields support accumulation operation
 
@@ -43,6 +55,10 @@ Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
+                 * supporting : const fields - constant values
+                 * symbols : a += b
+                 * fields : a += b
+
                  * (re)implement hashTable, using links, load control and so on
                  * fix : Hailstone sequence
                  * fix : Trigonometric functions (arctan)

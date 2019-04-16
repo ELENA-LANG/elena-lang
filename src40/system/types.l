@@ -53,6 +53,7 @@
 #8000101A = property;
 #8000101B = nonstructural;
 #8000101C = auto;
+#8000101F = attribute;
 
 /// primitive types
 #80000801 = __string;
