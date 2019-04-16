@@ -56,8 +56,7 @@ constexpr auto HINT_PROP_MODE       = 0x00000040;
 constexpr auto HINT_SILENT          = 0x00000020;
 constexpr auto HINT_FORWARD         = 0x00000010;
 constexpr auto HINT_REFOP           = 0x00000008;
-//#define HINT_INT64EXPECTED    0x00000004
-//#define HINT_REAL64EXPECTED   0x00000002
+constexpr auto HINT_RETEXPR         = 0x00000004;
 constexpr auto HINT_NOPRIMITIVES    = 0x00000001;
 
 // scope modes
@@ -2188,6 +2187,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          writeParamTerminal(writer, scope, object, mode, lxLocal);
          break;
       case okSelfParam:
+         if (test(mode, HINT_RETEXPR))
+            mode |= HINT_NOBOXING;
+
          writeParamTerminal(writer, scope, object, mode, lxSelfLocal);
          break;
       case okSuper:
@@ -4929,7 +4931,7 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             else {
                writer.newNode(lxReturning);
                writer.appendNode(lxBreakpoint, dsStep);
-               retVal = compileRetExpression(writer, current, scope, HINT_ROOT);
+               retVal = compileRetExpression(writer, current, scope, HINT_ROOT | HINT_RETEXPR);
                writer.closeNode();
             }
             break;
