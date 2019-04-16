@@ -265,7 +265,7 @@ public sealed const struct ByteNumber : IntBaseNumber
 
     /// Creates the object with a specified value
     constructor new(val)
-        <= (cast byte(val) ?? 0);
+        <= (cast byte(val));
 
     /// Returns the value as a short integer
     short cast() = new ShortNumber(self);
@@ -574,7 +574,7 @@ public sealed const struct ShortNumber : IntBaseNumber
 
     /// Creates the object with specified value
     constructor new(o)
-        <= (cast short(o) ?? 0);
+        <= (cast short(o));
 
     /// Returns the byte value        
     byte cast() = byteConvertor.convert(self);

@@ -1128,7 +1128,7 @@ bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleSco
    ref_t signRef = scope.module->mapSignature(signatures, paramCount, false);
 
    int stackSafeAttr = 0;
-   ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, paramCount, stackSafeAttr);
+   ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, paramCount, stackSafeAttr, true);
    if (messageRef) {
       compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef), stackSafeAttr);
 
@@ -1157,7 +1157,7 @@ ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
    return info.header.classRef;
 }
 
-ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr)
+ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod)
 {
    ref_t classClassRef = getClassClassRef(scope, targetRef);
    ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, 0);
@@ -1173,9 +1173,16 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
       return 0;
 
    if (classClassinfo.methods.exist(messageRef)) {
+      if (ignoreMultimethod) {
+         int hints = classClassinfo.methodHints.get(Attribute(messageRef, maHint));
+         if (test(hints, tpMultimethod))
+            return 0;
+      }
+
       return messageRef;
    }
-   else return 0;
+
+   return 0;
 }
 
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, 

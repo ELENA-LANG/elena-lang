@@ -4433,7 +4433,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
 		   bool variadicOne = false;
          ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne);
 
-         ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, targetRef, implicitSignatureRef, paramCount, stackSafeAttr);
+         ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, targetRef, implicitSignatureRef, paramCount, stackSafeAttr, false);
          if (messageRef) {
             // call the constructor if it can be resolved directly
             compileMessage(writer, node, scope, target, messageRef, HINT_SILENT | HINT_NODEBUGINFO, stackSafeAttr);
@@ -5728,7 +5728,7 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    ObjectInfo target(okClassSelf, scope.getClassRefId(), classRef);
    int stackSafeAttr = 0;
    if (implicitConstructor) {
-      messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), stackSafeAttr);
+      messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), stackSafeAttr, false);
    }
    else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
 
@@ -5752,7 +5752,7 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
 
             target.reference = classRef;
             if (implicitConstructor) {
-               messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), stackSafeAttr);
+               messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), stackSafeAttr, false);
             }
             else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
 
