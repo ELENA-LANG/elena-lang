@@ -324,10 +324,10 @@ private:
       ExtensionMap      extensions;
       ExtensionTmplMap  extensionTemplates;
 
-////      ref_t packageReference;
-//
-////      // list of references to the current module which should be checked after the project is compiled
-////      Unresolveds* forwardsUnresolved;
+      ref_t packageReference;
+
+//      // list of references to the current module which should be checked after the project is compiled
+//      Unresolveds* forwardsUnresolved;
 
       IdentifierString ns;
       IdentifierString sourcePath;
