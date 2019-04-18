@@ -151,6 +151,7 @@ class DerivationWriter : public _DerivationWriter
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope& derivationScope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, List<SNode>* parameters);
+   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateAttributeTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);

@@ -11,7 +11,6 @@ Pipeline:
               dev - elena 4.0
                  * test: internal prop x, internal prop int x
                  * test prop, event
-                 * get rid of property attribute
                  * prop public int x
                  * dynamic default constructor should create an empty dynamic object
                  * abstract class cannot be created

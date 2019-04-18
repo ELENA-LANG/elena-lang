@@ -597,7 +597,7 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPr
 
             ref_t templateRef = _scope->attributes.get(templateName.ident());
             if (templateRef) {
-               return V_TEMPLATTRIBUTE;
+               return V_PROPERTY;
             }
          }
 
@@ -609,7 +609,6 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPr
          if (templateRef) {
             return V_TEMPLATTRIBUTE;
          }
-
       }
 
       allowPropertyTemplate = false;
@@ -1043,11 +1042,11 @@ inline void checkFieldPropAttributes(SNode node, bool& withPropertyTemplate, boo
 {
    SNode current = node.prevNode();
    while (current.compare(lxAttribute, lxNameAttr, lxTarget)) {
+      if (current == lxAttribute && current.argument == V_PROPERTY) {
+         withPropertyTemplate = true;
+      }
       if (current == lxAttribute && current.argument == V_TEMPLATTRIBUTE) {
-         if (!withPropertyTemplate) {
-            withPropertyTemplate = true;
-         }
-         else withAttributes = true;
+         withAttributes = true;
       }
       else if (current == lxAttribute && current.argument == V_MEMBER) {
          withInitializer = true;
@@ -1067,7 +1066,11 @@ void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, 
 
    recognizeClassMebers(node);
 
-   if (withPropertyTemplate || withAttributes) {
+   if (withPropertyTemplate) {
+      // COMPILER MAGIC : inject an attribute template
+      generatePropertyTemplateTree(writer, node, derivationScope);
+   }
+   if (withAttributes) {
       // COMPILER MAGIC : inject an attribute template
       generateAttributeTemplateTree(writer, node, derivationScope);
    }
@@ -1092,7 +1095,7 @@ bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
 
    if (withPropertyTemplate) {
       // COMPILER MAGIC : inject an attribute template
-      generateAttributeTemplateTree(writer, node, derivationScope);
+      generatePropertyTemplateTree(writer, node, derivationScope);
    }
 
    if (withAttributes) {
@@ -1362,6 +1365,40 @@ void DerivationWriter :: generateAttributeTemplateTree(SyntaxWriter& writer, SNo
    List<SNode> parameters;
    IdentifierString templateName;
 
+   SNode nameNode = node.prevNode();
+   SNode current = nameNode.prevNode();
+   if (current == lxTarget || (current == lxAttribute && current.argument == V_TEMPLATE)) {
+      current = current.prevNode();
+   }
+
+   while (current == lxAttribute) {
+      if (current.argument == V_TEMPLATTRIBUTE) {
+         templateName.copy(current.firstChild(lxTerminalMask).identifier());
+         current.setArgument(0);
+         break;
+      }
+
+      current = current.prevNode();
+   }
+
+   // name parameter is always the last parameter
+   parameters.add(nameNode);
+
+   templateName.append('#');
+   templateName.appendInt(parameters.Count());
+
+   ref_t templateRef = _scope->attributes.get(templateName.c_str());
+   if (!templateRef)
+      _scope->raiseError(errInvalidSyntax, _filePath, node.parentNode());
+
+   _scope->generateTemplateProperty(writer, templateRef, parameters);
+}
+
+void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
+{
+   List<SNode> parameters;
+   IdentifierString templateName;
+
    SyntaxTree tempTree;
    SyntaxWriter tempWriter(tempTree);
 
@@ -1377,7 +1414,7 @@ void DerivationWriter :: generateAttributeTemplateTree(SyntaxWriter& writer, SNo
    }
 
    while (current == lxAttribute) {
-      if (current.argument == V_TEMPLATTRIBUTE) {
+      if (current.argument == V_PROPERTY) {
          templateName.copy(current.firstChild(lxTerminalMask).identifier());
          current.setArgument(0);
          break;
