@@ -1697,7 +1697,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          attrValue = (tpConversion | tpSealed);
          return true;
       case V_INITIALIZER:
-         attrValue = (tpSpecial | tpPrivate | tpInitializer);
+         attrValue = (tpSpecial | tpPrivate | tpInitializer | tpPartial);
          return true;
       case V_METHOD:
          attrValue = 0;
@@ -1727,6 +1727,8 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          return true;
       case V_SETACCESSOR:
          attrValue = tpSetAccessor;
+         return true;
+      case 0:
          return true;
       default:
          return false;
@@ -1768,6 +1770,8 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
       case V_SYMBOL:
          attrValue = 0;
          return true;
+      case 0:
+         // ignore idle attribute
       case V_FIELD:
          attrValue = -1;
          return true;

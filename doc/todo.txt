@@ -3,22 +3,16 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * implement sample to execute the automatic tests, invoke the code declared in 
-                   the specific classes, methods; optional - provide some data for them
-
-                 * attr_template prop_template ... prop
-                 * attr_template ... method
-                 * property attributes should be leading ones
-
-              maint
-                 * rix random sample
-                 * fix debugger watch : bsort - ref<int> is not correctly recognized
-
+                 * test all samples
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
+                 * test: internal prop x, internal prop int x
+                 * test prop, event
+                 * get rid of property attribute
+                 * prop public int x
                  * dynamic default constructor should create an empty dynamic object
                  * abstract class cannot be created
                  * read package info
@@ -157,6 +151,10 @@ Pipeline:
                  * support static prefix to allow operations with static field only
                  * sealed static fields, cannot be changed in the child classes?!
  
+              maint
+                 * rix random sample
+                 * fix debugger watch : bsort - ref<int> is not correctly recognized
+
               dev - tests          
                  * test elt
 

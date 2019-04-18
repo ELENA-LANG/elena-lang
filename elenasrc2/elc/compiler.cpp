@@ -6084,6 +6084,20 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
    SNode body = node.findChild(lxCode);
    ObjectInfo retVal = compileCode(writer, body, codeScope);
 
+   if (test(scope.hints, tpPartial)) {
+      // HOTFIX : compile all initializer methods
+      SNode next = node.nextNode();
+      while (next != lxNone) {
+         if (next == lxClassMethod && next.argument == node.argument) {
+            body = next.findChild(lxCode);
+            retVal = compileCode(writer, body, codeScope);
+
+            next = lxIdle;
+         }
+         next = next.nextNode();
+      }
+   }
+
    // if the method returns itself
    if (retVal.kind == okUnknown) {
       // adding the code loading $self
@@ -6503,19 +6517,6 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
          }
          else generateClassField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.size, singleField, attrs.isEmbeddable);
       }
-      //else if (current == lxFieldInit) {
-      //   // HOTFIX : reallocate static constant
-      //   SNode nameNode = current.findChild(lxMemberIdentifier);
-      //   ObjectInfo info = scope.mapField(nameNode.identifier().c_str() + 1, 0);
-      //   if (info.kind == okStaticConstantField) {
-      //      ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
-      //      name.append(STATICFIELD_POSTFIX);
-      //      name.append("##");
-      //      name.appendInt(-(int)info.param);
-
-      //      *scope.info.staticValues.getIt(info.param) = (scope.moduleScope->module->mapReference(name) | mskConstArray);
-      //   }
-      //}
       current = current.nextNode();
    }
 }
@@ -6915,7 +6916,12 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
 
       if (isConst) {
-         scope.info.staticValues.add(index, mapStaticField(scope.moduleScope, scope.reference, isArray));
+         ref_t statRef = mapStaticField(scope.moduleScope, scope.reference, isArray);
+         scope.info.staticValues.add(index, statRef);
+         if (isArray) {
+            //HOTFIX : allocate an empty array
+            scope.module->mapSection((statRef & ~mskAnyRef) | mskRDataRef, false);
+         }
       }
       else scope.info.staticValues.add(index, (ref_t)mskStatRef);
    }
@@ -7113,9 +7119,15 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
    // check if there is no duplicate method
    if (scope.info.methods.exist(message, true)) {
-      scope.raiseError(errDuplicatedMethod, current);
+      if (!test(methodHints, tpPartial))
+         scope.raiseError(errDuplicatedMethod, current);
    }
    else {
+      if (test(methodHints, tpPartial)) {
+         methodHints &= ~tpPartial;
+         scope.removeHint(message, tpPartial);
+      }
+
       bool privateOne = test(message, STATIC_MESSAGE);
 //      bool specialOne = test(methodHints, tpConversion);
 //      if (test(message, SPECIAL_MESSAGE)) {
