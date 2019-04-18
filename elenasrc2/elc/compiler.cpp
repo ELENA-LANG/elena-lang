@@ -7643,6 +7643,11 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
          dataWriter.writeDWord(0);
       }
+      else if (retVal.kind == okMessageNameConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
+
+         dataWriter.writeDWord(0);
+      }
       else {
          SymbolScope memberScope(nsScope, nsScope->moduleScope->mapAnonymous());
          if (!compileSymbolConstant(node, memberScope, retVal, false, 0))
