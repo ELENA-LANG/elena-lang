@@ -6,57 +6,26 @@ public interface<T>
     };
 }
 
-property prop<T>
+property prop<T, __name>
 {
-    T __property;
+    T __name;
     
-    get T __property()
+    get T __name()
     {
-        ^ __property
+        ^ __name
     }    
     
-    set __property(T value)
+    set __name(T value)
     {
-        __property := value
+        __name := value
     }
 }
 
-//public field dto_prop<prop_type, prop_name>
-//{
-//    const static V<object> theProperties.
-//
-//    prop_type field.
-//    
-//    @theProperties := theProperties + %prop_name.
-//    
-//    set prop_name(prop_type val)
-//    [
-//        field := val
-//    ]
-//    
-//    prop_type prop_name = field.
-//    
-//    static __properties = theProperties.
-//}
-//
-//public field dto_prop<prop_name>
-//{
-//    const static V<object> theProperties.
-//
-//    object field.
-//    
-//    @theProperties := theProperties + %prop_name.
-//    
-//    set prop_name:val
-//    [
-//        field := val
-//    ]
-//    
-//    prop_name = field.
-//    
-//    static __properties = theProperties.
-//}
-//
+attribute dto<__name>
+{
+    this __dto_properties += subjconst __name;
+}
+
 // --- extern statement ---
 
 public extern<extern_block>()

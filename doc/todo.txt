@@ -3,49 +3,29 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * support constant built-in class attributes : class name, manifest
-
-                 * support constant class meta attributes
-
-                 * implement class attribute - a preloaded code which is invoked only if the
-                   class is used
-                 * array accumulation - operation to be implemented in compile time
-                 * operations with meta data : introducing meta object : e.g
-                     __meta[class][name] := class
-                     __meta[class][dto] += name  
-
-                 * attr_template prop_template ... prop
-                 * attr_template ... method
-
-                 * property attributes should be leading ones
-
-                 * class attributes (run-time / meta)
-                 * global attributes / manifest / class name as an attribute
-                 * mainfest info
-
-                 * dynamic default constructor should create an empty dynamic object
-                 * abstract class cannot be created
-
-                 * an extension should be allowed to access class attributes?!
-
-                 * support seriaization properties - indicating which properties should be serilized
-                 * support class attributes - tests and test methods, test methods with data
-                 * support attributes - after declaration - every class child should initialize it,
-                   an array attributes inherites their previous value, normal one - not
-                 * support constants - declared only once and used through the class hierarchy
-                 * support static fields - after declaration - every class child should initialize it
-                 * support sealed static fields
-                 * warn if the attribute value is not set
-
-              maint
-                 * rix random sample
-                 * fix debugger watch : bsort - ref<int> is not correctly recognized
-
+                 * dto to json and back
+                 * test all samples
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
+                 * test: internal prop x, internal prop int x
+                 * test prop, event
+                 * prop public int x
+                 * dynamic default constructor should create an empty dynamic object
+                 * abstract class cannot be created
+                 * read package info
+                 * support seriaization properties - indicating which properties should be serilized
+                 * support constants - declared only once and used through the class hierarchy
+                 * support static fields - after declaration - every class child should initialize it
+                 * support sealed static fields
+                 * warn if the attribute value is not set
+                 * support constant class meta attributes
+                 * operations with meta data : introducing meta object : e.g
+                     __meta[class][name] := class
+                     __meta[class][dto] += name  
+
                  * supporting : const fields - constant values
                  * symbols : a += b
                  * fields : a += b
@@ -171,6 +151,10 @@ Pipeline:
                  * support static prefix to allow operations with static field only
                  * sealed static fields, cannot be changed in the child classes?!
  
+              maint
+                 * rix random sample
+                 * fix debugger watch : bsort - ref<int> is not correctly recognized
+
               dev - tests          
                  * test elt
 

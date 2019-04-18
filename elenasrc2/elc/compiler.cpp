@@ -205,6 +205,12 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ident_t ns
 
    // load private namespaces
    loadExtensions(moduleScope->module->Name(), ns, true);
+
+   // HOTFIX : package section should be created if at least literal class is declated
+   if (moduleScope->literalReference != 0) {
+      packageReference = module->mapReference(ReferenceNs("'", PACKAGE_SECTION));
+   }
+   else packageReference = 0;
 }
 
 pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
@@ -1458,15 +1464,18 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       // inherit static field values
       auto staticValue_it = scope.info.staticValues.start();
       while (!staticValue_it.Eof()) {
-         ref_t ref = *staticValue_it;
-         if (ref != mskStatRef) {
-            int mask = ref & mskAnyRef;
-            IdentifierString name(module->resolveReference(scope.reference));
-            name.append(STATICFIELD_POSTFIX);
+         if (staticValue_it.key() < MAX_ATTR_INDEX) {
+            // NOTE : the built-in attributes will be set later
+            ref_t ref = *staticValue_it;
+            if (ref != mskStatRef) {
+               int mask = ref & mskAnyRef;
+               IdentifierString name(module->resolveReference(scope.reference));
+               name.append(STATICFIELD_POSTFIX);
 
-            ref_t newRef = scope.moduleScope->mapAnonymous(name.c_str());
+               ref_t newRef = scope.moduleScope->mapAnonymous(name.c_str());
 
-            *staticValue_it = newRef | mask;
+               *staticValue_it = newRef | mask;
+            }
          }
 
          staticValue_it++;
@@ -3932,6 +3941,9 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
 
    scope.save();
 
+   if (scope.info.staticValues.Count() > 0)
+      copyStaticFieldValues(node, scope);
+
    generateClassImplementation(expressionTree.readRoot(), scope);
 }
 
@@ -3985,6 +3997,9 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
       scope.save();
    }
    else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
+
+   if (scope.info.staticValues.Count() > 0)
+      copyStaticFieldValues(node, scope);
 
    writer.newNode(lxClass, scope.reference);
 
@@ -6069,6 +6084,20 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
    SNode body = node.findChild(lxCode);
    ObjectInfo retVal = compileCode(writer, body, codeScope);
 
+   if (test(scope.hints, tpPartial)) {
+      // HOTFIX : compile all initializer methods
+      SNode next = node.nextNode();
+      while (next != lxNone) {
+         if (next == lxClassMethod && next.argument == node.argument) {
+            body = next.findChild(lxCode);
+            retVal = compileCode(writer, body, codeScope);
+
+            next = lxIdle;
+         }
+         next = next.nextNode();
+      }
+   }
+
    // if the method returns itself
    if (retVal.kind == okUnknown) {
       // adding the code loading $self
@@ -6488,19 +6517,6 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
          }
          else generateClassField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.size, singleField, attrs.isEmbeddable);
       }
-      //else if (current == lxFieldInit) {
-      //   // HOTFIX : reallocate static constant
-      //   SNode nameNode = current.findChild(lxMemberIdentifier);
-      //   ObjectInfo info = scope.mapField(nameNode.identifier().c_str() + 1, 0);
-      //   if (info.kind == okStaticConstantField) {
-      //      ReferenceNs name(scope.moduleScope->module->resolveReference(scope.reference));
-      //      name.append(STATICFIELD_POSTFIX);
-      //      name.append("##");
-      //      name.appendInt(-(int)info.param);
-
-      //      *scope.info.staticValues.getIt(info.param) = (scope.moduleScope->module->mapReference(name) | mskConstArray);
-      //   }
-      //}
       current = current.nextNode();
    }
 }
@@ -6613,6 +6629,9 @@ void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNo
    ////          only one is allowed
    //if (classScope.withImplicitConstructor && classClassScope.info.methods.exist(encodeAction(DEFAULT_MESSAGE_ID)))
    //   classScope.raiseError(errOneDefaultConstructor, node.findChild(lxNameAttr));
+
+   if (classClassScope.info.staticValues.Count() > 0)
+      copyStaticFieldValues(node, classClassScope);
 
    expressionTree.clear();
 
@@ -6850,6 +6869,16 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
    }
 }
 
+inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference, bool isArray)
+{
+   int mask = isArray ? mskConstArray : mskConstantRef;
+   IdentifierString name(moduleScope->module->resolveReference(reference));
+   name.append(STATICFIELD_POSTFIX);
+
+   return moduleScope->mapAnonymous(name.c_str()) | mask;
+
+}
+
 void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst, bool isArray)
 {
    _Module* module = scope.module;
@@ -6887,11 +6916,12 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
 
       if (isConst) {
-         int mask = isArray ? mskConstArray : mskConstantRef;
-         IdentifierString name(module->resolveReference(scope.reference));
-         name.append(STATICFIELD_POSTFIX);
-
-         scope.info.staticValues.add(index, scope.moduleScope->mapAnonymous(name.c_str()) | mask);
+         ref_t statRef = mapStaticField(scope.moduleScope, scope.reference, isArray);
+         scope.info.staticValues.add(index, statRef);
+         if (isArray) {
+            //HOTFIX : allocate an empty array
+            scope.module->mapSection((statRef & ~mskAnyRef) | mskRDataRef, false);
+         }
       }
       else scope.info.staticValues.add(index, (ref_t)mskStatRef);
    }
@@ -7089,9 +7119,15 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
    // check if there is no duplicate method
    if (scope.info.methods.exist(message, true)) {
-      scope.raiseError(errDuplicatedMethod, current);
+      if (!test(methodHints, tpPartial))
+         scope.raiseError(errDuplicatedMethod, current);
    }
    else {
+      if (test(methodHints, tpPartial)) {
+         methodHints &= ~tpPartial;
+         scope.removeHint(message, tpPartial);
+      }
+
       bool privateOne = test(message, STATIC_MESSAGE);
 //      bool specialOne = test(methodHints, tpConversion);
 //      if (test(message, SPECIAL_MESSAGE)) {
@@ -7446,10 +7482,18 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
       scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
    }
 
-   // if it is a super class validate it
+   // if it is a super class validate it, generate built-in attributes
    if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
       if (!scope.info.methods.exist(scope.moduleScope->dispatch_message))
          scope.raiseError(errNoDispatcher, node);
+
+      // package -5
+      int index = ++scope.info.header.staticSize;
+      scope.info.staticValues.add(-index - 4, 0);
+
+      // class name -6
+      index = ++scope.info.header.staticSize;
+      scope.info.staticValues.add(-index - 4, 0);
    }
 
    // save declaration
@@ -7464,31 +7508,54 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    }
 }
 
+inline ref_t mapClassName(_Module* module, ref_t reference)
+{
+   ident_t refName = module->resolveReference(reference);
+
+   return module->mapConstant(refName);
+}
+
 void Compiler :: copyStaticFieldValues(SNode node, ClassScope& scope)
 {
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+
    // inherit static field values
    auto staticValue_it = scope.info.staticValues.start();
    while (!staticValue_it.Eof()) {
-      ref_t ref = *staticValue_it;
-      if (ref != mskStatRef) {
-         int mask = ref & mskAnyRef;
+      int index = staticValue_it.key();
+      if (index == PACKAGE_ATTR_INDEX) {
+         // if it is a built-in package attribute
+         *staticValue_it = nsScope->packageReference | mskConstArray;
+      }
+      else if (index == NAME_ATTR_INDEX) {
+         // if it is a built-in class attribute
+         *staticValue_it = mapClassName(scope.module, scope.reference) | mskLiteralRef;
+      }
+      else {
+         // if it is a used-defined attribute
+         ref_t ref = *staticValue_it;
+         if (ref != mskStatRef) {
+            int mask = ref & mskAnyRef;
 
-         if (mask == mskConstArray) {
-            // HOTFIX : inherit accumulating attribute list
-            ClassInfo parentInfo;
-            scope.moduleScope->loadClassInfo(parentInfo, scope.info.header.parentRef);
-            ref_t targtListRef = *staticValue_it & ~mskAnyRef;
-            ref_t parentListRef = parentInfo.staticValues.get(staticValue_it.key()) & ~mskAnyRef;
+            if (mask == mskConstArray) {
+               // HOTFIX : inherit accumulating attribute list
+               ClassInfo parentInfo;
+               scope.moduleScope->loadClassInfo(parentInfo, scope.info.header.parentRef);
+               ref_t targtListRef = *staticValue_it & ~mskAnyRef;
+               ref_t parentListRef = parentInfo.staticValues.get(index) & ~mskAnyRef;
 
-            if (parentListRef != 0) {
-               // inherit the parent list
-               inheritClassConstantList(*scope.moduleScope, parentListRef, targtListRef);
+               if (parentListRef != 0) {
+                  // inherit the parent list
+                  inheritClassConstantList(*scope.moduleScope, parentListRef, targtListRef);
+               }
             }
          }
       }
 
       staticValue_it++;
    }
+
+   scope.save();
 }
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
@@ -7532,7 +7599,7 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
       validateClassFields(node, scope);
    }
 
-   if (scope.info.statics.Count() > 0)
+   if (scope.info.staticValues.Count() > 0)
       copyStaticFieldValues(node, scope);
 
    writer.newNode(lxClass, node.argument);
@@ -7573,6 +7640,11 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
 
       if (retVal.kind == okMessageConstant) {
          dataWriter.Memory()->addReference(retVal.param | mskMessage, dataWriter.Position());
+
+         dataWriter.writeDWord(0);
+      }
+      else if (retVal.kind == okMessageNameConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
 
          dataWriter.writeDWord(0);
       }
@@ -8553,7 +8625,7 @@ inline ref_t mapForwardRef(_Module* module, _ProjectManager& project, ident_t fo
 
 void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
 {
-   ReferenceNs sectionName(module->Name(), PACKAGE_SECTION);
+   ReferenceNs sectionName("'", PACKAGE_SECTION);
    ref_t reference = module->mapReference(sectionName);
    ref_t vmtReference = mapForwardRef(module, project, SUPER_FORWARD);
    if (vmtReference == 0)

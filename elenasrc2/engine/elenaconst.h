@@ -65,6 +65,11 @@ namespace _ELENA_
    constexpr auto CATCH_OPERATOR_ID       = 0x0023;
    constexpr auto ALT_OPERATOR_ID         = 0x0024;
 
+   // built-in class attributes
+   constexpr auto PACKAGE_ATTR_INDEX      = -5;
+   constexpr auto NAME_ATTR_INDEX         = -6;
+   constexpr auto MAX_ATTR_INDEX          = -6;
+
 //   // virtual operator
 //   #define SETNIL_REFER_MESSAGE_ID 0x1019
 
@@ -345,10 +350,10 @@ namespace _ELENA_
    constexpr int WARNING_MASK_3 = 7;
 
    // --- ELENA Module structure constants ---
-   constexpr auto ELENA_SIGNITURE         = "ELENA.15.";      // the stand alone image
-   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.15.";   // the ELENAVM client
+   constexpr auto ELENA_SIGNITURE         = "ELENA.16.";      // the stand alone image
+   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.16.";   // the ELENAVM client
 
-   constexpr auto MODULE_SIGNATURE        = "ELENA.15.0";     // the module version
+   constexpr auto MODULE_SIGNATURE        = "ELENA.16.0";     // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!2";
 
   // --- ELENA core module names ---
@@ -421,7 +426,7 @@ namespace _ELENA_
   // --- ELENA explicit variables ---
    constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target
    constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference
-
+   constexpr auto PROPERTY_VAR         = "__name";           // used in the attribute template to represent the property name
    constexpr auto SUPER_VAR            = "super";            // the predecessor class
    constexpr auto SUBJECT_VAR          = "__received";       // the current message
    constexpr auto NIL_VAR              = "nil";              // the nil pseudo symbol - representing the null value
@@ -429,16 +434,8 @@ namespace _ELENA_
    constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
    constexpr auto PARENT_VAR           = "$$parent";         // the closure parent
    constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
-//
-//   // template virtual methods / fields
-//   #define TEMPLATE_GET_MESSAGE     "__get"
-//   #define TEMPLATE_SET_MESSAGE     "__set"
 
-   constexpr auto PROPERTY_VAR         = "__property";   // used in property template to represent the property name
-
-//   #define ENUM_VAR                 "values"          // is auto generated for enum classes and contains the list of all possible enum values
-
-   #define INLINE_CLASSNAME         "$inline"         // nested class generic name
+   constexpr auto INLINE_CLASSNAME     = "$inline";          // nested class generic name
 
   // --- ELENA special sections ---
    #define ATTRIBUTE_SECTION        "#attributes"
@@ -454,7 +451,7 @@ namespace _ELENA_
 
    constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
    constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
-   #define TEMPLATE_PREFIX_NS_LEN   7 
+   constexpr auto TEMPLATE_PREFIX_NS_LEN     = 7;
 
    constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
    constexpr auto FORWARD_PREFIX_NS_LEN      = 10;

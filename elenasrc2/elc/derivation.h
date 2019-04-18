@@ -30,7 +30,7 @@ class DerivationWriter : public _DerivationWriter
       daTemplate    = 0x0004,
       daProperty    = 0x0008,
       daImport      = 0x0040,
-      daExtension   = 0x8000
+      daExtension   = 0x8000,
    };
 
    enum ScopeType
@@ -134,7 +134,7 @@ class DerivationWriter : public _DerivationWriter
 
    ref_t resolveTemplate(ident_t templateName);
 
-   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory);
+   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, bool& allowAttrTemplate, ref_t& previusCategory);
    void declareAttribute(SNode node);
 
    void recognizeScope();
@@ -152,6 +152,7 @@ class DerivationWriter : public _DerivationWriter
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, List<SNode>* parameters);
    void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
+   void generateAttributeTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
@@ -260,6 +261,7 @@ class TemplateGenerator
 
    void copyNodes(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyChildren(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyFieldInitTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope);

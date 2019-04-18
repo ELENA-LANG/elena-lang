@@ -144,10 +144,21 @@ int ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxL
 
 int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t length)
 {
-   RTManager manager;
-   MemoryReader reader(&_debugSection, _debugOffset);
+   int packagePtr = *(int*)(classAddress - 20);
+   int namePtr = *(int*)(classAddress - 24);
 
-   return manager.readClassName(reader, classAddress, buffer, length);
+   char* name = (char*)namePtr;
+   char* ns = ((char**)packagePtr)[0];
+
+   size_t ns_len = length;
+   if (!ident_t(ns).copyTo(buffer, ns_len))
+      return 0;
+  
+   length -= ns_len;
+   if (!ident_t(name).copyTo(buffer + ns_len, length))
+      return 0;
+
+   return length + ns_len;
 }
 
 int ELENARTMachine :: loadSubjectName(size_t subjectRef, char* buffer, size_t length)

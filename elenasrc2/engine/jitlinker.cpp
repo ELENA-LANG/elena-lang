@@ -774,6 +774,9 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
       else if (constArrayMode && currentMask == mskMessage) {
          (*image)[*it + position] = parseMessage(sectionInfo.module->resolveReference(currentRef), false);
       }
+      else if (constArrayMode && currentMask == mskMessageName) {
+         (*image)[*it + position] = parseMessage(sectionInfo.module->resolveReference(currentRef), true);
+      }
       else {
          void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 

@@ -73,6 +73,7 @@ constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
 constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
+constexpr auto V_TEMPLATTRIBUTE = 0x80001020u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -114,29 +115,30 @@ enum MethodHint
 {
    tpMask        = 0x00000F,
 
-   tpUnknown     = 0x000000,
-   tpSealed      = 0x000001,
-   tpClosed      = 0x000002,
-   tpNormal      = 0x000003,
-   tpDispatcher  = 0x000004,
-   tpPrivate     = 0x000005,
-   tpStackSafe   = 0x000010,
-   tpEmbeddable  = 0x000020,
-   tpGeneric     = 0x000040,
-   tpAction      = 0x000080,
-   tpConstructor = 0x200400,
-   tpConversion  = 0x200800,
-   tpMultimethod = 0x001000,
-   tpStatic      = 0x004000,
-   tpGetAccessor = 0x008000,
-   tpSpecial     = 0x010000,
-   tpAbstract    = 0x020000,
-   tpInternal    = 0x040000,
-   tpPredefined  = 0x080000, // virtual class declaration
-   tpDynamic     = 0x100000, // indicates that the method does not accept stack allocated parameters
-   tpInitializer = 0x200000,
-   tpSetAccessor = 0x400000,
-   tpCast        = 0x800000
+   tpUnknown     = 0x0000000,
+   tpSealed      = 0x0000001,
+   tpClosed      = 0x0000002,
+   tpNormal      = 0x0000003,
+   tpDispatcher  = 0x0000004,
+   tpPrivate     = 0x0000005,
+   tpStackSafe   = 0x0000010,
+   tpEmbeddable  = 0x0000020,
+   tpGeneric     = 0x0000040,
+   tpAction      = 0x0000080,
+   tpConstructor = 0x0200400,
+   tpConversion  = 0x0200800,
+   tpMultimethod = 0x0001000,
+   tpStatic      = 0x0004000,
+   tpGetAccessor = 0x0008000,
+   tpSpecial     = 0x0010000,
+   tpAbstract    = 0x0020000,
+   tpInternal    = 0x0040000,
+   tpPredefined  = 0x0080000, // virtual class declaration
+   tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
+   tpInitializer = 0x0200000,
+   tpSetAccessor = 0x0400000,
+   tpCast        = 0x0800000,
+   tpPartial     = 0x1000000
 };
 
 // --- _Project ---

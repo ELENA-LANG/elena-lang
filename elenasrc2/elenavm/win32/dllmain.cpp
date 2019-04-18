@@ -106,16 +106,35 @@ EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLengt
       return 0;
 
    try {
-      ident_t className = instance->getClassName(vmtAddress);
-      size_t length = getlength(className);
-      if (length > 0) {
-         if (maxLength >= (int)length) {
-            Convertor::copy(buffer, className, length, length);
-         }
-         else buffer[0] = 0;
-      }
+      size_t length = maxLength;
 
-      return length;
+      int packagePtr = *(int*)((int)vmtAddress - 20);
+      int namePtr = *(int*)((int)vmtAddress - 24);
+
+      char* name = (char*)namePtr;
+      char* ns = ((char**)packagePtr)[0];
+
+      size_t ns_len = length;
+      if (!ident_t(ns).copyTo(buffer, ns_len))
+         return 0;
+
+      maxLength -= ns_len;
+      if (!ident_t(name).copyTo(buffer + ns_len, length))
+         return 0;
+
+      return length + ns_len;
+
+
+      //ident_t className = instance->getClassName(vmtAddress);
+      //size_t length = getlength(className);
+      //if (length > 0) {
+      //   if (maxLength >= (int)length) {
+      //      Convertor::copy(buffer, className, length, length);
+      //   }
+      //   else buffer[0] = 0;
+      //}
+
+      //return length;
    }
    catch (JITUnresolvedException& e)
    {
