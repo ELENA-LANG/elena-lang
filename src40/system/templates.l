@@ -21,42 +21,11 @@ property prop<T, __name>
     }
 }
 
-//public field dto_prop<prop_type, prop_name>
-//{
-//    const static V<object> theProperties.
-//
-//    prop_type field.
-//    
-//    @theProperties := theProperties + %prop_name.
-//    
-//    set prop_name(prop_type val)
-//    [
-//        field := val
-//    ]
-//    
-//    prop_type prop_name = field.
-//    
-//    static __properties = theProperties.
-//}
-//
-//public field dto_prop<prop_name>
-//{
-//    const static V<object> theProperties.
-//
-//    object field.
-//    
-//    @theProperties := theProperties + %prop_name.
-//    
-//    set prop_name:val
-//    [
-//        field := val
-//    ]
-//    
-//    prop_name = field.
-//    
-//    static __properties = theProperties.
-//}
-//
+attribute dto<__name>
+{
+    this __dto_properties += subjconst __name;
+}
+
 // --- extern statement ---
 
 public extern<extern_block>()

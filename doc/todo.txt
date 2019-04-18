@@ -3,6 +3,7 @@ In development:
 ------                              
 
               dev - elena 4.0
+                 * dto to json and back
                  * test all samples
 ------                                                           
 Pipeline:

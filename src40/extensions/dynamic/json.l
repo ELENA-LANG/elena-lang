@@ -42,43 +42,43 @@ class JsonException : Exception
 ////        = output writeLiteral:"""":(object literal):"""".
 ////}.
 
-//extension<TextBuilder> jsonSerializer
-//{
-////    $serialize byte:n
-////    [
-////        self write(n literal).
-////    ]
-////
-////    $serialize short:n
-////    [
-////        self write(n literal).
-////    ]
-////
-////    $serialize long:n
-////    [
-////        self write(n literal).
-////    ]
-////
-////    $serialize real:n
-////    [
-////        self write(n literal).
-////    ]
-////
-////    $serialize bool:b
-////    [
-////        self write(b literal).
-////    ]
-////
-////    $serialize char:b
-////    [
-////        self write:"'"; write(b literal); write:"'".
-////    ]
-////
-////    $serialize wide:s
-////    [
-////        self write:""""; write(s literal); write:"""".
-////    ]
+extension jsonSerializer : TextBuilder
+{
+//    $serialize byte:n
+//    [
+//        self write(n literal).
+//    ]
 //
+//    $serialize short:n
+//    [
+//        self write(n literal).
+//    ]
+//
+//    $serialize long:n
+//    [
+//        self write(n literal).
+//    ]
+//
+//    $serialize real:n
+//    [
+//        self write(n literal).
+//    ]
+//
+//    $serialize bool:b
+//    [
+//        self write(b literal).
+//    ]
+//
+//    $serialize char:b
+//    [
+//        self write:"'"; write(b literal); write:"'".
+//    ]
+//
+//    $serialize wide:s
+//    [
+//        self write:""""; write(s literal); write:"""".
+//    ]
+
 //    serialize(Enumerator en)
 //    [
 //        self write:"[".
@@ -96,100 +96,100 @@ class JsonException : Exception
 //        
 //        self write:"]".
 //    ]    
-//    
-////    $serialize indexer:it
-////    [
-////        self write:"[".
-////        
-////        while (it available)
-////        [
-////            self~jsonSerializer jsonSerialize(it get).
-////            self write:",".
-////            
-////            it append index:1
-////        ].
-////        
-////        int outputLen := self length.
-////        if(outputLen > 1)
-////            [ self setLength int(outputLen - 1) ].
-////        
-////        self write:"]".
-////    ]    
-////    
-////    $serialize tape_structure:struct
-////    [
-////        self write:"{".
-////
-////        int i := 0.
-////        int len := struct fieldCount.
-////        while (i < len)
-////        [
-////            (0 == i) 
-////                ! [ self write:"," ].
-////            
-////            var prop := struct getField int:i.
-////            self write:"""".
-////            self write:(prop literal).
-////            self write:""":".
-////            
-////            var member := struct getField(i + 1).
-////            
-////            self~jsonSerializer jsonSerialize:member.
-////            
-////            i := i + 2.
-////        ].
-////                                
-////        self write:"}"
-////    ]
-//
-//    serialize(IntNumber n)
+    
+//    $serialize indexer:it
 //    [
-//        self write(n literal)
-//    ]
+//        self write:"[".
+//        
+//        while (it available)
+//        [
+//            self~jsonSerializer jsonSerialize(it get).
+//            self write:",".
+//            
+//            it append index:1
+//        ].
+//        
+//        int outputLen := self length.
+//        if(outputLen > 1)
+//            [ self setLength int(outputLen - 1) ].
+//        
+//        self write:"]".
+//    ]    
 //    
-//    serialize(LiteralValue s)
-//    [
-//        self write:"""".
-//        self write(s).
-//        self write:"""".
-//    ]
-//    
-//    serialize:object
+//    $serialize tape_structure:struct
 //    [
 //        self write:"{".
 //
-//        T<Array> props := object __class; __properties.
-////        if (nil == props)
-////        [
-////            props := object __properties.
-////        ].
-//        
 //        int i := 0.
-//        int len := props length.
+//        int len := struct fieldCount.
 //        while (i < len)
 //        [
-//            var prop := props[i].
-//            var val := object~prop get.
+//            (0 == i) 
+//                ! [ self write:"," ].
 //            
-//            if (nil != val)
-//            [
-//                self print("""",prop literal,""":").
-//                
-//                self serialize(val).
-//                
-//                self write:","
-//            ].            
-//
-//            i += 1
+//            var prop := struct getField int:i.
+//            self write:"""".
+//            self write:(prop literal).
+//            self write:""":".
+//            
+//            var member := struct getField(i + 1).
+//            
+//            self~jsonSerializer jsonSerialize:member.
+//            
+//            i := i + 2.
 //        ].
-//                                                
-//        int outputLen := self length.
-//        if(outputLen > 1)
-//            [ self setLength(outputLen - 1) ].
-//        
+//                                
 //        self write:"}"
-//    ]    
-//
+//    ]
+
+    serialize(int n)
+    {
+        self.write(n.Printable)
+    }
+    
+    serialize(String s)
+    {
+        self.write:"""";
+        self.write(s);
+        self.write:""""
+    }
+    
+    serialize(DTO object)
+    {
+        self.write:"{";
+
+        auto props := object.__dto_properties();
+//        if (nil == props)
+//        [
+//            props := object __properties.
+//        ].
+        
+        int len := props.Length;
+        for (int i := 0, i < len, i += 1)
+        {
+            auto prop := props[i];
+            var val := mixin prop(object).eval();
+            
+            if (nil != val)
+            {
+                self.print("""",prop.Printable,""":");
+                
+                self.serialize(val);
+                
+                self.write:","
+            }
+        };
+                                                
+        int outputLen := self.Length;
+        if(outputLen > 1)
+        {
+            outputLen -= 1;
+            self.Length := outputLen
+        };
+        
+        self.write:"}"
+    }    
+
 //    serialize(Array array)
 //    [
 //        self~jsonSerializer serialize(T<Enumerator>(array)).
@@ -220,7 +220,7 @@ class JsonException : Exception
 //
 //        ^ self
 //    ]
-//}
+}
 
 singleton helper
 {
@@ -350,9 +350,9 @@ singleton helper
 
 public extension jsonOp
 {
-//    literal toJson
-//        = TextBuilder new; serialize:self.
-//        
+    string toJson()
+        = new TextBuilder().serialize(self);
+        
     fromJson()
         = helper.deserializeObject(new TokenEnumerator(self, new ExpressionStatemachine()));
 

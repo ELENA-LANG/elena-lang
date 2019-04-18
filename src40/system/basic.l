@@ -2348,6 +2348,18 @@ public sealed class KeyValue
     dispatch() => theObject;
 }
 
+// --- DTO --
+
+public class DTO
+{
+    attribute MessageName[] __dto_properties;
+    
+    MessageName[] __dto_properties()
+    {
+        ^ __dto_properties
+    }
+}
+
 // === Basic Convertors ===
 
 // --- convertor helpers ---
