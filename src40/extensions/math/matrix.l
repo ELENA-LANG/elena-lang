@@ -1,5 +1,6 @@
 import system'dynamic;
 import system'text;
+import system'routines;
 
 class MatrixException : Exception
 {
@@ -125,7 +126,7 @@ public extension matrixOp : RealMatrix
     get Decomposed()
     {
         // create matrix copy
-        auto a := self.clone();
+        auto a := mixin matrixOp(self).clone();
 
         real v := 0.0r;
         real t := 0.0r;
@@ -213,7 +214,7 @@ public extension matrixOp : RealMatrix
 
     get real Determinant()
     {
-        var lum := self.Decomposed;
+        var lum := mixin matrixOp(self).Decomposed;
         real deter := 1.0r;
         real v := 0.0r;
 

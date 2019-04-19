@@ -1,6 +1,7 @@
 // based on http://cboard.cprogramming.com/cplusplus-programming/30001-determinant-calculation.html prelude sample
 
 // --- default namespaces ---
+import system'routines;
 import extensions;
 import extensions'math;
 
@@ -23,16 +24,19 @@ class Matrix
     
     constructor newIdentityOf(n)
         <= new(new RealMatrix(n,n).populate:(int i, int j =>
-            (i == j) ? 1.0r : 0.0r ));
+            cast RealNumber((i == j) ? 1.0r : 0.0r )));
     
     add(matrix)
-        = Matrix.new(theMatrix.add:matrix);
+        = Matrix.new(theMatrix.add(cast RealMatrix(matrix)));
 
     subtract(matrix)
-        = Matrix.new(theMatrix.subtract:matrix);
+        = Matrix.new(theMatrix.subtract(cast RealMatrix(matrix)));
 
     multiply(matrix)
-        = Matrix.new(theMatrix.multiply:matrix);
+        = Matrix.new(theMatrix.multiply(cast RealMatrix(matrix)));
+    
+    Determinant
+        = theMatrix.Determinant;
     
     dispatch() => theMatrix;
 }
@@ -41,7 +45,7 @@ class Matrix
 
 public singleton control
 {
-    prompt = "Choose an option
+    Prompt = "Choose an option
 [1] - Sum Matrix
 [2] - Subtract Matrix
 [3] - Multiply Matrix
@@ -115,7 +119,7 @@ Your choice:";
                 console.write:"Enter the order of matrix: ";
                 var N := console.readLine().toInt();
                 
-                var identity := Matrix.newIdentityOf(N);
+                RealMatrix identity := Matrix.newIdentityOf(N);
 
                 ^ identity.toString()
             }

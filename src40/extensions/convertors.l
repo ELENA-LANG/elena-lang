@@ -409,7 +409,7 @@ public extension convertorOp
     char toChar()
         = charConvertor.convert:self;
 
-    toReal()
+    real toReal()
         = realConvertor.convert:self;
 
     convertTo(target)
