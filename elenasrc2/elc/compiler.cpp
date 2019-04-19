@@ -7214,18 +7214,21 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
             privateName.append(scope.module->resolveAction(getAction(message), signRef));
             ref_t signArgs[ARG_COUNT];
             size_t signLen = scope.module->resolveSignature(signRef, signArgs);
-            signArgs[signLen++] = resolvePrimitiveReference(scope, V_WRAPPER, outputRef, true);
-            ref_t embeddableMessage = encodeMessage(
-               scope.module->mapAction(privateName.c_str(), scope.module->mapSignature(signArgs, signLen, false), false),
-               paramCount + 1,
-               flags);
+            if (signLen == paramCount) {
+               // HOTFIX : inject emmeddable returning argument attribute only if the message is strong
+               signArgs[signLen++] = resolvePrimitiveReference(scope, V_WRAPPER, outputRef, true);
+               ref_t embeddableMessage = encodeMessage(
+                  scope.module->mapAction(privateName.c_str(), scope.module->mapSignature(signArgs, signLen, false), false),
+                  paramCount + 1,
+                  flags);
 
-            if (!test(scope.info.header.flags, elSealed) || scope.info.methods.exist(embeddableMessage)) {
-               scope.include(embeddableMessage);
+               if (!test(scope.info.header.flags, elSealed) || scope.info.methods.exist(embeddableMessage)) {
+                  scope.include(embeddableMessage);
+               }
+               else embeddableMessage |= STATIC_MESSAGE;
+
+               scope.addAttribute(message, maEmbeddableRet, embeddableMessage);
             }
-            else embeddableMessage |= STATIC_MESSAGE;
-
-            scope.addAttribute(message, maEmbeddableRet, embeddableMessage);
          }
       }
    }

@@ -151,8 +151,8 @@ Pipeline:
                  * support static prefix to allow operations with static field only
                  * sealed static fields, cannot be changed in the child classes?!
  
-              maint
-                 * rix random sample
+              dev - debugger
+                 * debugger : step over message operation
                  * fix debugger watch : bsort - ref<int> is not correctly recognized
 
               dev - tests          
