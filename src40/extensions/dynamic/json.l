@@ -168,7 +168,7 @@ extension jsonSerializer : TextBuilder
         for (int i := 0, i < len, i += 1)
         {
             auto prop := props[i];
-            var val := mixin prop(object).eval();
+            var val := mixin prop(object).get;
             
             if (nil != val)
             {

@@ -3,13 +3,13 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * dto to json and back
                  * test all samples
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
+                 * implement jsonObject.serializeTo(MyDTO);
                  * test: internal prop x, internal prop int x
                  * test prop, event
                  * prop public int x

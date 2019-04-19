@@ -1731,8 +1731,7 @@ public extension charOp : CharValue
     
     bool isDigit()
     {
-        int ch := 0;
-        intConvertor.convert(self, ref ch);
+        int ch := intConvertor.convert(self);
         
         ^ (ch >= 30h) && (ch <= 39h)
     }
@@ -1744,8 +1743,7 @@ public extension charOp : CharValue
     
     bool isLetter()
     {
-        int ch := 0;
-        intConvertor.convert(self, ref ch);
+        int ch := intConvertor.convert(self);
         
         if (ch >= 41h && ch <= 5Ah)
             { ^ true };
@@ -1764,8 +1762,7 @@ public extension charOp : CharValue
     
     bool isLToken()
     {
-        int ch := 0;
-        intConvertor.convert(self, ref ch);
+        int ch := intConvertor.convert(self);
         
         if (ch >= 41h && ch <= 5Ah)
             { ^ true };
