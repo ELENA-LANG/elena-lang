@@ -4,6 +4,7 @@ In development:
 
               dev - elena 4.0
                  * test all samples
+                 * test matrix sample
 ------                                                           
 Pipeline:
 ------                                                                                         

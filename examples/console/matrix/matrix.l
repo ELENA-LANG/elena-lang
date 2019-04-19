@@ -1,128 +1,126 @@
 // based on http://cboard.cprogramming.com/cplusplus-programming/30001-determinant-calculation.html prelude sample
 
 // --- default namespaces ---
-//import system'dynamic.
-import extensions.
-import extensions'math.
+import extensions;
+import extensions'math;
 
 // --- factory ---
 
 class Matrix
 {
-    T<RealMatrix> theMatrix.
+    RealMatrix theMatrix;
     
-    constructor new(RealMatrix aMatrix)
-    [
-        theMatrix := aMatrix.
-    ]
+    constructor new(RealMatrix matrix)
+    {
+        theMatrix := matrix
+    }
     
-    constructor newOf:anN name:aName
-        <= new (RealMatrix new(anN,anN); populate(:i:j)<int,int,real>
-            [  
-                ^ console print("Enter ",aName,"[",i,",",j,"]="); readLineTo(Real new)
-            ]).
+    constructor create(n, name)
+        <= new (new RealMatrix(n,n).populate:(int i,int j)
+            { 
+                ^ console.print("Enter ",name,"[",i,",",j,"]=").readLine().toReal()
+            });
     
-    constructor newIdentityOf:anN
-        <= new(RealMatrix new(anN,anN); populate(:i:j)<int,int,real>
-            ( (i == j)iif(1.0r,0.0r) )).
+    constructor newIdentityOf(n)
+        <= new(new RealMatrix(n,n).populate:(int i, int j =>
+            (i == j) ? 1.0r : 0.0r ));
     
-    add : aMatrix
-        = Matrix new(theMatrix add:aMatrix).
+    add(matrix)
+        = Matrix.new(theMatrix.add:matrix);
 
-    subtract : aMatrix
-        = Matrix new(theMatrix subtract:aMatrix).
+    subtract(matrix)
+        = Matrix.new(theMatrix.subtract:matrix);
 
-    multiply : aMatrix
-        = Matrix new(theMatrix multiply:aMatrix).
+    multiply(matrix)
+        = Matrix.new(theMatrix.multiply:matrix);
     
-    dispatch => theMatrix.
+    dispatch() => theMatrix;
 }
 
 // ---- Program ---
 
-public control =
+public singleton control
 {
-    prompt = "Choose an option" + forwards'newLine +
-             "[1] - Sum Matrix" + forwards'newLine +
-             "[2] - Subtract Matrix" + forwards'newLine +
-             "[3] - Multiply Matrix" + forwards'newLine +
-             "[4] - Matrix Determinant" + forwards'newLine +
-             "[5] - Identity Matrix" + forwards'newLine +
-             "[6] - Exit" + forwards'newLine +
-             "Your choice:".
+    prompt = "Choose an option
+[1] - Sum Matrix
+[2] - Subtract Matrix
+[3] - Multiply Matrix
+[4] - Matrix Determinant
+[5] - Identity Matrix
+[6] - Exit
+Your choice:";
     
-    proceed : aChoice
-    [
-        aChoice =>
-            "1"
-            [
-                console write:"Enter the order of matrix: ".
-                var N := console readLineTo(Integer new).
+    proceed(choice)
+    {
+        choice =>
+            "1" {
+                console.write:"Enter the order of matrix: ";
+                var N := console.readLine().toInt();
                 
-                var aMatrixA := Matrix newOf:N name:"A".
+                var matrixA := Matrix.create(N, "A");
                 
-                console writeLine.
+                console.writeLine();
                 
-                var aMatrixB := Matrix newOf:N name:"B".
+                var matrixB := Matrix.create(N,"B");
                 
-                console writeLine; writeLine:"Output:".
+                console.writeLine().writeLine("Output:");
 
-                T<RealMatrix> aSum := aMatrixA + aMatrixB.
+                RealMatrix sum := matrixA + matrixB;
 
-                ^ aSum toLiteral
-            ];
-            "2" [
-                console write:"Enter the order of matrix: ".
-                var N := console readLineTo(Integer new).
+                ^ sum.toString()
+            }
+            "2" {
+                console.write:"Enter the order of matrix: ";
+                var N := console.readLine().toInt();
                 
-                var aMatrixA := Matrix newOf:N name:"A".
+                var matrixA := Matrix.create(N, "A");
                 
-                console writeLine.
+                console.writeLine();
                 
-                var aMatrixB := Matrix newOf:N name:"B".
+                var matrixB := Matrix.create(N,"B");
                 
-                console writeLine; writeLine:"Output:".
+                console.writeLine().writeLine("Output:");
 
-                T<RealMatrix> aDiff := aMatrixA - aMatrixB.
+                RealMatrix diff := matrixA - matrixB;
 
-                ^ aDiff toLiteral
-            ];
-            "3" [
-                console write:"Enter the order of matrix: ".
-                var N := console readLineTo(Integer new).
+                ^ diff.toString()
+            }
+            "3" {
+                console.write:"Enter the order of matrix: ";
+                var N := console.readLine().toInt();
                 
-                var aMatrixA := Matrix newOf:N name:"A".
+                var matrixA := Matrix.create(N, "A");
                 
-                console writeLine.
+                console.writeLine();
                 
-                var aMatrixB := Matrix newOf:N name:"B".
+                var matrixB := Matrix.create(N,"B");
                 
-                console writeLine; writeLine:"Output:".
+                console.writeLine().writeLine("Output:");
 
-                T<RealMatrix> aProduct := aMatrixA * aMatrixB.
+                RealMatrix product := matrixA * matrixB;
 
-                ^ aProduct toLiteral
-            ];
-            "4" [
-                console write:"Enter the order of matrix: ".
-                var N := console readLineTo(Integer new).
-
-                T<RealMatrix> aMatrixA := Matrix newOf:N name:"A".
+                ^ product.toString()
+            }
+            "4" {
+                console.write:"Enter the order of matrix: ";
+                var N := console.readLine().toInt();
+                
+                var matrixA := Matrix.create(N, "A");
                                 
-                console writeLine; writeLine:"Output:".
+                console.writeLine().writeLine("Output:");
 
-                ^ aMatrixA determinant
-            ];
-            "5" [
-                console write:"Enter the order of matrix: ".
-                var N := console readLineTo(Integer new).
+                ^ matrixA.Determinant
+            }
+            "5" {
+                console.write:"Enter the order of matrix: ";
+                var N := console.readLine().toInt();
+                
+                var identity := Matrix.newIdentityOf(N);
 
-                T<RealMatrix> identity := Matrix newIdentityOf:N.
-
-                ^ identity toLiteral
-            ];
-            "6" [
-                forwards'program stop
-            ].
-    ]
-}.
+                ^ identity.toString()
+            }
+            "6" {
+                forward program.stop()
+            }
+    }
+}

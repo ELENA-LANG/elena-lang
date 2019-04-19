@@ -1074,106 +1074,111 @@ public sealed class IntMatrix
 //    /// Creates the object copy
 //    clone = RealArray new(self).
 //}
-//
-//// --- RealMatrix ---
-//
-//public sealed class RealMatrix
-//{
-//    T<RealArray> theArray.
-//    int          theRows.
-//    int          theColumns.
-//    
-//    constructor new(int Rows, int Columns)
-//    [
-//        theArray := RealArray new(Columns * Rows).
-//        
-//        theRows := Rows.
-//        theColumns := Columns.
-//    ]
-//        
+
+// --- RealMatrix ---
+
+public sealed class RealMatrix
+{
+    real[] theArray;
+    int    theRows;
+    int    theColumns;
+    
+    constructor(int rows, int columns)
+    {
+        theRows := rows;
+        theColumns := columns;
+        
+        theArray := new real[](columns * rows)
+    }
+        
 //    constructor new(object Rows, object Columns)
 //        <= new(T<int>(Columns), T<int>(Rows)).
-//
-//    /// Reads the matrix lengths to the output parameter
-//    readLengthsTo(ref<int> Rows, ref<int> Columns)
-//    [
-//        Columns value := theColumns.
-//        Rows value := theRows.
-//    ]
-//
-//    readLengthTo(ref<int> retVal)
-//    [
-//        retVal value := theRows.
-//    ]
-//    
-//    int rvprop length :: readLengthTo.
-//
-//    readColumnsTo(ref<int> retVal)
-//    [
-//        retVal value := theColumns.
-//    ]
-//    
-//    int rvprop columns :: readColumnsTo.
-//
-//    readRowsTo(ref<int> retVal)
-//    [
-//        retVal value := theRows
-//    ]
-//    
-//    int rvprop rows :: readRowsTo.
-//
-//    /// Writes an integer value at the specified position
-//    write(int i, int j, real aValue)
-//    [
-//        int anIndex := i * theColumns + j.
-//        
-//        theArray setAt(anIndex, aValue)
-//    ]
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    read(int i, int j, ref<real> aValue)
-//    [
-//        int anIndex := i * theColumns + j.
-//        
-//        theArray read(anIndex, aValue)
-//    ]
-//
-//    embeddable real getAt(int i, int j)
-//    [
-//        real retVal := 0.0r.
-//        self read(i, j, &retVal).
-//        
-//        ^ retVal
-//    ]
-//
-//    getAt(object i, object j)
-//    [
-//        real aValue := 0.0r.
-//        self read(T<int>(i), T<int>(j), &aValue).
-//        
-//        ^ RealNumber new(aValue)
-//    ]
-//
-//    setAt(object i, object j, object aValue)
-//    [
-//        self write(i, j, aValue)
-//    ]
-//
-//    /// Returns a row
-//    getAt : i =
-//    {
-//        length = theColumns.
-//        
-//        getAt : j
-//            = self getAt(i,j).
-//        
-//        setAt(object j, object aValue)
-//        [
-//            self setAt(i,j,aValue)
-//        ]
-//    }.
-//}
-//
+
+    /// Reads the matrix lengths to the output parameter
+    readLengthsTo(ref int rows, ref int columns)
+    {
+        rows := theRows;
+        columns := theColumns
+    }
+
+    Length
+    {
+        int get()
+        {
+            ^ theRows
+        }
+    }    
+
+    Columns
+    {
+        int get()
+        {
+            ^ theColumns
+        }
+    }
+
+    Rows
+    {
+        int get()
+        {
+            ^ theRows
+        }
+    }
+
+    /// Writes a real value at the specified position
+    setAt(int i, int j, real v)
+    {
+        int index := i * theColumns + j;
+        
+        theArray[index] := v
+    }
+
+    /// Reads a real value at the specified position and saves it into an output variable
+    read(int i, int j, ref real retVal)
+    {
+        int index := i * theColumns + j;
+        
+        retVal := theArray[index];
+    }
+
+    real at(int i, int j)
+    {
+        int index := i * theColumns + j;
+        real retVal := theArray[index];
+        
+        ^ retVal
+    }
+
+    /// Returns a row
+    at(int i) = new Indexable<real>:
+    {
+        Length = theColumns;
+        
+        Indexer<real> indexer() = new BaseIndexer<real>:
+        {
+            this theIndex := 0;
+            
+            this theLength := self.Columns;
+            
+            real get()
+                = self.at(i,theIndex);
+                
+            set(real o)
+            {
+                self.setAt(i,theIndex,o);
+            }                        
+        }; 
+        
+        real at(int j)
+            = self.at(i,j);
+        
+        setAt(int j, real v)
+        {
+            self.setAt(i,j,v)
+        }
+    };
+}
+
 //// --- CharArray ---
 //
 ///// An array of unicode characters (UTF-32)
