@@ -2078,6 +2078,16 @@ public singleton stringConvertor
         intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length)
     }
 
+    convert(int n, byte[] buffer, ref int length)
+    {
+        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length)
+    }
+    
+    convert(uint n, byte[] buffer, ref int length)
+    {
+        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length)
+    }
+
     /// Returns a parameter                
     string convert(string s)
         = s;
