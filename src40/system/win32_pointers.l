@@ -96,10 +96,7 @@ public sealed const struct UnsafePointer
 //
 ////    stacksafe write int:anObject
 ////        => system'core_routines'__dptr.
-//                
-//    read(ref<int> retVal)
-//        => system'core_routines'__dptr.
-//
+                
 //    read(ByteArray arr, int len)
 //        => system'core_routines'__dptr.
 //
@@ -132,11 +129,13 @@ public sealed const struct UnsafePointer
         ^ s
     }
     
-//    stacksafe saveTo bytearray:target int:offs
-//    [
-//        target write int:offs int:thePointer.
-//    ]
-//    
+    saveTo(byte[] target, int offs)
+    {
+        intern system'core_routines'__dptr.read(self, ref int val);
+        
+        target.write(offs, val)
+    }
+    
 //    stacksafe saveTo intarray:target int:offs
 //    [
 //        target write int:offs int:thePointer.

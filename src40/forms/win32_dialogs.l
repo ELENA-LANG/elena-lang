@@ -1,38 +1,50 @@
 import system'winforms;
 
-//// --- File Dialog ---
-//
-//class FileDialog
-//{
-//    object theParent.
-//    object theTitle.
-//    object theFilters.
-//    object theSelectedPath.
-//    
-//    caption = theTitle.
-//
-//    selected = theSelectedPath.
-//            
-//    set caption:aTitle
-//    [
-//        theTitle := aTitle.
-//    ]
-//    
-//    addFilter caption:aCaption extension_mask:aMask
-//    [
-//        if($nil == theFilters)
-//            [ theFilters := (aCaption wide, aMask wide) ];
-//            [
-//                theFilters := theFilters + (aCaption wide, aMask wide)
-//            ]
-//    ]
-//    
-//    constructor new : aParent
-//    [
-//        theParent := aParent.
-//    ]
-//}
-//
+// --- File Dialog ---
+
+class FileDialog
+{
+    WindowHandle theParent;
+    wide         theTitle;
+    wide[]       theFilters;
+    object       theSelectedPath;
+
+    string Caption
+    {
+        string get()
+            = theTitle;
+            
+        set(string s)
+        {
+            theTitle := s
+        }
+        
+        set(wide s)
+        {
+            theTitle := s
+        }
+    }
+            
+    addFilter(string caption, string mask)
+    {
+        wide[] subarr := new wide[]{ cast wide(caption), cast wide(mask) };
+        
+        if (theFilters == nil)
+        {
+            theFilters := subarr
+        }
+        else
+        {
+            theFilters := theFilters + subarr
+        }
+    }
+    
+    constructor(parent)
+    {
+        theParent := parent
+    }
+}
+
 ////// --- OpenFileDialog ---
 ////
 ////#class OpenFileDialog
@@ -41,23 +53,23 @@ import system'winforms;
 ////    [
 ////    ]    
 ////}
-//
-//// --- SaveFileDialog ---
-//
-//sealed class SaveFileDialog :: FileDialog
-//{
-//    constructor new : aParent
-//        <= new:aParent.
-//    
-//    run
-//    [
-//        var aDialog := system'winforms'SaveFileDialog new hwnd:(theParent hwnd) array:theFilters int:0 int:255 wide:(theTitle wide).
-//        
-//        theSelectedPath := aDialog select.
-//        
-//        ^ ($nil != theSelectedPath)
-//    ]    
-//}
+
+// --- SaveFileDialog ---
+
+public sealed class SaveFileDialog : FileDialog
+{
+    constructor(parent)
+        <= (parent);
+    
+    bool run()
+    {
+        var dialog := new system'winforms'SaveFileDialog(theParent, theFilters, 0, 255, theTitle);
+   
+        theSelectedPath := dialog.select();
+        
+        ^ (nil != theSelectedPath)
+    }    
+}
 
 // --- messageDialog ---
 

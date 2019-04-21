@@ -1,224 +1,206 @@
-import extensions.
-import forms.
-import system'io.
+import extensions;
+import forms;
+import system'io;
 
-import system'drawing.
+import system'drawing;
 
 // --- Main window ---
 
-class MainWindow :: SDIDialog
+public class MainWindow : SDIDialog
 {
     // All Text Box's
-    object Name.
-    object SurName.
-    object OtName.
-    object Email.
-    object Age.
-    object PhoneNumber.
+    Edit Name;
+    Edit SurName;
+    Edit OtName;
+    Edit Email;
+    Edit Age;
+    Edit PhoneNumber;
     
     // All Labels
-    object LabelName.
-    object LabelSurName.
-    object LabelOtName.
-    object LabelEmail.
-    object LabelAge.
-    object LabelPhoneNumber.
-    object LabelAbout.
-    object LabelDel.
+    Label LabelName;
+    Label LabelSurName;
+    Label LabelOtName;
+    Label LabelEmail;
+    Label LabelAge;
+    Label LabelPhoneNumber;
+    Label LabelAbout;
+    Label LabelDel;
 
     // All Buttons
-    object BtmExit.
-    object BtmSave.
-    object BtmDelTxt.
-    object BtmInfo.
+    Button BtmExit;
+    Button BtmSave;
+    Button BtmDelTxt;
+    Button BtmInfo;
 
-    object theSavedPath.
+    File   theSavedFile;
 
-    constructor new
-        <= new;
-    [
+    constructor new()
+        <= new()
+    {
         // Controls
-        LabelName := Label new.
-        LabelSurName := Label new.
-        LabelOtName := Label new.
-        LabelEmail := Label new.
-        LabelAge := Label new.
-        LabelPhoneNumber := Label new.
-        LabelAbout := Label new.
-        LabelDel := Label new.
-        Name := Edit new.
-        SurName := Edit new.
-        OtName := Edit new.
-        Email := Edit new.
-        Age := Edit new.
-        PhoneNumber := Edit new.
-        BtmExit := Button new.
-        BtmSave := Button new.
-        BtmDelTxt := Button new.
-        BtmInfo := Button new.
+        LabelName := new Label();
+        LabelSurName := new Label();
+        LabelOtName := new Label();
+        LabelEmail := new Label();
+        LabelAge := new Label();
+        LabelPhoneNumber := new Label();
+        LabelAbout := new Label();
+        LabelDel := new Label();
+        Name := new Edit();
+        SurName := new Edit();
+        OtName := new Edit();
+        Email := new Edit();
+        Age := new Edit();
+        PhoneNumber := new Edit();
+        BtmExit := new Button();
+        BtmSave := new Button();
+        BtmDelTxt := new Button();
+        BtmInfo := new Button();
     
-        theControls append:LabelName.
-        theControls append:LabelSurName.
-        theControls append:LabelOtName.
-        theControls append:LabelEmail.
-        theControls append:LabelAge.
-        theControls append:LabelPhoneNumber.
-        theControls append:LabelAbout.
-        theControls append:LabelDel.
-        theControls append:Name.
-        theControls append:SurName.
-        theControls append:OtName.
-        theControls append:Email.
-        theControls append:Age.
-        theControls append:PhoneNumber.
-        theControls append:BtmExit.
-        theControls append:BtmSave.
-        theControls append:BtmDelTxt.
-        theControls append:BtmInfo.
+        self
+            .appendControl:LabelName
+            .appendControl:LabelSurName
+            .appendControl:LabelOtName
+            .appendControl:LabelEmail
+            .appendControl:LabelAge
+            .appendControl:LabelPhoneNumber
+            .appendControl:LabelAbout
+            .appendControl:LabelDel
+            .appendControl:Name
+            .appendControl:SurName
+            .appendControl:OtName
+            .appendControl:Email
+            .appendControl:Age
+            .appendControl:PhoneNumber
+            .appendControl:BtmExit
+            .appendControl:BtmSave
+            .appendControl:BtmDelTxt
+            .appendControl:BtmInfo;
         
         // Form
-        $self set caption:"Writer Account".
-        $self set x:350 y:250.
-        $self set width:500 height:265.
+        self.Caption := "Writer Account";
+        self.setRegion(350, 250, 500, 265);
         
         // ------------------------------------ Labels ------------------------------------
         // LabelName        
-        LabelName set caption:"Your Name:".
-        LabelName set x:12 y:10.
-        LabelName set width:109 height:30.
+        LabelName.Caption := "Your Name:";
+        LabelName.setRegion(12, 10, 109, 30);
 
         // LabelSurName
-        LabelSurName set caption:"Your Last Name:".
-        LabelSurName set x:12 y:40.
-        LabelSurName set width:109 height:20.
+        LabelSurName.Caption:="Your Last Name:";
+        LabelSurName.setRegion(12, 40, 109, 20);
 
         // LabelOtName
-        LabelOtName set caption:"Other Names:".
-        LabelOtName set x:12 y:65.
-        LabelOtName set width:109 height:20.
+        LabelOtName.Caption:="Other Names:";
+        LabelOtName.setRegion(12, 65, 109, 20);
 
         // LabelEmail
-        LabelEmail set caption:"Email:".
-        LabelEmail set x:12 y:90.
-        LabelEmail set width:109 height:20.
+        LabelEmail.Caption := "Email:";
+        LabelEmail.setRegion(12, 90, 109, 20);
 
         // LabelAge
-        LabelAge set caption:"Age:".
-        LabelAge set x:12 y:115.
-        LabelAge set width:109 height:20.
+        LabelAge.Caption := "Age:";
+        LabelAge.setRegion(12, 115, 109, 20);
 
         // LabelPhoneNumber
-        LabelPhoneNumber set caption:"Phone Number:".
-        LabelPhoneNumber set x:12 y:140.
-        LabelPhoneNumber set width:109 height:20.
+        LabelPhoneNumber.Caption := "Phone Number:";
+        LabelPhoneNumber.setRegion(12, 140, 109, 20);
 
         // LabelAbout
-        LabelAbout set caption:emptyWideLiteralValue.
-        LabelAbout set x:12 y:165.
-        LabelAbout set width:400 height:35.
+        LabelAbout.Caption := emptyWideString;
+        LabelAbout.setRegion(12, 165, 400, 35);
 
         // LabelDel
-        LabelDel set caption:emptyWideLiteralValue.
-        LabelDel set x:300 y:185.
-        LabelDel set width:400 height:35.
+        LabelDel.Caption := emptyWideString;
+        LabelDel.setRegion(300, 185, 400, 35);
 
         // ------------------------------------ Text Box's ------------------------------------
         // Name
-        Name << "Your name".
-        Name set x:125 y:10.
-        Name set width:200 height:25.
+        Name.Value := "Your name";
+        Name.setRegion(125, 10, 200, 25);
 
         // SurName
-        SurName << "Your Last Name".
-        SurName set x:125 y:35.
-        SurName set width:200 height:25.
+        SurName.Value := "Your Last Name";
+        SurName.setRegion(125, 35, 200, 25);
 
         // OtName
-        OtName << "Other Name".
-        OtName set x:125 y:60.
-        OtName set width:200 height:25.
+        OtName.Value := "Other Name";
+        OtName.setRegion(125, 60, 200, 25);
 
         // Email
-        Email << "Email".
-        Email set x:125 y:85.
-        Email set width:200 height:25.
+        Email.Value := "Email";
+        Email.setRegion(125, 85, 200, 25);
 
         // Age
-        Age << "Age".
-        Age set x:125 y:110.
-        Age set width:200 height:25.
+        Age.Value := "Age";
+        Age.setRegion(125, 110, 200, 25);
 
         // PhoneNumber
-        PhoneNumber << "Phone Number".
-        PhoneNumber set x:125 y:135.
-        PhoneNumber set width:200 height:25.
+        PhoneNumber.Value := "Phone Number";
+        PhoneNumber.setRegion(125, 135, 200, 25);
 
         // ------------------------------------ Buttons ------------------------------------
         // BtmSave
-        BtmSave set caption:"Save".
-        BtmSave set x:390 y:10.
-        BtmSave set width:82 height:25.
+        BtmSave.Caption:="Save";
+        BtmSave.setRegion(390, 10, 82, 25);
 
         // BtmDelTxt
-        BtmDelTxt set caption:"Del TXT".
-        BtmDelTxt set x:390 y:50.
-        BtmDelTxt set width:82 height:25.
-        BtmDelTxt set enabled:false.
+        BtmDelTxt.Caption:="Del TXT";
+        BtmDelTxt.setRegion(390, 50, 82, 25);
+        BtmDelTxt.Enabled:=false;
 
         // BtmInfo
-        BtmInfo set caption:"About".
-        BtmInfo set x:390 y:80.
-        BtmInfo set width:82 height:25.
+        BtmInfo.Caption:="About";
+        BtmInfo.setRegion(390, 80, 82, 25);
 
         // BtmExit
-        BtmExit set caption:"Exit".
-        BtmExit set x:390 y:110.
-        BtmExit set width:82 height:25.
+        BtmExit.Caption:="Exit";
+        BtmExit.setRegion(390, 110, 82, 25);
         
         // ------------------------------------ Handlers  ------------------------------------
         // Save
-        BtmSave set onClick: (:args)
-            [
-                var aDialog := SaveFileDialog new:$self.
-                aDialog addFilter caption:"Text Files" extension_mask:"*.txt".
-                aDialog set caption:"Select a file".
+        BtmSave.onClick := (args)
+            {
+                var dialog := new SaveFileDialog(self);
+                dialog.addFilter("Text Files", "*.txt");
+                dialog.Caption := "Select a file";
                 
-                if (aDialog run)
-                [
-                    theSavedPath := File new(aDialog selected).
+                if (dialog.run())
+                {
+                    theSavedFile := File.assign(dialog.Selected);
                     
-                    var aWriter := theSavedPath logger.
+                    var writer := theSavedFile.logger();
                     
-                    aWriter 
-                        printLine:"//-------------------------------------------------------------------------------";
-                        printLine("Name: ",Name," ",SurName," ",OtName);
-                        printLine("Email: ",Email);
-                        printLine("Age: ",Age);
-                        printLine("PhoneNumber:",PhoneNumber);
-                        printLine:"//-------------------------------------------------------------------------------".
+                    writer 
+                        .printLine:"//-------------------------------------------------------------------------------"
+                        .printLine("Name: ",Name.Value," ",SurName.Value," ",OtName.Value)
+                        .printLine("Email: ",Email.Value)
+                        .printLine("Age: ",Age.Value)
+                        .printLine("PhoneNumber:",PhoneNumber.Value)
+                        .printLine:"//-------------------------------------------------------------------------------";
 
-                    aWriter close.
+                    writer.close();
 
-                    BtmDelTxt enabled := true.
-                ].
-            ].
+                    BtmDelTxt.Enabled := true
+                }
+            };
         
-        // Del TXT
-        BtmDelTxt set onClick(:args)
-            [
-                theSavedPath delete.
-            ].
+//        // Del TXT
+//        BtmDelTxt set onClick(:args)
+//            [
+//                theSavedPath delete.
+//            ].
 
         // Exit
-        BtmExit set onClick(:args)
-            [
-                'program stop.
-            ].
+        BtmExit.onClick := (args)
+        {
+            forward program.stop()
+        };
             
         // About
-        BtmInfo set onClick(:args)
-            [
-                LabelAbout caption := "Created by Alexandre Bencz."$10"Thanks Alex Rakov, for support.".
-            ].
-    ]
+        BtmInfo.onClick := (args)
+        {
+            LabelAbout.Caption := "Created by Alexandre Bencz."$10"Thanks Alex Rakov, for support." 
+        }
+    }
 }

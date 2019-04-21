@@ -16,7 +16,7 @@ import system'drawing;
 public class BaseControl
 {
     bool   theVisible;
-//    bool   theEnabled.
+    bool   theEnabled;
     Region theRegion;
     bool   theTabStop;
     
@@ -26,7 +26,7 @@ public class BaseControl
     constructor new()
     {
         theVisible := true;
-//        theEnabled := true.
+        theEnabled := true;
         theRegion := new Region();
         theTabStop := false;
         theCaption := emptyWideString;
@@ -38,14 +38,17 @@ public class BaseControl
 //    [
 //        theVisible := aValue bool.
 //    ]
-//    
-//    enabled = theEnabled.
-//    
-//    set enabled : aValue
-//    [
-//        theEnabled := aValue bool.
-//    ]
-//    
+//
+    bool Enabled
+    {
+        bool get() = theEnabled;
+        
+        set(bool value)
+        {
+            theEnabled := value
+        }
+    }
+        
     Parent = theParent;    
 
     internal set Parent(object o)
@@ -72,7 +75,7 @@ public class BaseControl
 //            ]
 //    ]
 //    
-    Caption
+    string Caption
     {
         string get() = theCaption;
         
@@ -82,11 +85,6 @@ public class BaseControl
         }        
     }
 
-//    set caption : aValue
-//    [
-//        theCaption := aValue.
-//    ]
-//    
 //    append caption : aValue
 //    [    
 //        $self set caption:($self caption + aValue).

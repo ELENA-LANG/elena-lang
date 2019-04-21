@@ -7167,6 +7167,11 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
          scope.info.methodHints.exclude(Attribute(message, maHint));
          scope.info.methodHints.add(Attribute(message, maHint), methodHints);
+
+         if (privateOne) {
+            // HOTFIX : if it is private message save its hints as public one
+            scope.addHint(message & ~STATIC_MESSAGE, tpStackSafe);
+         }
       }
 
       if (!included && test(methodHints, tpAbstract)) {

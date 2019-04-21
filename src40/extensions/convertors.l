@@ -378,13 +378,13 @@ public extension convertorOp
 //
 //    toWide(int radix)
 //        = wideConvertor convert(self, radix).
-//            
-//    T<byte> toByte
-//        = byteConvertor convert:self.
-//
-//    T<short> toShort
-//        = shortConvertor convert:self.
-//
+            
+    byte toByte()
+        = byteConvertor.convert(self);
+
+    short toShort()
+        = shortConvertor.convert(self);
+
 //    T<uint> toUInt
 //        = uintConvertor convert:self.
         

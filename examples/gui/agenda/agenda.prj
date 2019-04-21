@@ -1,12 +1,16 @@
-﻿[project]
-debug=agenda.dm
-executable=agenda.exe
-namespace=agenda
-template=gui
-debuginfo=-1
-
-[files]
-form.l
-
-[forwards]
-'mainWindow=agenda'MainWindow
+<configuration>
+    <project>
+        <executable>agenda.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>agenda</namespace>
+        <template>gui</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>form.l</include>
+        </module>
+    </files>
+</configuration>

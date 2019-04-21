@@ -231,15 +231,15 @@ public singleton UTF16Encoder : Encoder
 
 public singleton UTF16Encoding
 {
-//    T<Encoder> encoder = UTF16Encoder.
-//    
+    Encoder encoder = UTF16Encoder;
+    
 //    charCount(wide aLiteral, ref<int> aRetVal)
 //        => system'core_routines'__utf16encoder.
-//        
-//    convert(int anIndex, int aLength, wide aLiteral, ShortArray anArray)
-//    [
-//        aLiteral saveToShortArray(anIndex, anArray, aLength).
-//    ]
+        
+    convert(int index, int length, wide s, short[] array)
+    {
+        s.saveToShortArray(index, array, length)
+    }
 
     convert(int index, int size, short[] array, char[] output, ref int outputLength)
         => system'core_routines'__utf16encoder;

@@ -72,19 +72,19 @@ public sealed const struct WindowHandle
 //        
 //        ^ (visible != 0)
 //    ]
-//    
-//    setEnabled int:aValue
-//    [
-//        system'external'USER32 EnableWindow int:theHandle int:aValue.
-//    ]            
-//    
-//    isEnabled
-//    [
-//        int visible := system'external'USER32 IsWindowEnabled int:theHandle.
-//        
-//        ^ (visible != 0)
-//    ]
-//
+    
+    setEnabled(int value)
+    {
+        extern USER32.EnableWindow(theHandle, value)
+    }            
+    
+    bool isEnabled()
+    {
+        int visible := extern USER32.IsWindowEnabled(theHandle);
+        
+        ^ (visible != 0)
+    }
+
 //    setChecked int:aValue
 //    [
 //        system'external'USER32 SendMessageW int:theHandle int:BM_SETCHECK int:aValue int:0

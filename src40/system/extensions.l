@@ -1828,6 +1828,28 @@ public extension byteArrayHelper : Array<byte>
     /// Copies the byte array at the specified position
     write(int index, real value)
         => system'core_routines'__bytearray;
+
+    /// Fills the sub array with a specified value
+    fill(int offset, int length, byte val)
+    {
+        int totalLength := self.Length;
+        
+        int i := offset;
+        int m := offset + length;
+        
+        if (i > totalLength)
+            { system'InvalidArgumentException.new().raise() };
+        
+        if (m > totalLength)
+            { system'InvalidArgumentException.new().raise() };
+            
+        while(i < m)
+        {
+            self[i] :=  val;
+            
+            i := i + 1
+        }
+    }
 }
 
 // --- charArrayHelper ---
@@ -1894,10 +1916,6 @@ public extension charArrayHelper : Array<char>
 ////        array write(offset, retVal)
 ////    ]
 ////    
-////    fill(ByteArray array, int offset, int length, byte val)
-////    [
-////        array fill(offset, length, val).
-////    ]
 //}
 //// --- intArrayHelper ---
 ////

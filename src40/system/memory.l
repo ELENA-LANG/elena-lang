@@ -101,6 +101,9 @@ public sealed Array<T> : Indexable<T>
         }
     }
 
+    setAt(index, item)
+        <= setAt(cast int(index), cast T(item));
+
     /// Concatinates the arrays    
     T[] add(T[] a)
         <= add(a, a.Length);

@@ -135,29 +135,29 @@ public class SDIApplication //:: BaseApplication
 public static program = new SDIApplication();
 //static xprogram = SDIXApplication new.
 
-public startUp = 
-    {
-        start(/*events*/)
-        {
-            intern system'core_routines'__exception.register();
-            
-            try
-            {
-                forward program()
-            }
-            finally
-            {
-               startUpEvents.stopping()
-            }
-            catch(AbortException e)
-            {
-            }
-            catch(Exception e)
-            {
-                messageBox.open("ELENA", e.Message, MB_ICONEXCLAMATION)
-            };
+entry()
+{
+    intern system'core_routines'__exception.register();
     
-            //events $onStop:$nil.
-        }        
+    try
+    {
+        forward program()
     }
-    .start(/*startUpEvents*/);
+    finally
+    {
+       startUpEvents.stopping()
+    }
+    catch(AbortException e)
+    {
+    }   
+    catch(Exception e)
+    {
+        messageBox.open("ELENA", e.Message, MB_ICONEXCLAMATION);
+        
+        //extern elenart.Exit(-1);
+    }
+}
+
+public symbol startUp
+    = entry();
+    

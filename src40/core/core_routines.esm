@@ -2017,6 +2017,20 @@ procedure __dptr."system$setReference[2]"
 
 end
 
+procedure __dptr."read$system@UnsafePointer$@system@ref#1&system@IntNumber[2]"
+
+  aloadsi 1
+  nload
+  pushd
+  popa
+  nload
+  bloadsi 2
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
 procedure __bytearray."read$system@IntNumber$system@IntNumber$system@ByteArray[4]"
 
   aloadsi 1
@@ -2157,6 +2171,7 @@ end
 
 procedure __bytearray."read$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber[4]"
 
+  aloadsi 1
   bcopya
   blen
   ecopyd  
@@ -2186,6 +2201,7 @@ end
 
 procedure __bytearray."write$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber[4]"
 
+  aloadsi 1
   bcopya
   aloadsi 2
   nload
@@ -2216,6 +2232,7 @@ end
 
 procedure __bytearray."write$system@IntNumber$system@ByteNumber[3]"
 
+  aloadsi 1
   blen
   ecopyd
   bcopya
@@ -2240,6 +2257,7 @@ end
 
 procedure __bytearray."write$system@IntNumber$system@ShortNumber[3]"
 
+  aloadsi 1
   blen
   ecopyd
   bcopya
@@ -2265,6 +2283,7 @@ end
 
 procedure __bytearray."write$system@IntNumber$system@CharValue[3]"
 
+  aloadsi 1
   blen
   ecopyd
   bcopya
@@ -2290,6 +2309,7 @@ end
 
 procedure __bytearray."write$system@IntNumber$system@IntNumber[3]"
 
+  aloadsi 1
   blen
   ecopyd
   bcopya
@@ -2315,6 +2335,7 @@ end
 
 procedure __bytearray."write$system@IntNumber$system@LongNumber[3]"
 
+  aloadsi 1
   blen
   bcopya
   ecopyd
@@ -2339,6 +2360,7 @@ end
 
 procedure __bytearray."write$system@IntNumber$system@RealNumber[3]"
 
+  aloadsi 1
   blen
   bcopya
   ecopyd

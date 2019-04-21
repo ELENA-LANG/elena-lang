@@ -77,11 +77,11 @@ public abstract class BaseWinControl : BaseControl
 
     internal abstract createHandle() {}            
 
-//    $onCreate
-//    [
-//        ifnot(theEnabled )
-//            [ theHandle setEnabled int:0 ].
-//    ]
+    internal onCreate()
+    {
+        ifnot(theEnabled )
+            { theHandle.setEnabled(0) };
+    }
 
     click() {}
     
@@ -98,7 +98,7 @@ public abstract class BaseWinControl : BaseControl
             
         self.createHandle();
         
-//        $self $onCreate.
+        self.onCreate()
     }
 
 //    opened = ($nil != theHandle).
@@ -116,19 +116,23 @@ public abstract class BaseWinControl : BaseControl
 //                    [ theHandle setVisible int:0 ]
 //            ].
 //    ]
-//                                                
-//    set enabled : aValue
-//    [
-//        $super set enabled:aValue.
-//        
-//        ifnot($nil == theHandle)
-//            [
-//                if(theEnabled)
-//                    [ theHandle setEnabled int:-1 ];
-//                    [ theHandle setEnabled int:0 ]
-//            ].
-//    ]
-//    
+//
+    bool Enabled
+    {
+        set(bool value)
+        {
+            super.Enabled := value;
+            
+            ifnot(nil == theHandle)
+            {
+                int val := theEnabled ? -1 : 0;
+                
+                theHandle.setEnabled(val)
+            }
+            
+        } 
+    }
+                                                                                                
     set:Caption(string s)
     {
         theCaption := s;
@@ -137,6 +141,17 @@ public abstract class BaseWinControl : BaseControl
         ifnot(nil == theHandle)
         {
             theHandle.setCaption(cast wide(s))
+        }
+    }
+
+    set:Caption(wide s)
+    {
+        theCaption := s;
+        //super.Caption := s;
+        
+        ifnot(nil == theHandle)
+        {
+            theHandle.setCaption(s)
         }
     }
 
@@ -395,10 +410,11 @@ abstract class BaseEdit : BaseWinControl
 //        $self set caption:($self caption + aValue wide).
 //    ]
 //    
-//    write : aValue
-//    [
-//        $self set caption:(aValue wide).
-//    ]          
+
+    set Value(string value)
+    {
+        self.Caption := cast WideString(value);
+    }
     
     internal updateStyles(ref int retVal)
     {
