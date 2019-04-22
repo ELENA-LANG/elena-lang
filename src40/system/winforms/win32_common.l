@@ -22,8 +22,8 @@ public const int EX_SDI_OVERLAPPEDWINDOW = 00040101h;
 public const int WS_EX_CLIENTEDGE        = 00000200h;
 //const int WS_EX_CONTROLPARENT     = 00010000h.
 ////#symbol(const,int)WS_EX_NOPARENTNOTIFY    = 00000004h.
-//const int WS_EX_TRANSPARENT       = 00000020h.
-//
+public const int WS_EX_TRANSPARENT       = 00000020h;
+
 //// --- static styles ---
 //const int SS_SIMPLE               = 0000000Bh.
 

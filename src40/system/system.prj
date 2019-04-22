@@ -74,6 +74,8 @@
      </module>
      <module name="drawing">
        <include>drawing\common.l</include>
+       <include>drawing\win32_handles.l</include>
+       <include>drawing\win32_graphics.l</include>
      </module>
      <module name="winforms">
        <include>winforms\win32_exceptions.l</include>

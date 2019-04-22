@@ -39,6 +39,9 @@ class FileDialog
         }
     }
     
+    string Selected
+        = theSelectedPath;
+    
     constructor(parent)
     {
         theParent := parent

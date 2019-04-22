@@ -178,7 +178,7 @@ public sealed class SaveFileDialog : BaseFileDialog
         {
             int length := extern KERNEL32.lstrlenW(theFileName);
             
-            var s := UTF16Encoder.toWide(0, length, theFileName); 
+            var s := UTF16Encoding.toWide(0, length, theFileName); 
             
             ^ s
         }

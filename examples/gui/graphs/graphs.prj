@@ -1,16 +1,16 @@
-﻿[project]
-debug=graphs.dm
-executable=graphs.exe
-namespace=graphs
-template=gui
-debuginfo=-1
-
-[files]
-graphs.l
-
-[subjects]
-math=std'dictionary'math
-
-[forwards]
-'mainWindow=graphs'Window
-
+<configuration>
+    <project>
+        <executable>graphs.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>graphs</namespace>
+        <template>gui</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>graphs.l</include>
+        </module>
+    </files>
+</configuration>

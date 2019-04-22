@@ -289,4 +289,9 @@ public singleton UTF16Encoding
         
         ^ s
     }
+    
+    string toWide(int index, int length, short[] array)
+    {
+        ^ WideString.fromShortArray(index, length, array)
+    }
 }

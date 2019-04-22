@@ -1,5 +1,5 @@
 import system'collections;
-//import system'drawing.
+import system'drawing;
 import system'winforms;
 
 // --- IControl ---
@@ -744,68 +744,68 @@ public sealed class Button : BaseButton, interface<IControl>
 //        $self $loadStrings
 //    ]
 //}
-//
-//// --- Paintbox ---
-//
-//class PaintboxListener :: WindowCallback
-//{
-//    paintbox theOwner.
-//    
-//    constructor new paintbox:anOwner
-//    [
-//        theOwner := anOwner.
-//    ]
-//    
-//    onpaint hwnd:aControl vint:aResult
-//    [
-//        theOwner $paint.
-//        
-//        aResult int := 0.
-//    ]
-//    
-//    onsize hwnd:aControl int:width int:height vint:aResult
-//    [
-//        theOwner $resize hwnd:aControl int:width int:height.
-//        
-//        aResult int := 0.
-//    ]
-//    
-//    ondestroy hwnd:aControl vint:aResult
-//    [
-//        theOwner $destroy.
-//        
-//        $super ondestroy hwnd:aControl vint:aResult
-//    ]
-//}
-//
+
+// --- Paintbox ---
+
+class PaintboxListener : WindowCallback
+{
+    Paintbox theOwner;
+    
+    constructor(Paintbox owner)
+    {
+        theOwner := owner
+    }
+    
+    onpaint(WindowHandle hwnd, ref int retVal)
+    {
+        theOwner.paint();
+        
+        retVal := 0
+    }
+    
+    onsize(WindowHandle hwnd, int width, int height, ref int result)
+    {
+        theOwner.resize(hwnd, width, height);
+        
+        result := 0
+    }
+    
+    ondestroy(WindowHandle hwnd, ref int result)
+    {
+        theOwner.destroy();
+        
+        super.ondestroy(hwnd, ref result)
+    }
+}
+
 //limited closure class PaintAction
 //{
 //    closure(object sender, canvas canvas) []
 //}
-//
-//limited class Paintbox :: BaseWinControl, icontrolof<paintbox>
-//{
-//    canvas    theCanvas.
+
+public closed class Paintbox : BaseWinControl, interface<IControl>
+{
+    Canvas  theCanvas;
 //    paintfunc thePaint.
-//    
-//    constructor new
-//        <= new;
-//    [
-//        theCanvas := Canvas new
-//    ]
-//
+    
+    constructor new()
+        <= new()
+    {
+        theCanvas := new Canvas()
+    }
+
 //    set onPaint:aFunction
 //    [
 //        thePaint := aFunction paintfunc.
 //    ]
-//   
-//    $destroy
-//    [
-//        theCanvas free
-//    ]
-// 
-//    $paint
-//    [
+   
+    internal destroy()
+    {
+        theCanvas.free()
+    }
+ 
+    internal paint()
+    {
 //        win_paintstruct struct := PAINTSTRUCT new.
 //        hdc dc := 0.
 //        
@@ -820,8 +820,8 @@ public sealed class Button : BaseButton, interface<IControl>
 //        theCanvas close.
 //
 //        struct end hwnd:theHandle
-//    ]
-// 
+    }
+ 
 //    stacksafe $resize hwnd:aControl int:aWidth int:aHeight
 //    [
 //    ]
@@ -830,29 +830,29 @@ public sealed class Button : BaseButton, interface<IControl>
 //    [
 //        $self $resize hwnd:theHandle int:aWidth int:aHeight.
 //    ]
-// 
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//
-//        int Styles := WS_CHILD.
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//                        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:WS_EX_TRANSPARENT
-//                        wide:PaintboxClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:(PaintboxListener new paintbox:$self)
-//    ]
-//}
-//
+ 
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+
+        int styles := WS_CHILD;
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+                        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        WS_EX_TRANSPARENT,
+                        PaintboxClass,
+                        theCaption,
+                        styles,
+                        x, y, width, height,
+                        parent,
+                        CurrentInstance,
+                        new PaintboxListener(self))
+    }
+}
+
 //class Imagebox :: Paintbox
 //{
 //    hbitmap  theImage.

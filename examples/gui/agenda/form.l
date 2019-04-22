@@ -185,11 +185,11 @@ public class MainWindow : SDIDialog
                 }
             };
         
-//        // Del TXT
-//        BtmDelTxt set onClick(:args)
-//            [
-//                theSavedPath delete.
-//            ].
+        // Del TXT
+        BtmDelTxt.onClick := (args)
+        {
+            theSavedFile.delete()
+        };
 
         // Exit
         BtmExit.onClick := (args)
