@@ -2021,8 +2021,17 @@ procedure __dptr."read$system@UnsafePointer$@system@ref#1&system@IntNumber[2]"
 
   aloadsi 1
   nload
-  pushd
-  popa
+  bloadsi 2
+  nsave
+  aloadsi 1
+  quitn 2
+
+end
+
+procedure __dptr."readVal$system@UnsafePointer$@system@ref#1&system@IntNumber[2]"
+
+  aloadsi 1
+  aloadai 0
   nload
   bloadsi 2
   nsave

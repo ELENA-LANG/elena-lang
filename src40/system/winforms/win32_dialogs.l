@@ -107,21 +107,21 @@ class BaseFileDialog
 
 //        lpstrFilter;
         ptr := new UnsafePointer(theFilters);
-        ptr.saveTo(struct, 12);
+        ptr.savePtrTo(struct, 12);
 
 //        nFilterIndex;
         struct.write(24, theFilterIndex);
 
 //        lpstrFile;
         ptr := new UnsafePointer(theFileName);
-        ptr.saveTo(struct, 28);
+        ptr.savePtrTo(struct, 28);
 
 //        nMaxFile;
         struct.write(32, theMaxFile);
 
 //        lpstrTitle;
         ptr := new UnsafePointer(theCaption);
-        ptr.saveTo(struct, 48);
+        ptr.savePtrTo(struct, 48);
 
 //        Flags;
         struct.write(52, theFlags)
@@ -178,7 +178,9 @@ public sealed class SaveFileDialog : BaseFileDialog
         {
             int length := extern KERNEL32.lstrlenW(theFileName);
             
-            ^ WideString.fromShortArray(0, length, theFileName)
+            var s := UTF16Encoder.toWide(0, length, theFileName); 
+            
+            ^ s
         }
     }
 }
