@@ -15,10 +15,8 @@ public interface IControl
 //    stacksafe readDimensionTo vint:aWidth vint:aHeight []
 //    
 //    stacksafe readLocationTo vint:x vint:y []
-//    
-//    stacksafe setDimension int:aWidth int:aHeight []
-//    
-//    stacksafe setLocation int:x int:y []
+    
+    abstract setRegion(int x, int y, int width, int height) {}
     
     abstract open() {}
 
@@ -105,18 +103,19 @@ public abstract class BaseWinControl : BaseControl
     
     WindowHandle cast() = theHandle;
 
-//    set visible : aValue
-//    [
-//        $super set visible:aValue.
-//        
-//        ifnot($nil == theHandle)
-//            [
-//                if(theVisible)
-//                    [ theHandle setVisible int:5 ];
-//                    [ theHandle setVisible int:0 ]
-//            ].
-//    ]
-//
+    bool Visible
+    {
+        set(bool v)
+        {
+            super.Visible := v;
+            
+            ifnot(nil == theHandle)
+            {
+                theHandle.setVisible(theVisible ? 5 : 0);
+            }
+        }
+    }
+
     bool Enabled
     {
         set(bool value)
@@ -170,25 +169,16 @@ public abstract class BaseWinControl : BaseControl
         ^ theCaption
     }
 
-//    setLocation int:x int:y
-//    [
-//        theRegion writeLocation int:x int:y.
-//        
-//        ifnot($nil == theHandle)
-//            [
-//                theHandle setPosition int:x int:y int:0 int:0 int:SWP_NOSIZE
-//            ]
-//    ]
-//    
-//    stacksafe setDimension int:aWidth int:aHeight
-//    [
-//        theRegion writeDimension int:aWidth int:aHeight.
-//        
-//        ifnot($nil == theHandle)
-//            [
-//                theHandle setPosition int:0 int:0 int:aWidth int:aHeight int:SWP_NOMOVE
-//            ]
-//    ]
+    setRegion(int x, int y, int width, int height)
+    {
+        super.setRegion(x, y, width, height);
+        
+        ifnot(nil == theHandle)
+        {
+            theHandle.setPosition(x, y, 0, 0, SWP_NOSIZE);
+            theHandle.setPosition(0, 0, width, height, SWP_NOMOVE)
+        }        
+    }
     
     refresh()
     {
@@ -289,40 +279,45 @@ public abstract class BaseWinContainer : BaseWinControl
     }  
 }
 
-//// --- Frame ---
-//
-//sealed class Frame :: BaseWinControl, icontrolof<frame>
-//{
-//    constructor new
-//        <= new;
-//    [
-//    ]
-//    
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//        
-//        int Styles := WS_CHILD || BS_GROUPBOX.
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:WS_EX_TRANSPARENT
-//                        wide:ButtonClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:$nil.
-//    ]
-//}
+// --- Frame ---
+
+public sealed class Frame : BaseWinControl, interface<IControl>
+{
+    constructor new()
+        <= new()
+    {
+    }
+    
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+        
+        int styles := WS_CHILD || BS_GROUPBOX;
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        WS_EX_TRANSPARENT,
+                        ButtonClass, 
+                        theCaption, 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        nil)
+    }
+}
 
 // --- Label ---
 public closed class Label : BaseWinControl, interface<IControl>
 {
+    constructor new()
+        <= new()
+    {
+    }
+
     constructor()
         <= new()
     {
@@ -440,6 +435,9 @@ abstract class BaseEdit : BaseWinControl
 public sealed class Edit : BaseEdit, interface<IControl>
 {
     constructor()
+        <= new();
+    
+    constructor new()
         <= new()
     {
         theTabStop := true
@@ -536,6 +534,11 @@ public abstract class BaseButton : BaseWinControl
 
 public sealed class Button : BaseButton, interface<IControl>
 {
+    constructor new()
+        <= new()
+    {
+    }
+
     constructor()
         <= new()
     {
@@ -562,18 +565,26 @@ public sealed class Button : BaseButton, interface<IControl>
     }
 }
 
-//// --- RadioButton ---
-//
-//limited class RadioButton :: BaseButton, icontrolof<radiobutton>
-//{
-//    bool theChecked.
-//    
-//    constructor new
-//        <= new;
-//    [
-//        theChecked := false.
-//    ]
-//    
+// --- RadioButton ---
+
+public closed class RadioButton : BaseButton, interface<IControl>
+{
+    bool theChecked;
+    
+    constructor new()
+        <= new()
+    {
+        theChecked := false
+    }
+    
+    constructor new(string caption)
+        <= new()
+    {
+        theChecked := false;
+        
+        self.Caption := caption
+    }
+    
 //    checked
 //    [
 //        ifnot($nil == theHandle)
@@ -593,32 +604,31 @@ public sealed class Button : BaseButton, interface<IControl>
 //                [ theHandle setChecked int:BST_UNCHECKED ]
 //        ].
 //    ]
-//
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//        
-//        int Styles := 0.
-//        Styles := (WS_CHILD || BS_AUTORADIOBUTTON).
-//        $self $updateStyles vint:Styles.
-//                
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:0
-//                        wide:ButtonClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:$nil.
-//                        
+
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+        
+        int styles := WS_CHILD || BS_AUTORADIOBUTTON;
+        self.updateStyles(ref styles);
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        0,
+                        ButtonClass, 
+                        theCaption, 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        nil);
+                        
 //        if(theChecked)
 //            [ $self set checked:true ]
-//    ]
-//}
-//
+    }
+}
+
 //// --- BaseList ---
 //
 //class BaseList :: BaseWinControl
@@ -917,60 +927,79 @@ public sealed class Imagebox : Paintbox
     }
 }
 
-//// --- BasePanel ---
-//
-//class BasePanel :: BaseWinContainer
-//{
-//    frame theFrame.
-//    
-//    constructor new
-//        <= new;
-//    [
-//        theFrame := Frame new.
-//        
-//        // NOTE : a frame should be the first element
-//        theControls append:theFrame.
-//    ]
-//    
-//    setDimension int:aWidth int:aHeight
-//    [
-//        $super setDimension int:aWidth int:aHeight.
-//        
-//        theFrame setDimension int:aWidth int:aHeight.
-//    ]
-//    
-//    set caption:aCaption
-//    [
-//        theFrame set caption:aCaption.
-//    ]
-//    
-//    $resize int:aWidth int:aHeight
-//    [
-//        dimension aSize := Dimension new.
-//        aSize write int:aWidth int:aHeight.
-//        
-//        theFrame setDimension int:aWidth int:aHeight
-//    ]    
-//}
-//
-//// --- Panel ---
-//
-//class PanelListener :: WindowCallback
-//{
-//    panel theOwner.
-//    
-//    constructor new panel:anOwner
-//    [
-//        theOwner := anOwner
-//    ]
-//    
-//    onsize hwnd:aControl int:width int:height vint:aResult
-//    [
-//        theOwner $resize int:width int:height.
-//        
-//        aResult int := 0.
-//    ]
-//    
+// --- BasePanel ---
+
+public abstract class BasePanel : BaseWinContainer
+{
+    Frame theFrame;
+    
+    constructor new()
+        <= new()
+    {
+        theFrame := Frame.new();
+        
+        // NOTE : a frame should be the first element
+        self.appendControlInternal:theFrame
+    }
+    
+    internal appendControlInternal(BaseControl control)
+    {
+        control.Parent := self;
+        
+        theControls.append(control)        
+    }
+
+    set Width(int v)
+    {
+        super.Width := v;
+        
+        theFrame.Width := v
+    }
+    
+    set Height(int h)
+    {
+        super.Height := h;
+        
+        theFrame.Height := h
+    }
+            
+    setRegion(int x, int y, int width, int height)
+    {
+        super.setRegion(x, y, width, height);
+        
+        theFrame.setRegion(0, 0, width, height);
+    }
+    
+    set Caption(caption)
+    {
+        theFrame.Caption := caption
+    }
+    
+    internal resize(WindowHandle handle, int width, int height)
+    {
+        theFrame.Width := width;
+        theFrame.Height := height
+    }    
+}
+
+// --- Panel ---
+
+class PanelListener : WindowCallback
+{
+    Panel theOwner;
+    
+    constructor(Panel owner)
+    {
+        theOwner := owner
+    }
+    
+    onsize(WindowHandle hwnd, int width, int height, ref int result)
+    {
+        theOwner.resize(hwnd, width, height);
+        
+        result := 0
+    }
+    
 //    onclick hwnd:aHandle vint:aResult
 //    [
 //        var aControl := theOwner retrieve hwnd:aHandle.
@@ -988,76 +1017,80 @@ public sealed class Imagebox : Paintbox
 //        
 //        $super onchange hwnd:aHandle vint:aResult.
 //    ]
-//}
-//
-//sealed class Panel :: BasePanel, icontrolof<panel>
-//{
-//    constructor new
-//        <= new;
-//    [
-//    ]
-//    
-//    controls = theControls.
-//            
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//
-//        int Styles := WS_CHILD || WS_CLIPSIBLINGS.
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//                        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:WS_EX_CONTROLPARENT
-//                        wide:PanelClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:(PanelListener new panel:$self)
-//    ]
-//}
-//
-//// --- RadioButtonGroup ---
-//
-//class RadioButtonGroupListener :: WindowCallback
-//{
-//    radiogroup theOwner.
-//    
+}
+
+public sealed class Panel : BasePanel, interface<IControl>
+{
+    constructor new()
+        <= new()
+    {
+    }
+    
+    appendControl(BaseControl control)
+    {
+        self.appendControlInternal(control);
+    }
+    
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+
+        int styles := WS_CHILD || WS_CLIPSIBLINGS;
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+                        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        WS_EX_CONTROLPARENT,
+                        PanelClass,
+                        theCaption,
+                        styles,
+                        x, y, width, height,
+                        parent,
+                        CurrentInstance,
+                        new PanelListener(self))
+                        
+    }
+}
+
+// --- RadioButtonGroup ---
+
+class RadioButtonGroupListener : WindowCallback
+{
+    RadioButtonGroup theOwner;
+    
 //    onclick hwnd:aHandle vint:aResult
 //    [
 //        theOwner $onClick hwnd:aHandle.
 //        
 //        aResult int := 0.
 //    ]
-//    
-//    onsize hwnd:aControl int:width int:height vint:aResult
-//    [
-//        theOwner $resize int:width int:height.
-//        
-//        aResult int := 0.
-//    ]
-//    
-//    constructor new radiogroup:anOwner
-//    [
-//        theOwner := anOwner
-//    ]
-//}
-//
-//sealed class RadioButtonGroup :: BasePanel, icontrolof<radiogroup>
-//{
-//    int   theSelected.
+
+    onsize(WindowHandle hwnd, int width, int height, ref int result)
+    {
+        theOwner.resize(hwnd, width, height);
+        
+        result := 0
+    }
+    
+    constructor(RadioButtonGroup owner)
+    {
+        theOwner := owner
+    }
+}
+
+public sealed class RadioButtonGroup : BasePanel, interface<IControl>
+{
+    int   theSelected;
 //    func1 theIndexChanged.
-//    
-//    constructor new
-//        <= new;
-//    [
-//        theSelected := -1
-//    ]
-//
+    
+    constructor new()
+        <= new()
+    {
+        theSelected := -1
+    }
+
 //    selected_index = theSelected.
 //
 //    $setChecked : aValue
@@ -1108,14 +1141,19 @@ public sealed class Imagebox : Paintbox
 //            $self $resize
 //        ]
 //    }.
-//
-//    setDimension int:aWidth int:aHeight
-//    [
-//        $super setDimension int:aWidth int:aHeight.
-//        
-//        $self $resize
-//    ]
-//
+
+    appendItem(string s)
+    {
+        self.appendControlInternal(RadioButton.new(s));
+    }
+
+    setRegion(int x, int y, int width, int height)
+    {
+        super.setRegion(x, y, width, height);
+        
+        self.resize()
+    }
+
 //    stacksafe $onClick hwnd:aHandle
 //    [
 //        int anIndex := -1. // !! to skip a frame
@@ -1141,62 +1179,53 @@ public sealed class Imagebox : Paintbox
 //            anIndex := anIndex + 1
 //        ]
 //    ]
-//
-//    $resize
-//    [
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        theRegion readDimensionTo vint:aWidth vint:aHeight.
-//        
-//        $self $resize int:aWidth int:aHeight
-//    ]
-//            
-//    $resize int:aWidth int:aHeight
-//    [
-//        control aCurrent := $nil.
-//        enumerator it := theControls enumerator.
-//        int i := 0.
-//        
-//        it next. // NOTE : skip the frame
-//        
-//        while (it next)
-//        [ 
-//            aCurrent := it get; control.
-//        
-//            aCurrent setLocation int:4 int:(18 + i * 20).
-//            aCurrent setDimension int:(aWidth - 6) int:20.
-//        
-//            i :=  i + 1
-//        ].
-//        
-//        $super $resize int:aWidth int:aHeight
-//    ]
-//    
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//
-//        int Styles := WS_CHILD || WS_CLIPSIBLINGS.
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//                        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:WS_EX_CONTROLPARENT
-//                        wide:PanelClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:(RadioButtonGroupListener new radiogroup:$self).
-//                        
+
+    internal resize()
+    {
+        int width := theRegion.Width;
+        int height := theRegion.Height;
+        
+        self.resize(theHandle, width, height)
+    }
+            
+    internal resize(WindowHandle handle, int width, int height)
+    {
+        int len := theControls.Length;
+        IControl current;
+        for (int i := 1, i < len, i += 1) {
+            current := theControls[i];
+            
+            current.setRegion(4, 18 + i * 20, width - 6, 20);
+        };
+        
+        super.resize(handle, width, height)
+    }
+    
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+
+        int styles := WS_CHILD || WS_CLIPSIBLINGS;
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+                        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        WS_EX_CONTROLPARENT,
+                        PanelClass,
+                        theCaption,
+                        styles,
+                        x, y, width, height,
+                        parent,
+                        CurrentInstance,
+                        new RadioButtonGroupListener(self))
+                                                
 //        if((theSelected != -1)and:($nil != theIndexChanged))
 //            [ theIndexChanged eval:$self ]
-//    ]
-//}
-//
+    }
+}
+
 //// --- ImageList ---
 //
 //sealed class ImageList

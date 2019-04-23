@@ -1,15 +1,16 @@
-﻿[project]
-debug=c_a_g.dm
-executable=bin\c_a_g.exe
-output=obj
-namespace=calc_area_gui
-template=gui
-debuginfo=-1
-
-[files]
-calc_area_gui.l
-anot_wind.l
-
-[forwards]
-'mainWindow=calc_area_gui'Window
-
+<configuration>
+    <project>
+        <executable>c_a_g.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>c_a_g</namespace>
+        <template>gui</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>calc_area_gui.l</include>
+        </module>
+    </files>
+</configuration>

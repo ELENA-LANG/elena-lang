@@ -61,11 +61,11 @@ public sealed const struct WindowHandle
         theHandle := h
     }
 
-//    setVisible int:aValue
-//    [
-//        system'external'USER32 ShowWindow int:theHandle int:aValue.
-//    ]
-//    
+    setVisible(int n)
+    {
+        extern USER32.ShowWindow(theHandle, n)
+    }
+    
 //    bool stacksafe isVisible
 //    [
 //        int visible := system'external'USER32 IsWindowVisible int:theHandle.
@@ -137,11 +137,11 @@ public sealed const struct WindowHandle
         }
     }
     
-//    stacksafe setPosition int:x int:y int:cx int:cy int:flags
-//    [
-//        system'external'USER32 SetWindowPos int:theHandle int:0 int:x int:y int:cx int:cy int:flags
-//    ]
-//
+    setPosition(int x, int y, int cx, int cy, int flags)
+    {
+        extern USER32.SetWindowPos(theHandle, 0, x, y, cx, cy, flags)
+    }
+
 //    stacksafe getClientRect win_rect:aStruct
 //    [
 //        system'external'USER32 GetClientRect int:theHandle win_rect:aStruct

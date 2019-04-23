@@ -31,14 +31,18 @@ public class BaseControl
         theTabStop := false;
         theCaption := emptyWideString;
     }
-    
-//    visible = theVisible.
-//    
-//    set visible:aValue
-//    [
-//        theVisible := aValue bool.
-//    ]
-//
+
+    bool Visible
+    {
+        bool get() = theVisible;
+        
+        
+        set(bool v)
+        {
+            theVisible := v
+        }
+    }
+
     bool Enabled
     {
         bool get() = theEnabled;
@@ -162,25 +166,7 @@ public class BaseControl
         theRegion.set(x, y, width, height);
     }
 
-//    
-//    location = theRegion point.
-
     Dimension Dimension = theRegion.Dimension;
-    
-//    stacksafe setDimension int:aWidth int:aHeight
-//    [
-//        theRegion writeDimension int:aWidth int:aHeight.
-//    ]
-//            
-//    stacksafe readDimensionTo vint:aWidth vint:aHeight
-//    [
-//        theRegion readDimensionTo vint:aWidth vint:aHeight.        
-//    ]
-//    
-//    stacksafe readLocationTo vint:x vint:y
-//    [
-//        theRegion readLocationTo vint:x vint:y
-//    ]
 //    
 ////    #method is &tabstop = theTabStop.
 ////    

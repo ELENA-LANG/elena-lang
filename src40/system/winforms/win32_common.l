@@ -9,7 +9,7 @@ public const int WS_CHILD                = 40000000h;
 public const int WS_VISIBLE              = 10000000h;
 public const int WS_BORDER               = 00800000h;
 public const int WS_TABSTOP              = 00010000h;
-//const int WS_CLIPSIBLINGS         = 04000000h.
+public const int WS_CLIPSIBLINGS         = 04000000h;
 //const int WS_DLGFRAME             = 00400000h.
 //const int WS_POPUPWINDOW          = 80880000h.
 //const int WS_VSCROLL              = 00200000h.
@@ -20,7 +20,7 @@ public const int WS_TABSTOP              = 00010000h;
 //const int WS_EX_OVERLAPPEDWINDOW  = 00000300h.
 public const int EX_SDI_OVERLAPPEDWINDOW = 00040101h;
 public const int WS_EX_CLIENTEDGE        = 00000200h;
-//const int WS_EX_CONTROLPARENT     = 00010000h.
+public const int WS_EX_CONTROLPARENT     = 00010000h;
 ////#symbol(const,int)WS_EX_NOPARENTNOTIFY    = 00000004h.
 public const int WS_EX_TRANSPARENT       = 00000020h;
 
@@ -32,9 +32,9 @@ public const int WS_EX_TRANSPARENT       = 00000020h;
 public const int BS_PUSHBUTTON           = 0; 
 //const int BS_DEFPUSHBUTTON        = 1. 
 //const int BS_AUTOCHECKBOX         = 3.
-//const int BS_GROUPBOX             = 7.
-//const int BS_AUTORADIOBUTTON      = 9.
-//
+public const int BS_GROUPBOX             = 7;
+public const int BS_AUTORADIOBUTTON      = 9;
+
 //const int BST_CHECKED             = 1.
 //const int BST_UNCHECKED           = 0.
 //
@@ -57,10 +57,10 @@ public const int WM_PAINT         = 0Fh;
 public const int WM_CLOSE         = 10h;
 public const int WM_SETCURSOR     = 20h;
 //const int WM_QUIT          = 12h.
-//
-//const int SWP_NOSIZE       = 0001h.
-//const int SWP_NOMOVE       = 0002h.
-//
+
+public const int SWP_NOSIZE       = 0001h;
+public const int SWP_NOMOVE       = 0002h;
+
 //const int BM_SETCHECK      = 00F1h.
 //const int BM_GETCHECK      = 00F0h.
 //
