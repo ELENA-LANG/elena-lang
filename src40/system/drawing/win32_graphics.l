@@ -98,11 +98,11 @@ public sealed struct Canvas
         thePen := HPEN.Default;
     }
     
-//    stacksafe open hdc:aHandle
-//    [
-//        theHDC := aHandle.
-//    ]
-//    
+    open(HDC handle)
+    {
+        theHDC := handle
+    }
+    
 //    set pen:aPen
 //    [
 //        ifnot (0 == thePen)
@@ -130,12 +130,12 @@ public sealed struct Canvas
 //        
 //        theBrush := aBrushCopy
 //    ]    
-//    
-//    close
-//    [
-//        theHDC := 0.
-//    ]
-// 
+    
+    close()
+    {
+        theHDC := 0
+    }
+ 
 //    setCaret:p
 //        <= setCaret coord:(p coord).
 //        
@@ -201,17 +201,17 @@ public sealed struct Canvas
 //        
 //        theHDC copy int:x int:y int:aWidth int:aHeight hdc:aDC int:0 int:0 int:SRCCOPY.
 //    ] 
-// 
-//    free
-//    [
-//        ifnot (0 == thePen)
-//            [ thePen free ].
-//           
-//        hbrush aBrushCopy := theBrush.
-//        ifnot (0 == aBrushCopy)
-//            [ aBrushCopy free ].
-//            
-//        theBrush := 0.
-//        thePen := 0
-//    ]
+ 
+    free()
+    {
+        ifnot (thePen.IsEmpty())
+            { thePen.free() };
+           
+        HBRUSH brushCopy := theBrush;
+        ifnot (0 == brushCopy)
+            { brushCopy.free() };
+            
+        theBrush := HBRUSH.Default;
+        thePen := HPEN.Default;
+    }
 }

@@ -295,7 +295,7 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
    result.found = defineClassInfo(scope, info, reference);
 
    if (result.found) {
-      if (test(info.header.flags, elClosed))
+      if (testany(info.header.flags, elClosed | elClassClass))
          result.directResolved = true;
 
       if (test(info.header.flags, elWithCustomDispatcher))

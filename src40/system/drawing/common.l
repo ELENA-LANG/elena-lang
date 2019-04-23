@@ -337,13 +337,13 @@ public sealed struct Region //: BaseValue
 //        anX int := theX.
 //        anY int := theY.
 //    ]
-//    
-//    stacksafe readDimensionTo vint:aWidth vint:aHeight
-//    [
-//        aWidth int := theWidth.
-//        aHeight int := theHeight.
-//    ]
-//    
+    
+    readDimensionTo(ref int width, ref int height)
+    {
+        width := theWidth;
+        height := theHeight;
+    }
+    
 //    point
 //        = Point new int:theX int:theY.
 //    

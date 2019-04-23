@@ -159,17 +159,17 @@ public abstract class BaseWinControl : BaseControl
 //    [    
 //        $self set caption($self caption + aValue wide)
 //    ]
-//
-//    caption
-//    [
-//        ifnot($nil == theHandle)
-//            [
-//                theCaption := theHandle getCaption
-//            ].
-//            
-//        ^ theCaption
-//    ]
-//
+
+    get string Caption()
+    {
+        ifnot(nil == theHandle)
+        {
+            theCaption := theHandle.getCaption()
+        };
+            
+        ^ theCaption
+    }
+
 //    setLocation int:x int:y
 //    [
 //        theRegion writeLocation int:x int:y.
@@ -189,14 +189,14 @@ public abstract class BaseWinControl : BaseControl
 //                theHandle setPosition int:0 int:0 int:aWidth int:aHeight int:SWP_NOMOVE
 //            ]
 //    ]
-//    
-//    refresh
-//    [
-//        if($nil != theHandle)
-//            [ theHandle refresh ]
-//    ]
     
-    internal resize(int width, int height)
+    refresh()
+    {
+        if(nil != theHandle)
+            { theHandle.refresh() }
+    }
+    
+    internal resize(WindowHandle hwnd, int width, int height)
     {
         theRegion.writeDimension(width, height)
     }  
@@ -280,9 +280,9 @@ public abstract class BaseWinContainer : BaseWinControl
         }
     }
     
-    internal resize(int width, int height)
+    internal resize(WindowHandle hwnd, int width, int height)
     {
-        super.resize(width, height);
+        super.resize(hwnd, width, height);
 
 //        ifnot($nil == theResize)
 //            [ theResize eval:$self ]
@@ -786,7 +786,8 @@ class PaintboxListener : WindowCallback
 public closed class Paintbox : BaseWinControl, interface<IControl>
 {
     Canvas  theCanvas;
-//    paintfunc thePaint.
+    
+    event Func<object,Canvas,object> onPaint;
     
     constructor new()
         <= new()
@@ -794,11 +795,6 @@ public closed class Paintbox : BaseWinControl, interface<IControl>
         theCanvas := new Canvas()
     }
 
-//    set onPaint:aFunction
-//    [
-//        thePaint := aFunction paintfunc.
-//    ]
-   
     internal destroy()
     {
         theCanvas.free()
@@ -806,20 +802,18 @@ public closed class Paintbox : BaseWinControl, interface<IControl>
  
     internal paint()
     {
-//        win_paintstruct struct := PAINTSTRUCT new.
-//        hdc dc := 0.
-//        
-//        struct begin hwnd:theHandle.
-//        struct read vhdc:dc.
-//        
-//        theCanvas open hdc:dc.
-//        
-//        ifnot($nil == thePaint)
-//            [ thePaint($self, theCanvas) ].
-//        
-//        theCanvas close.
-//
-//        struct end hwnd:theHandle
+        PAINTSTRUCT struct := new PAINTSTRUCT();
+        
+        struct.begin(theHandle);
+        HDC dc := struct.HDC;
+        
+        theCanvas.open(dc);
+        
+        onPaint.?(self, theCanvas);
+
+        theCanvas.close();
+
+        struct.end(theHandle)
     }
  
 //    stacksafe $resize hwnd:aControl int:aWidth int:aHeight
@@ -853,81 +847,76 @@ public closed class Paintbox : BaseWinControl, interface<IControl>
     }
 }
 
-//class Imagebox :: Paintbox
-//{
-//    hbitmap  theImage.
-//    hdc      theImageDC.
-//    bool     theNeedToRefresh.
-//    
-//    constructor new
-//        <= new;
-//    [
-//        theNeedToRefresh := false
-//    ]
-//
-//    $destroy
-//    [
-//        $super $destroy.
-//        
-//        theImage free.
-//        theImageDC free
-//    ]
-//    
-//    $paint
-//    [
-//        if(theNeedToRefresh)
-//            [ $self refresh ].
-//        
-//        win_paintstruct struct := PAINTSTRUCT new.
-//        
-//        struct begin hwnd:theHandle.
-//        
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        theRegion readDimensionTo vint:aWidth vint:aHeight.
-//        
-//        hdc dc := 0.
-//        struct read vhdc:dc.
-//        
-//        dc copy int:0 int:0 int:aWidth int:aHeight hdc:theImageDC int:0 int:0 int:SRCCOPY.
-////        int err := system'external'KERNEL32 GetLastError.
-//                
-//        struct end hwnd:theHandle.
-//    ]
-// 
-//    refresh
-//    [
-//        if($nil == theHandle)
-//            [ ^ $self ].
-//        
-//        ifnot($nil == thePaint)
-//            [ thePaint($self,theCanvas) ].
-//
-//        $super refresh.
-//        theNeedToRefresh := false
-//    ]
-// 
-//    $resize hwnd:aHandle int:aWidth int:aHeight
-//    [
-//        ifnot($nil == theImage)
-//            [
-//                theImage free.
-//                theImageDC free
-//            ].
-//            
-//        hdc dc := 0.
-//        aHandle read vhdc:dc.
-//            
-//        theImage := HBITMAP new hdc:dc int:aWidth int:aHeight.
-//        theImageDC := HDC newCompatible hdc:dc.
-//        theImage select hdc:theImageDC.
-//
-//        theCanvas open hdc:theImageDC.
-//
-//        theNeedToRefresh := true
-//    ]
-//}
-//
+public sealed class Imagebox : Paintbox
+{
+    HBITMAP  theImage;
+    HDC      theImageDC;
+    bool     theNeedToRefresh;
+    
+    constructor new()
+        <= new()
+    {
+        theNeedToRefresh := false
+    }
+
+    internal destroy()
+    {
+        super.destroy();
+        
+        theImage.free();
+        theImageDC.free()
+    }
+    
+    internal paint()
+    {
+        if(theNeedToRefresh)
+            { self.refresh() };
+        
+        PAINTSTRUCT struct := new PAINTSTRUCT();
+        
+        struct.begin(theHandle);
+        
+        theRegion.readDimensionTo(ref int width, ref int height);
+        
+        HDC dc := struct.HDC;
+        
+        dc.copy(0, 0, width, height, theImageDC, 0, 0, SRCCOPY);
+//        int err := system'external'KERNEL32 GetLastError.
+                
+        struct.end(theHandle)
+    }
+ 
+    refresh()
+    {
+        if(nil == theHandle)
+            { ^ self };
+        
+        onPaint.?(self, theCanvas);
+
+        super.refresh();
+        theNeedToRefresh := false
+    }
+ 
+    internal resize(WindowHandle handle, int width, int height)
+    {
+        ifnot(nil == theImage)
+        {
+            theImage.free();
+            theImageDC.free()
+        };
+            
+        HDC dc := handle.HDC;
+            
+        theImage := HBITMAP.create(dc, width, height);
+        theImageDC := HDC.newCompatible(dc);
+        theImage.select(theImageDC);
+
+        theCanvas.open(theImageDC);
+
+        theNeedToRefresh := true
+    }
+}
+
 //// --- BasePanel ---
 //
 //class BasePanel :: BaseWinContainer

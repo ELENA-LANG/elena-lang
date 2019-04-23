@@ -65,7 +65,7 @@ class SDIWindowListener : SDIWindowCallback
     
     onsize(WindowHandle hwnd, int width, int height, ref int result)
     {
-        theOwner.resize(width, height);
+        theOwner.resize(hwnd, width, height);
         
         result := 0;
     }

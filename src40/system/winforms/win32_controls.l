@@ -1,4 +1,4 @@
-//import system'drawing.
+import system'drawing;
 
 // --- classes ---
 public const wide StaticClass = "Static"w;
@@ -102,38 +102,41 @@ public sealed const struct WindowHandle
         extern USER32.SendMessageW(theHandle, WM_SETTEXT, 0, s)
     }
     
-//    getCaption
-//    [
-//        int aLength := system'external'USER32 SendMessageW int:theHandle int:WM_GETTEXTLENGTH int:0 int:0.
-//        
-//        if (aLength == 0)
-//            [ ^ emptyWideLiteralValue ];
-//            [
-//                wide aCaption := WideLiteralValue new int:aLength.
-//                aLength := aLength + 1.
-//                
-//                system'external'USER32 SendMessageW int:theHandle int:WM_GETTEXT int:aLength wide:aCaption.
-//                
-//                ^ aCaption
-//            ].
-//    ]
-//
+    wide getCaption()
+    {
+        int length := extern USER32.SendMessageW(theHandle, WM_GETTEXTLENGTH, 0, 0);
+        
+        if (length == 0)
+        { 
+            ^ emptyWideString 
+        }
+        else
+        {
+            wide caption := WideString.allocate(length);
+            length := length + 1;
+            
+            extern USER32.SendMessageW(theHandle, WM_GETTEXT, length, caption);
+            
+            ^ caption
+        }
+    }
+
 //    sendMessage int:aMessage int:aWParam wide:aLParam
 //    [
 //        system'external'USER32 SendMessageW int:theHandle int:aMessage int:aWParam wide:aLParam
 //    ]
-//            
-//    refresh
-//    [
-//        int handle := theHandle.
-//        
-//        extern()
-//        [
-//            system'external'USER32 InvalidateRect int:handle int:0 int:1.
-//            system'external'USER32 UpdateWindow int:handle
-//        ].
-//    ]
-//    
+            
+    refresh()
+    {
+        int handle := theHandle;
+        
+        extern
+        {
+            extern USER32.InvalidateRect(handle, 0, 1);
+            extern USER32.UpdateWindow(handle)
+        }
+    }
+    
 //    stacksafe setPosition int:x int:y int:cx int:cy int:flags
 //    [
 //        system'external'USER32 SetWindowPos int:theHandle int:0 int:x int:y int:cx int:cy int:flags
@@ -144,21 +147,13 @@ public sealed const struct WindowHandle
 //        system'external'USER32 GetClientRect int:theHandle win_rect:aStruct
 //    ]
 //  
-//    stacksafe read vhdc:anHDC
-//    [
-//        hdc dc := system'external'USER32 GetDC int:theHandle.
-//        
-//        anHDC hdc := dc.
-//    ]
-//
-//    hdc
-//    [
-//        hdc aDC := 0.
-//        $self read vhdc:aDC.
-//
-//        ^ HDC new hdc:aDC
-//    ]
-//
+    get HDC HDC()
+    {
+        HDC dc := extern USER32.GetDC(theHandle);
+
+        ^ dc
+    }
+
 //    stacksafe set hmenu:aMenuHandle
 //    [
 //        system'external'USER32 SetMenu int:theHandle int:aMenuHandle
@@ -170,43 +165,41 @@ public sealed const struct WindowHandle
     }
 }
 
-//// --- PAINTSTRUCT ---
-//
-//sealed struct PAINTSTRUCT
-//{
-//    hdc      theHDC.
-//    int      theErase.
-//    win_rect theRect. 
-//    int      theRestore.
-//    int      theIncUpdate.
-//    
-//    int      dummy0.
-//    int      dummy1.
-//    int      dummy2.
-//    int      dummy3.
-//    int      dummy4.
-//    int      dummy5.
-//    int      dummy6.
-//    int      dummy7.
-//
-//    embeddable constructor new
-//    [
-//    ]
-//
-//    stacksafe read vhdc:aHandle
-//    [
-//        aHandle hdc := theHDC.
-//    ]
-//            
-//    hdc = HDC new hdc:theHDC.            
-//            
-//    stacksafe begin hwnd:aHandle
-//    [
-//        system'external'USER32 BeginPaint int:aHandle win_paintstruct:$self
-//    ]
-//    
-//    stacksafe end hwnd:aHandle
-//    [
-//        system'external'USER32 EndPaint int:aHandle win_paintstruct:$self
-//    ]
-//}
+// --- PAINTSTRUCT ---
+
+public sealed struct PAINTSTRUCT
+{
+    HDC  theHDC;
+    int  theErase;
+    RECT theRect;
+    int  theRestore;
+    int  theIncUpdate;
+    
+    int  dummy0;
+    int  dummy1;
+    int  dummy2;
+    int  dummy3;
+    int  dummy4;
+    int  dummy5;
+    int  dummy6;
+    int  dummy7;
+
+    embeddable constructor()
+    {
+    }
+
+    get HDC HDC()
+    {
+        ^ theHDC
+    }
+            
+    begin(WindowHandle handle)
+    {
+        extern USER32.BeginPaint(handle, self)
+    }
+    
+    end(WindowHandle handle)
+    {
+        extern USER32.EndPaint(handle, self)
+    }
+}
