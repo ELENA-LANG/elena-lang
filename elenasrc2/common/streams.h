@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of abstract stream reader
 //      and writer classes
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef streamsH
@@ -100,6 +100,15 @@ public:
       readDWord(value);
 
       return value;
+   }
+
+   unsigned int getDWord(int default)
+   {
+      unsigned int value = 0;
+      if (readDWord(value)) {
+         return value;
+      }
+      else return default;
    }
 
    unsigned char getByte()

@@ -224,5 +224,5 @@ public class SDIWindowCallback : WindowCallback
 // --- SDIWindowClass ---
 
 public static wide SDIWindowClass = windowClassControl.createClass("ELENA.SDIWINDOW.3.1", CurrentInstance, WS_ELENAWINDOW, COLOR_BACKGROUND);
-//wide static PaintboxClass  = $windowClassControl createClass literal:"ELENA.Paintbox.3.1" hinstance:CurrentInstance int:(CS_VREDRAW or int:CS_HREDRAW) int:0; wide.
+public static wide PaintboxClass  = windowClassControl.createClass("ELENA.Paintbox.3.1", CurrentInstance, CS_VREDRAW || CS_HREDRAW, 0);
 //wide static PanelClass     = $windowClassControl createClass literal:"ELENA.PANEL.3.1" hinstance:CurrentInstance int:(CS_VREDRAW or int:CS_HREDRAW) int:COLOR_BACKGROUND; wide.

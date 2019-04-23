@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Syntax Tree class implementation
 //
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,6 +14,22 @@
 using namespace _ELENA_;
 
 // --- SyntaxWriter ---
+
+//void SyntaxWriter :: insertSubTree(int bookmark, void* body, size_t length)
+//{
+//   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+//
+//   _bodyWriter.insert(position, body, length);
+//
+//   Stack<size_t>::Iterator it = _bookmarks.start();
+//   while (!it.Eof()) {
+//      if (*it > position) {
+//         *it = *it + length;
+//      }
+//
+//      it++;
+//   }
+//}
 
 void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
 {
@@ -117,6 +133,26 @@ SyntaxTree::Node SyntaxTree :: insertStrNode(size_t position, LexicalType type, 
    MemoryReader reader(&_body, position);
    return read(reader);
 }
+
+//void SyntaxTree :: insertSubTree(size_t position, SyntaxTree& subTree)
+//{
+//   MemoryDump* buffer = subTree.getBody();
+//   MemoryDump* strBuffer = subTree.getStringBody();
+//   pos_t* ptr = (pos_t*)buffer->get(0);
+//   size_t len = buffer->Length();
+//
+//   SyntaxWriter writer(*this);
+//   writer.insertSubTree(writer.setBookmark(position), ptr, len);
+//
+//   for (size_t i = 0; i < position; i += 12) {
+//      if (ptr[i + 8] != -1) {
+//         *(int*)_body.get(position + i + 8) = *(int*)_body.get(position + i + 8) + _strings.Length();
+//      }
+//   }
+//
+//   MemoryWriter strWriter(&_strings);
+//   strWriter.write(strBuffer->get(0), strBuffer->Length());
+//}
 
 SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, ident_t argument)
 {
@@ -384,7 +420,7 @@ void SyntaxTree :: refresh(SyntaxTree::Node& node)
 
 SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
 {
-   int type = reader.getDWord();
+   int type = reader.getDWord(-1);
    ref_t arg = reader.getDWord();
    int str = reader.getDWord();
 
@@ -415,7 +451,7 @@ SyntaxTree::Node SyntaxTree :: readNextNode(size_t position)
    int level = 1;
 
    do {
-      int type = reader.getDWord();
+      int type = reader.getDWord(-1);
       reader.getQWord();
 
       if (type == -1) {
@@ -438,7 +474,7 @@ size_t SyntaxTree :: seekNodeEnd(size_t position)
    do {
       endPosition = reader.Position();
 
-      int type = reader.getDWord();
+      int type = reader.getDWord(-1);
       reader.getQWord();
 
       if (type == -1) {
@@ -461,7 +497,7 @@ SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
    while (position > 11) {
       reader.seek(position);
 
-      int type = reader.getDWord();
+      int type = reader.getDWord(-1);
       reader.getDWord();
 
       if (type != -1) {
@@ -489,7 +525,7 @@ SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
    position -= 24;
 
    reader.seek(position);
-   if (reader.getDWord() != -1) {
+   if (reader.getDWord(-1) != -1) {
       reader.seek(position);
 
       return read(reader);
@@ -499,7 +535,7 @@ SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
    while (position > 11) {
       reader.seek(position);
 
-      int type = reader.getDWord();
+      int type = reader.getDWord(-1);
 
       if (type != -1) {
          if (level == 0) {

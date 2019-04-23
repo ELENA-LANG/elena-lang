@@ -3,8 +3,6 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * fix an issue with borken build time to time
-
                  * test all samples
 ------                                                           
 Pipeline:

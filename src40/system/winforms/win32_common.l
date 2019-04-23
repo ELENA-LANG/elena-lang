@@ -84,8 +84,8 @@ public const int COLOR_BACKGROUND = 5;
 // --- Class Styles ---
 
 public const int WS_ELENAWINDOW   = 0100Bh;
-//const int CS_VREDRAW       = 00001h.
-//const int CS_HREDRAW       = 00002h.
+public const int CS_VREDRAW       = 00001h;
+public const int CS_HREDRAW       = 00002h;
 
 public const int HTCLIENT         = 1;
 

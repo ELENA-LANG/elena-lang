@@ -345,7 +345,7 @@ public:
 //         _bookmarks.clear();
 //      }
 
-      void set(int bookmark, LexicalType type);
+      //void set(int bookmark, LexicalType type);
 
       void insert(int bookmark, LexicalType type, ref_t argument);
       void insert(int bookmark, LexicalType type, ident_t argument);

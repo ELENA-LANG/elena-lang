@@ -313,7 +313,12 @@ struct _ModuleScope
       project->printInfo(info, messageName.ident());
    }
 
-//   void raiseWarning(int level, const char* message, ident_t sourcePath, ident_t identifier)
+   void printInfo(const char* message, const char* arg)
+   {
+      project->printInfo(message, arg);
+   }
+
+   //   void raiseWarning(int level, const char* message, ident_t sourcePath, ident_t identifier)
 //   {
 //      project->raiseWarning(level, message, sourcePath, 0, 0, identifier);
 //   }
