@@ -164,9 +164,9 @@ public class BaseControl
 
 //    
 //    location = theRegion point.
-//
-//    dimension = theRegion dimension.
-//    
+
+    Dimension Dimension = theRegion.Dimension;
+    
 //    stacksafe setDimension int:aWidth int:aHeight
 //    [
 //        theRegion writeDimension int:aWidth int:aHeight.

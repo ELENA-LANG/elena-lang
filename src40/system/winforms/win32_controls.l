@@ -128,12 +128,12 @@ public sealed const struct WindowHandle
             
     refresh()
     {
-        int handle := theHandle;
+        WindowHandle copy := theHandle;
         
         extern
         {
-            extern USER32.InvalidateRect(handle, 0, 1);
-            extern USER32.UpdateWindow(handle)
+            extern USER32.InvalidateRect(copy, 0, 1);
+            extern USER32.UpdateWindow(copy)
         }
     }
     

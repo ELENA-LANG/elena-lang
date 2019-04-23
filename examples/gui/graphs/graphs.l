@@ -1,94 +1,96 @@
-//import system'math.
+import system'math;
 import forms;
-//import system'drawing.
-//import extensions.
-//
-//const  ScaleX   = 15.
-//const  ScaleY   = 15.
-//const  starting = 0.0r.
-//symbol ending   = pi_value * 6.
-//const  H        = 0.005r.
-//const  A        = 5.0r.
-//symbol C        = 2.0r / 3.0r.
-//
-//// --- function ---
-//
-//symbol function = (:t) [ 
-//            ^ Point new 
-//                x((A * (C * t cos + (C*t) cos) * ScaleX) roundedInt)
-//                y((A * (C * t sin - (C*t) sin) * ScaleY) roundedInt)
-//        ].
-//
-//plotter =
-//{
-//    drawAxis dimension:aSize canvas:aCanvas
-//    [        
-//        var aZeroX :=  aSize width / 2.
-//        var aZeroY := aSize height / 2 - 10.
-//
-//        // X axis
-//        aCanvas setCaret x:0 y:aZeroY.
-//        aCanvas lineCaretTo x:(aSize width) y:aZeroY.
-//        
-//        aCanvas writeText:"X" x:(aSize width - 20) y:(aZeroY + 2).
-//
-//        // Y axis
-//        aCanvas setCaret x:aZeroX y:0.
-//        aCanvas lineCaretTo x:aZeroX y:(aSize height).
-//
-//        aCanvas writeText:"Y" x:(aZeroX + 2) y:2.
-//
-//        -10 to:10 by:2 do(:i)
-//        [
-//            if(i != 0)
-//            [
-//                aCanvas writeText:i x:(aZeroX + (i * ScaleX) - 4) y:(aZeroY + 2).
-//                
-//                aCanvas writeText:i x:(aZeroX + 8) y:(aZeroY - (i * ScaleY) - 2)
-//            ];
-//            [ aCanvas writeText:"0" x:(aZeroX + 2) y:(aZeroY + 2) ]
-//        ].
-//    ]
-//    
-//    drawGraph dimension:aSize canvas:aCanvas
-//    [
-//        var t := starting.
-//        var t2 := ending.
-//        var aZero := Point new x:(aSize width / 2) y:(aSize height / 2 - 10).
-//
-//        aCanvas setCaret:(aZero + function eval:t).
-//        while (t <= t2)
-//        [
-//            aCanvas lineCaretTo:(aZero + function eval:t).
-//
-//            t := t + H
-//        ]
-//    ]
-//}.
+import system'drawing;
+import extensions;
+
+const  int ScaleX   = 15;
+const  int ScaleY   = 15;
+const  real starting = 0.0r;
+symbol real ending   = Pi_value * 6;
+const  real H        = 0.005r;
+const  real A        = 5.0r;
+real C        = 2.0r / 3.0r;
+
+// --- function ---
+
+function(t) 
+{ 
+    ^ new Point(
+        (A * (C * t.cos() + (C*t).cos()) * ScaleX).RoundedInt,
+        (A * (C * t.sin() - (C*t).sin()) * ScaleY).RoundedInt)
+}
+
+singleton Plotter
+{
+    drawAxis(Dimension size, Canvas canvas)
+    {
+        var zeroX :=  size.Width / 2;
+        var zeroY := size.Height / 2 - 10;
+
+        // X axis
+        canvas.setCaret(0, zeroY);
+        canvas.lineCaretTo(size.Width, zeroY);
+        
+        canvas.writeText("X", size.Width - 20, zeroY + 2);
+
+        // Y axis
+        canvas.setCaret(zeroX, 0);
+        canvas.lineCaretTo(zeroX, size.Height);
+
+        canvas.writeText("Y", zeroX + 2, 2);
+
+        for(int i := -10, i <= 10, i += 2)
+        {
+            if(i != 0)
+            {
+                canvas.writeText(i.toString(), zeroX + (i * ScaleX) - 4, zeroY + 2);
+                
+                canvas.writeText(i.toString(), zeroX + 8, zeroY - (i * ScaleY) - 2);
+            }
+            else
+            { 
+                canvas.writeText("0", zeroX + 2, zeroY + 2) 
+            }
+        }
+    }
+    
+    drawGraph(Dimension size, Canvas canvas)
+    {
+        auto t := starting;
+        auto t2 := ending;
+        var zero := new Point(size.Width / 2, size.Height / 2 - 10);
+
+        canvas.setCaret(zero + function(t));
+        while (t <= t2)
+        {
+            canvas.lineCaretTo(zero + function(t));
+
+            t := t + H
+        }
+    }
+}
 
 public class MainWindow : SDIDialog
 {
-//    object theImagebox.
+    Imagebox theImagebox;
 
     constructor new()
         <= new()
     {
-//        theImagebox := Imagebox new.
-//        theControls append:theImagebox.
-//
-//        $self set caption:"Graph sample".
-//        $self set x:50 y:50.
-//        $self set width:400 height:420.
-//
-//        theImagebox set x:0 y:0.
-//        theImagebox set width:400 height:420.
-//        theImagebox set onPaint: (:sender:aCanvas)<object,canvas>
-//        [
-//            aCanvas set:WhitePen.
-//            aCanvas set:BlackBrush.
-//
-//            plotter drawAxis dimension:(theImagebox dimension) canvas:aCanvas.
-//            plotter drawGraph dimension:(theImagebox dimension) canvas:aCanvas
-//        ].
+        theImagebox := Imagebox.new();
+        self.appendControl:theImagebox;
+
+        self.Caption := "Graph sample";
+        self.setRegion(50, 50, 400, 420);
+
+        theImagebox.setRegion(0, 0, 400, 420);
+        theImagebox.onPaint := (object sender, Canvas canvas)
+        {
+            canvas.set(WhitePen);
+            canvas.set(BlackBrush);
+
+            Plotter.drawAxis(theImagebox.Dimension, canvas);
+            Plotter.drawGraph(theImagebox.Dimension, canvas)
+        }
     }
 }

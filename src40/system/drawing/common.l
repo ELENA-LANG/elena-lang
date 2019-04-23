@@ -1,162 +1,140 @@
-//// --- common types ---
-//type coord     = system'drawing'Point.
-//type dimension = system'drawing'Dimension.
-//type region    = system'drawing'Region.
-//
-//// --- Point ---
-//
-//sealed struct Point :: BaseNumber
-//{
-//    int theX.
-//    int theY.
-//    
-//    embeddable constructor new
-//    [
-//        theX := 0.
-//        theY := 0.
-//    ]
-//    
-//    constructor new x:anX y:anY
-//    [
-//        theX := anX int.
-//        theY := anY int.
-//    ]
-//    
-//    stacksafe constructor new int:anX int:anY
-//    [
-//        theX := anX.
-//        theY := anY.
-//    ]
-//    
-//    int vprop x :: readXTo, writeX.
-//    int vprop y :: readYTo, writeY.
-//    
-//    clone = Point new int:theX int:theY.
-//    
+// --- Point ---
+
+public sealed struct Point// :: BaseNumber
+{
+    int theX;
+    int theY;
+    
+    embeddable constructor()
+    {
+        theX := 0;
+        theY := 0
+    }
+    
+    embeddable constructor(int x, int y)
+    {
+        theX := x;
+        theY := y
+    }
+    
+    int X
+    {
+        int get() = theX;
+        
+        set(int v)
+        {
+            theX := v
+        }
+    }
+    
+    int Y
+    {
+        int get() = theY;
+        
+        set(int v)
+        {
+            theY := v
+        }
+    }
+    
+    Point clone() = new Point(theX, theY);
+    
 //    stacksafe write int:anX int:anY
 //    [
 //        theX := anX.
 //        theY := anY
 //    ]
 //    
-//    stacksafe writeX int:aValue
-//    [
-//        theX := aValue.
-//    ]
-//    
-//    stacksafe writeY int:aValue
-//    [
-//        theY := aValue.
-//    ]
-//    
-//    stacksafe readXTo vint:aValue
-//    [
-//        aValue int := theX.
-//    ]
-//    
-//    stacksafe readYTo vint:aValue
-//    [
-//        aValue int := theY.
-//    ]
 //    
 //    stacksafe read vint:anX vint:anY
 //    [
 //        anX int := theX.
 //        anY int := theY
 //    ]
-//    
-//    bool equal coord:aPoint
-//    [
-//        int anX := aPoint x.
-//        int anY := aPoint y.
-//        
-//        ^ (theX == anX) and:(theY == anY)
-//    ]
-//    
-//    bool less coord:aPoint
-//    [
-//        int anX := aPoint x.
-//        int anY := aPoint y.
-//        
-//        if (theY < anY)
-//            [ ^ true ].
-//            
-//        if (theY == anY)
-//            [ ^ theX < anX ].
-//
-//        ^ false  
-//    ]
-//    
-//    add coord:aPoint
-//    [
-//        int anX := aPoint x.
-//        int anY := aPoint y.
-//        
-//        ^ Point new int:(theX + anX) int:(theY + anY).
-//    ] 
-//    
-//    subtract coord:aPoint
-//    [
-//        int anX := aPoint x.
-//        int anY := aPoint y.
-//        
-//        ^ Point new int:(theX - anX) int:(theY - anY)
-//    ] 
-//}
-//
-//// --- Dimension ---
-//
-//sealed struct Dimension :: BaseValue
-//{
-//    int theWidth.
-//    int theHeight.
-//    
-//    embeddable constructor new
-//    [
-//        theWidth := 0.
-//        theHeight := 0.
-//    ]
-//    
-//    constructor new width:aWidth height:aHeight
-//    [
-//        theWidth := aWidth int.
-//        theHeight := aHeight int.
-//    ]
-//    
+    
+    bool equal(Point p)
+    {
+        int x := p.X;
+        int y := p.Y;
+        
+        ^ (theX == x) && (theY == y)
+    }
+    
+    bool less(Point p)
+    {
+        int x := p.X;
+        int y := p.Y;
+        
+        if (theY < y)
+            { ^ true };
+            
+        if (theY == y)
+            { ^ theX < x };
+
+        ^ false  
+    }
+    
+    Point add(Point p)
+    {
+        int x := p.X;
+        int y := p.Y;
+        
+        ^ new Point(theX + x, theY + y)
+    } 
+    
+    Point subtract(Point p)
+    {
+        int x := p.X;
+        int y := p.Y;
+        
+        ^ new Point(theX - x, theY - y)
+    }
+}
+
+// --- Dimension ---
+
+public sealed struct Dimension //:: BaseValue
+{
+    int theWidth;
+    int theHeight;
+    
+    embeddable constructor()
+    {
+        theWidth := 0;
+        theHeight := 0
+    }
+    
+    embeddable constructor(int width, int height)
+    {
+        theWidth := width;
+        theHeight := height
+    }
+    
 //    stacksafe constructor new int:aWidth int:aHeight
 //    [
 //        theWidth := aWidth.
 //        theHeight := aHeight.
 //    ]
 //    
-//    int vprop width :: readWidthTo, writeWidth.
-//    int vprop height :: readHeightTo, writeHeight.
-//    
-//    stacksafe writeWidth int:aValue
-//    [
-//        theWidth := aValue
-//    ]
-//    
-//    stacksafe writeHeight int:aValue
-//    [
-//        theHeight := aValue
-//    ]
-//    
-//    stacksafe write int:aWidth int:aHeight
-//    [
-//        theWidth := aWidth.
-//        theHeight := aHeight
-//    ]
-//    
-//    stacksafe readWidthTo vint:aValue
-//    [
-//        aValue int := theWidth.
-//    ]
-//    
-//    stacksafe readHeightTo vint:aValue
-//    [
-//        aValue int := theHeight.
-//    ]
+    int Width
+    {
+        int get() = theWidth;
+        
+        set(int v)
+        {
+            theWidth := v
+        }
+    }
+
+    int Height
+    {
+        int get() = theHeight;
+        
+        set(int v)
+        {
+            theHeight := v
+        }
+    }
 //    
 //    stacksafe read vint:aWidth vint:aHeight
 //    [
@@ -175,7 +153,7 @@
 //        
 //        ^ (theWidth == aWidth) and:(theHeight == aHeight)
 //    ]
-//}
+}
 
 // --- Region ---
 
@@ -346,10 +324,10 @@ public sealed struct Region //: BaseValue
     
 //    point
 //        = Point new int:theX int:theY.
-//    
-//    dimension
-//        = Dimension new int:theWidth int:theHeight.
-//    
+    
+    Dimension Dimension
+        = new Dimension(theWidth, theHeight);
+    
 //    bool equal region:aRegion
 //    [
 //        int aWidth := 0.
