@@ -970,7 +970,12 @@ public abstract class BasePanel : BaseWinContainer
         theFrame.setRegion(0, 0, width, height);
     }
     
-    set Caption(caption)
+    set Caption(string caption)
+    {
+        theFrame.Caption := caption
+    }
+    
+    set Caption(wide caption)
     {
         theFrame.Caption := caption
     }
@@ -1194,8 +1199,9 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
         IControl current;
         for (int i := 1, i < len, i += 1) {
             current := theControls[i];
+            int index := i - 1;
             
-            current.setRegion(4, 18 + i * 20, width - 6, 20);
+            current.setRegion(4, 18 + index * 20, width - 6, 20);
         };
         
         super.resize(handle, width, height)
