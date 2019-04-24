@@ -73,7 +73,7 @@ class CalendarMonthPrinter
 
         appendIndex(int index)
         {
-            self.Index := theRow.Value + index
+            this self.Index := theRow.Value + index
         }
         
         get int Length() { ^ 7 }

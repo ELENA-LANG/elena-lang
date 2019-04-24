@@ -1,25 +1,22 @@
 
 public interface Space
 {
-    int LiveCell
+    int LiveCell(int k, int l, int state)
     {
-        calc(int k, int l, int state, ref int retVal)
+        int j := -1;
+        int counter := 0;
+        for (int i := -1, i < 2, i += 1)
         {
-            int j := -1;
-            int counter := 0;
-            for (int i := -1, i < 2, i += 1)
+            for (int j := -1, j < 2, j += 1)
             {
-                for (int j := -1, j < 2, j += 1)
-                {
-                    int cell := self.at(k + i, l + j);
-                    if (cell == state)
-                        { counter := counter + 1 }
-                }
-            };
-            
-            retVal := counter
-        }        
-    }
+                int cell := self.at(k + i, l + j);
+                if (cell == state)
+                    { counter := counter + 1 }
+            }
+        };
+        
+        ^ counter
+    }        
     
     Rows
     {

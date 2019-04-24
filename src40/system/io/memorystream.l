@@ -18,7 +18,18 @@ public sealed class MemoryBuffer
     constructor()
         <= allocate(TextPageSize);
     
-//    cast T<ByteArray> = ByteArray new(0, theUsed value, theBuffer).
+    get byte[] Value()
+    {
+        int used := theUsed.Value;
+        byte[] b := new byte[](used);
+        
+        for (int i := 0, i < used, i+=1)
+        {
+            b[i] := theBuffer[i]
+        };
+        
+        ^ b
+    }
     
     private reserve(int len)
     {
@@ -85,16 +96,17 @@ public sealed class MemoryBuffer
         }
     }
     
-//    read(int index, ref<int> retVal)
-//    [
-//        int used := 0.
-//        theUsed readValueTo(&used).
-//        
-//        if(index > used)
-//            [ OutOfRangeException new; raise ].
-//        
-//        theBuffer read(index, retVal)
-//    ]
+    int readInt32(int index)
+    {
+        int used := theUsed.Value;
+        
+        if(index > used)
+            { OutOfRangeException.new().raise() };
+        
+        theBuffer.read(index, ref int retVal);
+        
+        ^ retVal
+    }
     
     read(int index, int length, byte[] array)
     {
@@ -106,20 +118,19 @@ public sealed class MemoryBuffer
         theBuffer.read(index, length, array)
     }
     
-//    delete(int index, int length)
-//    [
-//        int n := 0 - length.
-//        int l := 0.
-//        theUsed readValueTo(&l).
-//        
-//        l := l - index.
-//        l := l - length.
-//        
-//        theBuffer move(index + length, l, n).
-//        
-//        theUsed reduce(length).
-//    ]
-//    
+    delete(int index, int length)
+    {
+        int n := 0 - length;
+        int l := theUsed.Value;
+        
+        l := l - index;
+        l := l - length;
+        
+        theBuffer.move(index + length, l, n);
+        
+        theUsed.reduce(length)
+    }
+    
     Length
     {
         int get()

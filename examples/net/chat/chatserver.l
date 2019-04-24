@@ -12,7 +12,12 @@ sealed class ChatMember : BaseClient
     TcpRemoteClient theOwner;
     ChatServer      theServer;
     
-//    literal prop Name :: theName.
+    prop string Name;
+
+    constructor()
+        <= ()
+    {
+    }
 
     constructor(TcpRemoteClient owner, ChatServer server)
         <= ()
@@ -22,7 +27,7 @@ sealed class ChatMember : BaseClient
         theServer := server
     }    
     
-//    T<ChatServer> server = theServer.
+    ChatServer Server = theServer;
 }
 
 sealed class ChatServer
@@ -50,7 +55,7 @@ sealed class ChatServer
     
     private bool proceed()
     {
-        theNetworkServer.Clients().forEach:(TcpRemoteClient client)
+        theNetworkServer.Clients.forEach:(TcpRemoteClient client)
         {
             lock (theLock)
             {
@@ -60,19 +65,23 @@ sealed class ChatServer
                     var command := member.readCommand();
                     if (nil != command)
                     {
-//                        (command.Command) =>
-//                            INTRODUCTION
-//                            {
-//                                member.Name := command.Value;
-//                                
-//                                console.printLine(command.Value," joined")
-//                            }
-//                            SEND
-//                            {
-//                                console.printLine(member.Name,":",command.Value).
-//                                
-//                                member.Server.translate:CommandDTO::{ @_command := TRANSLATE. @_value := command Value. @_user := member Name. }.
-//                            };
+                        (command.Command) =>
+                            INTRODUCTION
+                            {
+                                member.Name := command.Value;
+                                
+                                console.printLine(command.Value," joined")
+                            }
+                            SEND
+                            {
+                                console.printLine(member.Name,":",command.Value).
+                                
+                                member.Server.translate(new CommandDTO:
+                                                        { 
+                                                            this _command := TRANSLATE; 
+                                                            this _value := command.Value; 
+                                                            this _user := member.Name; })
+                            };
                     }
                 }
             }

@@ -3,23 +3,23 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * test anagram,calendar,gameoflife,median,strinterpolation,zeckendorf
-                 * zuang,wireworld
                  * migrate chat sample
-                 * migrate chat sample
-                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
-                 * gui : check default error handler
-                 * exception in using statement is not correctly handled
-                 * uncomment c_a_g code
-                 * migrate nodepad
-                 * migrate sqlite
-                 * test chat server
+
+                 * test zeckendorf,zuang,wireworld
 
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
+                 * uncomment c_a_g code
+                 * migrate nodepad
+                 * migrate sqlite
+                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
+                 * gui : check default error handler
+                 * exception in using statement is not correctly handled
+                 * optimize intOp.Absolute method
+                 * optimize hash table implementation (both weak and strong typed)
                  * implement jsonObject.serializeTo(MyDTO);
                  * test: internal prop x, internal prop int x
                  * test prop, event

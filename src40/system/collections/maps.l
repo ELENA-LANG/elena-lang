@@ -76,7 +76,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
     
     setAt(TKey key, TValue object)
     {
-        int code := key.HashCode;
+        int code := key.HashCode.Absolute;
 
         code := code.mod(theHashMask);
         
@@ -87,7 +87,7 @@ public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
         
     TValue at(TKey key)
     {
-        int code := key.HashCode;
+        int code := key.HashCode.Absolute;
 
         code := code.mod(theHashMask);
         

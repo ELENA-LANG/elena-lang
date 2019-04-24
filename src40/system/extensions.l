@@ -326,17 +326,14 @@ public extension intOp : IntNumber
         }
     }
     
-    Absolute
+    get int Absolute()
     {
-        int get()
-        {
-            int n := self;
+        int n := self;
     
-            if (n < 0)
-                { n := n * -1 };
+        if (n < 0)
+           { n := n * -1 };
     
-            ^ n
-        }
+        ^ n
     }
 
     int power(int y)
@@ -1800,6 +1797,9 @@ public extension byteArrayHelper : Array<byte>
     read(int index, ref char retVal)
         => system'core_routines'__bytearray;                
         
+    move(int index, int length, int offset)
+        => system'core_routines'__bytearray;
+                
     /// Copies a sub array to the provided one at the specified position
     read(int index, int length, byte[] dump)
         => system'core_routines'__bytearray;

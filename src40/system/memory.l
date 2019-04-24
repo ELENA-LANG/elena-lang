@@ -503,9 +503,6 @@ public sealed Matrix<T>
 //    /// Reads a real value at the specified position and saves it into an output variable
 //    read(int anIndex, ref<real> aLong)
 //        => system'core_routines'__bytearray.
-//
-//    move(int anIndex, int aLength, int anOffset)
-//        => system'core_routines'__bytearray.
 //    
 //    /// Concatinates the arrays    
 //    T<ByteArray> add(int aLength2, ByteArray anArray)
