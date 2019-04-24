@@ -1077,12 +1077,12 @@ class RadioButtonGroupListener : WindowCallback
 {
     RadioButtonGroup theOwner;
     
-//    onclick hwnd:aHandle vint:aResult
-//    [
-//        theOwner $onClick hwnd:aHandle.
-//        
-//        aResult int := 0.
-//    ]
+    onclick(WindowHandle hwnd, ref int retVal)
+    {
+        theOwner.onClick(hwnd);
+        
+        retVal := 0
+    }
 
     onsize(WindowHandle hwnd, int width, int height, ref int result)
     {
@@ -1100,7 +1100,7 @@ class RadioButtonGroupListener : WindowCallback
 public sealed class RadioButtonGroup : BasePanel, interface<IControl>
 {
     int   theSelected;
-//    func1 theIndexChanged.
+    event Func1 onIndexChanged;
     
     constructor new()
         <= new()
@@ -1117,12 +1117,11 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
             ifnot(-1 == theSelected)
                 { self.setChecked(false) };
             
-        theSelected := n;
+            theSelected := n;
         
-        self.setChecked(true);
+            self.setChecked(true);
         
-//        if($nil != theIndexChanged)
-//            [ theIndexChanged eval:$self ]
+            onIndexChanged.?(self);
         }
     }
 
@@ -1141,11 +1140,6 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
             }
         };
     }
-    
-//    set onIndexChanged:aFunction
-//    [
-//        theIndexChanged := aFunction func1.
-//    ]
 
     appendItem(string s)
     {
@@ -1159,31 +1153,26 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
         self.resize()
     }
 
-//    stacksafe $onClick hwnd:aHandle
-//    [
-//        int anIndex := -1. // !! to skip a frame
-//        
-//        var aRetVal := $nil.
-//        control aCurrent := $nil.
-//        enumerator it := theControls enumerator.
-//        while(it next)
-//        [ 
-//            aCurrent := it get; control.
-//        
-//            aRetVal := aCurrent retrieve hwnd:aHandle.
-//            if($nil != aRetVal) 
-//            [
-//                theSelected := IntNumber new int:anIndex.
-//                
-//                if($nil != theIndexChanged)
-//                    [ theIndexChanged eval:$self ].
-//                    
-//                ^ $self
-//            ].
-//                
-//            anIndex := anIndex + 1
-//        ]
-//    ]
+    internal onClick(WindowHandle handle)
+    {
+        var retVal := nil;
+        int len := theControls.Length;
+        IControl current;
+        for (int i := 1, i < len, i += 1) {
+            current := theControls[i];            
+            
+            retVal := current.retrieve(handle);
+            if(nil != retVal)
+            {
+                int index := i - 1;
+                theSelected := index;
+                
+                onIndexChanged.?(self);
+                
+                ^ self
+            }
+        }
+    }
 
     internal resize()
     {

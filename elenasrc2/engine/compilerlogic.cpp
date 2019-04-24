@@ -253,13 +253,20 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
 
    if (methodFound) {
       int hint = info.methodHints.get(Attribute(message, maHint));
+      if ((hint & tpMask) == tpPrivate) {
+         // recognize the private message
+         message |= STATIC_MESSAGE;
+
+         hint = info.methodHints.get(Attribute(message, maHint));
+      }
+
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
 
       result.embeddable = test(hint, tpEmbeddable);
       result.closure = test(hint, tpAction);
       result.dynamicRequired = test(hint, tpDynamic);
 
-      if ((hint & tpMask) == tpSealed) {
+      if ((hint & tpMask) == tpSealed || (hint & tpMask) == tpPrivate) {
          return hint;
       }
       else if (test(info.header.flags, elFinal)) {

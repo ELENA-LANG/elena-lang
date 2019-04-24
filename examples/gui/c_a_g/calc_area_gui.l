@@ -2,7 +2,7 @@
 //import system'math.
 //import system'drawing.
 import forms;
-//import extensions.
+import extensions;
 
 public class MainWindow : SDIDialog
 {
@@ -213,21 +213,21 @@ public class MainWindow : SDIDialog
         theImageList.appendImage:"..\formulas\Triangulos\bitmap4.bmp";
         theImageList.appendImage:"..\formulas\Triangulos\bitmap5.bmp";
 
-//        // Events ------------------------------------------------------------------------
-//        // Radio Buttons -----------------------------------------------------------------
-//        Tconta set onIndexChanged: (:args)[ $self $TipoDoCalculo:(Tconta selected_index) ].
-//
-//        Econta1 set onIndexChanged: (:args)[ $self $TipoDoObj:(Econta1 selected_index). ].
-//        Econta2 set onIndexChanged: (:args)[ $self $TipoDoObj:(4 + Econta2 selected_index). ].
-//        Econta3 set onIndexChanged: (:args)[ $self $TipoDoObj:(7 + Econta3 selected_index). ].
-//        Econta4 set onIndexChanged: (:args)[ $self $TipoDoObj:(10 + Econta4 selected_index). ].
-//
-//        // Buttons ----------------------------------------------------------------------
-//        BtmCalc set onClick: (:args)
-//            [ $self $onButtonClick ].
-//       
+        // Events ------------------------------------------------------------------------
+        // Radio Buttons -----------------------------------------------------------------
+        Tconta.onIndexChanged := (args){ self.TipoDoCalculo(Tconta.SelectedIndex) };
+
+        Econta1.onIndexChanged := (args){ self.TipoDoObj(Econta1.SelectedIndex) };
+        Econta2.onIndexChanged := (args){ self.TipoDoObj(4 + Econta2.SelectedIndex) };
+        Econta3.onIndexChanged := (args){ self.TipoDoObj(7 + Econta3.SelectedIndex) };
+        Econta4.onIndexChanged := (args){ self.TipoDoObj(10 + Econta4.SelectedIndex) };
+
+        // Buttons ----------------------------------------------------------------------
+        BtmCalc.onClick := (args)
+            { self.onButtonClick() };
+       
 //        BtmInfo set onClick: (:args)
-//            [ $self $onButtonClickInfo:$self ].
+//            { $self $onButtonClickInfo:$self ].
 ////            
 ////        BtmSalv~eevents +=
 ////            { onclick'eval = self $onButtonClickSave. }.
@@ -236,298 +236,296 @@ public class MainWindow : SDIDialog
             { forward program.stop() }
     }
 
-//    $TipoDoCalculo : anIndex
-//    [
-//        Econta1 visible := false.
-//        Econta2 visible := false.
-//        Econta3 visible := false.
-//        Econta4 visible := false.
-//
-//        anIndex =>
-//            0 [
-//                    Econta1 visible := true.
-//
-//                    Econta1 selected_index := 0
-//              ];
-//            1 [
-//                    Econta2 visible := true.
-//
-//                    Econta2 selected_index := 0
-//              ];
-//            2 [
-//                    Econta3 visible := true.
-//
-//                    Econta3 selected_index := 0
-//              ];
-//            3 [
-//                    Econta4 visible := true.
-//
-//                    Econta4 selected_index := 0
-//              ].
-//    }
+    private TipoDoCalculo(int index)
+    {
+        Econta1.Visible := false;
+        Econta2.Visible := false;
+        Econta3.Visible := false;
+        Econta4.Visible := false;
+
+        index =>
+            0 {
+                    Econta1.Visible := true;
+
+                    Econta1.SelectedIndex := 0
+              }
+            1 {
+                    Econta2.Visible := true;
+
+                    Econta2.SelectedIndex := 0
+              }
+            2 {
+                    Econta3.Visible := true;
+
+                    Econta3.SelectedIndex := 0
+              }
+            3 {
+                    Econta4.Visible := true;
+
+                    Econta4.SelectedIndex := 0
+              }
+    }
     
-//    $TipoDoObj : anInicio
-//	[
-//        theImageList selected_index := anInicio.
-//     
-//        valTres visible := false.
-//        valDois visible := false.
-//        letter3 visible := false.
-//        letter2 visible := false.
-//     
-//        valUm   caption := "".
-//        valDois caption := "".
-//        valTres caption :="".
-//     
-//        valor caption := "Res: ".
-//        info caption  := "Info: ".
-//                
-//        anInicio =>
-//            0 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//            
-//                letter1 caption := "h: ".
-//                letter2 caption := "b: ".
-//            ];            
-//            1 [
-//                valUm   visible := true.
-//                letter1 visible := true.
-//            
-//                letter1 caption := "b: ".
-//            ];            
-//            2 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//            
-//                letter1 caption := "h: ".
-//                letter2 caption := "b: ".
-//            ];            
-//            3 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//            
-//                letter1 caption := "D: ".
-//                letter2 caption := "d: ".
-//            ];            
-//            4 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                valTres visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//                letter3 visible := true.
-//            
-//                letter1 caption := "B: ".
-//                letter2 caption := "b: ".
-//                letter3 caption := "h: ".
-//            ];
-//            5 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                valTres visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//                letter3 visible := true.
-//            
-//                letter1 caption := "B: ".
-//                letter2 caption := "b: ".
-//                letter3 caption := "h: ".
-//            ];
-//            6 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                valTres visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//                letter3 visible := true.
-//            
-//                letter1 caption := "B: ".
-//                letter2 caption := "b: ".
-//                letter3 caption := "h: ".
-//            ];
-//            7 [
-//                valUm   visible := true.
-//                letter1 visible := true.
-//            
-//                letter1 caption := "r: ".
-//            ];
-//            8 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//            
-//                letter1 caption := "R: ".
-//                letter2 caption := "r: ".
-//            ];
-//            9 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//            
-//                letter1 caption := "Al: ".
-//                letter2 caption := "r: ".
-//            
-//                info caption := "Info: Al = Alfa ( angulo )".
-//            ];
-//            10 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//            
-//                letter1 caption := "B: ".
-//                letter2 caption := "H: ".
-//            ];
-//            11 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//            
-//                letter1 caption := "B: ".
-//                letter2 caption := "C: ".
-//            ];
-//            12 [
-//                valUm   visible := true.
-//                letter1 visible := true.
-//            
-//                letter1 caption := "A: ".
-//            ];
-//            13 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                valTres visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//                letter3 visible := true.
-//            
-//                letter1 caption := "a: ".
-//                letter2 caption := "b: ".
-//                letter3 caption := "c: ".
-//            ];
-//            14 [
-//                valUm   visible := true.
-//                valDois visible := true.
-//                valTres visible := true.
-//                letter1 visible := true.
-//                letter2 visible := true.
-//                letter3 visible := true.
-//            
-//                letter1 caption := "Al: ".
-//                letter2 caption := "a: ".
-//                letter3 caption := "b: ".
-//            
-//                info caption := "Info: Al = Alfa ( angulo )".
-//            ].
-//
-//		thePaintbox refresh.
-//	]            
-// 
-//    $onButtonClick
-//    [   
-//        var aResult := 0.
-//                
-//        (theImageList selected_index) =>
-//            0 [
-//                var H := valUm value; toReal.
-//                var B := valDois value; toReal.
-//                aResult := H * B.
-//            ];
-//            1 [
-//                var B := valUm value; toReal.
-//                aResult := B * B.
-//            ];
-//            2 [
-//                var H := valUm value; toReal.
-//                var B := valDois value; toReal.
-//                aResult := H * B.
-//            ];
-//            3 [
-//                var DM := valUm value; toReal.
-//                var d := valDois value; toReal.
-//                aResult := DM * d / 2.
-//            ];
-//            4 [
-//                var BM := valUm value; toReal.
-//                var b := valDois value; toReal.
-//                var H := valTres value; toReal.
-//                aResult := (BM + b)*H / 2.
-//            ];
-//            5 [
-//                var BM := valUm value; toReal.
-//                var b := valDois value; toReal.
-//                var H := valTres value; toReal.
-//                aResult := (BM + b)*H / 2.
-//            ];
-//            6 [
-//                var BM := valUm value; toReal.
-//                var b := valDois value; toReal.
-//                var H := valTres value; toReal.
-//                aResult := (BM + b)*H / 2.
-//            ];
-//            7 [
-//                var R := valUm value; toReal.
-//                aResult := pi_value * R * R
-//            ];
-//            8 [
-//                var RM := valUm value; toReal.
-//                var r := valDois value; toReal.
-//                aResult := pi_value * (RM * RM - r * r).
-//            ];
-//            9 [
-//                var Alfa := valUm value; toReal.
-//                var R := valDois value; toReal.
-//                aResult := Alfa * pi_value * R * R / 360
-//            ];
-//            10 [
-//                var B := valUm value; toReal.
-//                var H := valDois value; toReal.
-//                aResult := B * H / 2.
-//            ];
-//            11 [
-//                var B := valUm value; toReal.
-//                var C := valDois value; toReal.
-//                aResult := B * C / 2.
-//            ];
-//            12 [
-//                var A := valUm value; toReal.
-//                aResult := ((pi_value sqrt) * A * A / 4) rounded.
-//            ];
-//            13 [
-//                var A := valUm value; toReal.
-//                var B := valDois value; toReal.
-//                var C := valTres value; toReal.
-//                var P := A + B + C / 2.
-//                var val1 := P-A.
-//                var val2 := P-B.
-//                var val3 := P-C.
-//                aResult := (P * (val1 * val2 * val3)) sqrt.
-//            ];
-//            14 [
-//                var Alfa := valUm value; toReal.
-//                var A := valDois value; toReal.
-//                var B := valTres value; toReal.
-//                var AlfaConv := (pi_value * Alfa) / 180.
-//                var sinAl := AlfaConv sin.
-//                aResult := sinAl * A * B / 2.
-//            ].
-//            
-//        valor caption := ("Res: " + aResult literal + " m^2").                    
-//    ]
-//    
-//    $onButtonClickInfo : aForm
-//    [
-//        calc_area_gui'InfoForm new parent:aForm; run.
-//    ]
-//    
-//    dispatch => form.
+    private TipoDoObj(int index)
+	{
+        theImageList.SelectedIndex := index;
+     
+        valTres.Visible := false;
+        valDois.Visible := false;
+        letter3.Visible := false;
+        letter2.Visible := false;
+     
+        valUm.Value := "";
+        valDois.Value := "";
+        valTres.Value :="";
+     
+        valor.Caption := "Res: ";
+        info.Caption  := "Info: ";
+                
+        index =>
+            0 {
+                valUm.Visible := true;
+                valDois.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+            
+                letter1.Caption := "h: ";
+                letter2.Caption := "b: ";
+            }           
+            1 {
+                valUm.Visible := true;
+                letter1.Visible := true;
+            
+                letter1.Caption := "b: "
+            }
+            2 {
+                valUm.Visible := true;
+                valDois.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+            
+                letter1.Caption := "h: ";
+                letter2.Caption := "b: ";
+            }            
+            3 {
+                valUm.Visible := true;
+                valDois.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+            
+                letter1.Caption := "D: ";
+                letter2.Caption := "d: ";
+            }           
+            4 {
+                valUm.Visible := true;
+                valDois.Visible := true;
+                valTres.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+                letter3.Visible := true;
+            
+                letter1.Caption := "B: ";
+                letter2.Caption := "b: ";
+                letter3.Caption := "h: ";
+            }
+            5 {
+                valUm  .Visible := true;
+                valDois.Visible := true;
+                valTres.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+                letter3.Visible := true;
+            
+                letter1.Caption := "B: ";
+                letter2.Caption := "b: ";
+                letter3.Caption := "h: ";
+            }
+            6 {
+                valUm  .Visible := true;
+                valDois.Visible := true;
+                valTres.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+                letter3.Visible := true;
+            
+                letter1.Caption := "B: ";
+                letter2.Caption := "b: ";
+                letter3.Caption := "h: ";
+            }
+            7 {
+                valUm  .Visible := true;
+                letter1.Visible := true;
+            
+                letter1.Caption := "r: ";
+            }
+            8 {
+                valUm  .Visible := true;
+                valDois.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+            
+                letter1.Caption := "R: ";
+                letter2.Caption := "r: ";
+            }
+            9 {
+                valUm  .Visible := true;
+                valDois.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+            
+                letter1.Caption := "Al: ";
+                letter2.Caption := "r: ";
+            
+                info.Caption := "Info: Al = Alfa ( angulo )"
+            }
+            10 {
+                valUm  .Visible := true;
+                valDois.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+            
+                letter1.Caption := "B: ";
+                letter2.Caption := "H: ";
+            }
+            11 {
+                valUm  .Visible := true;
+                valDois.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+            
+                letter1.Caption := "B: ";
+                letter2.Caption := "C: ";
+            }
+            12 {
+                valUm  .Visible := true;
+                letter1.Visible := true;
+            
+                letter1.Caption := "A: ";
+            }
+            13 {
+                valUm  .Visible := true;
+                valDois.Visible := true;
+                valTres.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+                letter3.Visible := true;
+            
+                letter1.Caption := "a: ";
+                letter2.Caption := "b: ";
+                letter3.Caption := "c: ";
+            }
+            14 {
+                valUm  .Visible := true;
+                valDois.Visible := true;
+                valTres.Visible := true;
+                letter1.Visible := true;
+                letter2.Visible := true;
+                letter3.Visible := true;
+            
+                letter1.Caption := "Al: ";
+                letter2.Caption := "a: ";
+                letter3.Caption := "b: ";
+            
+                info.Caption := "Info: Al = Alfa ( angulo )"
+            };
+
+		thePaintbox.refresh()
+	}            
+ 
+    private onButtonClick()
+    {   
+        var result := 0;
+                
+        (theImageList.SelectedIndex) =>
+            0 {
+                var H := valUm.Value.toReal();
+                var B := valDois.Value.toReal();
+                result := H * B
+            }
+            1 {
+                var B := valUm.Value.toReal();
+                result := B * B
+            }
+            2 {
+                var H := valUm.Value.toReal();
+                var B := valDois.Value.toReal();
+                result := H * B
+            }
+            3 {
+                var DM := valUm.Value.toReal();
+                var d := valDois.Value.toReal();
+                result := DM * d / 2
+            }
+            4 {
+                var BM := valUm.Value.toReal();
+                var b := valDois.Value.toReal();
+                var H := valTres.Value.toReal();
+                result := (BM + b)*H / 2
+            }
+            5 {
+                var BM := valUm.Value.toReal();
+                var b := valDois.Value.toReal();
+                var H := valTres.Value.toReal();
+                result := (BM + b)*H / 2
+            }
+            6 {
+                var BM := valUm.Value.toReal();
+                var b := valDois.Value.toReal();
+                var H := valTres.Value.toReal();
+                result := (BM + b)*H / 2
+            }
+            7 {
+                var R := valUm.Value.toReal();
+                result := Pi_value * R * R
+            }
+            8 {
+                var RM := valUm.Value.toReal();
+                var r := valDois.Value.toReal();
+                result := Pi_value * (RM * RM - r * r);
+            }
+            9 {
+                var Alfa := valUm.Value.toReal();
+                var R := valDois.Value.toReal();
+                result := Alfa * Pi_value * R * R / 360
+            }
+            10 {
+                var B := valUm.Value.toReal();
+                var H := valDois.Value.toReal();
+                result := B * H / 2;
+            }
+            11 {
+                var B := valUm.Value.toReal();
+                var C := valDois.Value.toReal();
+                result := B * C / 2;
+            }
+            12 {
+                var A := valUm.Value.toReal();
+                result := ((Pi_value.sqrt()) * A * A / 4).Rounded;
+            }
+            13 {
+                var A := valUm.Value.toReal();
+                var B := valDois.Value.toReal();
+                var C := valTres.Value.toReal();
+                var P := A + B + C / 2;
+                var val1 := P-A;
+                var val2 := P-B;
+                var val3 := P-C;
+                result := (P * (val1 * val2 * val3)).sqrt()
+            }
+            14 {
+                var Alfa := valUm.Value.toReal();
+                var A := valDois.Value.toReal();
+                var B := valTres.Value.toReal();
+                var AlfaConv := (Pi_value * Alfa) / 180;
+                var sinAl := AlfaConv.sin();
+                result := sinAl * A * B / 2;
+            };
+            
+        valor.Caption := ("Res: " + result.toString() + " m^2");
+    }
+    
+    private onButtonClickInfo(form)
+    {
+        //calc_area_gui'InfoForm new parent:aForm; run.
+    }
 }

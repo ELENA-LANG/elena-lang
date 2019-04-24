@@ -4,12 +4,12 @@ In development:
 
               dev - elena 4.0
                  * test all samples
-                 * gui : check default error handler
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
+                 * gui : check default error handler
                  * implement jsonObject.serializeTo(MyDTO);
                  * test: internal prop x, internal prop int x
                  * test prop, event
@@ -151,6 +151,8 @@ Pipeline:
                  * bool_expr ? 1 : 0 - the expression result should be strong-typed
                  * support static prefix to allow operations with static field only
                  * sealed static fields, cannot be changed in the child classes?!
+                 * uncomment c_a_g code
+                 * migrate nodepad
  
               dev - debugger
                  * debugger : step over message operation
