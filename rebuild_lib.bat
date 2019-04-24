@@ -53,7 +53,10 @@ bin\elc src40\forms\forms.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src40\sqlite\sqlite.prj
+bin\elc src40\sqlite\sqlite.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 bin\elc src40\cellular\cellular.prj
 @echo off 

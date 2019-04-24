@@ -2574,7 +2574,7 @@ class WideStringEnumerator : Enumerator<char>
         {
             theChar := theLiteral.at(index);
             
-            theChar.readLengthTo(ref theDiff); // !!
+            theChar.readLengthTo(theDiff);
             theDiff.append:1;
             theDiff.Value := theDiff.Value / 2;
             

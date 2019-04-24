@@ -709,6 +709,7 @@ OPTION ->
 	integer OPTION_BODY
 	| character OPTION_BODY
 	| literal OPTION_BODY
+	| identifier OPTION_BODY
 
 OPTION_BODY ->
 	BLOCK

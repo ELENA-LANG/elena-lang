@@ -9,6 +9,7 @@ Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
+                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
                  * gui : check default error handler
                  * implement jsonObject.serializeTo(MyDTO);
                  * test: internal prop x, internal prop int x
@@ -153,6 +154,10 @@ Pipeline:
                  * sealed static fields, cannot be changed in the child classes?!
                  * uncomment c_a_g code
                  * migrate nodepad
+                 * migrate sqlite
+                 * test db sample
+                 * test chat server
+                 * exception in using statement is not correctly handled
  
               dev - debugger
                  * debugger : step over message operation

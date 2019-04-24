@@ -444,7 +444,7 @@ public extension indexableOp
 //    forEvery(Func1 fn)
 //        = self~indexableOp forEvery(:n)<int>(fn(n)).
     
-    indexOfElement(element)
+    int indexOfElement(element)
     {
         Indexer it := self.indexer();
         

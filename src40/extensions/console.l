@@ -89,49 +89,40 @@ public extension outputFormatterOp
     }
 }
 
-//public extension outputCharFormatterOp
-//{
-//    generic printPaddingRightChar(int width, char ch, V<object> list)
-//    [
-//        auto aBuffer := TextBuilder new.
-//        
-//        int len := list length.
-//
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            aBuffer write(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        self write:(aBuffer literal) paddingRight:width with:ch.
-//            
-//        ^ self
-//    ]
-//
-//    generic printPaddingLeftChar(int width, char ch, V<object> list)
-//    [
-//        auto aBuffer := TextBuilder new.
-//        
-//        int len := list length.
-//        int i := 0.
-//        while (i < len)
-//        [
-//            object obj := list[i].
-//            
-//            aBuffer write(obj~convertorOp toLiteral).
-//            
-//            i := i + 1
-//        ].
-//        
-//        self write:(aBuffer literal) paddingLeft:width with:ch.
-//            
-//        ^ self
-//    ]    
-//}
+public extension outputCharFormatterOp
+{
+    printPaddingRightChar(int width, char ch, params object[] list)
+    {
+        auto buffer := new TextBuilder();
+        
+        int len := list.Length;
+
+        for(int i := 0, i < len, i += 1)
+        {
+            object obj := list[i];
+            
+            buffer.write(obj.toString())
+        };
+        
+        self.writePaddingRight(buffer.Value, ch, width)
+    }
+
+    printPaddingLeftChar(int width, char ch, params object[] list)
+    {
+        auto buffer := new TextBuilder();
+        
+        int len := list.Length;
+
+        for(int i := 0, i < len, i += 1)
+        {
+            object obj := list[i];
+            
+            buffer.write(obj.toString())
+        };
+        
+        self.writePaddingLeft(buffer.Value, ch, width)
+    }
+}
 
 // --- formatterOp ---
 

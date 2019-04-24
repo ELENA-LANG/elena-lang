@@ -124,7 +124,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem bin\elc examples\gui\notepad\notepad.prj
-rem bin\elc examples\db\sqlite\sqlite_test.prj
+
+ bin\elc examples\db\sqlite\sqlite_test.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 bin\elc examples\net\chat\chatserver.prj
 @echo off 
