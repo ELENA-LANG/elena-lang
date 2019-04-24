@@ -1,11 +1,9 @@
-import extensions.
-
-program =
-[
-    var s := "Hello".
-    var s2 := s + " literal".
-    
-    console writeLine:s.
-    console writeLine:s2.
-    console readChar.
-].
+public program()
+{
+    var s := "Hello";
+    var s2 := s + " literal";
+ 
+    console.writeLine:s;
+    console.writeLine:s2;
+    console.readChar()
+}

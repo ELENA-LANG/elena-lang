@@ -21,6 +21,16 @@ property prop<T, __name>
     }
 }
 
+property rprop<T, __name>
+{
+    T __name;
+    
+    get T __name()
+    {
+        ^ __name
+    }    
+}
+
 attribute dto<__name>
 {
     this __dto_properties += subjconst __name;

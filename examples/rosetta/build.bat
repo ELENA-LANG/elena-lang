@@ -146,13 +146,40 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc string_append\string_append.prj
-rem ..\..\bin\elc string_case\string_case.prj
-rem ..\..\bin\elc string_comparison\string_comparision.prj
-rem ..\..\bin\elc string_concatenation\string_concatenation.prj
-rem ..\..\bin\elc string_interpolation\string_interpolation.prj
-rem ..\..\bin\elc string_matching\string_matching.prj
-rem ..\..\bin\elc string_prepend\string_prepend.prj
+..\..\bin\elc string_append\string_append.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc string_case\string_case.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc string_comparison\string_comparision.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc string_concatenation\string_concatenation.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc string_interpolation\string_interpolation.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc string_matching\string_matching.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc string_prepend\string_prepend.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 ..\..\bin\elc ninetynine\ninetynine.prj
 @echo off 
@@ -228,10 +255,10 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem ..\..\bin\elc zhangsuen\zhangsuen.prj
-rem @echo off 
-rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
-rem @echo on
+..\..\bin\elc zhangsuen\zhangsuen.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 ..\..\bin\elc zeckendorf\zeckendorf.prj
 @echo off 

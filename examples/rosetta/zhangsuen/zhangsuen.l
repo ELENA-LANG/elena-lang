@@ -37,29 +37,29 @@ int[][][] nbrGroups = new int[][][]
 
 extension zhangsuenOp : Matrix<char>
 {
-    private proceed(r, c, toWhite, firstStep)
-    {
-        if (self[r][c] != $35)
-            { ^ false };
-        
-        int nn := self.numNeighbors(r,c);
-        
-        if (nn < 2 || nn > 6)
-            { ^ false };
-            
-        if(self.numTransitions(r,c) != 1)
-            { ^ false };
-
-        ifnot (self.atLeastOneIsWhite(r,c,firstStep.iif(0,1)))
-            { ^ false };
-
-        toWhite.append(new:{ X = c; Y = r; });
-        
-        ^ true     
-    }
+//    private proceed(r, c, toWhite, firstStep)
+//    {
+//        if (self[r][c] != $35)
+//            { ^ false };
+//        
+//        int nn := self.numNeighbors(r,c);
+//        
+//        if (nn < 2 || nn > 6)
+//            { ^ false };
+//            
+//        if(self.numTransitions(r,c) != 1)
+//            { ^ false };
+//
+//        ifnot (self.atLeastOneIsWhite(r,c,firstStep.iif(0,1)))
+//            { ^ false };
+//
+//        toWhite.append(new:{ X = c; Y = r; });
+//        
+//        ^ true     
+//    }
     
-    numNeighbors(r : c)
-    [
+    numNeighbors(r, c)
+    {
         int count := 0;
         
         for(int i := 0, i < nbrs.Length - 1, i += 1)
@@ -69,7 +69,7 @@ extension zhangsuenOp : Matrix<char>
         };
                 
         ^ count
-    ]
+    }
 
     numTransitions(r, c)
     {
@@ -95,74 +95,74 @@ extension zhangsuenOp : Matrix<char>
         var group := nbrGroups[step];
         for(int i := 0, i < 2, i += 1)
         {
-            for(int j := 0, j < group[i].Length, j += 1
+            for(int j := 0, j < group[i].Length, j += 1)
             {
-                var nbr := nbrs[group[i][j]].
+                var nbr := nbrs[group[i][j]];
                 
                 if (self[r + nbr[1]][c + nbr[0]] == $32)
-                    [ count := count + 1. ^ true ].
+                    { count := count + 1; ^ true };
                     
-                ^ false.                    
+                ^ false
             }
         };
         
         ^ count > 1
     }    
     
-    thinImage
-    [
-        bool firstStep := false.
-        bool hasChanged := true.
-        var toWhite := List new.
-
-        while (hasChanged || firstStep)
-        [
-            hasChanged := false.
-            firstStep := firstStep not.
-
-            1 till(self rows - 1) do(:r) 
-            [
-                1 till(self columns - 1) do(:c)
-                [
-                    if(self~zhangsuenOp $proceed(r,c,toWhite,firstStep))
-                        [ hasChanged := true ].
-                ].
-            ].
-            
-            toWhite forEach(:p)[ self[p y][p x] := $32. ].                
-            toWhite clear.
-        ].
-    ]
-    
-    print
-    [
-        var it := self enumerator.
-        
-        it forEach(:ch) [ console print(ch," ") ].
-        while (it next)
-        [
-            console writeLine.
-            
-            it forEach(:ch) [ console print(ch," ") ].
-        ].
-    ]
+//    thinImage()
+//    {
+//        bool firstStep := false.
+//        bool hasChanged := true.
+//        var toWhite := List new.
+//
+//        while (hasChanged || firstStep)
+//        [
+//            hasChanged := false.
+//            firstStep := firstStep not.
+//
+//            1 till(self rows - 1) do(:r) 
+//            [
+//                1 till(self columns - 1) do(:c)
+//                [
+//                    if(self~zhangsuenOp $proceed(r,c,toWhite,firstStep))
+//                        [ hasChanged := true ].
+//                ].
+//            ].
+//            
+//            toWhite forEach(:p)[ self[p y][p x] := $32. ].                
+//            toWhite clear.
+//        ].
+//    }
+//    
+//    print
+//    [
+//        var it := self enumerator.
+//        
+//        it forEach(:ch) [ console print(ch," ") ].
+//        while (it next)
+//        [
+//            console writeLine.
+//            
+//            it forEach(:ch) [ console print(ch," ") ].
+//        ].
+//    ]
 }
 
-program()
+public program()
 {
-    Matrix<char> grid := new MatrixSpace:
-    {
-        Rows = image length.
-        
-        Columns = image[0] length.
-        
-        at(int i, int j)
-            = image[i][j];
-    };
-
-    grid.thinImage();
-            
-    grid.print();
-    
-    console.readChar()
+//    Matrix<char> grid := new MatrixSpace:
+//    {
+//        Rows = image length.
+//        
+//        Columns = image[0] length.
+//        
+//        at(int i, int j)
+//            = image[i][j];
+//    };
+//
+//    grid.thinImage();
+//            
+//    grid.print();
+//    
+//    console.readChar()
 }

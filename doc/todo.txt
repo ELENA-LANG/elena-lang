@@ -3,14 +3,24 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * test all samples
+                 * test rosetta code sample
+                 * strinterpolation
+                 * zuang
+                 * migrate chat sample
+                 * migrate chat sample
+                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
+                 * gui : check default error handler
+                 * exception in using statement is not correctly handled
+                 * uncomment c_a_g code
+                 * migrate nodepad
+                 * migrate sqlite
+                 * test chat server
+
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
-                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
-                 * gui : check default error handler
                  * implement jsonObject.serializeTo(MyDTO);
                  * test: internal prop x, internal prop int x
                  * test prop, event
@@ -152,12 +162,6 @@ Pipeline:
                  * bool_expr ? 1 : 0 - the expression result should be strong-typed
                  * support static prefix to allow operations with static field only
                  * sealed static fields, cannot be changed in the child classes?!
-                 * uncomment c_a_g code
-                 * migrate nodepad
-                 * migrate sqlite
-                 * test db sample
-                 * test chat server
-                 * exception in using statement is not correctly handled
  
               dev - debugger
                  * debugger : step over message operation

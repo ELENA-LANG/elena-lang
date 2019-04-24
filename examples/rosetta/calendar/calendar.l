@@ -60,9 +60,9 @@ class CalendarMonthPrinter
     {
         bool Available = theRow < 7;
 
-        readIndexTo(ref int retVal) { theRow.readValueTo(ref retVal) }
+        get int Index() { ^ theRow.Value }
 
-        writeIndex(int index)
+        set Index(int index)
         {
             if (index <= theRow)
                 { self.writeTitle() };
@@ -72,9 +72,11 @@ class CalendarMonthPrinter
         }
 
         appendIndex(int index)
-            <= writeIndex(theRow.Value + index);
+        {
+            self.Index := theRow.Value + index
+        }
         
-        readLengthTo(ref int retVal) { retVal := 7 }
+        get int Length() { ^ 7 }
 
         get() = self;
         

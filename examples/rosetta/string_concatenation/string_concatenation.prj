@@ -1,12 +1,16 @@
-[project]
-executable=strconcatatenation.exe
-namespace=strconca
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
-[forwards]
-'program=strconca'program
-
+<configuration>
+    <project>
+        <executable>strconcatatenation.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>strconcatatenation</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

@@ -92,7 +92,7 @@ class Expression
         Level := level
     }
     
-    prop object Right
+    object Right
     {
         get() = Top;
         

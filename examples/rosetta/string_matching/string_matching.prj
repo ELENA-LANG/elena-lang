@@ -1,12 +1,16 @@
-[project]
-executable=strmatching.exe
-namespace=strmatching
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
-[forwards]
-'program=strmatching'program
-
+<configuration>
+    <project>
+        <executable>strmatching.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>strmatching</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

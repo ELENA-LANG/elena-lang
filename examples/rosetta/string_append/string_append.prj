@@ -1,12 +1,16 @@
-[project]
-executable=sa.exe
-namespace=strappend
-template=console
-debuginfo=-1
-
-[files]
-main.l
-
-[forwards]
-'program=strappend'program
-
+<configuration>
+    <project>
+        <executable>sa.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>strappend</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>
