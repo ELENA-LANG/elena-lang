@@ -152,8 +152,8 @@ public class MainWindow : SDIDialog
             .appendItem:"&Func lds ang";
         Econta4.Visible := false;
 
-//        Tconta set selected_index:0.
-//        Econta1 set selected_index:0.
+        Tconta.SelectedIndex := 0;
+        Econta1.SelectedIndex := 0;
 
         // Text Box ---------------------------------------------------------------------
         valUm.setRegion(185, 10, 150, 22);

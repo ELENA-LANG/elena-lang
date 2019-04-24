@@ -35,9 +35,9 @@ public const int BS_PUSHBUTTON           = 0;
 public const int BS_GROUPBOX             = 7;
 public const int BS_AUTORADIOBUTTON      = 9;
 
-//const int BST_CHECKED             = 1.
-//const int BST_UNCHECKED           = 0.
-//
+public const int BST_CHECKED             = 1;
+public const int BST_UNCHECKED           = 0;
+
 //// --- combobox styles ---
 //const int CBS_DROPDOWNLIST        = 3.
 //const int CBS_DROPDOWN            = 2.
@@ -61,9 +61,9 @@ public const int WM_SETCURSOR     = 20h;
 public const int SWP_NOSIZE       = 0001h;
 public const int SWP_NOMOVE       = 0002h;
 
-//const int BM_SETCHECK      = 00F1h.
-//const int BM_GETCHECK      = 00F0h.
-//
+public const int BM_SETCHECK      = 00F1h;
+public const int BM_GETCHECK      = 00F0h;
+
 //const int CB_ADDSTRING     = 0143h.
 //const int CB_GETCURSEL     = 0147h.
 //const int CB_SETCURSEL     = 014Eh.

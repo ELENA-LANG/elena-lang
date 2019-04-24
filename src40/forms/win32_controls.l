@@ -6,9 +6,7 @@ import system'winforms;
 
 public interface IControl
 {
-//    control = $self.
-//    
-//    control_object = $nil.
+    abstract get object Control() {}
     
     abstract IControl retrieve(WindowHandle handle) {}
     
@@ -61,6 +59,8 @@ public abstract class BaseWinControl : BaseControl
         <= new()
     {
     }
+    
+    get Control() = self;
     
     IControl retrieve(WindowHandle handle)
     {
@@ -585,25 +585,26 @@ public closed class RadioButton : BaseButton, interface<IControl>
         self.Caption := caption
     }
     
-//    checked
-//    [
-//        ifnot($nil == theHandle)
-//            [ theChecked := theHandle isChecked ].
-//            
-//        ^ theChecked
-//    ]
-// 
-//    set checked:aValue
-//    [
-//        theChecked := aValue bool.
-//        
-//        ifnot($nil == theHandle)
-//        [
-//            if(theChecked)
-//                [ theHandle setChecked int:BST_CHECKED ];
-//                [ theHandle setChecked int:BST_UNCHECKED ]
-//        ].
-//    ]
+    bool Checked
+    {
+        bool get()
+        {
+            ifnot(nil == theHandle)
+                { theChecked := theHandle.isChecked() };
+                
+            ^ theChecked
+        }
+        
+        set(bool v)
+        {
+            theChecked := v;
+            
+            ifnot(nil == theHandle)
+            {
+                theHandle.setChecked(v ? BST_CHECKED : BST_UNCHECKED)
+            }
+        }
+    }
 
     internal createHandle()
     {
@@ -624,8 +625,8 @@ public closed class RadioButton : BaseButton, interface<IControl>
                         CurrentInstance,
                         nil);
                         
-//        if(theChecked)
-//            [ $self set checked:true ]
+        if(theChecked)
+            { self.Checked := true }
     }
 }
 
@@ -1107,56 +1108,44 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
         theSelected := -1
     }
 
-//    selected_index = theSelected.
-//
-//    $setChecked : aValue
-//    [
-//        int anIndex := -1. // !! to skip a frame
-//        
-//        var aCurrent := $nil.
-//        enumerator it := theControls enumerator.
-//        while (it next)
-//        [ 
-//            aCurrent := it get.
-//        
-//            if(theSelected == anIndex)
-//                [
-//                    aCurrent control_object; set checked:aValue.
-//                    
-//                    ^ $self
-//                ].
-//                
-//            anIndex := anIndex + 1  
-//        ]
-//    ]
-//
-//    set selected_index : anIndex
-//    [
-//        ifnot(-1 == theSelected)
-//            [ $self $setChecked:false ].
-//        
-//        theSelected := anIndex int.
-//        
-//        $self $setChecked:true.
-//        
+    int SelectedIndex
+    {
+        int get() = theSelected;
+        
+        set(int n)
+        {
+            ifnot(-1 == theSelected)
+                { self.setChecked(false) };
+            
+        theSelected := n;
+        
+        self.setChecked(true);
+        
 //        if($nil != theIndexChanged)
 //            [ theIndexChanged eval:$self ]
-//    ]
-//    
+        }
+    }
+
+    private setChecked(value)
+    {
+        int len := theControls.Length;
+        IControl current;
+        for (int i := 1, i < len, i += 1) {
+            current := theControls[i];
+            int index := i - 1;
+            if (index == theSelected)
+            {
+                current.Control.Checked := value;
+                
+                ^ self
+            }
+        };
+    }
+    
 //    set onIndexChanged:aFunction
 //    [
 //        theIndexChanged := aFunction func1.
 //    ]
-//
-//    items =
-//    {
-//        append : anItem
-//        [
-//            theControls append:(RadioButton new; set caption:anItem).
-//            
-//            $self $resize
-//        ]
-//    }.
 
     appendItem(string s)
     {

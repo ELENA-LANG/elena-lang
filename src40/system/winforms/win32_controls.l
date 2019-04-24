@@ -66,12 +66,12 @@ public sealed const struct WindowHandle
         extern USER32.ShowWindow(theHandle, n)
     }
     
-//    bool stacksafe isVisible
-//    [
-//        int visible := system'external'USER32 IsWindowVisible int:theHandle.
-//        
-//        ^ (visible != 0)
-//    ]
+    bool isVisible()
+    {
+        int visible := extern USER32.IsWindowVisible(theHandle);
+        
+        ^ (visible != 0)
+    }
     
     setEnabled(int value)
     {
@@ -85,17 +85,17 @@ public sealed const struct WindowHandle
         ^ (visible != 0)
     }
 
-//    setChecked int:aValue
-//    [
-//        system'external'USER32 SendMessageW int:theHandle int:BM_SETCHECK int:aValue int:0
-//    ]
-//
-//    bool isChecked
-//    [
-//        int aResult := system'external'USER32 SendMessageW int:theHandle int:BM_GETCHECK int:0 int:0.
-//
-//		^ (aResult == BST_CHECKED)
-//    ]    
+    setChecked(int n)
+    {
+        extern USER32.SendMessageW(theHandle, BM_SETCHECK, n, 0)
+    }
+
+    bool isChecked()
+    {
+        int r := extern USER32.SendMessageW(theHandle, BM_GETCHECK, 0, 0);
+
+		^ (r == BST_CHECKED)
+    }    
             
     setCaption(wide s)
     {
