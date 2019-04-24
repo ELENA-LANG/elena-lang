@@ -42,41 +42,40 @@ public Pen WhitePen = new Pen(0FFFFFFh, 1);
 
 public Brush BlackBrush = new Brush(0);
 
-//// --- Image ---
-//
-//sealed class Image
-//{
-//    wide      thePath.
-//    hdc       theDC.
-//    hbitmap   theBitmap.
-//    dimension theSize.
-//    
-//    constructor new literal:aPath dimension:aSize
-//    [
-//        thePath := aPath wide.
-//        theSize := aSize.
-//    ]
-//    
-//    stacksafe open hdc:aParentDC
-//    [
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        theSize read vint:aWidth vint:aHeight.
-// 
-//        theBitmap := HBITMAP load wide:thePath int:aWidth int:aHeight.
-//        
-//        theDC := HDC newCompatible hdc:aParentDC.
-//        theBitmap select hdc:theDC. 
-//    ]    
-//    
-//    hdc = theDC.
-//
-//    free
-//    [
-//        theDC free.
-//        theBitmap free.
-//    ]
-//}
+// --- Image ---
+
+public sealed class Image
+{
+    wide      thePath;
+    HDC       theDC;
+    HBITMAP   theBitmap;
+    Dimension theSize;
+    
+    constructor load(string path, Dimension size)
+    {
+        thePath := path;
+        theSize := size
+    }
+    
+    open(HDC parentDC)
+    {
+        int width := theSize.Width;
+        int height := theSize.Height;
+ 
+        theBitmap := HBITMAP.load(thePath, width, height);
+        
+        theDC := HDC.newCompatible(parentDC);
+        theBitmap.select(theDC) 
+    }
+    
+    HDC cast() = theDC;
+
+    free()
+    {
+        theDC.free();
+        theBitmap.free();
+    }
+}
 
 // --- Canvas ---
 
@@ -175,22 +174,12 @@ public sealed struct Canvas
         theHDC.drawText(cast wide(s), x, y)
     }
  
-//    stacksafe write wide:aText int:x int:y
-//    [
-//        theHDC drawText wide:aText int:x int:y.
-//    ]
-// 
-//    stacksafe write literal:aText int:x int:y
-//    [
-//        theHDC drawText wide:(aText wide) int:x int:y.
-//    ]
-// 
-//    stacksafe write image:anImage int:x int:y int:aWidth int:aHeight
-//    [
-//        hdc aDC := anImage hdc.
-//        
-//        theHDC copy int:x int:y int:aWidth int:aHeight hdc:aDC int:0 int:0 int:SRCCOPY.
-//    ] 
+    write(Image image, int x, int y, int width, int height)
+    {
+        HDC dc := image;
+        
+        theHDC.copy(x, y, width, height, dc, 0, 0, SRCCOPY)
+    } 
  
     free()
     {

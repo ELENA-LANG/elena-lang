@@ -34,9 +34,9 @@ public class MainWindow : SDIDialog
 	RadioButtonGroup Econta3;
     RadioButtonGroup Econta4;
 
-//    // Image Formula
-//    object theImageList.
-//    object thePaintbox.
+    // Image Formula
+    ImageList theImageList;
+    Imagebox thePaintbox;
 
     constructor new()
         <= new()
@@ -92,13 +92,13 @@ public class MainWindow : SDIDialog
             .appendControl:Econta3
             .appendControl:Econta4;
 
-//        // Images Formulas
-//        thePaintbox  := Imagebox new.
-//        theImageList := ImageList new.
-//        pnlFormula controls; 
-//            append:theImageList;
-//            append:thePaintbox.
-//        // -----------------------------------------------------------
+        // Images Formulas
+        thePaintbox  := Imagebox.new();
+        theImageList := ImageList.new();
+        pnlFormula 
+            .appendControl:theImageList
+            .appendControl:thePaintbox;
+        // -----------------------------------------------------------
 
         // Form ------------------------------------------------------------------------
         self.setRegion(250, 200, 600, 400);
@@ -188,32 +188,31 @@ public class MainWindow : SDIDialog
         
         letter3.setRegion(170, 75, 14, 22);
 
-//        // Image Formula -----------------------------------------------------------------
-//        thePaintbox set x:12 y:22.
-//        thePaintbox set width:379 height:139.
-//
-//        // Image List Formulas -----------------------------------------------------------
-//        theImageList assign:thePaintbox.
-//        theImageList set width:379 height:139.
-//        theImageList append path:"..\formulas\Paralelogramos\bitmap1.bmp".
-//        theImageList append path:"..\formulas\Paralelogramos\bitmap2.bmp".
-//        theImageList append path:"..\formulas\Paralelogramos\bitmap3.bmp".
-//		theImageList append path:"..\formulas\Paralelogramos\bitmap4.bmp".
-//
-//        theImageList append path:"..\formulas\Trapezio\bitmap1.bmp".
-//        theImageList append path:"..\formulas\Trapezio\bitmap2.bmp".
-//        theImageList append path:"..\formulas\Trapezio\bitmap3.bmp".
-//
-//        theImageList append path:"..\formulas\Circulo\bitmap1.bmp".
-//        theImageList append path:"..\formulas\Circulo\bitmap2.bmp".
-//        theImageList append path:"..\formulas\Circulo\bitmap3.bmp".
-//        
-//        theImageList append path:"..\formulas\Triangulos\bitmap1.bmp".
-//        theImageList append path:"..\formulas\Triangulos\bitmap2.bmp".
-//        theImageList append path:"..\formulas\Triangulos\bitmap3.bmp".
-//        theImageList append path:"..\formulas\Triangulos\bitmap4.bmp".
-//        theImageList append path:"..\formulas\Triangulos\bitmap5.bmp".
-//
+        // Image Formula -----------------------------------------------------------------
+        thePaintbox.setRegion(12, 22, 379, 139);
+
+        // Image List Formulas -----------------------------------------------------------
+        theImageList.assign:thePaintbox;
+        theImageList.setRegion(0, 0, 379, 139);
+        theImageList.appendImage:"..\formulas\Paralelogramos\bitmap1.bmp";
+        theImageList.appendImage:"..\formulas\Paralelogramos\bitmap2.bmp";
+        theImageList.appendImage:"..\formulas\Paralelogramos\bitmap3.bmp";
+		theImageList.appendImage:"..\formulas\Paralelogramos\bitmap4.bmp";
+
+        theImageList.appendImage:"..\formulas\Trapezio\bitmap1.bmp";
+        theImageList.appendImage:"..\formulas\Trapezio\bitmap2.bmp";
+        theImageList.appendImage:"..\formulas\Trapezio\bitmap3.bmp";
+
+        theImageList.appendImage:"..\formulas\Circulo\bitmap1.bmp";
+        theImageList.appendImage:"..\formulas\Circulo\bitmap2.bmp";
+        theImageList.appendImage:"..\formulas\Circulo\bitmap3.bmp";
+        
+        theImageList.appendImage:"..\formulas\Triangulos\bitmap1.bmp";
+        theImageList.appendImage:"..\formulas\Triangulos\bitmap2.bmp";
+        theImageList.appendImage:"..\formulas\Triangulos\bitmap3.bmp";
+        theImageList.appendImage:"..\formulas\Triangulos\bitmap4.bmp";
+        theImageList.appendImage:"..\formulas\Triangulos\bitmap5.bmp";
+
 //        // Events ------------------------------------------------------------------------
 //        // Radio Buttons -----------------------------------------------------------------
 //        Tconta set onIndexChanged: (:args)[ $self $TipoDoCalculo:(Tconta selected_index) ].
@@ -232,9 +231,9 @@ public class MainWindow : SDIDialog
 ////            
 ////        BtmSalv~eevents +=
 ////            { onclick'eval = self $onButtonClickSave. }.
-//
-//        BtmSair set onClick:(:args)
-//            [ 'program stop. ].
+
+        BtmSair.onClick := (args)
+            { forward program.stop() }
     }
 
 //    $TipoDoCalculo : anIndex

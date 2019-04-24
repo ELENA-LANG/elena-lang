@@ -948,7 +948,14 @@ public abstract class BasePanel : BaseWinContainer
         
         theControls.append(control)        
     }
-
+    
+    internal appendControlInternal(ImageList control)
+    {
+        control.Parent := self;
+        
+        theControls.append(control)        
+    }
+    
     set Width(int v)
     {
         super.Width := v;
@@ -1032,6 +1039,10 @@ public sealed class Panel : BasePanel, interface<IControl>
     }
     
     appendControl(BaseControl control)
+    {
+        self.appendControlInternal(control);
+    }
+    appendControl(control)
     {
         self.appendControlInternal(control);
     }
@@ -1232,102 +1243,94 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
     }
 }
 
-//// --- ImageList ---
-//
-//sealed class ImageList
-//{
-//    dimension theSize.
-//    object    theParent.
-//    object    theImages.
-//    int       theIndex.
-// 
-//    constructor new
-//    [
-//        theIndex := 0.
-//        theImages := List new.
-//        
-//        theSize :=  Dimension new width:50 height:50.
-//    ]
-// 
+// --- ImageList ---
+
+public sealed class ImageList : Object, interface<IControl>
+{
+    Dimension    theSize;
+    object       theParent;
+    List<Image>  theImages; 
+    int          theIndex;
+ 
+    constructor new()
+    {
+        theIndex := 0;
+        theImages := new List<Image>();
+        
+        theSize :=  new Dimension(50, 50)
+    }
+
+    setRegion(int x, int y, int width, int height)
+    {
+        theSize.Width := width;
+        theSize.Height := height
+    }
+   
 //    assign : aControl
 //       <= assign paintbox:(aControl paintbox).
-// 
-//    assign paintbox:aPaintbox
-//    [
-//        aPaintbox set onPaint:(:sender:aCanvas)<object,canvas>
-//        [
-//            int aWidth := 0.
-//            int aHeight := 0.
-//            theSize dimension; read vint:aWidth vint:aHeight.
-//            
-//            var anImage := theImages getAt int:(theIndex int).
-//            
-//            aCanvas write image:(anImage image) int:0 int:0 int:aWidth int:aHeight
-//        ].
-//    ]
-//
-//    selected_index = theIndex.
-//
-//    set selected_index : anIndex
-//    [
-//        theIndex := anIndex int.
-//    ] 
-//   
-//    control = IControl::
-//    {
-//        control_object = $self.
-// 
-//        open [ $self open ]
-//          
-//        close [ $self close ]
-//          
-//        retrieve hwnd:aHandle = $nil.
-//    
-//        setDimension int:aWidth int:aHeight [ $self setDimension int:aWidth int:aHeight ]
-//    }.
-// 
-//    $set parent:aParent
-//    [
-//        theParent := aParent.
-//    ]
-//          
-//    dimension = theSize.
-//    
-//    stacksafe setDimension int:aWidth int:aHeight
-//    [
-//        theSize write int:aWidth int:aHeight.
-//    ]
-//    
-//    set width:aWidth height:aHeight
-//    [
-//        theSize set width:aWidth.
-//        theSize set height:aHeight.
-//    ]
-//    
-//    append path:aPath
-//    [        
-//        theImages append:(Image new literal:aPath dimension:theSize).
-//    ]
-//    
-//    open
-//    [
-//        hdc aParentDC := theParent hwnd; hdc.        
-//        
-//        enumerator it := theImages enumerator.
-//        while(it next) [
-//            it get; image; open hdc:aParentDC
-//        ].
-//    ]
-//    
-//    close
-//    [
-//        enumerator it := theImages enumerator.
-//        while(it next) [
-//            it get; free
-//        ].
-//    ]    
-//}
-//
+ 
+    assign(Paintbox paintbox)
+    {
+        paintbox.onPaint := (object sender, Canvas canvas)
+        {
+            int width := theSize.Width;
+            int height := theSize.Height;
+            
+            auto image := theImages[theIndex];
+            
+            canvas.write(image, 0, 0, width, height)
+        }
+    }
+
+    int SelectedIndex
+    {
+        int get() = theIndex;
+        
+        set(int n)
+        {
+            theIndex := n
+        }
+    }
+
+    IControl retrieve(WindowHandle handle) 
+    {
+        ^ nil
+    }
+    
+    click() {}
+
+    Parent = theParent;    
+
+    internal set Parent(object o)
+    {
+        theParent := o
+    }
+
+    appendImage(string path)
+    {        
+        theImages.append(Image.load(path, theSize))
+    }
+    
+    open()
+    {
+        WindowHandle parent := theParent;
+        HDC parentDC := parent.HDC;        
+
+        int len := theImages.Length;
+        for (int i := 0, i < len, i += 1) {
+            theImages[i].open(parentDC)
+        }
+    }
+    
+    close()
+    {
+        int len := theImages.Length;
+        for (int i := 0, i < len, i += 1) {
+            theImages[i].free()
+        }
+    }    
+}
+
 //// --- DockingBox ---
 //
 //sealed class DockingBox

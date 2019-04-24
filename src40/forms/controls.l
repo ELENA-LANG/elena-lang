@@ -57,28 +57,22 @@ public class BaseControl
 
     internal set Parent(object o)
     {
-        theParent := o
+        if(nil == o)
+        {
+            if(nil == theParent)
+                { InvalidOperationException.new:"A control already unbound".raise() };
+            
+            theParent := nil
+        }
+        else
+        {
+            if(nil != theParent)
+                { InvalidOperationException.new:"A control already bound".raise() };
+            
+            theParent := o
+        }
     }
 
-//    parent = theParent.
-//    
-//    $set parent:aParent
-//    [
-//        if($nil == aParent)
-//            [
-//                if($nil == theParent)
-//                    [ InvalidOperationException new:"A control already unbound"; raise ].
-//                
-//                theParent := $nil
-//            ];
-//            [
-//                if($nil != theParent)
-//                    [ InvalidOperationException new:"A control already bound"; raise ].
-//                
-//                theParent := aParent
-//            ]
-//    ]
-//    
     string Caption
     {
         string get() = theCaption;

@@ -2,9 +2,9 @@
 
 public const int SRCCOPY          = 00CC0020h;
 
-//const int IMAGE_BITMAP     = 0.
-//
-//const int LR_LOADFROMFILE  = 0010h.
+public const int IMAGE_BITMAP     = 0;
+
+public const int LR_LOADFROMFILE  = 0010h;
 
 // --- RECT ---
 
@@ -124,10 +124,10 @@ public sealed const struct HDC
         extern GDI32.SetBkColor(theHandle, color)
     }        
                         
-//    stacksafe select hbitmap:aBitmapHandle
-//    [
-//        system'external'GDI32 SelectObject int:theHandle int:aBitmapHandle.
-//    ]        
+    select(HBITMAP bitmapHandle)
+    {
+        extern GDI32.SelectObject(theHandle, bitmapHandle)
+    }        
     
     select(HPEN penHandle)
     {
@@ -187,17 +187,17 @@ public sealed const struct HBITMAP
         theHandle := h
     }
 
-//    stacksafe constructor load wide:aPath int:aWidth int:aHeight
-//    [
-//        int h := system'external'USER32 LoadImageW
-//            int:0
-//            wide:aPath
-//            int:IMAGE_BITMAP
-//            int:aWidth int:aHeight
-//            int:LR_LOADFROMFILE.
-//        
-//        theHandle := h
-//    ]                
+    embeddable constructor load(wide path, int width, int height)
+    {
+        int h := extern USER32.LoadImageW(
+            0,
+            path,
+            IMAGE_BITMAP,
+            width, height,
+            LR_LOADFROMFILE);
+        
+        theHandle := h
+    }                
         
     select(HDC handle)
     {
