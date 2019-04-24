@@ -34,6 +34,4 @@ public programUsingZip()
     
     zipped.forEach:(e)
         { console.writeLine:e };
-        
-    console.readChar();
 }

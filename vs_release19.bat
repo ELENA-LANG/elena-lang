@@ -262,27 +262,27 @@ md examples\console\bsort
 copy %1\examples\console\bsort\*.l examples\console\bsort
 copy %1\examples\console\bsort\*.prj examples\console\bsort
 
-rem md examples\gui\c_a_g
-rem copy %1\examples\gui\c_a_g\*.l examples\gui\c_a_g
-rem copy %1\examples\gui\c_a_g\*.prj examples\gui\c_a_g
+md examples\gui\c_a_g
+copy %1\examples\gui\c_a_g\*.l examples\gui\c_a_g
+copy %1\examples\gui\c_a_g\*.prj examples\gui\c_a_g
 
-rem md examples\gui\c_a_g\formulas
+md examples\gui\c_a_g\formulas
 
-rem md examples\gui\c_a_g\formulas\Circulo
-rem copy %1\examples\gui\c_a_g\formulas\Circulo\*.bmp examples\gui\c_a_g\formulas\Circulo
+md examples\gui\c_a_g\formulas\Circulo
+copy %1\examples\gui\c_a_g\formulas\Circulo\*.bmp examples\gui\c_a_g\formulas\Circulo
 
-rem md examples\gui\c_a_g\formulas\Paralelogramos 
-rem copy %1\examples\gui\c_a_g\formulas\Paralelogramos\*.bmp examples\gui\c_a_g\formulas\Paralelogramos 
+md examples\gui\c_a_g\formulas\Paralelogramos 
+copy %1\examples\gui\c_a_g\formulas\Paralelogramos\*.bmp examples\gui\c_a_g\formulas\Paralelogramos 
 
-rem md examples\gui\c_a_g\formulas\Trapezio 
-rem copy %1\examples\gui\c_a_g\formulas\Trapezio\*.bmp examples\gui\c_a_g\formulas\Trapezio
+md examples\gui\c_a_g\formulas\Trapezio 
+copy %1\examples\gui\c_a_g\formulas\Trapezio\*.bmp examples\gui\c_a_g\formulas\Trapezio
 
-rem md examples\c_a_g\gui\formulas\Triangulos 
-rem copy %1\examples\gui\c_a_g\formulas\Triangulos\*.bmp examples\gui\c_a_g\formulas\Triangulos 
+md examples\gui\c_a_g\gui\formulas\Triangulos 
+copy %1\examples\gui\c_a_g\formulas\Triangulos\*.bmp examples\gui\c_a_g\formulas\Triangulos 
 
-rem md examples\gui\c_a_g\inf
-rem md examples\gui\c_a_g\obj
-rem md examples\gui\c_a_g\bin
+md examples\gui\c_a_g\inf
+md examples\gui\c_a_g\obj
+md examples\gui\c_a_g\bin
 
 md examples\script\calculator 
 copy %1\examples\script\calculator\*.l examples\script\calculator 
@@ -293,25 +293,14 @@ md examples\console\datetime
 copy %1\examples\console\datetime\*.l examples\console\datetime 
 copy %1\examples\console\datetime\*.prj examples\console\datetime  
 
-rem md examples\dices
-rem copy %1\examples\dices\*.l examples\dices
-rem copy %1\examples\dices\*.prj examples\dices
-
-rem md examples\dices\kniffel
-rem copy %1\examples\dices\kniffel\*.l examples\dices\kniffel
-
-rem md examples\eldoc 
-rem copy %1\examples\eldoc\*.l examples\eldoc
-rem copy %1\examples\eldoc\*.prj examples\eldoc
-
 md examples\console\goods 
 copy %1\examples\console\goods\*.l examples\console\goods 
 copy %1\examples\console\goods\*.txt examples\console\goods 
 copy %1\examples\console\goods\*.prj examples\console\goods 
 
-rem md examples\gui\graphs
-rem copy %1\examples\gui\graphs\*.l examples\gui\graphs
-rem copy %1\examples\gui\graphs\*.prj examples\gui\graphs
+md examples\gui\graphs
+copy %1\examples\gui\graphs\*.l examples\gui\graphs
+copy %1\examples\gui\graphs\*.prj examples\gui\graphs
 
 md examples\console\helloworld 
 copy %1\examples\console\helloworld\*.l examples\console\helloworld
@@ -324,13 +313,9 @@ copy %1\examples\script\interpreter\*.prj examples\script\interpreter
 copy %1\examples\script\interpreter\*.txt examples\script\interpreter
 copy %1\examples\script\interpreter\*.es examples\script\interpreter
 
-rem md examples\console\matrix 
-rem copy %1\examples\console\matrix\*.l examples\console\matrix 
-rem copy %1\examples\console\matrix\*.prj examples\console\matrix 
-
-rem md examples\opencalc
-rem copy %1\examples\opencalc\*.bat examples\opencalc
-rem copy %1\examples\opencalc\*.vl examples\opencalc
+md examples\console\matrix 
+copy %1\examples\console\matrix\*.l examples\console\matrix 
+copy %1\examples\console\matrix\*.prj examples\console\matrix 
 
 md examples\console\pi
 copy %1\examples\console\pi\*.l examples\console\pi
@@ -411,11 +396,15 @@ copy %1\asm\x32\*.asm asm\x32
 copy %1\asm\*.esm asm
 
 md src40\core
-xcopy %1\src40\core\*.esn src40\core /s
+xcopy %1\src40\core\*.esm src40\core /s
 
 md src40\system
 xcopy %1\src40\system\*.l src40\system /s
 xcopy %1\src40\system\*.prj src40\system /s
+
+md src40\system\core
+xcopy %1\src40\system\core\*.esm src40\system\core /s
+
 
 md src40\extensions
 xcopy %1\src40\extensions\*.l src40\extensions /s
@@ -672,16 +661,27 @@ bin\elc src40\extensions\extensions.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src40\net\net.prj
+bin\elc src40\net\net.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 bin\elc src40\forms\forms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src40\sqlite\sqlite.prj
+bin\elc src40\sqlite\sqlite.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 bin\elc src40\cellular\cellular.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elc src40\algorithms\algorithms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

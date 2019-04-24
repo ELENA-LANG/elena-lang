@@ -3,9 +3,8 @@ In development:
 ------                              
 
               dev - elena 4.0
-                 * test rosetta code sample
-                 * strinterpolation
-                 * zuang
+                 * test anagram,calendar,gameoflife,median,strinterpolation,zeckendorf
+                 * zuang,wireworld
                  * migrate chat sample
                  * migrate chat sample
                  * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
