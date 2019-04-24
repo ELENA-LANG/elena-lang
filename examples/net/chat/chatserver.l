@@ -46,12 +46,12 @@ sealed class ChatServer
         theNetworkServer.Blocking := false
     }
     
-//    translate : command
-//    [
-//        literal json := command toJson.
-//        
-//        theNetworkServer sendAll(json length); sendAll(json).
-//    ]
+    translate(command)
+    {
+        string json := command.toJson();
+        
+        theNetworkServer.sendToAll(json.Length).sendToAll(json)
+    }
     
     private bool proceed()
     {
@@ -78,9 +78,10 @@ sealed class ChatServer
                                 
                                 member.Server.translate(new CommandDTO:
                                                         { 
-                                                            this _command := TRANSLATE; 
-                                                            this _value := command.Value; 
-                                                            this _user := member.Name; })
+                                                            this Command := TRANSLATE; 
+                                                            this Value := command.Value; 
+                                                            this User := member.Name; 
+                                                        })
                             };
                     }
                 }

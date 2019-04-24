@@ -6,18 +6,18 @@ In development:
                  * migrate chat sample
 
                  * test zeckendorf,zuang,wireworld
+                 * uncomment c_a_g code
+                 * migrate sqlite
+                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
+                 * gui : check default error handler
+                 * exception in using statement is not correctly handled
+                 * migrate nodepad
 
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
-                 * uncomment c_a_g code
-                 * migrate nodepad
-                 * migrate sqlite
-                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
-                 * gui : check default error handler
-                 * exception in using statement is not correctly handled
                  * optimize intOp.Absolute method
                  * optimize hash table implementation (both weak and strong typed)
                  * implement jsonObject.serializeTo(MyDTO);

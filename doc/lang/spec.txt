@@ -603,4 +603,14 @@ The output is:
     Reading a number:3
     The sum of 2 and 3 is 5
    
+### Constant symbols
+
+Symbols can be used to implement constants:
+
+    public const int N = 2;
+    public const string Message = "MyMessage";
+
+The symbol expression should be constant one (numeric or string constant for example), otherwise the compiler 
+will generate an error.
+
 4. Identifiers, Namespaces, Forwards

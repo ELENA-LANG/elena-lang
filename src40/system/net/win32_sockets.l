@@ -291,25 +291,25 @@ public sealed const struct Socket
 //        if (SOCKET_ERROR == retVal)
 //            [ SocketException new:"Error at socket"; raise ].
 //    ]
-//
-//    write(ByteArray buffer)
-//    [
-//        int len := buffer length.
-//        int sent := 0.
-//        self write(buffer, len, 0, &sent).        
-//        
-//        ^ sent.
-//    ]
-//
-//    write(ByteArray buffer, int length, int flags, ref<int> sent)
-//    [
-//        int retVal := system'external'WS2_32 send(theHandle, buffer, length, flags).
-//            
-//        if (retVal == SOCKET_ERROR)
-//            [ SocketException new:"Error at socket"; raise ].
-//            
-//        sent value := retVal.            
-//    ]
+
+    int write(byte[] buffer)
+    {
+        int len := buffer.Length;
+        int sent := 0;
+        self.write(buffer, len, 0, ref sent);
+        
+        ^ sent
+    }
+
+    write(byte[] buffer, int length, int flags, ref int sent)
+    {
+        int retVal := extern WS2_32.send(theHandle, buffer, length, flags);
+            
+        if (retVal == SOCKET_ERROR)
+            { SocketException.new:"Error at socket".raise() };
+            
+        sent := retVal
+    }
 
     read(byte[] buffer, int maxLength, int flags, ref int recvd)
     {
