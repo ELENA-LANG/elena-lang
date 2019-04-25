@@ -6,6 +6,8 @@
 //                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
+//#define FULL_OUTOUT_INFO 1
+
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "compiler.h"
@@ -3998,7 +4000,8 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
    }
    else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
 
-   if (scope.info.staticValues.Count() > 0)
+   if (!test(scope.info.header.flags, elVirtualVMT) && scope.info.staticValues.Count() > 0)
+      // do not inherit the static fields for the virtual class declaration
       copyStaticFieldValues(node, scope);
 
    writer.newNode(lxClass, scope.reference);
@@ -4017,6 +4020,17 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
    scope.save();
 
    generateClassImplementation(expressionTree.readRoot(), scope);
+}
+
+ref_t Compiler :: resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message)
+{
+   if (!classInfo.methods.exist(message, true)) {
+      ClassInfo parentInfo;
+      _logic->defineClassInfo(scope, parentInfo, classInfo.header.parentRef, false);
+
+      return resolveMessageOwnerReference(scope, parentInfo, classInfo.header.parentRef, message);
+   }
+   else return reference;
 }
 
 ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope)
@@ -4098,10 +4112,13 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       }
 
       if (scope.info.methods.exist(scope.moduleScope->init_message)) {
+         ref_t messageOwnerRef = resolveMessageOwnerReference(*scope.moduleScope, scope.info, scope.reference, 
+                                    scope.moduleScope->init_message);
+
          // if implicit constructor is declared - it should be automatically called
          writer.newNode(lxOvreriddenMessage, scope.moduleScope->init_message);
-         if (scope.reference != closureRef)
-            writer.appendNode(lxTarget, scope.reference);
+         if (messageOwnerRef != closureRef)
+            writer.appendNode(lxTarget, messageOwnerRef);
          writer.closeNode();
       }
 

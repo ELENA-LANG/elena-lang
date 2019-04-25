@@ -41,12 +41,13 @@ public control = new Client().mixInto(new :
     {
         if(line == "-q")
         {
-//                __target stop.
+            __target.stop();
     
             forward program.stop()
-//            }
-//            [
-//                __target send(line).
+        }
+        else
+        {
+            __target.send(line)
         };
 
         ^ emptyString

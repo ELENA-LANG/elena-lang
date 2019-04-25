@@ -365,10 +365,6 @@ private:
 ////      {
 ////         moduleScope->raiseWarning(level, message, sourcePath, identifier);
 ////      }
-////      //virtual void raiseWarning(int level, const char* message, int row, int col, ident_t sourcePath, ident_t terminal)
-////      //{
-////      //   moduleScope->raiseWarning(level, message, sourcePath, );
-////      //}
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
 
@@ -377,7 +373,6 @@ private:
       virtual pos_t saveSourcePath(ByteCodeWriter& writer);
       virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
 
-////      ref_t resolveFullReference(ident_t name);
       ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
 
       ref_t mapNewTerminal(SNode terminal);
@@ -789,6 +784,8 @@ private:
 
    void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
+
+   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message);
 
    int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message)
    {
