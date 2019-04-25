@@ -67,10 +67,10 @@ public sealed const struct UnsafePointer
 {
     embeddable __ptr thePointer[4];
 
-//    embeddable constructor load(int ptr)
-//    [
-//        thePointer := ptr.
-//    ]
+    embeddable constructor load(int ptr)
+    {
+        thePointer := ptr
+    }
 
     embeddable constructor()
     {
@@ -85,17 +85,19 @@ public sealed const struct UnsafePointer
     private setReference(o)
         => system'core_routines'__dptr;
                                          
-//    dirty_ptr add(int offs)
-//    [
-//        dirty_ptr ptr := self.
-//        
-//        ptr := ptr + 1.
-//        
-//        ^ ptr
-//    ]
-//
-////    stacksafe write int:anObject
-////        => system'core_routines'__dptr.
+    dirty_ptr add(int offs)
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        val += offs;
+        
+        dirty_ptr ptr := UnsafePointer.load(val);
+        
+        ^ ptr
+    }
+
+//    stacksafe write int:anObject
+//        => system'core_routines'__dptr.
                 
 //    read(ByteArray arr, int len)
 //        => system'core_routines'__dptr.

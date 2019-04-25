@@ -2,22 +2,22 @@ import system'dynamic;
 
 class Client
 {
-//    T<ChatClient> theClient.
+    ChatClient theClient;
     
     start(string userName, string ip, int port)
     {
-//        theClient := ChatClient new(ip, port, userName).
-//        
-//        theClient start.
+        theClient := ChatClient.create(ip, port, userName);
+        
+        theClient.start()
     }
     
-//    send(text)
-//        => theClient.
-//    
-//    stop
-//    [
-//        theClient stop.
-//    ]
+    send(text)
+        => theClient;
+    
+    stop()
+    {
+        theClient.stop()
+    }
 }
 
 public control = new Client().mixInto(new :

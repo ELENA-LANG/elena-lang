@@ -196,16 +196,16 @@ public sealed struct AddrInfoReader
         prootinfo := ptr;
     }
 
-//    bool available
-//        = paddrinfo isEmpty; inverted.
-//    
-//    next
-//    [
-//        dirty_ptr ptr := paddrinfo.
-//        ptr := ptr + 28.
-//        
-//        paddrinfo := ptr.
-//    ]
+    bool Available
+        = paddrinfo.isEmpty().Inverted;
+    
+    next()
+    {
+        dirty_ptr ptr := paddrinfo;
+        ptr := ptr + 28;
+        
+        paddrinfo := ptr
+    }
     
     read(AddrInfo info)
     {
@@ -271,13 +271,13 @@ public sealed const struct Socket
             { SocketException.new("Error at socket").raise() }
     }
 
-//    bool tryOpen(dirty_ptr ptr, int len)
-//    [
-//        int retVal := system'external'WS2_32 connect(theHandle, ptr, len).            
-//            
-//        ^ (SOCKET_ERROR != retVal).
-//    ]
-//
+    bool tryOpen(dirty_ptr ptr, int len)
+    {
+        int retVal := extern WS2_32.connect(theHandle, ptr, len);
+            
+        ^ (SOCKET_ERROR != retVal)
+    }
+
 //    connect(literal ip_address, int port)
 //    [
 //        T<SOCKADDR_IN> addr := SOCKADDR_IN new.

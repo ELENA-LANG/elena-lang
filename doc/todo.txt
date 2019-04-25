@@ -5,9 +5,13 @@ In development:
               dev - elena 4.0
                  * migrate chat sample
 
+                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
+                 * gui : check default error handler
+                 * exception in using statement is not correctly handled
+                 * Installing in the Program Files folder #354
+                 * unboxing explicit local allocated extension #200
                  * test zeckendorf,zuang,wireworld
                  * uncomment c_a_g code
-                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
 
 ------                                                           
 Pipeline:
@@ -15,8 +19,6 @@ Pipeline:
 
               dev - elena 4.0
                  * migrate sqlite
-                 * gui : check default error handler
-                 * exception in using statement is not correctly handled
                  * migrate nodepad
                  * optimize intOp.Absolute method
                  * optimize hash table implementation (both weak and strong typed)
