@@ -2,24 +2,19 @@
 In development:
 ------                              
               dev - elena 4.0
-                 * Installing in the Program Files folder #354
-                 * unboxing explicit local allocated extension #200
-
-                 * migrate chat sample
                  * test zeckendorf,zuang,wireworld
                  * uncomment c_a_g code
-
-              dev - elena 4.0
+                 * migrate sqlite
                  * variadic closure : correctly free argument list - using the code to free until the zero is encounter
                  * gui : check default error handler
-
+                 * migrate chat sample
 
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
-                 * migrate sqlite
+                 * unboxing explicit local allocated extension #200
                  * migrate nodepad
                  * optimize intOp.Absolute method
                  * optimize hash table implementation (both weak and strong typed)

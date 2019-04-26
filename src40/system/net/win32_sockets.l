@@ -175,7 +175,7 @@ public sealed struct AddrInfoReader
     embeddable constructor(string service, AddrInfo info)
     {
         dirty_ptr ptr := new dirty_ptr();
-        int retVal := extern WS2_32.getaddrinfo(0, service, info, ptr);
+        int retVal := extern WS2_32.getaddrinfo(0, service, info, ref ptr);
             
         ifnot(0 == retVal)
             { SocketException.new("getaddrinfo failed", retVal).raise() };
