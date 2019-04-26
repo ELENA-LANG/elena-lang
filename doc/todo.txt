@@ -2,12 +2,15 @@
 In development:
 ------                              
               dev - elena 4.0
+                 * working on xforms
+
+              dev - elena 4.0
+                 * migrate chat sample
                  * test zeckendorf,zuang,wireworld
                  * uncomment c_a_g code
                  * migrate sqlite
                  * variadic closure : correctly free argument list - using the code to free until the zero is encounter
                  * gui : check default error handler
-                 * migrate chat sample
 
 ------                                                           
 Pipeline:
