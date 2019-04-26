@@ -1,17 +1,19 @@
 ------                                 
 In development:
 ------                              
-
               dev - elena 4.0
-                 * migrate chat sample
-
-                 * check why console.printPaddingRightChar(25 * table.fieldCount(), $45) corrupt the stack (see sqlite_test)
-                 * gui : check default error handler
                  * exception in using statement is not correctly handled
                  * Installing in the Program Files folder #354
                  * unboxing explicit local allocated extension #200
+
+                 * migrate chat sample
                  * test zeckendorf,zuang,wireworld
                  * uncomment c_a_g code
+
+              dev - elena 4.0
+                 * variadic closure : correctly free argument list - using the code to free until the zero is encounter
+                 * gui : check default error handler
+
 
 ------                                                           
 Pipeline:

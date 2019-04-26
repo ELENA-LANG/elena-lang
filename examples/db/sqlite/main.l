@@ -20,8 +20,7 @@ extension dbTestOp
             console.printPaddingRight(25, fieldName)
         };
         console.printLine();
-        //console.printPaddingRightChar(25 * table.fieldCount(), $45);
-        console.writePaddingLeft("", $45, 25 * table.fieldCount());
+        console.printPaddingRightChar(25 * table.fieldCount(), $45, "-");
         console.printLine();
         
         // Rows

@@ -5533,6 +5533,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       }
       else scope.raiseError(errIllegalMethod, node);
 
+      if (test(flags, VARIADIC_MESSAGE) && !test(flags, SPECIAL_MESSAGE))
+         paramCount = 1;
+
       scope.message = encodeMessage(actionRef, paramCount, flags);
 
       // if it is an explicit constant conversion
@@ -5912,34 +5915,6 @@ bool Compiler :: isMethodEmbeddable(MethodScope& scope, SNode)
       return ownerScope->info.methodHints.exist(Attribute(scope.message, maEmbeddableRet));
    }
    else return false;
-
-   //if ()
-   //   return false;
-
-   //SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
-   //if (body.compare(lxDispatchCode, lxResendExpression))
-   //   return false;
-
-   //if (getParamCount(scope.message) == ARG_COUNT || test(scope.message, VARIADIC_MESSAGE))
-   //   return false;
-
-   //if (scope.generic || scope.closureMode)
-   //   return false;
-
-   ////if (scope.outputRef == scope.getClassRef())
-   ////   return false;
-
-   //if (!scope.outputRef || !_logic->isEmbeddable(*scope.moduleScope, scope.outputRef)) {
-   //   return false;
-   //}
-
-   //ref_t dummy = 0;
-   //ident_t actionName = scope.module->resolveAction(getAction(scope.message), dummy);
-   //if (actionName.startsWith(CAST_MESSAGE))
-   //   // HOTFIX : exclude cast operations
-   //   return false;
-
-   //return true;
 }
 
 void Compiler :: compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
