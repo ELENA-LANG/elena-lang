@@ -5125,11 +5125,13 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
                popObject(tape, lxResult);
             }
             declareSafeCatch(tape, finallyNode, retLabel);
+            doCatch(tape);
             if (finallyNode != lxNone) {
                // generate finally
+               pushObject(tape, lxResult);
                generateCodeBlock(tape, finallyNode);
+               popObject(tape, lxResult);
             }
-            doCatch(tape);
 
             // ...
 

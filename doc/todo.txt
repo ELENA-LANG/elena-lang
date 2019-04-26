@@ -2,7 +2,6 @@
 In development:
 ------                              
               dev - elena 4.0
-                 * exception in using statement is not correctly handled
                  * Installing in the Program Files folder #354
                  * unboxing explicit local allocated extension #200
 
