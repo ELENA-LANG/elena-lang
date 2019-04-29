@@ -2,24 +2,31 @@
 In development:
 ------                              
               dev - elena 4.0
-                 * working on xforms
-
-              dev - elena 4.0
+                 * duplicate output nested fields #284
+                 * unboxing duplicate object #283
+                 * unboxing explicit local allocated extension #200
+                 * migrate nodepad
+                 * optimize intOp.Absolute method
                  * migrate chat sample
                  * test zeckendorf,zuang,wireworld
                  * uncomment c_a_g code
                  * migrate sqlite
                  * variadic closure : correctly free argument list - using the code to free until the zero is encounter
                  * gui : check default error handler
+                 * bool_expr ? 1 : 0 - the expression result should be strong-typed
+                 * support 2.2 syntax (without r postfix)
+                 * optimize r * n + 0.5r
+                 * optimize pi sample
+                 * optimize compiler : more efficient hash table, caching the results
 
 ------                                                           
 Pipeline:
 ------                                                                                         
 
               dev - elena 4.0
-                 * unboxing explicit local allocated extension #200
-                 * migrate nodepad
-                 * optimize intOp.Absolute method
+                 * working on xforms
+
+              dev - elena 4.0
                  * optimize hash table implementation (both weak and strong typed)
                  * implement jsonObject.serializeTo(MyDTO);
                  * test: internal prop x, internal prop int x
@@ -78,8 +85,6 @@ Pipeline:
                  * mixin :: { collection }, new::{ collection } - get rid of - new {}
                  * create a nested class / collection - syntax review
 
-                 * implement textdb sample
-
                  * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
                  * property attribute - can be only the top most token
                  * no need to box variadic argument list for template opertions
@@ -101,10 +106,8 @@ Pipeline:
                    work
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
-                 * support 2.2 syntax (without r postfix)
                  * allow to work with ref<int> directly
                  * implement a ? b, a ? b : c, a ? {}, a ? {} : {}
-                 * IntNumber.#cast<'IntNumber> - why it always creates a new object?
                  * abstract class cannot have constructors / default constructor
                  * uncomment validateClassDeclaration
                  * if (a) b else c;
@@ -159,7 +162,6 @@ Pipeline:
                  * reimplement loop similar to lazy / direct
                  * set operation with constant array should not be allowed
                  * vm client : incorrect error if the program entry is not defined
-                 * bool_expr ? 1 : 0 - the expression result should be strong-typed
                  * support static prefix to allow operations with static field only
                  * sealed static fields, cannot be changed in the child classes?!
  
@@ -192,18 +194,15 @@ Pipeline:
                  * move system'core_routines'__exception register call to the system entry symbol
 
               dev - general implementation
-                 * #200 : unboxing explicit local allocated extension 
                  * &0l - should be dynamically created
 
               dev - tests          
                  * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
-                 * mta / gc : Hailstone sequence
 
               dev - general implementation
                  * (re)implement sockets
                  * (re)implement tcpserver / tcpclient
 
               xdev - general optimization  
-                 - optimize r * n + 0.5r
                  - closers passed as parameters should be stack-allocated
 

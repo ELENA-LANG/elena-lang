@@ -226,12 +226,13 @@ protected:
    void compileFFREE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
    void compileCMOVCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
+   void compileBSR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileCMPPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileCMPSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileCOMISS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
    bool compileCommandA(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
-   bool compileCommandB(TokenInfo& token);
+   bool compileCommandB(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandC(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper);
    bool compileCommandD(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandE(TokenInfo& token);

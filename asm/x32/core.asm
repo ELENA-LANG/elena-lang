@@ -945,35 +945,30 @@ end
 inline % 0Eh // (eax - object, ecx - message)
 
   mov  edi, [eax-4]
-  xor  edx, edx
+  push eax
   mov  esi, [edi - elVMTSizeOffset]
+  xor  edx, edx
 
 labSplit:
   test esi, esi
   jz   short labEnd
 
 labStart:
-  shr  esi, 1
+  shr   esi, 1
   setnc dl
-  cmp  ecx, [edi+esi*8]
-  jb   short labSplit
-  nop
-  nop
-  jz   short labFound
-  lea  edi, [edi+esi*8+8]
-  sub  esi, edx
-  jnz  short labStart
-  nop
-  nop
-  jmp  labEnd
-  nop
-  nop
+  cmp   ecx, [edi+esi*8]
+  je    short labFound
+  lea   eax, [edi+esi*8]
+  jb    short labSplit
+  lea   edi, [eax+8]
+  sub   esi, edx
+  jmp   labSplit
 labFound:
-  jmp  [edi+esi*8+4]
-  nop
-  nop
+  pop   eax
+  jmp   [edi+esi*8+4]
 
 labEnd:
+  pop   eax
                                                                 
 end
 

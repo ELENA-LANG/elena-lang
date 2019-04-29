@@ -3229,6 +3229,22 @@ void x86Assembler :: compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryW
 	else token.raiseErr("Invalid command (%d)");
 }
 
+void x86Assembler :: compileBSR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+
+   checkComma(token);
+
+   Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+   
+   if (test(sour.type, x86Helper::otR32) && (test(dest.type, x86Helper::otR32) || test(dest.type, x86Helper::otM32))) {
+      code->writeByte(0x0F);
+      code->writeByte(0xBD);
+      x86Helper::writeModRM(code, sour, dest);
+   }
+   else token.raiseErr("Invalid command (%d)");
+}
+
 void x86Assembler :: compileCMOVCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix)
 {
 	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
@@ -3421,9 +3437,13 @@ bool x86Assembler :: compileCommandA(TokenInfo& token, ProcedureInfo& info, Memo
    }
    else return false;
 }
-bool x86Assembler :: compileCommandB(TokenInfo& token)
+bool x86Assembler :: compileCommandB(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-   return false;
+   if (token.check("bsr")) {
+      compileBSR(token, info, &writer);
+      return true;
+   }
+   else return false;
 }
 bool x86Assembler :: compileCommandC(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper)
 {
@@ -4197,7 +4217,7 @@ bool x86Assembler :: compileCommand(PrefixInfo& prefix, TokenInfo& token, Proced
       recognized = compileCommandA(token, info, writer);
    }
    else if (token.value[0]=='b') {
-      recognized = compileCommandB(token);
+      recognized = compileCommandB(token, info, writer);
    }
    else if (token.value[0]=='c') {
       recognized = compileCommandC(prefix, token, info, writer, helper);
