@@ -1017,6 +1017,9 @@ private:
 
    void compileExternalArguments(SNode node, NamespaceScope& scope);
 
+   void injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& counter, Map<int, int>& tempLocal);
+   void analizeParameterBoxing(SNode node, NamespaceScope& scope, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
+   void analizeParameterBoxing(SNode node, NamespaceScope& scope);
    ref_t analizeAltExpression(SNode node, NamespaceScope& scope, int mode);
    ref_t analizeOp(SNode current, NamespaceScope& scope);
    ref_t analizeSymbol(SNode& node, NamespaceScope& scope);

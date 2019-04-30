@@ -3642,6 +3642,11 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          if (!closure->markAsPresaved(target))
             scope.raiseError(errInvalidOperation, sourceNode);
 
+         byRefAssigning = true;
+         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+         if (size != 0) {
+            operand = size;
+         }
          break;
       }
       case okReadOnlyField:
@@ -8009,6 +8014,110 @@ ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
    return node.findChild(lxTarget).argument;
 }
 
+inline int incMethodAllocated(SNode node)
+{
+   int arg = 0;
+   while (!node.compare(lxClassMethod, lxNone))
+      node = node.parentNode();
+
+   if (node != lxNone) {
+      SNode allocNode = node.findChild(lxAllocated);
+      if (allocNode != lxNone) {
+         arg = allocNode.argument + 1;
+
+         allocNode.setArgument(arg);
+      }
+   }
+
+   return arg;
+}
+
+void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxOuterMember) {
+         counter++;
+
+         SNode boxNode = current.findChild(lxBoxing);
+         SNode objNode = boxNode.firstChild(lxObjectMask);
+         if (objNode != lxNone) {
+            // COMPILER MAGIC : merging duplicate boxings into the single one
+            int key = boxed.get(Attribute(objNode.type, objNode.argument));
+            if (!key) {
+               boxed.add(Attribute(objNode.type, objNode.argument), counter);
+            }
+            else {
+               int tempLocal = tempLocals.get(key);
+               if (!tempLocal) {
+                  tempLocal = incMethodAllocated(node);
+
+                  tempLocals.add(key, tempLocal + 1);
+               }
+               
+               boxNode.set(lxLocal, tempLocal + 1);
+               current.set(lxMember, current.argument);
+            }
+         }
+         
+      }
+
+      current = current.nextNode();
+   }
+
+}
+
+void Compiler :: injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& counter, Map<int, int>& tempLocals)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone && tempLocals.Count() > 0) {
+      if (current == lxOuterMember) {
+         counter++;
+         SNode boxNode = current.findChild(lxBoxing);
+         if (boxNode != lxNone) {
+            auto it = tempLocals.start();
+
+            int key = it.key();
+            if (key == counter) {
+               boxNode.appendNode(lxTempLocal, *it);
+               tempLocals.erase(it);
+            }
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope)
+{
+   Map<Attribute, int> boxed;
+   Map<int, int>       tempLocals;
+
+   int counter = 0;
+   SNode current = node.firstChild();
+   // merging duplicate boxings
+   while (current != lxNone) {
+      if (current == lxNested) {
+         analizeParameterBoxing(current, scope, counter, boxed, tempLocals);
+      }
+
+      current = current.nextNode();
+   }
+
+   // inject boxed temporal variable
+   counter = 0;
+   current = node.firstChild();
+   // merging duplicate boxings
+   while (current != lxNone && tempLocals.Count() > 0) {
+      if (current == lxNested) {
+         injectBoxingTempLocal(current, scope, counter, tempLocals);
+      }
+
+      current = current.nextNode();
+   }
+}
+
 ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
 {   
    SNode attr = node.findChild(lxEmbeddableAttr);
@@ -8021,6 +8130,7 @@ ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
    int flag = 1;
 
    SNode current = node.firstChild();
+   int nested = 0;
    while (current != lxNone) {
       if (test(current.type, lxObjectMask)) {
          int paramMode = 0;
@@ -8030,10 +8140,17 @@ ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
          else paramMode |= HINT_DYNAMIC_OBJECT;
 
          analizeExpression(current, scope, /*warningScope, */paramMode);
+         if (current == lxNested) {
+            nested++;
+         }
 
          flag <<= 1;
       }
       current = current.nextNode();
+   }
+
+   if (nested > 1) {
+      analizeParameterBoxing(node, scope);
    }
 
    return node.findChild(lxTarget).argument;

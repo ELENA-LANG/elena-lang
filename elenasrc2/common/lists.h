@@ -3,7 +3,7 @@
 //
 //              This header contains various ELENA Engine list templates
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef listsH
@@ -106,6 +106,36 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
    bool operator >(int key) const
    {
       return (this->key > key);
+   }
+
+   bool operator ==(Pair<unsigned int, int> key) const
+   {
+      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
+   }
+
+   bool operator !=(Pair<unsigned int, int> key) const
+   {
+      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
+   }
+
+   bool operator <=(Pair<unsigned int, int> key) const
+   {
+      return (this->key.value1 <= key.value1 && this->key.value2 <= key.value2);
+   }
+
+   bool operator <(Pair<unsigned int, int> key) const
+   {
+      return (this->key.value1 < key.value1 && this->key.value2 < key.value2);
+   }
+
+   bool operator >=(Pair<unsigned int, int> key) const
+   {
+      return (this->key.value1 >= key.value1 && this->key.value2 >= key.value2);
+   }
+
+   bool operator >(Pair<unsigned int, int> key) const
+   {
+      return (this->key.value1 > key.value1 && this->key.value2 > key.value2);
    }
 
    bool operator ==(unsigned int key) const
@@ -253,7 +283,14 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
    void freeKey(unsigned long long key) { key = 0; }
    void freeKey(const wchar_t* key) { freestr((wchar_t*)key); }
    void freeKey(ident_t key) { const char* ptr = key; freestr((char*)ptr); }
+   void freeKey(Pair<unsigned int, int> key) { key.value1 = 0; key.value2 = 0; }
 
+   _MapItem(Pair<unsigned int, int> key, T item, _MapItem* next)
+   {
+      this->key = key;
+      this->item = item;
+      this->next = next;
+   }
    _MapItem(int key, T item, _MapItem* next)
    {
       this->key = key;

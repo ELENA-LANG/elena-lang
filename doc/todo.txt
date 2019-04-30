@@ -4,7 +4,12 @@ In development:
               dev - elena 4.0
                  * duplicate output nested fields #284
                  * unboxing duplicate object #283
+
                  * unboxing explicit local allocated extension #200
+
+                 * optimize gc - mg -> yg 
+                 * optimize pi
+
                  * migrate nodepad
                  * optimize intOp.Absolute method
                  * migrate chat sample
