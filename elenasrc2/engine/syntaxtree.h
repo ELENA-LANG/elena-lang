@@ -278,6 +278,7 @@ enum LexicalType
    lxByRefTarget              = 0x20049,
    lxArrayType                = 0x2004A,
    lxDimensionAttr            = 0x2004B,
+   lxCheckLocal               = 0x2004C,
 
    lxTempAttr                 = 0x2010D,
 };

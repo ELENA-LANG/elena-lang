@@ -4,6 +4,7 @@ In development:
               dev - elena 4.0
                  * duplicate output nested fields #284
                  * unboxing duplicate object #283
+                 * fixing an issue with dynamic ref
 
                  * unboxing explicit local allocated extension #200
 

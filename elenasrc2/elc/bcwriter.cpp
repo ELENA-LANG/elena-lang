@@ -3890,6 +3890,23 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
    }
 }
 
+void ByteCodeWriter :: saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal)
+{
+   // bloadfi checkLocal
+   tape.write(bcPushB);
+   loadBase(tape, lxLocal, checkLocal);
+
+   // ifb labSkip
+   int labSkip = tape.newLabel();
+   tape.write(bcIfB, baCurrentLabel);
+
+   saveObject(tape, type, argument);
+
+   // labSkip:
+   tape.setLabel();
+   tape.write(bcPopB);
+}
+
 void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t argument)
 {
    switch (type)
@@ -4869,6 +4886,7 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
                unboxing = true;
 
                SNode target = member.firstChild(lxObjectMask);
+               SNode checkLocal = member.firstChild(lxCheckLocal);
 
                // load outer field
                loadObject(tape, lxCurrent, 0);
@@ -4886,6 +4904,9 @@ void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node n
                   else tape.write(bcCopy);
 
                   tape.write(bcPopB);
+               }
+               else if (checkLocal == lxCheckLocal) {
+                  saveObjectIfChanged(tape, target.type, target.argument, checkLocal.argument);
                }
                else saveObject(tape, target.type, target.argument);
             }
@@ -5385,6 +5406,10 @@ void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::N
             popObject(tape, lxResult);
          }
          else generateExpression(tape, current, ACC_REQUIRED);
+         SNode temp = current.findChild(lxTempLocal);
+         if (temp != lxNone) {
+            saveObject(tape, lxLocal, temp.argument);
+         }
 
          saveBase(tape, true, lxResult, current.argument);
       }

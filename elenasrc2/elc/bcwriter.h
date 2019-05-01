@@ -276,6 +276,7 @@ class ByteCodeWriter
 
    void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
+   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal);
 
    int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
