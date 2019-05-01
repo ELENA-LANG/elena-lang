@@ -953,3 +953,34 @@ nestetNestedTest()
     
     console.writeLine("done")
 }
+
+duplicateStructBoxing()
+{
+    console.write("duplicateStructBoxing..");
+    
+    int mode := -1;
+    var value := false;
+    value ? { mode := 0 } : { mode := 1 }  ;
+    
+    Assert.ifTrue(mode == 1);
+    
+    console.writeLine("done")
+}
+
+duplicateBoxing()
+{
+    console.write("duplicateBoxing..");
+    
+    var mode := -1;
+    var value := false;
+    value ? { mode := 0 } : { mode := 1 }  ;
+    
+    Assert.ifTrue(mode == 1);
+    
+    value := true;
+    value ? { mode := 0 } : { mode := 1 }  ;
+    
+    Assert.ifTrue(mode == 0);
+    
+    console.writeLine("done")
+}

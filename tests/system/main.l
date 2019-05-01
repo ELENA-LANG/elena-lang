@@ -49,6 +49,8 @@ public program()
 //    proberTest().
     nestedTest();
     nestetNestedTest();
+    duplicateStructBoxing();
+    duplicateBoxing();
 
     console.writeLine:"=== Passed ==="
 }

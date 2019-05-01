@@ -8036,7 +8036,10 @@ void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope, int& 
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxOuterMember) {
+      if (current == lxNested) {
+         analizeParameterBoxing(current, scope, counter, boxed, tempLocals);
+      }
+      else if (current.compare(lxOuterMember, lxMember)) {
          counter++;
 
          SNode boxNode = current.findChild(lxBoxing);         
@@ -8060,7 +8063,7 @@ void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope, int& 
                current.set(lxMember, current.argument);
             }
          }
-         else {
+         else if (current == lxOuterMember) {
             SNode objNode = current.firstChild(lxObjectMask);
 
             // COMPILER MAGIC : add check label, to resolve race conditions
@@ -8083,7 +8086,10 @@ void Compiler :: injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& c
 {
    SNode current = node.firstChild();
    while (current != lxNone && tempLocals.Count() > 0) {
-      if (current == lxOuterMember) {
+      if (current == lxNested) {
+         injectBoxingTempLocal(current, scope, counter, boxed, tempLocals);
+      }
+      else if (current.compare(lxOuterMember, lxMember)) {
          counter++;
          SNode boxNode = current.findChild(lxBoxing);
          if (boxNode != lxNone) {
@@ -8098,7 +8104,7 @@ void Compiler :: injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& c
                tempLocals.erase(it);
             }
          }
-         else {
+         else if (current == lxOuterMember) {
             SNode objNode = current.firstChild(lxObjectMask);
             int tempLocal = boxed.get(Attribute(objNode.type, objNode.argument));
             if (tempLocal) {
@@ -8121,27 +8127,11 @@ void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope)
    Map<int, int>       tempLocals;
 
    int counter = 0;
-   SNode current = node.firstChild();
-   // merging duplicate boxings
-   while (current != lxNone) {
-      if (current == lxNested) {
-         analizeParameterBoxing(current, scope, counter, boxed, tempLocals);
-      }
-
-      current = current.nextNode();
-   }
+   analizeParameterBoxing(node, scope, counter, boxed, tempLocals);
 
    // inject boxed temporal variable
    counter = 0;
-   current = node.firstChild();
-   // merging duplicate boxings
-   while (current != lxNone && tempLocals.Count() > 0) {
-      if (current == lxNested) {
-         injectBoxingTempLocal(current, scope, counter, boxed, tempLocals);
-      }
-
-      current = current.nextNode();
-   }
+   injectBoxingTempLocal(node, scope, counter, boxed, tempLocals);
 }
 
 ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
@@ -8166,7 +8156,7 @@ ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
          else paramMode |= HINT_DYNAMIC_OBJECT;
 
          analizeExpression(current, scope, /*warningScope, */paramMode);
-         if (current == lxNested) {
+         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
             nested++;
          }
 

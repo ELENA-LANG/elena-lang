@@ -2,8 +2,6 @@
 In development:
 ------                              
               dev - elena 4.0
-                 * duplicate output nested fields #284
-                 * unboxing duplicate object #283
                  * fixing an issue with dynamic ref
 
                  * unboxing explicit local allocated extension #200
@@ -24,6 +22,7 @@ In development:
                  * optimize r * n + 0.5r
                  * optimize pi sample
                  * optimize compiler : more efficient hash table, caching the results
+                 * the following code should generate an error - lazy::(n < 5) - missing ^
 
 ------                                                           
 Pipeline:

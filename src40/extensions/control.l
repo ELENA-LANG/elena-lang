@@ -122,6 +122,14 @@ public extension loopOp
         }
     }
     
+    doUntil(action)
+    {
+        until (cast bool(self))
+        {
+            action()
+        }
+    }
+    
     doWhile()
     {
         while (cast bool(self))
