@@ -4144,6 +4144,8 @@ procedure coreapi'seh_handler
   push edi
   push esi
   mov  ebx, [ebp+8]
+  test ebx, ebx
+  jz   short lab5
   test dword ptr[ebx+4],1h
   jnz  lab5
   test dword ptr[ebx+4],2h

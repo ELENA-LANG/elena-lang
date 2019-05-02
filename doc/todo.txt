@@ -5,6 +5,7 @@ In development:
                  * fixing an issue with dynamic ref
 
                  * unboxing explicit local allocated extension #200
+                 * Duplicate unboxing #370
 
                  * optimize gc - mg -> yg 
                  * optimize pi

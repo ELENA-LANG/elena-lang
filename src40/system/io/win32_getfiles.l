@@ -86,6 +86,8 @@ public sealed class FileEnumerator : Enumerator<WIN32_FIND_DATA>
             if (retVal == 0)
             {
                 open := false;
+                
+                extern KERNEL32.FindClose(hFind);
             }    
         };
             
