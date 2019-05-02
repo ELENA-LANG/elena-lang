@@ -1,6 +1,7 @@
 import system'text;
 
 const int INVALID_HANDLE_VALUE = -1;
+const int ERROR_NO_MORE_FILES = 012h;
 
 struct FILETIME
 {
@@ -71,9 +72,10 @@ public sealed class FileEnumerator : Enumerator<WIN32_FIND_DATA>
             hFind := extern KERNEL32.FindFirstFileW(mask, ffd);
             if (INVALID_HANDLE_VALUE == hFind)
             {
-                int err := extern KERNEL32.GetLastError();
+                open := false;
                 
-                open := false
+                int err := extern KERNEL32.GetLastError();
+                IOException.new("FindFirstFile - " + err.Printable).raise()
             }
             else
             {
@@ -86,8 +88,13 @@ public sealed class FileEnumerator : Enumerator<WIN32_FIND_DATA>
             if (retVal == 0)
             {
                 open := false;
-                
                 extern KERNEL32.FindClose(hFind);
+                
+                int err := extern KERNEL32.GetLastError();
+                if (err != ERROR_NO_MORE_FILES)
+                {
+                    IOException.new("FindFirstFile - " + err.Printable).raise()
+                }                
             }    
         };
             

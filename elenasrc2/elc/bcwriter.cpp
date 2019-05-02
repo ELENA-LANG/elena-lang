@@ -337,7 +337,7 @@ void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
    tape.write(bcJump, baPreviousLabel);
    tape.setLabel();
 
-   tape.write(bcResetStack);
+   //tape.write(bcResetStack);
 }
 
 void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
