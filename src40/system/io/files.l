@@ -127,17 +127,18 @@ public sealed class Directory
     string[] getFiles(string mask)
     {
         auto l := new List<string>();
-        auto e := FileEnumerator.assign(thePath + "\" + mask);
-        while (e.next())
-        {
-            auto ddf := e.get();
-            if (ddf.isFile())
-            {
-                string s := thePath + "\" + ddf.FileName;
-                
-                l.append(s);
-            }            
-        };
+        SearchFiles(thePath, mask, l);
+//        auto e := FileEnumerator.assign(thePath + "\" + mask);
+//        while (e.next())
+//        {
+//            auto ddf := e.get();
+//            if (ddf.isFile())
+//            {
+//                string s := thePath + "\" + ddf.FileName;
+//                
+//                l.append(s);
+//            }            
+//        };
         
         ^l.Value;
     }
@@ -145,17 +146,18 @@ public sealed class Directory
     string[] getDirectories()
     {
         auto l := new List<string>();
-        auto e := FileEnumerator.assign(thePath + "\*.*");
-        while (e.next())
-        {
-            auto ddf := e.get();
-            if (ddf.isDirectory())
-            {
-                string s := thePath + "\" + ddf.FileName;
-                
-                l.append(s);
-            }            
-        };
+        SearchDirectories(thePath, "*.*", l);
+//        auto e := FileEnumerator.assign(thePath + "\*.*");
+//        while (e.next())
+//        {
+//            auto ddf := e.get();
+//            if (ddf.isDirectory())
+//            {
+//                string s := thePath + "\" + ddf.FileName;
+//                
+//                l.append(s);
+//            }            
+//        };
         
         ^l.Value;
     }

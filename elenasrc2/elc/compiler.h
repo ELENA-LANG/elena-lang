@@ -134,7 +134,7 @@ public:
 //////      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
-//////      okParamField,
+      okParamField,
       okSubject,                      // param - parameter offset
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
@@ -589,7 +589,7 @@ private:
 
       ObjectInfo mapSelf(/*bool forced = false*/);
       ObjectInfo mapGroup();
-      ObjectInfo mapParameter(Parameter param);
+      ObjectInfo mapParameter(Parameter param, int mode);
 
       MethodScope(ClassScope* parent);
    };
@@ -887,6 +887,7 @@ private:
 
    void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, int mode);
    void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
+   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
    ObjectInfo compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);

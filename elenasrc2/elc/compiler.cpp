@@ -27,7 +27,7 @@ using namespace _ELENA_;
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
-constexpr auto HINT_SCOPE_MASK      = 0x00100000;
+constexpr auto HINT_SCOPE_MASK      = 0x00100042;
 
 constexpr auto HINT_ROOT            = 0x80000000;
 constexpr auto HINT_ROOTSYMBOL      = 0xC0000000;
@@ -59,6 +59,7 @@ constexpr auto HINT_SILENT          = 0x00000020;
 constexpr auto HINT_FORWARD         = 0x00000010;
 constexpr auto HINT_REFOP           = 0x00000008;
 constexpr auto HINT_RETEXPR         = 0x00000004;
+constexpr auto HINT_REFEXPR         = 0x00000002;
 constexpr auto HINT_NOPRIMITIVES    = 0x00000001;
 
 // scope modes
@@ -687,7 +688,7 @@ ObjectInfo Compiler::MethodScope :: mapGroup()
    return ObjectInfo(okParam, (size_t)-1);
 }
 
-ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
+ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param, int mode)
 {
    int prefix = closureMode ? 0 : -1;
 
@@ -698,7 +699,10 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param)
       // if the parameter may be stack-allocated
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
-   return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, 0);
+   else if (param.class_ref == V_WRAPPER && !testany(mode, HINT_PROP_MODE | HINT_REFEXPR)) {
+      return ObjectInfo(okParamField, prefix - param.offset, param.element_ref, 0, 0);
+   }
+   else return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, 0);
 }
 
 ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool referenceOne, int mode)
@@ -706,7 +710,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
    if (!referenceOne && !test(mode, HINT_MODULESCOPE)) {
       Parameter param = parameters.get(terminal);
       if (param.offset >= 0) {
-         return mapParameter(param);
+         return mapParameter(param, mode);
       }
       else {
          if (terminal.compare(SELF_VAR)) {
@@ -2137,6 +2141,13 @@ int Compiler :: defineFieldSize(CodeScope& scope, int offset)
    else return classScope->info.size - offset;
 }
 
+void Compiler :: writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type)
+{
+   writer.newNode(lxFieldExpression);
+   writer.appendNode(type, object.param);
+   writer.appendNode(lxResultField);
+}
+
 void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type)
 {
    if (object.extraparam == -1 && !test(mode, HINT_NOBOXING)) {
@@ -2196,6 +2207,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okParam:
       case okLocal:
          writeParamTerminal(writer, scope, object, mode, lxLocal);
+         break;
+      case okParamField:
+         writeParamFieldTerminal(writer, scope, object, mode, lxLocal);
          break;
       case okSelfParam:
          if (test(mode, HINT_RETEXPR))
@@ -4388,7 +4402,7 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
 {
    writer.newBookmark();
 
-   ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode);
+   ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode | HINT_REFEXPR);
    ref_t operandRef = resolveObjectReference(scope, objectInfo, false);
    if (isPrimitiveRef(operandRef)) {
       operandRef = resolvePrimitiveReference(scope, operandRef, objectInfo.element, false);
@@ -4926,7 +4940,7 @@ ObjectInfo Compiler :: compileSubCode(SyntaxWriter& writer, SNode codeNode, Code
 
 void Compiler :: compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
 {
-   ObjectInfo retVar = scope.mapTerminal(RETVAL_ARG, false, 0);
+   ObjectInfo retVar = scope.mapTerminal(RETVAL_ARG, false, HINT_PROP_MODE);
 
    writer.newBookmark();   
    writeTerminal(writer, node, scope, retVar, HINT_NOBOXING);

@@ -2,14 +2,12 @@
 In development:
 ------                              
               dev - elena 4.0
-                 * fixing an issue with dynamic ref
+                 * optimize pi
 
                  * unboxing explicit local allocated extension #200
                  * Duplicate unboxing #370
 
                  * optimize gc - mg -> yg 
-                 * optimize pi
-
                  * migrate nodepad
                  * optimize intOp.Absolute method
                  * migrate chat sample

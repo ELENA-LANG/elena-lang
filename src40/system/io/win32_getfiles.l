@@ -1,4 +1,5 @@
 import system'text;
+import system'collections;
 
 const int INVALID_HANDLE_VALUE = -1;
 const int ERROR_NO_MORE_FILES = 012h;
@@ -114,4 +115,96 @@ public sealed class FileEnumerator : Enumerator<WIN32_FIND_DATA>
     }
     
     Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+}
+
+public SearchFiles(string path, string mask, List<string> output)
+{
+    WIN32_FIND_DATA ffd;
+    handle          hFind;  
+    
+    wide criteria := path + "\" + mask;
+    
+    hFind := extern KERNEL32.FindFirstFileW(criteria, ffd);
+    var b := true;
+    if (INVALID_HANDLE_VALUE == hFind)
+    {
+        int err := extern KERNEL32.GetLastError();
+        IOException.new("FindFirstFile - " + err.Printable).raise();
+        
+        b := false;
+    };
+    
+    auto buffer := new TextBuilder();
+    while (b)
+    {        
+        if (ffd.isFile())
+        {
+            buffer.clear();
+            buffer.append(path);
+            buffer.append("\");
+            buffer.append(ffd.FileName);
+            
+            output.append(buffer.Value)
+        };
+        
+        int retVal := extern KERNEL32.FindNextFileW(hFind, ffd);
+        if (retVal == 0)
+        {
+            extern KERNEL32.FindClose(hFind);
+            
+            int err := extern KERNEL32.GetLastError();
+            if (err != ERROR_NO_MORE_FILES)
+            {
+                IOException.new("FindFirstFile - " + err.Printable).raise()
+            };
+            
+            b := false
+        }
+    }
+}
+
+public SearchDirectories(string path, string mask, List<string> output)
+{
+    WIN32_FIND_DATA ffd;
+    handle          hFind;  
+    
+    wide criteria := path + "\" + mask;
+    
+    hFind := extern KERNEL32.FindFirstFileW(criteria, ffd);
+    var b := true;
+    if (INVALID_HANDLE_VALUE == hFind)
+    {
+        int err := extern KERNEL32.GetLastError();
+        IOException.new("FindFirstFile - " + err.Printable).raise();
+        
+        b := false;
+    };
+    
+    auto buffer := new TextBuilder();
+    while (b)
+    {
+        ifnot (ffd.isFile())
+        {
+            buffer.clear();
+            buffer.append(path);
+            buffer.append("\");
+            buffer.append(ffd.FileName);
+            
+            output.append(buffer.Value)
+        };
+        
+        int retVal := extern KERNEL32.FindNextFileW(hFind, ffd);
+        if (retVal == 0)
+        {
+            extern KERNEL32.FindClose(hFind);
+            
+            int err := extern KERNEL32.GetLastError();
+            if (err != ERROR_NO_MORE_FILES)
+            {
+                IOException.new("FindFirstFile - " + err.Printable).raise()
+            };
+            
+            b := false
+        }
+    }
 }
