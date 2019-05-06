@@ -2,10 +2,15 @@
 In development:
 ------                              
               dev - elena 4.0
-                 * optimize pi
+                 * primitive operations #86
+
+                 * optimize r * n + 0.5r
+                 * optimize pi sample
 
                  * unboxing explicit local allocated extension #200
                  * Duplicate unboxing #370
+                 * Operations with integer wrappers #427
+                 * Optimization : operation with structure fields (byte or short) #278
 
                  * optimize gc - mg -> yg 
                  * migrate nodepad
@@ -18,10 +23,14 @@ In development:
                  * gui : check default error handler
                  * bool_expr ? 1 : 0 - the expression result should be strong-typed
                  * support 2.2 syntax (without r postfix)
-                 * optimize r * n + 0.5r
-                 * optimize pi sample
                  * optimize compiler : more efficient hash table, caching the results
                  * the following code should generate an error - lazy::(n < 5) - missing ^
+                 * direct and, or, xor, shift, mul, div, equal, less
+                 * pusha new bcopya popa => bcopya new bswap nop??
+                 * direct operations with int constants e.g. $self create &int:(WS_STYLE1 || WS_STYLE2)
+                 * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
+
+                 * Various optimizations #431
 
 ------                                                           
 Pipeline:

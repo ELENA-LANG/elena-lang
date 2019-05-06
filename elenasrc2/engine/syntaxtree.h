@@ -626,7 +626,7 @@ public:
          Node child = firstChild();
          while (child != lxNone && child.type != type1) {
             if (child == lxExpression) {
-               Node subNode = child.findSubNode(type1, type2, type3);
+               Node subNode = child.findSubNode(type1, type2, type3, type4);
                if (subNode != lxNone)
                   return subNode;
             }

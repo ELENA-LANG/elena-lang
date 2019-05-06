@@ -258,9 +258,9 @@ class ByteCodeWriter
    void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, int value);
 //////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-   void doIntOperation(CommandTape& tape, int operator_id);
-   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
-   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
+   void doIntOperation(CommandTape& tape, int operator_id, bool subArgMode);
+   void doIntOperation(CommandTape& tape, int operator_id, int immArg, bool subArgMode);
+   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg, bool subArgMode);
    void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
    void doLongOperation(CommandTape& tape, int operator_id);
    void doRealOperation(CommandTape& tape, int operator_id);

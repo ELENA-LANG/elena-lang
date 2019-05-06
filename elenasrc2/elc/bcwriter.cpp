@@ -13,9 +13,9 @@
 
 using namespace _ELENA_;
 
-#define ACC_REQUIRED    0x0001
-#define BOOL_ARG_EXPR   0x0002
-#define EMBEDDABLE_EXPR 0x0004
+constexpr auto ACC_REQUIRED    = 0x0001;
+constexpr auto BOOL_ARG_EXPR   = 0x0002;
+constexpr auto EMBEDDABLE_EXPR = 0x0004;
 
 // check if the node contains only the simple nodes
 
@@ -2778,11 +2778,13 @@ void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id, int i
    }
 }
 
-void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg)
+void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg, bool subArgMode)
 {
    switch (operator_id) {
       case ADD_OPERATOR_ID:
-         tape.write(bcDLoadFI, indexArg);
+         if (!subArgMode)
+            tape.write(bcDLoadFI, indexArg);
+
          tape.write(bcAddN, immArg);
          tape.write(bcNSave);
          break;
@@ -2790,7 +2792,9 @@ void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, 
          tape.write(bcAddFI, indexArg, immArg);
          break;
       case SUB_OPERATOR_ID:
-         tape.write(bcDLoadFI, indexArg);
+         if (!subArgMode)
+            tape.write(bcDLoadFI, indexArg);
+
          tape.write(bcAddN, -immArg);
          tape.write(bcNSave);
          break;
@@ -2798,7 +2802,9 @@ void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, 
          tape.write(bcSubFI, indexArg, immArg);
          break;
       case MUL_OPERATOR_ID:
-         tape.write(bcDLoadFI, indexArg);
+         if (!subArgMode)
+            tape.write(bcDLoadFI, indexArg);
+
          tape.write(bcMulN, immArg);
          tape.write(bcNSave);
          break;
@@ -2828,21 +2834,25 @@ void ByteCodeWriter :: doIntDirectOperation(CommandTape& tape, int operator_id, 
    }
 }
 
-void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, bool largSubOp)
 {
    switch (operator_id) {
       // Note read / write operator is used for bitwise operations
       case SHIFTL_OPERATOR_ID:
          // nload
          // nshiftl
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
+
          tape.write(bcNShiftL);
          break;
       // Note read / write operator is used for bitwise operations
       case SHIFTR_OPERATOR_ID:
          // nload
          // nshiftr
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
+
          tape.write(bcNShiftR);
          break;
       case ADD_OPERATOR_ID:
@@ -2875,7 +2885,8 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
          tape.write(bcNLess);
          break;
       case SET_OPERATOR_ID:
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
          tape.write(bcNSave);
          break;
       default:
@@ -2883,7 +2894,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
    }
 }
 
-void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int immArg)
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int immArg, bool largSubOp)
 {
    switch (operator_id) {
       // Note read / write operator is used for bitwise operations
@@ -2891,7 +2902,9 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
          // nload
          // shiftln immArg
          // nsave
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
+
          tape.write(bcShiftLN, immArg);
          tape.write(bcNSave);
          break;
@@ -2900,34 +2913,46 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
          // nload
          // shiftrn immArg
          // nsave
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
+
          tape.write(bcShiftRN, immArg);
          tape.write(bcNSave);
          break;
       case ADD_OPERATOR_ID:
       case APPEND_OPERATOR_ID:
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
+
          tape.write(bcAddN, immArg);
          tape.write(bcNSave);
          break;
       case SUB_OPERATOR_ID:
       case REDUCE_OPERATOR_ID:
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
+
          tape.write(bcAddN, -immArg);
          tape.write(bcNSave);
          break;
       case MUL_OPERATOR_ID:
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
+
          tape.write(bcMulN, immArg);
          tape.write(bcNSave);
          break;
       case AND_OPERATOR_ID:
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
+
          tape.write(bcAndN, immArg);
          tape.write(bcNSave);
          break;
       case OR_OPERATOR_ID:
-         tape.write(bcNLoad);
+         if (!largSubOp)
+            tape.write(bcNLoad);
+
          tape.write(bcOrN, immArg);
          tape.write(bcNSave);
          break;
@@ -4242,7 +4267,26 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    if (rarg == lxExpression)
       rarg = rarg.findSubNodeMask(lxObjectMask);
 
-   bool largSimple = isSimpleObject(larg);
+   if (larg == lxConstantInt && immOp) {
+      switch (node.argument) {
+         case ADD_OPERATOR_ID:
+         case MUL_OPERATOR_ID:
+         case AND_OPERATOR_ID:
+         case OR_OPERATOR_ID:
+         case XOR_OPERATOR_ID:
+         {
+            SNode tmp = larg;
+            larg = rarg;
+            rarg = tmp;
+            break;
+         }
+         default:
+            break;
+      }
+   }
+
+   bool largSubOp = larg.type == node.type;
+   bool largSimple = largSubOp || isSimpleObject(larg);
    bool rargSimple = isSimpleObject(rarg);
    bool rargConst = immOp && (rarg == lxConstantInt);
 
@@ -4307,14 +4351,14 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       if (rargConst) {
          SNode immArg = rarg.findChild(lxIntValue);
          if (directMode) {
-            doIntDirectOperation(tape, operation, immArg.argument, larg.argument);
+            doIntDirectOperation(tape, operation, immArg.argument, larg.argument, largSubOp);
          }
          else if (larg == lxFieldAddress && larg.argument > 0) {
             doFieldIntOperation(tape, operation, larg.argument, immArg.argument);
          }
-         else doIntOperation(tape, operation, immArg.argument);
+         else doIntOperation(tape, operation, immArg.argument, largSubOp);
       }
-      else doIntOperation(tape, operation);
+      else doIntOperation(tape, operation, largSubOp);
    }
    else if (node == lxLongOp) {
       doLongOperation(tape, operation);

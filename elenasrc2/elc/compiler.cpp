@@ -8474,6 +8474,16 @@ ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope
       }
    }
 
+   SNode larg = loperand.findSubNodeMask(lxObjectMask);
+   if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
+      SNode opArg = larg.findSubNode(current.type);
+      if (opArg/* != lxNone*/ == lxIntOp) {
+         SNode llarg = larg.firstChild(lxObjectMask);
+         larg = lxExpression;
+         llarg = lxIdle;
+      }
+   }
+
    switch (current) {
       case lxIntOp:
       case lxByteArrOp:
