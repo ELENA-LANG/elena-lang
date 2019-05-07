@@ -104,3 +104,8 @@ bcopya quit => nop quit;
 bswap acopyb => bcopya nop;
 
 pop close => nop close;
+
+nsave addn nsave => nop addn nsave;
+nsave muln nsave => nop muln nsave;
+nsave andn nsave => nop andn nsave;
+nsave orn nsave => nop orn nsave;

@@ -4329,7 +4329,10 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       }
       else generateObject(tape, larg);
 
-      if (assignMode) {
+      if (largSubOp) {
+
+      }
+      else if (assignMode) {
          if (node.type == lxIntOp && !rargConst) {
             copyBase(tape, 4);
          }

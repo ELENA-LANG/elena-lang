@@ -2,10 +2,10 @@
 In development:
 ------                              
               dev - elena 4.0
-                 * primitive operations #86
-
-                 * optimize r * n + 0.5r
                  * optimize pi sample
+                 * optimize r * n + 0.5r
+
+                 * primitive operations #86
 
                  * unboxing explicit local allocated extension #200
                  * Duplicate unboxing #370
@@ -31,6 +31,7 @@ In development:
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
 
                  * Various optimizations #431
+                 * fix zeckendorf_arithm 
 
 ------                                                           
 Pipeline:
