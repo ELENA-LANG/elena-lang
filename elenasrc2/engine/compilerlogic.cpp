@@ -1008,7 +1008,7 @@ void CompilerLogic :: injectOperation(SyntaxWriter& writer, _ModuleScope& scope,
       writer.appendNode(lxSize, size);
    }
 
-   writer.insert((LexicalType)operationType, operator_id);
+   writer.inject((LexicalType)operationType, operator_id);
    writer.closeNode();
 }
 
@@ -1016,38 +1016,6 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
 {
    return test(info.header.flags, elReadOnlyRole);
 }
-
-//bool CompilerLogic :: injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, targetRef))
-//      return false;
-//
-//   if (test(info.header.flags, elStateless))
-//      return false;
-//
-//   ref_t implicitConstructor = encodeMessage(DEFAULT_MESSAGE_ID, 0) | SPECIAL_MESSAGE;
-//   if (!info.methods.exist(implicitConstructor, true))
-//      return injectDefaultCreation(writer, scope, compiler, targetRef, info.header.classRef);
-//
-//   bool stackSafe = isMethodStacksafe(info, implicitConstructor);
-//
-//   if (test(info.header.flags, elStructureRole)) {
-//      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingStruct, info.size, targetRef, targetRef, stackSafe);
-//      //compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, targetRef, stackSafe);
-//
-//      return true;
-//   }
-//   else if (test(info.header.flags, elDynamicRole)) {
-//      return false;
-//   }
-//   else {
-//      compiler.injectConverting(writer, lxDirectCalling, implicitConstructor, lxCreatingClass, info.fields.Count(), targetRef, targetRef, stackSafe);
-//      //compiler.injectConverting(writer, lxNone, 0, lxImplicitCall, encodeAction(NEWOBJECT_MESSAGE_ID), info.header.classRef, targetRef, stackSafe);
-//
-//      return true;
-//   }
-//}
 
 inline ref_t getSignature(_ModuleScope& scope, ref_t message)
 {
@@ -1323,7 +1291,7 @@ void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _ModuleScope& sco
    if (size != 0)
       writer.appendNode(lxSize, size);
 
-   writer.insert((LexicalType)operation, targetRef);
+   writer.inject((LexicalType)operation, targetRef);
    writer.closeNode();
 }
 

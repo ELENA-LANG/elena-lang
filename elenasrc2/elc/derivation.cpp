@@ -136,27 +136,25 @@ inline void copyIdentifier(SyntaxWriter& writer, SNode ident, bool ignoreTermina
 
    writer.closeNode();
 }
-
-inline void insertIdentifier(SyntaxWriter& writer, SNode ident, bool ignoreTerminalInfo)
-{
-   SNode col = ident.findChild(lxCol);
-   SNode row = ident.findChild(lxRow);
-   SNode len = ident.findChild(lxLength);
-
-   writer.insert(0, lxEnding, 0);
-
-   if (!ignoreTerminalInfo) {
-      writer.insertChild(0, lxCol, col.argument);
-      writer.insertChild(0, lxRow, row.argument);
-      writer.insertChild(0, lxLength, len.argument);
-   }
-
-   ident_t s = ident.identifier();
-   if (!emptystr(s)) {
-      writer.insert(0, ident.type, s);
-   }
-   else writer.insert(0, ident.type, 0);
-}
+//
+//inline void insertIdentifier(SyntaxWriter& writer, SNode ident, bool ignoreTerminalInfo)
+//{
+//   if (!ignoreTerminalInfo) {
+//      SNode col = ident.findChild(lxCol);
+//      SNode row = ident.findChild(lxRow);
+//      SNode len = ident.findChild(lxLength);
+//
+//      writer.insertChild(0, lxCol, col.argument);
+//      writer.insertChild(0, lxRow, row.argument);
+//      writer.insertChild(0, lxLength, len.argument);
+//   }
+//
+//   ident_t s = ident.identifier();
+//   if (!emptystr(s)) {
+//      writer.insert(0, ident.type, s);
+//   }
+//   else writer.insert(0, ident.type, 0);
+//}
 
 void DerivationWriter :: begin()
 {
@@ -914,7 +912,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
    }
 
    if (nested)
-      writer.insert(lxNestedClass);
+      writer.inject(lxNestedClass);
 
    writer.closeNode();
 }
@@ -1298,7 +1296,7 @@ void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode curr
 {
    if (closureMode) {
       generateCodeTree(writer, current, derivationScope);
-      writer.insert(lxClosureExpr);
+      writer.inject(lxClosureExpr);
       writer.closeNode();
    }
    else {
@@ -1450,7 +1448,7 @@ void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, 
       node = node.firstChild();
    }
    else if (node != lxClosureExpr) {
-      writer.insert(lxMethodParameter);
+      writer.inject(lxMethodParameter);
       writer.closeNode();
 
       node = node.nextNode();
@@ -1477,7 +1475,7 @@ void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, 
       generateCodeTree(writer, node.findChild(lxCode), derivationScope);
    }
 
-   writer.insert(lxClosureExpr);
+   writer.inject(lxClosureExpr);
    writer.closeNode();
 
    while (node.nextNode() != lxNone)
@@ -1513,7 +1511,7 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode no
 
    // load code template parameters
    List<SNode> parameters;
-   SNode current = tempTree.readRoot();
+   SNode current = tempTree.readRoot().firstChild();
    while (current != lxNone) {
       if (current == lxExpression) {
          parameters.add(current);
@@ -1560,6 +1558,7 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
    // generate members
    SyntaxTree tempTree;
    SyntaxWriter tempWriter(tempTree);
+   tempWriter.newNode(lxRoot);
    current = node;
    while (current != lxNone) {
       if (current == lxCode) {
@@ -1575,6 +1574,7 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
 
       current = current.nextNode();
    }
+   tempWriter.closeNode();
 
    generateCodeTemplateTree(writer, node, tempTree, templateName.ident(), derivationScope);
 
@@ -1770,7 +1770,7 @@ void DerivationWriter :: generateCollectionTree(SyntaxWriter& writer, SNode node
 void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope)
 {
    // revert the first operand
-   writer.trim();
+   writer.trimChildren();
 
    current = lxIdle;
 
@@ -1817,7 +1817,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
       case lxMessage:
       case lxImplicitMessage:
          if (!first) {
-            writer.insert(lxExpression);
+            writer.inject(lxExpression);
             writer.closeNode();
          }
          else first = false;
@@ -1840,7 +1840,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
       case lxOperator:
       case lxAssign:
          if (!first) {
-            writer.insert(lxExpression);
+            writer.inject(lxExpression);
             writer.closeNode();
          }
          else first = false;
@@ -1870,7 +1870,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
          break;
       case lxSwitching:
          generateSwitchTree(writer, current, derivationScope);
-         writer.insert(lxSwitching);
+         writer.inject(lxSwitching);
          writer.closeNode();
          expressionExpected = true;
          break;
@@ -1912,7 +1912,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
    }
 
    if (expressionExpected) {
-      writer.insert(lxExpression);
+      writer.inject(lxExpression);
       writer.closeNode();
    }
 

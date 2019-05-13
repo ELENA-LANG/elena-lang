@@ -606,9 +606,6 @@ private:
       int          reserved;  // allocated for the current statement
       int          saved;     // permanently allocated
 
-      // scope bookmarks
-      int rootBookmark;
-
       int newLocal()
       {
          level++;
@@ -796,7 +793,7 @@ private:
 
 //   bool verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount);
 
-   void loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes);
+   void loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
 
    ObjectInfo mapClassSymbol(Scope& scope, int classRef);
 

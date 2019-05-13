@@ -1,10 +1,29 @@
 ------                                 
 In development:
 ------                              
-              dev - elena 4.0
+              xdev
+                 * test switch
+                 * test local variables
+                 * test branching / loop
+                 * test wrapping
+                 * test collections
+                 * test try / catch
+                 * test alt
+
+                 * optimize assign inp_op direct_call embeddable
+                 * optimize direct_call direct_call embeddable
                  * optimize pi sample
                  * optimize r * n + 0.5r
+                 * optimize operation with variadic argument list (get, length)
 
+              ydev
+                 * graph sample
+
+              zdev
+                 * reflector
+                 * generate LIB40 API Doc
+
+              xdev - elena 4.0
                  * primitive operations #86
 
                  * unboxing explicit local allocated extension #200

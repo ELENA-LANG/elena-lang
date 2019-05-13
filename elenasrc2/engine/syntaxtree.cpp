@@ -15,89 +15,80 @@ using namespace _ELENA_;
 
 // --- SyntaxWriter ---
 
-//void SyntaxWriter :: insertSubTree(int bookmark, void* body, size_t length)
-//{
-//   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
-//
-//   _bodyWriter.insert(position, body, length);
-//
-//   Stack<size_t>::Iterator it = _bookmarks.start();
-//   while (!it.Eof()) {
-//      if (*it > position) {
-//         *it = *it + length;
-//      }
-//
-//      it++;
-//   }
-//}
-
-void SyntaxWriter :: insert(int bookmark, LexicalType type, ref_t argument)
+inline pos_t getBookmark(int bookmark, Stack<pos_t>& bookmarks)
 {
-   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
+   return (bookmark == 0) ? bookmarks.peek() : *bookmarks.get(bookmarks.Count() - bookmark);
+}
 
-   _bodyWriter.insertDWord(position, type);
-   _bodyWriter.insertDWord(position + 4, argument);
-   _bodyWriter.insertDWord(position + 8, -1);
-
-   Stack<size_t>::Iterator it = _bookmarks.start();
-   while (!it.Eof()) {
-      if (*it > position) {
-         *it = *it + 12;
-      }
-
-      it++;
+inline void updateBookmarks(Stack<pos_t>& bookmarks, pos_t oldPos, pos_t newPos)
+{
+   for (auto it = bookmarks.start(); !it.Eof(); it++) {
+      if (*it == oldPos)
+         * it = newPos;
    }
 }
 
-void SyntaxWriter::insert(int bookmark, LexicalType type, ident_t argument)
+void SyntaxWriter :: inject(pos_t position, LexicalType type, ref_t argument, pos_t strArgRef)
 {
-   size_t position = (bookmark == 0) ? _bookmarks.peek() : *_bookmarks.get(_bookmarks.Count() - bookmark);
-   size_t length = getlength(argument);
-
-   _bodyWriter.insertDWord(position, _stringWriter.Position());
-   _bodyWriter.insertDWord(position, 0);
-   _bodyWriter.insertDWord(position, type);
-
-   _stringWriter.writeLiteral(argument, length + 1);   
-
-   Stack<size_t>::Iterator it = _bookmarks.start();
-   while (!it.Eof()) {
-      if (*it > position) {
-         *it = *it + 12;
-      }
-
-      it++;
+   pos_t prev = _syntaxTree->getPrevious(position);
+   if (prev != INVALID_REF) {
+      _current = _syntaxTree->injectSibling(prev, type, argument, strArgRef);
    }
+   else _current = _syntaxTree->injectChild(position, type, argument, strArgRef);
+
+   updateBookmarks(_bookmarks, position, _current);
+}
+
+void SyntaxWriter :: insert(LexicalType type, ref_t argument, pos_t strArgRef, bool newMode)
+{
+   pos_t pos = _syntaxTree->insertChild(_current, type, argument, strArgRef);
+   if (newMode)
+      _current = pos;
 }
 
 void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
 {
-   // writer node
-   _bodyWriter.writeDWord(type);
-   _bodyWriter.writeDWord(argument);
-   _bodyWriter.writeDWord((pos_t)-1);
+   if (_current == INVALID_REF) {
+      _current = _syntaxTree->newRoot(type, argument, INVALID_REF);
+   }
+   else _current = _syntaxTree->appendChild(_current, type, argument, INVALID_REF);
+
+   insertPendingBookmarks(_current);
 }
 
 void SyntaxWriter :: newNode(LexicalType type, ident_t argument)
 {
-   // writer node
-   _bodyWriter.writeDWord(type);
-   _bodyWriter.writeDWord(0);
-   _bodyWriter.writeDWord(_stringWriter.Position());
+   if (_current == INVALID_REF) {
+      _current = _syntaxTree->newRoot(type, 0, _syntaxTree->saveStrArgument(argument));
+   }
+   else _current = _syntaxTree->appendChild(_current, type, 0, _syntaxTree->saveStrArgument(argument));
 
-   _stringWriter.writeLiteral(argument, getlength(argument) + 1);
+   insertPendingBookmarks(_current);
 }
 
 void SyntaxWriter :: closeNode()
 {
-   _bodyWriter.writeDWord((pos_t)-1);
-   _bodyWriter.writeDWord(0);
-   _bodyWriter.writeDWord((pos_t)-1);
+   _current = _syntaxTree->getParent(_current);
+}
+
+bool SyntaxWriter :: seekUp(LexicalType type)
+{
+   pos_t node = _current;
+   while (node != INVALID_REF && _syntaxTree->getType(node) != type) {
+      node = _syntaxTree->getParent(node);
+   }
+
+   if (node != INVALID_REF) {
+      _current = node;
+
+      return true;
+   }
+   else return false;
 }
 
 // --- SyntaxTree::Node ---
 
-SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, ref_t argument, int strArgument)
+SyntaxTree::Node :: Node(SyntaxTree* tree, pos_t position, LexicalType type, ref_t argument, int strArgument)
 {
    this->tree = tree;
    this->position = position;
@@ -107,61 +98,310 @@ SyntaxTree::Node :: Node(SyntaxTree* tree, size_t position, LexicalType type, re
    this->strArgument = strArgument;
 }
 
-// --- SyntaxReader ---
+// --- SyntaxTree ---
 
-SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, int argument)
+struct _NodeRecord
 {
-   SyntaxWriter writer(*this);
+   pos_t       parent;
+   pos_t       child;
+   pos_t       next;
+   LexicalType type;
+   int         argument;
+   pos_t       strArgument;
+};
 
-   writer.insertChild(writer.setBookmark(position), type, argument);
+inline pos_t newChild(_Memory& body, pos_t position, LexicalType type, int argument, pos_t strArgument)
+{
+   MemoryWriter writer(&body);
+   pos_t child = writer.Position();
 
-   MemoryReader reader(&_body, position);
-   return read(reader);
+   writer.writeDWord(position);
+   writer.writeDWord(INVALID_REF);
+   writer.writeDWord(INVALID_REF);
+   writer.writeDWord(type);
+   writer.writeDWord(argument);
+   writer.writeDWord(strArgument);
+
+   return child;
 }
 
-SyntaxTree::Node SyntaxTree :: insertStrNode(size_t position, LexicalType type, int strArgument)
+inline void appendChild(_Memory& body, pos_t parent, pos_t child)
 {
-   int length = getlength((const char*)(_strings.get(strArgument))) + 1;
+   auto r = (_NodeRecord*)body.get(parent);
+   if (r->child == INVALID_REF) {
+      r->child = child;
+   }
+   else {
+      auto ch = (_NodeRecord*)body.get(r->child);
+      while (ch->next != INVALID_REF) {
+         ch = (_NodeRecord*)body.get(ch->next);
+      }
 
-   // HOTFIX : resever the place for the string before writing it
-   _strings.reserve(_strings.Length() + length);
-
-   SyntaxWriter writer(*this);
-
-   writer.insertChild(writer.setBookmark(position), type, (const char*)(_strings.get(strArgument)));
-
-   MemoryReader reader(&_body, position);
-   return read(reader);
+      ch->next = child;
+   }
 }
 
-//void SyntaxTree :: insertSubTree(size_t position, SyntaxTree& subTree)
-//{
-//   MemoryDump* buffer = subTree.getBody();
-//   MemoryDump* strBuffer = subTree.getStringBody();
-//   pos_t* ptr = (pos_t*)buffer->get(0);
-//   size_t len = buffer->Length();
-//
-//   SyntaxWriter writer(*this);
-//   writer.insertSubTree(writer.setBookmark(position), ptr, len);
-//
-//   for (size_t i = 0; i < position; i += 12) {
-//      if (ptr[i + 8] != -1) {
-//         *(int*)_body.get(position + i + 8) = *(int*)_body.get(position + i + 8) + _strings.Length();
-//      }
-//   }
-//
-//   MemoryWriter strWriter(&_strings);
-//   strWriter.write(strBuffer->get(0), strBuffer->Length());
-//}
-
-SyntaxTree::Node SyntaxTree :: insertNode(size_t position, LexicalType type, ident_t argument)
+inline void insertChild(_Memory& body, pos_t parent, pos_t child)
 {
-   SyntaxWriter writer(*this);
+   auto r = (_NodeRecord*)body.get(parent);
+   if (r->child == INVALID_REF) {
+      r->child = child;
+   }
+   else {
+      auto nw = (_NodeRecord*)body.get(child);
+      nw->next = r->child;
+      r->child = child;
+   }
+}
 
-   writer.insertChild(writer.setBookmark(position), type, argument);
+inline void insertSibling(_Memory& body, pos_t prev, pos_t node)
+{
+   auto p = (_NodeRecord*)body.get(prev);
+   auto nw = (_NodeRecord*)body.get(node);
 
-   MemoryReader reader(&_body, position);
-   return read(reader);
+   nw->next = p->next;
+   p->next = node;
+}
+
+inline void updateParents(_Memory& body, pos_t node)
+{
+   auto r = (_NodeRecord*)body.get(node);
+   pos_t child = r->child;
+   while (child != INVALID_REF) {
+      auto c = (_NodeRecord*)body.get(child);
+      c->parent = node;
+
+      child = c->next;
+   }
+}
+
+inline void injectChild(_Memory& body, pos_t parent, pos_t child)
+{
+   auto r = (_NodeRecord*)body.get(parent);
+   if (r->child == INVALID_REF) {
+      r->child = child;
+   }
+   else {
+      auto nw = (_NodeRecord*)body.get(child);
+      nw->child = r->child;
+      r->child = child;
+
+      // HOTFIX : modify the parents of injected nodes
+      updateParents(body, child);
+   }
+}
+
+inline void injectSibling(_Memory& body, pos_t node, pos_t child)
+{
+   auto r = (_NodeRecord*)body.get(node);
+   auto nw = (_NodeRecord*)body.get(child);
+   nw->child = r->next;
+   r->next = child;
+
+   // HOTFIX : modify the parents of injected nodes
+   updateParents(body, child);
+}
+
+inline void clearChildren(_Memory& body, pos_t parent)
+{
+   auto r = (_NodeRecord*)body.get(parent);
+   r->child = INVALID_REF;
+}
+
+inline pos_t readParent(_Memory& body, pos_t position)
+{
+   auto r = (_NodeRecord*)body.get(position);
+
+   return r->parent;
+}
+
+inline pos_t readChild(_Memory& body, pos_t position)
+{
+   auto r = (_NodeRecord*)body.get(position);
+
+   return r->child;
+}
+
+inline pos_t readNext(_Memory& body, pos_t position)
+{
+   auto r = (_NodeRecord*)body.get(position);
+
+   return r->next;
+}
+
+inline bool read(_Memory& body, pos_t position, LexicalType& type, ref_t& arg, pos_t& strArgRef)
+{
+   auto r = (_NodeRecord*)body.get(position);
+   if (r) {
+      type = r->type;
+      arg = r->argument;
+      strArgRef = r->strArgument;
+
+      return true;
+   }
+   else return false;
+}
+
+inline void save(_Memory& body, pos_t position, LexicalType type, ref_t arg, pos_t strArgRef)
+{
+   auto r = (_NodeRecord*)body.get(position);
+   if (r) {
+      r->type = type;
+      r->argument = arg;
+      r->strArgument = strArgRef;
+   }
+}
+
+pos_t SyntaxTree :: newRoot(LexicalType type, int argument, pos_t strArgumentRef)
+{
+   return ::newChild(_body, INVALID_REF, type, argument, strArgumentRef);
+}
+
+pos_t SyntaxTree :: appendChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+{
+   pos_t child = ::newChild(_body, position, type, argument, strArgumentRef);
+   
+   ::appendChild(_body, position, child);
+
+   return child;
+}
+
+pos_t SyntaxTree :: insertChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+{
+   pos_t child = ::newChild(_body, position, type, argument, strArgumentRef);
+
+   ::insertChild(_body, position, child);
+
+   return child;
+}
+
+pos_t SyntaxTree :: insertSibling(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+{
+   pos_t child = ::newChild(_body, position, type, argument, strArgumentRef);
+
+   pos_t prev = getPrevious(position);
+   if (prev != INVALID_REF) {
+      ::insertSibling(_body, position, child);
+   }
+   else {
+      pos_t parent = ::readParent(_body, position);
+      if (parent != INVALID_REF)
+         ::insertChild(_body, parent, child);
+   }
+
+   return child;
+}
+
+pos_t SyntaxTree :: injectChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+{
+   pos_t parentNode = getParent(position);
+   pos_t child = ::newChild(_body, parentNode, type, argument, strArgumentRef);
+
+   ::injectChild(_body, parentNode, child);
+
+   return child;
+}
+
+pos_t SyntaxTree :: injectSibling(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+{
+   pos_t parentNode = getParent(position);
+   pos_t child = ::newChild(_body, parentNode, type, argument, strArgumentRef);
+
+   ::injectSibling(_body, position, child);
+
+   return child;
+}
+
+void SyntaxTree :: clearChildren(pos_t position)
+{
+   ::clearChildren(_body, position);
+}
+
+pos_t SyntaxTree :: getParent(pos_t position)
+{
+   return position == INVALID_REF ? INVALID_REF : ::readParent(_body, position);
+}
+
+pos_t SyntaxTree :: getChild(pos_t position)
+{
+   return position == INVALID_REF ? INVALID_REF : ::readChild(_body, position);
+}
+
+pos_t SyntaxTree :: getNext(pos_t position)
+{
+   return position == INVALID_REF ? INVALID_REF : ::readNext(_body, position);
+}
+
+pos_t SyntaxTree :: getPrevious(pos_t position)
+{
+   pos_t parent = ::readParent(_body, position);
+   if (parent != INVALID_REF) {
+      pos_t child = ::readChild(_body, parent);
+      pos_t prev = INVALID_REF;
+      while (child != position && child != INVALID_REF) {
+         prev = child;
+
+         child = ::readNext(_body, child);
+      }
+
+      return prev;
+   }
+   else return INVALID_REF;
+}
+
+pos_t SyntaxTree :: saveStrArgument(ident_t strArgument)
+{
+   MemoryWriter stringWriter(&_strings);
+
+   pos_t position = stringWriter.Position();
+
+   stringWriter.writeLiteral(strArgument, getlength(strArgument) + 1);
+
+   return position;
+}
+
+SyntaxTree::Node SyntaxTree :: read(pos_t position)
+{
+   LexicalType type;
+   ref_t arg;
+   pos_t strArg;
+   if (position != INVALID_REF && ::read(_body, position, type, arg, strArg)) {
+      return Node(this, position, type, arg, strArg);      
+   }
+   else return Node();
+}
+
+LexicalType SyntaxTree :: getType(pos_t position)
+{
+   LexicalType type;
+   ref_t arg;
+   pos_t strArg;
+   if (position != INVALID_REF && ::read(_body, position, type, arg, strArg)) {
+      return type;
+   }
+   else return lxNone;
+}
+
+void SyntaxTree :: refresh(SyntaxTree::Node& node)
+{
+   LexicalType type;
+   ref_t arg;
+   pos_t strArg;
+   if (::read(_body, node.position, type, arg, strArg)) {
+      node.type = type;
+      node.argument = arg;
+      node.strArgument = strArg;
+   }
+}
+
+void SyntaxTree :: save(Node& node)
+{
+   ::save(_body, node.position, node.type, node.argument, node.strArgument);
+}
+
+SyntaxTree::Node SyntaxTree :: readRoot()
+{
+   return read(0u);
 }
 
 void SyntaxTree :: saveNode(Node node, _Memory* dump, bool inclusingNode)
@@ -172,7 +412,7 @@ void SyntaxTree :: saveNode(Node node, _Memory* dump, bool inclusingNode)
    writer.newNode(lxRoot);
 
    if (inclusingNode) {
-      if (node.strArgument >= 0) {
+      if (node.strArgument != INVALID_REF) {
          writer.newNode(node.type, node.identifier());
       }
       else writer.newNode(node.type, node.argument);
@@ -198,7 +438,7 @@ void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer)
    SNode current = buffer.readRoot();
    while (current != lxNone) {
       if (current != lxIdle) {
-         if (current.strArgument >= 0) {
+         if (current.strArgument != INVALID_REF) {
             writer.newNode(current.type, current.identifier());
          }
          else writer.newNode(current.type, current.argument);
@@ -212,143 +452,6 @@ void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer)
    }
 }
 
-//bool SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type)
-//{
-//   bool moved = false;
-//   SNode current = buffer.readRoot();
-//   while (current != lxNone) {
-//      if (current == type) {
-//         moved = true;
-//         if (current.strArgument >= 0) {
-//            writer.newNode(current.type, current.identifier());
-//         }
-//         else writer.newNode(current.type, current.argument);
-//
-//         SyntaxTree::copyNode(writer, current);
-//         writer.closeNode();
-//
-//         current = lxIdle;
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   return moved;
-//}
-//
-//void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2)
-//{
-//   SNode current = buffer.readRoot();
-//   while (current != lxNone) {
-//      if (current == type1 || current == type2) {
-//         if (current.strArgument >= 0) {
-//            writer.newNode(current.type, current.identifier());
-//         }
-//         else writer.newNode(current.type, current.argument);
-//
-//         SyntaxTree::copyNode(writer, current);
-//         writer.closeNode();
-//
-//         current = lxIdle;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
-//void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3)
-//{
-//   SNode current = buffer.readRoot();
-//   while (current != lxNone) {
-//      if (current == type1 || current == type2 || current == type3) {
-//         if (current.strArgument >= 0) {
-//            writer.newNode(current.type, current.identifier());
-//         }
-//         else writer.newNode(current.type, current.argument);
-//
-//         SyntaxTree::copyNode(writer, current);
-//         writer.closeNode();
-//
-//         current = lxIdle;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
-//void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
-//{
-//   SNode current = buffer.readRoot();
-//   while (current != lxNone) {
-//      if (current == type1 || current == type2 || current == type3 || current == type4) {
-//         if (current.strArgument >= 0) {
-//            writer.newNode(current.type, current.identifier());
-//         }
-//         else writer.newNode(current.type, current.argument);
-//
-//         SyntaxTree::copyNode(writer, current);
-//         writer.closeNode();
-//
-//         current = lxIdle;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
-//void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
-//{
-//   SNode current = buffer.readRoot();
-//   while (current != lxNone) {
-//      if (current == type1 || current == type2 || current == type3 || current == type4 || current == type5) {
-//         if (current.strArgument >= 0) {
-//            writer.newNode(current.type, current.identifier());
-//         }
-//         else writer.newNode(current.type, current.argument);
-//
-//         SyntaxTree::copyNode(writer, current);
-//         writer.closeNode();
-//
-//         current = lxIdle;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
-//void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6)
-//{
-//   SNode current = buffer.readRoot();
-//   while (current != lxNone) {
-//      if (current == type1 || current == type2 || current == type3 || current == type4 || current == type5 || current == type6) {
-//         if (current.strArgument >= 0) {
-//            writer.newNode(current.type, current.identifier());
-//         }
-//         else writer.newNode(current.type, current.argument);
-//
-//         SyntaxTree::copyNode(writer, current);
-//         writer.closeNode();
-//
-//         current = lxIdle;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
-//void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7)
-//{
-//   SNode current = buffer.readRoot();
-//   while (current != lxNone) {
-//      if (current == type1 || current == type2 || current == type3 || current == type4 || current == type5 || current == type6 || current == type7) {
-//         if (current.strArgument >= 0) {
-//            writer.newNode(current.type, current.identifier());
-//         }
-//         else writer.newNode(current.type, current.argument);
-//
-//         SyntaxTree::copyNode(writer, current);
-//         writer.closeNode();
-//
-//         current = lxIdle;
-//      }
-//      current = current.nextNode();
-//   }
-//}
-
 void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
 {
    SyntaxTree::Node node = owner.findChild(type);
@@ -361,7 +464,7 @@ void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current.strArgument >= 0) {
+      if (current.strArgument != INVALID_REF) {
          writer.newNode(current.type, current.identifier());
       }
       else writer.newNode(current.type, current.argument);
@@ -378,13 +481,13 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
 {
    SNode current = source.firstChild();
    while (current != lxNone) {
-      if (current.strArgument >= 0) {
-         if (source.tree == destination.tree) {
-            // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
-            // so the special routine should be used
-            copyNode(current, destination.appendStrNode(current.type, current.strArgument));
-         }
-         else copyNode(current, destination.appendNode(current.type, current.identifier()));
+      if (current.strArgument != INVALID_REF) {
+         //if (source.tree == destination.tree) {
+         //   // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
+         //   // so the special routine should be used
+         //   copyNode(current, destination.appendStrNode(current.type, current.strArgument));
+         //}
+         /*else */copyNode(current, destination.appendNode(current.type, current.identifier()));
       }
       else copyNode(current, destination.appendNode(current.type, current.argument));
 
@@ -397,161 +500,6 @@ void SyntaxTree :: copyNodeSafe(Node source, Node destination, bool inclusingNod
    MemoryDump dump;
    saveNode(source, &dump, inclusingNode);
    loadNode(destination, &dump);
-}
-
-SyntaxTree::Node SyntaxTree :: insertNode(size_t start_position, size_t end_position, LexicalType type, int argument)
-{
-   SyntaxWriter writer(*this);
-
-   writer.insertChild(writer.setBookmark(start_position), writer.setBookmark(end_position), type, argument);
-
-   MemoryReader reader(&_body, start_position);
-   return read(reader);
-}
-
-void SyntaxTree :: refresh(SyntaxTree::Node& node)
-{
-   MemoryReader reader(&_body, node.position - 12);
-
-   node.type = (LexicalType)reader.getDWord();
-   node.argument = reader.getDWord();
-   node.strArgument = reader.getDWord();
-}
-
-SyntaxTree::Node SyntaxTree:: read(StreamReader& reader)
-{
-   int type = reader.getDWord(-1);
-   ref_t arg = reader.getDWord();
-   int str = reader.getDWord();
-
-   if (type == -1) {
-      return Node();
-   }
-   else return Node(this, reader.Position(), (LexicalType)type, arg, str);
-}
-
-SyntaxTree::Node SyntaxTree:: readRoot()
-{
-   MemoryReader reader(&_body, 0u);
-
-   return read(reader);
-}
-
-SyntaxTree::Node SyntaxTree:: readFirstNode(size_t position)
-{
-   MemoryReader reader(&_body, position);
-
-   return read(reader);
-}
-
-SyntaxTree::Node SyntaxTree :: readNextNode(size_t position)
-{
-   MemoryReader reader(&_body, position);
-
-   int level = 1;
-
-   do {
-      int type = reader.getDWord(-1);
-      reader.getQWord();
-
-      if (type == -1) {
-         level--;
-      }
-      else level++;
-
-   } while (level > 0);
-
-   return read(reader);
-}
-
-size_t SyntaxTree :: seekNodeEnd(size_t position)
-{
-   MemoryReader reader(&_body, position);
-
-   int level = 1;
-   size_t endPosition = 0;
-
-   do {
-      endPosition = reader.Position();
-
-      int type = reader.getDWord(-1);
-      reader.getQWord();
-
-      if (type == -1) {
-         level--;
-      }
-      else level++;
-
-   } while (level > 0);
-
-   return endPosition;
-}
-
-SyntaxTree::Node SyntaxTree :: readPreviousNode(size_t position)
-{
-   MemoryReader reader(&_body);
-
-   position -= 24;
-
-   int level = 0;
-   while (position > 11) {
-      reader.seek(position);
-
-      int type = reader.getDWord(-1);
-      reader.getDWord();
-
-      if (type != -1) {
-         if (level == 0)
-            break;
-
-         level++;
-         if (level == 0) {
-            reader.seek(position);
-
-            return read(reader);
-         }
-      }
-      else level--;
-
-      position -= 12;
-   }
-
-   return Node();
-}
-
-SyntaxTree::Node SyntaxTree :: readParentNode(size_t position)
-{
-   MemoryReader reader(&_body);
-   position -= 24;
-
-   reader.seek(position);
-   if (reader.getDWord(-1) != -1) {
-      reader.seek(position);
-
-      return read(reader);
-   }
-
-   int level = 0;
-   while (position > 11) {
-      reader.seek(position);
-
-      int type = reader.getDWord(-1);
-
-      if (type != -1) {
-         if (level == 0) {
-            reader.seek(position);
-
-            return read(reader);
-         }
-
-         level++;
-      }
-      else level--;
-
-      position -= 12;
-   }
-
-   return Node();
 }
 
 //bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)

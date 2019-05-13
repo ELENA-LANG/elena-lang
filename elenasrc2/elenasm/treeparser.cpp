@@ -54,7 +54,7 @@ void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, S
    while (!reader.Eof() && !reader.compare(")")) {
       if (reader.compare(";")) {
          writer.closeNode();
-         writer.insert(type);
+         writer.inject(type);
       }
       else parseStatement(reader, bm, writer);
 

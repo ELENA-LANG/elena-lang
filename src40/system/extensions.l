@@ -637,8 +637,7 @@ public extension realOp : RealNumber
         
         x := realOpController.exp(x);
             
-        ^ x
-            
+        ^ x            
     }
 
     real power(int y)

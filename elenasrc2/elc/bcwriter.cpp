@@ -4285,7 +4285,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       }
    }
 
-   bool largSubOp = larg.type == node.type;
+   bool largSubOp = node.existSubChild(lxSubOpMode);
    bool largSimple = largSubOp || isSimpleObject(larg);
    bool rargSimple = isSimpleObject(rarg);
    bool rargConst = immOp && (rarg == lxConstantInt);

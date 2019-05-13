@@ -746,7 +746,6 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
 Compiler::CodeScope :: CodeScope(SourceScope* parent)
    : Scope(parent), locals(Parameter(0))
 {
-   this->rootBookmark = 0;
    this->level = 0;
    this->saved = this->reserved = 0;
    this->genericMethod = false;
@@ -755,7 +754,6 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
    : Scope(parent), locals(Parameter(0))
 {
-   this->rootBookmark = 0;
    this->level = 0;
    this->saved = this->reserved = 0;
    this->genericMethod = parent->generic;
@@ -764,7 +762,6 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 Compiler::CodeScope :: CodeScope(CodeScope* parent)
    : Scope(parent), locals(Parameter(0))
 {
-   this->rootBookmark = 0;
    this->level = parent->level;
    this->saved = parent->saved;
    this->reserved = parent->reserved;
@@ -1874,8 +1871,8 @@ void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scop
 
       loperand = compileExpression(writer, targetNode, scope, 0, 0);
 
-      writer.insertChild(0, lxLocal, localOffs);
-      writer.insert(lxAssigning, 0);
+      writer.inject(lxAssigning, 0);
+      writer.insertNode(lxLocal, localOffs);
       writer.closeNode();
    }
 
@@ -1933,7 +1930,7 @@ void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scop
       writer.closeNode();
    }
 
-   writer.insert(lxSwitching);
+   writer.inject(lxSwitching);
    writer.closeNode();
 
    writer.removeBookmark();
@@ -2085,26 +2082,29 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
       scope.mapLocal(identifier, variable.param, variable.reference, variable.element, size);
 
       // injecting variable bookmark
-      writer.insert(scope.rootBookmark, lxEnding, 0);
+      SyntaxWriter frameWriter(writer);
+      frameWriter.seekUp(lxNewFrame);
 
-      writer.insertChild(scope.rootBookmark, lxLevel, variable.param);
-      writer.insertChild(scope.rootBookmark, lxIdentifier, identifier);
+      frameWriter.newNode(variableType, variableArg);
+      frameWriter.appendNode(lxLevel, variable.param);
+      frameWriter.appendNode(lxIdentifier, identifier);
+
       if (!emptystr(className)) {
          if (isWeakReference(className)) {
             if (isTemplateWeakReference(className)) {
                // HOTFIX : save weak template-based class name directly
-               writer.insertChild(scope.rootBookmark, lxClassName, className);
+               frameWriter.appendNode(lxClassName, className);
             }
             else {
                IdentifierString fullName(scope.module->Name(), className);
 
-               writer.insertChild(scope.rootBookmark, lxClassName, fullName);
+               frameWriter.appendNode(lxClassName, fullName);
             }
          }
-         else writer.insertChild(scope.rootBookmark, lxClassName, className);
+         else writer.appendNode(lxClassName, className);
       }
 
-      writer.insert(scope.rootBookmark, variableType, variableArg);
+      frameWriter.closeNode();
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
@@ -2935,7 +2935,7 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
       // we are lucky : we can implement branching directly
       compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
 
-      writer.insert(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
+      writer.inject(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
       writer.closeNode();
    }
    else {
@@ -2958,7 +2958,7 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
       retVal = compileMessage(writer, roperandNode, scope, loperand, message, 0, 0);
 
       if (loopMode) {
-         writer.insert(lxLooping);
+         writer.inject(lxLooping);
          writer.closeNode();
       }
    }
@@ -2980,7 +2980,7 @@ ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode, CodeSco
    
    ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef) ? loperandRef : 0;
 
-   writer.insert(lxNilOp, ISNIL_OPERATOR_ID);
+   writer.inject(lxNilOp, ISNIL_OPERATOR_ID);
    writer.closeNode();
 
    return ObjectInfo(okObject, resultRef);
@@ -3246,7 +3246,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
 
    // inserting calling expression
-   writer.insert(operation, argument);
+   writer.inject(operation, argument);
    writer.closeNode();
 
    return retVal;
@@ -3616,7 +3616,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          }
          else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::slClass)), accumulateMode);
 
-         writer.trim();
+         writer.trimChildren();
 
          //writer.removeBookmark();
 
@@ -3723,7 +3723,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       if (byRefAssigning)
          writer.appendNode(lxByRefTarget);
 
-      writer.insert(operationType, operand);
+      writer.inject(operationType, operand);
       writer.closeNode();
    //}
 
@@ -3808,7 +3808,7 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
       }
    }
    else {
-      writer.insert(lxMember);
+      writer.inject(lxMember);
       writer.closeNode();
 
       writer.newNode(lxMember, 1);
@@ -3819,7 +3819,7 @@ ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeSco
       role.reference = scope.moduleScope->wrapReference;
 
       writer.appendNode(lxTarget, role.reference);
-      writer.insert(lxNested, 2);
+      writer.inject(lxNested, 2);
       writer.closeNode();
    }
 
@@ -3936,7 +3936,7 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, int
    if (multiMethod) {
       // inject a virtual invoke multi-method if required
       SyntaxTree virtualTree;
-      virtualTree.insertNode(0, lxClass, 0);
+      virtualTree.createRoot(lxClass, 0);
 
       List<ref_t> implicitMultimethods;
       implicitMultimethods.add(multiMethod);
@@ -4225,9 +4225,9 @@ ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeS
    writer.appendNode(lxTarget, target.reference);
    if (size < 0) {
       writer.appendNode(lxSize, -size);
-      writer.insert(lxStruct, counter * (-size));
+      writer.inject(lxStruct, counter * (-size));
    }
-   else writer.insert(lxNested, counter);
+   else writer.inject(lxNested, counter);
    writer.closeNode();
 
 //   writer.removeBookmark();
@@ -4264,9 +4264,8 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
    if (test(mode, HINT_ROOT)) {
       ObjectInfo retVar = scope.mapTerminal(RETVAL_VAR, false, 0);
       if (retVar.kind != okUnknown) {
-         writer.insertChild(0, lxField, retVar.param);
-
-         writer.insert(lxAssigning);
+         writer.inject(lxAssigning);
+         writer.insertNode(lxField, retVar.param);
          writer.closeNode();
       }
    }
@@ -4278,7 +4277,7 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 
 ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t operator_id)
 {
-   writer.insert(lxExpression);
+   writer.inject(lxExpression);
    writer.closeNode();
 
    SNode current = node.firstChild();
@@ -4299,7 +4298,7 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Co
    
    writer.removeBookmark();
 
-   writer.insert(lxTrying);
+   writer.inject(lxTrying);
    writer.closeNode();
 
    return ObjectInfo(okObject);
@@ -4316,17 +4315,16 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Code
 
    writer.removeBookmark();
 
-   writer.insert(lxAlt);
+   writer.inject(lxAlt);
+   // inject a temporal variable
    writer.closeNode();
 
-   // inject a temporal variable
-   writer.insert(lxEnding);
-   writer.insertChild(0, lxIdle, 0);  // NOTE : place holder to be replaced with correct one later on (in analizeAltExpression)
-   writer.insertChild(0, lxLocal, tempLocal);
-   writer.insert(lxAssigning);
-
    // inject a nested expression
-   writer.insert(lxAltExpression);
+   writer.inject(lxAltExpression);
+   writer.newPrependedNode(lxAssigning, 0);
+   writer.appendNode(lxLocal, tempLocal);
+   writer.appendNode(lxIdle, 0);  // NOTE : place holder to be replaced with correct one later on (in analizeAltExpression)
+   writer.closeNode();
    writer.closeNode();
 
    return ObjectInfo(okObject);
@@ -4434,12 +4432,12 @@ ObjectInfo Compiler :: compileVariadicUnboxing(SyntaxWriter& writer, SNode node,
 	ref_t operandRef = resolveObjectReference(scope, objectInfo, false);
 	if (operandRef == V_ARGARRAY && test(mode, HINT_PARAMETER)) {
 		objectInfo.reference = V_UNBOXEDARGS;
-		writer.insert(lxArgUnboxing);
+		writer.inject(lxArgUnboxing);
 		writer.closeNode();
 	}
    else if (_logic->isArray(*scope.moduleScope, operandRef)) {
       objectInfo.reference = V_UNBOXEDARGS;
-      writer.insert(lxArgUnboxing, (ref_t)-1);
+      writer.inject(lxArgUnboxing, (ref_t)-1);
       writer.closeNode();
    }
 	else scope.raiseError(errNotApplicable, node);
@@ -4955,8 +4953,6 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
    bool needVirtualEnd = true;
    SNode current = node.firstChild();
 
-   scope.rootBookmark = writer.newBookmark();
-
    while (current != lxNone) {
       switch(current) {
          case lxExpression:
@@ -5003,8 +4999,6 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
    if (needVirtualEnd) {
       writer.appendNode(lxBreakpoint, dsVirtualEnd);
    }
-
-   writer.removeBookmark();
 
    return retVal;
 }
@@ -5126,9 +5120,9 @@ ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, Cod
 
    // To tell apart coreapi calls, the name convention is used
    if (apiCall) {
-      writer.insert(lxCoreAPICall, reference);
+      writer.inject(lxCoreAPICall, reference);
    }
-   else writer.insert(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+   else writer.inject(stdCall ? lxStdExternalCall : lxExternalCall, reference);
    writer.closeNode();
 
    if (!test(mode, HINT_ROOT)) {
@@ -5185,7 +5179,7 @@ ObjectInfo Compiler :: compileInternalCall(SyntaxWriter& writer, SNode node, Cod
 
    virtualReference.replaceAll('\'', '@', signIndex);
 
-   writer.insert(lxInternalCall, moduleScope->module->mapReference(virtualReference));
+   writer.inject(lxInternalCall, moduleScope->module->mapReference(virtualReference));
    writer.closeNode();
 
 //   SNode targetNode = node.firstChild(lxTerminalMask);
@@ -6313,6 +6307,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
 
 #ifdef FULL_OUTOUT_INFO
             // info
+            int x = 0;
             scope.moduleScope->printMessageInfo("method %s", methodScope.message);
 #endif // FULL_OUTOUT_INFO
 
@@ -7874,17 +7869,16 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
       if (allocateStructure(scope, size, false, retVal)) {
          retVal.extraparam = targetRef;
 
-         writer.insertChild(0, lxLocalAddress, retVal.param);
+         writer.inject(lxAssigning, size);
+         writer.insertNode(lxLocalAddress, retVal.param);
          writer.appendNode(lxTempAttr);
-         writer.insert(lxAssigning, size);
          writer.closeNode();
       }
       else if (size > 0) {
-         writer.appendNode(lxTarget, targetRef);
-         writer.insert(lxCreatingStruct, size);
+         writer.inject(lxAssigning, size);
          writer.closeNode();
-
-         writer.insert(lxAssigning, size);
+         writer.inject(lxCreatingStruct, size);
+         writer.appendNode(lxTarget, targetRef);
          writer.closeNode();
       }
       
@@ -7908,7 +7902,7 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
 
       writer.appendNode(lxTarget, targetRef);
       writer.appendNode(lxBoxableAttr);
-      writer.insert(lxBoxing,  size);
+      writer.inject(lxBoxing,  size);
       writer.closeNode();
 
       retVal.kind = okObject;
@@ -7949,6 +7943,9 @@ int Compiler :: allocateStructure(SNode node, int& size)
 
    SNode reserveNode = methodNode.findChild(lxReserved);
    int reserved = reserveNode.argument;
+   if (reserveNode == lxNone) {
+      reserved = 0;
+   }
 
    // allocating space
    int offset = allocateStructure(false, size, reserved);
@@ -8217,7 +8214,7 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
          node.set(lxIntOp, SET_OPERATOR_ID);
       }
       else {
-         SNode subNode = node.findSubNode(lxDirectCalling, lxSDirctCalling, lxCalling, lxAssigning);
+         SNode subNode = node.findSubNodeMask(lxSubOpMask);
          if (subNode == lxAssigning && targetNode != lxFieldAddress) {
             // HOTFIX : an extra assignment should be removed only for the operations with local variables
             bool tempAttr = subNode.existChild(lxTempAttr);
@@ -8277,7 +8274,15 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
             }
          }
          else if (subNode != lxNone) {
-            if (subNode.existChild(lxEmbeddable)) {
+            if (subNode.compare(lxIntOp, lxLongOp, lxRealOp)) {
+               //SNode callNode = subNode.findSubNode(lxDirectCalling, lxSDirctCalling);
+               //if (callNode != lxNone && callNode.existChild(lxEmbeddable)) {
+               //   if (!_logic->optimizeSubOpCall(*scope.moduleScope, *this, node)) {
+               //      subNode.appendNode(lxSubOpMode);
+               //   }
+               //}
+            }
+            else if (subNode.existChild(lxEmbeddable)) {
                if (!_logic->optimizeReturningStructure(*scope.moduleScope, *this, node)) {
                   _logic->optimizeEmbeddableOp(*scope.moduleScope, *this, node);
                }
@@ -8480,7 +8485,7 @@ ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope
       if (opArg/* != lxNone*/ == lxIntOp) {
          SNode llarg = larg.firstChild(lxObjectMask);
          larg = lxExpression;
-         llarg = lxIdle;
+         llarg = lxSubOpMode;
       }
    }
 
@@ -9012,9 +9017,9 @@ inline ref_t safeMapWeakReference(_Module* module, ident_t referenceName)
    else return 0;
 }
 
-void Compiler :: loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes)
+void Compiler :: loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silenMode)
 {
-   _Module* extModule = scope.project->loadModule(name, true);
+   _Module* extModule = scope.project->loadModule(name, silenMode);
    bool duplicates = false;
    if (extModule) {
       //      //bool owner = module == extModule;
@@ -9080,7 +9085,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically
-      loadAttributes(scope, STANDARD_MODULE, &scope.attributes);
+      loadAttributes(scope, STANDARD_MODULE, &scope.attributes, false);
    }
 
    createPackageInfo(scope.module, *scope.project);
@@ -9203,23 +9208,20 @@ void Compiler :: injectBoxing(SyntaxWriter& writer, _ModuleScope&, LexicalType b
    else writer.appendNode(lxBoxableAttr);
 
    writer.appendNode(lxTarget, targetClassRef);
-   writer.insert(boxingType, argument);
+   writer.inject(boxingType, argument);
    writer.closeNode();
 }
 
 void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*, ref_t targetRef*/, int stackSafeAttr)
 {
-   writer.insertChild(0, targetOp, targetArg/*, lxTarget, targetClassRef*/);
-
-   if (convertOp != lxNone) {
-      writer.appendNode(lxCallTarget, targetClassRef);
-      writer.appendNode(lxBoxableAttr);
-      if (stackSafeAttr)
-         writer.appendNode(lxStacksafeAttr, stackSafeAttr);
+   writer.appendNode(lxCallTarget, targetClassRef);
+   writer.appendNode(lxBoxableAttr);
+   if (stackSafeAttr)
+      writer.appendNode(lxStacksafeAttr, stackSafeAttr);
       
-      writer.insert(convertOp, convertArg);
-      writer.closeNode();
-   }
+   writer.inject(convertOp, convertArg);
+   writer.insertNode(targetOp, targetArg/*, lxTarget, targetClassRef*/);
+   writer.closeNode();
 }
 
 void Compiler :: injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t messageRef)
