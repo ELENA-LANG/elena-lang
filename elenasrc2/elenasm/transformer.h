@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2011-2018, by Alexei Rakov
+//                                             (C)2011-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef transformerH
@@ -11,6 +11,36 @@
 
 namespace _ELENA_
 {
+
+// --- TextParser ---
+
+class TextParser : public _Parser
+{
+   int _width;
+
+public:
+   virtual bool setPostfix(ident_t)
+   {
+      return false;
+   }
+
+   virtual bool parseGrammarRule(_ScriptReader&)
+   {
+      return false;
+   }
+
+   virtual bool parseGrammarMode(_ScriptReader&)
+   {
+      return false;
+   }
+
+   virtual void parse(_ScriptReader& reader, MemoryDump* output);
+
+   TextParser()
+   {
+      _width = 0x50;
+   }
+};
 
 // --- Transformer ---
 

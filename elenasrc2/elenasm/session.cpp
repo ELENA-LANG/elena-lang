@@ -62,6 +62,9 @@ _Parser* Session :: newParser(int id, ParserType type)
       case _ELENA_::Session::ptTree:
          newOne = new TreeScriptParser();
          break;
+      case _ELENA_::Session::ptText:
+         newOne = new TextParser();
+         break;
       default:
          throw EInvalidOperation("Unknown parser type");
    }
@@ -163,6 +166,9 @@ void Session :: parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader)
             }
             else if (reader.compare("tree")) {
                parser = newParser(id, Session::ptTree);
+            }
+            else if (reader.compare("text")) {
+               parser = newParser(id, Session::ptText);
             }
             else throw EParseError(bm.column, bm.row);
          }

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2017, by Alexei Rakov
+//                                              (C)2011-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -9,6 +9,33 @@
 #include "transformer.h"
 
 using namespace _ELENA_;
+
+// --- TextParser ---
+
+void TextParser :: parse(_ScriptReader& reader, MemoryDump* output)
+{
+   MemoryWriter writer(output);
+
+   ScriptBookmark bm = reader.read();
+   int length = 0;
+   while (!reader.Eof()) {
+      ident_t s = reader.lookup(bm);
+
+      int s_len = getlength(s);
+      writer.writeLiteral(s, s_len);
+      length += s_len;
+      if (length >= _width) {
+         writer.writeLiteral("\r\n", 2);
+         length = 0;
+      }
+      else writer.writeLiteral(" ", 1);
+
+      bm = reader.read();
+   }
+   writer.writeByte(0);
+}
+
+// --- Transformer::Scope ---
 
 void Transformer::Scope :: writeToken(ident_t token, ScriptLog&)
 {
