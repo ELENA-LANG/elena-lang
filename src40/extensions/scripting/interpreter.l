@@ -57,13 +57,28 @@ public class ScriptEngine
         ^ retVal
     }
 
-    loadScriptFile(string path, int encoding, int autoDetect)
+    string loadScriptFileAsText(string path, int encoding, int autoDetect)
     {
         dirty_ptr tape := extern elenasm.InterpretScopeFile
                             (scopeId, path, encoding, autoDetect);
             
         if (tape.isEmpty())
             { ScriptEngineException.new(self.lastScriptError()).raise() };
+
+        auto retVal := cast string(tape);    
+                                    
+        extern elenasm.Release(tape);
+        
+        ^ retVal
+    }
+    
+    loadScriptFile(string path, int encoding, int autoDetect)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeFile
+                            (scopeId, path, encoding, autoDetect);
+            
+        if (tape.isEmpty())
+            {   ScriptEngineException.new(self.lastScriptError()).raise() };
             
         extern elenasm.Release(tape)
     }
@@ -92,6 +107,11 @@ public class ScriptEngine
     loadPath(string path)
     {
         self.loadScriptFile(path, 0, -1)
+    }
+        
+    string loadPathAsText(string path)
+    {
+        ^ self.loadScriptFileAsText(path, 0, -1)
     }
         
     evalPath(string path)
