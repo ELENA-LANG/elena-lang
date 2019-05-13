@@ -1,0 +1,16 @@
+<configuration>
+    <project>
+        <executable>parser1.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>parser</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main1.l</include>
+        </module>
+    </files>
+</configuration>
