@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -7900,9 +7900,9 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
          //   break;
       }
 
+      writer.inject(lxBoxing, size);
       writer.appendNode(lxTarget, targetRef);
       writer.appendNode(lxBoxableAttr);
-      writer.inject(lxBoxing,  size);
       writer.closeNode();
 
       retVal.kind = okObject;
@@ -8659,6 +8659,8 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
 
 void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
 {
+   test2(node);
+
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
@@ -9207,8 +9209,8 @@ void Compiler :: injectBoxing(SyntaxWriter& writer, _ModuleScope&, LexicalType b
    }
    else writer.appendNode(lxBoxableAttr);
 
-   writer.appendNode(lxTarget, targetClassRef);
    writer.inject(boxingType, argument);
+   writer.appendNode(lxTarget, targetClassRef);
    writer.closeNode();
 }
 

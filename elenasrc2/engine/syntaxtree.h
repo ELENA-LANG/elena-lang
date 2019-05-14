@@ -693,7 +693,11 @@ public:
 
       Node injectNode(LexicalType type, int argument = 0)
       {
-         return tree->read(tree->injectChild(position, type, argument, INVALID_REF));
+         pos_t child = tree->getChild(position);
+         if (child != INVALID_REF) {
+            return tree->read(tree->injectChild(child, type, argument, INVALID_REF));
+         }
+         else return appendNode(type, argument);
       }
 
       void refresh()

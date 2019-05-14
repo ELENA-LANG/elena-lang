@@ -17,6 +17,15 @@ constexpr auto ACC_REQUIRED    = 0x0001;
 constexpr auto BOOL_ARG_EXPR   = 0x0002;
 constexpr auto EMBEDDABLE_EXPR = 0x0004;
 
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
+
 // check if the node contains only the simple nodes
 
 bool isSimpleObject(SNode node, bool ignoreFields = false)

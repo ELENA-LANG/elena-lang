@@ -1792,6 +1792,8 @@ void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNod
    // generate loperand
    derivationScope.nestedLevel += 0x100;
    bool dummy1 = false, dummy2 = false;
+   tempWriter.newNode(lxRoot);
+
    tempWriter.newNode(lxExpression);
    generateExpressionNode(tempWriter, node, dummy1,dummy2, derivationScope);
    tempWriter.closeNode();
@@ -1801,6 +1803,8 @@ void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNod
    derivationScope.nestedLevel += 0x100;
    generateExpressionTree(tempWriter, current.parentNode(), derivationScope);
    derivationScope.nestedLevel -= 0x100;
+
+   tempWriter.closeNode();
 
    generateCodeTemplateTree(writer, node, tempTree, templateName.ident(), derivationScope);
 
