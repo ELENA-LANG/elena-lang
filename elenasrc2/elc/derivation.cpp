@@ -136,25 +136,6 @@ inline void copyIdentifier(SyntaxWriter& writer, SNode ident, bool ignoreTermina
 
    writer.closeNode();
 }
-//
-//inline void insertIdentifier(SyntaxWriter& writer, SNode ident, bool ignoreTerminalInfo)
-//{
-//   if (!ignoreTerminalInfo) {
-//      SNode col = ident.findChild(lxCol);
-//      SNode row = ident.findChild(lxRow);
-//      SNode len = ident.findChild(lxLength);
-//
-//      writer.insertChild(0, lxCol, col.argument);
-//      writer.insertChild(0, lxRow, row.argument);
-//      writer.insertChild(0, lxLength, len.argument);
-//   }
-//
-//   ident_t s = ident.identifier();
-//   if (!emptystr(s)) {
-//      writer.insert(0, ident.type, s);
-//   }
-//   else writer.insert(0, ident.type, 0);
-//}
 
 void DerivationWriter :: begin()
 {
@@ -880,7 +861,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
       }
 
       if (withInPlaceInit) {
-         current = goToNode(buffer.readRoot(), lxFieldInit);
+         current = buffer.readRoot().findChild(lxFieldInit);
          writer.newNode(lxClassMethod);
 
          if (derivationScope.templateMode != stNormal) {
@@ -1126,6 +1107,11 @@ bool DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
    SNode bodyNode = node.findChild(lxFieldInit, lxFieldAccum);
    if (bodyNode != lxNone) {
       SyntaxWriter bufferWriter(buffer);
+      if (buffer.isEmpty()) {
+         // HOTFIX : create a root node
+         bufferWriter.newNode(lxRoot);
+      }
+      else bufferWriter.findRoot();
 
       SNode nameNode = node.prevNode();
 

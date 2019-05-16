@@ -377,6 +377,12 @@ public:
       void closeNode();
 
       bool seekUp(LexicalType type);
+      void findRoot()
+      {
+         if (_current == INVALID_REF && !_syntaxTree->isEmpty()) {
+            _current = 0;
+         }
+      }
 
       Writer(SyntaxTree& tree)
       {
@@ -1120,6 +1126,11 @@ public:
    void clear()
    {
       _body.clear();
+   }
+
+   bool isEmpty()
+   {
+      return _body.Length() == 0;
    }
 
    SyntaxTree()

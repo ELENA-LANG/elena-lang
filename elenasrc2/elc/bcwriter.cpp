@@ -1518,7 +1518,7 @@ void ByteCodeWriter :: writeInfo(Scope& scope, DebugSymbol symbol, ident_t class
    scope.debug->write((char*)&info, sizeof(DebugLineInfo));
 }
 
-void ByteCodeWriter :: writeSelf(Scope& scope, int level, int/* frameLevel*/)
+void ByteCodeWriter :: writeSelf(Scope& scope, int level, int frameLevel)
 {
    if (!scope.debug)
       return;
@@ -1527,12 +1527,12 @@ void ByteCodeWriter :: writeSelf(Scope& scope, int level, int/* frameLevel*/)
    info.symbol = dsLocal;
    info.addresses.local.nameRef = scope.debugStrings->Position();
 
-   //if (level < 0) {
-   //   scope.debugStrings->writeLiteral(GROUP_VAR);
+   if (level < 0) {
+      scope.debugStrings->writeLiteral(GROUP_VAR);
 
-   //   level -= frameLevel;
-   //}
-   /*else */scope.debugStrings->writeLiteral(SELF_VAR);
+      level -= frameLevel;
+   }
+   else scope.debugStrings->writeLiteral(SELF_VAR);
 
    info.addresses.local.level = level;
 

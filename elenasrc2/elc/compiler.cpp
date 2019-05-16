@@ -1289,7 +1289,7 @@ inline void writeClassNameInfo(SyntaxWriter& writer, _Module* module, ref_t refe
    }
 }
 
-void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/)
+void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf, bool withTargetSelf)
 {
    _ModuleScope* moduleScope = scope.moduleScope;
 
@@ -1305,8 +1305,8 @@ void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, Met
       else writer.appendNode(lxSelfVariable, 1);
    }
 
-//   if (withTargetSelf)
-//      writer.appendNode(lxSelfVariable, -1);
+   if (withTargetSelf)
+      writer.appendNode(lxSelfVariable, -1);
 
    writeMessageInfo(writer, *moduleScope, scope.message);
 
@@ -5634,7 +5634,7 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
 {
    writer.newNode(lxClassMethod, scope.message);
 
-   declareParameterDebugInfo(writer, node, scope, false/*, false*/);
+   declareParameterDebugInfo(writer, node, scope, false, false);
 
    CodeScope codeScope(&scope);
 
@@ -5666,7 +5666,7 @@ void Compiler :: compileExpressionMethod(SyntaxWriter& writer, SNode node, Metho
 {
    writer.newNode(lxClassMethod, scope.message);
 
-   declareParameterDebugInfo(writer, node, scope, false/*, false*/);
+   declareParameterDebugInfo(writer, node, scope, false, false);
 
    CodeScope codeScope(&scope);
 
@@ -5973,7 +5973,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
       scope.rootToFree -= 1;
    }
 
-   declareParameterDebugInfo(writer, node, scope, true/*, test(scope.getClassFlags(), elRole)*/);
+   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elRole));
 
    int paramCount = getParamCount(scope.message);
    int preallocated = 0;
@@ -6063,7 +6063,7 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
 {
    writer.newNode(lxClassMethod, scope.message);
 
-   declareParameterDebugInfo(writer, node, scope, true/*, test(scope.getClassFlags(), elRole)*/);
+   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elRole));
 
    int preallocated = 0;
 
@@ -6137,7 +6137,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
       writer.appendNode(attrNode.type, attrNode.argument);
    }
 
-   declareParameterDebugInfo(writer, node, scope, true/*, false*/);
+   declareParameterDebugInfo(writer, node, scope, true, false);
 
    CodeScope codeScope(&scope);
 

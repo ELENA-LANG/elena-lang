@@ -829,7 +829,7 @@ private:
    void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 
    // NOTE : the method is used to set template pseudo variable
-   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
+   void declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf, bool withTargetSelf);
 
    int resolveSize(SNode node, Scope& scope);
    ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
