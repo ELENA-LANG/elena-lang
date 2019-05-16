@@ -573,6 +573,7 @@ struct ClassInfo
    {
       header.flags = 0;
       header.classRef = 0;
+      size = 0;
    }
 };
 

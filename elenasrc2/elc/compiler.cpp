@@ -8657,6 +8657,12 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
    }
 }
 
+void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
+{
+   SyntaxTrie trie;
+
+}
+
 void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
 {
    test2(node);
@@ -8687,6 +8693,7 @@ void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxNewFrame) {
+         analizeCodePatterns(current, scope);
          analizeCode(current, scope);
       }
       current = current.nextNode();

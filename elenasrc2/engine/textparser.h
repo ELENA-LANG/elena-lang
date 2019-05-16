@@ -56,7 +56,7 @@ struct LineInfo
    LineInfo()
    {
       line = NULL;
-      column = row = readerPos = 0;
+      position = length = column = row = readerPos = 0;
       state = '\0';
    }
    LineInfo(int position, int column, int row)
@@ -65,7 +65,7 @@ struct LineInfo
       this->column = column;
       this->row = row;
       this->state = '\0';
-      this->readerPos = 0;
+      this->readerPos = this->length = 0;
    }
    LineInfo(int position, int column, int row, int readerPos)
    {
@@ -74,6 +74,7 @@ struct LineInfo
       this->row = row;
       this->state = '\0';
       this->readerPos = readerPos;
+      this->length = 0;
    }
 };
 

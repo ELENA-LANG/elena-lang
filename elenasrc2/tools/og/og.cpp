@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,10 +14,11 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION 1
+#define BUILD_VERSION 2
 
-typedef MemoryTrie<ByteCodePattern>     MemoryByteTrie;
-typedef MemoryTrieNode<ByteCodePattern> MemoryByteTrieNode;
+typedef Trie<ByteCodePattern>            ByteTrie;
+typedef MemoryTrie<ByteCodePattern>      MemoryByteTrie;
+typedef MemoryTrieNode<ByteCodePattern>  MemoryByteTrieNode;
 
 struct UnknownToken
 {
@@ -137,32 +138,7 @@ ByteCodePattern decodeCommand(TextSourceReader& source, char* token, LineInfo& i
    return pattern;
 }
 
-size_t findChild(MemoryByteTrie& trie, size_t position, ByteCodePattern pattern)
-{
-   MemoryByteTrieNode node(&trie, position);
-
-   MemoryByteTrieNode::ChildEnumerator children = node.Children();
-   while (!children.Eof()) {
-      MemoryByteTrieNode child = children.Node();
-      if (child.Value() == pattern)
-         return child.Position();
-
-      children++;
-   }
-
-   return 0;
-}
-
-size_t addOpcode(MemoryByteTrie& trie, size_t parentPosition, ByteCodePattern pattern)
-{
-   size_t position = findChild(trie, parentPosition, pattern);
-   if (position == 0) {
-      position = trie.addNode(parentPosition, pattern);
-   }
-   return position;
-}
-
-size_t readTransform(size_t position, TextSourceReader& source, char* token, LineInfo& info, MemoryByteTrie& trie)
+size_t readTransform(size_t position, TextSourceReader& source, char* token, LineInfo& info, ByteTrie& trie)
 {
    if (!ident_t(token).compare(";")) {
       ByteCodePattern pattern = decodeCommand(source, token, info);
@@ -170,77 +146,38 @@ size_t readTransform(size_t position, TextSourceReader& source, char* token, Lin
       // should be saved in reverse order, to simplify transform algorithm
       position = readTransform(position, source, token, info, trie);
 
-      return addOpcode(trie, position, pattern);
+      return trie.add(position, pattern);
    }
    else return position;
 }
 
-void appendOpCodeString(TextSourceReader& source, char* token, LineInfo& info, MemoryByteTrie& trie)
+void appendOpCodeString(TextSourceReader& source, char* token, LineInfo& info, ByteTrie& trie)
 {
    // save opcode pattern
    ByteCodePattern pattern = decodeCommand(source, token, info);
 
-   size_t position = addOpcode(trie, 0, pattern);
+   size_t position = trie.add(0, pattern);
 
    while (!ident_t(token).compare("=>")) {
-      position = addOpcode(trie, position, decodeCommand(source, token, info));
+      position = trie.add(position, decodeCommand(source, token, info));
    }
 
    // save end state
-   position = addOpcode(trie, position, ByteCodePattern(bcMatch));
+   position = trie.add(position, ByteCodePattern(bcMatch));
 
    // save replacement (should be saved in reverse order, to simplify transform algorithm)
    info = source.read(token, IDENTIFIER_LEN);
    readTransform(position, source, token, info, trie);
 }
 
-void scanTrie(MemoryByteTrieNode& current, MemoryByteTrieNode::ChildEnumerator nodes, MemoryByteTrieNode& failedNode)
+bool isMatchNode(ByteCodePattern pattern)
 {
-   while (!nodes.Eof()) {
-      MemoryByteTrieNode child = nodes.Node();
-      if (child.Value().code != bcMatch && child.Position() != current.Position()) {
-         if (current.Value() == child.Value()) {
-            MemoryByteTrieNode::ChildEnumerator next = current.Children();
-            while (!next.Eof()) {
-               MemoryByteTrieNode node = next.Node();
-               scanTrie(node, child.Children(), child);
-
-               next++;
-            }
-         }
-         else if (failedNode.Position() != 0) {
-            MemoryByteTrieNode::ChildEnumerator it = failedNode.find(current.Value());
-            if (it.Eof()) {
-               failedNode.link(current);
-            }
-         }
-
-         // skip terminator
-         if (child.Value().code != bcMatch) // !! useless condition?
-            scanTrie(current, child.Children(), failedNode);
-      }
-
-      nodes++;
-   }
-}
-
-void generateSuffixLinks(MemoryByteTrie& trie)
-{
-   MemoryByteTrieNode emptyNode;
-   MemoryByteTrieNode node(&trie);
-
-   MemoryByteTrieNode::ChildEnumerator children = node.Children();
-   while (!children.Eof()) {
-      MemoryByteTrieNode node = children.Node();
-      scanTrie(node, node.Children(), emptyNode);
-
-      children++;
-   }
+   return pattern.code == bcMatch;
 }
 
 int main(int argc, char* argv[])
 {
-   printLine("ELENA command line optimization table generator %d.%d.%d (C)2012-15 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
+   printLine("ELENA command line optimization table generator %d.%d.%d (C)2012-19 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
    if (argc != 2) {
       printLine("og <optimization_file>");
       return 0;
@@ -253,12 +190,12 @@ int main(int argc, char* argv[])
    LineInfo         info(0, 0, 0);
    char             token[IDENTIFIER_LEN + 1];
 
-   ByteCodePattern defValue;
-   MemoryByteTrie  trie(defValue);
+   ByteCodePattern  defValue;
+   ByteTrie         trie(defValue);
    try
    {
       // add root
-      trie.addRootNode(ByteCodePattern(bcNone));
+      trie.addRoot(ByteCodePattern(bcNone));
 
       // generate tree
       while (true) {
@@ -270,7 +207,7 @@ int main(int argc, char* argv[])
       }
 
       // add suffix links
-      generateSuffixLinks(trie);
+      trie.prepare(isMatchNode);
 
       // save the result
       Path outputFile(path);

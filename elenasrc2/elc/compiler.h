@@ -1036,6 +1036,7 @@ private:
    void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
    void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
    void analizeCode(SNode node, NamespaceScope& scope);
+   void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope);
    void analizeSymbolTree(SNode node, Scope& scope);

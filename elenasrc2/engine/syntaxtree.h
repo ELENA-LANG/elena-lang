@@ -1147,6 +1147,20 @@ typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
 typedef SyntaxTree::NodePattern  SNodePattern;
 
+struct SyntaxTrie
+{
+   typedef MemoryTrie<SNodePattern>     MemorySyntaxTrie;
+   typedef MemoryTrieNode<SNodePattern> Node;
+
+   MemorySyntaxTrie trie;
+
+   SyntaxTrie()
+      : trie(SNodePattern(lxNone))
+   {
+
+   }
+};
+
 } // _ELENA_
 
 #endif // syntaxTreeH

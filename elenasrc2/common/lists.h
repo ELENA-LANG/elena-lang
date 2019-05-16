@@ -3722,9 +3722,6 @@ public:
       unsigned int parent;
       unsigned int firstChildLink;
 
-      Node()
-      {
-      }
       Node(T defValue)
       {
          value = defValue;
@@ -3745,6 +3742,7 @@ public:
 
       ChildLink()
       {
+         node = nextChildLink = 0;
       }
       ChildLink(unsigned int node, unsigned int nextChildLink)
       {
@@ -3783,7 +3781,7 @@ public:
       _buffer.write(linkPosition, &link, sizeof(ChildLink));
 
       // update parent
-      Node parentNode;
+      Node parentNode(_defValue);
       _buffer.read(parent, &parentNode, sizeof(Node));
 
       if (parentNode.firstChildLink == 0) {
@@ -3988,6 +3986,102 @@ public:
          children++;
 
       return children;
+   }
+};
+
+template <class T> class Trie
+{
+private:
+   //MemoryTrie<T> _trie;
+
+public:
+   MemoryTrie<T> _trie;
+
+   typedef typename MemoryTrieNode<T>::ChildEnumerator ChildEnumerator;
+
+   size_t find(size_t position, T item)
+   {
+      MemoryTrieNode<T> node(&_trie, position);
+
+      auto children = node.Children();
+      while (!children.Eof()) {
+         auto child = children.Node();
+         if (child.Value() == item)
+            return child.Position();
+
+         children++;
+      }
+
+      return 0;
+   }
+
+   size_t add(size_t parentPosition, T item)
+   {
+      size_t position = find(parentPosition, item);
+      if (position == 0) {
+         position = _trie.addNode(parentPosition, item);
+      }
+      return position;
+   }
+
+   void scanTrie(MemoryTrieNode<T>& current, ChildEnumerator nodes, MemoryTrieNode<T>& failedNode, bool(*isTerminal)(T))
+   {
+      while (!nodes.Eof()) {
+         auto child = nodes.Node();
+         if (!isTerminal(child.Value())/*child.Value() != terminalNode*/ && child.Position() != current.Position()) {
+            if (current.Value() == child.Value()) {
+               auto next = current.Children();
+               while (!next.Eof()) {
+                  auto node = next.Node();
+                  scanTrie(node, child.Children(), child, isTerminal);
+
+                  next++;
+               }
+            }
+            else if (failedNode.Position() != 0) {
+               auto it = failedNode.find(current.Value());
+               if (it.Eof()) {
+                  failedNode.link(current);
+               }
+            }
+
+            // skip terminator
+            if (/*child.Value() != terminalNode*/!isTerminal(child.Value())) // !! useless condition?
+               scanTrie(current, child.Children(), failedNode, isTerminal);
+         }
+
+         nodes++;
+      }
+   }
+
+   void prepare(bool(*isTerminal)(T))
+   {
+      MemoryTrieNode<T> emptyNode;
+      MemoryTrieNode<T> node(&_trie);
+
+      auto children = node.Children();
+      while (!children.Eof()) {
+         auto node = children.Node();
+         scanTrie(node, node.Children(), emptyNode, isTerminal);
+
+         children++;
+      }
+   }
+
+   void addRoot(T item)
+   {
+      _trie.addRootNode(item);
+   }
+
+   void save(StreamWriter* writer)
+   {
+      _trie.save(writer);
+   }
+
+   Trie(T defaultVal)
+      : _trie(defaultVal)
+   {
+
    }
 };
 
