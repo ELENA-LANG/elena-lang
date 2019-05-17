@@ -1756,7 +1756,7 @@ void DerivationWriter :: generateCollectionTree(SyntaxWriter& writer, SNode node
 void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope)
 {
    // revert the first operand
-   writer.trimChildren();
+   writer.trim();
 
    current = lxIdle;
 

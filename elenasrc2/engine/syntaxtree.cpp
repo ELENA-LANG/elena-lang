@@ -46,6 +46,23 @@ void SyntaxWriter :: insert(LexicalType type, ref_t argument, pos_t strArgRef, b
       _current = pos;
 }
 
+void SyntaxWriter :: trim()
+{
+   if (_pendingBookmarks == 0) {
+      pos_t position = _bookmarks.peek();
+      pos_t prev = _syntaxTree->getPrevious(position);
+      if (prev != INVALID_REF) {
+         _syntaxTree->clearSibling(prev);
+      }
+      else _syntaxTree->clearChildren(position);
+
+      while (_bookmarks.peek() == position) {
+         _bookmarks.pop();
+         _pendingBookmarks++;
+      }
+   }
+}
+
 void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
 {
    if (_current == INVALID_REF) {
@@ -208,6 +225,12 @@ inline void clearChildren(_Memory& body, pos_t parent)
    r->child = INVALID_REF;
 }
 
+inline void clearSibling(_Memory& body, pos_t node)
+{
+   auto r = (_NodeRecord*)body.get(node);
+   r->next = INVALID_REF;
+}
+
 inline pos_t readParent(_Memory& body, pos_t position)
 {
    auto r = (_NodeRecord*)body.get(position);
@@ -315,6 +338,11 @@ pos_t SyntaxTree :: injectSibling(pos_t position, LexicalType type, int argument
 void SyntaxTree :: clearChildren(pos_t position)
 {
    ::clearChildren(_body, position);
+}
+
+void SyntaxTree :: clearSibling(pos_t position)
+{
+   ::clearSibling(_body, position);
 }
 
 pos_t SyntaxTree :: getParent(pos_t position)

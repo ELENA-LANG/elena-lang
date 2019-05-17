@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the Linux command-line compiler
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -37,12 +37,9 @@ class ImageHelper : public _ELENA_::ExecutableImage::_Helper
          debug->writeDWord(0, debug->Length());
          debug->addReference(image.getDebugEntryPoint(), 4);
 
-         // save subject info if enabled
+         // HOTFIX : should be removed (see DebugController)
          _ELENA_::MemoryWriter debugWriter(debug);
-         if (project->BoolSetting(_ELENA_::opDebugSubjectInfo)) {
-            image.saveSubject(&debugWriter);
-         }
-         else debugWriter.writeDWord(0);
+         debugWriter.writeDWord(0);
       }
       else debug->clear();
    }
@@ -158,14 +155,14 @@ _ELENA_::ident_t _ELC_::Project :: getOption(_ELENA_::_ConfigFile& config, _ELEN
       return config.getSetting(ELC_MG_SIZE);
    case _ELENA_::opGCYGSize:
       return config.getSetting(ELC_YG_SIZE);
-//   case _ELENA_::opSizeOfStackReserv:
-//      return config.getSetting(LINKER_CATEGORY, ELC_STACK_RESERV);
-//   case _ELENA_::opSizeOfStackCommit:
-//      return config.getSetting(LINKER_CATEGORY, ELC_STACK_COMMIT);
-//   case _ELENA_::opSizeOfHeapReserv:
-//      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_RESERV);
-//   case _ELENA_::opSizeOfHeapCommit:
-//      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_COMMIT);
+   case _ELENA_::opSizeOfStackReserv:
+      return config.getSetting(LINKER_CATEGORY, ELC_STACK_RESERV);
+   case _ELENA_::opSizeOfStackCommit:
+      return config.getSetting(LINKER_CATEGORY, ELC_STACK_COMMIT);
+   case _ELENA_::opSizeOfHeapReserv:
+      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_RESERV);
+   case _ELENA_::opSizeOfHeapCommit:
+      return config.getSetting(LINKER_CATEGORY, ELC_HEAP_COMMIT);
 //   case _ELENA_::opImageBase:
 //      return config.getSetting(LINKER_CATEGORY, ELC_YG_IMAGEBASE);
    case _ELENA_::opPlatform:

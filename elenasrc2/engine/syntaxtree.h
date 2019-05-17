@@ -294,14 +294,7 @@ public:
          return _bookmarks.Count() + _pendingBookmarks;
       }
 
-      void trimChildren()
-      {
-         if (_pendingBookmarks == 0) {
-            pos_t position = _bookmarks.peek();
-
-            _syntaxTree->clearChildren(position);
-         }
-      }
+      void trim();
 
       void removeBookmark()
       {
@@ -967,6 +960,7 @@ private:
    pos_t insertSibling(pos_t position, LexicalType type, int argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
    pos_t injectChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
    pos_t injectSibling(pos_t position, LexicalType type, int argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
+   void clearSibling(pos_t position);
    void clearChildren(pos_t position);
 
    pos_t getParent(pos_t position);

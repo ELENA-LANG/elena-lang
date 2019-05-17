@@ -2,14 +2,6 @@
 In development:
 ------                              
               xdev
-                 * test switch
-                 * test local variables
-                 * test branching / loop
-                 * test wrapping
-                 * test collections
-                 * test try / catch
-                 * test alt
-
                  * optimize assign inp_op direct_call embeddable
                  * optimize direct_call direct_call embeddable
                  * optimize pi sample

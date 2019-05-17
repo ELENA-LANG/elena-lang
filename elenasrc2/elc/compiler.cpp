@@ -3616,7 +3616,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
          }
          else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::slClass)), accumulateMode);
 
-         writer.trimChildren();
+         writer.trim();
 
          //writer.removeBookmark();
 
