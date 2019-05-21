@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -8479,13 +8479,21 @@ ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope
       }
    }
 
-   SNode larg = loperand.findSubNodeMask(lxObjectMask);
-   if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
-      SNode opArg = larg.findSubNode(current.type);
-      if (opArg/* != lxNone*/ == lxIntOp) {
-         SNode llarg = larg.firstChild(lxObjectMask);
-         larg = lxExpression;
-         llarg = lxSubOpMode;
+   SNode parentNode = current.parentNode();
+   while (parentNode == lxExpression)
+      parentNode = parentNode.parentNode();
+
+   if (parentNode == lxAssigning) {
+      SNode larg = loperand.findSubNodeMask(lxObjectMask);
+      if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
+         test2(current);
+
+         SNode opArg = larg.findSubNode(current.type);
+         if (opArg/* != lxNone*/ == lxIntOp) {
+            SNode llarg = larg.firstChild(lxObjectMask);
+            larg = lxExpression;
+            llarg = lxSubOpMode;
+         }
       }
    }
 
