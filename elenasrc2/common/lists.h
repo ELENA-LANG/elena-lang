@@ -3989,7 +3989,7 @@ public:
    }
 };
 
-template <class T> class Trie
+template <class T> struct Trie
 {
 private:
    //MemoryTrie<T> _trie;

@@ -249,6 +249,7 @@ enum LexicalType
 
    lxTempAttr                 = 0x2010D,
    lxSubOpMode                = 0x2010E,
+   lxMatch                    = 0x2010F
 };
 
 // --- SyntaxTree ---
@@ -927,27 +928,37 @@ public:
    struct NodePattern
    {
       LexicalType type;
-      LexicalType alt_type1;
+      int         argument;
 
       bool match(Node node)
       {
-         return node.type == type || node.type == alt_type1;
+         return node.type == type;
+      }
+
+      bool operator ==(NodePattern node) const
+      {
+         return (this->type == node.type);
+      }
+
+      bool operator !=(NodePattern node) const
+      {
+         return (this->type != node.type);
       }
 
       NodePattern()
       {
          type = lxNone;
-         alt_type1 = lxInvalid;
+         this->argument = 0;
       }
       NodePattern(LexicalType type)
       {
          this->type = type;
-         this->alt_type1 = lxInvalid;
+         this->argument = 0;
       }
-      NodePattern(LexicalType type1, LexicalType type2)
+      NodePattern(LexicalType type, int argument)
       {
-         this->type = type1;
-         this->alt_type1 = type2;
+         this->type = type;
+         this->argument = argument;
       }
    };
 
@@ -1085,6 +1096,8 @@ public:
 
    static Node findTerminalInfo(Node node);
 
+   //static bool apply(Node node, Trie<NodePattern>& trie);
+
    void createRoot(LexicalType type, int argument)
    {
       newRoot(type, argument, INVALID_REF);
@@ -1152,19 +1165,8 @@ typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
 typedef SyntaxTree::NodePattern  SNodePattern;
 
-struct SyntaxTrie
-{
-   typedef MemoryTrie<SNodePattern>     MemorySyntaxTrie;
-   typedef MemoryTrieNode<SNodePattern> Node;
-
-   MemorySyntaxTrie trie;
-
-   SyntaxTrie()
-      : trie(SNodePattern(lxNone))
-   {
-
-   }
-};
+typedef Trie<SNodePattern>           SyntaxTrie;
+typedef MemoryTrieNode<SNodePattern> SyntaxTrieNode;
 
 } // _ELENA_
 

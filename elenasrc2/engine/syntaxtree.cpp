@@ -628,3 +628,42 @@ SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
    return current;
 }
 
+//bool SyntaxTree :: apply(SyntaxTree::Node node, Trie<SyntaxTree::NodePattern>& trie)
+//{
+//   bool applied = false;
+//   //Node current(&trie);
+//   //while (!it.Eof()) {
+//   //   // skip meta commands (except labels)
+//   //   if (matchable(it)) {
+//   //      // make first step
+//   //      if (makeStep(current, *it, 0)) {
+//   //         int previousArg = (*it).argument;
+//   //         it++;
+//
+//   //         ByteCodeIterator word_it = it;
+//   //         while (!word_it.Eof() && (!matchable(word_it) || makeStep(current, *word_it, previousArg))) {
+//   //            if (matchable(word_it))
+//   //               previousArg = (*word_it).argument;
+//
+//   //            // check if the end node is reached
+//   //            if (current.Value().code == bcMatch) {
+//   //               it = word_it;
+//
+//   //               transform(--word_it, current.FirstNode());
+//
+//   //               applied = true;
+//   //               current = Node(&trie);
+//
+//   //               break;
+//   //            }
+//   //            else word_it++;
+//   //         }
+//   //      }
+//   //      else it++;
+//   //   }
+//   //   else it++;
+//   //}
+//
+//
+//   return applied;
+//}

@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -8659,13 +8659,34 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
-   SyntaxTrie trie;
+   SNodePattern defaultVal(lxNone);
+   SyntaxTrie trie(defaultVal);
 
+   trie.addRoot(SNodePattern(lxRoot));
+
+   size_t pos = trie.add(0, SNodePattern(lxAssigning));
+   pos = trie.add(pos, SNodePattern(lxIntOp));
+   pos = trie.add(pos, SNodePattern(lxDirectCalling));
+   pos = trie.add(pos, SNodePattern(lxEmbeddable));
+   pos = trie.add(pos, SNodePattern(lxMatch, 1));
+
+   //bool applied = true;
+   //while (applied) {
+   //   applied = false;
+
+   //   
+
+   //   if (SyntaxTree::seekMatch()) {
+   //      applied = true;
+   //   }
+   //}
+
+   //while (SyntaxTree::apply(node, trie));
 }
 
 void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
 {
-   test2(node);
+   //test2(node);
 
    SNode current = node.firstChild();
    while (current != lxNone) {
