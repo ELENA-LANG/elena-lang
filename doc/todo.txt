@@ -1,6 +1,10 @@
 ------                                 
 In development:
-------                              
+------            
+
+              ydev
+                * Stand alone executable: Script engine #64
+                  
               xdev
                  * optimize assign inp_op direct_call embeddable
                  * optimize direct_call direct_call embeddable

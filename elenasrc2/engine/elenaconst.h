@@ -103,8 +103,8 @@ namespace _ELENA_
 
    constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
 
-   #define VA_ALIGNMENT       0x08
-   #define VA_ALIGNMENT_POWER 0x03
+   constexpr auto VA_ALIGNMENT            = 0x08;
+   constexpr auto VA_ALIGNMENT_POWER      = 0x03;
 
   // --- ELENA Reference masks ---
    enum ReferenceType : unsigned int

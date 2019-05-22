@@ -400,39 +400,3 @@ ident_t Project :: resolveExternalAlias(ident_t alias, bool& stdCall)
    else return _settings.get(opExternals, alias, DEFAULT_STR);
 }
 
-////void Project :: compile(ident_t filePath, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved)
-////{
-////   try {
-////      // based on the target type generate the syntax tree for the file
-////      Path fullPath(StrSetting(_ELENA_::opProjectPath));
-////      fullPath.combine(filePath);
-////
-////      // parse
-////      SyntaxTree tree;
-////      parser.parse(fullPath.c_str(), tree/*, getTabSize()*/);
-////
-////      // compile the syntax tree
-////      compiler.compileSyntaxTree(*this, filePath, tree, moduleInfo, unresolved);
-////   }
-////   catch (LineTooLong& e)
-////   {
-////      raiseError(errLineTooLong, filePath, e.row, 1);
-////   }
-////   catch (InvalidChar& e)
-////   {
-////      size_t destLength = 6;
-////
-////      _ELENA_::String<char, 6> symbol;
-////      _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*)&e.ch, 1, destLength);
-////
-////      raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
-////   }
-////   catch (SyntaxError& e)
-////   {
-////      raiseError(e.error, filePath, e.row, e.column, e.token);
-////   }
-////   catch (ScriptError& e)
-////   {
-////      raiseError(e.error, filePath);
-////   }
-////}

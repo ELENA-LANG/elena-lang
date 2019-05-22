@@ -1,4 +1,5 @@
 import system'collections;
+import system'io;
 
 // --- ClosureTape ---
 
@@ -108,4 +109,25 @@ public mixin ClosureClass
     }
     
     dispatch() => system'core_routines'__closureclass;
+}
+
+// --- StreamTapeInterpreter ---
+
+public singleton StreamTapeInterpreter
+{
+//    run(BinaryReader reader)
+//    {
+//        byte buffer[255];
+//        int  command := 0;
+//        int  size := 0;
+//        reader.read(ref command);
+//        while (command != 0) {
+//            reader.read(ref size);
+//            reader.read(buffer, ref size);
+//            
+//            intern system'core_routines'tape.execute(command, buffer, size);
+//            
+//            reader.read(ref command);            
+//        }
+//    }
 }
