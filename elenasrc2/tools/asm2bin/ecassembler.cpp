@@ -231,6 +231,9 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 
          return compileRMessageArg(token, binary);
       }
+      else if (token.terminal.state == dfaInteger) {
+         return binary->mapConstant(token.value) | mskInt32Ref;
+      }
       else return binary->mapReference(token.value) | mskConstantRef;
    }
    else if (word.compare("rdata")) {
@@ -315,7 +318,7 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
 
 void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
 {
-	int n1 = token.readInteger(constants);
+	int n1 = token.readSignedInteger(constants);
 	int n2 = token.readInteger(constants);
 
    writeCommand(ByteCommand(code, n1, n2), writer);
@@ -481,6 +484,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcBLoadFI:
          case bcACopyS:
          case bcACopyF:
+         case bcSCopyF:
          case bcBCopyS:
          case bcBCopyF:
          case bcALoadAI:
@@ -563,6 +567,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             break;
          case bcSelectR:
             compileRRCommand(opcode, token, writer, binary);
+            break;
+         case bcSaveFI:
+            compileNNCommand(opcode, token, writer);
             break;
          case bcXIndexRM:
          case bcXCallRM:

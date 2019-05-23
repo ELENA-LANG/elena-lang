@@ -115,6 +115,14 @@ public interface BinaryReader
     }
 }
 
+public sealed BinaryStreamReader : BinaryReader
+{
+    constructor(Stream stream)
+    {
+        theStream := stream
+    }
+}
+
 // --- TextReader ---
 
 public interface TextReader

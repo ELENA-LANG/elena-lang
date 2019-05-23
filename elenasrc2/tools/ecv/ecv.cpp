@@ -26,26 +26,14 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   27
-
-#define INT_CLASS                "system'IntNumber" 
-#define LONG_CLASS               "system'LongNumber" 
-#define REAL_CLASS               "system'RealNumber" 
-#define STR_CLASS                "system'LiteralValue" 
-#define WSTR_CLASS               "system'WideLiteralValue" 
-#define CHAR_CLASS               "system'CharValue" 
+#define REVISION_VERSION   28
 
 using namespace _ELENA_;
 
 // === Variables ===
-ident_t _integer = INT_CLASS;
-ident_t _long = LONG_CLASS;
-ident_t _real = REAL_CLASS;
-ident_t _literal = STR_CLASS;
-ident_t _wide = WSTR_CLASS;
-ident_t _char = CHAR_CLASS;
-
 bool    _ignoreBreakpoints = true;
+bool    _showBytecodes = false;
+bool    _noPaging = false;
 
 TextFileWriter* _writer;
 
@@ -112,7 +100,7 @@ void printLine()
 void nextRow(int& row, int pageSize)
 {
    row++;
-   if (row == pageSize - 1) {
+   if (row == pageSize - 1 && !_noPaging) {
       print("Press any key to continue...");
       _fgetchar();
       printf("\n");
@@ -151,7 +139,9 @@ void printLoadError(LoadResult result)
 
 void printHelp()
 {
+   printf("-c                      - hide / show byte codes\n");
    printf("-b                      - hide / show breakpoints\n");
+   printf("-p                      - turn off / turn on pagination\n");
    printf("-q                      - quit\n");
    printf("-h                      - help\n");
    printf("<class>.<method name>   - view method byte codes\n");
@@ -313,6 +303,7 @@ inline void appendHex32(IdentifierString& command, unsigned int hex)
    }
 
    command.appendHex(hex);
+   command.append('h');
 }
 
 int getLabelIndex(int label, List<int>& labels)
@@ -384,70 +375,99 @@ void parseMessageConstant(IdentifierString& message, ident_t reference)
    }
 }
 
+void printExternReference(IdentifierString& command, _Module* module, size_t reference)
+{
+   ident_t ref = module->resolveReference(reference & ~mskAnyRef);
+   if (ref.startsWith("$dlls'$rt.")) {
+      command.append("extern : ");
+      command.append(ref + 10);
+   }
+   else command.append(ref);
+}
+
 void printReference(IdentifierString& command, _Module* module, size_t reference)
 {
+   ident_t postfix;
    bool literalConstant = false;
-   bool charConstant = false;
-   ident_t referenceName = NULL;
+   bool quote = false;
    int mask = reference & mskAnyRef;
    if (mask == mskInt32Ref) {
-      referenceName = _integer;
+      command.append("const : ");
       literalConstant = true;
    }
    else if (mask == mskInt64Ref) {
-      referenceName = _long;
+      command.append("const : ");
       literalConstant = true;
+      postfix = "l";
    }
    else if (mask == mskLiteralRef) {
-      referenceName = _literal;
-      literalConstant = true;
+      command.append("const : ");
+      quote = literalConstant = true;
    }
    else if (mask == mskWideLiteralRef) {
-      referenceName = _wide;
-      literalConstant = true;
+      command.append("const : ");
+      quote = literalConstant = true;
+      postfix = "w";
    }
    else if (mask == mskRealRef) {
-      referenceName = _real;
+      command.append("const : ");
       literalConstant = true;
+      postfix = "w";
    }
    else if (mask == mskCharRef) {
-      referenceName = _char;
-      charConstant = true;
+      command.append("const : ");
+      quote = literalConstant = true;
+      postfix = "c";
+   }
+   else if (mask == mskConstantRef) {
+      command.append("const : ");
+   }
+   else if (mask == mskMessage) {
+      command.append("const : %");
+   }
+   else if (mask == mskMessageName) {
+      command.append("const : %");
+   }
+   else if (mask == mskVMTRef) {
+      command.append("class : ");
    }
    else if (reference == 0) {
-      referenceName = "nil";
+      command.append("0");
    }
    else if (reference == -1) {
-      referenceName = "undefined";
+      command.append("undefined");
    }
-   else referenceName = module->resolveReference(reference & ~mskAnyRef);
+   
+   if (reference == 0 || reference == -1) {
+   }
+   else if (literalConstant) {
+      if (quote)
+         command.append("\"");
 
-   if (emptystr(referenceName)) {
-      command.append("unknown");
+      command.append(module->resolveConstant(reference & ~mskAnyRef));
+
+      if (quote)
+         command.append("\"");
+
+      command.append(postfix);
    }
    else {
-      command.append(referenceName);
-      if (literalConstant) {
-         command.append("(");
-         command.append(module->resolveConstant(reference & ~mskAnyRef));
-         command.append(")");
-      }
-      else if (charConstant) {
-         const char* ch = module->resolveConstant(reference & ~mskAnyRef);
-
-         IdentifierString num;
-         num.appendInt(ch[0]);
-         command.append("(");
-         command.append(num);
-         command.append(")");
-
-      }
+      command.append(module->resolveReference(reference & ~mskAnyRef));
    }
 }
 
 void printMessage(IdentifierString& command, _Module* module, size_t reference)
 {
    ByteCodeCompiler::resolveMessageName(command, module, reference);
+}
+
+void printCommand(IdentifierString& command, const char* opcode)
+{
+   command.append(opcode);
+   size_t tabbing = _showBytecodes ? 44 : 13;
+   while (getlength(command) < tabbing) {
+      command.append(' ');
+   }
 }
 
 bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<int>& labels)
@@ -469,49 +489,60 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 
       indent--;
    }
-   if (code < 0x10)
-      command.append('0');
-
-   command.appendHex((int)code);
-   command.append(' ');
 
    int argument = 0;
    int argument2 = 0;
    if (code > MAX_DOUBLE_ECODE) {
       argument = codeReader.getDWord();
       argument2 = codeReader.getDWord();
-
-      appendHex32(command, argument);
-      command.append(' ');
-
-      appendHex32(command, argument2);
-      command.append(' ');
    }
    else if (code > MAX_SINGLE_ECODE) {
       argument = codeReader.getDWord();
-
-      appendHex32(command, argument);
-      command.append(' ');
    }
 
-   size_t tabbing = code == bcNop ? 24 : 31;
-   while (getlength(command) < tabbing) {
+   if (_showBytecodes) {
+      if (code < 0x10)
+         command.append('0');
+
+      command.appendHex((int)code);
       command.append(' ');
+
+      if (code > MAX_DOUBLE_ECODE) {
+         appendHex32(command, argument);
+         command.append(' ');
+
+         appendHex32(command, argument2);
+         command.append(' ');
+      }
+      else if (code > MAX_SINGLE_ECODE) {
+         appendHex32(command, argument);
+         command.append(' ');
+      }
+
+      size_t tabbing = code == bcNop ? 24 : 31;
+      while (getlength(command) < tabbing) {
+         command.append(' ');
+      }
    }
 
    switch(code)
    {
-      case bcPushF:
-      case bcSCopyF:
+      case bcPushSI:
+      case bcALoadSI:
+      case bcASaveSI:
+      case bcBLoadSI:
+      case bcBSaveSI:
+      case bcBLoadFI:
+      case bcPushFI:
+      case bcALoadFI:
+      case bcASaveFI:
+      case bcDLoadFI:
       case bcACopyF:
+      case bcSCopyF:
       case bcBCopyF:
-         command.append(opcode);
-         command.append(" fp:");
-         command.appendInt(argument);
-         break;
       case bcACopyS:
-         command.append(opcode);
-         command.append(" sp:");
+      case bcPushF:
+         printCommand(command, opcode);
          command.appendInt(argument);
          break;
       case bcJump:
@@ -522,22 +553,21 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcIfHeap:
       case bcNotLess:
 //      case bcAddress:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
          printLabel(command, position + argument + 5, labels);
          break;
       case bcElseM:
       case bcIfM:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
+         command.append("message : \"");
          printMessage(command, module, argument);
+         command.append("\"");
          command.append(' ');
          printLabel(command, position + argument2 + 9, labels);
          break;
       case bcElseR:
       case bcIfR:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
          printReference(command, module, argument);
          command.append(' ');
          printLabel(command, position + argument2 + 9, labels);
@@ -548,28 +578,30 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcNotLessN:
       case bcGreaterN:
       case bcNotGreaterN:
-         command.append(opcode);
+         printCommand(command, opcode);
+         printLabel(command, position + argument2 + 9, labels);
          command.append(' ');
          command.appendHex(argument);
-         command.append(' ');
-         printLabel(command, position + argument2 + 9, labels);
+         command.append('h');
          break;
       case bcNop:
          printLabel(command, position + argument, labels);
          command.append(':');
-         command.append(' ');
+         command.append("   ");
          command.append(opcode);
          break;
       case bcPushR:
       case bcALoadR:
-      case bcCallExtR:
       case bcCallR:
       case bcASaveR:
       case bcACopyR:
       case bcBCopyR:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
          printReference(command, module, argument);
+         break;
+      case bcCallExtR:
+         printCommand(command, opcode);
+         printExternReference(command, module, argument);
          break;
       case bcReserve:
       case bcRestore:
@@ -586,90 +618,65 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcNSaveI:
       case bcMulN:
       case bcAddN:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
          command.appendHex(argument);
-         break;
-      case bcPushSI:
-      case bcALoadSI:
-      case bcASaveSI:
-      case bcBLoadSI:
-      case bcBSaveSI:
-         command.append(opcode);
-         command.append(" sp[");
-         command.appendInt(argument);
-         command.append(']');
-         break;
-      case bcBLoadFI:
-      case bcPushFI:
-      case bcALoadFI:
-      case bcASaveFI:
-      case bcDLoadFI:
-         command.append(opcode);
-         command.append(" fp[");
-         command.appendInt(argument);
-         command.append(']');
+         command.append('h');
          break;
       case bcAJumpVI:
       case bcACallVI:
-         command.append(opcode);
-         command.append(" acc::vmt[");
+         printCommand(command, opcode);
+         command.append("acc::vmt[");
          command.appendInt(argument);
          command.append(']');
          break;
       case bcPushAI:
       case bcALoadAI:
-         command.append(opcode);
-         command.append(" acc[");
+         printCommand(command, opcode);
          command.appendInt(argument);
-         command.append(']');
          break;
       case bcASaveBI:
       case bcAXSaveBI:
       case bcALoadBI:
          command.append(opcode);
-         command.append(" base[");
          command.appendInt(argument);
-         command.append(']');
          break;
       case bcNew:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
          printReference(command, module, argument);
-         command.append(", ");
+         command.append(" ");
          command.appendInt(argument2);
          break;
       case bcXCallRM:
       case bcXJumpRM:
       case bcXIndexRM:
       case bcXMTRedirect:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
          printReference(command, module, argument);
-         command.append(", ");
+         command.append(" message : \"");
          printMessage(command, module, argument2);
+         command.append("\"");
          break;
       case bcCopyM:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
+         command.append("message : \"");
          printMessage(command, module, argument);
+         command.append("\"");
          break;
       case bcSetVerb:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
+         command.append("messagename : \"");
          printMessage(command, module, encodeAction(argument));
+         command.append("\"");
          break;
       case bcSelectR:
       case bcXSelectR:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
          printReference(command, module, argument);
          command.append(", ");
          printReference(command, module, argument2);
          break;
       case bcNewN:
-         command.append(opcode);
-         command.append(' ');
+         printCommand(command, opcode);
          printReference(command, module, argument);
          command.append(", ");
          command.appendInt(argument2);
@@ -677,14 +684,13 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcSaveFI:
       case bcAddFI:
       case bcSubFI:
-         command.append(opcode);
-         command.append(" fp[");
+         printCommand(command, opcode);
          command.appendInt(argument);
-         command.append("], ");
+         command.append(" ");
          command.appendInt(argument2);
          break;
       default:
-         command.append(opcode);
+         printCommand(command, opcode);
          break;
    }
 
@@ -1177,9 +1183,12 @@ void runSession(_Module* module, int pageSize)
             case 'b':
                _ignoreBreakpoints = !_ignoreBreakpoints;
                break;
-            //case 'c':
-            //   printConstructor(module, line + 2, pageSize);
-            //   break;
+            case 'p':
+               _noPaging = !_noPaging;
+               break;
+            case 'c':
+               _showBytecodes = !_showBytecodes;
+               break;
             case 'o':
             {
                Path path(line + 2);

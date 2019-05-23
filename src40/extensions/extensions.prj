@@ -7,9 +7,9 @@
         <output>..\..\lib40</output>
     </project>
     <manifest>
-      <name>ELENA Extension Library</name>
-      <version>4.0.34</version>
-      <author>Alex Rakov</author>
+        <name>ELENA Extension Library</name>
+        <version>4.0.35</version>
+        <author>Alex Rakov</author>
     </manifest>
     <files>
         <module>
@@ -24,6 +24,7 @@
             <include>math\matrix.l</include>
             <include>text\strings.l</include>
             <include>text\words.l</include>
+            <include>io\streams.l</include>
         </module>
         <module name="routines">
             <include>routines\enumerating.l</include>
@@ -43,7 +44,7 @@
             <include>scripting\assembly.l</include>
         </module>
         <module name="threading">
-          <include>threading\threading.l</include>
+            <include>threading\threading.l</include>
         </module>
     </files>
 </configuration>

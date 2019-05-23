@@ -70,6 +70,14 @@ public interface BinaryWriter
     }
 }
 
+public sealed BinaryStreamWriter : BinaryWriter
+{
+    constructor(Stream stream)
+    {
+        theStream := stream
+    }
+}
+
 // --- TextWriter ---
 
 public interface TextWriter

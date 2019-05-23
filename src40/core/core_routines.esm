@@ -4545,7 +4545,113 @@ procedure __long."readInvertedTo$system@LongNumber$@system@ref#1&system@LongNumb
 
 end
 
+procedure __tape."run$system@io@BinaryReader[2]"
 
+    open     47h
+    reserve  44h
+    pushn    0
+    aloadfi  -73  
+    acopyf   -2
+    bcopya   
+    dcopy    8000FFh
+    nsave    
+    savefi   -68 0
+    savefi   -69 0
+
+    pushn    0h
+    aloadfi  -73
+    pusha    
+    acopyf   -68
+    asavesi  1
+
+    aloadsi  0
+    copym    message : "read<'$auto'system@ref#1&system@IntNumber>[1]"
+    xindexrm system'io'BinaryReader message : "read<'$auto'system@ref#1&system@IntNumber>[1]"
+    acallvd  
+    Lab00:   nop
+    snop     
+    bcopyf   -68
+    acopyr   const : 0
+    nequal   
+    elsen    Lab01 0h
+    pushn    0h
+    aloadfi  -73
+    pusha    
+    acopyf   -69
+    asavesi  1
+    aloadsi  0
+    copym    message : "read<'$auto'system@ref#1&system@IntNumber>[1]"
+    xindexrm system'io'BinaryReader message : "read<'$auto'system@ref#1&system@IntNumber>[1]"
+    acallvd  
+    pushn    0h
+    pushn    0h
+    aloadfi  -73
+    pusha    
+    acopyf   -4
+    asavesi  1
+    acopyf   -69
+    asavesi  2
+    aloadsi  0
+    copym    message : "read<'$auto'system@Array#1&system@ByteNumber,'$auto'system@ref#1&system@IntNumber>[2]"
+    xindexrm system'io'BinaryReader message : "read<'$auto'system@Array#1&system@ByteNumber,'$auto'system@ref#1&system@IntNumber>[2]"
+    acallvd  
+    bcopyf   -68
+    acopyr   const : 1
+    nequal   
+    ifn      Lab02 0h
+    acopyf   -4
+    pusha    
+    callextr extern : LoadMessage
+    scopyf   1
+    jump     Lab03
+    Lab02:   nop
+    bcopyf   -68
+    acopyr   const : 0
+    nequal   
+    ifn      Lab04 0h
+    pushn    0h
+    pushn    0h
+    pushn    0h
+    pushr    const : system'text'UTF8Encoding
+    acopyr   const : 0
+    asavesi  1
+    acopyf   -69
+    asavesi  2
+    acopyf   -4
+    asavesi  3
+    aloadsi  0
+    copym    message : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[3]"
+    validate 
+    xcallrm  system'text'UTF8Encoding message : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[3]"
+    pusha 
+    jump     Lab05
+    Lab04:   nop
+    acopyf   -4
+    pusha    
+    acopyf   -68
+    pushai   0
+    callextr extern : LoadSymbol
+    popi 2
+    pushd 
+    Lab05:   nop
+    Lab03:   nop
+    pushn    0h
+    aloadfi  -73
+    pusha    
+    acopyf   -68
+    asavesi  1
+    aloadsi  0
+    copym    message : "read<'$auto'system@ref#1&system@IntNumber>[1]"
+    xindexrm system'io'BinaryReader message : "read<'$auto'system@ref#1&system@IntNumber>[1]"
+    acallvd  
+    jump     Lab00
+    Lab01:   nop
+    aloadsi  0
+    restore  46h
+    close    
+    quitn    2h
+
+end
 
 // ; win32 constants
 define WM_CREATE            1

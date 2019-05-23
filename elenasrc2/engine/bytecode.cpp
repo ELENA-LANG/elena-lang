@@ -69,12 +69,10 @@ inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
 {
    if (ref != 0) {
       int mask = ref & mskAnyRef;
-
-      return importReference(sour, ref & ~mskAnyRef, dest) | mask;
-
-      //ident_t referenceName = sour->resolveReference(ref & ~mskAnyRef);
-
-      //return dest->mapReference(referenceName) | mask;
+      if (mask == mskInt32Ref) {
+         return importConstant(sour, ref & ~mskAnyRef, dest) | mask;
+      }
+      else return importReference(sour, ref & ~mskAnyRef, dest) | mask;
    }
    else return 0;
 }

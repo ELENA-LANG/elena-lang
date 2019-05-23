@@ -899,6 +899,13 @@ inline bool isPrimitiveRef(ref_t reference)
    return (int)reference < 0;
 }
 
+inline ref_t importConstant(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   ident_t val = exporter->resolveConstant(exportRef);
+
+   return importer->mapConstant(val);
+}
+
 inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
 {
    if (isPrimitiveRef(exportRef)) {
