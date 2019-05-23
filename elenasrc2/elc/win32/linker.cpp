@@ -54,7 +54,7 @@ inline int getSize(Section* section)
 
 ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
 {
-   int base = ((ImageBaseMap*)map)->base + key & ~mskAnyRef;
+   int base = ((ImageBaseMap*)map)->base + (key & ~mskAnyRef);
 
    switch(key & mskImageMask) {
       case mskCodeRef:

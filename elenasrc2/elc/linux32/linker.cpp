@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Linux32
-//                                              (C)2015-2018, by Alexei Rakov
+//                                              (C)2015-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -67,8 +67,14 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
 
          return ((ImageBaseMap*)map)->import + address + disp;
       }
-      case mskDebugRef:
-         return ((ImageBaseMap*)map)->debug + base + disp;
+      case mskMetaRef:
+         // HOTFIX : mskDebugRef is used for the message table reference
+         switch (key) {
+            case mskMessageTableRef:
+               return ((ImageBaseMap*)map)->mdata + ((ImageBaseMap*)map)->base;
+            default:
+               return ((ImageBaseMap*)map)->debug + base + disp;
+         }         
       default:
          return disp;
    }

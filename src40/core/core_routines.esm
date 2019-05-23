@@ -4606,7 +4606,7 @@ procedure __tape."run$system@io@BinaryReader[2]"
     jump     Lab03
     Lab02:   nop
     bcopyf   -68
-    acopyr   const : 0
+    acopyr   const : 2
     nequal   
     ifn      Lab04 0h
     pushn    0h
