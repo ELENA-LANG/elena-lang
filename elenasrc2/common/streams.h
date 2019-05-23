@@ -102,13 +102,13 @@ public:
       return value;
    }
 
-   unsigned int getDWord(int default)
+   unsigned int getDWord(int defValue)
    {
       unsigned int value = 0;
       if (readDWord(value)) {
          return value;
       }
-      else return default;
+      else return defValue;
    }
 
    unsigned char getByte()
@@ -577,7 +577,7 @@ public:
       }
       if (length > 0) {
          size_t eol = StrHelper::findChar(_text + _offset, '\n', length);
-         if (eol == NOTFOUND_POS) {            
+         if (eol == NOTFOUND_POS) {
             if (_length - _offset > length) {
                // if we are not lucky - try to find a whitespace
                eol = _offset + length - 2;
@@ -586,7 +586,7 @@ public:
                   eol--;
 
                length = eol - _offset + 1;
-            }            
+            }
          }
          else length = eol + 1;
 

@@ -74,9 +74,6 @@ _ELC_::Project :: Project()
 
    _tabSize = 4;
    _encoding = _ELENA_::feUTF8;
-
-   // !! temporally
-   _settings.add(_ELENA_::opDebugSubjectInfo, -1);
 }
 
 void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t s)
@@ -93,9 +90,26 @@ void _ELC_::Project :: raiseError(_ELENA_::ident_t msg, _ELENA_::ident_t value)
    throw _ELENA_::_Exception();
 }
 
+void _ELC_::Project :: raiseError(_ELENA_::ident_t msg)
+{
+   print(msg.c_str());
+
+   throw _ELENA_::_Exception();
+}
+
 void _ELC_::Project :: printInfo(const char* msg, _ELENA_::ident_t s)
 {
    print(msg, s.c_str());
+}
+
+void _ELC_::Project :: printInfo(const char* msg, _ELENA_::ReferenceInfo referenceInfo)
+{
+   if (referenceInfo.isRelative()) {
+      _ELENA_::IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);
+
+      printInfo(msg, fullName.c_str());
+   }
+   else printInfo(msg, referenceInfo.referenceName);
 }
 
 void _ELC_::Project :: raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _ELENA_::ident_t identifier)
@@ -106,16 +120,22 @@ void _ELC_::Project :: raiseErrorIf(bool throwExecption, _ELENA_::ident_t msg, _
       throw _ELENA_::_Exception();
 }
 
-void _ELC_::Project :: raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t s)
+void _ELC_::Project :: raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t s)
 {
+   if (!_ELENA_::test(_warningMasks, level))
+      return;
+
    if (!indicateWarning())
       return;
 
    print(msg.c_str(), path.c_str(), row, column, s.c_str());
 }
 
-void _ELC_::Project :: raiseWarning(_ELENA_::ident_t msg, _ELENA_::ident_t path)
+void _ELC_::Project :: raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path)
 {
+   if (!_ELENA_::test(_warningMasks, level))
+      return;
+
    if (!indicateWarning())
       return;
 
@@ -218,7 +238,7 @@ int main(int argc, char* argv[])
       _ELENA_::CompilerLogic elenaLogic;
       _ELENA_::Compiler compiler(&elenaLogic);
       _ELENA_::Parser parser(&syntaxFile);
-      setCompilerOptions(project, compiler);
+      project.setCompilerOptions(compiler);
 
       result = project.compileSources(compiler, parser);
 
@@ -235,7 +255,7 @@ int main(int argc, char* argv[])
 
          _ELENA_::I386Linker32 linker;
          ImageHelper helper;
-         _ELENA_::ExecutableImage image(&project, project.createJITCompiler(), helper);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
          linker.run(project, image/*, -1*/);
 
          print(ELC_SUCCESSFUL_LINKING);
@@ -279,7 +299,7 @@ int main(int argc, char* argv[])
    }
    catch(_ELENA_::JITUnresolvedException& ex)
    {
-      project.printInfo(errUnresovableLink, ex.reference);
+      project.printInfo(errUnresovableLink, ex.referenceInfo);
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;
 
@@ -287,7 +307,7 @@ int main(int argc, char* argv[])
    }
    catch(_ELENA_::JITConstantExpectedException& ex)
    {
-      project.printInfo(errConstantExpectedLink, ex.reference);
+      project.printInfo(errConstantExpectedLink, ex.referenceInfo);
       print(ELC_UNSUCCESSFUL);
       exitCode = -2;
 

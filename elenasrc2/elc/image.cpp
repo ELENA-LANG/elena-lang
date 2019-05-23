@@ -120,7 +120,7 @@ SectionInfo ExecutableImage::getSectionInfo(ReferenceInfo referenceInfo, size_t 
             throw JITUnresolvedException(referenceInfo);
       }
       else sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
-   }   
+   }
 
    if (sectionInfo.section == NULL && !silentMode) {
       throw JITUnresolvedException(referenceInfo);
@@ -355,28 +355,30 @@ void ExecutableImage::_Helper :: createTape(_Memory& tape, Project* project, boo
    MemoryWriter data(&tape);
 
    // write tape
-   
+
    // USE_VM_MESSAGE_ID path, package
    writeTapeRecord(data, USE_VM_MESSAGE_ID, project->StrSetting(opNamespace), project->StrSetting(opOutputPath));
-   
+
    // LOAD_VM_MESSAGE_ID name
    writeTapeRecord(data, LOAD_VM_MESSAGE_ID, project->StrSetting(opTemplate));
-   
+
    // { MAP_VM_MESSAGE_ID fwrd, ref }*
    ForwardIterator it = project->getForwardIt();
    while (!it.Eof()) {
-      writeTapeRecord(data, MAP_VM_MESSAGE_ID, it.key(), *it);
-   
+      ident_t fwd = *it;
+
+      writeTapeRecord(data, MAP_VM_MESSAGE_ID, it.key(), fwd);
+
       it++;
    }
-   
+
    if (withNewConsole) {
       writeTapeRecord(data, OPEN_VM_CONSOLE);
    }
-   
+
    // START_VM_MESSAGE_ID debugMode ??
    writeTapeRecord(data, START_VM_MESSAGE_ID);
-   
+
    // CALL_TAPE_MESSAGE_ID 'program
    writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, PROGRAM_ENTRY, true);
 
@@ -390,7 +392,7 @@ void ExecutableImage::_Helper :: createTape(_Memory& tape, Project* project, boo
 //{
 ////   _project = project;
 ////
-////   
+////
 ////   MemoryWriter   code(&_text);
 ////
 ////   // setup debugger hook record

@@ -85,9 +85,9 @@ public:
    }
 };
 
-//// --- section friend functions ---
-//Section* _readSection(StreamReader* reader);
-//
+// --- section friend functions ---
+Section* _readSection(StreamReader* reader);
+
 //void _readToMap(StreamReader* reader, SectionMap* map, pos_t counter, ref_t& key, Section* section);
 
 } // _ELENA_

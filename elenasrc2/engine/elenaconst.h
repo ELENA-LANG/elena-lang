@@ -239,7 +239,7 @@ namespace _ELENA_
       // masks
       mtPlatformMask     = 0x000FF,
       mtWin32            = 0x00001,
-//      mtLinux32          = 0x00002,
+      mtLinux32          = 0x00002,
 //      mtWin64            = 0x00081,
 
       mtTargetMask       = 0x00F00,
@@ -262,7 +262,7 @@ namespace _ELENA_
       ptWin32ConsoleX    = 0x10001,
 //      ptWin32GUIX        = 0x11001,
 //      ptVMWin32GUI       = 0x01101,
-//      ptLinux32Console   = 0x00002,
+      ptLinux32Console   = 0x00002,
    };
 
 ////  // --- ELENA Debug Mode ---
@@ -358,7 +358,7 @@ namespace _ELENA_
 
   // --- ELENA core module names ---
    constexpr auto CORE_ALIAS           = "core";          // Core functionality
-  
+
   // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE     = "#dispatch";
    constexpr auto NEWOBJECT_MESSAGE    = "#new";
@@ -469,7 +469,7 @@ namespace _ELENA_
 
 //   #define STANDARD_MODULE_LEN      6
    #define INTERNAL_MASK_LEN        12
-   #define COREAPI_MASK_LEN         5 
+   #define COREAPI_MASK_LEN         5
 
    #define CORE_MODULE              "coreapi"
    #define STANDARD_MODULE          "system"                         // the standard module name
@@ -516,7 +516,7 @@ namespace _ELENA_
 
    constexpr auto PROGRAM_ENTRY           = "$program";                     // the program entry
    constexpr auto SYSTEM_ENTRY            = "$system_entry";                // the system entry
-   
+
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)
    {

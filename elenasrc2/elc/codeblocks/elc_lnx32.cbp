@@ -91,6 +91,7 @@
 		<Unit filename="../bcwriter.h" />
 		<Unit filename="../compiler.cpp" />
 		<Unit filename="../compiler.h" />
+		<Unit filename="../compilerscope.cpp" />
 		<Unit filename="../derivation.cpp" />
 		<Unit filename="../derivation.h" />
 		<Unit filename="../elc.h" />

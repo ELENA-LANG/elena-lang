@@ -115,7 +115,7 @@ constexpr auto RULES_FILE           = "rules.dat";
 //#define ELC_WIN32VMGUI              "STA Win32 VM GUI"
 #define ELC_WIN32GUI                "STA Win32 GUI"
 //#define ELC_WIN32GUIX               "MTA Win32 GUI"
-//#define ELC_LINUX32CONSOLE          "STA Linux i386 Console"
+#define ELC_LINUX32CONSOLE          "STA Linux i386 Console"
 #define ELC_LIBRARY                 "library"
 #define ELC_UNKNOWN                 "unknown"
 
