@@ -182,6 +182,20 @@ EXTERN_DLL_EXPORT void* LoadSymbol(void* systemEnv, void* referenceName)
    return _Instance->loadSymbol((const char*)referenceName);
 }
 
+EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName, index, length);
+
+      return LoadSymbol(systemEnv, (void*)str.c_str());
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadSymbol(systemEnv, (void*)str.str());
+   }
+}
+
 // --- dllmain ---
 
 extern "C"

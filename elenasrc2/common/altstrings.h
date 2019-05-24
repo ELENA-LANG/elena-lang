@@ -705,6 +705,14 @@ public:
    {
       assignOrCopy(value, _string, _size);
    }
+   DynamicString(const T* value, size_t index, size_t length)
+   {
+      _size = 0;
+      _string = NULL;
+
+      copy(value + index, length);
+   }
+
 
    ~DynamicString() { if (_size > 0) freestr(_string); }
 };

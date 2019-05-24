@@ -160,6 +160,12 @@ public class MemoryStream : Stream
         thePosition := 0
     }
     
+    constructor(MemoryBuffer buffer)
+    {
+        theBuffer := buffer;
+        thePosition := 0
+    }
+    
 //    stacksafe constructor new int:anIndex int:aLength bytearray:anArray
 //        <= new;
 //    [

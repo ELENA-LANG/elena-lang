@@ -231,8 +231,14 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 
          return compileRMessageArg(token, binary);
       }
-      else if (token.terminal.state == dfaInteger) {
-         return binary->mapConstant(token.value) | mskInt32Ref;
+      else if (token.terminal.state == dfaInteger || token.terminal.state == dfaHexInteger) {
+         int n = 0;
+         token.getInteger(n, constants);
+
+         String<char, 16> tmp;
+         tmp.appendHex(n);
+
+         return binary->mapConstant(tmp.c_str()) | mskInt32Ref;
       }
       else return binary->mapReference(token.value) | mskConstantRef;
    }
@@ -569,6 +575,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             compileRRCommand(opcode, token, writer, binary);
             break;
          case bcSaveFI:
+         case bcAddFI:
             compileNNCommand(opcode, token, writer);
             break;
          case bcXIndexRM:

@@ -6,6 +6,8 @@ In development:
                 * Stand alone executable: Script engine #64
                   
               xdev
+                 * opzimiation extension operation with a byte array parameter
+                 * optimize i += 1
                  * optimize assign inp_op direct_call embeddable
                  * optimize direct_call direct_call embeddable
                  * optimize pi sample
