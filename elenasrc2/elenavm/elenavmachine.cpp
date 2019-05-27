@@ -182,6 +182,7 @@ Instance :: Instance(ELENAVMMachine* machine)
    _compiler = NULL;
    _messageTable = nullptr;
    _messageBodyTable = nullptr;
+   _mattributeTable = nullptr;
 
    _initialized = false;
    _debugMode = false;
@@ -195,13 +196,16 @@ Instance :: Instance(ELENAVMMachine* machine)
 
    // create message table module
    _ConvertedMTSize = 0;
+   _ConvertedMATSize = 0;
    LoadResult result = lrSuccessful;
-   _Module* messages = _loader.createModule(MESSAGE_TABLE_MODULE, result);
+   _Module* messages = _loader.createModule(META_MODULE, result);
    if (result == lrSuccessful) {
-      _messageTable = messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false);
-      _messageBodyTable = messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false);
+      _messageTable = messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(META_MODULE)) | mskRDataRef, false);
+      _messageBodyTable = messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(META_MODULE)) | mskRDataRef, false);
+      _mattributeTable = messages->mapSection(messages->mapReference(MATTRIBUTE_TABLE + getlength(META_MODULE)) | mskRDataRef, false);
 
       clearMessageTable();
+      clearMetaAttributeTable();
    }
    else throw EAbortException();
 }
@@ -480,6 +484,7 @@ void Instance :: addForward(ident_t line)
 void Instance :: onNewCode(SystemEnv* env)
 {
    resolveMessageTable();
+   resolveMetaAttributeTable();
 
    env->Table->gc_rootcount = (_linker->getStaticCount() << 2);
 }
@@ -532,6 +537,11 @@ void Instance :: clearMessageTable()
    _messageBodyTable->writeBytes(0, 0, 4); // write dummy place holder
 }
 
+void Instance :: clearMetaAttributeTable()
+{
+   _mattributeTable->trim(0);
+}
+
 void Instance :: resolveMessageTable()
 {
    while (_messageTable->Length() > _ConvertedMTSize) {
@@ -541,6 +551,18 @@ void Instance :: resolveMessageTable()
       _ConvertedMTSize = _messageTable->Length();
 
       _linker->resolve(MESSAGE_TABLE, mskMessageTableRef, true);
+   }
+}
+
+void Instance :: resolveMetaAttributeTable()
+{
+   while (_mattributeTable->Length() > _ConvertedMATSize) {
+      // !! HOTFIX : the message section should be overwritten
+      getMetaAttributeSection()->trim(0);
+
+      _ConvertedMATSize = _mattributeTable->Length();
+
+      _linker->resolve(MATTRIBUTE_TABLE, mskMetaAttributes, true);
    }
 }
 

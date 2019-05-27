@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Win32 / Win64 (limited)
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -27,13 +27,13 @@
 #define IMAGE_BASE         0x00400000
 
 #define TEXT_SECTION       ".text"
-#define RDATA_SECTION      ".rdata"
+#define ADATA_SECTION      ".adata"
 #define MDATA_SECTION      ".mdata"
+#define RDATA_SECTION      ".rdata"
 #define DATA_SECTION       ".data"
 #define BSS_SECTION        ".bss"
 #define IMPORT_SECTION     ".import"
 #define TLS_SECTION        ".tls"
-#define DEBUG_SECTION      ".debug"
 
 #ifndef IMAGE_SIZEOF_NT_OPTIONAL_HEADER
 #define IMAGE_SIZEOF_NT_OPTIONAL_HEADER 224
@@ -84,12 +84,11 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
          }
       }
       case mskMetaRef:
-         // HOTFIX : mskDebugRef is used for the message table reference
          switch (key) {
             case mskMessageTableRef:
                return ((ImageBaseMap*)map)->mdata + ((ImageBaseMap*)map)->base;
-            default:
-               return ((ImageBaseMap*)map)->debug + base + disp;
+            case mskMetaAttributes:
+               return ((ImageBaseMap*)map)->adata + ((ImageBaseMap*)map)->base;
          }         
       default:
          return disp;
@@ -113,9 +112,10 @@ void Linker :: mapImage(ImageInfo& info)
    int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
 
    info.map.code = 0x1000;               // code section should always be first
-   info.map.rdata = align(info.map.code + getSize(info.image->getTextSection()), alignment);
-   info.map.mdata = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
-   info.map.bss = align(info.map.mdata + getSize(info.image->getMDataSection()), alignment);
+   info.map.adata = align(info.map.code + getSize(info.image->getTextSection()), alignment);
+   info.map.mdata = align(info.map.adata + getSize(info.image->getADataSection()), alignment);
+   info.map.rdata = align(info.map.mdata + getSize(info.image->getMDataSection()), alignment);
+   info.map.bss = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
    info.map.stat = align(info.map.bss + getSize(info.image->getBSSSection()), alignment);
    info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
    info.map.import = align(info.map.tls + getSize(info.image->getTLSSection()), alignment);
@@ -173,8 +173,8 @@ void Linker :: createImportTable(ImageInfo& info)
    ImportTable::Iterator dll = info.importTable.start();
    while (!dll.Eof()) {
       tableWriter.writeRef(importRef, lstWriter.Position());              // OriginalFirstThunk
-      tableWriter.writeDWord((pos_t)time(NULL));                            // TimeDateStamp
-      tableWriter.writeDWord((pos_t)-1);                                         // ForwarderChain
+      tableWriter.writeDWord((pos_t)time(NULL));                          // TimeDateStamp
+      tableWriter.writeDWord((pos_t)-1);                                  // ForwarderChain
       tableWriter.writeRef(importRef, import->Length());                  // Name
 
       const char* dllName = dll.key();
@@ -265,6 +265,7 @@ void Linker :: fixImage(ImageInfo& info)
 {
    Section* text = info.image->getTextSection();
    Section* rdata = info.image->getRDataSection();
+   Section* adata = info.image->getADataSection();
    Section* mdata = info.image->getMDataSection();
    Section* bss = info.image->getBSSSection();
    Section* stat = info.image->getStatSection();
@@ -279,6 +280,9 @@ void Linker :: fixImage(ImageInfo& info)
 
   // fix up mdata section
    mdata->fixupReferences(&info.map, reallocate);
+
+   // fix up mdata section
+   adata->fixupReferences(&info.map, reallocate);
 
   // fix up bss section
    bss->fixupReferences(&info.map, reallocate);
@@ -307,10 +311,13 @@ int Linker :: countSections(Image* image)
    if (getSize(image->getTextSection()))
       count++;
 
-   if (getSize(image->getRDataSection()))
+   if (getSize(image->getADataSection()))
       count++;
 
    if (getSize(image->getMDataSection()))
+      count++;
+
+   if (getSize(image->getRDataSection()))
       count++;
 
    if (getSize(image->getBSSSection()))
@@ -323,9 +330,6 @@ int Linker :: countSections(Image* image)
       count++;
 
    if (getSize(image->getImportSection()))
-      count++;
-
-   if (getSize(image->getDebugSection()))
       count++;
 
    return count;
@@ -565,11 +569,11 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    writeSectionHeader(file, TEXT_SECTION, info.image->getTextSection(), tblOffset, alignment, sectionAlignment,
       info.map.code, IMAGE_SCN_CNT_CODE | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ);
 
-   // rdata section header
-   int rdataSize = getSize(info.image->getRDataSection());
-   if (rdataSize > 0) {
-      writeSectionHeader(file, RDATA_SECTION, info.image->getRDataSection(), tblOffset, alignment, sectionAlignment,
-         info.map.rdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
+   // adata section header
+   int adataSize = getSize(info.image->getADataSection());
+   if (adataSize > 0) {
+      writeSectionHeader(file, MDATA_SECTION, info.image->getADataSection(), tblOffset, alignment, sectionAlignment,
+         info.map.mdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
    }
 
    // mdata section header
@@ -577,6 +581,13 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    if (mdataSize > 0) {
       writeSectionHeader(file, MDATA_SECTION, info.image->getMDataSection(), tblOffset, alignment, sectionAlignment,
          info.map.mdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
+   }
+
+   // rdata section header
+   int rdataSize = getSize(info.image->getRDataSection());
+   if (rdataSize > 0) {
+      writeSectionHeader(file, RDATA_SECTION, info.image->getRDataSection(), tblOffset, alignment, sectionAlignment,
+         info.map.rdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
    }
 
    // bss section header
@@ -604,25 +615,22 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    writeSectionHeader(file, IMPORT_SECTION, info.image->getImportSection(), tblOffset, alignment, /*sectionAlignment*/1,
       info.map.import, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE);
 
-   // debug section header 
-   int debugSize = getSize(info.image->getDebugSection());
-   if (debugSize > 0) {
-      writeSectionHeader(file, DEBUG_SECTION, info.image->getDebugSection(), tblOffset, alignment, sectionAlignment,
-         info.map.debug, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
-   }
-
    file->align(alignment);
 
    // text section
    writeSection(file, info.image->getTextSection(), alignment);
 
-   // rdata section
-   if (rdataSize > 0)
-      writeSection(file, info.image->getRDataSection(), alignment);
+   // mdata section
+   if (adataSize > 0)
+      writeSection(file, info.image->getADataSection(), alignment);
 
    // mdata section
    if (mdataSize > 0)
       writeSection(file, info.image->getMDataSection(), alignment);
+
+   // rdata section
+   if (rdataSize > 0)
+      writeSection(file, info.image->getRDataSection(), alignment);
 
    // tls section
    if (tlsSize > 0)
@@ -630,11 +638,6 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
 
    // import section
    writeSection(file, info.image->getImportSection(), alignment);
-
-   // debug section
-   if (debugSize > 0) {
-      writeSection(file, info.image->getDebugSection(), alignment);
-   }
 }
 
 bool Linker :: createExecutable(ImageInfo& info, path_t exePath, ref_t tls_directory)

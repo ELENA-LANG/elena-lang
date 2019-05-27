@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x0010;
+constexpr auto ELENAVM_REVISION = 0x0011;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2019 by Alex Rakov";
@@ -185,7 +185,9 @@ protected:
 
    _Memory*       _messageTable;
    _Memory*       _messageBodyTable;
+   _Memory*       _mattributeTable;
    size_t         _ConvertedMTSize; // used to trace the message table change
+   size_t         _ConvertedMATSize; // used to trace the meta attribute table change
 
    IdentifierString _literalClass;
    IdentifierString _wideLiteralClass;
@@ -207,6 +209,7 @@ protected:
    IdentifierString _status;
 
    void clearMessageTable();
+   void clearMetaAttributeTable();
 
    virtual ident_t resolveForward(ident_t forward);
 
@@ -222,6 +225,7 @@ protected:
    virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
 
    virtual _Memory* getMessageSection() = 0;
+   virtual _Memory* getMetaAttributeSection() = 0;
 
    bool initLoader(InstanceConfig& config);
 
@@ -238,6 +242,7 @@ protected:
    void translate(MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator);
    void configurate(SystemEnv* env, void* sehTable, MemoryReader& reader, int terminator);
    void resolveMessageTable();
+   void resolveMetaAttributeTable();
 
    void onNewCode(SystemEnv* env);
 

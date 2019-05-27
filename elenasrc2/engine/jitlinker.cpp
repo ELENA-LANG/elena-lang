@@ -986,6 +986,23 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
    return NULL; // !! should be resolved only once
 }
 
+void* JITLinker :: resolveMetaAttributeTable(ReferenceInfo referenceInfo, int mask)
+{
+   _Memory* asection = _loader->getTargetSection(mask);
+
+   // get target image & resolve virtual address
+   MemoryWriter writer(asection);
+
+   SectionInfo bodyInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
+
+   // load table into target image
+   MemoryReader reader(bodyInfo.section);
+   writer.writeDWord(bodyInfo.section->Length()); // section size
+   writer.read(&reader, bodyInfo.section->Length());
+
+   return NULL; // !! should be resolved only once
+}
+
 ref_t JITLinker :: parseMessage(ident_t reference, bool actionOnlyMode)
 {
    SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
@@ -1312,6 +1329,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //            break;
          case mskMessageTableRef:
             vaddress = resolveMessageTable(referenceInfo, mskMessageTableRef);
+            break;
+         case mskMetaAttributes:
+            vaddress = resolveMetaAttributeTable(referenceInfo, mskMessageTableRef);
             break;
          case mskEntryRef:
             vaddress = resolveEntry(resolve(referenceInfo, mskSymbolRef, silentMode));

@@ -21,10 +21,11 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
    _project = project;
    _objectHeaderSize = compiler->getObjectHeaderSize();
 
-  // create message module
-   _Module* messages = _project->createModule(MESSAGE_TABLE_MODULE);
-   messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 8); // write dummy place holder
-   messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(MESSAGE_TABLE_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
+  // create a special module containing message and meta attribute data
+   _Module* messages = _project->createModule(META_MODULE);
+   messages->mapSection(messages->mapReference(MATTRIBUTE_TABLE + getlength(META_MODULE)) | mskRDataRef, false);
+   messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 8); // write dummy place holder
+   messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
 
   // load default forwards
    _literal = project->resolveForward(STR_FORWARD);
@@ -62,6 +63,9 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
   // resolve message & action tables
    linker.resolve(MESSAGE_TABLE, mskMessageTableRef, true);
 
+  // resolve attribute table
+   linker.resolve(MATTRIBUTE_TABLE, mskMetaAttributes, true);
+
    helper.afterLoad(*this);
 }
 
@@ -94,6 +98,8 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
          switch (mask) {
             case mskMessageTableRef:
                return &_mdata;
+            case mskMetaAttributes:
+               return &_adata;
             default:
                return &_debug;
          }

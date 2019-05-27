@@ -27,6 +27,7 @@ x86Instance :: x86Instance(ELENAVMMachine* machine)
      _codeProcess(0x500000, false, true),
      _dataProcess(0x500000, false, false),
      _messageProcess(0x10000, false, false),
+     _mattributeProcess(0x10000, false, false),
      _bssProcess(0x1000, true, false),
      _statProcess(0x10000, true, false, 0x100)  // !! temporal
 {
@@ -67,6 +68,9 @@ _Memory* x86Instance :: getTargetSection(size_t mask)
          if (mask == mskMessageTableRef) {
             return getMessageSection();
          }
+         else if (mask == mskMetaAttributes) {
+            return getMetaAttributeSection();
+         }
       default:
          return NULL;
    }
@@ -75,6 +79,11 @@ _Memory* x86Instance :: getTargetSection(size_t mask)
 _Memory* x86Instance :: getMessageSection()
 {
    return &_messageProcess;
+}
+
+_Memory* x86Instance :: getMetaAttributeSection()
+{
+   return &_mattributeProcess;
 }
 
 ref_t x86Instance :: resolveExternal(ident_t external)

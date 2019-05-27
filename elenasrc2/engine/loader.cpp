@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image loader class implementations
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -112,6 +112,7 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
 //         case mskStatSymbolRef:
 //            return (void*)_statReferences.get(reference);
          case mskMessageTableRef:
+         case mskMetaAttributes:
             return (void*)INVALID_REF; // !! HOTFIX : should be always resolved
          default:
          {

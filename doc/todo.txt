@@ -3,6 +3,10 @@ In development:
 ------            
 
               ydev
+                * Linux linker : meta + mdata + rdata (meta starts with size field)
+                * get rid of debug section for Linux and Windows
+
+                * Debug info structure redesign #11
                 * Stand alone executable: Script engine #64
                   
               xdev

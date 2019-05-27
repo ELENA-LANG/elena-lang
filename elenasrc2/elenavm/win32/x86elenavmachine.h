@@ -21,7 +21,7 @@ class x86Instance : public Instance
 {
    path_t _rootPath;
 
-   x86Process     _codeProcess, _dataProcess, _bssProcess, _statProcess, _debugProcess, _messageProcess;
+   x86Process     _codeProcess, _dataProcess, _bssProcess, _statProcess, _debugProcess, _messageProcess, _mattributeProcess;
 
    virtual ref_t resolveExternal(ident_t reference);
 
@@ -29,6 +29,7 @@ protected:
    virtual _Memory* getTargetSection(size_t mask);
    virtual _Memory* getTargetDebugSection();
    virtual _Memory* getMessageSection();
+   virtual _Memory* getMetaAttributeSection();
 
    virtual bool restart(SystemEnv* env, void* sehTable, bool debugMode);
 

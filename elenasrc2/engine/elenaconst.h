@@ -169,6 +169,7 @@ namespace _ELENA_
       mskConstArray          = 0x0D000000u,   // constant array
 
       mskDebugRef            = 0x60000000u,
+      mskMetaAttributes      = 0x61000000u,
       mskMessageTableRef     = 0x62000000u,
    };
 
@@ -350,11 +351,11 @@ namespace _ELENA_
    constexpr int WARNING_MASK_3 = 7;
 
    // --- ELENA Module structure constants ---
-   constexpr auto ELENA_SIGNITURE         = "ELENA.18.";      // the stand alone image
-   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.18.";   // the ELENAVM client
+   constexpr auto ELENA_SIGNITURE         = "ELENA.19.";      // the stand alone image
+   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.19.";   // the ELENAVM client
 
-   constexpr auto MODULE_SIGNATURE        = "ELENA.18.0";     // the module version
-   constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!2";
+   constexpr auto MODULE_SIGNATURE        = "ELENA.19.0";     // the module version
+   constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!3";
 
   // --- ELENA core module names ---
    constexpr auto CORE_ALIAS           = "core";          // Core functionality
@@ -481,9 +482,10 @@ namespace _ELENA_
 
    #define NATIVE_MODULE            "$native"
 
-   #define MESSAGE_TABLE_MODULE     "$messages"
-   #define MESSAGE_TABLE            "$messages'$table"
-   #define MESSAGEBODY_TABLE        "$messages'$body"
+   constexpr auto META_MODULE             = "$meta";
+   constexpr auto MESSAGE_TABLE           = "$meta'$messages";
+   constexpr auto MESSAGEBODY_TABLE       = "$meta'$messagebody";
+   constexpr auto MATTRIBUTE_TABLE        = "$meta'$attributes";
 
   // VM temporal code
    constexpr auto TAPE_SYMBOL             = "$tape";

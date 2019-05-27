@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class declaration
 //		Supported platforms: Linux32
-//                                              (C)2015-2018, by Alexei Rakov
+//                                              (C)2015-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef linkerH
@@ -20,14 +20,14 @@ namespace _ELENA_
 struct ImageBaseMap
 {
    int base;
-   int code, rdata, mdata, bss, stat, /*tls,*/ debug, import;
+   int code, rdata, mdata, adata, bss, stat, /*tls,*/ import;
 
    RelocationFixMap importMapping;
 
    ImageBaseMap()
       : importMapping((size_t)-1)
    {
-      base = code = rdata = mdata = bss = stat /*= tls*/ = debug = import = 0;
+      base = code = rdata = mdata = adata = bss = stat /*= tls*/ = import = 0;
    }
 };
 
@@ -51,7 +51,7 @@ class Linker32
       ImageBaseMap map;
 
       // Linker target image properties
-      int  headerSize, textSize, rdataSize, importSize, bssSize, debugSize;
+      int  headerSize, textSize, rdataSize, importSize, bssSize;
       int  ph_length;      // number of entries in the program header table
       int  interpreter, dynamic, entryPoint;
 
@@ -62,7 +62,7 @@ class Linker32
          this->image = image;
          this->entryPoint = this->interpreter = this->dynamic = 0;
          this->ph_length = 0;
-         this->headerSize = this->textSize = this->rdataSize = this->importSize = this->bssSize = this->debugSize = 0;
+         this->headerSize = this->textSize = this->rdataSize = this->importSize = this->bssSize = 0;
          this->withDebugInfo = project->BoolSetting(opDebugMode)/*false*/;
       }
    };
