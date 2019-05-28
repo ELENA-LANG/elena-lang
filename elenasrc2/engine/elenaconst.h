@@ -355,7 +355,7 @@ namespace _ELENA_
    constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.19.";   // the ELENAVM client
 
    constexpr auto MODULE_SIGNATURE        = "ELENA.19.0";     // the module version
-   constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!3";
+   constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!03";
 
   // --- ELENA core module names ---
    constexpr auto CORE_ALIAS           = "core";          // Core functionality

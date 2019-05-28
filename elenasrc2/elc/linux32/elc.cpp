@@ -28,20 +28,20 @@ class ImageHelper : public _ELENA_::ExecutableImage::_Helper
 
    virtual void afterLoad(_ELENA_::ExecutableImage& image)
    {
-      _ELENA_::Project* project = image.getProject();
-
-      _ELENA_::Section* debug = image.getDebugSection();
+//      _ELENA_::Project* project = image.getProject();
+//
+//      _ELENA_::Section* debug = image.getDebugSection();
 
       // fix up debug section if required
-      if (debug->Length() > 8) {
-         debug->writeDWord(0, debug->Length());
-         debug->addReference(image.getDebugEntryPoint(), 4);
+//      if (debug->Length() > 8) {
+//         debug->writeDWord(0, debug->Length());
+//         debug->addReference(image.getDebugEntryPoint(), 4);
 
-         // HOTFIX : should be removed (see DebugController)
-         _ELENA_::MemoryWriter debugWriter(debug);
-         debugWriter.writeDWord(0);
-      }
-      else debug->clear();
+//         // HOTFIX : should be removed (see DebugController)
+//         _ELENA_::MemoryWriter debugWriter(debug);
+//         debugWriter.writeDWord(0);
+//      }
+//      else debug->clear();
    }
 
 public:

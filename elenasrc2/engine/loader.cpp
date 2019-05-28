@@ -176,7 +176,4 @@ Image :: Image(bool standAlone)
    writer.write(number, strlen(number));               
                                                   
    writer.align(4, 0);
-
-   // write debug length and entry point placeholders
-   _debug.writeBytes(0, 0, 8);
 }

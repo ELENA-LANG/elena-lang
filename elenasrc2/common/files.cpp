@@ -658,6 +658,8 @@ void FileWriter :: align(int alignment)
    writeBytes('\0', len);
 }
 
+
+
 bool TextFileWriter :: write(const wide_c* s, pos_t length)
 {
    return _file.writeLiteral(s, length);

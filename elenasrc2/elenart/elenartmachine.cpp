@@ -86,10 +86,43 @@ bool ELENARTMachine :: ImageSection :: read(pos_t position, void* s, pos_t lengt
    else return false;
 }
 
-ELENARTMachine :: ELENARTMachine(path_t rootPath)
-   : _rootPath(rootPath), _verbs(0)
+ELENARTMachine :: ELENARTMachine(path_t rootPath, path_t execFileName)
+   : _rootPath(rootPath)
 {
-//   ByteCodeCompiler::loadVerbs(_verbs);
+   _messageSection = nullptr;
+
+   _debugFilePath.copy(execFileName);
+   _debugFilePath.changeExtension("dn");
+}
+
+bool ELENARTMachine :: loadDebugSection()
+{
+   if (_debugFilePath.isEmpty())
+      return false;
+
+   FileReader reader(_debugFilePath.c_str(), feRaw, false);
+   if (!reader.isOpened()) {
+      // clear the path to indicate an absence of debug data
+      _debugFilePath.clear();
+
+      return false;
+   }
+   else {
+      char header[5];
+      reader.read(header, 5);
+      if (!ident_t(DEBUG_MODULE_SIGNATURE).compare(header, 0, 5)) {
+         // clear the path to indicate invalid debug data
+         _debugFilePath.clear();
+
+         return false;
+      }
+      
+      size_t len = reader.getDWord();
+      MemoryWriter writer(&_debugSection);
+      writer.read(&reader, len);
+
+      return len != 0;
+   }
 }
 
 bool ELENARTMachine :: loadConfig(path_t configFile)
@@ -113,12 +146,9 @@ bool ELENARTMachine :: loadConfig(path_t configFile)
 
 void ELENARTMachine :: init(void* messageTable, path_t configPath)
 {
-   IdentifierString package;
-
    _messageSection = messageTable;
 
    loadConfig(configPath);
-   _loader.setNamespace(package);
 }
 
 int ELENARTMachine :: readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
@@ -133,12 +163,20 @@ int ELENARTMachine :: readCallStack(size_t framePosition, size_t currentAddress,
 
 int ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
 {
-   //RTManager manager;
-   //MemoryReader reader(&_debugSection, _debugOffset);
+   // lazy load of debug data
+   if (_debugSection.Length() == 0 && !loadDebugSection())
+      return 0;
 
-   //return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
+   RTManager manager;
+   MemoryReader reader(&_debugSection);
 
-   return 0;
+   // skip a debugger entry pointer
+   reader.getDWord();               
+
+   // set the root namespace
+   _loader.setNamespace(reader.getLiteral(DEFAULT_STR));
+
+   return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
 
 int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t length)

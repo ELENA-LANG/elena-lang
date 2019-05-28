@@ -88,15 +88,16 @@ EXTERN_DLL_EXPORT void StopThread(int exitCode)
    _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);
 }
 
-// !!
-
-void loadDLLPath(HMODULE hModule, Path& rootPath)
+void loadModulePath(HMODULE hModule, Path& rootPath, bool includeName)
 {
    TCHAR path[MAX_PATH + 1];
 
    ::GetModuleFileName(hModule, path, MAX_PATH);
 
-   rootPath.copySubPath(path);
+   if (includeName) {
+      rootPath.copy(path);
+   }
+   else rootPath.copySubPath(path);
    rootPath.lower();
 }
 
@@ -104,10 +105,15 @@ void loadDLLPath(HMODULE hModule, Path& rootPath)
 
 void init(HMODULE hModule)
 {
+   // get DLL path
    Path rootPath;
-   loadDLLPath(hModule, rootPath);
+   loadModulePath(hModule, rootPath, false);
 
-   _Instance = new ELENARTMachine(rootPath.c_str());
+   // get EXE path
+   Path execPath;
+   loadModulePath(0, execPath, true);
+
+   _Instance = new ELENARTMachine(rootPath.c_str(), execPath.c_str());
 
    void* messageSection = NULL;
    ELENARTMachine::ImageSection section;

@@ -689,6 +689,32 @@ bool Linker :: createExecutable(ImageInfo& info, path_t exePath, ref_t tls_direc
    return true;
 }
 
+bool Linker :: createDebugFile(ImageInfo& info, path_t debugFilePath)
+{
+   FileWriter	debugFile(debugFilePath, feRaw, false);
+
+   if (!debugFile.isOpened())
+      return false;
+
+   Section* debugInfo = info.image->getDebugSection();
+
+   // signature
+   debugFile.write(DEBUG_MODULE_SIGNATURE, strlen(DEBUG_MODULE_SIGNATURE));
+
+   // save entry point
+   ref_t imageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
+   ref_t entryPoint = info.map.code + info.map.base + info.image->getDebugEntryPoint();
+
+   debugFile.writeDWord(debugInfo->Length());
+   debugFile.writeDWord(entryPoint);
+
+   // save DebugInfo
+   MemoryReader reader(debugInfo);
+   debugFile.read(&reader, debugInfo->Length());
+
+   return true;
+}
+
 void Linker :: run(Project& project, Image& image, ref_t tls_directory)
 {
    ImageInfo info(&project, &image);
@@ -710,6 +736,21 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
 
    if (!createExecutable(info, path.c_str(), tls_directory))
       project.raiseError(errCannotCreate, project.StrSetting(opTarget));
+
+   if (info.withDebugInfo) {
+      Path debugPath(path);
+      debugPath.changeExtension("dn");
+
+      if (!createDebugFile(info, debugPath.c_str())) {
+         ident_t target = project.StrSetting(opTarget);
+
+         IdentifierString fileNameArg(target);
+         fileNameArg.truncate(target.findLast('.', fileNameArg.Length()));
+         fileNameArg.append(".dn");
+
+         project.raiseError(errCannotCreate, fileNameArg.c_str());
+      }         
+   }
 }
 
 void Linker :: prepareTLS(Image& image, int tls_variable, ref_t& tls_directory)

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine File class declarations.
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef filesH
@@ -364,7 +364,7 @@ class FileName
 public:
    operator const path_c*() const { return path_t(_path); }
 
-   path_t str() { return path_t(_path); }
+   path_t c_str() { return path_t(_path); }
 
    void copyName(path_t path)
    {

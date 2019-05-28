@@ -88,6 +88,7 @@ namespace _ELENA_
       void writeSections(ImageInfo& info, FileWriter* file);
 
       bool createExecutable(ImageInfo& info, path_t exePath, ref_t tls_directory);
+      bool createDebugFile(ImageInfo& image, path_t debugFilePath);
 
    public:
       void prepareTLS(Image& image, int tls_variable, ref_t& tls_directory);

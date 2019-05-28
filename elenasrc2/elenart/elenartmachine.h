@@ -102,12 +102,15 @@ public:
    };
 
 private:
-   Path           _rootPath;
+   Path           _rootPath;   
+   Path           _debugFilePath;
+   MemoryDump     _debugSection;
    void*          _messageSection;
    LibraryManager _loader;
-   MessageMap     _verbs;
 
    bool loadConfig(path_t configPath);
+
+   bool loadDebugSection();
 
 public:
    // frameHeader contains initialized frame fields
@@ -133,7 +136,7 @@ public:
 
    void init(void* messageTable,  path_t configPath);
 
-   ELENARTMachine(path_t rootPath);
+   ELENARTMachine(path_t dllRootPath, path_t execFile);
 
    virtual ~ELENARTMachine()
    {
