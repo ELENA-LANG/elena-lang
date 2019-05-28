@@ -7,6 +7,7 @@ In development:
                 * get rid of debug section for Linux and Windows
 
                 * Debug info structure redesign #11
+                * Debug information in executable #16
                 * Stand alone executable: Script engine #64
                   
               xdev
@@ -57,6 +58,9 @@ In development:
 ------                                                           
 Pipeline:
 ------                                                                                         
+
+              dev - ide
+                 * debugger : display message name
 
               dev - elena 4.0
                  * working on xforms

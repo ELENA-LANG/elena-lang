@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: IDE & IDE Controls
-//                             (C)2005-2017, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2019, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "winide.h"
@@ -1385,7 +1385,7 @@ void IDEWindow :: closeProjectView()
 bool IDEWindow :: compileProject(_ProjectManager* project, int postponedAction)
 {
    _ELENA_::Path path(_model->project.path);
-   path.combine(_model->project.name.str());
+   path.combine(_model->project.name.c_str());
    path.appendExtension(_T("prj"));
 
    _ELENA_::Path appPath(_model->paths.appPath);

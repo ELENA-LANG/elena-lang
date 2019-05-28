@@ -390,40 +390,8 @@ bool DebugController :: start()
    return _debugger.isStarted();
 }
 
-void DebugController :: onInitBreakpoint()
+void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
 {
-   bool starting = _debugInfoSize == 0;
-   if (starting) {
-      DebugReader reader(&_debugger, 0, _debugger.getBaseAddress());
-
-      // define if it is a vm client or stand-alone
-      char signature[0x10];
-      _debugger.findSignature(reader, signature);
-
-      if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) == 0) {
-         reader.seek(_debugger.getBaseAddress());
-
-         _debugger.initDebugInfo(true, reader, _debugInfoPtr);
-      }
-      else if (strncmp(signature, ELENACLIENT_SIGNITURE, strlen(ELENACLIENT_SIGNITURE)) == 0) {
-         reader.seek(_debugger.getBaseAddress());
-
-         if (!_debugger.initDebugInfo(false, reader, _debugInfoPtr)) {
-            // continue debugging
-            _events.setEvent(DEBUG_RESUME);
-            return;
-         }
-      }
-
-      // !! notify if the executable is not supported
-      _debugInfoSize = 4;
-   }
-
-   DebugReader reader(&_debugger, _debugInfoPtr, 0);
-   // the debug section starts with size field
-   reader.setSize(reader.getDWord());
-   reader.seek(_debugInfoSize);
-
    // if there are new records in debug section
    if (!reader.Eof()) {
       loadDebugData(reader, starting);
@@ -432,7 +400,7 @@ void DebugController :: onInitBreakpoint()
 
       _debugInfoSize = reader.Position();
 
-      loadSubjectInfo(reader);
+      //loadSubjectInfo(reader);
 
       // continue debugging
       if (_postponed.stepMode) {
@@ -450,6 +418,51 @@ void DebugController :: onInitBreakpoint()
    }
    // otherwise continue
    else _events.setEvent(DEBUG_RESUME);
+}
+
+void DebugController :: onInitBreakpoint()
+{
+   bool starting = _debugInfoSize == 0;
+   if (starting) {
+      DebugReader reader(&_debugger, 0, _debugger.getBaseAddress());
+
+      // define if it is a vm client or stand-alone
+      char signature[0x10];
+      _debugger.findSignature(reader, signature);
+
+      if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) == 0) {
+         Path debugDataPath(_debuggee);
+         debugDataPath.changeExtension(_T("dn"));
+
+         FileReader reader(debugDataPath.c_str(), feRaw, false);
+         char header[5];
+         reader.read(header, 5);
+         if (ident_t(DEBUG_MODULE_SIGNATURE).compare(header, 0, 5)) {
+            _debugInfoSize = reader.getDWord();
+
+            loadDebugSection(reader, starting);
+         }
+         else _debugInfoSize = 4;
+      }
+      else if (strncmp(signature, ELENACLIENT_SIGNITURE, strlen(ELENACLIENT_SIGNITURE)) == 0) {
+         reader.seek(_debugger.getBaseAddress());
+
+         if (!_debugger.initDebugInfo(false, reader, _debugInfoPtr)) {
+            // continue debugging
+            _events.setEvent(DEBUG_RESUME);
+            return;
+         }
+
+         DebugReader reader(&_debugger, _debugInfoPtr, 0);
+         // the debug section starts with size field
+         reader.setSize(reader.getDWord());
+         reader.seek(_debugInfoSize);
+
+         loadDebugSection(reader, starting);
+      }
+      // !! notify if the executable is not supported
+      else _debugInfoSize = 4;
+   }
 }
 
 inline bool isSymbolReference(ident_t name)
@@ -545,12 +558,12 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
    else return false;
 }
 
-void DebugController :: loadSubjectInfo(StreamReader& addressReader)
-{
-   //_subjects.clear();
-
-   //_subjects.read(&addressReader);
-}
+//void DebugController :: loadSubjectInfo(StreamReader& addressReader)
+//{
+//   //_subjects.clear();
+//
+//   //_subjects.read(&addressReader);
+//}
 
 bool DebugController :: loadTapeDebugInfo(size_t selfPtr)
 {
@@ -1030,13 +1043,13 @@ void DebugController :: parseMessage(IdentifierString& messageValue, ref_t messa
 {
    ref_t sign_ref = getAction(message);
    if (sign_ref != 0) {
-      ident_t subject = retrieveKey(_subjects.start(), sign_ref, DEFAULT_STR);
-      if (emptystr(subject)) {
+   //   ident_t subject = retrieveKey(_subjects.start(), sign_ref, DEFAULT_STR);
+   //   if (emptystr(subject)) {
          messageValue.append("?<");
          messageValue.appendHex(getAction(message));
          messageValue.append('>');
-      }
-      else messageValue.append(subject);
+      //}
+      //else messageValue.append(subject);
    }
    messageValue.append('[');
    messageValue.appendInt(getParamCount(message));

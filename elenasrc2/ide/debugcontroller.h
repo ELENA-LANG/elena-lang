@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugController class and its helpers header
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef debugcontrollerH
@@ -153,8 +153,7 @@ protected:
    ClassInfoMap      _classes;
    SymbolMap         _classNames;
 
-   ReferenceMap      _subjects;
-   MessageMap        _verbs;
+   //ReferenceMap      _subjects;
 
    bool              _started;
    bool              _running;
@@ -177,7 +176,7 @@ protected:
    void* unmapDebugPTR32(pos_t position);
 
    bool loadSymbolDebugInfo(ident_t reference, StreamReader& addressReader);
-   void loadSubjectInfo(StreamReader& addressReader);
+   //void loadSubjectInfo(StreamReader& addressReader);
    bool loadTapeDebugInfo(size_t objectPtr);
 
    bool loadDebugData(StreamReader& reader, bool setEntryAddress = false);
@@ -223,6 +222,7 @@ protected:
    bool start();
 
    virtual void onInitBreakpoint();
+   void loadDebugSection(StreamReader& reader, bool starting);
 
    void processStep();
 
@@ -304,7 +304,7 @@ public:
    }
 
    DebugController()
-      : _modules(NULL, freeobj), _tapeBookmarks(-1), _subjects(0), _verbs(0)
+      : _modules(NULL, freeobj), _tapeBookmarks(-1)
    {
       _listener = NULL;
       _manager = NULL;

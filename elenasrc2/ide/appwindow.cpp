@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      IDE main window class implementation
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "appwindow.h"
@@ -811,7 +811,7 @@ bool IDEController :: doSaveProject(bool saveAsMode)
       }
 	   else return false;
    }
-   _project.save(_model->project.extension.str(), _model->saveWithBOM);
+   _project.save(_model->project.extension.c_str(), _model->saveWithBOM);
 
    onChange();
 
@@ -2185,7 +2185,7 @@ void IDEController::ProjectManager::reset()
 void IDEController::ProjectManager :: save(_ELENA_::path_t extension, bool withBOM)
 {
    _ELENA_::Path cfgPath(_model->project.path);
-   cfgPath.combine(_model->project.name.str());
+   cfgPath.combine(_model->project.name.c_str());
    cfgPath.appendExtension(extension);
 
    _model->project.xmlConfig.save(cfgPath.c_str(), _ELENA_::feUTF8, withBOM);
