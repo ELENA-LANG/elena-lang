@@ -69,8 +69,6 @@ void ELENARTMachine :: ExitThread(SystemEnv* env, int exitCode)
    __routineProvider.ExitThread(env, exitCode, true);
 }
 
-// !! --
-
 // --- Instance::ImageSection ---
 
 void* ELENARTMachine :: ImageSection :: get(pos_t position) const
@@ -113,11 +111,10 @@ bool ELENARTMachine :: loadConfig(path_t configFile)
    return true;
 }
 
-void ELENARTMachine :: init(void* debugSection, void* messageTable, path_t configPath)
+void ELENARTMachine :: init(void* messageTable, path_t configPath)
 {
    IdentifierString package;
 
-   _debugOffset = _debugSection.init(debugSection, package);
    _messageSection = messageTable;
 
    loadConfig(configPath);
@@ -136,10 +133,12 @@ int ELENARTMachine :: readCallStack(size_t framePosition, size_t currentAddress,
 
 int ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
 {
-   RTManager manager;
-   MemoryReader reader(&_debugSection, _debugOffset);
+   //RTManager manager;
+   //MemoryReader reader(&_debugSection, _debugOffset);
 
-   return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
+   //return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
+
+   return 0;
 }
 
 int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t length)
@@ -207,10 +206,11 @@ int ELENARTMachine :: loadMessageName(size_t messageRef, char* buffer, size_t le
 
 void* ELENARTMachine :: loadSymbol(ident_t name)
 {
-   RTManager manager;
-   MemoryReader reader(&_debugSection, _debugOffset);
+   //RTManager manager;
+   //MemoryReader reader(&_debugSection, _debugOffset);
 
-   return manager.loadSymbol(reader, name);
+   //return manager.loadSymbol(reader, name);
+   return 0;
 }
 
 void* ELENARTMachine :: loadSubject(ident_t name)

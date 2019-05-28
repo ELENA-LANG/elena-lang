@@ -119,9 +119,8 @@ void Linker :: mapImage(ImageInfo& info)
    info.map.stat = align(info.map.bss + getSize(info.image->getBSSSection()), alignment);
    info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
    info.map.import = align(info.map.tls + getSize(info.image->getTLSSection()), alignment);
-   info.map.debug = align(info.map.import + getSize(info.image->getImportSection()), alignment);
 
-   info.imageSize = align(info.map.debug + getSize(info.image->getDebugSection()), alignment);
+   info.imageSize = align(info.map.import + getSize(info.image->getImportSection()), alignment);
 }
 
 int Linker :: fillImportTable(ImageInfo& info)
@@ -378,17 +377,25 @@ void Linker :: writeNTHeader(ImageInfo& info, FileWriter* file, ref_t tls_direct
    header.Magic = IMAGE_NT_OPTIONAL_HDR32_MAGIC;
    header.MajorLinkerVersion = 1;                                              // not used
    header.MinorLinkerVersion = 0;
-   header.SizeOfCode = getSize(info.image->getTextSection());
-   header.SizeOfInitializedData = getSize(info.image->getRDataSection()) + getSize(info.image->getImportSection())/* + getSize(image.getTLSSection())*/;
-   header.SizeOfUninitializedData = getSize(info.image->getBSSSection()) + getSize(info.image->getStatSection());
+   header.SectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
+   header.FileAlignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
+
+   header.SizeOfCode = align(getSize(info.image->getTextSection()), header.FileAlignment);
+
+   header.SizeOfInitializedData = align(getSize(info.image->getRDataSection()), header.FileAlignment);
+   header.SizeOfInitializedData += align(getSize(info.image->getImportSection()), header.FileAlignment);
+   header.SizeOfInitializedData += align(getSize(info.image->getTLSSection()), header.FileAlignment);
+   header.SizeOfInitializedData += align(getSize(info.image->getImportSection()), header.FileAlignment);
+   header.SizeOfInitializedData += align(getSize(info.image->getMDataSection()), header.FileAlignment);
+
+   header.SizeOfUninitializedData = align(getSize(info.image->getBSSSection()), header.FileAlignment);
+   header.SizeOfUninitializedData += align(getSize(info.image->getStatSection()), header.FileAlignment);
 
    header.AddressOfEntryPoint = info.map.code + info.entryPoint;
    header.BaseOfCode = info.map.code;
-   header.BaseOfData = info.map.rdata;
+   header.BaseOfData = info.map.adata;
 
    header.ImageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
-   header.SectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-   header.FileAlignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
 
    header.MajorOperatingSystemVersion = MAJOR_OS;
    header.MinorOperatingSystemVersion = MINOR_OS;
@@ -447,16 +454,24 @@ void Linker :: writeNTHeader64(ImageInfo& info, FileWriter* file, ref_t tls_dire
    header.Magic = IMAGE_NT_OPTIONAL_HDR64_MAGIC;
    header.MajorLinkerVersion = 1;                                              // not used
    header.MinorLinkerVersion = 0;
-   header.SizeOfCode = getSize(info.image->getTextSection());
-   header.SizeOfInitializedData = getSize(info.image->getRDataSection()) + getSize(info.image->getImportSection())/* + getSize(image.getTLSSection())*/;
-   header.SizeOfUninitializedData = getSize(info.image->getBSSSection()) + getSize(info.image->getStatSection());
+   header.SectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
+   header.FileAlignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
+
+   header.SizeOfCode = align(getSize(info.image->getTextSection()), header.FileAlignment);
+
+   header.SizeOfInitializedData = align(getSize(info.image->getRDataSection()), header.FileAlignment);
+   header.SizeOfInitializedData += align(getSize(info.image->getImportSection()), header.FileAlignment);
+   header.SizeOfInitializedData += align(getSize(info.image->getTLSSection()), header.FileAlignment);
+   header.SizeOfInitializedData += align(getSize(info.image->getImportSection()), header.FileAlignment);
+   header.SizeOfInitializedData += align(getSize(info.image->getMDataSection()), header.FileAlignment);
+
+   header.SizeOfUninitializedData = align(getSize(info.image->getBSSSection()), header.FileAlignment);
+   header.SizeOfUninitializedData += align(getSize(info.image->getStatSection()), header.FileAlignment);
 
    header.AddressOfEntryPoint = info.map.code + info.entryPoint;
    header.BaseOfCode = info.map.code;
 
    header.ImageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
-   header.SectionAlignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-   header.FileAlignment = info.project->IntSetting(opFileAlignment, FILE_ALIGNMENT);
 
    header.MajorOperatingSystemVersion = MAJOR_OS_64;
    header.MinorOperatingSystemVersion = MINOR_OS_64;
@@ -620,7 +635,7 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    // text section
    writeSection(file, info.image->getTextSection(), alignment);
 
-   // mdata section
+   // adata section
    if (adataSize > 0)
       writeSection(file, info.image->getADataSection(), alignment);
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2018, by Alexei Rakov
+//                                              (C)2009-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenartmachineH
@@ -103,8 +103,6 @@ public:
 
 private:
    Path           _rootPath;
-   ImageSection   _debugSection;
-   size_t         _debugOffset;
    void*          _messageSection;
    LibraryManager _loader;
    MessageMap     _verbs;
@@ -133,7 +131,7 @@ public:
    void* loadSubject(ident_t name);
    void* loadMessage(ident_t name);
 
-   void init(void* debugSection, void* messageTable,  path_t configPath);
+   void init(void* messageTable,  path_t configPath);
 
    ELENARTMachine(path_t rootPath);
 
