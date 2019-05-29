@@ -142,6 +142,8 @@ class JITLinker : _JITLoaderListener
    int getVMTMethodIndex(void* vaddress, int messageID);
    size_t getVMTFlags(void* vaddress);
 
+   void generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask);
+
    void fixReferences(References& relocations, _Memory* image);
    void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress, bool constArrayMode);
 
@@ -152,7 +154,7 @@ class JITLinker : _JITLoaderListener
    ref_t resolveMessage(_Module* module, ref_t reference);
    ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne);
 
-   void createAttributes(_Module* module, ClassInfo::CategoryInfoMap& attributes);
+   void createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes);
 
    void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveConstVariable(ident_t  reference, int mask);

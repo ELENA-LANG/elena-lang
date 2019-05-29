@@ -115,7 +115,8 @@ void init(HMODULE hModule)
 
    _Instance = new ELENARTMachine(rootPath.c_str(), execPath.c_str());
 
-   void* messageSection = NULL;
+   void* messageSection = nullptr;
+   void* mattributeSection = nullptr;
    ELENARTMachine::ImageSection section;
    section.init((void*)0x400000, 0x1000);
 
@@ -123,8 +124,11 @@ void init(HMODULE hModule)
    PEHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
    messageSection = (void*)ptr;
 
+   PEHelper::seekSection(MemoryReader(&section), ".adata", ptr);
+   mattributeSection = (void*)ptr;
+
    Path configPath(CONFIG_PATH);
-   _Instance->init(messageSection, configPath.c_str());
+   _Instance->init(messageSection, mattributeSection, configPath.c_str());
 }
 
 EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
@@ -181,7 +185,9 @@ EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
 
 EXTERN_DLL_EXPORT void* LoadSymbol(void* systemEnv, void* referenceName)
 {
-   return _Instance->loadSymbol((const char*)referenceName);
+   //return _Instance->loadSymbol((const char*)referenceName);
+
+   return nullptr;
 }
 
 EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)

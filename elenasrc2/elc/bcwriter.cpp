@@ -1788,7 +1788,7 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
    info.staticValues.write(&vmtWriter);
 
    // save attributes
-   info.attributes.write(&attrWriter);
+   info.mattributes.write(&attrWriter);
 }
 
 void ByteCodeWriter :: writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope)

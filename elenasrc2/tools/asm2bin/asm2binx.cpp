@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
          _ELENA_::FileName name(argv[2]);
 
          target.copy(argv[3]);
-         target.combine(name.str());
+         target.combine(name.c_str());
       }
       else {
          printf("Invalid argument list");
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
          _ELENA_::FileName name(argv[1]);
 
          target.copy(argv[2]);
-         target.combine(name.str());
+         target.combine(name.c_str());
       }
    }
    else target.copy(argv[1]);

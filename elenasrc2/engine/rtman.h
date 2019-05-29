@@ -29,8 +29,8 @@ public:
    size_t readClassName(StreamReader& debug, size_t vmtAddress, char* buffer, size_t maxLength);
    //size_t readSubjectName(StreamReader& debug, size_t subjectRef, char* buffer, size_t maxLength);
 
-   void* loadSymbol(StreamReader& debug, ident_t name);
-   void* loadSubject(StreamReader& debug, ident_t name);
+   void* loadMetaAttribute(StreamReader& section, ident_t name, int category, size_t len);
+   void* loadSubject(StreamReader& section, ident_t name);
 
    RTManager()
    {

@@ -703,20 +703,53 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
          ClassInfo::CategoryInfoMap attributes;
          attributes.read(&attrReader);
 
-         createAttributes(referenceInfo.module, attributes);
+         referenceInfo.module = sectionInfo.module;
+         createAttributes(referenceInfo, attributes);
       }
    }
 
    return vaddress;
 }
 
-void JITLinker :: createAttributes(_Module* module, ClassInfo::CategoryInfoMap& attributes)
+void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask)
+{
+   SectionInfo tableInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
+   
+   MemoryWriter writer(tableInfo.section);
+
+   IdentifierString fullName;
+   if (referenceInfo.isRelative()) {
+      fullName.copy(referenceInfo.module->Name());
+      fullName.append(referenceInfo.referenceName);
+   }
+   else fullName.copy(referenceInfo.referenceName);
+
+   writer.writeDWord(category);
+   writer.writeDWord(fullName.Length() + 5);
+   writer.writeLiteral(fullName.ident());
+
+   void* address = resolve(referenceInfo, mask, false);
+
+   if (!_virtualMode) {
+      writer.writeDWord((size_t)address);
+   }
+   else writer.writeRef((ref_t)address, 0);
+}
+
+void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes)
 {
    auto it = attributes.start();
    while (!it.Eof()) {
       ClassInfo::Attribute attr = it.key();
-      if (attr.value1 == caInitializer) {
-         _initializers.add(ModuleReference(module, *it));
+      switch (attr.value1) {
+         case caInitializer:
+            _initializers.add(ModuleReference(referenceInfo.module, *it));
+            break;
+         case caSerializable:
+            generateMetaAttribute(attr.value1, referenceInfo, mskVMTRef);
+            break;
+         default:
+            break;
       }
 
       it++;

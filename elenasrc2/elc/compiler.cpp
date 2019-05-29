@@ -1484,6 +1484,9 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
          staticValue_it++;
       }
 
+      // meta attributes are not directly inherited
+      scope.info.mattributes.clear();
+
       if (/*!ignoreSealed && */test(scope.info.header.flags, elSealed))
          return irSealed;
 
@@ -7855,8 +7858,7 @@ void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScop
    analizeSymbolTree(expressionTree.readRoot(), scope);
 
    ref_t actionRef = compileClassPreloadedCode(*scope.moduleScope, scope.reference, expressionTree.readRoot());
-   scope.info.attributes.exclude(Attribute(caInitializer, 0));
-   scope.info.attributes.add(Attribute(caInitializer, 0), actionRef);
+   scope.info.mattributes.add(Attribute(caInitializer, 0), actionRef);
 }
 
 // NOTE : elementRef is used for binary arrays

@@ -105,7 +105,10 @@ private:
    Path           _rootPath;   
    Path           _debugFilePath;
    MemoryDump     _debugSection;
+
    void*          _messageSection;
+   void*          _mattributesSection;
+
    LibraryManager _loader;
 
    bool loadConfig(path_t configPath);
@@ -130,11 +133,11 @@ public:
    int loadSubjectName(size_t subjectRef, char* buffer, size_t length);
    int loadMessageName(size_t subjectRef, char* buffer, size_t length);
 
-   void* loadSymbol(ident_t name);
+   void* loadMetaAttribute(ident_t name, int category);
    void* loadSubject(ident_t name);
    void* loadMessage(ident_t name);
 
-   void init(void* messageTable,  path_t configPath);
+   void init(void* messageTable, void* mattributeTable, path_t configPath);
 
    ELENARTMachine(path_t dllRootPath, path_t execFile);
 

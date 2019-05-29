@@ -97,34 +97,26 @@ size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, char
    return 0;
 }
 
-void* RTManager :: loadSymbol(StreamReader& reader, ident_t name)
+void* RTManager :: loadMetaAttribute(StreamReader& reader, ident_t name, int category, size_t len)
 {
-   ident_t symbol;
-   size_t len = getlength(name);
+   pos_t pos = reader.Position();
 
-   // search through debug section until the ret point is inside two consecutive steps within the same object
-   while (!reader.Eof()/* && !found*/) {
-      // read reference
-      symbol = reader.getLiteral(DEFAULT_STR);
-
-      // define the next record position
-      pos_t size = reader.getDWord() - 4;
-      pos_t nextPosition = reader.Position() + size;
-
-      // check the class
-      size_t pos = symbol.findLast('\'');
-      if (symbol[pos+1] == '#') {
-         int address = reader.getDWord();
-
-         if (name.compare(symbol, pos + 1) & name.compare(symbol + pos + 2, pos + 1, len - pos)) {
-            return (void*)address;
-         }
+   len += pos;
+   while (pos < len) {
+      int current = reader.getDWord();
+      int offset = reader.getDWord();
+      if (current == category) {
+         ident_t currentName = reader.getLiteral(DEFAULT_STR);
+         void* ptr = (void*)reader.getDWord();
+         if (name.compare(currentName))
+            return ptr;
       }
 
-      reader.seek(nextPosition);
+      pos += offset;
+      reader.seek(pos);
    }
 
-   return NULL;
+   return nullptr;
 }
 
 bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager,

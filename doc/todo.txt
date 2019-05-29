@@ -3,12 +3,17 @@ In development:
 ------            
 
               ydev
-                * Linux linker : meta + mdata + rdata (meta starts with size field)
-                * get rid of debug section for Linux and Windows
-
-                * Debug info structure redesign #11
+                * support meta attribute - class references
+                * support meta attribute - symbol references
+                * elenart : load class / symbol by scanning meta attribute list
+                * test vm debugger
                 * Debug information in executable #16
+
                 * Stand alone executable: Script engine #64
+
+              ydev
+                * Linux linker : adata + mdata + rdata (meta starts with size field)
+                * get rid of debug section for Linux
                   
               xdev
                  * opzimiation extension operation with a byte array parameter

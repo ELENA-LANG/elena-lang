@@ -144,9 +144,10 @@ bool ELENARTMachine :: loadConfig(path_t configFile)
    return true;
 }
 
-void ELENARTMachine :: init(void* messageTable, path_t configPath)
+void ELENARTMachine :: init(void* messageTable, void* mattributeTable, path_t configPath)
 {
    _messageSection = messageTable;
+   _mattributesSection = mattributeTable;
 
    loadConfig(configPath);
 }
@@ -242,13 +243,17 @@ int ELENARTMachine :: loadMessageName(size_t messageRef, char* buffer, size_t le
    return used;
 }
 
-void* ELENARTMachine :: loadSymbol(ident_t name)
+void* ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
 {
-   //RTManager manager;
-   //MemoryReader reader(&_debugSection, _debugOffset);
+   ImageSection mattrSection;
+   mattrSection.init(_mattributesSection, 0x10000); // !! dummy size
+   MemoryReader reader(&mattrSection);
 
-   //return manager.loadSymbol(reader, name);
-   return 0;
+   size_t len = reader.getDWord();
+
+   RTManager manager;
+
+   return manager.loadMetaAttribute(reader, name, category, len);
 }
 
 void* ELENARTMachine :: loadSubject(ident_t name)

@@ -126,13 +126,14 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
          staticValue_it++;
       }
 
-      // import attributes
-      auto attribute_it = copy.attributes.start();
+      // meta attributes are not inherited
+      auto attribute_it = copy.mattributes.start();
       while (!attribute_it.Eof()) {
          auto key = attribute_it.key();
          ref_t val = *attribute_it;
+         val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);
 
-         target.attributes.add(key, val);
+         target.mattributes.add(key, val);
          
          attribute_it++;
       }

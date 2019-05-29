@@ -511,7 +511,9 @@ enum MethodAttribute
 enum ClassAttribute
 {
    caNone         = 0x000,
-   caInitializer  = 0x001
+   caInitializer  = 0x001,
+   // if the class can be loaded dynamically
+   caSerializable = 0x002
 };
 
 struct ClassInfo
@@ -534,14 +536,14 @@ struct ClassInfo
 
    FieldTypeMap    fieldTypes;
    CategoryInfoMap methodHints;
-   CategoryInfoMap attributes;   
+   CategoryInfoMap mattributes;   
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
       writer->write((void*)this, sizeof(ClassHeader));
       writer->writeDWord(size);
       if (!headerAndSizeOnly) {
-         attributes.write(writer);
+         mattributes.write(writer);
          statics.write(writer);
          staticValues.write(writer);
          methods.write(writer);
@@ -556,7 +558,7 @@ struct ClassInfo
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
       if (!headerOnly) {
-         attributes.read(reader);
+         mattributes.read(reader);
          statics.read(reader);
          staticValues.read(reader);
          methods.read(reader);
