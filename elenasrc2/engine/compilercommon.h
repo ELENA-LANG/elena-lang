@@ -559,12 +559,12 @@ public:
       bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
-   virtual bool validateClassAttribute(int& attrValue) = 0;
+   virtual bool validateClassAttribute(int& attrValue, bool& publicOne) = 0;
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes) = 0;
-   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne) = 0;
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, bool& publicOne) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
 

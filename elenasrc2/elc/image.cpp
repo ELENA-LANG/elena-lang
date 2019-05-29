@@ -112,20 +112,23 @@ SectionInfo ExecutableImage::getSectionInfo(ReferenceInfo referenceInfo, size_t 
 {
    SectionInfo sectionInfo;
 
+   ref_t referenceID = 0;
    if (referenceInfo.isRelative()) {
       ref_t referenceID = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
 
       sectionInfo.module = referenceInfo.module;
-      sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
    }
    else {
-      ref_t referenceID = 0;
       sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID);
       if (sectionInfo.module == NULL || referenceID == 0) {
          if (!silentMode)
             throw JITUnresolvedException(referenceInfo);
       }
       else sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
+   }
+   if (sectionInfo.module != NULL && referenceID != 0) {
+      sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
+      sectionInfo.attrSection = sectionInfo.module->mapSection(referenceID | mskSymbolAttributeRef, true);
    }
 
    if (sectionInfo.section == NULL && !silentMode) {

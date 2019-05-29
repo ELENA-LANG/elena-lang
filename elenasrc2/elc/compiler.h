@@ -842,8 +842,8 @@ private:
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
    void validateClassFields(SNode node, ClassScope& scope);
 
-   void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode);
-   void declareClassAttributes(SNode node, ClassScope& scope);
+   void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool& publicAttribute);
+   void declareClassAttributes(SNode node, ClassScope& scope, bool& publicAttribute);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
    void declareVMT(SNode member, ClassScope& scope, bool& implicitClass);

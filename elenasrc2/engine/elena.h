@@ -89,16 +89,18 @@ struct SectionInfo
 {
    _Module* module;
    _Memory* section;
+   _Memory* attrSection;
 
    SectionInfo()
    {
-      module = NULL;
-      section = NULL;
+      module = nullptr;
+      attrSection = section = nullptr;
    }
-   SectionInfo(_Module* module, _Memory* section)
+   SectionInfo(_Module* module, _Memory* section, _Memory* attrSection)
    {
       this->module = module;
       this->section = section;
+      this->attrSection = attrSection;
    }
 };
 
@@ -510,10 +512,12 @@ enum MethodAttribute
 
 enum ClassAttribute
 {
-   caNone         = 0x000,
-   caInitializer  = 0x001,
+   caNone               = 0x000,
+   caInitializer        = 0x001,
    // if the class can be loaded dynamically
-   caSerializable = 0x002
+   caSerializable       = 0x002,
+   // if the symbol can be loaded dynamically
+   caSymbolSerializable = 0x003
 };
 
 struct ClassInfo

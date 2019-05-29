@@ -6204,21 +6204,6 @@ void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root, pos_t source
    endClass(tape);
 }
 
-////void ByteCodeWriter :: generateSymbolWithInitialization(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument, ref_t implicitConstructor)
-////{
-////   declareSymbol(tape, reference, (size_t)-1);
-////   loadObject(tape, type, argument);
-////   callInitMethod(tape, reference, implicitConstructor, false);
-////   endSymbol(tape);
-////}
-
-//void ByteCodeWriter :: generateSymbol(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
-//{
-//   declareSymbol(tape, reference, (size_t)-1);
-//   loadObject(tape, type, argument);
-//   endSymbol(tape);
-//}
-
 void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
 {
    declareInitializer(tape, reference);

@@ -1603,14 +1603,14 @@ void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope, bool ex
    else compileParentDeclaration(node, scope, parentRef);
 }
 
-void Compiler :: declareClassAttributes(SNode node, ClassScope& scope)
+void Compiler :: declareClassAttributes(SNode node, ClassScope& scope, bool& publicAttribute)
 {
    int flags = scope.info.header.flags;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateClassAttribute(value)) {
+         if (!_logic->validateClassAttribute(value, publicAttribute)) {
             current = lxIdle;
 
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
@@ -1662,13 +1662,13 @@ ref_t Compiler :: resolveTypeAttribute(Scope& scope, SNode node, bool declaratio
    return typeRef;
 }
 
-void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode)
+void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool& publicAttribute)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value, scope.constant, scope.staticOne, scope.preloaded)) {
+         if (!_logic->validateSymbolAttribute(value, scope.constant, scope.staticOne, scope.preloaded, publicAttribute)) {
             current = lxIdle; // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
@@ -7484,7 +7484,12 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    bool extensionDeclaration = isExtensionDeclaration(node);
    compileParentDeclaration(node.findChild(lxParent), scope, extensionDeclaration);
 
-   declareClassAttributes(node, scope);
+   bool publicClass = false;
+   declareClassAttributes(node, scope, publicClass);
+   if (publicClass) {
+      // add seriazible meta attribute for the public class
+      scope.info.mattributes.add(Attribute(caSerializable, 0), INVALID_REF);
+   }
 
    bool implicitMode = true;
    declareVMT(node, scope, implicitMode);
@@ -7639,7 +7644,11 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
 
 void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 {
-   declareSymbolAttributes(node, scope, true);
+   bool publicAttr = false;
+   declareSymbolAttributes(node, scope, true, publicAttr);
+   if (publicAttr) {
+      //scope.
+   }
 
    if ((scope.constant || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == nullptr) {
       scope.save();
@@ -7769,7 +7778,8 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 
    SyntaxWriter writer(expressionTree);
 
-   declareSymbolAttributes(node, scope, false);
+   bool publicAttr = false;
+   declareSymbolAttributes(node, scope, false, publicAttr);
 
    bool isStatic = scope.staticOne;
 
@@ -7815,11 +7825,24 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
 
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
 
+   ClassInfo::CategoryInfoMap mattributes;
+   if (publicAttr) {
+      // add seriazible meta attribute for the public symbol
+      mattributes.add(Attribute(caSymbolSerializable, 0), INVALID_REF);
+   }
+
    CommandTape tape;
    _writer.generateSymbol(tape, expressionTree.readRoot(), isStatic, sourcePathRef);
 
    // optimize
    optimizeTape(tape);
+
+   if (mattributes.Count() > 0) {
+      // initialize attribute section writers
+      MemoryWriter attrWriter(scope.moduleScope->mapSection(scope.reference | mskSymbolAttributeRef, false));
+
+      mattributes.write(&attrWriter);
+   }
 
    // create byte code sections
    _writer.saveTape(tape, *scope.moduleScope);

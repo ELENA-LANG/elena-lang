@@ -146,6 +146,7 @@ namespace _ELENA_
       mskStatSymbolRef       = 0x82000000u,   // reference to static symbol
       mskEntryRef            = 0x14000000u,   // reference to the program entry
       mskEntryRelRef         = 0x34000000u,   // reference to the program entry
+      mskSymbolAttributeRef  = 0x17000000u,
 
       mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000u,   // meta data

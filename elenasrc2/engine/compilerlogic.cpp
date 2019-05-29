@@ -1562,7 +1562,7 @@ bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, b
    return false;
 }
 
-bool CompilerLogic :: validateClassAttribute(int& attrValue)
+bool CompilerLogic :: validateClassAttribute(int& attrValue, bool& publicOne)
 {
    switch ((size_t)attrValue)
    {
@@ -1602,8 +1602,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue)
       //case V_TAPEGROUP:
       //   attrValue = elTapeGroup;
 //         return true;
-      case V_CLASS:
       case V_PUBLIC:
+         publicOne = true;
+      case V_CLASS:
       case V_INTERNAL:
          attrValue = 0;
          return true;
@@ -1815,7 +1816,7 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    }
 }
 
-bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne)
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, bool& publicOne)
 {
    if (attrValue == (int)V_CONST) {
       constant = true;
@@ -1835,7 +1836,12 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
 
       return true;
    }
-   else if (attrValue == (int)V_PUBLIC || attrValue == (int)V_INTERNAL) {
+   else if (attrValue == (int)V_PUBLIC) {
+      publicOne = true;
+
+      return true;
+   }
+   else if (attrValue == (int)V_INTERNAL) {
       return true;
    }
    else return false;

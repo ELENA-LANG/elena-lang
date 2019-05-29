@@ -588,6 +588,17 @@ void* JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, int mask,
    // fix not loaded references
    fixReferences(references, image);
 
+   if (sectionInfo.attrSection != nullptr) {
+      MemoryReader attrReader(sectionInfo.attrSection);
+
+      // generate run-time attributes
+      ClassInfo::CategoryInfoMap attributes;
+      attributes.read(&attrReader);
+
+      referenceInfo.module = sectionInfo.module;
+      createAttributes(referenceInfo, attributes);
+   }
+
    return vaddress;
 }
 
@@ -745,6 +756,7 @@ void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::Cate
          case caInitializer:
             _initializers.add(ModuleReference(referenceInfo.module, *it));
             break;
+         case caSymbolSerializable:
          case caSerializable:
             generateMetaAttribute(attr.value1, referenceInfo, mskVMTRef);
             break;
