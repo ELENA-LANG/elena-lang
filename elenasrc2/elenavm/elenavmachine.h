@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x0011;
+constexpr auto ELENAVM_REVISION = 0x0012;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2019 by Alex Rakov";
@@ -260,6 +260,32 @@ protected:
 ////      _actions.write(writer);
 //   }
 
+   void* loadReference(SystemEnv* systemEnv, ident_t referenceName, int mask, bool silentMode)
+   {
+      void* ref = NULL;
+      if (_debugMode) {
+         //// remove subject list from the debug section
+         _Memory* debugSection = getTargetDebugSection();
+         //if ((*debugSection)[0] > 0)
+         //   debugSection->trim((*debugSection)[0]);
+
+         ref = loadSymbol(referenceName, mask, silentMode);
+
+         (*debugSection)[0] = debugSection->Length();
+
+         //// add subject list to the debug section
+         //_ELENA_::MemoryWriter debugWriter(debugSection);
+         //saveActionNames(&debugWriter);
+
+         raiseBreakpoint();
+      }
+      else ref = loadSymbol(referenceName, mask, silentMode);
+
+      onNewCode(systemEnv);
+
+      return ref;
+   }
+
 public:
    ident_t getStatus() { return emptystr(_status) ? NULL : (const char*)_status; }
 
@@ -357,35 +383,14 @@ public:
 
    virtual ident_t getSubject(ref_t subjectRef);
 
-   //virtual void* getClassVMTRef(const wchar16_t* referenceName)
-   //{
-   //   return loadSymbol(referenceName, mskVMTRef);
-   //}
+   virtual void* getClassVMTRef(SystemEnv* systemEnv, ident_t referenceName, bool silentMode)
+   {
+      return loadReference(systemEnv, referenceName, mskVMTRef, silentMode);
+   }
 
    virtual void* getSymbolRef(SystemEnv* systemEnv, ident_t referenceName, bool silentMode)
-   {      
-      void* ref = NULL;
-      if (_debugMode) {
-         //// remove subject list from the debug section
-         _Memory* debugSection = getTargetDebugSection();
-         //if ((*debugSection)[0] > 0)
-         //   debugSection->trim((*debugSection)[0]);
-
-         ref = loadSymbol(referenceName, mskSymbolRef, silentMode);
-
-         (*debugSection)[0] = debugSection->Length();
-
-         //// add subject list to the debug section
-         //_ELENA_::MemoryWriter debugWriter(debugSection);
-         //saveActionNames(&debugWriter);
-
-         raiseBreakpoint();
-      }
-      else ref = loadSymbol(referenceName, mskSymbolRef, silentMode);
-
-      onNewCode(systemEnv);
-
-      return ref;
+   {
+      return loadReference(systemEnv, referenceName, mskSymbolRef, silentMode);
    }
 
    virtual ref_t getSubjectRef(ident_t subjectName)

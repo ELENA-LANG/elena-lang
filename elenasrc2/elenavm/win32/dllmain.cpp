@@ -312,7 +312,7 @@ EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
    }
 }
 
-EXTERN_DLL_EXPORT void* LoadSymbol(void* systemEnv, void* referenceName)
+EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
 {
    Instance* instance = _Machine->getInstance();
    if (instance == NULL)
@@ -344,12 +344,53 @@ EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName,
    if (length < 0x100) {
       IdentifierString str((const char*)referenceName, index, length);
 
-      return LoadSymbol(systemEnv, (void*)str.c_str());
+      return LoadSymbolByString(systemEnv, (void*)str.c_str());
    }
    else {
       DynamicString<char> str((const char*)referenceName, index, length);
 
-      return LoadSymbol(systemEnv, (void*)str.str());
+      return LoadSymbolByString(systemEnv, (void*)str.str());
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadClassByString(void* systemEnv, void* referenceName)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      return instance->getClassVMTRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName, index, length);
+
+      return LoadClassByString(systemEnv, (void*)str.c_str());
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadClassByString(systemEnv, (void*)str.str());
    }
 }
 

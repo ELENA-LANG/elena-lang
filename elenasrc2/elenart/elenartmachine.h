@@ -124,7 +124,6 @@ public:
    void Exit(int exitCode);
    void ExitThread(SystemEnv* env, int exitCode);
 
-   // !! 
    int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
    int loadAddressInfo(size_t retPoint, char* lineInfo, size_t length);

@@ -90,6 +90,7 @@ ELENARTMachine :: ELENARTMachine(path_t rootPath, path_t execFileName)
    : _rootPath(rootPath)
 {
    _messageSection = nullptr;
+   _mattributesSection = nullptr;
 
    _debugFilePath.copy(execFileName);
    _debugFilePath.changeExtension("dn");

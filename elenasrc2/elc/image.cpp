@@ -108,24 +108,17 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
    }
 }
 
-SectionInfo ExecutableImage::getSectionInfo(ReferenceInfo referenceInfo, size_t mask, bool silentMode)
+SectionInfo ExecutableImage :: getSectionInfo(ReferenceInfo referenceInfo, size_t mask, bool silentMode)
 {
    SectionInfo sectionInfo;
 
    ref_t referenceID = 0;
    if (referenceInfo.isRelative()) {
-      ref_t referenceID = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
-
       sectionInfo.module = referenceInfo.module;
+      referenceID = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
    }
-   else {
-      sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID);
-      if (sectionInfo.module == NULL || referenceID == 0) {
-         if (!silentMode)
-            throw JITUnresolvedException(referenceInfo);
-      }
-      else sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
-   }
+   else sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID);
+
    if (sectionInfo.module != NULL && referenceID != 0) {
       sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
       sectionInfo.attrSection = sectionInfo.module->mapSection(referenceID | mskSymbolAttributeRef, true);

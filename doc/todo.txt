@@ -3,18 +3,26 @@ In development:
 ------            
 
               ydev
-                * support meta attribute - class references
-                * support meta attribute - symbol references
-                * elenart : load class / symbol by scanning meta attribute list
                 * test vm debugger
                 * Debug information in executable #16
 
                 * Stand alone executable: Script engine #64
 
               ydev
+                * fix debugger goto 
+
+              ydev
                 * Linux linker : adata + mdata + rdata (meta starts with size field)
                 * get rid of debug section for Linux
                   
+              xdev
+                 * reseign source code level optimization
+                 * import hashtable design
+
+------                                                           
+Pipeline:
+------                                                                                         
+
               xdev
                  * opzimiation extension operation with a byte array parameter
                  * optimize i += 1
@@ -59,10 +67,6 @@ In development:
 
                  * Various optimizations #431
                  * fix zeckendorf_arithm 
-
-------                                                           
-Pipeline:
-------                                                                                         
 
               dev - ide
                  * debugger : display message name

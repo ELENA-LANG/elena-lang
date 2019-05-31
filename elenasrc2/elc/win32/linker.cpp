@@ -587,8 +587,8 @@ void Linker :: writeSections(ImageInfo& info, FileWriter* file)
    // adata section header
    int adataSize = getSize(info.image->getADataSection());
    if (adataSize > 0) {
-      writeSectionHeader(file, MDATA_SECTION, info.image->getADataSection(), tblOffset, alignment, sectionAlignment,
-         info.map.mdata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
+      writeSectionHeader(file, ADATA_SECTION, info.image->getADataSection(), tblOffset, alignment, sectionAlignment,
+         info.map.adata, IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_MEM_READ);
    }
 
    // mdata section header

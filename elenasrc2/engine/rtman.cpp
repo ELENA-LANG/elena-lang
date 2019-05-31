@@ -104,7 +104,7 @@ void* RTManager :: loadMetaAttribute(StreamReader& reader, ident_t name, int cat
    len += pos;
    while (pos < len) {
       int current = reader.getDWord();
-      int offset = reader.getDWord();
+      int offset = 4 + reader.getDWord();
       if (current == category) {
          ident_t currentName = reader.getLiteral(DEFAULT_STR);
          void* ptr = (void*)reader.getDWord();

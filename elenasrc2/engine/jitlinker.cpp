@@ -736,7 +736,7 @@ void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceIn
    else fullName.copy(referenceInfo.referenceName);
 
    writer.writeDWord(category);
-   writer.writeDWord(fullName.Length() + 5);
+   writer.writeDWord(fullName.Length() + 9);
    writer.writeLiteral(fullName.ident());
 
    void* address = resolve(referenceInfo, mask, false);
@@ -757,6 +757,8 @@ void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::Cate
             _initializers.add(ModuleReference(referenceInfo.module, *it));
             break;
          case caSymbolSerializable:
+            generateMetaAttribute(attr.value1, referenceInfo, mskSymbolRef);
+            break;
          case caSerializable:
             generateMetaAttribute(attr.value1, referenceInfo, mskVMTRef);
             break;
@@ -1043,7 +1045,16 @@ void* JITLinker :: resolveMetaAttributeTable(ReferenceInfo referenceInfo, int ma
    // load table into target image
    MemoryReader reader(bodyInfo.section);
    writer.writeDWord(bodyInfo.section->Length()); // section size
+   pos_t offs = writer.Position();
    writer.read(&reader, bodyInfo.section->Length());
+
+   // resolve signature references
+   _ELENA_::RelocationMap::Iterator body_it(bodyInfo.section->getReferences());
+   while (!body_it.Eof()) {
+      asection->addReference(body_it.key(), offs + *body_it);
+
+      body_it++;
+   }
 
    return NULL; // !! should be resolved only once
 }
@@ -1376,7 +1387,7 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
             vaddress = resolveMessageTable(referenceInfo, mskMessageTableRef);
             break;
          case mskMetaAttributes:
-            vaddress = resolveMetaAttributeTable(referenceInfo, mskMessageTableRef);
+            vaddress = resolveMetaAttributeTable(referenceInfo, mskMetaAttributes);
             break;
          case mskEntryRef:
             vaddress = resolveEntry(resolve(referenceInfo, mskSymbolRef, silentMode));

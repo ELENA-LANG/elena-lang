@@ -4141,7 +4141,7 @@ procedure __symbol."load$system@Symbol$system@String[2]"
   pusha
   system
   pushe
-  callextr extern : LoadSymbol
+  callextr extern : LoadSymbolByString
   popi 2
   ifn labError 0
   bloadsi 1
@@ -4627,7 +4627,7 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber$syste
     pusha    
     system
     pushe
-    callextr extern : LoadSymbolByBuffer
+    callextr extern : LoadClassByBuffer
     popi 4
     pushd
     copym message : "#constructor[0]"
@@ -4635,6 +4635,7 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber$syste
     add
     ecopyd
     acallvi 0
+    pusha
 
     Lab04:   nop
 
