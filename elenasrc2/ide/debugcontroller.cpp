@@ -401,20 +401,6 @@ void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
       _debugInfoSize = reader.Position();
 
       //loadSubjectInfo(reader);
-
-      // continue debugging
-      if (_postponed.stepMode) {
-         if (starting) {
-            _debugger.setBreakpoint(_entryPoint, false);
-         }
-         else _debugger.setStepMode();
-
-         _events.setEvent(DEBUG_RESUME);
-      }
-      else if (_postponed.gotoMode) {
-         runToCursor(_postponed.source, _postponed.path.c_str(), _postponed.col, _postponed.row);
-      }
-      else run();
    }
    // otherwise continue
    else _events.setEvent(DEBUG_RESUME);
@@ -456,6 +442,8 @@ void DebugController :: onInitBreakpoint()
          DebugReader reader(&_debugger, _debugInfoPtr, 0);
          // the debug section starts with size field
          reader.setSize(reader.getDWord());
+
+         _debugInfoSize = 4;
          reader.seek(_debugInfoSize);
 
          loadDebugSection(reader, starting);
@@ -463,6 +451,24 @@ void DebugController :: onInitBreakpoint()
       // !! notify if the executable is not supported
       else _debugInfoSize = 4;
    }
+
+   if (_entryPoint) {
+      if (_postponed.stepMode) {
+         // continue debugging
+         if (starting) {
+            _debugger.setBreakpoint(_entryPoint, false);
+         }
+         else _debugger.setStepMode();
+
+         _events.setEvent(DEBUG_RESUME);
+      }
+      else if (_postponed.gotoMode) {
+         runToCursor(_postponed.source, _postponed.path.c_str(), _postponed.col, _postponed.row);
+      }
+      // otherwise continue
+      else run();
+   }
+   else _events.setEvent(DEBUG_RESUME);
 }
 
 inline bool isSymbolReference(ident_t name)

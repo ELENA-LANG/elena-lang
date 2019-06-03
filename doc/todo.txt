@@ -3,7 +3,6 @@ In development:
 ------            
 
               ydev
-                * test vm debugger
                 * Debug information in executable #16
 
                 * Stand alone executable: Script engine #64
