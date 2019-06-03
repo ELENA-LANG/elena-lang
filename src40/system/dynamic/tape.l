@@ -113,21 +113,27 @@ public mixin ClosureClass
 
 // --- StreamTapeInterpreter ---
 
+
 public singleton StreamTapeInterpreter
 {
-//    run(BinaryReader reader)
+    build(byte[] buffer, int start, int end)
+        => system'core_routines'__tape;
 //    {
-//        byte buffer[255];
-//        int  command := 0;
-//        int  size := 0;
-//        reader.read(ref command);
-//        while (command != 0) {
-//            reader.read(ref size);
-//            reader.read(buffer, ref size);
+//        int size := 0;
+//        int i := start;
+//        while(i < end) {
+//            byte command := buffer[i];
+//            i += 1;
+//            buffer.read(i, ref size);
+//            i += 4;
+//            if (command == 0FFh) {
+//                UTF8Encoding.toString(i,size,buffer)
+//            }
+//            else {
+//                extern elenart.LoadSymbolByBuffer(buffer, i, size)
+//            };        
 //            
-//            intern system'core_routines'tape.execute(command, buffer, size);
-//            
-//            reader.read(ref command);            
+//            i += size
 //        }
-//    }
+//    }    
 }

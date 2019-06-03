@@ -3,16 +3,20 @@ In development:
 ------            
 
               ydev
-                * Debug information in executable #16
+                * parse expression 1-2-3 - manually
+                * new script engine target parser - build_tape
+                * parse expression 1-2-3 - using script engine
+
+                * redesign script code generation
+                * test script examples
 
                 * Stand alone executable: Script engine #64
+                * get rid of tape support??
 
-              ydev
-                * fix debugger goto 
-
-              ydev
-                * Linux linker : adata + mdata + rdata (meta starts with size field)
-                * get rid of debug section for Linux
+              ydev - Linux
+                * linker : adata + mdata + rdata (meta starts with size field)
+                * get rid of debug section
+                * suport elenart
                   
               xdev
                  * reseign source code level optimization
