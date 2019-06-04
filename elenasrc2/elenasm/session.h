@@ -24,7 +24,8 @@ class Session
       ptTree      = 0x02,
       ptCF        = 0x10,
       ptTransform = 0x20,
-      ptText      = 0x30
+      ptText      = 0x30,
+      ptBuild     = 0x40
    };
 
    int                _lastId;

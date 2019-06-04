@@ -3,7 +3,7 @@ In development:
 ------            
 
               ydev
-                * parse expression 1-2-3 - manually
+                * buildScriptFile, buildScript
                 * new script engine target parser - build_tape
                 * parse expression 1-2-3 - using script engine
 
@@ -34,6 +34,7 @@ Pipeline:
                  * optimize pi sample
                  * optimize r * n + 0.5r
                  * optimize operation with variadic argument list (get, length)
+                 * optimize dirty_ptr := dirty_ptr + int
 
               ydev
                  * graph sample
@@ -76,6 +77,9 @@ Pipeline:
 
               dev - elena 4.0
                  * working on xforms
+
+              dev - script engine
+                * parse script and save it
 
               dev - elena 4.0
                  * optimize hash table implementation (both weak and strong typed)

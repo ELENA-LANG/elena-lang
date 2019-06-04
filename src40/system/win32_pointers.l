@@ -96,20 +96,13 @@ public sealed const struct UnsafePointer
         ^ ptr
     }
 
-//    stacksafe write int:anObject
-//        => system'core_routines'__dptr.
-                
-//    read(ByteArray arr, int len)
-//        => system'core_routines'__dptr.
-//
-//    // unsafe code
-//    int
-//    [
-//        int val := 0.
-//        self read(&val).
-//        
-//        ^ val
-//    ]
+    // unsafe code
+    int cast()
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        ^ val
+    }
 
     // unsafe code
     string cast()
@@ -144,12 +137,12 @@ public sealed const struct UnsafePointer
         
         target.write(offs, val)
     }
-    
-//    stacksafe saveTo intarray:target int:offs
-//    [
-//        target write int:offs int:thePointer.
-//    ]
-    
+
+    copyTo(byte[] target, int len)
+    {
+        intern system'core_routines'__dptr.copyTo(self, target, len);
+    }
+            
     bool isEmpty()
         = thePointer == 0;
 }

@@ -22,7 +22,13 @@ void TextParser :: parse(_ScriptReader& reader, MemoryDump* output)
       ident_t s = reader.lookup(bm);
 
       int s_len = getlength(s);
-      writer.writeLiteral(s, s_len);
+      if (bm.state == _ELENA_TOOL_::dfaQuote) {
+         writer.writeChar('\"');
+         writer.writeLiteral(s, s_len);
+         writer.writeChar('\"');
+      }
+      else writer.writeLiteral(s, s_len);
+
       length += s_len;
       if (length >= _width) {
          writer.writeLiteral("\r\n", 2);
@@ -169,4 +175,86 @@ void Transformer :: parse(_ScriptReader& reader, MemoryDump* output)
    ScriptReader scriptReader(&logReader);
 
    _baseParser->parse(scriptReader, output);
+}
+
+// --- Builder ---
+
+Builder :: Builder()
+{
+}
+
+void Builder :: saveToken(MemoryWriter& writer, _ScriptReader& reader, ScriptBookmark bm)
+{
+   ident_t token = reader.lookup(bm);
+   size_t len = getlength(token);
+   writer.writeDWord(len);
+   writer.writeLiteral(token, len);
+}
+
+void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack)
+{
+   int counter = 0;
+
+   ScriptBookmark bm = stack.pop();
+   while (true) {
+      if (bm.state == 0) {
+         saveClass(writer, reader, stack);
+      }
+      else if (bm.state == _ELENA_TOOL_::dfaQuote) {
+         writer.writeByte(0xFF);
+         saveToken(writer, reader, bm);
+      }
+      else break;
+
+      counter++;
+      bm = stack.pop();
+   }
+
+   writer.writeByte(counter);
+   saveToken(writer, reader, bm);
+}
+
+void Builder :: flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack)
+{
+   int sizePos = writer.Position();
+   writer.writeDWord(0);
+
+   ScriptBookmark bm = stack.pop();
+   if (bm.state == 0) {
+      saveClass(writer, reader, stack);
+   }
+
+   size_t len = writer.Position() - sizePos - 4;
+
+   writer.seek(sizePos);
+   writer.writeDWord(len);
+   writer.seekEOF();
+}
+
+void Builder :: parse(_ScriptReader& reader, MemoryDump* output)
+{
+   MemoryWriter writer(output);
+
+   ScriptBookmark defVal;
+   Stack<ScriptBookmark> stack(defVal);
+
+   ScriptBookmark bm = reader.read();
+   int level = 0;
+   while (!reader.Eof()) {
+      if (reader.compare("(")) {
+         level++;
+      }
+      else if (reader.compare(")")) {
+         stack.push(defVal);
+         level--;
+         if (!level) {
+            flush(writer, reader, stack);
+         }
+      }
+      else stack.push(bm);
+
+      bm = reader.read();
+   }
+
+   writer.writeDWord(0);
 }

@@ -2104,7 +2104,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
                frameWriter.appendNode(lxClassName, fullName);
             }
          }
-         else writer.appendNode(lxClassName, className);
+         else frameWriter.appendNode(lxClassName, className);
       }
 
       frameWriter.closeNode();
@@ -5976,7 +5976,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
       scope.rootToFree -= 1;
    }
 
-   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elRole));
+   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elExtension));
 
    int paramCount = getParamCount(scope.message);
    int preallocated = 0;
@@ -6066,7 +6066,7 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
 {
    writer.newNode(lxClassMethod, scope.message);
 
-   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elRole));
+   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elExtension));
 
    int preallocated = 0;
 

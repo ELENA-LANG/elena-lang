@@ -62,6 +62,9 @@ _Parser* Session :: newParser(int id, ParserType type)
       case _ELENA_::Session::ptTree:
          newOne = new TreeScriptParser();
          break;
+      case _ELENA_::Session::ptBuild:
+         newOne = new Builder();
+         break;
       case _ELENA_::Session::ptText:
          newOne = new TextParser();
          break;
@@ -169,6 +172,9 @@ void Session :: parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader)
             }
             else if (reader.compare("text")) {
                parser = newParser(id, Session::ptText);
+            }
+            else if (reader.compare("build")) {
+               parser = newParser(id, Session::ptBuild);
             }
             else throw EParseError(bm.column, bm.row);
          }

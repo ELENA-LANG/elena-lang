@@ -1,6 +1,7 @@
 import system'text;
 import extensions;
 import system'dynamic;
+import system'collections;
 
 // --- IOException ---
 
@@ -36,9 +37,15 @@ public class ScriptEngine
         ^ cast string(err)  
     }
     
+    // obsolete
     evaluateTape(dirty_ptr tape)
         => system'core_routines'__vmtape;
     
+    // obsolete
+    eval(script)
+        = self.evaluateScript(script);
+        
+    // obsolete
     evaluateScript(string script)
     {
         dirty_ptr tape := extern elenasm.InterpretScopeScript
@@ -57,32 +64,7 @@ public class ScriptEngine
         ^ retVal
     }
 
-    string loadScriptFileAsText(string path, int encoding, int autoDetect)
-    {
-        dirty_ptr tape := extern elenasm.InterpretScopeFile
-                            (scopeId, path, encoding, autoDetect);
-            
-        if (tape.isEmpty())
-            { ScriptEngineException.new(self.lastScriptError()).raise() };
-
-        auto retVal := cast string(tape);    
-                                    
-        extern elenasm.Release(tape);
-        
-        ^ retVal
-    }
-    
-    loadScriptFile(string path, int encoding, int autoDetect)
-    {
-        dirty_ptr tape := extern elenasm.InterpretScopeFile
-                            (scopeId, path, encoding, autoDetect);
-            
-        if (tape.isEmpty())
-            {   ScriptEngineException.new(self.lastScriptError()).raise() };
-            
-        extern elenasm.Release(tape)
-    }
-    
+    // obsolete
     evalScriptFile(string path, int encoding, int autoDetect)
     {
         dirty_ptr tape := extern elenasm.InterpretScopeFile
@@ -101,21 +83,143 @@ public class ScriptEngine
         ^ retVal
     }
         
-    eval(script)
-        = self.evaluateScript(script);
-        
-    loadPath(string path)
+    // obsolete
+    evalPath(string path)
+        = self.evalScriptFile(path, 0, -1);
+
+    buildScriptFile(string path)
+        = self.buildScriptFile(path, 0, -1);
+
+    buildScriptFile(string path, int encoding, int autoDetect)
     {
-        self.loadScriptFile(path, 0, -1)
+        byte temp[256];        
+        dirty_ptr tape := extern elenasm.InterpretScopeFile
+                            (scopeId, path, encoding, autoDetect);
+            
+        if (tape.isEmpty())
+            { ScriptEngineException.new(self.lastScriptError()).raise() };
+
+        dirty_ptr current := tape;
+        int len := current;
+        auto result := new ArrayList();
+        while (len != 0) {
+            current := current + 4;
+            
+            if (len < 100h) {                
+                current.copyTo(temp, len);
+                
+                var item := StreamTapeInterpreter.build(temp, 0, len);
+                result.append(item)                
+            }
+            else {
+                auto dump := new byte[](len);
+                
+                current.copyTo(dump, len);
+                
+                var item := StreamTapeInterpreter.build(dump, 0, len);
+                result.append(item)
+            };
+            
+            current := current + len;
+            len := current;
+        };                                            
+                                                                                                            
+        extern elenasm.Release(tape);
+        
+        ^ result.Value
+
+    }
+
+    buildScript(string script)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeScript
+                            (scopeId, script);
+            
+        if (tape.isEmpty())
+            { ScriptEngineException.new(self.lastScriptError()).raise() };
+
+        dirty_ptr current := tape;
+        int len := current;
+        auto result := new ArrayList();
+        while (len != 0) {
+            current.add(4);
+            
+            if (len < 100h) {
+                byte temp[256];
+                
+                current.copyTo(temp, len);
+                
+                var item := StreamTapeInterpreter.build(temp, 0, len);
+                result.append(item)                
+            }
+            else {
+                auto dump := new byte[](len);
+                
+                current.copyTo(dump, len);
+                
+                var item := StreamTapeInterpreter.build(dump, 0, len);
+                result.append(item)
+            };
+            
+            current.add(len);
+        };                                            
+                                                                                                            
+        extern elenasm.Release(tape);
+        
+        ^ result.Value
+    }
+
+    string loadScriptFileAsText(string path, int encoding, int autoDetect)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeFile
+                            (scopeId, path, encoding, autoDetect);
+            
+        if (tape.isEmpty())
+            { ScriptEngineException.new(self.lastScriptError()).raise() };
+
+        auto retVal := cast string(tape);    
+                                    
+        extern elenasm.Release(tape);
+        
+        ^ retVal
+    }
+    
+    string evaluateScriptAsText(string script)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeScript
+                            (scopeId, script);
+            
+        if (tape.isEmpty())
+            { ScriptEngineException.new(self.lastScriptError()).raise() };
+
+        auto retVal := cast string(tape);    
+                                    
+        extern elenasm.Release(tape);
+        
+        ^ retVal
     }
         
     string loadPathAsText(string path)
     {
         ^ self.loadScriptFileAsText(path, 0, -1)
     }
+    
+    loadScriptFile(string path, int encoding, int autoDetect)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeFile
+                            (scopeId, path, encoding, autoDetect);
+            
+        if (tape.isEmpty())
+            {   ScriptEngineException.new(self.lastScriptError()).raise() };
+            
+        extern elenasm.Release(tape)
+    }
+    
+    loadPath(string path)
+    {
+        self.loadScriptFile(path, 0, -1)
+    }
         
-    evalPath(string path)
-        = self.evalScriptFile(path, 0, -1);
 }
 
 // --- globlas ---

@@ -120,6 +120,35 @@ public:
    Transformer(_Parser* baseParser);
 };
 
+class Builder : public _Parser
+{
+protected:
+   void saveToken(MemoryWriter& writer, _ScriptReader& reader, ScriptBookmark bm);
+
+   void saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack);
+   void flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack);
+
+public:
+   virtual bool setPostfix(ident_t)
+   {
+      return false;
+   }
+
+   virtual bool parseGrammarRule(_ScriptReader&)
+   {
+      return false;
+   }
+
+   virtual bool parseGrammarMode(_ScriptReader&)
+   {
+      return false;
+   }
+
+   virtual void parse(_ScriptReader& reader, MemoryDump* output);
+
+   Builder();
+};
+
 } // _ELENA_
 
 #endif // transformerH

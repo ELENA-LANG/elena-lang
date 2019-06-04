@@ -2040,6 +2040,22 @@ procedure __dptr."readVal$system@UnsafePointer$@system@ref#1&system@IntNumber[2]
 
 end
 
+procedure __dptr."copyTo$system@UnsafePointer$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
+
+  aloadsi 3
+  nload
+  ecopyd
+  bloadsi 2
+  dcopy 0
+  aloadsi 1
+  aloadai 0
+  callextr api : subcopy
+  aloadsi 1
+
+  quitn 3
+
+end
+
 procedure __bytearray."read$system@IntNumber$system@IntNumber$system@ByteArray[4]"
 
   aloadsi 1
