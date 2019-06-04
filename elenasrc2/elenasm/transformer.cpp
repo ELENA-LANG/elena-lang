@@ -197,8 +197,14 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
 
    ScriptBookmark bm = stack.pop();
    while (true) {
-      if (bm.state == 0) {
+      if (bm.state == 0 || bm.state == -1) {
          saveClass(writer, reader, stack);
+      }
+      else if (bm.state == -1) {
+         writer.writeByte(counter);
+         saveToken(writer, reader, bm);
+
+         counter = 1;
       }
       else if (bm.state == _ELENA_TOOL_::dfaQuote) {
          writer.writeByte(0xFF);
@@ -231,20 +237,30 @@ void Builder :: flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptB
    writer.seekEOF();
 }
 
-void Builder :: parse(_ScriptReader& reader, MemoryDump* output)
+void Builder::parse(_ScriptReader& reader, MemoryDump* output)
 {
    MemoryWriter writer(output);
 
    ScriptBookmark defVal;
    Stack<ScriptBookmark> stack(defVal);
+   Stack<int> bookmarks(0);
 
    ScriptBookmark bm = reader.read();
    int level = 0;
    while (!reader.Eof()) {
       if (reader.compare("(")) {
+         bookmarks.push(stack.Count());
          level++;
       }
+      else if (reader.compare(",")) {
+         auto expr_it = stack.get(stack.Count() - bookmarks.peek());
+         ScriptBookmark expr_bm = *expr_it;
+
+         stack.insert(expr_it, expr_bm);
+         stack.push(defVal);
+      }
       else if (reader.compare(")")) {
+         bookmarks.pop();
          stack.push(defVal);
          level--;
          if (!level) {

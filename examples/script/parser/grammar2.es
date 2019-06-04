@@ -8,15 +8,15 @@
    #define start          ::= $eof;
 
    #define node          ::= <= parser'Node ( => "(" leaf ")" <= ) =>;
-   #define node          ::= <= parser'Node ( => "(" operation operations* ")"  <= ) =>;
+   #define node          ::= <= parser'Node ( => "(" node operation operations* ")"  <= ) =>;
 
-   #define operation     ::= <= "+" => node node "+";
-   #define operation     ::= <= "-" => node node "-";
-   #define operation     ::= <= "*" => node node "*";
-   #define operation     ::= <= "/" => node node "/";
+   #define operation     ::= node "+" <= "+" =>;
+   #define operation     ::= node "-" <= "-" =>;
+   #define operation     ::= node "*" <= "*" =>;
+   #define operation     ::= node "/" <= "/" =>;
    #define leaf          ::= <= "$numeric" =>;
 
-   #define operations    ::= "," operation;
+   #define operations    ::= <= , => "," operation;
 
    #grammar cf
 

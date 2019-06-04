@@ -18,7 +18,7 @@ public class Node
         Text := text
     }
     
-    constructor(string operation, Node left, Node right)
+    constructor(Node left, Node right, string operation)
     {
         Left := left;
         Right := right;
