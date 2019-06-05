@@ -36,6 +36,8 @@ public class Node
             Text =>
                 "+" { ^ Left.eval() + Right.eval() }
                 "-" { ^ Left.eval() - Right.eval() }
+                "*" { ^ Left.eval() * Right.eval() }
+                "/" { ^ Left.eval() / Right.eval() }
                 : { ^ Text.toReal() }
         }        
     }
