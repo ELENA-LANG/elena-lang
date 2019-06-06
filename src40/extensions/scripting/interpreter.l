@@ -127,11 +127,11 @@ public class ScriptEngine
         extern elenasm.Release(tape);
         
         ^ result.Value
-
     }
 
     buildScript(string script)
     {
+        byte temp[256];        
         dirty_ptr tape := extern elenasm.InterpretScopeScript
                             (scopeId, script);
             
@@ -142,11 +142,9 @@ public class ScriptEngine
         int len := current;
         auto result := new ArrayList();
         while (len != 0) {
-            current.add(4);
+            current := current + 4;
             
-            if (len < 100h) {
-                byte temp[256];
-                
+            if (len < 100h) {                
                 current.copyTo(temp, len);
                 
                 var item := StreamTapeInterpreter.build(temp, 0, len);
@@ -161,7 +159,8 @@ public class ScriptEngine
                 result.append(item)
             };
             
-            current.add(len);
+            current := current + len;
+            len := current;
         };                                            
                                                                                                             
         extern elenasm.Release(tape);
@@ -202,6 +201,17 @@ public class ScriptEngine
     string loadPathAsText(string path)
     {
         ^ self.loadScriptFileAsText(path, 0, -1)
+    }
+    
+    loadScript(string script)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeScript
+                            (scopeId, script);
+            
+        if (tape.isEmpty())
+            {   ScriptEngineException.new(self.lastScriptError()).raise() };
+            
+        extern elenasm.Release(tape)
     }
     
     loadScriptFile(string path, int encoding, int autoDetect)

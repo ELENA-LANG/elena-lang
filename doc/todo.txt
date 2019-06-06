@@ -5,9 +5,7 @@ In development:
 
 
               ydev
-                * buildScriptFile, buildScript
-                * new script engine target parser - build_tape
-                * parse expression 1-2-3 - using script engine
+                * build expression tree, using build tape : 1-2-3
 
                 * redesign script code generation
                 * test script examples
