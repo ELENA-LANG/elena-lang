@@ -26,6 +26,9 @@ In development:
 Pipeline:
 ------                                                                                         
 
+              ydev
+                * support namespace import, so the build script can be shortened
+
               xdev
                  * opzimiation extension operation with a byte array parameter
                  * optimize i += 1
