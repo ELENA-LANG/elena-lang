@@ -5,13 +5,15 @@ In development:
 
 
               ydev
-                * build expression tree, using build tape : 1-2-3
+                * build : variables, branching, looping, returning (goto)
+                * methods, argument list, fields, classes
 
                 * redesign script code generation
                 * test script examples
 
                 * Stand alone executable: Script engine #64
                 * get rid of tape support??
+                * get rid of extensions'dynamic'TapeAssembly??
 
               ydev - Linux
                 * linker : adata + mdata + rdata (meta starts with size field)
@@ -26,8 +28,9 @@ In development:
 Pipeline:
 ------                                                                                         
 
-              ydev
-                * support namespace import, so the build script can be shortened
+              ydev - build tape
+                * support variadic argument list (if the number of arguments is bigger than 0x1F)
+                * ssupport namespace import, so the build script can be shortened
 
               xdev
                  * opzimiation extension operation with a byte array parameter

@@ -216,6 +216,12 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
       bm = stack.pop();
    }
 
+   // TODO : support variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
+   if (counter > ARG_COUNT) {
+      // !! temporal
+      throw EInvalidOperation("The number of constructor arguments is too big!");
+   }
+
    writer.writeByte(counter);
    saveToken(writer, reader, bm);
 }
@@ -237,7 +243,7 @@ void Builder :: flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptB
    writer.seekEOF();
 }
 
-void Builder::parse(_ScriptReader& reader, MemoryDump* output)
+void Builder :: parse(_ScriptReader& reader, MemoryDump* output)
 {
    MemoryWriter writer(output);
 
