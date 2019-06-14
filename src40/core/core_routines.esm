@@ -3981,6 +3981,56 @@ procedure __mssg_closure."params##invoke$system@Object[2]"
 
 end
 
+procedure __assign_closure."params##invoke$system@Object[2]"
+
+  pusha
+  bcopys -2
+  dcopy 0
+labSearch:
+  get
+  inc
+  elser labSearch 0
+  dec
+  popa
+  nloade
+  sub
+  aloadsi 1
+  xset
+
+  quitn 1
+
+end
+
+procedure __local_closure."params##invoke$system@Object[2]"
+
+  pusha
+  bcopys -2
+  dcopy 0
+labSearch:
+  get
+  inc
+  elser labSearch 0
+  dec
+  popa
+  nloade
+  sub
+  get
+
+  quit
+
+end
+
+procedure __free_closure."params##invoke$system@Object[2]"
+
+  nload
+  bcopys -1
+  get
+  ecopyd
+
+  equit
+
+end
+
 procedure __byte."readInvertedTo$system@ByteNumber$@system@ref#1&system@ByteNumber[2]"
 
   aloadsi 1

@@ -5,7 +5,13 @@ In development:
 
 
               ydev
-                * build : variables, branching, looping, returning (goto)
+                * tapeclosure method should be invoked semi-directly
+
+                * build : variables 
+
+                var a := "Hello"; system'console.writeLine(a)
+
+                * build : branching, looping, returning (goto)
                 * methods, argument list, fields, classes
 
                 * redesign script code generation
