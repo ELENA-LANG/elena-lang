@@ -1061,6 +1061,8 @@ private:
    void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
    void registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature);
 
+   bool matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
+
 public:
    void loadRules(StreamReader* optimization);
    void turnOnOptimiation(int level)

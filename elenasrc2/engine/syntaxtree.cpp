@@ -664,6 +664,5 @@ SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
 //   //   else it++;
 //   //}
 //
-//
 //   return applied;
 //}

@@ -8690,6 +8690,35 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
    }
 }
 
+bool Compiler :: matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns)
+{
+   bool applied = false;
+
+   List<SyntaxTrieNode> nextPatterns;
+   SyntaxTrieNode rootTrieNode(&trie._trie);
+   nextPatterns.add(rootTrieNode);
+
+   // match existing patterns
+   for (auto it = matchedPatterns.start(); !it.Eof(); it++) {
+      auto pattern = *it;
+      for (auto child_it = pattern.Children(); !child_it.Eof(); child_it++) {
+         auto currentPattern = child_it.Node();
+         if (currentPattern.Value().match(node)) {
+            nextPatterns.add(currentPattern);
+         }
+      }
+   }
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      applied |= matchTriePatterns(current, trie, nextPatterns);
+
+      current = current.nextNode();
+   }
+
+   return applied;
+}
+
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
    SNodePattern defaultVal(lxNone);
@@ -8703,18 +8732,15 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
    pos = trie.add(pos, SNodePattern(lxEmbeddable));
    pos = trie.add(pos, SNodePattern(lxMatch, 1));
 
-   //bool applied = true;
-   //while (applied) {
-   //   applied = false;
+   bool applied = true;
+   List<SyntaxTrieNode> matched;
+   while (applied) {
+      matched.clear();
+      SyntaxTrieNode rootTrieNode(&trie._trie);
+      matched.add(rootTrieNode);
 
-   //
-
-   //   if (SyntaxTree::seekMatch()) {
-   //      applied = true;
-   //   }
-   //}
-
-   //while (SyntaxTree::apply(node, trie));
+      applied = matchTriePatterns(node, trie, matched);
+   }
 }
 
 void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
