@@ -16,16 +16,16 @@ namespace _ELENA_
 
 enum LexicalType
 {
-   lxSimpleMask      = 0x002000,
-   lxCodeScopeMask   = 0x004000,
-   lxObjectMask      = 0x008000,
-   lxExprMask        = 0x00C000,
-   lxTerminalMask    = 0x010000,
-   lxSubOpMask       = 0x100000,
-   lxPrimitiveOpMask = 0x80000,
+   lxSimpleMask               = 0x002000,
+   lxCodeScopeMask            = 0x004000,
+   lxObjectMask               = 0x008000,
+   lxExprMask                 = 0x00C000,
+   lxTerminalMask             = 0x010000,
+   lxSubOpMask                = 0x100000,
+   lxPrimitiveOpMask          = 0x080000,
 
-   lxInvalid         = -2,
-   lxNone            = 0x00000,
+   lxInvalid                  = -2,
+   lxNone                     = 0x000000,
 
    // scopes
    lxRoot                     = 0x000001,
@@ -43,77 +43,77 @@ enum LexicalType
    lxCode                     = 0x00001A,
    lxMessage                  = 0x00001B, // arg - message
    lxDispatchCode             = 0x000020,
-   lxAssign                   = 0x00021,
-   lxParent                   = 0x00023,
-   lxConstructor              = 0x00024,
-   lxStaticMethod             = 0x00025,
-   lxSwitchOption             = 0x0003C,
-   lxWrapping                 = 0x0002B,
-   lxLastSwitchOption         = 0x0003D,
-   lxAttributeDecl            = 0x0004E,
-   lxClassField               = 0x0004F,
-   lxImplicitMessage          = 0x00067,
-   lxSizeDecl                 = 0x00068,
-   lxDynamicSizeDecl          = 0x00069,
-   lxPropertyParam            = 0x0006B,
-   lxClosureExpr              = 0x0006E,
-   lxFieldInit                = 0x00077,
-   lxSubMessage               = 0x0007D,
-   lxInlineClosure            = 0x0007F,
-   lxAttrExpression           = 0x00080,
-   lxTemplateOperator         = 0x00081,
-   lxFieldAccum               = 0x00083,
+   lxAssign                   = 0x000021,
+   lxParent                   = 0x000023,
+   lxConstructor              = 0x000024,
+   lxStaticMethod             = 0x000025,
+   lxSwitchOption             = 0x00003C,
+   lxWrapping                 = 0x00002B,
+   lxLastSwitchOption         = 0x00003D,
+   lxAttributeDecl            = 0x00004E,
+   lxClassField               = 0x00004F,
+   lxImplicitMessage          = 0x000067,
+   lxSizeDecl                 = 0x000068,
+   lxDynamicSizeDecl          = 0x000069,
+   lxPropertyParam            = 0x00006B,
+   lxClosureExpr              = 0x00006E,
+   lxFieldInit                = 0x000077,
+   lxSubMessage               = 0x00007D,
+   lxInlineClosure            = 0x00007F,
+   lxAttrExpression           = 0x000080,
+   lxTemplateOperator         = 0x000081,
+   lxFieldAccum               = 0x000083,
 
-   lxTypecast                 = 0x00100,
-   lxClassProperty            = 0x00101,
+   lxTypecast                 = 0x000100,
+   lxClassProperty            = 0x000101,
 
    // parameters
-   lxEOF                      = 0x18003, // indicating closing code bracket
-   lxLiteral                  = 0x18004,
-   lxIdentifier               = 0x18005,
-   lxReference                = 0x18007,
-   lxInteger                  = 0x18008,
-   lxHexInteger               = 0x18009,
-   lxReal                     = 0x1800A,
-   lxCharacter                = 0x1800B,
-   lxLong                     = 0x1800C,
-   lxWide                     = 0x1800D,
-   lxExplicitConst            = 0x1800E,
-   lxExplicitAttr             = 0x1800F,
-   lxGlobalReference          = 0x18011,
+   lxEOF                      = 0x018003, // indicating closing code bracket
+   lxLiteral                  = 0x018004,
+   lxIdentifier               = 0x018005,
+   lxReference                = 0x018007,
+   lxInteger                  = 0x018008,
+   lxHexInteger               = 0x018009,
+   lxReal                     = 0x01800A,
+   lxCharacter                = 0x01800B,
+   lxLong                     = 0x01800C,
+   lxWide                     = 0x01800D,
+   lxExplicitConst            = 0x01800E,
+   lxExplicitAttr             = 0x01800F,
+   lxGlobalReference          = 0x018011,
 
-   lxImporting                = 0x08101,
-   lxNested                   = 0x08102, // arg - count
-   lxStruct                   = 0x08103, // arg - count
-   lxConstantSymbol           = 0x0A104, // arg - reference
-   lxField                    = 0x08105, // arg - offset
-   lxStaticField              = 0x08106, // arg - reference   // - lxClassStaticField
-   lxSymbolReference          = 0x08107,
-   lxLocalAddress             = 0x0A108, // arg - offset
-   lxFieldAddress             = 0x08109, // arg - offset
-   lxLocal                    = 0x0A10A, // arg - offset
-   lxBlockLocal               = 0x0A10B, // arg - offset
-   lxConstantString           = 0x0A10C, // arg - reference
-   lxConstantWideStr          = 0x0A10D, // arg - reference
-   lxConstantChar             = 0x0A10E, // arg - reference
-   lxConstantInt              = 0x1A10F, // arg - reference
-   lxConstantLong             = 0x1A110, // arg - reference
-   lxConstantReal             = 0x1A111, // arg - reference
-   lxClassSymbol              = 0x0A112, // arg - reference
-   lxMessageConstant          = 0x0A113, // arg - rererence
-   lxExtMessageConstant       = 0x0A114, // arg -reference
-   lxSubjectConstant          = 0x0A115, // arg - reference
-   lxStaticConstField         = 0x08116, // arg - reference
-   lxNil                      = 0x0A117,
-   lxCurrent                  = 0x0A118, // arg -offset
-   lxResult                   = 0x0A119, // arg -offset
-   lxResultField              = 0x0A11A, // arg -offset
-   lxCurrentMessage           = 0x0A11B,
-   lxSelfLocal                = 0x0A11C,
-   lxConstantList             = 0x0A11E,   // arg - reference
-   lxBlockLocalAddr           = 0x0A11F,   // arg - offset
-   lxClassRefField            = 0x08120,   // arg - self instance offset
-   lxBaseField                = 0x0A122,
+   lxImporting                = 0x008101,
+   lxNested                   = 0x008102, // arg - count
+   lxStruct                   = 0x008103, // arg - count
+   lxConstantSymbol           = 0x00A104, // arg - reference
+   lxField                    = 0x008105, // arg - offset
+   lxStaticField              = 0x008106, // arg - reference   // - lxClassStaticField
+   lxSymbolReference          = 0x008107,
+   lxLocalAddress             = 0x00A108, // arg - offset
+   lxFieldAddress             = 0x008109, // arg - offset
+   lxLocal                    = 0x00A10A, // arg - offset
+   lxBlockLocal               = 0x00A10B, // arg - offset
+   lxConstantString           = 0x00A10C, // arg - reference
+   lxConstantWideStr          = 0x00A10D, // arg - reference
+   lxConstantChar             = 0x00A10E, // arg - reference
+   lxConstantInt              = 0x01A10F, // arg - reference
+   lxConstantLong             = 0x01A110, // arg - reference
+   lxConstantReal             = 0x01A111, // arg - reference
+   lxClassSymbol              = 0x00A112, // arg - reference
+   lxMessageConstant          = 0x00A113, // arg - rererence
+   lxExtMessageConstant       = 0x00A114, // arg -reference
+   lxSubjectConstant          = 0x00A115, // arg - reference
+   lxStaticConstField         = 0x008116, // arg - reference
+   lxNil                      = 0x00A117,
+   lxCurrent                  = 0x00A118, // arg -offset
+   lxResult                   = 0x00A119, // arg -offset
+   lxResultField              = 0x00A11A, // arg -offset
+   lxCurrentMessage           = 0x00A11B,
+   lxSelfLocal                = 0x00A11C,
+   lxConstantList             = 0x00A11E,   // arg - reference
+   lxBlockLocalAddr           = 0x00A11F,   // arg - offset
+   lxClassRefField            = 0x008120,   // arg - self instance offset
+   lxBaseField                = 0x00A122,
 
    lxCondBoxing               = 0x00C001,   // conditional boxing, arg - size
    lxBoxing                   = 0x00C002,   // boxing of the argument, arg - size
@@ -248,8 +248,7 @@ enum LexicalType
    lxCheckLocal               = 0x2004C,
 
    lxTempAttr                 = 0x2010D,
-   lxSubOpMode                = 0x2010E,
-   lxMatch                    = 0x2010F
+   lxSubOpMode                = 0x2010E
 };
 
 // --- SyntaxTree ---
@@ -929,6 +928,7 @@ public:
    {
       LexicalType type;
       int         argument;
+      int         patternId;
 
       bool match(Node node)
       {
@@ -949,16 +949,25 @@ public:
       {
          type = lxNone;
          this->argument = 0;
+         this->patternId = 0;
       }
       NodePattern(LexicalType type)
       {
          this->type = type;
          this->argument = 0;
+         this->patternId = 0;
       }
       NodePattern(LexicalType type, int argument)
       {
          this->type = type;
          this->argument = argument;
+         this->patternId = 0;
+      }
+      NodePattern(LexicalType type, int argument, int patternId)
+      {
+         this->type = type;
+         this->argument = argument;
+         this->patternId = patternId;
       }
    };
 

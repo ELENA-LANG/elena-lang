@@ -8,13 +8,14 @@
 //---------------------------------------------------------------------------
 #include "textsource.h"
 #include "bytecode.h"
+#include "syntaxtree.h"
 
 #include <stdarg.h>
 
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION 2
+#define BUILD_VERSION 3
 
 typedef Trie<ByteCodePattern>            ByteTrie;
 typedef MemoryTrie<ByteCodePattern>      MemoryByteTrie;
@@ -170,21 +171,41 @@ void appendOpCodeString(TextSourceReader& source, char* token, LineInfo& info, B
    readTransform(position, source, token, info, trie);
 }
 
+SNodePattern decodeSourceNode(TextSourceReader& source, char* token, LineInfo& info)
+{
+   SNodePattern pattern;
+
+   return pattern;
+}
+
+void appendSourceString(TextSourceReader& source, char* token, LineInfo& info, SyntaxTrie& trie)
+{
+   // save source pattern
+   SNodePattern pattern = decodeSourceNode(source, token, info);
+
+   //ByteCodePattern pattern = decodeCommand(source, token, info);
+
+   //size_t position = trie.add(0, pattern);
+
+   //while (!ident_t(token).compare("=>")) {
+   //   position = trie.add(position, decodeCommand(source, token, info));
+   //}
+
+   //// save end state
+   //position = trie.add(position, ByteCodePattern(bcMatch));
+
+   //// save replacement (should be saved in reverse order, to simplify transform algorithm)
+   //info = source.read(token, IDENTIFIER_LEN);
+   //readTransform(position, source, token, info, trie);
+}
+
 bool isMatchNode(ByteCodePattern pattern)
 {
    return pattern.code == bcMatch;
 }
 
-int main(int argc, char* argv[])
+void parseOpcodeRule(Path& path)
 {
-   printLine("ELENA command line optimization table generator %d.%d.%d (C)2012-19 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
-   if (argc != 2) {
-      printLine("og <optimization_file>");
-      return 0;
-   }
-
-   Path path(argv[1]);
-
    TextFileReader   sourceFile(path.c_str(), feUTF8, false);
    TextSourceReader source(4, &sourceFile);
    LineInfo         info(0, 0, 0);
@@ -218,9 +239,67 @@ int main(int argc, char* argv[])
 
       printLine("\nSuccessfully created\n");
    }
-   catch(UnknownToken& token)
+   catch (UnknownToken& token)
    {
       printLine("(%d): Invalid token %s\n", token.line.row, token.line.line);
+   }
+}
+
+void parseSourceRules(Path& path)
+{
+   TextFileReader   sourceFile(path.c_str(), feUTF8, false);
+   TextSourceReader source(4, &sourceFile);
+   LineInfo         info(0, 0, 0);
+   char             token[IDENTIFIER_LEN + 1];
+
+   SNodePattern     defValue;
+   SyntaxTrie       trie(defValue);
+   try
+   {
+      // add root
+      trie.addRoot(SNodePattern(lxRoot));
+
+      // generate tree
+      while (true) {
+         info = source.read(token, IDENTIFIER_LEN);
+
+         if (info.state == dfaEOF) break;
+
+         appendSourceString(source, token, info, trie);
+      }
+
+      //// add suffix links
+      //trie.prepare(isMatchNode);
+
+      // save the result
+      Path outputFile(path);
+      outputFile.changeExtension("dat");
+
+      FileWriter file(outputFile.c_str(), feRaw, false);
+      trie.save(&file);
+
+      printLine("\nSuccessfully created\n");
+   }
+   catch (UnknownToken& token)
+   {
+      printLine("(%d): Invalid token %s\n", token.line.row, token.line.line);
+   }
+}
+
+int main(int argc, char* argv[])
+{
+   printLine("ELENA command line optimization table generator %d.%d.%d (C)2012-19 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
+   if (argc == 2) {
+      Path path(argv[1]);
+      parseOpcodeRule(path);
+   }
+   else if (strcmp(argv[1], "s")) {
+      Path path(argv[2]);
+      parseSourceRules(path);
+   }
+   else {
+      printLine("og [s] <optimization_file>");
+      return 0;
    }
 
    return 0;

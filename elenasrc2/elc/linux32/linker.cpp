@@ -429,8 +429,8 @@ void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
    // RData Segment
    ph_header.p_type = PT_LOAD;
    ph_header.p_offset = info.headerSize + info.textSize;
-   ph_header.p_vaddr = info.map.base + info.map.rdata;
-   ph_header.p_paddr = info.map.base + info.map.rdata;
+   ph_header.p_vaddr = info.map.base + info.map.adata;
+   ph_header.p_paddr = info.map.base + info.map.adata;
    ph_header.p_memsz = ph_header.p_filesz = info.rdataSize;
    ph_header.p_flags = PF_R;
    ph_header.p_align = alignment;
@@ -522,6 +522,22 @@ void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
       project.raiseError(errCannotCreate, path.c_str());
 
    chmod(path, S_IXOTH | S_IXUSR | S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
+
+
+   if (info.withDebugInfo) {
+      Path debugPath(path);
+      debugPath.changeExtension("dn");
+
+      if (!createDebugFile(info, debugPath.c_str())) {
+         ident_t target = project.StrSetting(opTarget);
+
+         IdentifierString fileNameArg(target);
+         fileNameArg.truncate(target.findLast('.', fileNameArg.Length()));
+         fileNameArg.append(".dn");
+
+         project.raiseError(errCannotCreate, fileNameArg.c_str());
+      }         
+   }
 }
 
 // --- I386Linker32 ---

@@ -27,6 +27,14 @@ In development:
                 * suport elenart
                   
               xdev
+                 * get rid of lxEmbeddable
+                 * embeddable returning type : 
+                       lxAssigning
+                          lxDirectCalling, lxSDirctCalling, lxCalling
+                             lxEmbeddable
+
+                       
+
                  * reseign source code level optimization
                  * import hashtable design
 

@@ -1,0 +1,1 @@
+assigning, directcall, embeddable = 1;

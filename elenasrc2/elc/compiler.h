@@ -1062,6 +1062,7 @@ private:
    void registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature);
 
    bool matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
+   bool optimizeTriePattern(SNode& node, int patternId);
 
 public:
    void loadRules(StreamReader* optimization);

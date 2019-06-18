@@ -104,6 +104,7 @@
     <ClCompile Include="..\..\..\common\dump.cpp" />
     <ClCompile Include="..\..\..\common\files.cpp" />
     <ClCompile Include="..\..\..\engine\bytecode.cpp" />
+    <ClCompile Include="..\..\..\engine\syntaxtree.cpp" />
     <ClCompile Include="..\..\..\engine\textsource.cpp" />
     <ClCompile Include="..\og.cpp" />
   </ItemGroup>
@@ -120,6 +121,7 @@
     <ClInclude Include="..\..\..\common\streams.h" />
     <ClInclude Include="..\..\..\elc\syntax.h" />
     <ClInclude Include="..\..\..\common\tools.h" />
+    <ClInclude Include="..\..\..\engine\syntaxtree.h" />
     <ClInclude Include="..\..\..\engine\textparser.h" />
     <ClInclude Include="..\..\..\engine\textsource.h" />
   </ItemGroup>

@@ -8690,30 +8690,43 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
    }
 }
 
+bool Compiler :: optimizeTriePattern(SNode& node, int patternId)
+{
+   return false;
+}
+
+
 bool Compiler :: matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns)
 {
    bool applied = false;
 
    List<SyntaxTrieNode> nextPatterns;
-   SyntaxTrieNode rootTrieNode(&trie._trie);
-   nextPatterns.add(rootTrieNode);
+   if (test(node.type, lxCodeScopeMask)) {
+      SyntaxTrieNode rootTrieNode(&trie._trie);
+      nextPatterns.add(rootTrieNode);
+   }
 
    // match existing patterns
    for (auto it = matchedPatterns.start(); !it.Eof(); it++) {
       auto pattern = *it;
       for (auto child_it = pattern.Children(); !child_it.Eof(); child_it++) {
          auto currentPattern = child_it.Node();
-         if (currentPattern.Value().match(node)) {
+         auto currentPatternValue = currentPattern.Value();
+         if (currentPatternValue.match(node)) {
             nextPatterns.add(currentPattern);
+            if (currentPatternValue.patternId != 0)
+               applied |= optimizeTriePattern(node, currentPatternValue.patternId);
          }
       }
    }
 
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      applied |= matchTriePatterns(current, trie, nextPatterns);
+   if (nextPatterns.Count() > 0) {
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         applied |= matchTriePatterns(current, trie, nextPatterns);
 
-      current = current.nextNode();
+         current = current.nextNode();
+      }
    }
 
    return applied;
@@ -8727,10 +8740,8 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
    trie.addRoot(SNodePattern(lxRoot));
 
    size_t pos = trie.add(0, SNodePattern(lxAssigning));
-   pos = trie.add(pos, SNodePattern(lxIntOp));
    pos = trie.add(pos, SNodePattern(lxDirectCalling));
-   pos = trie.add(pos, SNodePattern(lxEmbeddable));
-   pos = trie.add(pos, SNodePattern(lxMatch, 1));
+   pos = trie.add(pos, SNodePattern(lxEmbeddableAttr, 0, 1));
 
    bool applied = true;
    List<SyntaxTrieNode> matched;
