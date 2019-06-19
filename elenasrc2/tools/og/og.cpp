@@ -171,25 +171,43 @@ void appendOpCodeString(TextSourceReader& source, char* token, LineInfo& info, B
    readTransform(position, source, token, info, trie);
 }
 
-SNodePattern decodeSourceNode(TextSourceReader& source, char* token, LineInfo& info)
+SNodePattern decodeSourceNode(TextSourceReader& source, char* token, LineInfo& info, Map<ident_t, int>& tokens)
 {
    SNodePattern pattern;
+   pattern.type = (LexicalType)tokens.get(token);
+   if (pattern.type == lxNone) {
+      throw UnknownToken(info);
+   }
+
+   info = source.read(token, IDENTIFIER_LEN);
+   if (ident_t(token).compare("=")) {
+      info = source.read(token, IDENTIFIER_LEN);
+      pattern.patternId = ident_t(token).toInt();
+      if (!pattern.patternId)
+         throw UnknownToken(info);
+
+      info = source.read(token, IDENTIFIER_LEN);
+      if (!ident_t(token).compare(";"))
+         throw UnknownToken(info);
+   }
+   else if (ident_t(token).compare(",")) {
+      info = source.read(token, IDENTIFIER_LEN);
+   }
+   else throw UnknownToken(info);
 
    return pattern;
 }
 
-void appendSourceString(TextSourceReader& source, char* token, LineInfo& info, SyntaxTrie& trie)
+void appendSourceString(TextSourceReader& source, char* token, LineInfo& info, SyntaxTrie& trie, Map<ident_t, int>& tokens)
 {
    // save source pattern
-   SNodePattern pattern = decodeSourceNode(source, token, info);
+   SNodePattern pattern = decodeSourceNode(source, token, info, tokens);
 
-   //ByteCodePattern pattern = decodeCommand(source, token, info);
+   size_t position = trie.add(0, pattern);
 
-   //size_t position = trie.add(0, pattern);
-
-   //while (!ident_t(token).compare("=>")) {
-   //   position = trie.add(position, decodeCommand(source, token, info));
-   //}
+   while (!ident_t(token).compare(";")) {
+      position = trie.add(position, decodeSourceNode(source, token, info, tokens));
+   }
 
    //// save end state
    //position = trie.add(position, ByteCodePattern(bcMatch));
@@ -247,6 +265,9 @@ void parseOpcodeRule(Path& path)
 
 void parseSourceRules(Path& path)
 {
+   Map<ident_t, int> tokens;
+   loadSyntaxTokens(tokens, true);
+
    TextFileReader   sourceFile(path.c_str(), feUTF8, false);
    TextSourceReader source(4, &sourceFile);
    LineInfo         info(0, 0, 0);
@@ -265,7 +286,7 @@ void parseSourceRules(Path& path)
 
          if (info.state == dfaEOF) break;
 
-         appendSourceString(source, token, info, trie);
+         appendSourceString(source, token, info, trie, tokens);
       }
 
       //// add suffix links
@@ -293,7 +314,7 @@ int main(int argc, char* argv[])
       Path path(argv[1]);
       parseOpcodeRule(path);
    }
-   else if (strcmp(argv[1], "s")) {
+   else if (argv[1][0] == 's' && argv[1][1] == 0) {
       Path path(argv[2]);
       parseSourceRules(path);
    }

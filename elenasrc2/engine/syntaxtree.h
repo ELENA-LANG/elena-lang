@@ -1165,6 +1165,8 @@ public:
    }
 };
 
+void loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode = false);
+
 inline bool isSingleStatement(SyntaxTree::Node expr)
 {
    return expr.findSubNode(lxMessage, lxAssign/*, lxOperator*/) == lxNone;

@@ -4078,6 +4078,11 @@ public:
       _trie.save(writer);
    }
 
+   void load(StreamReader* optimization)
+   {
+      _trie.load(optimization);
+   }
+
    Trie(T defaultVal)
       : _trie(defaultVal)
    {

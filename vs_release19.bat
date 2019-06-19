@@ -27,6 +27,9 @@ move %1\dat\sg\syntax.dat %1\bin
 %1\bin\og %1\dat\og\rules.txt
 move %1\dat\og\rules.dat %1\bin
 
+%1\bin\og s %1\dat\og\source_rules.txt 
+move %1\dat\og\source_rules.dat %1\bin
+
 md lib40
 %1\bin\asm2binx %1\src40\core\core_routines.esm lib40\system
 
@@ -54,6 +57,7 @@ copy %1\bin\elenasm.dll bin
 copy %1\bin\winstub.ex_ bin
 copy %1\bin\syntax.dat bin
 copy %1\bin\rules.dat bin
+copy %1\bin\source_rules.dat bin
 copy %1\bin\elc.cfg bin
 copy %1\bin\elenavm.cfg bin
 copy %1\bin\elenart.cfg bin

@@ -1087,7 +1087,7 @@ ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
 // --- Compiler ---
 
 Compiler :: Compiler(_CompilerLogic* logic)
-//   : _verbs(0)
+   : _sourceRules(SNodePattern(lxNone))
 {
    _optFlag = 0;
 
@@ -1116,6 +1116,11 @@ void Compiler :: writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref
 void Compiler :: loadRules(StreamReader* optimization)
 {
    _rules.load(optimization);
+}
+
+void Compiler :: loadSourceRules(StreamReader* optimization)
+{
+   _sourceRules.load(optimization);
 }
 
 bool Compiler :: optimizeIdleBreakpoints(CommandTape& tape)
@@ -8695,7 +8700,6 @@ bool Compiler :: optimizeTriePattern(SNode& node, int patternId)
    return false;
 }
 
-
 bool Compiler :: matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns)
 {
    bool applied = false;
@@ -8734,23 +8738,14 @@ bool Compiler :: matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTri
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
-   SNodePattern defaultVal(lxNone);
-   SyntaxTrie trie(defaultVal);
-
-   trie.addRoot(SNodePattern(lxRoot));
-
-   size_t pos = trie.add(0, SNodePattern(lxAssigning));
-   pos = trie.add(pos, SNodePattern(lxDirectCalling));
-   pos = trie.add(pos, SNodePattern(lxEmbeddableAttr, 0, 1));
-
    bool applied = true;
    List<SyntaxTrieNode> matched;
    while (applied) {
       matched.clear();
-      SyntaxTrieNode rootTrieNode(&trie._trie);
+      SyntaxTrieNode rootTrieNode(&_sourceRules._trie);
       matched.add(rootTrieNode);
 
-      applied = matchTriePatterns(node, trie, matched);
+      applied = matchTriePatterns(node, _sourceRules, matched);
    }
 }
 

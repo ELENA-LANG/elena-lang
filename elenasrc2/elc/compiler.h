@@ -765,6 +765,7 @@ private:
 
    // optimization rules
    TransformTape _rules;
+   SyntaxTrie    _sourceRules;
 
    // optmimization routines
    bool applyRules(CommandTape& tape);
@@ -1066,6 +1067,7 @@ private:
 
 public:
    void loadRules(StreamReader* optimization);
+   void loadSourceRules(StreamReader* optimization);
    void turnOnOptimiation(int level)
    {
       _optFlag |= level;
