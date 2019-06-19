@@ -123,7 +123,7 @@ enum LexicalType
    lxArgUnboxing              = 0x00C006,
    lxCalling                  = 0x10C007,   // sending a message, arg - message
    lxDirectCalling            = 0x10C008,   // calling a method, arg - message
-   lxSDirctCalling            = 0x10C009,   // calling a virtual method, arg - message
+   lxSDirectCalling           = 0x10C009,   // calling a virtual method, arg - message
    lxResending                = 0x00C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
    lxImplicitCall             = 0x00C00B,
    lxTrying                   = 0x00C00C,   // try-catch expression

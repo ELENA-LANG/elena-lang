@@ -1062,8 +1062,9 @@ private:
    void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
    void registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature);
 
-   bool matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
-   bool optimizeTriePattern(SNode& node, int patternId);
+   bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
+   bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
+   bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node);
 
 public:
    void loadRules(StreamReader* optimization);

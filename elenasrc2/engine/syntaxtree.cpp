@@ -46,6 +46,8 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
    if (fullMode) {
       tokens.add("assigning", lxAssigning);
       tokens.add("directcall", lxDirectCalling);
+      tokens.add("sdirectcall", lxSDirectCalling);
+      tokens.add("call", lxCalling);
       tokens.add("embeddable", lxEmbeddableAttr);
    }
 }

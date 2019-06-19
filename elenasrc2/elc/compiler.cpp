@@ -3197,7 +3197,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       writer.appendNode(lxOvreriddenMessage, messageRef);
    }
    else if (callType == tpClosed || callType == tpSealed) {
-      operation = callType == tpClosed ? lxSDirctCalling : lxDirectCalling;
+      operation = callType == tpClosed ? lxSDirectCalling : lxDirectCalling;
       argument = messageRef;
 
       if (!test(mode, HINT_DYNAMIC_OBJECT) && _logic->isEmbeddable(*scope.moduleScope, classReference) && result.stackSafe)
@@ -8313,9 +8313,9 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
                //}
             }
             else if (subNode.existChild(lxEmbeddable)) {
-               if (!_logic->optimizeReturningStructure(*scope.moduleScope, *this, node)) {
-                  _logic->optimizeEmbeddableOp(*scope.moduleScope, *this, node);
-               }
+               //if (!_logic->optimizeReturningStructure(*scope.moduleScope, *this, node)) {
+               //   _logic->optimizeEmbeddableOp(*scope.moduleScope, *this, node);
+               //}
             }
             else if (subNode != lxCalling && subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
                SNode createNode = subNode.findChild(lxCreatingStruct/*, lxImplicitCall*/);
@@ -8604,7 +8604,7 @@ ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mo
    switch (current.type) {
       case lxCalling:
       case lxDirectCalling:
-      case lxSDirctCalling:
+      case lxSDirectCalling:
 //      case lxImplicitCall:
          return analizeMessageCall(current, scope, mode);
       case lxExpression:
@@ -8695,12 +8695,38 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
    }
 }
 
-bool Compiler :: optimizeTriePattern(SNode& node, int patternId)
+bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node)
 {
+   bool applied = false;
+
+   // verify the path
+   SNode rootNode = node.parentNode().parentNode();
+   if (rootNode == lxAssigning) {
+      if (!_logic->optimizeReturningStructure(scope, *this, rootNode)) {
+         applied = _logic->optimizeEmbeddableOp(scope, *this, rootNode);
+      }
+      else applied = true;
+   }
+
+   if (applied)
+      node = lxIdle;
+
+   return applied;
+}
+
+bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
+{
+   switch (patternId) {
+      case 1:
+         return optimizeEmbeddableReturn(scope, node);
+      default:
+         break;
+   }
+
    return false;
 }
 
-bool Compiler :: matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns)
+bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns)
 {
    bool applied = false;
 
@@ -8719,7 +8745,7 @@ bool Compiler :: matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTri
          if (currentPatternValue.match(node)) {
             nextPatterns.add(currentPattern);
             if (currentPatternValue.patternId != 0)
-               applied |= optimizeTriePattern(node, currentPatternValue.patternId);
+               applied |= optimizeTriePattern(scope, node, currentPatternValue.patternId);
          }
       }
    }
@@ -8727,7 +8753,7 @@ bool Compiler :: matchTriePatterns(SNode& node, SyntaxTrie& trie, List<SyntaxTri
    if (nextPatterns.Count() > 0) {
       SNode current = node.firstChild();
       while (current != lxNone) {
-         applied |= matchTriePatterns(current, trie, nextPatterns);
+         applied |= matchTriePatterns(scope, current, trie, nextPatterns);
 
          current = current.nextNode();
       }
@@ -8745,7 +8771,7 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
       SyntaxTrieNode rootTrieNode(&_sourceRules._trie);
       matched.add(rootTrieNode);
 
-      applied = matchTriePatterns(node, _sourceRules, matched);
+      applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
 }
 

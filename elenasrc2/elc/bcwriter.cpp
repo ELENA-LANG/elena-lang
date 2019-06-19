@@ -3696,7 +3696,7 @@ bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, bool i
 
          switch (node.nextNode()) {
             case lxDirectCalling:
-            case lxSDirctCalling:
+            case lxSDirectCalling:
             case lxCalling:
             case lxNone:
                return true;
@@ -4468,7 +4468,7 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
       SNode larg;
       SNode rarg;
       assignOpArguments(node, larg, rarg);
-      if (larg.compare(lxCalling, lxDirectCalling, lxSDirctCalling) && getParamCount(larg.argument) == 0 && larg.existChild(lxTypecasting)) {
+      if (larg.compare(lxCalling, lxDirectCalling, lxSDirectCalling) && getParamCount(larg.argument) == 0 && larg.existChild(lxTypecasting)) {
          declareTry(tape);
 
          generateObject(tape, larg, ACC_REQUIRED);
@@ -4651,7 +4651,7 @@ ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
    if (callNode == lxDirectCalling) {
       callResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
    }
-   else if (callNode == lxSDirctCalling) {
+   else if (callNode == lxSDirectCalling) {
       callVMTResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
    }
    else if (invokeMode) {
@@ -5630,7 +5630,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
          break;
       case lxCalling:
       case lxDirectCalling:
-      case lxSDirctCalling:
+      case lxSDirectCalling:
          generateCallExpression(tape, node);
          break;
       //case lxImplicitCall:
