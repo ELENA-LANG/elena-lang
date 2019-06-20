@@ -8177,12 +8177,6 @@ void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope)
 
 ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
 {
-   SNode attr = node.findChild(lxEmbeddableAttr);
-   if (attr == lxEmbeddableAttr) {
-      if (!_logic->optimizeEmbeddable(node, *scope.moduleScope))
-         attr = lxEmbeddable;
-   }
-
    int stackSafeAttr = node.findChild(lxStacksafeAttr).argument;
    int flag = 1;
 
@@ -8312,11 +8306,11 @@ ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
                //   }
                //}
             }
-            else if (subNode.existChild(lxEmbeddable)) {
+            //else if (subNode.existChild(lxEmbeddable)) {
                //if (!_logic->optimizeReturningStructure(*scope.moduleScope, *this, node)) {
                //   _logic->optimizeEmbeddableOp(*scope.moduleScope, *this, node);
                //}
-            }
+            //}
             else if (subNode != lxCalling && subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
                SNode createNode = subNode.findChild(lxCreatingStruct/*, lxImplicitCall*/);
                if (createNode != lxNone && targetNode == lxLocalAddress) {
@@ -8714,11 +8708,25 @@ bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node)
    return applied;
 }
 
+bool Compiler :: optimizeEmbeddableCall(_ModuleScope& scope, SNode& node)
+{
+   SNode rootNode = node.parentNode();
+
+   if (_logic->optimizeEmbeddable(rootNode, scope)) {
+      node = lxIdle;
+
+      return true;
+   }
+   else return false;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
       case 1:
          return optimizeEmbeddableReturn(scope, node);
+      case 2:
+         return optimizeEmbeddableCall(scope, node);
       default:
          break;
    }

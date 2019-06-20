@@ -1,3 +1,4 @@
 assigning, directcall, embeddable = 1;
 assigning, sdirectcall, embeddable = 1;
 assigning, call, embeddable = 1;
+directcall, embeddable = 2;

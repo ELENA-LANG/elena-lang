@@ -1065,6 +1065,7 @@ private:
    bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
    bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node);
+   bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
 
 public:
    void loadRules(StreamReader* optimization);
