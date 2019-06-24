@@ -5,9 +5,21 @@ In development:
 
 
               ydev
-                * tapeclosure method should be invoked semi-directly
-
                 * build : variables 
+
+
+
+code
+(
+   variable,
+   assigning  (?index)
+   (
+      variable, -> get name, resolve name by index
+      constant  
+   )
+)
+
+
 
                 var a := "Hello"; system'console.writeLine(a)
 

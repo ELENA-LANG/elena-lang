@@ -3942,7 +3942,7 @@ labNext:
   inc
   dsavefi -2
 
-  xindexrm system'dynamic'DynamicClosure message : "params##invoke[1]"
+  xindexrm system'dynamic'DynamicClosure message : "params##invoke<system'Object>[1]"
   acallvd
   pusha
   bloadfi 1
