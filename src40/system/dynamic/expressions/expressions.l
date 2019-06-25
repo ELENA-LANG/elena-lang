@@ -51,8 +51,12 @@ public interface Expression
         
     abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
             
-    abstract eval() {}
-    
+    // temporal generic solution
+    eval()
+    {
+        ^ self.compiled().eval();
+    }
+        
     ClosureTape compiled()
     {
         List<DynamicClosure> list := new List<DynamicClosure>(8);
@@ -161,16 +165,6 @@ public class CodeblockExpression : Expression
                 Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
                 Expression p17, Expression p18, Expression p19, Expression p20)
         <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
-        
-    eval()
-    {
-        int last := statements.Length - 1;
-        for(int i := 0, i < last, i+=1) {
-            statements[i].eval()
-        };
-        
-        ^ statements[last].eval()
-    }
     
     saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
@@ -301,12 +295,6 @@ public class MessageCallExpression : Expression
                 Expression p11, Expression p12)
         <= new(new Message(message + "[12]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
     
-    // temporal solution
-    eval()
-    {
-        self.compiled().eval();
-    }
-    
     saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
         int len := _arguments.Length;
@@ -336,8 +324,6 @@ public class DeclarationExpression : Expression
         defaultValue := new ConstantExpression(nilValue)
     }
     
-    eval() {}
-    
     saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
         scope.declare(variable);
@@ -357,8 +343,6 @@ public class AssigningExpression : Expression
         this expression := expression
     }
     
-    eval() {}
-    
     saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
         scope.resolve(variable, ref int index);
@@ -376,8 +360,6 @@ public class VariableExpression : Expression
     {
         this variable := variable
     }
-    
-    eval() {}
     
     saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {

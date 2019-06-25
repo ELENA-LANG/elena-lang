@@ -5,8 +5,7 @@ In development:
 
 
               ydev
-                * build : variables 
-
+                * build : variables - using a script
 
                 var a := "Hello"; system'console.writeLine(a)
 
