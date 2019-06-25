@@ -8,20 +8,9 @@ In development:
                 * build : variables 
 
 
-
-code
-(
-   variable,
-   assigning  (?index)
-   (
-      variable, -> get name, resolve name by index
-      constant  
-   )
-)
-
-
-
                 var a := "Hello"; system'console.writeLine(a)
+
+                * support statement (which free the last object from the stack2)
 
                 * build : branching, looping, returning (goto)
                 * methods, argument list, fields, classes

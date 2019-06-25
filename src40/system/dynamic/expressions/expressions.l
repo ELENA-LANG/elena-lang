@@ -1,5 +1,40 @@
 import system'collections;
 
+public class ScopeVariable
+{
+    prop string Name;
+    
+    bool equal(ScopeVariable var)
+    {
+        ^ var.Name == Name
+    }
+    
+    constructor(string name)
+    {
+        Name := name
+    }
+}
+
+public interface ExpressionScope
+{
+    Expression resolve(ScopeVariable variable, ref int index) {}
+    
+    declare(ScopeVariable variable) {}
+}
+
+public singleton IdleExpressionScope : ExpressionScope
+{
+    Expression resolve(ScopeVariable variable, ref int index) 
+    {
+        ^ nil
+    }
+    
+    declare(ScopeVariable variable)
+    {
+        ^ nil
+    }
+}
+
 public interface Expression
 {    
     static Expression CodeBlock(params Expression[] statements)
@@ -14,17 +49,15 @@ public interface Expression
     static Expression MessageCall(mssg message, Expression t, params Expression[] arguments)
         = MessageCallExpression.new(message,t,params arguments);
         
-    abstract saveTo(List<DynamicClosure> list)
-    {
-    }
-    
+    abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
+            
     abstract eval() {}
     
     ClosureTape compiled()
     {
         List<DynamicClosure> list := new List<DynamicClosure>(8);
         
-        self.saveTo(list);
+        self.saveTo(list, IdleExpressionScope);
         
         ^ ClosureTape.new:list
     }
@@ -139,11 +172,36 @@ public class CodeblockExpression : Expression
         ^ statements[last].eval()
     }
     
-    saveTo(List<DynamicClosure> list)
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
+        auto variables := new List<ScopeVariable>();
+        
+        auto codeScope := new ExpressionScope:
+        {
+            Expression resolve(ScopeVariable variable, ref int index)
+            {
+                int len := variables.Length;
+                for(int i := 0, i < len, i+=1) {
+                    if (variables[i] == variable)
+                    {
+                        index := i + 1;
+                        
+                        ^ self
+                    }
+                };
+                
+                ^ nil
+            }
+    
+            declare(ScopeVariable variable)
+            {
+                variables.append(variable)
+            }            
+        };
+        
         int len := statements.Length;
         for(int i := 0, i < len, i+=1) {
-            statements[i].saveTo(list)
+            statements[i].saveTo(list, codeScope)
         }
     }
 }
@@ -160,7 +218,7 @@ public class ConstantExpression : Expression
     eval()
         = object;
     
-    saveTo(List<DynamicClosure> list)
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
         list.append(new ConstantClosure(object));
     }
@@ -178,7 +236,7 @@ public class SymbolExpression : Expression
     eval()
         = symbol;
         
-    saveTo(List<DynamicClosure> list)
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
         list.append(new ConstantClosure(symbol));        
     }                
@@ -249,7 +307,7 @@ public class MessageCallExpression : Expression
         self.compiled().eval();
     }
     
-    saveTo(List<DynamicClosure> list)
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
         int len := _arguments.Length;
         int i := len;
@@ -257,11 +315,74 @@ public class MessageCallExpression : Expression
         {
             i -= 1;
             
-            _arguments[i].saveTo(list);
+            _arguments[i].saveTo(list, scope);
         };
         
-        _target.saveTo(list);
+        _target.saveTo(list, scope);
         
         list.append(new MessageClosure(_message))
+    }
+}
+
+public class DeclarationExpression : Expression
+{
+    ScopeVariable variable;
+    Expression    defaultValue;
+    
+    constructor(ScopeVariable variable)
+    {
+        this variable := variable;
+        
+        defaultValue := new ConstantExpression(nilValue)
+    }
+    
+    eval() {}
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        scope.declare(variable);
+        
+        defaultValue.saveTo(list, scope)
+    }    
+}
+
+public class AssigningExpression : Expression
+{
+    ScopeVariable variable;
+    Expression    expression;  
+    
+    constructor(ScopeVariable variable, Expression expression)
+    {
+        this variable := variable;
+        this expression := expression
+    }
+    
+    eval() {}
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        scope.resolve(variable, ref int index);
+        
+        expression.saveTo(list, scope);
+        list.append(new AssigningClosure(index));
+    }
+}
+
+public class VariableExpression : Expression
+{
+    ScopeVariable variable;
+    
+    constructor(ScopeVariable variable)
+    {
+        this variable := variable
+    }
+    
+    eval() {}
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        scope.resolve(variable, ref int index);
+        
+        list.append(new LocalClosure(index));
     }
 }
