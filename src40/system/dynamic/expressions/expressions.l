@@ -1,5 +1,7 @@
 import system'collections;
 
+preloaded used = new object[] {Expression };
+
 public class ScopeVariable
 {
     prop string Name;
@@ -48,7 +50,16 @@ public interface Expression
         
     static Expression MessageCall(mssg message, Expression t, params Expression[] arguments)
         = MessageCallExpression.new(message,t,params arguments);
-        
+       
+    static Declaration(ScopeVariable variable)
+        = new DeclarationExpression(variable);
+       
+    static Expression Assigning(ScopeVariable variable, Expression expr)
+        = new AssigningExpression(variable, expr);
+          
+    static Expression Variable(ScopeVariable variable)
+        = new VariableExpression(variable);
+          
     abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
             
     // temporal generic solution

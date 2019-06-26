@@ -4696,6 +4696,7 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber$syste
     callextr extern : LoadClassByBuffer
     popi 4
     pushd
+    ifn labNotFound 0
     copym message : "#constructor[0]"
     dloadfi -4
     add
@@ -4717,6 +4718,13 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber$syste
     restore  7h
     close    
     quitn    4h
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr const : %new[0]
+  throw
 
 end
 

@@ -5,14 +5,10 @@ In development:
 
 
               ydev
-                * build : variables - using a script
-
-                var a := "Hello"; system'console.writeLine(a)
-
-                * support statement (which free the last object from the stack2)
-
                 * build : branching, looping, returning (goto)
                 * methods, argument list, fields, classes
+
+                * support statement (which free the last object from the stack2)
 
                 * redesign script code generation
                 * test script examples
@@ -48,6 +44,7 @@ Pipeline:
                  * optimize r * n + 0.5r
                  * optimize operation with variadic argument list (get, length)
                  * optimize dirty_ptr := dirty_ptr + int
+                 * building expression tree - raise an exceptoion with missing class name
 
               ydev
                  * graph sample

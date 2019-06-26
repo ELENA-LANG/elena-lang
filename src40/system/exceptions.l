@@ -77,32 +77,6 @@ public class Exception
     /// Returns the message
     string Message = theMessage;
     
-//    /// Executes the exception handler for the current exception if available.
-//    ///
-//    /// Otherwise goes to the next exception handler
-//    catch : aCatchBlock
-//    [
-//        if(nil == aCatchBlock~__prober on:self)
-//            [ self throw ]
-//    ]    
-//
-//    /// Executes the exception handler for the current exception if available.
-//    /// Finally code is called before
-//    ///
-//    /// Otherwise goes to the next exception handler
-//    catch(object aFinallyCode, object aCatchBlock)
-//    [
-//        aFinallyCode().
-//        
-//        if(nil == aCatchBlock~__prober on:self)
-//            [ self throw ]
-//    ]
-//
-//    if : aCatchblock
-//    [
-//        ^ aCatchblock(self).
-//    ]
-
     on(handler)
         => system'core_routines'__exception;
 
@@ -114,13 +88,6 @@ public class Exception
         self.throw()
     }
     
-//    raise : aFinallyCode
-//    [
-//        aFinallyCode().
-//        
-//        self throw.
-//    ]
-        
     /// Creates the exception with the provided message and error type
     constructor new(string message)
     {
@@ -166,25 +133,6 @@ public class OutOfRangeException : Exception
     constructor new(string message)
         <= new(message);
 }
-
-////// --- IndexOutOfRangeException ---
-////
-////#class(exceptionof:IndexOutOfRangeError) IndexOutOfRangeException
-////{
-////    #constructor new &literal:message
-////    [
-////        theMessage := message.
-////        theCallStack := CallStack new.
-////    ]
-////    
-////    /// Creates the exception
-////    #constructor new
-////        <= new &literal:"An index is out of range".
-////
-////    /// Creates the exception
-////    #constructor new:aMessage
-////        <= new &literal:(aMessage literal).
-////}
 
 // --- InvalidArgumentException ---
 
