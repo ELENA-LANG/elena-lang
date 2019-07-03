@@ -1992,7 +1992,7 @@ bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& me
    else return false;
 }
 
-bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node)
+bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode)
 {
    SNode callNode = node.findSubNode(lxDirectCalling, lxSDirectCalling, lxCalling);
    if (callNode == lxNone)
@@ -2007,7 +2007,21 @@ bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler&
    ref_t messageRef = info.methodHints.get(Attribute(callNode.argument, maEmbeddableRet));
    // if it is possible to replace get&subject operation with eval&subject2:local
    if (messageRef != 0) {
-      compiler.injectEmbeddableRet(node, callNode, messageRef);
+      if (argMode) {
+         // allocate & inject temporal variable
+         ref_t argRef = info.methodHints.get(Attribute(callNode.argument, maReference));
+         int size = defineStructSize(scope, argRef, 0);
+         SNode tempLocal = compiler.injectTempLocal(callNode, size, false);
+
+         // inject byref arg
+         callNode.setArgument(messageRef);
+
+         // inject sequence expr
+         callNode.injectNode(callNode.type, callNode.argument);
+         callNode.set(lxSeqExpression, 0);
+         callNode.appendNode(tempLocal.type, tempLocal.argument);
+      }
+      else compiler.injectEmbeddableRet(node, callNode, messageRef);
 
       return true;
    }
@@ -2076,7 +2090,7 @@ bool CompilerLogic :: validateBoxing(_ModuleScope& scope, _Compiler& compiler, S
       if (localBoxing) {
          bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
 
-         compiler.injectLocalBoxing(exprNode, node.argument);
+         compiler.injectTempLocal(exprNode, node.argument, true);
 
          node = unboxingMode ? lxLocalUnboxing : lxBoxing;
       }

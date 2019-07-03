@@ -376,10 +376,9 @@ public:
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef) = 0;
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
 //   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
-//
-   virtual void injectLocalBoxing(SNode node, int size) = 0;
-////   //virtual int injectTempLocal(SNode node) = 0;
-//
+
+   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
+
 //   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef) = 0;
 //
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
@@ -576,7 +575,7 @@ public:
    virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef) = 0;
    virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope) = 0;
 
-   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
+   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode) = 0;
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
    virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 

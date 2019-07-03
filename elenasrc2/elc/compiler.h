@@ -1064,7 +1064,7 @@ private:
 
    bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
-   bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node);
+   bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode);
    bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
 
 public:
@@ -1087,12 +1087,11 @@ public:
    // _Compiler interface implementation
    //virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
    virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
-   virtual void injectLocalBoxing(SNode node, int size);
+   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
    virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
       ref_t targetRef*/, int stacksafeAttr);
    virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
    virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
-//////   virtual void injectFieldExpression(SyntaxWriter& writer);
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);

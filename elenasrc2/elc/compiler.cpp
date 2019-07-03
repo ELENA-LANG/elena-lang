@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -8510,8 +8510,6 @@ ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope
    if (parentNode == lxAssigning) {
       SNode larg = loperand.findSubNodeMask(lxObjectMask);
       if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
-         test2(current);
-
          SNode opArg = larg.findSubNode(current.type);
          if (opArg/* != lxNone*/ == lxIntOp) {
             SNode llarg = larg.firstChild(lxObjectMask);
@@ -8689,14 +8687,19 @@ void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mo
    }
 }
 
-bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node)
+bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode)
 {
    bool applied = false;
 
    // verify the path
    SNode rootNode = node.parentNode().parentNode();
-   if (rootNode == lxAssigning) {
-      if (!_logic->optimizeReturningStructure(scope, *this, rootNode)) {
+   if (argMode) {
+      if (rootNode.compare(lxCalling, lxDirectCalling, lxSDirectCalling)) {
+         applied = _logic->optimizeReturningStructure(scope, *this, rootNode, true);
+      }
+   }
+   else if (rootNode == lxAssigning) {
+      if (!_logic->optimizeReturningStructure(scope, *this, rootNode, false)) {
          applied = _logic->optimizeEmbeddableOp(scope, *this, rootNode);
       }
       else applied = true;
@@ -8724,9 +8727,11 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
 {
    switch (patternId) {
       case 1:
-         return optimizeEmbeddableReturn(scope, node);
+         return optimizeEmbeddableReturn(scope, node, false);
       case 2:
          return optimizeEmbeddableCall(scope, node);
+      case 3:
+         return optimizeEmbeddableReturn(scope, node, true);
       default:
          break;
    }
@@ -9360,7 +9365,7 @@ void Compiler :: injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t mes
    if (assignNode.existChild(lxByRefTarget)) {
       assignTarget = assignNode.findChild(lxLocal);
    }
-   else assignTarget = assignNode.findPattern(SNodePattern(lxLocalAddress));
+   else assignTarget = assignNode.findChild(lxLocalAddress);
 
    if (assignTarget != lxNone) {
       // removing assinging operation
@@ -9419,28 +9424,29 @@ void Compiler :: injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode
    //}
 }
 
-void Compiler :: injectLocalBoxing(SNode node, int size)
+SNode Compiler :: injectTempLocal(SNode node, int size, bool boxingMode)
 {
+   SNode tempLocalNode;
+
    //HOTFIX : using size variable copy to prevent aligning
    int dummy = size;
    int offset = allocateStructure(node, dummy);
 
-   // allocate place for the local copy
-   node.injectNode(node.type, node.argument);
+   if (boxingMode) {
+      // allocate place for the local copy
+      node.injectNode(node.type, node.argument);
 
-   node.set(lxAssigning, size);
+      node.set(lxAssigning, size);
 
-   node.insertNode(lxLocalAddress, offset);
-   node.insertNode(lxTempAttr, 0);
+      tempLocalNode = node.insertNode(lxLocalAddress, offset);
+      node.insertNode(lxTempAttr, 0);
+   }
+   else {
+      tempLocalNode = node.appendNode(lxLocalAddress, offset);
+   }
+
+   return tempLocalNode;
 }
-
-////void Compiler :: injectFieldExpression(SyntaxWriter& writer)
-////{
-////   writer.appendNode(lxResultField);
-////
-////   writer.insert(lxFieldExpression);
-////   writer.closeNode();
-////}
 
 void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t embeddedMessageRef/*, ref_t genericMessage*/)
 {

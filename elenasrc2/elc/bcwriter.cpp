@@ -5626,6 +5626,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxLocalUnboxing:
       case lxFieldExpression:
       case lxAltExpression:
+      case lxSeqExpression:
          generateExpression(tape, node, mode);
          break;
       case lxCalling:

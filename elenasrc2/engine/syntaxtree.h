@@ -166,6 +166,7 @@ enum LexicalType
    lxResendExpression         = 0x00C031, 
    lxByteArrOp                = 0x08C032, // arg - operation id
    lxShortArrOp               = 0x08C033, // arg - operation id
+   lxSeqExpression            = 0x00C034,
    lxDispatching              = 0x00C036,   // dispatching a message, optional arg - message
    lxAssigning                = 0x10C037,   // an assigning expression, arg - size
    lxIntOp                    = 0x18C038,   // arg - operation id

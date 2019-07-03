@@ -2,7 +2,10 @@
 In development:
 ------         
 
-
+              xdev
+                 * redesign source code level optimization
+                 * remove idle variable / field / constant (e.g. 2)
+                 * import hashtable design
 
               ydev
                 * build : branching, looping, returning (goto)
@@ -22,11 +25,6 @@ In development:
                 * get rid of debug section
                 * suport elenart
                   
-              xdev
-                 * reseign source code level optimization
-                 * remove idle variable / field / constant (e.g. 2)
-                 * import hashtable design
-
 ------                                                           
 Pipeline:
 ------                                                                                         
