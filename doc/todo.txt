@@ -2,15 +2,16 @@
 In development:
 ------         
 
+              ydev
+                * build : branching, looping, returning (goto)
+                * methods, argument list, fields, classes
+
               xdev
                  * redesign source code level optimization
                  * remove idle variable / field / constant (e.g. 2)
                  * import hashtable design
 
               ydev
-                * build : branching, looping, returning (goto)
-                * methods, argument list, fields, classes
-
                 * support statement (which free the last object from the stack2)
 
                 * redesign script code generation

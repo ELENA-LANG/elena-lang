@@ -19,6 +19,8 @@ public class ScopeVariable
 
 public interface ExpressionScope
 {
+    get int ScopeLevel() {}
+    
     Expression resolve(ScopeVariable variable, ref int index) {}
     
     declare(ScopeVariable variable) {}
@@ -26,6 +28,8 @@ public interface ExpressionScope
 
 public singleton IdleExpressionScope : ExpressionScope
 {
+    int ScopeLevel = 0;
+    
     Expression resolve(ScopeVariable variable, ref int index) 
     {
         ^ nil
@@ -60,6 +64,9 @@ public interface Expression
     static Expression Variable(ScopeVariable variable)
         = new VariableExpression(variable);
           
+    static Expression Statement(params Expression[] expressions)
+        = StatementExpression.new(params expressions);
+          
     abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
             
     // temporal generic solution
@@ -75,6 +82,114 @@ public interface Expression
         self.saveTo(list, IdleExpressionScope);
         
         ^ ClosureTape.new:list
+    }
+}
+
+public class StatementExpression : Expression
+{
+    Expression[] statements;
+
+    constructor(Expression p1)
+        <= new(p1);
+    
+    constructor(Expression p1, Expression p2)
+        <= new(p1, p2);
+    
+    constructor(Expression p1, Expression p2, Expression p3)
+        <= new(p1, p2, p3);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4)
+        <= new(p1, p2, p3, p4);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5)
+        <= new(p1, p2, p3, p4, p5);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6)
+        <= new(p1, p2, p3, p4, p5, p6);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7)
+        <= new(p1, p2, p3, p4, p5, p6, p7);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12, Expression p13)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12, Expression p13, Expression p14)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                Expression p17)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                Expression p17, Expression p18)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                Expression p17, Expression p18, Expression p19)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19);
+    
+    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                Expression p17, Expression p18, Expression p19, Expression p20)
+        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
+        
+    constructor new(params Expression[] statements)
+    {
+        this statements := statements
+    }
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        int len := statements.Length;
+        for(int i := 0, i < len, i+=1) {
+            statements[i].saveTo(list, scope)
+        };
     }
 }
 
@@ -183,13 +298,17 @@ public class CodeblockExpression : Expression
         
         auto codeScope := new ExpressionScope:
         {
+            get int ScopeLevel = scope.ScopeLevel + variables.Length;
+            
             Expression resolve(ScopeVariable variable, ref int index)
             {
                 int len := variables.Length;
                 for(int i := 0, i < len, i+=1) {
                     if (variables[i] == variable)
                     {
-                        index := i + 1;
+                        int parentLevel := scope.ScopeLevel;
+                        
+                        index := parentLevel + i + 1;
                         
                         ^ self
                     }
@@ -204,10 +323,14 @@ public class CodeblockExpression : Expression
             }            
         };
         
+        var eosClosure := new ReleaseClosure(1);
         int len := statements.Length;
         for(int i := 0, i < len, i+=1) {
-            statements[i].saveTo(list, codeScope)
-        }
+            statements[i].saveTo(list, codeScope);
+            list.append(eosClosure)
+        };
+        
+        list.append(new ReleaseClosure(variables.Length))
     }
 }
 

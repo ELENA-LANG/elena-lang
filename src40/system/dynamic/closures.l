@@ -82,3 +82,47 @@ public struct ReleaseClosure : DynamicClosure
     closure(params object[] args)
         => system'core_routines'__free_closure;    
 }
+
+// --- GoToClosure ---
+
+public struct GoToClosure : DynamicClosure
+{
+    int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    closure(params object[] args)
+        => system'core_routines'__jump_closure;
+}
+
+//public struct JumpIfClosure :: DynamicClosure
+//{
+//    int index.
+//    
+//    constructor new(int index)
+//    [
+//        @index := index.
+//    ]
+//    
+//    generic closure(V<object> args)
+//        => system'core_routines'__jumpif_closure.    
+//}
+
+// --- JumpIfNotClosure ---
+
+public struct JumpIfNotClosure : DynamicClosure
+{
+    int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    closure(params object[] args)
+        => system'core_routines'__jumpifnot_closure;
+}
+
