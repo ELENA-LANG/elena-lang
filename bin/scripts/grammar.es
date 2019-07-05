@@ -5,8 +5,13 @@
    #define start ::= statements $eof;            
    #define start ::= $eof;
 
-   #define statements ::= <= system'dynamic'expressions'CodeblockExpression ( => expression next_expr* <= ) =>;
-   #define next_expr  ::= ";" expression;
+   #define statements     ::= <= system'dynamic'expressions'CodeblockExpression ( => statement next_statement* <= ) =>;
+   #define next_statement ::= ";" statement;
+
+   #define statement  ::= <= system'dynamic'expressions'StatementExpression ( => expression <= ) =>;
+   #define statement  ::= <= system'dynamic'expressions'StatementExpression ( => if_expr <= ) =>;
+
+   #define if_expr    ::= <= system'dynamic'expressions'IfExpression ( => "if" "(" expression ")" "{" statements "}" <= ) =>; 
 
    #define expression ::= object;  
    #define expression ::= <= system'dynamic'expressions'MessageCallExpression ( => object "." message "(" parameter parameters* ")" <= ) =>;  

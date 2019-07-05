@@ -67,6 +67,9 @@ public interface Expression
     static Expression Statement(params Expression[] expressions)
         = StatementExpression.new(params expressions);
           
+    static Expression If(Expression cond, Expression body)
+        = new IfExpression(cond, body);
+          
     abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
             
     // temporal generic solution
@@ -500,5 +503,32 @@ public class VariableExpression : Expression
         scope.resolve(variable, ref int index);
         
         list.append(new LocalClosure(index));
+    }
+}
+
+public class IfExpression : Expression
+{
+    Expression condition;
+    Expression body;
+    
+    constructor(Expression condition, Expression body)
+    {
+        this condition := condition;
+        this body := body;
+    }
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        condition.saveTo(list, scope);
+        int bookmark := list.Length;
+        list.append(cast DynamicClosure(nilValue));
+        body.saveTo(list, scope);
+        
+        //int offs := list.Length - bookmark + 1;
+        int offs := list.Length - bookmark;
+        offs := offs - 1;
+        
+        list[bookmark] := new JumpIfNotClosure(offs);
+        
     }
 }
