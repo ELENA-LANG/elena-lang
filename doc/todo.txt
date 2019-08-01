@@ -1,15 +1,25 @@
 ------                                 
 In development:
 ------         
+              xdev
+                * fix an error with arithmetic operation 
+                * debugger should show ref variable value
 
               ydev
-                * build : branching, looping, returning (goto)
+                * build : looping, returning (goto)
                 * methods, argument list, fields, classes
 
               xdev
                  * redesign source code level optimization
                  * remove idle variable / field / constant (e.g. 2)
                  * import hashtable design
+
+              xdev  - int op - test and optimize
+                * i*j+k 
+                * i*j+2
+                * i*2+3
+                * i+k
+                * i+3
 
               ydev
                 * support statement (which free the last object from the stack2)

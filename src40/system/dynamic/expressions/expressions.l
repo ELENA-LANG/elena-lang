@@ -70,6 +70,9 @@ public interface Expression
     static Expression If(Expression cond, Expression body)
         = new IfExpression(cond, body);
           
+    static Expression Loop(Expression cond, Expression body)
+        = new LoopExpression(cond, body);
+          
     abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
             
     // temporal generic solution
@@ -524,11 +527,41 @@ public class IfExpression : Expression
         list.append(cast DynamicClosure(nilValue));
         body.saveTo(list, scope);
         
-        //int offs := list.Length - bookmark + 1;
+        //int offs := list.Length - bookmark - 1;
         int offs := list.Length - bookmark;
         offs := offs - 1;
         
         list[bookmark] := new JumpIfNotClosure(offs);
         
+    }
+}
+
+public class LoopExpression : Expression
+{
+    Expression condition;
+    Expression body;
+    
+    constructor(Expression condition, Expression body)
+    {
+        this condition := condition;
+        this body := body
+    }
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        condition.saveTo(list, scope);
+        int bookmark := list.Length;
+        list.append(cast DynamicClosure(nilValue));
+        body.saveTo(list, scope);
+        
+        int offs := bookmark - list.Length;
+        
+        list.append(new GoToClosure(offs));
+        
+        //offs := list.Length - bookmark - 1;
+        offs := list.Length - bookmark;
+        offs := offs - 1;
+        
+        list[bookmark] := new JumpIfNotClosure(offs);
     }
 }

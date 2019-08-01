@@ -8515,8 +8515,9 @@ ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope
       SNode larg = loperand.findSubNodeMask(lxObjectMask);
       if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
          SNode opArg = larg.findSubNode(current.type);
-         if (opArg/* != lxNone*/ == lxIntOp) {
+         if (opArg/* != lxNone*/ == lxIntOp && opArg.existChild(lxConstantInt)) {
             SNode llarg = larg.firstChild(lxObjectMask);
+            SNode rlarg = llarg.nextNode(lxObjectMask);
             larg = lxExpression;
             llarg = lxSubOpMode;
          }
