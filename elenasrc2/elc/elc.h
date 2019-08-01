@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0123
+#define ELC_REVISION_NUMBER         0x0124
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -66,7 +66,7 @@ constexpr auto SOURCERULES_FILE     = "source_rules.dat";
 
 // --- ELC config settings ---
 #define ELC_DEBUGINFO               "configuration/project/debuginfo"
-#define ELC_CLASSSYMBOLLOAD         "project/classsymbolload"
+#define ELC_CLASSSYMBOLLOAD         "configuration/project/classsymbolload"
 #define ELC_TARGET                  "configuration/project/executable"
 #define ELC_MG_SIZE                 "configuration/linker/mgsize"
 #define ELC_HEAP_COMMIT             "configuration/linker/heapcommit"

@@ -6544,19 +6544,18 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 {
    CommandTape tape;
 
-//   ref_t implicitConstructor = encodeMessage(NEWOBJECT_MESSAGE_ID, 0) | CONVERSION_MESSAGE;
+   bool publicAttr = scope.info.mattributes.exist(Attribute(caSerializable, 0));
 
    SyntaxTree tree;
    SyntaxWriter writer(tree);
-   /*if (scope.info.methods.exist(implicitConstructor, true)) {
-      generateSymbolWithInitialization(writer, scope, implicitConstructor);
-   }
-   else*/ generateClassSymbol(writer, scope);
+   generateClassSymbol(writer, scope);
 
    _writer.generateSymbol(tape, tree.readRoot(), false, INVALID_REF);
 
    // create byte code sections
    _writer.saveTape(tape, *scope.moduleScope);
+
+   compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
 }
 
 void Compiler :: compilePreloadedCode(SymbolScope& scope)
@@ -7777,6 +7776,23 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
    return true;
 }
 
+
+void Compiler :: compileSymbolAttribtes(_ModuleScope& moduleScope, ref_t reference, bool publicAttr)
+{
+   ClassInfo::CategoryInfoMap mattributes;
+   if (publicAttr) {
+      // add seriazible meta attribute for the public symbol
+      mattributes.add(Attribute(caSymbolSerializable, 0), INVALID_REF);
+   }
+
+   if (mattributes.Count() > 0) {
+      // initialize attribute section writers
+      MemoryWriter attrWriter(moduleScope.mapSection(reference | mskSymbolAttributeRef, false));
+
+      mattributes.write(&attrWriter);
+   }
+}
+
 void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope)
 {
    expressionTree.clear();
@@ -7829,25 +7845,13 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    }
 
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
-
-   ClassInfo::CategoryInfoMap mattributes;
-   if (publicAttr) {
-      // add seriazible meta attribute for the public symbol
-      mattributes.add(Attribute(caSymbolSerializable, 0), INVALID_REF);
-   }
-
    CommandTape tape;
    _writer.generateSymbol(tape, expressionTree.readRoot(), isStatic, sourcePathRef);
 
    // optimize
    optimizeTape(tape);
 
-   if (mattributes.Count() > 0) {
-      // initialize attribute section writers
-      MemoryWriter attrWriter(scope.moduleScope->mapSection(scope.reference | mskSymbolAttributeRef, false));
-
-      mattributes.write(&attrWriter);
-   }
+   compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
 
    // create byte code sections
    _writer.saveTape(tape, *scope.moduleScope);

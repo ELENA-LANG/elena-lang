@@ -28,9 +28,9 @@ public extension classROp
         
 //    getField(int anIndex)
 //        => system'core_routines'__object.
-//        
-////    stacksafe respondTo mssg:aMessage
-////        => system'core_routines'__object.
+        
+    bool respondTo(mssg m)
+        => system'core_routines'__object;
 
     Message[] __getMessages()
     {

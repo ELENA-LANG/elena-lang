@@ -1005,6 +1005,7 @@ private:
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);
+   void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
 
 ////   bool validate(_ProjectManager& project, _Module* module, int reference);
 

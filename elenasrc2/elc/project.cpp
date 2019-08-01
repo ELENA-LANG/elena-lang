@@ -3,7 +3,7 @@
 //
 //		This file contains the base class implementing ELENA Project interface.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"

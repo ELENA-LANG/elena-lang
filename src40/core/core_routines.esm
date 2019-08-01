@@ -105,6 +105,24 @@ procedure __object.instanceOf[2]
 
 end
 
+procedure __object."respondTo$system@Message[2]"
+
+  bloadsi 1
+  aloadsi 2 // ; get message
+  nload     // ; load message id
+  acopyb
+  ecopyd
+  mindex
+  ifn labFalse 0FFFFFFFFh
+  acopyr const : system'true
+  quitn 2
+
+labFalse:
+  acopyr const : system'false
+  quitn 2
+
+end
+
 procedure __exception."on[2]"
 
   bcopya

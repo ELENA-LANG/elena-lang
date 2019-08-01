@@ -1,8 +1,34 @@
-Q: Could you tell me about the history of the language? why did you invent it? does it solve any problems?
+Q: what are its advantages and disadvantages
+A: 
+I'm a wrong person to speak about advantages and disadvantages but I could name few:
+Con: the compiler could be considered as a semi-industrial (it is quite advanced in comparison to amateur compilers but still a lot of efforts should be put in it to achieve good code performance) ,
+         lack of documentation, very small (practically non-existing) userbase, small codebase 
+Pro: mixins, message dispatching, multimethods, integrated into the compiler script engine, a debugger, full Unicode support (including keywords / attributes), templates (classes / operators / 
+
+Q: History of language 
+A: I started it back in 1999. During these periods i tried a number of different approaches, you may take a short look at the syntax history - https://www.reddit.com/r/elena_lang/comments/8hm4ig/elena_evolution_from_0xx_to_340/
+   the latest version of the language - ELENA 4.0 breaks from the previous versions which were inspired by Smalltalk. 
+
+   Currently ELENA is a keyword-less language. It's syntax is based on the user-defined attributes - https://www.reddit.com/r/elena_lang/comments/ababdm/elena_40_keywords/
+   As a result you are free to use whatever word you whish and no need to write something like in C# - @class class
+
+Q: Why it was developed? 
 A: I did it out of curiosity. I was interested in learning more about dynamic object-oriented languages. 
-   It is a general purpose language, so I didn't solve any paricular type of the problems.
- 
-   I'm currently interested in dynamic code generation using some special type of a turning machine.
+
+Q: Goal
+A: I'm interested in dynamic code generation and work in this direction.  
+
+Q: Could you tell me about the history of the language? why did you invent it? does it solve any problems?
+A: I started it back in 1999. During these periods i tried a number of different approaches, you may take a short look at the syntax history - https://www.reddit.com/r/elena_lang/comments/8hm4ig/elena_evolution_from_0xx_to_340/
+
+   the latest version of the language - ELENA 4.0 breaks from the previous versions which were inspired by Smalltalk. 
+
+   Currently ELENA is a keyword-less language. It's syntax is based on the user-defined attributes - https://www.reddit.com/r/elena_lang/comments/ababdm/elena_40_keywords/
+   As a result you are free to use whatever word you whish and no need to write something like in C# - @class class
+
+   Why it was developed? - I did it out of curiosity. I was interested in learning more about dynamic object-oriented languages. I'm interested in dynamic code generation and work
+   in this direction. Main goal is to  
+
    You may look here - https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Language#working-with-dynamic-code
 
 Q: the portability 
@@ -35,10 +61,24 @@ Q: Is there recursion in ELENA
 
 A: ELENA is Turing complete, multi-paradigm language - including procedural, OO and functional programming
  
-Q: The parameters to function are passed by reference/ by value/ by result? - 
+Q: Are the parameters to a function passed by value or by reference?
 A: by default any parameter is passed by reference. But if the class is a constant structure, it could be considered as
    passed by value (no changes are possible). Similar to C#, a structure can stored in the stack, so boxing and unboxing (if required) are done with it before and after passing to the function.
    It is possible to use ref attribute to return several parameters from the function - http://rosettacode.org/wiki/Return_multiple_values#Elena
  
 Q: GC 
 A: yes, it uses generational GC (two generations)
+
+Q: Does the language support Duck typing?
+A: Yes, see https://www.reddit.com/r/elena_lang/comments/caxqms/duck_typing_in_elena_programming_language/
+
+Q: Does the language support Operators overloading?
+A: Yes, an operator is an alias to the message, see - https://www.reddit.com/r/elena_lang/comments/cay2dn/operator_overloading_in_elena_programming_language/
+
+Q: What about nested functions?
+A: Yes, ELENA supports closures. See for example - http://rosettacode.org/wiki/Nested_function#Elena or http://rosettacode.org/wiki/Anonymous_recursion#Elena
+
+Q: Polimorphism?
+A: Yes, ELENA is a pure polymorphic object oriented language. All the methods (except sealed ones) are virtual.
+ 
+ 
