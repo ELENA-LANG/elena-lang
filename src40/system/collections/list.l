@@ -46,10 +46,7 @@ public sealed List<T> : Enumerable<T>
     constructor(Enumerator<T> e)
         <= ()
     {
-        while(e.next())
-        {
-            self.append(e.get())
-        }
+        self.appendRange(e)        
     }
     
     constructor(int capacity)
@@ -142,6 +139,14 @@ public sealed List<T> : Enumerable<T>
 
     append(object)
         <= append(cast T(object));
+
+    appendRange(Enumerator<T> e)
+    {
+        while(e.next())
+        {
+            self.append(e.get())
+        }        
+    }
 
     /// Removes an object at the specified position
     remove(int index)

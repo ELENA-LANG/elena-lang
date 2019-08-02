@@ -19,11 +19,11 @@ public class ScopeVariable
 
 public interface ExpressionScope
 {
-    get int ScopeLevel() {}
+    abstract get int ScopeLevel() {}
     
-    Expression resolve(ScopeVariable variable, ref int index) {}
+    abstract Expression resolve(ScopeVariable variable, ref int index) {}
     
-    declare(ScopeVariable variable) {}
+    abstract declare(ScopeVariable variable) {}
 }
 
 public singleton IdleExpressionScope : ExpressionScope
@@ -320,7 +320,7 @@ public class CodeblockExpression : Expression
                     }
                 };
                 
-                ^ nil
+                ^ scope.resolve(variable, ref index)
             }
     
             declare(ScopeVariable variable)
@@ -549,12 +549,14 @@ public class LoopExpression : Expression
     
     saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
+        int top := list.Length;
+        
         condition.saveTo(list, scope);
         int bookmark := list.Length;
         list.append(cast DynamicClosure(nilValue));
         body.saveTo(list, scope);
         
-        int offs := bookmark - list.Length;
+        int offs := top - list.Length - 1;
         
         list.append(new GoToClosure(offs));
         
