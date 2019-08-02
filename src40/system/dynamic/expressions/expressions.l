@@ -49,6 +49,9 @@ public interface Expression
     static Expression Constant(object o)
         = new ConstantExpression(o);
         
+    static Expression NumericConstant(object o)
+        = new NumericConstantExpression(o);
+        
     static Expression Symbol(string s)
         = new SymbolExpression(s);
         
@@ -60,6 +63,9 @@ public interface Expression
        
     static Expression Assigning(ScopeVariable variable, Expression expr)
         = new AssigningExpression(variable, expr);
+          
+    static Expression DeclareAndAssigning(ScopeVariable variable, Expression expr)
+        = new DeclaringAndAssigningExpression(variable, expr);
           
     static Expression Variable(ScopeVariable variable)
         = new VariableExpression(variable);
@@ -358,6 +364,14 @@ public class ConstantExpression : Expression
     }
 }
 
+public class NumericConstantExpression : ConstantExpression
+{
+    constructor(o)
+    {
+        this object := intConvertor.convert(o)
+    }
+}
+
 public class SymbolExpression : Expression
 {
     Symbol symbol;
@@ -489,6 +503,24 @@ public class AssigningExpression : Expression
         
         expression.saveTo(list, scope);
         list.append(new AssigningClosure(index));
+    }
+}
+
+public class DeclaringAndAssigningExpression : AssigningExpression
+{
+    Expression declaring;
+    
+    constructor(ScopeVariable variable, Expression expression)
+        <= (variable, expression)
+    {
+        this declaring := new DeclarationExpression(variable)
+    }
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        declaring.saveTo(list, scope);
+        
+        super.saveTo(list, scope);
     }
 }
 

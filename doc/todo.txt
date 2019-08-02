@@ -1,18 +1,17 @@
 ------                                 
 In development:
 ------         
-              xdev
-                * fix an error with arithmetic operation 
-                * debugger should show ref variable value
-
               ydev
-                * build : looping, returning (goto)
+                * build : returning (goto)
                 * methods, argument list, fields, classes
 
               xdev
                  * redesign source code level optimization
-                 * remove idle variable / field / constant (e.g. 2)
-                 * import hashtable design
+
+              ydev
+                * redesign script code generation
+                * test script examples
+                * Stand alone executable: Script engine #64
 
               xdev  - int op - test and optimize
                 * i*j+k 
@@ -20,14 +19,22 @@ In development:
                 * i*2+3
                 * i+k
                 * i+3
+                * pi sample
+
+------                                                           
+Pipeline:
+------                                                                                         
+
+              xdev
+                 * remove idle variable / field / constant (e.g. 2)
+                 * import hashtable design
+
+              xdev
+                * debugger should show ref variable value
 
               ydev
-                * support statement (which free the last object from the stack2)
-
-                * redesign script code generation
                 * test script examples
 
-                * Stand alone executable: Script engine #64
                 * get rid of tape support??
                 * get rid of extensions'dynamic'TapeAssembly??
 
@@ -36,10 +43,6 @@ In development:
                 * get rid of debug section
                 * suport elenart
                   
-------                                                           
-Pipeline:
-------                                                                                         
-
               ydev - build tape
                 * support variadic argument list (if the number of arguments is bigger than 0x1F)
                 * ssupport namespace import, so the build script can be shortened
