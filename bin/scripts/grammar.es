@@ -2,8 +2,16 @@
    #grammar build
    #grammar cf
 
-   #define start ::= statements $eof;            
+   #define start ::= class* $eof;            
    #define start ::= $eof;
+
+   #define class          ::= <= system'dynamic'expressions'DynamicSingleton (  => "{" method* "}" <= ) =>;
+   #define method         ::= <= system'dynamic'expressions'MethodExpression (  => identifier arguments body  <= ) =>;
+
+   #define body           ::= "{" statements "}";
+   #define arguments      ::= "(" variable next_argument*;
+   #define next_argument  ::= "," variable;
+   #define next_argument  ::= ")";
 
    #define statements     ::= <= system'dynamic'expressions'CodeblockExpression ( => statement next_statement* <= ) =>;
    #define next_statement ::= ";" statement;

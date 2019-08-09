@@ -97,6 +97,16 @@ public mixin ClosureClass
 //        ]
 //    ]
     
+    constructor new(params object[] args)
+        <= allocate(args.Length)
+    {
+        int length := args.Length;
+        for (int i := 0, i < length, i += 1)
+        {
+            items[i]:= args[i]
+        }
+    }
+    
     constructor new(List<object> list, int index, int length)
         <= allocate(length)
     {
@@ -105,6 +115,27 @@ public mixin ClosureClass
             int n := i + index;
             
             items[i]:= list.at(n)
+        }
+    }
+    
+    constructor create(List<Tuple<Message,ClosureTape>> methods)
+        <= allocate(methods.Length * 2)
+    {
+        int length := methods.Length;
+        for (int i := 0, i < length, i += 1)
+        {
+            var t := methods[i];
+            
+            var o1 := t.Item1;
+            var o2 := t.Item2;
+
+            items[i*2]:= o1;
+            
+            int k := i*2 + 1;
+            items[k]:= o2;
+                        
+//            items[i*2]:= methods[i].Item1;
+//            items[i*2 + 1]:= methods[i].Item2;
         }
     }
     

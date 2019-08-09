@@ -1,6 +1,7 @@
 import system'collections;
+import system'routines;
 
-preloaded used = new object[] {Expression };
+preloaded used = new object[] {Expression,DynamicSingleton };
 
 public class ScopeVariable
 {
@@ -78,9 +79,26 @@ public interface Expression
           
     static Expression Loop(Expression cond, Expression body)
         = new LoopExpression(cond, body);
+        
+    static Expression Method(string name, Expression body)
+        = new MethodExpression(name, body);        
+          
+    static Expression Method(string name, ScopeVariable param1, Expression body)
+        = new MethodExpression(name, param1, body);        
+          
+    static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
+        = new MethodExpression(name, param1, param2, body);        
+          
+    static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
+        = new MethodExpression(name, param1, param2, param3, body);        
           
     abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
-            
+
+    saveTo(List<Tuple<Message,ClosureTape>> list)
+    {
+        NotSupportedException.raise()
+    }
+                        
     // temporal generic solution
     eval()
     {
@@ -597,5 +615,96 @@ public class LoopExpression : Expression
         offs := offs - 1;
         
         list[bookmark] := new JumpIfNotClosure(offs);
+    }
+}
+
+public class MethodExpression : Expression
+{
+    Message         message;
+    ScopeVariable[] parameters;
+    Expression      body;
+    
+    constructor(string name, Expression body)
+    {
+        this parameters := new ScopeVariable[] { new ScopeVariable("self") };
+        this message := new Message(name + "[0]");
+        
+        this body := body;
+    } 
+    
+    constructor(string name, ScopeVariable param1, Expression body)
+    {
+        this parameters := new ScopeVariable[] { new ScopeVariable("self"), param1 };
+        this message := new Message(name + "[1]");
+        
+        this body := body;
+    } 
+    
+    constructor(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
+    {
+        this parameters := new ScopeVariable[] { new ScopeVariable("self"), param1, param2 };
+        this message := new Message(name + "[2]");
+        
+        this body := body;
+    }
+    
+    constructor(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
+    {
+        this parameters := new ScopeVariable[] { new ScopeVariable("self"), param1, param2, param3 };
+        this message := new Message(name + "[3]");
+        
+        this body := body;
+    }        
+ 
+    saveTo(List<Tuple<Message,ClosureTape>> list)
+    {
+        list.append(new Tuple<Message,ClosureTape>(message, self.compiled()));
+    }
+           
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        auto methodScope := new ExpressionScope:
+        {
+            get int ScopeLevel = parameters.Length;
+            
+            Expression resolve(ScopeVariable variable, ref int index)
+            {
+                int len := parameters.Length;
+                for(int i := 0, i < len, i+=1) {
+                    if (parameters[i] == variable)
+                    {
+                        index := i + 1;
+                        
+                        ^ self
+                    }
+                };
+                
+                ^ scope.resolve(variable, ref index)
+            }
+    
+            declare(ScopeVariable variable)
+            {
+            }            
+        };
+
+        body.saveTo(list, methodScope);        
+    }    
+}
+
+public class DynamicSingleton
+{
+    Expression[] methods;
+    
+    constructor(Expression method)
+    {
+        this methods := new Expression[] {method};                
+    }
+    
+    compiled()
+    {
+        auto list := new List<Tuple<Message,ClosureTape>>();
+        methods.forEach:(m){m.saveTo(list)};
+        
+        ^ ClosureClass.create(list);
     }
 }

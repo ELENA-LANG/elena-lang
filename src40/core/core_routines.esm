@@ -3924,6 +3924,7 @@ procedure __closuretape."#dispatch[1]"
   //;elsem labDefault message : "#invoke[1]"
 
   dcopycount
+  inc
   ecopyd  
 
   open 5

@@ -1,24 +1,30 @@
 ------                                 
 In development:
 ------         
-              ydev
-                * build : returning (goto)
-                * methods, argument list, fields, classes
 
               xdev
-                 * redesign source code level optimization
+                * invalid error message - new Expression[] (method);
+                * code does not work - ClosureClass - items[i*2]:= methods[i].Item1;
+                * why debug show no inner variables in the loop
 
               ydev
+                * build : returning (goto)
                 * redesign script code generation
                 * test script examples
                 * Stand alone executable: Script engine #64
+                * ?fields
 
-              xdev  - int op - test and optimize
+              xdev
+                * redesign source code level optimization
                 * i*j+k 
                 * i*j+2
                 * i*2+3
                 * i+k
                 * i+3
+
+              ydev
+
+              xdev  - int op - test and optimize
                 * pi sample
 
 ------                                                           
@@ -99,6 +105,9 @@ Pipeline:
 
               dev - elena 4.0
                  * working on xforms
+
+              ydev
+                * closure
 
               dev - script engine
                 * parse script and save it
