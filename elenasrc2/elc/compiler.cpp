@@ -53,7 +53,7 @@ constexpr auto HINT_MEMBER          = 0x00000800;
 constexpr auto HINT_CALL_MODE       = 0x00000400;
 constexpr auto HINT_LAZY_EXPR       = 0x00000200;
 constexpr auto HINT_DYNAMIC_OBJECT  = 0x00000100;  // indicates that the structure MUST be boxed
-constexpr auto HINT_UNBOXINGEXPECTED= 0x00000080;
+//constexpr auto HINT_UNBOXINGEXPECTED= 0x00000080;
 constexpr auto HINT_PROP_MODE       = 0x00000040;
 constexpr auto HINT_SILENT          = 0x00000020;
 constexpr auto HINT_FORWARD         = 0x00000010;
@@ -4484,7 +4484,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
             retVal.reference = target.reference;
             retVal.element = target.element;
          }
-         else scope.raiseError(errInvalidOperation, node);
+         else scope.raiseError(errInvalidOperation, node.parentNode());
       }
       else {
          int paramsMode = 0;
@@ -5016,7 +5016,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxExtArgument) {
-         analizeExpressionTree(current, nsScope, /*warningScope, */HINT_NOBOXING);
+         //analizeExpressionTree(current, nsScope, /*warningScope, */HINT_NOBOXING);
 
          ref_t classReference = current.findChild(lxExtArgumentRef).argument;
          ClassInfo classInfo;
@@ -7947,26 +7947,26 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
    else return retVal;
 }
 
-ref_t Compiler :: analizeExtCall(SNode node, NamespaceScope& scope)
-{
-   compileExternalArguments(node, scope);
-
-   return V_INT32;
-}
-
-ref_t Compiler :: analizeInternalCall(SNode node, NamespaceScope& scope)
-{
-   analizeExpressionTree(node, scope, HINT_NOBOXING);
-
-   return V_INT32;
-}
-
-ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, int)
-{
-   analizeExpressionTree(node, scope, HINT_NOBOXING);
-
-   return 0;
-}
+//ref_t Compiler :: analizeExtCall(SNode node, NamespaceScope& scope)
+//{
+//   compileExternalArguments(node, scope);
+//
+//   return V_INT32;
+//}
+//
+//ref_t Compiler :: analizeInternalCall(SNode node, NamespaceScope& scope)
+//{
+//   analizeExpressionTree(node, scope, HINT_NOBOXING);
+//
+//   return V_INT32;
+//}
+//
+//ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, int)
+//{
+//   analizeExpressionTree(node, scope, HINT_NOBOXING);
+//
+//   return 0;
+//}
 
 int Compiler :: allocateStructure(SNode node, int& size)
 {
@@ -7992,705 +7992,584 @@ int Compiler :: allocateStructure(SNode node, int& size)
    return offset;
 }
 
-ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
-{
-   // check if the nested collection can be treated like constant one
-   bool constant = true;
-   ref_t memberCounter = 0;
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (current == lxMember) {
-         SNode object = current.findSubNodeMask(lxObjectMask);
-         switch (object.type) {
-            case lxConstantChar:
-            //case lxConstantClass:
-            case lxConstantInt:
-            case lxConstantLong:
-            case lxConstantList:
-            case lxConstantReal:
-            case lxConstantString:
-            case lxConstantWideStr:
-            case lxConstantSymbol:
-               break;
-            case lxNested:
-               analizeNestedExpression(object, scope);
-               object.refresh();
-               if (object != lxConstantList)
-                  constant = false;
-
-               break;
-            case lxUnboxing:
-               current = lxOuterMember;
-               analizeBoxing(object, scope, HINT_NOUNBOXING);
-               constant = false;
-               break;
-            default:
-               constant = false;
-               analizeExpressionTree(current, scope);
-               break;
-         }
-         memberCounter++;
-      }
-      else if (current == lxOuterMember) {
-         // nested class with outer member must not be constant
-         constant = false;
-
-         analizeExpression(current, scope);
-      }
-      else if (current == lxOvreriddenMessage) {
-         constant = false;
-      }
-      current = current.nextNode();
-   }
-
-   if (node.argument != memberCounter)
-      constant = false;
-
-   // replace with constant array if possible
-   if (constant && memberCounter > 0) {
-      ref_t reference = scope.moduleScope->mapAnonymous();
-
-      node = lxConstantList;
-      node.setArgument(reference | mskConstArray);
-
-      _writer.generateConstantList(node, scope.module, reference);
-   }
-
-   return node.findChild(lxTarget).argument;
-}
-
-inline int incMethodAllocated(SNode node)
-{
-   int arg = 0;
-   while (!node.compare(lxClassMethod, lxNone))
-      node = node.parentNode();
-
-   if (node != lxNone) {
-      SNode allocNode = node.findChild(lxAllocated);
-      if (allocNode != lxNone) {
-         arg = allocNode.argument + 1;
-
-         allocNode.setArgument(arg);
-      }
-   }
-
-   return arg;
-}
-
-void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (current == lxNested) {
-         analizeParameterBoxing(current, scope, counter, boxed, tempLocals);
-      }
-      else if (current.compare(lxOuterMember, lxMember)) {
-         counter++;
-
-         SNode boxNode = current.findChild(lxBoxing);
-         if (boxNode != lxNone) {
-            SNode objNode = boxNode.firstChild(lxObjectMask);
-
-            // COMPILER MAGIC : merging duplicate boxings into the single one
-            int key = boxed.get(Attribute(objNode.type, objNode.argument));
-            if (!key) {
-               boxed.add(Attribute(objNode.type, objNode.argument), counter);
-            }
-            else {
-               int tempLocal = tempLocals.get(key);
-               if (!tempLocal) {
-                  tempLocal = incMethodAllocated(node);
-
-                  tempLocals.add(key, tempLocal + 1);
-               }
-
-               boxNode.set(lxLocal, tempLocal + 1);
-               current.set(lxMember, current.argument);
-            }
-         }
-         else if (current == lxOuterMember) {
-            SNode objNode = current.firstChild(lxObjectMask);
-
-            // COMPILER MAGIC : add check label, to resolve race conditions
-            int key = boxed.get(Attribute(objNode.type, objNode.argument));
-            if (!key) {
-               int tempLocal = incMethodAllocated(node);
-
-               boxed.add(Attribute(objNode.type, objNode.argument), tempLocal + 1);
-               tempLocals.add(tempLocal + 1, counter);
-            }
-         }
-      }
-
-      current = current.nextNode();
-   }
-
-}
-
-void Compiler :: injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone && tempLocals.Count() > 0) {
-      if (current == lxNested) {
-         injectBoxingTempLocal(current, scope, counter, boxed, tempLocals);
-      }
-      else if (current.compare(lxOuterMember, lxMember)) {
-         counter++;
-         SNode boxNode = current.findChild(lxBoxing);
-         if (boxNode != lxNone) {
-            SNode objNode = boxNode.firstChild(lxObjectMask);
-
-            int objKey = boxed.get(Attribute(objNode.type, objNode.argument));
-            auto it = tempLocals.getIt(objKey);
-
-            int key = it.key();
-            if (key == counter) {
-               boxNode.appendNode(lxTempLocal, *it);
-               tempLocals.erase(it);
-            }
-         }
-         else if (current == lxOuterMember) {
-            SNode objNode = current.firstChild(lxObjectMask);
-            int tempLocal = boxed.get(Attribute(objNode.type, objNode.argument));
-            if (tempLocal) {
-               int key = tempLocals.get(tempLocal);
-               if (counter == key) {
-                  current.appendNode(lxTempLocal, tempLocal);
-               }
-               current.appendNode(lxCheckLocal, tempLocal);
-            }
-         }
-      }
-
-      current = current.nextNode();
-   }
-}
-
-void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope)
-{
-   Map<Attribute, int> boxed;
-   Map<int, int>       tempLocals;
-
-   int counter = 0;
-   analizeParameterBoxing(node, scope, counter, boxed, tempLocals);
-
-   // inject boxed temporal variable
-   counter = 0;
-   injectBoxingTempLocal(node, scope, counter, boxed, tempLocals);
-}
-
-ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
-{
-   int stackSafeAttr = node.findChild(lxStacksafeAttr).argument;
-   int flag = 1;
-
-   SNode current = node.firstChild();
-   int nested = 0;
-   while (current != lxNone) {
-      if (test(current.type, lxObjectMask)) {
-         int paramMode = 0;
-         if (test(stackSafeAttr, flag)) {
-            paramMode |= HINT_NOBOXING;
-         }
-         else paramMode |= HINT_DYNAMIC_OBJECT;
-
-         analizeExpression(current, scope, /*warningScope, */paramMode);
-         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
-            nested++;
-         }
-
-         flag <<= 1;
-      }
-      current = current.nextNode();
-   }
-
-   if (nested > 1) {
-      analizeParameterBoxing(node, scope);
-   }
-
-   return node.findChild(lxTarget).argument;
-}
-
-ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
-{
-   //ref_t targetRef = node.findChild(lxTarget).argument;
-   SNode targetNode = node.firstChild(lxObjectMask);
-
-   SNode sourceNode = targetNode.nextNode(lxObjectMask);
-   ref_t sourceRef = analizeExpression(sourceNode, scope, (node.argument != 0 ? HINT_NOBOXING | HINT_NOUNBOXING : HINT_NOUNBOXING));
-   //switch (sourceNode) {
-   //   case lxStdExternalCall:
-   //   case lxExternalCall:
-   //   case lxCoreAPICall:
-   //      if (test(mode, HINT_INT64EXPECTED)) {
-   //         // HOTFIX : to recognize external function returning long number
-   //         sourceRef = V_INT64;
-   //      }
-   //      else if (test(mode, HINT_REAL64EXPECTED)) {
-   //         // HOTFIX : to recognize external function returning real number
-   //         node.appendNode(lxFPUTarget);
-
-   //         sourceRef = V_REAL64;
-   //      }
-   //      break;
-   //}
-
-   if (node.argument != 0) {
-      SNode intValue = node.findSubNode(lxConstantInt);
-      if (intValue != lxNone && node.argument == 4) {
-         // direct operation with numeric constants
-         node.set(lxIntOp, SET_OPERATOR_ID);
-      }
-      else {
-         SNode subNode = node.findSubNodeMask(lxSubOpMask);
-         if (subNode == lxAssigning && targetNode != lxFieldAddress) {
-            // HOTFIX : an extra assignment should be removed only for the operations with local variables
-            bool tempAttr = subNode.existChild(lxTempAttr);
-
-            // assignment operation
-            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
-            if (operationNode != lxNone) {
-               SNode larg = operationNode.findSubNodeMask(lxObjectMask);
-               SNode rarg = operationNode.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-               SNode target = node.firstChild(lxObjectMask);
-               if (rarg.type == targetNode.type && rarg.argument == targetNode.argument) {
-                  // if the target is used in the subexpression rvalue
-                  // do nothing
-               }
-               // if it is an operation with the same target
-               else if (larg.type == target.type && larg.argument == target.argument) {
-                  // remove an extra assignment
-                  larg = subNode.findSubNodeMask(lxObjectMask);
-
-                  larg = target.type;
-                  larg.setArgument(target.argument);
-                  node = lxExpression;
-                  target = lxIdle;
-
-                  // replace add / subtract with append / reduce and remove an assignment
-                  switch (operationNode.argument) {
-                     case ADD_OPERATOR_ID:
-                        operationNode.setArgument(APPEND_OPERATOR_ID);
-                        subNode = lxExpression;
-                        larg = lxIdle;
-                        break;
-                     case SUB_OPERATOR_ID:
-                        operationNode.setArgument(REDUCE_OPERATOR_ID);
-                        subNode = lxExpression;
-                        larg = lxIdle;
-                        break;
-                  }
-               }
-               // if it is an operation with an extra temporal variable
-               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
-                  larg = subNode.findSubNodeMask(lxObjectMask);
-
-                  if ((larg.type == targetNode.type && larg.argument == targetNode.argument) || (tempAttr && subNode.argument == node.argument && larg == lxLocalAddress)) {
-                     // remove an extra assignment
-                     subNode = lxExpression;
-                     larg = lxIdle;
-                  }
-               }
-            }
-            else if (tempAttr && subNode.argument == node.argument) {
-               SNode larg = subNode.firstChild(lxObjectMask);
-               if (larg == lxLocalAddress) {
-                  // remove an extra assignment
-                  subNode = lxExpression;
-                  larg = lxIdle;
-               }
-            }
-         }
-         else if (subNode != lxNone) {
-            if (subNode.compare(lxIntOp, lxLongOp, lxRealOp)) {
-               //SNode callNode = subNode.findSubNode(lxDirectCalling, lxSDirctCalling);
-               //if (callNode != lxNone && callNode.existChild(lxEmbeddable)) {
-               //   if (!_logic->optimizeSubOpCall(*scope.moduleScope, *this, node)) {
-               //      subNode.appendNode(lxSubOpMode);
-               //   }
-               //}
-            }
-            //else if (subNode.existChild(lxEmbeddable)) {
-               //if (!_logic->optimizeReturningStructure(*scope.moduleScope, *this, node)) {
-               //   _logic->optimizeEmbeddableOp(*scope.moduleScope, *this, node);
-               //}
-            //}
-            else if (subNode != lxCalling && subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
-               SNode createNode = subNode.findChild(lxCreatingStruct/*, lxImplicitCall*/);
-               if (createNode != lxNone && targetNode == lxLocalAddress) {
-                  // if it is implicit conversion
-                  createNode.set(targetNode.type, targetNode.argument);
-
-                  node = lxExpression;
-                  targetNode = lxIdle;
-               }
-            }
-         }
-      }
-  }
-
-   return sourceRef;
-}
-
-ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, int mode)
-{
-   if (node == lxCondBoxing && test(mode, HINT_NOCONDBOXING))
-      node = lxBoxing;
-
-   if (node == lxUnboxing && test(mode, HINT_NOUNBOXING))
-      node = lxBoxing;
-
-   ref_t targetRef = node.findChild(lxTarget).argument;
-   ref_t sourceRef = 0;
-   bool boxing = !test(mode, HINT_NOBOXING);
-
-   // HOTFIX : override the stacksafe attribute if the object must be boxed
-   if (!boxing && node.existChild(lxBoxingRequired))
-      boxing = true;
-
-   SNode sourceNode = node.findSubNodeMask(lxObjectMask);
-   if (sourceNode == lxNewArrOp) {
-      // HOTFIX : set correct target for the new operator and comment out the outer boxing
-      sourceNode.setArgument(targetRef);
-
-      analizeExpression(sourceNode, scope, HINT_NOBOXING);
-
-      boxing = false;
-   }
-   else {
-      // adjust primitive target
-      if (isPrimitiveRef(targetRef) && boxing) {
-         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument, false);
-         node.findChild(lxTarget).setArgument(targetRef);
-      }
-
-      // for boxing stack allocated / embeddable variables - source is the same as target
-      if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxSelfLocal) && node.argument != 0) {
-         sourceRef = targetRef;
-      }
-      // HOTFIX : do not box constant classes
-      else if (sourceNode == lxConstantInt && targetRef == scope.moduleScope->intReference) {
-         boxing = false;
-      }
-      else if (sourceNode == lxConstantReal && targetRef == scope.moduleScope->realReference) {
-         boxing = false;
-      }
-      else if (sourceNode == lxConstantSymbol && targetRef == scope.moduleScope->intReference) {
-         boxing = false;
-      }
-      else if (sourceNode == lxMessageConstant && targetRef == scope.moduleScope->messageReference) {
-         boxing = false;
-      }
-      else if (sourceNode == lxSubjectConstant && targetRef == scope.moduleScope->messageNameReference) {
-         boxing = false;
-      }
-      else if (node == lxUnboxing && !boxing) {
-         //HOTFIX : to unbox structure field correctly
-         sourceRef = analizeExpression(sourceNode, scope, /*warningScope, */HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
-      }
-      else {
-         if ((sourceNode == lxBoxing || sourceNode == lxUnboxing) && (int)node.argument < 0 && (int)sourceNode.argument > 0) {
-            //HOTFIX : boxing fixed-sized array
-            if (sourceNode.existChild(lxFieldAddress)) {
-               node.setArgument(-((int)sourceNode.argument / (int)node.argument));
-            }
-         }
-
-         int subMode = HINT_NOBOXING;
-         //if (targetRef == scope.moduleScope->longReference) {
-         //   subMode |= HINT_INT64EXPECTED;
-         //}
-         //else if (targetRef == scope.moduleScope->realReference) {
-         //   subMode |= HINT_REAL64EXPECTED;
-         //}
-
-         sourceRef = analizeExpression(sourceNode, scope, subMode);
-      }
-
-      if (!_logic->validateBoxing(*scope.moduleScope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED), test(mode, HINT_DYNAMIC_OBJECT))) {
-         scope.raiseError(errIllegalOperation, node);
-      }
-   }
-
-   if (!boxing && node != lxLocalUnboxing) {
-      node = lxExpression;
-   }
-
-   return targetRef;
-}
-
-ref_t Compiler :: analizeArgBoxing(SNode node, NamespaceScope& scope, int mode)
-{
-   bool boxing = !test(mode, HINT_NOBOXING);
-
-   // HOTFIX : override the stacksafe attribute if the object must be boxed
-   if (!boxing && node.existChild(lxBoxingRequired))
-      boxing = true;
-
-   if (!boxing)
-      node = lxExpression;
-
-   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
-
-   return node.findChild(lxTarget);
-}
-
-ref_t Compiler :: analizeSymbol(SNode& node, NamespaceScope& scope)
-{
-   ObjectInfo result = scope.defineObjectInfo(node.argument, true);
-   switch (result.kind) {
-      case okClass:
-         node = lxClassSymbol;
-         break;
-      case okConstantSymbol:
-      case okExtension:
-         node = lxConstantSymbol;
-         break;
-   }
-
-   return resolveObjectReference(*scope.moduleScope, result);
-}
-
-ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/)
-{
-   int lmask = HINT_NOBOXING;
-   if (current.argument == REFER_OPERATOR_ID) {
-      switch (current.type) {
-         case lxIntArrOp:
-         case lxByteArrOp:
-         case lxShortArrOp:
-         case lxBinArrOp:
-            lmask |= HINT_NOUNBOXING;
-            break;
-         default:
-            break;
-      }
-   }
-
-   SNode loperand = current.firstChild(lxObjectMask);
-   analizeExpression(loperand, scope, /*warningScope, */lmask);
-
-   SNode roperand = loperand.nextNode(lxObjectMask);
-   analizeExpression(roperand, scope, /*warningScope, */HINT_NOBOXING);
-
-   SNode roperand2 = roperand.nextNode(lxObjectMask);
-   if (roperand2 != lxNone)
-      analizeExpression(roperand2, scope, /*warningScope, */HINT_NOBOXING);
-
-   if (current == lxIntOp && loperand == lxConstantInt && roperand == lxConstantInt) {
-      int val = 0;
-      if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
-         loperand = lxIdle;
-         roperand = lxIdle;
-
-         IdentifierString str;
-         str.appendHex(val);
-         current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
-         current.appendNode(lxIntValue, val);
-
-         return V_INT32;
-      }
-   }
-   else if (current == lxRealOp && loperand == lxConstantReal && roperand == lxConstantReal) {
-      double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
-      double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
-      double val = 0;
-      if (calculateRealOp(current.argument, d1, d2, val)) {
-         loperand = lxIdle;
-         roperand = lxIdle;
-
-         IdentifierString str;
-         str.appendDouble(val);
-         current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
-
-         return V_REAL64;
-      }
-   }
-
-   SNode parentNode = current.parentNode();
-   while (parentNode == lxExpression)
-      parentNode = parentNode.parentNode();
-
-   if (parentNode == lxAssigning) {
-      SNode larg = loperand.findSubNodeMask(lxObjectMask);
-      if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
-         SNode opArg = larg.findSubNode(current.type);
-         if (opArg/* != lxNone*/ == lxIntOp && opArg.existChild(lxConstantInt)) {
-            SNode llarg = larg.firstChild(lxObjectMask);
-            SNode rlarg = llarg.nextNode(lxObjectMask);
-            larg = lxExpression;
-            llarg = lxSubOpMode;
-         }
-      }
-   }
-
-   switch (current) {
-      case lxIntOp:
-      case lxByteArrOp:
-      case lxIntArrOp:
-      case lxShortArrOp:
-         return V_INT32;
-      case lxLongOp:
-         return V_INT64;
-      case lxRealOp:
-         return V_REAL64;
-      case lxBinArrOp:
-         return V_BINARY;
-      case lxNewArrOp:
-         return current.argument;
-      default:
-         return 0;
-   }
-}
-
-ref_t Compiler :: analizeSubExpression(SNode node, NamespaceScope& scope, int mode)
-{
-   ref_t result = 0;
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      switch (current.type) {
-         case lxElse:
-         case lxCode:
-         case lxIf:
-         case lxExternFrame:
-            analizeExpressionTree(current, scope);
-            result = 0;
-            break;
-         case lxBranching:
-         case lxLooping:
-            analizeBranching(current, scope);
-            result = 0;
-            break;
-         default:
-            if (test(current.type, lxObjectMask)) {
-               result = analizeExpression(current, scope, mode);
-            }
-            break;
-      }
-      current = current.nextNode();
-   }
-
-   return result;
-}
-
-ref_t Compiler :: analizeAltExpression(SNode node, NamespaceScope&, int)
-{
-   SNode assignNode = node.findChild(lxAssigning);
-   SNode assignTargetNode = assignNode.findChild(lxLocal);
-   SNode assignSourceNode = assignNode.findChild(lxIdle);
-
-   SNode sourceNode = assignNode.nextNode().firstChild(lxExprMask).firstChild(lxObjectMask);
-   // COMPILER MAGIC : we have to replace the first operation target with temporal local
-   // and copy it to the assigning expression
-   if (sourceNode.compare(lxLocal, lxField, lxLocalAddress)) {
-      assignSourceNode.set(sourceNode.type, sourceNode.argument);
-   }
-   else {
-      // bad luck - we have to copy the whole expression
-      assignSourceNode = lxExpression;
-      SyntaxTree::copyNodeSafe(sourceNode, assignSourceNode, true);
-   }
-
-   sourceNode.set(assignTargetNode.type, assignTargetNode.argument);
-
-   return 0;
-}
-
-ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mode)
-{
-   switch (current.type) {
-      case lxCalling:
-      case lxDirectCalling:
-      case lxSDirectCalling:
-//      case lxImplicitCall:
-         return analizeMessageCall(current, scope, mode);
-      case lxExpression:
-      case lxReturning:
-         return analizeSubExpression(current, scope, mode);
-         //return analizeExpression(current.firstChild(lxObjectMask), scope, mode);
-      case lxAltExpression:
-         return analizeAltExpression(current, scope, mode);
-      case lxBranching:
-      case lxTrying:
-         analizeExpressionTree(current, scope);
-         return 0;
-      case lxBoxing:
-      case lxCondBoxing:
-      case lxUnboxing:
-         return analizeBoxing(current, scope, mode);
-      case lxArgBoxing:
-         return analizeArgBoxing(current, scope, mode);
-      case lxArgUnboxing:
-         return analizeArgUnboxing(current, scope, /*warningScope, */mode);
-      case lxAssigning:
-         return analizeAssigning(current, scope, mode);
-      case lxSymbolReference:
-         return analizeSymbol(current, scope);
-      case lxNilOp:
-      case lxIntOp:
-      case lxLongOp:
-      case lxRealOp:
-      case lxIntArrOp:
-      case lxShortArrOp:
-      case lxByteArrOp:
-      case lxArrOp:
-      case lxBinArrOp:
-      case lxNewArrOp:
-      case lxArgArrOp:
-      case lxBoolOp:
-         return analizeOp(current, scope);
-      case lxInternalCall:
-         return analizeInternalCall(current, scope);
-      case lxStdExternalCall:
-      case lxExternalCall:
-      case lxCoreAPICall:
-         return analizeExtCall(current, scope);
-      case lxLooping:
-      case lxSwitching:
-      case lxOption:
-      case lxElse:
-         analizeExpressionTree(current, scope);
-         return 0;
-      case lxNested:
-      case lxStruct:
-         return analizeNestedExpression(current, scope);
-      default:
-         return current.findChild(lxTarget).argument;
-   }
-}
-
-void Compiler :: analizeBranching(SNode node, NamespaceScope& scope, int mode)
-{
-   analizeExpressionTree(node, scope, mode);
-
-   _logic->optimizeBranchingOp(*scope.moduleScope, node);
-}
-
-void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mode)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      switch (current.type) {
-         case lxElse:
-         case lxCode:
-         case lxIf:
-         case lxExternFrame:
-            analizeExpressionTree(current, scope);
-            break;
-         case lxBranching:
-         case lxLooping:
-            analizeBranching(current, scope);
-            break;
-         default:
-            if (test(current.type, lxObjectMask)) {
-               analizeExpression(current, scope, mode);
-            }
-            break;
-      }
-
-      current = current.nextNode();
-   }
-}
+//ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
+//{
+//   // check if the nested collection can be treated like constant one
+//   bool constant = true;
+//   ref_t memberCounter = 0;
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (current == lxMember) {
+//         SNode object = current.findSubNodeMask(lxObjectMask);
+//         switch (object.type) {
+//            case lxConstantChar:
+//            //case lxConstantClass:
+//            case lxConstantInt:
+//            case lxConstantLong:
+//            case lxConstantList:
+//            case lxConstantReal:
+//            case lxConstantString:
+//            case lxConstantWideStr:
+//            case lxConstantSymbol:
+//               break;
+//            case lxNested:
+//               analizeNestedExpression(object, scope);
+//               object.refresh();
+//               if (object != lxConstantList)
+//                  constant = false;
+//
+//               break;
+//            case lxUnboxing:
+//               current = lxOuterMember;
+//               analizeBoxing(object, scope, HINT_NOUNBOXING);
+//               constant = false;
+//               break;
+//            default:
+//               constant = false;
+//               analizeExpressionTree(current, scope);
+//               break;
+//         }
+//         memberCounter++;
+//      }
+//      else if (current == lxOuterMember) {
+//         // nested class with outer member must not be constant
+//         constant = false;
+//
+//         analizeExpression(current, scope);
+//      }
+//      else if (current == lxOvreriddenMessage) {
+//         constant = false;
+//      }
+//      current = current.nextNode();
+//   }
+//
+//   if (node.argument != memberCounter)
+//      constant = false;
+//
+//   // replace with constant array if possible
+//   if (constant && memberCounter > 0) {
+//      ref_t reference = scope.moduleScope->mapAnonymous();
+//
+//      node = lxConstantList;
+//      node.setArgument(reference | mskConstArray);
+//
+//      _writer.generateConstantList(node, scope.module, reference);
+//   }
+//
+//   return node.findChild(lxTarget).argument;
+//}
+//
+//inline int incMethodAllocated(SNode node)
+//{
+//   int arg = 0;
+//   while (!node.compare(lxClassMethod, lxNone))
+//      node = node.parentNode();
+//
+//   if (node != lxNone) {
+//      SNode allocNode = node.findChild(lxAllocated);
+//      if (allocNode != lxNone) {
+//         arg = allocNode.argument + 1;
+//
+//         allocNode.setArgument(arg);
+//      }
+//   }
+//
+//   return arg;
+//}
+//
+//void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (current == lxNested) {
+//         analizeParameterBoxing(current, scope, counter, boxed, tempLocals);
+//      }
+//      else if (current.compare(lxOuterMember, lxMember)) {
+//         counter++;
+//
+//         SNode boxNode = current.findChild(lxBoxing);
+//         if (boxNode != lxNone) {
+//            SNode objNode = boxNode.firstChild(lxObjectMask);
+//
+//            // COMPILER MAGIC : merging duplicate boxings into the single one
+//            int key = boxed.get(Attribute(objNode.type, objNode.argument));
+//            if (!key) {
+//               boxed.add(Attribute(objNode.type, objNode.argument), counter);
+//            }
+//            else {
+//               int tempLocal = tempLocals.get(key);
+//               if (!tempLocal) {
+//                  tempLocal = incMethodAllocated(node);
+//
+//                  tempLocals.add(key, tempLocal + 1);
+//               }
+//
+//               boxNode.set(lxLocal, tempLocal + 1);
+//               current.set(lxMember, current.argument);
+//            }
+//         }
+//         else if (current == lxOuterMember) {
+//            SNode objNode = current.firstChild(lxObjectMask);
+//
+//            // COMPILER MAGIC : add check label, to resolve race conditions
+//            int key = boxed.get(Attribute(objNode.type, objNode.argument));
+//            if (!key) {
+//               int tempLocal = incMethodAllocated(node);
+//
+//               boxed.add(Attribute(objNode.type, objNode.argument), tempLocal + 1);
+//               tempLocals.add(tempLocal + 1, counter);
+//            }
+//         }
+//      }
+//
+//      current = current.nextNode();
+//   }
+//
+//}
+//
+//void Compiler :: injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone && tempLocals.Count() > 0) {
+//      if (current == lxNested) {
+//         injectBoxingTempLocal(current, scope, counter, boxed, tempLocals);
+//      }
+//      else if (current.compare(lxOuterMember, lxMember)) {
+//         counter++;
+//         SNode boxNode = current.findChild(lxBoxing);
+//         if (boxNode != lxNone) {
+//            SNode objNode = boxNode.firstChild(lxObjectMask);
+//
+//            int objKey = boxed.get(Attribute(objNode.type, objNode.argument));
+//            auto it = tempLocals.getIt(objKey);
+//
+//            int key = it.key();
+//            if (key == counter) {
+//               boxNode.appendNode(lxTempLocal, *it);
+//               tempLocals.erase(it);
+//            }
+//         }
+//         else if (current == lxOuterMember) {
+//            SNode objNode = current.firstChild(lxObjectMask);
+//            int tempLocal = boxed.get(Attribute(objNode.type, objNode.argument));
+//            if (tempLocal) {
+//               int key = tempLocals.get(tempLocal);
+//               if (counter == key) {
+//                  current.appendNode(lxTempLocal, tempLocal);
+//               }
+//               current.appendNode(lxCheckLocal, tempLocal);
+//            }
+//         }
+//      }
+//
+//      current = current.nextNode();
+//   }
+//}
+//
+//void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope)
+//{
+//   Map<Attribute, int> boxed;
+//   Map<int, int>       tempLocals;
+//
+//   int counter = 0;
+//   analizeParameterBoxing(node, scope, counter, boxed, tempLocals);
+//
+//   // inject boxed temporal variable
+//   counter = 0;
+//   injectBoxingTempLocal(node, scope, counter, boxed, tempLocals);
+//}
+//
+//ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
+//{
+//   int stackSafeAttr = node.findChild(lxStacksafeAttr).argument;
+//   int flag = 1;
+//
+//   SNode current = node.firstChild();
+//   int nested = 0;
+//   while (current != lxNone) {
+//      if (test(current.type, lxObjectMask)) {
+//         int paramMode = 0;
+//         if (test(stackSafeAttr, flag)) {
+//            paramMode |= HINT_NOBOXING;
+//         }
+//         else paramMode |= HINT_DYNAMIC_OBJECT;
+//
+//         analizeExpression(current, scope, /*warningScope, */paramMode);
+//         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
+//            nested++;
+//         }
+//
+//         flag <<= 1;
+//      }
+//      current = current.nextNode();
+//   }
+//
+//   if (nested > 1) {
+//      analizeParameterBoxing(node, scope);
+//   }
+//
+//   return node.findChild(lxTarget).argument;
+//}
+//
+//ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, int mode)
+//{
+//   if (node == lxCondBoxing && test(mode, HINT_NOCONDBOXING))
+//      node = lxBoxing;
+//
+//   if (node == lxUnboxing && test(mode, HINT_NOUNBOXING))
+//      node = lxBoxing;
+//
+//   ref_t targetRef = node.findChild(lxTarget).argument;
+//   ref_t sourceRef = 0;
+//   bool boxing = !test(mode, HINT_NOBOXING);
+//
+//   // HOTFIX : override the stacksafe attribute if the object must be boxed
+//   if (!boxing && node.existChild(lxBoxingRequired))
+//      boxing = true;
+//
+//   SNode sourceNode = node.findSubNodeMask(lxObjectMask);
+//   if (sourceNode == lxNewArrOp) {
+//      // HOTFIX : set correct target for the new operator and comment out the outer boxing
+//      sourceNode.setArgument(targetRef);
+//
+//      analizeExpression(sourceNode, scope, HINT_NOBOXING);
+//
+//      boxing = false;
+//   }
+//   else {
+//      // adjust primitive target
+//      if (isPrimitiveRef(targetRef) && boxing) {
+//         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument, false);
+//         node.findChild(lxTarget).setArgument(targetRef);
+//      }
+//
+//      // for boxing stack allocated / embeddable variables - source is the same as target
+//      if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxSelfLocal) && node.argument != 0) {
+//         sourceRef = targetRef;
+//      }
+//      // HOTFIX : do not box constant classes
+//      else if (sourceNode == lxConstantInt && targetRef == scope.moduleScope->intReference) {
+//         boxing = false;
+//      }
+//      else if (sourceNode == lxConstantReal && targetRef == scope.moduleScope->realReference) {
+//         boxing = false;
+//      }
+//      else if (sourceNode == lxConstantSymbol && targetRef == scope.moduleScope->intReference) {
+//         boxing = false;
+//      }
+//      else if (sourceNode == lxMessageConstant && targetRef == scope.moduleScope->messageReference) {
+//         boxing = false;
+//      }
+//      else if (sourceNode == lxSubjectConstant && targetRef == scope.moduleScope->messageNameReference) {
+//         boxing = false;
+//      }
+//      else if (node == lxUnboxing && !boxing) {
+//         //HOTFIX : to unbox structure field correctly
+//         sourceRef = analizeExpression(sourceNode, scope, /*warningScope, */HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
+//      }
+//      else {
+//         if ((sourceNode == lxBoxing || sourceNode == lxUnboxing) && (int)node.argument < 0 && (int)sourceNode.argument > 0) {
+//            //HOTFIX : boxing fixed-sized array
+//            if (sourceNode.existChild(lxFieldAddress)) {
+//               node.setArgument(-((int)sourceNode.argument / (int)node.argument));
+//            }
+//         }
+//
+//         int subMode = HINT_NOBOXING;
+//         //if (targetRef == scope.moduleScope->longReference) {
+//         //   subMode |= HINT_INT64EXPECTED;
+//         //}
+//         //else if (targetRef == scope.moduleScope->realReference) {
+//         //   subMode |= HINT_REAL64EXPECTED;
+//         //}
+//
+//         sourceRef = analizeExpression(sourceNode, scope, subMode);
+//      }
+//
+//      if (!_logic->validateBoxing(*scope.moduleScope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED), test(mode, HINT_DYNAMIC_OBJECT))) {
+//         scope.raiseError(errIllegalOperation, node);
+//      }
+//   }
+//
+//   if (!boxing && node != lxLocalUnboxing) {
+//      node = lxExpression;
+//   }
+//
+//   return targetRef;
+//}
+//
+//ref_t Compiler :: analizeArgBoxing(SNode node, NamespaceScope& scope, int mode)
+//{
+//   bool boxing = !test(mode, HINT_NOBOXING);
+//
+//   // HOTFIX : override the stacksafe attribute if the object must be boxed
+//   if (!boxing && node.existChild(lxBoxingRequired))
+//      boxing = true;
+//
+//   if (!boxing)
+//      node = lxExpression;
+//
+//   analizeExpressionTree(node, scope, /*warningScope, */HINT_NOBOXING);
+//
+//   return node.findChild(lxTarget);
+//}
+//
+//ref_t Compiler :: analizeSymbol(SNode& node, NamespaceScope& scope)
+//{
+//   ObjectInfo result = scope.defineObjectInfo(node.argument, true);
+//   switch (result.kind) {
+//      case okClass:
+//         node = lxClassSymbol;
+//         break;
+//      case okConstantSymbol:
+//      case okExtension:
+//         node = lxConstantSymbol;
+//         break;
+//   }
+//
+//   return resolveObjectReference(*scope.moduleScope, result);
+//}
+//
+//ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/)
+//{
+//   int lmask = HINT_NOBOXING;
+//   if (current.argument == REFER_OPERATOR_ID) {
+//      switch (current.type) {
+//         case lxIntArrOp:
+//         case lxByteArrOp:
+//         case lxShortArrOp:
+//         case lxBinArrOp:
+//            lmask |= HINT_NOUNBOXING;
+//            break;
+//         default:
+//            break;
+//      }
+//   }
+//
+//   SNode loperand = current.firstChild(lxObjectMask);
+//   analizeExpression(loperand, scope, /*warningScope, */lmask);
+//
+//   SNode roperand = loperand.nextNode(lxObjectMask);
+//   analizeExpression(roperand, scope, /*warningScope, */HINT_NOBOXING);
+//
+//   SNode roperand2 = roperand.nextNode(lxObjectMask);
+//   if (roperand2 != lxNone)
+//      analizeExpression(roperand2, scope, /*warningScope, */HINT_NOBOXING);
+//
+//   if (current == lxIntOp && loperand == lxConstantInt && roperand == lxConstantInt) {
+//      int val = 0;
+//      if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
+//         loperand = lxIdle;
+//         roperand = lxIdle;
+//
+//         IdentifierString str;
+//         str.appendHex(val);
+//         current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
+//         current.appendNode(lxIntValue, val);
+//
+//         return V_INT32;
+//      }
+//   }
+//   else if (current == lxRealOp && loperand == lxConstantReal && roperand == lxConstantReal) {
+//      double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
+//      double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
+//      double val = 0;
+//      if (calculateRealOp(current.argument, d1, d2, val)) {
+//         loperand = lxIdle;
+//         roperand = lxIdle;
+//
+//         IdentifierString str;
+//         str.appendDouble(val);
+//         current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
+//
+//         return V_REAL64;
+//      }
+//   }
+//
+//   SNode parentNode = current.parentNode();
+//   while (parentNode == lxExpression)
+//      parentNode = parentNode.parentNode();
+//
+//   if (parentNode == lxAssigning) {
+//      SNode larg = loperand.findSubNodeMask(lxObjectMask);
+//      if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
+//         SNode opArg = larg.findSubNode(current.type);
+//         if (opArg/* != lxNone*/ == lxIntOp && opArg.existChild(lxConstantInt)) {
+//            SNode llarg = larg.firstChild(lxObjectMask);
+//            SNode rlarg = llarg.nextNode(lxObjectMask);
+//            larg = lxExpression;
+//            llarg = lxSubOpMode;
+//         }
+//      }
+//   }
+//
+//   switch (current) {
+//      case lxIntOp:
+//      case lxByteArrOp:
+//      case lxIntArrOp:
+//      case lxShortArrOp:
+//         return V_INT32;
+//      case lxLongOp:
+//         return V_INT64;
+//      case lxRealOp:
+//         return V_REAL64;
+//      case lxBinArrOp:
+//         return V_BINARY;
+//      case lxNewArrOp:
+//         return current.argument;
+//      default:
+//         return 0;
+//   }
+//}
+//
+//ref_t Compiler :: analizeSubExpression(SNode node, NamespaceScope& scope, int mode)
+//{
+//   ref_t result = 0;
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      switch (current.type) {
+//         case lxElse:
+//         case lxCode:
+//         case lxIf:
+//         case lxExternFrame:
+//            analizeExpressionTree(current, scope);
+//            result = 0;
+//            break;
+//         case lxBranching:
+//         case lxLooping:
+//            analizeBranching(current, scope);
+//            result = 0;
+//            break;
+//         default:
+//            if (test(current.type, lxObjectMask)) {
+//               result = analizeExpression(current, scope, mode);
+//            }
+//            break;
+//      }
+//      current = current.nextNode();
+//   }
+//
+//   return result;
+//}
+//
+//ref_t Compiler :: analizeAltExpression(SNode node, NamespaceScope&, int)
+//{
+//   SNode assignNode = node.findChild(lxAssigning);
+//   SNode assignTargetNode = assignNode.findChild(lxLocal);
+//   SNode assignSourceNode = assignNode.findChild(lxIdle);
+//
+//   SNode sourceNode = assignNode.nextNode().firstChild(lxExprMask).firstChild(lxObjectMask);
+//   // COMPILER MAGIC : we have to replace the first operation target with temporal local
+//   // and copy it to the assigning expression
+//   if (sourceNode.compare(lxLocal, lxField, lxLocalAddress)) {
+//      assignSourceNode.set(sourceNode.type, sourceNode.argument);
+//   }
+//   else {
+//      // bad luck - we have to copy the whole expression
+//      assignSourceNode = lxExpression;
+//      SyntaxTree::copyNodeSafe(sourceNode, assignSourceNode, true);
+//   }
+//
+//   sourceNode.set(assignTargetNode.type, assignTargetNode.argument);
+//
+//   return 0;
+//}
+//
+//ref_t Compiler :: analizeExpression(SNode current, NamespaceScope& scope, int mode)
+//{
+//   switch (current.type) {
+//      case lxCalling:
+//      case lxDirectCalling:
+//      case lxSDirectCalling:
+////      case lxImplicitCall:
+//         return analizeMessageCall(current, scope, mode);
+//      case lxExpression:
+//      case lxReturning:
+//         return analizeSubExpression(current, scope, mode);
+//         //return analizeExpression(current.firstChild(lxObjectMask), scope, mode);
+//      case lxAltExpression:
+//         return analizeAltExpression(current, scope, mode);
+//      case lxBranching:
+//      case lxTrying:
+//         analizeExpressionTree(current, scope);
+//         return 0;
+//      case lxBoxing:
+//      case lxCondBoxing:
+//      case lxUnboxing:
+//         return analizeBoxing(current, scope, mode);
+//      case lxArgBoxing:
+//         return analizeArgBoxing(current, scope, mode);
+//      case lxArgUnboxing:
+//         return analizeArgUnboxing(current, scope, /*warningScope, */mode);
+//      case lxAssigning:
+//         return analizeAssigning(current, scope, mode);
+//      case lxSymbolReference:
+//         return analizeSymbol(current, scope);
+//      case lxNilOp:
+//      case lxIntOp:
+//      case lxLongOp:
+//      case lxRealOp:
+//      case lxIntArrOp:
+//      case lxShortArrOp:
+//      case lxByteArrOp:
+//      case lxArrOp:
+//      case lxBinArrOp:
+//      case lxNewArrOp:
+//      case lxArgArrOp:
+//      case lxBoolOp:
+//         return analizeOp(current, scope);
+//      case lxInternalCall:
+//         return analizeInternalCall(current, scope);
+//      case lxStdExternalCall:
+//      case lxExternalCall:
+//      case lxCoreAPICall:
+//         return analizeExtCall(current, scope);
+//      case lxLooping:
+//      case lxSwitching:
+//      case lxOption:
+//      case lxElse:
+//         analizeExpressionTree(current, scope);
+//         return 0;
+//      case lxNested:
+//      case lxStruct:
+//         return analizeNestedExpression(current, scope);
+//      default:
+//         return current.findChild(lxTarget).argument;
+//   }
+//}
+//
+//void Compiler :: analizeBranching(SNode node, NamespaceScope& scope, int mode)
+//{
+//   analizeExpressionTree(node, scope, mode);
+//
+//   _logic->optimizeBranchingOp(*scope.moduleScope, node);
+//}
+//
+//void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mode)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      switch (current.type) {
+//         case lxElse:
+//         case lxCode:
+//         case lxIf:
+//         case lxExternFrame:
+//            analizeExpressionTree(current, scope);
+//            break;
+//         case lxBranching:
+//         case lxLooping:
+//            analizeBranching(current, scope);
+//            break;
+//         default:
+//            if (test(current.type, lxObjectMask)) {
+//               analizeExpression(current, scope, mode);
+//            }
+//            break;
+//      }
+//
+//      current = current.nextNode();
+//   }
+//}
 
 bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode)
 {
@@ -8728,6 +8607,298 @@ bool Compiler :: optimizeEmbeddableCall(_ModuleScope& scope, SNode& node)
    else return false;
 }
 
+//   if (node == lxCondBoxing && test(mode, HINT_NOCONDBOXING))
+//      node = lxBoxing;
+//
+//   if (node == lxUnboxing && test(mode, HINT_NOUNBOXING))
+//      node = lxBoxing;
+//
+//   ref_t targetRef = node.findChild(lxTarget).argument;
+//   ref_t sourceRef = 0;
+//   bool boxing = !test(mode, HINT_NOBOXING);
+//
+//   // HOTFIX : override the stacksafe attribute if the object must be boxed
+//   if (!boxing && node.existChild(lxBoxingRequired))
+//      boxing = true;
+//
+//   SNode sourceNode = node.findSubNodeMask(lxObjectMask);
+//   if (sourceNode == lxNewArrOp) {
+//      // HOTFIX : set correct target for the new operator and comment out the outer boxing
+//      sourceNode.setArgument(targetRef);
+//
+//      analizeExpression(sourceNode, scope, HINT_NOBOXING);
+//
+//      boxing = false;
+//   }
+//   else {
+//      // adjust primitive target
+//      if (isPrimitiveRef(targetRef) && boxing) {
+//         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument, false);
+//         node.findChild(lxTarget).setArgument(targetRef);
+//      }
+//
+//      // for boxing stack allocated / embeddable variables - source is the same as target
+//      if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxSelfLocal) && node.argument != 0) {
+//         sourceRef = targetRef;
+//      }
+//      // HOTFIX : do not box constant classes
+//      else if (sourceNode == lxConstantInt && targetRef == scope.moduleScope->intReference) {
+//         boxing = false;
+//      }
+//      else if (sourceNode == lxConstantReal && targetRef == scope.moduleScope->realReference) {
+//         boxing = false;
+//      }
+//      else if (sourceNode == lxConstantSymbol && targetRef == scope.moduleScope->intReference) {
+//         boxing = false;
+//      }
+//      else if (sourceNode == lxMessageConstant && targetRef == scope.moduleScope->messageReference) {
+//         boxing = false;
+//      }
+//      else if (sourceNode == lxSubjectConstant && targetRef == scope.moduleScope->messageNameReference) {
+//         boxing = false;
+//      }
+//      else if (node == lxUnboxing && !boxing) {
+//         //HOTFIX : to unbox structure field correctly
+//         sourceRef = analizeExpression(sourceNode, scope, /*warningScope, */HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
+//      }
+//      else {
+//         if ((sourceNode == lxBoxing || sourceNode == lxUnboxing) && (int)node.argument < 0 && (int)sourceNode.argument > 0) {
+//            //HOTFIX : boxing fixed-sized array
+//            if (sourceNode.existChild(lxFieldAddress)) {
+//               node.setArgument(-((int)sourceNode.argument / (int)node.argument));
+//            }
+//         }
+//
+//         int subMode = HINT_NOBOXING;
+//         //if (targetRef == scope.moduleScope->longReference) {
+//         //   subMode |= HINT_INT64EXPECTED;
+//         //}
+//         //else if (targetRef == scope.moduleScope->realReference) {
+//         //   subMode |= HINT_REAL64EXPECTED;
+//         //}
+//
+//         sourceRef = analizeExpression(sourceNode, scope, subMode);
+//      }
+//
+//      if (!_logic->validateBoxing(*scope.moduleScope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED), test(mode, HINT_DYNAMIC_OBJECT))) {
+//         scope.raiseError(errIllegalOperation, node);
+//      }
+//   }
+//
+//   if (!boxing && node != lxLocalUnboxing) {
+//      node = lxExpression;
+//   }
+//
+//   return targetRef;
+
+void Compiler :: optimizeBoxing(_ModuleScope& scope, SNode& node)
+{
+   ref_t targetRef = node.findChild(lxTarget).argument;
+
+   SNode exprNode = node.findSubNodeMask(lxObjectMask);
+
+   bool localBoxing = false;
+   if (exprNode == lxFieldAddress && exprNode.argument > 0) {
+      localBoxing = true;
+   }
+   else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
+      localBoxing = true;
+   }
+   else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
+      // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
+      localBoxing = true;
+   }
+   if (localBoxing) {
+      bool unboxingMode = (node == lxUnboxing)/* || unboxingExpected*/;
+
+      injectTempLocal(exprNode, node.argument, true);
+
+      node = unboxingMode ? lxLocalUnboxing : lxBoxing;
+   }
+   else node = lxExpression;
+}
+
+//ref_t Compiler :: analizeAssigning(SNode node, NamespaceScope& scope, int)
+//{
+//   //ref_t targetRef = node.findChild(lxTarget).argument;
+//   SNode targetNode = node.firstChild(lxObjectMask);
+//
+//   SNode sourceNode = targetNode.nextNode(lxObjectMask);
+//   ref_t sourceRef = analizeExpression(sourceNode, scope, (node.argument != 0 ? HINT_NOBOXING | HINT_NOUNBOXING : HINT_NOUNBOXING));
+//   //switch (sourceNode) {
+//   //   case lxStdExternalCall:
+//   //   case lxExternalCall:
+//   //   case lxCoreAPICall:
+//   //      if (test(mode, HINT_INT64EXPECTED)) {
+//   //         // HOTFIX : to recognize external function returning long number
+//   //         sourceRef = V_INT64;
+//   //      }
+//   //      else if (test(mode, HINT_REAL64EXPECTED)) {
+//   //         // HOTFIX : to recognize external function returning real number
+//   //         node.appendNode(lxFPUTarget);
+//
+//   //         sourceRef = V_REAL64;
+//   //      }
+//   //      break;
+//   //}
+//
+//   if (node.argument != 0) {
+//      else {
+//         SNode subNode = node.findSubNodeMask(lxSubOpMask);
+//         if (subNode == lxAssigning && targetNode != lxFieldAddress) {
+//            // HOTFIX : an extra assignment should be removed only for the operations with local variables
+//            bool tempAttr = subNode.existChild(lxTempAttr);
+//
+//            // assignment operation
+//            SNode operationNode = subNode.findChild(lxIntOp, lxRealOp, lxLongOp, lxIntArrOp, lxByteArrOp, lxShortArrOp);
+//            if (operationNode != lxNone) {
+//               SNode larg = operationNode.findSubNodeMask(lxObjectMask);
+//               SNode rarg = operationNode.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+//               SNode target = node.firstChild(lxObjectMask);
+//               if (rarg.type == targetNode.type && rarg.argument == targetNode.argument) {
+//                  // if the target is used in the subexpression rvalue
+//                  // do nothing
+//               }
+//               // if it is an operation with the same target
+//               else if (larg.type == target.type && larg.argument == target.argument) {
+//                  // remove an extra assignment
+//                  larg = subNode.findSubNodeMask(lxObjectMask);
+//
+//                  larg = target.type;
+//                  larg.setArgument(target.argument);
+//                  node = lxExpression;
+//                  target = lxIdle;
+//
+//                  // replace add / subtract with append / reduce and remove an assignment
+//                  switch (operationNode.argument) {
+//                     case ADD_OPERATOR_ID:
+//                        operationNode.setArgument(APPEND_OPERATOR_ID);
+//                        subNode = lxExpression;
+//                        larg = lxIdle;
+//                        break;
+//                     case SUB_OPERATOR_ID:
+//                        operationNode.setArgument(REDUCE_OPERATOR_ID);
+//                        subNode = lxExpression;
+//                        larg = lxIdle;
+//                        break;
+//                  }
+//               }
+//               // if it is an operation with an extra temporal variable
+//               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
+//                  larg = subNode.findSubNodeMask(lxObjectMask);
+//
+//                  if ((larg.type == targetNode.type && larg.argument == targetNode.argument) || (tempAttr && subNode.argument == node.argument && larg == lxLocalAddress)) {
+//                     // remove an extra assignment
+//                     subNode = lxExpression;
+//                     larg = lxIdle;
+//                  }
+//               }
+//            }
+//            else if (tempAttr && subNode.argument == node.argument) {
+//               SNode larg = subNode.firstChild(lxObjectMask);
+//               if (larg == lxLocalAddress) {
+//                  // remove an extra assignment
+//                  subNode = lxExpression;
+//                  larg = lxIdle;
+//               }
+//            }
+//         }
+//         else if (subNode != lxNone) {
+//            if (subNode.compare(lxIntOp, lxLongOp, lxRealOp)) {
+//               //SNode callNode = subNode.findSubNode(lxDirectCalling, lxSDirctCalling);
+//               //if (callNode != lxNone && callNode.existChild(lxEmbeddable)) {
+//               //   if (!_logic->optimizeSubOpCall(*scope.moduleScope, *this, node)) {
+//               //      subNode.appendNode(lxSubOpMode);
+//               //   }
+//               //}
+//            }
+//            //else if (subNode.existChild(lxEmbeddable)) {
+//               //if (!_logic->optimizeReturningStructure(*scope.moduleScope, *this, node)) {
+//               //   _logic->optimizeEmbeddableOp(*scope.moduleScope, *this, node);
+//               //}
+//            //}
+//            else if (subNode != lxCalling && subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
+//               SNode createNode = subNode.findChild(lxCreatingStruct/*, lxImplicitCall*/);
+//               if (createNode != lxNone && targetNode == lxLocalAddress) {
+//                  // if it is implicit conversion
+//                  createNode.set(targetNode.type, targetNode.argument);
+//
+//                  node = lxExpression;
+//                  targetNode = lxIdle;
+//               }
+//            }
+//         }
+//      }
+//  }
+//
+//   return sourceRef;
+//}
+
+bool Compiler :: optimizeAssigningBoxing(_ModuleScope& scope, SNode& node)
+{
+   bool applied = false;
+
+   SNode boxingNode = node.nextNode(lxExprMask);
+   if (boxingNode.compare(lxBoxing, lxCondBoxing)) {
+      optimizeBoxing(scope, boxingNode);
+
+      applied = true;
+   }      
+
+   return applied;
+}
+
+bool Compiler :: optimizeConstantAssigning(_ModuleScope& scope, SNode& node)
+{
+   SNode parent = node.parentNode();
+   if (parent == lxExpression)
+      parent = parent.parentNode();
+   
+   if (parent.argument == 4) {
+      // direct operation with numeric constants
+      parent.set(lxIntOp, SET_OPERATOR_ID);
+
+      return true;
+   }
+   else return false;
+}
+
+bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
+{
+   bool applied = false;
+   SNode callNode = node.parentNode();
+
+   int stackSafeAttr = callNode.findChild(lxStacksafeAttr).argument;
+   int flag = 1;
+   
+   SNode current = callNode.firstChild();
+   int nested = 0;
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (test(stackSafeAttr, flag)) {
+            optimizeBoxing(scope, current);
+
+            applied = true;
+         }
+   
+//         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
+//            nested++;
+//         }
+   
+         flag <<= 1;
+      }
+      current = current.nextNode();
+   }
+   
+//   if (nested > 1) {
+//      analizeParameterBoxing(node, scope);
+//   }
+//
+//   return node.findChild(lxTarget).argument;
+
+   return applied;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8737,6 +8908,12 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeEmbeddableCall(scope, node);
       case 3:
          return optimizeEmbeddableReturn(scope, node, true);
+      case 4:
+         return optimizeAssigningBoxing(scope, node);
+      case 5:
+         return optimizeConstantAssigning(scope, node);
+      case 6:
+         return optimizeStacksafeCall(scope, node);
       default:
          break;
    }
@@ -8746,8 +8923,6 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
 
 bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns)
 {
-   bool applied = false;
-
    List<SyntaxTrieNode> nextPatterns;
    if (test(node.type, lxCodeScopeMask)) {
       SyntaxTrieNode rootTrieNode(&trie._trie);
@@ -8762,8 +8937,8 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
          auto currentPatternValue = currentPattern.Value();
          if (currentPatternValue.match(node)) {
             nextPatterns.add(currentPattern);
-            if (currentPatternValue.patternId != 0)
-               applied |= optimizeTriePattern(scope, node, currentPatternValue.patternId);
+            if (currentPatternValue.patternId != 0 && optimizeTriePattern(scope, node, currentPatternValue.patternId))
+               return true;
          }
       }
    }
@@ -8771,13 +8946,14 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
    if (nextPatterns.Count() > 0) {
       SNode current = node.firstChild();
       while (current != lxNone) {
-         applied |= matchTriePatterns(scope, current, trie, nextPatterns);
+         if(matchTriePatterns(scope, current, trie, nextPatterns))
+            return true;
 
          current = current.nextNode();
       }
    }
 
-   return applied;
+   return false;
 }
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
@@ -8792,31 +8968,31 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
 }
-
-void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
-{
-   //test2(node);
-
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      switch (current.type) {
-         case lxReturning:
-            analizeExpressionTree(current, scope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
-            break;
-         case lxExpression:
-         case lxExternFrame:
-         case lxCalling:
-            analizeExpressionTree(current, scope);
-            break;
-         default:
-            if (test(current.type, lxObjectMask)) {
-               analizeExpression(current, scope/*, 0*/);
-            }
-            break;
-      }
-      current = current.nextNode();
-   }
-}
+//
+//void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
+//{
+//   //test2(node);
+//
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      switch (current.type) {
+//         case lxReturning:
+//            analizeExpressionTree(current, scope, HINT_NOUNBOXING | HINT_NOCONDBOXING);
+//            break;
+//         case lxExpression:
+//         case lxExternFrame:
+//         case lxCalling:
+//            analizeExpressionTree(current, scope);
+//            break;
+//         default:
+//            if (test(current.type, lxObjectMask)) {
+//               analizeExpression(current, scope/*, 0*/);
+//            }
+//            break;
+//      }
+//      current = current.nextNode();
+//   }
+//}
 
 void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
 {
@@ -8824,7 +9000,7 @@ void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
    while (current != lxNone) {
       if (current == lxNewFrame) {
          analizeCodePatterns(current, scope);
-         analizeCode(current, scope);
+         //analizeCode(current, scope);
       }
       current = current.nextNode();
    }
@@ -8852,16 +9028,16 @@ void Compiler :: analizeClassTree(SNode node, ClassScope& scope)
 
 void Compiler :: analizeSymbolTree(SNode node, Scope& scope)
 {
-   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+   //NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (test(current.type, lxExprMask)) {
-         analizeExpressionTree(current, *nsScope, HINT_NOUNBOXING);
-      }
+   //SNode current = node.firstChild();
+   //while (current != lxNone) {
+   //   if (test(current.type, lxExprMask)) {
+   //      analizeExpressionTree(current, *nsScope, HINT_NOUNBOXING);
+   //   }
 
-      current = current.nextNode();
-   }
+   //   current = current.nextNode();
+   //}
 }
 
 void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)

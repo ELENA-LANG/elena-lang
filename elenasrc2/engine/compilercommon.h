@@ -570,7 +570,6 @@ public:
    virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
    // optimization
-   virtual bool validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired) = 0;
    virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
    virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef) = 0;
    virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope) = 0;

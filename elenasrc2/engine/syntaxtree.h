@@ -927,45 +927,56 @@ public:
    struct NodePattern
    {
       LexicalType type;
+      LexicalType followType;
       int         argument;
       int         patternId;
 
       bool match(Node node)
       {
-         return node.type == type;
+         if (node.type == type) {
+            if (followType != lxNone) {
+               return SyntaxTree::existSibling(node, followType);
+            }
+            return true;
+         }
+         else return false;
       }
 
       bool operator ==(NodePattern node) const
       {
-         return (this->type == node.type);
+         return (this->type == node.type && this->followType == node.followType);
       }
 
       bool operator !=(NodePattern node) const
       {
-         return (this->type != node.type);
+         return (this->type != node.type || this->followType != node.followType);
       }
 
       NodePattern()
       {
-         type = lxNone;
+         this->type = lxNone;
+         this->followType = lxNone;
          this->argument = 0;
          this->patternId = 0;
       }
       NodePattern(LexicalType type)
       {
          this->type = type;
+         this->followType = lxNone;
          this->argument = 0;
          this->patternId = 0;
       }
       NodePattern(LexicalType type, int argument)
       {
          this->type = type;
+         this->followType = lxNone;
          this->argument = argument;
          this->patternId = 0;
       }
       NodePattern(LexicalType type, int argument, int patternId)
       {
          this->type = type;
+         this->followType = lxNone;
          this->argument = argument;
          this->patternId = patternId;
       }
@@ -1098,6 +1109,19 @@ public:
       }
 
       return counter;
+   }
+
+   static bool existSibling(Node node, LexicalType type1)
+   {
+      Node current = node.nextNode();
+      while (current != lxNone) {
+         if (current == type1)
+            return true;
+
+         current = current.nextNode();
+      }
+
+      return false;
    }
 
    static Node findPattern(Node node, int counter, ...);

@@ -2054,51 +2054,6 @@ bool CompilerLogic :: optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compi
    return false;
 }
 
-bool CompilerLogic :: validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired)
-{
-   SNode exprNode = node.findSubNodeMask(lxObjectMask);   
-
-   if (targetRef == sourceRef || isCompatible(scope, targetRef, sourceRef)) {
-      //if (exprNode.type != lxLocalAddress || exprNode.type != lxFieldAddress) {
-      //}
-      //else node = lxExpression;
-   }
-   else if (sourceRef == V_NIL) {
-      // NIL reference is never boxed
-      node = lxExpression;
-   }
-   //else if (isPrimitiveRef(sourceRef) && (isCompatible(scope, targetRef, resolvePrimitiveReference(scope, sourceRef)) || sourceRef == V_INT32)) {
-   //   //HOTFIX : allowing numeric constant direct boxing
-   //}
-   else if (node.existChild(lxBoxableAttr)) {
-      // HOTFIX : if the object was explicitly boxed
-   }
-   else return false;
-
-   if (!dynamicRequired) {
-      bool localBoxing = false;
-      if (exprNode == lxFieldAddress && exprNode.argument > 0) {
-         localBoxing = true;
-      }
-      else if (exprNode == lxFieldAddress && node.argument < 4 && node.argument > 0) {
-         localBoxing = true;
-      }
-      else if (exprNode == lxExternalCall || exprNode == lxStdExternalCall) {
-         // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
-         localBoxing = true;
-      }
-      if (localBoxing) {
-         bool unboxingMode = (node == lxUnboxing) || unboxingExpected;
-
-         compiler.injectTempLocal(exprNode, node.argument, true);
-
-         node = unboxingMode ? lxLocalUnboxing : lxBoxing;
-      }
-   }
-
-   return true;
-}
-
 ////void CompilerLogic :: injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode)
 ////{
 ////   ClassInfo info;

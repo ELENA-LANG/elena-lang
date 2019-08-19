@@ -15,7 +15,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION 4
+#define BUILD_VERSION 5
 
 typedef Trie<ByteCodePattern>            ByteTrie;
 typedef MemoryTrie<ByteCodePattern>      MemoryByteTrie;
@@ -180,6 +180,17 @@ SNodePattern decodeSourceNode(TextSourceReader& source, char* token, LineInfo& i
    }
 
    info = source.read(token, IDENTIFIER_LEN);
+   if (ident_t(token).compare("|")) {
+      info = source.read(token, IDENTIFIER_LEN);
+
+      pattern.followType = (LexicalType)tokens.get(token);
+      if (pattern.followType == lxNone) {
+         throw UnknownToken(info);
+      }
+
+      info = source.read(token, IDENTIFIER_LEN);
+   }
+
    if (ident_t(token).compare("=")) {
       info = source.read(token, IDENTIFIER_LEN);
       pattern.patternId = ident_t(token).toInt();

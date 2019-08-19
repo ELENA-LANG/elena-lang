@@ -1017,27 +1017,27 @@ private:
 
    void compileExternalArguments(SNode node, NamespaceScope& scope);
 
-   void injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& counter, 
-                                 Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
-   void analizeParameterBoxing(SNode node, NamespaceScope& scope, int& counter, 
-                                 Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
-   void analizeParameterBoxing(SNode node, NamespaceScope& scope);
-   ref_t analizeAltExpression(SNode node, NamespaceScope& scope, int mode);
-   ref_t analizeOp(SNode current, NamespaceScope& scope);
-   ref_t analizeSymbol(SNode& node, NamespaceScope& scope);
-   ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);
-   ref_t analizeBoxing(SNode node, NamespaceScope& scope, int mode);
-   ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, int mode);
-   ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
-   ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
-   ref_t analizeSubExpression(SNode node, NamespaceScope& scope, int mode);
-   ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
-   ref_t analizeInternalCall(SNode node, NamespaceScope& scope);
-   ref_t analizeExtCall(SNode node, NamespaceScope& scope);
-   ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
-   void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
-   void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
-   void analizeCode(SNode node, NamespaceScope& scope);
+   //void injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& counter, 
+   //                              Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
+   //void analizeParameterBoxing(SNode node, NamespaceScope& scope, int& counter, 
+   //                              Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
+   //void analizeParameterBoxing(SNode node, NamespaceScope& scope);
+   //ref_t analizeAltExpression(SNode node, NamespaceScope& scope, int mode);
+   //ref_t analizeOp(SNode current, NamespaceScope& scope);
+   //ref_t analizeSymbol(SNode& node, NamespaceScope& scope);
+   //ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);
+   //ref_t analizeBoxing(SNode node, NamespaceScope& scope, int mode);
+   //ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, int mode);
+   //ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
+   //ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
+   //ref_t analizeSubExpression(SNode node, NamespaceScope& scope, int mode);
+   //ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
+   //ref_t analizeInternalCall(SNode node, NamespaceScope& scope);
+   //ref_t analizeExtCall(SNode node, NamespaceScope& scope);
+   //ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
+   //void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
+   //void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
+   //void analizeCode(SNode node, NamespaceScope& scope);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope);
@@ -1067,6 +1067,10 @@ private:
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
    bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode);
    bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
+   bool optimizeAssigningBoxing(_ModuleScope& scope, SNode& node);
+   void optimizeBoxing(_ModuleScope& scope, SNode& node);
+   bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
+   bool optimizeStacksafeCall(_ModuleScope& scope, SNode& node);
 
 public:
    void loadRules(StreamReader* optimization);

@@ -1,7 +1,9 @@
 assigning, directcall, embeddable = 1;
 assigning, sdirectcall, embeddable = 1;
 assigning, call, embeddable = 1;
+
 directcall, embeddable = 2;
+
 directcall, directcall, embeddable = 3;
 directcall, sdirectcall, embeddable = 3;
 directcall, call, embeddable = 3;
@@ -11,3 +13,20 @@ sdirectcall, call, embeddable = 3;
 call, directcall, embeddable = 3;
 call, sdirectcall, embeddable = 3;
 call, call, embeddable = 3;
+
+assigning, localaddress | boxing = 4;
+assigning, localaddress | condboxing = 4;
+
+assigning, expression, constint = 5;
+
+directcall, boxing | stacksafe = 6;
+sdirectcall, boxing | stacksafe = 6;
+call, boxing | stacksafe = 6;
+directcall, condboxing | stacksafe = 6;
+sdirectcall, condboxing | stacksafe = 6;
+call, condboxing | stacksafe = 6;
+directcall, unboxing | stacksafe = 6;
+sdirectcall, unboxing | stacksafe = 6;
+call, unboxing | stacksafe = 6;
+
+// assigning, directcall, boxable | stacksafe = 7 

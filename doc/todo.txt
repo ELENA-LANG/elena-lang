@@ -3,8 +3,37 @@ In development:
 ------         
 
               xdev
-                * invalid error message - new Expression[] (method);
-                * code does not work - ClosureClass - items[i*2]:= methods[i].Item1;
+                * embeddable constructor call
+
+              xdev
+                * analizeBoxing
+                * analizeArgBoxing
+                * analizeArgUnboxing
+                * analizeAssigning
+                * analizeOp
+                * analizeMessageCall
+                * analizeBranching
+                * analizeSubExpression
+                * analizeAltExpression
+                * analizeSymbol
+                * analizeInternalCall
+                * analizeExtCall
+                * analizeNestedExpression
+                * analizeSymbolTree
+                * compileExternalArguments
+                * redesign source code level optimization
+
+              xdev tests
+                * i*j+k 
+                * i*j+2
+                * i*2+3
+                * i+k
+                * i+3
+                * check nil boxing
+                * check boxing of incompatible types
+
+              xdev
+                * fixing #476
                 * why debug show no inner variables in the loop
 
               ydev
@@ -13,16 +42,6 @@ In development:
                 * test script examples
                 * Stand alone executable: Script engine #64
                 * ?fields
-
-              xdev
-                * redesign source code level optimization
-                * i*j+k 
-                * i*j+2
-                * i*2+3
-                * i+k
-                * i+3
-
-              ydev
 
               xdev  - int op - test and optimize
                 * pi sample

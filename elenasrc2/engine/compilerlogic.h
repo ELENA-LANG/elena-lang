@@ -203,8 +203,6 @@ public:
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
    virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node);
 
-   virtual bool validateBoxing(_ModuleScope& scope, _Compiler& compiler, SNode& node, ref_t targetRef, ref_t sourceRef, bool unboxingExpected, bool dynamicRequired);
-
 ////   virtual void optimizeDuplicateBoxing(SNode node);
 
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr);
