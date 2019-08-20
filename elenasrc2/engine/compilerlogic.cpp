@@ -664,6 +664,11 @@ bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
 }
 
+bool CompilerLogic :: isMethodEmbeddable(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpEmbeddable);
+}
+
 bool CompilerLogic :: isMethodInternal(ClassInfo& info, ref_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpInternal);
@@ -1098,14 +1103,25 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
    }
 }
 
-bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo&/* info*/, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount)
+bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      return isMethodEmbeddable(info, message);
+   }
+   else return false;
+}
+
+bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount)
 {
    ref_t signRef = scope.module->mapSignature(signatures, paramCount, false);
 
    int stackSafeAttr = 0;
    ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, paramCount, stackSafeAttr, true);
    if (messageRef) {
-      compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef), stackSafeAttr);
+      bool embeddableAttr = isMethodEmbeddable(scope, info.header.classRef, messageRef);
+
+      compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, info.header.classRef, stackSafeAttr, embeddableAttr);
 
       return true;
 
@@ -1118,7 +1134,7 @@ bool CompilerLogic :: injectConstantConstructor(SyntaxWriter& writer, _ModuleSco
    int stackSafeAttr = 0;
    setSignatureStacksafe(scope, scope.literalReference, stackSafeAttr);
 
-   compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef), stackSafeAttr);
+   compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef), stackSafeAttr, false);
 
    return true;
 }

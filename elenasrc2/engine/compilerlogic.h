@@ -145,6 +145,8 @@ public:
    virtual bool isMethodPrivate(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
    virtual bool isClosure(ClassInfo& info, ref_t message);
+   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message);
+   virtual bool isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message);
 //   virtual bool isDispatcher(ClassInfo& info, ref_t message);
    virtual bool isReadonly(ClassInfo& info);
    virtual bool isReadonly(_ModuleScope& scope, ref_t reference)

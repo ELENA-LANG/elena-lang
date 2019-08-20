@@ -16,6 +16,8 @@ call, call, embeddable = 3;
 
 assigning, localaddress | boxing = 4;
 assigning, localaddress | condboxing = 4;
+assigning, fieldaddress | boxing = 4;
+assigning, fieldaddress | condboxing = 4;
 
 assigning, expression, constint = 5;
 
@@ -28,5 +30,3 @@ call, condboxing | stacksafe = 6;
 directcall, unboxing | stacksafe = 6;
 sdirectcall, unboxing | stacksafe = 6;
 call, unboxing | stacksafe = 6;
-
-// assigning, directcall, boxable | stacksafe = 7 

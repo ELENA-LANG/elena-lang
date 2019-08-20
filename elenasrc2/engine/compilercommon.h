@@ -363,8 +363,8 @@ public:
    virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode) = 0;
 
    virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
-   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
-      ref_t targetRef*/, int stacksafeAttr) = 0;
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
+      int stacksafeAttr, bool embeddableAttr) = 0;
 ////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 
    virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
@@ -528,7 +528,8 @@ public:
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
    virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;   
+   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;
+   //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;   
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;          

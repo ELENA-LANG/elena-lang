@@ -1071,6 +1071,7 @@ private:
    void optimizeBoxing(_ModuleScope& scope, SNode& node);
    bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
    bool optimizeStacksafeCall(_ModuleScope& scope, SNode& node);
+   //bool optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node);
 
 public:
    void loadRules(StreamReader* optimization);
@@ -1093,8 +1094,8 @@ public:
    //virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
    virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
    virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
-   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*,
-      ref_t targetRef*/, int stacksafeAttr);
+   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
+      int stacksafeAttr, bool embeddableAttr);
    virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
    virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/);

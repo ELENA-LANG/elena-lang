@@ -5786,7 +5786,8 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    ObjectInfo target(okClassSelf, scope.getClassRefId(), classRef);
    int stackSafeAttr = 0;
    if (implicitConstructor) {
-      messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), stackSafeAttr, false);
+      messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), 
+         stackSafeAttr, false);
    }
    else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
 
@@ -8817,16 +8818,6 @@ void Compiler :: optimizeBoxing(_ModuleScope& scope, SNode& node)
 //               //   _logic->optimizeEmbeddableOp(*scope.moduleScope, *this, node);
 //               //}
 //            //}
-//            else if (subNode != lxCalling && subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
-//               SNode createNode = subNode.findChild(lxCreatingStruct/*, lxImplicitCall*/);
-//               if (createNode != lxNone && targetNode == lxLocalAddress) {
-//                  // if it is implicit conversion
-//                  createNode.set(targetNode.type, targetNode.argument);
-//
-//                  node = lxExpression;
-//                  targetNode = lxIdle;
-//               }
-//            }
 //         }
 //      }
 //  }
@@ -8899,6 +8890,24 @@ bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
    return applied;
 }
 
+//bool Compiler :: optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node)
+//{
+//   SNode callNode = node.parentNode();
+//
+//   //            else if (subNode != lxCalling && subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
+//                  SNode createNode = callNode.findChild(lxCreatingStruct/*, lxImplicitCall*/);
+//   //               if (createNode != lxNone && targetNode == lxLocalAddress) {
+//   //                  // if it is implicit conversion
+//   //                  createNode.set(targetNode.type, targetNode.argument);
+//   //
+//   //                  node = lxExpression;
+//   //                  targetNode = lxIdle;
+//   //               }
+//   //            }
+//
+//   return false;
+//}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8914,6 +8923,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeConstantAssigning(scope, node);
       case 6:
          return optimizeStacksafeCall(scope, node);
+      //case 7:
+      //   return optimizeEmbeddableConstructorCall(scope, node);
       default:
          break;
    }
@@ -9527,12 +9538,14 @@ void Compiler :: injectBoxing(SyntaxWriter& writer, _ModuleScope&, LexicalType b
    writer.closeNode();
 }
 
-void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef/*, ref_t targetRef*/, int stackSafeAttr)
+void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef, int stackSafeAttr, bool embeddableAttr)
 {
    writer.appendNode(lxCallTarget, targetClassRef);
    writer.appendNode(lxBoxableAttr);
    if (stackSafeAttr)
       writer.appendNode(lxStacksafeAttr, stackSafeAttr);
+   if (embeddableAttr)
+      writer.appendNode(lxEmbeddableAttr);
 
    writer.inject(convertOp, convertArg);
    writer.insertNode(targetOp, targetArg/*, lxTarget, targetClassRef*/);
