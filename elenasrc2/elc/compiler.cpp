@@ -8923,8 +8923,6 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeConstantAssigning(scope, node);
       case 6:
          return optimizeStacksafeCall(scope, node);
-      //case 7:
-      //   return optimizeEmbeddableConstructorCall(scope, node);
       default:
          break;
    }
