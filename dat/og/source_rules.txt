@@ -1,32 +1,37 @@
-assigning, directcall, embeddable = 1;
-assigning, sdirectcall, embeddable = 1;
-assigning, call, embeddable = 1;
+assigning, directcall, embeddable = 2;
+assigning, sdirectcall, embeddable = 2;
+assigning, call, embeddable = 2;
 
-directcall, embeddable = 2;
+directcall, embeddable = 3;
 
-directcall, directcall, embeddable = 3;
-directcall, sdirectcall, embeddable = 3;
-directcall, call, embeddable = 3;
-sdirectcall, directcall, embeddable = 3;
-sdirectcall, sdirectcall, embeddable = 3;
-sdirectcall, call, embeddable = 3;
-call, directcall, embeddable = 3;
-call, sdirectcall, embeddable = 3;
-call, call, embeddable = 3;
+directcall, directcall, embeddable = 4;
+directcall, sdirectcall, embeddable = 4;
+directcall, call, embeddable = 4;
+sdirectcall, directcall, embeddable = 4;
+sdirectcall, sdirectcall, embeddable = 4;
+sdirectcall, call, embeddable = 4;
+call, directcall, embeddable = 4;
+call, sdirectcall, embeddable = 4;
+call, call, embeddable = 4;
 
-assigning, localaddress | boxing = 4;
-assigning, localaddress | condboxing = 4;
-assigning, fieldaddress | boxing = 4;
-assigning, fieldaddress | condboxing = 4;
+assigning, localaddress | boxing = 5;
+assigning, localaddress | condboxing = 5;
+assigning, fieldaddress | boxing = 5;
+assigning, fieldaddress | condboxing = 5;
 
-assigning, expression, constint = 5;
+assigning, expression, constint = 6;
 
-directcall, boxing | stacksafe = 6;
-sdirectcall, boxing | stacksafe = 6;
-call, boxing | stacksafe = 6;
-directcall, condboxing | stacksafe = 6;
-sdirectcall, condboxing | stacksafe = 6;
-call, condboxing | stacksafe = 6;
-directcall, unboxing | stacksafe = 6;
-sdirectcall, unboxing | stacksafe = 6;
-call, unboxing | stacksafe = 6;
+directcall, boxing | stacksafe = 7;
+sdirectcall, boxing | stacksafe = 7;
+call, boxing | stacksafe = 7;
+directcall, condboxing | stacksafe = 7;
+sdirectcall, condboxing | stacksafe = 7;
+call, condboxing | stacksafe = 7;
+directcall, unboxing | stacksafe = 7;
+sdirectcall, unboxing | stacksafe = 7;
+call, unboxing | stacksafe = 7;
+
+intop, boxing = 8;
+longop, boxing = 8;
+realop, boxing = 8;
+

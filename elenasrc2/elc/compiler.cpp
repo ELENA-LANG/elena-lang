@@ -8709,6 +8709,9 @@ void Compiler :: optimizeBoxing(_ModuleScope& scope, SNode& node)
       // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
       localBoxing = true;
    }
+   else if (exprNode == lxBoxing)
+      optimizeBoxing(scope, exprNode);
+
    if (localBoxing) {
       bool unboxingMode = (node == lxUnboxing)/* || unboxingExpected*/;
 
@@ -8908,21 +8911,37 @@ bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
 //   return false;
 //}
 
+bool Compiler :: optimizeStacksafeOp(_ModuleScope& scope, SNode& node)
+{
+   optimizeBoxing(scope, node);
+
+   return true;
+}
+
+bool Compiler :: optimizeBoxingBoxing(_ModuleScope& scope, SNode& node)
+{
+   optimizeBoxing(scope, node);
+
+   return true;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
-      case 1:
-         return optimizeEmbeddableReturn(scope, node, false);
       case 2:
-         return optimizeEmbeddableCall(scope, node);
+         return optimizeEmbeddableReturn(scope, node, false);
       case 3:
-         return optimizeEmbeddableReturn(scope, node, true);
+         return optimizeEmbeddableCall(scope, node);
       case 4:
-         return optimizeAssigningBoxing(scope, node);
+         return optimizeEmbeddableReturn(scope, node, true);
       case 5:
-         return optimizeConstantAssigning(scope, node);
+         return optimizeAssigningBoxing(scope, node);
       case 6:
+         return optimizeConstantAssigning(scope, node);
+      case 7:
          return optimizeStacksafeCall(scope, node);
+      case 8:
+         return optimizeStacksafeOp(scope, node);
       default:
          break;
    }

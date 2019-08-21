@@ -1071,6 +1071,8 @@ private:
    void optimizeBoxing(_ModuleScope& scope, SNode& node);
    bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
    bool optimizeStacksafeCall(_ModuleScope& scope, SNode& node);
+   bool optimizeStacksafeOp(_ModuleScope& scope, SNode& node);
+   bool optimizeBoxingBoxing(_ModuleScope& scope, SNode& node);
    //bool optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node);
 
 public:

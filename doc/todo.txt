@@ -3,9 +3,6 @@ In development:
 ------         
 
               xdev
-                * debugger - stack allocated structure, 144fd8c
-
-              xdev
                 * analizeBoxing
                 * analizeArgBoxing
                 * analizeArgUnboxing

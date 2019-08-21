@@ -57,6 +57,9 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("constint", lxConstantInt);
       tokens.add("stacksafe", lxStacksafeAttr);
       tokens.add("boxable", lxBoxableAttr);
+      tokens.add("intop", lxIntOp);
+      tokens.add("longop", lxLongOp);
+      tokens.add("realop", lxRealOp);
    }
 }
 
