@@ -3,12 +3,14 @@ In development:
 ------         
 
               xdev
-                * i+k
                 * i*j+k 
                 * i*j+2
                 * i*2+3
                 * i+3
                 * analizeOp
+
+                * where i is fields - i+=k
+                * where i,k are fields - i+k
 
               xdev
                 * analizeBoxing

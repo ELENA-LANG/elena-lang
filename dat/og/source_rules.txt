@@ -35,9 +35,18 @@ intop, boxing = 8;
 longop, boxing = 8;
 realop, boxing = 8;
 
-assigning, expression, expression, assigning, intop = 9;
-assigning, expression, expression, assigning, longop = 9;
-assigning, expression, expression, assigning, realop = 9;
-assigning, expression, expression, assigning, intarrop = 9;
-assigning, expression, expression, assigning, bytearrop = 9;
-assigning, expression, expression, assigning, shortarrop = 9;
+assigning, expression, expression, assigning, localaddress | temp = 10;
+assigning, expression, assigning, localaddress | temp = 10;
+
+assigning, expression, expression, expression, intop = 9;
+assigning, expression, expression, expression, longop = 9;
+assigning, expression, expression, expression, realop = 9;
+assigning, expression, expression, expression, intarrop = 9;
+assigning, expression, expression, expression, bytearrop = 9;
+assigning, expression, expression, expression, shortarrop = 9;
+assigning, expression, expression, intop = 9;
+assigning, expression, expression, longop = 9;
+assigning, expression, expression, realop = 9;
+assigning, expression, expression, intarrop = 9;
+assigning, expression, expression, bytearrop = 9;
+assigning, expression, expression, shortarrop = 9;

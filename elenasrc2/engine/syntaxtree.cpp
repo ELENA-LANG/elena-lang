@@ -63,6 +63,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("intarrop", lxIntArrOp);
       tokens.add("bytearrop", lxByteArrOp);
       tokens.add("shortarrop", lxShortArrOp);
+      tokens.add("temp", lxTempAttr);
    }
 }
 

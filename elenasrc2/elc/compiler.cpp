@@ -8929,42 +8929,34 @@ bool Compiler :: optimizeAssigningOp(_ModuleScope& scope, SNode& node)
 {
    bool applied = false;
 
-   SNode assign2Node = node.parentNode();
-
-   SNode assignNode = assign2Node.parentNode(); 
+   SNode assignNode = node.parentNode();
    while (assignNode != lxAssigning)
       assignNode = assignNode.parentNode();
 
    SNode target = assignNode.firstChild(lxObjectMask);
-   SNode target2 = assign2Node.firstChild(lxObjectMask);
 
    SNode larg = node.findSubNodeMask(lxObjectMask);
    SNode rarg = node.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
                
-   if (rarg.type == target.type && rarg.argument == target.argument) {
+   if (target == lxFieldAddress) {
+
+   }
+   else if (rarg.type == target.type && rarg.argument == target.argument) {
       // if the target is used in the subexpression rvalue
       // do nothing
    }
    // if it is an operation with the same target
    else if (larg.type == target.type && larg.argument == target.argument) {
-      // remove an extra assignment
-      larg = assign2Node.findSubNodeMask(lxObjectMask);
-
-      larg = target.type;
-      larg.setArgument(target.argument);
-      assignNode = lxExpression;
-      target = lxIdle;
-
       // replace add / subtract with append / reduce and remove an assignment
       switch (node.argument) {
          case ADD_OPERATOR_ID:
             node.setArgument(APPEND_OPERATOR_ID);
-            assign2Node = lxExpression;
+            assignNode = lxExpression;
             larg = lxIdle;
             break;
          case SUB_OPERATOR_ID:
             node.setArgument(REDUCE_OPERATOR_ID);
-            assign2Node = lxExpression;
+            assignNode = lxExpression;
             larg = lxIdle;
             break;
       }
@@ -8981,6 +8973,30 @@ bool Compiler :: optimizeAssigningOp(_ModuleScope& scope, SNode& node)
 //                     larg = lxIdle;
 //                  }
   // }
+
+   return applied;
+}
+
+bool Compiler :: optimizeDoubleAssigning(_ModuleScope& scope, SNode& node)
+{
+   bool applied = false;
+
+   SNode assign2Node = node.parentNode();
+
+   SNode assignNode = assign2Node.parentNode();
+   while (assignNode != lxAssigning)
+      assignNode = assignNode.parentNode();
+
+   SNode larg2 = assign2Node.firstChild(lxObjectMask);
+   SNode larg = assignNode.firstChild(lxObjectMask);
+
+   if (assign2Node.argument == assignNode.argument && larg == lxLocalAddress) {
+      // remove an extra assignment
+      assign2Node = lxExpression;
+      larg2 = lxIdle;
+
+      applied = true;
+   }
 
    return applied;
 }
@@ -9004,6 +9020,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeStacksafeOp(scope, node);
       case 9:
          return optimizeAssigningOp(scope, node);
+      case 10:
+         return optimizeDoubleAssigning(scope, node);
       default:
          break;
    }
