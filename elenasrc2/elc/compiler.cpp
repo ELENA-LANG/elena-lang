@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -8925,6 +8925,66 @@ bool Compiler :: optimizeBoxingBoxing(_ModuleScope& scope, SNode& node)
    return true;
 }
 
+bool Compiler :: optimizeAssigningOp(_ModuleScope& scope, SNode& node)
+{
+   bool applied = false;
+
+   SNode assign2Node = node.parentNode();
+
+   SNode assignNode = assign2Node.parentNode(); 
+   while (assignNode != lxAssigning)
+      assignNode = assignNode.parentNode();
+
+   SNode target = assignNode.firstChild(lxObjectMask);
+   SNode target2 = assign2Node.firstChild(lxObjectMask);
+
+   SNode larg = node.findSubNodeMask(lxObjectMask);
+   SNode rarg = node.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+               
+   if (rarg.type == target.type && rarg.argument == target.argument) {
+      // if the target is used in the subexpression rvalue
+      // do nothing
+   }
+   // if it is an operation with the same target
+   else if (larg.type == target.type && larg.argument == target.argument) {
+      // remove an extra assignment
+      larg = assign2Node.findSubNodeMask(lxObjectMask);
+
+      larg = target.type;
+      larg.setArgument(target.argument);
+      assignNode = lxExpression;
+      target = lxIdle;
+
+      // replace add / subtract with append / reduce and remove an assignment
+      switch (node.argument) {
+         case ADD_OPERATOR_ID:
+            node.setArgument(APPEND_OPERATOR_ID);
+            assign2Node = lxExpression;
+            larg = lxIdle;
+            break;
+         case SUB_OPERATOR_ID:
+            node.setArgument(REDUCE_OPERATOR_ID);
+            assign2Node = lxExpression;
+            larg = lxIdle;
+            break;
+      }
+
+      applied = true;
+   }
+//               // if it is an operation with an extra temporal variable
+//               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
+//                  larg = subNode.findSubNodeMask(lxObjectMask);
+//
+//                  if ((larg.type == targetNode.type && larg.argument == targetNode.argument) || (tempAttr && subNode.argument == node.argument && larg == lxLocalAddress)) {
+//                     // remove an extra assignment
+//                     subNode = lxExpression;
+//                     larg = lxIdle;
+//                  }
+  // }
+
+   return applied;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8942,6 +9002,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeStacksafeCall(scope, node);
       case 8:
          return optimizeStacksafeOp(scope, node);
+      case 9:
+         return optimizeAssigningOp(scope, node);
       default:
          break;
    }
@@ -8995,6 +9057,8 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
+
+   test2(node);
 }
 //
 //void Compiler :: analizeCode(SNode node, NamespaceScope& scope)

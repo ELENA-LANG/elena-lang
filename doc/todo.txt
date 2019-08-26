@@ -3,11 +3,18 @@ In development:
 ------         
 
               xdev
+                * i+k
+                * i*j+k 
+                * i*j+2
+                * i*2+3
+                * i+3
+                * analizeOp
+
+              xdev
                 * analizeBoxing
                 * analizeArgBoxing
                 * analizeArgUnboxing
                 * analizeAssigning
-                * analizeOp
                 * analizeMessageCall
                 * analizeBranching
                 * analizeSubExpression
@@ -21,11 +28,6 @@ In development:
                 * redesign source code level optimization
 
               xdev tests
-                * i*j+k 
-                * i*j+2
-                * i*2+3
-                * i+k
-                * i+3
                 * check nil boxing
                 * check boxing of incompatible types
 

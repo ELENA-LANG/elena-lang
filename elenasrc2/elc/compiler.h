@@ -1073,6 +1073,7 @@ private:
    bool optimizeStacksafeCall(_ModuleScope& scope, SNode& node);
    bool optimizeStacksafeOp(_ModuleScope& scope, SNode& node);
    bool optimizeBoxingBoxing(_ModuleScope& scope, SNode& node);
+   bool optimizeAssigningOp(_ModuleScope& scope, SNode& node);
    //bool optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node);
 
 public:

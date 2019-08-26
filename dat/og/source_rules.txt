@@ -35,3 +35,9 @@ intop, boxing = 8;
 longop, boxing = 8;
 realop, boxing = 8;
 
+assigning, expression, expression, assigning, intop = 9;
+assigning, expression, expression, assigning, longop = 9;
+assigning, expression, expression, assigning, realop = 9;
+assigning, expression, expression, assigning, intarrop = 9;
+assigning, expression, expression, assigning, bytearrop = 9;
+assigning, expression, expression, assigning, shortarrop = 9;
