@@ -2096,57 +2096,57 @@ void ByteCodeWriter :: saveInt(CommandTape& tape, LexicalType target, int argume
    }
 }
 
-//void ByteCodeWriter :: saveReal(CommandTape& tape, LexicalType target, int argument)
-//{
-//   if (target == lxLocalAddress) {
-//      // bcopyf param
-//      // rsave
-//      tape.write(bcBCopyF, argument);
-//      tape.write(bcRSave);
-//   }
-//   else if (target == lxLocal || target == lxSelfLocal/* || target == lxBoxableLocal*/) {
-//      // bloadfi param
-//      // rsave
-//      tape.write(bcBLoadFI, argument, bpFrame);
-//      tape.write(bcRSave);
-//   }
-//   else if (target == lxFieldAddress) {
-//      // push 0
-//      // push 0
-//      // bcopys 0
-//      // rsave
-//      // bloadfi 1
-//      // pope
-//      // dcopy target.param
-//      // bwrite
-//      // pope
-//      // dcopy target.param+4
-//      // bwrite
-//      // popi 2
-//      tape.write(bcPushN);
-//      tape.write(bcPushN);
-//      tape.write(bcBCopyS, 0);
-//      tape.write(bcRSave);
-//      tape.write(bcBLoadFI, 1, bpFrame);
-//      tape.write(bcPopE);
-//      tape.write(bcDCopy, argument);
-//      tape.write(bcBWrite);
-//      tape.write(bcPopE);
-//      tape.write(bcDCopy, argument + 4);
-//      tape.write(bcBWrite);
-//      tape.write(bcPopI, 2);
-//   }
-//}
-//
-//void ByteCodeWriter :: saveLong(CommandTape& tape, LexicalType target, int argument)
-//{
-//   if (target == lxLocalAddress) {
-//      // bcopyf param
-//      // lsave
-//      tape.write(bcBCopyF, argument);
-//      tape.write(bcLSave);
-//   }
-//}
+void ByteCodeWriter :: saveReal(CommandTape& tape, LexicalType target, int argument)
+{
+   if (target == lxLocalAddress) {
+      // bcopyf param
+      // rsave
+      tape.write(bcBCopyF, argument);
+      tape.write(bcRSave);
+   }
+   else if (target == lxLocal || target == lxSelfLocal/* || target == lxBoxableLocal*/) {
+      // bloadfi param
+      // rsave
+      tape.write(bcBLoadFI, argument, bpFrame);
+      tape.write(bcRSave);
+   }
+   else if (target == lxFieldAddress) {
+      // push 0
+      // push 0
+      // bcopys 0
+      // rsave
+      // bloadfi 1
+      // pope
+      // dcopy target.param
+      // bwrite
+      // pope
+      // dcopy target.param+4
+      // bwrite
+      // popi 2
+      tape.write(bcPushN);
+      tape.write(bcPushN);
+      tape.write(bcBCopyS, 0);
+      tape.write(bcRSave);
+      tape.write(bcBLoadFI, 1, bpFrame);
+      tape.write(bcPopE);
+      tape.write(bcDCopy, argument);
+      tape.write(bcBWrite);
+      tape.write(bcPopE);
+      tape.write(bcDCopy, argument + 4);
+      tape.write(bcBWrite);
+      tape.write(bcPopI, 2);
+   }
+}
+
+void ByteCodeWriter :: saveLong(CommandTape& tape, LexicalType target, int argument)
+{
+   if (target == lxLocalAddress) {
+      // bcopyf param
+      // lsave
+      tape.write(bcBCopyF, argument);
+      tape.write(bcLSave);
+   }
+}
 
 void ByteCodeWriter :: loadIndex(CommandTape& tape, LexicalType target, ref_t sourceArgument)
 {
@@ -5101,12 +5101,12 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
          if (node.argument == 4) {
             saveInt(tape, target.type, target.argument);
          }
-         //else if (node.argument == 8) {
-         //   if (node.findSubNode(lxFPUTarget) == lxFPUTarget) {
-         //      saveReal(tape, target.type, target.argument);               
-         //   }
-         //   else saveLong(tape, target.type, target.argument);
-         //}
+         else if (node.argument == 8) {
+            if (node.findSubNode(lxFPUTarget) == lxFPUTarget) {
+               saveReal(tape, target.type, target.argument);               
+            }
+            else saveLong(tape, target.type, target.argument);
+         }
       }
       else if (target == lxFieldExpression || target == lxExpression) {
          SNode arg1, arg2;

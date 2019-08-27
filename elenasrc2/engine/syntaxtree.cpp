@@ -65,6 +65,11 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("bytearrop", lxByteArrOp);
       tokens.add("shortarrop", lxShortArrOp);
       tokens.add("temp", lxTempAttr);
+      tokens.add("stdextcall", lxStdExternalCall);
+      tokens.add("extcall", lxExternalCall);
+      tokens.add("corecall", lxCoreAPICall);
+      tokens.add("extarg", lxExtArgument);
+      tokens.add("intextarg", lxIntExtArgument);
    }
 }
 
@@ -156,6 +161,11 @@ bool SyntaxWriter :: seekUp(LexicalType type)
       return true;
    }
    else return false;
+}
+
+SyntaxTree::Node SyntaxWriter :: CurrentNode()
+{
+   return _syntaxTree->read(_current);
 }
 
 // --- SyntaxTree::Node ---

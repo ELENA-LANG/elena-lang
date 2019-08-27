@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -3030,7 +3030,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
       // if it is a primitive operation
       _logic->injectOperation(writer, *scope.moduleScope, operator_id, operationType, resultClassRef, loperand.element);
 
-      retVal = assignResult(writer, scope, resultClassRef, loperand.element);
+      retVal = assignResult(writer, scope, false, resultClassRef, loperand.element);
    }
    // if not , replace with appropriate method call
    else {
@@ -3493,7 +3493,7 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
    return generalMessageRef;
 }
 
-ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t exptectedRef*/, ObjectInfo target, int mode)
+ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, ObjectInfo target, int mode)
 {
    int paramsMode = 0;
    if (target.kind == okExternal) {
@@ -3508,7 +3508,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    if (target.kind == okExternal) {
       int extMode = mode & HINT_ROOT;
 
-      retVal = compileExternalCall(writer, node.prevNode(), scope/*, exptectedRef*/, extMode);
+      retVal = compileExternalCall(writer, node.prevNode(), scope, exptectedRef, extMode);
    }
    else {
       ref_t messageRef = mapMessage(node, scope, variadicOne);
@@ -4302,7 +4302,7 @@ ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, Co
 
    writer.newBookmark();
    writer.appendNode(lxResult);
-   compileOperation(writer, current, scope, ObjectInfo(okObject), 0);
+   compileOperation(writer, current, scope, ObjectInfo(okObject), 0, 0);
 
    writer.removeBookmark();
 
@@ -4319,7 +4319,7 @@ ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, Code
 
    writer.newBookmark();
    writer.appendNode(lxLocal, tempLocal);
-   compileOperation(writer, node.firstChild(), scope, ObjectInfo(okObject), 0);
+   compileOperation(writer, node.firstChild(), scope, ObjectInfo(okObject), 0, 0);
 
    writer.removeBookmark();
 
@@ -4508,7 +4508,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, int mode)
+ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, ref_t expectedRef, int mode)
 {
    switch (current.type) {
       case lxCollection:
@@ -4524,7 +4524,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
             objectInfo.param = resolvePrimitiveArray(scope, objectInfo.element, false);
             objectInfo.reference = V_OBJARRAY;
 
-            objectInfo = compileOperation(writer, current.nextNode(), scope, objectInfo, mode);
+            objectInfo = compileOperation(writer, current.nextNode(), scope, objectInfo, expectedRef, mode);
          }
          else scope.raiseError(errIllegalOperation, current);
          break;
@@ -4532,7 +4532,7 @@ ObjectInfo Compiler :: compileOperation(SyntaxWriter& writer, SNode current, Cod
          if (test(mode, HINT_PROP_MODE)) {
             objectInfo = compilePropAssigning(writer, current, scope, objectInfo);
          }
-         else objectInfo = compileMessage(writer, current, scope/*, expectedRef*/, objectInfo, mode);
+         else objectInfo = compileMessage(writer, current, scope, expectedRef, objectInfo, mode);
          break;
       case lxTypecast:
          objectInfo = compileBoxingExpression(writer, current, scope, objectInfo, mode);
@@ -4881,7 +4881,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    // HOTFIX : reload the operation node
    operationNode = current.nextNode();
    if (operationNode != lxNone) {
-      objectInfo = compileOperation(writer, operationNode, scope, objectInfo/*, exptectedRef*/, mode);
+      objectInfo = compileOperation(writer, operationNode, scope, objectInfo, exptectedRef, mode);
    }
 
    ref_t sourceRef = resolveObjectReference(scope, objectInfo/*, exptectedRef*/);
@@ -5011,13 +5011,11 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
    return retVal;
 }
 
-void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*, WarningScope& warningScope*/)
+void Compiler :: compileExternalArguments(SNode node, Scope& nsScope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxExtArgument) {
-         //analizeExpressionTree(current, nsScope, /*warningScope, */HINT_NOBOXING);
-
          ref_t classReference = current.findChild(lxExtArgumentRef).argument;
          ClassInfo classInfo;
          if (classReference) {
@@ -5074,7 +5072,7 @@ void Compiler :: compileExternalArguments(SNode node, NamespaceScope& nsScope/*,
    }
 }
 
-ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t expectedRef*/, int mode)
+ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, int mode)
 {
    ObjectInfo retVal(okExternal);
 
@@ -5131,16 +5129,19 @@ ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, Cod
       writer.inject(lxCoreAPICall, reference);
    }
    else writer.inject(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+
+   compileExternalArguments(writer.CurrentNode(), scope);
+
    writer.closeNode();
 
    if (!test(mode, HINT_ROOT)) {
-      //if (expectedRef == scope.moduleScope->realReference) {
-      //   retVal = assignResult(writer, scope, V_REAL64);
-      //}
-      //else if (expectedRef == V_REAL64 || expectedRef == V_INT64) {
-      //   retVal = assignResult(writer, scope, expectedRef);
-      //}
-      /*else */retVal = assignResult(writer, scope, V_INT32);
+      if (expectedRef == scope.moduleScope->realReference || expectedRef == V_REAL64) {
+         retVal = assignResult(writer, scope, true, V_REAL64);
+      }
+      else if (expectedRef == V_INT64) {
+         retVal = assignResult(writer, scope, false, expectedRef);
+      }
+      else retVal = assignResult(writer, scope, false, V_INT32);
    }
 
    return retVal;
@@ -5920,7 +5921,7 @@ void Compiler :: compileResendExpression(SyntaxWriter& writer, SNode node, CodeS
 
       ObjectInfo target = scope.mapMember(SELF_VAR);
       writeTerminal(writer, node, scope, target, HINT_NODEBUGINFO);
-      compileMessage(writer, messageNode, scope, /*0, */target, 0);
+      compileMessage(writer, messageNode, scope, 0, target, 0);
 
       writer.removeBookmark();
       writer.closeNode();
@@ -7895,7 +7896,7 @@ void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScop
 }
 
 // NOTE : elementRef is used for binary arrays
-ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef)
+ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, bool fpuMode, ref_t targetRef, ref_t elementRef)
 {
    ObjectInfo retVal(okObject, 0, targetRef, 0, elementRef);
 
@@ -7907,6 +7908,9 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
          writer.inject(lxAssigning, size);
          writer.insertNode(lxLocalAddress, retVal.param);
          writer.appendNode(lxTempAttr);
+         if (fpuMode)
+            writer.appendNode(lxFPUTarget);
+
          writer.closeNode();
       }
       else if (size > 0) {
@@ -7948,13 +7952,6 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, ref_
    else return retVal;
 }
 
-//ref_t Compiler :: analizeExtCall(SNode node, NamespaceScope& scope)
-//{
-//   compileExternalArguments(node, scope);
-//
-//   return V_INT32;
-//}
-//
 //ref_t Compiler :: analizeInternalCall(SNode node, NamespaceScope& scope)
 //{
 //   analizeExpressionTree(node, scope, HINT_NOBOXING);
@@ -8429,10 +8426,7 @@ int Compiler :: allocateStructure(SNode node, int& size)
 //         return analizeOp(current, scope);
 //      case lxInternalCall:
 //         return analizeInternalCall(current, scope);
-//      case lxStdExternalCall:
-//      case lxExternalCall:
-//      case lxCoreAPICall:
-//         return analizeExtCall(current, scope);
+
 //      case lxLooping:
 //      case lxSwitching:
 //      case lxOption:
@@ -8975,7 +8969,7 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeDoubleAssigning(scope, node);
       case 11:
          return optimizeDirectIntOp(scope, node);
-      case 12  :
+      case 12:
          return optimizeDirectRealOp(scope, node);
       default:
          break;
@@ -9030,6 +9024,8 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
+
+   test2(node);
 }
 //
 //void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
@@ -9059,35 +9055,6 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 
 //ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/)
 //{
-//   int lmask = HINT_NOBOXING;
-//   if (current.argument == REFER_OPERATOR_ID) {
-//      switch (current.type) {
-//         case lxIntArrOp:
-//         case lxByteArrOp:
-//         case lxShortArrOp:
-//         case lxBinArrOp:
-//            lmask |= HINT_NOUNBOXING;
-//            break;
-//         default:
-//            break;
-//      }
-//   }
-//
-//   SNode loperand = current.firstChild(lxObjectMask);
-//   analizeExpression(loperand, scope, /*warningScope, */lmask);
-//
-//   SNode roperand = loperand.nextNode(lxObjectMask);
-//   analizeExpression(roperand, scope, /*warningScope, */HINT_NOBOXING);
-//
-//   SNode roperand2 = roperand.nextNode(lxObjectMask);
-//   if (roperand2 != lxNone)
-//      analizeExpression(roperand2, scope, /*warningScope, */HINT_NOBOXING);
-//
-//
-//   SNode parentNode = current.parentNode();
-//   while (parentNode == lxExpression)
-//      parentNode = parentNode.parentNode();
-//
 //   if (parentNode == lxAssigning) {
 //      SNode larg = loperand.findSubNodeMask(lxObjectMask);
 //      if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
@@ -9127,7 +9094,6 @@ void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
    while (current != lxNone) {
       if (current == lxNewFrame) {
          analizeCodePatterns(current, scope);
-         //analizeCode(current, scope);
       }
       current = current.nextNode();
    }

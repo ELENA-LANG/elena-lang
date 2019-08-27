@@ -314,8 +314,8 @@ private:
    struct NamespaceScope : Scope
    {
       // imported namespaces
-      IdentifierList importedNs;
-      ForwardMap     forwards;       // forward declarations
+      IdentifierList    importedNs;
+      ForwardMap        forwards;       // forward declarations
 
       // symbol hints
       Map<ref_t, ref_t> constantHints;
@@ -324,13 +324,13 @@ private:
       ExtensionMap      extensions;
       ExtensionTmplMap  extensionTemplates;
 
-      ref_t packageReference;
+      ref_t             packageReference;
 
 //      // list of references to the current module which should be checked after the project is compiled
 //      Unresolveds* forwardsUnresolved;
 
-      IdentifierString ns;
-      IdentifierString sourcePath;
+      IdentifierString  ns;
+      IdentifierString  sourcePath;
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -905,7 +905,7 @@ private:
 
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, bool& variadicOne);
 
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t exptectedRef*/, ObjectInfo target, int mode);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, ObjectInfo target, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 
@@ -929,7 +929,7 @@ private:
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode/*, int mode*/);
    void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal, bool accumulatorMode);
 
-   ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, int mode);
+   ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, ref_t expectedRef, int mode);
 
    ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ref_t operator_id);
    ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo);
@@ -939,7 +939,7 @@ private:
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
-   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, /*ref_t expectedRef, */int mode);
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, int mode);
    ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
@@ -1009,13 +1009,13 @@ private:
 
 ////   bool validate(_ProjectManager& project, _Module* module, int reference);
 
-   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ref_t elementRef = 0);
+   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, bool fpuMode, ref_t targetRef, ref_t elementRef = 0);
 
    bool convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
    bool typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
    bool sendTypecast(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
 
-   void compileExternalArguments(SNode node, NamespaceScope& scope);
+   void compileExternalArguments(SNode node, Scope& scope);
 
    //void injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& counter, 
    //                              Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
@@ -1033,7 +1033,6 @@ private:
    //ref_t analizeSubExpression(SNode node, NamespaceScope& scope, int mode);
    //ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
    //ref_t analizeInternalCall(SNode node, NamespaceScope& scope);
-   //ref_t analizeExtCall(SNode node, NamespaceScope& scope);
    //ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
    //void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
    //void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);

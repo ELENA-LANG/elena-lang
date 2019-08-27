@@ -248,7 +248,8 @@ enum LexicalType
    lxCheckLocal               = 0x2004C,
 
    lxTempAttr                 = 0x2010D,
-   lxSubOpMode                = 0x2010E
+   lxSubOpMode                = 0x2010E,
+   lxFPUTarget                = 0x2010F
 };
 
 // --- SyntaxTree ---
@@ -259,138 +260,6 @@ class SyntaxTree
    MemoryDump _strings;
 
 public:
-   // --- SyntaxWriter ---
-
-   class Writer
-   {
-      friend class SyntaxTree;
-
-      SyntaxTree*  _syntaxTree;
-      Stack<pos_t> _bookmarks;
-      pos_t        _current;
-      int          _pendingBookmarks;
-
-      void insertPendingBookmarks(pos_t position)
-      {
-         while (_pendingBookmarks) {
-            _bookmarks.push(position);
-            _pendingBookmarks--;
-         }
-      }
-
-      void inject(pos_t position, LexicalType type, ref_t argument, pos_t strArgRef);
-      void insert(LexicalType type, ref_t argument, pos_t strArgRef, bool newMode);
-
-   public:
-      bool hasBookmarks() const
-      {
-         return _bookmarks.Count() != 0;
-      }
-
-      int newBookmark()
-      {
-         _pendingBookmarks++;
-
-         return _bookmarks.Count() + _pendingBookmarks;
-      }
-
-      void trim();
-
-      void removeBookmark()
-      {
-         if (_pendingBookmarks > 0) {
-            _pendingBookmarks--;
-         }
-         else _bookmarks.pop();         
-      }
-
-      void clear()
-      {
-         _syntaxTree->clear();
-         _bookmarks.clear();
-         _current = INVALID_REF;
-         _pendingBookmarks = 0;
-      }
-
-      void inject(LexicalType type, ident_t argument)
-      {
-         inject(_bookmarks.peek(), type, 0, _syntaxTree->saveStrArgument(argument));
-      }
-      void inject(LexicalType type, ref_t argument)
-      {
-         inject(_bookmarks.peek(), type, argument, INVALID_REF);
-      }
-      void inject(LexicalType type)
-      {
-         inject(_bookmarks.peek(), type, 0, INVALID_REF);
-      }
-      void newNode(LexicalType type, ref_t argument);
-      void newNode(LexicalType type, int argument)
-      {
-         newNode(type, (ref_t)argument);
-      }
-      void newNode(LexicalType type, ident_t argument);
-      void newNode(LexicalType type)
-      {
-         newNode(type, 0u);
-      }
-      void appendNode(LexicalType type, ref_t argument)
-      {
-         newNode(type, argument);
-         closeNode();
-      }
-      void appendNode(LexicalType type, int argument)
-      {
-         newNode(type, argument);
-         closeNode();
-      }
-      void appendNode(LexicalType type, ident_t argument)
-      {
-         newNode(type, argument);
-         closeNode();
-      }
-      void appendNode(LexicalType type)
-      {
-         newNode(type);
-         closeNode();
-      }
-      void insertNode(LexicalType type)
-      {
-         insert(type, 0, INVALID_REF, false);
-      }
-      void insertNode(LexicalType type, int argument)
-      {
-         insert(type, argument, INVALID_REF, false);
-      }
-      void newPrependedNode(LexicalType type, int argument)
-      {
-         insert(type, argument, INVALID_REF, true);
-      }
-
-      void closeNode();
-
-      bool seekUp(LexicalType type);
-      void findRoot()
-      {
-         if (_current == INVALID_REF && !_syntaxTree->isEmpty()) {
-            _current = 0;
-         }
-      }
-
-      Writer(SyntaxTree& tree)
-      {
-         _current = INVALID_REF;
-         _syntaxTree = &tree;
-         _pendingBookmarks = 0;
-      }
-      Writer(Writer& writer)
-      {
-         _current = writer._current;
-         _syntaxTree = writer._syntaxTree;
-         _pendingBookmarks = 0;
-      }
-   };
-
    struct NodePattern;
 
    // --- Node ---
@@ -971,6 +840,139 @@ public:
          strArgument = INVALID_REF;
 
          tree = NULL;
+      }
+   };
+
+   // --- SyntaxWriter ---
+   class Writer
+   {
+      friend class SyntaxTree;
+
+      SyntaxTree* _syntaxTree;
+      Stack<pos_t> _bookmarks;
+      pos_t        _current;
+      int          _pendingBookmarks;
+
+      void insertPendingBookmarks(pos_t position)
+      {
+         while (_pendingBookmarks) {
+            _bookmarks.push(position);
+            _pendingBookmarks--;
+         }
+      }
+
+      void inject(pos_t position, LexicalType type, ref_t argument, pos_t strArgRef);
+      void insert(LexicalType type, ref_t argument, pos_t strArgRef, bool newMode);
+
+   public:
+      bool hasBookmarks() const
+      {
+         return _bookmarks.Count() != 0;
+      }
+
+      int newBookmark()
+      {
+         _pendingBookmarks++;
+
+         return _bookmarks.Count() + _pendingBookmarks;
+      }
+
+      void trim();
+
+      void removeBookmark()
+      {
+         if (_pendingBookmarks > 0) {
+            _pendingBookmarks--;
+         }
+         else _bookmarks.pop();
+      }
+
+      void clear()
+      {
+         _syntaxTree->clear();
+         _bookmarks.clear();
+         _current = INVALID_REF;
+         _pendingBookmarks = 0;
+      }
+
+      void inject(LexicalType type, ident_t argument)
+      {
+         inject(_bookmarks.peek(), type, 0, _syntaxTree->saveStrArgument(argument));
+      }
+      void inject(LexicalType type, ref_t argument)
+      {
+         inject(_bookmarks.peek(), type, argument, INVALID_REF);
+      }
+      void inject(LexicalType type)
+      {
+         inject(_bookmarks.peek(), type, 0, INVALID_REF);
+      }
+      void newNode(LexicalType type, ref_t argument);
+      void newNode(LexicalType type, int argument)
+      {
+         newNode(type, (ref_t)argument);
+      }
+      void newNode(LexicalType type, ident_t argument);
+      void newNode(LexicalType type)
+      {
+         newNode(type, 0u);
+      }
+      void appendNode(LexicalType type, ref_t argument)
+      {
+         newNode(type, argument);
+         closeNode();
+      }
+      void appendNode(LexicalType type, int argument)
+      {
+         newNode(type, argument);
+         closeNode();
+      }
+      void appendNode(LexicalType type, ident_t argument)
+      {
+         newNode(type, argument);
+         closeNode();
+      }
+      void appendNode(LexicalType type)
+      {
+         newNode(type);
+         closeNode();
+      }
+      void insertNode(LexicalType type)
+      {
+         insert(type, 0, INVALID_REF, false);
+      }
+      void insertNode(LexicalType type, int argument)
+      {
+         insert(type, argument, INVALID_REF, false);
+      }
+      void newPrependedNode(LexicalType type, int argument)
+      {
+         insert(type, argument, INVALID_REF, true);
+      }
+
+      void closeNode();
+
+      bool seekUp(LexicalType type);
+      void findRoot()
+      {
+         if (_current == INVALID_REF && !_syntaxTree->isEmpty()) {
+            _current = 0;
+         }
+      }
+
+      Node CurrentNode();
+
+      Writer(SyntaxTree& tree)
+      {
+         _current = INVALID_REF;
+         _syntaxTree = &tree;
+         _pendingBookmarks = 0;
+      }
+      Writer(Writer& writer)
+      {
+         _current = writer._current;
+         _syntaxTree = writer._syntaxTree;
+         _pendingBookmarks = 0;
       }
    };
 

@@ -36,6 +36,8 @@ call, unboxing | stacksafe = 7;
 intop, boxing = 8;
 longop, boxing = 8;
 realop, boxing = 8;
+extarg, boxing = 8;
+intextarg, boxing = 8;
 
 assigning, expression, expression, assigning, localaddress | temp = 10;
 assigning, expression, assigning, localaddress | temp = 10;

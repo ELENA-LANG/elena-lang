@@ -3,7 +3,10 @@ In development:
 ------         
 
               xdev
-                * analizeOp
+                * analizeExtCall
+                * analizeInternalCall
+                * #15
+                * uncomment float support in sqlite
 
               xdev
                 * analizeBoxing
@@ -15,12 +18,10 @@ In development:
                 * analizeSubExpression
                 * analizeAltExpression
                 * analizeSymbol
-                * analizeInternalCall
-                * analizeExtCall
                 * analizeNestedExpression
                 * analizeSymbolTree
                 * compileExternalArguments
-                * redesign source code level optimization
+                * analizeOp
 
               xdev tests
                 * check nil boxing
