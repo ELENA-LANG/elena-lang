@@ -209,12 +209,12 @@ public sealed class DBCommand
         
                     ^ cast string(columnTextPtr)
                 }
-//            SQLITE_FLOAT
-//                [
-//                    real val := system'external'sqlite3 sqlite3_column_double(theCommandHandle, anIndex).
-//                    
-//                    ^ RealNumber new(val).
-//                ];
+            SQLITE_FLOAT
+                {
+                    real val := extern sqlite3.sqlite3_column_double(theCommandHandle, anIndex);
+                    
+                    ^ val
+                }
 //            SQLITE_BLOB
 //                [
 //                    dirty_ptr blob := system'external'sqlite3 sqlite3_column_blob(theCommandHandle, anIndex).

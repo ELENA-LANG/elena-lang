@@ -4783,8 +4783,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
          directMode = false;
       }
 
-      if (member == lxExpression && !isSimpleObjectExpression(member, true)) {
+      if (member == lxExpression && isSimpleObjectExpression(member, true)) {
          // ignore nested expression
+      }
+      else if (member == lxOverridden) {
+         // ignore target override
       }
       else if (test(member.type, lxCodeScopeMask) || member == lxResult)
          directMode = false;

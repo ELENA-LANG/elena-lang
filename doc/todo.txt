@@ -3,12 +3,10 @@ In development:
 ------         
 
               xdev
-                * analizeExtCall
-                * analizeInternalCall
-                * #15
-                * uncomment float support in sqlite
+                * #84
 
               xdev
+                * analizeInternalCall
                 * analizeBoxing
                 * analizeArgBoxing
                 * analizeArgUnboxing
