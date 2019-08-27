@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -8331,98 +8331,6 @@ int Compiler :: allocateStructure(SNode node, int& size)
 //   return resolveObjectReference(*scope.moduleScope, result);
 //}
 //
-//ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/)
-//{
-//   int lmask = HINT_NOBOXING;
-//   if (current.argument == REFER_OPERATOR_ID) {
-//      switch (current.type) {
-//         case lxIntArrOp:
-//         case lxByteArrOp:
-//         case lxShortArrOp:
-//         case lxBinArrOp:
-//            lmask |= HINT_NOUNBOXING;
-//            break;
-//         default:
-//            break;
-//      }
-//   }
-//
-//   SNode loperand = current.firstChild(lxObjectMask);
-//   analizeExpression(loperand, scope, /*warningScope, */lmask);
-//
-//   SNode roperand = loperand.nextNode(lxObjectMask);
-//   analizeExpression(roperand, scope, /*warningScope, */HINT_NOBOXING);
-//
-//   SNode roperand2 = roperand.nextNode(lxObjectMask);
-//   if (roperand2 != lxNone)
-//      analizeExpression(roperand2, scope, /*warningScope, */HINT_NOBOXING);
-//
-//   if (current == lxIntOp && loperand == lxConstantInt && roperand == lxConstantInt) {
-//      int val = 0;
-//      if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
-//         loperand = lxIdle;
-//         roperand = lxIdle;
-//
-//         IdentifierString str;
-//         str.appendHex(val);
-//         current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
-//         current.appendNode(lxIntValue, val);
-//
-//         return V_INT32;
-//      }
-//   }
-//   else if (current == lxRealOp && loperand == lxConstantReal && roperand == lxConstantReal) {
-//      double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
-//      double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
-//      double val = 0;
-//      if (calculateRealOp(current.argument, d1, d2, val)) {
-//         loperand = lxIdle;
-//         roperand = lxIdle;
-//
-//         IdentifierString str;
-//         str.appendDouble(val);
-//         current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
-//
-//         return V_REAL64;
-//      }
-//   }
-//
-//   SNode parentNode = current.parentNode();
-//   while (parentNode == lxExpression)
-//      parentNode = parentNode.parentNode();
-//
-//   if (parentNode == lxAssigning) {
-//      SNode larg = loperand.findSubNodeMask(lxObjectMask);
-//      if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
-//         SNode opArg = larg.findSubNode(current.type);
-//         if (opArg/* != lxNone*/ == lxIntOp && opArg.existChild(lxConstantInt)) {
-//            SNode llarg = larg.firstChild(lxObjectMask);
-//            SNode rlarg = llarg.nextNode(lxObjectMask);
-//            larg = lxExpression;
-//            llarg = lxSubOpMode;
-//         }
-//      }
-//   }
-//
-//   switch (current) {
-//      case lxIntOp:
-//      case lxByteArrOp:
-//      case lxIntArrOp:
-//      case lxShortArrOp:
-//         return V_INT32;
-//      case lxLongOp:
-//         return V_INT64;
-//      case lxRealOp:
-//         return V_REAL64;
-//      case lxBinArrOp:
-//         return V_BINARY;
-//      case lxNewArrOp:
-//         return current.argument;
-//      default:
-//         return 0;
-//   }
-//}
-//
 //ref_t Compiler :: analizeSubExpression(SNode node, NamespaceScope& scope, int mode)
 //{
 //   ref_t result = 0;
@@ -8845,7 +8753,7 @@ bool Compiler :: optimizeAssigningBoxing(_ModuleScope& scope, SNode& node)
 bool Compiler :: optimizeConstantAssigning(_ModuleScope& scope, SNode& node)
 {
    SNode parent = node.parentNode();
-   if (parent == lxExpression)
+   while (parent == lxExpression)
       parent = parent.parentNode();
    
    if (parent.argument == 4) {
@@ -9001,6 +8909,49 @@ bool Compiler :: optimizeDoubleAssigning(_ModuleScope& scope, SNode& node)
    return applied;
 }
 
+bool Compiler :: optimizeDirectRealOp(_ModuleScope& scope, SNode& node)
+{
+   SNode current = node.parentNode();
+   SNode loperand = current.findSubNodeMask(lxObjectMask);
+   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+
+   double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
+   double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
+   double val = 0;
+   if (calculateRealOp(current.argument, d1, d2, val)) {
+      loperand = lxIdle;
+      roperand = lxIdle;
+
+      IdentifierString str;
+      str.appendDouble(val);
+      current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
+
+      return true;
+   }
+   else return false;
+}
+
+bool Compiler :: optimizeDirectIntOp(_ModuleScope& scope, SNode& node)
+{
+   SNode current = node.parentNode();
+   SNode loperand = current.findSubNodeMask(lxObjectMask);
+   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+
+   int val = 0;
+   if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
+      loperand = lxIdle;
+      roperand = lxIdle;
+
+      IdentifierString str;
+      str.appendHex(val);
+      current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
+      current.appendNode(lxIntValue, val);
+
+      return true;
+   }
+   else return false;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -9022,6 +8973,10 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeAssigningOp(scope, node);
       case 10:
          return optimizeDoubleAssigning(scope, node);
+      case 11:
+         return optimizeDirectIntOp(scope, node);
+      case 12  :
+         return optimizeDirectRealOp(scope, node);
       default:
          break;
    }
@@ -9075,8 +9030,6 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
-
-   test2(node);
 }
 //
 //void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
@@ -9103,6 +9056,70 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 //      current = current.nextNode();
 //   }
 //}
+
+//ref_t Compiler :: analizeOp(SNode current, NamespaceScope& scope/*, WarningScope& warningScope*/)
+//{
+//   int lmask = HINT_NOBOXING;
+//   if (current.argument == REFER_OPERATOR_ID) {
+//      switch (current.type) {
+//         case lxIntArrOp:
+//         case lxByteArrOp:
+//         case lxShortArrOp:
+//         case lxBinArrOp:
+//            lmask |= HINT_NOUNBOXING;
+//            break;
+//         default:
+//            break;
+//      }
+//   }
+//
+//   SNode loperand = current.firstChild(lxObjectMask);
+//   analizeExpression(loperand, scope, /*warningScope, */lmask);
+//
+//   SNode roperand = loperand.nextNode(lxObjectMask);
+//   analizeExpression(roperand, scope, /*warningScope, */HINT_NOBOXING);
+//
+//   SNode roperand2 = roperand.nextNode(lxObjectMask);
+//   if (roperand2 != lxNone)
+//      analizeExpression(roperand2, scope, /*warningScope, */HINT_NOBOXING);
+//
+//
+//   SNode parentNode = current.parentNode();
+//   while (parentNode == lxExpression)
+//      parentNode = parentNode.parentNode();
+//
+//   if (parentNode == lxAssigning) {
+//      SNode larg = loperand.findSubNodeMask(lxObjectMask);
+//      if (larg == lxAssigning && larg.existChild(lxTempAttr)) {
+//         SNode opArg = larg.findSubNode(current.type);
+//         if (opArg/* != lxNone*/ == lxIntOp && opArg.existChild(lxConstantInt)) {
+//            SNode llarg = larg.firstChild(lxObjectMask);
+//            SNode rlarg = llarg.nextNode(lxObjectMask);
+//            larg = lxExpression;
+//            llarg = lxSubOpMode;
+//         }
+//      }
+//   }
+//
+//   switch (current) {
+//      case lxIntOp:
+//      case lxByteArrOp:
+//      case lxIntArrOp:
+//      case lxShortArrOp:
+//         return V_INT32;
+//      case lxLongOp:
+//         return V_INT64;
+//      case lxRealOp:
+//         return V_REAL64;
+//      case lxBinArrOp:
+//         return V_BINARY;
+//      case lxNewArrOp:
+//         return current.argument;
+//      default:
+//         return 0;
+//   }
+//}
+//
 
 void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
 {

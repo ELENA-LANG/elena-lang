@@ -20,6 +20,8 @@ assigning, fieldaddress | boxing = 5;
 assigning, fieldaddress | condboxing = 5;
 
 assigning, expression, constint = 6;
+assigning, expression, expression, constint = 6;
+assigning, expression, expression, expression, constint = 6;
 
 directcall, boxing | stacksafe = 7;
 sdirectcall, boxing | stacksafe = 7;
@@ -50,3 +52,6 @@ assigning, expression, expression, realop = 9;
 assigning, expression, expression, intarrop = 9;
 assigning, expression, expression, bytearrop = 9;
 assigning, expression, expression, shortarrop = 9;
+
+intop, constint | constint = 11;
+realop, constreal | constreal = 12;

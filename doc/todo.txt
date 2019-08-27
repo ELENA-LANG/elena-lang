@@ -3,14 +3,7 @@ In development:
 ------         
 
               xdev
-                * i*j+k 
-                * i*j+2
-                * i*2+3
-                * i+3
                 * analizeOp
-
-                * where i is fields - i+=k
-                * where i,k are fields - i+k
 
               xdev
                 * analizeBoxing
@@ -37,6 +30,13 @@ In development:
                 * fixing #476
                 * why debug show no inner variables in the loop
 
+              xdev
+                * primitive op where i is fields - i+=k
+                * primitive op where i,k are fields - i+k
+
+------                                                           
+Pipeline:
+------                                                                                         
               ydev
                 * build : returning (goto)
                 * redesign script code generation
@@ -45,11 +45,8 @@ In development:
                 * ?fields
 
               xdev  - int op - test and optimize
+                * Tester.test(n+m*n);
                 * pi sample
-
-------                                                           
-Pipeline:
-------                                                                                         
 
               xdev
                  * remove idle variable / field / constant (e.g. 2)
