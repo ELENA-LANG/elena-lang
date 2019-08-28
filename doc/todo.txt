@@ -3,22 +3,20 @@ In development:
 ------         
 
               xdev
-                * #186
+                * #217
 
               xdev
+                * analizeOp
                 * analizeBoxing
                 * analizeArgBoxing
                 * analizeArgUnboxing
                 * analizeAssigning
                 * analizeMessageCall
-                * analizeBranching
                 * analizeSubExpression
                 * analizeAltExpression
                 * analizeSymbol
                 * analizeNestedExpression
                 * analizeSymbolTree
-                * compileExternalArguments
-                * analizeOp
 
               xdev tests
                 * check nil boxing
@@ -37,6 +35,7 @@ Pipeline:
 ------                                                                                         
               xdev
                 * #162 - explicit constructor
+                * new system'dynamics'DynamicStruct() - raise an error
 
               ydev
                 * build : returning (goto)

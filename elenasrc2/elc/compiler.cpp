@@ -8423,13 +8423,6 @@ int Compiler :: allocateStructure(SNode node, int& size)
 //   }
 //}
 //
-//void Compiler :: analizeBranching(SNode node, NamespaceScope& scope, int mode)
-//{
-//   analizeExpressionTree(node, scope, mode);
-//
-//   _logic->optimizeBranchingOp(*scope.moduleScope, node);
-//}
-//
 //void Compiler :: analizeExpressionTree(SNode node, NamespaceScope& scope, int mode)
 //{
 //   SNode current = node.firstChild();
@@ -8846,6 +8839,13 @@ bool Compiler :: optimizeDirectIntOp(_ModuleScope& scope, SNode& node)
    else return false;
 }
 
+bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
+{
+   _logic->optimizeBranchingOp(scope, node);
+
+   return true;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8871,6 +8871,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeDirectIntOp(scope, node);
       case 12:
          return optimizeDirectRealOp(scope, node);
+      case 13:
+         return optimizeBranching(scope, node);
       default:
          break;
    }
@@ -8881,7 +8883,7 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
 bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns)
 {
    List<SyntaxTrieNode> nextPatterns;
-   if (test(node.type, lxCodeScopeMask)) {
+   if (test(node.type, lxCodeScopeMask) || node.type == lxCode) {
       SyntaxTrieNode rootTrieNode(&trie._trie);
       nextPatterns.add(rootTrieNode);
    }
@@ -8915,8 +8917,6 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
-   test2(node);
-
    bool applied = true;
    List<SyntaxTrieNode> matched;
    while (applied) {

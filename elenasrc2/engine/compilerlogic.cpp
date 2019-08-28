@@ -2107,13 +2107,11 @@ bool CompilerLogic :: optimizeEmbeddable(SNode node, _ModuleScope& scope)
    return false;
 }
 
-void CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode node)
+void CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode ifOp)
 {
-   // check if direct comparision with a numeric constant is possible
-   SNode ifOp = SyntaxTree::findPattern(node, 3,
-      SNodePattern(lxExpression),
-      SNodePattern(lxIntOp),
-      SNodePattern(lxConstantInt));
+   SNode node = ifOp.parentNode().parentNode();
+   while (node == lxExpression)
+      node = node.parentNode();
 
    if (ifOp != lxNone) {
       int arg = ifOp.findChild(lxIntValue).argument;

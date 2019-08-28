@@ -41,7 +41,6 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
    tokens.add("assign", lxAssign);
    tokens.add("operator", lxOperator);
    tokens.add("nameattr", lxNameAttr);
-   //_tokens.add("loop", lxLoop);
 
    if (fullMode) {
       tokens.add("assigning", lxAssigning);
@@ -71,6 +70,8 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("extarg", lxExtArgument);
       tokens.add("intextarg", lxIntExtArgument);
       tokens.add("interncall", lxInternalCall);
+      tokens.add("branching", lxBranching);
+      tokens.add("looping", lxLooping);
    }
 }
 

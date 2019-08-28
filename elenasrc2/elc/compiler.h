@@ -1076,6 +1076,7 @@ private:
    bool optimizeDoubleAssigning(_ModuleScope& scope, SNode& node);
    bool optimizeDirectRealOp(_ModuleScope& scope, SNode& node);
    bool optimizeDirectIntOp(_ModuleScope& scope, SNode& node);
+   bool optimizeBranching(_ModuleScope& scope, SNode& node);
    //bool optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node);
 
 public:

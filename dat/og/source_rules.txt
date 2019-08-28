@@ -64,3 +64,6 @@ assigning, expression, expression, shortarrop = 9;
 
 intop, constint | constint = 11;
 realop, constreal | constreal = 12;
+
+branching, intop, constint = 13;
+looping, intop, constint = 13;
