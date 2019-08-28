@@ -813,7 +813,7 @@ private:
 
    ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, bool unboxWrapper = true);
+   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, bool noPrimitivesMode, bool unboxWrapper = true);
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
    ref_t resolveImplicitIdentifier(Scope& scope, SNode terminal);
    ref_t resolveImplicitIdentifier(Scope& scope, ident_t identifier, bool referenceOne, bool gloabalOne = false);

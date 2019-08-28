@@ -70,6 +70,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("corecall", lxCoreAPICall);
       tokens.add("extarg", lxExtArgument);
       tokens.add("intextarg", lxIntExtArgument);
+      tokens.add("interncall", lxInternalCall);
    }
 }
 

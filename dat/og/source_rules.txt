@@ -37,7 +37,14 @@ intop, boxing = 8;
 longop, boxing = 8;
 realop, boxing = 8;
 extarg, boxing = 8;
+extarg, condboxing = 8;
+extarg, unboxing = 8;
 intextarg, boxing = 8;
+intextarg, condboxing = 8;
+intextarg, unboxing = 8;
+interncall, boxing = 8;
+interncall, condboxing = 8;
+interncall, unboxing = 8;
 
 assigning, expression, expression, assigning, localaddress | temp = 10;
 assigning, expression, assigning, localaddress | temp = 10;

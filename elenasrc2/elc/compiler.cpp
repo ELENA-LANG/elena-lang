@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -1234,7 +1234,7 @@ ref_t Compiler :: resolveConstantObjectReference(CodeScope& scope, ObjectInfo ob
       //case okSignatureConstant:
       //   return scope.moduleScope->signatureReference;
       default:
-         return resolveObjectReference(scope, object);
+         return resolveObjectReference(scope, object, false);
    }
 }
 
@@ -1253,19 +1253,27 @@ ref_t Compiler :: resolveConstantObjectReference(CodeScope& scope, ObjectInfo ob
 //   /*else */return resolveObjectReference(scope, object);
 //}
 
-ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, bool unboxWapper)
+ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, bool noPrimitivesMode, bool unboxWapper)
 {
+   ref_t retVal = 0;
+   ref_t elementRef = object.element;
    if (object.kind == okSelfParam) {
       if (object.extraparam == (ref_t)-2) {
          // HOTFIX : to return the primitive array
-         return object.reference;
+         retVal = object.reference;
       }
-      else return scope.getClassRefId(false);
+      else retVal = scope.getClassRefId(false);
    }
    else if (unboxWapper && object.reference == V_WRAPPER) {
-      return object.element;
+      elementRef = 0;
+      retVal = object.element;
    }
-   else return resolveObjectReference(*scope.moduleScope, object);
+   else retVal = resolveObjectReference(*scope.moduleScope, object);
+
+   if (noPrimitivesMode && isPrimitiveRef(retVal)) {
+      return resolvePrimitiveReference(scope, retVal, elementRef, false);
+   }
+   else return retVal;
 }
 
 ref_t Compiler :: resolveObjectReference(_ModuleScope&, ObjectInfo object)
@@ -1897,7 +1905,7 @@ void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scop
 
       if (!immMode) {
          writer.newNode(lxLocal, localOffs);
-         writer.appendNode(lxTarget, resolveObjectReference(scope, loperand));
+         writer.appendNode(lxTarget, resolveObjectReference(scope, loperand, false));
          writer.closeNode();
       }
       else loperand = compileObject(writer, targetNode, scope, 0, 0);
@@ -2160,7 +2168,7 @@ void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, Obje
 {
    if (object.extraparam == -1 && !test(mode, HINT_NOBOXING)) {
       // if the parameter may be stack-allocated
-      ref_t targetRef = resolveObjectReference(scope, object);
+      ref_t targetRef = resolveObjectReference(scope, object, false);
       bool variable = false;
       int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
       writer.newNode((variable && !test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxCondBoxing, size);
@@ -2294,7 +2302,8 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          LexicalType type = object.kind == okLocalAddress ? lxLocalAddress : lxFieldAddress;
          if (!test(mode, HINT_NOBOXING) || test(mode, HINT_DYNAMIC_OBJECT)) {
             bool variable = false;
-            int size = _logic->defineStructSizeVariable(*scope.moduleScope, resolveObjectReference(scope, object), object.element, variable);
+            int size = _logic->defineStructSizeVariable(*scope.moduleScope, 
+               resolveObjectReference(scope, object, false), object.element, variable);
             if (size < 0 && type == lxFieldAddress) {
                // if it is fixed-size array
                size = defineFieldSize(scope, object.param)/* * (-size)*/;
@@ -2349,7 +2358,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          return;
    }
 
-   writeTarget(writer, resolveObjectReference(scope, object), object.element);
+   writeTarget(writer, resolveObjectReference(scope, object, false), object.element);
 
    if (!test(mode, HINT_NODEBUGINFO))
       writeTerminalInfo(writer, terminal);
@@ -2725,12 +2734,8 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, bool variadicOne)
 
 ref_t Compiler :: mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, int& stackSafeAttr)
 {
-   ref_t objectRef = resolveObjectReference(scope, object);
-   if (isPrimitiveRef(objectRef)) {
-      //if (objectRef != V_ARGARRAY)
-         objectRef = resolvePrimitiveReference(scope, objectRef, object.element, false);
-   }
-   else if (objectRef == scope.moduleScope->superReference) {
+   ref_t objectRef = resolveObjectReference(scope, object, true);
+   if (objectRef == scope.moduleScope->superReference) {
       objectRef = 0;
    }
 
@@ -2939,7 +2944,8 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
    ref_t ifReference = 0;
    ref_t resolved_operator_id = operator_id;
    // try to resolve the branching operator directly
-   if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id, resolveObjectReference(scope, loperand), ifReference)) {
+   if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id, 
+      resolveObjectReference(scope, loperand, false), ifReference)) {
       // we are lucky : we can implement branching directly
       compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
 
@@ -2983,8 +2989,8 @@ ObjectInfo Compiler :: compileBranchingOperator(SyntaxWriter& writer, SNode rope
 
 ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand)
 {
-   ref_t loperandRef = resolveObjectReference(scope, loperand);
-   ref_t roperandRef = resolveObjectReference(scope, roperand);
+   ref_t loperandRef = resolveObjectReference(scope, loperand, false);
+   ref_t roperandRef = resolveObjectReference(scope, roperand, false);
 
    ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef) ? loperandRef : 0;
 
@@ -2998,14 +3004,14 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
 {
    ObjectInfo retVal;
 
-   ref_t loperandRef = resolveObjectReference(scope, loperand);
-   ref_t roperandRef = resolveObjectReference(scope, roperand);
+   ref_t loperandRef = resolveObjectReference(scope, loperand, false);
+   ref_t roperandRef = resolveObjectReference(scope, roperand, false);
    ref_t roperand2Ref = 0;
    ref_t resultClassRef = 0;
    int operationType = 0;
 
    if (roperand2.kind != okUnknown) {
-      roperand2Ref = resolveObjectReference(scope, roperand2);
+      roperand2Ref = resolveObjectReference(scope, roperand2, false);
       //HOTFIX : allow to work with int constants
       if (roperand2.kind == okIntConstant && loperandRef == V_OBJARRAY)
          roperand2Ref = 0;
@@ -3162,10 +3168,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    int argument = messageRef;
 
    // try to recognize the operation
-   ref_t classReference = resolveObjectReference(scope, target);
-   if (isPrimitiveRef(classReference)) {
-      classReference = resolvePrimitiveReference(scope, classReference, target.element, false);
-   }
+   ref_t classReference = resolveObjectReference(scope, target, true);
 
    bool dispatchCall = false;
    _CompilerLogic::ChechMethodInfo result;
@@ -3264,7 +3267,7 @@ bool Compiler :: convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t tar
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-   ref_t sourceRef = resolveObjectReference(scope, source);
+   ref_t sourceRef = resolveObjectReference(scope, source, false);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
       if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, sourceRef, source.element, nsScope->ns.c_str()))
@@ -3275,7 +3278,7 @@ bool Compiler :: convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t tar
 
 bool Compiler :: typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
 {
-   ref_t sourceRef = resolveObjectReference(scope, source);
+   ref_t sourceRef = resolveObjectReference(scope, source, false);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       // if it is not compatible - send type-casting message
       return sendTypecast(writer, scope, targetRef, source);
@@ -3303,12 +3306,10 @@ bool Compiler :: sendTypecast(SyntaxWriter& writer, CodeScope& scope, ref_t targ
 
 ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
 {
-   ref_t argRef = resolveObjectReference(scope, info);
+   ref_t argRef = resolveObjectReference(scope, info, true);
    if (!argRef) {
       return 0;
    }
-   else if (isPrimitiveRef(argRef))
-      argRef = resolvePrimitiveReference(scope, argRef, info.element, false);
 
    return scope.module->mapSignature(&argRef, 1, false);
 }
@@ -3317,16 +3318,11 @@ ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info1, Obje
 {
    ref_t argRef[2];
 
-   argRef[0] = resolveObjectReference(scope, info1);
-   argRef[1] = resolveObjectReference(scope, info2);
+   argRef[0] = resolveObjectReference(scope, info1, true);
+   argRef[1] = resolveObjectReference(scope, info2, true);
 
    if (!argRef[0] || !argRef[1])
       return 0;
-
-   if (isPrimitiveRef(argRef[0]))
-      argRef[0] = resolvePrimitiveReference(scope, argRef[0], info1.element, false);
-   if (isPrimitiveRef(argRef[1]))
-      argRef[1] = resolvePrimitiveReference(scope, argRef[1], info2.element, false);
 
    return scope.module->mapSignature(argRef, 2, false);
 }
@@ -3387,7 +3383,7 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
 
          // try to recognize the message signature
 		   ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode);
-         ref_t argRef = resolveObjectReference(scope, paramInfo);
+         ref_t argRef = resolveObjectReference(scope, paramInfo, false);
          if (argRef == V_UNBOXEDARGS) {
 			   signatures[signatureLen++] = paramInfo.element;
 			   if (!variadicOne) {
@@ -3439,7 +3435,7 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& sco
    bool withExtension, int& stackSafeAttr)
 {
    ref_t resolvedMessageRef = 0;
-   ref_t targetRef = resolveObjectReference(scope, target);
+   ref_t targetRef = resolveObjectReference(scope, target, true);
 
    // try to resolve the message as is
    resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, stackSafeAttr);
@@ -3587,10 +3583,7 @@ void Compiler :: compileClassConstantAssigning(SyntaxWriter& writer, SNode node,
 
 bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope)
 {
-   ref_t sourceRef = resolveObjectReference(scope, source);
-
-   if (isPrimitiveRef(sourceRef))
-      sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
+   ref_t sourceRef = resolveObjectReference(scope, source, true);
 
    if (!_logic->validateAutoType(*scope.moduleScope, sourceRef))
       return false;
@@ -3636,7 +3629,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       // !! temporally
       scope.raiseError(errInvalidOperation, sourceNode);
 
-   ref_t targetRef = resolveObjectReference(scope, target, false);
+   ref_t targetRef = resolveObjectReference(scope, target, false, false);
    bool byRefAssigning = false;
    switch (target.kind) {
       case okLocal:
@@ -3712,7 +3705,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       // support auto attribute
       retVal = compileExpression(writer, sourceNode, scope, 0, assignMode);
       if (resolveAutoType(retVal, target, scope)) {
-         targetRef = resolveObjectReference(scope, retVal);
+         targetRef = resolveObjectReference(scope, retVal, false);
       }
       else scope.raiseError(errInvalidOperation, node);
    }
@@ -3777,7 +3770,7 @@ ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, Co
 ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, bool callMode)
 {
    ref_t expectedClassRef = 0;
-   ref_t classRef = resolveObjectReference(scope, role);
+   ref_t classRef = resolveObjectReference(scope, role, false);
 
    int flags = 0;
    if (classRef == scope.getClassRefId()) {
@@ -4259,9 +4252,7 @@ ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, Co
 
    ObjectInfo info = compileExpression(writer, node, scope, targetRef, mode);
    if (autoMode) {
-      targetRef = resolveObjectReference(scope, info);
-      if (isPrimitiveRef(targetRef))
-         targetRef = resolvePrimitiveReference(scope, targetRef, info.element, false);
+      targetRef = resolveObjectReference(scope, info, true);
 
      _logic->validateAutoType(*scope.moduleScope, targetRef);
 
@@ -4409,11 +4400,8 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    writer.newBookmark();
 
    ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode | HINT_REFEXPR);
-   ref_t operandRef = resolveObjectReference(scope, objectInfo, false);
-   if (isPrimitiveRef(operandRef)) {
-      operandRef = resolvePrimitiveReference(scope, operandRef, objectInfo.element, false);
-   }
-   else if (!operandRef)
+   ref_t operandRef = resolveObjectReference(scope, objectInfo, true, false);
+   if (!operandRef)
       operandRef = scope.moduleScope->superReference;
 
    ref_t targetRef = 0;
@@ -4437,7 +4425,7 @@ ObjectInfo Compiler :: compileVariadicUnboxing(SyntaxWriter& writer, SNode node,
 	writer.newBookmark();
 
 	ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode);
-	ref_t operandRef = resolveObjectReference(scope, objectInfo, false);
+	ref_t operandRef = resolveObjectReference(scope, objectInfo, false, false);
 	if (operandRef == V_ARGARRAY && test(mode, HINT_PARAMETER)) {
 		objectInfo.reference = V_UNBOXEDARGS;
 		writer.inject(lxArgUnboxing);
@@ -4476,7 +4464,8 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
       if (target.reference == V_OBJARRAY && paramCount == 1) {
          ObjectInfo roperand = compileExpression(writer, node.findNext(lxObjectMask), scope, 0, 0);
 
-         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef, resolveObjectReference(scope, roperand));
+         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef, 
+                                          resolveObjectReference(scope, roperand, false));
          if (operationType != 0) {
             // if it is a primitive operation
             _logic->injectNewOperation(writer, *scope.moduleScope, operationType, targetRef, target.element);
@@ -4884,7 +4873,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       objectInfo = compileOperation(writer, operationNode, scope, objectInfo, exptectedRef, mode);
    }
 
-   ref_t sourceRef = resolveObjectReference(scope, objectInfo/*, exptectedRef*/);
+   ref_t sourceRef = resolveObjectReference(scope, objectInfo, false/*, exptectedRef*/);
    if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
       if (sourceRef != V_UNBOXEDARGS) {
          // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
@@ -7952,13 +7941,6 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, bool
    else return retVal;
 }
 
-//ref_t Compiler :: analizeInternalCall(SNode node, NamespaceScope& scope)
-//{
-//   analizeExpressionTree(node, scope, HINT_NOBOXING);
-//
-//   return V_INT32;
-//}
-//
 //ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, int)
 //{
 //   analizeExpressionTree(node, scope, HINT_NOBOXING);
@@ -8510,90 +8492,6 @@ bool Compiler :: optimizeEmbeddableCall(_ModuleScope& scope, SNode& node)
    else return false;
 }
 
-//   if (node == lxCondBoxing && test(mode, HINT_NOCONDBOXING))
-//      node = lxBoxing;
-//
-//   if (node == lxUnboxing && test(mode, HINT_NOUNBOXING))
-//      node = lxBoxing;
-//
-//   ref_t targetRef = node.findChild(lxTarget).argument;
-//   ref_t sourceRef = 0;
-//   bool boxing = !test(mode, HINT_NOBOXING);
-//
-//   // HOTFIX : override the stacksafe attribute if the object must be boxed
-//   if (!boxing && node.existChild(lxBoxingRequired))
-//      boxing = true;
-//
-//   SNode sourceNode = node.findSubNodeMask(lxObjectMask);
-//   if (sourceNode == lxNewArrOp) {
-//      // HOTFIX : set correct target for the new operator and comment out the outer boxing
-//      sourceNode.setArgument(targetRef);
-//
-//      analizeExpression(sourceNode, scope, HINT_NOBOXING);
-//
-//      boxing = false;
-//   }
-//   else {
-//      // adjust primitive target
-//      if (isPrimitiveRef(targetRef) && boxing) {
-//         targetRef = resolvePrimitiveReference(scope, targetRef, node.findChild(lxElement).argument, false);
-//         node.findChild(lxTarget).setArgument(targetRef);
-//      }
-//
-//      // for boxing stack allocated / embeddable variables - source is the same as target
-//      if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxSelfLocal) && node.argument != 0) {
-//         sourceRef = targetRef;
-//      }
-//      // HOTFIX : do not box constant classes
-//      else if (sourceNode == lxConstantInt && targetRef == scope.moduleScope->intReference) {
-//         boxing = false;
-//      }
-//      else if (sourceNode == lxConstantReal && targetRef == scope.moduleScope->realReference) {
-//         boxing = false;
-//      }
-//      else if (sourceNode == lxConstantSymbol && targetRef == scope.moduleScope->intReference) {
-//         boxing = false;
-//      }
-//      else if (sourceNode == lxMessageConstant && targetRef == scope.moduleScope->messageReference) {
-//         boxing = false;
-//      }
-//      else if (sourceNode == lxSubjectConstant && targetRef == scope.moduleScope->messageNameReference) {
-//         boxing = false;
-//      }
-//      else if (node == lxUnboxing && !boxing) {
-//         //HOTFIX : to unbox structure field correctly
-//         sourceRef = analizeExpression(sourceNode, scope, /*warningScope, */HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
-//      }
-//      else {
-//         if ((sourceNode == lxBoxing || sourceNode == lxUnboxing) && (int)node.argument < 0 && (int)sourceNode.argument > 0) {
-//            //HOTFIX : boxing fixed-sized array
-//            if (sourceNode.existChild(lxFieldAddress)) {
-//               node.setArgument(-((int)sourceNode.argument / (int)node.argument));
-//            }
-//         }
-//
-//         int subMode = HINT_NOBOXING;
-//         //if (targetRef == scope.moduleScope->longReference) {
-//         //   subMode |= HINT_INT64EXPECTED;
-//         //}
-//         //else if (targetRef == scope.moduleScope->realReference) {
-//         //   subMode |= HINT_REAL64EXPECTED;
-//         //}
-//
-//         sourceRef = analizeExpression(sourceNode, scope, subMode);
-//      }
-//
-//      if (!_logic->validateBoxing(*scope.moduleScope, *this, node, targetRef, sourceRef, test(mode, HINT_UNBOXINGEXPECTED), test(mode, HINT_DYNAMIC_OBJECT))) {
-//         scope.raiseError(errIllegalOperation, node);
-//      }
-//   }
-//
-//   if (!boxing && node != lxLocalUnboxing) {
-//      node = lxExpression;
-//   }
-//
-//   return targetRef;
-
 void Compiler :: optimizeBoxing(_ModuleScope& scope, SNode& node)
 {
    ref_t targetRef = node.findChild(lxTarget).argument;
@@ -8772,9 +8670,11 @@ bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
    while (current != lxNone) {
       if (test(current.type, lxObjectMask)) {
          if (test(stackSafeAttr, flag)) {
-            optimizeBoxing(scope, current);
+            if (current.compare(lxBoxing, lxCondBoxing, lxUnboxing)) {
+               optimizeBoxing(scope, current);
 
-            applied = true;
+               applied = true;
+            }
          }
    
 //         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
@@ -9015,6 +8915,8 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
+   test2(node);
+
    bool applied = true;
    List<SyntaxTrieNode> matched;
    while (applied) {
@@ -9024,8 +8926,10 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
+
+   test2(node);
 }
-//
+
 //void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
 //{
 //   //test2(node);
@@ -9712,8 +9616,8 @@ SNode Compiler :: injectTempLocal(SNode node, int size, bool boxingMode)
 
       node.set(lxAssigning, size);
 
-      tempLocalNode = node.insertNode(lxLocalAddress, offset);
       node.insertNode(lxTempAttr, 0);
+      tempLocalNode = node.insertNode(lxLocalAddress, offset);
    }
    else {
       tempLocalNode = node.appendNode(lxLocalAddress, offset);

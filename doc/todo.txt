@@ -3,10 +3,9 @@ In development:
 ------         
 
               xdev
-                * #84
+                * #186
 
               xdev
-                * analizeInternalCall
                 * analizeBoxing
                 * analizeArgBoxing
                 * analizeArgUnboxing
@@ -36,6 +35,9 @@ In development:
 ------                                                           
 Pipeline:
 ------                                                                                         
+              xdev
+                * #162 - explicit constructor
+
               ydev
                 * build : returning (goto)
                 * redesign script code generation
