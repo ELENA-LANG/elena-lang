@@ -72,6 +72,13 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("interncall", lxInternalCall);
       tokens.add("branching", lxBranching);
       tokens.add("looping", lxLooping);
+      tokens.add("constlong", lxConstantLong);
+      tokens.add("constsymbol", lxConstantSymbol);
+      tokens.add("constmssg", lxMessageConstant);
+      tokens.add("constsubj", lxSubjectConstant);
+
+      tokens.add("argunboxing", lxArgUnboxing);
+      tokens.add("argboxing", lxArgBoxing);
    }
 }
 

@@ -1021,22 +1021,6 @@ private:
    //                              Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    //void analizeParameterBoxing(SNode node, NamespaceScope& scope, int& counter, 
    //                              Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
-   //void analizeParameterBoxing(SNode node, NamespaceScope& scope);
-   //ref_t analizeAltExpression(SNode node, NamespaceScope& scope, int mode);
-   //ref_t analizeOp(SNode current, NamespaceScope& scope);
-   //ref_t analizeSymbol(SNode& node, NamespaceScope& scope);
-   //ref_t analizeAssigning(SNode node, NamespaceScope& scope, int mode);
-   //ref_t analizeBoxing(SNode node, NamespaceScope& scope, int mode);
-   //ref_t analizeArgBoxing(SNode node, NamespaceScope& scope, int mode);
-   //ref_t analizeArgUnboxing(SNode node, NamespaceScope& scope, int mode);
-   //ref_t analizeMessageCall(SNode node, NamespaceScope& scope, int mode);
-   //ref_t analizeSubExpression(SNode node, NamespaceScope& scope, int mode);
-   //ref_t analizeExpression(SNode node, NamespaceScope& scope, int mode = 0);
-   //ref_t analizeInternalCall(SNode node, NamespaceScope& scope);
-   //ref_t analizeNestedExpression(SNode node, NamespaceScope& scope);
-   //void analizeExpressionTree(SNode node, NamespaceScope& scope, int mode = 0);
-   //void analizeBranching(SNode node, NamespaceScope& scope, int mode = 0);
-   //void analizeCode(SNode node, NamespaceScope& scope);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope);
@@ -1077,6 +1061,9 @@ private:
    bool optimizeDirectRealOp(_ModuleScope& scope, SNode& node);
    bool optimizeDirectIntOp(_ModuleScope& scope, SNode& node);
    bool optimizeBranching(_ModuleScope& scope, SNode& node);
+   bool optimizeConstants(_ModuleScope& scope, SNode& node);
+   bool optimizeArgBoxing(_ModuleScope& scope, SNode& node);
+   bool optimizeArgOp(_ModuleScope& scope, SNode& node);
    //bool optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node);
 
 public:

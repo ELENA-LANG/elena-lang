@@ -3,13 +3,10 @@ In development:
 ------         
 
               xdev
-                * #217
+                * #253
 
               xdev
                 * analizeOp
-                * analizeBoxing
-                * analizeArgBoxing
-                * analizeArgUnboxing
                 * analizeAssigning
                 * analizeMessageCall
                 * analizeSubExpression
@@ -77,7 +74,6 @@ Pipeline:
                  * optimize direct_call direct_call embeddable
                  * optimize pi sample
                  * optimize r * n + 0.5r
-                 * optimize operation with variadic argument list (get, length)
                  * optimize dirty_ptr := dirty_ptr + int
                  * building expression tree - raise an exceptoion with missing class name
 

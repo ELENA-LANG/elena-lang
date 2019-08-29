@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -7941,13 +7941,6 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, bool
    else return retVal;
 }
 
-//ref_t Compiler :: analizeArgUnboxing(SNode node, NamespaceScope& scope, int)
-//{
-//   analizeExpressionTree(node, scope, HINT_NOBOXING);
-//
-//   return 0;
-//}
-
 int Compiler :: allocateStructure(SNode node, int& size)
 {
    // finding method's reserved attribute
@@ -8227,22 +8220,7 @@ int Compiler :: allocateStructure(SNode node, int& size)
 //      if ((sourceNode == lxLocalAddress || sourceNode == lxFieldAddress || sourceNode == lxLocal || sourceNode == lxSelfLocal) && node.argument != 0) {
 //         sourceRef = targetRef;
 //      }
-//      // HOTFIX : do not box constant classes
-//      else if (sourceNode == lxConstantInt && targetRef == scope.moduleScope->intReference) {
-//         boxing = false;
-//      }
-//      else if (sourceNode == lxConstantReal && targetRef == scope.moduleScope->realReference) {
-//         boxing = false;
-//      }
-//      else if (sourceNode == lxConstantSymbol && targetRef == scope.moduleScope->intReference) {
-//         boxing = false;
-//      }
-//      else if (sourceNode == lxMessageConstant && targetRef == scope.moduleScope->messageReference) {
-//         boxing = false;
-//      }
-//      else if (sourceNode == lxSubjectConstant && targetRef == scope.moduleScope->messageNameReference) {
-//         boxing = false;
-//      }
+
 //      else if (node == lxUnboxing && !boxing) {
 //         //HOTFIX : to unbox structure field correctly
 //         sourceRef = analizeExpression(sourceNode, scope, /*warningScope, */HINT_NOBOXING | HINT_UNBOXINGEXPECTED);
@@ -8846,6 +8824,59 @@ bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
    return true;
 }
 
+bool Compiler :: optimizeConstants(_ModuleScope& scope, SNode& sourceNode)
+{
+   bool applied = false;
+
+   SNode boxingNode = sourceNode.parentNode();
+   ref_t targetRef = boxingNode.findChild(lxTarget).argument;
+
+   // HOTFIX : do not box constant classes
+   if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
+      applied = true;
+   }
+   else if (sourceNode == lxConstantReal && targetRef == scope.realReference) {
+      applied = true;
+   }
+   else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
+      applied = true;
+   }
+   else if (sourceNode == lxMessageConstant && targetRef == scope.messageReference) {
+      applied = true;
+   }
+   else if (sourceNode == lxSubjectConstant && targetRef == scope.messageNameReference) {
+      applied = true;
+   }
+
+   if (applied)
+      optimizeBoxing(scope, boxingNode);
+
+   return applied;
+}
+
+bool Compiler :: optimizeArgBoxing(_ModuleScope& scope, SNode& node)
+{
+   // HOTFIX : override the stacksafe attribute if the object must be boxed
+   if (!node.existChild(lxBoxingRequired)) {
+      node = lxExpression;
+
+      return true;
+   }
+   else return false;
+}
+
+bool Compiler :: optimizeArgOp(_ModuleScope& scope, SNode& node)
+{
+   SNode callNode = node.parentNode();
+   SNode calleeNode = callNode.firstChild(lxObjectMask);
+   if (calleeNode == lxArgBoxing) {
+      calleeNode = lxExpression;
+
+      return true;
+   }
+   else return false;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8873,6 +8904,12 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeDirectRealOp(scope, node);
       case 13:
          return optimizeBranching(scope, node);
+      case 14:
+         return optimizeConstants(scope, node);
+      case 15:
+         return optimizeArgBoxing(scope, node);
+      case 16:
+         return optimizeArgOp(scope, node);
       default:
          break;
    }
@@ -8926,8 +8963,6 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
-
-   test2(node);
 }
 
 //void Compiler :: analizeCode(SNode node, NamespaceScope& scope)

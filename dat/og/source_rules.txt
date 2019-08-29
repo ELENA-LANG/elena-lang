@@ -67,3 +67,14 @@ realop, constreal | constreal = 12;
 
 branching, intop, constint = 13;
 looping, intop, constint = 13;
+
+boxing, constint = 14;
+boxing, constreal = 14;
+boxing, constlong = 14;
+boxing, constsymbol = 14;
+boxing, constmssg = 14;
+boxing, constsubj = 14;
+
+argunboxing, argboxing = 15;
+
+directcall, argboxing = 16;
