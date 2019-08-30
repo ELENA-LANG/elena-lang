@@ -3,7 +3,7 @@ In development:
 ------         
 
               xdev
-                * #253
+                * #283
 
               xdev
                 * analizeOp
@@ -16,6 +16,10 @@ In development:
                 * analizeSymbolTree
 
               xdev tests
+                * #271
+                * operations with weak array
+                * operations with strong array : dynamic / data allocated
+                * operations with variadic array
                 * check nil boxing
                 * check boxing of incompatible types
 
@@ -33,6 +37,7 @@ Pipeline:
               xdev
                 * #162 - explicit constructor
                 * new system'dynamics'DynamicStruct() - raise an error
+                * support lazyOp
 
               ydev
                 * build : returning (goto)

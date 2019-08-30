@@ -1,6 +1,35 @@
-assigning, directcall, embeddable = 2;
-assigning, sdirectcall, embeddable = 2;
+assigning, boxing | byreftarget = 17;
 assigning, call, embeddable = 2;
+assigning, directcall, embeddable = 2;
+assigning, expression, assigning, localaddress | temp = 10;
+assigning, expression, constint = 6;
+assigning, expression, expression, assigning, localaddress | temp = 10;
+assigning, expression, expression, constint = 6;
+assigning, expression, expression, expression, constint = 6;
+assigning, expression, expression, expression, intop = 9;
+assigning, expression, expression, expression, longop = 9;
+assigning, expression, expression, expression, realop = 9;
+assigning, expression, expression, expression, intarrop = 9;
+assigning, expression, expression, expression, bytearrop = 9;
+assigning, expression, expression, expression, shortarrop = 9;
+assigning, expression, expression, bytearrop = 9;
+assigning, expression, expression, intop = 9;
+assigning, expression, expression, intarrop = 9;
+assigning, expression, expression, longop = 9;
+assigning, expression, expression, realop = 9;
+assigning, expression, expression, shortarrop = 9;
+assigning, fieldaddress | boxing = 5;
+assigning, fieldaddress | condboxing = 5;
+assigning, localaddress | boxing = 5;
+assigning, localaddress | condboxing = 5;
+assigning, sdirectcall, embeddable = 2;
+
+boxing, constint = 14;
+boxing, constreal = 14;
+boxing, constlong = 14;
+boxing, constsymbol = 14;
+boxing, constmssg = 14;
+boxing, constsubj = 14;
 
 directcall, embeddable = 3;
 
@@ -13,15 +42,6 @@ sdirectcall, call, embeddable = 4;
 call, directcall, embeddable = 4;
 call, sdirectcall, embeddable = 4;
 call, call, embeddable = 4;
-
-assigning, localaddress | boxing = 5;
-assigning, localaddress | condboxing = 5;
-assigning, fieldaddress | boxing = 5;
-assigning, fieldaddress | condboxing = 5;
-
-assigning, expression, constint = 6;
-assigning, expression, expression, constint = 6;
-assigning, expression, expression, expression, constint = 6;
 
 directcall, boxing | stacksafe = 7;
 sdirectcall, boxing | stacksafe = 7;
@@ -36,6 +56,12 @@ call, unboxing | stacksafe = 7;
 intop, boxing = 8;
 longop, boxing = 8;
 realop, boxing = 8;
+arrop, boxing = 8;
+intarrop, boxing = 8;
+shortarrop, boxing = 8;
+bytearrop, boxing = 8;
+binarrop, boxing = 8;
+
 extarg, boxing = 8;
 extarg, condboxing = 8;
 extarg, unboxing = 8;
@@ -46,34 +72,11 @@ interncall, boxing = 8;
 interncall, condboxing = 8;
 interncall, unboxing = 8;
 
-assigning, expression, expression, assigning, localaddress | temp = 10;
-assigning, expression, assigning, localaddress | temp = 10;
-
-assigning, expression, expression, expression, intop = 9;
-assigning, expression, expression, expression, longop = 9;
-assigning, expression, expression, expression, realop = 9;
-assigning, expression, expression, expression, intarrop = 9;
-assigning, expression, expression, expression, bytearrop = 9;
-assigning, expression, expression, expression, shortarrop = 9;
-assigning, expression, expression, intop = 9;
-assigning, expression, expression, longop = 9;
-assigning, expression, expression, realop = 9;
-assigning, expression, expression, intarrop = 9;
-assigning, expression, expression, bytearrop = 9;
-assigning, expression, expression, shortarrop = 9;
-
 intop, constint | constint = 11;
 realop, constreal | constreal = 12;
 
 branching, intop, constint = 13;
 looping, intop, constint = 13;
-
-boxing, constint = 14;
-boxing, constreal = 14;
-boxing, constlong = 14;
-boxing, constsymbol = 14;
-boxing, constmssg = 14;
-boxing, constsubj = 14;
 
 argunboxing, argboxing = 15;
 

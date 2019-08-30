@@ -76,9 +76,11 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("constsymbol", lxConstantSymbol);
       tokens.add("constmssg", lxMessageConstant);
       tokens.add("constsubj", lxSubjectConstant);
-
       tokens.add("argunboxing", lxArgUnboxing);
       tokens.add("argboxing", lxArgBoxing);
+      tokens.add("byreftarget", lxByRefTarget);
+      tokens.add("arrop", lxArrOp); 
+      tokens.add("binarrop", lxBinArrOp);
    }
 }
 

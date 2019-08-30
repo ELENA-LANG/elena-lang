@@ -1064,6 +1064,7 @@ private:
    bool optimizeConstants(_ModuleScope& scope, SNode& node);
    bool optimizeArgBoxing(_ModuleScope& scope, SNode& node);
    bool optimizeArgOp(_ModuleScope& scope, SNode& node);
+   bool optimizeByRefAssigning(_ModuleScope& scope, SNode& node);
    //bool optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node);
 
 public:

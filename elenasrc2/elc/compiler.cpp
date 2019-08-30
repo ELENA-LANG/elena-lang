@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -8877,6 +8877,17 @@ bool Compiler :: optimizeArgOp(_ModuleScope& scope, SNode& node)
    else return false;
 }
 
+bool Compiler :: optimizeByRefAssigning(_ModuleScope& scope, SNode& node)
+{
+   SNode assignNode = node.parentNode();
+   if (assignNode.argument != 0) {
+      optimizeBoxing(scope, node);
+
+      return true;
+   }
+   else return false;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8910,6 +8921,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeArgBoxing(scope, node);
       case 16:
          return optimizeArgOp(scope, node);
+      case 17:
+         return optimizeByRefAssigning(scope, node);
       default:
          break;
    }
@@ -8963,6 +8976,8 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
+
+   test2(node);
 }
 
 //void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
