@@ -1017,14 +1017,13 @@ private:
 
    void compileExternalArguments(SNode node, Scope& scope);
 
-   //void injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& counter, 
-   //                              Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
-   //void analizeParameterBoxing(SNode node, NamespaceScope& scope, int& counter, 
-   //                              Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
+   void injectBoxingTempLocal(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
+   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope);
    void analizeSymbolTree(SNode node, Scope& scope);
+   void analizeMessageParameters(SNode node);
 
    void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 
@@ -1065,6 +1064,7 @@ private:
    bool optimizeArgBoxing(_ModuleScope& scope, SNode& node);
    bool optimizeArgOp(_ModuleScope& scope, SNode& node);
    bool optimizeByRefAssigning(_ModuleScope& scope, SNode& node);
+   bool optimizeDuplicateboxing(_ModuleScope& scope, SNode& node);
    //bool optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node);
 
 public:

@@ -3258,9 +3258,31 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
    // inserting calling expression
    writer.inject(operation, argument);
+
+   analizeMessageParameters(writer.CurrentNode());
+
    writer.closeNode();
 
    return retVal;
+}
+
+void Compiler :: analizeMessageParameters(SNode node)
+{
+   SNode current = node.firstChild();
+   int nested = 0;
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
+            nested++;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   if (nested > 1) {
+      // NOTE : it should be the last node to correctly optimize boxing duplicates
+      node.appendNode(lxDuplicateBoxingAttr);
+   }
 }
 
 bool Compiler :: convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
@@ -8031,159 +8053,155 @@ int Compiler :: allocateStructure(SNode node, int& size)
 //
 //   return node.findChild(lxTarget).argument;
 //}
-//
-//inline int incMethodAllocated(SNode node)
-//{
-//   int arg = 0;
-//   while (!node.compare(lxClassMethod, lxNone))
-//      node = node.parentNode();
-//
-//   if (node != lxNone) {
-//      SNode allocNode = node.findChild(lxAllocated);
-//      if (allocNode != lxNone) {
-//         arg = allocNode.argument + 1;
-//
-//         allocNode.setArgument(arg);
-//      }
-//   }
-//
-//   return arg;
-//}
-//
-//void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxNested) {
-//         analizeParameterBoxing(current, scope, counter, boxed, tempLocals);
-//      }
-//      else if (current.compare(lxOuterMember, lxMember)) {
-//         counter++;
-//
-//         SNode boxNode = current.findChild(lxBoxing);
-//         if (boxNode != lxNone) {
-//            SNode objNode = boxNode.firstChild(lxObjectMask);
-//
-//            // COMPILER MAGIC : merging duplicate boxings into the single one
-//            int key = boxed.get(Attribute(objNode.type, objNode.argument));
-//            if (!key) {
-//               boxed.add(Attribute(objNode.type, objNode.argument), counter);
-//            }
-//            else {
-//               int tempLocal = tempLocals.get(key);
-//               if (!tempLocal) {
-//                  tempLocal = incMethodAllocated(node);
-//
-//                  tempLocals.add(key, tempLocal + 1);
-//               }
-//
-//               boxNode.set(lxLocal, tempLocal + 1);
-//               current.set(lxMember, current.argument);
-//            }
-//         }
-//         else if (current == lxOuterMember) {
-//            SNode objNode = current.firstChild(lxObjectMask);
-//
-//            // COMPILER MAGIC : add check label, to resolve race conditions
-//            int key = boxed.get(Attribute(objNode.type, objNode.argument));
-//            if (!key) {
-//               int tempLocal = incMethodAllocated(node);
-//
-//               boxed.add(Attribute(objNode.type, objNode.argument), tempLocal + 1);
-//               tempLocals.add(tempLocal + 1, counter);
-//            }
-//         }
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//}
-//
-//void Compiler :: injectBoxingTempLocal(SNode node, NamespaceScope& scope, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone && tempLocals.Count() > 0) {
-//      if (current == lxNested) {
-//         injectBoxingTempLocal(current, scope, counter, boxed, tempLocals);
-//      }
-//      else if (current.compare(lxOuterMember, lxMember)) {
-//         counter++;
-//         SNode boxNode = current.findChild(lxBoxing);
-//         if (boxNode != lxNone) {
-//            SNode objNode = boxNode.firstChild(lxObjectMask);
-//
-//            int objKey = boxed.get(Attribute(objNode.type, objNode.argument));
-//            auto it = tempLocals.getIt(objKey);
-//
-//            int key = it.key();
-//            if (key == counter) {
-//               boxNode.appendNode(lxTempLocal, *it);
-//               tempLocals.erase(it);
-//            }
-//         }
-//         else if (current == lxOuterMember) {
-//            SNode objNode = current.firstChild(lxObjectMask);
-//            int tempLocal = boxed.get(Attribute(objNode.type, objNode.argument));
-//            if (tempLocal) {
-//               int key = tempLocals.get(tempLocal);
-//               if (counter == key) {
-//                  current.appendNode(lxTempLocal, tempLocal);
-//               }
-//               current.appendNode(lxCheckLocal, tempLocal);
-//            }
-//         }
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//void Compiler :: analizeParameterBoxing(SNode node, NamespaceScope& scope)
-//{
-//   Map<Attribute, int> boxed;
-//   Map<int, int>       tempLocals;
-//
-//   int counter = 0;
-//   analizeParameterBoxing(node, scope, counter, boxed, tempLocals);
-//
-//   // inject boxed temporal variable
-//   counter = 0;
-//   injectBoxingTempLocal(node, scope, counter, boxed, tempLocals);
-//}
-//
-//ref_t Compiler :: analizeMessageCall(SNode node, NamespaceScope& scope, int)
-//{
-//   int stackSafeAttr = node.findChild(lxStacksafeAttr).argument;
-//   int flag = 1;
-//
-//   SNode current = node.firstChild();
-//   int nested = 0;
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         int paramMode = 0;
-//         if (test(stackSafeAttr, flag)) {
-//            paramMode |= HINT_NOBOXING;
-//         }
-//         else paramMode |= HINT_DYNAMIC_OBJECT;
-//
-//         analizeExpression(current, scope, /*warningScope, */paramMode);
-//         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
-//            nested++;
-//         }
-//
-//         flag <<= 1;
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   if (nested > 1) {
-//      analizeParameterBoxing(node, scope);
-//   }
-//
-//   return node.findChild(lxTarget).argument;
-//}
-//
+
+inline int incMethodAllocated(SNode node)
+{
+   int arg = 0;
+   while (!node.compare(lxClassMethod, lxNone))
+      node = node.parentNode();
+
+   if (node != lxNone) {
+      SNode allocNode = node.findChild(lxAllocated);
+      if (allocNode != lxNone) {
+         arg = allocNode.argument + 1;
+
+         allocNode.setArgument(arg);
+      }
+   }
+
+   return arg;
+}
+
+bool Compiler :: analizeParameterBoxing(SNode node, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
+{
+   bool applied = false;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxNested) {
+         applied |= analizeParameterBoxing(current, counter, boxed, tempLocals);
+      }
+      else if (current.compare(lxOuterMember, lxMember)) {
+         counter++;
+
+         SNode boxNode = current.findChild(lxBoxing);
+         if (boxNode != lxNone) {
+            SNode objNode = boxNode.firstChild(lxObjectMask);
+
+            // COMPILER MAGIC : merging duplicate boxings into the single one
+            int key = boxed.get(Attribute(objNode.type, objNode.argument));
+            if (!key) {
+               boxed.add(Attribute(objNode.type, objNode.argument), counter);
+            }
+            else {
+               applied = true;
+
+               int tempLocal = tempLocals.get(key);
+               if (!tempLocal) {
+                  tempLocal = incMethodAllocated(node);
+
+                  tempLocals.add(key, tempLocal + 1);
+               }
+
+               boxNode.set(lxLocal, tempLocal + 1);
+               current.set(lxMember, current.argument);
+            }
+         }
+         else if (current == lxOuterMember) {
+            SNode objNode = current.firstChild(lxObjectMask);
+
+            // COMPILER MAGIC : add check label, to resolve race conditions
+            int key = boxed.get(Attribute(objNode.type, objNode.argument));
+            if (!key) {
+               int tempLocal = incMethodAllocated(node);
+
+               boxed.add(Attribute(objNode.type, objNode.argument), tempLocal + 1);
+               tempLocals.add(tempLocal + 1, counter);
+            }
+            else {
+               applied = true;
+
+               int tempLocal = tempLocals.get(key);
+               if (!tempLocal) {
+                  tempLocal = incMethodAllocated(node);
+
+                  tempLocals.add(key, tempLocal + 1);
+               }
+
+               objNode.set(lxLocal, tempLocal + 1);
+               current.setArgument(current.argument);
+            }
+         }
+         else {
+            SNode objNode = current.firstChild(lxObjectMask);
+            if (objNode != lxNone) {
+               // COMPILER MAGIC : add check label, to resolve race conditions
+               int key = boxed.get(Attribute(objNode.type, objNode.argument));
+               if (!key) {
+                  int tempLocal = incMethodAllocated(node);
+
+                  boxed.add(Attribute(objNode.type, objNode.argument), tempLocal + 1);
+                  tempLocals.add(tempLocal + 1, counter);
+               }
+            }
+         }
+      }
+
+      current = current.nextNode();
+   }
+
+   return applied;
+}
+
+void Compiler :: injectBoxingTempLocal(SNode node, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone && tempLocals.Count() > 0) {
+      if (current == lxNested) {
+         injectBoxingTempLocal(current, counter, boxed, tempLocals);
+      }
+      else if (current.compare(lxOuterMember, lxMember)) {
+         counter++;
+         SNode boxNode = current.findChild(lxBoxing);
+         if (boxNode != lxNone) {
+            SNode objNode = boxNode.firstChild(lxObjectMask);
+
+            int objKey = boxed.get(Attribute(objNode.type, objNode.argument));
+            auto it = tempLocals.getIt(objKey);
+
+            int key = it.key();
+            if (key == counter) {
+               boxNode.appendNode(lxTempLocal, *it);
+               tempLocals.erase(it);
+            }
+         }
+         else if (current == lxOuterMember) {
+            SNode objNode = current.firstChild(lxObjectMask);
+            int tempLocal = boxed.get(Attribute(objNode.type, objNode.argument));
+            if (tempLocal) {
+               int key = tempLocals.get(tempLocal);
+               if (counter == key) {
+                  current.appendNode(lxTempLocal, tempLocal);
+               }
+               current.appendNode(lxCheckLocal, tempLocal);
+            }
+         }
+         else {
+            SNode objNode = current.firstChild(lxObjectMask);
+            int tempLocal = boxed.get(Attribute(objNode.type, objNode.argument));
+            if (tempLocal) {
+               int key = tempLocals.get(tempLocal);
+               if (counter == key) {
+                  current.appendNode(lxTempLocal, tempLocal);
+               }
+            }
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //ref_t Compiler :: analizeBoxing(SNode node, NamespaceScope& scope, int mode)
 //{
 //   if (node == lxCondBoxing && test(mode, HINT_NOCONDBOXING))
@@ -8648,21 +8666,11 @@ bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
             }
          }
    
-//         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
-//            nested++;
-//         }
-   
          flag <<= 1;
       }
       current = current.nextNode();
    }
    
-//   if (nested > 1) {
-//      analizeParameterBoxing(node, scope);
-//   }
-//
-//   return node.findChild(lxTarget).argument;
-
    return applied;
 }
 
@@ -8888,6 +8896,38 @@ bool Compiler :: optimizeByRefAssigning(_ModuleScope& scope, SNode& node)
    else return false;
 }
 
+bool Compiler :: optimizeDuplicateboxing(_ModuleScope& scope, SNode& node)
+{
+   node = lxIdle;
+
+   bool applied = false;
+   SNode callNode = node.parentNode();
+
+   // check if there are more then 1 boxing left
+   SNode current = callNode.firstChild();
+   int nested = 0;
+   while (current != lxNone) {
+      if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
+         nested++;
+      }
+
+      current = current.nextNode();
+   }
+
+   if (nested > 1) {
+      Map<Attribute, int> boxed;
+      Map<int, int>       tempLocals;
+      
+      int counter = 0;
+      applied = analizeParameterBoxing(callNode, counter, boxed, tempLocals);
+      
+      // inject boxed temporal variable
+      counter = 0;
+      injectBoxingTempLocal(callNode, counter, boxed, tempLocals);
+   }
+   return applied;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8923,6 +8963,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeArgOp(scope, node);
       case 17:
          return optimizeByRefAssigning(scope, node);
+      case 18:
+         return optimizeDuplicateboxing(scope, node);
       default:
          break;
    }

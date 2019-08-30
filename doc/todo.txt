@@ -3,7 +3,7 @@ In development:
 ------         
 
               xdev
-                * #283
+                * #283, #302
 
               xdev
                 * analizeOp

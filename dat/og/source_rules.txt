@@ -31,27 +31,31 @@ boxing, constsymbol = 14;
 boxing, constmssg = 14;
 boxing, constsubj = 14;
 
-directcall, embeddable = 3;
-
-directcall, directcall, embeddable = 4;
-directcall, sdirectcall, embeddable = 4;
-directcall, call, embeddable = 4;
-sdirectcall, directcall, embeddable = 4;
-sdirectcall, sdirectcall, embeddable = 4;
-sdirectcall, call, embeddable = 4;
-call, directcall, embeddable = 4;
-call, sdirectcall, embeddable = 4;
-call, call, embeddable = 4;
-
-directcall, boxing | stacksafe = 7;
-sdirectcall, boxing | stacksafe = 7;
 call, boxing | stacksafe = 7;
-directcall, condboxing | stacksafe = 7;
-sdirectcall, condboxing | stacksafe = 7;
+call, call, embeddable = 4;
 call, condboxing | stacksafe = 7;
-directcall, unboxing | stacksafe = 7;
-sdirectcall, unboxing | stacksafe = 7;
+call, directcall, embeddable = 4;
+call, duplicateboxing = 18;
+call, sdirectcall, embeddable = 4;
 call, unboxing | stacksafe = 7;
+
+directcall, argboxing = 16;
+directcall, boxing | stacksafe = 7;
+directcall, call, embeddable = 4;
+directcall, condboxing | stacksafe = 7;
+directcall, directcall, embeddable = 4;
+directcall, duplicateboxing = 18;
+directcall, embeddable = 3;
+directcall, sdirectcall, embeddable = 4;
+directcall, unboxing | stacksafe = 7;
+
+sdirectcall, boxing | stacksafe = 7;
+sdirectcall, call, embeddable = 4;
+sdirectcall, condboxing | stacksafe = 7;
+sdirectcall, directcall, embeddable = 4;
+sdirectcall, duplicateboxing = 18;
+sdirectcall, sdirectcall, embeddable = 4;
+sdirectcall, unboxing | stacksafe = 7;
 
 intop, boxing = 8;
 longop, boxing = 8;
@@ -80,4 +84,3 @@ looping, intop, constint = 13;
 
 argunboxing, argboxing = 15;
 
-directcall, argboxing = 16;

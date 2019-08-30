@@ -249,7 +249,8 @@ enum LexicalType
 
    lxTempAttr                 = 0x2010D,
    lxSubOpMode                = 0x2010E,
-   lxFPUTarget                = 0x2010F
+   lxFPUTarget                = 0x2010F,
+   lxDuplicateBoxingAttr      = 0x20110
 };
 
 // --- SyntaxTree ---
