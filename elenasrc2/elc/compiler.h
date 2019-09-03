@@ -1066,7 +1066,7 @@ private:
    bool optimizeByRefAssigning(_ModuleScope& scope, SNode& node);
    bool optimizeDuplicateboxing(_ModuleScope& scope, SNode& node);
    bool optimizeUnboxing(_ModuleScope& scope, SNode& node);
-   //bool optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node);
+   bool optimizeNestedExpression(_ModuleScope& scope, SNode& node);
 
 public:
    void loadRules(StreamReader* optimization);

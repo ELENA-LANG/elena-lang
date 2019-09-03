@@ -2008,8 +2008,20 @@ bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& me
    else return false;
 }
 
+inline bool isMethodTree(SNode node)
+{
+   while (!node.compare(lxClassMethod, lxNone))
+      node = node.parentNode();
+
+   return (node != lxNone);
+}
+
 bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode)
 {
+   // validate if it is a method
+   if (!isMethodTree(node))
+      return false;
+
    SNode callNode = node.findSubNode(lxDirectCalling, lxSDirectCalling, lxCalling);
    if (callNode == lxNone)
       return false;

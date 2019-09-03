@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -7987,72 +7987,69 @@ int Compiler :: allocateStructure(SNode node, int& size)
    return offset;
 }
 
-//ref_t Compiler :: analizeNestedExpression(SNode node, NamespaceScope& scope)
-//{
-//   // check if the nested collection can be treated like constant one
-//   bool constant = true;
-//   ref_t memberCounter = 0;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxMember) {
-//         SNode object = current.findSubNodeMask(lxObjectMask);
-//         switch (object.type) {
-//            case lxConstantChar:
-//            //case lxConstantClass:
-//            case lxConstantInt:
-//            case lxConstantLong:
-//            case lxConstantList:
-//            case lxConstantReal:
-//            case lxConstantString:
-//            case lxConstantWideStr:
-//            case lxConstantSymbol:
-//               break;
-//            case lxNested:
-//               analizeNestedExpression(object, scope);
-//               object.refresh();
-//               if (object != lxConstantList)
-//                  constant = false;
-//
-//               break;
-//            case lxUnboxing:
-//               current = lxOuterMember;
-//               analizeBoxing(object, scope, HINT_NOUNBOXING);
-//               constant = false;
-//               break;
-//            default:
-//               constant = false;
-//               analizeExpressionTree(current, scope);
-//               break;
-//         }
-//         memberCounter++;
-//      }
-//      else if (current == lxOuterMember) {
-//         // nested class with outer member must not be constant
-//         constant = false;
-//
-//         analizeExpression(current, scope);
-//      }
-//      else if (current == lxOvreriddenMessage) {
-//         constant = false;
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   if (node.argument != memberCounter)
-//      constant = false;
-//
-//   // replace with constant array if possible
-//   if (constant && memberCounter > 0) {
-//      ref_t reference = scope.moduleScope->mapAnonymous();
-//
-//      node = lxConstantList;
-//      node.setArgument(reference | mskConstArray);
-//
-//      _writer.generateConstantList(node, scope.module, reference);
-//   }
-//
-//   return node.findChild(lxTarget).argument;
-//}
+bool Compiler :: optimizeNestedExpression(_ModuleScope& scope, SNode& node)
+{
+   // check if the nested collection can be treated like constant one
+   bool constant = true;
+   ref_t memberCounter = 0;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxMember) {
+         SNode object = current.findSubNodeMask(lxObjectMask);
+         switch (object.type) {
+            case lxConstantChar:
+            //case lxConstantClass:
+            case lxConstantInt:
+            case lxConstantLong:
+            case lxConstantList:
+            case lxConstantReal:
+            case lxConstantString:
+            case lxConstantWideStr:
+            case lxConstantSymbol:
+               break;
+            case lxNested:
+               optimizeNestedExpression(scope, object);
+               object.refresh();
+               if (object != lxConstantList)
+                  constant = false;
+
+               break;
+            case lxUnboxing:
+               current = lxOuterMember;
+               constant = false;
+               break;
+            default:
+               constant = false;
+               break;
+         }
+         memberCounter++;
+      }
+      else if (current == lxOuterMember) {
+         // nested class with outer member must not be constant
+         constant = false;
+      }
+      else if (current == lxOvreriddenMessage) {
+         constant = false;
+      }
+      current = current.nextNode();
+   }
+
+   if (node.argument != memberCounter)
+      constant = false;
+
+   // replace with constant array if possible
+   if (constant && memberCounter > 0) {
+      ref_t reference = scope.mapAnonymous();
+
+      node = lxConstantList;
+      node.setArgument(reference | mskConstArray);
+
+      _writer.generateConstantList(node, scope.module, reference);
+
+      return true;
+   }
+   else return false;
+}
 
 inline int incMethodAllocated(SNode node)
 {
@@ -8674,24 +8671,6 @@ bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
    return applied;
 }
 
-//bool Compiler :: optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node)
-//{
-//   SNode callNode = node.parentNode();
-//
-//   //            else if (subNode != lxCalling && subNode.existChild(lxBoxableAttr) && subNode.existChild(lxStacksafeAttr)) {
-//                  SNode createNode = callNode.findChild(lxCreatingStruct/*, lxImplicitCall*/);
-//   //               if (createNode != lxNone && targetNode == lxLocalAddress) {
-//   //                  // if it is implicit conversion
-//   //                  createNode.set(targetNode.type, targetNode.argument);
-//   //
-//   //                  node = lxExpression;
-//   //                  targetNode = lxIdle;
-//   //               }
-//   //            }
-//
-//   return false;
-//}
-
 bool Compiler :: optimizeStacksafeOp(_ModuleScope& scope, SNode& node)
 {
    optimizeBoxing(scope, node);
@@ -8734,15 +8713,15 @@ bool Compiler :: optimizeAssigningOp(_ModuleScope& scope, SNode& node)
             node.setArgument(APPEND_OPERATOR_ID);
             assignNode = lxExpression;
             larg = lxIdle;
+            applied = true;
             break;
          case SUB_OPERATOR_ID:
             node.setArgument(REDUCE_OPERATOR_ID);
             assignNode = lxExpression;
             larg = lxIdle;
+            applied = true;
             break;
       }
-
-      applied = true;
    }
 //               // if it is an operation with an extra temporal variable
 //               else if ((node.argument == subNode.argument || operationNode == lxByteArrOp || operationNode == lxShortArrOp) && tempAttr) {
@@ -8979,6 +8958,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeDuplicateboxing(scope, node);
       case 19:
          return optimizeUnboxing(scope, node);
+      case 20:
+         return optimizeNestedExpression(scope, node);
       default:
          break;
    }
@@ -9023,8 +9004,6 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
-   test2(node);
-
    bool applied = true;
    List<SyntaxTrieNode> matched;
    while (applied) {
@@ -9034,8 +9013,6 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
-
-   test2(node);
 }
 
 //void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
@@ -9131,16 +9108,16 @@ void Compiler :: analizeClassTree(SNode node, ClassScope& scope)
 
 void Compiler :: analizeSymbolTree(SNode node, Scope& scope)
 {
-   //NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
-   //SNode current = node.firstChild();
-   //while (current != lxNone) {
-   //   if (test(current.type, lxExprMask)) {
-   //      analizeExpressionTree(current, *nsScope, HINT_NOUNBOXING);
-   //   }
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxExprMask)) {
+         analizeCodePatterns(current, *nsScope);
+      }
 
-   //   current = current.nextNode();
-   //}
+      current = current.nextNode();
+   }
 }
 
 void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)

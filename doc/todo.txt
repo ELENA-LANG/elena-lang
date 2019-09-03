@@ -3,19 +3,16 @@ In development:
 ------         
 
               xdev
-                * operations with strong array : dynamic / data allocated
-                * #302
+                * analizeNestedExpression
 
               xdev
-                * analizeOp
-                * analizeAssigning
-                * analizeMessageCall
+                * analizeSymbol
                 * analizeSubExpression
                 * analizeAltExpression
-                * analizeSymbol
-                * analizeNestedExpression
-                * analizeSymbolTree
 
+------                                                           
+Pipeline:
+------                                                                                         
               xdev tests
                 * #271
                 * operations with weak array
@@ -31,10 +28,8 @@ In development:
                 * primitive op where i is fields - i+=k
                 * primitive op where i,k are fields - i+k
 
-------                                                           
-Pipeline:
-------                                                                                         
               xdev
+                * (re)implement toUInt extension
                 * #162 - explicit constructor
                 * new system'dynamics'DynamicStruct() - raise an error
                 * support lazyOp
