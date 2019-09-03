@@ -1,4 +1,5 @@
 assigning, boxing | byreftarget = 17;
+assigning, boxing, boxing = 8;
 assigning, call, embeddable = 2;
 assigning, directcall, embeddable = 2;
 assigning, expression, assigning, localaddress | temp = 10;
@@ -23,6 +24,7 @@ assigning, fieldaddress | condboxing = 5;
 assigning, localaddress | boxing = 5;
 assigning, localaddress | condboxing = 5;
 assigning, sdirectcall, embeddable = 2;
+assigning, unboxing = 19;
 
 boxing, constint = 14;
 boxing, constreal = 14;
@@ -61,10 +63,22 @@ intop, boxing = 8;
 longop, boxing = 8;
 realop, boxing = 8;
 arrop, boxing = 8;
+arrop, condboxing = 8;
+arrop, unboxing = 8;
 intarrop, boxing = 8;
+intarrop, condboxing = 8;
+intarrop, unboxing = 8;
 shortarrop, boxing = 8;
+shortarrop, condboxing = 8;
+shortarrop, unboxing = 8;
 bytearrop, boxing = 8;
+bytearrop, condboxing = 8;
+bytearrop, unboxing = 8;
 binarrop, boxing = 8;
+binarrop, condboxing = 8;
+binarrop, unboxing = 8;
+newarrop, boxing = 8;
+newarrop, unboxing = 8;
 
 extarg, boxing = 8;
 extarg, condboxing = 8;

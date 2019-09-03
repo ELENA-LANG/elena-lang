@@ -82,6 +82,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("arrop", lxArrOp); 
       tokens.add("binarrop", lxBinArrOp);
       tokens.add("duplicateboxing", lxDuplicateBoxingAttr);
+      tokens.add("newarrop", lxNewArrOp);
    }
 }
 

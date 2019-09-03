@@ -3,7 +3,8 @@ In development:
 ------         
 
               xdev
-                * #283, #302
+                * operations with strong array : dynamic / data allocated
+                * #302
 
               xdev
                 * analizeOp
@@ -18,7 +19,6 @@ In development:
               xdev tests
                 * #271
                 * operations with weak array
-                * operations with strong array : dynamic / data allocated
                 * operations with variadic array
                 * check nil boxing
                 * check boxing of incompatible types

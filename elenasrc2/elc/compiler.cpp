@@ -2306,7 +2306,7 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
                resolveObjectReference(scope, object, false), object.element, variable);
             if (size < 0 && type == lxFieldAddress) {
                // if it is fixed-size array
-               size = defineFieldSize(scope, object.param)/* * (-size)*/;
+               size = defineFieldSize(scope, object.param) * (-size);
             }
             writer.newNode((variable && !test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxBoxing, size);
 
@@ -3708,7 +3708,7 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    }
 
    int assignMode = HINT_NOUNBOXING | HINT_ASSIGNING_EXPR;
-   if (targetRef == 0 || targetRef == V_AUTO)
+   if (operand == 0)
       assignMode |= (HINT_DYNAMIC_OBJECT | HINT_NOPRIMITIVES);
 
    if (isPrimitiveArrRef(targetRef))
@@ -4896,7 +4896,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    }
 
    ref_t sourceRef = resolveObjectReference(scope, objectInfo, false/*, exptectedRef*/);
-   if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
+   if (isPrimitiveRef(sourceRef) && noPrimMode) {
       if (sourceRef != V_UNBOXEDARGS) {
          // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
          // NOTE : the primitive wrapper is set as an expected type, so later the primitive will be boxed
@@ -8928,6 +8928,18 @@ bool Compiler :: optimizeDuplicateboxing(_ModuleScope& scope, SNode& node)
    return applied;
 }
 
+bool Compiler :: optimizeUnboxing(_ModuleScope& scope, SNode& node)
+{
+   SNode child = node.firstChild(lxObjectMask);
+   if (child == lxBoxing) {
+      // to deal with unboxing -1, boxing n
+      node.set(lxBoxing, child.argument);
+   }
+   else node = lxBoxing;
+
+   return true;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8965,6 +8977,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeByRefAssigning(scope, node);
       case 18:
          return optimizeDuplicateboxing(scope, node);
+      case 19:
+         return optimizeUnboxing(scope, node);
       default:
          break;
    }
@@ -9009,6 +9023,8 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
+   test2(node);
+
    bool applied = true;
    List<SyntaxTrieNode> matched;
    while (applied) {

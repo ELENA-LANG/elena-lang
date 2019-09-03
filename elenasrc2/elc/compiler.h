@@ -1065,6 +1065,7 @@ private:
    bool optimizeArgOp(_ModuleScope& scope, SNode& node);
    bool optimizeByRefAssigning(_ModuleScope& scope, SNode& node);
    bool optimizeDuplicateboxing(_ModuleScope& scope, SNode& node);
+   bool optimizeUnboxing(_ModuleScope& scope, SNode& node);
    //bool optimizeEmbeddableConstructorCall(_ModuleScope& scope, SNode& node);
 
 public:
