@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   28
+#define REVISION_VERSION   29
 
 using namespace _ELENA_;
 
@@ -637,7 +637,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcASaveBI:
       case bcAXSaveBI:
       case bcALoadBI:
-         command.append(opcode);
+         printCommand(command, opcode);
          command.appendInt(argument);
          break;
       case bcNew:

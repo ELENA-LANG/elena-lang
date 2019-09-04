@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -4896,7 +4896,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    }
 
    ref_t sourceRef = resolveObjectReference(scope, objectInfo, false/*, exptectedRef*/);
-   if (isPrimitiveRef(sourceRef) && noPrimMode) {
+   if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
       if (sourceRef != V_UNBOXEDARGS) {
          // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
          // NOTE : the primitive wrapper is set as an expected type, so later the primitive will be boxed
@@ -9004,7 +9004,7 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
-   //test2(node);
+   test2(node);
 
    bool applied = true;
    List<SyntaxTrieNode> matched;

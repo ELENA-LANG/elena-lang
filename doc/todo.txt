@@ -2,23 +2,32 @@
 In development:
 ------         
 
+              ydev
+                * test script examples
               xdev
-                * analizeNestedExpression
+                * (re)implement toUInt extension
+
+------                                                           
+Pipeline:
+------                                                                                         
+              ydev
+                * redesign script code generation
+                * build : returning (goto)
+                * Stand alone executable: Script engine #64
+                * ?fields
 
               xdev
                 * analizeSymbol
                 * analizeSubExpression
                 * analizeAltExpression
 
-------                                                           
-Pipeline:
-------                                                                                         
               xdev tests
                 * #271
                 * operations with weak array
                 * operations with variadic array
                 * check nil boxing
                 * check boxing of incompatible types
+                * test all examples \ rosetta code samples
 
               xdev
                 * fixing #476
@@ -33,13 +42,6 @@ Pipeline:
                 * #162 - explicit constructor
                 * new system'dynamics'DynamicStruct() - raise an error
                 * support lazyOp
-
-              ydev
-                * build : returning (goto)
-                * redesign script code generation
-                * test script examples
-                * Stand alone executable: Script engine #64
-                * ?fields
 
               xdev  - int op - test and optimize
                 * Tester.test(n+m*n);
