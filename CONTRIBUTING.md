@@ -6,15 +6,11 @@ To acquire the source code clone the git repository:
 
 ### Windows:
 
-You just need Visual Studio 2015 or 2017. Do not forget to include a path to BIN folder to the system environment PATH.
+You just need Visual Studio 2019 or later. Do not forget to include a path to BIN folder to the system environment PATH.
 
-To build the compiler under VS2015 you have to go to the root folder and type:
+To build the compiler under VS2019 you have to go to the root folder and type:
 
-    recompile.bat
-
-If you use VS2017 type the following:
-
-    recompile15.bat
+    recompile19.bat
 
 To build the ELENA libraries type the following command:
 
