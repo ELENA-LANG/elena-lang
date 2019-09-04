@@ -1,5 +1,8 @@
+arrop, boxing = 8;
+arrop, condboxing = 8;
+arrop, unboxing = 8;
+
 assigning, boxing | byreftarget = 17;
-assigning, boxing, boxing = 8;
 assigning, call, embeddable = 2;
 assigning, directcall, embeddable = 2;
 assigning, expression, assigning, localaddress | temp = 10;
@@ -26,12 +29,15 @@ assigning, localaddress | condboxing = 5;
 assigning, sdirectcall, embeddable = 2;
 assigning, unboxing = 19;
 
+boxing, boxing = 8;
 boxing, constint = 14;
 boxing, constreal = 14;
 boxing, constlong = 14;
 boxing, constsymbol = 14;
 boxing, constmssg = 14;
 boxing, constsubj = 14;
+
+branching, intop, constint = 13;
 
 call, boxing | stacksafe = 7;
 call, call, embeddable = 4;
@@ -51,6 +57,22 @@ directcall, embeddable = 3;
 directcall, sdirectcall, embeddable = 4;
 directcall, unboxing | stacksafe = 7;
 
+intop, boxing = 8;
+intop, constint | constint = 11;
+intop, condboxing = 8;
+intop, unboxing = 8;
+
+longop, boxing = 8;
+longop, condboxing = 8;
+longop, unboxing = 8;
+
+looping, intop, constint = 13;
+
+realop, boxing = 8;
+realop, condboxing = 8;
+realop, constreal | constreal = 12;
+realop, unboxing = 8;
+
 sdirectcall, boxing | stacksafe = 7;
 sdirectcall, call, embeddable = 4;
 sdirectcall, condboxing | stacksafe = 7;
@@ -59,12 +81,6 @@ sdirectcall, duplicateboxing = 18;
 sdirectcall, sdirectcall, embeddable = 4;
 sdirectcall, unboxing | stacksafe = 7;
 
-intop, boxing = 8;
-longop, boxing = 8;
-realop, boxing = 8;
-arrop, boxing = 8;
-arrop, condboxing = 8;
-arrop, unboxing = 8;
 intarrop, boxing = 8;
 intarrop, condboxing = 8;
 intarrop, unboxing = 8;
@@ -90,12 +106,8 @@ interncall, boxing = 8;
 interncall, condboxing = 8;
 interncall, unboxing = 8;
 
-intop, constint | constint = 11;
-realop, constreal | constreal = 12;
-
-branching, intop, constint = 13;
-looping, intop, constint = 13;
-
 argunboxing, argboxing = 15;
 
 nested = 20;
+
+unboxing, unboxing = 8;

@@ -5018,6 +5018,8 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
 void ByteCodeWriter :: generateBoxing(CommandTape& tape, SNode node)
 {
    SNode target = node.findChild(lxTarget);
+   if (isPrimitiveRef(target.argument))
+      throw InternalError("Invalid boxing target");
 
    if (node == lxArgBoxing) {
       boxArgList(tape, target.argument);

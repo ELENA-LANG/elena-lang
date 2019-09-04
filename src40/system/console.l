@@ -48,16 +48,24 @@ sealed class Console
         theWriter.refresh();
     }
 
-//    /// Writes the specified literal value to the standard output stream.
-//    write(wide aLiteral)
-//    [
-//        theWriter write(aLiteral).
-//        
-//        theWriter refresh.
-//    ]
+    /// Writes the specified literal value to the standard output stream.
+    write(wide s)
+    {
+        theWriter.write(s);
+        
+        theWriter.refresh()
+    }
 
     /// the current line terminator to the standard output stream.
     writeLine(string s)
+    {
+        theWriter.writeLine(s);
+        
+        theWriter.refresh();
+    }
+
+    /// the current line terminator to the standard output stream.
+    writeLine(wide s)
     {
         theWriter.writeLine(s);
         
@@ -111,3 +119,4 @@ sealed class Console
 
 /// A standard console
 public static Console console = new Console(io'stdConsoleReader, io'stdConsoleWriter);
+

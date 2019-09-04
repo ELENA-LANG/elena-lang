@@ -211,7 +211,7 @@ public sealed class DBCommand
                 }
             SQLITE_FLOAT
                 {
-                    real val := extern sqlite3.sqlite3_column_double(theCommandHandle, anIndex);
+                    real val := extern sqlite3.sqlite3_column_double(theCommandHandle, index);
                     
                     ^ val
                 }

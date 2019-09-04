@@ -8495,7 +8495,7 @@ void Compiler :: optimizeBoxing(_ModuleScope& scope, SNode& node)
       // the result of external operation should be boxed locally, unboxing is not required (similar to assigning)
       localBoxing = true;
    }
-   else if (exprNode == lxBoxing)
+   else if (exprNode.compare(lxBoxing, lxCondBoxing, lxUnboxing))
       optimizeBoxing(scope, exprNode);
 
    if (localBoxing) {
@@ -9004,6 +9004,8 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
+   //test2(node);
+
    bool applied = true;
    List<SyntaxTrieNode> matched;
    while (applied) {
@@ -9013,6 +9015,8 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
+
+   //test2(node);
 }
 
 //void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
