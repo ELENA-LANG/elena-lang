@@ -23,7 +23,7 @@ For time being only x86 (32-bit) architecture is supported.
 
 To acquire the source code clone the git repository:
 
-    git clone git://github.com//ELENA-LANG/elena-lang.git
+    git clone git://github.com/ELENA-LANG/elena-lang.git
 
 ### Windows:
 
