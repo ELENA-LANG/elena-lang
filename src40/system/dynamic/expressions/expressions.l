@@ -59,6 +59,9 @@ public interface Expression
     static Expression MessageCall(mssg message, Expression t, params Expression[] arguments)
         = MessageCallExpression.new(message,t,params arguments);
        
+    static Expression MessageCall(mssg message, Expression t)
+        = MessageCallExpression.new(message,t);
+       
     static Declaration(ScopeVariable variable)
         = new DeclarationExpression(variable);
        
@@ -419,6 +422,13 @@ public class MessageCallExpression : Expression
         _message := message;
         _target := t;
         _arguments := arguments;
+    }
+    
+    constructor new(mssg message, Expression t)
+    {
+        _message := message;
+        _target := t;
+        _arguments := new Expression[](0);
     }
     
     constructor(Expression t, string message, Expression p1)
