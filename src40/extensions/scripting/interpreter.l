@@ -203,6 +203,9 @@ public class ScriptEngine
         ^ self.loadScriptFileAsText(path, 0, -1)
     }
     
+    string loadScriptAsText(string script)
+        <= evaluateScriptAsText(script);
+    
     loadScript(string script)
     {
         dirty_ptr tape := extern elenasm.InterpretScopeScript

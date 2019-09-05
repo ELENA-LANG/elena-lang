@@ -10,6 +10,9 @@ In development:
 ------                                                           
 Pipeline:
 ------                                                                                         
+              xdev ui
+                * creating a new project with a new file - reload the project explorer after the saving
+
               ydev
                 * redesign script code generation
                 * build : returning (goto)
@@ -28,6 +31,7 @@ Pipeline:
                 * check nil boxing
                 * check boxing of incompatible types
                 * test all examples \ rosetta code samples
+                * test pi
 
               xdev
                 * fixing #476
