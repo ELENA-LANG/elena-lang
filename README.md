@@ -12,7 +12,7 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 - **Twitter:** <https://twitter.com/elena_language>
 - **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
 - **Binaries mirror:** <https://sourceforge.net/projects/elenalang/files/>
-- **Tutorials** <https://github.com/ELENA-LANG/tutorials>
+- **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
 
 ## Currently Supported Platforms
 
