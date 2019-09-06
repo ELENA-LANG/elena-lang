@@ -813,6 +813,12 @@ bool IDEController :: doSaveProject(bool saveAsMode)
    }
    _project.save(_model->project.extension.c_str(), _model->saveWithBOM);
 
+   if (_ELENA_::test(_model->state, uiProjectNotSaved)) {
+      _model->state &= ~uiProjectNotSaved;
+
+      onProjectOpen();
+   }
+
    onChange();
 
    return true;
@@ -921,6 +927,9 @@ void IDEController :: doCreateProject()
 
    doSetProjectSettings();
 
+   _model->state |= uiProjectNotSaved;
+
+   onProjectOpen();
    onChange();
 }
 

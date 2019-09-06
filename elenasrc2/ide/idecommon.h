@@ -75,7 +75,8 @@ enum IDEState
    uiDebugging = 0x08,
    uiAutoRecompile = 0x10,
    uiHighlight = 0x20,
-   uiBracketBold = 0x40
+   uiBracketBold = 0x40,
+   uiProjectNotSaved = 0x80
 };
 
 // --- FrameState ---
