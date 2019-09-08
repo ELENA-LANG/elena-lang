@@ -4,12 +4,18 @@ In development:
 
               ydev
                 * test script examples
+
               xdev
                 * (re)implement toUInt extension
 
 ------                                                           
 Pipeline:
 ------                                                                                         
+              xdev - usability
+                * warn if the project does not exists or have invalid structure
+                * warn if the source file does not exists
+                * warn if the project is not configurated
+
               ydev
                 * redesign script code generation
                 * build : returning (goto)

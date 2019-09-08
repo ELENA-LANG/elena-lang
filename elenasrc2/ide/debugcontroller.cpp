@@ -39,8 +39,12 @@ void* DebugController :: unmapDebugPTR32(pos_t position)
 
 void DebugController :: debugThread()
 {
-   if (!_debugger.start(_debuggee, _arguments))
+   if (!_debugger.start(_debuggee, _arguments)) {
+      //HOTFIX : to inform the listening thread
+      _events.resetEvent(DEBUG_ACTIVE);
+
       return;
+   }      
 
    _running = true;
    while (_debugger.isStarted()) {
