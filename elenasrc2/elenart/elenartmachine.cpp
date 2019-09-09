@@ -304,6 +304,8 @@ void* ELENARTMachine :: loadMessage(ident_t message)
       }
       else if (message[i] == ']' && i == (getlength(message) - 1)) {
       }
+      else if (message[i] == '#') {
+      }
       else return nullptr;
    }
 

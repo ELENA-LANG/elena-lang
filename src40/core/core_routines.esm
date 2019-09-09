@@ -3832,6 +3832,50 @@ labErr:
 
 end
 
+procedure __signature."saveTo$system@MessageName$@system@ref#1&system@Message[2]"
+
+  aloadsi 2
+  nloade
+  aloadsi 1
+  nload
+  dsetverb
+  dcopye
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+
+procedure __signature."getProperty$system@MessageName$@system@ref#1&system@Message[2]"
+
+  aloadsi 1
+  nload
+  ecopy 0
+  dsetverb
+  dcopye
+  orn 40h
+  bloadsi 2
+  nsave
+  acopyb
+  quitn 2
+
+end
+
+procedure __signature."setProperty$system@MessageName$@system@ref#1&system@Message[2]"
+
+  aloadsi 1
+  nload
+  ecopy 1
+  dsetverb
+  dcopye
+  orn 40h
+  bloadsi 2
+  nsave
+  acopyb
+  quitn 2
+
+end
+
 procedure __group."#dispatch[1]"
 
   open 5

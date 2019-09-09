@@ -15,6 +15,7 @@ Pipeline:
                 * warn if the project does not exists or have invalid structure
                 * warn if the source file does not exists
                 * warn if the project is not configurated
+                * uncomment IDEController :: isOutaged
 
               ydev
                 * redesign script code generation

@@ -61,6 +61,12 @@ public interface Expression
        
     static Expression MessageCall(mssg message, Expression t)
         = MessageCallExpression.new(message,t);
+        
+    static Expression GetProperty(MessageName name, Expression t)
+        = GetPropertyExpression.new(name, t);
+        
+    static Expression SetProperty(MessageName name, Expression t, Expression v)
+        = SetPropertyExpression.new(name, t, v);
        
     static Declaration(ScopeVariable variable)
         = new DeclarationExpression(variable);
@@ -491,6 +497,55 @@ public class MessageCallExpression : Expression
         _target.saveTo(list, scope);
         
         list.append(new MessageClosure(_message))
+    }
+}
+
+public class GetPropertyExpression : Expression
+{
+    MessageName _name;
+    Expression  _target;
+    
+    constructor(Expression t, string message)
+        <= new(new MessageName(message), t);
+        
+    constructor new(MessageName name, Expression t)
+    {
+        _name := name;
+        _target := t
+    }
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        _target.saveTo(list, scope);
+        
+        auto mssg := _name.getPropertyMessage();
+        list.append(new MessageClosure(mssg))
+    }
+}
+
+public class SetPropertyExpression : Expression
+{
+    MessageName _name;
+    Expression  _target;
+    Expression  _value;
+    
+    constructor(Expression t, string message, Expression v)
+        <= new(new MessageName(message), t, v);
+        
+    constructor new(MessageName name, Expression t, Expression v)
+    {
+        _name := name;
+        _target := t;
+        _value := v
+    }
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        _value.saveTo(list, scope);
+        _target.saveTo(list, scope);
+        
+        auto mssg := _name.setPropertyMessage();
+        list.append(new MessageClosure(mssg))        
     }
 }
 

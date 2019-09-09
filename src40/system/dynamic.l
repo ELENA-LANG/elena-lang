@@ -101,6 +101,25 @@ public sealed const struct MessageName
         intern system'core_routines'__signature.load(self, s)
     }
 
+    saveTo(ref mssg message)
+    {
+        intern system'core_routines'__signature.saveTo(self, ref message)
+    }
+
+    mssg getPropertyMessage()
+    {
+        intern system'core_routines'__signature.getProperty(self, ref mssg message);
+        
+        ^ message
+    }
+
+    mssg setPropertyMessage()
+    {
+        intern system'core_routines'__signature.setProperty(self, ref mssg message);
+        
+        ^ message        
+    }
+
 //    /// Creates a dynamic signature
 //    constructor new(wide aSubjectName)
 //        <= new(T<literal>(aSubjectName)).
