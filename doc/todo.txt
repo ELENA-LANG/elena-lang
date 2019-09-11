@@ -3,9 +3,17 @@ In development:
 ------         
 
               ydev
+                * tutorials : expression trees
+
+              xdev - language
+                * call a property directly
+                * simplified syntax to invoke dynamic message?
+
+              ydev
+                * script : support several operation in a row
                 * test script examples
 
-              xdev
+              xdev - lib
                 * (re)implement toUInt extension
 
 ------                                                           

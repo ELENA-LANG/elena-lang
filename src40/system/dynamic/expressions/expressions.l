@@ -56,11 +56,23 @@ public interface Expression
     static Expression Symbol(string s)
         = new SymbolExpression(s);
         
+    static Expression New(Expression t)
+        = new MessageCallExpression(t, "#constructor");
+       
+    static Expression New(Expression t, Expression p0)
+        = new MessageCallExpression(t, "#constructor", p0);
+       
     static Expression MessageCall(mssg message, Expression t, params Expression[] arguments)
         = MessageCallExpression.new(message,t,params arguments);
        
     static Expression MessageCall(mssg message, Expression t)
         = MessageCallExpression.new(message,t);
+        
+    static Expression DynamicMessageCall(Expression t, params Expression[] arguments)
+        = DynamicMessageCallExpression.new(t,params arguments);
+       
+    static Expression DynamicMessageCall(Expression t)
+        = DynamicMessageCallExpression.new(t);
         
     static Expression GetProperty(MessageName name, Expression t)
         = GetPropertyExpression.new(name, t);
@@ -437,6 +449,9 @@ public class MessageCallExpression : Expression
         _arguments := new Expression[](0);
     }
     
+    constructor(Expression t, string message)
+        <= new(new Message(message + "[0]"), t);
+    
     constructor(Expression t, string message, Expression p1)
         <= new(new Message(message + "[1]"), t, p1);
     
@@ -497,6 +512,84 @@ public class MessageCallExpression : Expression
         _target.saveTo(list, scope);
         
         list.append(new MessageClosure(_message))
+    }
+}
+
+public class DynamicMessageCallExpression : Expression
+{
+    Expression[] _arguments;
+    
+    constructor new(params Expression[] arguments)
+    {
+        _arguments := arguments;
+    }
+    
+    constructor new()
+    {
+        _arguments := new Expression[](0);
+    }
+    
+    constructor(Expression t)
+        <= new(t);
+    
+    constructor(Expression t, Expression p1)
+        <= new(t, p1);
+    
+    constructor(Expression t, Expression p1, Expression p2)
+        <= new(t, p1, p2);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3)
+        <= new(t, p1, p2, p3);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4)
+        <= new(t, p1, p2, p3, p4);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5)
+        <= new(t, p1, p2, p3, p4, p5);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6)
+        <= new(t, p1, p2, p3, p4, p5, p6);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7)
+        <= new(t, p1, p2, p3, p4, p5, p6, p7);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8)
+        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11)
+        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+    
+    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                Expression p11, Expression p12)
+        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        int len := _arguments.Length;
+        int i := len;
+        while(i > 0)
+        {
+            i -= 1;
+            
+            _arguments[i].saveTo(list, scope);
+        };
+        
+        list.append(DynamicMessageClosure)
     }
 }
 

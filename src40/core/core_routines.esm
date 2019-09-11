@@ -4044,6 +4044,17 @@ procedure __mssg_closure."params##invoke$system@Object[2]"
 
 end
 
+procedure __dynamicmssg_closure."params##invoke$system@Object[2]"
+
+  popd
+  popa
+  pushd
+  nloade
+  aloadsi 1
+  ajumpvi 0
+
+end
+
 procedure __assign_closure."params##invoke$system@Object[2]"
 
   pusha
@@ -4253,6 +4264,36 @@ labErr:
   pushr const : %new[0]
   throw
   
+end
+
+procedure __class."#dispatch[1]"
+
+  aloadai 0
+  ajumpvi 0
+
+end
+
+procedure __class."load$system@ClassReference$system@String[2]"
+
+  aloadsi 2   // ; read aName parameter
+  pusha
+  system
+  pushe
+  callextr extern : LoadClassByString
+  popi 2
+  ifn labError 0
+  bloadsi 1
+  nsave
+  acopyb
+  quitn 2
+
+labError:
+  pop
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr const : %new[0]
+  throw
+
 end
 
 procedure __symbol."#dispatch[1]"
