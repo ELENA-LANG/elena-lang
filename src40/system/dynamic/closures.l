@@ -134,3 +134,9 @@ public struct JumpIfNotClosure : DynamicClosure
         => system'core_routines'__jumpifnot_closure;
 }
 
+public singleton JumpToEnd : DynamicClosure
+{
+    closure(params object[] args)
+        => system'core_routines'__exit_closure;
+}
+

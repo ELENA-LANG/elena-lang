@@ -122,6 +122,21 @@ public interface Expression
     static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
         = new MethodExpression(name, param1, param2, param3, body);        
           
+    static Expression Closure(Expression body)
+        = new ClosureExpression(body);        
+          
+    static Expression Closure(ScopeVariable param1, Expression body)
+        = new ClosureExpression(param1, body);        
+          
+    static Expression Closure(ScopeVariable param1, ScopeVariable param2, Expression body)
+        = new ClosureExpression(param1, param2, body);        
+          
+    static Expression Closure(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
+        = new ClosureExpression(param1, param2, param3, body);        
+          
+    static Expression Return(Expression expr)
+        = new ReturnExpression(expr);
+          
     abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
 
     saveTo(List<Tuple<Message,ClosureTape>> list)
@@ -390,7 +405,10 @@ public class CodeblockExpression : Expression
             list.append(eosClosure)
         };
         
-        list.append(new ReleaseClosure(variables.Length))
+        int l := variables.Length;
+        if (l != 0) {
+            list.append(new ReleaseClosure(variables.Length))
+        }        
     }
 }
 
@@ -789,6 +807,22 @@ public class VariableExpression : Expression
     }
 }
 
+public class ReturnExpression : Expression
+{
+    Expression expr;
+    
+    constructor(Expression expr)
+    {
+        this expr := expr
+    }
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        expr.saveTo(list, scope);
+        list.append(JumpToEnd)
+    }
+}
+
 public class IfExpression : Expression
 {
     Expression condition;
@@ -918,6 +952,70 @@ public class MethodExpression : Expression
         };
 
         body.saveTo(list, methodScope);        
+    }    
+}
+
+
+public class ClosureExpression : Expression
+{
+    ScopeVariable[] parameters;
+    Expression      body;
+    
+    constructor(Expression body)
+    {
+        this parameters := new ScopeVariable[](0);
+        
+        this body := body;
+    } 
+    
+    constructor(ScopeVariable param1, Expression body)
+    {
+        this parameters := new ScopeVariable[] { param1 };
+        
+        this body := body;
+    } 
+    
+    constructor(ScopeVariable param1, ScopeVariable param2, Expression body)
+    {
+        this parameters := new ScopeVariable[] { param2, param1 };
+        
+        this body := body;
+    }
+    
+    constructor(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
+    {
+        this parameters := new ScopeVariable[] { param3, param2, param1 };
+        
+        this body := body;
+    }        
+ 
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        auto closureScope := new ExpressionScope:
+        {
+            get int ScopeLevel = parameters.Length;
+            
+            Expression resolve(ScopeVariable variable, ref int index)
+            {
+                int len := parameters.Length;
+                for(int i := 0, i < len, i+=1) {
+                    if (parameters[i] == variable)
+                    {
+                        index := i + 1;
+                        
+                        ^ self
+                    }
+                };
+                
+                ^ scope.resolve(variable, ref index)
+            }
+    
+            declare(ScopeVariable variable)
+            {
+            }            
+        };
+
+        body.saveTo(list, closureScope);        
     }    
 }
 
