@@ -3964,11 +3964,12 @@ end
 
 procedure __closuretape."#dispatch[1]"
 
-  //;dcopyverb
-  //;elsem labDefault message : "#invoke[1]"
+  //; check if it is a closure call, otherwise handle it by default
+  dcopye
+  andn 20h
+  ifn labDefault 0
 
   dcopycount
-  inc
   ecopyd  
 
   open 5

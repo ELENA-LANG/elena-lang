@@ -977,14 +977,14 @@ public class ClosureExpression : Expression
     
     constructor(ScopeVariable param1, ScopeVariable param2, Expression body)
     {
-        this parameters := new ScopeVariable[] { param2, param1 };
+        this parameters := new ScopeVariable[] { param2, param1 }; // NOTE : it should be in reversed order
         
         this body := body;
     }
     
     constructor(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
     {
-        this parameters := new ScopeVariable[] { param3, param2, param1 };
+        this parameters := new ScopeVariable[] { param3, param2, param1 }; // NOTE : it should be in reversed order
         
         this body := body;
     }        
