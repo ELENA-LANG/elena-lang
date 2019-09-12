@@ -2,19 +2,25 @@
 In development:
 ------         
 
+              ydev
+                * ClosureClass - invoking method
+                * tutorials : expression trees
+
               xdev
                 * why debug show no inner variables in the loop
 
               ydev
-                * tutorials : expression trees
+                * script : support several operation in a row
+                * test script examples
 
               xdev - language
                 * call a property directly
                 * simplified syntax to invoke dynamic message?
+                * optimize:
+                     int dump[4];
+                     dump[i*2] := 3;
 
               ydev
-                * script : support several operation in a row
-                * test script examples
 
               xdev - lib
                 * (re)implement toUInt extension

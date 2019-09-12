@@ -4112,7 +4112,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          loadIndex(tape, rarg.type, index);
       }
       else {
-         generateObject(tape, rarg);
+         generateObject(tape, rarg, ACC_REQUIRED);
          loadIndex(tape, lxResult);
       }
 
