@@ -147,7 +147,7 @@ public interface Expression
     // temporal generic solution
     eval()
     {
-        ^ self.compiled().eval();
+        ^ (self.compiled())();
     }
         
     ClosureTape compiled()
