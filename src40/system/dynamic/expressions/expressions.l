@@ -1028,6 +1028,21 @@ public class DynamicSingleton
         this methods := new Expression[] {method};                
     }
     
+    constructor(Expression method1, Expression method2)
+    {
+        this methods := new Expression[] {method1, method2};                
+    }
+    
+    constructor(Expression method1, Expression method2, Expression method3)
+    {
+        this methods := new Expression[] {method1, method2, method3};                
+    }
+    
+    constructor new(params Expression[] methods)
+    {
+        this methods := methods;                
+    }
+    
     compiled()
     {
         auto list := new List<Tuple<Message,ClosureTape>>();

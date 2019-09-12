@@ -2,6 +2,9 @@
 In development:
 ------         
 
+              xdev
+                * why debug show no inner variables in the loop
+
               ydev
                 * tutorials : expression trees
 
@@ -47,7 +50,6 @@ Pipeline:
 
               xdev
                 * fixing #476
-                * why debug show no inner variables in the loop
 
               xdev
                 * primitive op where i is fields - i+=k
