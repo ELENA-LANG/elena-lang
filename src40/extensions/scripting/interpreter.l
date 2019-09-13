@@ -90,6 +90,13 @@ public class ScriptEngine
     buildScriptFile(string path)
         = self.buildScriptFile(path, 0, -1);
 
+    buildScriptFileFirst(string path)
+    {
+        var a := self.buildScriptFile(path);
+        
+        ^ a[0]
+    }
+
     buildScriptFile(string path, int encoding, int autoDetect)
     {
         byte temp[256];        

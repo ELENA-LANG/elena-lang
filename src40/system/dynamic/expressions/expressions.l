@@ -648,7 +648,7 @@ public class GetDynamicPropertyExpression : Expression
     Expression _property;
     Expression _target;
     
-    constructor(Expression p, Expression t)
+    constructor(Expression t, Expression p)
         <= new(p, t);
         
     constructor new(Expression p, Expression t)
@@ -705,7 +705,7 @@ public class SetDynamicPropertyExpression : Expression
     Expression  _target;
     Expression  _value;
     
-    constructor(Expression p, Expression t, Expression v)
+    constructor(Expression t, Expression p, Expression v)
         <= new(p, t, v);
         
     constructor new(Expression p, Expression t, Expression v)
