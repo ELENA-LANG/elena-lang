@@ -898,7 +898,7 @@ public class MethodExpression : Expression
     
     constructor(string name, ScopeVariable param1, Expression body)
     {
-        this parameters := new ScopeVariable[] { new ScopeVariable("self"), param1 };
+        this parameters := new ScopeVariable[] { param1, new ScopeVariable("self") };
         this message := new Message(name + "[1]");
         
         this body := body;
@@ -906,7 +906,7 @@ public class MethodExpression : Expression
     
     constructor(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
     {
-        this parameters := new ScopeVariable[] { new ScopeVariable("self"), param1, param2 };
+        this parameters := new ScopeVariable[] { param2, param1, new ScopeVariable("self") };
         this message := new Message(name + "[2]");
         
         this body := body;
@@ -914,7 +914,7 @@ public class MethodExpression : Expression
     
     constructor(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
     {
-        this parameters := new ScopeVariable[] { new ScopeVariable("self"), param1, param2, param3 };
+        this parameters := new ScopeVariable[] { param3, param2, param1, new ScopeVariable("self") };
         this message := new Message(name + "[3]");
         
         this body := body;

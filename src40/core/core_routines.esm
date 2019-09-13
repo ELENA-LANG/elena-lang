@@ -4358,8 +4358,9 @@ labCall:
   dloadsi 0
   get
   pop
-  pope
-  setverb messagename : "#invoke"
+  popd
+  orn 20h // ; set special flag
+  ecopyd
   eaddn 1
   ajumpvi 0
 

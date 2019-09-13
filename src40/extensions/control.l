@@ -266,3 +266,38 @@ public extension controlOp
 //        action().
 //    ]
 //}
+
+// --- invoker ---
+
+public extension invokeOp : MessageName
+{
+    invoke(target)
+    {
+        ^ mixin self(target).eval()
+    }
+    
+    invoke(target,p1)
+    {
+        ^ mixin self(target).eval(p1)
+    }
+    
+    invoke(target,p1,p2)
+    {
+        ^ mixin self(target).eval(p1,p2)
+    }
+    
+    invoke(target,p1,p2,p3)
+    {
+        ^ mixin self(target).eval(p1,p2,p3)
+    }
+    
+    invoke(target,p1,p2,p3,p4)
+    {
+        ^ mixin self(target).eval(p1,p2,p3,p4)
+    }
+    
+    invoke(target,p1,p2,p3,p4,p5)
+    {
+        ^ mixin self(target).eval(p1,p2,p3,p4,p5)
+    }
+}
