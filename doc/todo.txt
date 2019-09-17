@@ -2,8 +2,11 @@
 In development:
 ------         
 
+              xdev
+                * fix pi
+                * expression tree sample
+
               ydev
-                * ClosureClass - invoking method
                 * tutorials : expression trees
 
               xdev

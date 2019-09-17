@@ -166,8 +166,8 @@ class ByteCodeWriter
    void popObject(CommandTape& tape, LexicalType sourceTypeS);
 
    void copyBase(CommandTape& tape, int size);
-   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument);
+   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int mode);
+   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int mode);
    void initBase(CommandTape& tape, int fieldCount);
    void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
    void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
@@ -242,10 +242,10 @@ class ByteCodeWriter
 
    void assignBaseTo(CommandTape& tape, LexicalType target);
 
-   void assignInt(CommandTape& tape, LexicalType target, int offset);
-   void assignLong(CommandTape& tape, LexicalType target, int offset);
-   void assignShort(CommandTape& tape, LexicalType target, int offset);
-   void assignByte(CommandTape& tape, LexicalType target, int offset);
+   void assignInt(CommandTape& tape, LexicalType target, int offset, bool& accRequired);
+   void assignLong(CommandTape& tape, LexicalType target, int offset, bool& accRequired);
+   void assignShort(CommandTape& tape, LexicalType target, int offset, bool& accRequired);
+   void assignByte(CommandTape& tape, LexicalType target, int offset, bool& accRequired);
    void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
    void saveInt(CommandTape& tape, LexicalType target, int argument);
    void saveReal(CommandTape& tape, LexicalType target, int argument);
@@ -258,9 +258,11 @@ class ByteCodeWriter
    void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, int value);
 //////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-   void doIntOperation(CommandTape& tape, int operator_id, bool subArgMode);
-   void doIntOperation(CommandTape& tape, int operator_id, int immArg, bool subArgMode);
-   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg, bool subArgMode);
+   void doIntOperation(CommandTape& tape, int operator_id);
+   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
+   void doIndexOperation(CommandTape& tape, int operator_id);
+   void doIndexOperation(CommandTape& tape, int operator_id, int immArg);
+   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
    void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
    void doLongOperation(CommandTape& tape, int operator_id);
    void doRealOperation(CommandTape& tape, int operator_id);
@@ -276,13 +278,13 @@ class ByteCodeWriter
 
    void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
-   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal);
+   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal, int mode);
 
    int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 
 //   void pushObject(CommandTape& tape, SyntaxTree::Node node);
-   void loadObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
+   void loadObject(CommandTape& tape, LexicalType type, ref_t argument, int mode);
    void loadObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
@@ -290,7 +292,7 @@ class ByteCodeWriter
    void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
    void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
-   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
    void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
