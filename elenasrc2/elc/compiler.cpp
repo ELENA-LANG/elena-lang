@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -2099,28 +2099,26 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
 
       // injecting variable bookmark
       SyntaxWriter frameWriter(writer);
-      frameWriter.seekUp(lxNewFrame);
+      frameWriter.seekUp(lxNewFrame, lxCode);
 
-      frameWriter.newNode(variableType, variableArg);
-      frameWriter.appendNode(lxLevel, variable.param);
-      frameWriter.appendNode(lxIdentifier, identifier);
+      SNode varNode = frameWriter.CurrentNode().lastChild().prependSibling(variableType, variableArg);
+      varNode.appendNode(lxLevel, variable.param);
+      varNode.appendNode(lxIdentifier, identifier);
 
       if (!emptystr(className)) {
          if (isWeakReference(className)) {
             if (isTemplateWeakReference(className)) {
                // HOTFIX : save weak template-based class name directly
-               frameWriter.appendNode(lxClassName, className);
+               varNode.appendNode(lxClassName, className);
             }
             else {
                IdentifierString fullName(scope.module->Name(), className);
 
-               frameWriter.appendNode(lxClassName, fullName);
+               varNode.appendNode(lxClassName, fullName);
             }
          }
-         else frameWriter.appendNode(lxClassName, className);
+         else varNode.appendNode(lxClassName, className);
       }
-
-      frameWriter.closeNode();
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 }
@@ -7918,7 +7916,7 @@ ObjectInfo Compiler :: assignResult(SyntaxWriter& writer, CodeScope& scope, bool
 
          writer.inject(lxAssigning, size);
          writer.insertNode(lxLocalAddress, retVal.param);
-         writer.appendNode(lxTempAttr);
+         writer.appendNode(lxTempAttr); // NOTE : should be the last child!
          if (fpuMode)
             writer.appendNode(lxFPUTarget);
 
@@ -8712,13 +8710,13 @@ bool Compiler :: optimizeAssigningOp(_ModuleScope& scope, SNode& node)
          case ADD_OPERATOR_ID:
             node.setArgument(APPEND_OPERATOR_ID);
             assignNode = lxExpression;
-            larg = lxIdle;
+            target = lxIdle;
             applied = true;
             break;
          case SUB_OPERATOR_ID:
             node.setArgument(REDUCE_OPERATOR_ID);
             assignNode = lxExpression;
-            larg = lxIdle;
+            target = lxIdle;
             applied = true;
             break;
       }
@@ -8737,6 +8735,26 @@ bool Compiler :: optimizeAssigningOp(_ModuleScope& scope, SNode& node)
    return applied;
 }
 
+inline bool existSubNode(SNode node, SNode target, bool skipFirstOpArg)
+{
+   SNode current = node.firstChild(lxObjectMask);
+
+   if (skipFirstOpArg && test(node.type, lxPrimitiveOpMask))
+      current = current.nextNode(lxObjectMask);
+
+   while (current != lxNone) {
+      if (current.type == target.type && current.argument == target.argument) {
+         return true;
+      }
+      else if (existSubNode(current, target, false))
+         return true;
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   return false;
+}
+
 bool Compiler :: optimizeDoubleAssigning(_ModuleScope& scope, SNode& node)
 {
    bool applied = false;
@@ -8751,11 +8769,20 @@ bool Compiler :: optimizeDoubleAssigning(_ModuleScope& scope, SNode& node)
    SNode larg = assignNode.firstChild(lxObjectMask);
 
    if (assign2Node.argument == assignNode.argument && larg == lxLocalAddress) {
-      // remove an extra assignment
-      assign2Node = lxExpression;
-      larg2 = lxIdle;
+      SNode opNode = larg2.nextSubNodeMask(lxObjectMask);
+      //if (opNode == lxLocalAddress && opNode.argument == larg.argument) {
+      if (existSubNode(opNode, larg, true)) {
+         // if the target is used in the subexpression rvalue
+         // do nothing
+         node = lxIdle; // remove temporal attribute to prevent duplicate check
+      }
+      else {
+         // remove an extra assignment
+         assign2Node = lxExpression;
+         larg2 = lxIdle;
 
-      applied = true;
+         applied = true;
+      }
    }
 
    return applied;
@@ -9016,7 +9043,7 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
 
-   test2(node);
+   //test2(node);
 }
 
 //void Compiler :: analizeCode(SNode node, NamespaceScope& scope)
@@ -9705,7 +9732,8 @@ SNode Compiler :: injectTempLocal(SNode node, int size, bool boxingMode)
 
       node.set(lxAssigning, size);
 
-      node.insertNode(lxTempAttr, 0);
+      node.insertNode(lxTempAttr, 0); // NOTE _ should be the last child
+
       tempLocalNode = node.insertNode(lxLocalAddress, offset);
    }
    else {

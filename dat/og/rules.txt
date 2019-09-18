@@ -111,3 +111,5 @@ nsave addn nsave => nop addn nsave;
 nsave muln nsave => nop muln nsave;
 nsave andn nsave => nop andn nsave;
 nsave orn nsave => nop orn nsave;
+
+acopyb newn => nop newn;

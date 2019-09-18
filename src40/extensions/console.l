@@ -45,8 +45,7 @@ public extension outputOp
             object obj := list[i];
             
             self.write(obj.toString())
-        };
-        
+        };        
         
         self.writeLine();
     }    

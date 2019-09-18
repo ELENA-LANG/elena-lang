@@ -3,6 +3,7 @@ In development:
 ------         
 
               xdev
+                * why debug show no inner variables in the loop
                 * fix pi
                 * expression tree sample
 
@@ -10,13 +11,14 @@ In development:
                 * tutorials : expression trees
 
               xdev
-                * why debug show no inner variables in the loop
+                * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
 
               ydev
                 * script : support several operation in a row
                 * test script examples
 
               xdev - language
+                * 2*i should be compiled as i*2
                 * call a property directly
                 * simplified syntax to invoke dynamic message?
                 * optimize:
@@ -30,7 +32,12 @@ In development:
 
 ------                                                           
 Pipeline:
-------                                                                                         
+------   
+              xdev - bytecode optimization
+                * i += i + 1; Tester.test(i*2+1)
+                * operations with stack-allocated array : dump[0] := 1;
+                * operation with dynamic array should be direct???
+                                                                                      
               xdev - usability
                 * warn if the project does not exists or have invalid structure
                 * warn if the source file does not exists

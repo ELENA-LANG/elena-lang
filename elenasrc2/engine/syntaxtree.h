@@ -619,6 +619,31 @@ public:
          else return appendNode(type, argument);
       }
 
+      Node prependSibling(LexicalType type, int argument = 0)
+      {
+         pos_t prevSibl = tree->getPrevious(position);
+         if (prevSibl != INVALID_REF) {
+            return tree->read(tree->insertSibling(prevSibl, type, argument, INVALID_REF));
+         }
+         else {
+            pos_t parent = tree->getParent(position);
+
+            return tree->read(tree->insertChild(parent, type, argument, INVALID_REF));
+         }
+      }
+      Node prependSibling(LexicalType type, ident_t argument)
+      {
+         pos_t prevSibl = tree->getPrevious(position);
+         if (prevSibl != INVALID_REF) {
+            return tree->read(tree->insertSibling(prevSibl, type, 0, tree->saveStrArgument(argument)));
+         }
+         else {
+            pos_t parent = tree->getParent(position);
+
+            return tree->read(tree->insertChild(parent, type, 0, tree->saveStrArgument(argument)));
+         }
+      }
+
       void refresh()
       {
          tree->refresh(*this);
@@ -954,6 +979,7 @@ public:
       void closeNode();
 
       bool seekUp(LexicalType type);
+      bool seekUp(LexicalType type1, LexicalType type2);
       void findRoot()
       {
          if (_current == INVALID_REF && !_syntaxTree->isEmpty()) {

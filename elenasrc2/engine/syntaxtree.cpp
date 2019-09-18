@@ -176,6 +176,26 @@ bool SyntaxWriter :: seekUp(LexicalType type)
    else return false;
 }
 
+inline bool checkTypes(LexicalType v, LexicalType r1, LexicalType r2)
+{
+   return v == r1 || v == r2;
+}
+
+bool SyntaxWriter :: seekUp(LexicalType type1, LexicalType type2)
+{
+   pos_t node = _current;
+   while (node != INVALID_REF && !checkTypes(_syntaxTree->getType(node), type1, type2)) {
+      node = _syntaxTree->getParent(node);
+   }
+
+   if (node != INVALID_REF) {
+      _current = node;
+
+      return true;
+   }
+   else return false;
+}
+
 SyntaxTree::Node SyntaxWriter :: CurrentNode()
 {
    return _syntaxTree->read(_current);

@@ -4182,6 +4182,8 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
    SNode larg, rarg, rarg2;
    assignOpArguments(node, larg, rarg, rarg2);
 
+   if (larg == lxExpression)
+      larg = larg.findSubNodeMask(lxObjectMask);
    if (rarg == lxExpression)
       rarg = rarg.findSubNodeMask(lxObjectMask);
    if (rarg2 == lxExpression)
@@ -4274,7 +4276,72 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
       }
    }
    else {
-      if (largSimple) {
+      SNode barg;
+      if (test(mode, ASSIGN_MODE)) {
+         barg = node.parentNode();
+         while (barg != lxAssigning)
+            barg = barg.parentNode();
+
+         barg = barg.firstChild(lxObjectMask);
+         if (barg == lxExpression)
+            barg = barg.findSubNodeMask(lxObjectMask);
+      }
+
+      if (barg != lxNone) {
+         if (isSimpleObject(barg)) {
+            if (largSimple) {
+               if (immIndex) {
+                  int index = rarg.findChild(lxIntValue).argument;
+
+                  loadIndex(tape, rarg.type, index);
+               }
+               else {
+                  generateObject(tape, rarg, ACC_REQUIRED);
+                  loadIndex(tape, lxResult);
+               }
+
+               loadObject(tape, larg, ACC_REQUIRED);
+            }
+            else {
+               if (immIndex) {
+                  int index = rarg.findChild(lxIntValue).argument;
+
+                  generateObject(tape, larg, ACC_REQUIRED);
+                  loadIndex(tape, rarg.type, index);
+               }
+               else {
+                  generateObject(tape, larg, ACC_REQUIRED);
+                  tape.write(bcPushA);
+                  generateObject(tape, rarg, ACC_REQUIRED);
+                  loadIndex(tape, lxResult);
+                  tape.write(bcPopA);
+               }
+            }
+
+            loadBase(tape, barg.type, barg.argument, ACC_PRESAVED);
+         }
+         else {
+            generateObject(tape, barg, ACC_REQUIRED);
+            tape.write(bcPushA);
+
+            if (immIndex) {
+               int index = rarg.findChild(lxIntValue).argument;
+
+               generateObject(tape, larg, ACC_REQUIRED);
+               loadIndex(tape, rarg.type, index);
+            }
+            else {
+               generateObject(tape, larg, ACC_REQUIRED);
+               tape.write(bcPushA);
+               generateObject(tape, rarg, ACC_REQUIRED);
+               loadIndex(tape, lxResult);
+               tape.write(bcPopA);
+            }
+
+            tape.write(bcPopB);
+         }
+      }
+      else if (largSimple) {
          if (immIndex) {
             int index = rarg.findChild(lxIntValue).argument;
 
@@ -4285,7 +4352,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
             loadIndex(tape, lxResult);
          }
 
-         loadBase(tape, larg.type, larg.argument, 0);
+         generateObject(tape, larg, ACC_REQUIRED);
       }
       else {
          generateObject(tape, rarg, ACC_REQUIRED);
@@ -4468,8 +4535,19 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       directOp = false;
 
    if (directOp) {
-      // do nothing
       basePresaved = false;
+
+      if (barg != lxNone) {
+         // if it is an arithmetic / logic / shift operation
+         if (isSimpleObject(barg)) {
+            loadBase(tape, barg.type, barg.argument, 0);
+         }
+         else {
+            generateObject(tape, barg, ACC_REQUIRED);
+            loadBase(tape, lxResult, 0, 0);
+         }
+      }
+      // otherwise do nothing
    }
    else if (barg != lxNone) {
       // if it is an arithmetic / logic / shift operation
@@ -4493,7 +4571,10 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
          copyBase(tape, 8);
       }
 
-      if (rargSimple) {
+      if (rargConst) {
+         // do nothing
+      }
+      else if (rargSimple) {
          generateObject(tape, rarg, ACC_REQUIRED | BASE_PRESAVED);
       }
       else if (isSimpleObject(barg)) {
@@ -5283,11 +5364,15 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 
 
    if (isAssignOp(source)) {
+      int opMode = ASSIGN_MODE;
+      if (accRequiered)
+         opMode |= ACC_REQUIRED;
+
    //   if (target == lxCreatingStruct) {
    //      generateObject(tape, target, ACC_REQUIRED);
    //      loadBase(tape, lxResult);
    //   }
-      /*else */generateObject(tape, source, ASSIGN_MODE);
+      /*else */generateObject(tape, source, opMode);
    }
    else {
       generateObject(tape, source, ACC_REQUIRED);
