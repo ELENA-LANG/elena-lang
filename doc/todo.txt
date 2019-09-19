@@ -3,11 +3,10 @@ In development:
 ------         
 
               xdev
-                * expression tree sample
                 * invalid error message : elc guitest - the file not found should be used
 
               ydev
-                * tutorials : expression trees
+                * interpreter example
 
               xdev
                 * i += i + 1; Tester.test(i*2+1)
@@ -16,7 +15,8 @@ In development:
 
               ydev
                 * script : support several operation in a row
-                * test script examples
+                * calc example
+                * js example
 
               xdev - language
                 * 2*i should be compiled as i*2

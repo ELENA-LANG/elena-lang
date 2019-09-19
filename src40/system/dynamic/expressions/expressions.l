@@ -95,11 +95,17 @@ public interface Expression
     static Expression Assigning(ScopeVariable variable, Expression expr)
         = new AssigningExpression(variable, expr);
           
+    static Expression Assigning(string variable, Expression expr)
+        = new AssigningExpression(new ScopeVariable(variable), expr);
+          
     static Expression DeclareAndAssigning(ScopeVariable variable, Expression expr)
         = new DeclaringAndAssigningExpression(variable, expr);
           
     static Expression Variable(ScopeVariable variable)
         = new VariableExpression(variable);
+          
+    static Expression Variable(string variable)
+        = new VariableExpression(new ScopeVariable(variable));
           
     static Expression Statement(params Expression[] expressions)
         = StatementExpression.new(params expressions);
