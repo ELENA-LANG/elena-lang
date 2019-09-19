@@ -226,9 +226,8 @@ public solution1()
                    "eval",
                    new ScopeVariable("tape"),                   
                    Expression.CodeBlock(                   
-                      Expression.Declaration(new ScopeVariable("ptr")),                      
-                      // ptr := 0
-                      Expression.Assigning(
+                      // var ptr := 0
+                      Expression.DeclareAndAssigning(
                         new ScopeVariable("ptr"),
                         Expression.Constant(0)
                       ),

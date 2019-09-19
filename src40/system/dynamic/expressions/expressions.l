@@ -748,7 +748,10 @@ public class DeclarationExpression : Expression
     {
         scope.declare(variable);
         
-        defaultValue.saveTo(list, scope)
+        defaultValue.saveTo(list, scope);
+        
+        scope.resolve(variable, ref int index);        
+        list.append(new LocalClosure(index));        
     }    
 }
 

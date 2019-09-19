@@ -4,12 +4,14 @@ In development:
 
               xdev
                 * expression tree sample
+                * invalid error message : elc guitest - the file not found should be used
 
               ydev
                 * tutorials : expression trees
 
               xdev
                 * i += i + 1; Tester.test(i*2+1)
+                * operation with numeric constant should be used with constant symbol as well
                 * optimize pi sample
 
               ydev
