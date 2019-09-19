@@ -738,8 +738,23 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
    bool accPresaved = test(mode, ACC_PRESAVED);
 
    switch (sourceType) {
+      case lxConstantString:
+      case lxConstantWideStr:
       case lxClassSymbol:
+      case lxConstantSymbol:
+      case lxConstantChar:
+      case lxConstantInt:
+      case lxConstantLong:
+      case lxConstantReal:
+      case lxMessageConstant:
+      case lxExtMessageConstant:
+      case lxSubjectConstant:
+      case lxConstantList:
          tape.write(bcBCopyR, sourceArgument | defineConstantMask(sourceType));
+         break;
+      case lxNil:
+         // acopyr 0
+         tape.write(bcBCopyR, sourceArgument);
          break;
       case lxCurrent:
          // bloadsi param
@@ -754,6 +769,14 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
       case lxLocalAddress:
          // bcopyf n
          tape.write(bcBCopyF, sourceArgument);
+         break;
+      case lxBlockLocal:
+         // aloadfi n
+         tape.write(bcBLoadFI, sourceArgument, bpBlock);
+         break;
+      case lxBlockLocalAddr:
+         // acopyf n
+         tape.write(bcBCopyF, sourceArgument, bpFrame);
          break;
       case lxResult:
          // bcopya
@@ -794,6 +817,10 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
       case lxFieldAddress:
          // bloadfi 1
          tape.write(bcBLoadFI, 1, bpFrame);
+         break;
+      case lxResultField:
+         // bloadai
+         tape.write(bcBLoadAI, sourceArgument);
          break;
       case lxStaticConstField:
          if ((int)sourceArgument > 0) {
@@ -4355,7 +4382,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          generateObject(tape, larg, ACC_REQUIRED);
       }
       else {
-         generateObject(tape, rarg, ACC_REQUIRED);
+         generateObject(tape, larg, ACC_REQUIRED);
          loadBase(tape, lxResult, 0, 0);
 
          if (immIndex) {

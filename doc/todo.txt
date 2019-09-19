@@ -3,15 +3,14 @@ In development:
 ------         
 
               xdev
-                * why debug show no inner variables in the loop
-                * fix pi
                 * expression tree sample
 
               ydev
                 * tutorials : expression trees
 
               xdev
-                * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
+                * i += i + 1; Tester.test(i*2+1)
+                * optimize pi sample
 
               ydev
                 * script : support several operation in a row
@@ -29,12 +28,12 @@ In development:
 
               xdev - lib
                 * (re)implement toUInt extension
+                * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
 
 ------                                                           
 Pipeline:
 ------   
               xdev - bytecode optimization
-                * i += i + 1; Tester.test(i*2+1)
                 * operations with stack-allocated array : dump[0] := 1;
                 * operation with dynamic array should be direct???
                                                                                       

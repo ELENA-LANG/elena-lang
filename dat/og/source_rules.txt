@@ -1,3 +1,5 @@
+argarrop, argboxing = 16;
+
 arrop, boxing = 8;
 arrop, condboxing = 8;
 arrop, unboxing = 8;

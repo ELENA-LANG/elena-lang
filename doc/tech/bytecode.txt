@@ -89,6 +89,8 @@ ELENA byte codes (or ecodes)
  axsavebi i                 - [base::i] <= acc;
                                direct
  
+ bloadai i                  - [acc::i] => base
+
  bloadr r                   - [r] => base
 
  bread                      - acc[index] >> ext                               

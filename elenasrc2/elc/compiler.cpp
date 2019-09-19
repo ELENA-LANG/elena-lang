@@ -2097,7 +2097,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
 
       scope.mapLocal(identifier, variable.param, variable.reference, variable.element, size);
 
-      // injecting variable bookmark
+      // injecting variable label
       SyntaxWriter frameWriter(writer);
       frameWriter.seekUp(lxNewFrame, lxCode);
 

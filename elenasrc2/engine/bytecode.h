@@ -231,6 +231,7 @@ enum ByteCode
    bcBLoadR          = 0xDC,
    bcInit            = 0xDD,
    bcEqualR          = 0xDE,
+   bcBLoadAI         = 0xDF,
 
    bcMTRedirect      = 0xE8,
    bcXMTRedirect     = 0xE9,

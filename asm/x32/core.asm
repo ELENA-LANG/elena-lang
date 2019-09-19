@@ -2644,6 +2644,13 @@ inline %0DEh
 
 end
 
+// ; bloadai i
+inline % 0DFh
+
+  mov edi, [eax + __arg1]
+
+end
+
 // ; mtredirect
 
 inline % 0E8h
