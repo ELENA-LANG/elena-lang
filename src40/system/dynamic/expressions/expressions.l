@@ -47,6 +47,9 @@ public interface Expression
     static Expression CodeBlock(params Expression[] statements)
         = CodeblockExpression.new(params statements);
     
+    static Expression CodeBlock(Expression[] statements)
+        = CodeblockExpression.new(statements);
+    
     static Expression Constant(object o)
         = new ConstantExpression(o);
         
@@ -279,6 +282,11 @@ public class CodeblockExpression : Expression
     Expression[] statements;
     
     constructor new(params Expression[] statements)
+    {
+        this statements := statements
+    }
+    
+    constructor new(Expression[] statements)
     {
         this statements := statements
     }

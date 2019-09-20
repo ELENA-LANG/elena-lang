@@ -794,7 +794,7 @@ private:
 
 //   bool verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount);
 
-   void loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
+   bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
 
    ObjectInfo mapClassSymbol(Scope& scope, int classRef);
 

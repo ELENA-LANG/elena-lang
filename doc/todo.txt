@@ -2,9 +2,6 @@
 In development:
 ------         
 
-              xdev
-                * invalid error message : elc guitest - the file not found should be used
-
               ydev
                 * interpreter example
 

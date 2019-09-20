@@ -9443,13 +9443,11 @@ inline ref_t safeMapWeakReference(_Module* module, ident_t referenceName)
    else return 0;
 }
 
-void Compiler :: loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silenMode)
+bool Compiler :: loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silenMode)
 {
    _Module* extModule = scope.project->loadModule(name, silenMode);
    bool duplicates = false;
    if (extModule) {
-      //      //bool owner = module == extModule;
-      //
       ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
 
       _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
@@ -9467,8 +9465,10 @@ void Compiler :: loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* a
                duplicates = true;
          }
       }
+
+      return true;
    }
-   //   return duplicates;
+   else return false;
 }
 
 void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo)
@@ -9511,7 +9511,8 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically
-      loadAttributes(scope, STANDARD_MODULE, &scope.attributes, false);
+      if (!loadAttributes(scope, STANDARD_MODULE, &scope.attributes, true))
+         scope.printInfo(wrnInvalidModule, STANDARD_MODULE);
    }
 
    createPackageInfo(scope.module, *scope.project);

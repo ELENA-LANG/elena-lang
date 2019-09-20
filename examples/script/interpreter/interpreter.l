@@ -3,7 +3,7 @@ import system'routines;
 import system'dynamic'expressions;
 
 import extensions;
-//import extensions'scripting;
+import extensions'scripting;
 ////import extensions'dynamic;
 //import extensions'dynamic'expressions;
 
@@ -312,19 +312,19 @@ public solution2()
     bfProgram(bfTape)
 }
 
-//public program3bis()
-//{
-//    var bfAssemblyProgram := new ScriptEngine() 
-//        .loadPath("asmrules.es")
-//        .eval(">,[.,]");
-//
-//    var bfProgram := TapeAssembler.load(bfAssemblyProgram).get();
-//
-//    var bfTape := Array.allocate(1024).populate:(n => $0);
-//
-//    bfProgram(bfTape)
-//}
-//
+public solution3()
+{
+    var bfAssemblyProgram := new ScriptEngine() 
+        .loadPath("asmrules.es")
+        .eval(">,[.,]");
+
+    var bfProgram := TapeAssembler.load(bfAssemblyProgram).compiled();
+
+    var bfTape := Array.allocate(1024).populate:(n => $0);
+
+    bfProgram(bfTape)
+}
+
 //public program3()
 //{
 //    if (program_arguments.Length == 1)
@@ -356,7 +356,7 @@ public solution2()
 ////    console writeLine:bfProgram.
 ////].
 
-const int Solution = 2;
+const int Solution = 3;
 
 public program()
 {
@@ -366,5 +366,8 @@ public program()
         }
         2 {
             solution2()
+        }
+        3 {
+            solution3()
         };
 }

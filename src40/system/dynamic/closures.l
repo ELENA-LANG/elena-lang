@@ -19,6 +19,9 @@ public struct MessageClosure : DynamicClosure
 {
     embeddable mssg theMessage;
     
+    constructor(string message)
+        <= (new Message(message));
+    
     constructor(mssg message)
     {
         theMessage := message
