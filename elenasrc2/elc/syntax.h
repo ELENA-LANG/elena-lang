@@ -38,7 +38,7 @@ enum Symbol
    tsLong                       = 0x0300C,
    tsWide                       = 0x0300D,
    tsExplicitConst              = 0x0300E,
-   tsAttribute                  = 0x0300F,
+//   tsAttribute                  = 0x0300F,
 //   tsMember                     = 0x03010,
    tsGlobal                     = 0x03011,
 
@@ -152,11 +152,6 @@ public:
    virtual void writeSymbol(Symbol symbol) = 0;
    virtual void writeTerminal(TerminalInfo& terminal) = 0;
 };
-
-////inline bool ifAny(Symbol target, Symbol value1, Symbol value2)
-////{
-////   return target == value1 || target == value2;
-////}
 
 } // _ELENA_
 

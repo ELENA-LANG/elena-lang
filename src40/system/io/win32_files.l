@@ -129,7 +129,7 @@ public struct FileStream : Stream
 
 // --- fileStreamHelper ---
 
-fileStreamHelper =
+fileStreamHelper = new:
 {
     Stream openForWrite(string path, bool appendMode)
     {

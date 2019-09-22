@@ -121,5 +121,5 @@ public interface TextWriter
     }
     
     writeLine()
-        <= write:theNewLineConstant;
+        <= write(theNewLineConstant);
 }

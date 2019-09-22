@@ -14,17 +14,12 @@
 
 using namespace _ELENA_;
 
-//inline bool isPrimitiveRef(ref_t reference)
-//{
-//   return (int)reference < 0;
-//}
-
 constexpr auto MODE_ROOT            = 0x01;
-//#define MODE_CODETEMPLATE    0x02
-//#define MODE_OBJECTEXPR      0x04
-////#define MODE_SIGNATURE       0x08
-//#define MODE_IMPORTING       0x10
-//#define MODE_MESSAGE_BODY    0x20  // indicates that sub-expressions should be an expression themselves
+////#define MODE_CODETEMPLATE    0x02
+////#define MODE_OBJECTEXPR      0x04
+//////#define MODE_SIGNATURE       0x08
+////#define MODE_IMPORTING       0x10
+////#define MODE_MESSAGE_BODY    0x20  // indicates that sub-expressions should be an expression themselves
 constexpr auto MODE_PROPERTYALLOWED = 0x40;
 
 constexpr auto MODE_CLOSURE         = -2;
@@ -32,31 +27,31 @@ constexpr auto MODE_COMPLEXMESSAGE  = -3;
 constexpr auto MODE_PROPERTYMETHOD  = -4;
 
 #define EXPRESSION_IMPLICIT_MODE   1
-////#define EXPRESSION_MESSAGE_MODE    2
-//#define EXPRESSION_OPERATOR_MODE   4
-//#define EXPRESSION_OBJECT_REQUIRED 8
-
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+//////#define EXPRESSION_MESSAGE_MODE    2
+////#define EXPRESSION_OPERATOR_MODE   4
+////#define EXPRESSION_OBJECT_REQUIRED 8
+//
+////void test2(SNode node)
+////{
+////   SNode current = node.firstChild();
+////   while (current != lxNone) {
+////      test2(current);
+////      current = current.nextNode();
+////   }
+////}
 
 // --- DerivationWriter ---
 
-inline SNode goToLastNode(SNode current)
-{
-   SNode lastOne;
-   while (current != lxNone) {
-      lastOne = current;
-      current = current.nextNode();
-   }      
-
-   return lastOne;
-}
+//inline SNode goToLastNode(SNode current)
+//{
+//   SNode lastOne;
+//   while (current != lxNone) {
+//      lastOne = current;
+//      current = current.nextNode();
+//   }      
+//
+//   return lastOne;
+//}
 
 inline SNode goToFirstNode(SNode current)
 {
@@ -189,10 +184,10 @@ void DerivationWriter :: newNode(Symbol symbol)
       case nsL3Operand:
       case nsL4Operand:
       case nsL6Operand:
-      case nsNestedStatement:
          _cacheWriter.newNode(lxExpression);
          break;
       case nsNestedStatements:
+      case nsNestedStatement:
          _cacheWriter.newNode(lxCode);
          break;
       case nsCodeEnd:
@@ -423,7 +418,7 @@ bool DerivationWriter :: recognizeMetaScope(SNode node)
    }      
    
    //   bool privateOne = true;
-   while (current == lxAttribute/* || current == lxAttributeDecl*/) {
+   while (current == lxAttribute) {
       switch (current.argument) {
          case V_TYPETEMPL:
             declType = (DeclarationAttr)(declType | daType);
@@ -619,21 +614,25 @@ ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPr
 
 void DerivationWriter :: declareAttribute(SNode node)
 {
-   SNode nameAttr = node.findChild(lxToken);
-   ident_t name = nameAttr.findChild(lxIdentifier).identifier();
+   ident_t name = node.findChild(lxIdentifier).identifier();
 
-   SNode attrNode = node.firstChild();
+   SNode attrNode = node.findChild(lxSizeDecl);
    ref_t attrRef = 0;
-   if (attrNode == lxExplicitAttr) {
-      ident_t value = attrNode.identifier();
-      
-      attrRef = value.toULong(16, 1);
+   if (attrNode == lxSizeDecl) {
+      SNode valNode = attrNode.firstChild(lxTerminalMask);
+      ident_t value = valNode.identifier();
+      if (valNode == lxHexInteger) {
+         attrRef = value.toULong(16);
+      }
+      else {
+         attrRef = value.toULong(10);
+      }
    }
 
    if (attrRef && _scope->attributes.add(name, attrRef, true)) {
       _scope->saveAttribute(name, attrRef);
    }
-   else _scope->raiseError(errDuplicatedDefinition, _filePath, nameAttr);
+   else _scope->raiseError(errDuplicatedDefinition, _filePath, node);
 }
 
 void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, DerivationScope& scope*/)
@@ -1568,10 +1567,10 @@ void DerivationWriter :: generateCodeTemplateTree(SyntaxWriter& writer, SNode& n
       node = node.nextNode();
 }
 
-inline bool isTypeExpressionAttribute(SNode current)
-{
-   return current.nextNode() == lxToken && current.nextNode().nextNode() != lxToken;
-}
+//inline bool isTypeExpressionAttribute(SNode current)
+//{
+//   return current.nextNode() == lxToken && current.nextNode().nextNode() != lxToken;
+//}
 
 void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
    ref_t& previousCategory, bool templateArgMode, bool onlyAttributes)
@@ -2002,7 +2001,7 @@ _Memory* TemplateGenerator::TemplateScope :: loadTemplateTree()
 
 TemplateGenerator :: TemplateGenerator(SyntaxTree& tree)
 {
-   _root = tree.readRoot();
+//   _root = tree.readRoot();
 }
 
 void TemplateGenerator :: copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope)
@@ -2275,16 +2274,16 @@ void TemplateGenerator :: copyModuleInfo(SyntaxWriter& writer, SNode node, Templ
    }
 }
 
-//void DerivationTransformer :: copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, SubjectMap* parentAttributes, int mode)
-//{
-//   loadParameterValues(attributeValues, scope, parentAttributes/*, true*/);
-//
-//   if (generateTemplate(writer, scope, false, mode)) {
-//      //if (/*variableMode && */scope.reference != 0)
-//      //   writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(scope.reference));
-//   }
-//   else scope.raiseError(errInvalidHint, node);
-//}
+////void DerivationTransformer :: copyTemplateTree(SyntaxWriter& writer, SNode node, DerivationScope& scope, SNode attributeValues, SubjectMap* parentAttributes, int mode)
+////{
+////   loadParameterValues(attributeValues, scope, parentAttributes/*, true*/);
+////
+////   if (generateTemplate(writer, scope, false, mode)) {
+////      //if (/*variableMode && */scope.reference != 0)
+////      //   writer.appendNode(lxClassRefAttr, scope.moduleScope->module->resolveReference(scope.reference));
+////   }
+////   else scope.raiseError(errInvalidHint, node);
+////}
 
 bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool declaringClass, bool importModuleInfo)
 {

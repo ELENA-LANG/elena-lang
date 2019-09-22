@@ -15,11 +15,10 @@
 namespace _ELENA_
 {
 
-// --- DerivationWriter ---
-
-typedef Map<ident_t, char*> TypedMap;
-
-
+//// --- DerivationWriter ---
+//
+//typedef Map<ident_t, char*> TypedMap;
+//
 class DerivationWriter : public _DerivationWriter
 {
    enum DeclarationAttr
@@ -194,7 +193,6 @@ public:
    {
       _cachingLevel = _level = 0;
 
-   //   _cachingMode = true; 
       _scope = scope;
 
       _cacheWriter.newNode(lxRoot);
@@ -257,7 +255,7 @@ class TemplateGenerator
       }
    };
 
-   SNode       _root;
+//   SNode       _root;
 
    void copyNodes(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyChildren(SyntaxWriter& writer, SNode node, TemplateScope& scope);

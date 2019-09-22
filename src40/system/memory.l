@@ -1755,7 +1755,7 @@ public sealed class Variant
 //    ]    
 
     private castValueTo(target)
-        = {
+        = new:{
             eval(o)
                 = o.Printable;
             

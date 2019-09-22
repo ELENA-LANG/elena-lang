@@ -2,6 +2,43 @@
 In development:
 ------         
 
+              xdev syntax
+                * code templates:
+
+
+if (a)
+{
+    console.printLine("Hurra")
+}
+else
+{
+}
+
+
+if (a)
+  : console.printLine("Hurr")
+else
+  : console.printLine("Hurr")
+
+
+try
+{
+   x()
+}
+catch:catcher 
+
+
+
+                * syntax simplification
+                * test if(a) b else: c 
+                * test ??
+                * simplified syntax to create a weak typed array
+
+
+              xdev
+                * duck typing tutorial
+                * implicit constructor with variadic argument list
+
               ydev
                 * interpreter example
 
@@ -28,6 +65,10 @@ In development:
               xdev - lib
                 * (re)implement toUInt extension
                 * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
+
+              zdev
+                * source to expression tree
+                * expression tree to source
 
 ------                                                           
 Pipeline:
