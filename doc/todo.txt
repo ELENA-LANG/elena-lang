@@ -2,15 +2,25 @@
 In development:
 ------         
 
-              xdev syntax
-                * test dtcalculator
-                * implicit constructor with variadic argument list
-
               zdev
                 * write - Programming in ELENA : cookbook
 
+              xdev syntax
+                * test dtcalculator
+
+              xdev syntax
+                * implicit constructor with variadic argument list
+
               ydev
                 * interpreter example
+
+              xdev syntax
+                * test all samples
+
+              ydev
+                * script : support several operation in a row
+                * calc example
+                * js example
 
               xdev
                 * i += i + 1; Tester.test(i*2+1)
@@ -18,9 +28,6 @@ In development:
                 * optimize pi sample
 
               ydev
-                * script : support several operation in a row
-                * calc example
-                * js example
 
               xdev - language
                 * 2*i should be compiled as i*2

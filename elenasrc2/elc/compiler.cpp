@@ -8202,10 +8202,27 @@ bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool
    bool applied = false;
 
    // verify the path
-   SNode rootNode = node.parentNode().parentNode();
+   SNode callNode = node.parentNode();
+   SNode rootNode = callNode.parentNode();
    if (argMode) {
       if (rootNode.compare(lxCalling, lxDirectCalling, lxSDirectCalling)) {
-         applied = _logic->optimizeReturningStructure(scope, *this, rootNode, true);
+         // validate if the argument is stack safe
+         int stackSafeAttrs = rootNode.findChild(lxStacksafeAttr).argument;
+         int flag = 1;
+         SNode current = rootNode.firstChild(lxObjectMask);
+         bool stackSafeArg = false;
+         while (current != lxNone) {
+            if (current == callNode && test(stackSafeAttrs, flag)) {
+               stackSafeArg = true;
+               break;
+            }
+
+            current = current.nextNode(lxObjectMask);
+            flag <<= 1;
+         }
+
+         if (stackSafeArg)
+            applied = _logic->optimizeReturningStructure(scope, *this, rootNode, true);
       }
    }
    else if (rootNode == lxAssigning) {

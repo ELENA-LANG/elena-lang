@@ -38,7 +38,7 @@ entry()
     }
     finally
     {
-       startUpEvents.stopping()
+//       startUpEvents.stopping()
     }
     catch:(AbortException e)
     {
