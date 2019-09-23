@@ -170,7 +170,7 @@ public sealed Stack<T> : Enumerable<T>
         theTop.Value := 0
     }    
     
-    Enumerator<T> enumerator() = new BaseEnumerator<T>:
+    Enumerator<T> enumerator() = new BaseEnumerator<T>::
     {
         this theIndex := -1;
         
@@ -397,7 +397,7 @@ public sealed Queue<T> : Enumerable<T>
         ^ item
     }
 
-    Enumerator<T> enumerator() = new BaseEnumerator<T>:
+    Enumerator<T> enumerator() = new BaseEnumerator<T>::
     {
         this theIndex := -1;
         

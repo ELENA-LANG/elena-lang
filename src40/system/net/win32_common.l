@@ -76,7 +76,7 @@ sealed struct WSADATA
         ifnot (0 == retVal)
             { SocketException.new("Cannot start socket service", retVal).raise() };
             
-        startUpEvents.OnStop := (){ self.close() }
+        startUpEvents.OnStop := { self.close() }
     }
     
     close()

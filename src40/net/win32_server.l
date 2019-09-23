@@ -81,7 +81,7 @@ public sealed class TcpServer
         theListenSocket.listen(SOMAXCONN)
     }
 
-    Enumerable<TcpRemoteClient> Clients = new Enumerable<TcpRemoteClient>:
+    Enumerable<TcpRemoteClient> Clients = new Enumerable<TcpRemoteClient>::
     { 
         /*embeddable dispatch => theClients.*/
         
@@ -183,7 +183,7 @@ public sealed class TcpServer
     
     start()
     {
-        theListenThread := Thread.assign(()
+        theListenThread := Thread.assign(
         {
             while (self.proceed()){}
         });

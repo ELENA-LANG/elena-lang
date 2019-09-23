@@ -3,7 +3,7 @@ import system'routines;
 
 public singleton EmptyEnumerable
 {
-    enumerator() = new Enumerator:
+    enumerator() = new Enumerator::
     {
         bool next() = false;
         
@@ -24,7 +24,7 @@ public class SingleEnumerable
         this value := value
     }
 
-    enumerator() = new Enumerator:
+    enumerator() = new Enumerator::
     {
         bool notpassed := nil != value;
         

@@ -83,7 +83,7 @@ public sealed class FileEnumerator : Enumerator<WIN32_FIND_DATA>
                 open := true
             }
         }
-        else:if(open) 
+        else if(open) 
         {
             int retVal := extern KERNEL32.FindNextFileW(hFind, ffd);
             if (retVal == 0)
@@ -114,7 +114,7 @@ public sealed class FileEnumerator : Enumerator<WIN32_FIND_DATA>
         ffd := nil
     }
     
-    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
 }
 
 public SearchFiles(string path, string mask, List<string> output)

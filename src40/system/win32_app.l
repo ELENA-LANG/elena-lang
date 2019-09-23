@@ -40,10 +40,10 @@ entry()
     {
        startUpEvents.stopping()
     }
-    catch(AbortException e)
+    catch:(AbortException e)
     {
     }   
-    catch(Exception e)
+    catch:(Exception e)
     {
         console.writeLine(e.Printable);
         

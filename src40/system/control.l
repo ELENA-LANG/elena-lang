@@ -985,7 +985,7 @@ public abstract class BaseEnumerator<T> : Enumerator<T>
         ^ (cast int(theIndex)) < theLength
     }
     
-    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
 }
 
 // --- BaseIndexer ---
@@ -1063,7 +1063,7 @@ public abstract BaseIndexer<T> : Indexer<T>
         }
     }
     
-    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
+    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
 }
 
 //// --- BaseMatrixIndexer ---
@@ -1154,7 +1154,7 @@ class IntRangeEnumerator : Enumerator<int>
         theIndex := theStart - 1;
     } 
     
-    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
     
     enumerable() = new Range(theStart, theEnd - theStart);
 }
@@ -1203,5 +1203,5 @@ public sealed class Range : Enumerable<int>
     
     Enumerator<int> enumerator() = new IntRangeEnumerator(theStart, theEnd);
     
-    Enumerable cast() = new Enumerable:{ Enumerator enumerator() => self; };
+    Enumerable cast() = new Enumerable::{ Enumerator enumerator() => self; };
 }

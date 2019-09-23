@@ -147,10 +147,10 @@ entry()
     {
        startUpEvents.stopping()
     }
-    catch(AbortException e)
+    catch:(AbortException e)
     {
     }   
-    catch(Exception e)
+    catch:(Exception e)
     {
         messageBox.open("ELENA", e.Message, MB_ICONEXCLAMATION);
         

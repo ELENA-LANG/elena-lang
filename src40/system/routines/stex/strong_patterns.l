@@ -60,7 +60,7 @@ public StrongFilter<T> : Enumerator<T>
     
     enumerable() => enumerator;
     
-    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
 }
 
 // --- StrongSelector ---
@@ -84,7 +84,7 @@ public StrongSelector<T1, T2> : Enumerator<T2>
     
     enumerable() => enumerator;
     
-    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
 }
 
 //// --- StrongJoinEnumerator ---

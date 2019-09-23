@@ -184,7 +184,7 @@ public sealed class TcpClient
     
     start()
     {
-        theThread := Thread.assign(()
+        theThread := Thread.assign(
         {
             while(self.proceed()){}
         });

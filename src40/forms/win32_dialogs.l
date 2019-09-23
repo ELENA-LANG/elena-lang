@@ -27,7 +27,7 @@ class FileDialog
             
     addFilter(string caption, string mask)
     {
-        wide[] subarr := new wide[]{ cast wide(caption), cast wide(mask) };
+        wide[] subarr := new wide[]::( cast wide(caption), cast wide(mask) );
         
         if (theFilters == nil)
         {

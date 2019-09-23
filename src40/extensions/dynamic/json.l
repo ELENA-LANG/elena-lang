@@ -13,7 +13,7 @@ class JsonException : Exception
         = JsonException.new().raise();
     
     constructor new()
-        <= new : "Json Deserializer error";
+        <= new("Json Deserializer error");
 }
 
 ////class jsonDispatcher =

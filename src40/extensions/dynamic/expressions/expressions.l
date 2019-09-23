@@ -61,7 +61,7 @@ public interface TapeExpression
         
         ClosureTape tape := ClosureTape.new(list);
         
-        ^ (){ ^ TapeAssembly.load(tape).eval() };
+        ^ { ^ TapeAssembly.load(tape).eval() };
     }
 }
 

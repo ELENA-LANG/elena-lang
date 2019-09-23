@@ -1,7 +1,7 @@
 import system'collections;
 import system'routines;
 
-preloaded used = new object[] {Expression,DynamicSingleton };
+preloaded used = new object[]::(Expression,DynamicSingleton);
 
 public class ScopeVariable
 {
@@ -385,7 +385,7 @@ public class CodeblockExpression : Expression
     {
         auto variables := new List<ScopeVariable>();
         
-        auto codeScope := new ExpressionScope:
+        auto codeScope := new ExpressionScope::
         {
             get int ScopeLevel = scope.ScopeLevel + variables.Length;
             
@@ -907,7 +907,7 @@ public class MethodExpression : Expression
     
     constructor(string name, Expression body)
     {
-        this parameters := new ScopeVariable[] { new ScopeVariable("self") };
+        this parameters := new ScopeVariable[]::( new ScopeVariable("self") );
         this message := new Message(name + "[0]");
         
         this body := body;
@@ -915,7 +915,7 @@ public class MethodExpression : Expression
     
     constructor(string name, ScopeVariable param1, Expression body)
     {
-        this parameters := new ScopeVariable[] { param1, new ScopeVariable("self") };
+        this parameters := new ScopeVariable[]::( param1, new ScopeVariable("self") );
         this message := new Message(name + "[1]");
         
         this body := body;
@@ -923,7 +923,7 @@ public class MethodExpression : Expression
     
     constructor(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
     {
-        this parameters := new ScopeVariable[] { param2, param1, new ScopeVariable("self") };
+        this parameters := new ScopeVariable[]::( param2, param1, new ScopeVariable("self") );
         this message := new Message(name + "[2]");
         
         this body := body;
@@ -931,7 +931,7 @@ public class MethodExpression : Expression
     
     constructor(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
     {
-        this parameters := new ScopeVariable[] { param3, param2, param1, new ScopeVariable("self") };
+        this parameters := new ScopeVariable[]::( param3, param2, param1, new ScopeVariable("self") );
         this message := new Message(name + "[3]");
         
         this body := body;
@@ -944,7 +944,7 @@ public class MethodExpression : Expression
            
     saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
-        auto methodScope := new ExpressionScope:
+        auto methodScope := new ExpressionScope::
         {
             get int ScopeLevel = parameters.Length;
             
@@ -987,28 +987,28 @@ public class ClosureExpression : Expression
     
     constructor(ScopeVariable param1, Expression body)
     {
-        this parameters := new ScopeVariable[] { param1 };
+        this parameters := new ScopeVariable[]::( param1 );
         
         this body := body;
     } 
     
     constructor(ScopeVariable param1, ScopeVariable param2, Expression body)
     {
-        this parameters := new ScopeVariable[] { param2, param1 }; // NOTE : it should be in reversed order
+        this parameters := new ScopeVariable[]::( param2, param1 ); // NOTE : it should be in reversed order
         
         this body := body;
     }
     
     constructor(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
     {
-        this parameters := new ScopeVariable[] { param3, param2, param1 }; // NOTE : it should be in reversed order
+        this parameters := new ScopeVariable[]::( param3, param2, param1 ); // NOTE : it should be in reversed order
         
         this body := body;
     }        
  
     saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
-        auto closureScope := new ExpressionScope:
+        auto closureScope := new ExpressionScope::
         {
             get int ScopeLevel = parameters.Length;
             
@@ -1042,17 +1042,17 @@ public class DynamicSingleton
     
     constructor(Expression method)
     {
-        this methods := new Expression[] {method};                
+        this methods := new Expression[]::(method);
     }
     
     constructor(Expression method1, Expression method2)
     {
-        this methods := new Expression[] {method1, method2};                
+        this methods := new Expression[]::(method1, method2);                
     }
     
     constructor(Expression method1, Expression method2, Expression method3)
     {
-        this methods := new Expression[] {method1, method2, method3};                
+        this methods := new Expression[]::(method1, method2, method3);                
     }
     
     constructor new(params Expression[] methods)

@@ -17,7 +17,7 @@ public sealed Array<T> : Indexable<T>
         }
     }
 
-    Enumerator<T> enumerator() = new BaseEnumerator<T>:
+    Enumerator<T> enumerator() = new BaseEnumerator<T>::
     {
         this theIndex := -1;
         
@@ -37,9 +37,9 @@ public sealed Array<T> : Indexable<T>
     
 //    cast Enumerable<T> = new Enumerable<T>:{ embeddable dispatch => self; };
 
-    Enumerable cast() = new Enumerable:{ Enumerator enumerator() => self; };
+    Enumerable cast() = new Enumerable::{ Enumerator enumerator() => self; };
 
-    Indexer<T> indexer() = new BaseIndexer<T>:
+    Indexer<T> indexer() = new BaseIndexer<T>::
     {
         this theIndex := 0;
         
@@ -177,7 +177,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
         ^ array
     }
     
-    Enumerator<T> enumerator() = new BaseEnumerator<T>:
+    Enumerator<T> enumerator() = new BaseEnumerator<T>::
     {
         this theIndex := -1;
         
@@ -193,7 +193,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
         }
     };
 
-    Indexer<T> indexer() = new BaseIndexer<T>:
+    Indexer<T> indexer() = new BaseIndexer<T>::
     {
         this theIndex := 0;
         
@@ -942,11 +942,11 @@ public sealed class IntMatrix
     }
 
     /// Returns a row
-    at(int i) = new Indexable<int>:
+    at(int i) = new Indexable<int>::
     {
         Length = theColumns;
         
-        Indexer<int> indexer() = new BaseIndexer<int>:
+        Indexer<int> indexer() = new BaseIndexer<int>::
         {
             this theIndex := 0;
             
@@ -1150,11 +1150,11 @@ public sealed class RealMatrix
     }
 
     /// Returns a row
-    at(int i) = new Indexable<real>:
+    at(int i) = new Indexable<real>::
     {
         Length = theColumns;
         
-        Indexer<real> indexer() = new BaseIndexer<real>:
+        Indexer<real> indexer() = new BaseIndexer<real>::
         {
             this theIndex := 0;
             
@@ -1305,7 +1305,7 @@ public sealed const struct String : BaseValue
     /// Converts to UTF-16 literal
     wide cast() = wideConvertor.convert(self);
 
-    Enumerable<char> cast() = new Enumerable<char>:{ Enumerator<char> enumerator() => self; };
+    Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
 
     string Printable = self;
 
@@ -1755,7 +1755,7 @@ public sealed class Variant
 //    ]    
 
     private castValueTo(target)
-        = new:{
+        = new::{
             eval(o)
                 = o.Printable;
             
@@ -2438,7 +2438,7 @@ class StringEnumerator : Enumerator<char>
         ^ false
     }
     
-    Enumerator cast() = new Enumerator:
+    Enumerator cast() = new Enumerator::
     {
         embeddable dispatch() => self;
     };
@@ -2525,7 +2525,7 @@ class StringIndexer : Indexer<char>
         }
     }
         
-    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
+    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
 }
 
 // --- WideLiteralEnumerator ---
@@ -2584,7 +2584,7 @@ class WideStringEnumerator : Enumerator<char>
         ^ false
     }
     
-    Enumerator cast() = new Enumerator:
+    Enumerator cast() = new Enumerator::
     {
         embeddable dispatch() => self;
     };
@@ -2665,7 +2665,7 @@ class WideStringIndexer : Indexer<char>
         }
     }
         
-    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };
+    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
 }
 
 // --- ArrayIndexer ---
@@ -2853,7 +2853,7 @@ class BitArrayIndexer : Indexer<bool>
         }
     }
         
-    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };        
+    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };        
 }
 
 // --- BitArrayEnumerator ---
@@ -2899,7 +2899,7 @@ class BitArrayEnumerator : Enumerator<bool>
         
     enumerable() = theArray;
     
-    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
 }
 
 // --- BitArray32Indexer ---
@@ -2970,7 +2970,7 @@ class BitArray32Indexer : Indexer<bool>
             => theArray;
     }
         
-    Indexer cast() = new Indexer:{ embeddable dispatch() => self; };        
+    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };        
 }
 
 // --- BitArray32Enumerator ---
@@ -3014,5 +3014,5 @@ class BitArray32Enumerator : Enumerator<bool>
         
     enumerable() = theArray;        
     
-    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
 }

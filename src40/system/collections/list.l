@@ -182,7 +182,7 @@ public sealed List<T> : Enumerable<T>
         theLength.Value := pos
     }
     
-    Enumerator<T> enumerator() = new BaseEnumerator<T>:
+    Enumerator<T> enumerator() = new BaseEnumerator<T>::
     {
         this theIndex := -1;
         
@@ -198,7 +198,7 @@ public sealed List<T> : Enumerable<T>
         }
     };
 
-    Indexer<T> indexer() = new BaseIndexer<T>:
+    Indexer<T> indexer() = new BaseIndexer<T>::
     {
         this theIndex := 0;
         

@@ -417,7 +417,7 @@ public extension convertorOp
 }
 
 public convertor 
-    = new : { generic(n) = mixin __received(mixin convertorOp(n)).eval(); };
+    = new::{ generic(n) = mixin __received(mixin convertorOp(n)).eval(); };
 
 public extension dateFormatterOp : Date
 {
@@ -433,7 +433,7 @@ singleton enumerableConvertor
         = o;
     
     Enumerable convert(o)
-        = new Enumerable:{ Enumerator enumerator() = o.enumerator(); };
+        = new Enumerable::{ Enumerator enumerator() = o.enumerator(); };
 }
 
 // --- enumerableExOp ---

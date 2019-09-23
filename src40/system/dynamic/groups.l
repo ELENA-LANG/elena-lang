@@ -39,7 +39,7 @@ public mixin Group
 public extension dynamicOp
 {
     mixInto(role)
-        = new Extension { self, role };
+        = new Extension::( self, role );
         
 //    groupWith:object
 //    [

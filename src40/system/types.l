@@ -9,91 +9,89 @@
 /// property:
 #define sealed      80004001h
 #define abstract    80004002h
-//#define closed     80004003h
+#define closed     80004003h
 #define predefined  80004005h
 
 /// scope_accessors:
 #define get         80003007h
-//#80003008 = set;
+#define set         80003008h
 
 /// scope_prefix:
 
 #define const       80002001h
-//#80002002 = embeddable;
 #define embeddable  80002002h
 #define ref         80002003h
 //#80002004 = __direct;
 #define __loop      80002005h
-//#80002006 = preloaded;
+#define preloaded   80002006h
 //#80002009 = lazy;
-//
-///// scope:
-//#80001001 = class;
-//#80001002 = struct;
-//#80001003 = symbol;
-//#80001004 = constructor;
-//#80001005 = extension;
-//#80001006 = singleton;
-//#80001007 = interface;
-//#80001008 = method;
-//#80001009 = field;
-//#8000100A = type;
-//#8000100B = generic;
-//#8000100C = closure;
-//#8000100D = var;
-//#8000100E = this;
-//#8000100F = static;
+
+/// scope:
+#define class       80001001h
+#define struct      80001002h
+#define symbol      80001003h
+#define constructor 80001004h
+#define extension   80001005h
+#define singleton   80001006h
+#define interface   80001007h
+#define method      80001008h
+#define field       80001009h
+#define type        8000100Ah
+#define generic     8000100Bh
+#define closure     8000100Ch
+#define var         8000100Dh
+#define this        8000100Eh
 #define static      8000100Fh
-//#80001011 = cast;
+#define cast        80001011h
 #define new         80001012h
-//#80001013 = dispatch;
+#define dispatch    80001013h
 #define params      80001014h
-//#80001015 = extern;
-//#80001016 = intern;
-//#80001017 = forward;
-//#80001018 = import;
-//#80001019 = mixin;
+#define extern      80001015h
+#define intern      80001016h
+#define forward     80001017h
+#define import      80001018h
+#define mixin       80001019h
 #define property    8000101Ah
 //#8000101B = nonstructural;
-//#8000101C = auto;
+#define auto        8000101Ch
 #define attribute   8000101Fh
 
 /// primitive types
 #define __string    80000801h
-//#80000802 = __float;
-//#80000803 = __int;
-//#80000804 = __raw;
-//#80000805 = __ptr;
-//#80000806 = __mssg;
-//#80000807 = __subj;
+#define __float     80000802h
+#define __int       80000803h
+#define __raw       80000804h
+#define __ptr       80000805h
+#define __mssg      80000806h
+#define __subj      80000807h
 //#80000806 = mssgconst;
-//#80000807 = subjconst;
-//#80000808 = __symbol;
-//
-////__extmssg       = #21.
-////__tape_mixin    = #8209.
-////dynamic         = #30.
-////stackunsafe     = #16403.
-//
-///// Provides classes that describe the basic functionality
-//
-//type object     = Object;
-//
-//// === basic logical types ===
-//type bool       = BoolValue;
-//
-//// === basic type aliases ===
-//type byte       = ByteNumber;
-//type short      = ShortNumber;
-//type int        = IntNumber;
-//type uint       = UIntNumber;
-//type long       = LongNumber;
-//type real       = RealNumber;
-//type char       = CharValue;
-//type mssg       = Message;
-//////type ext_mssg   = system'ExtensionMessage.
-//type string     = String;
-//type wide       = WideString;
-//type handle     = Handle;
-//type rt_ptr     = RTPointer;
-//type dirty_ptr  = UnsafePointer;
+#define subjconst   80000807h
+#define __symbol    80000808h
+
+//__extmssg       = #21.
+//__tape_mixin    = #8209.
+//dynamic         = #30.
+//stackunsafe     = #16403.
+
+/// Provides classes that describe the basic functionality
+
+type object     = Object;
+
+// === basic logical types ===
+type bool       = BoolValue;
+
+// === basic type aliases ===
+type byte       = ByteNumber;
+type short      = ShortNumber;
+type int        = IntNumber;
+type uint       = UIntNumber;
+type long       = LongNumber;
+type real       = RealNumber;
+type char       = CharValue;
+type mssg       = Message;
+//type ext_mssg   = system'ExtensionMessage.
+type string     = String;
+type wide       = WideString;
+type handle     = Handle;
+type rt_ptr     = RTPointer;
+type dirty_ptr  = UnsafePointer;

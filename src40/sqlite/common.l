@@ -17,7 +17,7 @@ public class DBException : Exception
 {
     /// Creates the exception
     constructor new()
-        <= new:"The process terminated";
+        <= new("The process terminated");
     
     /// Creates the exception
     constructor new(string message)

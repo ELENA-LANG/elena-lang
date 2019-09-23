@@ -17,7 +17,7 @@ public sealed class DBEnumerator : Enumerator<object[]>
     
     reset() { NotSupportedException.new().raise() }
     
-    Enumerator cast() = new Enumerator:{ embeddable dispatch() => self; };    
+    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };    
 }
 
 public sealed class DBReader : Enumerable<object[]>

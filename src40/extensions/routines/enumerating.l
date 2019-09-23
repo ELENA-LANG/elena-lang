@@ -93,5 +93,5 @@ public symbol printingLn = (aLine){ forward program'output.printLine:aLine };
 public extension func1Op : Func1
 {
     asComparator()
-        = { bool equal(o) = self(o); };
+        = new::{ bool equal(o) = self(o); };
 }

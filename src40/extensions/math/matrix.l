@@ -209,7 +209,7 @@ public extension matrixOp : RealMatrix
             };
         };
 
-        ^ a.mixInto(new : { Even = even; } );
+        ^ a.mixInto(new::{ Even = even; } );
     }
 
     get real Determinant()

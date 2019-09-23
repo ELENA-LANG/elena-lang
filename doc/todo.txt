@@ -3,41 +3,14 @@ In development:
 ------         
 
               xdev syntax
-                * code templates:
-
-
-if (a)
-{
-    console.printLine("Hurra")
-}
-else
-{
-}
-
-
-if (a)
-  : console.printLine("Hurr")
-else
-  : console.printLine("Hurr")
-
-
-try
-{
-   x()
-}
-catch:catcher 
-
-
-
                 * syntax simplification
                 * test if(a) b else: c 
                 * test ??
                 * simplified syntax to create a weak typed array
-
-
-              xdev
-                * duck typing tutorial
                 * implicit constructor with variadic argument list
+
+              zdev
+                * write - Programming in ELENA : cookbook
 
               ydev
                 * interpreter example
@@ -73,6 +46,9 @@ catch:catcher
 ------                                                           
 Pipeline:
 ------   
+              xdev - tutorials
+                * duck typing tutorial
+
               xdev - bytecode optimization
                 * operations with stack-allocated array : dump[0] := 1;
                 * operation with dynamic array should be direct???
