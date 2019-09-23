@@ -3,10 +3,7 @@ In development:
 ------         
 
               xdev syntax
-                * syntax simplification
-                * test if(a) b else: c 
-                * test ??
-                * simplified syntax to create a weak typed array
+                * test dtcalculator
                 * implicit constructor with variadic argument list
 
               zdev
