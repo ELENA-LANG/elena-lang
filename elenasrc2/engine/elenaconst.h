@@ -26,8 +26,8 @@ namespace _ELENA_
    // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto SPECIAL_MESSAGE         = 0x020u;
    constexpr auto PROPERTY_MESSAGE        = 0x040u;
-   constexpr auto STATIC_MESSAGE          = 0x080u;
-   constexpr auto VARIADIC_MESSAGE        = 0x100u;
+   constexpr auto VARIADIC_MESSAGE        = 0x080u;
+   constexpr auto STATIC_MESSAGE          = 0x100u;
    constexpr auto PARAM_MASK              = 0x01Fu;
    constexpr auto ARG_COUNT               = 0x01Fu;
 

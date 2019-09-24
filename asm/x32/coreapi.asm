@@ -13,10 +13,6 @@ define CORE_ET_TABLE     2000Bh
 define elSizeOffset      0008h
 define elVMTSizeOffset   000Ch
 
-// verbs
-define EVAL_MESSAGE_ID   0050h
-define INVOKE_MESSAGE_ID 01E0h
-
 define SUBJECT_MASK     000FFFFF0h
 
 // ; --- API ---

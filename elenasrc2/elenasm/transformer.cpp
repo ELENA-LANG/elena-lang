@@ -201,6 +201,11 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
          saveClass(writer, reader, stack);
       }
       else if (bm.state == -1) {
+         if (counter > ARG_COUNT) {
+            // variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
+            counter = VARIADIC_MESSAGE | 1;
+         }
+
          writer.writeByte(counter);
          saveToken(writer, reader, bm);
 
@@ -216,10 +221,9 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
       bm = stack.pop();
    }
 
-   // TODO : support variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
    if (counter > ARG_COUNT) {
-      // !! temporal
-      throw EInvalidOperation("The number of constructor arguments is too big!");
+      // variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
+      counter = VARIADIC_MESSAGE | 1;
    }
 
    writer.writeByte(counter);
