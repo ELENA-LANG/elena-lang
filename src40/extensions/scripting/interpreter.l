@@ -175,6 +175,13 @@ public class ScriptEngine
         ^ result.Value
     }
 
+    buildScriptFirst(string script)
+    {
+        var a := self.buildScript(script);
+        
+        ^ a[0]
+    }
+
     string loadScriptFileAsText(string path, int encoding, int autoDetect)
     {
         dirty_ptr tape := extern elenasm.InterpretScopeFile

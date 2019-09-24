@@ -55,6 +55,7 @@
 //#8000101B = nonstructural;
 #define auto        8000101Ch
 #define attribute   8000101Fh
+#define inline      80001021h
 
 /// primitive types
 #define __string    80000801h

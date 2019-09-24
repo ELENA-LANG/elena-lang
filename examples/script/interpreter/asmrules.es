@@ -2,7 +2,7 @@
    #grammar build
    #grammar cf
 
-   #define start      ::= <= system'dynamic'ClosureTape ( > => commands <= ) =>;
+   #define start      ::= <= system'dynamic'ClosureTape ( => commands <= ) =>;
 
    #define commands   ::= command commands;
    #define commands   ::= comment commands;

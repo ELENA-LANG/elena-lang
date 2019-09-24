@@ -5,9 +5,6 @@ In development:
               zdev
                 * write - Programming in ELENA : cookbook
 
-              xdev syntax
-                * implicit constructor with variadic argument list
-
               ydev
                 * interpreter example
 
@@ -19,6 +16,7 @@ In development:
                 * script : support several operation in a row
                 * calc example
                 * js example
+                * remove obsolete code
 
               xdev
                 * i += i + 1; Tester.test(i*2+1)

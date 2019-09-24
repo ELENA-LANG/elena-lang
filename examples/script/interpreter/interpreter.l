@@ -316,7 +316,7 @@ public solution3()
 {
     var bfAssemblyProgram := new ScriptEngine() 
         .loadPath("asmrules.es")
-        .eval(">,[.,]");
+        .buildScriptFirst(">,[.,]");
 
     var bfProgram := TapeAssembler.load(bfAssemblyProgram).compiled();
 

@@ -1151,7 +1151,8 @@ ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
 ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod)
 {
    ref_t classClassRef = getClassClassRef(scope, targetRef);
-   ref_t messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), paramCount, 0);
+   ref_t actionRef = scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false);
+   ref_t messageRef = encodeMessage(actionRef, paramCount, 0);
    if (signRef != 0) {
       // try to resolve implicit multi-method
       ref_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef, stackSafeAttr);
@@ -1171,6 +1172,10 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
       }
 
       return messageRef;
+   }
+   else if (classClassinfo.methods.exist(encodeMessage(actionRef, 1, VARIADIC_MESSAGE))) {
+      // if exists an inplicit message with variadic argument list
+      return encodeMessage(actionRef, 1, VARIADIC_MESSAGE);
    }
 
    return 0;

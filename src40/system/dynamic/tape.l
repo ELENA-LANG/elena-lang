@@ -9,16 +9,16 @@ public mixin ClosureTape
     
     internal constructor allocate(int len)
         = new DynamicClosure[](len);
-    
+
+    constructor(params DynamicClosure[] args)
+        <= new(params args);
+            
     constructor new(params DynamicClosure[] args)
         <= allocate(args.Length)
     {
         self.setFields(params args)
     }
 
-    /*internal */constructor allocate(int length)
-        = new DynamicClosure[](length);
-        
     constructor new (List<DynamicClosure> list)        
         <= allocate(list.Length)
     {
