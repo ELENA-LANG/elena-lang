@@ -6,15 +6,14 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev syntax
-                * test dtcalculator
-
-              xdev syntax
+                * New expression attribute : __inline #481
                 * implicit constructor with variadic argument list
 
               ydev
                 * interpreter example
 
               xdev syntax
+                * test pi2
                 * test all samples
 
               ydev
@@ -58,8 +57,6 @@ Pipeline:
                 * operation with dynamic array should be direct???
                                                                                       
               xdev - usability
-                * warn if the project does not exists or have invalid structure
-                * warn if the source file does not exists
                 * warn if the project is not configurated
                 * uncomment IDEController :: isOutaged
 
@@ -70,7 +67,6 @@ Pipeline:
                 * ?fields
 
               xdev
-                * analizeSymbol
                 * analizeSubExpression
                 * analizeAltExpression
 
