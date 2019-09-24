@@ -53,7 +53,7 @@ constexpr auto HINT_MEMBER          = 0x00000800;
 constexpr auto HINT_CALL_MODE       = 0x00000400;
 constexpr auto HINT_LAZY_EXPR       = 0x00000200;
 constexpr auto HINT_DYNAMIC_OBJECT  = 0x00000100;  // indicates that the structure MUST be boxed
-//constexpr auto HINT_UNBOXINGEXPECTED= 0x00000080;
+constexpr auto HINT_INLINEARGMODE   = 0x00000080;  // indicates that the argument list should be unboxed
 constexpr auto HINT_PROP_MODE       = 0x00000040;
 constexpr auto HINT_SILENT          = 0x00000020;
 constexpr auto HINT_FORWARD         = 0x00000010;
@@ -3168,9 +3168,14 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    // try to recognize the operation
    ref_t classReference = resolveObjectReference(scope, target, true);
 
+   bool inlineArgCall = test(mode, HINT_INLINEARGMODE);
    bool dispatchCall = false;
    _CompilerLogic::ChechMethodInfo result;
-   int callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
+   int callType = 0;
+   if (!inlineArgCall) {
+      callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
+   }
+      
    if (result.found) {
       retVal.reference = result.outputReference;
    }
@@ -3191,7 +3196,11 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       callType = tpSealed;
    }
 
-   if (dispatchCall) {
+   if (inlineArgCall) {
+      operation = lxInlineArgCall;
+      argument = messageRef;
+   }
+   else if (dispatchCall) {
       operation = lxDirectCalling;
       argument = scope.moduleScope->dispatch_message;
 
@@ -3382,7 +3391,8 @@ ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, r
    }
 }
 
-ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, bool& variadicOne)
+ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, 
+   bool& variadicOne, bool& inlineArg)
 {
    int paramMode = HINT_PARAMETER;
    bool externalMode = false;
@@ -3404,12 +3414,21 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
          // try to recognize the message signature
 		   ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode);
          ref_t argRef = resolveObjectReference(scope, paramInfo, false);
-         if (argRef == V_UNBOXEDARGS) {
+         if (inlineArg) {
+            scope.raiseError(errNotApplicable, current);
+         }
+         else if (argRef == V_UNBOXEDARGS) {
 			   signatures[signatureLen++] = paramInfo.element;
 			   if (!variadicOne) {
 				   variadicOne = true;
 			   }
 			   else scope.raiseError(errNotApplicable, current);
+         }
+         else if (argRef == V_INLINEARG) {
+            if (signatureLen == 0) {
+               inlineArg = true;
+            }
+            else scope.raiseError(errNotApplicable, current);
          }
          else if (argRef) {
             signatures[signatureLen++] = argRef;
@@ -3518,7 +3537,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
    ObjectInfo retVal;
    bool variadicOne = false;
-   ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne);
+   bool inlineArg = false;
+   ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne, inlineArg);
 
    //   bool externalMode = false;
    if (target.kind == okExternal) {
@@ -3531,6 +3551,9 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
 
       if (target.kind == okInternal) {
          retVal = compileInternalCall(writer, node, scope, messageRef, implicitSignatureRef, target);
+      }
+      else if (inlineArg) {
+         retVal = compileMessage(writer, node, scope, target, messageRef, mode | HINT_INLINEARGMODE, 0);
       }
       else {
          int stackSafeAttr = 0;
@@ -4499,7 +4522,8 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
          int paramsMode = 0;
          int stackSafeAttr = 0;
 		   bool variadicOne = false;
-         ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne);
+         bool inlineArg = false;
+         ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne, inlineArg);
 
          ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, targetRef, implicitSignatureRef, paramCount, stackSafeAttr, false);
          if (messageRef) {
@@ -4689,7 +4713,7 @@ ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope, bool decl
    else return resolveTemplateDeclarationUnsafe(node, scope, declarationMode);
 }
 
-ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int)
+ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, int mode)
 {
    ref_t exprAttr = 0;
 
@@ -4744,6 +4768,12 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          }
          if (attributes.paramsAttr) {
 	         exprAttr |= HINT_PARAMSOP;
+         }
+         if (attributes.inlineAttr) {
+            if (test(mode, HINT_PARAMETER)) {
+               exprAttr |= HINT_INLINEARGMODE;
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
 	   }
 
@@ -4853,6 +4883,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    writer.newBookmark();
 
    bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
+   bool inlineArgMode = false;
 //   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
 
    mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
@@ -4867,6 +4898,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          // HOTFIX : direct call attribute should be applied to the operation
          mode |= HINT_DIRECTCALL;
          targetMode &= ~HINT_DIRECTCALL;
+      }
+      if (test(targetMode, HINT_INLINEARGMODE)) {
+         noPrimMode = true;
+         inlineArgMode = true;
+         targetMode &= ~HINT_INLINEARGMODE;
       }
    }
 
@@ -4910,6 +4946,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          objectInfo = ObjectInfo(okObject, 0, exptectedRef);
       }
       else scope.raiseError(errInvalidOperation, node);
+   }
+
+   if (inlineArgMode) {
+      objectInfo.element = objectInfo.reference;
+      objectInfo.reference = V_INLINEARG;
    }
 
    writer.removeBookmark();
@@ -5791,7 +5832,9 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    resendScope.withFrame = withFrame;
 
    bool variadicOne = false;
-   ref_t implicitSignatureRef = compileMessageParameters(writer, expr.findChild(lxMessage).nextNode(), resendScope, 0, variadicOne);
+   bool inlineArg = false;
+   ref_t implicitSignatureRef = compileMessageParameters(writer, expr.findChild(lxMessage).nextNode(), resendScope, 0, 
+      variadicOne, inlineArg);
 
    ObjectInfo target(okClassSelf, scope.getClassRefId(), classRef);
    int stackSafeAttr = 0;

@@ -73,7 +73,8 @@ constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
 constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
-constexpr auto V_TEMPLATTRIBUTE = 0x80001020u;
+constexpr auto V_TEMPLATTRIBUTE  = 0x80001020u;
+constexpr auto V_INLINE          = 0x80001021u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -101,6 +102,7 @@ constexpr auto V_INT16ARRAY      = 0x8000000Cu;
 constexpr auto V_INT8ARRAY       = 0x8000000Du;
 constexpr auto V_OBJECT          = 0x8000000Eu;
 constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
+constexpr auto V_INLINEARG       = 0x80000010u;
 
 //#define V_PARAMETER      (ref_t)-02
 constexpr auto V_STRCONSTANT     = 0x80000010u; // used for explicit constant operations
@@ -439,10 +441,12 @@ public:
       bool  classAttr;
       bool  directAttr;
       bool  lazyAttr;
+      bool  inlineAttr;
 
       bool isExprAttr()
       {
-         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | classAttr | directAttr | lazyAttr;
+         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | 
+            classAttr | directAttr | lazyAttr | inlineAttr;
       } 
 
       ExpressionAttributes()
@@ -450,7 +454,7 @@ public:
          refAttr = externAttr = typeAttr = castAttr = forwardAttr = false;
          paramsAttr = newOpAttr = loopAttr = internAttr = false;
          classAttr = mssgAttr = wrapAttr = subjAttr = memberAttr = false;
-         lazyAttr = directAttr = false;
+         lazyAttr = inlineAttr = directAttr = false;
       }
    };
 
@@ -461,9 +465,6 @@ public:
       bool  withCustomDispatcher;
       bool  stackSafe;
       bool  embeddable;
-//      bool  withOpenArgDispatcher;
-//      bool  withOpenArg1Dispatcher;
-//      bool  withOpenArg2Dispatcher;
       bool  closure;
       bool  dynamicRequired;
       ref_t outputReference;
@@ -475,9 +476,6 @@ public:
          outputReference = 0;
          withCustomDispatcher = false;
          stackSafe = false;
-//         withOpenArgDispatcher = false;
-//         withOpenArg1Dispatcher = false;
-//         withOpenArg2Dispatcher = false;
          closure = false;
          dynamicRequired = false;
       }

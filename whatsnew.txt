@@ -1,13 +1,14 @@
 ﻿
                                 ELENA Language 
 
-                                Version 4.1.0
+                                Version 4.1.1
  
 ***************************************************************
-                             What's New in 4.1.0 
+                             What's New in 4.1.1
 ***************************************************************
 
 [ELENA]
+[+] #481 : New expression attribute - inline 
 [*] the operations with reference arguments are improved
 
 ***************************************************************

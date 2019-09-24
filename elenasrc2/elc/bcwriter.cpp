@@ -3806,6 +3806,7 @@ bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, bool i
             case lxDirectCalling:
             case lxSDirectCalling:
             case lxCalling:
+            case lxInlineArgCall:
             case lxNone:
                return true;
             default:
@@ -4999,6 +5000,77 @@ void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
    freeVirtualStack(tape, paramCount);
 }
 
+void ByteCodeWriter :: generateInlineArgCallExpression(CommandTape& tape, SNode node)
+{
+   SNode larg;
+   SNode rarg;
+   assignOpArguments(node, larg, rarg);
+   if (rarg == lxExpression)
+      rarg = rarg.findSubNodeMask(lxObjectMask);
+
+   generateInlineArgCall(tape, larg, rarg, node.argument);
+}
+
+void ByteCodeWriter :: generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message)
+{
+   tape.newLabel(); // declare end label
+
+   
+   if (isSimpleObject(rarg)) {
+      loadBase(tape, rarg.type, rarg.argument, 0);
+   }
+   else {
+      generateObject(tape, rarg, ACC_REQUIRED);
+      loadBase(tape, lxResult, 0, 0);
+   }
+
+   // count
+   tape.write(bcCount);
+   // dcopye
+   tape.write(bcDCopyE);
+   // greatern labVariadic ARG_COUNT
+
+   // labNext:
+   tape.newLabel();
+   tape.setLabel(true);
+   // dec
+   tape.write(bcDec);
+   // get
+   tape.write(bcGet);
+   // pusha
+   tape.write(bcPushA);
+   // elsen labNext 0
+   tape.write(bcElseN, baCurrentLabel, 0);
+   tape.releaseLabel();
+
+   // ; push target
+   generateObject(tape, larg, ACC_REQUIRED);
+   pushObject(tape, lxResult);
+
+   // setverb m
+   tape.write(bcSetVerb, getAction(message));
+
+   // acallvi 0
+   tape.write(bcACallVI, 0);
+   // jmp labEnd
+   tape.write(bcJump, baCurrentLabel);
+
+   // labVariadic:
+   // pushn 0
+   // labNext2:
+   // dec
+   // get
+   // pusha
+   // ifn labNext2 0
+
+   // labEnd
+   tape.setLabel();
+}
+
+void ByteCodeWriter :: generateVariadicInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message)
+{
+}
+
 void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 {
    bool directMode = true;
@@ -5949,6 +6021,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxDirectCalling:
       case lxSDirectCalling:
          generateCallExpression(tape, node);
+         break;
+      case lxInlineArgCall:
+         generateInlineArgCallExpression(tape, node);
          break;
       //case lxImplicitCall:
       //   callInitMethod(tape, node.findChild(lxTarget).argument, node.argument, false);

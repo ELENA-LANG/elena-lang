@@ -1827,6 +1827,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_LAZY:
          attributes.lazyAttr = true;
          return true;
+      case V_INLINE:
+         attributes.inlineAttr = true;
+         return true;
       default:
          return false;
    }

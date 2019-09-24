@@ -6,6 +6,13 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev syntax
+                * inline arg : normal arg list
+                * inline arg : long arg list
+                * simple call with long arg list
+
+                * inline arg : variadic normal arg list
+                * inline arg : variadic long arg list
+
                 * New expression attribute : __inline #481
                 * implicit constructor with variadic argument list
 

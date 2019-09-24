@@ -132,6 +132,7 @@ enum LexicalType
    lxBranching                = 0x00C00F,   // branch expression      
    lxSwitching                = 0x00C010,
    lxLooping                  = 0x00C011,
+   lxInlineArgCall            = 0x10C012,   // calling a message with the unpacked parameter list
    lxStdExternalCall          = 0x00C014,   // calling an external function, arg - reference
    lxExternalCall             = 0x00C015,   // calling an external function, arg - reference
    lxCoreAPICall              = 0x00C016,   // calling an external function, arg - reference

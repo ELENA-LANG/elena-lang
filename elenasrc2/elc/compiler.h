@@ -903,7 +903,8 @@ private:
    ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
    ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
 
-   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, bool& variadicOne);
+   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, 
+      bool& variadicOne, bool& inlineArg);
 
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, ObjectInfo target, int mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
