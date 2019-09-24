@@ -2701,7 +2701,6 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, bool variadicOne)
          actionFlags = PROPERTY_MESSAGE;
       }
       else if (test(current.type, lxObjectMask)) {
-         //if (paramCount < OPEN_ARG_COUNT)
          paramCount++;
       }
       else if (current == lxMessage) {
@@ -2713,7 +2712,7 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, bool variadicOne)
       current = current.nextNode();
    }
 
-   if (paramCount >= ARG_COUNT) {
+   if (paramCount > ARG_COUNT) {
       actionFlags |= VARIADIC_MESSAGE;
       paramCount = 1;
    }
@@ -4936,7 +4935,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
    ref_t sourceRef = resolveObjectReference(scope, objectInfo, false/*, exptectedRef*/);
    if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
-      if (sourceRef != V_UNBOXEDARGS) {
+      if (sourceRef != V_UNBOXEDARGS || inlineArgMode) { // !! temporal box the argument list
          // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
          // NOTE : the primitive wrapper is set as an expected type, so later the primitive will be boxed
          exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element, false);

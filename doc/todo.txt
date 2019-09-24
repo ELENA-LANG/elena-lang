@@ -6,10 +6,6 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev syntax
-                * inline arg : variadic normal arg list
-                * inline arg : variadic long arg list
-
-                * New expression attribute : __inline #481
                 * implicit constructor with variadic argument list
 
               ydev
@@ -58,6 +54,8 @@ Pipeline:
               xdev - bytecode optimization
                 * operations with stack-allocated array : dump[0] := 1;
                 * operation with dynamic array should be direct???
+                * inline arg : variadic normal arg list
+                * inline arg : variadic long arg list
                                                                                       
               xdev - usability
                 * warn if the project is not configurated
