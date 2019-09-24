@@ -6,7 +6,6 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev syntax
-                * inline arg : normal arg list
                 * inline arg : long arg list
                 * simple call with long arg list
 

@@ -5014,7 +5014,7 @@ void ByteCodeWriter :: generateInlineArgCallExpression(CommandTape& tape, SNode 
 void ByteCodeWriter :: generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message)
 {
    tape.newLabel(); // declare end label
-
+   tape.newLabel(); // declare long label
    
    if (isSimpleObject(rarg)) {
       loadBase(tape, rarg.type, rarg.argument, 0);
@@ -5028,7 +5028,9 @@ void ByteCodeWriter :: generateInlineArgCall(CommandTape& tape, SNode larg, SNod
    tape.write(bcCount);
    // dcopye
    tape.write(bcDCopyE);
+
    // greatern labVariadic ARG_COUNT
+   tape.write(bcGreaterN, baCurrentLabel, ARG_COUNT);
 
    // labNext:
    tape.newLabel();
@@ -5053,15 +5055,39 @@ void ByteCodeWriter :: generateInlineArgCall(CommandTape& tape, SNode larg, SNod
    // acallvi 0
    tape.write(bcACallVI, 0);
    // jmp labEnd
-   tape.write(bcJump, baCurrentLabel);
+   tape.write(bcJump, baPreviousLabel);
 
    // labVariadic:
+   tape.setLabel();
+
    // pushn 0
+   tape.write(bcPushR, 0);
+
    // labNext2:
+   tape.newLabel();
+   tape.setLabel(true);
+
    // dec
+   tape.write(bcDec);
    // get
+   tape.write(bcGet);
    // pusha
-   // ifn labNext2 0
+   tape.write(bcPushA);
+   // elsen labNext2 0
+   tape.write(bcElseN, baCurrentLabel, 0);
+   tape.releaseLabel();
+
+   // ; push target
+   generateObject(tape, larg, ACC_REQUIRED);
+   pushObject(tape, lxResult);
+
+   // copym
+   tape.write(bcCopyM, encodeMessage(getAction(message), 1, VARIADIC_MESSAGE));
+
+   // acallvi 0
+   tape.write(bcACallVI, 0);
+
+   releaseArgList(tape);
 
    // labEnd
    tape.setLabel();
