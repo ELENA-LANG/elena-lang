@@ -2713,8 +2713,10 @@ ref_t Compiler :: mapMessage(SNode node, CodeScope& scope, bool variadicOne)
       current = current.nextNode();
    }
 
-//   if (paramCount >= OPEN_ARG_COUNT)
-//      paramCount = OPEN_ARG_COUNT;
+   if (paramCount >= ARG_COUNT) {
+      actionFlags |= VARIADIC_MESSAGE;
+      paramCount = 1;
+   }
 
    if (messageStr.Length() == 0) {
       actionFlags |= SPECIAL_MESSAGE;
@@ -3414,7 +3416,10 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
          // try to recognize the message signature
 		   ObjectInfo paramInfo = compileExpression(writer, current, scope, 0, paramMode);
          ref_t argRef = resolveObjectReference(scope, paramInfo, false);
-         if (inlineArg) {
+         if (signatureLen >= ARG_COUNT) {
+            signatureLen++;
+         }
+         else if (inlineArg) {
             scope.raiseError(errNotApplicable, current);
          }
          else if (argRef == V_UNBOXEDARGS) {
@@ -3444,7 +3449,7 @@ ref_t Compiler :: compileMessageParameters(SyntaxWriter& writer, SNode node, Cod
       current = current.nextNode();
    }
 
-   if (signatureLen > 0) {
+   if (signatureLen > 0 && signatureLen <= ARG_COUNT) {
       bool anonymous = true;
       for (ref_t i = 0; i < signatureLen; i++) {
          if (signatures[i] != scope.moduleScope->superReference) {
