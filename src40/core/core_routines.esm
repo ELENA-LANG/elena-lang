@@ -4717,120 +4717,913 @@ procedure __long."readInvertedTo$system@LongNumber$@system@ref#1&system@LongNumb
 
 end
 
-procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber$system@IntNumber[4]"
+procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
 
-    open     8h
-    reserve  5h
+    open     0Ah
+    reserve  7h
     pusha    
-    // int size := 0; 
+    // int i := 0;
     savefi   -2 0
-    // int i := start;
-    aloadfi  -11
-    bcopyf   -3
-    ncopy    
-    acopyb   
-    // while(i < end) {
+    // byte command := 0;
+    savefi   -3 0
+    // int size := 0;
+    savefi   -4 0
+    // while (i < len) {
     Lab00:   nop
     snop     
-    aloadfi  -12
-    bcopya   
-    acopyf   -3
+    acopyf   -2
+    bloadfi  -13
     nless    
     ifn      Lab01 0h
-
-    // byte command := buffer[i];
-    acopyf   -3
-    nload
-    aloadfi  -10
+    //command := buffer[i];
+    aloadfi  -12
+    dloadfi -2
     breadb
-    bcopyf   -4
-    nwritei  0
-
+    dcopye
+    dsavefi -3
     // i += 1;
-    addfi   -3 1
-
-    // buffer.read(i, ref size);
-    pushn    0h
-    pushn    0h
-    aloadfi  -10
-    pusha    
-    acopyf   -3
-    asavesi  1
-    acopyf   -2
-    asavesi  2
-    acopyr   const : system'byteArrayHelper
-    copym    message : "read<system'IntNumber,'$auto'system@ref#1&system@IntNumber>[2]"
-    validate 
-    xcallrm  system'byteArrayHelper message : "read<system'IntNumber,'$auto'system@ref#1&system@IntNumber>[2]"
-
+    addfi    -2 1
+    // size := buffer[i];
+    aloadfi  -12
+    dloadfi -2
+    bread
+    dcopye
+    dsavefi -4
     // i += 4;
-    addfi   -3 4
+    addfi    -2 4
+    // commands[command](size,buffer,i);
+    bcopyr   constarray : "system'dynamic'$inline27"
+    dloadfi -3
+    get
+    bloadfi -12
+    dloadfi -2
+    eloadfi -4
+    acallvi  0
+    pusha
+    // i += size
+    acopyf   -4
+    bcopyf   -2
+    nadd     
+    jump     Lab00
+    Lab01:   nop
+    popa
+    restore  9h
+    close    
+    quitn    3h
 
-    // if (command == 0FFh) {
-    bcopyf   -4
-    acopyr   const : 255
-    nequal   
-    ifn      Lab03 0h
+end
+
+procedure __loadString."#dispatch[1]"
 
     // UTF8Encoding.toString(i,size,buffer)
-    aloadfi  -10
-    pusha    
-    acopyf   -2
-    pusha    
-    acopyf   -3
-    pusha    
+    pushe
+    pushd
+
+    pushb
+    acopys 2
+    pusha
+    acopys 2
+    pusha
     acopyr   const : system'text'UTF8Encoding
     pusha    
     copym    message : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[3]"
     validate 
     xcallrm  system'text'UTF8Encoding message : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[3]"
-    pusha
-    jump     Lab04
+    popi 2
 
-    // else {
-    Lab03:   nop
+    quit
 
-    // extern elenart.LoadSymbolByBuffer(buffer, i, size)
-    acopyf   -2
-    pushai   0
-    acopyf   -3
-    pushai   0
-    aloadfi  -10
-    pusha    
+end
+
+procedure __invoke0."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
     system
     pushe
     callextr extern : LoadClassByBuffer
     popi 4
-    pushd
     ifn labNotFound 0
+    dswapsi 0
+    pushd
+
     copym message : "#constructor[0]"
-    dloadfi -4
-    add
-    ecopyd
-    acallvi 0
-    pusha
-
-    Lab04:   nop
-
-    // i += size 
-    acopyf   -2
-    bcopyf   -3
-    nadd
-
-    jump     Lab00
-
-    Lab01:   nop
-    popa
-    restore  7h
-    close    
-    quitn    4h
+    ajumpvi 0
 
 labNotFound:
 
-  open 1
-  pushr class : system'InvalidOperationException
-  pushr const : %new[0]
-  throw
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke1."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[1]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke2."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[2]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke3."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[3]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke4."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[4]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke5."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[5]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke6."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[6]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke7."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[7]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke8."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[8]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke9."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[9]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke10."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[10]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke11."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[11]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke12."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[12]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke13."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[13]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke14."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[14]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke15."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[15]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke16."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[16]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke17."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[17]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke18."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[18]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke19."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[19]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke20."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[20]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke21."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[21]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke22."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[22]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke23."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[23]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke24."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[24]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke25."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[25]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke26."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[26]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke27."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[27]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke28."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[28]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke29."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[29]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke30."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[30]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
+
+end
+
+procedure __invoke31."#dispatch[1]"   // ext - size, index - index, ebx - buffer
+
+    // extern elenart.LoadClassByBuffer(buffer, i, size)
+    pushe
+    pushd
+    pushb
+    system
+    pushe
+    callextr extern : LoadClassByBuffer
+    popi 4
+    ifn labNotFound 0
+    dswapsi 0
+    pushd
+
+    copym message : "#constructor[31]"
+    ajumpvi 0
+
+labNotFound:
+
+    open 1
+    pushr class : system'InvalidOperationException
+    pushr const : %new[0]
+    throw
 
 end
 

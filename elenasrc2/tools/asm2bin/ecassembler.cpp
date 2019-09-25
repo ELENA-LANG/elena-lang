@@ -242,6 +242,17 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       }
       else return binary->mapReference(token.value) | mskConstantRef;
    }
+   else if (word.compare("constarray")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
+
+      if (token.terminal.state == dfaQuote) {
+         QuoteTemplate<IdentifierString> quote(token.terminal.line);
+
+         return binary->mapReference(quote.ident()) | mskConstArray;
+      }
+      else return binary->mapReference(token.value) | mskConstArray;
+   }
    else if (word.compare("rdata")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
@@ -477,6 +488,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       {
          case bcCallR:
          case bcACopyR:
+         case bcBCopyR:
          case bcPushR:
             compileRCommand(opcode, token, writer, binary);
             break;
@@ -525,6 +537,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcACallI:
          case bcNReadI:
          case bcNWriteI:
+         case bcPushF:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:

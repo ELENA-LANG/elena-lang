@@ -2,6 +2,23 @@
 In development:
 ------         
 
+              xdev - build routine:
+                  three commands : invoke0,invoke1,...invoke1F, invokeV1,loadString,freeArgList
+
+[command]
+[size]
+[body]
+
+
+A
+(
+   "2"
+)
+
+
+
+ 
+
               zdev
                 * write - Programming in ELENA : cookbook
 
@@ -66,6 +83,7 @@ Pipeline:
                 * ?fields
 
               xdev
+                * public const commands := new::(1,2); - compiled incorrectly, should be not possible?
                 * analizeSubExpression
                 * analizeAltExpression
 

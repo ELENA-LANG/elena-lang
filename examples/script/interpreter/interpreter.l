@@ -325,23 +325,23 @@ public solution3()
     bfProgram(bfTape)
 }
 
-//public program3()
-//{
-//    if (program_arguments.Length == 1)
-//        { console.write:"Please provide the path to the file to interpret"; AbortException.raise() };
-//
-//    var bfAssemblyProgram := new ScriptEngine() 
-//        .loadPath("asmrules.es")
-//        .evalPath(program_arguments[1]);
-//
-//    var bfProgram := TapeAssembler.load(bfAssemblyProgram).get();
-//
-//    var bfTape := Array.allocate(1024).populate:(n => $0);
-//
-//    bfProgram(bfTape)
-//}
-//
-////public symbol program4 =
+public solution4()
+{
+    if (program_arguments.Length == 1)
+        { console.write:"Please provide the path to the file to interpret"; AbortException.raise() };
+
+    var bfAssemblyProgram := new ScriptEngine() 
+        .loadPath("asmrules.es")
+        .buildScriptFileFirst(program_arguments[1]);
+
+    var bfProgram := TapeAssembler.load(bfAssemblyProgram).compiled();
+
+    var bfTape := Array.allocate(1024).populate:(n => $0);
+
+    bfProgram(bfTape)
+}
+
+////public symbol program5 =
 ////[
 ////    if (forwards'program'arguments length == 1)
 ////        [ console write:"Please provide the path to the file to interpret". AbortException new; raise ].
@@ -356,7 +356,7 @@ public solution3()
 ////    console writeLine:bfProgram.
 ////].
 
-const int Solution = 3;
+const int Solution = 4;
 
 public program()
 {
@@ -369,5 +369,8 @@ public program()
         }
         3 {
             solution3()
+        }
+        4 {
+            solution4()
         };
 }

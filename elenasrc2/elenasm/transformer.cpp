@@ -179,6 +179,8 @@ void Transformer :: parse(_ScriptReader& reader, MemoryDump* output)
 
 // --- Builder ---
 
+constexpr auto loadStringCommand = 33;
+
 Builder :: Builder()
 {
 }
@@ -202,8 +204,9 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
       }
       else if (bm.state == -1) {
          if (counter > ARG_COUNT) {
-            // variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
-            counter = VARIADIC_MESSAGE | 1;
+            //// variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
+            //counter = VARIADIC_MESSAGE | 1;
+            throw EInvalidOperation("Invlaid operation : too many arguments"); // !! temporal
          }
 
          writer.writeByte(counter);
@@ -212,7 +215,7 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
          counter = 1;
       }
       else if (bm.state == _ELENA_TOOL_::dfaQuote) {
-         writer.writeByte(0xFF);
+         writer.writeByte(loadStringCommand);
          saveToken(writer, reader, bm);
       }
       else break;
@@ -222,8 +225,9 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
    }
 
    if (counter > ARG_COUNT) {
-      // variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
-      counter = VARIADIC_MESSAGE | 1;
+      throw EInvalidOperation("Invlaid operation : too many arguments"); // !! temporal
+      //// variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
+      //counter = VARIADIC_MESSAGE | 1;
    }
 
    writer.writeByte(counter);

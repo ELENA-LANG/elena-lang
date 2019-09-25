@@ -36,105 +36,45 @@ public class ScriptEngine
             
         ^ cast string(err)  
     }
-    
-    // obsolete
-    evaluateTape(dirty_ptr tape)
-        => system'core_routines'__vmtape;
-    
-    // obsolete
-    eval(script)
-        = self.evaluateScript(script);
-        
-    // obsolete
-    evaluateScript(string script)
+
+    buildTape(dirty_ptr tape)
     {
-        dirty_ptr tape := extern elenasm.InterpretScopeScript
-                                (scopeId, script);
+        var retVal := nil;
+        byte temp[1024];        
+        int len := tape;
+        dirty_ptr current := tape + 4;
+                       
+        if (len <= 1024) {
+            current.copyTo(temp, len);
             
-        if (tape.isEmpty())
-            { ScriptEngineException.new(self.lastScriptError()).raise() };
+            retVal := StreamTapeInterpreter.build(temp, len)
+        }
+        else {
+            auto dump := new byte[](len);
             
-        var retVal := self.evaluateTape(tape);
-        
+            current.copyTo(dump, len);
+            
+            retVal := StreamTapeInterpreter.build(dump, len);
+        };
+                                                                                                            
         extern elenasm.Release(tape);
         
-        if(nil == retVal)
-            { ScriptEngineException.new(self.lastVMError()).raise() };
-            
         ^ retVal
-    }
-
-    // obsolete
-    evalScriptFile(string path, int encoding, int autoDetect)
-    {
-        dirty_ptr tape := extern elenasm.InterpretScopeFile
-                            (scopeId, path, encoding, autoDetect);
-            
-        if (tape.isEmpty())
-            { ScriptEngineException.new(self.lastScriptError()).raise() };
-            
-        var retVal := self.evaluateTape(tape);
-        
-        extern elenasm.Release(tape);
-        
-        if(nil == retVal)
-            { ScriptEngineException.new(self.lastVMError()).raise() };
-            
-        ^ retVal
-    }
-        
-    // obsolete
-    evalPath(string path)
-        = self.evalScriptFile(path, 0, -1);
-
-    buildScriptFile(string path)
-        = self.buildScriptFile(path, 0, -1);
-
-    buildScriptFileFirst(string path)
-    {
-        var a := self.buildScriptFile(path);
-        
-        ^ a[0]
     }
 
     buildScriptFile(string path, int encoding, int autoDetect)
     {
-        byte temp[256];        
         dirty_ptr tape := extern elenasm.InterpretScopeFile
                             (scopeId, path, encoding, autoDetect);
-            
+
         if (tape.isEmpty())
             { ScriptEngineException.new(self.lastScriptError()).raise() };
 
-        dirty_ptr current := tape;
-        int len := current;
-        auto result := new ArrayList();
-        while (len != 0) {
-            current := current + 4;
-            
-            if (len < 100h) {                
-                current.copyTo(temp, len);
-                
-                var item := StreamTapeInterpreter.build(temp, 0, len);
-                result.append(item)                
-            }
-            else {
-                auto dump := new byte[](len);
-                
-                current.copyTo(dump, len);
-                
-                var item := StreamTapeInterpreter.build(dump, 0, len);
-                result.append(item)
-            };
-            
-            current := current + len;
-            len := current;
-        };                                            
-                                                                                                            
-        extern elenasm.Release(tape);
-        
-        ^ result.Value
+        ^ self.buildTape(tape)             
     }
+                                
+    buildScriptFile(string path)
+        = self.buildScriptFile(path, 0, -1);
 
     buildScript(string script)
     {
@@ -145,41 +85,7 @@ public class ScriptEngine
         if (tape.isEmpty())
             { ScriptEngineException.new(self.lastScriptError()).raise() };
 
-        dirty_ptr current := tape;
-        int len := current;
-        auto result := new ArrayList();
-        while (len != 0) {
-            current := current + 4;
-            
-            if (len < 100h) {                
-                current.copyTo(temp, len);
-                
-                var item := StreamTapeInterpreter.build(temp, 0, len);
-                result.append(item)                
-            }
-            else {
-                auto dump := new byte[](len);
-                
-                current.copyTo(dump, len);
-                
-                var item := StreamTapeInterpreter.build(dump, 0, len);
-                result.append(item)
-            };
-            
-            current := current + len;
-            len := current;
-        };                                            
-                                                                                                            
-        extern elenasm.Release(tape);
-        
-        ^ result.Value
-    }
-
-    buildScriptFirst(string script)
-    {
-        var a := self.buildScript(script);
-        
-        ^ a[0]
+        ^ self.buildTape(tape)             
     }
 
     string loadScriptFileAsText(string path, int encoding, int autoDetect)
