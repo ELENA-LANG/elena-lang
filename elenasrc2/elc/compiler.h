@@ -602,6 +602,8 @@ private:
       int          level;
       bool         genericMethod;
 
+      bool         ignoreDuplicates; // used for code templates, should be applied only to the statement
+
       // scope stack allocation
       int          reserved;  // allocated for the current statement
       int          saved;     // permanently allocated
@@ -624,6 +626,13 @@ private:
       void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
       {
          locals.add(local, Parameter(level, class_ref, element_ref, size));
+      }
+
+      // check if a local was declared in one of nested code scopes
+      bool checkLocal(ident_t local)
+      {
+         ObjectInfo info = mapTerminal(local, false, 0);
+         return info.kind == okLocal || info.kind == okLocalAddress;
       }
 
 //      void freeSpace()

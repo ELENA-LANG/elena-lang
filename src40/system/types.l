@@ -1,5 +1,8 @@
 /// Attribute categories:
-/// visibility? property? scope_prefix? scope? type?
+/// modificator? visibility? property? scope_prefix? scope? type?
+
+/// modificator:
+#define __ignore_duplicates 80006001h 
 
 /// visibility:
 #define public      80005001h

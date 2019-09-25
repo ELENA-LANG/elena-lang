@@ -1835,6 +1835,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_INLINE:
          attributes.inlineAttr = true;
          return true;
+      case V_IGNOREDUPLICATE:
+         attributes.ignoreDuplicates = true;
+         return true;
       default:
          return false;
    }

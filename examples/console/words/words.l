@@ -40,7 +40,8 @@ public program()
 
     // read until the empty string is not entered
     var text := new StringWriter();
-    doUntil(string line, line.isEmpty(), line := console.readLine())
+    string line;
+    until(line := console.readLine(), line.isEmpty())
     {
         text.writeLine(line)
     };

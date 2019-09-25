@@ -18,6 +18,9 @@ constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
 
 // attributes / prmitive types
 
+/// modificator
+constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
+
 /// visibility:
 constexpr auto V_PUBLIC          = 0x80005001u;
 constexpr auto V_PRIVATE         = 0x80005002u;
@@ -442,6 +445,7 @@ public:
       bool  directAttr;
       bool  lazyAttr;
       bool  inlineAttr;
+      bool  ignoreDuplicates;
 
       bool isExprAttr()
       {
@@ -454,7 +458,7 @@ public:
          refAttr = externAttr = typeAttr = castAttr = forwardAttr = false;
          paramsAttr = newOpAttr = loopAttr = internAttr = false;
          classAttr = mssgAttr = wrapAttr = subjAttr = memberAttr = false;
-         lazyAttr = inlineAttr = directAttr = false;
+         lazyAttr = inlineAttr = directAttr = ignoreDuplicates = false;
       }
    };
 

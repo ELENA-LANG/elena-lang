@@ -3,21 +3,7 @@ In development:
 ------         
 
               xdev - build routine:
-                  three commands : invoke0,invoke1,...invoke1F, invokeV1,loadString,freeArgList
-
-[command]
-[size]
-[body]
-
-
-A
-(
-   "2"
-)
-
-
-
- 
+                * vargs
 
               zdev
                 * write - Programming in ELENA : cookbook
@@ -26,6 +12,7 @@ A
                 * interpreter example
 
               xdev syntax
+                * test words
                 * test pi2
                 * test all samples
 
@@ -98,6 +85,7 @@ Pipeline:
 
               xdev
                 * fixing #476
+                * redesign invoke1..invoke31 - they should use the same class with messageid as a field
 
               xdev
                 * primitive op where i is fields - i+=k

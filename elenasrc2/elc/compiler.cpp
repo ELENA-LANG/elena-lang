@@ -749,6 +749,7 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
    this->level = 0;
    this->saved = this->reserved = 0;
    this->genericMethod = false;
+   this->ignoreDuplicates = false;
 }
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
@@ -757,6 +758,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
    this->level = 0;
    this->saved = this->reserved = 0;
    this->genericMethod = parent->generic;
+   this->ignoreDuplicates = false;
 }
 
 Compiler::CodeScope :: CodeScope(CodeScope* parent)
@@ -766,6 +768,7 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->saved = parent->saved;
    this->reserved = parent->reserved;
    this->genericMethod = parent->genericMethod;
+   this->ignoreDuplicates = false;
 }
 
 ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
@@ -4781,6 +4784,8 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          }
 	   }
 
+      scope.ignoreDuplicates |= attributes.ignoreDuplicates;
+
       if (attributes.typeAttr && !attributes.castAttr) {
          // if it is a variable declaration
          newVariable = true;
@@ -4835,7 +4840,11 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
       if (!typeRef)
          typeRef = scope.moduleScope->superReference;
 
-      compileVariable(writer, current, scope, typeRef, dynamicSize, !testany(exprAttr, HINT_REFOP));
+      // COMPILER MAGIC : make possible to ignore duplicates - used for some code templates
+      if (scope.ignoreDuplicates && scope.checkLocal(current.identifier())) {
+         // ignore duplicates 
+      }
+      else compileVariable(writer, current, scope, typeRef, dynamicSize, !testany(exprAttr, HINT_REFOP));
    }
 
    return exprAttr;
@@ -4867,7 +4876,12 @@ ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, C
       current = current.nextNode();
    }
 
-   return compileExpression(writer, node, scope, 0, rootMode);
+   ObjectInfo retVal = compileExpression(writer, node, scope, 0, rootMode);
+
+   // HOTFIX:to ignore duplicates in some code templates
+   scope.ignoreDuplicates = false;
+
+   return retVal;
 }
 
 inline bool isAssigmentOp(SNode node)
