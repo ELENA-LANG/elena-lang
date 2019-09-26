@@ -791,17 +791,16 @@ public class AssigningExpression : Expression
 
 public class DeclaringAndAssigningExpression : AssigningExpression
 {
-    Expression declaring;
-    
     constructor(ScopeVariable variable, Expression expression)
         <= (variable, expression)
     {
-        this declaring := new DeclarationExpression(variable)
     }
     
     saveTo(List<DynamicClosure> list, ExpressionScope scope)
     {
-        declaring.saveTo(list, scope);
+        scope.declare(variable);
+        
+        new ConstantExpression(nilValue).saveTo(list, scope);
         
         super.saveTo(list, scope);
     }
@@ -896,6 +895,8 @@ public class LoopExpression : Expression
         offs := offs - 1;
         
         list[bookmark] := new JumpIfNotClosure(offs);
+        
+        list.append(new ConstantClosure(nilValue));
     }
 }
 

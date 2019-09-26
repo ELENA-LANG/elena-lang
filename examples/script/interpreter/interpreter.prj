@@ -1,7 +1,7 @@
 <configuration>
     <project>
         <executable>interpreter.exe</executable>
-        <arguments>sample2.txt</arguments>
+        <arguments>sample2b.txt</arguments>
         <output></output>
         <options></options>
         <namespace>interpreter</namespace>

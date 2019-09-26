@@ -5,19 +5,18 @@ In development:
               zdev
                 * write - Programming in ELENA : cookbook
 
-              ydev
-                * interpreter example
-
               xdev syntax
                 * test words
                 * test pi2
-                * test all samples
 
               ydev
-                * script : support several operation in a row
                 * calc example
                 * js example
                 * remove obsolete code
+                * script : support several operation in a row
+
+              xdev syntax
+                * test all samples
 
               xdev
                 * i += i + 1; Tester.test(i*2+1)
