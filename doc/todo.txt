@@ -2,9 +2,6 @@
 In development:
 ------         
 
-              xdev - build routine:
-                * vargs
-
               zdev
                 * write - Programming in ELENA : cookbook
 
@@ -62,6 +59,7 @@ Pipeline:
               xdev - usability
                 * warn if the project is not configurated
                 * uncomment IDEController :: isOutaged
+                *uncomment exclude from the project command
 
               ydev
                 * redesign script code generation

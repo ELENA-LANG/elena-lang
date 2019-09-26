@@ -179,7 +179,10 @@ void Transformer :: parse(_ScriptReader& reader, MemoryDump* output)
 
 // --- Builder ---
 
+constexpr auto invokeV1 = 32;
 constexpr auto loadStringCommand = 33;
+constexpr auto freeVArg = 34; 
+constexpr auto loadNil = 35;
 
 Builder :: Builder()
 {
@@ -195,6 +198,7 @@ void Builder :: saveToken(MemoryWriter& writer, _ScriptReader& reader, ScriptBoo
 
 void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack)
 {
+   pos_t start = writer.Position();
    int counter = 0;
 
    ScriptBookmark bm = stack.pop();
@@ -204,13 +208,19 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
       }
       else if (bm.state == -1) {
          if (counter > ARG_COUNT) {
-            //// variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
-            //counter = VARIADIC_MESSAGE | 1;
-            throw EInvalidOperation("Invlaid operation : too many arguments"); // !! temporal
-         }
+            writer.insertDWord(start, 0);
+            writer.insertByte(start, (char)loadNil);
 
-         writer.writeByte(counter);
-         saveToken(writer, reader, bm);
+            writer.writeByte(invokeV1);
+            saveToken(writer, reader, bm);
+
+            writer.writeByte(freeVArg);
+            writer.writeDWord(0);
+         }
+         else {
+            writer.writeByte(counter);
+            saveToken(writer, reader, bm);
+         }
 
          counter = 1;
       }
@@ -225,13 +235,19 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
    }
 
    if (counter > ARG_COUNT) {
-      throw EInvalidOperation("Invlaid operation : too many arguments"); // !! temporal
-      //// variadic argument list, if the number of constructor arguments is bigger than ARG_COUNT
-      //counter = VARIADIC_MESSAGE | 1;
-   }
+      writer.insertDWord(start, 0);
+      writer.insertByte(start, (char)loadNil);
 
-   writer.writeByte(counter);
-   saveToken(writer, reader, bm);
+      writer.writeByte(invokeV1);
+      saveToken(writer, reader, bm);
+
+      writer.writeByte(freeVArg);
+      writer.writeDWord(0);
+   }
+   else {
+      writer.writeByte(counter);
+      saveToken(writer, reader, bm);
+   }
 }
 
 void Builder :: flush(MemoryWriter& writer, _ScriptReader& reader, Stack<ScriptBookmark>& stack)

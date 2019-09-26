@@ -176,15 +176,16 @@ singleton invoke28 { dispatch() => system'core_routines'__invoke28; }
 singleton invoke29 { dispatch() => system'core_routines'__invoke29; }
 singleton invoke30 { dispatch() => system'core_routines'__invoke30; }
 singleton invoke31 { dispatch() => system'core_routines'__invoke31; }
-singleton invokeV1 { }
+singleton invokeV1 { dispatch() => system'core_routines'__invokeV1; }
 singleton loadString { dispatch() => system'core_routines'__loadString; }
-singleton freeVArg {}
+singleton freeVArg { dispatch() => system'core_routines'__freeVArg; }
+singleton loadNil { dispatch() => system'core_routines'__loadNil; }
 
 const commands = new::(
     invoke0,invoke1,invoke2,invoke3,invoke4,invoke5,invoke6,invoke7,invoke8,invoke9,
     invoke10,invoke11,invoke12,invoke13,invoke14,invoke15,invoke16,invoke17,invoke18,invoke19,
     invoke20,invoke21,invoke22,invoke23,invoke24,invoke25,invoke26,invoke27,invoke28,invoke29,
-    invoke30,invoke31,invokeV1,loadString,freeVArg);
+    invoke30,invoke31,invokeV1,loadString,freeVArg,loadNil);
 
 public singleton StreamTapeInterpreter
 {

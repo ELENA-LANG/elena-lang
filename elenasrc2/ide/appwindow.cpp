@@ -864,6 +864,10 @@ bool IDEController :: doSave(int docIndex, bool saveAsMode)
          if (_view->confirm(QUESTION_INCLUDE_FILE1, newPath, QUESTION_INCLUDE_FILE2)) {
             markDocumentAsIncluded(docIndex);
             _project.includeSource(newPath.c_str());
+
+            if (doc == _model->currentDoc) {
+               onDocIncluded();
+            }
          }
       }
       saveDocument(newPath.c_str(), docIndex);
@@ -914,6 +918,7 @@ bool IDEController :: doSaveAll(bool forced)
       else doSaveProject(false);
    }
    onChange();
+   _view->reloadProjectView(&_project);
 
    return true;
 }
@@ -2267,7 +2272,7 @@ bool IDEController::ProjectManager :: isIncluded(_ELENA_::path_t path)
    return false;
 }
 
-void IDEController::ProjectManager::includeSource(_ELENA_::path_t path)
+void IDEController::ProjectManager :: includeSource(_ELENA_::path_t path)
 {
    _ELENA_::Path relPath(path);
    Paths::makeRelativePath(relPath, _model->project.path.c_str());
