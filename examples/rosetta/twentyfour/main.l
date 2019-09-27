@@ -113,12 +113,12 @@ class TwentyFourGame
     newPuzzle()
     {
         theNumbers := new object[]
-            {
+            ::(
                 1 + randomGenerator.eval:9, 
                 1 + randomGenerator.eval:9, 
                 1 + randomGenerator.eval:9, 
                 1 + randomGenerator.eval:9
-            }
+            )
     }
     
     help()

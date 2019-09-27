@@ -1021,7 +1021,7 @@ private:
 
    ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, bool fpuMode, ref_t targetRef, ref_t elementRef = 0);
 
-   bool convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
+   bool convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source, int mode);
    bool typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
    bool sendTypecast(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
 
@@ -1077,6 +1077,7 @@ private:
    bool optimizeDuplicateboxing(_ModuleScope& scope, SNode& node);
    bool optimizeUnboxing(_ModuleScope& scope, SNode& node);
    bool optimizeNestedExpression(_ModuleScope& scope, SNode& node);
+   bool optimizeNewArrBoxing(_ModuleScope& scope, SNode& node);
 
 public:
    void loadRules(StreamReader* optimization);

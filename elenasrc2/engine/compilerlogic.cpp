@@ -1182,7 +1182,7 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
 }
 
 bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, 
-   ref_t elementRef, ident_t ns)
+   ref_t elementRef, ident_t ns, bool noUnboxing)
 {
 //   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
 //      if (isPrimitiveArrayRef(sourceRef)) {
@@ -1229,7 +1229,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 
       if (compatible) {
          compiler.injectBoxing(writer, scope, 
-            isReadonly(info) ? lxBoxing : lxUnboxing,
+            noUnboxing || isReadonly(info)  ? lxBoxing : lxUnboxing,
             test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
 
          return true;
@@ -1267,7 +1267,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
 
       if (isCompatible(scope, info.fieldTypes.get(-1).value2, elementRef)) {
          compiler.injectBoxing(writer, scope,
-            test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, boxingArg, targetRef, true);
+            noUnboxing || test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, boxingArg, targetRef, true);
 
          return true;
       }
@@ -1276,7 +1276,7 @@ bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScop
    // COMPILE MAGIC : trying to typecast wrapper
    if (sourceRef == V_WRAPPER && isCompatible(scope, targetRef, elementRef)) {
       compiler.injectBoxing(writer, scope,
-         isReadonly(info) ? lxBoxing : lxUnboxing,
+         noUnboxing || isReadonly(info) ? lxBoxing : lxUnboxing,
          test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
 
       return true;

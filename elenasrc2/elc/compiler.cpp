@@ -3296,15 +3296,18 @@ void Compiler :: analizeMessageParameters(SNode node)
    }
 }
 
-bool Compiler :: convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
+bool Compiler :: convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source, int mode)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
    ref_t sourceRef = resolveObjectReference(scope, source, false);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
-      if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, sourceRef, source.element, nsScope->ns.c_str()))
+      if (!_logic->injectImplicitConversion(writer, *scope.moduleScope, *this, targetRef, sourceRef,
+         source.element, nsScope->ns.c_str(), test(mode, HINT_NOUNBOXING)))
+      {
          return sendTypecast(writer, scope, targetRef, source);
+      }
    }
    return true;
 }
@@ -4462,7 +4465,7 @@ ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode no
    else {
       // generate an reference class
       targetRef = resolveReferenceTemplate(scope, operandRef, false);
-      if (!convertObject(writer, scope, targetRef, objectInfo))
+      if (!convertObject(writer, scope, targetRef, objectInfo, mode))
          scope.raiseError(errInvalidOperation, node);
    }
 
@@ -4960,7 +4963,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 //      if (assignMode && exptectedRef == scope.moduleScope->realReference && (sourceRef == V_INT32 || sourceRef == scope.moduleScope->intReference)) {
 //         objectInfo = ObjectInfo(okPrimitiveConv, V_REAL64, V_INT32);
 //      }
-      /*else */if (convertObject(writer, scope, exptectedRef, objectInfo)) {
+      /*else */if (convertObject(writer, scope, exptectedRef, objectInfo, mode)) {
          objectInfo = ObjectInfo(okObject, 0, exptectedRef);
       }
       else scope.raiseError(errInvalidOperation, node);
@@ -6104,7 +6107,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
          ref_t resultRef = scope.getReturningRef(false);
          if (resultRef != 0) {
-            if (!convertObject(writer, codeScope, resultRef, thisParam/*, 0*/))
+            if (!convertObject(writer, codeScope, resultRef, thisParam, 0))
                scope.raiseError(errInvalidOperation, node);
          }
 
@@ -7893,7 +7896,7 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
          scope.save();
       }
    }
-   else convertObject(writer, codeScope, scope.outputRef, retVal);
+   else convertObject(writer, codeScope, scope.outputRef, retVal, 0);
 
    writer.removeBookmark();
    writer.closeNode();
@@ -8675,6 +8678,21 @@ bool Compiler :: optimizeUnboxing(_ModuleScope& scope, SNode& node)
    return true;
 }
 
+bool Compiler :: optimizeNewArrBoxing(_ModuleScope& scope, SNode& node)
+{
+   SNode boxingNode = node.parentNode();
+   if (boxingNode == lxBoxing && boxingNode.argument == -1) {
+      SNode target = boxingNode.findChild(lxTarget);
+      if (target.argument == node.argument) {
+         optimizeBoxing(scope, boxingNode);
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8716,6 +8734,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeUnboxing(scope, node);
       case 20:
          return optimizeNestedExpression(scope, node);
+      case 21:
+         return optimizeNewArrBoxing(scope, node);
       default:
          break;
    }

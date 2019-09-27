@@ -6,24 +6,40 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev syntax
-                * test words
-                * test pi2
+                * test twentyfour - quiting the program
 
               ydev
                 * calc example
                 * js example
                 * remove obsolete code
-                * script : support several operation in a row
 
               xdev syntax
                 * test all samples
 
               xdev
-                * i += i + 1; Tester.test(i*2+1)
                 * operation with numeric constant should be used with constant symbol as well
+                * i += i + 1; Tester.test(i*2+1)
                 * optimize pi sample
 
               ydev
+
+              xdev - lib
+                * (re)implement toUInt extension
+                * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
+
+------                                                           
+Pipeline:
+------   
+              xdev syntax
+                * generate out of memory exception
+                * create big objects directly in mg
+
+              ydev
+                * script : support several operation in a row
+
+              zdev
+                * source to expression tree
+                * expression tree to source
 
               xdev - language
                 * 2*i should be compiled as i*2
@@ -33,19 +49,6 @@ In development:
                      int dump[4];
                      dump[i*2] := 3;
 
-              ydev
-
-              xdev - lib
-                * (re)implement toUInt extension
-                * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
-
-              zdev
-                * source to expression tree
-                * expression tree to source
-
-------                                                           
-Pipeline:
-------   
               xdev - tutorials
                 * duck typing tutorial
 

@@ -409,10 +409,10 @@ void ByteCodeWriter :: declareSafeCatch(CommandTape& tape, SyntaxTree::Node fina
    //   jump labEnd
    tape.write(bcJump, baPreviousLabel);
 
-   if (finallyNode != lxNone) {
-      // restore the original ret label and return the overridden one
-      retLabel = tape.exchangeFirstsLabel(retLabel);
+   // restore the original ret label and return the overridden one
+   retLabel = tape.exchangeFirstsLabel(retLabel);
 
+   if (finallyNode != lxNone) {
       // tryRet:
       tape.setPredefinedLabel(retLabel);
       tape.write(bcUnhook);

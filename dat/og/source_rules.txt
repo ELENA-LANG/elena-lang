@@ -38,6 +38,7 @@ boxing, constlong = 14;
 boxing, constsymbol = 14;
 boxing, constmssg = 14;
 boxing, constsubj = 14;
+boxing, newarrop = 21;
 
 branching, intop, constint = 13;
 
