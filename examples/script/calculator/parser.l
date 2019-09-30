@@ -49,7 +49,7 @@ class DerivationTree
 
     constructor()
     {
-        theRoot := new BaseTreeNode:{ Level = -1; add(node) = node; }
+        theRoot := new BaseTreeNode::{ Level = -1; add(node) = node; }
     }
 }
 

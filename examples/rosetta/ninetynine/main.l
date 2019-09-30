@@ -10,7 +10,7 @@ extension bottleOp
         
     bottleEnumerator() = new Variable(self).doWith:(n)
     {
-        ^ new Enumerator:
+        ^ new Enumerator::
         {
             bool next() = n > 0;
             

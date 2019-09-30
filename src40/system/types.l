@@ -68,7 +68,7 @@
 #define __ptr       80000805h
 #define __mssg      80000806h
 #define __subj      80000807h
-//#80000806 = mssgconst;
+#define mssgconst   80000806h
 #define subjconst   80000807h
 #define __symbol    80000808h
 

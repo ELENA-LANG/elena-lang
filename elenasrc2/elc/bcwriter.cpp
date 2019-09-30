@@ -3046,14 +3046,18 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int im
          tape.write(bcShiftRN, immArg);
          tape.write(bcNSave);
          break;
-      case ADD_OPERATOR_ID:
       case APPEND_OPERATOR_ID:
+         // acc is not set for this operation
+         tape.write(bcACopyB);
+      case ADD_OPERATOR_ID:
          tape.write(bcNLoad);
          tape.write(bcAddN, immArg);
          tape.write(bcNSave);
          break;
-      case SUB_OPERATOR_ID:
       case REDUCE_OPERATOR_ID:
+         // acc is not set for this operation
+         tape.write(bcACopyB);
+      case SUB_OPERATOR_ID:
          tape.write(bcNLoad);
          tape.write(bcAddN, -immArg);
          tape.write(bcNSave);

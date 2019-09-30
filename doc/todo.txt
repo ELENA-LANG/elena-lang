@@ -5,8 +5,8 @@ In development:
               zdev
                 * write - Programming in ELENA : cookbook
 
-              xdev syntax
-                * test twentyfour - quiting the program
+              xdev - lib
+                * should toReal work only for real numbers without fraction?
 
               ydev
                 * calc example
@@ -24,7 +24,6 @@ In development:
               ydev
 
               xdev - lib
-                * (re)implement toUInt extension
                 * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
 
 ------                                                           
@@ -70,7 +69,7 @@ Pipeline:
                 * ?fields
 
               xdev
-                * public const commands := new::(1,2); - compiled incorrectly, should be not possible?
+                * inject target boxing if it is stack allocated and the message call is not stacksafe
                 * analizeSubExpression
                 * analizeAltExpression
 

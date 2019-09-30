@@ -2633,6 +2633,14 @@ public singleton uintConvertor
         
         ^ retVal
     }        
+    
+    /// Converts a literal string into an unsgined integer
+    uint convert(string s)
+    {
+        intern system'core_routines'__intconvertor.convert(s, ref int retVal);
+        
+        ^ retVal
+    }    
 }
 
 /// A long integer convertor

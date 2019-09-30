@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -3270,6 +3270,8 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    // inserting calling expression
    writer.inject(operation, argument);
 
+   // TODO : inject target boxing if it is stack allocated and the message call is not stacksafe 
+
    analizeMessageParameters(writer.CurrentNode());
 
    writer.closeNode();
@@ -3747,22 +3749,20 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
 
    if (node == lxOperator) {
       // COMPILER MAGIC : implementing assignment operators
-      //writer.newNode(lxExpression);
       writer.newBookmark();
       writeTerminal(writer, node.prevNode(), scope, target, assignMode);
       compileOperator(writer, node, scope, target, assignMode);
       writer.removeBookmark();
-      //writer.closeNode();
    }
    else if (targetRef == V_AUTO) {
       // support auto attribute
-      retVal = compileExpression(writer, sourceNode, scope, 0, assignMode);
-      if (resolveAutoType(retVal, target, scope)) {
-         targetRef = resolveObjectReference(scope, retVal, false);
+      ObjectInfo exprVal = compileExpression(writer, sourceNode, scope, 0, assignMode);
+      if (resolveAutoType(exprVal, target, scope)) {
+         targetRef = resolveObjectReference(scope, exprVal, false);
       }
       else scope.raiseError(errInvalidOperation, node);
    }
-   else retVal = compileExpression(writer, sourceNode, scope, targetRef, assignMode);
+   else compileExpression(writer, sourceNode, scope, targetRef, assignMode);
 
 //   else if (retVal.kind == okPrimitiveConv) {
 //      if (retVal.param == V_REAL64) {
@@ -4905,6 +4905,7 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
    bool noPrimMode = test(mode, HINT_NOPRIMITIVES);
    bool inlineArgMode = false;
+   bool boxingMode = false;
 //   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
 
    mode &= ~(HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
@@ -4931,8 +4932,15 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
    if (isAssigmentOp(operationNode)) {
       // recognize the property set operation
       targetMode |= HINT_PROP_MODE;
-      if (isSingleStatement(current))
+      if (isSingleStatement(current)) {
          targetMode |= (HINT_NOBOXING/* | HINT_ASSIGNTARGET*/);
+         if (testany(targetMode, HINT_DYNAMIC_OBJECT | HINT_PARAMETER)) {
+            // HOTFIX : an assignment target should not be boxed but the operation result should be!
+            targetMode &= ~HINT_DYNAMIC_OBJECT; 
+
+            boxingMode = noPrimMode = true;
+         }
+      }         
 
       mode |= HINT_NOUNBOXING;
    }
@@ -4956,6 +4964,19 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
          // NOTE : the primitive wrapper is set as an expected type, so later the primitive will be boxed
          exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element, false);
+      }
+   }
+   if (boxingMode) {
+      switch (objectInfo.kind) {
+         case okLocalAddress:
+         case okFieldAddress:
+            // HOTFIX : the result of an assignment operation result should be boxed
+            writer.inject(lxBoxing, _logic->defineStructSize(*scope.moduleScope, sourceRef, 0u));
+            writer.appendNode(lxTarget, sourceRef);
+            writer.closeNode();
+            break;
+         default:
+            break;
       }
    }
 
@@ -8693,6 +8714,16 @@ bool Compiler :: optimizeNewArrBoxing(_ModuleScope& scope, SNode& node)
    return false;
 }
 
+bool Compiler :: optimizeAssigningTargetBoxing(_ModuleScope& scope, SNode& node)
+{
+   SNode nextArg = node.nextSubNodeMask(lxObjectMask);
+   if (nextArg != lxNone) {
+      optimizeBoxing(scope, node);
+
+      return true;
+   }
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -8736,6 +8767,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeNestedExpression(scope, node);
       case 21:
          return optimizeNewArrBoxing(scope, node);
+      case 22:
+         return optimizeAssigningTargetBoxing(scope, node);
       default:
          break;
    }
@@ -8792,7 +8825,7 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
 
-   //test2(node);
+   test2(node);
 }
 
 void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)

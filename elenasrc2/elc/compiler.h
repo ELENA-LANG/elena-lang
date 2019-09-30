@@ -1078,6 +1078,7 @@ private:
    bool optimizeUnboxing(_ModuleScope& scope, SNode& node);
    bool optimizeNestedExpression(_ModuleScope& scope, SNode& node);
    bool optimizeNewArrBoxing(_ModuleScope& scope, SNode& node);
+   bool optimizeAssigningTargetBoxing(_ModuleScope& scope, SNode& node);
 
 public:
    void loadRules(StreamReader* optimization);

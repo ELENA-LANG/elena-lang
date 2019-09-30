@@ -385,8 +385,8 @@ public extension convertorOp
     short toShort()
         = shortConvertor.convert(self);
 
-//    T<uint> toUInt
-//        = uintConvertor convert:self.
+    uint toUInt()
+        = uintConvertor.convert(self);
         
     int toInt()
         = intConvertor.convert(self);
