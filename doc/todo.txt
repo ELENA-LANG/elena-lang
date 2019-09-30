@@ -10,9 +10,8 @@ In development:
                 * js example
                 * remove obsolete code
 
-              xdev syntax
-                * AKS test for primes
-                * test all samples
+              xdev
+                * test all samples (amb)
 
               xdev
                 * operation with numeric constant should be used with constant symbol as well

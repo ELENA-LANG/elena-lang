@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -7987,6 +7987,7 @@ void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScop
 
    ref_t actionRef = compileClassPreloadedCode(*scope.moduleScope, scope.reference, expressionTree.readRoot());
    scope.info.mattributes.add(Attribute(caInitializer, 0), actionRef);
+   scope.save();
 }
 
 // NOTE : elementRef is used for binary arrays
@@ -8825,7 +8826,7 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
 
-   test2(node);
+   //test2(node);
 }
 
 void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
