@@ -5,15 +5,13 @@ In development:
               zdev
                 * write - Programming in ELENA : cookbook
 
-              xdev - lib
-                * should toReal work only for real numbers without fraction?
-
               ydev
                 * calc example
                 * js example
                 * remove obsolete code
 
               xdev syntax
+                * AKS test for primes
                 * test all samples
 
               xdev
@@ -29,6 +27,9 @@ In development:
 ------                                                           
 Pipeline:
 ------   
+              xdev - lib
+                * should toReal work only for real numbers without fraction?
+
               xdev syntax
                 * generate out of memory exception
                 * create big objects directly in mg

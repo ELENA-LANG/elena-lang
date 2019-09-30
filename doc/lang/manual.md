@@ -396,3 +396,212 @@ The output will be:
 #### Methods and functions
 
 The representative classes greatly extends a set of primitive operations. The functionality is declared either in the proper class or in one of its extensions. For convenience the functions can be used as well.
+
+**Operations with bit-wise masks**
+
+Method | Description
+------ | -----------
+allMask(mask) | Returns true if all the mask bits are set
+anyMask(mask) | Returns true if any of the mask bits are set
+
+For examples the code:
+
+    import extensions;
+    
+    public program()
+    {
+        console
+            .printLine("8.anyMask(15)=", 8.anyMask(15))
+            .printLine("8l.allMask(15)=", 8l.allMask(15))
+    }
+
+will generate the following result:
+
+    8.anyMask(15)=true
+    8l.allMask(15)=false
+
+**Operations with the number sign:**
+
+Method | Description
+------ | -----------
+Absolute | Returns the absolute value
+Inverted | Returns the inverted value
+Negative | Returns the negated value
+
+These properties can be used to return negative, positive or inverted values:
+
+    import extensions;
+    
+    public program()
+    {
+        int r := -123;
+        
+        console
+            .printLine(r,".Inverted = ", r.Inverted)
+            .printLine(r,".Negative = ", r.Negative)
+            .printLine(r,".Absolute = ", r.Absolute)
+    }
+
+The result is:
+
+    -123.Inverted = 122
+    -123.Negative = 123
+    -123.Absolute = 123
+
+When we have to check if our number is positive, negative, zero, odd and so on, these extension methods will be useful:
+
+Method | Description
+------ | -----------
+isOdd() | Returns true if the number is odd, otherwise false           
+isEven() | Returns true if the number is even, otherwise false           
+isZero() | Returns true if the number is zero, otherwise false
+isPositive() | Returns true if the number is positive, otherwise false      
+isNegative() | Returns true if the number is negative, otherwise false       
+isNonnegative() | Returns true if the number is non negative ( >= 0), otherwise false    
+
+The usage is quite straightforward:
+
+    import extensions;
+    
+    public program()
+    {
+        int n := 2;
+        
+        console
+            .printLine(n," is odd : ", n.isOdd())
+            .printLine(n," is even : ", n.isEven())
+            .printLine(n," is zero : ", n.isZero())
+            .printLine(n," is positive : ", n.isPositive())
+            .printLine(n," is negative : ", n.isNegative())
+    }
+
+with the following result:
+
+    2 is odd : false
+    2 is even : true
+    2 is zero : false
+    2 is positive : true
+    2 is negative : false
+
+**Modulo and real division of integer numbers**
+
+Method | Function | Description
+------ | -------- | -----------
+mod(operand) | modulo(loperand,roperand) | An Integer remainder
+realDiv(operand) | A float-based division 
+
+A modulo operation is implemented in ELENA with a help of an extension method **mod**
+
+    import extensions;
+    
+    public program()
+    {
+        console.printLine("5 % 2 = ", 5.mod(2))
+    }
+
+The result is as expected one:
+
+    5 % 2 = 1
+
+Instead of extension method we may use an appropriate function declared in **extensions'math** module
+
+    import extensions;
+    import extensions'math;
+    
+    public program()
+    {
+        console.printLine("5 % 2 = ", modulo(5, 2))
+    }
+
+A fraction of two integer numbers is always an integer. If we need an exact result we may use **realDiv** extension:
+
+    import extensions;
+
+    public program()
+    {
+        console.printLine("5 / 2 = ", 5.realDiv(2))
+    }
+
+The output will be:
+
+    5 / 2 = 2.5
+
+**Operation with floating-point numbers**
+
+Method | Function | Description
+------ | -------- | -----------
+Rounded | |  Returns the rounded number           
+RoundedInt | | Returns the rounded integer number        
+Integer | | Truncates the fraction part
+IntegerInt | | Truncates the fraction part and returns an integer 
+frac() | frac(operand) | Returns only the fraction part
+ceil() | ceil(operand) |  returns the smallest integer that is greater than or equal to the operand
+floor() | floor(operand) | the largest integer that is smaller than or equal to the operand
+truncate(precision) | truncate(operand,precision) | Rounds the number to the provided precision
+Reciprocal | | returns a number obtained by dividing 1 by operand
+
+We may use either extension methods (declared in **system'math**) or functions (declared in **extensions'math**):
+
+    import extensions;
+    import system'math;
+    import extensions'math;
+    
+    public program()
+    {
+        console
+            .printLine("foor(5.6)=", floor(5.6r))
+            .printLine("ceil(5.6)=", 5.6r.ceil())
+    }
+
+The code produces the following output:
+
+    foor(5.6)=5.0
+    ceil(5.6)=6.0
+
+**Mathematical functions**
+
+Method | Function
+------ | --------
+power(operand) | power(loperand,roperand)
+sqr() | sqr(operand)
+sqrt() | sqrt(operand)
+exp() | exp(operand)
+ln() | ln(operand)
+sin() | sin(operand)
+cos() | cos(operand)
+tan() | tan(operand)
+arctan() | arctan(operand)
+arcsin() | arcsin(operand)
+arccos() | arccos(operand)
+log2() | log2(operand)
+log10() | log10(operand)
+
+Similar both extension methods and functions can be used:
+
+    import extensions;
+    import system'math;
+    import extensions'math;
+    
+    Pi = RealNumber.Pi;
+    
+    public program()
+    {
+        console
+            .printLine("sin(π/3) = ",(Pi / 3).sin())
+            .printLine("cos(π/3) = ",cos(Pi / 3))
+            .printLine("tan(π/3) = ",tan(Pi / 3))
+    }
+
+The result is:
+
+    sin(π/3) = 0.8660254037844
+    cos(π/3) = 0.5
+    tan(π/3) = 1.732050807569
+
+**Converting to Converting to radians, degrees**
+
+Method | Description
+------ | -----------
+Radian | Converts to radians
+Degree | Converts to degree
+

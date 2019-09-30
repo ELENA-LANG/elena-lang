@@ -1890,6 +1890,9 @@ public sealed const struct RealNumber : BaseNumber
     static real NaN
         = 0.0r / 0.0r;
 
+    static real Pi
+        = Pi_value;
+
     /// Creates the object with a default value (0)
     constructor()
         = 0.0r;
