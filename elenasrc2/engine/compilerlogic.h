@@ -100,6 +100,12 @@ public:
    virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference);
    virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne);
 
+   virtual bool isDeclared(_ModuleScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      return defineClassInfo(scope, info, reference, true);
+   }
+
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
 ////   virtual bool isPrimitiveArray(ref_t reference);
 //   virtual bool isPrimitiveRef(ref_t reference)

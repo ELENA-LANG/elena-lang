@@ -511,6 +511,8 @@ public:
    virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info) = 0;
    virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference) = 0;
 
+   virtual bool isDeclared(_ModuleScope& scope, ref_t reference) = 0;
+
    // check if the classes is compatible
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 

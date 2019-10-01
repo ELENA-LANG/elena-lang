@@ -4501,6 +4501,9 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
    if (target.kind == okClass) {
       targetRef = target.param;
    }
+   else if (target.kind == okSymbol && !_logic->isDeclared(*scope.moduleScope, target.param)) {
+      scope.raiseError(errUnknownClass, node.prevNode());
+   }
    else scope.raiseError(errNotApplicable, node.parentNode());
 
    ObjectInfo retVal = ObjectInfo(okObject, 0, targetRef);
