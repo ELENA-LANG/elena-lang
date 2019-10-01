@@ -1,18 +1,18 @@
 import extensions'dynamic;
 
-static jscriptEngine
+static lscriptEngine
     = new ScriptEngine()
-            .loadPath("~\scripts\assembly.es")
-            .loadPath("~\scripts\jscript.es");
+            .loadPath("~\scripts\grammar.es")
+            .loadPath("~\scripts\lscript.es");
 
-public singleton jscript
+public singleton lscript
 {
     eval(string script)
-        = TapeAssembly.load(jscriptEngine.eval(script)).eval();
+        = lscriptEngine.buildScript(script).compled();
             
     evalPath(string path)
-        = TapeAssembly.load(jscriptEngine.evalPath(path)).eval();
+        = lscriptEngine.buildScriptFile(path).compled();
         
     load(string path)
-        = TapeAssembly.load(jscriptEngine.loadPath(path)).eval();
+        = lscriptEngine.loadPath(path);
 }

@@ -6,7 +6,7 @@ import extensions'scripting;
 // --- testCase ---
 
 public static dynamicRules = 
-    jscript.evalPath:"calc.es";
+    lscript.evalPath:"calc.es";
     
 public symbol staticRules =
     calc'rules'States;
@@ -31,7 +31,7 @@ extension staticTestOp
     }
 }
 
-testCases()
+public testCases()
 {
     "22.4".testEvaluation();
 
@@ -48,7 +48,7 @@ testCases()
     "min(2,3)".testEvaluation();
 }
 
-staticTestCases()
+public staticTestCases()
 {
     "22.4".testStaticEvaluation();
 

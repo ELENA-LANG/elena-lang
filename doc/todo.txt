@@ -5,7 +5,11 @@ In development:
               zdev
                 * write - Programming in ELENA : cookbook
 
+              xdev
+                * fix all open bugs in 4.1 milestone
+                             
               ydev
+                * interpreter sample
                 * calc example
                 * js example
                 * remove obsolete code

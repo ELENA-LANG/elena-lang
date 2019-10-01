@@ -2,8 +2,10 @@
    #grammar build
    #grammar cf
 
-   #define start ::= class* $eof;            
+   #define start ::= "root" "(" namespace ")" $eof;            
    #define start ::= $eof;
+
+   #define namespace      ::= "namespace" "(" class* ")";
 
    #define class          ::= <= system'dynamic'expressions'DynamicSingleton (  => "{" method* "}" <= ) =>;
    #define method         ::= <= system'dynamic'expressions'MethodExpression (  => identifier arguments body  <= ) =>;

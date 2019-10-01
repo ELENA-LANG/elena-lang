@@ -282,10 +282,14 @@ class ByteCodeWriter
 
    int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
+   void unboxCallParameter(CommandTape& tape, SNode current);
 
 //   void pushObject(CommandTape& tape, SyntaxTree::Node node);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument, int mode);
    void loadObject(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+
+   void saveUnboxingVar(CommandTape& tape, SNode member, bool& accTrarget, bool& accPresaving, int& presavedCount);
+   void loadUnboxingVar(CommandTape& tape, SNode current, int paramCount, int& presavedCount);
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 
@@ -302,7 +306,7 @@ class ByteCodeWriter
    void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
-   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node);
+   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node, int paramCount, int presavedCount);
 
    void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
    void generateTrying(CommandTape& tape, SyntaxTree::Node node);
