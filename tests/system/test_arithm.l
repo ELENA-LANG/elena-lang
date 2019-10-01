@@ -490,11 +490,11 @@ ExceptionTest()
     {
         ExecTester.break2()
     }
-    catch(MyException e)
+    catch:(MyException e)
     {
         Assert.ifTrue(false)
     }
-    catch(MyException2 e)
+    catch:(MyException2 e)
     {
         console.writeLine(e.Message)
     };
@@ -505,13 +505,13 @@ ExceptionTest()
         {
             ExecTester.break3()
         }
-        catch(MyException e)
+        catch:(MyException e)
         {
             console.writeLine:"!!Wrong handler";
             Assert.ifTrue(false)
         }
     }
-    catch(MyException2 e)
+    catch:(MyException2 e)
     {
         console.printLine(e.Message)
     }
@@ -784,15 +784,15 @@ nestedFieldsTest()
 {
     console.write("nestedFieldsTest..");
     
-    var o := new : 
+    var o := new:: 
     {
         field3 := 3;
         
-        innerMost() =>
+        innerMost() => new::
         {
             field2 := 2;
             
-            innerMost() =>
+            innerMost() => new::
             {
                 field1 := 1;
                 
@@ -905,7 +905,7 @@ class NestedTester
     
     validate()
     {
-        var c := (){ ^ param2 };        
+        var c := { ^ param2 };        
         
         Assert.ifTrue(c() == param2);
     }
@@ -935,7 +935,7 @@ class NestetNestedTester
     
     validate()
     {
-        var c := (){ ^ (){ ^ param2 } };        
+        var c := { ^ { ^ param2 } };        
         var cc := c();
         
         Assert.ifTrue(cc() == param2);
