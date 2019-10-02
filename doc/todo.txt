@@ -15,7 +15,6 @@ In development:
                 * fix all open bugs in 4.1 milestone
                 * re-implement lazy expression
                 * Stand alone executable: Script engine #64
-                * the folowing code should raise an error - real cast() = RealNumber new(self);
                              
               xdev - usability
                 * warn if the project is not configurated

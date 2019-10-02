@@ -4843,6 +4843,9 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
    }
 
    if (newVariable) {
+      if (test(mode, HINT_RETEXPR))
+         scope.raiseError(errInvalidSyntax, current.parentNode());
+
       if (!typeRef)
          typeRef = scope.moduleScope->superReference;
 
