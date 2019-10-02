@@ -4,8 +4,6 @@ import system'dynamic'expressions;
 
 import extensions;
 import extensions'scripting;
-////import extensions'dynamic;
-//import extensions'dynamic'expressions;
 
 class TapeAssembler
 {    
@@ -170,69 +168,69 @@ class TapeAssembler
     }
 }
 
-////class TapeCGenerator
-////{    
-////    object theOutput.
-////    
-////    constructor new
-////    [
-////        theOutput := system'text'TextBuilder new.
-////    ]
-////    
-////    constructor new : assembly_program
-////        <= new;
-////    [
-////        assembly_program(self).
-////    ]    
-////    
-////    open
-////    [
-////        theOutput printLine:"while (*p) {".
-////    ]
-////
-////    close
-////    [
-////        theOutput printLine:"}".
-////    ]
-////    
-////    input
-////    [
-////        theOutput printLine:"*p = getchar();".
-////    ]
-////    
-////    output
-////    [
-////        theOutput printLine:"putchar(*p);".
-////    ]
-////    
-////    next
-////    [
-////        theOutput printLine:"++p;".
-////    ]
-////    
-////    previous
-////    [
-////        theOutput printLine:"--p;".
-////    ]
-////
-////    increase
-////    [
-////        theOutput printLine:"++*p;".
-////    ]
-////    
-////    decrease
-////    [
-////        theOutput printLine:"--*p;".
-////    ]
-////    
-////    get
-////    [
-////        theOutput insert:"void execute(char* p) {" at:0.
-////        theOutput printLine:"}".
-////        
-////        ^ theOutput literal.
-////    ]
-////}
+class TapeCGenerator
+{    
+    object theOutput;
+    
+    constructor()
+    {
+        theOutput := new system'text'TextBuilder()
+    }
+
+    constructor load(assembly_program)
+        <= ()
+    {
+        assembly_program(self)
+    }    
+    
+    open()
+    {
+        theOutput.printLine:"while (*p) {"
+    }
+
+    close()
+    {
+        theOutput.printLine:"}"
+    }
+    
+    input()
+    {
+        theOutput.printLine:"*p = getchar();"
+    }
+    
+    output()
+    {
+        theOutput.printLine:"putchar(*p);"
+    }
+    
+    next()
+    {
+        theOutput.printLine:"++p;"
+    }
+    
+    previous()
+    {
+        theOutput.printLine:"--p;"
+    }
+
+    increase()
+    {
+        theOutput.printLine:"++*p;"
+    }
+    
+    decrease()
+    {
+        theOutput.printLine:"--*p;"
+    }
+    
+    compiled()
+    {
+        theOutput.insert(0,"void execute(char* p) {");
+        theOutput.printLine:"}";
+        
+        ^ theOutput.Value
+    }
+}
 
 public solution1()
 {
@@ -341,20 +339,19 @@ public solution4()
     bfProgram(bfTape)
 }
 
-////public symbol program5 =
-////[
-////    if (forwards'program'arguments length == 1)
-////        [ console write:"Please provide the path to the file to interpret". AbortException new; raise ].
-////
-////    var bfAssemblyProgram := ScriptEngine 
-////        new;
-////        loadPath:"asmrules.es";
-////        evalPath:(forwards'program'arguments[1]).
-////
-////    var bfProgram := TapeCGenerator new(bfAssemblyProgram); get.
-////
-////    console writeLine:bfProgram.
-////].
+public solution5()
+{
+    if (program_arguments.Length == 1)
+        { console.write:"Please provide the path to the file to interpret"; AbortException.raise() };
+
+    var bfAssemblyProgram := new ScriptEngine() 
+        .loadPath("asmrules.es")
+        .buildScriptFile(program_arguments[1]);
+
+    var bfProgram := TapeCGenerator.load(bfAssemblyProgram).compiled();
+
+    console.writeLine(bfProgram)
+}
 
 const int Solution = 4;
 
@@ -372,5 +369,8 @@ public program()
         }
         4 {
             solution4()
+        }
+        5 {
+            solution5()
         };
 }

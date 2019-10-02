@@ -5,32 +5,37 @@ In development:
               zdev
                 * write - Programming in ELENA : cookbook
 
-              xdev
-                * fix all open bugs in 4.1 milestone
-                * re-implement lazy expression
-                             
               ydev
-                * interpreter sample
+                * test all samples (amb)
                 * calc example
                 * js example
                 * remove obsolete code
 
               xdev
-                * test all samples (amb)
+                * fix all open bugs in 4.1 milestone
+                * re-implement lazy expression
+                * Stand alone executable: Script engine #64
+                * the folowing code should raise an error - real cast() = RealNumber new(self);
+                             
+              xdev - usability
+                * warn if the project is not configurated
+
+              ydev - Linux
+                * linker : adata + mdata + rdata (meta starts with size field)
+                * get rid of debug section
+                * suport elenart
+                  
+------                                                           
+Pipeline:
+------   
+              xdev - lib
+                * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
 
               xdev
                 * operation with numeric constant should be used with constant symbol as well
                 * i += i + 1; Tester.test(i*2+1)
                 * optimize pi sample
 
-              ydev
-
-              xdev - lib
-                * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
-
-------                                                           
-Pipeline:
-------   
               xdev - lib
                 * should toReal work only for real numbers without fraction?
 
@@ -63,14 +68,11 @@ Pipeline:
                 * inline arg : variadic long arg list
                                                                                       
               xdev - usability
-                * warn if the project is not configurated
                 * uncomment IDEController :: isOutaged
-                *uncomment exclude from the project command
+                * uncomment exclude from the project command
 
               ydev
-                * redesign script code generation
                 * build : returning (goto)
-                * Stand alone executable: Script engine #64
                 * ?fields
 
               xdev
@@ -84,8 +86,6 @@ Pipeline:
                 * operations with variadic array
                 * check nil boxing
                 * check boxing of incompatible types
-                * test all examples \ rosetta code samples
-                * test pi
 
               xdev
                 * fixing #476
@@ -96,7 +96,6 @@ Pipeline:
                 * primitive op where i,k are fields - i+k
 
               xdev
-                * (re)implement toUInt extension
                 * #162 - explicit constructor
                 * new system'dynamics'DynamicStruct() - raise an error
                 * support lazyOp
@@ -113,16 +112,8 @@ Pipeline:
                 * debugger should show ref variable value
 
               ydev
-                * test script examples
-
                 * get rid of tape support??
-                * get rid of extensions'dynamic'TapeAssembly??
 
-              ydev - Linux
-                * linker : adata + mdata + rdata (meta starts with size field)
-                * get rid of debug section
-                * suport elenart
-                  
               ydev - build tape
                 * support variadic argument list (if the number of arguments is bigger than 0x1F)
                 * ssupport namespace import, so the build script can be shortened
@@ -217,8 +208,6 @@ Pipeline:
                  * implenent break analog
                  * Support enumeration list #265
                  * Sockets
-                 * review new {a,b,c} - syntax, it is inconsisten with root expression
-                 * replace new object[]{-19.0r, 7.0r, -4.0r, 6.0r} with []{-19.0r, 7.0r, -4.0r, 6.0r}?
                  * property template - should support public / internal visibility attributes
                  * (re)implement UTF8Encoder.convert(..,string,byte[]) method
                  * implement Heap, Balanced Search Tree and Hash tables, review Map<T,Key> template, if it could be
@@ -241,14 +230,11 @@ Pipeline:
                  * (#378) support AccessViolation - _pxcptinfoptrs
                  * (#378) support Stackoverflow / OutOfMemory exception, reduce the maximal heap size in callstack
                  * lazy::(console.write("Reading a number:").readLine().toInt()) should generate an error?
-                 * mixin :: { collection }, new::{ collection } - get rid of - new {}
-                 * create a nested class / collection - syntax review
 
                  * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
                  * property attribute - can be only the top most token
                  * no need to box variadic argument list for template opertions
                  * array operation with Array<type> should be resolved directly (an array is embeddable)
-                 * support - singleton Code : BaseCode;
                  * syntax : template should be the last token in expression and one before the last for declaration
                  * => operator should work with expression as well - s.toInt() => ...
                    toInt is ignored
@@ -259,17 +245,14 @@ Pipeline:
                  * Thread.assign:(){} should be supported
                  * (re)implement tape debugger
 
-                 * passing variadic list to the implicit constructor (see - TapeExpression)
                  * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
                  * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
                    work
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
                  * allow to work with ref<int> directly
-                 * implement a ? b, a ? b : c, a ? {}, a ? {} : {}
                  * abstract class cannot have constructors / default constructor
                  * uncomment validateClassDeclaration
-                 * if (a) b else c;
 
                  * new anyToken { .. } - should raise an error?
                  * warn on operations with unassigned variable
@@ -279,14 +262,12 @@ Pipeline:
                  * in the interface it was possible to declare a parameter of non-existing class
                  * the following code - theIndexers[i] := arguments[i].indexer() - does not work correctly
                    (see SequentialEnumerator)
-                 * debugger : variables inside for loop
                  * optimize SystemTime
                  * the following code should not be allowed - real n := n;
                  * uncomment __closuretape."#dispatch[1]  - check the subject correctly
 
                  * test unboxing with variadic arg list
 
-                 * the folowing code should raise an error - real cast() = RealNumber new(self);
                  * long constant should not be boxed like int constants
 
                  * support Array<type> constructors

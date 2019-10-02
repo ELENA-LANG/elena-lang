@@ -53,11 +53,11 @@ public sealed class TextBuilder
 
 //    cast T<wide>
 //        = WideLiteralValue new(0, T<int>(theLength), theBuffer).
-//
-//    writeLine
-//    [
-//        self write:forwards'newLine.
-//    ]
+
+    writeLine()
+    {
+        self.write(forward newLine)
+    }
 
     append(line)
     {
