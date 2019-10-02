@@ -5,15 +5,17 @@ In development:
               zdev
                 * write - Programming in ELENA : cookbook
 
+              xdev
+                * re-implement lazy expression
+
               ydev
-                * test all samples (amb)
+                * test all samples (bulls and cows)
                 * calc example
                 * js example
                 * remove obsolete code
 
               xdev
                 * fix all open bugs in 4.1 milestone
-                * re-implement lazy expression
                 * Stand alone executable: Script engine #64
                              
               xdev - usability

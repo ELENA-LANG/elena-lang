@@ -8,6 +8,7 @@ Content
   + [Variables](#variables)
   + [Numbers](#numbers)
   + [Mathematical Operations and Functions](#mathematical-operations-and-functions)
+  + [Strings](#strings)
 
 ## Overview
 A programming language is a mammoth task to develop and to learn. So encountering a new language you may ask: why another
@@ -598,10 +599,83 @@ The result is:
     cos(π/3) = 0.5
     tan(π/3) = 1.732050807569
 
-**Converting to Converting to radians, degrees**
+**Converting to radians, degrees**
 
 Method | Description
 ------ | -----------
 Radian | Converts to radians
 Degree | Converts to degree
+
+### Strings
+
+**String** is a sequence of characters representing some text information. The way how to interpret these characters depends on the text encoding. ELENA supports both UTF-8 (**system'String**, or **string** alias) and UTF-16  (**system'WideString**,or **wide** alias) encoded strings. The string literal constants are enclosed in double quotes:
+
+    string stringConstant := "Привет Мир"; // UTF-8 encoded constant
+    wide wideConstant   := "你好世界"w;     // UTF-16 encoded constant
+
+A string can be considered as a read-only collection of **system'CharValue** classes each representing UTF-32 symbol. Because the text is encoded either with UTF-8 and UTF-16 the character may be encoded with more than one element in this collection. When our text is plain ASCII it makes no difference. But for example Russian (for system'String) or Chinese (for system'WideString) it requires some additional actions.
+
+Let's print a first, second and the last characters of the given string. As it was said above for the plain English text, it is quite staight-forward. A string is a collection and we may use an array operator to access each its element. The index of the first element is 0.
+
+    import extensions;
+    
+    public program()
+    {
+        auto s := "Hello";    
+        
+        console.printLine(s[0]); // printing the first element
+        console.printLine(s[1]); // printing the second element
+        console.printLine(s[s.Length - 1]); // printing the second element
+    }
+
+The output is:
+
+    H
+    e
+    o
+
+Let's try it with Russian word:
+
+    auto s := "Привет";    
+    
+    console.printLine(s[0]); // printing the first element
+    console.printLine(s[1]); // printing the second element
+    console.printLine(s[s.Length - 1]); // printing the second element
+
+There error is raised for the second element:
+
+    П
+    An index is out of range
+    Call stack:
+    system'Exception#class.new[1]:exceptions.l(96)
+    system'OutOfRangeException#class.new[1]:exceptions.l(126)
+    system'OutOfRangeException#class.new[0]:exceptions.l(126)
+    system'String.at[1]:memory.l(1356)
+    mytest'program.#invoke[0]:test.l(8)
+    system'$private'entry.#invoke[0]:win32_app.l(37)
+    system'#startUp:win32_app.l(55)
+
+Why? Because in UTF-8 a russian character is encoded with two bytes (two elements of String collection).
+
+We may actually fix the problem using UTF-16:
+
+    auto s := "Привет"w;    
+    
+    console.printLine(s[0]); // printing the first element
+    console.printLine(s[1]); // printing the second element
+    console.printLine(s[s.Length - 1]); // printing the second element
+
+And the output is:
+
+    П
+    р
+    т
+
+But for the Chinese word it will not work:
+
+    auto s := "你好世界"w;    
+    
+    console.printLine(s[0]); // printing the first element
+    console.printLine(s[1]); // printing the second element
+    console.printLine(s[s.Length - 1]); // printing the second element
 

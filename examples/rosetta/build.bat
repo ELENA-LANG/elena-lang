@@ -54,6 +54,10 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 ..\..\bin\elc associativearrays\associativearrays.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 ..\..\bin\elc amb\amb.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
