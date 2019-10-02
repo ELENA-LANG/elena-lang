@@ -7044,6 +7044,11 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
    }
 }
 
+inline SNode findName(SNode node)
+{
+   return node.findChild(lxNameAttr).findChild(lxIdentifier);
+}
+
 void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message, bool allowTypeAttribute)
 {
    ref_t outputRef = scope.info.methodHints.get(Attribute(message, maReference));
@@ -7111,10 +7116,13 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       ref_t signRef = 0;
       ident_t name = scope.module->resolveAction(getAction(message), signRef);
       int index = name.find("$$");
+      if(index == NOTFOUND_POS)
+         scope.raiseError(errDupInternalMethod, findName(node));
+
       ref_t publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
       if (scope.info.methods.exist(publicMessage)) {
          // there should be no public method with the same name
-         scope.raiseError(errDupPublicMethod, node.findChild(lxIdentifier));
+         scope.raiseError(errDupPublicMethod, findName(node));
       }
       else {
          scope.info.methodHints.exclude(Attribute(publicMessage, maHint));
