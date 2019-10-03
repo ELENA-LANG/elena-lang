@@ -15,11 +15,6 @@
 using namespace _ELENA_;
 
 constexpr auto MODE_ROOT            = 0x01;
-////#define MODE_CODETEMPLATE    0x02
-////#define MODE_OBJECTEXPR      0x04
-//////#define MODE_SIGNATURE       0x08
-////#define MODE_IMPORTING       0x10
-////#define MODE_MESSAGE_BODY    0x20  // indicates that sub-expressions should be an expression themselves
 constexpr auto MODE_PROPERTYALLOWED = 0x40;
 
 constexpr auto MODE_CLOSURE         = -2;
@@ -27,18 +22,6 @@ constexpr auto MODE_COMPLEXMESSAGE  = -3;
 constexpr auto MODE_PROPERTYMETHOD  = -4;
 
 #define EXPRESSION_IMPLICIT_MODE   1
-//////#define EXPRESSION_MESSAGE_MODE    2
-////#define EXPRESSION_OPERATOR_MODE   4
-////#define EXPRESSION_OBJECT_REQUIRED 8
-//
-////void test2(SNode node)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      test2(current);
-////      current = current.nextNode();
-////   }
-////}
 
 // --- DerivationWriter ---
 

@@ -6,6 +6,11 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev
+                * __loop& cast bool(expr) ? loop_block
+                * class / methods meta attributes
+                * generate ELENA LIB API
+
+              xdev
                 * re-implement lazy expression
 
               ydev
@@ -15,6 +20,7 @@ In development:
                 * remove obsolete code
 
               xdev
+                * fix bug with inserting unicode character
                 * fix all open bugs in 4.1 milestone
                 * Stand alone executable: Script engine #64
                              

@@ -4789,6 +4789,8 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
             else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
 	   }
+      if (attributes.loopAttr)
+         exprAttr |= HINT_LOOP;
 
       scope.ignoreDuplicates |= attributes.ignoreDuplicates;
 
@@ -4818,8 +4820,8 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          else invalidExpr = true;
       }
 
-      if (attributes.loopAttr)
-         scope.raiseError(errIllegalOperation, current);
+      //if (attributes.loopAttr)
+      //   scope.raiseError(errIllegalOperation, current);
 
       current = current.nextNode();
    }
@@ -4871,19 +4873,19 @@ ObjectInfo Compiler :: compileRootExpression(SyntaxWriter& writer, SNode node, C
 {
    int rootMode = HINT_ROOT;
 
-   // COMPILER MAGIC : recognize root attributes
-   SNode current = findLeftMostNode(node.firstChild(), lxAttribute);
-   while (current == lxAttribute) {
-      ExpressionAttributes attributes;
-      if (_logic->validateExpressionAttribute(current.argument, attributes)) {
-         if (attributes.loopAttr) {
-            rootMode |= HINT_LOOP;
+   //// COMPILER MAGIC : recognize root attributes
+   //SNode current = findLeftMostNode(node.firstChild(), lxAttribute);
+   //while (current == lxAttribute) {
+   //   ExpressionAttributes attributes;
+   //   if (_logic->validateExpressionAttribute(current.argument, attributes)) {
+   //      if (attributes.loopAttr) {
+   //         rootMode |= HINT_LOOP;
 
-            current.setArgument(0);
-         }
-      }
-      current = current.nextNode();
-   }
+   //         current.setArgument(0);
+   //      }
+   //   }
+   //   current = current.nextNode();
+   //}
 
    ObjectInfo retVal = compileExpression(writer, node, scope, 0, rootMode);
 

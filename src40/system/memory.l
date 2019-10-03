@@ -2569,11 +2569,10 @@ class WideStringEnumerator : Enumerator<char>
         int index := theIndex.Value;
         if (index < len)
         {
-            theChar := theLiteral.at(index);
-            
-            theChar.readLengthTo(theDiff);
-            theDiff.append:1;
-            theDiff.Value := theDiff.Value / 2;
+            theChar := theLiteral.at(index);                
+            //theDiff := theChar.WideLength;
+            diff := theChar.WideLength;
+            theDiff.Value := diff;
             
             ^ true
         };

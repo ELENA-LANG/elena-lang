@@ -75,21 +75,21 @@ public ifnot<ifnot_block,else_block>:else(expr)
 
 public while<loop_block>(expr)
 {
-    __loop cast bool(expr) ? loop_block
+    __loop& cast bool(expr) ? loop_block
 }    
 
 // --- until statement ---
 
 public until<loop_block>(expr)
 {
-    __loop cast bool(expr) ! loop_block
+    __loop& cast bool(expr) ! loop_block
 }
 
 public until<loop_body>(step_expr, cond_expr)
 {
     step_expr;
     
-    __loop cast bool(cond_expr) ! { loop_body; __ignore_duplicates step_expr }
+    __loop& cast bool(cond_expr) ! { loop_body; __ignore_duplicates step_expr }
 }
     
 // --- for statement ---
@@ -98,14 +98,14 @@ public for<loop_body>(step_expr, cond_expr)
 {
     step_expr;
     
-    __loop cast bool(cond_expr) ? { loop_body; __ignore_duplicates step_expr }
+    __loop& cast bool(cond_expr) ? { loop_body; __ignore_duplicates step_expr }
 }
 
 public for<loop_body>(init_expr, cond_expr, step_expr)
 {
     init_expr;
     
-    __loop cast bool(cond_expr) ? { loop_body; step_expr }
+    __loop& cast bool(cond_expr) ? { loop_body; step_expr }
 }
 
 // --- for statement ---
@@ -114,7 +114,7 @@ public for<loop_body>(init_expr, cond_expr, step1_expr, step2_expr)
 {
     init_expr;
     
-    __loop cast bool(cond_expr) ? { loop_body; step1_expr; step2_expr }
+    __loop& cast bool(cond_expr) ? { loop_body; step1_expr; step2_expr }
 }
 
 // --- doUntil statement ---
@@ -123,14 +123,14 @@ public doUntil<loop_body>(cond_expr)
 {
     loop_body;
     
-    __loop cast bool(cond_expr) ! { loop_body }
+    __loop& cast bool(cond_expr) ! { loop_body }
 }
 
 public doWhile<loop_body>(cond_expr)
 {
     loop_body;
     
-    __loop cast bool(cond_expr) ? { loop_body }
+    __loop& cast bool(cond_expr) ? { loop_body }
 }
 
 
