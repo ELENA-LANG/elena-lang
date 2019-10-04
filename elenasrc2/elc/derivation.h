@@ -153,6 +153,7 @@ class DerivationWriter : public _DerivationWriter
    void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateAttributeTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
+   void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
    void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode);

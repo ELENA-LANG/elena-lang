@@ -130,6 +130,9 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
       auto attribute_it = copy.mattributes.start();
       while (!attribute_it.Eof()) {
          auto key = attribute_it.key();
+         if (key.value2 != 0)
+            key.value2 = importMessage(exporter, key.value2, module);
+
          ref_t val = *attribute_it;
          if (val != INVALID_REF)
             val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);

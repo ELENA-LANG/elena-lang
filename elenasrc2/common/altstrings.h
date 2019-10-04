@@ -130,7 +130,7 @@ public:
 
    ident_t()
    {
-      _string = NULL;
+      _string = nullptr;
    }
    ident_t(const char* s)
    {

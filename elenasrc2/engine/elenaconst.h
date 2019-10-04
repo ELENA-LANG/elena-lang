@@ -440,13 +440,14 @@ namespace _ELENA_
    constexpr auto INLINE_CLASSNAME     = "$inline";          // nested class generic name
 
   // --- ELENA special sections ---
-   #define ATTRIBUTE_SECTION        "#attributes"
-   #define EXTENSION_SECTION        "#extensions"
-   #define INITIALIZER_SECTION      "#initializer"
-   #define PACKAGE_SECTION          "#package"
-   #define IMPORTS_SECTION          "#import"
-   #define NAMESPACES_SECTION       "#namespaces"
-   #define NAMESPACE_REF            "#namespace"
+   constexpr auto METAINFO_SECTION     = "#metainfo";
+   constexpr auto ATTRIBUTE_SECTION    = "#attributes";
+   constexpr auto EXTENSION_SECTION    = "#extensions";
+   constexpr auto INITIALIZER_SECTION  = "#initializer";
+   constexpr auto PACKAGE_SECTION      = "#package";
+   constexpr auto IMPORTS_SECTION      = "#import";
+   constexpr auto NAMESPACES_SECTION   = "#namespaces";
+   constexpr auto NAMESPACE_REF        = "#namespace";
 
   // --- ELENA class prefixes / postfixes ---
    #define PRIVATE_PREFIX_NS        "'$private'"

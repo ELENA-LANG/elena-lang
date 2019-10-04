@@ -25,6 +25,7 @@ constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
 constexpr auto V_PUBLIC          = 0x80005001u;
 constexpr auto V_PRIVATE         = 0x80005002u;
 constexpr auto V_INTERNAL        = 0x80005003u;
+constexpr auto V_META            = 0x80005004u;
 
 /// property:
 constexpr auto V_SEALED          = 0x80004001u;

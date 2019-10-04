@@ -517,7 +517,8 @@ enum ClassAttribute
    // if the class can be loaded dynamically
    caSerializable       = 0x002,
    // if the symbol can be loaded dynamically
-   caSymbolSerializable = 0x003
+   caSymbolSerializable = 0x003,
+   caInfo               = 0x004
 };
 
 struct ClassInfo

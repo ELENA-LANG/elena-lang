@@ -614,6 +614,7 @@ SIZE_DECLARATION ->
 SIZE ->
 	hex
 	| integer
+	| identifier
 
 DYNAMIC_SIZE ->
 	[]

@@ -8,11 +8,12 @@
 #define public      80005001h
 #define private     80005002h
 #define internal    80005003h
+#define __meta      80005004h
 
 /// property:
 #define sealed      80004001h
 #define abstract    80004002h
-#define closed     80004003h
+#define closed      80004003h
 #define predefined  80004005h
 
 /// scope_accessors:

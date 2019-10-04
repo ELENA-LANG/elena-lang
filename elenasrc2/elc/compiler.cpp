@@ -8986,6 +8986,76 @@ void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
    _writer.generateConstantList(tree.readRoot(), module, reference);
 }
 
+void Compiler :: declareMetaAttributes(SNode node, NamespaceScope& scope)
+{
+   bool declared = false;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute && current.argument == V_META) {
+         // meta attribute is the only allowed
+         declared = true;
+      }
+      else if (current == lxNameAttr && declared) {
+         break;
+      }
+      else scope.raiseError(errInvalidHint, current);
+
+      current = current.nextNode();
+   }
+}
+
+int Compiler :: saveMetaInfo(_ModuleScope& scope, ident_t info)
+{
+   int position = 0;
+
+   ReferenceNs sectionName("'", METAINFO_SECTION);
+   _Memory* section = scope.module->mapSection(scope.module->mapReference(sectionName, false) | mskMetaRDataRef, false);
+   if (section) {
+      MemoryWriter metaWriter(section);
+
+      position = metaWriter.Position();
+
+      metaWriter.writeLiteral(info);
+   }
+
+   return position;
+}
+
+void Compiler :: compileMetaCategory(SNode node, NamespaceScope& scope)
+{
+   ObjectInfo target;
+   ident_t    info;
+
+   declareMetaAttributes(node, scope);
+
+   SNode identNode = node.findChild(lxNameAttr).firstChild(lxTerminalMask);
+   if (identNode == lxIdentifier) {
+      target = scope.mapTerminal(identNode.identifier(), false, 0);
+      if (target.kind == okUnknown)
+         scope.raiseError(errUnknownClass, identNode);
+   }
+
+   SNode current = node.firstChild(lxObjectMask);
+   if (isSingleStatement(current))
+      current = current.findSubNodeMask(lxObjectMask);
+
+   switch (current.type) {
+      case lxLiteral:
+         info = current.identifier();
+         break;
+   }
+
+   if (target.kind == okClass && !emptystr(info)) {
+      ClassScope classScope(&scope, target.param);
+      _logic->defineClassInfo(*scope.moduleScope, classScope.info, classScope.reference);
+
+      classScope.info.mattributes.add(Attribute(caInfo, 0), saveMetaInfo(*scope.moduleScope, info));
+      classScope.save();
+   }
+   else scope.raiseError(errInvalidSyntax, current);
+}
+
 void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 {
    SyntaxTree expressionTree; // expression tree is reused
@@ -9027,6 +9097,9 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
             compileSymbolImplementation(expressionTree, current, symbolScope);
             break;
          }
+         case lxMeta:
+            compileMetaCategory(current, scope);
+            break;
       }
       current = current.nextNode();
    }

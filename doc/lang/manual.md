@@ -608,14 +608,79 @@ Degree | Converts to degree
 
 ### Strings
 
-**String** is a sequence of characters representing some text information. The way how to interpret these characters depends on the text encoding. ELENA supports both UTF-8 (**system'String**, or **string** alias) and UTF-16  (**system'WideString**,or **wide** alias) encoded strings. The string literal constants are enclosed in double quotes:
+**String** is a sequence of characters representing some text information. The way how to interpret these characters depends on the text encoding. ELENA supports both UTF-8 (**system'String**, or **string** alias) and UTF-16  (**system'WideString**,or **wide** alias) encoded strings. 
+
+Strings are immutable. To modify its content a new string should be created.
+
+A string can be considered as a partial array of UTF-32 characters. It means that for some indexes no character can be returned (an exception will be generated). The reason is UTF-8 / 16 encoding (the character may take more more than one element in the array). When our text is plain ASCII it makes no difference. But for example Russian (for a string) or Chinese (for a wide string) we have to take this feature into account.
+
+#### Characters
+
+A character is a 32-bit primitive value represented by **system'CharValue** class (**char** alias). It can be converted into a 32 bit integer number and vice versa. It supports comparison operations both with another characters and with numbers.
+
+    import extensions;
+     
+    public program()
+    {
+        auto s := "♥♦♣♠";    
+        
+        char ch := s[0];
+        int  code := ch.toInt();
+        
+        console.printLine(ch);
+        console.printLine(code);
+        console.printLine(ch == code);
+    }
+
+The result is:
+
+    ♥
+    9829
+    true
+
+ELENA supports character literal constant as well:
+
+    console.printLine($9829); // character literal
+
+which will be printed like this:
+
+    ♥
+
+#### String literals
+
+The string literals are enclosed in double quotes:
 
     string stringConstant := "Привет Мир"; // UTF-8 encoded constant
     wide wideConstant   := "你好世界"w;     // UTF-16 encoded constant
 
-A string can be considered as a read-only collection of **system'CharValue** classes each representing UTF-32 symbol. Because the text is encoded either with UTF-8 and UTF-16 the character may be encoded with more than one element in this collection. When our text is plain ASCII it makes no difference. But for example Russian (for system'String) or Chinese (for system'WideString) it requires some additional actions.
+If the string itself contains double quote it should be doubled:
 
-Let's print a first, second and the last characters of the given string. As it was said above for the plain English text, it is quite staight-forward. A string is a collection and we may use an array operator to access each its element. The index of the first element is 0.
+    console.printLine("The string may contain a symbol """);
+
+The output is:
+
+    The string may contain a symbol "
+
+Multi-line string is supported as well:
+
+    console.printLine("This is a string with
+    two lines");
+
+The result:
+
+    This is a string with
+    two lines
+
+An empty string may be a string literal without content or a constant **emptyString**:
+
+    console.printLine("");
+    console.printLine(emptyString);
+
+#### Reading string content
+
+If you want to extract a character from a string, you index into it using an array operator. The index of the first element is 0.
+
+Let's print a first, second and the last characters of the given string. As it was said above for the plain English text, it is quite straight-forward:
 
     import extensions;
     
@@ -625,7 +690,7 @@ Let's print a first, second and the last characters of the given string. As it w
         
         console.printLine(s[0]); // printing the first element
         console.printLine(s[1]); // printing the second element
-        console.printLine(s[s.Length - 1]); // printing the second element
+        console.printLine(s[s.Length - 1]); // printing the last element
     }
 
 The output is:
@@ -640,7 +705,7 @@ Let's try it with Russian word:
     
     console.printLine(s[0]); // printing the first element
     console.printLine(s[1]); // printing the second element
-    console.printLine(s[s.Length - 1]); // printing the second element
+    console.printLine(s[s.Length - 1]); // printing the last element
 
 There error is raised for the second element:
 
@@ -655,15 +720,15 @@ There error is raised for the second element:
     system'$private'entry.#invoke[0]:win32_app.l(37)
     system'#startUp:win32_app.l(55)
 
-Why? Because in UTF-8 a russian character is encoded with two bytes (two elements of String collection).
+Why? Because in UTF-8 a russian character is encoded with two bytes (two elements of String array). It means that the second character must be read from third, and not from the second position.
 
-We may actually fix the problem using UTF-16:
+We may actually fix the problem using UTF-16. Now every symbol is encoded in only one array element.
 
     auto s := "Привет"w;    
     
     console.printLine(s[0]); // printing the first element
     console.printLine(s[1]); // printing the second element
-    console.printLine(s[s.Length - 1]); // printing the second element
+    console.printLine(s[s.Length - 1]); // printing the last element
 
 And the output is:
 
@@ -671,11 +736,106 @@ And the output is:
     р
     т
 
-But for the Chinese word it will not work:
+But for the Chinese word it will not work.
 
-    auto s := "你好世界"w;    
+To correctly read the next character, we have to use a character **Length** (for strings) or **WideLength** (for wide strings) properties:
+
+    auto s1 := "Привет";    
+    auto s2 := "你好世界"w;    
     
-    console.printLine(s[0]); // printing the first element
-    console.printLine(s[1]); // printing the second element
-    console.printLine(s[s.Length - 1]); // printing the second element
+    console.printLine(s1[s1[0].Length]);     // printing the second element of UTF-8 string
+    console.printLine(s2[s2[0].WideLength]); // printing the second element of UTF-16 string
 
+Enumerators can be used to simplify the task:
+
+    auto s := "Привет";    
+    auto it := s.enumerator();   // creating a string enumerator
+
+    it.next();                   // going to the first element
+    console.printLine(it.get()); // printing the current element  
+    it.next();                   // going to the second element
+    console.printLine(it.get()); // printing the current element  
+
+The output as expected:
+
+    П
+    р
+
+To read the last one we have go to the end one by one. Instead let's use an extension method **LastMember** declared in **system'routines** module:
+
+    import extensions;
+    import system'routines;
+ 
+    public program()
+    {
+        auto s1 := "Привет";    
+        
+        console.printLine(s1.LastMember);
+    }
+
+The output is
+
+    т
+
+#### Basic operations and functions
+
+You can compare two strings:
+
+    console.print("""string1"" < ""string1""=", "string1" < "string2");
+    console.print("""string1"" > ""string1""=", "string1" > "string2");
+    console.print("""string1"" == ""string1""=", "string1" == "string2");
+
+with the following result:
+
+    "string1" < "string1"=true
+    "string1" > "string1"=false
+    "string1" == "string1"=false
+
+Several strings or a string and a char can be concatenated. The result of the operation is always a new string.
+
+    import extensions;
+    
+    public program()
+    {
+        console.print("Hello" + " " + " World " + $10);
+    }
+
+The result will be
+
+    Hello  World 
+
+We can insert a sub string into or delete it from given string:
+
+    console.printLine("Hillo World".delete(1,1).insert(1, "e"));
+
+The output is:
+
+    Hello World
+
+The first operand is a position in the given string (*note that we may corrupt the string if a sub string will be inserted into multi-element character*). The second one is the length of the sub string for **delete** and a sub string for **insert**.
+
+We may find a position of a sub string in the given one.
+
+    console.printLine("Hello World".indexOf(0, " "));
+    console.printLine("Hello World".indexOf(0, "!"));
+
+The result will be
+
+     5
+     -1
+
+The first operand is starting index and the second one is the sub string to be found. The method will return the index of the first occurrence of the second argument or -1. 
+
+We may return a sub string from the given one:
+
+    console.printLine("Hello World".Substring(6,5));
+
+and the result is:
+
+    World
+
+Similar to the examples above the first index is a position of the sub string and the second one is its length.
+
+The exception will be generated if the index lays outside the target string for these operations.
+
+There is a number of extension methods for formatting, padding and interpolating strings

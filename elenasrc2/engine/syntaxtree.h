@@ -37,6 +37,7 @@ enum LexicalType
    lxExpression               = 0x00C012,
    lxScope                    = 0x000013,
    lxClass                    = 0x000014,
+   lxMeta                     = 0x000015,
    lxClassMethod              = 0x000016,
    lxParameter                = 0x000017,
    lxNestedClass              = 0x000018,

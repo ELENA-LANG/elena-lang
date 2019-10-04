@@ -486,6 +486,9 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
    else if (bodyNode == lxSizeDecl) {
       _scope->raiseError(errInvalidSyntax, _filePath, bodyNode);
    }
+   else if (bodyNode == lxFieldInit) {
+      scopeNode = lxMeta;
+   }
    else {
       scopeNode = lxClass;
 
@@ -647,7 +650,7 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode/*, Der
                }
                else _scope->raiseError(errInvalidHint, _filePath, current);
             }
-            else if (attrRef == V_TYPETEMPL) {
+            else if (attrRef == V_TYPETEMPL || attrRef == V_META) {
                // NOTE : the type alias should not be mapped in the module
                withoutMapping = true;
             }
@@ -736,6 +739,25 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
    }
 }
 
+void DerivationWriter :: generateMetaTree(SyntaxWriter& writer, SNode node, Scope& scope)
+{
+   writer.newNode(lxMeta);
+   //writer.appendNode(lxSourcePath, scope.sourcePath);
+
+   generateAttributes(writer, node.prevNode(), scope/*, true, false, false*/);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxFieldInit) {
+         generateExpressionTree(writer, current, scope);
+      }
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
 void DerivationWriter :: generateScope(SyntaxWriter& writer, SNode node, Scope& scope)
 {
    SNode current = node.firstChild();
@@ -756,6 +778,9 @@ void DerivationWriter :: generateScope(SyntaxWriter& writer, SNode node, Scope& 
             break;
          case lxForward:
             declareType(current);
+            break;
+         case lxMeta:
+            generateMetaTree(writer, current, scope);
             break;
          case lxImport:
             generateImport(writer, current);

@@ -6,8 +6,18 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev
-                * __loop& cast bool(expr) ? loop_block
+                 * support constant class meta attributes
+                 * operations with meta data : introducing meta object : e.g
+                     __meta[class][name] := class
+                     __meta[class][dto] += name  
+
                 * class / methods meta attributes
+                * modify scope attribute syntax - support square brackets
+                * support dto_field, info scope attributes
+
+                * do not allow to write something like
+                  A{ int dump[4] := 3; }  // !! error
+
                 * generate ELENA LIB API
 
               xdev
@@ -134,6 +144,7 @@ Pipeline:
                  * optimize r * n + 0.5r
                  * optimize dirty_ptr := dirty_ptr + int
                  * building expression tree - raise an exceptoion with missing class name
+                 * the following code should not be allowed - real n := n;
 
               ydev
                  * graph sample
@@ -197,10 +208,6 @@ Pipeline:
                  * support static fields - after declaration - every class child should initialize it
                  * support sealed static fields
                  * warn if the attribute value is not set
-                 * support constant class meta attributes
-                 * operations with meta data : introducing meta object : e.g
-                     __meta[class][name] := class
-                     __meta[class][dto] += name  
 
                  * supporting : const fields - constant values
                  * symbols : a += b
@@ -270,7 +277,6 @@ Pipeline:
                  * the following code - theIndexers[i] := arguments[i].indexer() - does not work correctly
                    (see SequentialEnumerator)
                  * optimize SystemTime
-                 * the following code should not be allowed - real n := n;
                  * uncomment __closuretape."#dispatch[1]  - check the subject correctly
 
                  * test unboxing with variadic arg list
