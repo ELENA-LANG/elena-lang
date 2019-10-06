@@ -9,6 +9,7 @@
 #define private     80005002h
 #define internal    80005003h
 #define __meta      80005004h
+#define inline      80005005h
 
 /// property:
 #define sealed      80004001h
@@ -59,7 +60,6 @@
 //#8000101B = nonstructural;
 #define auto        8000101Ch
 #define attribute   8000101Fh
-#define inline      80001021h
 
 /// primitive types
 #define __string    80000801h
@@ -72,6 +72,7 @@
 #define mssgconst   80000806h
 #define subjconst   80000807h
 #define __symbol    80000808h
+#define inlinearg   80000809h
 
 //__extmssg       = #21.
 //__tape_mixin    = #8209.

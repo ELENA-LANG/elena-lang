@@ -1694,7 +1694,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          attrValue = (tpConversion | tpSealed);
          return true;
       case V_INITIALIZER:
-         attrValue = (tpSpecial | tpPrivate | tpInitializer | tpPartial);
+         attrValue = (tpSpecial | tpPrivate | tpInitializer);
          return true;
       case V_METHOD:
          attrValue = 0;
@@ -1832,8 +1832,8 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_LAZY:
          attributes.lazyAttr = true;
          return true;
-      case V_INLINE:
-         attributes.inlineAttr = true;
+      case V_INLINEARG:
+         attributes.inlineArgAttr = true;
          return true;
       case V_IGNOREDUPLICATE:
          attributes.ignoreDuplicates = true;

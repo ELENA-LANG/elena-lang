@@ -26,6 +26,7 @@ constexpr auto V_PUBLIC          = 0x80005001u;
 constexpr auto V_PRIVATE         = 0x80005002u;
 constexpr auto V_INTERNAL        = 0x80005003u;
 constexpr auto V_META            = 0x80005004u;
+constexpr auto V_INLINE          = 0x80005005u;
 
 /// property:
 constexpr auto V_SEALED          = 0x80004001u;
@@ -77,8 +78,6 @@ constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
 constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
-constexpr auto V_TEMPLATTRIBUTE  = 0x80001020u;
-constexpr auto V_INLINE          = 0x80001021u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -89,6 +88,8 @@ constexpr auto V_PTRBINARY       = 0x80000805u;
 constexpr auto V_MESSAGE         = 0x80000806u;
 constexpr auto V_SUBJECT         = 0x80000807u;
 constexpr auto V_SYMBOL          = 0x80000808u;
+constexpr auto V_INLINEARG       = 0x80000809u;
+constexpr auto V_INLINEATTRIBUTE = 0x8000080Au;
 
 /// primitive types
 constexpr auto V_FLAG            = 0x80000001u;
@@ -106,7 +107,6 @@ constexpr auto V_INT16ARRAY      = 0x8000000Cu;
 constexpr auto V_INT8ARRAY       = 0x8000000Du;
 constexpr auto V_OBJECT          = 0x8000000Eu;
 constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
-constexpr auto V_INLINEARG       = 0x80000010u;
 
 //#define V_PARAMETER      (ref_t)-02
 constexpr auto V_STRCONSTANT     = 0x80000010u; // used for explicit constant operations
@@ -143,8 +143,7 @@ enum MethodHint
    tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
    tpInitializer = 0x0200000,
    tpSetAccessor = 0x0400000,
-   tpCast        = 0x0800000,
-   tpPartial     = 0x1000000
+   tpCast        = 0x0800000
 };
 
 // --- _Project ---
@@ -445,13 +444,13 @@ public:
       bool  classAttr;
       bool  directAttr;
       bool  lazyAttr;
-      bool  inlineAttr;
+      bool  inlineArgAttr;
       bool  ignoreDuplicates;
 
       bool isExprAttr()
       {
          return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | 
-            classAttr | directAttr | lazyAttr | inlineAttr;
+            classAttr | directAttr | lazyAttr | inlineArgAttr;
       } 
 
       ExpressionAttributes()
@@ -459,7 +458,7 @@ public:
          refAttr = externAttr = typeAttr = castAttr = forwardAttr = false;
          paramsAttr = newOpAttr = loopAttr = internAttr = false;
          classAttr = mssgAttr = wrapAttr = subjAttr = memberAttr = false;
-         lazyAttr = inlineAttr = directAttr = ignoreDuplicates = false;
+         lazyAttr = inlineArgAttr = directAttr = ignoreDuplicates = false;
       }
    };
 

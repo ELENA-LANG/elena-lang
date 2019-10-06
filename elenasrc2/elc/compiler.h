@@ -429,6 +429,7 @@ private:
       bool        classClassMode;
       bool        abstractMode;
       bool        abstractBaseMode;
+      bool        withInitializers;
 //      bool        withImplicitConstructor;
 
       void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
@@ -852,7 +853,7 @@ private:
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
    void validateClassFields(SNode node, ClassScope& scope);
 
-   void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
+   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
    void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool& publicAttribute);
    void declareClassAttributes(SNode node, ClassScope& scope, bool& publicAttribute);
 //   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
@@ -1017,7 +1018,7 @@ private:
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
    bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);
    void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
-   void compileMetaCategory(SNode node, NamespaceScope& scope);
+   //void compileMetaCategory(SNode node, NamespaceScope& scope);
 
 ////   bool validate(_ProjectManager& project, _Module* module, int reference);
 
@@ -1082,7 +1083,7 @@ private:
    bool optimizeNewArrBoxing(_ModuleScope& scope, SNode& node);
    bool optimizeAssigningTargetBoxing(_ModuleScope& scope, SNode& node);
 
-   int saveMetaInfo(_ModuleScope& scope, ident_t info);
+   //int saveMetaInfo(_ModuleScope& scope, ident_t info);
 
 public:
    void loadRules(StreamReader* optimization);

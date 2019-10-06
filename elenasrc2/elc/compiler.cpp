@@ -560,6 +560,7 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference)
    classClassMode = false;
    abstractMode = false;
    abstractBaseMode = false;
+   withInitializers = false;
 //   withImplicitConstructor = false;
 }
 
@@ -4782,7 +4783,7 @@ ref_t Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
          if (attributes.paramsAttr) {
 	         exprAttr |= HINT_PARAMSOP;
          }
-         if (attributes.inlineAttr) {
+         if (attributes.inlineArgAttr) {
             if (test(mode, HINT_PARAMETER)) {
                exprAttr |= HINT_INLINEARGMODE;
             }
@@ -6198,37 +6199,22 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
 
    preallocated = codeScope.level;
 
-   SNode body = node.findChild(lxCode);
-   ObjectInfo retVal = compileCode(writer, body, codeScope);
-
-   if (test(scope.hints, tpPartial)) {
-      // HOTFIX : compile all initializer methods
-      SNode next = node.nextNode();
-      while (next != lxNone) {
-         if (next == lxClassMethod && next.argument == node.argument) {
-            body = next.findChild(lxCode);
-            retVal = compileCode(writer, body, codeScope);
-
-            next = lxIdle;
-         }
-         next = next.nextNode();
-      }
-   }
-
-   // if the method returns itself
-   if (retVal.kind == okUnknown) {
-      // adding the code loading $self
-      writer.newNode(lxExpression);
-      writer.appendNode(lxLocal, 1);
-
-      ref_t resultRef = scope.getReturningRef(false);
-      if (resultRef != 0) {
-         scope.raiseError(errInvalidOperation, node);
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.compare(lxFieldInit, lxFieldAccum)) {
+         writer.newNode(lxExpression);
+         writer.appendNode(lxBreakpoint, dsStep);
+         compileRootExpression(writer, current, codeScope);
+         writer.closeNode();
       }
 
-      writer.closeNode();
+      current = current.nextNode();
    }
-   else scope.raiseError(errIllegalMethod, node);
+
+   // adding the code loading $self
+   writer.newNode(lxExpression);
+   writer.appendNode(lxLocal, 1);
+   writer.closeNode();
 
    writer.closeNode();
 
@@ -6407,6 +6393,10 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
 
    while (current != lxNone) {
       switch(current) {
+         case lxFieldInit:
+         case lxFieldAccum:
+            scope.withInitializers = true;
+            break;
          case lxClassMethod:
          {
             if (ignoreAutoMultimethods && current.existChild(lxAutoMultimethod)) {
@@ -6450,11 +6440,7 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
             else {
                declareArgumentList(current, methodScope, false, false);
 
-               if (methodScope.message == scope.moduleScope->init_message) {
-                  // if it is in-place class member initialization
-                  compileInitializer(writer, current, methodScope);
-               }
-               else if (methodScope.abstractMethod) {
+               if (methodScope.abstractMethod) {
                   if (isMethodEmbeddable(methodScope, current)) {
                      compileEmbeddableMethod(writer, current, methodScope);
                   }
@@ -6475,6 +6461,16 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
       }
 
       current = current.nextNode();
+   }
+
+   if (scope.withInitializers) {
+      MethodScope methodScope(&scope);
+      methodScope.message = scope.moduleScope->init_message;
+
+      initialize(scope, methodScope);
+
+      // if it is in-place class member initialization
+      compileInitializer(writer, node, methodScope);
    }
 
    // if the VMT conatains newly defined generic handlers, overrides default one
@@ -6789,7 +6785,10 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& implicitClass)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxClassMethod) {
+      if (current.compare(lxFieldInit, lxFieldAccum)) {
+         scope.withInitializers = true;
+      }
+      else if (current == lxClassMethod) {
          MethodScope methodScope(&scope);
 
          declareMethodAttributes(current, methodScope);
@@ -7249,15 +7248,9 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
    // check if there is no duplicate method
    if (scope.info.methods.exist(message, true)) {
-      if (!test(methodHints, tpPartial))
-         scope.raiseError(errDuplicatedMethod, current);
+      scope.raiseError(errDuplicatedMethod, current);
    }
    else {
-      if (test(methodHints, tpPartial)) {
-         methodHints &= ~tpPartial;
-         scope.removeHint(message, tpPartial);
-      }
-
       bool privateOne = test(message, STATIC_MESSAGE);
 //      bool specialOne = test(methodHints, tpConversion);
 //      if (test(message, SPECIAL_MESSAGE)) {
@@ -7471,6 +7464,17 @@ inline bool isEmbeddable(Compiler::ClassType classType)
 void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassType classType, bool nestedDeclarationMode)
 {
    bool closed = test(scope.info.header.flags, elClosed);
+
+   if (scope.withInitializers) {
+      // add special method initalizer
+      scope.include(scope.moduleScope->init_message);
+
+      int attrValue = V_INITIALIZER;
+      bool dummy = false;
+      _logic->validateMethodAttribute(attrValue, dummy);
+
+      scope.addAttribute(scope.moduleScope->init_message, maHint, attrValue);
+   }
 
    if (isClassClass(classType)) {
       if (!scope.abstractMode) {
@@ -8739,6 +8743,7 @@ bool Compiler :: optimizeAssigningTargetBoxing(_ModuleScope& scope, SNode& node)
 
       return true;
    }
+   else return false;
 }
 
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
@@ -8986,75 +8991,75 @@ void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
    _writer.generateConstantList(tree.readRoot(), module, reference);
 }
 
-void Compiler :: declareMetaAttributes(SNode node, NamespaceScope& scope)
-{
-   bool declared = false;
+//void Compiler :: declareMetaAttributes(SNode node, NamespaceScope& scope)
+//{
+//   bool declared = false;
+//
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (current == lxAttribute && current.argument == V_META) {
+//         // meta attribute is the only allowed
+//         declared = true;
+//      }
+//      else if (current == lxNameAttr && declared) {
+//         break;
+//      }
+//      else scope.raiseError(errInvalidHint, current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (current == lxAttribute && current.argument == V_META) {
-         // meta attribute is the only allowed
-         declared = true;
-      }
-      else if (current == lxNameAttr && declared) {
-         break;
-      }
-      else scope.raiseError(errInvalidHint, current);
+//int Compiler :: saveMetaInfo(_ModuleScope& scope, ident_t info)
+//{
+//   int position = 0;
+//
+//   ReferenceNs sectionName("'", METAINFO_SECTION);
+//   _Memory* section = scope.module->mapSection(scope.module->mapReference(sectionName, false) | mskMetaRDataRef, false);
+//   if (section) {
+//      MemoryWriter metaWriter(section);
+//
+//      position = metaWriter.Position();
+//
+//      metaWriter.writeLiteral(info);
+//   }
+//
+//   return position;
+//}
 
-      current = current.nextNode();
-   }
-}
-
-int Compiler :: saveMetaInfo(_ModuleScope& scope, ident_t info)
-{
-   int position = 0;
-
-   ReferenceNs sectionName("'", METAINFO_SECTION);
-   _Memory* section = scope.module->mapSection(scope.module->mapReference(sectionName, false) | mskMetaRDataRef, false);
-   if (section) {
-      MemoryWriter metaWriter(section);
-
-      position = metaWriter.Position();
-
-      metaWriter.writeLiteral(info);
-   }
-
-   return position;
-}
-
-void Compiler :: compileMetaCategory(SNode node, NamespaceScope& scope)
-{
-   ObjectInfo target;
-   ident_t    info;
-
-   declareMetaAttributes(node, scope);
-
-   SNode identNode = node.findChild(lxNameAttr).firstChild(lxTerminalMask);
-   if (identNode == lxIdentifier) {
-      target = scope.mapTerminal(identNode.identifier(), false, 0);
-      if (target.kind == okUnknown)
-         scope.raiseError(errUnknownClass, identNode);
-   }
-
-   SNode current = node.firstChild(lxObjectMask);
-   if (isSingleStatement(current))
-      current = current.findSubNodeMask(lxObjectMask);
-
-   switch (current.type) {
-      case lxLiteral:
-         info = current.identifier();
-         break;
-   }
-
-   if (target.kind == okClass && !emptystr(info)) {
-      ClassScope classScope(&scope, target.param);
-      _logic->defineClassInfo(*scope.moduleScope, classScope.info, classScope.reference);
-
-      classScope.info.mattributes.add(Attribute(caInfo, 0), saveMetaInfo(*scope.moduleScope, info));
-      classScope.save();
-   }
-   else scope.raiseError(errInvalidSyntax, current);
-}
+//void Compiler :: compileMetaCategory(SNode node, NamespaceScope& scope)
+//{
+//   ObjectInfo target;
+//   ident_t    info;
+//
+//   declareMetaAttributes(node, scope);
+//
+//   SNode identNode = node.findChild(lxNameAttr).firstChild(lxTerminalMask);
+//   if (identNode == lxIdentifier) {
+//      target = scope.mapTerminal(identNode.identifier(), false, 0);
+//      if (target.kind == okUnknown)
+//         scope.raiseError(errUnknownClass, identNode);
+//   }
+//
+//   SNode current = node.firstChild(lxObjectMask);
+//   if (isSingleStatement(current))
+//      current = current.findSubNodeMask(lxObjectMask);
+//
+//   switch (current.type) {
+//      case lxLiteral:
+//         info = current.identifier();
+//         break;
+//   }
+//
+//   if (target.kind == okClass && !emptystr(info)) {
+//      ClassScope classScope(&scope, target.param);
+//      _logic->defineClassInfo(*scope.moduleScope, classScope.info, classScope.reference);
+//
+//      classScope.info.mattributes.add(Attribute(caInfo, 0), saveMetaInfo(*scope.moduleScope, info));
+//      classScope.save();
+//   }
+//   else scope.raiseError(errInvalidSyntax, current);
+//}
 
 void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 {
@@ -9097,9 +9102,9 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
             compileSymbolImplementation(expressionTree, current, symbolScope);
             break;
          }
-         case lxMeta:
-            compileMetaCategory(current, scope);
-            break;
+         //case lxMeta:
+         //   compileMetaCategory(current, scope);
+         //   break;
       }
       current = current.nextNode();
    }

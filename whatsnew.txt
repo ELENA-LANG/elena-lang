@@ -8,7 +8,7 @@
 ***************************************************************
 
 [ELENA]
-[+] #481 : New expression attribute - inline 
+[+] #481 : New expression attribute - inlinearg
 [*] the operations with reference arguments are improved
 [-] #200 : unboxing explicit local allocated extension
 

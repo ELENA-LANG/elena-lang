@@ -64,6 +64,7 @@ enum LexicalType
    lxAttrExpression           = 0x000080,
    lxTemplateOperator         = 0x000081,
    lxFieldAccum               = 0x000083,
+   lxInlineAttribute          = 0x000084,
 
    lxTypecast                 = 0x000100,
    lxClassProperty            = 0x000101,
@@ -1094,6 +1095,8 @@ public:
    static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
    static void saveNode(Node node, _Memory* dump, bool includingNode = false);
    static void loadNode(Node node, _Memory* dump);
+
+   static void copyMatchedNodes(Writer& writer, LexicalType type, Node owner);
 
    static int countNodeMask(Node current, LexicalType mask)
    {

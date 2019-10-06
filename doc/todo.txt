@@ -6,6 +6,12 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev
+                 * implement inline arguments
+                 * static fields should beaccessaible from storng typed extensions
+                 * testcase : test methods
+                 * property
+
+              xdev
                  * support constant class meta attributes
                  * operations with meta data : introducing meta object : e.g
                      __meta[class][name] := class
