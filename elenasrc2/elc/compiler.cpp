@@ -8358,8 +8358,6 @@ bool Compiler :: optimizeEmbeddableCall(_ModuleScope& scope, SNode& node)
 
 void Compiler :: optimizeBoxing(_ModuleScope& scope, SNode& node)
 {
-   ref_t targetRef = node.findChild(lxTarget).argument;
-
    SNode exprNode = node.findSubNodeMask(lxObjectMask);
 
    bool localBoxing = false;

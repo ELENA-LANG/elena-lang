@@ -26,7 +26,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   29
+#define REVISION_VERSION   30
 
 using namespace _ELENA_;
 
@@ -1084,6 +1084,9 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       temp.copy(className);
       temp.append('.');
       printMessage(temp, module, entry.message);
+
+      //ref_t retType = info.
+
       printLine("@method ", temp);
 
       nextRow(row, pageSize);

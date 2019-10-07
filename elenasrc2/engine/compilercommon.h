@@ -27,6 +27,7 @@ constexpr auto V_PRIVATE         = 0x80005002u;
 constexpr auto V_INTERNAL        = 0x80005003u;
 constexpr auto V_META            = 0x80005004u;
 constexpr auto V_INLINE          = 0x80005005u;
+constexpr auto V_PROPERTY        = 0x80005006u;
 
 /// property:
 constexpr auto V_SEALED          = 0x80004001u;
@@ -72,7 +73,6 @@ constexpr auto V_INTERN          = 0x80001016u;
 constexpr auto V_FORWARD         = 0x80001017u;
 constexpr auto V_IMPORT          = 0x80001018u;
 constexpr auto V_GROUP           = 0x80001019u;
-constexpr auto V_PROPERTY        = 0x8000101Au;
 constexpr auto V_NOSTRUCT        = 0x8000101Bu;
 constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;

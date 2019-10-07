@@ -38,15 +38,13 @@ class DerivationWriter : public _DerivationWriter
       stNormal = 0,
       stClassTemplate,
       stCodeTemplate,
-      stPropertyTemplate, // !! obosolete
+      stPropertyTemplate,
       stExtensionTemplate,
       stInlineTemplate
    };
 
    struct Scope
    {
-      SyntaxTree     buffer;
-
       ScopeType      templateMode;
       ForwardMap     parameters;
       int            nestedLevel;
@@ -54,10 +52,14 @@ class DerivationWriter : public _DerivationWriter
 
       bool isNameParameter(ident_t name, ref_t& argument)
       {
-         if (templateMode == stPropertyTemplate && name.compare(PROPERTY_VAR)) {
-            argument = nestedLevel + 1;
+         if (templateMode == stInlineTemplate || templateMode == stPropertyTemplate) {
+            int index = parameters.get(name);
+            if (index == parameters.Count()) {
+               argument = nestedLevel + index;
 
-            return true;
+               return true;
+            }
+            else return false;
          }
          else return false;
       }
@@ -108,7 +110,6 @@ class DerivationWriter : public _DerivationWriter
       }
 
       Scope()
-         : buffer((pos_t)0)
       {
          templateMode = ScopeType::stNormal;
          nestedLevel = 0;
@@ -138,7 +139,7 @@ class DerivationWriter : public _DerivationWriter
 
    ref_t resolveTemplate(ident_t templateName);
 
-   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, bool& allowAttrTemplate, ref_t& previusCategory);
+   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory);
    ref_t mapInlineAttribute(SNode terminal);
    void declareAttribute(SNode node);
 
@@ -156,22 +157,22 @@ class DerivationWriter : public _DerivationWriter
    void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope& derivationScope);
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
-   void generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, List<SNode>* parameters);
-   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-   void generateAttributeTemplateTree(SyntaxWriter& writer, SNode node, SNode nameNode, Scope& derivationScope);
+   void generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, List<SNode>* parameters, SyntaxTree& buffer);
+   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
+   void generateAttributeTemplateTree(SyntaxWriter& writer, SNode node, SNode nameNode, Scope& derivationScope, SyntaxTree& buffer);
    void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
-   void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode);
+   void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode, SyntaxTree& buffer);
    // returns true if in-place init found
-   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-   void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope); 
+   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
+   void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
    void generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope, bool rootMode);
    void generateTypeAttribute(SyntaxWriter& writer, SNode attrNodes, SNode terminal, size_t dimensionCounterwriter, 
                               ref_t argRef, Scope& derivationScope);
-   void generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
+   void generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, bool templateArgMode = false, bool onlyAttributes = false);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);

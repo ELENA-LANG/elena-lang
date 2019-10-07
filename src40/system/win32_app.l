@@ -38,14 +38,14 @@ entry()
     }
     finally
     {
-//       startUpEvents.stopping()
+       startUpEvents.stopping()
     }
     catch:(AbortException e)
     {
     }   
     catch:(Exception e)
     {
-        console.writeLine(e.Printable);
+        //console.writeLine(e.Printable);
         
         extern elenart.Exit(-1);
     }

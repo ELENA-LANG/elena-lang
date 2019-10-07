@@ -8,8 +8,9 @@
 #define public      80005001h
 #define private     80005002h
 #define internal    80005003h
-#define __meta      80005004h
-#define inline      80005005h
+//#define __meta      80005004h
+//#define inline      80005005h
+#define property    80005006h
 
 /// property:
 #define sealed      80004001h
@@ -56,7 +57,6 @@
 #define forward     80001017h
 #define import      80001018h
 #define mixin       80001019h
-#define property    8000101Ah
 //#8000101B = nonstructural;
 #define auto        8000101Ch
 #define attribute   8000101Fh

@@ -6,6 +6,21 @@ public interface<T>
     };
 }
 
+property prop<__name>
+{
+    __name;
+    
+    get __name()
+    {
+        ^ __name
+    }    
+    
+    set __name(value)
+    {
+        __name := value
+    }
+}
+
 property prop<T, __name>
 {
     T __name;
@@ -21,6 +36,16 @@ property prop<T, __name>
     }
 }
 
+property rprop<__name>
+{
+    __name;
+    
+    get __name()
+    {
+        ^ __name
+    }    
+}
+
 property rprop<T, __name>
 {
     T __name;
@@ -31,10 +56,10 @@ property rprop<T, __name>
     }    
 }
 
-attribute dto<__name>
-{
-    this __dto_properties += subjconst __name;
-}
+//attribute dto<__name>
+//{
+//    this __dto_properties += subjconst __name;
+//}
 
 // --- extern statement ---
 
