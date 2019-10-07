@@ -5252,7 +5252,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
    }
    else if (openArg) {
       // clear open argument list, including trailing nil and subtracting normal arguments
-      releaseObject(tape, paramCount - getParamCount(node.argument));
+      if (test(node.argument, SPECIAL_MESSAGE)) {
+         // HOTFIX : self is not in the stack
+         releaseObject(tape, paramCount - getParamCount(node.argument) + 1);
+      }
+      else releaseObject(tape, paramCount - getParamCount(node.argument));
    }
 
    // unbox the arguments
