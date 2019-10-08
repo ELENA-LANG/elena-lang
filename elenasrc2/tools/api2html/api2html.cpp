@@ -59,6 +59,7 @@ struct ApiClassInfo
    List<ApiFieldInfo*> fields;
    List<ApiMethodInfo*> methods;
    List<ApiMethodInfo*> constructors;
+   List<ApiMethodInfo*> extensions;
 
    ApiClassInfo()
       : fields(nullptr, freeobj), methods(nullptr, freeobj), constructors(nullptr, freeobj)
@@ -593,45 +594,30 @@ void writeStaticProperties(TextFileWriter& writer, ApiClassInfo* info)
    }
 }
 
-//void writeExtensions(TextFileWriter& writer, IniConfigFile& config, const char* name)
-//{
-//   if (emptystr(config.getSetting(name, "#extension", NULL)))
-//      return;
-//
-//   // method section
-//   writer.writeLiteralNewLine("<A NAME=\"method_summary\"><!-- --></A>");
-//
-//   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-//   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-//   writer.writeLiteralNewLine("<B>Extension Summary</B></FONT></TD>");
-//   writer.writeLiteralNewLine("</TR>");
-//
-//   ConfigCategoryIterator it = config.getCategoryIt(name);
-//   while (!it.Eof()) {
-//      if (StringHelper::compare(it.key(), "#extension")) {
-//         writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-//         writer.writeLiteralNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
-//         writer.writeLiteralNewLine("<CODE>&nbsp;");
-//
-//         const char* message = *it;
-//         const char* descr = find(message, ';');
-//
-//         writeMessage(writer, message);
-//
-//         writer.writeLiteralNewLine("</TD>");
-//         writer.writeLiteral("<TD><CODE>");
-//
-//         if (!emptystr(descr)) {
-//            writer.writeLiteral(descr);
-//         }
-//         else writer.writeLiteral("&nbsp;");
-//         writer.writeLiteralNewLine("</CODE>");
-//         writer.writeLiteralNewLine("</TD>");
-//         writer.writeLiteralNewLine("</TR>");
-//      }
-//      it++;
-//   }
-//}
+void writeExtensions(TextFileWriter& writer, ApiClassInfo* info)
+{
+   // method section
+   writer.writeLiteralNewLine("<A NAME=\"method_summary\"><!-- --></A>");
+
+   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeLiteralNewLine("<B>Extension Summary</B></FONT></TD>");
+   writer.writeLiteralNewLine("</TR>");
+
+   auto it = info->extensions.start();
+   while (!it.Eof()) {
+      if (!(*it)->special) {
+         writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+
+         writeFirstColumn(writer, *it);
+         writeSecondColumn(writer, *it);
+
+         writer.writeLiteralNewLine("</TR>");
+      }
+
+      it++;
+   }
+}
 
 void writeConstructors(TextFileWriter& writer, ApiClassInfo* info)
 {
@@ -755,8 +741,10 @@ void writeBody(TextFileWriter& writer, ApiClassInfo* info, const char* moduleNam
    writer.writeLiteralNewLine("<!-- ========== METHOD SUMMARY =========== -->");
    writeMethods(writer, info);
 
-//   writer.writeLiteralNewLine("<!-- ========== EXTNSION SUMMARY =========== -->");
-//   writeExtensions(writer, config, name);
+   if (info->extensions.Count() > 0) {
+      writer.writeLiteralNewLine("<!-- ========== EXTNSION SUMMARY =========== -->");
+      writeExtensions(writer, info);
+   }
 
    writer.writeLiteralNewLine("</TABLE>");
 }
@@ -851,7 +839,7 @@ void parseName(ApiMethodInfo* info)
 
 }
 
-void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne)
+void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool extensionOne)
 {
    int paramCount = 0;
 
@@ -914,6 +902,9 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne)
    if (info->isMultidispatcher)
       info->special = true;
 
+   if (extensionOne)
+      info->prefix.append("extension ");
+
    if (info->isAbstract)
       info->prefix.append("abstract ");
 
@@ -934,7 +925,7 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
       if (ident_t(line).startsWith("@method ")) {
          ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-         parseMethod(methodInfo, line.c_str() + 8, false);
+         parseMethod(methodInfo, line.c_str() + 8, false, false);
 
          if (methodInfo->prop)
             info->withProps = true;
@@ -967,7 +958,7 @@ void readClassClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader,
       if (ident_t(line).startsWith("@method ")) {
          ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-         parseMethod(methodInfo, line.c_str() + 8, true);
+         parseMethod(methodInfo, line.c_str() + 8, true, false);
 
          if (isMethod(methodInfo))
             info->withConstructors = true;
@@ -975,6 +966,24 @@ void readClassClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader,
             info->withStaticProps = true;
 
          info->constructors.add(methodInfo);
+      }
+      else if (line.Length() == 0)
+         return;
+   }
+}
+
+void readExtensions(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info)
+{
+   while (true) {
+      if (!readLine(line, reader))
+         return;
+
+      if (ident_t(line).startsWith("@method ")) {
+         ApiMethodInfo* methodInfo = new ApiMethodInfo();
+
+         parseMethod(methodInfo, line.c_str() + 8, true, true);
+
+         info->extensions.add(methodInfo);
       }
       else if (line.Length() == 0)
          return;
@@ -1011,12 +1020,7 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          readClassClassMembers(line, reader, info);
       }
       else {
-         ApiClassInfo* info = findClass(moduleInfo, line + 6);
-         if (info == nullptr) {
-            info = new ApiClassInfo();
-
-            moduleInfo->classes.add(info);
-         }
+         ApiClassInfo* info = new ApiClassInfo();
 
          info->fullName.copy(line + 6);
          info->name.copy(line + 6 + ns.Length());
@@ -1028,7 +1032,44 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
             info->prefix.copy("Interface ");
          }
          else info->prefix.copy("Class ");
+
+         moduleInfo->classes.add(info);
       }
+   }
+   else if (ident_t(line).startsWith("extension ")) {
+      ApiModuleInfo* moduleInfo = nullptr;
+
+      pos_t index = ident_t(line).find(" of ");
+      IdentifierString targetRef(line + index + 4);
+      line[index] = 0;
+
+      NamespaceName ns(line + 10);
+      ns.append('\'');
+
+      moduleInfo = findModule(modules, ns.c_str());
+      if (!moduleInfo) {
+         moduleInfo = new ApiModuleInfo();
+         moduleInfo->name.copy(ns.c_str());
+
+         modules.add(moduleInfo);
+      }
+
+      NamespaceName targetNs(targetRef);
+      targetNs.append('\'');
+
+      IdentifierString targetName(targetRef.c_str() + targetNs.Length());
+
+      ApiClassInfo* info = findClass(moduleInfo, targetName);
+      if (info == nullptr) {
+         info = new ApiClassInfo();
+
+         info->fullName.copy(targetRef);
+         info->name.copy(targetName.c_str());
+
+
+      }
+
+      readExtensions(line, reader, info);
    }
 
    return true;

@@ -27,7 +27,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   31
+#define REVISION_VERSION   32
 
 using namespace _ELENA_;
 
@@ -1032,7 +1032,7 @@ void listFlags(int flags, int& row, int pageSize)
    }
 }
 
-void listClassMethods(_Module* module, ident_t className, int pageSize, bool fullInfo, bool withConstructors)
+void listClassMethods(_Module* module, ident_t className, int pageSize, bool fullInfo, bool apiMode)
 {
    className = trim(className);
 
@@ -1059,6 +1059,24 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          printLine("Class not found:", className);
 
          return;
+      }
+
+      if (apiMode) {
+         if (test(info.header.flags, elExtension)) {
+            IdentifierString title(className);
+            title.append(" of ");
+
+            auto target = info.fieldTypes.get(-1);
+            if (target.value1) {
+               ident_t targetName = module->resolveReference(target.value1);
+
+               title.append(targetName);
+            }
+            else title.append("system'Object");
+
+            printLine("extension '", title.c_str());
+         }
+         else printLine("class '", className);
       }
 
       if (info.header.parentRef) {
@@ -1125,13 +1143,12 @@ void printAPI(_Module* module, int pageSize, bool publicOnly)
 
       if (reference[0] == '\'' && (!publicOnly || publicOne)) {
          if (module->mapSection(*it | mskVMTRef, true)) {
-            printLine("class ", reference);
-
             listClassMethods(module, reference.c_str() + 1, pageSize, true, true);
             printLine();
          }
          else if (module->mapSection(*it | mskSymbolRef, true)) {
             printLine("symbol ", reference);
+            printLine();
          }
       }
 
