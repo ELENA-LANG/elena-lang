@@ -6,17 +6,8 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev
-                 * support class / method / field meta description
-
-                 * support constant class meta attributes
-                 * operations with meta data : introducing meta object : e.g
-                     __meta[class][name] := class
-                     __meta[class][dto] += name  
-
-                * class / methods meta attributes
-
-                * generate ELENA LIB API
                 * ecv : show the method returning type
+                * generate ELENA LIB API
 
               xdev
                 * support dto_field, info scope attributes
@@ -48,6 +39,10 @@ In development:
 ------                                                           
 Pipeline:
 ------   
+              xdev
+                 * support constant class meta attributes
+                 * support class / method / field / static field meta description
+
               xdev - lib
                 * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
 

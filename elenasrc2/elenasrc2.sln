@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elc", "elc\vs\elc15.vcxproj", "{18637822-DE06-457E-86CD-5EB1A2C38776}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "og", "tools\og\vs\og15.vcxproj", "{106C7025-E6C5-484F-A46A-56F09354039C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sg", "tools\sg\vs\sg15.vcxproj", "{C827D32F-1A64-4C98-B959-9BBDF8F0B438}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "api2html", "tools\api2html\vs\api2html10.vcxproj", "{336B5594-108C-4448-BEC5-85C27EC312BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +80,10 @@ Global
 		{C827D32F-1A64-4C98-B959-9BBDF8F0B438}.Debug|x86.Build.0 = Debug|Win32
 		{C827D32F-1A64-4C98-B959-9BBDF8F0B438}.Release|x86.ActiveCfg = Release|Win32
 		{C827D32F-1A64-4C98-B959-9BBDF8F0B438}.Release|x86.Build.0 = Release|Win32
+		{336B5594-108C-4448-BEC5-85C27EC312BC}.Debug|x86.ActiveCfg = Debug|Win32
+		{336B5594-108C-4448-BEC5-85C27EC312BC}.Debug|x86.Build.0 = Debug|Win32
+		{336B5594-108C-4448-BEC5-85C27EC312BC}.Release|x86.ActiveCfg = Release|Win32
+		{336B5594-108C-4448-BEC5-85C27EC312BC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

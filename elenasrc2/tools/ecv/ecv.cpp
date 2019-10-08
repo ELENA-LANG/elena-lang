@@ -15,6 +15,7 @@
 #include "module.h"
 #include "config.h"
 #include "bytecode.h"
+#include "compilercommon.h"
 
 #ifdef _WIN32
 
@@ -26,7 +27,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   30
+#define REVISION_VERSION   31
 
 using namespace _ELENA_;
 
@@ -886,13 +887,8 @@ bool loadClassInfo(_Module* module, ident_t reference, ClassInfo& info)
    return true;
 }
 
-void listFields(_Module* module, ident_t className, int& row, int pageSize)
+void listFields(_Module* module, ClassInfo& info, int& row, int pageSize)
 {
-   ClassInfo info;
-   if (!loadClassInfo(module, className, info)) {
-      return;
-   }
-   
    ClassInfo::FieldMap::Iterator it = info.fields.start();
    while (!it.Eof()) {
       ref_t type = info.fieldTypes.get(*it).value1;
@@ -1054,19 +1050,24 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    size_t size = vmtReader.getDWord();
 
    // read VMT info
-   ClassHeader header;
-   vmtReader.read((void*)&header, sizeof(ClassHeader));
+   ClassInfo info;
+   vmtReader.read((void*)& info.header, sizeof(ClassHeader));
 
    int row = 0;
-
    if (fullInfo) {
-      if (header.parentRef) {
-         printLine("@parent ", module->resolveReference(header.parentRef));
+      if (!loadClassInfo(module, className, info)) {
+         printLine("Class not found:", className);
+
+         return;
+      }
+
+      if (info.header.parentRef) {
+         printLine("@parent ", module->resolveReference(info.header.parentRef));
          row++;
       }         
 
-      listFlags(header.flags, row, pageSize);
-      listFields(module, className, row, pageSize);
+      listFlags(info.header.flags, row, pageSize);
+      listFields(module, info, row, pageSize);
    }
 
    //if (header.classRef != 0 && withConstructors) {
@@ -1077,17 +1078,33 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
 
    size -= sizeof(ClassHeader);
    IdentifierString temp;
+   IdentifierString prefix;
    while (size > 0) {
       vmtReader.read((void*)&entry, sizeof(VMTEntry));
+
+      int hints = info.methodHints.get(ClassInfo::Attribute(entry.message, maHint));
+      bool isAbstract = test(hints, tpAbstract);
+      bool isMultidispatcher = test(hints, tpMultimethod);
 
       // print the method name
       temp.copy(className);
       temp.append('.');
       printMessage(temp, module, entry.message);
 
-      //ref_t retType = info.
+      ref_t retType = info.methodHints.get(ClassInfo::Attribute(entry.message, maReference));
+      if (retType) {
+         temp.append(" of ");
+         ident_t typeName = module->resolveReference(retType);
+         temp.append(typeName);
+      }
 
-      printLine("@method ", temp);
+      prefix.copy("@method ");
+      if (isAbstract)
+         prefix.append("@abstract ");
+      if (isMultidispatcher)
+         prefix.append("@multidispatcher ");
+
+      printLine(prefix, temp);
 
       nextRow(row, pageSize);
 
@@ -1095,24 +1112,26 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    }
 }
 
-void printAPI(_Module* module, int pageSize)
+void printAPI(_Module* module, int pageSize, bool publicOnly)
 {
-   ident_t moduleName = module->Name();
-
    ReferenceMap::Iterator it = ((Module*)module)->References();
    while (!it.Eof()) {
       ident_t reference = it.key();
-      NamespaceName ns(it.key());
-      if (moduleName.compare(ns)) {
-         ReferenceName name(it.key());
-         if (module->mapSection(*it | mskVMTRef, true)) {
-            printLine("class ", name);
+      bool publicOne = true;
+      if (reference.find(INLINE_CLASSNAME) == 1)
+         publicOne = false;
+      if (reference.startsWith(PRIVATE_PREFIX_NS))
+         publicOne = false;
 
-            listClassMethods(module, name, pageSize, true, true);
+      if (reference[0] == '\'' && (!publicOnly || publicOne)) {
+         if (module->mapSection(*it | mskVMTRef, true)) {
+            printLine("class ", reference);
+
+            listClassMethods(module, reference.c_str() + 1, pageSize, true, true);
             printLine();
          }
          else if (module->mapSection(*it | mskSymbolRef, true)) {
-            printLine("symbol ", name);
+            printLine("symbol ", reference);
          }
       }
 
@@ -1181,7 +1200,7 @@ void runSession(_Module* module, int pageSize)
                printHelp();
                break;
             case 'l':
-               printAPI(module, pageSize);
+               printAPI(module, pageSize, true);
                break;
             case 'b':
                _ignoreBreakpoints = !_ignoreBreakpoints;

@@ -449,7 +449,7 @@ namespace _ELENA_
    constexpr auto NAMESPACE_REF        = "#namespace";
 
   // --- ELENA class prefixes / postfixes ---
-   #define PRIVATE_PREFIX_NS        "'$private'"
+   constexpr auto PRIVATE_PREFIX_NS    = "'$private'";
 
    constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
    constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
