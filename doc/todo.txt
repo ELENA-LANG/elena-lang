@@ -11,6 +11,7 @@ In development:
 
               xdev
                 * simplified syntax to invoke dynamic message?
+                * (re)implement manifest
 
               xdev
                 * support dto_field, info scope attributes

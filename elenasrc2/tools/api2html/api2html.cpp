@@ -926,7 +926,7 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
       info->name.copy("<i>cast</i>");
    }
 
-   if (info->isMultidispatcher)
+   if (info->isMultidispatcher && !info->isAbstract)
       info->special = true;
 
    if (extensionOne)
@@ -972,24 +972,29 @@ void parseField(ApiClassInfo* info, ident_t line)
 }
 
 void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info, 
-   bool& isAbstract, bool& isClosed, bool& isSealed)
+   bool& isAbstract, bool& isClosed, bool& isSealed, bool& isStateless, bool& isRole)
 {
    while (true) {
       if (!readLine(line, reader))
          return;
 
       if (ident_t(line).startsWith("@method ")) {
-         ApiMethodInfo* methodInfo = new ApiMethodInfo();
+         if (ident_t(line.c_str()).find("#private&") != NOTFOUND_POS || ident_t(line.c_str()).find("auto#") != NOTFOUND_POS) {
+            // ignore private methods
+         }
+         else {
+            ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-         parseMethod(methodInfo, line.c_str() + 8, false, false, info->templateBased);
+            parseMethod(methodInfo, line.c_str() + 8, false, false, info->templateBased);
 
-         if (methodInfo->prop)
-            info->withProps = true;
+            if (methodInfo->prop)
+               info->withProps = true;
 
-         if (methodInfo->convertor)
-            info->withConversions = true;
+            if (methodInfo->convertor)
+               info->withConversions = true;
 
-         info->methods.add(methodInfo);
+            info->methods.add(methodInfo);
+         }
       }
       else if (ident_t(line).startsWith("@flag ")) {
          if (ident_t(line).endsWith("elAbstract"))
@@ -998,6 +1003,10 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
             isClosed = true;
          else if (ident_t(line).endsWith("elSealed"))
             isSealed = true;
+         else if (ident_t(line).endsWith("elRole"))
+            isRole = true;
+         else if (ident_t(line).endsWith("elStateless"))
+            isStateless = true;
       }
       else if (ident_t(line).startsWith("@parent ")) {
          info->parents.add(line + 8);
@@ -1017,16 +1026,21 @@ void readClassClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader,
          return;
 
       if (ident_t(line).startsWith("@method ")) {
-         ApiMethodInfo* methodInfo = new ApiMethodInfo();
+         if (ident_t(line.c_str()).find("#private&") != NOTFOUND_POS || ident_t(line.c_str()).find("auto#") != NOTFOUND_POS) {
+            // ignore private methods
+         }
+         else {
+            ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-         parseMethod(methodInfo, line.c_str() + 8, true, false, info->templateBased);
+            parseMethod(methodInfo, line.c_str() + 8, true, false, info->templateBased);
 
-         if (isMethod(methodInfo))
-            info->withConstructors = true;
-         if (methodInfo->prop)
-            info->withStaticProps = true;
+            if (isMethod(methodInfo))
+               info->withConstructors = true;
+            if (methodInfo->prop)
+               info->withStaticProps = true;
 
-         info->constructors.add(methodInfo);
+            info->constructors.add(methodInfo);
+         }
       }
       else if (line.Length() == 0)
          return;
@@ -1097,21 +1111,28 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          info->name.copy(info->fullName.c_str() + ns.Length());
 
          bool isAbstract = false, isClosed = false, isSealed = false;
-         readClassMembers(line, reader, info, isAbstract, isClosed, isSealed);
+         bool isStateless = false, isRole = false;
+         readClassMembers(line, reader, info, isAbstract, isClosed, isSealed, isStateless, isRole);
 
          info->prefix.clear();
          if (isSealed) {
-            info->prefix.append("Sealed ");
+            info->prefix.append("sealed ");
          }
 
          if (info->templateBased) {
+            if (isRole && isStateless) {
+               info->prefix.append("Singleton ");
+            }
             info->prefix.append("Template ");
          }
          else if (isAbstract && isClosed) {
             info->prefix.append("Interface ");
          }
          else if (isAbstract) {
-            info->prefix.append("Abstract Class ");
+            info->prefix.append("abstract Class ");
+         }
+         else if (isRole && isStateless) {
+            info->prefix.append("Singleton ");
          }
          else info->prefix.append("Class ");
 

@@ -892,7 +892,7 @@ void listFields(_Module* module, ClassInfo& info, int& row, int pageSize)
    ClassInfo::FieldMap::Iterator it = info.fields.start();
    while (!it.Eof()) {
       ref_t type = info.fieldTypes.get(*it).value1;
-      if (type != 0) {
+      if (type != 0 && !isPrimitiveRef(type)) {
          ident_t typeName = module->resolveReference(type);
 
          printLine("@field ", (const char*)it.key(), " of ", typeName, row, pageSize);
