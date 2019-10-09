@@ -10,6 +10,9 @@ In development:
                 * generate ELENA LIB API
 
               xdev
+                * simplified syntax to invoke dynamic message?
+
+              xdev
                 * support dto_field, info scope attributes
                 * static fields should be accessaible from storng typed extensions
                 * re-implement lazy expression
@@ -68,7 +71,6 @@ Pipeline:
               xdev - language
                 * 2*i should be compiled as i*2
                 * call a property directly
-                * simplified syntax to invoke dynamic message?
                 * optimize:
                      int dump[4];
                      dump[i*2] := 3;

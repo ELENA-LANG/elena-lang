@@ -50,6 +50,7 @@ struct ApiClassInfo
    bool withProps;
    bool withConstructors;
    bool withConversions;
+   bool templateBased;
 
    IdentifierString prefix;
    IdentifierString fullName;
@@ -67,6 +68,7 @@ struct ApiClassInfo
       withStaticProps = withProps = false;
       withConstructors = false;
       withConversions = false;
+      templateBased = false;
    }
    ~ApiClassInfo()
    {
@@ -91,6 +93,16 @@ struct ApiModuleInfo
 };
 
 //typedef String<char, 255> ParamString;
+
+inline bool isTemplateBased(ident_t reference)
+{
+   for (int i = 0; i < getlength(reference); i++) {
+      if (reference[i] == '#' && reference[i + 1] >= '0' && reference[i + 1] <= '9')
+         return true;
+   }
+
+   return false;
+}
 
 void writeNs(IdentifierString& name, ApiModuleInfo* info)
 {
@@ -327,21 +339,24 @@ inline void repeatStr(TextFileWriter& writer, const char* s, int count)
 
 void writeType(TextFileWriter& writer, ident_t type)
 {
-   writer.writeLiteral("<A HREF=\"");
+   if (type.find('\'') != NOTFOUND_POS) {
+      writer.writeLiteral("<A HREF=\"");
 
-   NamespaceName ns(type);
-   if (emptystr(ns.c_str())) {
-      writer.writeLiteral("#");
-   }
-   else {
-      writeNs(writer, ns.ident());
-      writer.writeLiteral(".html#");
-   }
-   writeRefName(writer, type.c_str() + ns.Length() + 1);
+      NamespaceName ns(type);
+      if (emptystr(ns.c_str())) {
+         writer.writeLiteral("#");
+      }
+      else {
+         writeNs(writer, ns.ident());
+         writer.writeLiteral(".html#");
+      }
+      writeRefName(writer, type.c_str() + ns.Length() + 1);
 
-   writer.writeLiteral("\">");
-   writer.writeLiteral(type.c_str() + ns.Length() + 1);
-   writer.writeLiteral("</A>");
+      writer.writeLiteral("\">");
+      writer.writeLiteral(type.c_str() + ns.Length() + 1);
+      writer.writeLiteral("</A>");
+   }
+   else writer.writeLiteral(type.c_str());
 }
 
 void writeParents(TextFileWriter& writer, ApiClassInfo* info, ident_t moduleName)
@@ -374,51 +389,31 @@ void writeParents(TextFileWriter& writer, ApiClassInfo* info, ident_t moduleName
    writer.writeLiteralNewLine("</PRE>");
 }
 
-//void writeProtocols(TextFileWriter& writer, const char* name, IniConfigFile& config)
-//{
-//   if (!emptystr(config.getSetting(name, "#protocol", NULL))) {
-//      ConfigCategoryIterator it = config.getCategoryIt(name);
-//      writer.writeLiteral("<B>All Implemented Protocols:</B>");
-//      writer.writeLiteralNewLine("<DL>");
-//      while (!it.Eof()) {
-//         if (StringHelper::compare(it.key(), "#protocol")) {
-//            writer.writeLiteralNewLine("<DT>");
-//            writeLink(writer, *it, "protocol.html");
-//            writer.writeLiteralNewLine("</DT>");
-//         }
-//         it++;
-//      }
-//      writer.writeLiteralNewLine("</DL>");
-//   }
-//}
-//
-//void writeFields(TextFileWriter& writer, IniConfigFile& config, const char* name)
-//{
-//   // field section
-//   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-//   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-//   writer.writeLiteralNewLine("<B>Field Summary</B></FONT></TD>");
-//
-//   ConfigCategoryIterator it = config.getCategoryIt(name);
-//   while (!it.Eof()) {
-//      if (StringHelper::compare(it.key(), "#field")) {
-//         const char* descr = find(*it, ';');
-//         writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-//         writer.writeLiteralNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
-//         writer.writeLiteralNewLine("<CODE>");
-//         writeLeft(writer, *it, descr);
-//         writer.writeLiteralNewLine("&nbsp;</CODE>");
-//         writer.writeLiteralNewLine("</TD>");
-//         writer.writeLiteral("<TD><CODE>");
-//         writer.writeLiteral(descr);
-//         writer.writeLiteralNewLine("</CODE>");
-//         writer.writeLiteralNewLine("</TD>");
-//         writer.writeLiteralNewLine("</TR>");
-//      }
-//      it++;
-//   }
-//}
-//
+void writeFields(TextFileWriter& writer, ApiClassInfo* info)
+{
+   // field section
+   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeLiteralNewLine("<B>Field Summary</B></FONT></TD>");
+
+   auto it = info->fields.start();
+   while (!it.Eof()) {
+      writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+      writer.writeLiteralNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
+      writer.writeLiteralNewLine("<CODE>");
+      writeType(writer, (*it)->type);
+      writer.writeLiteralNewLine("&nbsp;</CODE>");
+      writer.writeLiteralNewLine("</TD>");
+      writer.writeLiteral("<TD><CODE>");
+      writer.writeLiteral((*it)->name);
+      writer.writeLiteralNewLine("</CODE>");
+      writer.writeLiteralNewLine("</TD>");
+      writer.writeLiteralNewLine("</TR>");
+
+      it++;
+   }
+}
+
 bool isMethod(ApiMethodInfo* info)
 {
    return !info->special && !info->prop;
@@ -432,7 +427,10 @@ void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
       writer.writeLiteral(info->prefix.ident());
       writer.writeLiteral("&nbsp;");
    }
-   writeType(writer, info->retType);
+   if (info->retType.Length() != 0) {
+      writeType(writer, info->retType);
+   }
+   
    writer.writeLiteralNewLine("</CODE></TD>");
 }
 
@@ -465,49 +463,6 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    writer.writeLiteralNewLine("</DIV>");
 
    writer.writeLiteralNewLine("</TD>");
-
-   //   const char* parameter = find(message, ',');
-   //   const char* result = find(parameter, ',');
-   //
-   //   if (emptystr(result)) {
-   //      result = descr;
-   //   }
-   //
-   //   bool oper = (StringHelper::find(OPERATORS, message[0])!=-1);
-   //
-   //   if (message[0]=='<' && message[1] == 'a') {
-   //      oper = false;
-   //   }
-   //   else if (message[0]=='<') {
-   //      writer.writeLiteral("&lt;");
-   //      message++;
-   //   }
-   //   else if (message[0]=='>') {
-   //      writer.writeLiteral("&gt;");
-   //      message++;
-   //   }
-   //   writeLeft(writer, message, parameter);
-   //   if (!emptystr(parameter) && result != parameter && parameter[0] != ',') {
-   //      if (!oper) {
-   //         if (exists(parameter, '&')) {
-   //            ParamString signature(parameter, result - parameter - 1);
-   //
-   //            writer.writeLiteral(" ");
-   //            writeSignature(writer, signature);
-   //         }
-   //         else {
-   //            writer.writeLiteral(" : ");
-   //
-   //            writeParamLink(writer, parameter, result, "protocol.html");
-   //         }
-   //      }
-   //      else writer.writeLiteral(" ");
-   //   }
-   //   if (!emptystr(result) && result != descr && result[0] != ';') {
-   //      writer.writeLiteral(" = ");
-   //      writeParamLink(writer, result, descr, "protocol.html");
-   //   }
-
 }
 
 void writeSecondPropColumn(TextFileWriter& writer, ApiMethodInfo* info)
@@ -515,6 +470,25 @@ void writeSecondPropColumn(TextFileWriter& writer, ApiMethodInfo* info)
    writer.writeLiteralNewLine("<TD VALIGN=\"top\" WIDTH=\"30%\">");
    writer.writeLiteralNewLine("<CODE>&nbsp;");
    writer.writeLiteral(info->name);
+
+   if (info->params.Count() > 0) {
+      writer.writeLiteral("(");
+
+      bool first = true;
+      auto it = info->params.start();
+      while (!it.Eof()) {
+         if (!first) {
+            writer.writeLiteral(", ");
+         }
+         else first = false;
+
+         writeType(writer, (*it).c_str());
+
+         it++;
+      }
+
+      writer.writeLiteralNewLine(")");
+   }
 
    writer.writeLiteralNewLine("</CODE>");
 
@@ -713,10 +687,10 @@ void writeBody(TextFileWriter& writer, ApiClassInfo* info, const char* moduleNam
 
    writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
 
-//   if (!emptystr(config.getSetting(name, "#field", NULL))) {
-//      writer.writeLiteralNewLine("<!-- =========== FIELD SUMMARY =========== -->");
-//      writeFields(writer, config, name);
-//   }
+   if (info->fields.Count() > 0) {
+      writer.writeLiteralNewLine("<!-- =========== FIELD SUMMARY =========== -->");
+      writeFields(writer, info);
+   }
 
    if (info->withStaticProps) {
       writer.writeLiteralNewLine("<!-- ========== CONSTRUCTOR SUMMARY =========== -->");
@@ -820,13 +794,64 @@ ApiClassInfo* findClass(ApiModuleInfo* module, ident_t name)
    return nullptr;
 }
 
-void parseName(ApiMethodInfo* info)
+void parseTemplateName(IdentifierString& line, int index)
+{
+   IdentifierString temp(line);
+
+   line.truncate(index);
+
+   int last = index;
+   bool first = true;
+   for (int i = index; i < temp.Length(); i++) {
+      if (temp[i] == '@') {
+         temp[i] = '\'';
+         last = i;
+      }
+      else if (temp[i] == '#') {
+         line.append(temp.c_str() + last + 1, i - last - 1);
+      }
+      else if (temp[i] == '&') {
+         if (first) {
+            line.append("&lt;");
+            first = false;
+         }
+         else {
+            line.append(temp.c_str() + last + 1, i - last - 1);
+            line.append(',');
+         }
+      }
+   }
+
+   line.append(temp.c_str() + last + 1);
+   line.append("&gt;");
+}
+
+void validateTemplateType(IdentifierString& type)
+{
+   if (isTemplateBased(type)) {
+      NamespaceName ns(type);
+      ns.append('\'');
+
+      parseTemplateName(type, ns.Length());
+   }
+   else if (type.ident().find("$private'T") != NOTFOUND_POS) {
+      int index = type.ident().findLast('\'');
+      type.cut(0, index + 1);
+   }
+
+}
+
+void parseName(ApiMethodInfo* info, bool templateBased)
 {
    int sign_index = info->name.ident().find("<");
    if (sign_index != NOTFOUND_POS) {
       IdentifierString paramType;
       for (int i = sign_index + 1; i < info->name.Length(); i++) {
          if (info->name[i] == ',' || info->name[i] == '>') {
+            if (templateBased) {
+               validateTemplateType(paramType);
+            }
+
             info->params.add(paramType.c_str());
 
             paramType.clear();
@@ -839,7 +864,7 @@ void parseName(ApiMethodInfo* info)
 
 }
 
-void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool extensionOne)
+void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool extensionOne, bool templateBased)
 {
    int paramCount = 0;
 
@@ -849,35 +874,37 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    pos_t retPos = messageLine.find(" of ");
    if (retPos != NOTFOUND_POS) {
       info->retType.copy(messageLine.c_str() + retPos + 4);
+
+      if (templateBased) {
+         validateTemplateType(info->retType);
+      }
    }
    else {
       info->retType.copy("system'Object");
       retPos = getlength(messageLine);
    }
 
-   int propIndex = messageLine.find(".prop#");
-
    pos_t index = messageLine.find('.') + 1;
-   pos_t end = messageLine.find('[') + 1;
-   if (end == 0) {
-      if (propIndex != NOTFOUND_POS) {
-         info->prop = true;
+   int propIndex = messageLine.find(".prop#");
+   if (propIndex != NOTFOUND_POS) {
+      info->prop = true;
 
-         info->name.copy(messageLine.c_str() + propIndex + 6, retPos - propIndex - 6);
-      }
-      else info->name.copy(messageLine.c_str() + index, retPos - index);
+      info->name.copy(messageLine.c_str() + propIndex + 6, retPos - propIndex - 6);
    }
-   else {
-      pos_t size_end = messageLine.find(']') + 1;
+   else info->name.copy(messageLine.c_str() + index, retPos - index);
 
-      info->name.copy(messageLine.c_str() + index, end - index - 1);
+   pos_t end = info->name.ident().find('[') + 1;
+   if (end != 0)  {
+      pos_t size_end = info->name.ident().find(']') + 1;
 
       String<char, 4> tmp;
-      tmp.copy(messageLine.c_str() + end, size_end - end - 1);
+      tmp.copy(info->name.c_str() + end, size_end - end - 1);
       paramCount = ident_t(tmp.c_str()).toInt();
+
+      info->name.truncate(end - 1);
    }
 
-   parseName(info);
+   parseName(info, templateBased);
 
    if (info->params.Count() < paramCount) {
       // if weak message
@@ -914,9 +941,38 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    if (info->prop && paramCount == 0) {
       info->prefix.append("get");
    }
+   else if (info->prop && paramCount == 1) {
+      info->prefix.append("set");
+
+      info->retType.clear();
+   }
 }
 
-void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info, bool& isAbstract, bool& isClosed)
+void parseField(ApiClassInfo* info, ident_t line)
+{
+   auto fieldInfo = new ApiFieldInfo();
+
+   pos_t retPos = line.find(" of ");
+   if (retPos != NOTFOUND_POS) {
+      fieldInfo->name.copy(line, retPos);
+
+      fieldInfo->type.copy(line.c_str() + 4);
+
+      if (info->templateBased) {
+         validateTemplateType(fieldInfo->type);
+      }
+   }
+   else {
+      fieldInfo->type.copy("system'Object");
+      fieldInfo->name.copy(line);
+   }
+
+   info->fields.add(fieldInfo);
+
+}
+
+void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info, 
+   bool& isAbstract, bool& isClosed, bool& isSealed)
 {
    while (true) {
       if (!readLine(line, reader))
@@ -925,7 +981,7 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
       if (ident_t(line).startsWith("@method ")) {
          ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-         parseMethod(methodInfo, line.c_str() + 8, false, false);
+         parseMethod(methodInfo, line.c_str() + 8, false, false, info->templateBased);
 
          if (methodInfo->prop)
             info->withProps = true;
@@ -940,9 +996,14 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
             isAbstract = true;
          else if (ident_t(line).endsWith("elClosed"))
             isClosed = true;
+         else if (ident_t(line).endsWith("elSealed"))
+            isSealed = true;
       }
       else if (ident_t(line).startsWith("@parent ")) {
          info->parents.add(line + 8);
+      }
+      else if (ident_t(line).startsWith("@field ")) {
+         parseField(info, line.c_str() + 7);
       }
       else if (line.Length() == 0)
          return;
@@ -958,7 +1019,7 @@ void readClassClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader,
       if (ident_t(line).startsWith("@method ")) {
          ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-         parseMethod(methodInfo, line.c_str() + 8, true, false);
+         parseMethod(methodInfo, line.c_str() + 8, true, false, info->templateBased);
 
          if (isMethod(methodInfo))
             info->withConstructors = true;
@@ -981,7 +1042,7 @@ void readExtensions(String<char, LINE_LEN>& line, TextFileReader& reader, ApiCla
       if (ident_t(line).startsWith("@method ")) {
          ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-         parseMethod(methodInfo, line.c_str() + 8, true, true);
+         parseMethod(methodInfo, line.c_str() + 8, true, true, info->templateBased);
 
          info->extensions.add(methodInfo);
       }
@@ -1015,6 +1076,10 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          IdentifierString className(line + 6 + ns.Length());
          className.truncate(className.Length() - 6);
 
+         if (isTemplateBased(className)) {
+            parseTemplateName(className, 0);
+         }
+
          ApiClassInfo* info = findClass(moduleInfo, className.c_str());
 
          readClassClassMembers(line, reader, info);
@@ -1023,15 +1088,32 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          ApiClassInfo* info = new ApiClassInfo();
 
          info->fullName.copy(line + 6);
-         info->name.copy(line + 6 + ns.Length());
+         if (isTemplateBased(info->fullName)) {
+            info->templateBased = true;
 
-         bool isAbstract = false, isClosed = false;
-         readClassMembers(line, reader, info, isAbstract, isClosed);
-
-         if (isAbstract && isClosed) {
-            info->prefix.copy("Interface ");
+            parseTemplateName(info->fullName, ns.Length());
          }
-         else info->prefix.copy("Class ");
+
+         info->name.copy(info->fullName.c_str() + ns.Length());
+
+         bool isAbstract = false, isClosed = false, isSealed = false;
+         readClassMembers(line, reader, info, isAbstract, isClosed, isSealed);
+
+         info->prefix.clear();
+         if (isSealed) {
+            info->prefix.append("Sealed ");
+         }
+
+         if (info->templateBased) {
+            info->prefix.append("Template ");
+         }
+         else if (isAbstract && isClosed) {
+            info->prefix.append("Interface ");
+         }
+         else if (isAbstract) {
+            info->prefix.append("Abstract Class ");
+         }
+         else info->prefix.append("Class ");
 
          moduleInfo->classes.add(info);
       }

@@ -27,28 +27,33 @@ ELENA&nbsp;Standard&nbsp;Library<br>4.1
 </TABLE>
 <DL>
 <HR>
-<A NAME="Object"/>
+<A NAME="BaseVariable"/>
 <HR/>
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
 system'</FONT>
 <BR>
-Object</H2>
-Class Object<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
+BaseVariable</H2>
+<PRE>
+<A HREF="#Object">Object</A>
+ |
+ +--<B>system'BaseVariable</B>
+</PRE>
+Abstract Class BaseVariable<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
+<B>Conversion Summary</B></FONT></TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-<A HREF="#Object">Object</A></CODE></TD>
+<A HREF="#BaseVariable">BaseVariable</A></CODE></TD>
 <TD VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-<i>constructor</i>()
+<i>cast</i>(<A HREF="#BaseVariable">BaseVariable</A>)
 </CODE>
 <DIV>
 </DIV>
@@ -61,10 +66,22 @@ Class Object<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-get&nbsp;<A HREF="#String">String</A></CODE></TD>
+abstract get&nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
 <TD VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
-Printable</CODE>
+Value</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+abstract set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Value(<A HREF="system.html#Object">Object</A>)
+</CODE>
 <DIV>
 </DIV>
 </TD>
@@ -74,60 +91,6 @@ Printable</CODE>
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TD COLSPAN=2><FONT SIZE="+2">
 <B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="#BoolValue">BoolValue</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-equal(<A HREF="system.html#Object">Object</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="#BoolValue">BoolValue</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-notequal(<A HREF="system.html#Object">Object</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== EXTNSION SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Extension Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-extension &nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-back(<A HREF="system.html#Object">Object</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-extension &nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-then(<A HREF="#Func">Func</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
 </TR>
 </TABLE>
 <A NAME="BoolValue"/>
@@ -301,6 +264,254 @@ abstract &nbsp;<A HREF="#BoolValue">BoolValue</A></CODE></TD>
 <TD VALIGN="top" WIDTH="30%">
 <CODE>&nbsp;
 clone()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Object"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'</FONT>
+<BR>
+Object</H2>
+Class Object<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="#String">String</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Printable</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+notequal(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== EXTNSION SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Extension Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+extension &nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+back(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+extension &nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+then(<A HREF="#Func">Func</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ref&lt;T1&gt;"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'</FONT>
+<BR>
+ref&lt;T1&gt;</H2>
+<PRE>
+<A HREF="#Object">Object</A>
+ |
+ +--<A HREF="#BaseVariable">BaseVariable</A>
+   |
+   +--<B>system'ref&lt;T1&gt;</B>
+</PRE>
+Sealed Template ref&lt;T1&gt;<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+T1&nbsp;</CODE>
+</TD>
+<TD><CODE>theValue</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="#ref&lt;T1&gt;">ref&lt;T1&gt;</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(T1)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+T1</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(T1)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="#ref&lt;T1&gt;">ref&lt;T1&gt;</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="#ref&lt;T1&gt;">ref&lt;T1&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;T1</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Value</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Value(T1)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="#String">String</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Printable</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Value(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal(<A HREF="system.html#Object">Object</A>)
 </CODE>
 <DIV>
 </DIV>

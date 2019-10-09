@@ -29,7 +29,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "og", "tools\og\vs\og15.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sg", "tools\sg\vs\sg15.vcxproj", "{C827D32F-1A64-4C98-B959-9BBDF8F0B438}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "api2html", "tools\api2html\vs\api2html10.vcxproj", "{336B5594-108C-4448-BEC5-85C27EC312BC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "api2html", "tools\api2html\vs\api2html15.vcxproj", "{A359EEE3-C00D-48D6-AA15-692E1769223D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,10 +80,10 @@ Global
 		{C827D32F-1A64-4C98-B959-9BBDF8F0B438}.Debug|x86.Build.0 = Debug|Win32
 		{C827D32F-1A64-4C98-B959-9BBDF8F0B438}.Release|x86.ActiveCfg = Release|Win32
 		{C827D32F-1A64-4C98-B959-9BBDF8F0B438}.Release|x86.Build.0 = Release|Win32
-		{336B5594-108C-4448-BEC5-85C27EC312BC}.Debug|x86.ActiveCfg = Debug|Win32
-		{336B5594-108C-4448-BEC5-85C27EC312BC}.Debug|x86.Build.0 = Debug|Win32
-		{336B5594-108C-4448-BEC5-85C27EC312BC}.Release|x86.ActiveCfg = Release|Win32
-		{336B5594-108C-4448-BEC5-85C27EC312BC}.Release|x86.Build.0 = Release|Win32
+		{A359EEE3-C00D-48D6-AA15-692E1769223D}.Debug|x86.ActiveCfg = Debug|Win32
+		{A359EEE3-C00D-48D6-AA15-692E1769223D}.Debug|x86.Build.0 = Debug|Win32
+		{A359EEE3-C00D-48D6-AA15-692E1769223D}.Release|x86.ActiveCfg = Release|Win32
+		{A359EEE3-C00D-48D6-AA15-692E1769223D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

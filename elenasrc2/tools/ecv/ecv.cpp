@@ -27,7 +27,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   32
+#define REVISION_VERSION   34
 
 using namespace _ELENA_;
 
@@ -895,9 +895,9 @@ void listFields(_Module* module, ClassInfo& info, int& row, int pageSize)
       if (type != 0) {
          ident_t typeName = module->resolveReference(type);
 
-         printLine("Field ", (const char*)it.key(), " of ", typeName, row, pageSize);
+         printLine("@field ", (const char*)it.key(), " of ", typeName, row, pageSize);
       }
-      else printLine("Field ", (const char*)it.key(), row, pageSize);
+      else printLine("@field ", (const char*)it.key(), row, pageSize);
    
       it++;
    }
@@ -1032,6 +1032,28 @@ void listFlags(int flags, int& row, int pageSize)
    }
 }
 
+void printParents(_Module* module, ref_t reference)
+{
+   if (!reference)
+      return;
+
+   _Memory* vmt = module->mapSection(reference | mskVMTRef, true);
+   if (!vmt)
+      return;
+
+   MemoryReader vmtReader(vmt);
+   // read tape record size
+   vmtReader.getDWord();
+
+   // read VMT info
+   ClassInfo info;
+   vmtReader.read((void*)& info.header, sizeof(ClassHeader));
+
+   printParents(module, info.header.parentRef);
+
+   printLine("@parent ", module->resolveReference(reference));
+}
+
 void listClassMethods(_Module* module, ident_t className, int pageSize, bool fullInfo, bool apiMode)
 {
    className = trim(className);
@@ -1080,7 +1102,10 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       }
 
       if (info.header.parentRef) {
-         printLine("@parent ", module->resolveReference(info.header.parentRef));
+         if (apiMode) {
+            printParents(module, info.header.parentRef);
+         }
+         else printLine("@parent ", module->resolveReference(info.header.parentRef));
          row++;
       }         
 
@@ -1130,6 +1155,16 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    }
 }
 
+inline bool isTemplateBased(ident_t reference)
+{
+   for (int i = 0; i < getlength(reference); i++) {
+      if (reference[i] == '#' && reference[i + 1] >= '0' && reference[i + 1] <= '9')
+         return true;
+   }
+
+   return false;
+}
+
 void printAPI(_Module* module, int pageSize, bool publicOnly)
 {
    ReferenceMap::Iterator it = ((Module*)module)->References();
@@ -1143,8 +1178,16 @@ void printAPI(_Module* module, int pageSize, bool publicOnly)
 
       if (reference[0] == '\'' && (!publicOnly || publicOne)) {
          if (module->mapSection(*it | mskVMTRef, true)) {
-            listClassMethods(module, reference.c_str() + 1, pageSize, true, true);
-            printLine();
+            if (isTemplateBased(reference)) {
+               if (reference.find("$private@T1") != NOTFOUND_POS) {
+                  listClassMethods(module, reference.c_str() + 1, pageSize, true, true);
+                  printLine();
+               }
+            }
+            else {
+               listClassMethods(module, reference.c_str() + 1, pageSize, true, true);
+               printLine();
+            }
          }
          else if (module->mapSection(*it | mskSymbolRef, true)) {
             printLine("symbol ", reference);
