@@ -2953,11 +2953,3 @@ public extension realRefOp : ref<real>
         self.Value := v
     }
 }
-
-// template test cases
-T1;
-
-template_test()
-{
-    ref<T1> r;
-}

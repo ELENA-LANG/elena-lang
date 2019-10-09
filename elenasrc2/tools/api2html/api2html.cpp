@@ -186,12 +186,39 @@ void writeSummaryHeader(TextFileWriter& writer, const char* name, const char* sh
 
 void writeRefName(TextFileWriter& writer, ident_t name)
 {
+   int paramIndex = 1;
+   bool paramMode = false;
    for (int i = 0; i < getlength(name); i++)
    {
-      if (name[i] == '\'') {
+      if (!paramMode && name[i] == '\'') {
          writer.writeChar('-');
       }
-      else writer.writeChar(name[i]);
+      else if (name.compare("&lt;", i, 4)) {
+         paramMode = true;
+         writer.writeLiteral("&lt;");
+      }
+      else if (name.compare("&gt;", i, 4)) {
+         String<char, 5> tmp;
+         tmp.copy("T");
+         tmp.appendInt(paramIndex);
+         writer.writeLiteral(tmp.c_str());
+         writer.writeLiteral("&gt;");
+
+         paramMode = false;
+
+         i += 3;
+      }
+      else if (name[i] == ',') {
+         String<char, 5> tmp;
+         tmp.copy("T");
+         tmp.appendInt(paramIndex);
+         writer.writeLiteral(tmp.c_str());
+         writer.writeLiteral("&gt;,");
+
+         paramIndex++;
+      }
+      else if (!paramMode)
+         writer.writeChar(name[i]);
    }
 }
 
@@ -342,7 +369,17 @@ void writeType(TextFileWriter& writer, ident_t type)
    if (type.find('\'') != NOTFOUND_POS) {
       writer.writeLiteral("<A HREF=\"");
 
+      pos_t index = type.find("&lt;");
       NamespaceName ns(type);
+      if (index != NOTFOUND_POS) {
+         for (pos_t i = index; i >= 0; i--) {
+            if (type[i] == '\'') {
+               ns.copy(type, i);
+               break;
+            }
+         }
+      }
+
       if (emptystr(ns.c_str())) {
          writer.writeLiteral("#");
       }
@@ -417,6 +454,11 @@ void writeFields(TextFileWriter& writer, ApiClassInfo* info)
 bool isMethod(ApiMethodInfo* info)
 {
    return !info->special && !info->prop;
+}
+
+bool isProp(ApiMethodInfo* info)
+{
+   return !info->special && info->prop;
 }
 
 void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
@@ -535,7 +577,7 @@ void writeProperties(TextFileWriter& writer, ApiClassInfo* info)
 
    auto it = info->methods.start();
    while (!it.Eof()) {
-      if ((*it)->prop) {
+      if (isProp(*it)) {
          writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
 
          writeFirstColumn(writer, *it);
@@ -826,19 +868,57 @@ void parseTemplateName(IdentifierString& line, int index)
    line.append("&gt;");
 }
 
-void validateTemplateType(IdentifierString& type)
+void parseTemplateType(IdentifierString& line, int index)
 {
-   if (isTemplateBased(type)) {
+   IdentifierString temp(line);
+
+   line.truncate(0);
+
+   int last = index;
+   bool first = true;
+   for (int i = index; i < temp.Length(); i++) {
+      if (temp[i] == '@') {
+         temp[i] = '\'';
+      }
+      else if (temp[i] == '#') {
+         line.append(temp.c_str() + last + 1, i - last - 1);
+      }
+      else if (temp[i] == '&') {
+         if (first) {
+            last = i;
+            line.append("&lt;");
+            first = false;
+         }
+         else {
+            line.append(temp.c_str() + last + 1, i - last - 1);
+            line.append(',');
+         }
+      }
+   }
+
+   line.append(temp.c_str() + last + 1);
+   line.append("&gt;");
+}
+
+void validateTemplateType(IdentifierString& type, bool templateBased)
+{
+   if (templateBased) {
+      if (isTemplateBased(type)) {
+         NamespaceName ns(type);
+         ns.append('\'');
+
+         parseTemplateName(type, ns.Length());
+      }
+      else if (type.ident().find("$private'T") != NOTFOUND_POS) {
+         int index = type.ident().findLast('\'');
+         type.cut(0, index + 1);
+      }
+   }
+   else if (isTemplateWeakReference(type.c_str())) {
       NamespaceName ns(type);
-      ns.append('\'');
 
-      parseTemplateName(type, ns.Length());
+      parseTemplateType(type, ns.Length());
    }
-   else if (type.ident().find("$private'T") != NOTFOUND_POS) {
-      int index = type.ident().findLast('\'');
-      type.cut(0, index + 1);
-   }
-
 }
 
 void parseName(ApiMethodInfo* info, bool templateBased)
@@ -848,9 +928,7 @@ void parseName(ApiMethodInfo* info, bool templateBased)
       IdentifierString paramType;
       for (int i = sign_index + 1; i < info->name.Length(); i++) {
          if (info->name[i] == ',' || info->name[i] == '>') {
-            if (templateBased) {
-               validateTemplateType(paramType);
-            }
+            validateTemplateType(paramType, templateBased);
 
             info->params.add(paramType.c_str());
 
@@ -875,9 +953,7 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    if (retPos != NOTFOUND_POS) {
       info->retType.copy(messageLine.c_str() + retPos + 4);
 
-      if (templateBased) {
-         validateTemplateType(info->retType);
-      }
+      validateTemplateType(info->retType, templateBased);
    }
    else {
       info->retType.copy("system'Object");
@@ -925,6 +1001,9 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
       info->convertor = true;
       info->name.copy("<i>cast</i>");
    }
+   else if (info->name.compare("#generic")) {
+      info->name.copy("<i>generic</i>");
+   }
 
    if (info->isMultidispatcher && !info->isAbstract)
       info->special = true;
@@ -958,9 +1037,7 @@ void parseField(ApiClassInfo* info, ident_t line)
 
       fieldInfo->type.copy(line.c_str() + 4);
 
-      if (info->templateBased) {
-         validateTemplateType(fieldInfo->type);
-      }
+      validateTemplateType(fieldInfo->type, info->templateBased);
    }
    else {
       fieldInfo->type.copy("system'Object");
@@ -1122,6 +1199,12 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          if (info->templateBased) {
             if (isRole && isStateless) {
                info->prefix.append("Singleton ");
+            }
+            else if (isAbstract && isClosed) {
+               info->prefix.append("Interface ");
+            }
+            else if (isAbstract) {
+               info->prefix.append("abstract ");
             }
             info->prefix.append("Template ");
          }

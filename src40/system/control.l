@@ -1205,3 +1205,12 @@ public sealed class Range : Enumerable<int>
     
     Enumerable cast() = new Enumerable::{ Enumerator enumerator() => self; };
 }
+
+// template test cases
+T1;
+
+template_test()
+{
+    ref<T1> r;
+    Enumerator<T1> e;
+}

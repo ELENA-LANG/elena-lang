@@ -6,7 +6,8 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev
-                * ecv : show the method returning type
+                * symbol - show return type
+                * trmplate extension
                 * generate ELENA LIB API
 
               xdev
