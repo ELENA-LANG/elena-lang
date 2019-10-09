@@ -213,7 +213,7 @@ void writeRefName(TextFileWriter& writer, ident_t name)
          tmp.copy("T");
          tmp.appendInt(paramIndex);
          writer.writeLiteral(tmp.c_str());
-         writer.writeLiteral("&gt;,");
+         writer.writeLiteral(",");
 
          paramIndex++;
       }
@@ -904,6 +904,9 @@ void validateTemplateType(IdentifierString& type, bool templateBased)
 {
    if (templateBased) {
       if (isTemplateBased(type)) {
+         if (isTemplateWeakReference(type.c_str()))
+            type.cut(0, 6);
+
          NamespaceName ns(type);
          ns.append('\'');
 
@@ -1004,6 +1007,9 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    else if (info->name.compare("#generic")) {
       info->name.copy("<i>generic</i>");
    }
+   else if (info->name.compare("#invoke")) {
+      info->name.copy("<i>invoke</i>");
+   }
 
    if (info->isMultidispatcher && !info->isAbstract)
       info->special = true;
@@ -1035,7 +1041,7 @@ void parseField(ApiClassInfo* info, ident_t line)
    if (retPos != NOTFOUND_POS) {
       fieldInfo->name.copy(line, retPos);
 
-      fieldInfo->type.copy(line.c_str() + 4);
+      fieldInfo->type.copy(line.c_str() + retPos + 4);
 
       validateTemplateType(fieldInfo->type, info->templateBased);
    }

@@ -736,241 +736,6 @@ public abstract BaseLazyExpression
     dispatch() => system'core_routines'__lazyexpression;
 }
 
-//// --- IndexFunction ---
-//
-//public extension<Func<int,object>> indexFunctionOp
-//{
-//    /// Executes the function for every value in the specified integer range (starting value, ending value, -step)
-//    rewind(int aStart, int n, int dx)
-//    [
-//        int i := aStart.
-//        
-//        while (i >= n)
-//        [
-//            self(i).
-//            
-//            i := i - dx
-//        ].
-//        
-//        ^ nil
-//    ]          
-//    
-//    /// Executes the function for every value in the specified range (starting value, ending value, step)
-//    run(int aStart, int n, int dx)
-//    [
-//        int i := aStart.
-//        
-//        while (i <= n)
-//        [
-//            self(i).
-//            
-//            i := i + dx
-//        ].
-//        
-//        ^ nil
-//    ]
-//}
-//
-/////// A base index function
-////limited closure class IndexFunction1
-////{
-////    /// Executes the function
-////    stacksafe closure int:n []
-////
-////    stacksafe eval int:n = $self(n).
-////
-////
-////    /// Executes the function for every value in the specified range (starting value, ending value, step) until it returns true    
-////    sealed stacksafe retrieve int:aStart int:n int:dx
-////    [
-////        int i := aStart.
-////        
-////        while(i <= n)
-////        [
-////            if ($self(i))
-////                [ ^ IntNumber new int:i ].
-////            
-////            i := i + dx
-////        ].
-////        
-////        ^ $nil
-////    ]
-////}
-////
-/////// A base two variable index function
-////limited closure class IndexFunction2
-////{
-////    /// Executes the function
-////    stacksafe closure(int i, int j)[]
-////
-////    stacksafe eval int:n int:m = $self(n,m).
-////
-////    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, ending x-value, ending y-value, -step)
-////    sealed rewind int:i int:j int:n int:m int:dx
-////    [
-////        int x := i.
-////        int y := j.
-////        
-////        while(x >= n)
-////        [
-////            y := j.
-////            
-////            while (y >= m)
-////            [
-////                $self eval int:x int:y.
-////                
-////                y := y - dx
-////            ].
-////                        
-////            x := x - dx
-////        ].
-////        
-////        ^ $nil
-////    ]          
-////    
-////    /// Executes the function for every value in the specified range (starting x-value, starting y-value, ending x-value, ending y-value, step)
-////    sealed run int:i int:j int:n int:m int:dx
-////    [
-////        int x := i.
-////        int y := j.
-////        
-////        while(x <= n)
-////        [
-////            y := j.
-////            
-////            while (y <= m)
-////            [
-////                $self eval int:x int:y.
-////                
-////                y := y + dx
-////            ].
-////                        
-////            x := x + dx
-////        ].
-////        
-////        ^ $nil
-////    ]
-////}
-////
-/////// A base three variable index function
-////limited closure class IndexFunction3
-////{
-////    /// Executes the function
-////    stacksafe closure(int i, int j, int k) []
-////
-////    stacksafe eval int:n int:m int:k = $self(n,m,k).
-////
-////    /// Executes the function for every value in the specified integer area (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, -step)
-////    sealed rewind int:i int:j int:k int:n int:m int:p int:dx
-////    [
-////        int x := i.
-////        int y := j.
-////        int z := k.
-////        
-////        while(x >= n)
-////        [
-////            y := j.
-////            
-////            while(y >= m)
-////            [
-////                z := k.
-////                
-////                while(z >= p)
-////                [
-////                    $self eval int:x int:y int:z.
-////                    
-////                    z := z - dx
-////                ].                
-////                
-////                y := y - dx
-////            ].
-////                        
-////            x := x - dx
-////        ].
-////        
-////        ^ $nil
-////    ]          
-////    
-////    /// Executes the function for every value in the specified range (starting x-value, starting y-value, starting z-value, ending x-value, ending y-value, ending z-value, step)
-////    sealed run int:i int:j int:k int:n int:m int:p int:dx
-////    [
-////        int x := i.
-////        int y := j.
-////        int z := k.
-////        
-////        while(x <= n)
-////        [
-////            y := j.
-////            
-////            while(y <= m)
-////            [
-////                z := k.
-////                
-////                while(z <= p)
-////                [
-////                    $self eval int:x int:y int:z.
-////                    
-////                    z := z + dx
-////                ].                
-////                
-////                y := y + dx
-////            ].
-////                        
-////            x := x + dx
-////        ].
-////        
-////        ^ $nil
-////    ]
-////}
-////
-//////// --- Boolean ---
-//////
-///////// A boolean variable. 
-//////#class(varof:bool) Boolean :: BaseValue
-//////{
-//////    /// Creates a boolean variable with an initial value (false)
-//////    #constructor new
-//////    [        
-//////        $value := false.
-//////    ]
-//////
-//////    /// Creates a boolean variable with specified value
-//////    #constructor new : aValue
-//////    [        
-//////        $value := true equal &bool:(aValue bool).
-//////    ]
-//////    
-//////    /// Creates a boolean variable with specified value
-//////    #constructor new &bool:aValue
-//////    [        
-//////        $value := aValue.
-//////    ]
-//////
-//////    /// Returns the boolean value
-//////    #method bool = $value.
-//////
-//////    /// Executes logical OR operation
-//////    #method append : aValue
-//////    [
-//////        $value := $value or:aValue.
-//////    ]
-//////
-//////    /// Executes logical AND operation            
-//////    #method multiplyBy : aValue
-//////    [
-//////        $value := $value and:aValue.
-//////    ]
-//////            
-//////    /// Inverts the boolean value
-//////    #method invert
-//////    [
-//////        $value := $value not bool.
-//////    ]            
-//////
-//////    /// Clones the object
-//////    #method clone = Boolean new:$value.
-//////}
-
 // --- BaseEnumerator<type> ---
 
 public abstract class BaseEnumerator<T> : Enumerator<T>
@@ -1208,9 +973,36 @@ public sealed class Range : Enumerable<int>
 
 // template test cases
 T1;
+T2;
+T3;
+T4;
+T5;
+T6;
+T7;
+T8;
+T9;
+T10;
+T11;
+T12;
 
 template_test()
 {
-    ref<T1> r;
-    Enumerator<T1> e;
+    ref<T1> o1;
+    Enumerator<T1> o2;
+    Enumerable<T1> o3;
+    Indexer<T1> o4;
+    Indexable<T1> o5;
+    BaseEnumerator<T1> o6;
+    BaseIndexer<T1> o7;
+    Func<T1,T2> f;
+    Func<T1,T2,T3> f2;
+    Func<T1,T2,T3,T4> f3;
+    Func<T1,T2,T3,T4,T5> f4;
+    Func<T1,T2,T3,T4,T5,T6> f5;
+    Func<T1,T2,T3,T4,T5,T6,T7> f6;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8> f7;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9> f8;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> f9;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11> f10;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12> f11;
 }

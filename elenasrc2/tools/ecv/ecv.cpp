@@ -27,7 +27,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   34
+#define REVISION_VERSION   35
 
 using namespace _ELENA_;
 
@@ -1376,6 +1376,17 @@ int main(int argc, char* argv[])
       printLine(moduleName, " module loaded");
 
       printManifest(module);
+   }
+
+   if (argc == 3 && ident_t(argv[2]).compare("l")) {
+      _noPaging = true;
+
+      Path path(moduleName);
+      setOutputMode(path.c_str());
+
+      printAPI(module, 0, true);
+
+      return 0;
    }
 
    runSession(module, rows);
