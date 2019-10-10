@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   36
+#define REVISION_VERSION   37
 
 using namespace _ELENA_;
 
@@ -1178,6 +1178,26 @@ inline bool isTemplateBased(ident_t reference)
    return false;
 }
 
+void printSymbolInfo(_Module* module, ident_t refName, ref_t ref)
+{
+   IdentifierString name(refName);
+   
+   _Memory* metaData = module->mapSection(ref | mskMetaRDataRef, true);
+   if (metaData != NULL && metaData->Length() == sizeof(SymbolExpressionInfo)) {
+      SymbolExpressionInfo info;
+
+      MemoryReader reader(metaData);
+      info.load(&reader);
+
+      if (info.expressionClassRef) {
+         name.append(" of ");
+         name.append(module->resolveReference(info.expressionClassRef));
+      }
+   }
+
+   printLine("symbol ", name.c_str());
+}
+
 void printAPI(_Module* module, int pageSize, bool publicOnly)
 {
    ReferenceMap::Iterator it = ((Module*)module)->References();
@@ -1203,7 +1223,7 @@ void printAPI(_Module* module, int pageSize, bool publicOnly)
             }
          }
          else if (module->mapSection(*it | mskSymbolRef, true)) {
-            printLine("symbol ", reference);
+            printSymbolInfo(module, reference, *it);
             printLine();
          }
       }

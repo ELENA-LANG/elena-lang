@@ -6,16 +6,13 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev API
-                * system'collections - template are missing
-
-                * missing system'routines'stex
-                * missing algorithms
-
-                * symbols
                 * template based extensions
                 * template extensions
                 * missing algorithms (template extensions)
                 * validate / format generated html
+
+                * missing system'routines'stex
+                * missing algorithms
 
               xdev
                 * simplified syntax to invoke dynamic message?
@@ -42,6 +39,9 @@ In development:
                              
               xdev - usability
                 * warn if the project is not configurated
+
+              xdev API
+                * review all api
 
               ydev - Linux
                 * linker : adata + mdata + rdata (meta starts with size field)

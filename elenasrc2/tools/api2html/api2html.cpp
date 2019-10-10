@@ -26,6 +26,13 @@ struct ApiFieldInfo
    IdentifierString type;
 };
 
+struct ApiSymbolInfo
+{
+   IdentifierString fullName;
+   IdentifierString name;
+   IdentifierString type;
+};
+
 struct ApiMethodInfo
 {
    bool prop, special, convertor, isAbstract, isInternal;
@@ -82,8 +89,9 @@ struct ApiModuleInfo
    IdentifierString name;
 
    List<ApiClassInfo*> classes;
+   List<ApiSymbolInfo*> symbols;
    ApiModuleInfo()
-      : classes(nullptr, freeobj)
+      : classes(nullptr, freeobj), symbols(nullptr, freeobj)
    {
 
    }
@@ -185,6 +193,16 @@ void writeSummaryHeader(TextFileWriter& writer, const char* name, const char* sh
    writer.writeLiteralNewLine("</TR>");
 }
 
+void writeSymbolSummaryHeader(TextFileWriter& writer, const char* name, const char* shortDescr)
+{
+   writer.writeLiteralNewLine("<BR/>");
+   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeLiteralNewLine("<B>Symbol Summary</B></FONT></TD>");
+   writer.writeLiteralNewLine("</TR>");
+}
+
 void writeRefName(TextFileWriter& writer, ident_t name)
 {
    int paramIndex = 1;
@@ -252,118 +270,25 @@ void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* b
    writer.writeLiteralNewLine("</TR>");
 }
 
+void writeSymbolSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const char* bodyFileName)
+{
+   writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+   writer.writeLiteral("<TD WIDTH=\"15%\"><B><A HREF=\"");
+   writer.writeLiteral(bodyFileName);
+   writer.writeLiteral("#");
+   writeRefName(writer, info->name.c_str());
+   writer.writeLiteral("\">");
+   writer.writeLiteral(info->name.c_str());
+   writer.writeLiteralNewLine("</A></B></TD>");
+   writer.writeLiteral("<TD>");
+   writer.writeLiteral("</TD>");
+   writer.writeLiteralNewLine("</TR>");
+}
+
 inline void repeatStr(TextFileWriter& writer, const char* s, int count)
 {
    for(int i = 0 ; i < count ; i++) writer.writeLiteral(s);
 }
-
-//inline const char* find(const char* s, char ch)
-//{
-//   if (emptystr(s)) {
-//      return NULL;
-//   }
-//   else {
-//      int index = StringHelper::find(s, ch);
-//      if (index==-1)
-//         index = getlength(s) - 1;
-//
-//      return s + index + 1;
-//   }
-//}
-//
-//inline bool exists(const char* s, char ch)
-//{
-//   if (emptystr(s)) {
-//      return false;
-//   }
-//   else return StringHelper::find(s, ch) != -1;
-//}
-//
-//inline void writeLeft(TextFileWriter& writer, const char* s, const char* right)
-//{
-//   if (emptystr(right)) {
-//      writer.writeLiteral(s);
-//   }
-//   else writer.write(s, right - s - 1);
-//}
-//
-//void writeLink(TextFileWriter& writer, const char* link, const char* file = NULL)
-//{
-//   const char* body = find(link, ':');
-//
-//   writer.writeLiteral("<A HREF=\"");
-//
-//   if (StringHelper::find(link, '#') == -1) {
-//      if (!emptystr(file)) {
-//         writer.writeLiteral(file);
-//      }
-//      writer.writeChar('#');
-//      writeLeft(writer, link, body);
-//   }
-//   else writeLeft(writer, link, body);
-//
-//   writer.writeLiteral("\">");
-//   if (emptystr(body)) {
-//      writer.writeLiteral(link);
-//   }
-//   else writeLeft(writer, body, find(body, ';'));
-//
-//   writer.writeLiteralNewLine("</A>");
-//}
-//
-//void writeParamLink(TextFileWriter& writer, const char* link, const char* right, const char* file)
-//{
-//   writer.writeLiteral("<A HREF=\"");
-//
-//   int pos = StringHelper::find(link, '#');
-//
-//   if (pos == -1 || pos > (right - link)) {
-//      writer.writeLiteral(file);
-//      writer.writeChar('#');
-//	   writeLeft(writer, link, right);
-//   }
-//   else {
-//      writeLeft(writer, link, right);
-//	   link += StringHelper::find(link, '#') + 1;
-//   }
-//   writer.writeLiteral("\">");
-//   writeLeft(writer, link, right);
-//   writer.writeLiteralNewLine("</A>");
-//}
-//
-//void writeSignature(TextFileWriter& writer, const char* parameters)
-//{
-//   if (parameters[0] != '&') {
-//      const char* param = parameters;
-//      const char* next_subj = find(param, '&');
-//
-//      writer.writeLiteral(" : ");
-//      writeParamLink(writer, param, next_subj, "protocol.html");
-//
-//      parameters = next_subj;
-//   }
-//
-//   while (!emptystr(parameters)) {
-//      const char* subj = parameters;
-//      const char* param = find(parameters, ':');
-//      const char* next_subj = find(param, '&');
-//
-//      if (subj[0] == ':' || (subj[0] == '&' && subj[1] == ':')) {
-//         writer.writeLiteral(": ");
-//         writeParamLink(writer, param, next_subj, "protocol.html");
-//      }
-//      else {
-//         if (parameters[0]!='&')
-//            writer.writeLiteral("&");
-//
-//         writeLeft(writer, subj, param);
-//         writer.writeLiteral(":");
-//         writeParamLink(writer, param, next_subj, "protocol.html");
-//      }
-//
-//      parameters = next_subj;
-//   }
-//}
 
 void writeType(TextFileWriter& writer, ident_t type, bool fullReference = false)
 {
@@ -786,6 +711,54 @@ void writeBody(TextFileWriter& writer, ApiClassInfo* info, const char* rootNs)
       writeExtensions(writer, info);
    }
 
+   writer.writeLiteralNewLine("</TABLE>");
+}
+
+void writeSymbolBody(TextFileWriter& writer, ApiSymbolInfo* info, const char* rootNs)
+{
+   const char* title = /*config.getSetting(name, "#title", NULL)*/nullptr;
+   if (title == NULL)
+      title = info->name.c_str();
+
+   IdentifierString moduleName;
+   parseNs(moduleName, rootNs, info->fullName.c_str());
+
+   writer.writeLiteral("<A NAME=\"");
+   writer.writeLiteral(info->name.c_str());
+   writer.writeLiteralNewLine("\"/>");
+   writer.writeLiteralNewLine("<HR/>");
+   writer.writeLiteralNewLine("<!-- ======== START OF CLASS DATA ======== -->");
+   writer.writeLiteralNewLine("<H2>");
+   writer.writeLiteralNewLine("<FONT SIZE=\"-1\">");
+   writer.writeLiteral(moduleName);
+   writer.writeLiteral("'");
+   writer.writeLiteralNewLine("</FONT>");
+   writer.writeLiteralNewLine("<BR>");
+   writer.writeLiteral(title);
+   writer.writeLiteralNewLine("</H2>");
+
+   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+
+   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeLiteralNewLine("<B>Symbol Summary</B></FONT></TD>");
+   writer.writeLiteralNewLine("</TR>");
+
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
+   writer.writeLiteralNewLine("<CODE>&nbsp;");
+   writeType(writer, info->type);
+   writer.writeLiteralNewLine("&nbsp;</CODE>");
+   writer.writeLiteralNewLine("</TD>");
+
+   writer.writeLiteralNewLine("<TD VALIGN=\"top\">");
+   writer.writeLiteralNewLine("<CODE>&nbsp;");
+   writer.writeLiteral("symbol ");
+   writer.writeLiteral(info->name.c_str());
+   writer.writeLiteralNewLine("</CODE>");
+   writer.writeLiteralNewLine("</TD>");
+
+   writer.writeLiteralNewLine("</TR>");
    writer.writeLiteralNewLine("</TABLE>");
 }
 
@@ -1236,7 +1209,6 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          modules.add(moduleInfo);
       }
 
-
       if (classClassMode) {
          ApiClassInfo* info = findClass(moduleInfo, fullName.c_str());
 
@@ -1321,6 +1293,32 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
       readExtensions(line, reader, info, rootNs);
    }
    else if (ident_t(line).startsWith("symbol ")) {
+      ApiSymbolInfo* info = new ApiSymbolInfo();
+      ApiModuleInfo* moduleInfo = nullptr;
+
+      pos_t retPos = ident_t(line).find(" of ");
+      if (retPos != NOTFOUND_POS) {
+         readType(info->type, line.c_str() + retPos + 4, rootNs, false);
+
+         line.truncate(retPos);
+      }
+
+      NamespaceName ns(rootNs, line + 7);
+
+      moduleInfo = findModule(modules, ns.c_str());
+      if (!moduleInfo) {
+         moduleInfo = new ApiModuleInfo();
+         moduleInfo->name.copy(ns.c_str());
+
+         modules.add(moduleInfo);
+      }
+
+      info->fullName.copy(ns);
+      info->fullName.append(line.c_str() + 7);
+      info->name.copy(info->fullName.c_str() + info->fullName.ident().findLast('\'') + 1);
+
+      moduleInfo->symbols.add(info);
+
       if (!readLine(line, reader))
          return false;
    }
@@ -1392,7 +1390,6 @@ int main(int argc, char* argv[])
       const char* shortDescr = /*config.getSetting("#general#", "#shortdescr")*/nullptr;
 
       writeSummaryHeader(summaryWriter, (*it)->name.c_str(), shortDescr);
-      //
 
       auto class_it = (*it)->classes.start();
       while (!class_it.Eof()) {
@@ -1400,6 +1397,19 @@ int main(int argc, char* argv[])
          writeBody(bodyWriter, *class_it, ns);
          
          class_it++;
+      }
+
+      writeSummaryFooter(summaryWriter);
+
+      // symbols
+      writeSymbolSummaryHeader(summaryWriter, (*it)->name.c_str(), shortDescr);
+
+      auto symbol_it = (*it)->symbols.start();
+      while (!symbol_it.Eof()) {
+         writeSymbolSummaryTable(summaryWriter, *symbol_it, name);
+         writeSymbolBody(bodyWriter, *symbol_it, ns);
+
+         symbol_it++;
       }
 
       writeSummaryFooter(summaryWriter);
