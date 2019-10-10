@@ -20,6 +20,7 @@
 #ifdef _WIN32
 
 #include "winapi/consolehelper.h"
+#include <windows.h>
 
 #endif // _WIN32
 
@@ -27,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   35
+#define REVISION_VERSION   36
 
 using namespace _ELENA_;
 
@@ -1038,8 +1039,17 @@ void printParents(_Module* module, ref_t reference)
       return;
 
    _Memory* vmt = module->mapSection(reference | mskVMTRef, true);
-   if (!vmt)
-      return;
+   if (!vmt) {
+      ident_t refName = module->resolveReference(reference);
+      if (isTemplateWeakReference(refName)) {
+         ref_t resolvedReference = module->mapReference(refName.c_str() + getlength(TEMPLATE_PREFIX_NS) - 1);
+
+         vmt = module->mapSection(resolvedReference | mskVMTRef, true);
+         if (!vmt)
+            return;
+      }
+      else return;
+   }      
 
    MemoryReader vmtReader(vmt);
    // read tape record size
@@ -1128,6 +1138,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       int hints = info.methodHints.get(ClassInfo::Attribute(entry.message, maHint));
       bool isAbstract = test(hints, tpAbstract);
       bool isMultidispatcher = test(hints, tpMultimethod);
+      bool isInternal = test(hints, tpInternal);
 
       // print the method name
       temp.copy(className);
@@ -1146,6 +1157,8 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          prefix.append("@abstract ");
       if (isMultidispatcher)
          prefix.append("@multidispatcher ");
+      if (isInternal)
+         prefix.append("@internal ");
 
       printLine(prefix, temp);
 
@@ -1320,6 +1333,16 @@ void printManifest(_Module* module)
    //}
 }
 
+void getAppPath(_ELENA_::Path& appPath)
+{
+   wchar_t path[MAX_PATH + 1];
+
+   ::GetModuleFileName(NULL, path, MAX_PATH);
+
+   appPath.copySubPath(path);
+   appPath.lower();
+}
+
 // === Main Program ===
 int main(int argc, char* argv[])
 {
@@ -1335,8 +1358,13 @@ int main(int argc, char* argv[])
    ConsoleHelper::getConsoleSize(columns, rows);
 
    // prepare library manager
-   Path configPath("templates\\lib.cfg");
-   Path rootPath("..\\lib40");
+   Path configPath;
+   getAppPath(configPath);
+   configPath.combine("templates\\lib.cfg");
+
+   Path rootPath;
+   getAppPath(rootPath);
+   rootPath.combine("..\\lib40");
 
    // get viewing module name
    IdentifierString buffer(argv[1]);

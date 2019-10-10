@@ -28,7 +28,7 @@ struct ApiFieldInfo
 
 struct ApiMethodInfo
 {
-   bool prop, special, convertor, isAbstract;
+   bool prop, special, convertor, isAbstract, isInternal;
    bool isMultidispatcher;
 
    IdentifierString       prefix;
@@ -41,6 +41,7 @@ struct ApiMethodInfo
    {
       special = prop = convertor = false;
       isAbstract = isMultidispatcher = false;
+      isInternal = false;
    }
 };
 
@@ -106,7 +107,7 @@ inline bool isTemplateBased(ident_t reference)
 
 void writeNs(IdentifierString& name, ApiModuleInfo* info)
 {
-   for (int i = 1; i < info->name.Length(); i++)
+   for (int i = 0; i < info->name.Length(); i++)
    {
       if (info->name[i] == '\'') {
          name.append('-');
@@ -364,7 +365,7 @@ inline void repeatStr(TextFileWriter& writer, const char* s, int count)
 //   }
 //}
 
-void writeType(TextFileWriter& writer, ident_t type)
+void writeType(TextFileWriter& writer, ident_t type, bool fullReference = false)
 {
    if (type.find('\'') != NOTFOUND_POS) {
       writer.writeLiteral("<A HREF=\"");
@@ -390,7 +391,11 @@ void writeType(TextFileWriter& writer, ident_t type)
       writeRefName(writer, type.c_str() + ns.Length() + 1);
 
       writer.writeLiteral("\">");
-      writer.writeLiteral(type.c_str() + ns.Length() + 1);
+      if (fullReference) {
+         writer.writeLiteral(type.c_str());
+      }
+      else writer.writeLiteral(type.c_str() + ns.Length() + 1);
+
       writer.writeLiteral("</A>");
    }
    else writer.writeLiteral(type.c_str());
@@ -402,25 +407,23 @@ void writeParents(TextFileWriter& writer, ApiClassInfo* info, ident_t moduleName
    int indent = 0;
    auto it = info->parents.start();
    while (!it.Eof()) {
-      repeatStr(writer, "  ", indent - 1);
-      if (indent > 0) writer.writeLiteralNewLine(" |");
-      repeatStr(writer, "  ", indent - 1);
-      if (indent > 0) writer.writeLiteral(" +--");
+      repeatStr(writer, "   ", indent - 1);
+      if (indent > 0) writer.writeLiteralNewLine("|");
+      repeatStr(writer, "   ", indent - 1);
+      if (indent > 0) writer.writeLiteral("+--");
 
-      writeType(writer, (*it).ident());
+      writeType(writer, (*it).ident(), true);
       writer.writeNewLine();
 
       indent++;
 
       it++;
    }
-   repeatStr(writer, "  ", indent - 1);
-   writer.writeLiteralNewLine(" |");
-   repeatStr(writer, "  ", indent - 1);
-   writer.writeLiteral(" +--<B>");
-   writer.writeLiteral(moduleName);
-   writer.writeLiteral("'");
-   writer.writeLiteral(info->name);
+   repeatStr(writer, "   ", indent - 1);
+   writer.writeLiteralNewLine("|");
+   repeatStr(writer, "   ", indent - 1);
+   writer.writeLiteral("+--<B>");
+   writer.writeLiteral(info->fullName.c_str());
    writer.writeLiteralNewLine("</B>");
 
    writer.writeLiteralNewLine("</PRE>");
@@ -689,11 +692,32 @@ void writeConversions(TextFileWriter& writer, ApiClassInfo* info)
    }
 }
 
-void writeBody(TextFileWriter& writer, ApiClassInfo* info, const char* moduleName)
+void parseNs(IdentifierString& ns, ident_t root, ident_t fullName)
+{
+   if (isWeakReference(fullName)) {
+      ns.copy(root);
+   }
+
+   size_t last = 0;
+   for (size_t i = 0; i < getlength(fullName); i++) {
+      if (fullName[i] == '\'') {
+         last = i;
+      }
+      else if (fullName[i] == '#')
+         break;
+   }
+
+   ns.append(fullName, last);
+}
+
+void writeBody(TextFileWriter& writer, ApiClassInfo* info, const char* rootNs)
 {
    const char* title = /*config.getSetting(name, "#title", NULL)*/nullptr;
    if (title==NULL)
       title = info->name.c_str();
+
+   IdentifierString moduleName;
+   parseNs(moduleName, rootNs, info->fullName.c_str());
 
    writer.writeLiteral("<A NAME=\"");
    writer.writeLiteral(info->name.c_str());
@@ -711,7 +735,7 @@ void writeBody(TextFileWriter& writer, ApiClassInfo* info, const char* moduleNam
 
 //   if (!emptystr(config.getSetting(name, "#parent", NULL))) {
    if (info->parents.Count() > 0) {
-      writeParents(writer, info, moduleName);
+      writeParents(writer, info, rootNs);
    }
 
    const char* descr = /*config.getSetting(name, "#descr", NULL)*/nullptr;
@@ -827,7 +851,7 @@ ApiClassInfo* findClass(ApiModuleInfo* module, ident_t name)
 {
    auto it = module->classes.start();
    while (!it.Eof()) {
-      if ((*it)->name.compare(name))
+      if ((*it)->fullName.compare(name))
          return *it;
 
       it++;
@@ -924,20 +948,36 @@ void validateTemplateType(IdentifierString& type, bool templateBased)
    }
 }
 
-void parseName(ApiMethodInfo* info, bool templateBased)
+void readType(IdentifierString& type, ident_t line, ident_t rootNs, bool templateBased)
+{
+   if (isTemplateWeakReference(line.c_str())) {
+      type.copy(line);
+   }
+   else if (line[0] == '\'') {
+      type.copy(rootNs);
+      type.append(line);
+   }
+   else type.copy(line);
+
+   validateTemplateType(type, templateBased);
+}
+
+void parseName(ApiMethodInfo* info, bool templateBased, ident_t rootNs)
 {
    int sign_index = info->name.ident().find("<");
    if (sign_index != NOTFOUND_POS) {
-      IdentifierString paramType;
+      IdentifierString param;
+      IdentifierString type;
       for (int i = sign_index + 1; i < info->name.Length(); i++) {
          if (info->name[i] == ',' || info->name[i] == '>') {
-            validateTemplateType(paramType, templateBased);
+            readType(type, param.c_str(), rootNs, templateBased);
 
-            info->params.add(paramType.c_str());
+            info->params.add(type.c_str());
 
-            paramType.clear();
+            param.clear();
+            type.clear();
          }
-         else paramType.append(info->name[i]);
+         else param.append(info->name[i]);
       }
 
       info->name.truncate(sign_index);
@@ -945,18 +985,17 @@ void parseName(ApiMethodInfo* info, bool templateBased)
 
 }
 
-void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool extensionOne, bool templateBased)
+void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool extensionOne, bool templateBased, ident_t rootNs)
 {
    int paramCount = 0;
 
    info->isAbstract = messageLine.find("@abstract") != NOTFOUND_POS;
    info->isMultidispatcher = messageLine.find("@multidispatcher") != NOTFOUND_POS;
+   info->isInternal = messageLine.find("@internal") != NOTFOUND_POS;
 
    pos_t retPos = messageLine.find(" of ");
    if (retPos != NOTFOUND_POS) {
-      info->retType.copy(messageLine.c_str() + retPos + 4);
-
-      validateTemplateType(info->retType, templateBased);
+      readType(info->retType, messageLine.c_str() + retPos + 4, rootNs, templateBased);
    }
    else {
       info->retType.copy("system'Object");
@@ -983,7 +1022,7 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
       info->name.truncate(end - 1);
    }
 
-   parseName(info, templateBased);
+   parseName(info, templateBased, rootNs);
 
    if (info->params.Count() < paramCount) {
       // if weak message
@@ -1014,6 +1053,9 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    if (info->isMultidispatcher && !info->isAbstract)
       info->special = true;
 
+   if (info->isInternal)
+      info->special = true;
+
    if (extensionOne)
       info->prefix.append("extension ");
 
@@ -1033,7 +1075,7 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    }
 }
 
-void parseField(ApiClassInfo* info, ident_t line)
+void parseField(ApiClassInfo* info, ident_t line, ident_t rootNs)
 {
    auto fieldInfo = new ApiFieldInfo();
 
@@ -1041,9 +1083,7 @@ void parseField(ApiClassInfo* info, ident_t line)
    if (retPos != NOTFOUND_POS) {
       fieldInfo->name.copy(line, retPos);
 
-      fieldInfo->type.copy(line.c_str() + retPos + 4);
-
-      validateTemplateType(fieldInfo->type, info->templateBased);
+      readType(fieldInfo->type, line.c_str() + retPos + 4, rootNs, info->templateBased);
    }
    else {
       fieldInfo->type.copy("system'Object");
@@ -1054,7 +1094,7 @@ void parseField(ApiClassInfo* info, ident_t line)
 
 }
 
-void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info, 
+void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info, ident_t rootNs,
    bool& isAbstract, bool& isClosed, bool& isSealed, bool& isStateless, bool& isRole)
 {
    while (true) {
@@ -1068,7 +1108,7 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
          else {
             ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-            parseMethod(methodInfo, line.c_str() + 8, false, false, info->templateBased);
+            parseMethod(methodInfo, line.c_str() + 8, false, false, info->templateBased, rootNs);
 
             if (methodInfo->prop)
                info->withProps = true;
@@ -1092,17 +1132,20 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
             isStateless = true;
       }
       else if (ident_t(line).startsWith("@parent ")) {
-         info->parents.add(line + 8);
+         IdentifierString type;
+         readType(type, line + 8, rootNs, info->templateBased);
+
+         info->parents.add(type.c_str());
       }
       else if (ident_t(line).startsWith("@field ")) {
-         parseField(info, line.c_str() + 7);
+         parseField(info, line.c_str() + 7, rootNs);
       }
       else if (line.Length() == 0)
          return;
    }
 }
 
-void readClassClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info)
+void readClassClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info, ident_t rootNs)
 {
    while (true) {
       if (!readLine(line, reader))
@@ -1115,7 +1158,7 @@ void readClassClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader,
          else {
             ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-            parseMethod(methodInfo, line.c_str() + 8, true, false, info->templateBased);
+            parseMethod(methodInfo, line.c_str() + 8, true, false, info->templateBased, rootNs);
 
             if (isMethod(methodInfo))
                info->withConstructors = true;
@@ -1130,25 +1173,30 @@ void readClassClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader,
    }
 }
 
-void readExtensions(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info)
+void readExtensions(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info, ident_t rootNs)
 {
    while (true) {
       if (!readLine(line, reader))
          return;
 
       if (ident_t(line).startsWith("@method ")) {
-         ApiMethodInfo* methodInfo = new ApiMethodInfo();
+         if (ident_t(line.c_str()).find("#private&") != NOTFOUND_POS || ident_t(line.c_str()).find("auto#") != NOTFOUND_POS) {
+            // ignore private methods
+         }
+         else {
+            ApiMethodInfo* methodInfo = new ApiMethodInfo();
 
-         parseMethod(methodInfo, line.c_str() + 8, true, true, info->templateBased);
+            parseMethod(methodInfo, line.c_str() + 8, true, true, info->templateBased, rootNs);
 
-         info->extensions.add(methodInfo);
+            info->extensions.add(methodInfo);
+         }
       }
       else if (line.Length() == 0)
          return;
    }
 }
 
-bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<ApiModuleInfo*>& modules)
+bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<ApiModuleInfo*>& modules, ident_t rootNs)
 {
    if (emptystr(line)) {
       if (!readLine(line, reader))
@@ -1158,8 +1206,7 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
    if (ident_t(line).startsWith("class ")) {
       ApiModuleInfo* moduleInfo = nullptr;
 
-      NamespaceName ns(line + 6);
-      ns.append('\'');
+      NamespaceName ns(rootNs, line + 6);
 
       moduleInfo = findModule(modules, ns.c_str());
       if (!moduleInfo) {
@@ -1169,33 +1216,40 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          modules.add(moduleInfo);
       }
 
+      bool templateBased = false;
+      bool classClassMode = false;
+      IdentifierString fullName;
+      fullName.copy(ns);
+      fullName.append(line + ident_t(line).findLast('\''));
+
       if (ident_t(line).endsWith("#class")) {
-         IdentifierString className(line + 6 + ns.Length());
-         className.truncate(className.Length() - 6);
+         classClassMode = true;
+         fullName.truncate(fullName.Length() - 6);
+      }
 
-         if (isTemplateBased(className)) {
-            parseTemplateName(className, 0);
-         }
+      if (isTemplateBased(fullName)) {
+         templateBased = true;
 
-         ApiClassInfo* info = findClass(moduleInfo, className.c_str());
+         parseTemplateName(fullName, fullName.ident().findLast('\'') + 1);
+      }
 
-         readClassClassMembers(line, reader, info);
+      if (classClassMode) {
+         ApiClassInfo* info = findClass(moduleInfo, fullName.c_str());
+
+         readClassClassMembers(line, reader, info, rootNs);
       }
       else {
          ApiClassInfo* info = new ApiClassInfo();
 
-         info->fullName.copy(line + 6);
-         if (isTemplateBased(info->fullName)) {
-            info->templateBased = true;
+         info->templateBased = templateBased;
+         info->fullName.copy(fullName.c_str());
 
-            parseTemplateName(info->fullName, ns.Length());
-         }
-
-         info->name.copy(info->fullName.c_str() + ns.Length());
+         pos_t index = fullName.ident().findLast('\'');
+         info->name.copy(fullName.c_str() + index + 1);
 
          bool isAbstract = false, isClosed = false, isSealed = false;
          bool isStateless = false, isRole = false;
-         readClassMembers(line, reader, info, isAbstract, isClosed, isSealed, isStateless, isRole);
+         readClassMembers(line, reader, info, rootNs, isAbstract, isClosed, isSealed, isStateless, isRole);
 
          info->prefix.clear();
          if (isSealed) {
@@ -1232,11 +1286,10 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
       ApiModuleInfo* moduleInfo = nullptr;
 
       pos_t index = ident_t(line).find(" of ");
-      IdentifierString targetRef(line + index + 4);
+      IdentifierString targetName(line + index + 4);
       line[index] = 0;
 
-      NamespaceName ns(line + 10);
-      ns.append('\'');
+      NamespaceName ns(rootNs, line + 10);
 
       moduleInfo = findModule(modules, ns.c_str());
       if (!moduleInfo) {
@@ -1246,22 +1299,26 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          modules.add(moduleInfo);
       }
 
-      NamespaceName targetNs(targetRef);
-      targetNs.append('\'');
+      IdentifierString targetFullName;
+      if (isWeakReference(targetName.c_str())) {
+         targetFullName.copy(rootNs);
+         targetFullName.append(targetName.c_str());
+      }
+      else targetFullName.copy(targetName.c_str());
 
-      IdentifierString targetName(targetRef.c_str() + targetNs.Length());
-
-      ApiClassInfo* info = findClass(moduleInfo, targetName);
+      ApiClassInfo* info = findClass(moduleInfo, targetFullName);
       if (info == nullptr) {
          info = new ApiClassInfo();
 
-         info->fullName.copy(targetRef);
-         info->name.copy(targetName.c_str());
-
-
+         info->fullName.copy(targetFullName.c_str());
+         info->name.copy(targetFullName.c_str() + targetFullName.ident().findLast('\'') + 1);
       }
 
-      readExtensions(line, reader, info);
+      readExtensions(line, reader, info, rootNs);
+   }
+   else if (ident_t(line).startsWith("symbol ")) {
+      if (!readLine(line, reader))
+         return false;
    }
 
    return true;
@@ -1294,16 +1351,21 @@ int main(int argc, char* argv[])
    String<char, LINE_LEN> line;
    line[0] = 0;
 
-   while (readClassInfo(line, reader, modules));
+   printf("Reading...");
+
+   while (readClassInfo(line, reader, modules, ns));
+   printf("\n");
 
    auto it = modules.start();
    while (!it.Eof()) {
-      IdentifierString name(ns);
+      printf("generating %s\n", (*it)->name.c_str());
+
+      IdentifierString name;
       writeNs(name, *it);
 
       name.append(".html");
       
-      IdentifierString summaryname(ns);
+      IdentifierString summaryname;
       writeNs(summaryname, *it);
 
       summaryname.append("-summary");
@@ -1318,14 +1380,14 @@ int main(int argc, char* argv[])
       TextFileWriter bodyWriter(outPath.str(), feUTF8, false);
       TextFileWriter summaryWriter(outSumPath.str(), feUTF8, false);
 
-      writeHeader(summaryWriter, ns, nullptr);
-      writeHeader(bodyWriter, ns, summaryname);
+      writeHeader(summaryWriter, (*it)->name.c_str(), nullptr);
+      writeHeader(bodyWriter, (*it)->name.c_str(), summaryname);
 
       //
       //	const char* package = config.getSetting("#general#", "#name");
       const char* shortDescr = /*config.getSetting("#general#", "#shortdescr")*/nullptr;
 
-      writeSummaryHeader(summaryWriter, ns, shortDescr);
+      writeSummaryHeader(summaryWriter, (*it)->name.c_str(), shortDescr);
       //
 
       auto class_it = (*it)->classes.start();

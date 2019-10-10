@@ -295,7 +295,18 @@ public:
    {
       size_t pos = reference.findLast('\'', 0);
       copy(reference, pos);
-      _string[pos] = 0;
+   }
+   NamespaceName(ident_t root, ident_t reference)
+   {
+      size_t pos = reference.findLast('\'', 0);
+
+      if (reference[0] != '\'') {
+         copy(reference, pos);
+      }
+      else {
+         copy(root);
+         append(reference, pos);
+      }
    }
 
    static bool compare(ident_t reference, ident_t ns)
