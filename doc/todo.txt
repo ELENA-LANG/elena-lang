@@ -3,16 +3,18 @@ In development:
 ------         
 
               zdev
-                * write - Programming in ELENA : cookbook
+                * write - Programming in ELENA : manual
 
               xdev API
-                * system'dynamic
-                * system'routines'stex
-                * algorithms
+                * missing system'dynamic
+                * missing system'routines'stex
+                * missing algorithms
+
                 * symbols
                 * template based extensions
                 * template extensions
-                * generate ELENA LIB API
+                * missing algorithms (template extensions)
+                * validate / format generated html
 
               xdev
                 * simplified syntax to invoke dynamic message?

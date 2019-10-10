@@ -1,0 +1,3255 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 4.1: Module system'dynamic'expressions
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-dynamic-expressions-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="AssigningExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+AssigningExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'AssigningExpression</B>
+</PRE>
+Class AssigningExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>variable</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>expression</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#AssigningExpression">AssigningExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ClosureExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+ClosureExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'ClosureExpression</B>
+</PRE>
+Class ClosureExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'dynamic'expressions'ScopeVariable&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>parameters</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>body</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#ClosureExpression">ClosureExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#ClosureExpression">ClosureExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#ClosureExpression">ClosureExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#ClosureExpression">ClosureExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="CodeblockExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+CodeblockExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'CodeblockExpression</B>
+</PRE>
+Class CodeblockExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'dynamic'expressions'Expression&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>statements</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#new(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'dynamic'expressions'Expression&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ConstantExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+ConstantExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'ConstantExpression</B>
+</PRE>
+Class ConstantExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>object</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#ConstantExpression">ConstantExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+eval()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DeclarationExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+DeclarationExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'DeclarationExpression</B>
+</PRE>
+Class DeclarationExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>variable</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>defaultValue</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DeclarationExpression">DeclarationExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DeclaringAndAssigningExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+DeclaringAndAssigningExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<A HREF="system-dynamic-expressions.html#AssigningExpression">system'dynamic'expressions'AssigningExpression</A>
+   |
+   +--<B>system'dynamic'expressions'DeclaringAndAssigningExpression</B>
+</PRE>
+Class DeclaringAndAssigningExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>variable</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>expression</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DeclaringAndAssigningExpression">DeclaringAndAssigningExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DynamicMessageCallExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+DynamicMessageCallExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'DynamicMessageCallExpression</B>
+</PRE>
+Class DynamicMessageCallExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'dynamic'expressions'Expression&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_arguments</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#new(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DynamicSingleton"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+DynamicSingleton</H2>
+Class DynamicSingleton<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'dynamic'expressions'Expression&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>methods</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicSingleton">DynamicSingleton</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicSingleton">DynamicSingleton</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicSingleton">DynamicSingleton</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicSingleton">DynamicSingleton</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#new(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#DynamicSingleton">DynamicSingleton</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-dynamic-expressions.html#DynamicSingleton">DynamicSingleton</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+compiled()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Expression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+Expression</H2>
+Interface Expression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#CodeBlock(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+CodeBlock(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'dynamic'expressions'Expression&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Constant(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+NumericConstant(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Symbol(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+ClassReference(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+New(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+New(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#MessageCall(<A HREF="system.html#Message">Message</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+MessageCall(<A HREF="system.html#Message">Message</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#DynamicMessageCall(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+DynamicMessageCall(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+GetProperty(<A HREF="system.html#MessageName">MessageName</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+SetProperty(<A HREF="system.html#MessageName">MessageName</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+GetDynamicProperty(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+SetDynamicProperty(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Declaration(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Assigning(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Assigning(<A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+DeclareAndAssigning(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Variable(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Variable(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#Statement(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+If(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Loop(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Method(<A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Method(<A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Method(<A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Method(<A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Closure(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Closure(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Closure(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Closure(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Return(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+abstract &nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1,T2,T3&gt;">List&lt;'$auto'system'collections'Tuple'$auto'system'collections'Tuple#2,'$auto'system'collections'Tuple#2&system'Message,'$auto'system'collections'Tuple#2&system'Message&system'dynamic'ClosureTape&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+eval()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+compiled()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ExpressionScope"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+ExpressionScope</H2>
+Interface ExpressionScope<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+abstract get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+ScopeLevel</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+abstract &nbsp;<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+resolve(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+abstract &nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+declare(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="GetDynamicPropertyExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+GetDynamicPropertyExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'GetDynamicPropertyExpression</B>
+</PRE>
+Class GetDynamicPropertyExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_property</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_target</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#GetDynamicPropertyExpression">GetDynamicPropertyExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#GetDynamicPropertyExpression">GetDynamicPropertyExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="GetPropertyExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+GetPropertyExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'GetPropertyExpression</B>
+</PRE>
+Class GetPropertyExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#MessageName">MessageName</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_name</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_target</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#GetPropertyExpression">GetPropertyExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#GetPropertyExpression">GetPropertyExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#MessageName">MessageName</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="IdleExpressionScope"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+IdleExpressionScope</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#ExpressionScope">system'dynamic'expressions'ExpressionScope</A>
+|
++--<B>system'dynamic'expressions'IdleExpressionScope</B>
+</PRE>
+sealed Singleton IdleExpressionScope<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+ScopeLevel</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+resolve(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+declare(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="IfExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+IfExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'IfExpression</B>
+</PRE>
+Class IfExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>condition</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>body</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#IfExpression">IfExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="LoopExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+LoopExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'LoopExpression</B>
+</PRE>
+Class LoopExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>condition</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>body</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#LoopExpression">LoopExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="MessageCallExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+MessageCallExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'MessageCallExpression</B>
+</PRE>
+Class MessageCallExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Message">Message</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_message</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_target</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'dynamic'expressions'Expression&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_arguments</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#new(<A HREF="system.html#Message">Message</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Message">Message</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="MethodExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+MethodExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'MethodExpression</B>
+</PRE>
+Class MethodExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Message">Message</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>message</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'dynamic'expressions'ScopeVariable&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>parameters</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>body</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MethodExpression">MethodExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MethodExpression">MethodExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MethodExpression">MethodExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#MethodExpression">MethodExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1,T2,T3&gt;">List&lt;'$auto'system'collections'Tuple'$auto'system'collections'Tuple#2,'$auto'system'collections'Tuple#2&system'Message,'$auto'system'collections'Tuple#2&system'Message&system'dynamic'ClosureTape&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="NumericConstantExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+NumericConstantExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<A HREF="system-dynamic-expressions.html#ConstantExpression">system'dynamic'expressions'ConstantExpression</A>
+   |
+   +--<B>system'dynamic'expressions'NumericConstantExpression</B>
+</PRE>
+Class NumericConstantExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>object</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#NumericConstantExpression">NumericConstantExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="ReturnExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+ReturnExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'ReturnExpression</B>
+</PRE>
+Class ReturnExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>expr</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#ReturnExpression">ReturnExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ScopeVariable"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+ScopeVariable</H2>
+Class ScopeVariable<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#String">String</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>Name</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#String">String</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Name</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Name(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="SetDynamicPropertyExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+SetDynamicPropertyExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'SetDynamicPropertyExpression</B>
+</PRE>
+Class SetDynamicPropertyExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_property</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_target</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_value</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#SetDynamicPropertyExpression">SetDynamicPropertyExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#SetDynamicPropertyExpression">SetDynamicPropertyExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="SetPropertyExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+SetPropertyExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'SetPropertyExpression</B>
+</PRE>
+Class SetPropertyExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#MessageName">MessageName</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_name</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_target</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#Expression">Expression</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_value</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#SetPropertyExpression">SetPropertyExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system.html#String">String</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#SetPropertyExpression">SetPropertyExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#MessageName">MessageName</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="StatementExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+StatementExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'StatementExpression</B>
+</PRE>
+Class StatementExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'dynamic'expressions'Expression&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>statements</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>, <A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#new(<A HREF="system-dynamic-expressions.html#Expression">Expression</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="SymbolExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+SymbolExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'SymbolExpression</B>
+</PRE>
+Class SymbolExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Symbol">Symbol</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>symbol</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#SymbolExpression">SymbolExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+eval()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="VariableExpression"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'dynamic'expressions'</FONT>
+<BR>
+VariableExpression</H2>
+<PRE>
+<A HREF="system-dynamic-expressions.html#Expression">system'dynamic'expressions'Expression</A>
+|
++--<B>system'dynamic'expressions'VariableExpression</B>
+</PRE>
+Class VariableExpression<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>variable</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-dynamic-expressions.html#VariableExpression">VariableExpression</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+saveTo(<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A>, <A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-dynamic-expressions-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+</TD>
+</TR>
+</TABLE>
