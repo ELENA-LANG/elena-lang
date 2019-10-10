@@ -6,7 +6,8 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev API
-                * missing system'dynamic
+                * system'collections - template are missing
+
                 * missing system'routines'stex
                 * missing algorithms
 

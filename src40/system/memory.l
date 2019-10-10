@@ -3053,4 +3053,14 @@ template_test()
     Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> f9;
     Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11> f10;
     Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12> f11;
+    
+    collections'List<T1> o11;
+    collections'Stack<T1> o12;
+    collections'Queue<T1> o13;
+    collections'Tuple<T1> o14;
+    collections'Tuple<T1,T2> o15;
+    collections'Tuple<T1,T2,T3> o16;
+    collections'Tuple<T1,T2,T3,T4> o17;
+    collections'Tuple<T1,T2,T3,T4,T5> o18;
+    collections'Tuple<T1,T2,T3,T4,T5,T6> o19;    
 }

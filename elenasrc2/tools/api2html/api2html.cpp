@@ -860,18 +860,20 @@ ApiClassInfo* findClass(ApiModuleInfo* module, ident_t name)
    return nullptr;
 }
 
-void parseTemplateName(IdentifierString& line, int index)
+void parseTemplateName(IdentifierString& line)
 {
    IdentifierString temp(line);
 
-   line.truncate(index);
+   size_t index = line.ident().findLast('\'');
+   line.clear();
 
    int last = index;
    bool first = true;
-   for (int i = index; i < temp.Length(); i++) {
+   for (size_t i = index; i < temp.Length(); i++) {
       if (temp[i] == '@') {
          temp[i] = '\'';
-         last = i;
+         if(!first)
+            last = i;
       }
       else if (temp[i] == '#') {
          line.append(temp.c_str() + last + 1, i - last - 1);
@@ -931,10 +933,7 @@ void validateTemplateType(IdentifierString& type, bool templateBased)
          if (isTemplateWeakReference(type.c_str()))
             type.cut(0, 6);
 
-         NamespaceName ns(type);
-         ns.append('\'');
-
-         parseTemplateName(type, ns.Length());
+         parseTemplateName(type);
       }
       else if (type.ident().find("$private'T") != NOTFOUND_POS) {
          int index = type.ident().findLast('\'');
@@ -1210,14 +1209,6 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
 
       NamespaceName ns(rootNs, line + 6);
 
-      moduleInfo = findModule(modules, ns.c_str());
-      if (!moduleInfo) {
-         moduleInfo = new ApiModuleInfo();
-         moduleInfo->name.copy(ns.c_str());
-
-         modules.add(moduleInfo);
-      }
-
       bool templateBased = false;
       bool classClassMode = false;
       IdentifierString fullName;
@@ -1232,8 +1223,19 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
       if (isTemplateBased(fullName)) {
          templateBased = true;
 
-         parseTemplateName(fullName, fullName.ident().findLast('\'') + 1);
+         parseTemplateName(fullName);
+
+         ns.copy(fullName.c_str(), fullName.ident().findLast('\''));
       }
+
+      moduleInfo = findModule(modules, ns.c_str());
+      if (!moduleInfo) {
+         moduleInfo = new ApiModuleInfo();
+         moduleInfo->name.copy(ns.c_str());
+
+         modules.add(moduleInfo);
+      }
+
 
       if (classClassMode) {
          ApiClassInfo* info = findClass(moduleInfo, fullName.c_str());
