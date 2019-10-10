@@ -1,0 +1,1019 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 4.1: Module sqlite
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="sqlite-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="DBCommand"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+sqlite'</FONT>
+<BR>
+DBCommand</H2>
+sealed Class DBCommand<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="sqlite.html#DBConnection">DBConnection</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theConnection</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Handle">Handle</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theCommandHandle</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBCommand">DBCommand</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="sqlite.html#DBConnection">DBConnection</A>, <A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Handle">Handle</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system.html#Handle">Handle</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBCommand">DBCommand</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="sqlite.html#DBCommand">DBCommand</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+eval()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+evalNext()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+evalScalar()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBReader">DBReader</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reader()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Enumerator">Enumerator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+enumerator()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+at(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+readFieldCount()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'String&gt;</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+sql_field_names()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+close()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DBConnection"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+sqlite'</FONT>
+<BR>
+DBConnection</H2>
+sealed Class DBConnection<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theDBHandle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#String">String</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>thePath</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#BoolValue">BoolValue</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theOpen</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBConnection">DBConnection</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system-io.html#File">File</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBConnection">DBConnection</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBConnection">DBConnection</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="sqlite.html#DBConnection">DBConnection</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+isAvailable()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+open()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#String">String</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+last_error_message()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+doSql(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+executeNonQuery(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+executeQuery(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+numberOfTable()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+tables()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+close()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DBEnumerator"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+sqlite'</FONT>
+<BR>
+DBEnumerator</H2>
+<PRE>
+<A HREF="system.html#Enumerator&lt;T1,T2&gt;">system'Enumerator&lt;'$auto'system'Array'$auto'system'Array#1,'$auto'system'Array#1&system'Object&gt;</A>
+|
++--<B>sqlite'DBEnumerator</B>
+</PRE>
+sealed Class DBEnumerator<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="sqlite.html#DBReader">DBReader</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>reader</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBEnumerator">DBEnumerator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="sqlite.html#DBReader">DBReader</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Enumerator">Enumerator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system.html#Enumerator">Enumerator</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+next()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+enumerable()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reset()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DBException"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+sqlite'</FONT>
+<BR>
+DBException</H2>
+Class DBException<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#String">String</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theMessage</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#CallStack">CallStack</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theCallstack</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBException">DBException</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBException">DBException</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBException">DBException</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="sqlite.html#DBException">DBException</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="DBReader"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+sqlite'</FONT>
+<BR>
+DBReader</H2>
+<PRE>
+<A HREF="system.html#Enumerable&lt;T1,T2&gt;">system'Enumerable&lt;'$auto'system'Array'$auto'system'Array#1,'$auto'system'Array#1&system'Object&gt;</A>
+|
++--<B>sqlite'DBReader</B>
+</PRE>
+sealed Class DBReader<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="sqlite.html#DBCommand">DBCommand</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theCommand</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Handle">Handle</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theCommandHandle</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'String&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theFieldNames</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBReader">DBReader</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="sqlite.html#DBCommand">DBCommand</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBReader">DBReader</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="sqlite.html#DBReader">DBReader</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+readNext()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+next()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+at(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+at(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+row()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Enumerator&lt;T1,T2&gt;">Enumerator&lt;'$auto'system'Array'$auto'system'Array#1,'$auto'system'Array#1&system'Object&gt;</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+enumerator()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+close()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DBRow"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+sqlite'</FONT>
+<BR>
+DBRow</H2>
+sealed Class DBRow<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theRow</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="sqlite.html#DBTable">DBTable</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theTable</CODE>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBRow">DBRow</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="sqlite.html#DBRow">DBRow</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+at(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+at(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="DBTable"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+sqlite'</FONT>
+<BR>
+DBTable</H2>
+sealed Class DBTable<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'String&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theFieldNames</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;sqlite'DBRow&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theRows</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBTable">DBTable</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'String&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="sqlite.html#DBTable">DBTable</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="sqlite.html#DBTable">DBTable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+appendRow(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;sqlite'DBRow&gt;</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+rows()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'String&gt;</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+fields()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+fieldCount()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="sqlite-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+</TD>
+</TR>
+</TABLE>

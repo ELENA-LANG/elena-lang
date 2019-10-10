@@ -1,0 +1,756 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 4.1: Module extensions'routines
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="extensions-routines-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="BaseRowEnumerator"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'routines'</FONT>
+<BR>
+BaseRowEnumerator</H2>
+Interface BaseRowEnumerator<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Indexer&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theIndexers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theLength</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theStrategy</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+next()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+enumerable()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Combinator"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'routines'</FONT>
+<BR>
+Combinator</H2>
+<PRE>
+<A HREF="extensions-routines.html#BaseRowEnumerator">extensions'routines'BaseRowEnumerator</A>
+|
++--<B>extensions'routines'Combinator</B>
+</PRE>
+Class Combinator<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Indexer&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theIndexers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theLength</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theStrategy</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theTotalLength</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#Combinator">Combinator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#Combinator">Combinator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+next()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reset()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="CompoundEnumerator"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'routines'</FONT>
+<BR>
+CompoundEnumerator</H2>
+Class CompoundEnumerator<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Enumerator&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>enumerators</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>index</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#CompoundEnumerator">CompoundEnumerator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reset()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+enumerable()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+next()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="EmptyEnumerable"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'routines'</FONT>
+<BR>
+EmptyEnumerable</H2>
+sealed Singleton EmptyEnumerable<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+enumerator()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ParallelEnumerator"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'routines'</FONT>
+<BR>
+ParallelEnumerator</H2>
+<PRE>
+<A HREF="extensions-routines.html#BaseRowEnumerator">extensions'routines'BaseRowEnumerator</A>
+|
++--<B>extensions'routines'ParallelEnumerator</B>
+</PRE>
+Class ParallelEnumerator<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Indexer&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theIndexers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theLength</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theStrategy</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#ParallelEnumerator">ParallelEnumerator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#ParallelEnumerator">ParallelEnumerator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Array">Array</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reset()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ReaderEnumerator"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'routines'</FONT>
+<BR>
+ReaderEnumerator</H2>
+Class ReaderEnumerator<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-io.html#TextReader">TextReader</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theReader</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theLine</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reset()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+next()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+enumerable()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="SequentialEnumerator"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'routines'</FONT>
+<BR>
+SequentialEnumerator</H2>
+<PRE>
+<A HREF="extensions-routines.html#BaseRowEnumerator">extensions'routines'BaseRowEnumerator</A>
+|
++--<B>extensions'routines'SequentialEnumerator</B>
+</PRE>
+Class SequentialEnumerator<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Indexer&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theIndexers</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theLength</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="extensions-routines-$private.html#BaseStrategy">BaseStrategy</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theStrategy</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#SequentialEnumerator">SequentialEnumerator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#SequentialEnumerator">SequentialEnumerator</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params#new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+reset()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="SingleEnumerable"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'routines'</FONT>
+<BR>
+SingleEnumerable</H2>
+Class SingleEnumerable<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>value</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#SingleEnumerable">SingleEnumerable</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-routines.html#SingleEnumerable">SingleEnumerable</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="extensions-routines.html#SingleEnumerable">SingleEnumerable</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+enumerator()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="printingLn"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'routines'</FONT>
+<BR>
+printingLn</H2>
+sealed Class printingLn<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>invoke</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="extensions-routines-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+</TD>
+</TR>
+</TABLE>

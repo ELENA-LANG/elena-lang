@@ -1,0 +1,1899 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 4.1: Module system'drawing
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-drawing-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="Brush"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+Brush</H2>
+sealed Class Brush<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theColor</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-drawing.html#HBRUSH">HBRUSH</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theBrush</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Brush">Brush</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HBRUSH">HBRUSH</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#HBRUSH">HBRUSH</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Brush">Brush</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#Brush">Brush</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Color</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="Canvas"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+Canvas</H2>
+sealed Class Canvas<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-drawing.html#HDC">HDC</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theHDC</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-drawing.html#HBRUSH">HBRUSH</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theBrush</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-drawing.html#HPEN">HPEN</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>thePen</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Canvas">Canvas</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Canvas">Canvas</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#Canvas">Canvas</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+open(<A HREF="system-drawing.html#HDC">HDC</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set(<A HREF="system-drawing.html#Pen">Pen</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set(<A HREF="system-drawing.html#Brush">Brush</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+close()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+setCaret(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+setCaret(<A HREF="system-drawing.html#Point">Point</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+lineCaretTo(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+lineCaretTo(<A HREF="system-drawing.html#Point">Point</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+writeText(<A HREF="system.html#WideString">WideString</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+writeText(<A HREF="system.html#String">String</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write(<A HREF="system-drawing.html#Image">Image</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+free()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Dimension"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+Dimension</H2>
+sealed Class Dimension<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theWidth</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theHeight</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Dimension">Dimension</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Dimension">Dimension</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Dimension">Dimension</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#Dimension">Dimension</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Width</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Width(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Height</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Height(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="HBITMAP"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+HBITMAP</H2>
+sealed Class HBITMAP<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theHandle</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HBITMAP">HBITMAP</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+create(<A HREF="system-drawing.html#HDC">HDC</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HBITMAP">HBITMAP</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+load(<A HREF="system.html#WideString">WideString</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HBITMAP">HBITMAP</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#HBITMAP">HBITMAP</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+select(<A HREF="system-drawing.html#HDC">HDC</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+free()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="HBRUSH"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+HBRUSH</H2>
+sealed Class HBRUSH<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theHandle</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Static Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+static get&nbsp;<A HREF="system-drawing.html#HBRUSH">HBRUSH</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Default</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HBRUSH">HBRUSH</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+createSolid(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HBRUSH">HBRUSH</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HBRUSH">HBRUSH</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#HBRUSH">HBRUSH</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+free()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="HDC"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+HDC</H2>
+sealed Class HDC<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theHandle</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Static Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+static get&nbsp;<A HREF="system-drawing.html#HDC">HDC</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Default</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HDC">HDC</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+newCompatible(<A HREF="system-drawing.html#HDC">HDC</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HDC">HDC</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HDC">HDC</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#HDC">HDC</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+setTextColor(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+setBkColor(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+select(<A HREF="system-drawing.html#HBITMAP">HBITMAP</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+select(<A HREF="system-drawing.html#HPEN">HPEN</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+select(<A HREF="system-drawing.html#HBRUSH">HBRUSH</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+copy(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system-drawing.html#HDC">HDC</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+moveTo(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+lineTo(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+drawText(<A HREF="system.html#WideString">WideString</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+free()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="HPEN"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+HPEN</H2>
+sealed Class HPEN<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theHandle</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Static Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+static get&nbsp;<A HREF="system-drawing.html#HPEN">HPEN</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Default</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HPEN">HPEN</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+create(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HPEN">HPEN</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HPEN">HPEN</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#HPEN">HPEN</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+IsEmpty()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+free()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Image"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+Image</H2>
+sealed Class Image<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#WideString">WideString</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>thePath</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-drawing.html#HDC">HDC</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theDC</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-drawing.html#HBITMAP">HBITMAP</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theBitmap</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-drawing.html#Dimension">Dimension</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theSize</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Image">Image</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+load(<A HREF="system.html#String">String</A>, <A HREF="system-drawing.html#Dimension">Dimension</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HDC">HDC</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#HDC">HDC</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Image">Image</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#Image">Image</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+open(<A HREF="system-drawing.html#HDC">HDC</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+free()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Pen"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+Pen</H2>
+sealed Class Pen<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theColor</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-drawing.html#HPEN">HPEN</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>thePen</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Pen">Pen</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#HPEN">HPEN</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#HPEN">HPEN</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Pen">Pen</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#Pen">Pen</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Color</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="Point"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+Point</H2>
+sealed Class Point<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theX</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theY</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Point">Point</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Point">Point</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Point">Point</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#Point">Point</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+X</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+X(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Y</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Y(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Point">Point</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+clone()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+equal(<A HREF="system-drawing.html#Point">Point</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+less(<A HREF="system-drawing.html#Point">Point</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Point">Point</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+add(<A HREF="system-drawing.html#Point">Point</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Point">Point</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+subtract(<A HREF="system-drawing.html#Point">Point</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="RECT"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+RECT</H2>
+sealed Class RECT<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theLeft</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theTop</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theRight</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theBottom</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#RECT">RECT</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#RECT">RECT</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#RECT">RECT</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Left</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Left(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Top</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Top(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Right</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Right(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Bottom</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Bottom(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Width</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Height</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="Region"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'drawing'</FONT>
+<BR>
+Region</H2>
+sealed Class Region<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theX</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theY</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theWidth</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theHeight</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Region">Region</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-drawing.html#Region">Region</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-drawing.html#Region">Region</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+X</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+X(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Y</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Y(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Width</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Width(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Height</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Height(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system-drawing.html#Dimension">Dimension</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Dimension</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read(<A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+writeDimension(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+readDimensionTo(<A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-drawing-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+</TD>
+</TR>
+</TABLE>

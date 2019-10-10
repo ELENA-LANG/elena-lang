@@ -1,0 +1,1378 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 4.1: Module extensions'dynamic
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="extensions-dynamic-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="DynamicClosureWithParam"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+DynamicClosureWithParam</H2>
+Interface DynamicClosureWithParam<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>param</CODE>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="TapeAssembly"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+TapeAssembly</H2>
+Class TapeAssembly<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system-collections.html#Stack&lt;T1&gt;">Stack&lt;extensions'dynamic'$private'Strategy&gt;</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_states</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="extensions-dynamic-$private.html#Strategy">Strategy</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_state</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="extensions-dynamic-$private.html#ClassContext">ClassContext</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_context</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="extensions-dynamic-$private.html#ParameterContext">ParameterContext</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>_parameters</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#TapeAssembly">TapeAssembly</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#TapeAssembly">TapeAssembly</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+load(<A HREF="system-dynamic.html#ClosureTape">ClosureTape</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#TapeAssembly">TapeAssembly</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="extensions-dynamic.html#TapeAssembly">TapeAssembly</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+open(<A HREF="system.html#MessageName">MessageName</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+openPreloadedSymbol()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+openSymbol()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+openSingleton()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+openMethod()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+openCode()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+openExpression()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+openReturning()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+openVariable()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+openLoop()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+newReference(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+newConstant(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+newLiteralToken(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+newNumericToken(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+newMessageToken(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+newParamToken(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+newIdentToken(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+newAssignToken(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+if()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+include(<A HREF="system.html#String">String</A>, <A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+nextOperation()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+close()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+eval()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="closeClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+closeClosure</H2>
+sealed Singleton closeClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="ifClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+ifClosure</H2>
+sealed Singleton ifClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="includeClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+includeClosure</H2>
+Class includeClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#String">String</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>forward</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#String">String</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>reference</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#includeClosure">includeClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#String">String</A>, <A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="newAssignClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+newAssignClosure</H2>
+sealed Singleton newAssignClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="newConstantClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+newConstantClosure</H2>
+<PRE>
+<A HREF="extensions-dynamic.html#DynamicClosureWithParam">extensions'dynamic'DynamicClosureWithParam</A>
+|
++--<B>extensions'dynamic'newConstantClosure</B>
+</PRE>
+Class newConstantClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>param</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newConstantClosure">newConstantClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newConstantClosure">newConstantClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="newIdentifierClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+newIdentifierClosure</H2>
+<PRE>
+<A HREF="extensions-dynamic.html#DynamicClosureWithParam">extensions'dynamic'DynamicClosureWithParam</A>
+|
++--<B>extensions'dynamic'newIdentifierClosure</B>
+</PRE>
+Class newIdentifierClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>param</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newIdentifierClosure">newIdentifierClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newIdentifierClosure">newIdentifierClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="newMessageClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+newMessageClosure</H2>
+<PRE>
+<A HREF="extensions-dynamic.html#DynamicClosureWithParam">extensions'dynamic'DynamicClosureWithParam</A>
+|
++--<B>extensions'dynamic'newMessageClosure</B>
+</PRE>
+Class newMessageClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>param</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newMessageClosure">newMessageClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newMessageClosure">newMessageClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="newNumericClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+newNumericClosure</H2>
+<PRE>
+<A HREF="extensions-dynamic.html#DynamicClosureWithParam">extensions'dynamic'DynamicClosureWithParam</A>
+|
++--<B>extensions'dynamic'newNumericClosure</B>
+</PRE>
+Class newNumericClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>param</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newNumericClosure">newNumericClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newNumericClosure">newNumericClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="newParamTokenClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+newParamTokenClosure</H2>
+<PRE>
+<A HREF="extensions-dynamic.html#DynamicClosureWithParam">extensions'dynamic'DynamicClosureWithParam</A>
+|
++--<B>extensions'dynamic'newParamTokenClosure</B>
+</PRE>
+Class newParamTokenClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>param</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newParamTokenClosure">newParamTokenClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newParamTokenClosure">newParamTokenClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="newReferenceClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+newReferenceClosure</H2>
+<PRE>
+<A HREF="extensions-dynamic.html#DynamicClosureWithParam">extensions'dynamic'DynamicClosureWithParam</A>
+|
++--<B>extensions'dynamic'newReferenceClosure</B>
+</PRE>
+Class newReferenceClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>param</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newReferenceClosure">newReferenceClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newReferenceClosure">newReferenceClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="newStringClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+newStringClosure</H2>
+<PRE>
+<A HREF="extensions-dynamic.html#DynamicClosureWithParam">extensions'dynamic'DynamicClosureWithParam</A>
+|
++--<B>extensions'dynamic'newStringClosure</B>
+</PRE>
+Class newStringClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>param</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newStringClosure">newStringClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="extensions-dynamic.html#newStringClosure">newStringClosure</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="openCodeClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+openCodeClosure</H2>
+sealed Singleton openCodeClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="openExpressionClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+openExpressionClosure</H2>
+sealed Singleton openExpressionClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="openLoopClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+openLoopClosure</H2>
+sealed Singleton openLoopClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="openMethodClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+openMethodClosure</H2>
+sealed Singleton openMethodClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="openPreloadedSymbolClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+openPreloadedSymbolClosure</H2>
+sealed Singleton openPreloadedSymbolClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="openReturningClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+openReturningClosure</H2>
+sealed Singleton openReturningClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="openSingletonClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+openSingletonClosure</H2>
+sealed Singleton openSingletonClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="openSymbolClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+openSymbolClosure</H2>
+sealed Singleton openSymbolClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="openVariableClosure"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+extensions'dynamic'</FONT>
+<BR>
+openVariableClosure</H2>
+sealed Singleton openVariableClosure<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+params##invoke(<A HREF="system.html#Object">Object</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="extensions-dynamic-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+</TD>
+</TR>
+</TABLE>

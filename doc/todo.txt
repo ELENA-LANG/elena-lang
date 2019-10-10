@@ -6,6 +6,9 @@ In development:
                 * write - Programming in ELENA : cookbook
 
               xdev API
+                * system'dynamic
+                * system'routines'stex
+                * algorithms
                 * symbols
                 * template based extensions
                 * template extensions

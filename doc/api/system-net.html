@@ -1,0 +1,770 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN""http://www.w3.org/TR/REC-html40/frameset.dtd">
+<HTML>
+<HEAD>
+<TITLE>
+ELENA Standard Library 4.1: Module system'net
+</TITLE>
+<meta name="collection" content="api">
+</HEAD>
+<BODY BGCOLOR="white">
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-net-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</b></EM>
+</TD>
+</TR>
+</TABLE>
+<DL>
+<HR>
+<A NAME="AddrInfo"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'net'</FONT>
+<BR>
+AddrInfo</H2>
+sealed Class AddrInfo<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>ai_flags</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>ai_family</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>ai_socktype</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>ai_protocol</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>ai_addrlen</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#UnsafePointer">UnsafePointer</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>ai_canonname</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#UnsafePointer">UnsafePointer</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>ai_addr</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#UnsafePointer">UnsafePointer</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>ai_next</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#AddrInfo">AddrInfo</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#AddrInfo">AddrInfo</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-net.html#AddrInfo">AddrInfo</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Flags</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Flags(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Family</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Family(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+SocketType</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+SocketType(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Protocol</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Protocol(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+AddressLen</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+set&nbsp;</CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+AddressLen(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#UnsafePointer">UnsafePointer</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Address</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+clear()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="AddrInfoReader"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'net'</FONT>
+<BR>
+AddrInfoReader</H2>
+sealed Class AddrInfoReader<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#UnsafePointer">UnsafePointer</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>paddrinfo</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#UnsafePointer">UnsafePointer</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>prootinfo</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#String">String</A>, <A HREF="system-net.html#AddrInfo">AddrInfo</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#String">String</A>, <A HREF="system.html#String">String</A>, <A HREF="system-net.html#AddrInfo">AddrInfo</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Available</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+next()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read(<A HREF="system-net.html#AddrInfo">AddrInfo</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+close()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="Socket"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'net'</FONT>
+<BR>
+Socket</H2>
+sealed Class Socket<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theHandle</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#Socket">Socket</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#Socket">Socket</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#Socket">Socket</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-net.html#Socket">Socket</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+bind(<A HREF="system.html#UnsafePointer">UnsafePointer</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+listen(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+tryOpen(<A HREF="system.html#UnsafePointer">UnsafePointer</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+write(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+read(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#Socket">Socket</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+accept()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+shutdown(<A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+iocommand(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+option(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#BoolValue">BoolValue</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system.html#Object">Object</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+close()
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+</TABLE>
+<A NAME="SocketException"/>
+<HR/>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+system'net'</FONT>
+<BR>
+SocketException</H2>
+Class SocketException<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<!-- =========== FIELD SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#String">String</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theMessage</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#CallStack">CallStack</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theCallstack</CODE>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>
+<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
+</TD>
+<TD><CODE>theCode</CODE>
+</TD>
+</TR>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<A NAME="constuctor_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#SocketException">SocketException</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#String">String</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#SocketException">SocketException</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+new(<A HREF="system.html#String">String</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== COVERSION SUMMARY =========== -->
+<A NAME="conversion_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Conversion Summary</B></FONT></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<A HREF="system-net.html#SocketException">SocketException</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+<i>cast</i>(<A HREF="system-net.html#SocketException">SocketException</A>)
+</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TD>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+ErrorCode</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+get&nbsp;<A HREF="system.html#String">String</A></CODE></TD>
+<TD VALIGN="top" WIDTH="30%">
+<CODE>&nbsp;
+Printable</CODE>
+<DIV>
+</DIV>
+</TD>
+</TR>
+<!-- ========== METHOD SUMMARY =========== -->
+<A NAME="method_summary"><!-- --></A>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TD COLSPAN=2><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TD>
+</TR>
+</TABLE>
+<HR>
+<A NAME="navbar_top"><!-- --></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-net-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+</TD>
+</TR>
+</TABLE>
