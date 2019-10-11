@@ -5,793 +5,785 @@
 ELENA Standard Library 4.1: Module net
 </TITLE>
 <meta name="collection" content="api">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <BODY BGCOLOR="white">
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="net-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+<DIV CLASS="topNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+<A HREF="net-summary.html">Module</A>
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
 ELENA&nbsp;Standard&nbsp;Library<br>4.1
-</b></EM>
-</TD>
-</TR>
-</TABLE>
-<DL>
+</STRONG>
+</DIV>
+</DIV>
+<A NAME="TcpClient">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+net'</DIV>
+<H2 title="TcpClient" class="title">TcpClient</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
 <HR>
-<A NAME="TcpClient"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-net'</FONT>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">TcpClient</SPAN></PRE>
 <BR>
-TcpClient</H2>
-sealed Class TcpClient<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
 <!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system-threading.html#Thread">Thread</A>&nbsp;</CODE>
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE>
 </TD>
-<TD><CODE>theThread</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system-net.html#Socket">Socket</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theSocket</CODE>
+<TD CLASS="colLast">
+<CODE>theThread</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>&nbsp;</CODE>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN></CODE>
 </TD>
-<TD><CODE>theBuffer</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theMaxLength</CODE>
+<TD CLASS="colLast">
+<CODE>theSocket</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN></CODE>
 </TD>
-<TD><CODE>theLock</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#EventHandler&lt;T1,T2,T3&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#2,'$auto'system'Func#2&net'TcpClient,'$auto'system'Func#2&net'TcpClient&system'Object&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>onConnect</CODE>
+<TD CLASS="colLast">
+<CODE>theBuffer</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#EventHandler&lt;T1,T2,T3,T4,T5,T6&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#4,'$auto'system'Func#4&net'TcpClient,'$auto'system'Func#4&net'TcpClient&'$auto'system'Array'$auto'system'Func#4&net'TcpClient&'$auto'system'Array#1,'$auto'system'Func#4&net'TcpClient&'$auto'system'Array#1&system'ByteNumber,'$auto'system'Func#4&net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,'$auto'system'Func#4&net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A>&nbsp;</CODE>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
 </TD>
-<TD><CODE>onReceived</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#EventHandler&lt;T1,T2,T3,T4&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#3,'$auto'system'Func#3&net'TcpClient,'$auto'system'Func#3&net'TcpClient&system'Exception,'$auto'system'Func#3&net'TcpClient&system'Exception&system'Object&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>onError</CODE>
+<TD CLASS="colLast">
+<CODE>theMaxLength</CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theLock</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#2,'$auto'system'Func#2&net'TcpClient,'$auto'system'Func#2&net'TcpClient&system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onConnect</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3,T4,T5,T6&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#4,'$auto'system'Func#4&net'TcpClient,'$auto'system'Func#4&net'TcpClient&'$auto'system'Array'$auto'system'Func#4&net'TcpClient&'$auto'system'Array#1,'$auto'system'Func#4&net'TcpClient&'$auto'system'Array#1&system'ByteNumber,'$auto'system'Func#4&net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,'$auto'system'Func#4&net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onReceived</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3,T4&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#3,'$auto'system'Func#3&net'TcpClient,'$auto'system'Func#3&net'TcpClient&system'Exception,'$auto'system'Func#3&net'TcpClient&system'Exception&system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onError</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpClient">TcpClient</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>()
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpClient">TcpClient</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpClient">TcpClient</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-new(<A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpClient">TcpClient</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpClient">TcpClient</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="net.html#TcpClient">TcpClient</A>)
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpClient">TcpClient</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpClient">TcpClient</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
+</TABLE>
+</LI>
+</UL>
 <!-- =========== PROPERTY SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-onConnect(<A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpClient,net'TcpClient&system'Object&gt;</A>)
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onConnect(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpClient,net'TcpClient&system'Object&gt;</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-onReceived(<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;net'TcpClient,net'TcpClient&'$auto'system'Arraynet'TcpClient&'$auto'system'Array#1,net'TcpClient&'$auto'system'Array#1&system'ByteNumber,net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onReceived(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;net'TcpClient,net'TcpClient&'$auto'system'Arraynet'TcpClient&'$auto'system'Array#1,net'TcpClient&'$auto'system'Array#1&system'ByteNumber,net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-onError(<A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;net'TcpClient,net'TcpClient&system'Exception,net'TcpClient&system'Exception&system'Object&gt;</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onError(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;net'TcpClient,net'TcpClient&system'Exception,net'TcpClient&system'Exception&system'Object&gt;</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Blocking(<A HREF="system.html#BoolValue">BoolValue</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Blocking(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Nodelay(<A HREF="system.html#BoolValue">BoolValue</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Nodelay(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-connect(<A HREF="system.html#String">String</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-close()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write(<A HREF="system.html#String">String</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-start()
-</CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
 </TABLE>
-<A NAME="TcpClientException"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-net'</FONT>
-<BR>
-TcpClientException</H2>
-Class TcpClientException<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#String">String</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theMessage</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#CallStack">CallStack</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theCallstack</CODE>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpClientException">TcpClientException</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-new(<A HREF="system.html#String">String</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpClientException">TcpClientException</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="net.html#TcpClientException">TcpClientException</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
+</LI>
+</UL>
 <!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-</TABLE>
-<A NAME="TcpRemoteClient"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-net'</FONT>
-<BR>
-TcpRemoteClient</H2>
-sealed Class TcpRemoteClient<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
 <CODE>
-<A HREF="system-net.html#Socket">Socket</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theSocket</CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>connect(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE>
-<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>Parameter</CODE>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-assign(<A HREF="system-net.html#Socket">Socket</A>)
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Parameter</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Parameter(<A HREF="system.html#Object">Object</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-read(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>start()
 </CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-close()
-</CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
 </TABLE>
-<A NAME="TcpServer"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-net'</FONT>
-<BR>
-TcpServer</H2>
-sealed Class TcpServer<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system-net.html#Socket">Socket</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theListenSocket</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system-collections.html#List&lt;T1&gt;">List&lt;net'TcpRemoteClient&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theClients</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system-threading.html#Thread">Thread</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theListenThread</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theBuffer</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theMaxLength</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#EventHandler&lt;T1,T2,T3&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#2,'$auto'system'Func#2&net'TcpRemoteClient,'$auto'system'Func#2&net'TcpRemoteClient&system'Object&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>OnConnect</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#EventHandler&lt;T1,T2,T3&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#2,'$auto'system'Func#2&net'TcpRemoteClient,'$auto'system'Func#2&net'TcpRemoteClient&system'Object&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>OnLeave</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#EventHandler&lt;T1,T2,T3,T4,T5,T6&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#4,'$auto'system'Func#4&net'TcpRemoteClient,'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array#1,'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber,'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>OnReceived</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#EventHandler&lt;T1,T2,T3,T4&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#3,'$auto'system'Func#3&net'TcpRemoteClient,'$auto'system'Func#3&net'TcpRemoteClient&system'net'SocketException,'$auto'system'Func#3&net'TcpRemoteClient&system'net'SocketException&system'Object&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>OnError</CODE>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpServer">TcpServer</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-assign(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
+</LI>
+</UL>
+</LI>
+</UL>
 </DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpServer">TcpServer</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-assign(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpServer">TcpServer</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="net.html#TcpServer">TcpServer</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-OnConnect(<A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'Object&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-OnLeave(<A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'Object&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-OnReceived(<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&'$auto'system'Arraynet'TcpRemoteClient&'$auto'system'Array#1,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-OnError(<A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'net'SocketException,net'TcpRemoteClient&system'net'SocketException&system'Object&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#Enumerable&lt;T1&gt;">Enumerable&lt;net'TcpRemoteClient&gt;</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Clients</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Blocking(<A HREF="system.html#BoolValue">BoolValue</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-start()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpServer">TcpServer</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-sendToAll(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpServer">TcpServer</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-sendToAll(<A HREF="system.html#String">String</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="net.html#TcpServer">TcpServer</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-sendToAll(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-close()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
 <HR>
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="net-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
-  </TR>
-</TABLE>
+</DIV>
+<A NAME="TcpClientException">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+net'</DIV>
+<H2 title="TcpClientException" class="title">TcpClientException</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+Class <SPAN CLASS="typeNameLabel">TcpClientException</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
 </TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
-ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+<TD CLASS="colLast">
+<CODE>theMessage</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#CallStack">CallStack</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theCallstack</CODE>
 </TD>
 </TR>
 </TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpClientException">TcpClientException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpClientException">TcpClientException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpClientException">TcpClientException</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="TcpRemoteClient">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+net'</DIV>
+<H2 title="TcpRemoteClient" class="title">TcpRemoteClient</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">TcpRemoteClient</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theSocket</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>Parameter</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Parameter</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Parameter(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="TcpServer">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+net'</DIV>
+<H2 title="TcpServer" class="title">TcpServer</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">TcpServer</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theListenSocket</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;net'TcpRemoteClient&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theClients</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theListenThread</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theBuffer</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theMaxLength</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#2,'$auto'system'Func#2&net'TcpRemoteClient,'$auto'system'Func#2&net'TcpRemoteClient&system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>OnConnect</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#2,'$auto'system'Func#2&net'TcpRemoteClient,'$auto'system'Func#2&net'TcpRemoteClient&system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>OnLeave</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3,T4,T5,T6&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#4,'$auto'system'Func#4&net'TcpRemoteClient,'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array#1,'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber,'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,'$auto'system'Func#4&net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>OnReceived</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3,T4&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#3,'$auto'system'Func#3&net'TcpRemoteClient,'$auto'system'Func#3&net'TcpRemoteClient&system'net'SocketException,'$auto'system'Func#3&net'TcpRemoteClient&system'net'SocketException&system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>OnError</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>OnConnect(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'Object&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>OnLeave(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'Object&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>OnReceived(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&'$auto'system'Arraynet'TcpRemoteClient&'$auto'system'Array#1,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>OnError(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'net'SocketException,net'TcpRemoteClient&system'net'SocketException&system'Object&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable&lt;T1&gt;">Enumerable&lt;net'TcpRemoteClient&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Clients</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Blocking(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>start()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>sendToAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>sendToAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>sendToAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<DIV CLASS="bottomNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+<A HREF="net-summary.html">Module</A>
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</STRONG>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

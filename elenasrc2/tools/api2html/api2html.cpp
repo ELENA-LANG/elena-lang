@@ -146,72 +146,83 @@ void writeHeader(TextFileWriter& writer, const char* package, const char* packag
    writer.writeLiteralNewLine(package);
    writer.writeLiteralNewLine("</TITLE>");
    writer.writeLiteralNewLine("<meta name=\"collection\" content=\"api\">");
+   writer.writeLiteralNewLine("<LINK REL =\"stylesheet\" TYPE=\"text/css\" HREF=\"stylesheet.css\" TITLE=\"Style\">");
    writer.writeLiteralNewLine("</HEAD>");
    writer.writeLiteralNewLine("<BODY BGCOLOR=\"white\">");
 
-   writer.writeLiteralNewLine("<A NAME=\"navbar_top\"><!-- --></A>");
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" WIDTH=\"100%\" CELLPADDING=\"1\" CELLSPACING=\"0\">");
-   writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TD COLSPAN=2 BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">");
-   writer.writeLiteralNewLine("<A NAME=\"navbar_top_firstrow\"><!-- --></A>");
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"0\" CELLSPACING=\"3\">");
-   writer.writeLiteralNewLine("  <TR ALIGN=\"center\" VALIGN=\"top\">");
-   writer.writeLiteralNewLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"index.html\"><FONT CLASS=\"NavBarFont1\"><B>Overview</B></FONT></A>&nbsp;</TD>");
+   writer.writeLiteralNewLine("<DIV CLASS=\"topNav\">");
+
+   writer.writeLiteralNewLine("<UL CLASS=\"navList\">");
+
+   writer.writeLiteralNewLine("<LI>");
+   writer.writeLiteralNewLine("<A HREF=\"index.html\">Overview</A>");
+   writer.writeLiteralNewLine("</LI>");
+
+   writer.writeLiteralNewLine("<LI>");
    if (!emptystr(packageLink)) {
-      writer.writeLiteral("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\"><A HREF=\"");
+      writer.writeLiteral("<A HREF=\"");
       writer.writeLiteral(packageLink);
-      writer.writeLiteralNewLine("\"><FONT CLASS=\"NavBarFont1\"><B>Module</B></FONT></A>&nbsp;</TD>");
+      writer.writeLiteralNewLine("\">Module</A>");
    }
-   else writer.writeLiteralNewLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <FONT CLASS=\"NavBarFont1\">Module</FONT>&nbsp;</TD>");
-   writer.writeLiteralNewLine("  </TR>");
-   writer.writeLiteralNewLine("</TABLE>");
-   writer.writeLiteralNewLine("</TD>");
+   else writer.writeLiteralNewLine("Module");
+   writer.writeLiteralNewLine("</LI>");
 
-   writer.writeLiteralNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" ROWSPAN=3><EM><b>");
+   writer.writeLiteralNewLine("</UL>");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"aboutLanguage\">");
+   writer.writeLiteralNewLine("<STRONG>");
    writer.writeLiteralNewLine(TITLE2);
-   writer.writeLiteralNewLine("</b></EM>");
-   writer.writeLiteralNewLine("</TD>");
-   writer.writeLiteralNewLine("</TR>");
-   writer.writeLiteralNewLine("</TABLE>");
+   writer.writeLiteralNewLine("</STRONG>");
+   writer.writeLiteralNewLine("</DIV>");
 
-   writer.writeLiteralNewLine("<DL>");
-   writer.writeLiteralNewLine("<HR>");
+   writer.writeLiteralNewLine("</DIV>");
 }
 
 void writeSummaryHeader(TextFileWriter& writer, const char* name, const char* shortDescr)
 {
-   writer.writeLiteralNewLine("<H2>");
+   writer.writeLiteralNewLine("<DIV CLASS=\"header\">");
+   writer.writeLiteralNewLine("<H1>");
    writer.writeLiteral("Module ");
    writer.writeLiteralNewLine(name);
-   writer.writeLiteralNewLine("</H2>");
-   writer.writeLiteralNewLine(shortDescr);
-   writer.writeLiteralNewLine("<P>");
+   writer.writeLiteralNewLine("</H1>");
+   writer.writeLiteralNewLine("</DIV>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Class Summary</B></FONT></TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("<DIV CLASS=\"docSummary\">");
+   writer.writeLiteral("<DIV CLASS=\"block\">");
+   writer.writeLiteral(shortDescr);
+   writer.writeLiteralNewLine("</DIV>");
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"contentContainer\">");
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
 }
 
-void writeSymbolSummaryHeader(TextFileWriter& writer, const char* name, const char* shortDescr)
+void writeClassSummaryHeader(TextFileWriter& writer)
 {
-   writer.writeLiteralNewLine("<BR/>");
-   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Symbol Summary</B></FONT></TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"typeSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<HEADER>");
+   writer.writeLiteralNewLine("Symbol Summary");
+   writer.writeLiteralNewLine("</HEADER>");
 }
 
-void writeExtendedSummaryHeader(TextFileWriter& writer, const char* name, const char* shortDescr)
+void writeSymbolSummaryHeader(TextFileWriter& writer)
 {
-   writer.writeLiteralNewLine("<BR/>");
-   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Extended Class Summary</B></FONT></TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"typeSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<HEADER>");
+   writer.writeLiteralNewLine("Symbol Summary");
+   writer.writeLiteralNewLine("</HEADER>");
+
+}
+
+void writeExtendedSummaryHeader(TextFileWriter& writer)
+{
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"typeSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<HEADER>");
+   writer.writeLiteralNewLine("Extended Class Summary");
+   writer.writeLiteralNewLine("</HEADER>");
 }
 
 void writeRefName(TextFileWriter& writer, ident_t name)
@@ -260,55 +271,71 @@ void writeClassName(TextFileWriter& writer, ApiClassInfo* info)
    }
    else {
       writer.writeLiteral(info->prefix.c_str());
+      writer.writeLiteral("<SPAN CLASS=\"typeNameLabel\">");
       writer.writeLiteral(info->name.c_str());
+      writer.writeLiteral("</SPAN>");
    }
 }
 
 void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
 {
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-   writer.writeLiteral("<TD WIDTH=\"15%\"><B><A HREF=\"");
+   writer.writeLiteralNewLine("<TD CLASS=\"colFirst\">");
+
+   writer.writeLiteral("<A HREF=\"");
    writer.writeLiteral(bodyFileName);
    writer.writeLiteral("#");
    writeRefName(writer, info->name.c_str());
    writer.writeLiteral("\">");
    writer.writeLiteral(info->name.c_str());
-   writer.writeLiteralNewLine("</A></B></TD>");
-   writer.writeLiteral("<TD>");
-   writeClassName(writer, info);
+   writer.writeLiteralNewLine("</A>");
+   writer.writeLiteralNewLine("</TD>");
 
-   writer.writeLiteral("</TD>");
-   writer.writeLiteralNewLine("</TR>");
+
+   writer.writeLiteralNewLine("<TD CLASS=\"colLast\">");
+   writer.writeLiteralNewLine("<DIV CLASS=\"block\">");
+   writeClassName(writer, info);
+   writer.writeLiteralNewLine("</DIV>");
+   writer.writeLiteralNewLine("</TD>");
 }
 
 void writeSymbolSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const char* bodyFileName)
 {
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-   writer.writeLiteral("<TD WIDTH=\"15%\"><B><A HREF=\"");
+   writer.writeLiteralNewLine("<TD CLASS=\"colFirst\">");
+
+   writer.writeLiteral("<A HREF=\"");
    writer.writeLiteral(bodyFileName);
    writer.writeLiteral("#");
    writeRefName(writer, info->name.c_str());
    writer.writeLiteral("\">");
    writer.writeLiteral(info->name.c_str());
-   writer.writeLiteralNewLine("</A></B></TD>");
-   writer.writeLiteral("<TD>");
-   writer.writeLiteral("</TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("</A>");
+   writer.writeLiteralNewLine("</TD>");
+
+   writer.writeLiteralNewLine("<TD CLASS=\"colLast\">");
+   writer.writeLiteralNewLine("<DIV CLASS=\"block\">");
+   writer.writeLiteral(info->name.c_str());
+   writer.writeLiteralNewLine("</DIV>");
+   writer.writeLiteralNewLine("</TD>");
 }
 
 void writeExtendedSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
 {
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-   writer.writeLiteral("<TD WIDTH=\"15%\"><B><A HREF=\"");
+   writer.writeLiteralNewLine("<TD CLASS=\"colFirst\">");
+
+   writer.writeLiteral("<A HREF=\"");
    writer.writeLiteral(bodyFileName);
    writer.writeLiteral("#ext-");
    writeRefName(writer, info->name.c_str());
    writer.writeLiteral("\">");
    writer.writeLiteral(info->name.c_str());
-   writer.writeLiteralNewLine("</A></B></TD>");
-   writer.writeLiteral("<TD>");
-   writer.writeLiteral("</TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("</A>");
+   writer.writeLiteralNewLine("</TD>");
+
+   writer.writeLiteralNewLine("<TD CLASS=\"colLast\">");
+   writer.writeLiteralNewLine("<DIV CLASS=\"block\">");
+   writer.writeLiteral(info->name.c_str());
+   writer.writeLiteralNewLine("</DIV>");
+   writer.writeLiteralNewLine("</TD>");
 }
 
 inline void repeatStr(TextFileWriter& writer, const char* s, int count)
@@ -319,6 +346,7 @@ inline void repeatStr(TextFileWriter& writer, const char* s, int count)
 void writeType(TextFileWriter& writer, ident_t type, bool fullReference = false)
 {
    if (type.find('\'') != NOTFOUND_POS) {
+      writer.writeLiteral("<SPAN CLASS=\"memberNameLink\">");      
       writer.writeLiteral("<A HREF=\"");
 
       pos_t index = type.find("&lt;");
@@ -348,54 +376,66 @@ void writeType(TextFileWriter& writer, ident_t type, bool fullReference = false)
       else writer.writeLiteral(type.c_str() + ns.Length() + 1);
 
       writer.writeLiteral("</A>");
+      writer.writeLiteral("</SPAN>");
    }
    else writer.writeLiteral(type.c_str());
 }
 
-void writeParents(TextFileWriter& writer, ApiClassInfo* info, ident_t moduleName)
+void writeParent(TextFileWriter& writer, List<IdentifierString>::Iterator& it, ApiClassInfo* info)
 {
-   writer.writeLiteralNewLine("<PRE>");
-   int indent = 0;
-   auto it = info->parents.start();
-   while (!it.Eof()) {
-      repeatStr(writer, "   ", indent - 1);
-      if (indent > 0) writer.writeLiteralNewLine("|");
-      repeatStr(writer, "   ", indent - 1);
-      if (indent > 0) writer.writeLiteral("+--");
+   writer.writeLiteralNewLine("<UL CLASS=\"inheritance\">");
+   writer.writeLiteralNewLine("<LI>");
 
+   if (!it.Eof()) {
       writeType(writer, (*it).ident(), true);
-      writer.writeNewLine();
-
-      indent++;
+      writer.writeLiteralNewLine("</LI>");
 
       it++;
+      writer.writeLiteralNewLine("<LI>");
+      writeParent(writer, it, info);
    }
-   repeatStr(writer, "   ", indent - 1);
-   writer.writeLiteralNewLine("|");
-   repeatStr(writer, "   ", indent - 1);
-   writer.writeLiteral("+--<B>");
-   writer.writeLiteral(info->fullName.c_str());
-   writer.writeLiteralNewLine("</B>");
+   else {
+      writer.writeLiteral(info->fullName.c_str());
+   }
 
-   writer.writeLiteralNewLine("</PRE>");
+   writer.writeLiteralNewLine("</LI>");
+
+   writer.writeLiteralNewLine("</UL>");
+}
+
+void writeParents(TextFileWriter& writer, ApiClassInfo* info, ident_t moduleName)
+{
+   auto it = info->parents.start();
+   writeParent(writer, it, info);
 }
 
 void writeFields(TextFileWriter& writer, ApiClassInfo* info)
 {
-   // field section
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Field Summary</B></FONT></TD>");
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
+
+   writer.writeLiteralNewLine("<H3>Field Summary</H3>");
+
+   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
 
    auto it = info->fields.start();
+   bool alt = true;
    while (!it.Eof()) {
-      writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
-      writer.writeLiteralNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
-      writer.writeLiteralNewLine("<CODE>");
+      if (alt) {
+         writer.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+      }
+      else {
+         writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+      }
+      alt = !alt;
+
+      writer.writeLiteralNewLine("<TD CLASS=\"colFirst\">");
+      writer.writeLiteral("<CODE>");
       writeType(writer, (*it)->type);
-      writer.writeLiteralNewLine("&nbsp;</CODE>");
+      writer.writeLiteralNewLine("</CODE>");
       writer.writeLiteralNewLine("</TD>");
-      writer.writeLiteral("<TD><CODE>");
+      writer.writeLiteralNewLine("<TD CLASS=\"colLast\">");
+      writer.writeLiteral("<CODE>");
       writer.writeLiteral((*it)->name);
       writer.writeLiteralNewLine("</CODE>");
       writer.writeLiteralNewLine("</TD>");
@@ -403,6 +443,11 @@ void writeFields(TextFileWriter& writer, ApiClassInfo* info)
 
       it++;
    }
+
+   writer.writeLiteralNewLine("</TABLE>");
+
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
 }
 
 bool isMethod(ApiMethodInfo* info)
@@ -417,11 +462,10 @@ bool isProp(ApiMethodInfo* info)
 
 void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
 {
-   writer.writeLiteralNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
-   writer.writeLiteralNewLine("<CODE>&nbsp;");
+   writer.writeLiteralNewLine("<TD CLASS=\"colFirst\">");
+   writer.writeLiteralNewLine("<CODE>");
    if (info->prefix.Length() != 0) {
       writer.writeLiteral(info->prefix.ident());
-      writer.writeLiteral("&nbsp;");
    }
    if (info->retType.Length() != 0) {
       writeType(writer, info->retType);
@@ -432,8 +476,9 @@ void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
 
 void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
 {
-   writer.writeLiteralNewLine("<TD VALIGN=\"top\" WIDTH=\"30%\">");
-   writer.writeLiteralNewLine("<CODE>&nbsp;");
+   writer.writeLiteralNewLine("<TD CLASS=\"colLast\">");
+   writer.writeLiteral("<CODE>");
+
    writer.writeLiteral(info->name);
    writer.writeLiteral("(");
 
@@ -453,18 +498,13 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    writer.writeLiteralNewLine(")");
 
    writer.writeLiteralNewLine("</CODE>");
-
-   writer.writeLiteralNewLine("<DIV>");
-   //   const char* descr = emptystr(result) ? find(parameter, ';') : find(result, ';');
-   writer.writeLiteralNewLine("</DIV>");
-
    writer.writeLiteralNewLine("</TD>");
 }
 
 void writeSecondPropColumn(TextFileWriter& writer, ApiMethodInfo* info)
 {
-   writer.writeLiteralNewLine("<TD VALIGN=\"top\" WIDTH=\"30%\">");
-   writer.writeLiteralNewLine("<CODE>&nbsp;");
+   writer.writeLiteralNewLine("<TD CLASS=\"colLast\">");
+   writer.writeLiteral("<CODE>");
    writer.writeLiteral(info->name);
 
    if (info->params.Count() > 0) {
@@ -487,31 +527,29 @@ void writeSecondPropColumn(TextFileWriter& writer, ApiMethodInfo* info)
    }
 
    writer.writeLiteralNewLine("</CODE>");
-
-   writer.writeLiteralNewLine("<DIV>");
-   //   const char* descr = emptystr(result) ? find(parameter, ';') : find(result, ';');
-   writer.writeLiteralNewLine("</DIV>");
-
    writer.writeLiteralNewLine("</TD>");
 }
 
 void writeMethods(TextFileWriter& writer, ApiClassInfo* info)
 {
-//   if (emptystr(config.getSetting(name, "#method", NULL)))
-//      return;
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
 
-   // method section
-   writer.writeLiteralNewLine("<A NAME=\"method_summary\"><!-- --></A>");
+   writer.writeLiteralNewLine("<H3>Method Summary</H3>");
 
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Method Summary</B></FONT></TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
 
+   bool alt = true;
    auto it = info->methods.start();
    while (!it.Eof()) {
       if (isMethod(*it)) {
-         writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         if (alt) {
+            writer.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;
 
          writeFirstColumn(writer, *it);
          writeSecondColumn(writer, *it);
@@ -520,19 +558,33 @@ void writeMethods(TextFileWriter& writer, ApiClassInfo* info)
       }
       it++;
    }
+
+   writer.writeLiteralNewLine("</TABLE>");
+
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
 }
 
 void writeProperties(TextFileWriter& writer, ApiClassInfo* info)
 {
-   // property section
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Property Summary</B></FONT></TD>");
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
 
+   writer.writeLiteralNewLine("<H3>Property Summary</H3>");
+
+   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+
+   bool alt = true;
    auto it = info->methods.start();
    while (!it.Eof()) {
       if (isProp(*it)) {
-         writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         if (alt) {
+            writer.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;
 
          writeFirstColumn(writer, *it);
          writeSecondPropColumn(writer, *it);
@@ -541,19 +593,33 @@ void writeProperties(TextFileWriter& writer, ApiClassInfo* info)
       }
       it++;
    }
+
+   writer.writeLiteralNewLine("</TABLE>");
+
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
 }
 
 void writeStaticProperties(TextFileWriter& writer, ApiClassInfo* info)
 {
-   // property section
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Static Property Summary</B></FONT></TD>");
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
+
+   writer.writeLiteralNewLine("<H3>Static Property Summary</H3>");
+
+   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
 
    auto it = info->constructors.start();
+   bool alt = true;
    while (!it.Eof()) {
       if ((*it)->prop) {
-         writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         if (alt) {
+            writer.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;
 
          writeFirstColumn(writer, *it);
          writeSecondPropColumn(writer, *it);
@@ -562,22 +628,33 @@ void writeStaticProperties(TextFileWriter& writer, ApiClassInfo* info)
       }
       it++;
    }
+
+   writer.writeLiteralNewLine("</TABLE>");
+
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
 }
 
 void writeExtensions(TextFileWriter& writer, ApiClassInfo* info)
 {
-   // method section
-   writer.writeLiteralNewLine("<A NAME=\"method_summary\"><!-- --></A>");
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
 
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Extension Summary</B></FONT></TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("<H3>Extension Summary</H3>");
 
+   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+
+   bool alt = true;
    auto it = info->extensions.start();
    while (!it.Eof()) {
       if (!(*it)->special) {
-         writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         if (alt) {
+            writer.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;         
 
          writeFirstColumn(writer, *it);
          writeSecondColumn(writer, *it);
@@ -587,60 +664,83 @@ void writeExtensions(TextFileWriter& writer, ApiClassInfo* info)
 
       it++;
    }
+
+   writer.writeLiteralNewLine("</TABLE>");
+
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
 }
 
 void writeConstructors(TextFileWriter& writer, ApiClassInfo* info)
 {
-//   if (emptystr(config.getSetting(name, "#constructor", NULL)))
-//      return;
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
 
-   // method section
-   writer.writeLiteralNewLine("<A NAME=\"constuctor_summary\"><!-- --></A>");
+   writer.writeLiteralNewLine("<H3>Constructor Summary</H3>");
 
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Constructor Summary</B></FONT></TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
 
    auto it = info->constructors.start();
+   bool alt = true;
    while (!it.Eof()) {
       if (isMethod(*it)) {
-         writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         if (alt) {
+            writer.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;
 
          writeFirstColumn(writer, *it);
          writeSecondColumn(writer, *it);
 
          writer.writeLiteralNewLine("</TR>");
       }
+
       it++;
    }
+
+   writer.writeLiteralNewLine("</TABLE>");
+
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
 }
 
 void writeConversions(TextFileWriter& writer, ApiClassInfo* info)
 {
-   //   if (emptystr(config.getSetting(name, "#constructor", NULL)))
-   //      return;
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
 
-      // method section
-   writer.writeLiteralNewLine("<A NAME=\"conversion_summary\"><!-- --></A>");
+   writer.writeLiteralNewLine("<H3>Conversion Summary</H3>");
 
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Conversion Summary</B></FONT></TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
 
+   bool alt = true;
    auto it = info->methods.start();
    while (!it.Eof()) {
       if ((*it)->convertor) {
-         writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+         if (alt) {
+            writer.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;
 
          writeFirstColumn(writer, *it);
          writeSecondColumn(writer, *it);
 
          writer.writeLiteralNewLine("</TR>");
       }
+
       it++;
    }
+
+   writer.writeLiteralNewLine("</TABLE>");
+
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
 }
 
 void parseNs(IdentifierString& ns, ident_t root, ident_t fullName)
@@ -672,37 +772,45 @@ void writeBody(TextFileWriter& writer, ApiClassInfo* info, const char* rootNs)
 
    writer.writeLiteral("<A NAME=\"");
    writer.writeLiteral(info->name.c_str());
-   writer.writeLiteralNewLine("\"/>");
-   writer.writeLiteralNewLine("<HR/>");
+   writer.writeLiteralNewLine("\">");
+   writer.writeLiteralNewLine("</A>");
+
    writer.writeLiteralNewLine("<!-- ======== START OF CLASS DATA ======== -->");
-   writer.writeLiteralNewLine("<H2>");
-   writer.writeLiteralNewLine("<FONT SIZE=\"-1\">");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"header\">");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"subTitle\">");
    writer.writeLiteral(moduleName);
    writer.writeLiteral("'");
-   writer.writeLiteralNewLine("</FONT>");
-   writer.writeLiteralNewLine("<BR>");
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteral("<H2 title=\"");
+   writer.writeLiteral(title);
+   writer.writeLiteral("\" class=\"title\">");
    writer.writeLiteral(title);
    writer.writeLiteralNewLine("</H2>");
 
-//   if (!emptystr(config.getSetting(name, "#parent", NULL))) {
+   writer.writeLiteralNewLine("</DIV>");
+   
+   writer.writeLiteralNewLine("<DIV CLASS=\"contentContainer\">");
+
    if (info->parents.Count() > 0) {
       writeParents(writer, info, rootNs);
    }
 
-   const char* descr = /*config.getSetting(name, "#descr", NULL)*/nullptr;
-//   if (emptystr(descr)) {
-//      descr = config.getSetting(name, "#shortdescr", NULL);
-//   }
-//   if (!emptystr(descr)) {
-//      writer.writeLiteralNewLine("<P>");
-//      writer.writeLiteralNewLine(descr);
-//      writer.writeLiteralNewLine("<P>");
-//   }
-   /*else*/ writeClassName(writer, info);
+   writer.writeLiteralNewLine("<DIV CLASS=\"description\">");
+      writer.writeLiteralNewLine("<BR>");
+      writer.writeLiteralNewLine("<HR>");
+      //const char* descr = nullptr;
+      writer.writeLiteralNewLine("<PRE STYLE=\"padding-top: 15px;\">");
+      writeClassName(writer, info);
+      writer.writeLiteralNewLine("</PRE>");
+      writer.writeLiteralNewLine("<BR>");
+      writer.writeLiteralNewLine("</DIV>");
 
-//   writer.writeLiteralNewLine("<P>");
-
-   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<DIV CLASS=\"summary\">");
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
 
    if (info->fields.Count() > 0) {
       writer.writeLiteralNewLine("<!-- =========== FIELD SUMMARY =========== -->");
@@ -737,7 +845,13 @@ void writeBody(TextFileWriter& writer, ApiClassInfo* info, const char* rootNs)
       writeExtensions(writer, info);
    }
 
-   writer.writeLiteralNewLine("</TABLE>");
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteralNewLine("<HR>");
+
+   writer.writeLiteralNewLine("</DIV>");
 }
 
 void writeExtendedBody(TextFileWriter& writer, ApiClassInfo* info, const char* rootNs)
@@ -751,28 +865,54 @@ void writeExtendedBody(TextFileWriter& writer, ApiClassInfo* info, const char* r
 
    writer.writeLiteral("<A NAME=\"ext-");
    writer.writeLiteral(info->name.c_str());
-   writer.writeLiteralNewLine("\"/>");
-   writer.writeLiteralNewLine("<HR/>");
-   writer.writeLiteralNewLine("<!-- ======== START OF CLASS DATA ======== -->");
-   writer.writeLiteralNewLine("<H2>");
-   writer.writeLiteralNewLine("<FONT SIZE=\"-1\">");
+   writer.writeLiteralNewLine("\">");
+   writer.writeLiteralNewLine("</A>");
+
+   writer.writeLiteralNewLine("<!-- ======== START OF EXTENSION DATA ======== -->");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"header\">");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"subTitle\">");
    writer.writeLiteral(moduleName);
    writer.writeLiteral("'");
-   writer.writeLiteralNewLine("</FONT>");
-   writer.writeLiteralNewLine("<BR>");
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteral("<H2 title=\"");
+   writer.writeLiteral(title);
+   writer.writeLiteral("\" class=\"title\">");
    writer.writeLiteral(title);
    writer.writeLiteralNewLine("</H2>");
 
-   writeClassName(writer, info);
+   writer.writeLiteralNewLine("</DIV>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<DIV CLASS=\"contentContainer\">");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"description\">");
+   writer.writeLiteralNewLine("<BR>");
+   writer.writeLiteralNewLine("<HR>");
+   //const char* descr = nullptr;
+   writer.writeLiteralNewLine("<PRE STYLE=\"padding-top: 15px;\">");
+   writeClassName(writer, info);
+   writer.writeLiteralNewLine("</PRE>");
+   writer.writeLiteralNewLine("<BR>");
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"summary\">");
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
 
    if (info->extensions.Count() > 0) {
       writer.writeLiteralNewLine("<!-- ========== EXTNSION SUMMARY =========== -->");
       writeExtensions(writer, info);
    }
 
-   writer.writeLiteralNewLine("</TABLE>");
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteralNewLine("<HR>");
+
+   writer.writeLiteralNewLine("</DIV>");
 }
 
 void writeSymbolBody(TextFileWriter& writer, ApiSymbolInfo* info, const char* rootNs)
@@ -786,75 +926,105 @@ void writeSymbolBody(TextFileWriter& writer, ApiSymbolInfo* info, const char* ro
 
    writer.writeLiteral("<A NAME=\"");
    writer.writeLiteral(info->name.c_str());
-   writer.writeLiteralNewLine("\"/>");
-   writer.writeLiteralNewLine("<HR/>");
-   writer.writeLiteralNewLine("<!-- ======== START OF CLASS DATA ======== -->");
-   writer.writeLiteralNewLine("<H2>");
-   writer.writeLiteralNewLine("<FONT SIZE=\"-1\">");
+   writer.writeLiteralNewLine("\">");
+   writer.writeLiteralNewLine("</A>");
+
+
+   writer.writeLiteralNewLine("<!-- ======== START OF SYMBOL DATA ======== -->");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"header\">");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"subTitle\">");
    writer.writeLiteral(moduleName);
    writer.writeLiteral("'");
-   writer.writeLiteralNewLine("</FONT>");
-   writer.writeLiteralNewLine("<BR>");
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteral("<H2 title=\"");
+   writer.writeLiteral(title);
+   writer.writeLiteral("\" class=\"title\">");
    writer.writeLiteral(title);
    writer.writeLiteralNewLine("</H2>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("</DIV>");
 
-   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
-   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
-   writer.writeLiteralNewLine("<B>Symbol Summary</B></FONT></TD>");
-   writer.writeLiteralNewLine("</TR>");
+   writer.writeLiteralNewLine("<DIV CLASS=\"contentContainer\">");
 
-   writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" WIDTH=\"30%\">");
-   writer.writeLiteralNewLine("<CODE>&nbsp;");
+   writer.writeLiteralNewLine("<DIV CLASS=\"summary\">");
+   writer.writeLiteralNewLine("<UL CLASS=\"blockList\">");
+   writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
+
+   writer.writeLiteralNewLine("<H3>Symbol Summary</H3>");
+
+   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+
+   writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+   writer.writeLiteralNewLine("<TD CLASS=\"colFirst\">");
+   writer.writeLiteral("<CODE>");
    writeType(writer, info->type);
-   writer.writeLiteralNewLine("&nbsp;</CODE>");
+   writer.writeLiteralNewLine("</CODE>");
    writer.writeLiteralNewLine("</TD>");
-
-   writer.writeLiteralNewLine("<TD VALIGN=\"top\">");
-   writer.writeLiteralNewLine("<CODE>&nbsp;");
+   writer.writeLiteralNewLine("<TD CLASS=\"colLast\">");
+   writer.writeLiteral("<CODE>");
    writer.writeLiteral("symbol ");
    writer.writeLiteral(info->name.c_str());
    writer.writeLiteralNewLine("</CODE>");
    writer.writeLiteralNewLine("</TD>");
-
    writer.writeLiteralNewLine("</TR>");
    writer.writeLiteralNewLine("</TABLE>");
+
+   writer.writeLiteralNewLine("</LI>");
+   writer.writeLiteralNewLine("</UL>");
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteralNewLine("<HR>");
+
+   writer.writeLiteralNewLine("</DIV>");
+
 }
 
 void writeFooter(TextFileWriter& writer, const char* packageLink)
 {
-   writer.writeLiteralNewLine("<HR>");
-   writer.writeLiteralNewLine("<A NAME=\"navbar_top\"><!-- --></A>");
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" WIDTH=\"100%\" CELLPADDING=\"1\" CELLSPACING=\"0\">");
-   writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TD COLSPAN=2 BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">");
-   writer.writeLiteralNewLine("<A NAME=\"navbar_top_firstrow\"><!-- --></A>");
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"0\" CELLSPACING=\"3\">");
-   writer.writeLiteralNewLine("  <TR ALIGN=\"center\" VALIGN=\"top\">");
-   writer.writeLiteralNewLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"index.html\"><FONT CLASS=\"NavBarFont1\"><B>Overview</B></FONT></A>&nbsp;</TD>");
-   if (!emptystr(packageLink)) {
-      writer.writeLiteral("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\"><A HREF=\"");
-      writer.writeLiteral(packageLink);
-      writer.writeLiteralNewLine("\"><FONT CLASS=\"NavBarFont1\"><B>Module</B></FONT></A>&nbsp;</TD>");
-   }
-   else writer.writeLiteralNewLine("  <TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <FONT CLASS=\"NavBarFont1\">Module</FONT>&nbsp;</TD>");
-   writer.writeLiteralNewLine("  </TR>");
-   writer.writeLiteralNewLine("</TABLE>");
-   writer.writeLiteralNewLine("</TD>");
+   writer.writeLiteralNewLine("<DIV CLASS=\"bottomNav\">");
 
-   writer.writeLiteralNewLine("<TD ALIGN=\"right\" VALIGN=\"top\" ROWSPAN=3><EM><b>");
-   writer.writeLiteral(TITLE2);
-   writer.writeLiteralNewLine("</b></EM>");
-   writer.writeLiteralNewLine("</TD>");
-   writer.writeLiteralNewLine("</TR>");
-   writer.writeLiteralNewLine("</TABLE>");
+   writer.writeLiteralNewLine("<UL CLASS=\"navList\">");
+
+   writer.writeLiteralNewLine("<LI>");
+   writer.writeLiteralNewLine("<A HREF=\"index.html\">Overview</A>");
+   writer.writeLiteralNewLine("</LI>");
+
+   writer.writeLiteralNewLine("<LI>");
+   if (!emptystr(packageLink)) {
+      writer.writeLiteral("<A HREF=\"");
+      writer.writeLiteral(packageLink);
+      writer.writeLiteralNewLine("\">Module</A>");
+   }
+   else writer.writeLiteralNewLine("Module");
+   writer.writeLiteralNewLine("</LI>");
+
+   writer.writeLiteralNewLine("</UL>");
+
+   writer.writeLiteralNewLine("<DIV CLASS=\"aboutLanguage\">");
+   writer.writeLiteralNewLine("<STRONG>");
+   writer.writeLiteralNewLine(TITLE2);
+   writer.writeLiteralNewLine("</STRONG>");
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteralNewLine("</DIV>");
+
+   writer.writeLiteralNewLine("</BODY>");
+   writer.writeLiteralNewLine("</HTML>");
 }
 
 void writeSummaryFooter(TextFileWriter& writer)
 {
+   writer.writeLiteralNewLine("</UL>");
+   writer.writeLiteralNewLine("</DIV>");
+}
+
+void writeClassSummaryFooter(TextFileWriter& writer)
+{
    writer.writeLiteralNewLine("</TABLE>");
+   writer.writeLiteralNewLine("</LI>");
 }
 
 bool readLine(String<char, LINE_LEN>& line, TextFileReader& reader)
@@ -1458,43 +1628,80 @@ int main(int argc, char* argv[])
 
       writeSummaryHeader(summaryWriter, (*it)->name.c_str(), shortDescr);
 
+      // classes
+      writeClassSummaryHeader(summaryWriter);
+
       auto class_it = (*it)->classes.start();
+      bool alt = true;
       while (!class_it.Eof()) {
          if (!(*class_it)->isVirtual) {
+            if (alt) {
+               summaryWriter.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+            }
+            else {
+               summaryWriter.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+            }
+            alt = !alt;
+
             writeSummaryTable(summaryWriter, *class_it, name);
             writeBody(bodyWriter, *class_it, ns);
+
+            summaryWriter.writeLiteralNewLine("</TR>");
          }
          
          class_it++;
       }
 
-      writeSummaryFooter(summaryWriter);
+      writeClassSummaryFooter(summaryWriter);
 
       // symbols
-      writeSymbolSummaryHeader(summaryWriter, (*it)->name.c_str(), shortDescr);
+      writeSymbolSummaryHeader(summaryWriter);
 
       auto symbol_it = (*it)->symbols.start();
+      alt = true;
       while (!symbol_it.Eof()) {
+         if (alt) {
+            summaryWriter.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+         }
+         else {
+            summaryWriter.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+         }
+         alt = !alt;
+
          writeSymbolSummaryTable(summaryWriter, *symbol_it, name);
          writeSymbolBody(bodyWriter, *symbol_it, ns);
 
+         summaryWriter.writeLiteralNewLine("</TR>");
+
          symbol_it++;
       }
+      writeClassSummaryFooter(summaryWriter);
 
-      writeSummaryFooter(summaryWriter);
-
-      // symbols
-      writeExtendedSummaryHeader(summaryWriter, (*it)->name.c_str(), shortDescr);
+      // extensions
+      writeExtendedSummaryHeader(summaryWriter);
 
       class_it = (*it)->classes.start();
+      alt = true;
       while (!class_it.Eof()) {
          if ((*class_it)->isVirtual) {
+            if (alt) {
+               summaryWriter.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+            }
+            else {
+               summaryWriter.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+            }
+            alt = !alt;
+
             writeExtendedSummaryTable(summaryWriter, *class_it, name);
             writeExtendedBody(bodyWriter, *class_it, ns);
+
+            summaryWriter.writeLiteralNewLine("</TR>");
          }
 
          class_it++;
       }
+
+      writeClassSummaryFooter(summaryWriter);
 
       writeSummaryFooter(summaryWriter);
 

@@ -77,6 +77,8 @@ enum ByteCode
    bcCheck           = 0x38,
    bcACallVD         = 0x39,
    bcValidate        = 0x3A,
+   bcAndE            = 0x3B,
+   bcDMoveVerb       = 0x3C,
    // 0x3F should be reserved for command
 
    bcNEqual          = 0x40,

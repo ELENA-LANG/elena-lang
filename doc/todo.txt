@@ -6,7 +6,10 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev API
-                * validate / format generated html
+                * html : table headers
+                * html : redesign index
+
+                * correctly display variadic arguments
                 * template based extensions
                 * template extensions
                 * missing algorithms (template extensions)

@@ -5,6 +5,8 @@ define elStructure          000000008h
 define elSubject            000002000h
 define elMessage            000008000h
 
+define SPECIAL_MESSAGE      000000020h
+
 procedure __object."#dispatch[1]"
 
   bsredirect  
@@ -3028,19 +3030,21 @@ end
 
 procedure __message."#dispatch[1]"
 
-  bloadsi 1
-  ifb labDefault
+  // check if it is invoke
+  dcopy SPECIAL_MESSAGE
+  ande
+  ifn labDefault 0 
 
+  eaddn -1
   nload
-  eswap
-  setverb messagename : "eval"
+  dmoveverb
   else labEnd
-  nload
-  ecopyd
+
   aloadsi 1
   ajumpvi 0
 
 labEnd:
+  eaddn   1
   open    4
   reserve 1
   dsavesi 2

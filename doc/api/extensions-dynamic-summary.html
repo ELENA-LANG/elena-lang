@@ -5,137 +5,278 @@
 ELENA Standard Library 4.1: Module extensions'dynamic
 </TITLE>
 <meta name="collection" content="api">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <BODY BGCOLOR="white">
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+<DIV CLASS="topNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
 ELENA&nbsp;Standard&nbsp;Library<br>4.1
-</b></EM>
-</TD>
-</TR>
-</TABLE>
-<DL>
-<HR>
-<H2>
+</STRONG>
+</DIV>
+</DIV>
+<DIV CLASS="header">
+<H1>
 Module extensions'dynamic
-</H2>
-
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Class Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#DynamicClosureWithParam">DynamicClosureWithParam</A></B></TD>
-<TD>Interface DynamicClosureWithParam</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#TapeAssembly">TapeAssembly</A></B></TD>
-<TD>Class TapeAssembly</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#closeClosure">closeClosure</A></B></TD>
-<TD>sealed Singleton closeClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#ifClosure">ifClosure</A></B></TD>
-<TD>sealed Singleton ifClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#includeClosure">includeClosure</A></B></TD>
-<TD>Class includeClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#newAssignClosure">newAssignClosure</A></B></TD>
-<TD>sealed Singleton newAssignClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#newConstantClosure">newConstantClosure</A></B></TD>
-<TD>Class newConstantClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#newIdentifierClosure">newIdentifierClosure</A></B></TD>
-<TD>Class newIdentifierClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#newMessageClosure">newMessageClosure</A></B></TD>
-<TD>Class newMessageClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#newNumericClosure">newNumericClosure</A></B></TD>
-<TD>Class newNumericClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#newParamTokenClosure">newParamTokenClosure</A></B></TD>
-<TD>Class newParamTokenClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#newReferenceClosure">newReferenceClosure</A></B></TD>
-<TD>Class newReferenceClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#newStringClosure">newStringClosure</A></B></TD>
-<TD>Class newStringClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#openCodeClosure">openCodeClosure</A></B></TD>
-<TD>sealed Singleton openCodeClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#openExpressionClosure">openExpressionClosure</A></B></TD>
-<TD>sealed Singleton openExpressionClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#openLoopClosure">openLoopClosure</A></B></TD>
-<TD>sealed Singleton openLoopClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#openMethodClosure">openMethodClosure</A></B></TD>
-<TD>sealed Singleton openMethodClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#openPreloadedSymbolClosure">openPreloadedSymbolClosure</A></B></TD>
-<TD>sealed Singleton openPreloadedSymbolClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#openReturningClosure">openReturningClosure</A></B></TD>
-<TD>sealed Singleton openReturningClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#openSingletonClosure">openSingletonClosure</A></B></TD>
-<TD>sealed Singleton openSingletonClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#openSymbolClosure">openSymbolClosure</A></B></TD>
-<TD>sealed Singleton openSymbolClosure</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#openVariableClosure">openVariableClosure</A></B></TD>
-<TD>sealed Singleton openVariableClosure</TD></TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Symbol Summary</B></FONT></TD>
-</TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Extended Class Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="extensions-dynamic.html#ext-Object">Object</A></B></TD>
-<TD></TD></TR>
-</TABLE>
-<HR>
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
+</H1>
+</DIV>
+<DIV CLASS="docSummary">
+<DIV CLASS="block"></DIV>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#DynamicClosureWithParam">DynamicClosureWithParam</A>
 </TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
-ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">DynamicClosureWithParam</SPAN></DIV>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#TapeAssembly">TapeAssembly</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">TapeAssembly</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#closeClosure">closeClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">closeClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#ifClosure">ifClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">ifClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#includeClosure">includeClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">includeClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#newAssignClosure">newAssignClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">newAssignClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#newConstantClosure">newConstantClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">newConstantClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#newIdentifierClosure">newIdentifierClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">newIdentifierClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#newMessageClosure">newMessageClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">newMessageClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#newNumericClosure">newNumericClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">newNumericClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#newParamTokenClosure">newParamTokenClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">newParamTokenClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#newReferenceClosure">newReferenceClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">newReferenceClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#newStringClosure">newStringClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">newStringClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#openCodeClosure">openCodeClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">openCodeClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#openExpressionClosure">openExpressionClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">openExpressionClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#openLoopClosure">openLoopClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">openLoopClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#openMethodClosure">openMethodClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">openMethodClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#openPreloadedSymbolClosure">openPreloadedSymbolClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">openPreloadedSymbolClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#openReturningClosure">openReturningClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">openReturningClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#openSingletonClosure">openSingletonClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">openSingletonClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#openSymbolClosure">openSymbolClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">openSymbolClosure</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#openVariableClosure">openVariableClosure</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">openVariableClosure</SPAN></DIV>
+</TD>
+</TR>
 </TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+</TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Extended Class Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="extensions-dynamic.html#ext-Object">Object</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Object</DIV>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<DIV CLASS="bottomNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</STRONG>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

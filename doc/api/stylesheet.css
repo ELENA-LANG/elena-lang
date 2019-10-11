@@ -1,0 +1,246 @@
+@import url('dejavu.css');
+
+body {
+    background-color:#ffffff;
+    color:#353833;
+    font-family:'DejaVu Sans', Arial, Helvetica, sans-serif;2
+    font-size:14px;
+    margin:0;
+}
+a:link, a:visited {
+    text-decoration:none;
+    color:#4A6782;
+}
+a:hover, a:focus {
+    text-decoration:none;
+    color:#bb7a2a;
+}
+a:active {
+    text-decoration:none;
+    color:#4A6782;
+}
+a[name] {
+    color:#353833;
+}
+a[name]:hover {
+    text-decoration:none;
+    color:#353833;
+}
+
+.header, .footer {
+    clear: both;
+    margin: 0 20px;
+    padding: 5px 0 0 0;
+}
+
+.title {
+    color: #2c4557;
+    margin: 10px 0;
+}
+
+.subTitle {
+    margin: 5px 0 0 0;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+.contentContainer, .sourceContainer, .classUseContainer, .serializedFormContainer, .constantValuesContainer {
+    clear: both;
+    padding: 10px 20px;
+    position: relative;
+}
+
+ul.inheritance {
+    margin: 0;
+    padding: 0;
+}
+
+ul.inheritance li {
+    display: inline;
+    list-style: none;
+}
+
+ul.inheritance li ul.inheritance {
+    margin-left: 15px;
+    padding-left: 15px;
+    padding-top: 1px;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+.description pre {
+    margin-top: 0;
+}
+pre {
+    font-family: 'DejaVu Sans Mono', monospace;
+    font-size: 14px;
+}
+
+ul.blockList, ul.blockListLast {
+    margin: 10px 0 10px 0;
+    padding: 0;
+}
+
+ul.blockList li.blockList, ul.blockListLast li.blockList {
+    list-style: none;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+ul.blockList ul.blockList li.blockList h3 {
+    padding: 0;
+    margin: 15px 0;
+}
+
+h3 {
+    font-size: 16px;
+    font-style: italic;
+}
+
+
+.overviewSummary, .memberSummary {
+    padding: 0px;
+}
+.overviewSummary, .memberSummary, .typeSummary, .useSummary, .constantsSummary, .deprecatedSummary {
+    width: 100%;
+    border-left: 1px solid #EEE;
+    border-right: 1px solid #EEE;
+    border-bottom: 1px solid #EEE;
+}
+
+.altColor {
+    background-color: #FFFFFF;
+}
+
+.rowColor {
+    background-color: #EEEEEF;
+}
+
+.overviewSummary td.colFirst, .overviewSummary th.colFirst, .useSummary td.colFirst, .useSummary th.colFirst, .overviewSummary td.colOne, .overviewSummary th.colOne, .memberSummary td.colFirst, .memberSummary th.colFirst, .memberSummary td.colOne, .memberSummary th.colOne, .typeSummary td.colFirst {
+    width: 25%;
+    vertical-align: top;
+}
+
+.overviewSummary td, .memberSummary td, .typeSummary td, .useSummary td, .constantsSummary td, .deprecatedSummary td {
+    text-align: left;
+    padding: 0px 0px 12px 10px;
+}
+td.colLast, th.colLast {
+    font-size: 13px;
+}
+
+code, tt {
+    font-family: 'DejaVu Sans Mono', monospace;
+    font-size: 14px;
+    padding-top: 4px;
+    margin-top: 8px;
+    line-height: 1.4em;
+}
+
+
+deprecatedLabel, .descfrmTypeLabel, .memberNameLabel, .memberNameLink, .overrideSpecifyLabel, .packageHierarchyLabel, .paramLabel, .returnLabel, .seeLabel, .simpleTagLabel, .throwsLabel, .typeNameLabel, .typeNameLink {
+    font-weight: bold;
+}
+
+td.colOne a:link, td.colOne a:active, td.colOne a:visited, td.colOne a:hover, td.colFirst a:link, td.colFirst a:active, td.colFirst a:visited, td.colFirst a:hover, td.colLast a:link, td.colLast a:active, td.colLast a:visited, td.colLast a:hover, .constantValuesContainer td a:link, .constantValuesContainer td a:active, .constantValuesContainer td a:visited, .constantValuesContainer td a:hover {
+    font-weight: bold;
+}
+td.colLast a {
+    padding-bottom: 3px;
+}
+
+.topNav {
+    background-color: #4D7A97;
+    color: #FFFFFF;
+    float: left;
+    padding: 0;
+    width: 100%;
+    clear: right;
+    height: 2.8em;
+    padding-top: 10px;
+    overflow: hidden;
+    font-size: 12px;
+}
+
+ul.navList, ul.subNavList {
+    float: left;
+    margin: 0 25px 0 0;
+    padding: 0;
+}
+
+
+.aboutLanguage {
+    float: right;
+    padding: 0px 21px;
+    font-size: 11px;
+    z-index: 200;
+    margin-top: -9px;
+}
+
+.topNav a:link, .topNav a:active, .topNav a:visited, .bottomNav a:link, .bottomNav a:active, .bottomNav a:visited {
+    color: #FFFFFF;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+ul.navList li {
+    list-style: none;
+    float: left;
+    padding: 5px 6px;
+    text-transform: uppercase;
+}
+
+.bottomNav {
+    margin-top: 10px;
+    background-color: #4D7A97;
+    color: #FFFFFF;
+    float: left;
+    padding: 0;
+    width: 100%;
+    clear: right;
+    height: 2.8em;
+    padding-top: 10px;
+    overflow: hidden;
+    font-size: 12px;
+}
+
+h1 {
+    font-size: 20px;
+}
+
+.docSummary {
+    padding: 0;
+}
+
+div.block {
+    font-size: 14px;
+    font-family: 'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+}
+
+.block {
+    display: block;
+    margin: 3px 10px 2px 0px;
+    color: #474747;
+}
+
+
+td.colFirst, th.colFirst {
+    white-space: nowrap;
+    font-size: 13px;
+}
+th.colOne, th.colFirst, th.colLast, .useSummary th, .constantsSummary th, td.colOne, td.colFirst, td.colLast, .useSummary td, .constantsSummary td {
+    vertical-align: top;
+    padding-right: 0px;
+    padding-top: 8px;
+    padding-bottom: 3px;
+}
+
+ul.blockList ul.blockList li.blockList, ul.blockList ul.blockListLast li.blockList {
+    padding: 0px 20px 5px 10px;
+    border: 1px solid #ededed;
+    background-color: #f8f8f8;
+}

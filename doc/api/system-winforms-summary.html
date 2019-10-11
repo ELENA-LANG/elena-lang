@@ -5,251 +5,620 @@
 ELENA Standard Library 4.1: Module system'winforms
 </TITLE>
 <meta name="collection" content="api">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <BODY BGCOLOR="white">
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+<DIV CLASS="topNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
 ELENA&nbsp;Standard&nbsp;Library<br>4.1
-</b></EM>
-</TD>
-</TR>
-</TABLE>
-<DL>
-<HR>
-<H2>
+</STRONG>
+</DIV>
+</DIV>
+<DIV CLASS="header">
+<H1>
 Module system'winforms
-</H2>
-
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Class Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#CREATESTRUCT">CREATESTRUCT</A></B></TD>
-<TD>sealed Class CREATESTRUCT</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#HInstance">HInstance</A></B></TD>
-<TD>sealed Class HInstance</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#MSG">MSG</A></B></TD>
-<TD>sealed Class MSG</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#PAINTSTRUCT">PAINTSTRUCT</A></B></TD>
-<TD>sealed Class PAINTSTRUCT</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#SDIApplication">SDIApplication</A></B></TD>
-<TD>Class SDIApplication</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#SDIWindowCallback">SDIWindowCallback</A></B></TD>
-<TD>Class SDIWindowCallback</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#SaveFileDialog">SaveFileDialog</A></B></TD>
-<TD>sealed Class SaveFileDialog</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WinFormsException">WinFormsException</A></B></TD>
-<TD>Class WinFormsException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WindowCallback">WindowCallback</A></B></TD>
-<TD>Class WindowCallback</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></B></TD>
-<TD>sealed Class WindowHandle</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#messageBox">messageBox</A></B></TD>
-<TD>sealed Singleton messageBox</TD></TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Symbol Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#BM_GETCHECK">BM_GETCHECK</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#BM_SETCHECK">BM_SETCHECK</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#BN_CLICKED">BN_CLICKED</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#BST_CHECKED">BST_CHECKED</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#BST_UNCHECKED">BST_UNCHECKED</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#BS_AUTORADIOBUTTON">BS_AUTORADIOBUTTON</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#BS_GROUPBOX">BS_GROUPBOX</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#BS_PUSHBUTTON">BS_PUSHBUTTON</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#ButtonClass">ButtonClass</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#COLOR_BACKGROUND">COLOR_BACKGROUND</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#CS_HREDRAW">CS_HREDRAW</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#CS_VREDRAW">CS_VREDRAW</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#CurrentInstance">CurrentInstance</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#EX_SDI_OVERLAPPEDWINDOW">EX_SDI_OVERLAPPEDWINDOW</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#EditClass">EditClass</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#GWL_USERDATA">GWL_USERDATA</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#HTCLIENT">HTCLIENT</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#IDC_ARROW">IDC_ARROW</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#IDNO">IDNO</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#IDYES">IDYES</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#MB_ICONEXCLAMATION">MB_ICONEXCLAMATION</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#MB_ICONQUESTION">MB_ICONQUESTION</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#MB_YESNO">MB_YESNO</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#PaintboxClass">PaintboxClass</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#PanelClass">PanelClass</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#SDIWindowClass">SDIWindowClass</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#SWP_NOMOVE">SWP_NOMOVE</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#SWP_NOSIZE">SWP_NOSIZE</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#StaticClass">StaticClass</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WM_CLOSE">WM_CLOSE</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WM_DESTROY">WM_DESTROY</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WM_GETTEXT">WM_GETTEXT</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WM_GETTEXTLENGTH">WM_GETTEXTLENGTH</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WM_PAINT">WM_PAINT</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WM_SETCURSOR">WM_SETCURSOR</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WM_SETTEXT">WM_SETTEXT</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WM_SIZE">WM_SIZE</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_BORDER">WS_BORDER</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_CHILD">WS_CHILD</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_CLIPSIBLINGS">WS_CLIPSIBLINGS</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_DIALOGWINDOW">WS_DIALOGWINDOW</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_ELENAWINDOW">WS_ELENAWINDOW</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_EX_CLIENTEDGE">WS_EX_CLIENTEDGE</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_EX_CONTROLPARENT">WS_EX_CONTROLPARENT</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_EX_TRANSPARENT">WS_EX_TRANSPARENT</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_OVERLAPPEDWINDOW">WS_OVERLAPPEDWINDOW</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_TABSTOP">WS_TABSTOP</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#WS_VISIBLE">WS_VISIBLE</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#program">program</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-winforms.html#startUp">startUp</A></B></TD>
-<TD></TD></TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Extended Class Summary</B></FONT></TD>
-</TR>
-</TABLE>
-<HR>
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
+</H1>
+</DIV>
+<DIV CLASS="docSummary">
+<DIV CLASS="block"></DIV>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#CREATESTRUCT">CREATESTRUCT</A>
 </TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
-ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">CREATESTRUCT</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#HInstance">HInstance</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">HInstance</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#MSG">MSG</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">MSG</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#PAINTSTRUCT">PAINTSTRUCT</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">PAINTSTRUCT</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#SDIApplication">SDIApplication</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">SDIApplication</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#SDIWindowCallback">SDIWindowCallback</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">SDIWindowCallback</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#SaveFileDialog">SaveFileDialog</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">SaveFileDialog</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WinFormsException">WinFormsException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">WinFormsException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WindowCallback">WindowCallback</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">WindowCallback</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WindowHandle">WindowHandle</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">WindowHandle</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#messageBox">messageBox</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">messageBox</SPAN></DIV>
 </TD>
 </TR>
 </TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#BM_GETCHECK">BM_GETCHECK</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+BM_GETCHECK</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#BM_SETCHECK">BM_SETCHECK</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+BM_SETCHECK</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#BN_CLICKED">BN_CLICKED</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+BN_CLICKED</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#BST_CHECKED">BST_CHECKED</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+BST_CHECKED</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#BST_UNCHECKED">BST_UNCHECKED</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+BST_UNCHECKED</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#BS_AUTORADIOBUTTON">BS_AUTORADIOBUTTON</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+BS_AUTORADIOBUTTON</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#BS_GROUPBOX">BS_GROUPBOX</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+BS_GROUPBOX</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#BS_PUSHBUTTON">BS_PUSHBUTTON</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+BS_PUSHBUTTON</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#ButtonClass">ButtonClass</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+ButtonClass</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#COLOR_BACKGROUND">COLOR_BACKGROUND</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+COLOR_BACKGROUND</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#CS_HREDRAW">CS_HREDRAW</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+CS_HREDRAW</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#CS_VREDRAW">CS_VREDRAW</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+CS_VREDRAW</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#CurrentInstance">CurrentInstance</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+CurrentInstance</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#EX_SDI_OVERLAPPEDWINDOW">EX_SDI_OVERLAPPEDWINDOW</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+EX_SDI_OVERLAPPEDWINDOW</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#EditClass">EditClass</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+EditClass</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#GWL_USERDATA">GWL_USERDATA</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+GWL_USERDATA</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#HTCLIENT">HTCLIENT</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+HTCLIENT</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#IDC_ARROW">IDC_ARROW</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+IDC_ARROW</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#IDNO">IDNO</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+IDNO</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#IDYES">IDYES</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+IDYES</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#MB_ICONEXCLAMATION">MB_ICONEXCLAMATION</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+MB_ICONEXCLAMATION</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#MB_ICONQUESTION">MB_ICONQUESTION</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+MB_ICONQUESTION</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#MB_YESNO">MB_YESNO</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+MB_YESNO</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#PaintboxClass">PaintboxClass</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+PaintboxClass</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#PanelClass">PanelClass</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+PanelClass</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#SDIWindowClass">SDIWindowClass</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+SDIWindowClass</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#SWP_NOMOVE">SWP_NOMOVE</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+SWP_NOMOVE</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#SWP_NOSIZE">SWP_NOSIZE</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+SWP_NOSIZE</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#StaticClass">StaticClass</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+StaticClass</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WM_CLOSE">WM_CLOSE</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WM_CLOSE</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WM_DESTROY">WM_DESTROY</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WM_DESTROY</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WM_GETTEXT">WM_GETTEXT</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WM_GETTEXT</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WM_GETTEXTLENGTH">WM_GETTEXTLENGTH</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WM_GETTEXTLENGTH</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WM_PAINT">WM_PAINT</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WM_PAINT</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WM_SETCURSOR">WM_SETCURSOR</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WM_SETCURSOR</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WM_SETTEXT">WM_SETTEXT</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WM_SETTEXT</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WM_SIZE">WM_SIZE</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WM_SIZE</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_BORDER">WS_BORDER</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_BORDER</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_CHILD">WS_CHILD</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_CHILD</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_CLIPSIBLINGS">WS_CLIPSIBLINGS</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_CLIPSIBLINGS</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_DIALOGWINDOW">WS_DIALOGWINDOW</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_DIALOGWINDOW</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_ELENAWINDOW">WS_ELENAWINDOW</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_ELENAWINDOW</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_EX_CLIENTEDGE">WS_EX_CLIENTEDGE</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_EX_CLIENTEDGE</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_EX_CONTROLPARENT">WS_EX_CONTROLPARENT</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_EX_CONTROLPARENT</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_EX_TRANSPARENT">WS_EX_TRANSPARENT</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_EX_TRANSPARENT</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_OVERLAPPEDWINDOW">WS_OVERLAPPEDWINDOW</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_OVERLAPPEDWINDOW</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_TABSTOP">WS_TABSTOP</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_TABSTOP</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#WS_VISIBLE">WS_VISIBLE</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WS_VISIBLE</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#program">program</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+program</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-winforms.html#startUp">startUp</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+startUp</DIV>
+</TD>
+</TR>
+</TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Extended Class Summary
+</HEADER>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<DIV CLASS="bottomNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</STRONG>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

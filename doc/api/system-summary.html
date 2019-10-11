@@ -5,407 +5,1088 @@
 ELENA Standard Library 4.1: Module system
 </TITLE>
 <meta name="collection" content="api">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <BODY BGCOLOR="white">
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+<DIV CLASS="topNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
 ELENA&nbsp;Standard&nbsp;Library<br>4.1
-</b></EM>
-</TD>
-</TR>
-</TABLE>
-<DL>
-<HR>
-<H2>
+</STRONG>
+</DIV>
+</DIV>
+<DIV CLASS="header">
+<H1>
 Module system
-</H2>
-
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Class Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#AbortException">AbortException</A></B></TD>
-<TD>Class AbortException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Array">Array</A></B></TD>
-<TD>sealed Class Array</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ArrayIndexer">ArrayIndexer</A></B></TD>
-<TD>Class ArrayIndexer</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BaseExtender">BaseExtender</A></B></TD>
-<TD>Class BaseExtender</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BaseIndexer">BaseIndexer</A></B></TD>
-<TD>Interface BaseIndexer</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BaseLazyExpression">BaseLazyExpression</A></B></TD>
-<TD>abstract Class BaseLazyExpression</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BaseNumber">BaseNumber</A></B></TD>
-<TD>abstract Class BaseNumber</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BaseValue">BaseValue</A></B></TD>
-<TD>abstract Class BaseValue</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BaseVariable">BaseVariable</A></B></TD>
-<TD>abstract Class BaseVariable</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BitArray">BitArray</A></B></TD>
-<TD>sealed Class BitArray</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BitArray32">BitArray32</A></B></TD>
-<TD>sealed Class BitArray32</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BoolValue">BoolValue</A></B></TD>
-<TD>Interface BoolValue</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ByteNumber">ByteNumber</A></B></TD>
-<TD>sealed Class ByteNumber</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#COORD">COORD</A></B></TD>
-<TD>sealed Class COORD</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#CallStack">CallStack</A></B></TD>
-<TD>sealed Class CallStack</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#CharValue">CharValue</A></B></TD>
-<TD>sealed Class CharValue</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ClassReference">ClassReference</A></B></TD>
-<TD>sealed Class ClassReference</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#CriticalException">CriticalException</A></B></TD>
-<TD>Class CriticalException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#DTO">DTO</A></B></TD>
-<TD>Class DTO</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Enumerable">Enumerable</A></B></TD>
-<TD>abstract Class Enumerable</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Enumerator">Enumerator</A></B></TD>
-<TD>Interface Enumerator</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Exception">Exception</A></B></TD>
-<TD>Class Exception</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Extension">Extension</A></B></TD>
-<TD>Class Extension</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ExtensionMessage">ExtensionMessage</A></B></TD>
-<TD>sealed Class ExtensionMessage</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#FormatException">FormatException</A></B></TD>
-<TD>Class FormatException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func">Func</A></B></TD>
-<TD>Interface Func</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func1">Func1</A></B></TD>
-<TD>Interface Func1</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func2">Func2</A></B></TD>
-<TD>Interface Func2</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func3">Func3</A></B></TD>
-<TD>Interface Func3</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func4">Func4</A></B></TD>
-<TD>Interface Func4</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func5">Func5</A></B></TD>
-<TD>Interface Func5</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func6">Func6</A></B></TD>
-<TD>Interface Func6</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Handle">Handle</A></B></TD>
-<TD>sealed Class Handle</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#IConsoleReader">IConsoleReader</A></B></TD>
-<TD>Interface IConsoleReader</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Indexable">Indexable</A></B></TD>
-<TD>abstract Class Indexable</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Indexer">Indexer</A></B></TD>
-<TD>Interface Indexer</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#IntBaseNumber">IntBaseNumber</A></B></TD>
-<TD>abstract Class IntBaseNumber</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#IntMatrix">IntMatrix</A></B></TD>
-<TD>sealed Class IntMatrix</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#IntNumber">IntNumber</A></B></TD>
-<TD>sealed Class IntNumber</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#InvalidArgumentException">InvalidArgumentException</A></B></TD>
-<TD>Class InvalidArgumentException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#InvalidOperationException">InvalidOperationException</A></B></TD>
-<TD>Class InvalidOperationException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#KeyValue">KeyValue</A></B></TD>
-<TD>sealed Class KeyValue</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#LongNumber">LongNumber</A></B></TD>
-<TD>sealed Class LongNumber</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Message">Message</A></B></TD>
-<TD>sealed Class Message</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#MessageName">MessageName</A></B></TD>
-<TD>sealed Class MessageName</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#MethodNotFoundException">MethodNotFoundException</A></B></TD>
-<TD>sealed Class MethodNotFoundException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#NilReferenceException">NilReferenceException</A></B></TD>
-<TD>Class NilReferenceException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#NotSupportedException">NotSupportedException</A></B></TD>
-<TD>Class NotSupportedException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Object">Object</A></B></TD>
-<TD>Class Object</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#OutOfRangeException">OutOfRangeException</A></B></TD>
-<TD>Class OutOfRangeException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#RTPointer">RTPointer</A></B></TD>
-<TD>sealed Class RTPointer</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Range">Range</A></B></TD>
-<TD>sealed Class Range</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#RealMatrix">RealMatrix</A></B></TD>
-<TD>sealed Class RealMatrix</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#RealNumber">RealNumber</A></B></TD>
-<TD>sealed Class RealNumber</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#SMALL_RECT">SMALL_RECT</A></B></TD>
-<TD>sealed Class SMALL_RECT</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ShortNumber">ShortNumber</A></B></TD>
-<TD>sealed Class ShortNumber</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#String">String</A></B></TD>
-<TD>sealed Class String</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Symbol">Symbol</A></B></TD>
-<TD>sealed Class Symbol</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#UIntNumber">UIntNumber</A></B></TD>
-<TD>sealed Class UIntNumber</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#UnsafePointer">UnsafePointer</A></B></TD>
-<TD>sealed Class UnsafePointer</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Variable">Variable</A></B></TD>
-<TD>sealed Class Variable</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Variant">Variant</A></B></TD>
-<TD>sealed Class Variant</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#WideString">WideString</A></B></TD>
-<TD>sealed Class WideString</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Wrap">Wrap</A></B></TD>
-<TD>Class Wrap</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#byteConvertor">byteConvertor</A></B></TD>
-<TD>sealed Singleton byteConvertor</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#charConvertor">charConvertor</A></B></TD>
-<TD>sealed Singleton charConvertor</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#false">false</A></B></TD>
-<TD>sealed Singleton false</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#intConvertor">intConvertor</A></B></TD>
-<TD>sealed Singleton intConvertor</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#longConvertor">longConvertor</A></B></TD>
-<TD>sealed Singleton longConvertor</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#nilValue">nilValue</A></B></TD>
-<TD>sealed Singleton nilValue</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#realConvertor">realConvertor</A></B></TD>
-<TD>sealed Singleton realConvertor</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#realOpController">realOpController</A></B></TD>
-<TD>sealed Singleton realOpController</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#shortConvertor">shortConvertor</A></B></TD>
-<TD>sealed Singleton shortConvertor</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#stringConvertor">stringConvertor</A></B></TD>
-<TD>sealed Singleton stringConvertor</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A></B></TD>
-<TD>sealed Template Array&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BaseEnumerator&lt;T1&gt;">BaseEnumerator&lt;T1&gt;</A></B></TD>
-<TD>Interface Template BaseEnumerator&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#BaseIndexer&lt;T1&gt;">BaseIndexer&lt;T1&gt;</A></B></TD>
-<TD>Interface Template BaseIndexer&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Enumerable&lt;T1&gt;">Enumerable&lt;T1&gt;</A></B></TD>
-<TD>abstract Template Enumerable&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></B></TD>
-<TD>Interface Template Enumerator&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;T1,T2&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T2,T3&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3,T4&gt;">Func&lt;T1,T2,T3,T4&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3,T4&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;T1,T2,T3,T4,T5&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3,T4,T5&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6&gt;">Func&lt;T1,T2,T3,T4,T5,T6&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3,T4,T5,T6&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3,T4,T5,T6,T7&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9&gt;</A></B></TD>
-<TD>Interface Template Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Indexable&lt;T1&gt;">Indexable&lt;T1&gt;</A></B></TD>
-<TD>abstract Template Indexable&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;T1&gt;</A></B></TD>
-<TD>Interface Template Indexer&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Matrix&lt;T1&gt;">Matrix&lt;T1&gt;</A></B></TD>
-<TD>sealed Template Matrix&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#VariadicArray&lt;T1&gt;">VariadicArray&lt;T1&gt;</A></B></TD>
-<TD>sealed Template VariadicArray&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ref&lt;T1&gt;">ref&lt;T1&gt;</A></B></TD>
-<TD>sealed Template ref&lt;T1&gt;</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#true">true</A></B></TD>
-<TD>sealed Singleton true</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#uintConvertor">uintConvertor</A></B></TD>
-<TD>sealed Singleton uintConvertor</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#wideConvertor">wideConvertor</A></B></TD>
-<TD>sealed Singleton wideConvertor</TD></TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Symbol Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#E_value">E_value</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#Pi_value">Pi_value</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#commandLine">commandLine</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#console">console</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#emptyString">emptyString</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#emptyWideString">emptyWideString</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#newLine">newLine</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#rt_sync">rt_sync</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#startUp">startUp</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#startUpEvents">startUpEvents</A></B></TD>
-<TD></TD></TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Extended Class Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ext-system@Array#1&system@ByteNumber">system@Array#1&system@ByteNumber</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ext-system@Array#1&system@CharValue">system@Array#1&system@CharValue</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ext-system@Array#1&system@IntNumber">system@Array#1&system@IntNumber</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ext-system@ref#1&system@IntNumber">system@ref#1&system@IntNumber</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system.html#ext-system@ref#1&system@RealNumber">system@ref#1&system@RealNumber</A></B></TD>
-<TD></TD></TR>
-</TABLE>
-<HR>
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
+</H1>
+</DIV>
+<DIV CLASS="docSummary">
+<DIV CLASS="block"></DIV>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#AbortException">AbortException</A>
 </TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
-ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">AbortException</SPAN></DIV>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Array">Array</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">Array</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ArrayIndexer">ArrayIndexer</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">ArrayIndexer</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BaseExtender">BaseExtender</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">BaseExtender</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BaseIndexer">BaseIndexer</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">BaseIndexer</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BaseLazyExpression">BaseLazyExpression</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+abstract Class <SPAN CLASS="typeNameLabel">BaseLazyExpression</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BaseNumber">BaseNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+abstract Class <SPAN CLASS="typeNameLabel">BaseNumber</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BaseValue">BaseValue</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+abstract Class <SPAN CLASS="typeNameLabel">BaseValue</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BaseVariable">BaseVariable</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+abstract Class <SPAN CLASS="typeNameLabel">BaseVariable</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BitArray">BitArray</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">BitArray</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BitArray32">BitArray32</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">BitArray32</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BoolValue">BoolValue</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">BoolValue</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ByteNumber">ByteNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#COORD">COORD</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">COORD</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#CallStack">CallStack</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">CallStack</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#CharValue">CharValue</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">CharValue</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ClassReference">ClassReference</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">ClassReference</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#CriticalException">CriticalException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">CriticalException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#DTO">DTO</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">DTO</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Enumerable">Enumerable</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+abstract Class <SPAN CLASS="typeNameLabel">Enumerable</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Enumerator">Enumerator</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Enumerator</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Exception">Exception</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">Exception</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Extension">Extension</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">Extension</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ExtensionMessage">ExtensionMessage</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">ExtensionMessage</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#FormatException">FormatException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">FormatException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func">Func</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Func</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func1">Func1</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Func1</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func2">Func2</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Func2</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func3">Func3</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Func3</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func4">Func4</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Func4</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func5">Func5</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Func5</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func6">Func6</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Func6</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Handle">Handle</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">Handle</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#IConsoleReader">IConsoleReader</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">IConsoleReader</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Indexable">Indexable</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+abstract Class <SPAN CLASS="typeNameLabel">Indexable</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Indexer">Indexer</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Indexer</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#IntBaseNumber">IntBaseNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+abstract Class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#IntMatrix">IntMatrix</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">IntMatrix</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#IntNumber">IntNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">IntNumber</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#InvalidArgumentException">InvalidArgumentException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">InvalidArgumentException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#InvalidOperationException">InvalidOperationException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">InvalidOperationException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#KeyValue">KeyValue</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">KeyValue</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#LongNumber">LongNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">LongNumber</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Message">Message</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">Message</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#MessageName">MessageName</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">MessageName</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#MethodNotFoundException">MethodNotFoundException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">MethodNotFoundException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#NilReferenceException">NilReferenceException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">NilReferenceException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#NotSupportedException">NotSupportedException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">NotSupportedException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Object">Object</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">Object</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#OutOfRangeException">OutOfRangeException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">OutOfRangeException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#RTPointer">RTPointer</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">RTPointer</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Range">Range</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">Range</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#RealMatrix">RealMatrix</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">RealMatrix</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#RealNumber">RealNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">RealNumber</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#SMALL_RECT">SMALL_RECT</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">SMALL_RECT</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ShortNumber">ShortNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">ShortNumber</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#String">String</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">String</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Symbol">Symbol</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">Symbol</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#UIntNumber">UIntNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">UIntNumber</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#UnsafePointer">UnsafePointer</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">UnsafePointer</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Variable">Variable</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">Variable</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Variant">Variant</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">Variant</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#WideString">WideString</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">WideString</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Wrap">Wrap</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">Wrap</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#byteConvertor">byteConvertor</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">byteConvertor</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#charConvertor">charConvertor</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">charConvertor</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#false">false</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">false</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#intConvertor">intConvertor</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">intConvertor</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#longConvertor">longConvertor</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">longConvertor</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#nilValue">nilValue</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">nilValue</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#realConvertor">realConvertor</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">realConvertor</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#realOpController">realOpController</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">realOpController</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#shortConvertor">shortConvertor</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">shortConvertor</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#stringConvertor">stringConvertor</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">stringConvertor</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Array&lt;T1&gt;">Array&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Template <SPAN CLASS="typeNameLabel">Array&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BaseEnumerator&lt;T1&gt;">BaseEnumerator&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">BaseEnumerator&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#BaseIndexer&lt;T1&gt;">BaseIndexer&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">BaseIndexer&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Enumerable&lt;T1&gt;">Enumerable&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+abstract Template <SPAN CLASS="typeNameLabel">Enumerable&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Enumerator&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;T1,T2&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T2,T3&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3,T4&gt;">Func&lt;T1,T2,T3,T4&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3,T4&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;T1,T2,T3,T4,T5&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3,T4,T5&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6&gt;">Func&lt;T1,T2,T3,T4,T5,T6&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3,T4,T5,T6&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3,T4,T5,T6,T7&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9&gt;">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Func&lt;T1,T2,T3,T4,T5,T6,T7,T8,T9&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Indexable&lt;T1&gt;">Indexable&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+abstract Template <SPAN CLASS="typeNameLabel">Indexable&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface Template <SPAN CLASS="typeNameLabel">Indexer&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Matrix&lt;T1&gt;">Matrix&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Template <SPAN CLASS="typeNameLabel">Matrix&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#VariadicArray&lt;T1&gt;">VariadicArray&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Template <SPAN CLASS="typeNameLabel">VariadicArray&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ref&lt;T1&gt;">ref&lt;T1&gt;</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Template <SPAN CLASS="typeNameLabel">ref&lt;T1&gt;</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#true">true</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">true</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#uintConvertor">uintConvertor</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">uintConvertor</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#wideConvertor">wideConvertor</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">wideConvertor</SPAN></DIV>
+</TD>
+</TR>
 </TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#E_value">E_value</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+E_value</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#Pi_value">Pi_value</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Pi_value</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#commandLine">commandLine</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+commandLine</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#console">console</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+console</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#emptyString">emptyString</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+emptyString</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#emptyWideString">emptyWideString</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+emptyWideString</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#newLine">newLine</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+newLine</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#rt_sync">rt_sync</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+rt_sync</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#startUp">startUp</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+startUp</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#startUpEvents">startUpEvents</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+startUpEvents</DIV>
+</TD>
+</TR>
+</TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Extended Class Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ext-system@Array#1&system@ByteNumber">system@Array#1&system@ByteNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+system@Array#1&system@ByteNumber</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ext-system@Array#1&system@CharValue">system@Array#1&system@CharValue</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+system@Array#1&system@CharValue</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ext-system@Array#1&system@IntNumber">system@Array#1&system@IntNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+system@Array#1&system@IntNumber</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ext-system@ref#1&system@IntNumber">system@ref#1&system@IntNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+system@ref#1&system@IntNumber</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#ext-system@ref#1&system@RealNumber">system@ref#1&system@RealNumber</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+system@ref#1&system@RealNumber</DIV>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<DIV CLASS="bottomNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</STRONG>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

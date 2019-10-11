@@ -5,122 +5,233 @@
 ELENA Standard Library 4.1: Module system'net
 </TITLE>
 <meta name="collection" content="api">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <BODY BGCOLOR="white">
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+<DIV CLASS="topNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
 ELENA&nbsp;Standard&nbsp;Library<br>4.1
-</b></EM>
-</TD>
-</TR>
-</TABLE>
-<DL>
-<HR>
-<H2>
+</STRONG>
+</DIV>
+</DIV>
+<DIV CLASS="header">
+<H1>
 Module system'net
-</H2>
-
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Class Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#AddrInfo">AddrInfo</A></B></TD>
-<TD>sealed Class AddrInfo</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A></B></TD>
-<TD>sealed Class AddrInfoReader</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#Socket">Socket</A></B></TD>
-<TD>sealed Class Socket</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#SocketException">SocketException</A></B></TD>
-<TD>Class SocketException</TD></TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Symbol Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html##initializer">#initializer</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#AF_INET">AF_INET</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#AF_UNSPEC">AF_UNSPEC</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#AI_PASSIVE">AI_PASSIVE</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#FIONBIO">FIONBIO</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#INVALID_SOCKET">INVALID_SOCKET</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#IPPROTO_TCP">IPPROTO_TCP</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#SD_BOTH">SD_BOTH</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#SOCKET_ERROR">SOCKET_ERROR</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#SOCK_STREAM">SOCK_STREAM</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#SOMAXCONN">SOMAXCONN</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#TCP_NODELAY">TCP_NODELAY</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#WSAECONNRESET">WSAECONNRESET</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-net.html#WSAEWOULDBLOCK">WSAEWOULDBLOCK</A></B></TD>
-<TD></TD></TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Extended Class Summary</B></FONT></TD>
-</TR>
-</TABLE>
-<HR>
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
+</H1>
+</DIV>
+<DIV CLASS="docSummary">
+<DIV CLASS="block"></DIV>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#AddrInfo">AddrInfo</A>
 </TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
-ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">AddrInfo</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#AddrInfoReader">AddrInfoReader</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">AddrInfoReader</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#Socket">Socket</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">Socket</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#SocketException">SocketException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">SocketException</SPAN></DIV>
 </TD>
 </TR>
 </TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html##initializer">#initializer</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+#initializer</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#AF_INET">AF_INET</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+AF_INET</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#AF_UNSPEC">AF_UNSPEC</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+AF_UNSPEC</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#AI_PASSIVE">AI_PASSIVE</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+AI_PASSIVE</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#FIONBIO">FIONBIO</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+FIONBIO</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#INVALID_SOCKET">INVALID_SOCKET</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+INVALID_SOCKET</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#IPPROTO_TCP">IPPROTO_TCP</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+IPPROTO_TCP</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#SD_BOTH">SD_BOTH</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+SD_BOTH</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#SOCKET_ERROR">SOCKET_ERROR</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+SOCKET_ERROR</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#SOCK_STREAM">SOCK_STREAM</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+SOCK_STREAM</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#SOMAXCONN">SOMAXCONN</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+SOMAXCONN</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#TCP_NODELAY">TCP_NODELAY</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+TCP_NODELAY</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#WSAECONNRESET">WSAECONNRESET</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WSAECONNRESET</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-net.html#WSAEWOULDBLOCK">WSAEWOULDBLOCK</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+WSAEWOULDBLOCK</DIV>
+</TD>
+</TR>
+</TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Extended Class Summary
+</HEADER>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<DIV CLASS="bottomNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</STRONG>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

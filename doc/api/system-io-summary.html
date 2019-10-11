@@ -5,134 +5,269 @@
 ELENA Standard Library 4.1: Module system'io
 </TITLE>
 <meta name="collection" content="api">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <BODY BGCOLOR="white">
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+<DIV CLASS="topNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
 ELENA&nbsp;Standard&nbsp;Library<br>4.1
-</b></EM>
-</TD>
-</TR>
-</TABLE>
-<DL>
-<HR>
-<H2>
+</STRONG>
+</DIV>
+</DIV>
+<DIV CLASS="header">
+<H1>
 Module system'io
-</H2>
-
-<P>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Class Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#BinaryFileReader">BinaryFileReader</A></B></TD>
-<TD>sealed Class BinaryFileReader</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#BinaryFileWriter">BinaryFileWriter</A></B></TD>
-<TD>sealed Class BinaryFileWriter</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#BinaryReader">BinaryReader</A></B></TD>
-<TD>Interface BinaryReader</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#BinaryStreamReader">BinaryStreamReader</A></B></TD>
-<TD>sealed Class BinaryStreamReader</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#BinaryStreamWriter">BinaryStreamWriter</A></B></TD>
-<TD>sealed Class BinaryStreamWriter</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#BinaryWriter">BinaryWriter</A></B></TD>
-<TD>Interface BinaryWriter</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#Directory">Directory</A></B></TD>
-<TD>sealed Class Directory</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#File">File</A></B></TD>
-<TD>sealed Class File</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#FileEnumerator">FileEnumerator</A></B></TD>
-<TD>sealed Class FileEnumerator</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#FileStream">FileStream</A></B></TD>
-<TD>Class FileStream</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#IOException">IOException</A></B></TD>
-<TD>Class IOException</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></B></TD>
-<TD>sealed Class MemoryBuffer</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#MemoryStream">MemoryStream</A></B></TD>
-<TD>Class MemoryStream</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#SearchDirectories">SearchDirectories</A></B></TD>
-<TD>sealed Singleton SearchDirectories</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#SearchFiles">SearchFiles</A></B></TD>
-<TD>sealed Singleton SearchFiles</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#Stream">Stream</A></B></TD>
-<TD>Interface Stream</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#StreamReader">StreamReader</A></B></TD>
-<TD>Class StreamReader</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#StreamWriter">StreamWriter</A></B></TD>
-<TD>Class StreamWriter</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#TextReader">TextReader</A></B></TD>
-<TD>Interface TextReader</TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#TextWriter">TextWriter</A></B></TD>
-<TD>Interface TextWriter</TD></TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Symbol Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#stdConsoleReader">stdConsoleReader</A></B></TD>
-<TD></TD></TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="system-io.html#stdConsoleWriter">stdConsoleWriter</A></B></TD>
-<TD></TD></TR>
-</TABLE>
-<BR/>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Extended Class Summary</B></FONT></TD>
-</TR>
-</TABLE>
-<HR>
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Module</FONT>&nbsp;</TD>
-  </TR>
-</TABLE>
+</H1>
+</DIV>
+<DIV CLASS="docSummary">
+<DIV CLASS="block"></DIV>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#BinaryFileReader">BinaryFileReader</A>
 </TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
-ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">BinaryFileReader</SPAN></DIV>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#BinaryFileWriter">BinaryFileWriter</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">BinaryFileWriter</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#BinaryReader">BinaryReader</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">BinaryReader</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#BinaryStreamReader">BinaryStreamReader</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">BinaryStreamReader</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#BinaryStreamWriter">BinaryStreamWriter</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">BinaryStreamWriter</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#BinaryWriter">BinaryWriter</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">BinaryWriter</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#Directory">Directory</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">Directory</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#File">File</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">File</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#FileEnumerator">FileEnumerator</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">FileEnumerator</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#FileStream">FileStream</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">FileStream</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#IOException">IOException</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">IOException</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">MemoryBuffer</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#MemoryStream">MemoryStream</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">MemoryStream</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#SearchDirectories">SearchDirectories</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">SearchDirectories</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#SearchFiles">SearchFiles</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Singleton <SPAN CLASS="typeNameLabel">SearchFiles</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#Stream">Stream</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">Stream</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#StreamReader">StreamReader</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">StreamReader</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#StreamWriter">StreamWriter</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Class <SPAN CLASS="typeNameLabel">StreamWriter</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#TextReader">TextReader</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">TextReader</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#TextWriter">TextWriter</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">TextWriter</SPAN></DIV>
+</TD>
+</TR>
 </TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Symbol Summary
+</HEADER>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#stdConsoleReader">stdConsoleReader</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+stdConsoleReader</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-io.html#stdConsoleWriter">stdConsoleWriter</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+stdConsoleWriter</DIV>
+</TD>
+</TR>
+</TABLE>
+</LI>
+<LI CLASS="blockList">
+<TABLE CLASS="typeSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<HEADER>
+Extended Class Summary
+</HEADER>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<DIV CLASS="bottomNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+Module
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</STRONG>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

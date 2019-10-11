@@ -5,916 +5,939 @@
 ELENA Standard Library 4.1: Module system'text
 </TITLE>
 <meta name="collection" content="api">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <BODY BGCOLOR="white">
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-text-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+<DIV CLASS="topNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+<A HREF="system-text-summary.html">Module</A>
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
 ELENA&nbsp;Standard&nbsp;Library<br>4.1
-</b></EM>
-</TD>
-</TR>
-</TABLE>
-<DL>
+</STRONG>
+</DIV>
+</DIV>
+<A NAME="Encoder">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'text'</DIV>
+<H2 title="Encoder" class="title">Encoder</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'text'Encoder</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
 <HR>
-<A NAME="Encoder"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'text'</FONT>
+<PRE STYLE="padding-top: 15px;">
+Interface <SPAN CLASS="typeNameLabel">Encoder</SPAN></PRE>
 <BR>
-Encoder</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<B>system'text'Encoder</B>
-</PRE>
-Interface Encoder<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
 <!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-text.html#Encoder">Encoder</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system-text.html#Encoder">Encoder</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-abstract &nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-abstract &nbsp;<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#String">String</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#WideString">WideString</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-toByteArray(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#String">String</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-toByteArray(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#WideString">WideString</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-toString(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#WideString">WideString</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-toWide(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="TextBuilder"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'text'</FONT>
-<BR>
-TextBuilder</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<B>system'text'TextBuilder</B>
-</PRE>
-sealed Class TextBuilder<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
 <CODE>
-<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theBuffer</CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN>)
+</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
 <CODE>
-<A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theLength</CODE>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-text.html#TextBuilder">TextBuilder</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>()
+abstract <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-text.html#TextBuilder">TextBuilder</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-load(<A HREF="system.html#Object">Object</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system.html#String">String</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-text.html#TextBuilder">TextBuilder</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system-text.html#TextBuilder">TextBuilder</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Length</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Length(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Value</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Printable</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-clear()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-writeLine()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-append(<A HREF="system.html#Object">Object</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write(<A HREF="system.html#String">String</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write(<A HREF="system.html#CharValue">CharValue</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-write(<A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-params#writeFormatted(<A HREF="system.html#String">String</A>, <A HREF="system.html#Object">Object</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-fill(<A HREF="system.html#String">String</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-fill(<A HREF="system.html#WideString">WideString</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-fill(<A HREF="system.html#CharValue">CharValue</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-insert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#String">String</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-indexOf(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#String">String</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Substring(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-delete(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-trim(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="UTF16Encoder"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'text'</FONT>
-<BR>
-UTF16Encoder</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<A HREF="system-text.html#Encoder">system'text'Encoder</A>
-   |
-   +--<B>system'text'UTF16Encoder</B>
-</PRE>
-sealed Singleton UTF16Encoder<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="UTF16Encoding"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'text'</FONT>
-<BR>
-UTF16Encoding</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<B>system'text'UTF16Encoding</B>
-</PRE>
-sealed Singleton UTF16Encoding<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- =========== PROPERTY SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system-text.html#Encoder">Encoder</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-encoder</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#WideString">WideString</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#String">String</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-toString(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-toWide(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="UTF8Encoder"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'text'</FONT>
-<BR>
-UTF8Encoder</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<A HREF="system-text.html#Encoder">system'text'Encoder</A>
-   |
-   +--<B>system'text'UTF8Encoder</B>
-</PRE>
-sealed Singleton UTF8Encoder<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="UTF8Encoding"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'text'</FONT>
-<BR>
-UTF8Encoding</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<B>system'text'UTF8Encoding</B>
-</PRE>
-sealed Singleton UTF8Encoding<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-text.html#Encoder">Encoder</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-encoder()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-charCount(<A HREF="system.html#String">String</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#String">String</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-toString(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#String">String</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="WinEncoder"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'text'</FONT>
-<BR>
-WinEncoder</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<A HREF="system-text.html#Encoder">system'text'Encoder</A>
-   |
-   +--<B>system'text'WinEncoder</B>
-</PRE>
-Class WinEncoder<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE>
-<A HREF="system.html#IntNumber">IntNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theCodePage</CODE>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-text.html#WinEncoder">WinEncoder</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>(<A HREF="system.html#IntNumber">IntNumber</A>)
+abstract <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-convert(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A>, <A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A>, <A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toByteArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toByteArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toString(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toWide(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>)
+</CODE>
 </TD>
 </TR>
 </TABLE>
-<A NAME="OEMEncoder"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'text'text'</FONT>
-<BR>
-OEMEncoder</H2>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Symbol Summary</B></FONT></TD>
-</TR>
-<TR>
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-text.html#Encoder">Encoder</A>&nbsp;</CODE>
-</TD>
-<TD VALIGN="top">
-<CODE>&nbsp;
-symbol OEMEncoder</CODE>
-</TD>
-</TR>
-</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
 <HR>
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-text-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
-  </TR>
-</TABLE>
+</DIV>
+<A NAME="TextBuilder">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'text'</DIV>
+<H2 title="TextBuilder" class="title">TextBuilder</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'text'TextBuilder</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">TextBuilder</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN></CODE>
 </TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
-ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+<TD CLASS="colLast">
+<CODE>theBuffer</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theLength</CODE>
 </TD>
 </TR>
 </TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#TextBuilder">TextBuilder</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#TextBuilder">TextBuilder</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#TextBuilder">TextBuilder</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system-text.html#TextBuilder">TextBuilder</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Printable</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clear()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>writeLine()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>params#writeFormatted(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>fill(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>fill(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>fill(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexOf(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Substring(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="UTF16Encoder">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'text'</DIV>
+<H2 title="UTF16Encoder" class="title">UTF16Encoder</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">system'text'Encoder</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'text'UTF16Encoder</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Singleton <SPAN CLASS="typeNameLabel">UTF16Encoder</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="UTF16Encoding">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'text'</DIV>
+<H2 title="UTF16Encoding" class="title">UTF16Encoding</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'text'UTF16Encoding</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Singleton <SPAN CLASS="typeNameLabel">UTF16Encoding</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>encoder</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toString(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toWide(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ShortNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="UTF8Encoder">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'text'</DIV>
+<H2 title="UTF8Encoder" class="title">UTF8Encoder</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">system'text'Encoder</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'text'UTF8Encoder</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Singleton <SPAN CLASS="typeNameLabel">UTF8Encoder</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="UTF8Encoding">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'text'</DIV>
+<H2 title="UTF8Encoding" class="title">UTF8Encoding</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'text'UTF8Encoding</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Singleton <SPAN CLASS="typeNameLabel">UTF8Encoding</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>encoder()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>charCount(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toString(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="WinEncoder">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'text'</DIV>
+<H2 title="WinEncoder" class="title">WinEncoder</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">system'text'Encoder</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'text'WinEncoder</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+Class <SPAN CLASS="typeNameLabel">WinEncoder</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theCodePage</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-text.html#WinEncoder">WinEncoder</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'CharValue&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="OEMEncoder">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'text'text'</DIV>
+<H2 title="OEMEncoder" class="title">OEMEncoder</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>symbol OEMEncoder</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<DIV CLASS="bottomNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+<A HREF="system-text-summary.html">Module</A>
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</STRONG>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

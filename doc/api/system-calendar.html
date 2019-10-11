@@ -5,1381 +5,1303 @@
 ELENA Standard Library 4.1: Module system'calendar
 </TITLE>
 <meta name="collection" content="api">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
 </HEAD>
 <BODY BGCOLOR="white">
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-calendar-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
+<DIV CLASS="topNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+<A HREF="system-calendar-summary.html">Module</A>
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
 ELENA&nbsp;Standard&nbsp;Library<br>4.1
-</b></EM>
-</TD>
-</TR>
-</TABLE>
-<DL>
+</STRONG>
+</DIV>
+</DIV>
+<A NAME="Date">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'calendar'</DIV>
+<H2 title="Date" class="title">Date</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseValue">system'BaseValue</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'calendar'Date</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
 <HR>
-<A NAME="Date"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'calendar'</FONT>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">Date</SPAN></PRE>
 <BR>
-Date</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<A HREF="system.html#BaseValue">system'BaseValue</A>
-   |
-   +--<B>system'calendar'Date</B>
-</PRE>
-sealed Class Date<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
 <!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theValue</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
 <CODE>
-<A HREF="system-calendar.html#SystemTime">SystemTime</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theValue</CODE>
+static get<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Default</CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+static get<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>MinValue</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+static get<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Now</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+static get<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>UtcNow</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Static Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-static get&nbsp;<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Default</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-static get&nbsp;<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-MinValue</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-static get&nbsp;<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Now</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-static get&nbsp;<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-UtcNow</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>()
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-new(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-new(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#TimeStruct">TimeStruct</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system-calendar.html#TimeStruct">TimeStruct</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#TimeStruct">TimeStruct</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#TimeStruct">TimeStruct</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system-calendar.html#Date">Date</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
+</TABLE>
+</LI>
+</UL>
 <!-- =========== PROPERTY SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-SystemTime</CODE>
-<DIV>
-</DIV>
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>SystemTime</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Year</CODE>
-<DIV>
-</DIV>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Year</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Month</CODE>
-<DIV>
-</DIV>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Month</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Day</CODE>
-<DIV>
-</DIV>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Day</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-DayOfWeek</CODE>
-<DIV>
-</DIV>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>DayOfWeek</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Hour</CODE>
-<DIV>
-</DIV>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Hour</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Minute</CODE>
-<DIV>
-</DIV>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Minute</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Second</CODE>
-<DIV>
-</DIV>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Second</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Millisecond</CODE>
-<DIV>
-</DIV>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Millisecond</CODE>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Printable</CODE>
-<DIV>
-</DIV>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Printable</CODE>
 </TD>
 </TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-equal(<A HREF="system-calendar.html#Date">Date</A>)
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-less(<A HREF="system-calendar.html#Date">Date</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-subtract(<A HREF="system-calendar.html#Date">Date</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-subtract(<A HREF="system-calendar.html#Timespan">Timespan</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-add(<A HREF="system-calendar.html#Timespan">Timespan</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-addYears(<A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>addYears(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-addMonths(<A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>addMonths(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-addDays(<A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>addDays(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-addHours(<A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>addHours(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-addMinutes(<A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>addMinutes(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-addSeconds(<A HREF="system.html#IntNumber">IntNumber</A>)
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>addSeconds(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Date">Date</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-clone()
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clone()
 </CODE>
-<DIV>
-</DIV>
 </TD>
 </TR>
 </TABLE>
-<A NAME="SystemTime"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'calendar'</FONT>
-<BR>
-SystemTime</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<A HREF="system.html#BaseValue">system'BaseValue</A>
-   |
-   +--<B>system'calendar'SystemTime</B>
-</PRE>
-sealed Class SystemTime<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#Object">Object</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theValue</CODE>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Static Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-static get&nbsp;<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Default</CODE>
-<DIV>
+</LI>
+</UL>
+</LI>
+</UL>
 </DIV>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>(<A HREF="system.html#LongNumber">LongNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#LongNumber">LongNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system.html#LongNumber">LongNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#LongNumber">LongNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Value</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-equal(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-less(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-subtract(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-add(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="TimeStruct"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'calendar'</FONT>
-<BR>
-TimeStruct</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<B>system'calendar'TimeStruct</B>
-</PRE>
-sealed Class TimeStruct<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#ShortNumber">ShortNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theYear</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#ShortNumber">ShortNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theMonth</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#ShortNumber">ShortNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theDayOfWeek</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#ShortNumber">ShortNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theDay</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#ShortNumber">ShortNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theHour</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#ShortNumber">ShortNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theMinute</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#ShortNumber">ShortNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theSecond</CODE>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system.html#ShortNumber">ShortNumber</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theMillisecond</CODE>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#TimeStruct">TimeStruct</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#TimeStruct">TimeStruct</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#TimeStruct">TimeStruct</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system-calendar.html#TimeStruct">TimeStruct</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Year</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Year(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Month</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Month(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-DayOfWeek</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Day</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Day(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Hour</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Hour(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Minute</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Minute(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Second</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Second(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Millisecond</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-set&nbsp;</CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Millisecond(<A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-readTo(<A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#WideString">WideString</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-toShortDate()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#WideString">WideString</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-toShortTime()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="Timespan"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'calendar'</FONT>
-<BR>
-Timespan</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<A HREF="system.html#BaseValue">system'BaseValue</A>
-   |
-   +--<B>system'calendar'Timespan</B>
-</PRE>
-sealed Class Timespan<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- =========== FIELD SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>
-<A HREF="system-calendar.html#SystemTime">SystemTime</A>&nbsp;</CODE>
-</TD>
-<TD><CODE>theValue</CODE>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Static Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-static get&nbsp;<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Default</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-static get&nbsp;<A HREF="system.html#ByteNumber">ByteNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-MinValue</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<A NAME="constuctor_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Timespan">Timespan</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Timespan">Timespan</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>constructor</i>(<A HREF="system-calendar.html#SystemTime">SystemTime</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Timespan">Timespan</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-new(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Timespan">Timespan</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-new(<A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>, <A HREF="system.html#IntNumber">IntNumber</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== COVERSION SUMMARY =========== -->
-<A NAME="conversion_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Conversion Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Timespan">Timespan</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<i>cast</i>(<A HREF="system-calendar.html#Timespan">Timespan</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- =========== PROPERTY SUMMARY =========== -->
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Property Summary</B></FONT></TD>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system-calendar.html#SystemTime">SystemTime</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-SystemTime</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Days</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Hours</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Minutes</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#IntNumber">IntNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Seconds</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#LongNumber">LongNumber</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Milliseconds</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-get&nbsp;<A HREF="system.html#String">String</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-Printable</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-equal(<A HREF="system-calendar.html#Timespan">Timespan</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#BoolValue">BoolValue</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-less(<A HREF="system-calendar.html#Timespan">Timespan</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-add(<A HREF="system-calendar.html#Date">Date</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-add(<A HREF="system-calendar.html#Timespan">Timespan</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-subtract(<A HREF="system-calendar.html#Timespan">Timespan</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Timespan">Timespan</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-clone()
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="systemTimeFactory"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'calendar'</FONT>
-<BR>
-systemTimeFactory</H2>
-<PRE>
-<A HREF="system.html#Object">system'Object</A>
-|
-+--<B>system'calendar'systemTimeFactory</B>
-</PRE>
-sealed Singleton systemTimeFactory<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<!-- ========== METHOD SUMMARY =========== -->
-<A NAME="method_summary"><!-- --></A>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-readUtcNow(<A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system.html#Object">Object</A></CODE></TD>
-<TD VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-readNow(<A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A>)
-</CODE>
-<DIV>
-</DIV>
-</TD>
-</TR>
-</TABLE>
-<A NAME="now"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'calendar'calendar'</FONT>
-<BR>
-now</H2>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Symbol Summary</B></FONT></TD>
-</TR>
-<TR>
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Date">Date</A>&nbsp;</CODE>
-</TD>
-<TD VALIGN="top">
-<CODE>&nbsp;
-symbol now</CODE>
-</TD>
-</TR>
-</TABLE>
-<A NAME="utcNow"/>
-<HR/>
-<!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-system'calendar'calendar'</FONT>
-<BR>
-utcNow</H2>
-<TABLE BORDER="1" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TD COLSPAN=2><FONT SIZE="+2">
-<B>Symbol Summary</B></FONT></TD>
-</TR>
-<TR>
-<TD ALIGN="right" VALIGN="top" WIDTH="30%">
-<CODE>&nbsp;
-<A HREF="system-calendar.html#Date">Date</A>&nbsp;</CODE>
-</TD>
-<TD VALIGN="top">
-<CODE>&nbsp;
-symbol utcNow</CODE>
-</TD>
-</TR>
-</TABLE>
 <HR>
-<A NAME="navbar_top"><!-- --></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="index.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><A HREF="system-calendar-summary.html"><FONT CLASS="NavBarFont1"><B>Module</B></FONT></A>&nbsp;</TD>
-  </TR>
-</TABLE>
+</DIV>
+<A NAME="SystemTime">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'calendar'</DIV>
+<H2 title="SystemTime" class="title">SystemTime</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseValue">system'BaseValue</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'calendar'SystemTime</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">SystemTime</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
 </TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM><b>
-ELENA&nbsp;Standard&nbsp;Library<br>4.1</b></EM>
+<TD CLASS="colLast">
+<CODE>theValue</CODE>
 </TD>
 </TR>
 </TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+static get<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Default</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="TimeStruct">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'calendar'</DIV>
+<H2 title="TimeStruct" class="title">TimeStruct</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'calendar'TimeStruct</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">TimeStruct</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theYear</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theMonth</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theDayOfWeek</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theDay</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theHour</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theMinute</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theSecond</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theMillisecond</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#TimeStruct">TimeStruct</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#TimeStruct">TimeStruct</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#TimeStruct">TimeStruct</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#TimeStruct">TimeStruct</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Year</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Year(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Month</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Month(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>DayOfWeek</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Day</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Day(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Hour</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Hour(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Minute</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Minute(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Second</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Second(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Millisecond</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Millisecond(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toShortDate()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toShortTime()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="Timespan">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'calendar'</DIV>
+<H2 title="Timespan" class="title">Timespan</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseValue">system'BaseValue</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'calendar'Timespan</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">Timespan</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theValue</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+static get<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Default</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+static get<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>MinValue</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>SystemTime</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Days</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Hours</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Minutes</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Seconds</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Milliseconds</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Printable</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clone()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="systemTimeFactory">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'calendar'</DIV>
+<H2 title="systemTimeFactory" class="title">systemTimeFactory</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'calendar'systemTimeFactory</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Singleton <SPAN CLASS="typeNameLabel">systemTimeFactory</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readUtcNow(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readNow(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="now">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'calendar'calendar'</DIV>
+<H2 title="now" class="title">now</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>symbol now</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="utcNow">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'calendar'calendar'</DIV>
+<H2 title="utcNow" class="title">utcNow</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE BORDER="0" CELLPADDING="3" CELLSPACING="0" WIDTH="100%">
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>symbol utcNow</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<DIV CLASS="bottomNav">
+<UL CLASS="navList">
+<LI>
+<A HREF="index.html">Overview</A>
+</LI>
+<LI>
+<A HREF="system-calendar-summary.html">Module</A>
+</LI>
+</UL>
+<DIV CLASS="aboutLanguage">
+<STRONG>
+ELENA&nbsp;Standard&nbsp;Library<br>4.1
+</STRONG>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

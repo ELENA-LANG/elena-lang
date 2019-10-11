@@ -54,8 +54,10 @@ ELENA byte codes (or ecodes)
  
  dcopyverb                  - index << ext.verb
  
- dsetverb                  - index >> ext.verb
+ dsetverb                   - index >> ext.verb
  
+ dmoveverb                  - index.verb >> ext.verb
+
  ecopy i                    - i => ext
  
  ecopyd                     - ext << index
@@ -405,6 +407,8 @@ ELENA byte codes (or ecodes)
  ----------------------
  add                        - index += ext
 
+ ande                       - index && ext => index
+ 
  addn n                     - index += n
  
  andn n                     - index && n => index

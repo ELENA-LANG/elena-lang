@@ -64,6 +64,8 @@ define elPackageOffset       0010h
 define page_align_mask   000FFFF0h
 
 define ACTION_ORDER              9
+define PARAM_MASK             01Fh
+define PARAM_MASK_INV   0FFFFFFE0h
 
 // --- System Core Preloaded Routines --
 
@@ -1325,6 +1327,23 @@ end
 inline % 03Ah
 
   cmp [eax], eax
+
+end
+
+// ; ande
+inline % 03Bh
+
+  and ebx, ecx
+
+end
+
+// ; dmoveverb
+inline % 03Ch
+
+  mov edx, ebx
+  and ecx, PARAM_MASK
+  and edx, PARAM_MASK_INV 
+  or  ecx, edx
 
 end
 
