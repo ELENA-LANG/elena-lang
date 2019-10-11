@@ -202,8 +202,12 @@ void writeClassSummaryHeader(TextFileWriter& writer)
    writer.writeLiteralNewLine("<LI CLASS=\"blockList\">");
    writer.writeLiteralNewLine("<TABLE CLASS=\"typeSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeLiteralNewLine("<HEADER>");
-   writer.writeLiteralNewLine("Symbol Summary");
+   writer.writeLiteralNewLine("Class Summary");
    writer.writeLiteralNewLine("</HEADER>");
+   writer.writeLiteralNewLine("<TR>"); 
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Class name</TH>"); 
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Description</TH>");
+   writer.writeLiteralNewLine("</TR>");
 }
 
 void writeSymbolSummaryHeader(TextFileWriter& writer)
@@ -213,6 +217,10 @@ void writeSymbolSummaryHeader(TextFileWriter& writer)
    writer.writeLiteralNewLine("<HEADER>");
    writer.writeLiteralNewLine("Symbol Summary");
    writer.writeLiteralNewLine("</HEADER>");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Symbol name</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Description</TH>");
+   writer.writeLiteralNewLine("</TR>");
 
 }
 
@@ -223,6 +231,11 @@ void writeExtendedSummaryHeader(TextFileWriter& writer)
    writer.writeLiteralNewLine("<HEADER>");
    writer.writeLiteralNewLine("Extended Class Summary");
    writer.writeLiteralNewLine("</HEADER>");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Extended class name</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Description</TH>");
+   writer.writeLiteralNewLine("</TR>");
+
 }
 
 void writeRefName(TextFileWriter& writer, ident_t name)
@@ -416,7 +429,12 @@ void writeFields(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<H3>Field Summary</H3>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Field</TH>");
+   writer.writeLiteralNewLine("</TR>");
+
 
    auto it = info->fields.start();
    bool alt = true;
@@ -537,7 +555,11 @@ void writeMethods(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<H3>Method Summary</H3>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Method</TH>");
+   writer.writeLiteralNewLine("</TR>");
 
    bool alt = true;
    auto it = info->methods.start();
@@ -572,7 +594,11 @@ void writeProperties(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<H3>Property Summary</H3>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Property accessor</TH>");
+   writer.writeLiteralNewLine("</TR>");
 
    bool alt = true;
    auto it = info->methods.start();
@@ -607,7 +633,11 @@ void writeStaticProperties(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<H3>Static Property Summary</H3>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Property accessor</TH>");
+   writer.writeLiteralNewLine("</TR>");
 
    auto it = info->constructors.start();
    bool alt = true;
@@ -642,7 +672,11 @@ void writeExtensions(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<H3>Extension Summary</H3>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Extension Method</TH>");
+   writer.writeLiteralNewLine("</TR>");
 
    bool alt = true;
    auto it = info->extensions.start();
@@ -678,7 +712,11 @@ void writeConstructors(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<H3>Constructor Summary</H3>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Constructor</TH>");
+   writer.writeLiteralNewLine("</TR>");
 
    auto it = info->constructors.start();
    bool alt = true;
@@ -714,7 +752,11 @@ void writeConversions(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<H3>Conversion Summary</H3>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Conversion Method</TH>");
+   writer.writeLiteralNewLine("</TR>");
 
    bool alt = true;
    auto it = info->methods.start();
@@ -955,7 +997,11 @@ void writeSymbolBody(TextFileWriter& writer, ApiSymbolInfo* info, const char* ro
 
    writer.writeLiteralNewLine("<H3>Symbol Summary</H3>");
 
-   writer.writeLiteralNewLine("<TABLE BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+   writer.writeLiteralNewLine("<TR>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Name</TH>");
+   writer.writeLiteralNewLine("</TR>");
 
    writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
    writer.writeLiteralNewLine("<TD CLASS=\"colFirst\">");
