@@ -6,10 +6,10 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev API
+                * validate / format generated html
                 * template based extensions
                 * template extensions
                 * missing algorithms (template extensions)
-                * validate / format generated html
 
                 * missing system'routines'stex
                 * missing algorithms

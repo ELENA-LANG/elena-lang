@@ -59,6 +59,7 @@ struct ApiClassInfo
    bool withConstructors;
    bool withConversions;
    bool templateBased;
+   bool isVirtual;
 
    IdentifierString prefix;
    IdentifierString fullName;
@@ -76,7 +77,7 @@ struct ApiClassInfo
       withStaticProps = withProps = false;
       withConstructors = false;
       withConversions = false;
-      templateBased = false;
+      isVirtual = templateBased = false;
    }
    ~ApiClassInfo()
    {
@@ -203,6 +204,16 @@ void writeSymbolSummaryHeader(TextFileWriter& writer, const char* name, const ch
    writer.writeLiteralNewLine("</TR>");
 }
 
+void writeExtendedSummaryHeader(TextFileWriter& writer, const char* name, const char* shortDescr)
+{
+   writer.writeLiteralNewLine("<BR/>");
+   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
+   writer.writeLiteralNewLine("<TR BGCOLOR=\"#CCCCFF\" CLASS=\"TableHeadingColor\">");
+   writer.writeLiteralNewLine("<TD COLSPAN=2><FONT SIZE=\"+2\">");
+   writer.writeLiteralNewLine("<B>Extended Class Summary</B></FONT></TD>");
+   writer.writeLiteralNewLine("</TR>");
+}
+
 void writeRefName(TextFileWriter& writer, ident_t name)
 {
    int paramIndex = 1;
@@ -276,6 +287,21 @@ void writeSymbolSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const 
    writer.writeLiteral("<TD WIDTH=\"15%\"><B><A HREF=\"");
    writer.writeLiteral(bodyFileName);
    writer.writeLiteral("#");
+   writeRefName(writer, info->name.c_str());
+   writer.writeLiteral("\">");
+   writer.writeLiteral(info->name.c_str());
+   writer.writeLiteralNewLine("</A></B></TD>");
+   writer.writeLiteral("<TD>");
+   writer.writeLiteral("</TD>");
+   writer.writeLiteralNewLine("</TR>");
+}
+
+void writeExtendedSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* bodyFileName)
+{
+   writer.writeLiteralNewLine("<TR BGCOLOR=\"white\" CLASS=\"TableRowColor\">");
+   writer.writeLiteral("<TD WIDTH=\"15%\"><B><A HREF=\"");
+   writer.writeLiteral(bodyFileName);
+   writer.writeLiteral("#ext-");
    writeRefName(writer, info->name.c_str());
    writer.writeLiteral("\">");
    writer.writeLiteral(info->name.c_str());
@@ -705,6 +731,41 @@ void writeBody(TextFileWriter& writer, ApiClassInfo* info, const char* rootNs)
 
    writer.writeLiteralNewLine("<!-- ========== METHOD SUMMARY =========== -->");
    writeMethods(writer, info);
+
+   if (info->extensions.Count() > 0) {
+      writer.writeLiteralNewLine("<!-- ========== EXTNSION SUMMARY =========== -->");
+      writeExtensions(writer, info);
+   }
+
+   writer.writeLiteralNewLine("</TABLE>");
+}
+
+void writeExtendedBody(TextFileWriter& writer, ApiClassInfo* info, const char* rootNs)
+{
+   const char* title = /*config.getSetting(name, "#title", NULL)*/nullptr;
+   if (title == NULL)
+      title = info->name.c_str();
+
+   IdentifierString moduleName;
+   parseNs(moduleName, rootNs, info->fullName.c_str());
+
+   writer.writeLiteral("<A NAME=\"ext-");
+   writer.writeLiteral(info->name.c_str());
+   writer.writeLiteralNewLine("\"/>");
+   writer.writeLiteralNewLine("<HR/>");
+   writer.writeLiteralNewLine("<!-- ======== START OF CLASS DATA ======== -->");
+   writer.writeLiteralNewLine("<H2>");
+   writer.writeLiteralNewLine("<FONT SIZE=\"-1\">");
+   writer.writeLiteral(moduleName);
+   writer.writeLiteral("'");
+   writer.writeLiteralNewLine("</FONT>");
+   writer.writeLiteralNewLine("<BR>");
+   writer.writeLiteral(title);
+   writer.writeLiteralNewLine("</H2>");
+
+   writeClassName(writer, info);
+
+   writer.writeLiteralNewLine("<TABLE BORDER=\"1\" CELLPADDING=\"3\" CELLSPACING=\"0\" WIDTH=\"100%\">");
 
    if (info->extensions.Count() > 0) {
       writer.writeLiteralNewLine("<!-- ========== EXTNSION SUMMARY =========== -->");
@@ -1209,13 +1270,18 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          modules.add(moduleInfo);
       }
 
-      if (classClassMode) {
-         ApiClassInfo* info = findClass(moduleInfo, fullName.c_str());
+      ApiClassInfo* info = findClass(moduleInfo, fullName.c_str());
 
+      if (classClassMode) {
          readClassClassMembers(line, reader, info, rootNs);
       }
       else {
-         ApiClassInfo* info = new ApiClassInfo();
+         if (!info) {
+            info = new ApiClassInfo();
+
+            moduleInfo->classes.add(info);
+         }
+         else info->isVirtual = false;
 
          info->templateBased = templateBased;
          info->fullName.copy(fullName.c_str());
@@ -1254,8 +1320,6 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
             info->prefix.append("Singleton ");
          }
          else info->prefix.append("Class ");
-
-         moduleInfo->classes.add(info);
       }
    }
    else if (ident_t(line).startsWith("extension ")) {
@@ -1288,6 +1352,9 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
 
          info->fullName.copy(targetFullName.c_str());
          info->name.copy(targetFullName.c_str() + targetFullName.ident().findLast('\'') + 1);
+         info->isVirtual = true;
+
+         moduleInfo->classes.add(info);
       }
 
       readExtensions(line, reader, info, rootNs);
@@ -1393,8 +1460,10 @@ int main(int argc, char* argv[])
 
       auto class_it = (*it)->classes.start();
       while (!class_it.Eof()) {
-         writeSummaryTable(summaryWriter, *class_it, name);
-         writeBody(bodyWriter, *class_it, ns);
+         if (!(*class_it)->isVirtual) {
+            writeSummaryTable(summaryWriter, *class_it, name);
+            writeBody(bodyWriter, *class_it, ns);
+         }
          
          class_it++;
       }
@@ -1410,6 +1479,21 @@ int main(int argc, char* argv[])
          writeSymbolBody(bodyWriter, *symbol_it, ns);
 
          symbol_it++;
+      }
+
+      writeSummaryFooter(summaryWriter);
+
+      // symbols
+      writeExtendedSummaryHeader(summaryWriter, (*it)->name.c_str(), shortDescr);
+
+      class_it = (*it)->classes.start();
+      while (!class_it.Eof()) {
+         if ((*class_it)->isVirtual) {
+            writeExtendedSummaryTable(summaryWriter, *class_it, name);
+            writeExtendedBody(bodyWriter, *class_it, ns);
+         }
+
+         class_it++;
       }
 
       writeSummaryFooter(summaryWriter);
