@@ -6,7 +6,6 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev API
-                * correctly display variadic arguments
                 * template extensions
 
                 * missing algorithms (template extensions)

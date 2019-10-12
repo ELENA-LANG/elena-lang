@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Hint constants ---
 constexpr auto HINT_CLOSURE_MASK    = 0xC0008A00;
@@ -2651,7 +2651,7 @@ ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode termi
 
    retVal.param = scope.moduleScope->module->mapReference(message);
 
-   writeTerminal(writer, terminal, scope, retVal, mode);
+   //writeTerminal(writer, terminal, scope, retVal, mode);
 
    return retVal;
 }
@@ -2669,7 +2669,7 @@ ObjectInfo Compiler :: compileSubjectReference(SyntaxWriter& writer, SNode termi
    retVal.param = scope.moduleScope->module->mapReference(messageName);
    retVal.reference = V_SUBJECT;
 
-   writeTerminal(writer, terminal, scope, retVal, mode);
+   //writeTerminal(writer, terminal, scope, retVal, mode);
 
    return retVal;
 }
@@ -8845,7 +8845,7 @@ void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
       applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
    }
 
-   //test2(node);
+   test2(node);
 }
 
 void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
