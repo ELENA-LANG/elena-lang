@@ -3130,15 +3130,16 @@ end
 
 procedure __extmessage."#dispatch[1]"
 
-  bloadsi 1
-  ifb labDefault
+  // check if it is invoke
+  dcopy SPECIAL_MESSAGE
+  ande
+  ifn labDefault 0 
 
+  eaddn -1
   nload
-  eswap
-  setverb messagename : "eval"
+  dmoveverb
   else labEnd
-  nload
-  ecopyd
+
   ajumpi 1
 
 labEnd:
